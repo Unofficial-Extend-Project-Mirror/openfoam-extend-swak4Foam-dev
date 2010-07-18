@@ -1,0 +1,3 @@
+{"expr":"Selected %f% cells for refinement out of (%f%).","name":"Grid size","titles":["cells"]}
+{"expr":"Liquid phase volume fraction = (%f%)","name":"Liquid Phase","titles":["fraction"]}
+{"expr":"Execution time for mesh.update\(\) = (%f%) s","name":"Mesh update Time","titles":["seconds"]}
