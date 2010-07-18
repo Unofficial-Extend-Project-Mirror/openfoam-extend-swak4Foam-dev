@@ -3,6 +3,7 @@ syntax: glob
 *~
 *.dep
 *.output
+*.bak
 
 linux*Opt
 linux*Debug
