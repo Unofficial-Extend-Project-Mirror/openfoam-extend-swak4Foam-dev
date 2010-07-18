@@ -1,0 +1,10 @@
+syntax: glob
+
+*~
+*.dep
+
+linux*Opt
+linux*Debug
+
+darwin*Opt
+darwin*Debug
