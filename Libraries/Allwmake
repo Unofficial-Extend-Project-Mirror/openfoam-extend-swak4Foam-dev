@@ -2,3 +2,5 @@
 
 wmake libso swak4FoamParsers
 
+wmake libso groovyBC
+

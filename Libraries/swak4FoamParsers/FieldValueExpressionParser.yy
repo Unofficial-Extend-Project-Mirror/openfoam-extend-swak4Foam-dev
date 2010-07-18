@@ -27,7 +27,7 @@
 class FieldValueExpressionDriver;
 %}
 
-%name-prefix="fvexpr"
+%name-prefix="parsers"
 
 %parse-param { FieldValueExpressionDriver& driver }
 %lex-param { FieldValueExpressionDriver& driver }
@@ -379,7 +379,7 @@ fvector: TOKEN_VECTOR '(' fsexp ',' fsexp ',' fsexp ')' {     $$ = driver.makeSu
 
 %%
 
-void fvexpr::FieldValueExpressionParser::error (const fvexpr::FieldValueExpressionParser::location_type& l,const std::string& m)
+void parsers::FieldValueExpressionParser::error (const parsers::FieldValueExpressionParser::location_type& l,const std::string& m)
 {
      driver.error (l, m);
 }

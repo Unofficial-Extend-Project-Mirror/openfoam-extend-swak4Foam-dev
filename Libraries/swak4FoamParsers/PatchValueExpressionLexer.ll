@@ -8,7 +8,7 @@
 
 %option noyywrap nounput batch debug 
 %option stack
-%option prefix="ve"
+%option prefix="parsers"
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -33,7 +33,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 %{
-    typedef pve::PatchValueExpressionParser::token token;
+    typedef parsers::PatchValueExpressionParser::token token;
 %}
 
 &&                   return token::TOKEN_AND;

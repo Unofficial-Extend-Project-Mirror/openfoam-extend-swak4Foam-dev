@@ -1,0 +1,14 @@
+
+ifdef FOAM_DEV
+FOAM_DEV_OPTION = -DFOAM_DEV
+endif
+
+EXE_INC = -I$(OBJECTS_DIR) \
+	$(FOAM_DEV_OPTION) 	\
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I../swak4FoamParsers/lnInclude/
+
+LIB_LIBS = -lfiniteVolume \
+	-lOpenFOAM \
+	-L$(FOAM_USER_LIBBIN) \
+	-lswak4FoamParsers

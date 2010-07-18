@@ -159,7 +159,7 @@ void PatchValueExpressionDriver::parse (const std::string& f)
 {
     content = f;
     scan_begin ();
-    pve::PatchValueExpressionParser parser (*this);
+    parsers::PatchValueExpressionParser parser (*this);
     parser.set_debug_level (trace_parsing);
     parser.parse ();
     scan_end ();
@@ -170,7 +170,7 @@ PatchResult PatchValueExpressionDriver::getUniform(label size,bool noWarning)
     return result_.getUniform(size,noWarning);
 }
 
-void PatchValueExpressionDriver::error (const pve::location& l, const std::string& m)
+void PatchValueExpressionDriver::error (const parsers::location& l, const std::string& m)
 {
     std::ostringstream buff;
     buff << l;

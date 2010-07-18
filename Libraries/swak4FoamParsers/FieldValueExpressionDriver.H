@@ -13,12 +13,12 @@ class FieldValueExpressionDriver;
 
 #include "FieldValueExpressionParser.tab.hh"
 
-namespace fvexpr {
+namespace parsers {
     class location;
     class FieldValueExpressionParser;
 }
 
-#define YY_DECL int fvexprlex(fvexpr::FieldValueExpressionParser::semantic_type* yylval,fvexpr::location* yylloc,FieldValueExpressionDriver &driver)
+#define YY_DECL int parserslex(parsers::FieldValueExpressionParser::semantic_type* yylval,parsers::location* yylloc,FieldValueExpressionDriver &driver)
 
 YY_DECL;
 
@@ -92,7 +92,7 @@ public:
     bool trace_parsing;
 
     // Error handling.
-    void error (const fvexpr::location& l, const std::string& m);
+    void error (const parsers::location& l, const std::string& m);
     void error (const std::string& m);
 
     // checking for variables

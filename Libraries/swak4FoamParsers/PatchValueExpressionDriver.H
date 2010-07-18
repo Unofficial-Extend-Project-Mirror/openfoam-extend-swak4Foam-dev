@@ -58,12 +58,12 @@ using Foam::PatchValueExpressionDriver;
 
 #include "PatchValueExpressionParser.tab.hh"
 
-namespace pve {
+namespace parsers {
     class location;
     class PatchValueExpressionParser;
 }
 
-#define YY_DECL int pvelex(pve::PatchValueExpressionParser::semantic_type* yylval,pve::location* yylloc,Foam::PatchValueExpressionDriver &driver)
+#define YY_DECL int parserslex(parsers::PatchValueExpressionParser::semantic_type* yylval,parsers::location* yylloc,Foam::PatchValueExpressionDriver &driver)
 
 YY_DECL;
 
@@ -200,7 +200,7 @@ public:
     sphericalTensorField *composeSphericalTensorField(scalarField *);
 
     // Error handling.
-    void error (const pve::location& l, const std::string& m);
+    void error (const parsers::location& l, const std::string& m);
     void error (const std::string& m);
 
     // Handling the scanner 
