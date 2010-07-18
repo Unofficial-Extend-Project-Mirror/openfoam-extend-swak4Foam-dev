@@ -1,0 +1,6 @@
+.SUFFIXES: .ll
+
+lltoo = rm $*.C ; flex -f $$SOURCE ; mv *.c $*.C ; $(CC) $(c++FLAGS) -c $*.C -o $@ 
+
+.ll.dep:
+	$(MAKE_DEP)

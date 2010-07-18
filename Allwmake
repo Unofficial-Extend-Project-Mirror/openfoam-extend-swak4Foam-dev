@@ -1,0 +1,6 @@
+#! /bin/sh
+
+(cd Libraries; wmake all )
+
+(cd Utilities; wmake all )
+

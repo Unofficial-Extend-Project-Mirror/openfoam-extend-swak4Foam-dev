@@ -1,0 +1,7 @@
+.SUFFIXES: .yy
+
+yytoo = rm -f $*.C $*.tab.hh; bison -ra -v $(YYPREFIX) -d $$SOURCE ;  mv *.tab.cc $*.C ; mv *.hh lnInclude ;  $(CC) $(c++FLAGS) -c  $*.C -o $@ 
+
+.yy.dep:
+	$(MAKE_DEP)
+

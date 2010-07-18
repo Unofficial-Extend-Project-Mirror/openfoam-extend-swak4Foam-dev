@@ -1,0 +1,5 @@
+ValueExpressionParser.C
+ValueExpressionLexer.C
+ValueExpressionDriver.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers

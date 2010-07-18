@@ -1,0 +1,12 @@
+include $(OBJECTS_DIR)/../mybison
+include $(OBJECTS_DIR)/../myflex
+
+
+EXE_INC = -I$(OBJECTS_DIR) \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
+	
+
+EXE_LIBS = -lfiniteVolume \
+	-lmeshTools
+

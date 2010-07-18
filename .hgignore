@@ -2,9 +2,12 @@ syntax: glob
 
 *~
 *.dep
+*.output
 
 linux*Opt
 linux*Debug
 
 darwin*Opt
 darwin*Debug
+
+lnInclude
