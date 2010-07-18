@@ -1,6 +1,6 @@
  
 %{                                          /* -*- C++ -*- */
-#include "ValueExpressionDriver.H"
+#include "FieldValueExpressionDriver.H"
 #include <errno.h>
 %}
 
@@ -8,7 +8,7 @@
 
 %option noyywrap nounput batch debug 
 %option stack
-%option prefix="ve"
+%option prefix="fvexpr"
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -33,7 +33,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 %{
-    typedef ve::ValueExpressionParser::token token;
+    typedef fvexpr::FieldValueExpressionParser::token token;
 %}
 
 &&                   return token::TOKEN_AND;
@@ -163,7 +163,7 @@ false                  return token::TOKEN_FALSE;
 
 %%
 
-void ValueExpressionDriver::scan_begin ()
+void FieldValueExpressionDriver::scan_begin ()
 {
     yy_flex_debug = trace_scanning;
     yy_scan_string(content.c_str());
@@ -171,7 +171,7 @@ void ValueExpressionDriver::scan_begin ()
 //        error (std::string ("cannot open ") + file);
 }
 
-void ValueExpressionDriver::scan_end ()
+void FieldValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
 }

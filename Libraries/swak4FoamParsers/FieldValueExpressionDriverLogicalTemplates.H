@@ -1,16 +1,16 @@
-//  ICE Revision: $Id: ValueExpressionDriverLogicalTemplates.H 7088 2007-01-25 21:12:21Z bgschaid $ 
+//  ICE Revision: $Id: FieldValueExpressionDriverLogicalTemplates.H 7088 2007-01-25 21:12:21Z bgschaid $ 
 
 #ifndef VALUE_EXPRESSION_LOGICAL_TEMPLATES
 #define VALUE_EXPRESSION_LOGICAL_TEMPLATES
 
 template<>
-Foam::volScalarField *ValueExpressionDriver::makeLogicalField<Foam::volScalarField>(Foam::scalar val)
+Foam::volScalarField *FieldValueExpressionDriver::makeLogicalField<Foam::volScalarField>(Foam::scalar val)
 {
     return makeScalarField(val);
 }
 
 template<>
-Foam::surfaceScalarField *ValueExpressionDriver::makeLogicalField<Foam::surfaceScalarField>(Foam::scalar val)
+Foam::surfaceScalarField *FieldValueExpressionDriver::makeLogicalField<Foam::surfaceScalarField>(Foam::scalar val)
 {
     return makeSurfaceScalarField(val);
 }
@@ -45,7 +45,7 @@ Foam::surfaceScalarField *ValueExpressionDriver::makeLogicalField<Foam::surfaceS
 #define getFaceValue(ding) (ding->boundaryField()[pI][fI])
 
 template <class Op,class Field>
-Field *ValueExpressionDriver::doCompare(Field *a,Op op,Field *b)
+Field *FieldValueExpressionDriver::doCompare(Field *a,Op op,Field *b)
 {
     Field *res=makeLogicalField<Field>(0.);
 
@@ -71,7 +71,7 @@ Field *ValueExpressionDriver::doCompare(Field *a,Op op,Field *b)
 }
 
 template <class Op,class Field>
-Field *ValueExpressionDriver::doLogicalOp(Field *a,Op op,Field *b)
+Field *FieldValueExpressionDriver::doLogicalOp(Field *a,Op op,Field *b)
 {
     Field *res=makeLogicalField<Field>(0.);
 
@@ -102,7 +102,7 @@ Field *ValueExpressionDriver::doLogicalOp(Field *a,Op op,Field *b)
 }
 
 template <class T,class Field>
-T * ValueExpressionDriver::doConditional(Field *cond,T* yes,T* no,T* result)
+T * FieldValueExpressionDriver::doConditional(Field *cond,T* yes,T* no,T* result)
 {
     forAll(*result,cellI) {
     //    for(Foam::label cellI=0;cellI<upperLimit(*result);cellI++) {
@@ -130,7 +130,7 @@ T * ValueExpressionDriver::doConditional(Field *cond,T* yes,T* no,T* result)
 }
 
 template <class Field>
-Field *ValueExpressionDriver::doLogicalNot(Field *a)
+Field *FieldValueExpressionDriver::doLogicalNot(Field *a)
 {
     Field *res=makeLogicalField<Field>(0.);
 

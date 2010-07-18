@@ -1,6 +1,6 @@
-//  ICE Revision: $Id: ValueExpressionDriver.C 7567 2007-06-20 12:38:50Z bgschaid $ 
+//  ICE Revision: $Id: FieldValueExpressionDriver.C 7567 2007-06-20 12:38:50Z bgschaid $ 
 
-#include "ValueExpressionDriver.H"
+#include "FieldValueExpressionDriver.H"
 #include <Random.H>
 #include <wallDist.H>
 #include <dimensionedVector.H>
@@ -9,7 +9,7 @@
 #include "wallFvPatch.H"
 #include "cellSet.H"
 
-ValueExpressionDriver::ValueExpressionDriver (
+FieldValueExpressionDriver::FieldValueExpressionDriver (
     const Foam::string& time,
     const Foam::Time& runTime,
     const Foam::fvMesh &mesh,
@@ -35,7 +35,7 @@ ValueExpressionDriver::ValueExpressionDriver (
 {
 }
 
-ValueExpressionDriver::~ValueExpressionDriver ()
+FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 {
     if(result_) {
         delete result_;
@@ -45,32 +45,32 @@ ValueExpressionDriver::~ValueExpressionDriver ()
     }
 }
 
-void ValueExpressionDriver::setScalarResult(Foam::volScalarField *r) {
+void FieldValueExpressionDriver::setScalarResult(Foam::volScalarField *r) {
     result_=r;
     typ_=SCALAR_TYPE;
 }
 
-void ValueExpressionDriver::setLogicalResult(Foam::volScalarField *r) {
+void FieldValueExpressionDriver::setLogicalResult(Foam::volScalarField *r) {
     result_=r;
     typ_=LOGICAL_TYPE;
 }
 
-void ValueExpressionDriver::setVectorResult(Foam::volVectorField *r) {
+void FieldValueExpressionDriver::setVectorResult(Foam::volVectorField *r) {
     vresult_=r;
     typ_=VECTOR_TYPE;
 }
 
-void ValueExpressionDriver::parse (const std::string &f)
+void FieldValueExpressionDriver::parse (const std::string &f)
 {
     content = f;
     scan_begin ();
-    ve::ValueExpressionParser parser (*this);
+    fvexpr::FieldValueExpressionParser parser (*this);
     parser.set_debug_level (trace_parsing);
     parser.parse ();
     scan_end ();
 }
 
-void ValueExpressionDriver::error (const ve::location& l, const std::string& m)
+void FieldValueExpressionDriver::error (const fvexpr::location& l, const std::string& m)
 {
     std::ostringstream buff;
     buff << l;
@@ -93,7 +93,7 @@ void ValueExpressionDriver::error (const ve::location& l, const std::string& m)
     //    Foam::Info << buff.str() << ": " << m << Foam::endl;
 }
 
-void ValueExpressionDriver::error (const std::string& m)
+void FieldValueExpressionDriver::error (const std::string& m)
 {
     Foam::FatalErrorIn("parsingValue")
         //        << Foam::args.executable()
@@ -101,7 +101,7 @@ void ValueExpressionDriver::error (const std::string& m)
             << Foam::exit(Foam::FatalError);
 }
 
-bool ValueExpressionDriver::isCellSet(const Foam::string &name)
+bool FieldValueExpressionDriver::isCellSet(const Foam::string &name)
 {
     if(getTypeOfSet(name)=="cellSet") {
         return true;
@@ -110,7 +110,7 @@ bool ValueExpressionDriver::isCellSet(const Foam::string &name)
     }
 }
 
-bool ValueExpressionDriver::isCellZone(const Foam::string &name)
+bool FieldValueExpressionDriver::isCellZone(const Foam::string &name)
 {
     if(mesh_.cellZones().findZoneID(name)>=0) {
         return true;
@@ -119,7 +119,7 @@ bool ValueExpressionDriver::isCellZone(const Foam::string &name)
     }
 }
 
-Foam::string ValueExpressionDriver::getTypeOfField(const Foam::string &name)
+Foam::string FieldValueExpressionDriver::getTypeOfField(const Foam::string &name)
 {
     Foam::IOobject f 
         (
@@ -134,7 +134,7 @@ Foam::string ValueExpressionDriver::getTypeOfField(const Foam::string &name)
     return f.headerClassName();
 }
 
-Foam::string ValueExpressionDriver::getTypeOfSet(const Foam::string &name)
+Foam::string FieldValueExpressionDriver::getTypeOfSet(const Foam::string &name)
 {
     Foam::IOobject f 
         (
@@ -165,7 +165,7 @@ Foam::string ValueExpressionDriver::getTypeOfSet(const Foam::string &name)
     }
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeModuloField(
+Foam::volScalarField *FieldValueExpressionDriver::makeModuloField(
     const Foam::volScalarField &a,
     const Foam::volScalarField &b)
 {
@@ -188,7 +188,7 @@ Foam::volScalarField *ValueExpressionDriver::makeModuloField(
     return result_;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeRandomField()
+Foam::volScalarField *FieldValueExpressionDriver::makeRandomField()
 {
     Foam::volScalarField *f=makeScalarField(0.);
     Foam::Random rand(65);
@@ -200,7 +200,7 @@ Foam::volScalarField *ValueExpressionDriver::makeRandomField()
     return f;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeCellIdField()
+Foam::volScalarField *FieldValueExpressionDriver::makeCellIdField()
 {
     Foam::volScalarField *f=makeScalarField(0.);
 
@@ -211,7 +211,7 @@ Foam::volScalarField *ValueExpressionDriver::makeCellIdField()
     return f;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeGaussRandomField()
+Foam::volScalarField *FieldValueExpressionDriver::makeGaussRandomField()
 {
     Foam::volScalarField *f=makeScalarField(0.);
     Foam::Random rand(65);
@@ -223,7 +223,7 @@ Foam::volScalarField *ValueExpressionDriver::makeGaussRandomField()
     return f;
 }
 
-Foam::volVectorField *ValueExpressionDriver::makePositionField()
+Foam::volVectorField *FieldValueExpressionDriver::makePositionField()
 {
     Foam::dimensionSet nullDim(0,0,0,0,0);
     Foam::volVectorField *f=new Foam::volVectorField(
@@ -244,7 +244,7 @@ Foam::volVectorField *ValueExpressionDriver::makePositionField()
     return f;
 }
 
-Foam::surfaceVectorField *ValueExpressionDriver::makeFacePositionField()
+Foam::surfaceVectorField *FieldValueExpressionDriver::makeFacePositionField()
 {
     Foam::dimensionSet nullDim(0,0,0,0,0);
     Foam::surfaceVectorField *f=new Foam::surfaceVectorField(
@@ -265,7 +265,7 @@ Foam::surfaceVectorField *ValueExpressionDriver::makeFacePositionField()
     return f;
 }
 
-Foam::surfaceVectorField *ValueExpressionDriver::makeFaceProjectionField()
+Foam::surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
 {
 
     Foam::dimensionSet nullDim(0,0,0,0,0);
@@ -363,7 +363,7 @@ Foam::surfaceVectorField *ValueExpressionDriver::makeFaceProjectionField()
     return f;
 }
 
-Foam::surfaceVectorField *ValueExpressionDriver::makeFaceField()
+Foam::surfaceVectorField *FieldValueExpressionDriver::makeFaceField()
 {
     Foam::dimensionSet nullDim(0,0,0,0,0);
     Foam::surfaceVectorField *f=new Foam::surfaceVectorField(
@@ -384,7 +384,7 @@ Foam::surfaceVectorField *ValueExpressionDriver::makeFaceField()
     return f;
 }
 
-Foam::surfaceScalarField *ValueExpressionDriver::makeAreaField()
+Foam::surfaceScalarField *FieldValueExpressionDriver::makeAreaField()
 {
     Foam::dimensionSet nullDim(0,0,0,0,0);
     Foam::surfaceScalarField *f=new Foam::surfaceScalarField(
@@ -405,7 +405,7 @@ Foam::surfaceScalarField *ValueExpressionDriver::makeAreaField()
     return f;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeVolumeField()
+Foam::volScalarField *FieldValueExpressionDriver::makeVolumeField()
 {
     Foam::volScalarField *f=new Foam::volScalarField(
         Foam::IOobject
@@ -428,7 +428,7 @@ Foam::volScalarField *ValueExpressionDriver::makeVolumeField()
     return f;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeDistanceField()
+Foam::volScalarField *FieldValueExpressionDriver::makeDistanceField()
 {
     Foam::dimensionSet nullDim(0,0,0,0,0);
     Foam::volScalarField *f=new Foam::volScalarField(
@@ -451,7 +451,7 @@ Foam::volScalarField *ValueExpressionDriver::makeDistanceField()
 
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeRDistanceField(const Foam::volVectorField& r)
+Foam::volScalarField *FieldValueExpressionDriver::makeRDistanceField(const Foam::volVectorField& r)
 {
     Foam::dimensionSet nullDim(0,0,0,0,0);
     Foam::volScalarField *f=new Foam::volScalarField(
@@ -474,7 +474,7 @@ Foam::volScalarField *ValueExpressionDriver::makeRDistanceField(const Foam::volV
     return f;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeScalarField(const Foam::scalar &val)
+Foam::volScalarField *FieldValueExpressionDriver::makeScalarField(const Foam::scalar &val)
 {
     std::ostringstream buff;
     buff << "constantScalar" << val;
@@ -496,7 +496,7 @@ Foam::volScalarField *ValueExpressionDriver::makeScalarField(const Foam::scalar 
     return f;
 }
 
-Foam::surfaceScalarField *ValueExpressionDriver::makeSurfaceScalarField
+Foam::surfaceScalarField *FieldValueExpressionDriver::makeSurfaceScalarField
 (
     const Foam::scalar &val
 ){
@@ -520,7 +520,7 @@ Foam::surfaceScalarField *ValueExpressionDriver::makeSurfaceScalarField
     return f;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeCellSetField(const Foam::string &name)
+Foam::volScalarField *FieldValueExpressionDriver::makeCellSetField(const Foam::string &name)
 {
   Foam::volScalarField *f=makeScalarField(0);
 
@@ -557,7 +557,7 @@ Foam::volScalarField *ValueExpressionDriver::makeCellSetField(const Foam::string
   return f;
 }
 
-Foam::volScalarField *ValueExpressionDriver::makeCellZoneField(const Foam::string &name)
+Foam::volScalarField *FieldValueExpressionDriver::makeCellZoneField(const Foam::string &name)
 {
   Foam::volScalarField *f=makeScalarField(0);
   Foam::label zoneID=mesh_.cellZones().findZoneID(name);
@@ -572,7 +572,7 @@ Foam::volScalarField *ValueExpressionDriver::makeCellZoneField(const Foam::strin
   return f;
 }
 
-Foam::volVectorField *ValueExpressionDriver::makeVectorField(const Foam::vector &vec)
+Foam::volVectorField *FieldValueExpressionDriver::makeVectorField(const Foam::vector &vec)
 {
     std::ostringstream buff;
     buff << "constantVector" << vec.x() << "_" << vec.y() << "_" << vec.z() ;
@@ -594,7 +594,7 @@ Foam::volVectorField *ValueExpressionDriver::makeVectorField(const Foam::vector 
     return f;
 }
 
-Foam::volVectorField *ValueExpressionDriver::makeVectorField
+Foam::volVectorField *FieldValueExpressionDriver::makeVectorField
 (
     Foam::volScalarField *x,
     Foam::volScalarField *y,
@@ -609,7 +609,7 @@ Foam::volVectorField *ValueExpressionDriver::makeVectorField
     return f;
 }
 
-Foam::surfaceVectorField *ValueExpressionDriver::makeSurfaceVectorField
+Foam::surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
 (
     const Foam::vector &vec
 ){
@@ -633,7 +633,7 @@ Foam::surfaceVectorField *ValueExpressionDriver::makeSurfaceVectorField
     return f;
 }
 
-Foam::surfaceVectorField *ValueExpressionDriver::makeSurfaceVectorField
+Foam::surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
 (
     Foam::surfaceScalarField *x,
     Foam::surfaceScalarField *y,
@@ -650,7 +650,7 @@ Foam::surfaceVectorField *ValueExpressionDriver::makeSurfaceVectorField
 }
 
 template<class T>
-void ValueExpressionDriver::makePatches
+void FieldValueExpressionDriver::makePatches
 (
     Foam::GeometricField<T,Foam::fvPatchField,Foam::volMesh> &field,
     bool keepPatches,
@@ -701,7 +701,7 @@ void ValueExpressionDriver::makePatches
 }
 
 template<class T>
-void ValueExpressionDriver::setValuePatches
+void FieldValueExpressionDriver::setValuePatches
 (
     Foam::GeometricField<T,Foam::fvPatchField,Foam::volMesh> &field,
     bool keepPatches,
@@ -743,15 +743,15 @@ void ValueExpressionDriver::setValuePatches
   }
 }
 
-bool ValueExpressionDriver::debug=false;
+bool FieldValueExpressionDriver::debug=false;
 
 // Force the compiler to generate the code, there'S a better way but I'm too stupid
 void dummyS(Foam::GeometricField<Foam::scalar,Foam::fvPatchField,Foam::volMesh>  &f,bool keepPatches,const Foam::wordList &fixedPatches) {
-    ValueExpressionDriver::makePatches(f,keepPatches,fixedPatches);
-    ValueExpressionDriver::setValuePatches(f,keepPatches,fixedPatches);
+    FieldValueExpressionDriver::makePatches(f,keepPatches,fixedPatches);
+    FieldValueExpressionDriver::setValuePatches(f,keepPatches,fixedPatches);
 }
 
 void dummyV(Foam::GeometricField<Foam::vector,Foam::fvPatchField,Foam::volMesh>  &f,bool keepPatches,const Foam::wordList &fixedPatches) {
-    ValueExpressionDriver::makePatches(f,keepPatches,fixedPatches);
-    ValueExpressionDriver::setValuePatches(f,keepPatches,fixedPatches);
+    FieldValueExpressionDriver::makePatches(f,keepPatches,fixedPatches);
+    FieldValueExpressionDriver::setValuePatches(f,keepPatches,fixedPatches);
 }

@@ -1,4 +1,4 @@
-//  ICE Revision: $Id: ValueExpressionDriver.H 7567 2007-06-20 12:38:50Z bgschaid $ 
+//  ICE Revision: $Id: FieldValueExpressionDriver.H 7567 2007-06-20 12:38:50Z bgschaid $ 
 
 #ifndef VALUE_EXPRESSION_DRIVER_H
 #define VALUE_EXPRESSION_DRIVER_H
@@ -9,20 +9,20 @@
 #include <volFields.H>
 #include <surfaceFields.H>
 
-class ValueExpressionDriver;
+class FieldValueExpressionDriver;
 
-#include "ValueExpressionParser.tab.hh"
+#include "FieldValueExpressionParser.tab.hh"
 
-namespace ve {
+namespace fvexpr {
     class location;
-    class ValueExpressionParser;
+    class FieldValueExpressionParser;
 }
 
-#define YY_DECL int velex(ve::ValueExpressionParser::semantic_type* yylval,ve::location* yylloc,ValueExpressionDriver &driver)
+#define YY_DECL int fvexprlex(fvexpr::FieldValueExpressionParser::semantic_type* yylval,fvexpr::location* yylloc,FieldValueExpressionDriver &driver)
 
 YY_DECL;
 
-class ValueExpressionDriver {
+class FieldValueExpressionDriver {
 public:
     enum ExpressionType{
         NO_TYPE,
@@ -54,7 +54,7 @@ private:
     bool searchOnDisc_;
 
 public:
-    ValueExpressionDriver(
+    FieldValueExpressionDriver(
         const Foam::string& time,
         const Foam::Time& runTime,
         const Foam::fvMesh &mesh,
@@ -62,7 +62,7 @@ public:
         bool searchInMemory=false,
         bool searchOnDisc=true
     );
-    virtual ~ValueExpressionDriver();
+    virtual ~FieldValueExpressionDriver();
 
     // Output debug-info
     static bool debug;
@@ -92,7 +92,7 @@ public:
     bool trace_parsing;
 
     // Error handling.
-    void error (const ve::location& l, const std::string& m);
+    void error (const fvexpr::location& l, const std::string& m);
     void error (const std::string& m);
 
     // checking for variables
@@ -159,6 +159,6 @@ public:
 
 };
 
-#include "ValueExpressionDriverI.H"
+#include "FieldValueExpressionDriverI.H"
 
 #endif

@@ -3,7 +3,7 @@
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "ValueExpressionParser"
+%define "parser_class_name" "FieldValueExpressionParser"
 
 %{
 #include <volFields.H>
@@ -24,13 +24,13 @@
 #include <functional>
 #include <cmath>
 
-class ValueExpressionDriver;
+class FieldValueExpressionDriver;
 %}
 
-%name-prefix="ve"
+%name-prefix="fvexpr"
 
-%parse-param { ValueExpressionDriver& driver }
-%lex-param { ValueExpressionDriver& driver }
+%parse-param { FieldValueExpressionDriver& driver }
+%lex-param { FieldValueExpressionDriver& driver }
 
 %locations
 %initial-action
@@ -59,8 +59,8 @@ class ValueExpressionDriver;
 };
 
 %{
-#include "ValueExpressionDriver.H"
-#include "ValueExpressionDriverLogicalTemplates.H"
+#include "FieldValueExpressionDriver.H"
+#include "FieldValueExpressionDriverLogicalTemplates.H"
 %}
 
 %token <name>   TOKEN_SID   "scalarID"
@@ -379,7 +379,7 @@ fvector: TOKEN_VECTOR '(' fsexp ',' fsexp ',' fsexp ')' {     $$ = driver.makeSu
 
 %%
 
-void ve::ValueExpressionParser::error (const ve::ValueExpressionParser::location_type& l,const std::string& m)
+void fvexpr::FieldValueExpressionParser::error (const fvexpr::FieldValueExpressionParser::location_type& l,const std::string& m)
 {
      driver.error (l, m);
 }

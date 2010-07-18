@@ -38,7 +38,7 @@ Description
 
 #include "fvCFD.H"
 
-#include "ValueExpressionDriver.H"
+#include "FieldValueExpressionDriver.H"
 
 #include "timeSelector.H"
 
@@ -87,7 +87,7 @@ void setField
         );
     }
 
-    ValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
+    FieldValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
 
     label setCells=0;
 
@@ -98,7 +98,7 @@ void setField
         }
     }
 
-    ValueExpressionDriver::setValuePatches(*tmp,keepPatches,valuePatches);
+    FieldValueExpressionDriver::setValuePatches(*tmp,keepPatches,valuePatches);
 
     Info << " Setting " << setCells << " of " << tmp->size() << " cells" << endl;
 
@@ -165,12 +165,12 @@ void doAnExpression
 
     Info << endl;
 
-    ValueExpressionDriver driver(
+    FieldValueExpressionDriver driver(
         time,
         runTime,
         mesh,
         cacheVariables);
-    ValueExpressionDriver ldriver(
+    FieldValueExpressionDriver ldriver(
         time,
         runTime,
         mesh,

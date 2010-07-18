@@ -1,13 +1,13 @@
-//  ICE Revision: $Id: ValueExpressionDriver.H 7567 2007-06-20 12:38:50Z bgschaid $ 
+//  ICE Revision: $Id: FieldValueExpressionDriver.H 7567 2007-06-20 12:38:50Z bgschaid $ 
 
 #ifndef VALUE_EXPRESSION_DRIVER_I_H
 #define VALUE_EXPRESSION_DRIVER_I_H
 
 template<class T>
-T *ValueExpressionDriver::getField(const Foam::string &name)
+T *FieldValueExpressionDriver::getField(const Foam::string &name)
 {
     if(debug) {
-        Foam::Info << "ValueExpressionDriver::getField. Name: " << name 
+        Foam::Info << "FieldValueExpressionDriver::getField. Name: " << name 
             << " Type: " << T::typeName << Foam::endl;
     }
 
@@ -54,7 +54,7 @@ T *ValueExpressionDriver::getField(const Foam::string &name)
     }
 
     if(f==NULL) {
-        Foam::FatalErrorIn("ValueExpressionDriver::getField(const Foam::string &name)")
+        Foam::FatalErrorIn("FieldValueExpressionDriver::getField(const Foam::string &name)")
             << "Could not find the field " << name 
                 << " in memory or on disc" << Foam::endl
                 << abort(Foam::FatalError);
@@ -66,10 +66,10 @@ T *ValueExpressionDriver::getField(const Foam::string &name)
 }
 
 template<class T>
-bool ValueExpressionDriver::ValueExpressionDriver::isThere(const Foam::string &name)
+bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const Foam::string &name)
 {
     if(debug) {
-        Foam::Info << "ValueExpressionDriver::isThere. Name: " << name 
+        Foam::Info << "FieldValueExpressionDriver::isThere. Name: " << name 
             << " Type: " << T::typeName << Foam::endl;
     }
     if(searchInMemory_) {
