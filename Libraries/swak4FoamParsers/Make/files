@@ -1,5 +1,10 @@
-FieldValueExpressionParser.C
-FieldValueExpressionLexer.C
+FieldValueExpressionParser.yy
+FieldValueExpressionLexer.ll
 FieldValueExpressionDriver.C
+
+PatchResult.C
+PatchValueExpressionParser.yy
+PatchValueExpressionLexer.ll
+PatchValueExpressionDriver.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers
