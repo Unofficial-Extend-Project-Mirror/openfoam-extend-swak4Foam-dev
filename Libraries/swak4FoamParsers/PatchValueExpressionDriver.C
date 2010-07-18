@@ -381,7 +381,7 @@ void PatchValueExpressionDriver::readLines(Istream &is,bool clear)
 void PatchValueExpressionDriver::writeLines(Ostream &os) const
 {
     os << token::BEGIN_LIST << nl;
-    forAllConstIter(HashTable<interpolationTable<scalar> >::const_iterator,lines_,it) {
+    forAllConstIter(HashTable<interpolationTable<scalar> >,lines_,it) {
         os << token::BEGIN_BLOCK << nl;
         os.writeKeyword("name") << it.key() << token::END_STATEMENT << nl;
         (*it).write(os);
