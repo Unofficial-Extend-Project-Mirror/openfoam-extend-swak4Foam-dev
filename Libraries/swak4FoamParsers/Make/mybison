@@ -1,6 +1,6 @@
 .SUFFIXES: .yy
 
-yytoo = rm -f $*.C $*.tab.hh; bison -ra -v $(YYPREFIX) -d $$SOURCE ;  mv *.tab.cc $*.C ; sed -i.bak "s/position.hh/$(*F)_position.hh/" location.hh ; mv location.hh lnInclude/$(*F)_location.hh ; mv stack.hh lnInclude/$(*F)_stack.hh ; mv position.hh lnInclude/$(*F)_position.hh ; sed -i.bak "s/stack.hh/$(*F)_stack.hh/;s/location.hh/$(*F)_location.hh/" $(*F).tab.hh ;mv *.hh lnInclude ;  $(CC) $(c++FLAGS) -c  $*.C -o $@ 
+yytoo = rm -f $*.C $*.tab.hh; bison -ra -v $(YYPREFIX) -d $$SOURCE ;  mv *.tab.cc $*.C ; sed -i.bak "s/position.hh/$(*F)_position.hh/" location.hh ; mv location.hh lnInclude/$(*F)_location.hh ; mv stack.hh lnInclude/$(*F)_stack.hh ; mv position.hh lnInclude/$(*F)_position.hh ; sed -i.bak "s/stack.hh/$(*F)_stack.hh/;s/location.hh/$(*F)_location.hh/" $(*F).tab.hh ;mv *.hh lnInclude ; touch -r $$SOURCE lnInclude/$(*F)*.hh ;  $(CC) $(c++FLAGS) -c  $*.C -o $@ 
 
 .yy.dep:
 	$(MAKE_DEP)
