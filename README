@@ -1,0 +1,20 @@
+# -*- mode: org -*-
+* Contents
+** Libraries
+   Collection of Libraries
+*** swak4FoamParsers
+    The basis of =swak4Foam=: the expression parsers with the logic to
+    access the /OpenFOAM/ data-structures.
+
+    None of the other software pieces compile without it
+*** groovyBC
+    Implements the infamous =groovyBC=. A boundary condition that
+    allows arbitrary expressions in the field-file
+*** simpleSwakFunctionObjects
+    Function objects based on the =simpleFunctionObjects=-library
+    (which is a prerequisite for compiling it)
+** Utilities
+*** funkySetFields
+    Utility that allows creation and manipulation of files with
+    expressions 
+** Examples
