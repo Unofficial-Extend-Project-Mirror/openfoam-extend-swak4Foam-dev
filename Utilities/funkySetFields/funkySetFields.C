@@ -33,7 +33,7 @@ Application
 
 Description
 
- ICE Revision: $Id: funkySetFields.C 7567 2007-06-20 12:38:50Z bgschaid $ 
+ ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
