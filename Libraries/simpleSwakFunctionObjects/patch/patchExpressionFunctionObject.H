@@ -37,7 +37,9 @@ SourceFiles
 #ifndef patchExpressionFunctionObject_H
 #define patchExpressionFunctionObject_H
 
-#include "patchFieldFunctionObject.H"
+#include "patchFunctionObject.H"
+
+#include "PatchValueExpressionDriver.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,7 +52,7 @@ namespace Foam
 
 class patchExpressionFunctionObject
 :
-    public patchFieldFunctionObject
+    public patchFunctionObject
 {
 
     // Private Member Functions
@@ -63,18 +65,23 @@ class patchExpressionFunctionObject
 
     //- integrate single field on all patches
     template <class T>
-    Field<T> average(const word& fieldName,T preset) const;
-    
+    Field<T> evaluate(const word& fieldName,T preset) const;
+
+    //- list with the accumulations of evaluated expression
+    wordList accumulations_;
+
+    //- the expression that is to be evaluated 
+    string expression_;
 protected:
 
     word dirName();
 
-    virtual scalarField process(const word& fieldName,scalar preset);
-    virtual Field<vector> process(const word& fieldName,vector preset);
-    virtual Field<sphericalTensor> process(const word& fieldName,sphericalTensor preset);
-    virtual Field<symmTensor> process(const word& fieldName,symmTensor preset);
-    virtual Field<tensor> process(const word& fieldName,tensor preset);
+    string firstLine();
 
+    wordList fileNames();
+
+    template<class T>
+    void writeData(const word &pName,PatchValueExpressionDriver &driver);
 public:
 
     //- Runtime type information
@@ -90,6 +97,9 @@ public:
         const Time&,
         const dictionary&
     );
+
+    //- Do the writing
+    virtual void write();
 
 };
 

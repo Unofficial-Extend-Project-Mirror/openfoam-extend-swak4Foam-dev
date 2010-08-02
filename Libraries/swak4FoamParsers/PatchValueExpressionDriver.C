@@ -83,6 +83,11 @@ PatchValueExpressionDriver::~PatchValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+word PatchValueExpressionDriver::getResultType()
+{
+    return result_.type();
+}
+
 void PatchValueExpressionDriver::clearResult()
 {
     result_.clearResult();

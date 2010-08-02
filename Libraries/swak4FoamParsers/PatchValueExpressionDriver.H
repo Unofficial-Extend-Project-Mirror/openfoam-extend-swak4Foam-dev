@@ -126,6 +126,8 @@ public:
     template<class Type>
     tmp<Field<Type> > getResult(bool qPoint=false);
 
+    word getResultType();
+
     PatchResult getUniform(label size,bool noWarning);
 
     void clearResult();

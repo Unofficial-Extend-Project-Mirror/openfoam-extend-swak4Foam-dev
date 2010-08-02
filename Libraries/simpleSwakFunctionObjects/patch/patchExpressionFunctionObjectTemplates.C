@@ -40,53 +40,48 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template <class T>
-Field<T> patchExpressionFunctionObject::average(const word& fieldName,T unsetVal) const
+void patchExpressionFunctionObject::writeData(const word &pName,PatchValueExpressionDriver &driver)
 {
-    const GeometricField<T, fvPatchField, volMesh>& fld =
-        obr_.lookupObject<GeometricField<T, fvPatchField, volMesh> >
-        (
-            fieldName
-        );
+    Field<T> result=driver.getResult<T>();
 
-    Field<T> vals(patchNames_.size(), unsetVal);
+    Field<T> results(accumulations_.size());
 
-    const fvMesh &mesh=refCast<const fvMesh>(obr_);
-    
-    forAll(patchNames_, patchI)
-    {
-        if (patchIndizes_[patchI] >= 0)
-        {
-            label index=patchIndizes_[patchI];
-            scalar surf=sum(mesh.magSf().boundaryField()[index]);
-            reduce(surf,sumOp<scalar>());
-            vals[patchI] = sum
-                        (
-                            mesh.magSf().boundaryField()[index]
-                            *fld.boundaryField()[index]
-                        );
-            reduce(vals[patchI],sumOp<T>());
-            vals[patchI]/=surf;
+    forAll(accumulations_,i) {
+        const word &aName=accumulations_[i];
+        T val=pTraits<T>::zero;
+
+        if(aName=="min") {
+            val=gMin(result);
+        } else if(aName=="max") {
+            val=gMax(result);
+        } else if(aName=="sum") {
+            val=gSum(result);
+        } else if(aName=="average") {
+            val=gAverage(result);
+        } else {
+            WarningIn("patchExpressionFunctionObject::writeData")
+                << "Unknown accumultation type " << aName
+                    << ". Currently only 'min', 'max', 'sum' and 'average' are supported"
+                    << endl;
+        }
+        results[i]=val;
+        if(verbose()) {
+            Info << " " << aName << "=" << val;
         }
     }
 
-    if(verbose()) {
-        Info << " Expressions of " << fieldName << " :";
-
-        forAll(patchNames_, patchI)
-        {
-            Info << "  " << patchNames_[patchI] << " = " 
-                << vals[patchI];
+    if (Pstream::master()) {
+        unsigned int w = IOstream::defaultPrecision() + 7;
+        
+        OFstream& o=*filePtrs_[pName];
+        
+        o << setw(w) << time().value();
+        forAll(results,i) {
+            o << setw(w) << results[i];
         }
-
-        Info << endl;
+        o << nl;
     }
-
-    //    Pstream::listCombineGather(vals, isNotEqOp<T>());
-    //    Pstream::listCombineScatter(vals);
-
-    return vals;
 }
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

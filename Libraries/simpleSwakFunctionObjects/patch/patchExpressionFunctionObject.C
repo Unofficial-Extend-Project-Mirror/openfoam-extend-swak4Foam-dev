@@ -54,7 +54,8 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
     const dictionary& dict
 )
 :
-    patchFieldFunctionObject(name,t,dict)
+    patchFunctionObject(name,t,dict),
+    accumulations_(dict.lookup("accumulations"))
 {
 }
 
@@ -63,33 +64,74 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
 word patchExpressionFunctionObject::dirName()
 {
     return typeName;
+//     string expr="";
+//     forAll(expression_,i) {
+//         const char c=expression_[i];
+//         switch (c) {
+//             case '/':
+//                 expr+="_DIV_";
+//                 break;
+//             case '*':
+//                 expr+="_MULT_";
+//                 break;
+//             case '&':
+//                 expr+="_IPROD_";
+//                 break;
+//             default:
+//                 expr+=c;
+//         }
+//     }
+
+//     return typeName+"_"+expr;
 }
 
-scalarField patchExpressionFunctionObject::process(const word& fieldName,scalar preset)
+wordList patchExpressionFunctionObject::fileNames()
 {
-    return average(fieldName,preset);
+    return patchNames_;
 }
 
-Field<vector> patchExpressionFunctionObject::process(const word& fieldName,vector preset)
+string patchExpressionFunctionObject::firstLine()
 {
-    return average(fieldName,preset);
+    string result="";
+
+    forAll(accumulations_,i) {
+        result+=" "+accumulations_[i];
+    }
+
+    return result;
 }
 
-Field<sphericalTensor> patchExpressionFunctionObject::process(const word& fieldName,sphericalTensor preset)
+void patchExpressionFunctionObject::write()
 {
-    return average(fieldName,preset);
-}
+    const fvMesh &mesh=refCast<const fvMesh>(obr_);
+    
+    forAll(patchIndizes_,i) {
+        PatchValueExpressionDriver driver(mesh.boundary()[i]);
 
-Field<symmTensor> patchExpressionFunctionObject::process(const word& fieldName,symmTensor preset)
-{
-    return average(fieldName,preset);
-}
+        if(verbose()) {
+            Info << "Expression " << name() << " on " << patchNames_[i] << ": ";
+        }
 
-Field<tensor> patchExpressionFunctionObject::process(const word& fieldName,tensor preset)
-{
-    return average(fieldName,preset);
-}
+        driver.parse(expression_);
+        word rType=driver.getResultType();
 
+        if(rType==pTraits<scalar>::typeName) {
+            writeData<scalar>(patchNames_[i],driver);
+        } else if(rType==pTraits<vector>::typeName) {
+            writeData<vector>(patchNames_[i],driver);
+        } else if(rType==pTraits<tensor>::typeName) {
+            writeData<tensor>(patchNames_[i],driver);
+        } else if(rType==pTraits<symmTensor>::typeName) {
+            writeData<symmTensor>(patchNames_[i],driver);
+        } else if(rType==pTraits<sphericalTensor>::typeName) {
+            writeData<sphericalTensor>(patchNames_[i],driver);
+        }  
+
+        if(verbose()) {
+            Info << endl;
+        }
+    }
+}
 
 } // namespace Foam
 
