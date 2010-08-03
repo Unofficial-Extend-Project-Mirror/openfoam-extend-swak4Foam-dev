@@ -5,6 +5,8 @@ syntax: glob
 *.output
 *.bak
 
+*.gz
+
 linux*Opt
 linux*Debug
 
