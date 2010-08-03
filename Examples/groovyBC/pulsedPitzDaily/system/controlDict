@@ -144,6 +144,29 @@ functions
         expression "p-pOut";
         verbose true;
     }
+    massFlowSimple
+    {
+        // Just for checking whether tha othr massflow is correct
+        type patchMassFlow;
+        patches (
+            inlet 
+            outlet
+        );
+        verbose true;
+    }
+    massFlowSwak
+    {
+        type patchExpression;
+        verbose true;
+        accumulations (
+            sum
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "phi";
+    }
 );
 
 libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" ) ;
