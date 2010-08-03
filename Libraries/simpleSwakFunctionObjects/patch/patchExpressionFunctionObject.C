@@ -56,6 +56,7 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
 :
     patchFunctionObject(name,t,dict),
     expression_(dict.lookup("expression")),
+    variables_(dict.lookupOrDefault("variables",string(""))),
     accumulations_(dict.lookup("accumulations"))
 {
 }
@@ -112,7 +113,8 @@ void patchExpressionFunctionObject::write()
         if(verbose()) {
             Info << "Expression " << name() << " on " << patchNames_[i] << ": ";
         }
-
+        
+        driver.addVariables(variables_);
         driver.parse(expression_);
         word rType=driver.getResultType();
 

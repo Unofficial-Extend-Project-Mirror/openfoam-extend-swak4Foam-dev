@@ -118,6 +118,19 @@ functions
         expression "U&U+k";
         verbose true;
     }
+    deltaP
+    {
+        type patchExpression;
+        accumulations (
+            min max average
+        );
+        patches (
+            inlet 
+        );
+        variables "pOut@outlet=average(p);";
+        expression "p-pOut";
+        verbose true;
+    }
 );
 
 libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" ) ;
