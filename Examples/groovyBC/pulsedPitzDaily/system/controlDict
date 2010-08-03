@@ -103,7 +103,7 @@ functions
             }
         );
     }
-    sumKineticOut
+    kineticOut
     {
         type patchExpression;
         accumulations (
@@ -115,7 +115,20 @@ functions
             upperWall
             lowerWall
         );
-        expression "U&U+k";
+        expression "U&U+k*phi";
+        verbose true;
+    }
+    sumKineticOut
+    {
+        type patchExpression;
+        accumulations (
+            sum
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "mag(Sf())*(U&U+k*phi)";
         verbose true;
     }
     deltaP
