@@ -103,8 +103,23 @@ functions
             }
         );
     }
+    sumKineticOut
+    {
+        type patchExpression;
+        accumulations (
+            min max sum average
+        );
+        patches (
+            inlet 
+            outlet
+            upperWall
+            lowerWall
+        );
+        expression "U&U+k";
+        verbose true;
+    }
 );
 
-libs ( "libOpenFOAM.so" "libgroovyBC.so" ) ;
+libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" ) ;
 
 // ************************************************************************* //

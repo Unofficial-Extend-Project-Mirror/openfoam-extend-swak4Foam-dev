@@ -55,6 +55,7 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
 )
 :
     patchFunctionObject(name,t,dict),
+    expression_(dict.lookup("expression")),
     accumulations_(dict.lookup("accumulations"))
 {
 }

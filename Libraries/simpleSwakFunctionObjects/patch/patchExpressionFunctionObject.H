@@ -67,11 +67,11 @@ class patchExpressionFunctionObject
     template <class T>
     Field<T> evaluate(const word& fieldName,T preset) const;
 
-    //- list with the accumulations of evaluated expression
-    wordList accumulations_;
-
     //- the expression that is to be evaluated 
     string expression_;
+
+    //- list with the accumulations of evaluated expression
+    wordList accumulations_;
 protected:
 
     word dirName();
