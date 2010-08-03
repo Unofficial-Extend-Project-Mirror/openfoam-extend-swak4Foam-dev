@@ -167,6 +167,19 @@ functions
         );
         expression "phi";
     }
+    massFlowSwak2
+    {
+        type patchExpression;
+        verbose true;
+        accumulations (
+            sum
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "U&Sf()";
+    }
 );
 
 libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" ) ;
