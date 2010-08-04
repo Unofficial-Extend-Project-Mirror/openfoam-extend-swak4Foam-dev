@@ -17,4 +17,10 @@
 *** funkySetFields
     Utility that allows creation and manipulation of files with
     expressions 
+*** replayTransientBC
+    Utility to quickly test whether a groovyBC gives the expected
+    results. Writes the specified fields with the applied boundary
+    condition but doesn't do anything else.
+
+    Can be used for other BCs as well
 ** Examples
