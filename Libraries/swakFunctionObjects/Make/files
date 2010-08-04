@@ -1,0 +1,2 @@
+
+LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects
