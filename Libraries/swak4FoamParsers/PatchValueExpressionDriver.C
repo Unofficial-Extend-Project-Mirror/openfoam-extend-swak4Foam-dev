@@ -266,6 +266,15 @@ scalarField *PatchValueExpressionDriver::makeModuloField(const scalarField &a,co
     return result;
 }
 
+scalarField *PatchValueExpressionDriver::makeFaceIdField()
+{
+    scalarField *result=new scalarField(patch_.size());
+    forAll(*result,i) {
+        (*result)[i]=i;
+    }
+    return result;
+}
+
 scalarField *PatchValueExpressionDriver::makeRandomField(label seed)
 {
     scalarField *result=new scalarField(patch_.size());

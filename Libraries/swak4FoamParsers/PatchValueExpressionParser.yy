@@ -401,6 +401,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | hexp '.' TOKEN_ii       { $$ = new Foam::scalarField($1->component(0)); delete $1; }
         | lexp '?' exp ':' exp        { $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_pi { $$ = driver.makeField(M_PI); }
+        | TOKEN_id '(' ')'                         { $$ = driver.makeFaceIdField(); }
         | TOKEN_cpu '(' ')'       { $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo())); }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField(); }
         | TOKEN_weights '(' ')'              { $$ = driver.makeWeightsField(); }

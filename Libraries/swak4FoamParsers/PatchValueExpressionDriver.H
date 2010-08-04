@@ -160,6 +160,8 @@ public:
 
     scalarField *makeWeightsField();
 
+    scalarField *makeFaceIdField();
+
     template<class Type>
     Field<Type> *getField(const string &name);
 
