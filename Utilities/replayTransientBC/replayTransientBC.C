@@ -56,13 +56,15 @@ int main(int argc, char *argv[])
 #   include "setRootCase.H"
 #   include "createTime.H"
 
+    runTime.functionObjects().off();
+
 #   include "createMesh.H"
 
     IOdictionary replayDict
     (
         IOobject
         (
-            "replayTransientBC",
+            "replayTransientBCDict",
             mesh.time().system(),
             mesh,
             IOobject::MUST_READ,
