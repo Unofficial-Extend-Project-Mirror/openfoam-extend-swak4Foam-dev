@@ -89,6 +89,7 @@ class FieldValueExpressionDriver;
 %token TOKEN_pi
 %token TOKEN_rand
 %token TOKEN_id
+%token TOKEN_cpu
 %token TOKEN_randNormal
 %token TOKEN_position
 %token TOKEN_fposition
@@ -336,6 +337,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField
         | TOKEN_rand '(' ')'                       { $$ = driver.makeRandomField(); }
         | TOKEN_randNormal '(' ')'                 { $$ = driver.makeGaussRandomField(); }
         | TOKEN_id '(' ')'                         { $$ = driver.makeCellIdField(); }
+        | TOKEN_cpu'(' ')'                         { $$ = driver.makeScalarField(Foam::Pstream::myProcNo()); }
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeScalarField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeScalarField(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }

@@ -92,6 +92,7 @@ neighbourField        return token::TOKEN_neighbourField;
 normal                return token::TOKEN_normal;
 rand                  return token::TOKEN_rand;
 id                    return token::TOKEN_id;
+cpu                   return token::TOKEN_cpu;
 randNormal            return token::TOKEN_randNormal;
 
 deltaT                return token::TOKEN_deltaT;
