@@ -1,2 +1,4 @@
+expressionField.C
+expressionFieldFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects
