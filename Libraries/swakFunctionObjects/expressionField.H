@@ -40,6 +40,8 @@ SourceFiles
 #include "primitiveFieldsFwd.H"
 #include "volFieldsFwd.H"
 #include "pointFieldFwd.H"
+#include "Switch.H"
+#include "autoPtr.H"
 
 namespace Foam
 {
@@ -63,6 +65,12 @@ protected:
 
     //- Name of the field
     word name_;
+
+    //- Expression
+    string expression_;
+
+    //- should the file be autowrite
+    Switch autowrite_;
 
     const objectRegistry& obr_;
 

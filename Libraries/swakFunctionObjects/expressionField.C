@@ -27,6 +27,8 @@ License
 
 #include "expressionField.H"
 
+#include "FieldValueExpressionDriver.H"
+
 Foam::expressionField::expressionField
 (
     const word& name,
@@ -35,9 +37,9 @@ Foam::expressionField::expressionField
     const bool loadFromFiles
 )
 :
-    name_(name),
     obr_(obr)
 {
+    read(dict);
 }
 
 Foam::expressionField::~expressionField()
@@ -45,6 +47,9 @@ Foam::expressionField::~expressionField()
 
 void Foam::expressionField::read(const dictionary& dict)
 {
+    name_=word(dict.lookup("fieldName"));
+    expression_=word(dict.lookup("expression"));
+    autowrite_=Switch(dict.lookup("autowrite"));
 }
 
 void Foam::expressionField::execute()
