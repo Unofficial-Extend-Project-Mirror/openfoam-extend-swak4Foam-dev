@@ -63,12 +63,13 @@ void Foam::expressionField::storeField(
     autoPtr<T> &store
 )
 {
-    store.set(
+    store.reset(
         new T(
             IOobject(
                 name_,
+                obr_.time().timeName(),
                 obr_,
-                IOobject::MUST_READ,
+                IOobject::NO_READ,
                 autowrite_ ? IOobject::AUTO_WRITE : IOobject::NO_WRITE
             ),
             *data
