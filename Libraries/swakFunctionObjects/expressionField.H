@@ -63,6 +63,9 @@ protected:
 
     // Private data
 
+    //- are we working?
+    bool active_;
+
     //- Name of the field
     word name_;
 
@@ -74,7 +77,15 @@ protected:
 
     const objectRegistry& obr_;
 
+    autoPtr<volVectorField> vectorField_;
 
+    autoPtr<volScalarField> scalarField_;
+
+    template<class T>
+    void storeField(
+        const T *data,
+        autoPtr<T> &store
+    );
 
 public:
 

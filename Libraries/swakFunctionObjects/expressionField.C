@@ -37,23 +37,84 @@ Foam::expressionField::expressionField
     const bool loadFromFiles
 )
 :
+    active_(true),
     obr_(obr)
 {
+    if (!isA<fvMesh>(obr_))
+    {
+        active_=false;
+        WarningIn("expressionField::expressionField")
+            << "Not a fvMesh. Nothing I can do"
+                << endl;
+    }
     read(dict);
 }
 
 Foam::expressionField::~expressionField()
 {}
 
+template<class T>
+void Foam::expressionField::storeField(
+    const T *data,
+    autoPtr<T> &store
+)
+{
+    store.set(
+        new T(
+            IOobject(
+                name_,
+                obr_,
+                IOobject::MUST_READ,
+                autowrite_ ? IOobject::AUTO_WRITE : IOobject::NO_WRITE
+            ),
+            *data
+        )
+    );
+}
+
 void Foam::expressionField::read(const dictionary& dict)
 {
-    name_=word(dict.lookup("fieldName"));
-    expression_=word(dict.lookup("expression"));
-    autowrite_=Switch(dict.lookup("autowrite"));
+    if(active_) {
+        name_=word(dict.lookup("fieldName"));
+        expression_=word(dict.lookup("expression"));
+        autowrite_=Switch(dict.lookup("autowrite"));
+    }
 }
 
 void Foam::expressionField::execute()
 {
+    if(active_) {
+        const fvMesh& mesh = refCast<const fvMesh>(obr_);
+        
+        FieldValueExpressionDriver driver(
+            mesh.time().timeName(),
+            mesh.time(),
+            mesh,
+            false, // no caching. No need
+            true,  // search fields in memory
+            false  // don't look up files in memory
+        );
+
+        driver.parse(expression_);
+
+        if(driver.resultIsVector()) {
+            storeField(
+                driver.getVector(),
+                vectorField_
+            );
+            
+        } else if(driver.resultIsScalar()) {
+            storeField(
+                driver.getScalar(),
+                scalarField_
+            );
+        } else {
+            WarningIn("Foam::expressionField::execute()")
+                << "Expression '" << expression_ 
+                    << "' evaluated to an unsupported type"
+                    << endl;
+        }
+    }
 }
 
 
