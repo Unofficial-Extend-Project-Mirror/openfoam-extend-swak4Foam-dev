@@ -103,6 +103,15 @@ functions
             }
         );
     }
+    kineticEnergy
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName kineticEnergy;
+        expression "U&U+k";
+        autowrite true;        
+    }
     kineticOut
     {
         type patchExpression;
@@ -182,6 +191,6 @@ functions
     }
 );
 
-libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" ) ;
+libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" "libswakFunctionObjects.so" ) ;
 
 // ************************************************************************* //
