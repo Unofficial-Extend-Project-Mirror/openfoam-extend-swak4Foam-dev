@@ -29,6 +29,10 @@ License
 
 #include "FieldValueExpressionDriver.H"
 
+namespace Foam {
+    defineTypeNameAndDebug(expressionField,0);
+}
+
 Foam::expressionField::expressionField
 (
     const word& name,
