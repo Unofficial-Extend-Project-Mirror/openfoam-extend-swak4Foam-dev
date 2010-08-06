@@ -52,6 +52,7 @@ Foam::expressionField::expressionField
                 << endl;
     }
     read(dict);
+    execute();
 }
 
 Foam::expressionField::~expressionField()
@@ -63,18 +64,22 @@ void Foam::expressionField::storeField(
     autoPtr<T> &store
 )
 {
-    store.reset(
-        new T(
-            IOobject(
-                name_,
-                obr_.time().timeName(),
-                obr_,
-                IOobject::NO_READ,
-                autowrite_ ? IOobject::AUTO_WRITE : IOobject::NO_WRITE
-            ),
-            *data
-        )
-    );
+    if(store.empty()) {
+        store.reset(
+            new T(
+                IOobject(
+                    name_,
+                    obr_.time().timeName(),
+                    obr_,
+                    IOobject::NO_READ,
+                    autowrite_ ? IOobject::AUTO_WRITE : IOobject::NO_WRITE
+                ),
+                *data
+            )
+        );
+    } else {
+        store()==*data;
+    }
 }
 
 void Foam::expressionField::read(const dictionary& dict)
