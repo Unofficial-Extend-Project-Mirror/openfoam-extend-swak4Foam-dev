@@ -86,7 +86,7 @@ void Foam::expressionField::read(const dictionary& dict)
 {
     if(active_) {
         name_=word(dict.lookup("fieldName"));
-        expression_=word(dict.lookup("expression"));
+        expression_=string(dict.lookup("expression"));
         autowrite_=Switch(dict.lookup("autowrite"));
     }
 }
