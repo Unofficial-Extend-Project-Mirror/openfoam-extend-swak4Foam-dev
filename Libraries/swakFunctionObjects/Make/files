@@ -1,3 +1,5 @@
+manipulateField.C
+manipulateFieldFunctionObject.C
 expressionField.C
 expressionFieldFunctionObject.C
 

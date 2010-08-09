@@ -189,6 +189,15 @@ functions
         );
         expression "U&Sf()";
     }
+    fixdedK
+    {
+        type manipulateField;
+        expression "1e-5";
+        mask "mag(pos().y)<0.01 && pos().x>0.1 && pos().x<0.12";
+        fieldName k;
+        outputControl timeStep;
+        outputInterval 1;
+    }
 );
 
 libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" "libswakFunctionObjects.so" ) ;
