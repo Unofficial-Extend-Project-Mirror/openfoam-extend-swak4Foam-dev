@@ -103,7 +103,7 @@ functions
             }
         );
     }
-    kineticEnergy
+    kineticEnergyExpression
     {
         type expressionField;
         outputControl timeStep;
@@ -197,6 +197,13 @@ functions
         fieldName k;
         outputControl timeStep;
         outputInterval 1;
+    }
+    clearKinetic
+    {
+        type clearExpressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName kineticEnergy;
     }
 );
 

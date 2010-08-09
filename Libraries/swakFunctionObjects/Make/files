@@ -2,5 +2,7 @@ manipulateField.C
 manipulateFieldFunctionObject.C
 expressionField.C
 expressionFieldFunctionObject.C
+clearExpressionField.C
+clearExpressionFieldFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects

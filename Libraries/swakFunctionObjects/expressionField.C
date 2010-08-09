@@ -136,4 +136,10 @@ void Foam::expressionField::write()
 {
 }
 
+void Foam::expressionField::clearData()
+{
+    scalarField_.clear();
+    vectorField_.clear();
+}
+
 // ************************************************************************* //
