@@ -108,6 +108,9 @@ void patchExpressionFunctionObject::write()
     const fvMesh &mesh=refCast<const fvMesh>(obr_);
     
     forAll(patchIndizes_,i) {
+        if(patchIndizes_[i]<0) {
+            continue;
+        }
         PatchValueExpressionDriver driver(mesh.boundary()[patchIndizes_[i]]);
 
         if(verbose()) {
