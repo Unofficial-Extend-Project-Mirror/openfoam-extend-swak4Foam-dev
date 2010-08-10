@@ -323,12 +323,12 @@ void PatchValueExpressionDriver::evaluateVariable(const word &name,const string 
     variables_.insert(name,PatchResult(result_));
 }
 
-void PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)
+void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
 {
-    label patchI=patch_.patch().boundaryMesh().findPatchID(patchName);
+    label patchI=patch_.patch().boundaryMesh().findPatchID(remoteExpr);
     if(patchI<0) {
         FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-            << " This mesh does not have a patch named " << patchName
+            << " This mesh does not have a patch named " << remoteExpr
                 << endl
                 << abort(FatalError);
     }
@@ -366,11 +366,19 @@ void PatchValueExpressionDriver::addVariables(const string &exprList,bool clear)
         }
         string expr(exprList.substr(eqPos+1,end-eqPos-1));
 
-        std::string::size_type  atPos=exprList.find('@',start);
-        if(atPos!=std::string::npos && atPos<eqPos) {
-            word name(exprList.substr(start,atPos-start));
-            word patchName(exprList.substr(atPos+1,eqPos-atPos-1));
-            evaluateVariableRemote(patchName,name,expr);
+        std::string::size_type  startPos=exprList.find('{',start);
+        if(startPos!=std::string::npos && startPos<eqPos) {
+            std::string::size_type  endPos=exprList.find('}',start);
+            if(endPos!=(eqPos-1)) {
+                FatalErrorIn("PatchValueExpressionDriver::addVariables")
+                    << "No closing '}' found in " 
+                        << exprList.substr(start,eqPos-start)
+                        << endl
+                        << abort(FatalError);
+            }
+            word name(exprList.substr(start,startPos-start));
+            string remoteExpr(exprList.substr(startPos+1,endPos-startPos-1));
+            evaluateVariableRemote(remoteExpr,name,expr);
         } else {
             word name(exprList.substr(start,eqPos-start));
             evaluateVariable(name,expr);

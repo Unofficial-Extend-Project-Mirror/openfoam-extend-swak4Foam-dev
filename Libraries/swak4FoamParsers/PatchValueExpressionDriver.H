@@ -116,7 +116,7 @@ public:
 
     void evaluateVariable(const word &name,const string &expr);
 
-    void evaluateVariableRemote(const word &patchName,const word &name,const string &expr);
+    void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);
 
     void addVariables(const string &exprList,bool clear=true);
 
