@@ -351,6 +351,7 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
                     << endl
                     << abort(FatalError);
     }
+
     if(type=="patch") {
         label patchI=patch_.patch().boundaryMesh().findPatchID(id);
         if(patchI<0) {
