@@ -150,6 +150,7 @@ functions
             inlet 
         );
         variables "pOut{outlet}=average(p);";
+        //        variables "pOut{patch'outlet/nowhere}=average(p);";
         expression "p-pOut";
         verbose true;
     }

@@ -325,17 +325,51 @@ void PatchValueExpressionDriver::evaluateVariable(const word &name,const string 
 
 void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
 {
-    label patchI=patch_.patch().boundaryMesh().findPatchID(remoteExpr);
-    if(patchI<0) {
-        FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-            << " This mesh does not have a patch named " << remoteExpr
+    string remote=remoteExpr;
+    word region="";
+    word id="";
+    word type="patch";
+
+    std::string::size_type slashPos=remote.find('/');
+
+    if(slashPos!=std::string::npos) {
+        region=remote.substr(slashPos+1);
+        remote=remote.substr(0,slashPos);
+    }
+    
+    std::string::size_type quotePos=remote.find('\'');
+    if(quotePos!=std::string::npos) {
+        id=remote.substr(quotePos+1);
+        type=remote.substr(0,quotePos);        
+    } else {
+        id=remote;
+    }
+
+    if(region!="") {
+            FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
+                << " Region " << region  << " defined, but multi-region is currently not supported" 
+                    << endl
+                    << abort(FatalError);
+    }
+    if(type=="patch") {
+        label patchI=patch_.patch().boundaryMesh().findPatchID(id);
+        if(patchI<0) {
+            FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
+                << " This mesh does not have a patch named " << id
+                    << endl
+                    << abort(FatalError);
+        }
+        const fvPatch &otherPatch=patch_.boundaryMesh()[patchI];
+        PatchValueExpressionDriver otherDriver(otherPatch);
+        otherDriver.parse(expr);
+        variables_.insert(name,otherDriver.getUniform(patch_.size(),false));
+    } else {
+        FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote")
+            << "The type '" << type << "' is not implemented. " 
+                << "Valid types are 'patch'"
                 << endl
                 << abort(FatalError);
     }
-    const fvPatch &otherPatch=patch_.boundaryMesh()[patchI];
-    PatchValueExpressionDriver otherDriver(otherPatch);
-    otherDriver.parse(expr);
-    variables_.insert(name,otherDriver.getUniform(patch_.size(),false));
 }
 
 void PatchValueExpressionDriver::addVariables(const string &exprList,bool clear)
