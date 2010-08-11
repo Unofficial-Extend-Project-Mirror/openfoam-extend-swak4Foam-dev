@@ -326,14 +326,14 @@ void PatchValueExpressionDriver::evaluateVariable(const word &name,const string 
 void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
 {
     string remote=remoteExpr;
-    word region="";
+    word regionName="";
     word id="";
     word type="patch";
 
     std::string::size_type slashPos=remote.find('/');
 
     if(slashPos!=std::string::npos) {
-        region=remote.substr(slashPos+1);
+        regionName=remote.substr(slashPos+1);
         remote=remote.substr(0,slashPos);
     }
     
@@ -353,22 +353,29 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
         type="internalField";
     }
 
-    if(region!="") {
-            FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " Region " << region  << " defined, but multi-region is currently not supported" 
-                    << endl
-                    << abort(FatalError);
+    const fvMesh *pRegion=&(patch_.boundaryMesh().mesh());
+
+    if(regionName!="") {
+        pRegion=&(dynamicCast<const fvMesh&>(
+                      pRegion->time().lookupObject<objectRegistry>(regionName))
+        );
+        FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
+            << " Region " << regionName  << " defined, but multi-region is currently not supported" 
+                << endl
+                << abort(FatalError);
     }
 
+    const fvMesh &region=*pRegion;
+
     if(type=="patch") {
-        label patchI=patch_.patch().boundaryMesh().findPatchID(id);
+        label patchI=region.boundaryMesh().findPatchID(id);
         if(patchI<0) {
             FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
                 << " This mesh does not have a patch named " << id
                     << endl
                     << abort(FatalError);
         }
-        const fvPatch &otherPatch=patch_.boundaryMesh()[patchI];
+        const fvPatch &otherPatch=region.boundary()[patchI];
         PatchValueExpressionDriver otherDriver(otherPatch);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(patch_.size(),false));

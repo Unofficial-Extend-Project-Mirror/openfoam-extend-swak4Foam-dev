@@ -155,6 +155,19 @@ functions
         expression "p-pOut";
         verbose true;
     }
+    deltaPAverage
+    {
+        type patchExpression;
+        accumulations (
+            min max average
+        );
+        patches (
+            outlet 
+        );
+        variables "pAverage{}=sum(p*vol())/sum(vol());";
+        expression "pAverage-p";
+        verbose true;
+    }
     massFlowSimple
     {
         // Just for checking whether tha othr massflow is correct
