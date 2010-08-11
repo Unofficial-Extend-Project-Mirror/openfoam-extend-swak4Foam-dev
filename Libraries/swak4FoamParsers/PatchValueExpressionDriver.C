@@ -345,6 +345,14 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
         id=remote;
     }
 
+    if(
+        type=="patch" 
+        && 
+        (id=="internalField" || id=="")
+    ) {
+        type="internalField";
+    }
+
     if(region!="") {
             FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
                 << " Region " << region  << " defined, but multi-region is currently not supported" 
@@ -364,10 +372,20 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
         PatchValueExpressionDriver otherDriver(otherPatch);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(patch_.size(),false));
+    } else if(type=="internalField") {
+        notImplemented("type 'internalField' not yet implemented");
+    } else if(type=="cellSet") {
+        notImplemented("type 'cellSet' not yet implemented");
+    } else if(type=="cellZone") {
+        notImplemented("type 'cellZone' not yet implemented");
+    } else if(type=="faceSet") {
+        notImplemented("type 'faceSet' not yet implemented");
+    } else if(type=="faceZone") {
+        notImplemented("type 'faceZone' not yet implemented");
     } else {
         FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote")
             << "The type '" << type << "' is not implemented. " 
-                << "Valid types are 'patch'"
+                << "Valid types are 'patch', 'internalField', 'cellSet', 'cellZone', 'faceSet' and 'faceZone'"
                 << endl
                 << abort(FatalError);
     }
