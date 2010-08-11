@@ -382,7 +382,15 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(patch_.size(),false));
     } else if(type=="internalField") {
-        notImplemented("type 'internalField' not yet implemented");
+        FieldValueExpressionDriver fieldDriver(
+            region.time().timeName(),
+            region.time(),
+            region,
+            false,
+            true,
+            false
+        );
+        fieldDriver.parse(expr);
     } else if(type=="cellSet") {
         notImplemented("type 'cellSet' not yet implemented");
     } else if(type=="cellZone") {
