@@ -18,10 +18,6 @@ namespace parsers {
     class FieldValueExpressionParser;
 }
 
-#define YY_DECL int parserslex(parsers::FieldValueExpressionParser::semantic_type* yylval,parsers::location* yylloc,FieldValueExpressionDriver &driver)
-
-YY_DECL;
-
 class FieldValueExpressionDriver {
 public:
     enum ExpressionType{

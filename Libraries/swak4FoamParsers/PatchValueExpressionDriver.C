@@ -33,6 +33,8 @@ License
 
 #include "PatchValueExpressionDriver.H"
 
+#include "FieldValueExpressionDriver.H"
+
 #include "Random.H"
 
 namespace Foam {

@@ -63,10 +63,6 @@ namespace parsers {
     class PatchValueExpressionParser;
 }
 
-#define YY_DECL int parserslex(parsers::PatchValueExpressionParser::semantic_type* yylval,parsers::location* yylloc,Foam::PatchValueExpressionDriver &driver)
-
-YY_DECL;
-
 namespace Foam
 {
 
