@@ -90,6 +90,9 @@ public:
     inline void setResult(Field<Type> *,bool isPoint=false);
 
     template<class Type>
+    inline void setResult(const Field<Type> &,bool isPoint=false);
+
+    template<class Type>
     inline void setResult(Type val,label size);
 
     template<class Type>

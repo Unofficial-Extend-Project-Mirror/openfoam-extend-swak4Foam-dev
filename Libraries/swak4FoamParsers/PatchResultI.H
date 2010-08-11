@@ -37,6 +37,16 @@ namespace Foam {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     template<class Type>
+    void PatchResult::setResult(const Field<Type> &val,bool isPoint)
+    {
+        clearResult();
+
+        valType_=pTraits<Type>::typeName;
+        valPtr_=static_cast<void *>(new Field<Type>(val));
+        isPoint_=isPoint;
+    }
+
+    template<class Type>
     void PatchResult::setResult(Field<Type> *val,bool isPoint)
     {
         clearResult();

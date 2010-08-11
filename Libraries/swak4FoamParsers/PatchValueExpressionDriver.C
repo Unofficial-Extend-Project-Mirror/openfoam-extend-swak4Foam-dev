@@ -391,6 +391,24 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
             false
         );
         fieldDriver.parse(expr);
+
+        PatchResult result;
+
+        if(fieldDriver.resultIsVector()) {
+            result.setResult(
+                fieldDriver.getVector()->internalField()
+            );            
+        } else if(fieldDriver.resultIsScalar()) {
+            result.setResult(
+                fieldDriver.getScalar()->internalField()
+            );            
+        } else {
+            WarningIn("PatchValueExpressionDriver::evaluateVariableRemote")
+                << "Expression '" << expr 
+                    << "' evaluated to an unsupported type"
+                    << endl;
+        }
+        variables_.insert(name,result.getUniform(patch_.size(),false));
     } else if(type=="cellSet") {
         notImplemented("type 'cellSet' not yet implemented");
     } else if(type=="cellZone") {
