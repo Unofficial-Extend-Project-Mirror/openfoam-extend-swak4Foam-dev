@@ -52,6 +52,7 @@ cos                   return token::TOKEN_cos;
 tan                   return token::TOKEN_tan;
 min                   return token::TOKEN_min;
 max                   return token::TOKEN_max;
+sum                   return token::TOKEN_sum;
 sqr                   return token::TOKEN_sqr;
 sqrt                  return token::TOKEN_sqrt;
 
@@ -110,7 +111,7 @@ div                   return token::TOKEN_div;
 laplacian             return token::TOKEN_laplacian;
 
 integrate             return token::TOKEN_integrate;
-sum                   return token::TOKEN_sum;
+surfSum               return token::TOKEN_surfSum;
 interpolate           return token::TOKEN_interpolate;
 average               return token::TOKEN_average;
 reconstruct           return token::TOKEN_reconstruct;
