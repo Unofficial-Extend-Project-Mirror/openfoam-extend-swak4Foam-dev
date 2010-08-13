@@ -197,6 +197,9 @@ vexp:   vector                                    { $$ = $1; }
         | TOKEN_average '(' fvexp ')'             { $$ = new Foam::volVectorField(Foam::fvc::average(*$3)); delete $3; }
         | TOKEN_integrate '(' fvexp ')'           { $$ = new Foam::volVectorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; }
         | TOKEN_surfSum '(' fvexp ')'             { $$ = new Foam::volVectorField(Foam::fvc::surfaceSum(*$3)); delete $3; }
+        | TOKEN_min '(' vexp ')'                 { $$ = driver.makeVectorField(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_max '(' vexp ')'                 { $$ = driver.makeVectorField(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_sum '(' vexp ')'                 { $$ = driver.makeVectorField(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_grad '(' exp ')'                  { $$ = new Foam::volVectorField(Foam::fvc::grad(*$3)); delete $3; }
         | TOKEN_reconstruct '(' fsexp ')'         { $$ = new Foam::volVectorField(Foam::fvc::reconstruct(*$3)); delete $3; }
         | TOKEN_curl '(' vexp ')'                 { $$ = new Foam::volVectorField(Foam::fvc::curl(*$3)); delete $3; }
@@ -270,6 +273,9 @@ fvexp:  fvector                            { $$ = $1; }
         | TOKEN_face '(' ')'               { $$ = driver.makeFaceField(); }
         | TOKEN_snGrad '(' vexp ')'        { $$ = new Foam::surfaceVectorField(Foam::fvc::snGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' vexp ')'   { $$ = new Foam::surfaceVectorField(Foam::fvc::interpolate(*$3)); delete $3; }
+        | TOKEN_min '(' fvexp ')'          { $$ = driver.makeSurfaceVectorField(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_max '(' fvexp ')'          { $$ = driver.makeSurfaceVectorField(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_sum '(' fvexp ')'          { $$ = driver.makeSurfaceVectorField(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_FVID                       { $$ = driver.getField<Foam::surfaceVectorField>(*$1); }
 ;
  
