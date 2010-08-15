@@ -60,6 +60,13 @@ dictionaryReplacement
                 K               K;
                 value           uniform 300;
             }
+            minY
+            {
+                type            groovyBC;
+                valueExpression "Tin-(Tout-300)";
+                variables       "Tout{maxX/topAir}=average(T);Tin{minY/heater}=average(T);";
+                value           uniform 300;
+            }
         }
     }
 
