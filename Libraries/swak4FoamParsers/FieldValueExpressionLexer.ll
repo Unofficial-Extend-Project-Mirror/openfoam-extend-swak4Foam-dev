@@ -53,6 +53,7 @@ tan                   return token::TOKEN_tan;
 min                   return token::TOKEN_min;
 max                   return token::TOKEN_max;
 sum                   return token::TOKEN_sum;
+average               return token::TOKEN_average;
 sqr                   return token::TOKEN_sqr;
 sqrt                  return token::TOKEN_sqrt;
 
@@ -113,7 +114,7 @@ laplacian             return token::TOKEN_laplacian;
 integrate             return token::TOKEN_integrate;
 surfSum               return token::TOKEN_surfSum;
 interpolate           return token::TOKEN_interpolate;
-average               return token::TOKEN_average;
+faceAverage           return token::TOKEN_faceAverage;
 reconstruct           return token::TOKEN_reconstruct;
 
 deltaT                return token::TOKEN_deltaT;
