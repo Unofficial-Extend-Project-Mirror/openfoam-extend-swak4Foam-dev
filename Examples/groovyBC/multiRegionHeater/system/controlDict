@@ -54,6 +54,30 @@ maxDi           10.0;
 
 adjustTimeStep  yes;
 
-libs ("libgroovyBC.so" );
+functions
+(
+    tempOut{
+        type patchExpression;
+        accumulations (
+            min max average
+        );
+        patches (maxX);
+        region topAir;
+        expression "T";
+        verbose true;
+    }
+    tempIn{
+        type patchExpression;
+        accumulations (
+            min max average
+        );
+        patches (minY);
+        region bottomAir;
+        expression "T";
+        verbose true;
+    }
+);
+
+libs ("libgroovyBC.so"  "libsimpleSwakFunctionObjects.so" "libswakFunctionObjects.so" );
 
 // ************************************************************************* //

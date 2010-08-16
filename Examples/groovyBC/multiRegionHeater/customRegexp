@@ -1,0 +1,14 @@
+tOut
+{
+	expr "Expression tempOut on maxX:  min=(%f%) max=(%f%)";
+	titles ("min Out" "max Out");
+	theTitle "Temperature";
+}
+tIn
+{
+	expr "Expression tempIn on minY:  min=(%f%) max=(%f%)";
+	titles ("min In" "max In");
+	theTitle "Temperature";
+	type slave;
+	master tOut;
+}
