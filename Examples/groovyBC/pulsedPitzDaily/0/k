@@ -16,13 +16,15 @@ FoamFile
 
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 2e-05;
 
 boundaryField
 {
     inlet           
     {
-        type            fixedValue;
+        type            groovyBC;
+        variables "kAvg{}=sum(k*vol())/sum(vol());";
+        valueExpression "0.5*(kAvg+2e-5)";
         value           uniform 2e-05;
     }
 
