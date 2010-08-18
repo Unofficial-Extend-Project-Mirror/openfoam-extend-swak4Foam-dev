@@ -47,7 +47,7 @@ SourceFiles
 
 #include "PatchValueExpressionDriver.H"
 
-#define YY_DECL int parserslex(parsers::PatchValueExpressionParser::semantic_type* yylval,parsers::location* yylloc,Foam::PatchValueExpressionDriver &driver)
+#define YY_DECL int parserPatchlex(parserPatch::PatchValueExpressionParser::semantic_type* yylval,parserPatch::location* yylloc,Foam::PatchValueExpressionDriver &driver)
 
 YY_DECL;
 

@@ -13,7 +13,7 @@ class FieldValueExpressionDriver;
 
 #include "FieldValueExpressionParser.tab.hh"
 
-namespace parsers {
+namespace parserField {
     class location;
     class FieldValueExpressionParser;
 }
@@ -88,7 +88,7 @@ public:
     bool trace_parsing;
 
     // Error handling.
-    void error (const parsers::location& l, const std::string& m);
+    void error (const parserField::location& l, const std::string& m);
     void error (const std::string& m);
 
     // checking for variables

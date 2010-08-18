@@ -64,13 +64,13 @@ void FieldValueExpressionDriver::parse (const std::string &f)
 {
     content = f;
     scan_begin ();
-    parsers::FieldValueExpressionParser parser (*this);
+    parserField::FieldValueExpressionParser parser (*this);
     parser.set_debug_level (trace_parsing);
     parser.parse ();
     scan_end ();
 }
 
-void FieldValueExpressionDriver::error (const parsers::location& l, const std::string& m)
+void FieldValueExpressionDriver::error (const parserField::location& l, const std::string& m)
 {
     std::ostringstream buff;
     buff << l;

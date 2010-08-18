@@ -20,7 +20,7 @@
     using Foam::PatchValueExpressionDriver;
 %}
 
-%name-prefix="parsers"
+%name-prefix="parserPatch"
 
 %parse-param { PatchValueExpressionDriver& driver }
 %lex-param { PatchValueExpressionDriver& driver }
@@ -668,7 +668,7 @@ plexp: pexp '<' pexp  { $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3); 
 
 %%
 
-void parsers::PatchValueExpressionParser::error (const parsers::PatchValueExpressionParser::location_type& l,const std::string& m)
+void parserPatch::PatchValueExpressionParser::error (const parserPatch::PatchValueExpressionParser::location_type& l,const std::string& m)
 {
      driver.error (l, m);
 }

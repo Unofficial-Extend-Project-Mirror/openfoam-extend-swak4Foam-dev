@@ -58,7 +58,7 @@ using Foam::PatchValueExpressionDriver;
 
 #include "PatchValueExpressionParser.tab.hh"
 
-namespace parsers {
+namespace parserPatch {
     class location;
     class PatchValueExpressionParser;
 }
@@ -200,7 +200,7 @@ public:
     sphericalTensorField *composeSphericalTensorField(scalarField *);
 
     // Error handling.
-    void error (const parsers::location& l, const std::string& m);
+    void error (const parserPatch::location& l, const std::string& m);
     void error (const std::string& m);
 
     // Handling the scanner 

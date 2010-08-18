@@ -8,7 +8,7 @@
 
 %option noyywrap nounput batch debug 
 %option stack
-%option prefix="parsers"
+%option prefix="parserPatch"
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -33,7 +33,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 %{
-    typedef parsers::PatchValueExpressionParser::token token;
+    typedef parserPatch::PatchValueExpressionParser::token token;
 %}
 
 &&                   return token::TOKEN_AND;
@@ -166,12 +166,12 @@ inv                    return token::TOKEN_inv;
 
 %%
 
-YY_BUFFER_STATE buffer;
+YY_BUFFER_STATE bufferPatch;
 
 void PatchValueExpressionDriver::scan_begin ()
 {
     yy_flex_debug = trace_scanning;
-    buffer=yy_scan_string(content.c_str());
+    bufferPatch=yy_scan_string(content.c_str());
     
 
 //    if (!(yyin = fopen (file.c_str (), "r")))
@@ -181,5 +181,5 @@ void PatchValueExpressionDriver::scan_begin ()
 void PatchValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
-    yy_delete_buffer(buffer);
+    yy_delete_buffer(bufferPatch);
 }

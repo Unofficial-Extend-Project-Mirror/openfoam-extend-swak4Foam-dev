@@ -33,7 +33,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 %{
-    typedef parsers::FieldValueExpressionParser::token token;
+    typedef parserField::FieldValueExpressionParser::token token;
 %}
 
 &&                   return token::TOKEN_AND;

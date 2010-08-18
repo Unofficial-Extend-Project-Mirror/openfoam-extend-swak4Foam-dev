@@ -166,7 +166,7 @@ void PatchValueExpressionDriver::parse (const std::string& f)
 {
     content = f;
     scan_begin ();
-    parsers::PatchValueExpressionParser parser (*this);
+    parserPatch::PatchValueExpressionParser parser (*this);
     parser.set_debug_level (trace_parsing);
     parser.parse ();
     scan_end ();
@@ -177,7 +177,7 @@ ExpressionResult PatchValueExpressionDriver::getUniform(label size,bool noWarnin
     return result_.getUniform(size,noWarning);
 }
 
-void PatchValueExpressionDriver::error (const parsers::location& l, const std::string& m)
+void PatchValueExpressionDriver::error (const parserPatch::location& l, const std::string& m)
 {
     std::ostringstream buff;
     buff << l;
