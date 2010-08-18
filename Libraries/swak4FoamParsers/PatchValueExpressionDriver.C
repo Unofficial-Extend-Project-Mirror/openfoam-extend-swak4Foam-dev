@@ -35,6 +35,8 @@ License
 
 #include "FieldValueExpressionDriver.H"
 
+#include "SubsetValueExpressionDriver.H"
+
 #include "Random.H"
 
 namespace Foam {
