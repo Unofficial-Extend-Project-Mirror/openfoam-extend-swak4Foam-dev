@@ -172,7 +172,7 @@ void PatchValueExpressionDriver::parse (const std::string& f)
     scan_end ();
 }
 
-PatchResult PatchValueExpressionDriver::getUniform(label size,bool noWarning)
+ExpressionResult PatchValueExpressionDriver::getUniform(label size,bool noWarning)
 {
     return result_.getUniform(size,noWarning);
 }
@@ -322,7 +322,7 @@ void PatchValueExpressionDriver::clearVariables()
 void PatchValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
 {
     parse(expr);
-    variables_.insert(name,PatchResult(result_));
+    variables_.insert(name,ExpressionResult(result_));
 }
 
 void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
@@ -388,7 +388,7 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
         );
         fieldDriver.parse(expr);
 
-        PatchResult result;
+        ExpressionResult result;
 
         if(fieldDriver.resultIsVector()) {
             result.setResult(

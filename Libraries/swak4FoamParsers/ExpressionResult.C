@@ -31,7 +31,7 @@ License
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#include "PatchResult.H"
+#include "ExpressionResult.H"
 #include "vector.H"
 #include "tensor.H"
 #include "symmTensor.H"
@@ -41,7 +41,7 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-PatchResult::PatchResult()
+ExpressionResult::ExpressionResult()
 :
     valType_("None"),
     valPtr_(NULL),
@@ -50,7 +50,7 @@ PatchResult::PatchResult()
     clearResult();
 }
 
-PatchResult::PatchResult(const PatchResult &rhs)
+ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 :
     valType_("None"),
     valPtr_(NULL)
@@ -61,7 +61,7 @@ PatchResult::PatchResult(const PatchResult &rhs)
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-PatchResult::~PatchResult()
+ExpressionResult::~ExpressionResult()
 {
     uglyDelete();
 }
@@ -69,14 +69,14 @@ PatchResult::~PatchResult()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void PatchResult::clearResult()
+void ExpressionResult::clearResult()
 {
     uglyDelete();
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-void PatchResult::uglyDelete()
+void ExpressionResult::uglyDelete()
 {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {
@@ -92,7 +92,7 @@ void PatchResult::uglyDelete()
         } else if(valType_==pTraits<bool>::typeName) {
             delete static_cast<Field<bool>*>(valPtr_);
         } else {
-            WarningIn("PatchResult::uglyDelete()")
+            WarningIn("ExpressionResult::uglyDelete()")
                 << "Unknown type " << valType_ << " propable memory loss" << endl;
             delete valPtr_;
         }
@@ -101,7 +101,7 @@ void PatchResult::uglyDelete()
     valPtr_=NULL;
 }
 
-PatchResult PatchResult::getUniform(const label size,bool noWarn)
+ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn)
 {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {
@@ -115,33 +115,33 @@ PatchResult PatchResult::getUniform(const label size,bool noWarn)
         } else if(valType_==sphericalTensor::typeName) {
             return getUniformInternal<sphericalTensor>(size,noWarn);
         } else if(valType_==pTraits<bool>::typeName) {
-            FatalErrorIn("PatchResult::getUniformInternal<bool>(const label size,bool noWarn)")
+            FatalErrorIn("ExpressionResult::getUniformInternal<bool>(const label size,bool noWarn)")
                 << "This specialisation is not implemented"
                     << endl << abort(FatalError);
 
-            return PatchResult(); // makes warnings go away
+            return ExpressionResult(); // makes warnings go away
         } else {
-            FatalErrorIn("PatchResult::getUniform()")
+            FatalErrorIn("ExpressionResult::getUniform()")
                 << "Unknown type " << valType_ << endl
                     << abort(FatalError);
 
-            return PatchResult(); // makes warnings go away
+            return ExpressionResult(); // makes warnings go away
         }
     } else {
-        FatalErrorIn("PatchResult::getUniform()")
+        FatalErrorIn("ExpressionResult::getUniform()")
             << "Not set. Can't construct an uniform value" << endl
                 << abort(FatalError);
 
-        return PatchResult(); // makes warnings go away
+        return ExpressionResult(); // makes warnings go away
     }
 }
 
-void PatchResult::operator=(const PatchResult& rhs)
+void ExpressionResult::operator=(const ExpressionResult& rhs)
 {
     // Check for assignment to self
     if (this == &rhs)
     {
-        FatalErrorIn("PatchResult::operator=(const PatchResult&)")
+        FatalErrorIn("ExpressionResult::operator=(const ExpressionResult&)")
             << "Attempted assignment to self"
             << abort(FatalError);
     }
@@ -150,8 +150,8 @@ void PatchResult::operator=(const PatchResult& rhs)
     valType_=rhs.valType_;
     isPoint_=rhs.isPoint_;
 
-    const_cast<PatchResult &>(rhs).valPtr_=NULL;
-    const_cast<PatchResult &>(rhs).clearResult();
+    const_cast<ExpressionResult &>(rhs).valPtr_=NULL;
+    const_cast<ExpressionResult &>(rhs).clearResult();
 }
 
 

@@ -37,7 +37,7 @@ namespace Foam {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     template<class Type>
-    void PatchResult::setResult(const Field<Type> &val,bool isPoint)
+    void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)
     {
         clearResult();
 
@@ -47,7 +47,7 @@ namespace Foam {
     }
 
     template<class Type>
-    void PatchResult::setResult(Field<Type> *val,bool isPoint)
+    void ExpressionResult::setResult(Field<Type> *val,bool isPoint)
     {
         clearResult();
 
@@ -57,7 +57,7 @@ namespace Foam {
     }
 
     template<class Type>
-    void PatchResult::setResult(Type val,label size)
+    void ExpressionResult::setResult(Type val,label size)
     {
         clearResult();
 
@@ -67,10 +67,10 @@ namespace Foam {
     }
 
     template<class Type>
-    tmp<Field<Type> > PatchResult::getResult(bool keep)
+    tmp<Field<Type> > ExpressionResult::getResult(bool keep)
     {
         if(valType_!=pTraits<Type>::typeName) {
-            FatalErrorIn("tmp<Field<Type> > PatchResult::getResult()")
+            FatalErrorIn("tmp<Field<Type> > ExpressionResult::getResult()")
                 << "The expected return type " << pTraits<Type>::typeName 
                     << " is different from the stored result type "
                     << valType_ << "\n" << endl
@@ -93,9 +93,9 @@ namespace Foam {
     }
 
     template<class Type>
-    PatchResult PatchResult::getUniformInternal(const label size,bool noWarn)
+    ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn)
     {
-        PatchResult result;
+        ExpressionResult result;
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
         Type avg=gAverage(vals);
 
@@ -103,7 +103,7 @@ namespace Foam {
             Type minVal=gMin(vals);
             Type maxVal=gMax(vals);
             if(mag(minVal-maxVal)>SMALL) {
-                WarningIn("PatchResult::getUniformInternal(const label size,bool noWarn)")
+                WarningIn("ExpressionResult::getUniformInternal(const label size,bool noWarn)")
                     << "The minimum value " << minVal << " and the maximum " 
                         << maxVal << " differ. I will use the average " << avg
                         << endl;
@@ -113,12 +113,12 @@ namespace Foam {
         return result;
     }
 
-    inline const string &PatchResult::type() const
+    inline const string &ExpressionResult::type() const
     {
         return valType_;
     }
 
-    inline bool PatchResult::isPoint() const
+    inline bool ExpressionResult::isPoint() const
     {
         return isPoint_;
     }

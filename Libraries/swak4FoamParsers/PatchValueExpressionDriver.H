@@ -48,7 +48,7 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "PatchResult.H"
+#include "ExpressionResult.H"
 
 namespace Foam {
     class PatchValueExpressionDriver;
@@ -81,9 +81,9 @@ class PatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const PatchValueExpressionDriver&);
 
-    PatchResult result_;
+    ExpressionResult result_;
 
-    HashTable<PatchResult,word> variables_;
+    HashTable<ExpressionResult,word> variables_;
 
     HashTable<interpolationTable<scalar>,word> lines_;
 
@@ -124,7 +124,7 @@ public:
 
     word getResultType();
 
-    PatchResult getUniform(label size,bool noWarning);
+    ExpressionResult getUniform(label size,bool noWarning);
 
     void clearResult();
 

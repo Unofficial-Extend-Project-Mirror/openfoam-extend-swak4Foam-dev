@@ -29,20 +29,20 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::PatchResult
+    Foam::ExpressionResult
 
 Description
 
 SourceFiles
-    PatchResultI.H
-    PatchResult.C
-    PatchResultIO.C
+    ExpressionResultI.H
+    ExpressionResult.C
+    ExpressionResultIO.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef PatchResult_H
-#define PatchResult_H
+#ifndef ExpressionResult_H
+#define ExpressionResult_H
 
 #include "Field.H"
 
@@ -52,10 +52,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class PatchResult Declaration
+                           Class ExpressionResult Declaration
 \*---------------------------------------------------------------------------*/
 
-class PatchResult
+class ExpressionResult
 {
     // Private data
 
@@ -68,23 +68,23 @@ class PatchResult
     void uglyDelete();
 
     template<class Type>
-    PatchResult getUniformInternal(const label size,bool noWarn);
+    ExpressionResult getUniformInternal(const label size,bool noWarn);
 
 public:
 
     // Constructors
 
     //- Construct null
-    PatchResult();
+    ExpressionResult();
 
     //- Construct as copy
-    PatchResult(const PatchResult&);
+    ExpressionResult(const ExpressionResult&);
 
     // Destructor
 
-    ~PatchResult();
+    ~ExpressionResult();
 
-    void operator=(const PatchResult&);
+    void operator=(const ExpressionResult&);
 
     template<class Type>
     inline void setResult(Field<Type> *,bool isPoint=false);
@@ -99,7 +99,7 @@ public:
     inline tmp<Field<Type> > getResult(bool keep=false);
 
     // Construct a uniform field from the current results
-    PatchResult getUniform(const label size,bool noWarn);
+    ExpressionResult getUniform(const label size,bool noWarn);
 
     void clearResult();
 
@@ -115,7 +115,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "PatchResultI.H"
+#include "ExpressionResultI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
