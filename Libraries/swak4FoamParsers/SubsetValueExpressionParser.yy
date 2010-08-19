@@ -112,13 +112,7 @@
 %token TOKEN_randNormal
 %token TOKEN_position
 %token TOKEN_Sf
-%token TOKEN_Cn
-%token TOKEN_delta
-%token TOKEN_weights
 %token TOKEN_normal
-%token TOKEN_snGrad
-%token TOKEN_internalField
-%token TOKEN_neighbourField
 
 %token TOKEN_deltaT
 %token TOKEN_time
@@ -232,20 +226,9 @@ vexp:   vector                  { $$ = $1; }
         | TOKEN_position '(' ')'        { $$ = driver.makePositionField(); }
         | TOKEN_normal '(' ')'          { $$ = driver.makeFaceNormalField(); }
         | TOKEN_Sf '(' ')'              { $$ = driver.makeFaceAreaField(); }
-        | TOKEN_Cn '(' ')'              { $$ = driver.makeCellNeighbourField(); }
-        | TOKEN_delta '(' ')'              { $$ = driver.makeDeltaField(); }
         | TOKEN_toFace '(' pvexp ')'        { $$ = driver.toFace(*$3); delete $3; }
         | TOKEN_VID {
             $$=driver.getField<Foam::vector>(*$1); delete $1;
-                    }
-        | TOKEN_snGrad '(' TOKEN_VID ')' {
-            $$=driver.getSurfaceNormalField<Foam::vector>(*$3); delete $3;
-                    }
-        | TOKEN_internalField '(' TOKEN_VID ')' {
-            $$=driver.getSubsetInternalField<Foam::vector>(*$3); delete $3;
-                    }
-        | TOKEN_neighbourField '(' TOKEN_VID ')' {
-            $$=driver.getSubsetNeighbourField<Foam::vector>(*$3); delete $3;
                     }
 ;
 
@@ -376,7 +359,6 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_id '(' ')'                         { $$ = driver.makeFaceIdField(); }
         | TOKEN_cpu '(' ')'       { $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo())); }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField(); }
-        | TOKEN_weights '(' ')'              { $$ = driver.makeWeightsField(); }
         | TOKEN_randNormal '(' ')'        { $$ = driver.makeGaussRandomField(); }
         | TOKEN_deltaT '(' ')'   { $$ = driver.makeField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'   { $$ = driver.makeField(driver.runTime().time().value()); }
@@ -387,15 +369,6 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
 	| TOKEN_LINE		{ 
             $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
 				}
-        | TOKEN_snGrad '(' TOKEN_SID ')' {
-            $$=driver.getSurfaceNormalField<Foam::scalar>(*$3); delete $3;
-                    }
-        | TOKEN_internalField '(' TOKEN_SID ')' {
-            $$=driver.getSubsetInternalField<Foam::scalar>(*$3); delete $3;
-                    }
-        | TOKEN_neighbourField '(' TOKEN_SID ')' {
-            $$=driver.getSubsetNeighbourField<Foam::scalar>(*$3); delete $3;
-                    }
 ;
 
 texp:   tensor                  { $$ = $1; }
@@ -428,15 +401,6 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_TID {
             $$=driver.getField<Foam::tensor>(*$1); delete $1;
                     }
-        | TOKEN_snGrad '(' TOKEN_TID ')' {
-            $$=driver.getSurfaceNormalField<Foam::tensor>(*$3); delete $3;
-                    }
-        | TOKEN_internalField '(' TOKEN_TID ')' {
-            $$=driver.getSubsetInternalField<Foam::tensor>(*$3); delete $3;
-                    }
-        | TOKEN_neighbourField '(' TOKEN_TID ')' {
-            $$=driver.getSubsetNeighbourField<Foam::tensor>(*$3); delete $3;
-                    }
 ;
 
 yexp:   symmTensor                  { $$ = $1; }
@@ -462,15 +426,6 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_YID {
             $$=driver.getField<Foam::symmTensor>(*$1); delete $1;
                     }
-        | TOKEN_snGrad '(' TOKEN_YID ')' {
-            $$=driver.getSurfaceNormalField<Foam::symmTensor>(*$3); delete $3;
-                    }
-        | TOKEN_internalField '(' TOKEN_YID ')' {
-            $$=driver.getSubsetInternalField<Foam::symmTensor>(*$3); delete $3;
-                    }
-        | TOKEN_neighbourField '(' TOKEN_YID ')' {
-            $$=driver.getSubsetNeighbourField<Foam::symmTensor>(*$3); delete $3;
-                    }
 ;
 
 hexp:   sphericalTensor                  { $$ = $1; }
@@ -487,15 +442,6 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_toFace '(' phexp ')'        { $$ = driver.toFace(*$3); delete $3; }
         | TOKEN_HID {
             $$=driver.getField<Foam::sphericalTensor>(*$1); delete $1;
-                    }
-        | TOKEN_snGrad '(' TOKEN_HID ')' {
-            $$=driver.getSurfaceNormalField<Foam::sphericalTensor>(*$3); delete $3;
-                    }
-        | TOKEN_internalField '(' TOKEN_HID ')' {
-            $$=driver.getSubsetInternalField<Foam::sphericalTensor>(*$3); delete $3;
-                    }
-        | TOKEN_neighbourField '(' TOKEN_HID ')' {
-            $$=driver.getSubsetNeighbourField<Foam::sphericalTensor>(*$3); delete $3;
                     }
 ;
 
