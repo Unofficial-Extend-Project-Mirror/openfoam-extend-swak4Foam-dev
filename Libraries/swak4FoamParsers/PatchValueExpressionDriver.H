@@ -44,11 +44,12 @@ SourceFiles
 #define PatchValueExpressionDriver_H
 
 #include "volFields.H"
-#include "interpolationTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "ExpressionResult.H"
+
+#include "CommonValueExpressionDriver.H"
 
 namespace Foam {
     class PatchValueExpressionDriver;
@@ -71,6 +72,8 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class PatchValueExpressionDriver
+:
+    public CommonValueExpressionDriver
 {
     // Private data
 
@@ -81,11 +84,20 @@ class PatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const PatchValueExpressionDriver&);
 
-    ExpressionResult result_;
+protected:
 
-    HashTable<ExpressionResult,word> variables_;
+    // Handling the scanner 
+    void scan_begin();
+    void scan_end();
 
-    HashTable<interpolationTable<scalar>,word> lines_;
+    //- actual size of the field
+    virtual label size() const;
+
+    //- actual size of the supporting point-field
+    virtual label pointSize() const;
+
+    //- get the mesh we're living on
+    virtual const fvMesh &mesh() const;
 
 public:
 
@@ -106,41 +118,6 @@ public:
 
 
     // Member Functions
-
-    template<class Type>
-    tmp<Field<Type> > evaluate(const string &expr,bool qPoint=false);
-
-    void evaluateVariable(const word &name,const string &expr);
-
-    void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);
-
-    void addVariables(const string &exprList,bool clear=true);
-
-    template<class Type>
-    void setResult(Field<Type> *,bool isPoint=false);
-
-    template<class Type>
-    tmp<Field<Type> > getResult(bool qPoint=false);
-
-    word getResultType();
-
-    ExpressionResult getUniform(label size,bool noWarning);
-
-    void clearResult();
-
-    template <class Op,class Type>
-    Field<bool> *doCompare(Field<Type> *a,Op op,Field<Type> *b);
-
-    template <class Op>
-    Field<bool> *doLogicalOp(Field<bool> *a,Op op,Field<bool> *b);
-
-    inline Field<bool> *doLogicalNot(Field<bool> *a);
-    
-    template<class Type>
-    Field<Type> *doConditional(Field<bool> *d,Field<Type> *yes,Field<Type> *no);
-
-    template<class Type>
-    Field<Type> *makeField(Type,bool isPoint=false);
 
     vectorField *makePositionField();
 
@@ -170,51 +147,8 @@ public:
     template<class Type>
     Field<Type> *getPatchNeighbourField(const string &name);
 
-    template<class Type>
-    bool is(const string &name,bool isPoint=false) const;
-
-    template<class Type>
-    bool isField(const string &name,bool isPoint=false) const;
-
-    inline bool isLine(const string &name) const;
-    scalarField *getLine(const string &name,scalar t);
-
-    void readLines(Istream &is,bool clear=true);
-    void writeLines(Ostream &os) const;
-
-    scalarField *makeModuloField(const scalarField &a,const scalarField &b);
-    scalarField *makeRandomField(label seed=0);
-    scalarField *makeGaussRandomField(label seed=0);
-
-    const Time& runTime() const;
-
-    vectorField *composeVectorField(scalarField *,scalarField *,scalarField *);
-
-    tensorField *composeTensorField(scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *);
-
-    symmTensorField *composeSymmTensorField(scalarField *,scalarField *,scalarField *,
-                                            scalarField *,scalarField *,scalarField *);
-
-    sphericalTensorField *composeSphericalTensorField(scalarField *);
-
-    // Error handling.
-    void error (const parserPatch::location& l, const std::string& m);
-    void error (const std::string& m);
-
-    // Handling the scanner 
-    void scan_begin();
-    void scan_end();
-    bool trace_scanning;
-
     // Handling the parser
     void parse(const std::string& f);
-    Foam::string content;
-    bool trace_parsing;
-
-    // Handling temporary variables
-    void clearVariables();
 
     template<class Type>
     Field<Type> *toFace(const Field<Type> &);

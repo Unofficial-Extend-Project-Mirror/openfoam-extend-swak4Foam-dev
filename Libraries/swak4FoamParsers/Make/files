@@ -1,14 +1,17 @@
 ExpressionResult.C
 
 FieldValueExpressionParser.yy
+PatchValueExpressionParser.yy
+SubsetValueExpressionParser.yy
+
+CommonValueExpressionDriver.C
+
 FieldValueExpressionLexer.ll
 FieldValueExpressionDriver.C
 
-PatchValueExpressionParser.yy
 PatchValueExpressionLexer.ll
 PatchValueExpressionDriver.C
 
-SubsetValueExpressionParser.yy
 SubsetValueExpressionLexer.ll
 SubsetValueExpressionDriver.C
 

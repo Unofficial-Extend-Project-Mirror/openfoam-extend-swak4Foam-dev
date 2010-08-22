@@ -170,8 +170,8 @@ YY_BUFFER_STATE bufferPatch;
 
 void PatchValueExpressionDriver::scan_begin ()
 {
-    yy_flex_debug = trace_scanning;
-    bufferPatch=yy_scan_string(content.c_str());
+    yy_flex_debug = trace_scanning_;
+    bufferPatch=yy_scan_string(content_.c_str());
     
 
 //    if (!(yyin = fopen (file.c_str (), "r")))

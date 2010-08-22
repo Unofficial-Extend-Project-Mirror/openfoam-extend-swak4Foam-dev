@@ -164,8 +164,8 @@ YY_BUFFER_STATE bufferSubset;
 
 void SubsetValueExpressionDriver::scan_begin ()
 {
-    yy_flex_debug = trace_scanning;
-    bufferSubset=yy_scan_string(content.c_str());
+    yy_flex_debug = trace_scanning_;
+    bufferSubset=yy_scan_string(content_.c_str());
     
 
 //    if (!(yyin = fopen (file.c_str (), "r")))
