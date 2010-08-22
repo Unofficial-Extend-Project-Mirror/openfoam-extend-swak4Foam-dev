@@ -52,22 +52,13 @@ namespace Foam {
 
 SubsetValueExpressionDriver::SubsetValueExpressionDriver(const SubsetValueExpressionDriver& orig)
 :
-    CommonValueExpressionDriver(orig),
-    patch_(orig.patch_)
+    CommonValueExpressionDriver(orig)
 {}
 
-SubsetValueExpressionDriver::SubsetValueExpressionDriver(const fvPatch& patch)
+SubsetValueExpressionDriver::SubsetValueExpressionDriver()
 :
-    CommonValueExpressionDriver(),
-    patch_(patch)
+    CommonValueExpressionDriver()
 {}
-
-SubsetValueExpressionDriver::SubsetValueExpressionDriver(const fvPatch& patch,const SubsetValueExpressionDriver& old)
-:
-    CommonValueExpressionDriver(old),
-    patch_(patch)
-{}
-
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -89,61 +80,27 @@ void SubsetValueExpressionDriver::parse (const std::string& f)
 
 vectorField *SubsetValueExpressionDriver::makePositionField()
 {
-    return new vectorField(patch_.Cf());
+    notImplemented("SubsetValueExpressionDriver::makePositionField");
 }
 
-vectorField *SubsetValueExpressionDriver::makePointField()
-{
-    return new vectorField(patch_.patch().localPoints());
-}
+// vectorField *SubsetValueExpressionDriver::makePointField()
+// {
+//     notImplemented("SubsetValueExpressionDriver::makePointField");
+// }
 
 vectorField *SubsetValueExpressionDriver::makeFaceNormalField()
 {
-    return new vectorField(patch_.nf());
+    notImplemented("SubsetValueExpressionDriver::makeFaceNormalField");
 }
 
 vectorField *SubsetValueExpressionDriver::makeFaceAreaField()
 {
-    return new vectorField(patch_.Sf());
+    notImplemented("SubsetValueExpressionDriver::makeFaceAreaField");
 }
 
-vectorField *SubsetValueExpressionDriver::makeCellNeighbourField()
+scalarField *SubsetValueExpressionDriver::makeIdField()
 {
-    return new vectorField(patch_.Cn());
-}
-
-vectorField *SubsetValueExpressionDriver::makeDeltaField()
-{
-    return new vectorField(patch_.delta());
-}
-
-scalarField *SubsetValueExpressionDriver::makeWeightsField()
-{
-    return new scalarField(patch_.weights());
-}
-
-scalarField *SubsetValueExpressionDriver::makeFaceIdField()
-{
-    scalarField *result=new scalarField(patch_.size());
-    forAll(*result,i) {
-        (*result)[i]=i;
-    }
-    return result;
-}
-
-const fvMesh &SubsetValueExpressionDriver::mesh() const
-{
-    return patch_.boundaryMesh().mesh();
-}
-
-label SubsetValueExpressionDriver::size() const
-{
-    return patch_.size();
-}
-
-label SubsetValueExpressionDriver::pointSize() const
-{
-    return patch_.patch().nPoints();
+    notImplemented("SubsetValueExpressionDriver::makeIdField");
 }
 
 // ************************************************************************* //

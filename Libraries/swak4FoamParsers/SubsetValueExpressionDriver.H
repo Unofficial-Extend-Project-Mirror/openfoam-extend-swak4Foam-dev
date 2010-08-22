@@ -77,12 +77,7 @@ class SubsetValueExpressionDriver
 {
     // Private data
 
-    const fvPatch &patch_;
-
     // Private Member Functions
-
-    //- Disallow default bitwise assignment
-    void operator=(const SubsetValueExpressionDriver&);
 
 protected:
 
@@ -90,25 +85,13 @@ protected:
     void scan_begin();
     void scan_end();
 
-    //- actual size of the field
-    virtual label size() const;
-
-    //- actual size of the supporting point-field
-    virtual label pointSize() const;
-
-    //- get the mesh we're living on
-    virtual const fvMesh &mesh() const;
-
 public:
 
     // Constructors
 
     //- Construct from components
-    SubsetValueExpressionDriver(const fvPatch& patch_);
+    SubsetValueExpressionDriver();
     
-    //- Construct from and an old Version
-    SubsetValueExpressionDriver(const fvPatch& patch_,const SubsetValueExpressionDriver& old);
-
     //- Copy construct
     SubsetValueExpressionDriver(const SubsetValueExpressionDriver&);
 
@@ -119,42 +102,37 @@ public:
 
     // Member Functions
 
-    vectorField *makePositionField();
+    virtual vectorField *makePositionField()=0;
 
-    vectorField *makePointField();
+    //     virtual vectorField *makePointField()=0;
 
-    vectorField *makeFaceNormalField();
+    virtual vectorField *makeFaceNormalField()=0;
 
-    vectorField *makeFaceAreaField();
+    virtual vectorField *makeFaceAreaField()=0;
 
-    vectorField *makeCellNeighbourField();
+    virtual scalarField *makeIdField()=0;
 
-    vectorField *makeDeltaField();
+//     template<class Type>
+//     Field<Type> *getField(const string &name);
 
-    scalarField *makeWeightsField();
+    virtual Field<scalar> *getScalarField(const string &name)=0;
 
-    scalarField *makeFaceIdField();
+    virtual Field<vector> *getVectorField(const string &name)=0;
 
-    template<class Type>
-    Field<Type> *getField(const string &name);
+    virtual Field<tensor> *getTensorField(const string &name)=0;
 
-    template<class Type>
-    Field<Type> *getSurfaceNormalField(const string &name);
+    virtual Field<symmTensor> *getSymmTensorField(const string &name)=0;
 
-    template<class Type>
-    Field<Type> *getSubsetInternalField(const string &name);
-
-    template<class Type>
-    Field<Type> *getSubsetNeighbourField(const string &name);
+    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name)=0;
 
     // Handling the parser
     void parse(const std::string& f);
 
-    template<class Type>
-    Field<Type> *toFace(const Field<Type> &);
+//     template<class Type>
+//     virtual Field<Type> *toFace(const Field<Type> &)=0;
 
-    template<class Type>
-    Field<Type> *toPoint(const Field<Type> &);
+//     template<class Type>
+//     virtual Field<Type> *toPoint(const Field<Type> &)=0;
 };
 
 
