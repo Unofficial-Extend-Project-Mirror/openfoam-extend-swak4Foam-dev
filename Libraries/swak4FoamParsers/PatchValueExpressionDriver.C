@@ -138,6 +138,15 @@ label PatchValueExpressionDriver::pointSize() const
     return patch_.patch().nPoints();
 }
 
+scalarField *PatchValueExpressionDriver::makeFaceIdField()
+{
+    scalarField *result=new scalarField(patch_.size());
+    forAll(*result,i) {
+        (*result)[i]=i;
+    }
+    return result;
+}
+
 // ************************************************************************* //
 
 } // namespace
