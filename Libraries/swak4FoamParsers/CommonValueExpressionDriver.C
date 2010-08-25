@@ -37,7 +37,7 @@ License
 
 #include "PatchValueExpressionDriver.H"
 
-#include "SubsetValueExpressionDriver.H"
+#include "CellZoneValueExpressionDriver.H"
 
 #include "Random.H"
 
@@ -334,7 +334,17 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
     } else if(type=="cellSet") {
         notImplemented("type 'cellSet' not yet implemented");
     } else if(type=="cellZone") {
-        notImplemented("type 'cellZone' not yet implemented");
+        label zoneI=region.cellZones().findZoneID(id);
+        if(zoneI<0) {
+            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
+                << " This mesh does not have a cellZone named " << id
+                    << endl
+                    << abort(FatalError);
+        }
+        const cellZone &otherZone=region.cellZones()[zoneI];
+        CellZoneValueExpressionDriver otherDriver(otherZone);
+        otherDriver.parse(expr);
+        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else if(type=="faceSet") {
         notImplemented("type 'faceSet' not yet implemented");
     } else if(type=="faceZone") {

@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rhoPorousSimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         100;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+functions
+(
+    pressureToFilter
+    {
+        type patchExpression;
+        variables "pFilter{cellZone'porosity}=average(p);";
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "p-pFilter";
+        verbose true;
+    }
+);
+
+libs ( 
+    "libOpenFOAM.so" 
+    "libgroovyBC.so" 
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+) ;
+
+// ************************************************************************* //

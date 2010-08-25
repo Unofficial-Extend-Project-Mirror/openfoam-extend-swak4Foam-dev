@@ -15,4 +15,6 @@ PatchValueExpressionDriver.C
 SubsetValueExpressionLexer.ll
 SubsetValueExpressionDriver.C
 
+CellZoneValueExpressionDriver.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers

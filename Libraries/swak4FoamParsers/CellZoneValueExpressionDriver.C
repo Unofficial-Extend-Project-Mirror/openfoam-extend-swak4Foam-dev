@@ -31,9 +31,7 @@ License
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#include "SubsetValueExpressionDriver.H"
-
-#include "Random.H"
+#include "CellZoneValueExpressionDriver.H"
 
 namespace Foam {
 
@@ -46,61 +44,69 @@ namespace Foam {
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-SubsetValueExpressionDriver::SubsetValueExpressionDriver(const SubsetValueExpressionDriver& orig)
+    CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const cellZone &zone,const CellZoneValueExpressionDriver& orig)
 :
-    CommonValueExpressionDriver(orig)
+        SubsetValueExpressionDriver(orig),
+        cellZone_(zone)
 {}
 
-SubsetValueExpressionDriver::SubsetValueExpressionDriver()
+CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const cellZone &zone)
 :
-    CommonValueExpressionDriver()
+    SubsetValueExpressionDriver(),
+    cellZone_(zone)
 {}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-SubsetValueExpressionDriver::~SubsetValueExpressionDriver()
+CellZoneValueExpressionDriver::~CellZoneValueExpressionDriver()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void SubsetValueExpressionDriver::parse (const std::string& f)
+Field<scalar> *CellZoneValueExpressionDriver::getScalarField(const string &name)
 {
-    content_ = f;
-    scan_begin ();
-    parserSubset::SubsetValueExpressionParser parser (*this);
-    parser.set_debug_level (trace_parsing_);
-    parser.parse ();
-    scan_end ();
+    return getFieldInternal<volScalarField,cellZone,scalar>(name,cellZone_);
 }
 
-scalarField *SubsetValueExpressionDriver::makeIdField()
+Field<vector> *CellZoneValueExpressionDriver::getVectorField(const string &name)
 {
-    scalarField *ids=new scalarField(this->size());
-    forAll(*ids,i) {
-        (*ids)[i]=i;
-    }
-    return ids;
+    return getFieldInternal<volVectorField,cellZone,vector>(name,cellZone_);
 }
 
-vectorField *SubsetValueExpressionDriver::makePositionField()
+Field<tensor> *CellZoneValueExpressionDriver::getTensorField(const string &name)
 {
-    notImplemented("SubsetValueExpressionDriver::makePositionField");
+    return getFieldInternal<volTensorField,cellZone,tensor>(name,cellZone_);
 }
 
-// vectorField *SubsetValueExpressionDriver::makePointField()
+Field<symmTensor> *CellZoneValueExpressionDriver::getSymmTensorField(const string &name)
+{
+    return getFieldInternal<volSymmTensorField,cellZone,symmTensor>(name,cellZone_);
+}
+
+vectorField *CellZoneValueExpressionDriver::makePositionField()
+{
+    notImplemented("CellZoneValueExpressionDriver::makePositionField");
+}
+
+Field<sphericalTensor> *CellZoneValueExpressionDriver::getSphericalTensorField(const string &name)
+{
+    return getFieldInternal<volSphericalTensorField,cellZone,sphericalTensor>(name,cellZone_);
+}
+
+// vectorField *CellZoneValueExpressionDriver::makePointField()
 // {
-//     notImplemented("SubsetValueExpressionDriver::makePointField");
+//     notImplemented("CellZoneValueExpressionDriver::makePointField");
 // }
 
-vectorField *SubsetValueExpressionDriver::makeFaceNormalField()
+vectorField *CellZoneValueExpressionDriver::makeFaceNormalField()
 {
-    notImplemented("SubsetValueExpressionDriver::makeFaceNormalField");
+    notImplemented("CellZoneValueExpressionDriver::makeFaceNormalField");
 }
 
-vectorField *SubsetValueExpressionDriver::makeFaceAreaField()
+vectorField *CellZoneValueExpressionDriver::makeFaceAreaField()
 {
-    notImplemented("SubsetValueExpressionDriver::makeFaceAreaField");
+    notImplemented("CellZoneValueExpressionDriver::makeFaceAreaField");
 }
 
 // ************************************************************************* //

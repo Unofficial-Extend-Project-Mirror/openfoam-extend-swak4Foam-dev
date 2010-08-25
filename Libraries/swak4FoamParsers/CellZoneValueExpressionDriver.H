@@ -29,107 +29,90 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::SubsetValueExpressionDriver
+    Foam::CellZoneValueExpressionDriver
 
 Description
 
 SourceFiles
-    SubsetValueExpressionDriverI.H
-    SubsetValueExpressionDriver.C
+    CellZoneValueExpressionDriverI.H
+    CellZoneValueExpressionDriver.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef SubsetValueExpressionDriver_H
-#define SubsetValueExpressionDriver_H
+#ifndef CellZoneValueExpressionDriver_H
+#define CellZoneValueExpressionDriver_H
 
 #include "volFields.H"
 
+#include "cellZone.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "ExpressionResult.H"
-
-#include "CommonValueExpressionDriver.H"
-
-namespace Foam {
-    class SubsetValueExpressionDriver;
-}
-
-using Foam::SubsetValueExpressionDriver;
-
-#include "SubsetValueExpressionParser.tab.hh"
-
-namespace parserSubset {
-    class location;
-    class SubsetValueExpressionParser;
-}
+#include "SubsetValueExpressionDriver.H"
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SubsetValueExpressionDriver Declaration
+                           Class CellZoneValueExpressionDriver Declaration
 \*---------------------------------------------------------------------------*/
 
-class SubsetValueExpressionDriver
+class CellZoneValueExpressionDriver
 :
-    public CommonValueExpressionDriver
+    public SubsetValueExpressionDriver
 {
     // Private data
+    const cellZone &cellZone_;
 
     // Private Member Functions
 
-protected:
-
-    // Handling the scanner 
-    void scan_begin();
-    void scan_end();
-
-    //- General Method to get the values
-    template<class FieldType,class Subset,class T>
-    Field<T> *getFieldInternal(const string &name,const Subset &sub);
 public:
 
     // Constructors
 
     //- Construct from components
-    SubsetValueExpressionDriver();
+    CellZoneValueExpressionDriver(const cellZone &);
     
     //- Copy construct
-    SubsetValueExpressionDriver(const SubsetValueExpressionDriver&);
+    CellZoneValueExpressionDriver(const cellZone &,const CellZoneValueExpressionDriver&);
 
     // Destructor
 
-    ~SubsetValueExpressionDriver();
+    ~CellZoneValueExpressionDriver();
 
 
     // Member Functions
 
-    virtual vectorField *makePositionField()=0;
+    virtual vectorField *makePositionField();
 
     //     virtual vectorField *makePointField()=0;
 
-    virtual vectorField *makeFaceNormalField()=0;
+    virtual vectorField *makeFaceNormalField();
 
-    virtual vectorField *makeFaceAreaField()=0;
-
-    scalarField *makeIdField();
+    virtual vectorField *makeFaceAreaField();
 
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
-    virtual Field<scalar> *getScalarField(const string &name)=0;
+    virtual Field<scalar> *getScalarField(const string &name);
 
-    virtual Field<vector> *getVectorField(const string &name)=0;
+    virtual Field<vector> *getVectorField(const string &name);
 
-    virtual Field<tensor> *getTensorField(const string &name)=0;
+    virtual Field<tensor> *getTensorField(const string &name);
 
-    virtual Field<symmTensor> *getSymmTensorField(const string &name)=0;
+    virtual Field<symmTensor> *getSymmTensorField(const string &name);
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name)=0;
+    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name);
 
     // Handling the parser
-    void parse(const std::string& f);
+    //    void parse(const std::string& f);
+
+    inline virtual label size() const;
+
+    inline virtual label pointSize() const;
+
+    inline virtual const fvMesh &mesh() const;
 
 //     template<class Type>
 //     virtual Field<Type> *toFace(const Field<Type> &)=0;
@@ -145,7 +128,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "SubsetValueExpressionDriverI.H"
+#include "CellZoneValueExpressionDriverI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
