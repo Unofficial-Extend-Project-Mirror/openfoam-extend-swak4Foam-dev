@@ -63,6 +63,20 @@ functions
         expression "p-pFilter";
         verbose true;
     }
+    distanceToFilter
+    {
+        type patchExpression;
+        variables "pFilter{cellZone'porosity}=average(pos());";
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "mag(pos()-pFilter)";
+        verbose true;
+    }
 );
 
 libs ( 

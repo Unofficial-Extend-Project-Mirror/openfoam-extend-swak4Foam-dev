@@ -88,6 +88,10 @@ protected:
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
     Field<T> *getFieldInternal(const string &name,const Subset &sub);
+
+    //- General Method to get values from a field
+    template<class Subset,class T>
+    Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
 public:
 
     // Constructors

@@ -59,6 +59,22 @@ namespace Foam {
         return result;
     }
 
+    template<class Subset,class T>
+    Field<T> *SubsetValueExpressionDriver::getFromFieldInternal(const Field<T> &original,const Subset &sub)
+    {
+        Field<T> *result=new Field<T>(this->size());
+        label cnt=0;
+
+        forAllConstIter(typename Subset,sub,iter) {
+            (*result)[cnt]=original[*iter];
+            cnt++;
+        }
+
+        assert(cnt==this->size());
+
+        return result;
+    }
+
 }
 
 
