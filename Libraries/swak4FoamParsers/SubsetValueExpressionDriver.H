@@ -102,6 +102,9 @@ public:
     //- Copy construct
     SubsetValueExpressionDriver(const SubsetValueExpressionDriver&);
 
+    //- Copy from a dictionary
+    SubsetValueExpressionDriver(const dictionary&);
+
     // Destructor
 
     ~SubsetValueExpressionDriver();

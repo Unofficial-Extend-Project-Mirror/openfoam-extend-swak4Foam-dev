@@ -43,8 +43,11 @@ License
 
 namespace Foam {
 
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+defineTypeNameAndDebug(CommonValueExpressionDriver, 0);
+defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -62,12 +65,53 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const CommonValueExpres
     trace_parsing_ (orig.trace_parsing_)
 {}
 
+CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
+:
+    variableString_(dict.lookupOrDefault("variables",string(""))),
+    content_(""),
+    trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
+    trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
+{
+    if(dict.found("timelines")) {
+        readLines(dict.lookup("timelines"));
+    }
+    addVariables(variableString_);
+}
+
 CommonValueExpressionDriver::CommonValueExpressionDriver()
 :
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
 {}
+
+autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
+(
+    const dictionary& dict,
+    const fvMesh& mesh
+)
+{
+    word driverType(dict.lookup("valueType"));
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(driverType);
+
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New"
+        )   << "Unknown  CommonValueExpressionDriver type " << driverType
+            << endl << endl
+            << "Valid valueTypes are :" << endl
+            << dictionaryConstructorTablePtr_->sortedToc()
+            << exit(FatalError);
+    }
+
+    return autoPtr<CommonValueExpressionDriver>
+    (
+        cstrIter()(dict,mesh)
+    );
+}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -242,7 +286,8 @@ scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
 
 void CommonValueExpressionDriver::clearVariables()
 {
-    variables_.clear();
+    //    variables_.clear();
+    addVariables(variableString_);
 }
 
 void CommonValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
@@ -430,6 +475,22 @@ void CommonValueExpressionDriver::writeLines(Ostream &os) const
         os << token::END_BLOCK << nl;
     }
     os << token::END_LIST;
+}
+
+const fvMesh &CommonValueExpressionDriver::regionMesh
+(
+    const dictionary &dict,
+    const fvMesh &mesh
+)
+{
+    if(!dict.found("region")) {
+        return mesh;
+    }
+  return dynamicCast<const fvMesh&>(
+      mesh.time().lookupObject<objectRegistry>(
+          dict.lookup("region")
+      )
+  );    
 }
 
 // ************************************************************************* //

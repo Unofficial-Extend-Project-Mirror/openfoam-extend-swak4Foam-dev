@@ -101,10 +101,16 @@ protected:
 
 public:
 
+    //- Runtime type information
+    TypeName("PatchValueExpressionDriver");
+
     // Constructors
 
     //- Construct from components
     PatchValueExpressionDriver(const fvPatch& patch_);
+    
+    //- Construct from a dictionary
+    PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
     //- Construct from and an old Version
     PatchValueExpressionDriver(const fvPatch& patch_,const PatchValueExpressionDriver& old);

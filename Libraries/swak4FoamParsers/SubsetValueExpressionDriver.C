@@ -51,6 +51,11 @@ SubsetValueExpressionDriver::SubsetValueExpressionDriver(const SubsetValueExpres
     CommonValueExpressionDriver(orig)
 {}
 
+SubsetValueExpressionDriver::SubsetValueExpressionDriver(const dictionary& dict)
+:
+    CommonValueExpressionDriver(dict)
+{}
+
 SubsetValueExpressionDriver::SubsetValueExpressionDriver()
 :
     CommonValueExpressionDriver()

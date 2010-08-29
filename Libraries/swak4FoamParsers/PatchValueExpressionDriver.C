@@ -39,10 +39,14 @@ License
 
 #include "Random.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+defineTypeNameAndDebug(PatchValueExpressionDriver, 0);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, dictionary, patch);
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -61,6 +65,21 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
     CommonValueExpressionDriver(),
     patch_(patch)
 {}
+
+PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+ :
+    CommonValueExpressionDriver(dict),
+    patch_(
+        regionMesh(dict,mesh).boundary()[
+            regionMesh(dict,mesh).boundaryMesh().findPatchID(
+                dict.lookup(
+                    "patchName"
+                )
+            )
+        ]
+    )
+{
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch,const PatchValueExpressionDriver& old)
 :

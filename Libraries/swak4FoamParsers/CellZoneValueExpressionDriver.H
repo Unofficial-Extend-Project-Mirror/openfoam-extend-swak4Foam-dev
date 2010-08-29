@@ -69,10 +69,16 @@ class CellZoneValueExpressionDriver
 
 public:
 
-    // Constructors
+     //- Runtime type information
+    TypeName("CellZoneValueExpressionDriver");
+
+   // Constructors
 
     //- Construct from components
     CellZoneValueExpressionDriver(const cellZone &);
+    
+    //- Construct from a dictionary
+    CellZoneValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
     //- Copy construct
     CellZoneValueExpressionDriver(const cellZone &,const CellZoneValueExpressionDriver&);

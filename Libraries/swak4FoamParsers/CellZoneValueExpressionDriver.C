@@ -33,9 +33,14 @@ License
 
 #include "CellZoneValueExpressionDriver.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+defineTypeNameAndDebug(CellZoneValueExpressionDriver, 0);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellZoneValueExpressionDriver, dictionary, cellZone);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -56,6 +61,20 @@ CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const cellZone &zon
     cellZone_(zone)
 {}
 
+CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+ :
+    SubsetValueExpressionDriver(dict),
+    cellZone_(
+        regionMesh(dict,mesh).cellZones()[
+            regionMesh(dict,mesh).cellZones().findZoneID(
+                dict.lookup(
+                    "patchName"
+                )
+            )
+        ]
+    )
+{
+}
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 CellZoneValueExpressionDriver::~CellZoneValueExpressionDriver()

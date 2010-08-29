@@ -46,6 +46,8 @@ SourceFiles
 #include "volFields.H"
 #include "interpolationTable.H"
 
+#include "runTimeSelectionTables.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "ExpressionResult.H"
@@ -65,6 +67,9 @@ class CommonValueExpressionDriver
 
     //- Disallow default bitwise assignment
     void operator=(const CommonValueExpressionDriver&);
+
+    //- variables from a dictionary
+    string variableString_;
 
 protected:
 
@@ -93,7 +98,29 @@ protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
 
+    //- find out which mesh is meant from the dictionary
+    static const fvMesh &regionMesh
+    (
+        const dictionary &dict,
+        const fvMesh &mesh
+    );
 public:
+    //- Runtime type information
+    TypeName("CommonValueExpressionDriver");
+
+    // Declare run-time constructor selection table
+
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        CommonValueExpressionDriver,
+        dictionary,
+        (
+            const dictionary& dict,
+            const fvMesh& mesh
+        ),
+        (dict,mesh)
+    );
 
     // Constructors
 
@@ -102,6 +129,16 @@ public:
     
     //- Copy construct
     CommonValueExpressionDriver(const CommonValueExpressionDriver&);
+
+    //- Construct from a dictionary
+    CommonValueExpressionDriver(const dictionary&);
+
+    //- Return a reference to the selected value driver
+    static autoPtr<CommonValueExpressionDriver> New
+    (
+        const dictionary& dict,
+        const fvMesh& mesh
+    );
 
     // Destructor
 
