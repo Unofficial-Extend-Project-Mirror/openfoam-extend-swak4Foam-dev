@@ -86,6 +86,10 @@ public:
 
     virtual vectorField *makePositionField();
 
+    virtual scalarField *makeFaceAreaMagField();
+
+    virtual scalarField *makeCellVolumeField();
+
     //     virtual vectorField *makePointField()=0;
 
     virtual vectorField *makeFaceNormalField();

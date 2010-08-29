@@ -111,6 +111,8 @@
 %token TOKEN_id
 %token TOKEN_randNormal
 %token TOKEN_position
+%token TOKEN_area
+%token TOKEN_volume
 %token TOKEN_Sf
 %token TOKEN_normal
 
@@ -363,6 +365,8 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_deltaT '(' ')'   { $$ = driver.makeField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'   { $$ = driver.makeField(driver.runTime().time().value()); }
 //        | TOKEN_toFace '(' pexp ')'        { $$ = driver.toFace(*$3); delete $3;}
+        | TOKEN_area '(' ')'        { $$ = driver.makeFaceAreaMagField(); }
+        | TOKEN_volume '(' ')'        { $$ = driver.makeCellVolumeField(); }
 	| TOKEN_SID		{ 
             $$=driver.getScalarField(*$1);delete $1;
 				}

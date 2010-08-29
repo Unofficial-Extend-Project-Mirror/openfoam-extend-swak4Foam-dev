@@ -81,6 +81,8 @@ negative              return token::TOKEN_neg;
 
 pi                    return token::TOKEN_pi;
 pos                   return token::TOKEN_position;
+area                  return token::TOKEN_area;
+vol                   return token::TOKEN_volume;
 pts                   return token::TOKEN_points;
 Sf                    return token::TOKEN_Sf;
 normal                return token::TOKEN_normal;

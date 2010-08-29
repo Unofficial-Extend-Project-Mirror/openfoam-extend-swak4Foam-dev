@@ -111,6 +111,10 @@ public:
 
     virtual vectorField *makePositionField()=0;
 
+    virtual scalarField *makeFaceAreaMagField()=0;
+
+    virtual scalarField *makeCellVolumeField()=0;
+
     //     virtual vectorField *makePointField()=0;
 
     virtual vectorField *makeFaceNormalField()=0;

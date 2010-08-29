@@ -84,20 +84,35 @@ Field<symmTensor> *CellZoneValueExpressionDriver::getSymmTensorField(const strin
     return getFieldInternal<volSymmTensorField,cellZone,symmTensor>(name,cellZone_);
 }
 
-vectorField *CellZoneValueExpressionDriver::makePositionField()
-{
-    return getFromFieldInternal(this->mesh().C(),cellZone_);
-}
-
 Field<sphericalTensor> *CellZoneValueExpressionDriver::getSphericalTensorField(const string &name)
 {
     return getFieldInternal<volSphericalTensorField,cellZone,sphericalTensor>(name,cellZone_);
 }
 
+vectorField *CellZoneValueExpressionDriver::makePositionField()
+{
+    return getFromFieldInternal(this->mesh().C(),cellZone_);
+}
+
+scalarField *CellZoneValueExpressionDriver::makeCellVolumeField()
+{
+    return getFromFieldInternal(this->mesh().V(),cellZone_);
+}
+
+
 // vectorField *CellZoneValueExpressionDriver::makePointField()
 // {
 //     notImplemented("CellZoneValueExpressionDriver::makePointField");
 // }
+
+scalarField *CellZoneValueExpressionDriver::makeFaceAreaMagField()
+{
+    FatalErrorIn("CellZoneValueExpressionDriver::makeFaceAreaField()")
+        << "cellZone knows nothing about faces"
+            << endl
+            << abort(FatalError);
+    return new scalarField(0);
+}
 
 vectorField *CellZoneValueExpressionDriver::makeFaceNormalField()
 {
