@@ -45,6 +45,10 @@ namespace Foam {
     template<class FieldType,class Subset,class T>
     Field<T> *SubsetValueExpressionDriver::getFieldInternal(const string &name,const Subset &sub)
     {
+        if(this->variables_.found(name)) {
+            return this->variables_[name].getResult<T>(true).ptr();
+        }
+
         const FieldType &f=this->mesh().lookupObject<FieldType>(name);
         Field<T> *result=new Field<T>(this->size());
         label cnt=0;
