@@ -68,7 +68,7 @@ CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const dictionary& d
         regionMesh(dict,mesh).cellZones()[
             regionMesh(dict,mesh).cellZones().findZoneID(
                 dict.lookup(
-                    "patchName"
+                    "zoneName"
                 )
             )
         ]

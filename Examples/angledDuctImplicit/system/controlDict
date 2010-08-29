@@ -91,6 +91,30 @@ functions
         expression "mag(pos()-pFilter)";
         verbose true;
     }
+    alternatePressureToFilter
+    {
+        type swakExpression;
+        valueType patch;
+        patchName outlet;
+        variables "pFilter{cellZone'porosity}=average(p);";
+        accumulations (
+            average
+        );
+        expression "p-pFilter";
+        verbose true;
+    }
+    alternatePressureToFilter2
+    {
+        type swakExpression;
+        valueType cellZone;
+        zoneName porosity;
+        variables "pRaus{outlet}=average(p);";
+        accumulations (
+            average
+        );
+        expression "pRaus-p";
+        verbose true;
+    }
 );
 
 libs ( 

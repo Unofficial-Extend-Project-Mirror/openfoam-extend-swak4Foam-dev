@@ -57,6 +57,7 @@ defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(const CommonValueExpressionDriver& orig)
 :
+    variableString_(""),
     result_(orig.result_),
     variables_(orig.variables_),
     lines_(orig.lines_),
@@ -72,14 +73,19 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
 {
+    if(debug) {
+        Info << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
+    }
+
     if(dict.found("timelines")) {
         readLines(dict.lookup("timelines"));
     }
-    addVariables(variableString_);
+    //    addVariables(variableString_);
 }
 
 CommonValueExpressionDriver::CommonValueExpressionDriver()
 :
+    variableString_(""),
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
@@ -105,6 +111,10 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
             << "Valid valueTypes are :" << endl
             << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalError);
+    }
+
+    if(debug) {
+        Info << "Creating driver of type " << driverType << endl;
     }
 
     return autoPtr<CommonValueExpressionDriver>
@@ -286,8 +296,10 @@ scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
 
 void CommonValueExpressionDriver::clearVariables()
 {
-    //    variables_.clear();
-    addVariables(variableString_);
+    variables_.clear();
+    if(variableString_!="") {
+        addVariables(variableString_,false);
+    }
 }
 
 void CommonValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
@@ -484,13 +496,22 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
 )
 {
     if(!dict.found("region")) {
+        if(debug) {
+            Info << "Using original mesh " << endl;
+        }
+
         return mesh;
     }
-  return dynamicCast<const fvMesh&>(
-      mesh.time().lookupObject<objectRegistry>(
-          dict.lookup("region")
-      )
-  );    
+
+    if(debug) {
+        Info << "Using mesh " << dict.lookup("region")  << endl;
+    }
+    
+    return dynamicCast<const fvMesh&>(
+        mesh.time().lookupObject<objectRegistry>(
+            dict.lookup("region")
+        )
+    );    
 }
 
 // ************************************************************************* //
