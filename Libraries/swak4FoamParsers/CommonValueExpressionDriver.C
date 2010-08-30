@@ -43,6 +43,8 @@ License
 
 #include "FaceZoneValueExpressionDriver.H"
 
+#include "FaceSetValueExpressionDriver.H"
+
 #include "Random.H"
 
 namespace Foam {
@@ -414,7 +416,14 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else if(type=="faceSet") {
-        notImplemented("type 'faceSet' not yet implemented");
+        faceSet otherSet(
+            region,
+            id,
+            IOobject::MUST_READ
+        );
+        FaceSetValueExpressionDriver otherDriver(otherSet);
+        otherDriver.parse(expr);
+        variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="faceZone") {
         label zoneI=region.faceZones().findZoneID(id);
         if(zoneI<0) {
