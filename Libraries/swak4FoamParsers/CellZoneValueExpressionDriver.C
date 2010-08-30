@@ -82,6 +82,11 @@ CellZoneValueExpressionDriver::~CellZoneValueExpressionDriver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+template<>
+label SubsetValueExpressionDriver::getIndexFromIterator(const cellZone::const_iterator &it) 
+{
+    return *it;
+}
 
 Field<scalar> *CellZoneValueExpressionDriver::getScalarField(const string &name)
 {

@@ -39,6 +39,8 @@ License
 
 #include "CellZoneValueExpressionDriver.H"
 
+#include "CellSetValueExpressionDriver.H"
+
 #include "Random.H"
 
 namespace Foam {
@@ -389,7 +391,14 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         }
         variables_.insert(name,result.getUniform(this->size(),false));
     } else if(type=="cellSet") {
-        notImplemented("type 'cellSet' not yet implemented");
+        cellSet otherSet(
+            region,
+            id,
+            IOobject::MUST_READ
+        );
+        CellSetValueExpressionDriver otherDriver(otherSet);
+        otherDriver.parse(expr);
+        variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="cellZone") {
         label zoneI=region.cellZones().findZoneID(id);
         if(zoneI<0) {

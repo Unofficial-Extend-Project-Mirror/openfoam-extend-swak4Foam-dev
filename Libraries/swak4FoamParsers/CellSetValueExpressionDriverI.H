@@ -41,42 +41,20 @@ License
 #include <cassert>
 
 namespace Foam {
-
-    template<class FieldType,class Subset,class T>
-    Field<T> *SubsetValueExpressionDriver::getFieldInternal(const string &name,const Subset &sub)
+    label CellSetValueExpressionDriver::size() const
     {
-        if(this->variables_.found(name)) {
-            return this->variables_[name].getResult<T>(true).ptr();
-        }
-
-        const FieldType &f=this->mesh().lookupObject<FieldType>(name);
-        Field<T> *result=new Field<T>(this->size());
-        label cnt=0;
-
-        forAllConstIter(typename Subset,sub,iter) {
-            (*result)[cnt]=f[getIndexFromIterator(iter)];
-            cnt++;
-        }
-
-        assert(cnt==this->size());
-
-        return result;
+        return cellSet_.size();
     }
 
-    template<class Subset,class T>
-    Field<T> *SubsetValueExpressionDriver::getFromFieldInternal(const Field<T> &original,const Subset &sub)
+    label CellSetValueExpressionDriver::pointSize() const
     {
-        Field<T> *result=new Field<T>(this->size());
-        label cnt=0;
+        notImplemented("CellSetValueExpressionDriver::pointSize()");
+        return 0;
+    }
 
-        forAllConstIter(typename Subset,sub,iter) {
-            (*result)[cnt]=original[getIndexFromIterator(iter)];
-            cnt++;
-        }
-
-        assert(cnt==this->size());
-
-        return result;
+    const fvMesh &CellSetValueExpressionDriver::mesh() const
+    {
+        return dynamicCast<const fvMesh&>(cellSet_.db());
     }
 
 }

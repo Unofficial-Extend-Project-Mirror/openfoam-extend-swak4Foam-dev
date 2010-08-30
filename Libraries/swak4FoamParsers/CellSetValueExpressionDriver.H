@@ -29,122 +29,100 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::SubsetValueExpressionDriver
+    Foam::CellSetValueExpressionDriver
 
 Description
 
 SourceFiles
-    SubsetValueExpressionDriverI.H
-    SubsetValueExpressionDriver.C
+    CellSetValueExpressionDriverI.H
+    CellSetValueExpressionDriver.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef SubsetValueExpressionDriver_H
-#define SubsetValueExpressionDriver_H
+#ifndef CellSetValueExpressionDriver_H
+#define CellSetValueExpressionDriver_H
 
 #include "volFields.H"
 
+#include "cellSet.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "ExpressionResult.H"
-
-#include "CommonValueExpressionDriver.H"
-
-namespace Foam {
-    class SubsetValueExpressionDriver;
-}
-
-using Foam::SubsetValueExpressionDriver;
-
-#include "SubsetValueExpressionParser.tab.hh"
-
-namespace parserSubset {
-    class location;
-    class SubsetValueExpressionParser;
-}
+#include "SubsetValueExpressionDriver.H"
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SubsetValueExpressionDriver Declaration
+                           Class CellSetValueExpressionDriver Declaration
 \*---------------------------------------------------------------------------*/
 
-class SubsetValueExpressionDriver
+class CellSetValueExpressionDriver
 :
-    public CommonValueExpressionDriver
+    public SubsetValueExpressionDriver
 {
     // Private data
+    cellSet cellSet_;
 
     // Private Member Functions
 
-protected:
-
-    // Handling the scanner 
-    void scan_begin();
-    void scan_end();
-
-    //- get the index from the container iterator
-    template<class Iter>
-    label getIndexFromIterator(const Iter &it);
-
-    //- General Method to get the values
-    template<class FieldType,class Subset,class T>
-    Field<T> *getFieldInternal(const string &name,const Subset &sub);
-
-    //- General Method to get values from a field
-    template<class Subset,class T>
-    Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
 public:
 
-    // Constructors
+     //- Runtime type information
+    TypeName("CellSetValueExpressionDriver");
+
+   // Constructors
 
     //- Construct from components
-    SubsetValueExpressionDriver();
+    CellSetValueExpressionDriver(const cellSet &);
+    
+    //- Construct from a dictionary
+    CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
     //- Copy construct
-    SubsetValueExpressionDriver(const SubsetValueExpressionDriver&);
-
-    //- Copy from a dictionary
-    SubsetValueExpressionDriver(const dictionary&);
+    CellSetValueExpressionDriver(const cellSet &,const CellSetValueExpressionDriver&);
 
     // Destructor
 
-    ~SubsetValueExpressionDriver();
+    ~CellSetValueExpressionDriver();
 
 
     // Member Functions
 
-    virtual vectorField *makePositionField()=0;
+    virtual vectorField *makePositionField();
 
-    virtual scalarField *makeFaceAreaMagField()=0;
+    virtual scalarField *makeFaceAreaMagField();
 
-    virtual scalarField *makeCellVolumeField()=0;
+    virtual scalarField *makeCellVolumeField();
 
     //     virtual vectorField *makePointField()=0;
 
-    virtual vectorField *makeFaceNormalField()=0;
+    virtual vectorField *makeFaceNormalField();
 
-    virtual vectorField *makeFaceAreaField()=0;
-
-    scalarField *makeIdField();
+    virtual vectorField *makeFaceAreaField();
 
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
-    virtual Field<scalar> *getScalarField(const string &name)=0;
+    virtual Field<scalar> *getScalarField(const string &name);
 
-    virtual Field<vector> *getVectorField(const string &name)=0;
+    virtual Field<vector> *getVectorField(const string &name);
 
-    virtual Field<tensor> *getTensorField(const string &name)=0;
+    virtual Field<tensor> *getTensorField(const string &name);
 
-    virtual Field<symmTensor> *getSymmTensorField(const string &name)=0;
+    virtual Field<symmTensor> *getSymmTensorField(const string &name);
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name)=0;
+    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name);
 
     // Handling the parser
-    void parse(const std::string& f);
+    //    void parse(const std::string& f);
+
+    inline virtual label size() const;
+
+    inline virtual label pointSize() const;
+
+    inline virtual const fvMesh &mesh() const;
 
 //     template<class Type>
 //     virtual Field<Type> *toFace(const Field<Type> &)=0;
@@ -160,7 +138,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "SubsetValueExpressionDriverI.H"
+#include "CellSetValueExpressionDriverI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
