@@ -88,7 +88,7 @@ CellSetValueExpressionDriver::~CellSetValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<>
-label SubsetValueExpressionDriver::getIndexFromIterator(const cellSet::const_iterator &it) 
+inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellSet::const_iterator &it) 
 {
     return it.key();
 }

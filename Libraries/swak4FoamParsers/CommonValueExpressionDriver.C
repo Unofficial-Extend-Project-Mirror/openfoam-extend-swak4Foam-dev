@@ -41,6 +41,8 @@ License
 
 #include "CellSetValueExpressionDriver.H"
 
+#include "FaceZoneValueExpressionDriver.H"
+
 #include "Random.H"
 
 namespace Foam {
@@ -414,7 +416,17 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
     } else if(type=="faceSet") {
         notImplemented("type 'faceSet' not yet implemented");
     } else if(type=="faceZone") {
-        notImplemented("type 'faceZone' not yet implemented");
+        label zoneI=region.faceZones().findZoneID(id);
+        if(zoneI<0) {
+            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
+                << " This mesh does not have a faceZone named " << id
+                    << endl
+                    << abort(FatalError);
+        }
+        const faceZone &otherZone=region.faceZones()[zoneI];
+        FaceZoneValueExpressionDriver otherDriver(otherZone);
+        otherDriver.parse(expr);
+        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else {
         FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote")
             << "The type '" << type << "' is not implemented. " 
