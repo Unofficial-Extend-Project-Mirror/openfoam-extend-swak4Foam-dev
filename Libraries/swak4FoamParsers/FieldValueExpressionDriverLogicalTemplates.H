@@ -3,44 +3,19 @@
 #ifndef VALUE_EXPRESSION_LOGICAL_TEMPLATES
 #define VALUE_EXPRESSION_LOGICAL_TEMPLATES
 
+namespace Foam {
+
 template<>
-Foam::volScalarField *FieldValueExpressionDriver::makeLogicalField<Foam::volScalarField>(Foam::scalar val)
+volScalarField *FieldValueExpressionDriver::makeLogicalField<volScalarField>(scalar val)
 {
     return makeScalarField(val);
 }
 
 template<>
-Foam::surfaceScalarField *FieldValueExpressionDriver::makeLogicalField<Foam::surfaceScalarField>(Foam::scalar val)
+surfaceScalarField *FieldValueExpressionDriver::makeLogicalField<surfaceScalarField>(scalar val)
 {
     return makeSurfaceScalarField(val);
 }
-
-// template<class M>
-// Foam::label upperLimit(M &f);
-
-// template<>
-// inline Foam::label upperLimit(Foam::volScalarField &f)
-// {
-//     return f.mesh().nCells();
-// }
-
-// template<>
-// inline Foam::label upperLimit(Foam::surfaceScalarField &f)
-// {
-//     return f.mesh().nFaces();
-// }
-
-// template<>
-// inline Foam::label upperLimit(Foam::volVectorField &f)
-// {
-//     return f.mesh().nCells();
-// }
-
-// template<>
-// inline Foam::label upperLimit(Foam::surfaceVectorField &f)
-// {
-//     return f.mesh().nFaces();
-// }
 
 #define getFaceValue(ding) (ding->boundaryField()[pI][fI])
 
@@ -105,7 +80,6 @@ template <class T,class Field>
 T * FieldValueExpressionDriver::doConditional(Field *cond,T* yes,T* no,T* result)
 {
     forAll(*result,cellI) {
-    //    for(Foam::label cellI=0;cellI<upperLimit(*result);cellI++) {
         bool c= (*cond)[cellI] ? true : false;
         if(c) {
             (*result)[cellI]=(*yes)[cellI];
@@ -113,7 +87,6 @@ T * FieldValueExpressionDriver::doConditional(Field *cond,T* yes,T* no,T* result
             (*result)[cellI]=(*no)[cellI];
         }
     }
-    //    (*result)=(*yes)*pos((*cond)-0.5)+(*no)*((*cond)-0.5);
 
     forAll(result->boundaryField(),pI) {
         forAll(result->boundaryField()[pI],fI) {
@@ -158,5 +131,8 @@ Field *FieldValueExpressionDriver::doLogicalNot(Field *a)
     return res;
 }
 
+#undef getFaceValue
+
+} // end namespace
 
 #endif

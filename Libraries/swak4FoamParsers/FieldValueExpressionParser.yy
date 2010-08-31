@@ -24,7 +24,11 @@
 #include <functional>
 #include <cmath>
 
-class FieldValueExpressionDriver;
+    namespace Foam {
+        class FieldValueExpressionDriver;
+    }
+
+    using Foam::FieldValueExpressionDriver;
 %}
 
 %name-prefix="parserField"

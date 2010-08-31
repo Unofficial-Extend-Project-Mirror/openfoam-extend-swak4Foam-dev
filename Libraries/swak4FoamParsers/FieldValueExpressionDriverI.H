@@ -3,15 +3,17 @@
 #ifndef VALUE_EXPRESSION_DRIVER_I_H
 #define VALUE_EXPRESSION_DRIVER_I_H
 
+namespace Foam {
+
 template<class T>
-T *FieldValueExpressionDriver::getField(const Foam::string &name)
+T *FieldValueExpressionDriver::getField(const string &name)
 {
     if(debug) {
-        Foam::Info << "FieldValueExpressionDriver::getField. Name: " << name 
-            << " Type: " << T::typeName << Foam::endl;
+        Info << "FieldValueExpressionDriver::getField. Name: " << name 
+            << " Type: " << T::typeName << endl;
     }
 
-    Foam::dimensionSet nullDim(0,0,0,0,0);
+    dimensionSet nullDim(0,0,0,0,0);
 
     T *f=NULL;
 
@@ -21,7 +23,7 @@ T *FieldValueExpressionDriver::getField(const Foam::string &name)
         mesh_.foundObject<T>(name)
     ) {
         if(debug) {
-            Foam::Info << "Getting " << name << " from memory" << Foam::endl;
+            Info << "Getting " << name << " from memory" << endl;
         }
 
         f=new T(
@@ -31,22 +33,22 @@ T *FieldValueExpressionDriver::getField(const Foam::string &name)
         searchOnDisc_
     ) {
         if(debug) {
-            Foam::Info << "Reading " << name << " from disc" << Foam::endl;
+            Info << "Reading " << name << " from disc" << endl;
         }
         f=new T(
-            Foam::IOobject
+            IOobject
             (
                 name,
                 time_,
                 mesh_,
-                Foam::IOobject::MUST_READ,
-                Foam::IOobject::NO_WRITE
+                IOobject::MUST_READ,
+                IOobject::NO_WRITE
             ),
             mesh_
         );
         if(cacheReadFields_) {
             if(debug) {
-                Foam::Info << "Registering a copy of " << name << " with mesh" << Foam::endl;
+                Info << "Registering a copy of " << name << " with mesh" << endl;
             }
             T* toCache=new T(*f);
             toCache->store();
@@ -54,10 +56,10 @@ T *FieldValueExpressionDriver::getField(const Foam::string &name)
     }
 
     if(f==NULL) {
-        Foam::FatalErrorIn("FieldValueExpressionDriver::getField(const Foam::string &name)")
+        FatalErrorIn("FieldValueExpressionDriver::getField(const string &name)")
             << "Could not find the field " << name 
-                << " in memory or on disc" << Foam::endl
-                << abort(Foam::FatalError);
+                << " in memory or on disc" << endl
+                << abort(FatalError);
     }
     
     f->dimensions().reset(nullDim);
@@ -66,16 +68,16 @@ T *FieldValueExpressionDriver::getField(const Foam::string &name)
 }
 
 template<class T>
-bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const Foam::string &name)
+bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const string &name)
 {
     if(debug) {
-        Foam::Info << "FieldValueExpressionDriver::isThere. Name: " << name 
-            << " Type: " << T::typeName << Foam::endl;
+        Info << "FieldValueExpressionDriver::isThere. Name: " << name 
+            << " Type: " << T::typeName << endl;
     }
     if(searchInMemory_) {
         if(mesh_.foundObject<T>(name)) {
             if(debug) {
-                Foam::Info << "Found " << name << " in memory" << Foam::endl;
+                Info << "Found " << name << " in memory" << endl;
             }
             return true;
         }
@@ -87,16 +89,17 @@ bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const Foam:
         getTypeOfField(name)==T::typeName
     ) {
         if(debug) {
-            Foam::Info << "Found " << name << " on disc" << Foam::endl;
+            Info << "Found " << name << " on disc" << endl;
         }
         return true;
     } else {
         if(debug) {
-            Foam::Info << name << " not found" << Foam::endl;
+            Info << name << " not found" << endl;
         }
         return false;
     }
 }
 
+} // end namespace
 
 #endif

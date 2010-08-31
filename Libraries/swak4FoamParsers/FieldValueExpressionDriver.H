@@ -9,7 +9,11 @@
 #include <volFields.H>
 #include <surfaceFields.H>
 
-class FieldValueExpressionDriver;
+namespace Foam {
+    class FieldValueExpressionDriver;
+}
+
+using Foam::FieldValueExpressionDriver;
 
 #include "FieldValueExpressionParser.tab.hh"
 
@@ -17,6 +21,8 @@ namespace parserField {
     class location;
     class FieldValueExpressionParser;
 }
+
+namespace Foam {
 
 class FieldValueExpressionDriver {
 public:
@@ -28,15 +34,15 @@ public:
     };
 
 private:
-    Foam::string getTypeOfField(const Foam::string &name);
-    Foam::string getTypeOfSet(const Foam::string &name);
+    string getTypeOfField(const string &name);
+    string getTypeOfSet(const string &name);
 
-    const Foam::string &time_;
-    const Foam::fvMesh &mesh_;
-    const Foam::Time& runTime_;
+    const string &time_;
+    const fvMesh &mesh_;
+    const Time& runTime_;
 
-    Foam::volScalarField *result_;
-    Foam::volVectorField *vresult_;
+    volScalarField *result_;
+    volVectorField *vresult_;
 
     ExpressionType typ_;
 
@@ -51,9 +57,9 @@ private:
 
 public:
     FieldValueExpressionDriver(
-        const Foam::string& time,
-        const Foam::Time& runTime,
-        const Foam::fvMesh &mesh,
+        const string& time,
+        const Time& runTime,
+        const fvMesh &mesh,
         bool cacheReadFields=false,
         bool searchInMemory=false,
         bool searchOnDisc=true
@@ -69,13 +75,13 @@ public:
     bool resultIsLogical() { return typ_==LOGICAL_TYPE; }
 
     // Setting the result
-    void setScalarResult(Foam::volScalarField *);
-    void setLogicalResult(Foam::volScalarField *);
-    void setVectorResult(Foam::volVectorField *);
+    void setScalarResult(volScalarField *);
+    void setLogicalResult(volScalarField *);
+    void setVectorResult(volVectorField *);
 
     // Getting the results
-    Foam::volScalarField *getScalar() { return result_; }
-    Foam::volVectorField *getVector() { return vresult_; }
+    volScalarField *getScalar() { return result_; }
+    volVectorField *getVector() { return vresult_; }
 
     // Handling the scanner.
     void scan_begin ();
@@ -84,7 +90,7 @@ public:
 
     // Handling the parser.
     void parse (const std::string& f);
-    Foam::string content;
+    string content;
     bool trace_parsing;
 
     // Error handling.
@@ -93,47 +99,47 @@ public:
 
     // checking for variables
     template<class T>
-    bool isThere(const Foam::string &name);
+    bool isThere(const string &name);
 
-    bool isCellSet(const Foam::string &name);
-    bool isCellZone(const Foam::string &name);
+    bool isCellSet(const string &name);
+    bool isCellZone(const string &name);
 
     // returning fields
     template<class T>
-    T *getField(const Foam::string &name);
+    T *getField(const string &name);
 
     // make constant fields
-    Foam::volScalarField *makeScalarField(const Foam::scalar &val);
-    Foam::volVectorField *makeVectorField(const Foam::vector &vec);
-    Foam::volVectorField *makeVectorField(Foam::volScalarField *x,Foam::volScalarField *y,Foam::volScalarField *z);
-    Foam::surfaceScalarField *makeSurfaceScalarField(const Foam::scalar &val);
-    Foam::surfaceVectorField *makeSurfaceVectorField(const Foam::vector &vec);
-    Foam::surfaceVectorField *makeSurfaceVectorField(Foam::surfaceScalarField *x,Foam::surfaceScalarField *y,Foam::surfaceScalarField *z);
-    Foam::volScalarField *makeCellSetField(const Foam::string &name);
-    Foam::volScalarField *makeCellZoneField(const Foam::string &name);
+    volScalarField *makeScalarField(const scalar &val);
+    volVectorField *makeVectorField(const vector &vec);
+    volVectorField *makeVectorField(volScalarField *x,volScalarField *y,volScalarField *z);
+    surfaceScalarField *makeSurfaceScalarField(const scalar &val);
+    surfaceVectorField *makeSurfaceVectorField(const vector &vec);
+    surfaceVectorField *makeSurfaceVectorField(surfaceScalarField *x,surfaceScalarField *y,surfaceScalarField *z);
+    volScalarField *makeCellSetField(const string &name);
+    volScalarField *makeCellZoneField(const string &name);
 
     // modulo operator
-    Foam::volScalarField *makeModuloField(const Foam::volScalarField &a,const Foam::volScalarField &b);
+    volScalarField *makeModuloField(const volScalarField &a,const volScalarField &b);
 
     // make special fields
-    Foam::surfaceVectorField *makeFacePositionField();
-    Foam::surfaceVectorField *makeFaceProjectionField();
-    Foam::surfaceVectorField *makeFaceField();
-    Foam::surfaceScalarField *makeAreaField();
-    Foam::volVectorField *makePositionField();
-    Foam::volScalarField *makeDistanceField();
-    Foam::volScalarField *makeRDistanceField(const Foam::volVectorField &r);
-    Foam::volScalarField *makeVolumeField();
-    Foam::volScalarField *makeRandomField();
-    Foam::volScalarField *makeGaussRandomField();
-    Foam::volScalarField *makeCellIdField();
+    surfaceVectorField *makeFacePositionField();
+    surfaceVectorField *makeFaceProjectionField();
+    surfaceVectorField *makeFaceField();
+    surfaceScalarField *makeAreaField();
+    volVectorField *makePositionField();
+    volScalarField *makeDistanceField();
+    volScalarField *makeRDistanceField(const volVectorField &r);
+    volScalarField *makeVolumeField();
+    volScalarField *makeRandomField();
+    volScalarField *makeGaussRandomField();
+    volScalarField *makeCellIdField();
     
     // return Time object
-    const Foam::Time& runTime() const { return runTime_; }
+    const Time& runTime() const { return runTime_; }
 
     // Logical expressions
     template <class Field>
-    Field *makeLogicalField(Foam::scalar v);
+    Field *makeLogicalField(scalar v);
 
     template <class Op,class Field>
     Field *doCompare(Field *a,Op op,Field *b);
@@ -148,12 +154,14 @@ public:
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
     template<class T>
-    static void makePatches(Foam::GeometricField<T,Foam::fvPatchField,Foam::volMesh> &field,bool keepPatches,const Foam::wordList &fixedPatches);
+    static void makePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
 
     template<class T>
-    static void setValuePatches(Foam::GeometricField<T,Foam::fvPatchField,Foam::volMesh> &field,bool keepPatches,const Foam::wordList &fixedPatches);
+    static void setValuePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
 
 };
+
+} // end namespace
 
 #include "FieldValueExpressionDriverI.H"
 
