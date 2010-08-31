@@ -36,6 +36,8 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "FieldValueExpressionDriver.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -53,10 +55,40 @@ addToRunTimeSelectionTable(topoSetSource, expressionToCell, istream);
 Foam::topoSetSource::addToUsageTable Foam::expressionToCell::usage_
 (
     expressionToCell::typeName,
-    "\n    Usage: expressionToCell <cellSet>\n\n"
-    "    Select all cells in the cellSet\n\n"
+    "\n    Usage: expressionToCell <expression>\n\n"
+    "    Select all cells for which expression evaluates to true\n\n"
 );
 
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+void Foam::expressionToCell::combine(topoSet& set, const bool add) const
+{
+    FieldValueExpressionDriver driver
+        (
+            set.db().time().timeName(),
+            set.db().time(),
+            dynamicCast<const fvMesh&>(set.db()),
+            true, // cache stuff
+            true, // search in memory
+            true  // search on disc
+        );
+    driver.parse(expression_);
+    if(!driver.resultIsLogical()) {
+        FatalErrorIn("Foam::expressionToCell::combine(topoSet& set, const bool add) const")
+            << "Expression " << expression_ << " does not evaluate to a logical expression"
+                << endl
+                << abort(FatalError);
+    }
+    autoPtr<volScalarField> condition(driver.getScalar());
+
+    forAll(condition(), cellI)
+    {
+        if (condition()[cellI])
+        {
+            addOrDelete(set, cellI, add);
+        }
+    }
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -64,11 +96,11 @@ Foam::topoSetSource::addToUsageTable Foam::expressionToCell::usage_
 Foam::expressionToCell::expressionToCell
 (
     const polyMesh& mesh,
-    const word& setName
+    const string& expression
 )
 :
     topoSetSource(mesh),
-    setName_(setName)
+    expression_(expression)
 {}
 
 
@@ -80,7 +112,7 @@ Foam::expressionToCell::expressionToCell
 )
 :
     topoSetSource(mesh),
-    setName_(dict.lookup("set"))
+    expression_(dict.lookup("expression"))
 {}
 
 
@@ -92,7 +124,7 @@ Foam::expressionToCell::expressionToCell
 )
 :
     topoSetSource(mesh),
-    setName_(checkIs(is))
+    expression_(checkIs(is))
 {}
 
 
@@ -112,23 +144,17 @@ void Foam::expressionToCell::applyToSet
 {
     if ((action == topoSetSource::ADD) || (action == topoSetSource::NEW))
     {
-        Info<< "    Adding all elements of cellSet " << setName_ << " ..."
+        Info<< "    Adding all elements of for which " << expression_ << " evaluates to true ..."
             << endl;
-
-        // Load the set
-        cellSet loadedSet(mesh_, setName_);
-
-        set.addSet(loadedSet);
+        
+        combine(set,true);
     }
     else if (action == topoSetSource::DELETE)
     {
-        Info<< "    Removing all elements of cellSet " << setName_ << " ..."
+        Info<< "    Removing all elements of for which " << expression_ << " evaluates to true ..."
             << endl;
 
-        // Load the set
-        cellSet loadedSet(mesh_, setName_);
-
-        set.deleteSet(loadedSet);
+        combine(set,false);
     }
 }
 

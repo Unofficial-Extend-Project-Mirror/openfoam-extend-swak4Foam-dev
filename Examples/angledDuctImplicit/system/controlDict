@@ -146,6 +146,7 @@ libs (
     "libgroovyBC.so" 
     "libsimpleSwakFunctionObjects.so" 
     "libswakFunctionObjects.so" 
+    "libswakTopoSources.so" 
 ) ;
 
 // ************************************************************************* //

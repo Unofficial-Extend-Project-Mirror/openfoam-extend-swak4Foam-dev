@@ -31,7 +31,7 @@ Class
     Foam::expressionToCell
 
 Description
-    A topoSetSource to select the cells from another cellSet.
+    A topoSetSource to select the cell from a logical expression
 
 SourceFiles
     expressionToCell.C
@@ -62,8 +62,10 @@ class expressionToCell
         //- Add usage string
         static addToUsageTable usage_;
 
-        //- Name of set to use
-        word setName_;
+        //- The logical expression to use
+        string expression_;
+
+        void combine(topoSet& set, const bool add) const;
 
 public:
 
@@ -76,7 +78,7 @@ public:
         expressionToCell
         (
             const polyMesh& mesh,
-            const word& setName
+            const string& expression
         );
 
         //- Construct from dictionary

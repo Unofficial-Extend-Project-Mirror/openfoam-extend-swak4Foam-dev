@@ -31,11 +31,9 @@ Class
     Foam::expressionToFace
 
 Description
-    A topoSetSource to select a faceSet from cells.
+    A topoSetSource to select a faceSet from a logical expression on the cells
 
-    Either all faces of cell or some other criterion.
-    See implementation.
-    Note: when picking up coupled faces uses cells on neighbouring processors.
+    Face is added if owner and neighbour cell have two different values
 
 SourceFiles
     expressionToFace.C
@@ -47,7 +45,6 @@ SourceFiles
 #define expressionToFace_H
 
 #include "topoSetSource.H"
-#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -62,34 +59,17 @@ class expressionToFace
 :
     public topoSetSource
 {
-public:
-        //- Enumeration defining the valid options
-        enum cellAction
-        {
-            ALL,
-            BOTH
-        };
 
-
-private:
-
-        //- Add usage string
-        static addToUsageTable usage_;
-
-        static const NamedEnum<cellAction, 2> cellActionNames_;
-
-        //- Name of set to use
-        word setName_;
-
-        //- Option
-        cellAction option_;
-
-
+    //- Add usage string
+    static addToUsageTable usage_;
+    
+    //- The logical expression to use
+    string expression_;
+    
     // Private Member Functions
 
-        //- Depending on face to cell option add to or delete from cellSet.
-        void combine(topoSet& set, const bool add) const;
-
+    //- Depending on face to cell option add to or delete from cellSet.
+    void combine(topoSet& set, const bool add) const;
 
 public:
 
@@ -102,8 +82,7 @@ public:
         expressionToFace
         (
             const polyMesh& mesh,
-            const word& setName,
-            const cellAction option
+            const string& expression
         );
 
         //- Construct from dictionary

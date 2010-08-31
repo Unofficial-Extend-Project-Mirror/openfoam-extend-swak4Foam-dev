@@ -37,6 +37,8 @@ License
 #include "syncTools.H"
 #include "addToRunTimeSelectionTable.H"
 
+#include "FieldValueExpressionDriver.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -54,112 +56,46 @@ addToRunTimeSelectionTable(topoSetSource, expressionToFace, istream);
 Foam::topoSetSource::addToUsageTable Foam::expressionToFace::usage_
 (
     expressionToFace::typeName,
-    "\n    Usage: expressionToFace <cellSet> all|both\n\n"
-    "    Select -all : all faces of cells in the cellSet\n"
-    "           -both: faces where both neighbours are in the cellSet\n\n"
+    "\n    Usage: expressionToFace <expression>\n\n"
+    "    Select all faces for which expression evaluates to true on one and false on the other side\n\n"
 );
-
-template<>
-const char* Foam::NamedEnum<Foam::expressionToFace::cellAction, 2>::names[] =
-{
-    "all",
-    "both"
-};
-
-const Foam::NamedEnum<Foam::expressionToFace::cellAction, 2>
-    Foam::expressionToFace::cellActionNames_;
-
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 void Foam::expressionToFace::combine(topoSet& set, const bool add) const
 {
-    // Load the set
-    if (!exists(mesh_.time().path()/topoSet::localPath(mesh_, setName_)))
-    {
-        SeriousError<< "Cannot load set "
-            << setName_ << endl;
+    if(Pstream::parRun()) {
+        WarningIn("Foam::expressionToFace::combine(topoSet& set, const bool add) const")
+            << " Does not give correct results if faces are on the processor boundary"
+                << endl;
     }
 
-    cellSet loadedSet(mesh_, setName_);
-
-    if (option_ == ALL)
-    {
-        // Add all faces from cell
-        for
+    FieldValueExpressionDriver driver
         (
-            cellSet::const_iterator iter = loadedSet.begin();
-            iter != loadedSet.end();
-            ++iter
-        )
-        {
-            label cellI = iter.key();
-
-            const labelList& cFaces = mesh_.cells()[cellI];
-
-            forAll(cFaces, cFaceI)
-            {
-                addOrDelete(set, cFaces[cFaceI], add);
-            }
-        }
+            set.db().time().timeName(),
+            set.db().time(),
+            dynamicCast<const fvMesh&>(set.db()),
+            true, // cache stuff
+            true, // search in memory
+            true  // search on disc
+        );
+    driver.parse(expression_);
+    if(!driver.resultIsLogical()) {
+        FatalErrorIn("Foam::expressionToFace::combine(topoSet& set, const bool add) const")
+            << "Expression " << expression_ << " does not evaluate to a logical expression"
+                << endl
+                << abort(FatalError);
     }
-    else if (option_ == BOTH)
+    autoPtr<volScalarField> condition(driver.getScalar());
+
+    const labelList &own=condition().mesh().faceOwner();
+    const labelList &nei=condition().mesh().faceNeighbour();
+
+    for(label faceI=0;faceI<condition().mesh().nInternalFaces();faceI++)
     {
-        // Add all faces whose both neighbours are in set.
-
-        label nInt = mesh_.nInternalFaces();
-        const labelList& own = mesh_.faceOwner();
-        const labelList& nei = mesh_.faceNeighbour();
-        const polyBoundaryMesh& patches = mesh_.boundaryMesh();
-
-
-        // Check all internal faces
-        for (label faceI = 0; faceI < nInt; faceI++)
+        if (condition()[own[faceI]] != condition()[nei[faceI]])
         {
-            if (loadedSet.found(own[faceI]) && loadedSet.found(nei[faceI]))
-            {
-                addOrDelete(set, faceI, add);
-            }
-        }
-
-
-        // Get coupled cell status
-        boolList neiInSet(mesh_.nFaces()-nInt, false);
-
-        forAll(patches, patchI)
-        {
-            const polyPatch& pp = patches[patchI];
-
-            if (pp.coupled())
-            {
-                label faceI = pp.start();
-                forAll(pp, i)
-                {
-                    neiInSet[faceI-nInt] = loadedSet.found(own[faceI]);
-                    faceI++;
-                }
-            }
-        }
-        syncTools::swapBoundaryFaceList(mesh_, neiInSet, false);
-
-
-        // Check all boundary faces
-        forAll(patches, patchI)
-        {
-            const polyPatch& pp = patches[patchI];
-
-            if (pp.coupled())
-            {
-                label faceI = pp.start();
-                forAll(pp, i)
-                {
-                    if (loadedSet.found(own[faceI]) && neiInSet[faceI-nInt])
-                    {
-                        addOrDelete(set, faceI, add);
-                    }
-                    faceI++;
-                }
-            }
+            addOrDelete(set, faceI, add);
         }
     }
 }
@@ -171,13 +107,11 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
 Foam::expressionToFace::expressionToFace
 (
     const polyMesh& mesh,
-    const word& setName,
-    const cellAction option
+    const string& expression
 )
 :
     topoSetSource(mesh),
-    setName_(setName),
-    option_(option)
+    expression_(expression)
 {}
 
 
@@ -189,8 +123,7 @@ Foam::expressionToFace::expressionToFace
 )
 :
     topoSetSource(mesh),
-    setName_(dict.lookup("set")),
-    option_(cellActionNames_.read(dict.lookup("option")))
+    expression_(dict.lookup("expression"))
 {}
 
 
@@ -202,8 +135,7 @@ Foam::expressionToFace::expressionToFace
 )
 :
     topoSetSource(mesh),
-    setName_(checkIs(is)),
-    option_(cellActionNames_.read(checkIs(is)))
+    expression_(checkIs(is))
 {}
 
 
@@ -221,19 +153,19 @@ void Foam::expressionToFace::applyToSet
     topoSet& set
 ) const
 {
-    if ((action == topoSetSource::NEW) || (action == topoSetSource::ADD))
+    if ((action == topoSetSource::ADD) || (action == topoSetSource::NEW))
     {
-        Info<< "    Adding faces according to cellSet " << setName_
-            << " ..." << endl;
-
-        combine(set, true);
+        Info<< "    Adding all elements of for which " << expression_ << " evaluates to true ..."
+            << endl;
+        
+        combine(set,true);
     }
     else if (action == topoSetSource::DELETE)
     {
-        Info<< "    Removing faces according to cellSet " << setName_
-            << " ..." << endl;
+        Info<< "    Removing all elements of for which " << expression_ << " evaluates to true ..."
+            << endl;
 
-        combine(set, false);
+        combine(set,false);
     }
 }
 
