@@ -142,6 +142,18 @@ scalarField *FaceZoneValueExpressionDriver::makeFaceAreaMagField()
     return getFromFieldInternal(this->mesh().magSf(),faceZone_);
 }
 
+scalarField *FaceZoneValueExpressionDriver::makeFaceFlipField()
+{
+    scalarField *result=new scalarField(faceZone_.size());
+    const boolList &flip=faceZone_.flipMap();
+    forAll(flip,i)
+    {
+        (*result)[i]= (flip[i] ? -1 : 1);
+    }
+
+    return result;
+}
+
 vectorField *FaceZoneValueExpressionDriver::makeFaceNormalField()
 {
     autoPtr<vectorField> sf(this->makeFaceAreaField());

@@ -35,6 +35,9 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "cellSet.H"
+#include "SortableList.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -141,6 +144,74 @@ scalarField *FaceSetValueExpressionDriver::makeCellVolumeField()
 // {
 //     notImplemented("FaceSetValueExpressionDriver::makePointField");
 // }
+
+scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
+{
+    // inspired by the setsToZones-utility
+
+    scalarField *result=new scalarField(faceSet_.size());
+    word setName(faceSet_.name() + "SlaveCells");
+    const fvMesh &mesh=this->mesh();
+    cellSet cells(mesh, setName,IOobject::MUST_READ);
+    SortableList<label> faceLabels(faceSet_.toc());
+
+    forAll(faceLabels, i)
+    {
+        label faceI = faceLabels[i];
+
+        bool flip = false;
+
+        if (mesh.isInternalFace(faceI))
+        {
+            if
+                (
+                    cells.found(mesh.faceOwner()[faceI])
+                    && !cells.found(mesh.faceNeighbour()[faceI])
+                )
+            {
+                flip = false;
+            }
+            else if
+                (
+                    !cells.found(mesh.faceOwner()[faceI])
+                    && cells.found(mesh.faceNeighbour()[faceI])
+                )
+            {
+                flip = true;
+            }
+            else
+            {
+                FatalErrorIn("scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()")
+                    << "One of owner or neighbour of internal face "
+                        << faceI << " should be in cellSet " << cells.name()
+                        << " to be able to determine orientation." << endl
+                        << "Face:" << faceI
+                        << " own:" << mesh.faceOwner()[faceI]
+                        << " OwnInCellSet:"
+                        << cells.found(mesh.faceOwner()[faceI])
+                        << " nei:" << mesh.faceNeighbour()[faceI]
+                        << " NeiInCellSet:"
+                        << cells.found(mesh.faceNeighbour()[faceI])
+                        << abort(FatalError);
+            }
+        }
+        else
+        {
+            if (cells.found(mesh.faceOwner()[faceI]))
+            {
+                flip = false;
+            }
+            else
+            {
+                flip = true;
+            }
+        }
+    
+        (*result)[i]= (flip ? -1 : 1 );
+    }
+ 
+    return result;
+}
 
 scalarField *FaceSetValueExpressionDriver::makeFaceAreaMagField()
 {

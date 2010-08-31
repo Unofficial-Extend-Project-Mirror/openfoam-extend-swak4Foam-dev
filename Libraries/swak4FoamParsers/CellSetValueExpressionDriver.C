@@ -143,6 +143,15 @@ scalarField *CellSetValueExpressionDriver::makeFaceAreaMagField()
     return new scalarField(0);
 }
 
+scalarField *CellSetValueExpressionDriver::makeFaceFlipField()
+{
+    FatalErrorIn("CellSetValueExpressionDriver::makeFaceFlipField()")
+        << "cellSet knows nothing about faces"
+            << endl
+            << abort(FatalError);
+    return new scalarField(0);
+}
+
 vectorField *CellSetValueExpressionDriver::makeFaceNormalField()
 {
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceNormalField()")

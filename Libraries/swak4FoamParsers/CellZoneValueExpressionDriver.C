@@ -147,6 +147,15 @@ vectorField *CellZoneValueExpressionDriver::makeFaceNormalField()
     return new vectorField(0);
 }
 
+scalarField *CellZoneValueExpressionDriver::makeFaceFlipField()
+{
+    FatalErrorIn("CellZoneValueExpressionDriver::makeFaceFlipField()")
+        << "cellZone knows nothing about faces"
+            << endl
+            << abort(FatalError);
+    return new scalarField(0);
+}
+
 vectorField *CellZoneValueExpressionDriver::makeFaceAreaField()
 {
     FatalErrorIn("CellZoneValueExpressionDriver::makeFaceAreaField()")

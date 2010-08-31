@@ -186,7 +186,7 @@ functions
         type swakExpression;
         valueType faceSet;
         setName beforeFilter;
-        expression "phi";
+        expression "phi*flip()";
         accumulations (
             sum
         );
@@ -197,7 +197,7 @@ functions
         type swakExpression;
         valueType faceSet;
         setName afterFilter;
-        expression "phi";
+        expression "phi*flip()";
         accumulations (
             sum
         );
@@ -208,7 +208,7 @@ functions
         type swakExpression;
         valueType faceZone;
         zoneName beforeFilter;
-        expression "phi";
+        expression "phi*flip()";
         accumulations (
             sum
         );
@@ -219,7 +219,7 @@ functions
         type swakExpression;
         valueType faceZone;
         zoneName afterFilter;
-        expression "phi";
+        expression "phi*flip()";
         accumulations (
             sum
         );

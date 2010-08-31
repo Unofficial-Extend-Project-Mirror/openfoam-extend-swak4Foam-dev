@@ -102,6 +102,8 @@ public:
 
     //     virtual vectorField *makePointField()=0;
 
+    virtual scalarField *makeFaceFlipField();
+
     virtual vectorField *makeFaceNormalField();
 
     virtual vectorField *makeFaceAreaField();

@@ -140,6 +140,8 @@ public:
 
     virtual vectorField *makeFaceAreaField()=0;
 
+    virtual scalarField *makeFaceFlipField()=0;
+
     scalarField *makeIdField();
 
 //     template<class Type>

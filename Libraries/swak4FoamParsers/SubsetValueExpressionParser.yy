@@ -172,6 +172,8 @@
 
 %token TOKEN_cpu
 
+%token TOKEN_flip
+
 %left '?' ':'
 %left TOKEN_OR
 %left TOKEN_AND
@@ -360,6 +362,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_pi { $$ = driver.makeField(M_PI); }
         | TOKEN_id '(' ')'                         { $$ = driver.makeIdField(); }
         | TOKEN_cpu '(' ')'       { $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo())); }
+        | TOKEN_flip '(' ')'       { $$ = driver.makeFaceFlipField(); }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField(); }
         | TOKEN_randNormal '(' ')'        { $$ = driver.makeGaussRandomField(); }
         | TOKEN_deltaT '(' ')'   { $$ = driver.makeField(driver.runTime().deltaT().value()); }
