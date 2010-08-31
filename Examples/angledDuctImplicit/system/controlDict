@@ -139,16 +139,82 @@ functions
         expression "p-pFilter";
         verbose true;
     }
-    pressureOverFiler
+    // pressureOverFiler
+    // {
+    //     type swakExpression;
+    //     valueType faceZone;
+    //     zoneName beforeFilter;
+    //     variables "pAfter{faceSet'afterFilter}=average(p);";
+    //     accumulations (
+    //         average
+    //     );
+    //     expression "p-pAfter";
+    //     verbose true;
+    // }
+    flowBeforeSet
+    {
+        type swakExpression;
+        valueType faceSet;
+        setName beforeFilter;
+        expression "phi";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowAfterSet
+    {
+        type swakExpression;
+        valueType faceSet;
+        setName afterFilter;
+        expression "phi";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowBeforeZone
     {
         type swakExpression;
         valueType faceZone;
         zoneName beforeFilter;
-        variables "pAfter{faceSet'afterFilter}=average(p);";
+        expression "phi";
         accumulations (
-            average
+            sum
         );
-        expression "p-pAfter";
+        verbose true;
+    }
+    flowAfterZone
+    {
+        type swakExpression;
+        valueType faceZone;
+        zoneName afterFilter;
+        expression "phi";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowInlet
+    {
+        type swakExpression;
+        valueType patch;
+        patchName inlet;
+        expression "phi";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowOutlet
+    {
+        type swakExpression;
+        valueType patch;
+        patchName outlet;
+        expression "phi";
+        accumulations (
+            sum
+        );
         verbose true;
     }
 );

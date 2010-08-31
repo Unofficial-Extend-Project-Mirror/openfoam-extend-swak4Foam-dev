@@ -90,27 +90,27 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceZone::c
 
 Field<scalar> *FaceZoneValueExpressionDriver::getScalarField(const string &name)
 {
-    return getFieldInternal<volScalarField,faceZone,scalar>(name,faceZone_);
+    return getFieldInternal<surfaceScalarField,faceZone,scalar>(name,faceZone_);
 }
 
 Field<vector> *FaceZoneValueExpressionDriver::getVectorField(const string &name)
 {
-    return getFieldInternal<volVectorField,faceZone,vector>(name,faceZone_);
+    return getFieldInternal<surfaceVectorField,faceZone,vector>(name,faceZone_);
 }
 
 Field<tensor> *FaceZoneValueExpressionDriver::getTensorField(const string &name)
 {
-    return getFieldInternal<volTensorField,faceZone,tensor>(name,faceZone_);
+    return getFieldInternal<surfaceTensorField,faceZone,tensor>(name,faceZone_);
 }
 
 Field<symmTensor> *FaceZoneValueExpressionDriver::getSymmTensorField(const string &name)
 {
-    return getFieldInternal<volSymmTensorField,faceZone,symmTensor>(name,faceZone_);
+    return getFieldInternal<surfaceSymmTensorField,faceZone,symmTensor>(name,faceZone_);
 }
 
 Field<sphericalTensor> *FaceZoneValueExpressionDriver::getSphericalTensorField(const string &name)
 {
-    return getFieldInternal<volSphericalTensorField,faceZone,sphericalTensor>(name,faceZone_);
+    return getFieldInternal<surfaceSphericalTensorField,faceZone,sphericalTensor>(name,faceZone_);
 }
 
 vectorField *FaceZoneValueExpressionDriver::makePositionField()
