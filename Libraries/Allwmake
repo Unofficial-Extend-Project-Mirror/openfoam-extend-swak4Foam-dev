@@ -7,3 +7,5 @@ wmake libso groovyBC
 wmake libso swakFunctionObjects
 
 wmake libso simpleSwakFunctionObjects
+
+wmake libso swakTopoSources

@@ -1,0 +1,4 @@
+expressionToCell.C
+expressionToFace.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakTopoSources
