@@ -70,11 +70,13 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
                 << endl;
     }
 
+    fvMesh mesh(set.db());
+
     FieldValueExpressionDriver driver
         (
-            set.db().time().timeName(),
-            set.db().time(),
-            dynamicCast<const fvMesh&>(set.db()),
+            mesh.time().timeName(),
+            mesh.time(),
+            mesh,
             true, // cache stuff
             true, // search in memory
             true  // search on disc
@@ -86,14 +88,14 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
                 << endl
                 << abort(FatalError);
     }
-    autoPtr<volScalarField> condition(driver.getScalar());
+    const volScalarField &condition=*(driver.getScalar());
 
-    const labelList &own=condition().mesh().faceOwner();
-    const labelList &nei=condition().mesh().faceNeighbour();
+    const labelList &own=condition.mesh().faceOwner();
+    const labelList &nei=condition.mesh().faceNeighbour();
 
-    for(label faceI=0;faceI<condition().mesh().nInternalFaces();faceI++)
+    for(label faceI=0;faceI<condition.mesh().nInternalFaces();faceI++)
     {
-        if (condition()[own[faceI]] != condition()[nei[faceI]])
+        if (condition[own[faceI]] != condition[nei[faceI]])
         {
             addOrDelete(set, faceI, add);
         }

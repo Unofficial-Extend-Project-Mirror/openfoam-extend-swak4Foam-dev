@@ -63,11 +63,13 @@ Foam::topoSetSource::addToUsageTable Foam::expressionToCell::usage_
 
 void Foam::expressionToCell::combine(topoSet& set, const bool add) const
 {
+    fvMesh mesh(set.db());
+
     FieldValueExpressionDriver driver
         (
-            set.db().time().timeName(),
-            set.db().time(),
-            dynamicCast<const fvMesh&>(set.db()),
+            mesh.time().timeName(),
+            mesh.time(),
+            mesh,
             true, // cache stuff
             true, // search in memory
             true  // search on disc
@@ -79,11 +81,11 @@ void Foam::expressionToCell::combine(topoSet& set, const bool add) const
                 << endl
                 << abort(FatalError);
     }
-    autoPtr<volScalarField> condition(driver.getScalar());
+    const volScalarField &condition=*(driver.getScalar());
 
-    forAll(condition(), cellI)
+    forAll(condition, cellI)
     {
-        if (condition()[cellI])
+        if (condition[cellI])
         {
             addOrDelete(set, cellI, add);
         }

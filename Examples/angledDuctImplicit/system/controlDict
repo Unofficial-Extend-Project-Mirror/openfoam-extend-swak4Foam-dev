@@ -33,11 +33,11 @@ writeInterval   10;
 
 purgeWrite      0;
 
-writeFormat     binary;
+writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression uncompressed;
+writeCompression compressed;
 
 timeFormat      general;
 
@@ -137,6 +137,18 @@ functions
             average
         );
         expression "p-pFilter";
+        verbose true;
+    }
+    pressureOverFiler
+    {
+        type swakExpression;
+        valueType faceZone;
+        zoneName beforeFilter;
+        variables "pAfter{faceSet'afterFilter}=average(p);";
+        accumulations (
+            average
+        );
+        expression "p-pAfter";
         verbose true;
     }
 );

@@ -16,7 +16,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // Name of set to operate on
-name beforeFilter;
+name afterFilter;
 
 // One of clear/new/invert/add/delete|subset/list
 action new;
@@ -27,7 +27,7 @@ topoSetSources
 (
     expressionToFace
     {
-        expression "set(inlet)";
+        expression "set(outlet)";
     }
 );
 
