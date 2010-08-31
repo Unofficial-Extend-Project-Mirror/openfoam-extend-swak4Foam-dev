@@ -75,7 +75,11 @@ public:
    // Constructors
 
     //- Construct from components
-    FaceZoneValueExpressionDriver(const faceZone &);
+    FaceZoneValueExpressionDriver(
+        const faceZone &,
+        bool autoInterpolate=false,
+        bool warnAutoInterpolate=true
+    );
     
     //- Construct from a dictionary
     FaceZoneValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);

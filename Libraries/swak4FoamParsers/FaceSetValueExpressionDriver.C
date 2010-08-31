@@ -59,9 +59,13 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceSetValueExpress
         )
 {}
 
-FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const faceSet &set)
+FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
+    const faceSet &set,
+    bool autoInterpolate,
+    bool warnAutoInterpolate
+)
 :
-    SubsetValueExpressionDriver(),
+    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     faceSet_(
             dynamicCast<const fvMesh&>(set.db()),
             set.name()+"_copy",
@@ -95,27 +99,27 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceSet::co
 
 Field<scalar> *FaceSetValueExpressionDriver::getScalarField(const string &name)
 {
-    return getFieldInternal<surfaceScalarField,faceSet,scalar>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceSet,scalar>(name,faceSet_);
 }
 
 Field<vector> *FaceSetValueExpressionDriver::getVectorField(const string &name)
 {
-    return getFieldInternal<surfaceVectorField,faceSet,vector>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceSet,vector>(name,faceSet_);
 }
 
 Field<tensor> *FaceSetValueExpressionDriver::getTensorField(const string &name)
 {
-    return getFieldInternal<surfaceTensorField,faceSet,tensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceSet,tensor>(name,faceSet_);
 }
 
 Field<symmTensor> *FaceSetValueExpressionDriver::getSymmTensorField(const string &name)
 {
-    return getFieldInternal<surfaceSymmTensorField,faceSet,symmTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceSet,symmTensor>(name,faceSet_);
 }
 
 Field<sphericalTensor> *FaceSetValueExpressionDriver::getSphericalTensorField(const string &name)
 {
-    return getFieldInternal<surfaceSphericalTensorField,faceSet,sphericalTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceSet,sphericalTensor>(name,faceSet_);
 }
 
 vectorField *FaceSetValueExpressionDriver::makePositionField()

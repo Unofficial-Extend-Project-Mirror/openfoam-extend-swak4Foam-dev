@@ -75,7 +75,11 @@ public:
    // Constructors
 
     //- Construct from components
-    FaceSetValueExpressionDriver(const faceSet &);
+    FaceSetValueExpressionDriver(
+        const faceSet &,
+        bool autoInterpolate=false,
+        bool warnAutoInterpolate=true
+    );
     
     //- Construct from a dictionary
     FaceSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);

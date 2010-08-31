@@ -421,7 +421,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
             id,
             IOobject::MUST_READ
         );
-        FaceSetValueExpressionDriver otherDriver(otherSet);
+        FaceSetValueExpressionDriver otherDriver(otherSet,true,false);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="faceZone") {
@@ -433,7 +433,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
                     << abort(FatalError);
         }
         const faceZone &otherZone=region.faceZones()[zoneI];
-        FaceZoneValueExpressionDriver otherDriver(otherZone);
+        FaceZoneValueExpressionDriver otherDriver(otherZone,true,false);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else {

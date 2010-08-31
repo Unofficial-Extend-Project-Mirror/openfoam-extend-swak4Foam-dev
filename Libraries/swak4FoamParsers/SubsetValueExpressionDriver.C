@@ -48,17 +48,26 @@ namespace Foam {
 
 SubsetValueExpressionDriver::SubsetValueExpressionDriver(const SubsetValueExpressionDriver& orig)
 :
-    CommonValueExpressionDriver(orig)
+    CommonValueExpressionDriver(orig),
+    autoInterpolate_(orig.autoInterpolate_),
+    warnAutoInterpolate_(orig.warnAutoInterpolate_)
 {}
 
 SubsetValueExpressionDriver::SubsetValueExpressionDriver(const dictionary& dict)
 :
-    CommonValueExpressionDriver(dict)
+    CommonValueExpressionDriver(dict),
+    autoInterpolate_(dict.lookupOrDefault("autoInterpolate",false)),
+    warnAutoInterpolate_(dict.lookupOrDefault("warnAutoInterpolate",true))
 {}
 
-SubsetValueExpressionDriver::SubsetValueExpressionDriver()
+SubsetValueExpressionDriver::SubsetValueExpressionDriver(
+        bool autoInterpolate,
+        bool warnAutoInterpolate
+)
 :
-    CommonValueExpressionDriver()
+    CommonValueExpressionDriver(),
+    autoInterpolate_(autoInterpolate),
+    warnAutoInterpolate_(warnAutoInterpolate)
 {}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

@@ -55,9 +55,13 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceZoneValueExpres
         faceZone_(zone)
 {}
 
-FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(const faceZone &zone)
+FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(
+    const faceZone &zone,
+    bool autoInterpolate,
+    bool warnAutoInterpolate
+)
 :
-    SubsetValueExpressionDriver(),
+    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     faceZone_(zone)
 {}
 
@@ -90,27 +94,27 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceZone::c
 
 Field<scalar> *FaceZoneValueExpressionDriver::getScalarField(const string &name)
 {
-    return getFieldInternal<surfaceScalarField,faceZone,scalar>(name,faceZone_);
+    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceZone,scalar>(name,faceZone_);
 }
 
 Field<vector> *FaceZoneValueExpressionDriver::getVectorField(const string &name)
 {
-    return getFieldInternal<surfaceVectorField,faceZone,vector>(name,faceZone_);
+    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceZone,vector>(name,faceZone_);
 }
 
 Field<tensor> *FaceZoneValueExpressionDriver::getTensorField(const string &name)
 {
-    return getFieldInternal<surfaceTensorField,faceZone,tensor>(name,faceZone_);
+    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceZone,tensor>(name,faceZone_);
 }
 
 Field<symmTensor> *FaceZoneValueExpressionDriver::getSymmTensorField(const string &name)
 {
-    return getFieldInternal<surfaceSymmTensorField,faceZone,symmTensor>(name,faceZone_);
+    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceZone,symmTensor>(name,faceZone_);
 }
 
 Field<sphericalTensor> *FaceZoneValueExpressionDriver::getSphericalTensorField(const string &name)
 {
-    return getFieldInternal<surfaceSphericalTensorField,faceZone,sphericalTensor>(name,faceZone_);
+    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceZone,sphericalTensor>(name,faceZone_);
 }
 
 vectorField *FaceZoneValueExpressionDriver::makePositionField()

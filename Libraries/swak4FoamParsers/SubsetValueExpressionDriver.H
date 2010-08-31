@@ -77,6 +77,11 @@ class SubsetValueExpressionDriver
 {
     // Private data
 
+    //- allow automatic interpolation
+    bool autoInterpolate_;
+    //- warn on automatic interpolation
+    bool warnAutoInterpolate_;
+
     // Private Member Functions
 
 protected:
@@ -93,6 +98,10 @@ protected:
     template<class FieldType,class Subset,class T>
     Field<T> *getFieldInternal(const string &name,const Subset &sub);
 
+    //- General Method to get the values and interpolate
+    template<class FieldType,class IFieldType,class Subset,class T>
+    Field<T> *getFieldInternalAndInterpolate(const string &name,const Subset &sub);
+
     //- General Method to get values from a field
     template<class Subset,class T>
     Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
@@ -101,7 +110,10 @@ public:
     // Constructors
 
     //- Construct from components
-    SubsetValueExpressionDriver();
+    SubsetValueExpressionDriver(
+        bool autoInterpolate=false,
+        bool warnAutoInterpolate=true
+    );
     
     //- Copy construct
     SubsetValueExpressionDriver(const SubsetValueExpressionDriver&);
