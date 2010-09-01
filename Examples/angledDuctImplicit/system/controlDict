@@ -251,9 +251,8 @@ functions
     {
         type swakExpression;
         valueType internalField;
-        // variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";        
-        //        expression "p-pFilter";
-        expression "p";
+        variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";        
+        expression "p-pFilter";
         accumulations (
             min
             max

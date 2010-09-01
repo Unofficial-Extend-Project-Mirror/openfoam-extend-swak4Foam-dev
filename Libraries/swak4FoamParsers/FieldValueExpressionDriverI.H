@@ -72,7 +72,8 @@ bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const strin
 {
     if(debug) {
         Info << "FieldValueExpressionDriver::isThere. Name: " << name 
-            << " Type: " << T::typeName << endl;
+            << " Type: " << T::typeName << " searchInMemory: " << searchInMemory_
+            << " searchOnDisc_: " << searchOnDisc_ << endl;
     }
     if(searchInMemory_) {
         if(mesh_.foundObject<T>(name)) {

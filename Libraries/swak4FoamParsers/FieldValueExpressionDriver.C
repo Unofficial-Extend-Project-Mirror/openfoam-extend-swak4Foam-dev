@@ -81,11 +81,11 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       typ_(NO_TYPE),
       cacheReadFields_(dict.lookupOrDefault("cacheReadFields",false)),
       searchInMemory_(
-          dict.lookupOrDefault("searchInMemory",false)
+          dict.lookupOrDefault("searchInMemory",true)
           ||
           cacheReadFields_
       ),
-      searchOnDisc_(dict.lookupOrDefault("searchOnDisc",true)),
+      searchOnDisc_(dict.lookupOrDefault("searchOnDisc",false)),
       trace_scanning (false),
       trace_parsing (false)
 {
