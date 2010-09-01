@@ -61,7 +61,9 @@ defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-CommonValueExpressionDriver::CommonValueExpressionDriver(const CommonValueExpressionDriver& orig)
+CommonValueExpressionDriver::CommonValueExpressionDriver(
+    const CommonValueExpressionDriver& orig
+)
 :
     variableString_(""),
     result_(orig.result_),
@@ -70,7 +72,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const CommonValueExpres
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_)
-{}
+{
+    setSearchBehaviour(
+        orig.cacheReadFields_,
+        orig.searchInMemory_,
+        orig.searchOnDisc_
+    );
+}
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
 :
@@ -83,19 +91,49 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
         Info << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
+    setSearchBehaviour(
+        dict.lookupOrDefault("cacheReadFields",false),
+        dict.lookupOrDefault("searchInMemory",true),
+        dict.lookupOrDefault("searchOnDisc",false)
+    );
+
     if(dict.found("timelines")) {
         readLines(dict.lookup("timelines"));
     }
     //    addVariables(variableString_);
 }
 
-CommonValueExpressionDriver::CommonValueExpressionDriver()
+CommonValueExpressionDriver::CommonValueExpressionDriver(
+    bool cacheReadFields,
+    bool searchInMemory,
+    bool searchOnDisc
+)
 :
     variableString_(""),
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
-{}
+{
+    setSearchBehaviour(
+        cacheReadFields,
+        searchInMemory,
+        searchOnDisc
+    );
+}
+
+void CommonValueExpressionDriver::setSearchBehaviour(
+    bool cacheReadFields,
+    bool searchInMemory,
+    bool searchOnDisc
+)
+{
+    cacheReadFields_=cacheReadFields;
+    searchInMemory_=
+        searchInMemory
+        ||
+        cacheReadFields;
+    searchOnDisc_=searchOnDisc;
+}
 
 autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
 (

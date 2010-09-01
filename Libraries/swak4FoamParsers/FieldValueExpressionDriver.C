@@ -24,20 +24,17 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     bool searchInMemory,
     bool searchOnDisc
 )
-    : CommonValueExpressionDriver(),
+    : CommonValueExpressionDriver(
+        cacheReadFields,
+        searchInMemory,
+        searchOnDisc        
+    ),
       time_(time),
       mesh_(mesh),
       runTime_(runTime),
       result_(NULL),
       vresult_(NULL),
-      typ_(NO_TYPE),
-      cacheReadFields_(cacheReadFields),
-      searchInMemory_(
-          searchInMemory
-          ||
-          cacheReadFields_
-      ),
-      searchOnDisc_(searchOnDisc)
+      typ_(NO_TYPE)
 {
 }
 
@@ -47,20 +44,17 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     bool searchInMemory,
     bool searchOnDisc
 )
-    : CommonValueExpressionDriver(),
+    : CommonValueExpressionDriver(
+        cacheReadFields,
+        searchInMemory,
+        searchOnDisc        
+    ),
       time_(mesh.time().timeName()),
       mesh_(mesh),
       runTime_(mesh.time()),
       result_(NULL),
       vresult_(NULL),
-      typ_(NO_TYPE),
-      cacheReadFields_(cacheReadFields),
-      searchInMemory_(
-          searchInMemory
-          ||
-          cacheReadFields_
-      ),
-      searchOnDisc_(searchOnDisc)
+      typ_(NO_TYPE)
 {
 }
 
@@ -74,14 +68,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(mesh.time()),
       result_(NULL),
       vresult_(NULL),
-      typ_(NO_TYPE),
-      cacheReadFields_(dict.lookupOrDefault("cacheReadFields",false)),
-      searchInMemory_(
-          dict.lookupOrDefault("searchInMemory",true)
-          ||
-          cacheReadFields_
-      ),
-      searchOnDisc_(dict.lookupOrDefault("searchOnDisc",false))
+      typ_(NO_TYPE)
 {
 }
 

@@ -51,15 +51,6 @@ private:
 
     ExpressionType typ_;
 
-    // keep fields read from disc in memory
-    bool cacheReadFields_;
-
-    // should we search for the field in the registry before looking on disc
-    bool searchInMemory_;
-
-    // should we look on disc? does not make sense in the application
-    bool searchOnDisc_;
-
 public:
     TypeName("FieldValueExpressionDriver");
 

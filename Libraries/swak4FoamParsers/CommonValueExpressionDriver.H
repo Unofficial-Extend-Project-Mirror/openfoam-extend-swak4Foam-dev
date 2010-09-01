@@ -104,6 +104,31 @@ protected:
         const dictionary &dict,
         const fvMesh &mesh
     );
+
+private:
+    //- keep fields read from disc in memory
+    bool cacheReadFields_;
+
+    //- should we search for the field in the registry before looking on disc
+    bool searchInMemory_;
+
+    //- should we look on disc? does not make sense in the application
+    bool searchOnDisc_;
+
+protected:
+   
+    inline bool cacheReadFields() const { return cacheReadFields_; }
+
+    inline bool searchInMemory() const { return searchInMemory_; }
+
+    inline bool searchOnDisc() const { return searchOnDisc_; }
+
+    void setSearchBehaviour(
+        bool cacheReadFields,
+        bool searchInMemory,
+        bool searchOnDisc
+    );
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -125,10 +150,16 @@ public:
     // Constructors
 
     //- Construct from components
-    CommonValueExpressionDriver();
+    CommonValueExpressionDriver(
+        bool cacheReadFields=false,
+        bool searchInMemory=true,
+        bool searchOnDisc=false
+    );
     
     //- Copy construct
-    CommonValueExpressionDriver(const CommonValueExpressionDriver&);
+    CommonValueExpressionDriver(
+        const CommonValueExpressionDriver&
+    );
 
     //- Construct from a dictionary
     CommonValueExpressionDriver(const dictionary&);

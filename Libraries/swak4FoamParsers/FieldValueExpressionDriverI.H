@@ -18,7 +18,7 @@ T *FieldValueExpressionDriver::getField(const string &name)
     T *f=NULL;
 
     if(
-        searchInMemory_
+        searchInMemory()
         &&
         mesh_.foundObject<T>(name)
     ) {
@@ -30,7 +30,7 @@ T *FieldValueExpressionDriver::getField(const string &name)
             mesh_.lookupObject<T>(name)
         );
     } else if(
-        searchOnDisc_
+        searchOnDisc()
     ) {
         if(debug) {
             Info << "Reading " << name << " from disc" << endl;
@@ -46,7 +46,7 @@ T *FieldValueExpressionDriver::getField(const string &name)
             ),
             mesh_
         );
-        if(cacheReadFields_) {
+        if(cacheReadFields()) {
             if(debug) {
                 Info << "Registering a copy of " << name << " with mesh" << endl;
             }
@@ -72,10 +72,10 @@ bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const strin
 {
     if(debug) {
         Info << "FieldValueExpressionDriver::isThere. Name: " << name 
-            << " Type: " << T::typeName << " searchInMemory: " << searchInMemory_
-            << " searchOnDisc_: " << searchOnDisc_ << endl;
+            << " Type: " << T::typeName << " searchInMemory: " << searchInMemory()
+            << " searchOnDisc_: " << searchOnDisc() << endl;
     }
-    if(searchInMemory_) {
+    if(searchInMemory()) {
         if(mesh_.foundObject<T>(name)) {
             if(debug) {
                 Info << "Found " << name << " in memory" << endl;
@@ -85,7 +85,7 @@ bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const strin
     }
 
     if(
-        searchOnDisc_
+        searchOnDisc()
         &&
         getTypeOfField(name)==T::typeName
     ) {
