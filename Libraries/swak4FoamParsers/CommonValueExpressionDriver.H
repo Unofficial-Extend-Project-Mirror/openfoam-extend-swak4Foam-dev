@@ -263,6 +263,12 @@ public:
 
     // Handling temporary variables
     void clearVariables();
+
+    // Set the trace variables
+    void setTrace(
+        bool scanning,
+        bool parsing
+    );
 };
 
 

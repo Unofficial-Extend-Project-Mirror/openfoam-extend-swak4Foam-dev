@@ -179,8 +179,7 @@ void doAnExpression
     if (doDebug) {
         Info << "Parsing expression: " << expression << "\nand condition " 
             << condition << "\n" << endl; 
-        driver.trace_parsing=true;
-        driver.trace_scanning=true;
+        driver.setTrace(true,true);
     }
 
     ldriver.parse(condition);

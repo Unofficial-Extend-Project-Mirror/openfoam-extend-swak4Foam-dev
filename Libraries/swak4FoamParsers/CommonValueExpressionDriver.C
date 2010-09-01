@@ -626,6 +626,14 @@ string CommonValueExpressionDriver::getTypeOfSet(const string &name)
     }
 }
 
+void CommonValueExpressionDriver::setTrace(
+    bool scanning,
+    bool parsing
+)
+{
+    trace_parsing_=parsing;
+    trace_scanning_=scanning;
+}
 
 // ************************************************************************* //
 
