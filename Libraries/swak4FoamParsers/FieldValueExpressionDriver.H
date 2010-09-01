@@ -108,16 +108,9 @@ public:
     // Handling the scanner.
     void scan_begin ();
     void scan_end ();
-    bool trace_scanning;
 
     // Handling the parser.
     void parse (const std::string& f);
-    string content;
-    bool trace_parsing;
-
-    // Error handling.
-    void error (const parserField::location& l, const std::string& m);
-    void error (const std::string& m);
 
     // checking for variables
     template<class T>

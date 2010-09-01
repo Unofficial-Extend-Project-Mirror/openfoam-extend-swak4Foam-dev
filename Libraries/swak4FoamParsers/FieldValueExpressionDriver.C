@@ -37,9 +37,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
           ||
           cacheReadFields_
       ),
-      searchOnDisc_(searchOnDisc),
-      trace_scanning (false),
-      trace_parsing (false)
+      searchOnDisc_(searchOnDisc)
 {
 }
 
@@ -62,9 +60,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
           ||
           cacheReadFields_
       ),
-      searchOnDisc_(searchOnDisc),
-      trace_scanning (false),
-      trace_parsing (false)
+      searchOnDisc_(searchOnDisc)
 {
 }
 
@@ -85,9 +81,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
           ||
           cacheReadFields_
       ),
-      searchOnDisc_(dict.lookupOrDefault("searchOnDisc",false)),
-      trace_scanning (false),
-      trace_parsing (false)
+      searchOnDisc_(dict.lookupOrDefault("searchOnDisc",false))
 {
 }
 
@@ -118,44 +112,14 @@ void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
 
 void FieldValueExpressionDriver::parse (const std::string &f)
 {
-    content = f;
+    content_ = f;
     scan_begin ();
     parserField::FieldValueExpressionParser parser (*this);
-    parser.set_debug_level (trace_parsing);
+    parser.set_debug_level (trace_parsing_);
     parser.parse ();
     scan_end ();
 }
 
-void FieldValueExpressionDriver::error (const parserField::location& l, const std::string& m)
-{
-    std::ostringstream buff;
-    buff << l;
-    std::string place="";
-    for(unsigned int i=0;i<l.begin.column;i++) {
-        place+=" ";
-    }
-    for(unsigned int i=l.begin.column;i<l.end.column;i++) {
-        place+="^";
-    }
-    for(unsigned int i=l.end.column;i<content.size();i++) {
-        place+=" ";
-    }
-
-    FatalErrorIn("parsingValue")
-        //        << args.executable()
-        << " Parser Error at " << buff.str() << " :"  << m << endl
-            << content << endl << place
-            << exit(FatalError);
-    //    Info << buff.str() << ": " << m << endl;
-}
-
-void FieldValueExpressionDriver::error (const std::string& m)
-{
-    FatalErrorIn("parsingValue")
-        //        << args.executable()
-            << " Parser Error: " << m
-            << exit(FatalError);
-}
 
 bool FieldValueExpressionDriver::isCellSet(const string &name)
 {
