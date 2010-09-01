@@ -67,40 +67,6 @@ T *FieldValueExpressionDriver::getField(const string &name)
     return f;
 }
 
-template<class T>
-bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const string &name)
-{
-    if(debug) {
-        Info << "FieldValueExpressionDriver::isThere. Name: " << name 
-            << " Type: " << T::typeName << " searchInMemory: " << searchInMemory()
-            << " searchOnDisc_: " << searchOnDisc() << endl;
-    }
-    if(searchInMemory()) {
-        if(mesh_.foundObject<T>(name)) {
-            if(debug) {
-                Info << "Found " << name << " in memory" << endl;
-            }
-            return true;
-        }
-    }
-
-    if(
-        searchOnDisc()
-        &&
-        getTypeOfField(name)==T::typeName
-    ) {
-        if(debug) {
-            Info << "Found " << name << " on disc" << endl;
-        }
-        return true;
-    } else {
-        if(debug) {
-            Info << name << " not found" << endl;
-        }
-        return false;
-    }
-}
-
 inline label FieldValueExpressionDriver::size() const
 {
     return mesh_.nCells();

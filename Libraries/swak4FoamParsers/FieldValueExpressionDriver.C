@@ -126,52 +126,6 @@ bool FieldValueExpressionDriver::isCellZone(const string &name)
     }
 }
 
-string FieldValueExpressionDriver::getTypeOfField(const string &name)
-{
-    IOobject f 
-        (
-            name,
-            time_,
-            mesh_,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        );
-    f.headerOk();
-
-    return f.headerClassName();
-}
-
-string FieldValueExpressionDriver::getTypeOfSet(const string &name)
-{
-    IOobject f 
-        (
-            name,
-            time_,
-            polyMesh::meshSubDir/"sets",
-	    mesh_,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        );
-    
-    if(f.headerOk()) {;
-        return f.headerClassName();
-    } else {
-        Info << "No set " << name << " at t=" << time_ 
-            << " falling back to 'constant'" << endl;
-        f=IOobject 
-        (
-            name,
-            "constant",
-            polyMesh::meshSubDir/"sets",
-	    mesh_,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        );
-        f.headerOk();
-        return f.headerClassName();
-    }
-}
-
 volScalarField *FieldValueExpressionDriver::makeModuloField(
     const volScalarField &a,
     const volScalarField &b)

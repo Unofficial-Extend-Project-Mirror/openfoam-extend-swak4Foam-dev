@@ -39,9 +39,6 @@ public:
     };
 
 private:
-    string getTypeOfField(const string &name);
-    string getTypeOfSet(const string &name);
-
     const string &time_;
     const fvMesh &mesh_;
     const Time& runTime_;
@@ -102,10 +99,6 @@ public:
 
     // Handling the parser.
     void parse (const std::string& f);
-
-    // checking for variables
-    template<class T>
-    bool isThere(const string &name);
 
     bool isCellSet(const string &name);
     bool isCellZone(const string &name);

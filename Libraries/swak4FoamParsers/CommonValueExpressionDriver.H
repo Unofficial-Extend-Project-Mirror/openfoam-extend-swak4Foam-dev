@@ -129,6 +129,9 @@ protected:
         bool searchOnDisc
     );
 
+    string getTypeOfField(const string &name);
+    string getTypeOfSet(const string &name);
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -221,6 +224,10 @@ public:
 
     template<class Type>
     bool isField(const string &name,bool isPoint=false) const;
+
+    // checking for variables
+    template<class T>
+    bool isThere(const string &name);
 
     inline bool isLine(const string &name) const;
     scalarField *getLine(const string &name,scalar t);

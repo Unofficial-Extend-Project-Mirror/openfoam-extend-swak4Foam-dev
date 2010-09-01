@@ -580,6 +580,53 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
     );    
 }
 
+string CommonValueExpressionDriver::getTypeOfField(const string &name)
+{
+    IOobject f 
+        (
+            name,
+            mesh().time().timeName(),
+            mesh(),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+    f.headerOk();
+
+    return f.headerClassName();
+}
+
+string CommonValueExpressionDriver::getTypeOfSet(const string &name)
+{
+    IOobject f 
+        (
+            name,
+            mesh().time().timeName(),
+            polyMesh::meshSubDir/"sets",
+	    mesh(),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+    
+    if(f.headerOk()) {;
+        return f.headerClassName();
+    } else {
+        Info << "No set " << name << " at t=" << mesh().time().timeName() 
+            << " falling back to 'constant'" << endl;
+        f=IOobject 
+        (
+            name,
+            "constant",
+            polyMesh::meshSubDir/"sets",
+	    mesh(),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+        f.headerOk();
+        return f.headerClassName();
+    }
+}
+
+
 // ************************************************************************* //
 
 } // namespace

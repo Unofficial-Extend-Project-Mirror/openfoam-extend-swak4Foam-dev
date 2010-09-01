@@ -131,6 +131,40 @@ namespace Foam {
         }
     }
 
+    template<class T>
+    bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(const string &name)
+    {
+        if(debug) {
+            Info << "CommonValueExpressionDriver::isThere. Name: " << name 
+                << " Type: " << T::typeName << " searchInMemory: " << searchInMemory()
+                << " searchOnDisc_: " << searchOnDisc() << endl;
+        }
+        if(searchInMemory()) {
+            if(this->mesh().foundObject<T>(name)) {
+                if(debug) {
+                    Info << "Found " << name << " in memory" << endl;
+                }
+                return true;
+            }
+        }
+        
+        if(
+            searchOnDisc()
+            &&
+            getTypeOfField(name)==T::typeName
+        ) {
+            if(debug) {
+                Info << "Found " << name << " on disc" << endl;
+            }
+            return true;
+        } else {
+            if(debug) {
+                Info << name << " not found" << endl;
+            }
+            return false;
+        }
+    }
+
     inline bool CommonValueExpressionDriver::isLine(const string &name) const 
     {
         return lines_.found(name);
