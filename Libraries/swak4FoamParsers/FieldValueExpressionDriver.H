@@ -22,9 +22,14 @@ namespace parserField {
     class FieldValueExpressionParser;
 }
 
+#include "CommonValueExpressionDriver.H"
+
 namespace Foam {
 
-class FieldValueExpressionDriver {
+class FieldValueExpressionDriver
+:
+    public CommonValueExpressionDriver
+{
 public:
     enum ExpressionType{
         NO_TYPE,
@@ -56,6 +61,9 @@ private:
     bool searchOnDisc_;
 
 public:
+    TypeName("FieldValueExpressionDriver");
+
+    //- old style constructor
     FieldValueExpressionDriver(
         const string& time,
         const Time& runTime,
@@ -64,11 +72,25 @@ public:
         bool searchInMemory=false,
         bool searchOnDisc=true
     );
+
+    //- simpler Constructor
+    FieldValueExpressionDriver(
+        const fvMesh &mesh,
+        bool cacheReadFields=false,
+        bool searchInMemory=false,
+        bool searchOnDisc=true
+    );
+
+    //- Construct from dictionary
+    FieldValueExpressionDriver(const dictionary &,const fvMesh &);
+
     virtual ~FieldValueExpressionDriver();
 
-    // Output debug-info
-    static bool debug;
-
+    // necessary to override Common
+    inline label size() const;
+    inline label pointSize() const;
+    inline const fvMesh &mesh() const;
+ 
     // Check the result type
     bool resultIsVector() { return typ_==VECTOR_TYPE; }
     bool resultIsScalar() { return typ_==SCALAR_TYPE; }

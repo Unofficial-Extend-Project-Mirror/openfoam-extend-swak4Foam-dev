@@ -100,6 +100,21 @@ bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const strin
     }
 }
 
+inline label FieldValueExpressionDriver::size() const
+{
+    return mesh_.nCells();
+}
+
+inline label FieldValueExpressionDriver::pointSize() const
+{
+    return mesh_.nPoints();
+}
+
+inline const fvMesh &FieldValueExpressionDriver::mesh() const
+{
+    return mesh_;
+}
+
 } // end namespace
 
 #endif

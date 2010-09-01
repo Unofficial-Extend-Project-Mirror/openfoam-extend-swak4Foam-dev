@@ -368,8 +368,6 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         variables_.insert(name,otherDriver.getUniform(this->size(),false));
     } else if(type=="internalField") {
         FieldValueExpressionDriver fieldDriver(
-            region.time().timeName(),
-            region.time(),
             region,
             false,
             true,

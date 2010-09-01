@@ -9,7 +9,12 @@
 #include "wallFvPatch.H"
 #include "cellSet.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 namespace Foam {
+
+defineTypeNameAndDebug(FieldValueExpressionDriver, 0);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, dictionary, internalField);
 
 FieldValueExpressionDriver::FieldValueExpressionDriver (
     const string& time,
@@ -19,7 +24,8 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     bool searchInMemory,
     bool searchOnDisc
 )
-    : time_(time),
+    : CommonValueExpressionDriver(),
+      time_(time),
       mesh_(mesh),
       runTime_(runTime),
       result_(NULL),
@@ -32,6 +38,54 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
           cacheReadFields_
       ),
       searchOnDisc_(searchOnDisc),
+      trace_scanning (false),
+      trace_parsing (false)
+{
+}
+
+FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const fvMesh &mesh,
+    bool cacheReadFields,
+    bool searchInMemory,
+    bool searchOnDisc
+)
+    : CommonValueExpressionDriver(),
+      time_(mesh.time().timeName()),
+      mesh_(mesh),
+      runTime_(mesh.time()),
+      result_(NULL),
+      vresult_(NULL),
+      typ_(NO_TYPE),
+      cacheReadFields_(cacheReadFields),
+      searchInMemory_(
+          searchInMemory
+          ||
+          cacheReadFields_
+      ),
+      searchOnDisc_(searchOnDisc),
+      trace_scanning (false),
+      trace_parsing (false)
+{
+}
+
+FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const dictionary &dict,
+    const fvMesh &mesh
+)
+    : CommonValueExpressionDriver(dict),
+      time_(mesh.time().timeName()),
+      mesh_(mesh),
+      runTime_(mesh.time()),
+      result_(NULL),
+      vresult_(NULL),
+      typ_(NO_TYPE),
+      cacheReadFields_(dict.lookupOrDefault("cacheReadFields",false)),
+      searchInMemory_(
+          dict.lookupOrDefault("searchInMemory",false)
+          ||
+          cacheReadFields_
+      ),
+      searchOnDisc_(dict.lookupOrDefault("searchOnDisc",true)),
       trace_scanning (false),
       trace_parsing (false)
 {
@@ -744,8 +798,6 @@ void FieldValueExpressionDriver::setValuePatches
     }
   }
 }
-
-bool FieldValueExpressionDriver::debug=false;
 
 // Force the compiler to generate the code, there'S a better way but I'm too stupid
 void dummyS(GeometricField<scalar,fvPatchField,volMesh>  &f,bool keepPatches,const wordList &fixedPatches) {
