@@ -322,6 +322,11 @@ scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
     return new scalarField(this->size(),lines_[name](t));
 }
 
+scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
+{
+    return lines_[name](t);
+}
+
 scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
 {
     scalarField *result=new scalarField(this->size());
@@ -580,7 +585,7 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
     );    
 }
 
-string CommonValueExpressionDriver::getTypeOfField(const string &name)
+string CommonValueExpressionDriver::getTypeOfField(const string &name) const
 {
     IOobject f 
         (
@@ -595,7 +600,7 @@ string CommonValueExpressionDriver::getTypeOfField(const string &name)
     return f.headerClassName();
 }
 
-string CommonValueExpressionDriver::getTypeOfSet(const string &name)
+string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
 {
     IOobject f 
         (

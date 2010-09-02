@@ -129,7 +129,7 @@ namespace Foam {
     }
 
     template<class T>
-    bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(const string &name)
+    bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(const string &name) const
     {
         if(debug) {
             Info << "CommonValueExpressionDriver::isThere. Name: " << name 

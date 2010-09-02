@@ -129,8 +129,8 @@ protected:
         bool searchOnDisc
     );
 
-    string getTypeOfField(const string &name);
-    string getTypeOfSet(const string &name);
+    string getTypeOfField(const string &name) const;
+    string getTypeOfSet(const string &name) const;
 
 public:
     //- Runtime type information
@@ -227,10 +227,11 @@ public:
 
     // checking for variables
     template<class T>
-    bool isThere(const string &name);
+    bool isThere(const string &name) const;
 
     inline bool isLine(const string &name) const;
     scalarField *getLine(const string &name,scalar t);
+    scalar getLineValue(const string &name,scalar t);
 
     void readLines(Istream &is,bool clear=true);
     void writeLines(Ostream &os) const;
