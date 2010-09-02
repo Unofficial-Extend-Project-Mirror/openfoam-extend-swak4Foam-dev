@@ -107,8 +107,7 @@ namespace Foam {
 
         if(isPoint) {
             if(
-                this->mesh().
-                objectRegistry::foundObject<localPointField>(name)
+                isThere<localPointField>(name)
             ) {
                 return true;
             } else {
@@ -116,13 +115,11 @@ namespace Foam {
             }
         } else {
             if(
-                this->mesh().
-                objectRegistry::foundObject<localVolField>(name)
+                isThere<localVolField>(name)
             ) {
                 return true;
             } else if(
-                this->mesh().
-                objectRegistry::foundObject<localSurfaceField>(name)
+                isThere<localSurfaceField>(name)
             ) {
                 return true;
             } else{
