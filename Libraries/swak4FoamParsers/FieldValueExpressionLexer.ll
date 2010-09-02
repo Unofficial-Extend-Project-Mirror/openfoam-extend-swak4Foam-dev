@@ -141,7 +141,11 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isThere<Foam::volVectorField>(*ptr)) {
         yylval->vname = ptr; return token::TOKEN_VID;
-    } else if(driver.isThere<Foam::volScalarField>(*ptr)) {
+    } else if(
+        driver.isVariable<Foam::volScalarField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volScalarField>(*ptr)
+    ) {
         yylval->name = ptr; return token::TOKEN_SID;
     } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FSID;

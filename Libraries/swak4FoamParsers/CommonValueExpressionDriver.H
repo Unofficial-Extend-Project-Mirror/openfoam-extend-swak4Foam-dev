@@ -223,6 +223,9 @@ public:
     bool is(const string &name,bool isPoint=false) const;
 
     template<class Type>
+    bool isVariable(const string &name,bool isPoint=false) const;
+
+    template<class Type>
     bool isField(const string &name,bool isPoint=false) const;
 
     // checking for variables

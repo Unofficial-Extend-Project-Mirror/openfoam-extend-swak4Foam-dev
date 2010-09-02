@@ -17,6 +17,54 @@ T *FieldValueExpressionDriver::getField(const string &name)
 
     T *f=NULL;
 
+    if(variables_.found(name)) {
+        if(debug) {
+            Info << "Getting " << name << " from variables" << endl;
+        }
+
+        typedef typename T::value_type Type;
+
+        f=new T(
+            IOobject
+            (
+                name,
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensioned<Type>(name,nullDim,pTraits<Type>::zero)
+        );
+
+        Field<Type> vals=variables_[name].getResult<Type>(true);
+
+        if(debug) {
+            Pout << "sizes: " << vals.size() << " " << f->size() << endl;
+        }
+        if(vals.size()==f->size()) {
+            f->internalField()=vals;
+        } else {
+            Type avg=gAverage(vals);
+
+            bool noWarn=false;
+
+            if(!noWarn) {
+                Type minVal=gMin(vals);
+                Type maxVal=gMax(vals);
+                if(mag(minVal-maxVal)>SMALL) {
+                    WarningIn("ExpressionResult::getUniformInternal(const label size,bool noWarn)")
+                        << "The minimum value " << minVal << " and the maximum " 
+                            << maxVal << " differ. I will use the average " << avg
+                            << endl;
+                }
+            }
+ 
+            f->internalField()=avg;
+        }        
+        return f;
+    }
+
     if(
         searchInMemory()
         &&

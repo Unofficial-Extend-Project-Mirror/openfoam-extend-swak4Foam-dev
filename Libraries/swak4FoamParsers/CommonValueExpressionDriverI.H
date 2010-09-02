@@ -81,7 +81,7 @@ namespace Foam {
     }
 
     template<class Type>
-    bool CommonValueExpressionDriver::is(const string &name,bool isPoint) const
+    bool CommonValueExpressionDriver::isVariable(const string &name,bool isPoint) const
     {
         if(variables_.found(name)) {
             if(
@@ -90,9 +90,17 @@ namespace Foam {
                 variables_[name].isPoint()==isPoint
             ) {
                 return true;
-            } else {
-                return false;
-            }
+            } 
+        }
+
+        return false;
+    }
+
+    template<class Type>
+    bool CommonValueExpressionDriver::is(const string &name,bool isPoint) const
+    {
+        if(isVariable<Type>(name,isPoint)) {
+            return true;
         } else {
             return isField<Type>(name,isPoint);
         }
