@@ -1,6 +1,10 @@
 .SUFFIXES: .ll
 
+ifeq (,$(WM_NCOMPPROCS))
 lltoo = rm $*.C ; flex -f $$SOURCE ; mv *.c $*.C ; $(CC) $(c++FLAGS) -c $*.C -o $@ 
+else
+lltoo = echo "Can't compile $$SOURCE with a value of WM_NCOMPPROCS of $(WM_NCOMPPROCS). Please clear it"
+endif
 
 .ll.dep:
 	$(MAKE_DEP)
