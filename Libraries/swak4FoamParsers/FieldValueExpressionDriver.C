@@ -83,18 +83,33 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 }
 
 void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
+    if(debug) {
+        Info << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
+    }
+
     result_=r;
     typ_=SCALAR_TYPE;
+    CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
 }
 
 void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
+    if(debug) {
+        Info << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
+    }
+
     result_=r;
     typ_=LOGICAL_TYPE;
+    CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
 }
 
 void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
+    if(debug) {
+        Info << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
+    }
+
     vresult_=r;
     typ_=VECTOR_TYPE;
+    CommonValueExpressionDriver::result_.setResultForeign(vresult_->internalField());
 }
 
 void FieldValueExpressionDriver::parse (const std::string &f)
