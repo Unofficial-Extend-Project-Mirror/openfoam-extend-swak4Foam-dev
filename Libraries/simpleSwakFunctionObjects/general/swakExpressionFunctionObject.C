@@ -110,7 +110,11 @@ void swakExpressionFunctionObject::write()
         writeData<symmTensor>(driver_());
     } else if(rType==pTraits<sphericalTensor>::typeName) {
         writeData<sphericalTensor>(driver_());
-    }  
+    } else {
+        WarningIn("swakExpressionFunctionObject::write()")
+            << "Don't know how to handle type " << rType 
+                << endl;
+    }
     
     if(verbose()) {
         Info << endl;
