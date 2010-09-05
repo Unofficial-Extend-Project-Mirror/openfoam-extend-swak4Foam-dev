@@ -112,8 +112,22 @@ int main(int argc, char *argv[])
                 field.readHeader(inStream);
                 field.readData(inStream);
             }
-            //            PtrList<entry> parts=funkyDict.lookup("expressions");
+            
+            List<dictionary> expressions(part.lookup("expressions"));
     
+            forAll(expressions,expressionI) {
+                const dictionary &expression=expressions[expressionI];
+
+                word target(expression["target"]);
+                word patchName(expression["patchName"]);
+                string expr(expression["expression"]);
+                Info << "Setting " << target << " on " << patchName 
+                    << " the expression " << expr << endl;
+
+                PatchValueExpressionDriver driver(expression,mesh);
+                driver.parse(expr);
+            }
+
             {
                 // this way the class is not overwritten
                 word actualClass=field.headerClassName();
