@@ -2,5 +2,7 @@
 
 wmake funkySetFields
 
+wmake funkySetBoundaryField
+
 wmake replayTransientBC
 
