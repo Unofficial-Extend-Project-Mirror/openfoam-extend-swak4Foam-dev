@@ -57,7 +57,61 @@ int main(int argc, char *argv[])
 
 #   include "setRootCase.H"
 
+    word dictName="funkySetBoundaryDict";
+    if(args.options().found("dict")) {
+        dictName=args.options()["dict"];
+    }
+
+#   include "createTime.H"
+    Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
+
+#   include "createNamedMesh.H"
+
+    IOdictionary funkyDict
+        (
+            IOobject
+            (
+                dictName,
+                runTime.system(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::NO_WRITE
+            )
+        );
+
+    forAll(timeDirs, timeI)
+    {
+        runTime.setTime(timeDirs[timeI], timeI);
+
+        Foam::Info<< "Time = " << runTime.timeName() << Foam::endl;
+
+        mesh.readUpdate();
+
+        forAllIter(dictionary,funkyDict,it) {
+            const dictionary &part=(*it).dict();
+        
+            word fieldName=part["field"];
+            
+            Info << "\n\nPart: " << (*it).keyword() 
+                << " working on field " << fieldName << endl;
+            
+            IOdictionary field(
+                IOobject
+                (
+                    fieldName,
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                )
+            );
+
+            PtrList<entry> parts=funkyDict.lookup("expressions");
     
+            field.regIOobject::write();
+        }
+    }
+
     Info << "End\n" << endl;
 
     return 0;
