@@ -42,6 +42,7 @@ Description
 
 #include "timeSelector.H"
 
+#include "OFstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -101,14 +102,30 @@ int main(int argc, char *argv[])
                     fieldName,
                     runTime.timeName(),
                     mesh,
-                    IOobject::MUST_READ,
+                    IOobject::NO_READ,
                     IOobject::NO_WRITE
                 )
             );
-
-            PtrList<entry> parts=funkyDict.lookup("expressions");
+            {
+                // this way it doesn't matter that the file is not of the right class
+                IFstream inStream(field.filePath());
+                field.readHeader(inStream);
+                field.readData(inStream);
+            }
+            //            PtrList<entry> parts=funkyDict.lookup("expressions");
     
-            field.regIOobject::write();
+            {
+                // this way the class is not overwritten
+                word actualClass=field.headerClassName();
+
+                OStringStream headerStream;
+                field.writeHeader(headerStream);
+                string newHeader=headerStream.str().replace("dictionary",actualClass);
+
+                OFstream outStream(field.filePath());
+                outStream << newHeader.c_str();
+                field.writeData(outStream);
+            }
         }
     }
 
