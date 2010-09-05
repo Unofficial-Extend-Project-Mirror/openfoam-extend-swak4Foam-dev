@@ -126,6 +126,21 @@ int main(int argc, char *argv[])
 
                 PatchValueExpressionDriver driver(expression,mesh);
                 driver.parse(expr);
+
+                dictionary &patchDict=field.subDict("boundaryField").subDict(patchName);
+
+                if(patchDict.found(target)) {
+//                     entry old(patchDict.lookupEntry(target,false,false));
+//                     old.keyname()=target+"Old";
+//                     patchDict.set(old);
+                }
+                OStringStream result;
+                driver.outputResult(result);
+//                 string newEntry=target+" "+result.str()+";";
+//                 Info << newEntry << endl;
+//                 entry::New(patchDict,IStringStream(newEntry)());
+                primitiveEntry newEntry(target,IStringStream(result.str())());
+                patchDict.set(newEntry);
             }
 
             {

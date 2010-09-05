@@ -640,6 +640,24 @@ void CommonValueExpressionDriver::setTrace(
     trace_scanning_=scanning;
 }
 
+void CommonValueExpressionDriver::outputResult(Ostream &o)
+{
+    word rType=getResultType();
+    
+    if(rType==pTraits<scalar>::typeName) {
+        o << getResult<scalar>();
+    } else if(rType==pTraits<vector>::typeName) {
+        o << getResult<vector>();
+    } else if(rType==pTraits<tensor>::typeName) {
+        o << getResult<tensor>();
+    } else if(rType==pTraits<symmTensor>::typeName) {
+        o << getResult<symmTensor>();
+    } else if(rType==pTraits<sphericalTensor>::typeName) {
+        o << getResult<sphericalTensor>();
+    } else { 
+        o << "No implementation for " << rType;
+    }
+}
 // ************************************************************************* //
 
 } // namespace

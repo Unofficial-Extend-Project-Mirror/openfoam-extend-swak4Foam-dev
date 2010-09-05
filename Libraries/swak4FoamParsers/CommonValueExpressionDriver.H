@@ -196,6 +196,8 @@ public:
     template<class Type>
     tmp<Field<Type> > getResult(bool qPoint=false);
 
+    void outputResult(Ostream &);
+
     word getResultType();
 
     ExpressionResult getUniform(label size,bool noWarning);
