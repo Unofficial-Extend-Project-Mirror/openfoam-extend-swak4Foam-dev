@@ -61,7 +61,9 @@ defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-CommonValueExpressionDriver::CommonValueExpressionDriver(const CommonValueExpressionDriver& orig)
+CommonValueExpressionDriver::CommonValueExpressionDriver(
+    const CommonValueExpressionDriver& orig
+)
 :
     variableString_(""),
     result_(orig.result_),
@@ -70,7 +72,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const CommonValueExpres
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_)
-{}
+{
+    setSearchBehaviour(
+        orig.cacheReadFields_,
+        orig.searchInMemory_,
+        orig.searchOnDisc_
+    );
+}
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
 :
@@ -83,19 +91,49 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
         Info << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
+    setSearchBehaviour(
+        dict.lookupOrDefault("cacheReadFields",false),
+        dict.lookupOrDefault("searchInMemory",true),
+        dict.lookupOrDefault("searchOnDisc",false)
+    );
+
     if(dict.found("timelines")) {
         readLines(dict.lookup("timelines"));
     }
     //    addVariables(variableString_);
 }
 
-CommonValueExpressionDriver::CommonValueExpressionDriver()
+CommonValueExpressionDriver::CommonValueExpressionDriver(
+    bool cacheReadFields,
+    bool searchInMemory,
+    bool searchOnDisc
+)
 :
     variableString_(""),
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
-{}
+{
+    setSearchBehaviour(
+        cacheReadFields,
+        searchInMemory,
+        searchOnDisc
+    );
+}
+
+void CommonValueExpressionDriver::setSearchBehaviour(
+    bool cacheReadFields,
+    bool searchInMemory,
+    bool searchOnDisc
+)
+{
+    cacheReadFields_=cacheReadFields;
+    searchInMemory_=
+        searchInMemory
+        ||
+        cacheReadFields;
+    searchOnDisc_=searchOnDisc;
+}
 
 autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
 (
@@ -284,6 +322,11 @@ scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
     return new scalarField(this->size(),lines_[name](t));
 }
 
+scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
+{
+    return lines_[name](t);
+}
+
 scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
 {
     scalarField *result=new scalarField(this->size());
@@ -368,8 +411,6 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         variables_.insert(name,otherDriver.getUniform(this->size(),false));
     } else if(type=="internalField") {
         FieldValueExpressionDriver fieldDriver(
-            region.time().timeName(),
-            region.time(),
             region,
             false,
             true,
@@ -544,6 +585,79 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
     );    
 }
 
+string CommonValueExpressionDriver::getTypeOfField(const string &name) const
+{
+    IOobject f 
+        (
+            name,
+            mesh().time().timeName(),
+            mesh(),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+    f.headerOk();
+
+    return f.headerClassName();
+}
+
+string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
+{
+    IOobject f 
+        (
+            name,
+            mesh().time().timeName(),
+            polyMesh::meshSubDir/"sets",
+	    mesh(),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+    
+    if(f.headerOk()) {;
+        return f.headerClassName();
+    } else {
+        Info << "No set " << name << " at t=" << mesh().time().timeName() 
+            << " falling back to 'constant'" << endl;
+        f=IOobject 
+        (
+            name,
+            "constant",
+            polyMesh::meshSubDir/"sets",
+	    mesh(),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+        f.headerOk();
+        return f.headerClassName();
+    }
+}
+
+void CommonValueExpressionDriver::setTrace(
+    bool scanning,
+    bool parsing
+)
+{
+    trace_parsing_=parsing;
+    trace_scanning_=scanning;
+}
+
+void CommonValueExpressionDriver::outputResult(Ostream &o)
+{
+    word rType=getResultType();
+    
+    if(rType==pTraits<scalar>::typeName) {
+        o << getResult<scalar>();
+    } else if(rType==pTraits<vector>::typeName) {
+        o << getResult<vector>();
+    } else if(rType==pTraits<tensor>::typeName) {
+        o << getResult<tensor>();
+    } else if(rType==pTraits<symmTensor>::typeName) {
+        o << getResult<symmTensor>();
+    } else if(rType==pTraits<sphericalTensor>::typeName) {
+        o << getResult<sphericalTensor>();
+    } else { 
+        o << "No implementation for " << rType;
+    }
+}
 // ************************************************************************* //
 
 } // namespace

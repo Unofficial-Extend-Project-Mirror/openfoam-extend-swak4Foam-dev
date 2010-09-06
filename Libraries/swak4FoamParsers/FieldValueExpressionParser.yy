@@ -67,6 +67,7 @@
 #include "FieldValueExpressionDriverLogicalTemplates.H"
 %}
 
+%token <name>   TOKEN_LINE  "timeline"
 %token <name>   TOKEN_SID   "scalarID"
 %token <vname>  TOKEN_VID   "vectorID"
 %token <fsname> TOKEN_FSID  "faceScalarID"
@@ -174,7 +175,7 @@
 
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
-%destructor          { delete $$; } "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"
+%destructor          { delete $$; } "timeline" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"
 %printer             { debug_stream () << $$; } "number"  "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression"
 
@@ -359,6 +360,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeScalarField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeScalarField(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }
+        | TOKEN_LINE		                   { $$ = driver.makeScalarField(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
 ;
 
 lexp: TOKEN_TRUE                       { $$ = driver.makeScalarField(1); }

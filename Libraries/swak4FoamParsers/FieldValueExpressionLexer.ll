@@ -137,9 +137,15 @@ false                  return token::TOKEN_FALSE;
 
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
-    if(driver.isThere<Foam::volVectorField>(*ptr)) {
+    if(driver.isLine(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LINE;
+    } else if(driver.isThere<Foam::volVectorField>(*ptr)) {
         yylval->vname = ptr; return token::TOKEN_VID;
-    } else if(driver.isThere<Foam::volScalarField>(*ptr)) {
+    } else if(
+        driver.isVariable<Foam::volScalarField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volScalarField>(*ptr)
+    ) {
         yylval->name = ptr; return token::TOKEN_SID;
     } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FSID;
@@ -169,8 +175,8 @@ false                  return token::TOKEN_FALSE;
 
 void FieldValueExpressionDriver::scan_begin ()
 {
-    yy_flex_debug = trace_scanning;
-    yy_scan_string(content.c_str());
+    yy_flex_debug = trace_scanning_;
+    yy_scan_string(content_.c_str());
 //    if (!(yyin = fopen (file.c_str (), "r")))
 //        error (std::string ("cannot open ") + file);
 }

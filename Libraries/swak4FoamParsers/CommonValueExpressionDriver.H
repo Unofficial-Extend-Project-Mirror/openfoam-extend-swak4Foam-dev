@@ -104,6 +104,34 @@ protected:
         const dictionary &dict,
         const fvMesh &mesh
     );
+
+private:
+    //- keep fields read from disc in memory
+    bool cacheReadFields_;
+
+    //- should we search for the field in the registry before looking on disc
+    bool searchInMemory_;
+
+    //- should we look on disc? does not make sense in the application
+    bool searchOnDisc_;
+
+protected:
+   
+    inline bool cacheReadFields() const { return cacheReadFields_; }
+
+    inline bool searchInMemory() const { return searchInMemory_; }
+
+    inline bool searchOnDisc() const { return searchOnDisc_; }
+
+    void setSearchBehaviour(
+        bool cacheReadFields,
+        bool searchInMemory,
+        bool searchOnDisc
+    );
+
+    string getTypeOfField(const string &name) const;
+    string getTypeOfSet(const string &name) const;
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -125,10 +153,16 @@ public:
     // Constructors
 
     //- Construct from components
-    CommonValueExpressionDriver();
+    CommonValueExpressionDriver(
+        bool cacheReadFields=false,
+        bool searchInMemory=true,
+        bool searchOnDisc=false
+    );
     
     //- Copy construct
-    CommonValueExpressionDriver(const CommonValueExpressionDriver&);
+    CommonValueExpressionDriver(
+        const CommonValueExpressionDriver&
+    );
 
     //- Construct from a dictionary
     CommonValueExpressionDriver(const dictionary&);
@@ -162,6 +196,8 @@ public:
     template<class Type>
     tmp<Field<Type> > getResult(bool qPoint=false);
 
+    void outputResult(Ostream &);
+
     word getResultType();
 
     ExpressionResult getUniform(label size,bool noWarning);
@@ -189,10 +225,18 @@ public:
     bool is(const string &name,bool isPoint=false) const;
 
     template<class Type>
+    bool isVariable(const string &name,bool isPoint=false) const;
+
+    template<class Type>
     bool isField(const string &name,bool isPoint=false) const;
+
+    // checking for variables
+    template<class T>
+    bool isThere(const string &name) const;
 
     inline bool isLine(const string &name) const;
     scalarField *getLine(const string &name,scalar t);
+    scalar getLineValue(const string &name,scalar t);
 
     void readLines(Istream &is,bool clear=true);
     void writeLines(Ostream &os) const;
@@ -225,6 +269,12 @@ public:
 
     // Handling temporary variables
     void clearVariables();
+
+    // Set the trace variables
+    void setTrace(
+        bool scanning,
+        bool parsing
+    );
 };
 
 

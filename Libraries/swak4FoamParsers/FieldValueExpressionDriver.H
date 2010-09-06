@@ -22,9 +22,14 @@ namespace parserField {
     class FieldValueExpressionParser;
 }
 
+#include "CommonValueExpressionDriver.H"
+
 namespace Foam {
 
-class FieldValueExpressionDriver {
+class FieldValueExpressionDriver
+:
+    public CommonValueExpressionDriver
+{
 public:
     enum ExpressionType{
         NO_TYPE,
@@ -34,9 +39,6 @@ public:
     };
 
 private:
-    string getTypeOfField(const string &name);
-    string getTypeOfSet(const string &name);
-
     const string &time_;
     const fvMesh &mesh_;
     const Time& runTime_;
@@ -46,16 +48,10 @@ private:
 
     ExpressionType typ_;
 
-    // keep fields read from disc in memory
-    bool cacheReadFields_;
-
-    // should we search for the field in the registry before looking on disc
-    bool searchInMemory_;
-
-    // should we look on disc? does not make sense in the application
-    bool searchOnDisc_;
-
 public:
+    TypeName("FieldValueExpressionDriver");
+
+    //- old style constructor
     FieldValueExpressionDriver(
         const string& time,
         const Time& runTime,
@@ -64,11 +60,25 @@ public:
         bool searchInMemory=false,
         bool searchOnDisc=true
     );
+
+    //- simpler Constructor
+    FieldValueExpressionDriver(
+        const fvMesh &mesh,
+        bool cacheReadFields=false,
+        bool searchInMemory=false,
+        bool searchOnDisc=true
+    );
+
+    //- Construct from dictionary
+    FieldValueExpressionDriver(const dictionary &,const fvMesh &);
+
     virtual ~FieldValueExpressionDriver();
 
-    // Output debug-info
-    static bool debug;
-
+    // necessary to override Common
+    inline label size() const;
+    inline label pointSize() const;
+    inline const fvMesh &mesh() const;
+ 
     // Check the result type
     bool resultIsVector() { return typ_==VECTOR_TYPE; }
     bool resultIsScalar() { return typ_==SCALAR_TYPE; }
@@ -86,20 +96,9 @@ public:
     // Handling the scanner.
     void scan_begin ();
     void scan_end ();
-    bool trace_scanning;
 
     // Handling the parser.
     void parse (const std::string& f);
-    string content;
-    bool trace_parsing;
-
-    // Error handling.
-    void error (const parserField::location& l, const std::string& m);
-    void error (const std::string& m);
-
-    // checking for variables
-    template<class T>
-    bool isThere(const string &name);
 
     bool isCellSet(const string &name);
     bool isCellZone(const string &name);

@@ -9,7 +9,12 @@
 #include "wallFvPatch.H"
 #include "cellSet.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 namespace Foam {
+
+defineTypeNameAndDebug(FieldValueExpressionDriver, 0);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, dictionary, internalField);
 
 FieldValueExpressionDriver::FieldValueExpressionDriver (
     const string& time,
@@ -19,21 +24,51 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     bool searchInMemory,
     bool searchOnDisc
 )
-    : time_(time),
+    : CommonValueExpressionDriver(
+        cacheReadFields,
+        searchInMemory,
+        searchOnDisc        
+    ),
+      time_(time),
       mesh_(mesh),
       runTime_(runTime),
       result_(NULL),
       vresult_(NULL),
-      typ_(NO_TYPE),
-      cacheReadFields_(cacheReadFields),
-      searchInMemory_(
-          searchInMemory
-          ||
-          cacheReadFields_
-      ),
-      searchOnDisc_(searchOnDisc),
-      trace_scanning (false),
-      trace_parsing (false)
+      typ_(NO_TYPE)
+{
+}
+
+FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const fvMesh &mesh,
+    bool cacheReadFields,
+    bool searchInMemory,
+    bool searchOnDisc
+)
+    : CommonValueExpressionDriver(
+        cacheReadFields,
+        searchInMemory,
+        searchOnDisc        
+    ),
+      time_(mesh.time().timeName()),
+      mesh_(mesh),
+      runTime_(mesh.time()),
+      result_(NULL),
+      vresult_(NULL),
+      typ_(NO_TYPE)
+{
+}
+
+FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const dictionary &dict,
+    const fvMesh &mesh
+)
+    : CommonValueExpressionDriver(dict),
+      time_(mesh.time().timeName()),
+      mesh_(mesh),
+      runTime_(mesh.time()),
+      result_(NULL),
+      vresult_(NULL),
+      typ_(NO_TYPE)
 {
 }
 
@@ -48,60 +83,45 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 }
 
 void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
+    if(debug) {
+        Info << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
+    }
+
     result_=r;
     typ_=SCALAR_TYPE;
+    CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
 }
 
 void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
+    if(debug) {
+        Info << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
+    }
+
     result_=r;
     typ_=LOGICAL_TYPE;
+    CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
 }
 
 void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
+    if(debug) {
+        Info << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
+    }
+
     vresult_=r;
     typ_=VECTOR_TYPE;
+    CommonValueExpressionDriver::result_.setResultForeign(vresult_->internalField());
 }
 
 void FieldValueExpressionDriver::parse (const std::string &f)
 {
-    content = f;
+    content_ = f;
     scan_begin ();
     parserField::FieldValueExpressionParser parser (*this);
-    parser.set_debug_level (trace_parsing);
+    parser.set_debug_level (trace_parsing_);
     parser.parse ();
     scan_end ();
 }
 
-void FieldValueExpressionDriver::error (const parserField::location& l, const std::string& m)
-{
-    std::ostringstream buff;
-    buff << l;
-    std::string place="";
-    for(unsigned int i=0;i<l.begin.column;i++) {
-        place+=" ";
-    }
-    for(unsigned int i=l.begin.column;i<l.end.column;i++) {
-        place+="^";
-    }
-    for(unsigned int i=l.end.column;i<content.size();i++) {
-        place+=" ";
-    }
-
-    FatalErrorIn("parsingValue")
-        //        << args.executable()
-        << " Parser Error at " << buff.str() << " :"  << m << endl
-            << content << endl << place
-            << exit(FatalError);
-    //    Info << buff.str() << ": " << m << endl;
-}
-
-void FieldValueExpressionDriver::error (const std::string& m)
-{
-    FatalErrorIn("parsingValue")
-        //        << args.executable()
-            << " Parser Error: " << m
-            << exit(FatalError);
-}
 
 bool FieldValueExpressionDriver::isCellSet(const string &name)
 {
@@ -118,52 +138,6 @@ bool FieldValueExpressionDriver::isCellZone(const string &name)
         return true;
     } else {
         return false;
-    }
-}
-
-string FieldValueExpressionDriver::getTypeOfField(const string &name)
-{
-    IOobject f 
-        (
-            name,
-            time_,
-            mesh_,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        );
-    f.headerOk();
-
-    return f.headerClassName();
-}
-
-string FieldValueExpressionDriver::getTypeOfSet(const string &name)
-{
-    IOobject f 
-        (
-            name,
-            time_,
-            polyMesh::meshSubDir/"sets",
-	    mesh_,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        );
-    
-    if(f.headerOk()) {;
-        return f.headerClassName();
-    } else {
-        Info << "No set " << name << " at t=" << time_ 
-            << " falling back to 'constant'" << endl;
-        f=IOobject 
-        (
-            name,
-            "constant",
-            polyMesh::meshSubDir/"sets",
-	    mesh_,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        );
-        f.headerOk();
-        return f.headerClassName();
     }
 }
 
@@ -744,8 +718,6 @@ void FieldValueExpressionDriver::setValuePatches
     }
   }
 }
-
-bool FieldValueExpressionDriver::debug=false;
 
 // Force the compiler to generate the code, there'S a better way but I'm too stupid
 void dummyS(GeometricField<scalar,fvPatchField,volMesh>  &f,bool keepPatches,const wordList &fixedPatches) {

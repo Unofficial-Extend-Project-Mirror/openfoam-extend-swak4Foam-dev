@@ -247,6 +247,18 @@ functions
         );
         verbose true;
     }
+    filterMeanDiff
+    {
+        type swakExpression;
+        valueType internalField;
+        variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";        
+        expression "p-pFilter";
+        accumulations (
+            min
+            max
+        );
+        verbose true;
+    }
 );
 
 libs ( 

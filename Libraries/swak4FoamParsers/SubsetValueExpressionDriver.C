@@ -100,6 +100,8 @@ scalarField *SubsetValueExpressionDriver::makeIdField()
 vectorField *SubsetValueExpressionDriver::makePositionField()
 {
     notImplemented("SubsetValueExpressionDriver::makePositionField");
+
+    return new vectorField(0);
 }
 
 // vectorField *SubsetValueExpressionDriver::makePointField()
@@ -110,11 +112,15 @@ vectorField *SubsetValueExpressionDriver::makePositionField()
 vectorField *SubsetValueExpressionDriver::makeFaceNormalField()
 {
     notImplemented("SubsetValueExpressionDriver::makeFaceNormalField");
+
+    return new vectorField(0);
 }
 
 vectorField *SubsetValueExpressionDriver::makeFaceAreaField()
 {
     notImplemented("SubsetValueExpressionDriver::makeFaceAreaField");
+
+    return new vectorField(0);
 }
 
 // ************************************************************************* //

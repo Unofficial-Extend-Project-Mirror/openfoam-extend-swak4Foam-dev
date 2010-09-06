@@ -81,7 +81,7 @@ namespace Foam {
     }
 
     template<class Type>
-    bool CommonValueExpressionDriver::is(const string &name,bool isPoint) const
+    bool CommonValueExpressionDriver::isVariable(const string &name,bool isPoint) const
     {
         if(variables_.found(name)) {
             if(
@@ -90,9 +90,17 @@ namespace Foam {
                 variables_[name].isPoint()==isPoint
             ) {
                 return true;
-            } else {
-                return false;
-            }
+            } 
+        }
+
+        return false;
+    }
+
+    template<class Type>
+    bool CommonValueExpressionDriver::is(const string &name,bool isPoint) const
+    {
+        if(isVariable<Type>(name,isPoint)) {
+            return true;
         } else {
             return isField<Type>(name,isPoint);
         }
@@ -107,8 +115,7 @@ namespace Foam {
 
         if(isPoint) {
             if(
-                this->mesh().
-                objectRegistry::foundObject<localPointField>(name)
+                isThere<localPointField>(name)
             ) {
                 return true;
             } else {
@@ -116,18 +123,50 @@ namespace Foam {
             }
         } else {
             if(
-                this->mesh().
-                objectRegistry::foundObject<localVolField>(name)
+                isThere<localVolField>(name)
             ) {
                 return true;
             } else if(
-                this->mesh().
-                objectRegistry::foundObject<localSurfaceField>(name)
+                isThere<localSurfaceField>(name)
             ) {
                 return true;
             } else{
                 return false;
             }
+        }
+    }
+
+    template<class T>
+    bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(const string &name) const
+    {
+        if(debug) {
+            Info << "CommonValueExpressionDriver::isThere. Name: " << name 
+                << " Type: " << T::typeName << " searchInMemory: " << searchInMemory()
+                << " searchOnDisc_: " << searchOnDisc() << endl;
+        }
+        if(searchInMemory()) {
+            if(this->mesh().foundObject<T>(name)) {
+                if(debug) {
+                    Info << "Found " << name << " in memory" << endl;
+                }
+                return true;
+            }
+        }
+        
+        if(
+            searchOnDisc()
+            &&
+            getTypeOfField(name)==T::typeName
+        ) {
+            if(debug) {
+                Info << "Found " << name << " on disc" << endl;
+            }
+            return true;
+        } else {
+            if(debug) {
+                Info << name << " not found" << endl;
+            }
+            return false;
         }
     }
 

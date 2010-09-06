@@ -17,8 +17,56 @@ T *FieldValueExpressionDriver::getField(const string &name)
 
     T *f=NULL;
 
+    if(variables_.found(name)) {
+        if(debug) {
+            Info << "Getting " << name << " from variables" << endl;
+        }
+
+        typedef typename T::value_type Type;
+
+        f=new T(
+            IOobject
+            (
+                name,
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensioned<Type>(name,nullDim,pTraits<Type>::zero)
+        );
+
+        Field<Type> vals=variables_[name].getResult<Type>(true);
+
+        if(debug) {
+            Pout << "sizes: " << vals.size() << " " << f->size() << endl;
+        }
+        if(vals.size()==f->size()) {
+            f->internalField()=vals;
+        } else {
+            Type avg=gAverage(vals);
+
+            bool noWarn=false;
+
+            if(!noWarn) {
+                Type minVal=gMin(vals);
+                Type maxVal=gMax(vals);
+                if(mag(minVal-maxVal)>SMALL) {
+                    WarningIn("ExpressionResult::getUniformInternal(const label size,bool noWarn)")
+                        << "The minimum value " << minVal << " and the maximum " 
+                            << maxVal << " differ. I will use the average " << avg
+                            << endl;
+                }
+            }
+ 
+            f->internalField()=avg;
+        }        
+        return f;
+    }
+
     if(
-        searchInMemory_
+        searchInMemory()
         &&
         mesh_.foundObject<T>(name)
     ) {
@@ -30,7 +78,7 @@ T *FieldValueExpressionDriver::getField(const string &name)
             mesh_.lookupObject<T>(name)
         );
     } else if(
-        searchOnDisc_
+        searchOnDisc()
     ) {
         if(debug) {
             Info << "Reading " << name << " from disc" << endl;
@@ -46,7 +94,7 @@ T *FieldValueExpressionDriver::getField(const string &name)
             ),
             mesh_
         );
-        if(cacheReadFields_) {
+        if(cacheReadFields()) {
             if(debug) {
                 Info << "Registering a copy of " << name << " with mesh" << endl;
             }
@@ -67,37 +115,19 @@ T *FieldValueExpressionDriver::getField(const string &name)
     return f;
 }
 
-template<class T>
-bool FieldValueExpressionDriver::FieldValueExpressionDriver::isThere(const string &name)
+inline label FieldValueExpressionDriver::size() const
 {
-    if(debug) {
-        Info << "FieldValueExpressionDriver::isThere. Name: " << name 
-            << " Type: " << T::typeName << endl;
-    }
-    if(searchInMemory_) {
-        if(mesh_.foundObject<T>(name)) {
-            if(debug) {
-                Info << "Found " << name << " in memory" << endl;
-            }
-            return true;
-        }
-    }
+    return mesh_.nCells();
+}
 
-    if(
-        searchOnDisc_
-        &&
-        getTypeOfField(name)==T::typeName
-    ) {
-        if(debug) {
-            Info << "Found " << name << " on disc" << endl;
-        }
-        return true;
-    } else {
-        if(debug) {
-            Info << name << " not found" << endl;
-        }
-        return false;
-    }
+inline label FieldValueExpressionDriver::pointSize() const
+{
+    return mesh_.nPoints();
+}
+
+inline const fvMesh &FieldValueExpressionDriver::mesh() const
+{
+    return mesh_;
 }
 
 } // end namespace
