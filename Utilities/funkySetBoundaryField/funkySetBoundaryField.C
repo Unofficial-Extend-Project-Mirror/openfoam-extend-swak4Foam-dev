@@ -136,11 +136,8 @@ int main(int argc, char *argv[])
                 }
                 OStringStream result;
                 driver.outputResult(result);
-//                 string newEntry=target+" "+result.str()+";";
-//                 Info << newEntry << endl;
-//                 entry::New(patchDict,IStringStream(newEntry)());
-                primitiveEntry newEntry(target,IStringStream(result.str())());
-                patchDict.set(newEntry);
+                string newEntry="nonuniform "+result.str();
+                patchDict.set(target,newEntry.c_str());                
             }
 
             {
