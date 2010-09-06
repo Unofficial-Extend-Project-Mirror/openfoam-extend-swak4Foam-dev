@@ -111,6 +111,7 @@
 %token TOKEN_id
 %token TOKEN_randNormal
 %token TOKEN_position
+%token TOKEN_area
 %token TOKEN_Sf
 %token TOKEN_Cn
 %token TOKEN_delta
@@ -381,6 +382,10 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_deltaT '(' ')'   { $$ = driver.makeField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'   { $$ = driver.makeField(driver.runTime().time().value()); }
         | TOKEN_toFace '(' pexp ')'        { $$ = driver.toFace(*$3); delete $3;}
+        | TOKEN_area '(' ')'              { 
+            Foam::vectorField *Sf=driver.makeFaceAreaField();
+            $$ = new Foam::scalarField(Foam::mag(*Sf)); 
+            delete Sf;}
 	| TOKEN_SID		{ 
             $$=driver.getField<Foam::scalar>(*$1);delete $1;
 				}
