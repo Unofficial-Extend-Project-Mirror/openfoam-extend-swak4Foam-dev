@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
                     << " the expression " << expr << endl;
 
                 PatchValueExpressionDriver driver(expression,mesh);
+                driver.clearVariables();
                 driver.parse(expr);
 
                 dictionary &patchDict=field.subDict("boundaryField").subDict(patchName);
