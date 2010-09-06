@@ -1,0 +1,48 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+velocities {
+    field U;
+    expressions
+    (
+        {
+            target value;
+            patchName leftWall;
+            variables "maxY=max(pts().y);thres=0.25*maxY;";
+            expression "(pos().y<thres) ? vector(1,0,0)*(maxY-pos().y) : vector(0,0,0)";
+        }
+        {
+            target value;
+            patchName rightWall;
+            variables "maxY=max(pts().y);";
+            expression "vector(0,1,0)*(maxY-pos().y+p_rgh)";
+        }
+    );
+}
+dropIn {
+    field alpha1;
+    expressions
+    (
+        {
+            target inletValue;
+            patchName atmosphere;
+            variables "maxX=max(pts().x);thres1=0.4*maxX;thres2=0.6*maxX;";
+            expression "(pos().x>thres1 && pos().x<thres2) ? 1 : 0";
+        }
+    );
+}
+// ************************************************************************* //
