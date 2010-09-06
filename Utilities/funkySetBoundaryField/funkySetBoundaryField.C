@@ -130,11 +130,10 @@ int main(int argc, char *argv[])
                 dictionary &patchDict=field.subDict("boundaryField").subDict(patchName);
 
                 if(patchDict.found(target)) {
-                    patchDict.changeKeyword(keyType(target),keyType(word(target+"Old")),true);
+                    //                    patchDict.changeKeyword(keyType(target),keyType(word(target+"Old")),true);
                 }
                 OStringStream result;
-                driver.outputResult(result);
-                string newEntry="nonuniform "+result.str();
+                string newEntry=driver.outputEntry();
                 patchDict.set(target,newEntry.c_str());                
             }
 

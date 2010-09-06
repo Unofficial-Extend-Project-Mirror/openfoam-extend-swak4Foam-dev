@@ -658,6 +658,29 @@ void CommonValueExpressionDriver::outputResult(Ostream &o)
         o << "No implementation for " << rType;
     }
 }
+
+string CommonValueExpressionDriver::outputEntry()
+{
+    OStringStream o;
+    
+    word rType=getResultType();
+    if(rType==pTraits<scalar>::typeName) {
+        result_.getResult<scalar>(true)().writeEntry("",o);
+    } else if(rType==pTraits<vector>::typeName) {
+        result_.getResult<vector>(true)().writeEntry("",o);
+    } else if(rType==pTraits<tensor>::typeName) {
+        result_.getResult<tensor>(true)().writeEntry("",o);
+    } else if(rType==pTraits<symmTensor>::typeName) {
+        result_.getResult<symmTensor>(true)().writeEntry("",o);
+    } else if(rType==pTraits<sphericalTensor>::typeName) {
+        result_.getResult<sphericalTensor>(true)().writeEntry("",o);
+    } else { 
+        o << "No implementation for " << rType << ";";
+    }
+
+    return o.str();
+}
+
 // ************************************************************************* //
 
 } // namespace

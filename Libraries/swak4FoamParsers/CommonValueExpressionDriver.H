@@ -198,6 +198,8 @@ public:
 
     void outputResult(Ostream &);
 
+    string outputEntry();
+
     word getResultType();
 
     ExpressionResult getUniform(label size,bool noWarning);
