@@ -719,6 +719,11 @@ void FieldValueExpressionDriver::setValuePatches
   }
 }
 
+const word &FieldValueExpressionDriver::time() const
+{
+    return time_;
+}
+
 // Force the compiler to generate the code, there'S a better way but I'm too stupid
 void dummyS(GeometricField<scalar,fvPatchField,volMesh>  &f,bool keepPatches,const wordList &fixedPatches) {
     FieldValueExpressionDriver::makePatches(f,keepPatches,fixedPatches);

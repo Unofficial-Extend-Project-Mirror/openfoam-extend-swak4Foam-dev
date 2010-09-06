@@ -137,6 +137,32 @@ namespace Foam {
     }
 
     template<class T>
+    inline tmp<T> CommonValueExpressionDriver::readAndRegister(const word &name)
+    {
+        tmp<T>f(
+            new T(
+                IOobject
+                (
+                    name,
+                    this->time(),
+                    this->mesh(),
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                ),
+                this->mesh()
+            )
+        );
+        if(cacheReadFields()) {
+            if(debug) {
+                Info << "Registering a copy of " << name << " with mesh" << endl;
+            }
+            T* toCache=new T(f());
+            toCache->store();
+        }
+        return f;
+    }
+
+    template<class T>
     bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(const string &name) const
     {
         if(debug) {

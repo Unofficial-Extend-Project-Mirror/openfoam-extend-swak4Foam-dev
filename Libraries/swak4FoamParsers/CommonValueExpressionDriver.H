@@ -98,6 +98,9 @@ protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
 
+    //- get the current time
+    virtual const word &time() const;
+
     //- find out which mesh is meant from the dictionary
     static const fvMesh &regionMesh
     (
@@ -123,14 +126,11 @@ protected:
 
     inline bool searchOnDisc() const { return searchOnDisc_; }
 
-    void setSearchBehaviour(
-        bool cacheReadFields,
-        bool searchInMemory,
-        bool searchOnDisc
-    );
-
     string getTypeOfField(const string &name) const;
     string getTypeOfSet(const string &name) const;
+
+    template<class T>
+    inline tmp<T> readAndRegister(const word &name);
 
 public:
     //- Runtime type information
@@ -180,6 +180,12 @@ public:
 
 
     // Member Functions
+
+    void setSearchBehaviour(
+        bool cacheReadFields,
+        bool searchInMemory,
+        bool searchOnDisc
+    );
 
     template<class Type>
     tmp<Field<Type> > evaluate(const string &expr,bool qPoint=false);

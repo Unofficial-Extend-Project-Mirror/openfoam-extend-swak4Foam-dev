@@ -132,6 +132,8 @@ inv                    return token::TOKEN_inv;
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
+    } else if(driver.is<Foam::scalar>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_SID;
     } else if(driver.is<Foam::vector>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_VID;
     } else if(driver.is<Foam::tensor>(*ptr)) {
@@ -140,10 +142,10 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr; return token::TOKEN_YID;
     } else if(driver.is<Foam::sphericalTensor>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_HID;
-    } else if(driver.is<Foam::scalar>(*ptr)) {
-        yylval->name = ptr; return token::TOKEN_SID;
         //    } else if(driver.is<Foam::bool>(*ptr)) {
         //        yylval->name = ptr; return token::TOKEN_LID;
+    } else if(driver.is<Foam::scalar>(*ptr,true)) {
+        yylval->name = ptr; return token::TOKEN_PSID;
     } else if(driver.is<Foam::vector>(*ptr,true)) {
         yylval->name = ptr; return token::TOKEN_PVID;
     } else if(driver.is<Foam::tensor>(*ptr,true)) {
@@ -152,8 +154,6 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr; return token::TOKEN_PYID;
     } else if(driver.is<Foam::sphericalTensor>(*ptr,true)) {
         yylval->name = ptr; return token::TOKEN_PHID;
-    } else if(driver.is<Foam::scalar>(*ptr,true)) {
-        yylval->name = ptr; return token::TOKEN_PSID;
         //    } else if(driver.is<Foam::bool>(*ptr,true)) {
         //        yylval->name = ptr; return token::TOKEN_PLID;
     } else {

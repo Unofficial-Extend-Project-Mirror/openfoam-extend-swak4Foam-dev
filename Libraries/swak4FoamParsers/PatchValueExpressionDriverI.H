@@ -53,6 +53,31 @@ namespace Foam {
             return variables_[name].getResult<Type>(true).ptr();
         }
 
+        autoPtr<localVolField> tmpVol;
+        autoPtr<localSurfaceField> tmpSurf;
+        autoPtr<localPointField> tmpPoint;
+
+        if(
+            searchOnDisc()
+            &&
+            !mesh().foundObject<localVolField>(name)
+            &&
+            !mesh().foundObject<localSurfaceField>(name)
+            &&
+            !mesh().foundObject<localPointField>(name)
+        ) {
+            word fType=this->getTypeOfField(name);
+            if(fType==localVolField::typeName) {
+                tmpVol.set(this->readAndRegister<localVolField>(name).ptr());
+            } else if(fType==localSurfaceField::typeName) {
+                tmpSurf.set(this->readAndRegister<localSurfaceField>(name).ptr());
+            } 
+            // TODO: this constructor doesn't work
+            // else if(fType==localPointField::typeName) {
+            //     tmpPoint.set(this->readAndRegister<localPointField>(name).ptr());
+            // }
+        }
+
         if(
             patch_.boundaryMesh().mesh().
             objectRegistry::foundObject<localVolField>(name)

@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
 
     argList::validOptions.insert("dict","<dictionary to use>");
+    argList::validOptions.insert("cacheFields","");
 
 #   include "setRootCase.H"
 
@@ -62,6 +63,15 @@ int main(int argc, char *argv[])
     if(args.options().found("dict")) {
         dictName=args.options()["dict"];
     }
+    
+    bool cacheFields=args.options().found("cacheFields");
+    if(cacheFields) {
+        WarningIn("main()")
+            << "The current behaviour is to cache fields that were read from disc. "
+                << "This may lead to unexpected behaviour as previous modifications "
+                << "will not be visible."
+                << endl;
+            }
 
 #   include "createTime.H"
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
@@ -125,6 +135,12 @@ int main(int argc, char *argv[])
                     << " the expression " << expr << endl;
 
                 PatchValueExpressionDriver driver(expression,mesh);
+                driver.setSearchBehaviour(
+                    cacheFields,
+                    false,
+                    true             // search on disc
+                );
+
                 driver.clearVariables();
                 driver.parse(expr);
 

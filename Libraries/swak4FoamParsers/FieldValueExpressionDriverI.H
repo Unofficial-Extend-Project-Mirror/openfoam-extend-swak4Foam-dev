@@ -53,7 +53,7 @@ T *FieldValueExpressionDriver::getField(const string &name)
                 Type minVal=gMin(vals);
                 Type maxVal=gMax(vals);
                 if(mag(minVal-maxVal)>SMALL) {
-                    WarningIn("ExpressionResult::getUniformInternal(const label size,bool noWarn)")
+                    WarningIn("FieldValueExpressionDriver::getField(const string &name)")
                         << "The minimum value " << minVal << " and the maximum " 
                             << maxVal << " differ. I will use the average " << avg
                             << endl;
@@ -83,24 +83,8 @@ T *FieldValueExpressionDriver::getField(const string &name)
         if(debug) {
             Info << "Reading " << name << " from disc" << endl;
         }
-        f=new T(
-            IOobject
-            (
-                name,
-                time_,
-                mesh_,
-                IOobject::MUST_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh_
-        );
-        if(cacheReadFields()) {
-            if(debug) {
-                Info << "Registering a copy of " << name << " with mesh" << endl;
-            }
-            T* toCache=new T(*f);
-            toCache->store();
-        }
+        
+        f=this->readAndRegister<T>(name).ptr();
     }
 
     if(f==NULL) {
