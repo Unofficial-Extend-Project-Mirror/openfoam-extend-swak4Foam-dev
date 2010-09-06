@@ -54,7 +54,8 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpress
         SubsetValueExpressionDriver(orig),
         cellSet_(
             dynamicCast<const fvMesh&>(set.db()),
-            set.name()+"_copy",
+            //            set.name()+"_copy",
+            set.name(),
             set
         )
 {}
@@ -64,7 +65,8 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
     SubsetValueExpressionDriver(),
     cellSet_(
             dynamicCast<const fvMesh&>(set.db()),
-            set.name()+"_copy",
+            //            set.name()+"_copy",
+            set.name(),
             set
     )
 {}

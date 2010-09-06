@@ -57,7 +57,8 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceSetValueExpress
         SubsetValueExpressionDriver(orig),
         faceSet_(
             dynamicCast<const fvMesh&>(set.db()),
-            set.name()+"_copy",
+            //            set.name()+"_copy",
+            set.name(),
             set
         )
 {}
@@ -71,7 +72,8 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     faceSet_(
             dynamicCast<const fvMesh&>(set.db()),
-            set.name()+"_copy",
+            //            set.name()+"_copy",
+            set.name(),
             set
     )
 {}
