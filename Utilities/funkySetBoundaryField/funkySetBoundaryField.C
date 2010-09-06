@@ -130,9 +130,7 @@ int main(int argc, char *argv[])
                 dictionary &patchDict=field.subDict("boundaryField").subDict(patchName);
 
                 if(patchDict.found(target)) {
-//                     entry old(patchDict.lookupEntry(target,false,false));
-//                     old.keyname()=target+"Old";
-//                     patchDict.set(old);
+                    patchDict.changeKeyword(keyType(target),keyType(word(target+"Old")),true);
                 }
                 OStringStream result;
                 driver.outputResult(result);
