@@ -99,7 +99,7 @@ protected:
     virtual const fvMesh &mesh() const = 0;
 
     //- get the current time
-    virtual const word &time() const;
+    virtual const word time() const;
 
     //- find out which mesh is meant from the dictionary
     static const fvMesh &regionMesh

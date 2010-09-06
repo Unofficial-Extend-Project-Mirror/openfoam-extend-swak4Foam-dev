@@ -78,7 +78,7 @@ public:
     inline label size() const;
     inline label pointSize() const;
     inline const fvMesh &mesh() const;
-    const word &time() const;
+    const word time() const;
 
     // Check the result type
     bool resultIsVector() { return typ_==VECTOR_TYPE; }

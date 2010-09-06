@@ -52,7 +52,7 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CommonValueExpressionDriver, 1);
+defineTypeNameAndDebug(CommonValueExpressionDriver, 0);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -686,7 +686,7 @@ string CommonValueExpressionDriver::outputEntry()
     return o.str();
 }
 
-const word &CommonValueExpressionDriver::time() const
+const word CommonValueExpressionDriver::time() const
 {
     return this->mesh().time().timeName();
 }

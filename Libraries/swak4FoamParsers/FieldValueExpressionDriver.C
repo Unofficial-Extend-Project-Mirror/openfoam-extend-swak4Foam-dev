@@ -719,7 +719,7 @@ void FieldValueExpressionDriver::setValuePatches
   }
 }
 
-const word &FieldValueExpressionDriver::time() const
+const word FieldValueExpressionDriver::time() const
 {
     return time_;
 }
