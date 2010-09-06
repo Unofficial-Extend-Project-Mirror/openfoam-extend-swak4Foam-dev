@@ -130,7 +130,12 @@ int main(int argc, char *argv[])
                 dictionary &patchDict=field.subDict("boundaryField").subDict(patchName);
 
                 if(patchDict.found(target)) {
+                    // Does not work (memory problem)
                     //                    patchDict.changeKeyword(keyType(target),keyType(word(target+"Old")),true);
+                    if(patchDict.found(target+"Old")) {
+                        patchDict.remove(target+"Old");
+                    }
+                    patchDict.changeKeyword(keyType(target),keyType(word(target+"Old")));
                 }
                 OStringStream result;
                 string newEntry=driver.outputEntry();
