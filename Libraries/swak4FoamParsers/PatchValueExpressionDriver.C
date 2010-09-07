@@ -361,10 +361,10 @@ void PatchValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr
         pRegion=&(dynamicCast<const fvMesh&>(
                       pRegion->time().lookupObject<objectRegistry>(regionName))
         );
-        FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-            << " Region " << regionName  << " defined, but multi-region is currently not supported" 
-                << endl
-                << abort(FatalError);
+//         FatalErrorIn("PatchValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
+//             << " Region " << regionName  << " defined, but multi-region is currently not supported" 
+//                 << endl
+//                 << abort(FatalError);
     }
 
     const fvMesh &region=*pRegion;
