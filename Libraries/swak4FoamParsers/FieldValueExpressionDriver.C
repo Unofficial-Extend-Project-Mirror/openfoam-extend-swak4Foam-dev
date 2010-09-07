@@ -93,6 +93,9 @@ void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
         Info << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
     }
 
+//     if(result_) {
+//         delete result_;
+//     }
     result_=r;
     if(!resultDimension_.dimensionless()) {
         (*result_).dimensions().reset(resultDimension_);
@@ -106,6 +109,9 @@ void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
         Info << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
     }
 
+//     if(result_) {
+//         delete result_;
+//     }
     result_=r;
     typ_=LOGICAL_TYPE;
     CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
@@ -115,6 +121,10 @@ void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
     if(debug) {
         Info << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
     }
+
+//     if(result_) {
+//         delete result_;
+//     }
 
     vresult_=r;
     if(!resultDimension_.dimensionless()) {
