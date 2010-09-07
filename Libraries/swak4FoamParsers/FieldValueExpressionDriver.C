@@ -34,7 +34,8 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(runTime),
       result_(NULL),
       vresult_(NULL),
-      typ_(NO_TYPE)
+      typ_(NO_TYPE),
+      resultDimension_(0,0,0,0,0,0,0)
 {
 }
 
@@ -54,7 +55,8 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(mesh.time()),
       result_(NULL),
       vresult_(NULL),
-      typ_(NO_TYPE)
+      typ_(NO_TYPE),
+      resultDimension_(0,0,0,0,0,0,0)
 {
 }
 
@@ -68,8 +70,12 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(mesh.time()),
       result_(NULL),
       vresult_(NULL),
-      typ_(NO_TYPE)
+      typ_(NO_TYPE),
+      resultDimension_(0,0,0,0,0,0,0)
 {
+    if(dict.found("dimensions")) {
+        resultDimension_.reset(dimensionSet(dict.lookup("dimensions")));
+    }
 }
 
 FieldValueExpressionDriver::~FieldValueExpressionDriver ()
@@ -88,6 +94,9 @@ void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
     }
 
     result_=r;
+    if(!resultDimension_.dimensionless()) {
+        (*result_).dimensions().reset(resultDimension_);
+    }
     typ_=SCALAR_TYPE;
     CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
 }
@@ -108,6 +117,9 @@ void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
     }
 
     vresult_=r;
+    if(!resultDimension_.dimensionless()) {
+        (*vresult_).dimensions().reset(resultDimension_);
+    }
     typ_=VECTOR_TYPE;
     CommonValueExpressionDriver::result_.setResultForeign(vresult_->internalField());
 }

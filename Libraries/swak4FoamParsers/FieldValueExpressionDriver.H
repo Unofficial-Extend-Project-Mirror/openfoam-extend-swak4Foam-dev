@@ -53,6 +53,8 @@ private:
 
     ExpressionType typ_;
 
+    dimensionSet resultDimension_;
+
 public:
     TypeName("FieldValueExpressionDriver");
 

@@ -97,7 +97,7 @@ tmp<typename expressionSource<vector>::resultField> expressionSource<vector>::op
     }
 
     tmp<resultField> result(new resultField(*getVector()));
-    
+
     return result;
 }
 
