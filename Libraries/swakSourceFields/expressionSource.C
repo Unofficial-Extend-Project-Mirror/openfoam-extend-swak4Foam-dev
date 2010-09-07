@@ -79,7 +79,7 @@ tmp<typename expressionSource<scalar>::resultField> expressionSource<scalar>::op
                 << abort(FatalError);
     }
 
-    tmp<resultField> result(new resultField(*getScalar()));
+    tmp<resultField> result(new resultField(getScalar()));
     
     return result;
 }
@@ -96,7 +96,7 @@ tmp<typename expressionSource<vector>::resultField> expressionSource<vector>::op
                 << abort(FatalError);
     }
 
-    tmp<resultField> result(new resultField(*getVector()));
+    tmp<resultField> result(new resultField(getVector()));
 
     return result;
 }

@@ -60,15 +60,15 @@ Foam::manipulateField::~manipulateField()
 
 template<class T>
 void Foam::manipulateField::manipulate(
-    const T *data,
-    const volScalarField *mask
+    const T &data,
+    const volScalarField &mask
 )
 {
     T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
 
     forAll(original,cellI) {
-        if((*mask)[cellI]>SMALL) {
-            original[cellI]=(*data)[cellI];
+        if(mask[cellI]>SMALL) {
+            original[cellI]=data[cellI];
         }
     }
     original.correctBoundaryConditions();

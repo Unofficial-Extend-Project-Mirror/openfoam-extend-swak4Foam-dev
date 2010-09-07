@@ -88,7 +88,7 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
                 << endl
                 << abort(FatalError);
     }
-    const volScalarField &condition=*(driver.getScalar());
+    const volScalarField &condition=driver.getScalar();
 
     const labelList &own=condition.mesh().faceOwner();
     const labelList &nei=condition.mesh().faceNeighbour();

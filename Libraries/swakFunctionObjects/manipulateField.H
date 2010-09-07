@@ -79,8 +79,8 @@ protected:
 
     template<class T>
     void manipulate(
-        const T *data,
-        const volScalarField *mask
+        const T &data,
+        const volScalarField &mask
     );
 
 public:

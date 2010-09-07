@@ -36,17 +36,17 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    template<class Type>
-    void ExpressionResult::setResultForeign(Field<Type> &val)
-    {
-        clearResult();
+//     template<class Type>
+//     void ExpressionResult::setResultForeign(Field<Type> &val)
+//     {
+//         clearResult();
 
-        valType_=pTraits<Type>::typeName;
-        valPtr_=static_cast<void *>(&val);
+//         valType_=pTraits<Type>::typeName;
+//         valPtr_=static_cast<void *>(&val);
 
-        isForeign_=true;
-        isPoint_=false;
-    }
+//         isForeign_=true;
+//         isPoint_=false;
+//     }
 
     template<class Type>
     void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)

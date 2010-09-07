@@ -81,7 +81,7 @@ void Foam::expressionToCell::combine(topoSet& set, const bool add) const
                 << endl
                 << abort(FatalError);
     }
-    const volScalarField &condition=*(driver.getScalar());
+    const volScalarField &condition=driver.getScalar();
 
     forAll(condition, cellI)
     {

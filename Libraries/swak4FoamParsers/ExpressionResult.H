@@ -89,8 +89,9 @@ public:
 
     void operator=(const ExpressionResult&);
 
-    template<class Type>
-    inline void setResultForeign(Field<Type> &);
+    // Not a good idea
+//     template<class Type>
+//     inline void setResultForeign(Field<Type> &);
 
     template<class Type>
     inline void setResult(Field<Type> *,bool isPoint=false);

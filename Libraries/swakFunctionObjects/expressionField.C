@@ -60,7 +60,7 @@ Foam::expressionField::~expressionField()
 
 template<class T>
 void Foam::expressionField::storeField(
-    const T *data,
+    const T &data,
     autoPtr<T> &store
 )
 {
@@ -74,11 +74,11 @@ void Foam::expressionField::storeField(
                     IOobject::NO_READ,
                     autowrite_ ? IOobject::AUTO_WRITE : IOobject::NO_WRITE
                 ),
-                *data
+                data
             )
         );
     } else {
-        store()==*data;
+        store()==data;
     }
 }
 

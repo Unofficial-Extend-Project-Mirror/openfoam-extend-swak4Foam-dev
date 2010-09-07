@@ -83,7 +83,7 @@ protected:
 
     template<class T>
     void storeField(
-        const T *data,
+        const T &data,
         autoPtr<T> &store
     );
 

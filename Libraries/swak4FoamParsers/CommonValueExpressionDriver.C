@@ -423,11 +423,11 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
 
         if(fieldDriver.resultIsVector()) {
             result.setResult(
-                fieldDriver.getVector()->internalField()
+                fieldDriver.getVector().internalField()
             );            
         } else if(fieldDriver.resultIsScalar()) {
             result.setResult(
-                fieldDriver.getScalar()->internalField()
+                fieldDriver.getScalar().internalField()
             );            
         } else {
             WarningIn("CommonValueExpressionDriver::evaluateVariableRemote")

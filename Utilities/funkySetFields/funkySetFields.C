@@ -48,8 +48,8 @@ void setField
     const string &name,
     const fvMesh &mesh,
     const string &time,
-    T *result,
-    volScalarField *cond,
+    const T &result,
+    const volScalarField &cond,
     bool create,
     const dimensionSet &dim,
     bool keepPatches,
@@ -92,8 +92,8 @@ void setField
     label setCells=0;
 
     forAll(*tmp,cellI) {
-        if((*cond)[cellI]!=0) {
-	  (*tmp)[cellI]=(*result)[cellI];
+        if(cond[cellI]!=0) {
+	  (*tmp)[cellI]=result[cellI];
             setCells++;
         }
     }

@@ -48,8 +48,8 @@ private:
     const fvMesh &mesh_;
     const Time& runTime_;
 
-    volScalarField *result_;
-    volVectorField *vresult_;
+    autoPtr<volScalarField> sresult_;
+    autoPtr<volVectorField> vresult_;
 
     ExpressionType typ_;
 
@@ -98,8 +98,8 @@ public:
     void setVectorResult(volVectorField *);
 
     // Getting the results
-    volScalarField *getScalar() { return result_; }
-    volVectorField *getVector() { return vresult_; }
+    const volScalarField &getScalar() { return sresult_; }
+    const volVectorField &getVector() { return vresult_; }
 
     // Handling the scanner.
     void scan_begin ();
