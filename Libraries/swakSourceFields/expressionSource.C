@@ -105,19 +105,28 @@ tmp<typename expressionSource<vector>::resultField> expressionSource<vector>::op
 template<class T>
 tmp<typename expressionSource<T>::resultField> expressionSource<T>::operator()()
 {
-    notImplemented(
-        "expressionSource<T>operator()() for T="+
-        pTraits<T>::typeName
-    );
+    FatalErrorIn(
+        "expressionSource<T>operator()()"
+    )
+        <<  "not implemented for for T="
+            << pTraits<T>::typeName
+            << endl
+            << abort(FatalError);
 }
 
-template<>
+template
+class expressionSource<scalar>;
+
+template
+class expressionSource<vector>;
+
+template
 class expressionSource<tensor>;
 
-template<>
+template
 class expressionSource<symmTensor>;
 
-template<>
+template
 class expressionSource<sphericalTensor>;
 
 } // end namespace
