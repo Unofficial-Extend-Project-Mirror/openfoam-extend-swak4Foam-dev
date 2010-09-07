@@ -93,15 +93,16 @@ void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
         Info << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
     }
 
-//     if(result_) {
-//         delete result_;
-//     }
+    if(result_) {
+        delete result_;
+    }
+
     result_=r;
     if(!resultDimension_.dimensionless()) {
         (*result_).dimensions().reset(resultDimension_);
     }
     typ_=SCALAR_TYPE;
-    CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
+    CommonValueExpressionDriver::result_.setResult(result_->internalField());
 }
 
 void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
@@ -109,12 +110,13 @@ void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
         Info << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
     }
 
-//     if(result_) {
-//         delete result_;
-//     }
+    if(result_) {
+        delete result_;
+    }
+
     result_=r;
     typ_=LOGICAL_TYPE;
-    CommonValueExpressionDriver::result_.setResultForeign(result_->internalField());
+    CommonValueExpressionDriver::result_.setResult(result_->internalField());
 }
 
 void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
@@ -122,16 +124,16 @@ void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
         Info << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
     }
 
-//     if(result_) {
-//         delete result_;
-//     }
+    if(vresult_) {
+        delete vresult_;
+    }
 
     vresult_=r;
     if(!resultDimension_.dimensionless()) {
         (*vresult_).dimensions().reset(resultDimension_);
     }
     typ_=VECTOR_TYPE;
-    CommonValueExpressionDriver::result_.setResultForeign(vresult_->internalField());
+    CommonValueExpressionDriver::result_.setResult(vresult_->internalField());
 }
 
 void FieldValueExpressionDriver::parse (const std::string &f)
