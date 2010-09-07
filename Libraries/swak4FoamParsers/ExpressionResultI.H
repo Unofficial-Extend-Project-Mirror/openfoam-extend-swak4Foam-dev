@@ -36,18 +36,6 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-//     template<class Type>
-//     void ExpressionResult::setResultForeign(Field<Type> &val)
-//     {
-//         clearResult();
-
-//         valType_=pTraits<Type>::typeName;
-//         valPtr_=static_cast<void *>(&val);
-
-//         isForeign_=true;
-//         isPoint_=false;
-//     }
-
     template<class Type>
     void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)
     {
@@ -56,7 +44,6 @@ namespace Foam {
         valType_=pTraits<Type>::typeName;
         valPtr_=static_cast<void *>(new Field<Type>(val));
 
-        isForeign_=false;
         isPoint_=isPoint;
     }
 
@@ -68,7 +55,6 @@ namespace Foam {
         valType_=pTraits<Type>::typeName;
         valPtr_=static_cast<void *>(val);
 
-        isForeign_=false;
         isPoint_=isPoint;
     }
 
@@ -80,7 +66,6 @@ namespace Foam {
         valType_=pTraits<Type>::typeName;
         valPtr_=static_cast<void *>(new Field<Type>(size,val));
 
-        isForeign_=false;
         isPoint_=false;
     }
 
@@ -97,15 +82,10 @@ namespace Foam {
 
         tmp<Field<Type> > result;
         
-        if(isForeign_) {
-            result=tmp<Field<Type> > (
-                new Field<Type>(*static_cast<Field<Type>*>(valPtr_))
-            );
-        } else {
-            result=tmp<Field<Type> > (
-                static_cast<Field<Type>*>(valPtr_)
-            );
-        }
+        result=tmp<Field<Type> > (
+            static_cast<Field<Type>*>(valPtr_)
+        );
+
         if(keep) {
             valPtr_=new Field<Type>(*(static_cast<Field<Type>*>(valPtr_)));
         } else {

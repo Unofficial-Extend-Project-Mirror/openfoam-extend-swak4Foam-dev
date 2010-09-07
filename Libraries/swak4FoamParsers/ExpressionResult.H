@@ -65,9 +65,6 @@ class ExpressionResult
     
     bool isPoint_;
 
-    //- this data belongs to someone else. Don't delete it
-    bool isForeign_;
-
     void uglyDelete();
 
     template<class Type>
@@ -88,10 +85,6 @@ public:
     ~ExpressionResult();
 
     void operator=(const ExpressionResult&);
-
-    // Not a good idea
-//     template<class Type>
-//     inline void setResultForeign(Field<Type> &);
 
     template<class Type>
     inline void setResult(Field<Type> *,bool isPoint=false);

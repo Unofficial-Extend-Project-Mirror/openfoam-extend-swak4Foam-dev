@@ -45,8 +45,7 @@ ExpressionResult::ExpressionResult()
 :
     valType_("None"),
     valPtr_(NULL),
-    isPoint_(false),
-    isForeign_(false)
+    isPoint_(false)
 {
     clearResult();
 }
@@ -55,8 +54,7 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 :
     valType_("None"),
     valPtr_(NULL),
-    isPoint_(false),
-    isForeign_(false)
+    isPoint_(false)
 {
     (*this)=rhs;
 }
@@ -81,7 +79,7 @@ void ExpressionResult::clearResult()
 
 void ExpressionResult::uglyDelete()
 {
-    if( valPtr_ && !isForeign_ ) {
+    if( valPtr_ ) {
         if(valType_==pTraits<scalar>::typeName) {
             delete static_cast<scalarField*>(valPtr_);
         } else if(valType_==vector::typeName) {
@@ -152,7 +150,6 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
     valPtr_=rhs.valPtr_;
     valType_=rhs.valType_;
     isPoint_=rhs.isPoint_;
-    isForeign_=rhs.isForeign_;
 
     const_cast<ExpressionResult &>(rhs).valPtr_=NULL;
     const_cast<ExpressionResult &>(rhs).clearResult();
