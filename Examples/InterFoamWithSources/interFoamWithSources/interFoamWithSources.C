@@ -93,6 +93,13 @@ int main(int argc, char *argv[])
 
         turbulence->correct();
 
+        if(runTime.write()) 
+        {
+            volVectorField momSrc=momentumSource();
+            momSrc.rename("momSrc");
+            momSrc.write();
+        }
+
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
