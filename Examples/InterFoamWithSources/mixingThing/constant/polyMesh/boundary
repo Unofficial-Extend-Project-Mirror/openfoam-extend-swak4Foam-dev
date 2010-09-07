@@ -20,20 +20,20 @@ FoamFile
     top
     {
         type            wall;
-        nFaces          20;
-        startFace       760;
+        nFaces          50;
+        startFace       4900;
     }
     walls
     {
         type            wall;
-        nFaces          60;
-        startFace       780;
+        nFaces          150;
+        startFace       4950;
     }
     frontAndBack
     {
         type            empty;
-        nFaces          800;
-        startFace       840;
+        nFaces          5000;
+        startFace       5100;
     }
 )
 
