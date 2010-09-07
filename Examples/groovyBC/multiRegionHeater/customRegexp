@@ -12,3 +12,11 @@ tIn
 	type slave;
 	master tOut;
 }
+energyRegion
+{
+	expr "Expression energyRegion(.+) :  .+=(%f%)";
+	type dynamic;
+	idNr 1;
+	theTitle "Energy in the regions";
+	logscale true;
+}

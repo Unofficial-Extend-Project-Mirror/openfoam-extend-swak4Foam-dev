@@ -76,8 +76,38 @@ functions
         expression "T";
         verbose true;
     }
+    energyRegionheater{
+        type swakExpression;
+        region heater;
+        expression "vol()*T*cp*rho";
+        accumulations ( sum );
+        valueType internalField;
+        verbose true;
+    }
+    energyRegionAir{
+        type swakExpression;
+        region topAir;
+        variables "bottomE{/bottomAir}=sum(h*vol());";
+        expression "sum(h*vol())+bottomE";
+        accumulations ( average );
+        valueType internalField;
+        verbose true;
+    }
+    energyRegionSolid{
+        type swakExpression;
+        region leftSolid;
+        variables "rightE{/rightSolid}=sum(T*cp*rho*vol());";
+        expression "sum(T*cp*rho*vol())+rightE";
+        accumulations ( average );
+        valueType internalField;
+        verbose true;
+    }
 );
 
-libs ("libgroovyBC.so"  "libsimpleSwakFunctionObjects.so" "libswakFunctionObjects.so" );
+libs (
+    "libgroovyBC.so"  
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+);
 
 // ************************************************************************* //

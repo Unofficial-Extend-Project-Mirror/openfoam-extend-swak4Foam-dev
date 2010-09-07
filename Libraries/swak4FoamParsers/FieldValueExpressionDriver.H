@@ -30,6 +30,11 @@ class FieldValueExpressionDriver
 :
     public CommonValueExpressionDriver
 {
+
+    // forbid copy
+    FieldValueExpressionDriver(const FieldValueExpressionDriver &);
+    void operator=(const FieldValueExpressionDriver&);
+
 public:
     enum ExpressionType{
         NO_TYPE,
@@ -39,7 +44,7 @@ public:
     };
 
 private:
-    const string &time_;
+    const string time_;
     const fvMesh &mesh_;
     const Time& runTime_;
 

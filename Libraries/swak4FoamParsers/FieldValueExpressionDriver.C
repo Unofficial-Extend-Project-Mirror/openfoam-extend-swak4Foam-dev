@@ -49,7 +49,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
         searchInMemory,
         searchOnDisc        
     ),
-      time_(mesh.time().timeName()),
+      time_(""),
       mesh_(mesh),
       runTime_(mesh.time()),
       result_(NULL),
@@ -63,7 +63,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     const fvMesh &mesh
 )
     : CommonValueExpressionDriver(dict),
-      time_(mesh.time().timeName()),
+      time_(""),
       mesh_(mesh),
       runTime_(mesh.time()),
       result_(NULL),
@@ -206,7 +206,7 @@ volVectorField *FieldValueExpressionDriver::makePositionField()
         IOobject
         (
             "pos",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -227,7 +227,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFacePositionField()
         IOobject
         (
             "fpos",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -249,7 +249,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
         IOobject
         (
             "fproj",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -346,7 +346,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceField()
         IOobject
         (
             "face",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -367,7 +367,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeAreaField()
         IOobject
         (
             "face",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -387,7 +387,7 @@ volScalarField *FieldValueExpressionDriver::makeVolumeField()
         IOobject
         (
             "vol",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -411,7 +411,7 @@ volScalarField *FieldValueExpressionDriver::makeDistanceField()
         IOobject
         (
             "dist",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -434,7 +434,7 @@ volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorFi
         IOobject
         (
             "rdist",
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -459,7 +459,7 @@ volScalarField *FieldValueExpressionDriver::makeScalarField(const scalar &val)
         IOobject
         (
             buff.str(),
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -483,7 +483,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeSurfaceScalarField
         IOobject
         (
             buff.str(),
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -503,7 +503,7 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
   IOobject head 
       (
           name,
-          time_,
+          time(),
           polyMesh::meshSubDir/"sets",
           mesh_,
           IOobject::MUST_READ,
@@ -557,7 +557,7 @@ volVectorField *FieldValueExpressionDriver::makeVectorField(const vector &vec)
         IOobject
         (
             buff.str(),
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -596,7 +596,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
         IOobject
         (
             buff.str(),
-            time_,
+            time(),
             mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
@@ -721,7 +721,11 @@ void FieldValueExpressionDriver::setValuePatches
 
 const word FieldValueExpressionDriver::time() const
 {
-    return time_;
+    if(time_!="") {
+        return time_;
+    } else {
+        return CommonValueExpressionDriver::time();
+    }
 }
 
 // Force the compiler to generate the code, there'S a better way but I'm too stupid
