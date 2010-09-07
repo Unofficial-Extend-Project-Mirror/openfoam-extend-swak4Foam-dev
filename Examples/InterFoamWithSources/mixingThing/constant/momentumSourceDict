@@ -15,7 +15,10 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-expression   "vector(0,0,0)";
+variables "angle=sin(time());direction=vector(sin(angle),cos(angle),0);";
+
+expression   "0*direction";
+
 dimensions [1 -2 -2 0 0 0 0];
 
 

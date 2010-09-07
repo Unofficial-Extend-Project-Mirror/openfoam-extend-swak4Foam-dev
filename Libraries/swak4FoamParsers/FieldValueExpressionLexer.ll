@@ -139,7 +139,11 @@ false                  return token::TOKEN_FALSE;
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
-    } else if(driver.isThere<Foam::volVectorField>(*ptr)) {
+    } else if(       
+        driver.isVariable<Foam::volVectorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volVectorField>(*ptr)
+    ) {
         yylval->vname = ptr; return token::TOKEN_VID;
     } else if(
         driver.isVariable<Foam::volScalarField::value_type>(*ptr)
