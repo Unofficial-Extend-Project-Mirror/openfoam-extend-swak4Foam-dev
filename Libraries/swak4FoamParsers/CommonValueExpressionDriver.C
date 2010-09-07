@@ -153,7 +153,7 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
         )   << "Unknown  CommonValueExpressionDriver type " << driverType
             << endl << endl
             << "Valid valueTypes are :" << endl
-            << dictionaryConstructorTablePtr_->sortedToc()
+	  //            << dictionaryConstructorTablePtr_->sortedToc()
             << exit(FatalError);
     }
 

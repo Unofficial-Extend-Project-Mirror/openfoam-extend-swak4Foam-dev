@@ -176,7 +176,7 @@ public:
 
     // Destructor
 
-    ~CommonValueExpressionDriver();
+    virtual ~CommonValueExpressionDriver();
 
 
     // Member Functions
