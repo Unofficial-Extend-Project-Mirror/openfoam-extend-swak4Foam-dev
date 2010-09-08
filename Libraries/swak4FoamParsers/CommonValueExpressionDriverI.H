@@ -137,6 +137,48 @@ namespace Foam {
     }
 
     template<class T>
+    inline autoPtr<T> CommonValueExpressionDriver::getSet(const fvMesh &mesh,const word &name)
+    {
+        if(debug) {
+            Info << "Looking for " << T::typeName << " named " << name << " with mesh" << endl;
+            Info << "Caching: " << cacheSets() << " Found: " << mesh.foundObject<T>(name) << endl;
+        }
+        if(
+            !cacheSets()
+            ||
+            !mesh.foundObject<T>(name)
+        ) {
+            autoPtr<T> s(
+                new T(
+                    mesh,
+                    name,
+                    IOobject::MUST_READ
+                )
+            );
+        
+            if(cacheSets()) {
+                if(debug) {
+                    Info << "Registering a copy of " << name << " with mesh" << endl;
+                }
+                T* toCache=new T(mesh,name,s());
+                toCache->store();
+                if(debug) {
+                    Info << "Checking for " << name << " :"  << mesh.foundObject<T>(name) << endl;
+                }
+            }
+            return s;
+        } else {
+            return autoPtr<T>(
+                new T(
+                    mesh,
+                    name,
+                    mesh.lookupObject<T>(name)
+                )
+            );
+        }
+    }
+
+    template<class T>
     inline tmp<T> CommonValueExpressionDriver::readAndRegister(const word &name)
     {
         tmp<T>f(

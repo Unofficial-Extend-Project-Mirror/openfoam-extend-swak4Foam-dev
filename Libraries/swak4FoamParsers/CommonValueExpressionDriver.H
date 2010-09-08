@@ -118,6 +118,9 @@ private:
     //- should we look on disc? does not make sense in the application
     bool searchOnDisc_;
 
+    //- should cellSets and faceSets be cached instead of read from disc every time
+    static bool cacheSets_;
+
 protected:
    
     inline bool cacheReadFields() const { return cacheReadFields_; }
@@ -126,11 +129,16 @@ protected:
 
     inline bool searchOnDisc() const { return searchOnDisc_; }
 
+    inline bool cacheSets() const { return cacheSets_; }
+
     string getTypeOfField(const string &name) const;
     string getTypeOfSet(const string &name) const;
 
     template<class T>
     inline tmp<T> readAndRegister(const word &name);
+
+    template<class T>
+    inline autoPtr<T> getSet(const fvMesh &,const word &);
 
 public:
     //- Runtime type information

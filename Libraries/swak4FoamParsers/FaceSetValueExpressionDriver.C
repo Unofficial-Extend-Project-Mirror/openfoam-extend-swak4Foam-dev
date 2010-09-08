@@ -82,9 +82,12 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dic
  :
     SubsetValueExpressionDriver(dict),
     faceSet_(
+        regionMesh(dict,mesh),
+        dict.lookup("setName"),        
+        getSet<faceSet>(
             regionMesh(dict,mesh),
-            dict.lookup("setName"),
-            IOobject::MUST_READ
+            dict.lookup("setName")
+        )
     )
 {
 }
@@ -154,7 +157,15 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
     scalarField *result=new scalarField(faceSet_.size());
     word setName(faceSet_.name() + "SlaveCells");
     const fvMesh &mesh=this->mesh();
-    cellSet cells(mesh, setName,IOobject::MUST_READ);
+
+    cellSet cells(
+        mesh,
+        setName,
+        getSet<cellSet>(
+            mesh,
+            setName
+        )
+    );
     SortableList<label> faceLabels(faceSet_.toc());
 
     forAll(faceLabels, i)

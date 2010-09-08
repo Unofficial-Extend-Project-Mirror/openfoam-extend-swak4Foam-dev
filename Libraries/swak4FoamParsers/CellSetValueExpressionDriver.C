@@ -75,9 +75,12 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dic
  :
     SubsetValueExpressionDriver(dict),
     cellSet_(
+        mesh,
+        dict.lookup("setName"),
+        getSet<cellSet>(
             regionMesh(dict,mesh),
-            dict.lookup("setName"),
-            IOobject::MUST_READ
+            dict.lookup("setName")
+        )
     )
 {
 }

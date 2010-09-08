@@ -262,6 +262,7 @@ functions
 );
 
 libs ( 
+    "libmeshToos.so"
     "libOpenFOAM.so" 
     "libgroovyBC.so" 
     "libsimpleSwakFunctionObjects.so" 
