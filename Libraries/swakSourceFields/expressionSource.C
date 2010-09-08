@@ -68,7 +68,7 @@ expressionSource<T>::~expressionSource()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<>
-tmp<typename expressionSource<scalar>::resultField> expressionSource<scalar>::operator()()
+tmp<expressionSource<scalar>::resultField> expressionSource<scalar>::operator()()
 {
     clearVariables();
     parse(expression_);
@@ -85,7 +85,7 @@ tmp<typename expressionSource<scalar>::resultField> expressionSource<scalar>::op
 }
 
 template<>
-tmp<typename expressionSource<vector>::resultField> expressionSource<vector>::operator()()
+tmp<expressionSource<vector>::resultField> expressionSource<vector>::operator()()
 {
     clearVariables();
     parse(expression_);
