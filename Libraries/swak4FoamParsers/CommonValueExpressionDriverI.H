@@ -140,13 +140,13 @@ namespace Foam {
     inline autoPtr<T> CommonValueExpressionDriver::getSet(const fvMesh &mesh,const word &name)
     {
         if(debug) {
-            Info << "Looking for " << T::typeName << " named " << name << " with mesh" << endl;
+            Info << "Looking for " << T::typeName << " named " << name << " with mesh ";
             Info << "Caching: " << cacheSets() << " Found: " << mesh.foundObject<T>(name) << endl;
         }
         if(
             !cacheSets()
             ||
-            !mesh.foundObject<T>(name)
+            !mesh.thisDb().foundObject<T>(name)
         ) {
             autoPtr<T> s(
                 new T(
@@ -162,9 +162,6 @@ namespace Foam {
                 }
                 T* toCache=new T(mesh,name,s());
                 toCache->store();
-                if(debug) {
-                    Info << "Checking for " << name << " :"  << mesh.foundObject<T>(name) << endl;
-                }
             }
             return s;
         } else {

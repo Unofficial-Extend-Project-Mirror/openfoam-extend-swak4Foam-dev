@@ -52,10 +52,11 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CommonValueExpressionDriver, 1);
+defineTypeNameAndDebug(CommonValueExpressionDriver, 0);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 
-bool CommonValueExpressionDriver::cacheSets_=true;
+    // Currently not working
+bool CommonValueExpressionDriver::cacheSets_=false;
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -444,7 +445,12 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
             id,
             IOobject::MUST_READ
         );
-        CellSetValueExpressionDriver otherDriver(otherSet);
+        CellSetValueExpressionDriver otherDriver(
+            getSet<cellSet>(
+                region,
+                id
+            )()
+        );
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="cellZone") {
@@ -460,8 +466,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else if(type=="faceSet") {
-        FaceSetValueExpressionDriver otherDriver
-            (
+        FaceSetValueExpressionDriver otherDriver(
                 getSet<faceSet>(
                     region,
                     id
