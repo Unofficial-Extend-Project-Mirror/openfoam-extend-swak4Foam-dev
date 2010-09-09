@@ -52,11 +52,11 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CommonValueExpressionDriver, 0);
+defineTypeNameAndDebug(CommonValueExpressionDriver,0);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 
     // Currently not working
-bool CommonValueExpressionDriver::cacheSets_=false;
+bool CommonValueExpressionDriver::cacheSets_=true;
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -618,6 +618,9 @@ string CommonValueExpressionDriver::getTypeOfField(const string &name) const
 
 string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
 {
+    if(debug) {
+        Info << "Lookinh for set named " << name << endl;
+    }
     IOobject f 
         (
             name,

@@ -139,15 +139,21 @@ namespace Foam {
     template<class T>
     inline autoPtr<T> CommonValueExpressionDriver::getSet(const fvMesh &mesh,const word &name)
     {
+        // avoid the possibility of name-clashes
+        const word regName=name+"RegisteredNameFor"+T::typeName;
+
         if(debug) {
             Info << "Looking for " << T::typeName << " named " << name << " with mesh ";
-            Info << "Caching: " << cacheSets() << " Found: " << mesh.foundObject<T>(name) << endl;
+            Info << "Caching: " << cacheSets() << " Found: " << mesh.foundObject<T>(regName) << endl;
         }
         if(
             !cacheSets()
             ||
-            !mesh.thisDb().foundObject<T>(name)
+            !mesh.thisDb().foundObject<T>(regName)
         ) {
+            if(debug) {
+                Info << "Constructing a new " << name << endl;
+            }
             autoPtr<T> s(
                 new T(
                     mesh,
@@ -160,16 +166,19 @@ namespace Foam {
                 if(debug) {
                     Info << "Registering a copy of " << name << " with mesh" << endl;
                 }
-                T* toCache=new T(mesh,name,s());
+                T* toCache=new T(mesh,regName,s());
                 toCache->store();
             }
             return s;
         } else {
+            if(debug) {
+                Info << "Getting existing " << regName << endl;
+            }
             return autoPtr<T>(
                 new T(
                     mesh,
                     name,
-                    mesh.lookupObject<T>(name)
+                    mesh.lookupObject<T>(regName)
                 )
             );
         }
