@@ -41,7 +41,7 @@ solvers
         maxIter          100;
     };
 
-    p
+    p_rgh
     {
         solver GAMG;
         tolerance        1e-8;
@@ -58,7 +58,7 @@ solvers
         mergeLevels      1;
     };
 
-    pFinal 
+    p_rghFinal 
     {
         solver PCG;
         preconditioner 

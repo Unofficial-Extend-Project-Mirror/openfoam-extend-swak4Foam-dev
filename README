@@ -108,7 +108,8 @@
      the momentum equation. The source term is an expression that is
      defined at run-time
 **** =mixingThing=
-     Demonstration case for it
+     Demonstration case for it.
+     - Preparation :: Run the script =prepare.sh= to prepare the case
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
@@ -118,3 +119,6 @@
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
           =swakExpression=-functionObject
+* History
+** 2010-09-13
+   First Release
