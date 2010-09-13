@@ -1,26 +1,120 @@
 # -*- mode: org -*-
+* Description
+  A collection of libraries and tools that let the user handle
+  OpenFOAM-data based on expressions
+* Contributors etc
+** Original Author
+   Bernhard Gschaider (bgschaid@ice-sf.at)
+** Current Maintainer
+   Bernhard Gschaider (bgschaid@ice-sf.at)
+** Contributors
+   /None yet/
+** Documentation
+   See: http://openfoamwiki.net/index.php/contrib/swak4Foam
+* Installation/Compilation
+** Requirements
+   - Version 1.7 of OpenFOAM (1.6 should work, too)
+   - the compiler generators =bison= and =flex=
+   - =simpleSwakFunctionObjects= needs the =simpleFunctionObjects=
+     (see
+     http://openfoamwiki.net/index.php/Contrib_simpleFunctionObjects)
+     all other functionality has no additional requirements
+     (=simpleSwakFunctionObjects= is only required by some examples)
+** Building
+  =wmake all= at the base directory should build all the libraries and
+  tools.
+
+  The main library =swak4FoamParsers= can't be built in parallel (no
+  values of =WM_NCOMPPROCS= bigger than 1)
 * Contents
 ** Libraries
    Collection of Libraries
-*** swak4FoamParsers
+*** =swak4FoamParsers=
     The basis of =swak4Foam=: the expression parsers with the logic to
     access the /OpenFOAM/ data-structures.
 
     None of the other software pieces compile without it
-*** groovyBC
+*** =groovyBC=
     Implements the infamous =groovyBC=. A boundary condition that
     allows arbitrary expressions in the field-file
-*** simpleSwakFunctionObjects
+*** =swakFunctionObjects=
+    Function objects that have no additional requirements. Mainly used
+    for manipulating and creating fields with expressions
+*** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
-    (which is a prerequisite for compiling it)
+    (which is a prerequisite for compiling it).
+
+    Evaluate expressions and output the results
+*** =swakSourceFields=
+    Field that is calculated from an expression. To be used as
+    source-term or coefficient in some solver
+*** =swakTopoSources=
+    =topoSources= for =cellSet= and =faceSet=. Can be used with the
+    =cellSet= and =faceSet=-utilities 
 ** Utilities
-*** funkySetFields
+*** =funkySetFields=
     Utility that allows creation and manipulation of files with
     expressions 
-*** replayTransientBC
+*** =funkySetBoundaryField=
+    Sets any field on a boundary to a non-uniform value based on an
+    expression. 
+
+    Acts without deeper understanding of the underlying boundary condition
+*** =replayTransientBC=
     Utility to quickly test whether a groovyBC gives the expected
     results. Writes the specified fields with the applied boundary
     condition but doesn't do anything else.
 
     Can be used for other BCs as well
 ** Examples
+   If not otherwise noted cases are prepared by a simple
+   =blockMesh=-call.
+
+   *All the cases here are strictly for demonstration purposes and
+    resemble nothing from the 'real world'*
+*** groovyBC
+    The old =groovyBC=-Demos
+**** pulsedPitzDaily
+    - Solver :: pisoFoam
+    - Also demonstrates :: =manipulateField=, =expressionField= and
+         =clearField= from the
+         =swakFunctionObjects=. =patchExpression= from
+         =simpleSwakFunctionObjects=. 
+**** wobbler
+    - Solver :: solidDisplacementFoam
+**** circulatingSplash 
+    - Solver :: interDyMFoam 
+    - Remark :: this one crashes halfway through the calculation. If
+                you can fix it: Be my guest
+**** movingConeDistorted
+    - Solver :: pimpleDyMFoam
+**** average-t-junction
+    - Solver :: pimpleFoam
+**** multiRegionHeaterFeedback
+    - Solver :: chtMultiRegionFoam
+    - Mesh preparation :: Execute the script =prepare.sh= in that
+         directory 
+    - Also demonstrated :: =patchExpression= and =swakExpression= from
+         =simpleSwakFunctionObjects=. 
+*** FunkySetFields
+    Example dictionary for =funkySetFields=
+*** FunkySetBoundaryFields
+    Example dictionary for =funkySetBoundaryFields=. Sets nonsense
+    boundary conditions for the world famous =damBreak=-case
+*** InterFoamWithSources
+    Demonstrates usage of =swakSourceFields=
+**** =interFoamWithSources=
+     Slightly modified version of =interFoam=. Adds a source term to
+     the momentum equation. The source term is an expression that is
+     defined at run-time
+**** =mixingThing=
+     Demonstration case for it
+*** other
+    Cases that don't have a =groovyBC=
+**** =angledDuctImplicit=
+     - Solver :: rhoPorousSimpleFoam
+     - Mesh preparation :: Execute the =makeMesh.sh=-script in that
+          directory
+     - Demonstrates :: Usage of the =swakTopoSources=. Compares
+          different approaches to evaluating with the
+          =swakExpression=-functionObject
