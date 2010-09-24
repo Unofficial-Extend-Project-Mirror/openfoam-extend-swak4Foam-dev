@@ -42,7 +42,7 @@ boundaryField
     {
         type            groovyBC;
         valueExpression "0.5*(pInlet+pOutlet2)";
-        variables       "pInlet{inlet}=sum(p*mag(Sf()))/sum(mag(Sf()));pOutlet2@outlet2=p;";
+        variables       "pInlet{inlet}=sum(p*mag(Sf()))/sum(mag(Sf()));pOutlet2{outlet2}=p;";
         value           uniform 100010;
     }
 
