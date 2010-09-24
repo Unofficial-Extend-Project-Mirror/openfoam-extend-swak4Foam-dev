@@ -111,6 +111,8 @@ public:
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
+    virtual bool isCell() { return false; }
+
     virtual Field<scalar> *getScalarField(const string &name);
 
     virtual Field<vector> *getVectorField(const string &name);

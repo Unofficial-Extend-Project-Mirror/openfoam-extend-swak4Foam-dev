@@ -142,6 +142,8 @@ public:
 
     virtual scalarField *makeFaceFlipField()=0;
 
+    virtual bool isCell()=0;
+
     scalarField *makeIdField();
 
 //     template<class Type>

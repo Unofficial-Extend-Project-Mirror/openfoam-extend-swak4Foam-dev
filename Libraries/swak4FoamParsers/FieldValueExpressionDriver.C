@@ -8,6 +8,7 @@
 #include "fixedValueFvPatchFields.H"
 #include "wallFvPatch.H"
 #include "cellSet.H"
+#include "faceSet.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -138,6 +139,24 @@ bool FieldValueExpressionDriver::isCellSet(const string &name)
 bool FieldValueExpressionDriver::isCellZone(const string &name)
 {
     if(mesh_.cellZones().findZoneID(name)>=0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool FieldValueExpressionDriver::isFaceSet(const string &name)
+{
+    if(getTypeOfSet(name)=="faceSet") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool FieldValueExpressionDriver::isFaceZone(const string &name)
+{
+    if(mesh_.faceZones().findZoneID(name)>=0) {
         return true;
     } else {
         return false;
@@ -536,6 +555,43 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
   return f;
 }
 
+surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &name)
+{
+  surfaceScalarField *f=makeSurfaceScalarField(0);
+
+  IOobject head 
+      (
+          name,
+          time(),
+          polyMesh::meshSubDir/"sets",
+          mesh_,
+          IOobject::MUST_READ,
+          IOobject::NO_WRITE
+      );
+  
+  if(!head.headerOk()) {;
+      head=IOobject 
+          (
+              name,
+              "constant",
+              polyMesh::meshSubDir/"sets",
+              mesh_,
+              IOobject::MUST_READ,
+              IOobject::NO_WRITE
+          );
+      head.headerOk();
+  }
+
+  faceSet cs(head);
+  labelList faces(cs.toc());
+
+  forAll(faces,faceI) {
+    (*f)[faces[faceI]]=1.;
+  }
+
+  return f;
+}
+
 volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name)
 {
   volScalarField *f=makeScalarField(0);
@@ -546,6 +602,21 @@ volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name
   forAll(zone,ind) {
       label cellI=zone[ind];
       (*f)[cellI]=1.;
+  }
+
+  return f;
+}
+
+surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &name)
+{
+  surfaceScalarField *f=makeSurfaceScalarField(0);
+  label zoneID=mesh_.faceZones().findZoneID(name);
+
+  const faceZone &zone=mesh_.faceZones()[zoneID];
+
+  forAll(zone,ind) {
+      label faceI=zone[ind];
+      (*f)[faceI]=1.;
   }
 
   return f;

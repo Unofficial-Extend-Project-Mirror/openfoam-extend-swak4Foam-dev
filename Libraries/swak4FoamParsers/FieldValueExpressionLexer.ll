@@ -5,6 +5,9 @@
 %}
 
 %s setname
+%s zonename
+%s fsetname
+%s fzonename
 
 %option noyywrap nounput batch debug 
 %option stack
@@ -27,10 +30,10 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,fsetname,fzonename>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
+<INITIAL,setname,zonename,fsetname,fzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 %{
     typedef parserField::FieldValueExpressionParser::token token;
@@ -100,8 +103,18 @@ set                   {
                       }
 
 zone                  {
-    BEGIN(setname);
+    BEGIN(zonename);
     return token::TOKEN_zone;
+                      }
+
+fset                   {
+    BEGIN(fsetname);
+    return token::TOKEN_fset;
+                      }
+
+fzone                  {
+    BEGIN(fzonename);
+    return token::TOKEN_fzone;
                       }
 
 grad                  return token::TOKEN_grad;
@@ -165,10 +178,35 @@ false                  return token::TOKEN_FALSE;
     BEGIN(INITIAL);
     if(driver.isCellSet(*ptr)) {
         yylval->name = ptr; return token::TOKEN_SETID;
-    } else if(driver.isCellZone(*ptr)) {
+    } else {
+        driver.error (*yylloc, "cellSet id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+<zonename>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isCellZone(*ptr)) {
         yylval->name = ptr; return token::TOKEN_ZONEID;
     } else {
-        driver.error (*yylloc, "cell/zone id "+*ptr+" not existing or of wrong type");
+        driver.error (*yylloc, "cellZone id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+<fsetname>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isFaceSet(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FSETID;
+    } else {
+        driver.error (*yylloc, "faceSet id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+<fzonename>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isFaceZone(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FZONEID;
+    } else {
+        driver.error (*yylloc, "faceZone id "+*ptr+" not existing or of wrong type");
     }
                      }
 

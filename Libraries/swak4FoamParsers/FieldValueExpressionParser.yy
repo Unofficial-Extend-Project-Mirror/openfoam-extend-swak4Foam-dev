@@ -74,6 +74,8 @@
 %token <fvname> TOKEN_FVID  "faceVectorID"
 %token <setname> TOKEN_SETID "cellSetID" 
 %token <zonename> TOKEN_ZONEID "cellZoneID" 
+%token <setname> TOKEN_FSETID "faceSetID" 
+%token <zonename> TOKEN_FZONEID "faceZoneID" 
 %token <val>    TOKEN_NUM   "number"
 %token <vec>    TOKEN_VEC   "vector"
 %type  <val>    scalar      "sexpression"  
@@ -107,6 +109,8 @@
 
 %token TOKEN_set
 %token TOKEN_zone
+%token TOKEN_fset
+%token TOKEN_fzone
 
 %token TOKEN_div
 %token TOKEN_grad
@@ -173,9 +177,9 @@
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID"
+%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
-%destructor          { delete $$; } "timeline" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"
+%destructor          { delete $$; } "timeline" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID"
 %printer             { debug_stream () << $$; } "number"  "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression"
 
@@ -381,6 +385,8 @@ lexp: TOKEN_TRUE                       { $$ = driver.makeScalarField(1); }
 
 flexp: TOKEN_surf '(' TOKEN_TRUE ')'  { $$ = driver.makeSurfaceScalarField(1); }
     | TOKEN_surf '(' TOKEN_FALSE ')'  { $$ = driver.makeSurfaceScalarField(0); }
+    | TOKEN_fset '(' TOKEN_FSETID ')'    { $$ = driver.makeFaceSetField(*$3); }
+    | TOKEN_fzone '(' TOKEN_FZONEID ')'  { $$ = driver.makeFaceZoneField(*$3); }
     | fsexp '<' fsexp                 { $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);  delete $1; delete $3; }
     | fsexp '>' fsexp                 { $$ = driver.doCompare($1,std::greater<Foam::scalar>(),$3);  delete $1; delete $3; }
     | fsexp TOKEN_LEQ fsexp           { $$ = driver.doCompare($1,std::less_equal<Foam::scalar>(),$3);  delete $1; delete $3; }
