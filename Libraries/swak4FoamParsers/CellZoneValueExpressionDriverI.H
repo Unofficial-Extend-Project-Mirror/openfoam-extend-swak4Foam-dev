@@ -54,7 +54,8 @@ namespace Foam {
 
     const fvMesh &CellZoneValueExpressionDriver::mesh() const
     {
-        return dynamicCast<const fvMesh&>(cellZone_.zoneMesh().mesh());
+        //        return dynamicCast<const fvMesh&>(cellZone_.zoneMesh().mesh()); // doesn't work with gcc 4.2
+        return dynamic_cast<const fvMesh&>(cellZone_.zoneMesh().mesh());
     }
 
 }

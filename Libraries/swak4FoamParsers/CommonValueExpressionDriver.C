@@ -394,7 +394,8 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
     const fvMesh *pRegion=&(this->mesh());
 
     if(regionName!="") {
-        pRegion=&(dynamicCast<const fvMesh&>(
+        //        pRegion=&(dynamicCast<const fvMesh&>( // doesn't work with gcc 4.2
+        pRegion=&(dynamic_cast<const fvMesh&>(
                       pRegion->time().lookupObject<objectRegistry>(regionName))
         );
     }
@@ -589,7 +590,8 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
         Info << "Using mesh " << dict.lookup("region")  << endl;
     }
     
-    return dynamicCast<const fvMesh&>(
+    //     return dynamicCast<const fvMesh&>( // soesn't work with gcc 3.2
+    return dynamic_cast<const fvMesh&>(
         mesh.time().lookupObject<objectRegistry>(
             dict.lookup("region")
         )

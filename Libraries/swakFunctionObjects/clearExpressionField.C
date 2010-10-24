@@ -64,7 +64,8 @@ void Foam::clearExpressionField::execute()
     forAll(fol,i) {
         if(isA<expressionFieldFunctionObject>(fol[i])) {
             expressionField &ef=const_cast<expressionField &>(
-                dynamicCast<const expressionFieldFunctionObject&>(fol[i]).outputFilter()
+                //                dynamicCast<const expressionFieldFunctionObject&>(fol[i]).outputFilter() // doesn't work with gcc 4.2
+                dynamic_cast<const expressionFieldFunctionObject&>(fol[i]).outputFilter()
             );
 
             if(ef.name()==name_) {
