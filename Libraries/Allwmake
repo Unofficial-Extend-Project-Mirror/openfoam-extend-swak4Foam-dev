@@ -1,6 +1,6 @@
 #! /bin/sh
 
-export WM_NCOMPPROCS= ; wmake libso swak4FoamParsers
+(export WM_NCOMPPROCS= ; wmake libso swak4FoamParsers)
 
 wmake libso groovyBC
 

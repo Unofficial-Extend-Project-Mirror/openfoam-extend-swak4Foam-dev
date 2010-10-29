@@ -1,0 +1,13 @@
+#! /bin/sh
+
+wclean swak4FoamParsers
+
+wclean groovyBC
+
+wclean swakFunctionObjects
+
+wclean simpleSwakFunctionObjects
+
+wclean swakTopoSources
+
+wclean swakSourceFields
