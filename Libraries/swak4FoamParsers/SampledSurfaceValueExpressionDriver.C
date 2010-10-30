@@ -1,0 +1,180 @@
+/*---------------------------------------------------------------------------*\
+ ##   ####  ######     | 
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is based on OpenFOAM.
+
+    OpenFOAM is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM; if not, write to the Free Software Foundation,
+    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+ ICE Revision: $Id$ 
+\*---------------------------------------------------------------------------*/
+
+#include "SampledSurfaceValueExpressionDriver.H"
+
+#include "addToRunTimeSelectionTable.H"
+
+namespace Foam {
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+defineTypeNameAndDebug(SampledSurfaceValueExpressionDriver, 0);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, dictionary, faceZone);
+
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+
+    SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const sampledSurface &surf,const SampledSurfaceValueExpressionDriver& orig)
+:
+        SubsetValueExpressionDriver(orig),
+        theSurface_(surf.clone())
+{}
+
+SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
+    const sampledSurface &surf,
+    bool autoInterpolate,
+    bool warnAutoInterpolate
+)
+:
+    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
+    theSurface_(surf.clone())
+{}
+
+SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+ :
+    SubsetValueExpressionDriver(dict),
+    theSurface_(
+        sampledSurface::New(
+            dict.lookup("surfaceName"),
+            mesh,
+            dict
+        )
+    )
+{
+}
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+template<>
+inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceZone::const_iterator &it) 
+{
+    return *it;
+}
+
+Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(const string &name)
+{
+    return sampleOrInterpolateInternal<scalar,volScalarField,surfaceScalarField>
+        (
+            name
+        );
+}
+
+Field<vector> *SampledSurfaceValueExpressionDriver::getVectorField(const string &name)
+{
+    return sampleOrInterpolateInternal<vector,volVectorField,surfaceVectorField>
+        (
+            name
+        );
+}
+
+Field<tensor> *SampledSurfaceValueExpressionDriver::getTensorField(const string &name)
+{
+    return sampleOrInterpolateInternal<tensor,volTensorField,surfaceTensorField>
+        (
+            name
+        );
+}
+
+Field<symmTensor> *SampledSurfaceValueExpressionDriver::getSymmTensorField(const string &name)
+{
+    return sampleOrInterpolateInternal<symmTensor,volSymmTensorField,surfaceSymmTensorField>
+        (
+            name
+        );
+}
+
+Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorField(const string &name)
+{
+    return sampleOrInterpolateInternal<sphericalTensor,volSphericalTensorField,surfaceSphericalTensorField>
+        (
+            name
+        );
+}
+
+vectorField *SampledSurfaceValueExpressionDriver::makePositionField()
+{
+    return new vectorField(theSurface_->Cf());
+}
+
+scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
+{
+    FatalErrorIn("SampledSurfaceValueExpressionDriver::makeCellVolumeField()")
+        << "faceZone knows nothing about cells"
+            << endl
+            << abort(FatalError);
+    return new scalarField(0);
+}
+
+
+// vectorField *SampledSurfaceValueExpressionDriver::makePointField()
+// {
+//     notImplemented("SampledSurfaceValueExpressionDriver::makePointField");
+// }
+
+scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
+{
+    return new scalarField(theSurface_->magSf());
+}
+
+scalarField *SampledSurfaceValueExpressionDriver::makeFaceFlipField()
+{
+    scalarField *result=new scalarField(this->size(),false);
+
+    return result;
+}
+
+vectorField *SampledSurfaceValueExpressionDriver::makeFaceNormalField()
+{
+    autoPtr<vectorField> sf(this->makeFaceAreaField());
+    autoPtr<scalarField> magSf(this->makeFaceAreaMagField());
+
+    return new vectorField(sf()/magSf());
+}
+
+vectorField *SampledSurfaceValueExpressionDriver::makeFaceAreaField()
+{
+    return new vectorField(theSurface_->Sf());
+}
+
+// ************************************************************************* //
+
+} // namespace
