@@ -53,7 +53,9 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValue
 :
         SubsetValueExpressionDriver(orig),
         theSurface_(surf.clone())
-{}
+{
+    theSurface_->update();
+}
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     const sampledSurface &surf,
@@ -63,7 +65,9 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
 :
     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     theSurface_(surf.clone())
-{}
+{
+    theSurface_->update();
+}
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
@@ -76,6 +80,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const d
         )
     )
 {
+    theSurface_->update();
 }
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
