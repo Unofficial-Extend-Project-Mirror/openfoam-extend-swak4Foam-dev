@@ -268,9 +268,28 @@ functions
             type plane;
             basePoint       (0 0 0);
             normalVector    (0 0 1);
+            interpolate false;
         }
         verbose true;
-        expression "U";
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfacePlane2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type plane;
+            basePoint       (0 0 0);
+            normalVector    (0 0 1);
+            interpolate true;
+        }
+        verbose true;
+        expression "mag(U)";
         accumulations (
             min
             max
@@ -284,9 +303,78 @@ functions
         surface {
             type patch;
             patchName outlet;
+            //            triangulate      false;      
         }
         verbose true;
-        expression "U";
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceCuttingPlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type cuttingPlane;
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                basePoint       (0 0 0);
+                normalVector    (0 0 1);
+            }
+            interpolate false;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    distField
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName distanceFromZero;
+        expression "mag(pos())";
+        autowrite true;        
+    }
+    surfaceIsoDist
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceIsoDistCell
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type isoSurfaceCell;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate false;
+            //            regularise      false;      
+        }
+        verbose true;
+        expression "mag(U)";
         accumulations (
             min
             max
