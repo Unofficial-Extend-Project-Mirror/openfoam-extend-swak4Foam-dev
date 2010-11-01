@@ -40,7 +40,7 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(SampledSurfaceValueExpressionDriver, 0);
-addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, dictionary, faceZone);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, dictionary, surface);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -72,7 +72,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const d
         sampledSurface::New(
             dict.lookup("surfaceName"),
             mesh,
-            dict
+            dict.subDict("surface")
         )
     )
 {

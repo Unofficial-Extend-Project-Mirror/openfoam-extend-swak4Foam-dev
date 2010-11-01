@@ -259,6 +259,23 @@ functions
         );
         verbose true;
     }
+    surfaceTest
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type plane;
+            basePoint       (0 0 0);
+            normalVector    (0 0 1);
+        }
+        verbose true;
+        expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
 );
 
 libs ( 
