@@ -69,6 +69,11 @@ class SampledSurfaceValueExpressionDriver
 
     template<class Type,class volField,class surfField>
     Field<Type> *sampleOrInterpolateInternal(const word &name);
+
+protected:
+    //- update stuff the surface
+    virtual bool update();
+
 public:
 
      //- Runtime type information

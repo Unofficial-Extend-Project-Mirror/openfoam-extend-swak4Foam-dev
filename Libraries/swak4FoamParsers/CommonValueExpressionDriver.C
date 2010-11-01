@@ -347,8 +347,14 @@ scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
     return result;
 }
 
+bool CommonValueExpressionDriver::update()
+{
+    return true;
+}
+
 void CommonValueExpressionDriver::clearVariables()
 {
+    this->update();
     variables_.clear();
     if(variableString_!="") {
         addVariables(variableString_,false);

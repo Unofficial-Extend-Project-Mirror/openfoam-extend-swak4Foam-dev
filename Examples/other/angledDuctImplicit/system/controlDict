@@ -259,6 +259,17 @@ functions
         );
         verbose true;
     }
+    velocityExtreme
+    {
+        type swakExpression;
+        valueType internalField;
+        accumulations (
+            min
+            max
+        );
+        expression "mag(U)";
+        verbose true;
+    }
     surfacePlane
     {
         type swakExpression;
@@ -361,6 +372,25 @@ functions
             max
         );
     }
+    surfaceIsoDist2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        accumulations (
+            min
+            max
+        );
+    }
     surfaceIsoDistCell
     {
         type swakExpression;
@@ -375,6 +405,34 @@ functions
         }
         verbose true;
         expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    velocityMagnitude
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName magU;
+        expression "mag(U)";
+        autowrite true;        
+    }
+    surfaceU40
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type isoSurface;
+            isoField magU;
+            isoValue 40;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
         accumulations (
             min
             max

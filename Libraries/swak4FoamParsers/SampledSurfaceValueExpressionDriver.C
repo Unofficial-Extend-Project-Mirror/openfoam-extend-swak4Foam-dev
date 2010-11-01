@@ -54,7 +54,6 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValue
         SubsetValueExpressionDriver(orig),
         theSurface_(surf.clone())
 {
-    theSurface_->update();
 }
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
@@ -66,7 +65,6 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     theSurface_(surf.clone())
 {
-    theSurface_->update();
 }
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
@@ -80,7 +78,6 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const d
         )
     )
 {
-    theSurface_->update();
 }
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -89,10 +86,10 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-template<>
-inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceZone::const_iterator &it) 
+
+bool SampledSurfaceValueExpressionDriver::update()
 {
-    return *it;
+    return theSurface_->update();
 }
 
 Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(const string &name)
