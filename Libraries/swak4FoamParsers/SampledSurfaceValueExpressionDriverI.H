@@ -65,13 +65,26 @@ namespace Foam {
         }
         Field<Type> *result;
 
-        result=new Field<Type>(
-            this->theSurface_->sample(
-                this->mesh().lookupObject<volField>(name)
-            )
-        );
-
-        //TODO: interpolation
+        if(interpolate_) {
+            autoPtr<interpolation<Type> > inter(
+                interpolation<Type>::New(
+                    interpolationType_,
+                    this->mesh().lookupObject<volField>(name)
+                )
+            );
+            
+            result=new Field<Type>(
+                this->theSurface_->interpolate(
+                    inter()
+                )
+            );
+        } else {
+            result=new Field<Type>(
+                this->theSurface_->sample(
+                    this->mesh().lookupObject<volField>(name)
+                )
+            );
+        }
 
         return result;
     }

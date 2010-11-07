@@ -74,6 +74,11 @@ protected:
     //- update stuff the surface
     virtual bool update();
 
+    //- should we interpolate?
+    bool interpolate_;
+
+    //- what kind of interpolation
+    word interpolationType_;
 public:
 
      //- Runtime type information

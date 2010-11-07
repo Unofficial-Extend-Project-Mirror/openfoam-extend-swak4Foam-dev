@@ -52,7 +52,9 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValue
     SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const sampledSurface &surf,const SampledSurfaceValueExpressionDriver& orig)
 :
         SubsetValueExpressionDriver(orig),
-        theSurface_(surf.clone())
+        theSurface_(surf.clone()),
+        interpolate_(orig.interpolate_),
+        interpolationType_(orig.interpolationType_)
 {
 }
 
@@ -63,7 +65,9 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
 )
 :
     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
-    theSurface_(surf.clone())
+    theSurface_(surf.clone()),
+    interpolate_(false),
+    interpolationType_("nix")
 {
 }
 
@@ -76,6 +80,14 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const d
             mesh,
             dict.subDict("surface")
         )
+    ),
+    interpolate_(dict.lookupOrDefault<bool>("interpolate",false)),
+    interpolationType_(
+        interpolate_ 
+        ?
+        word(dict.lookup("interpolationType"))
+        :
+        word("nix")
     )
 {
 }
@@ -89,7 +101,9 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 bool SampledSurfaceValueExpressionDriver::update()
 {
-    return theSurface_->update();
+    bool updated=theSurface_->update();
+    //    Info << "Updated: " << updated << " " << this->size() << endl;
+    return updated;
 }
 
 Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(const string &name)
