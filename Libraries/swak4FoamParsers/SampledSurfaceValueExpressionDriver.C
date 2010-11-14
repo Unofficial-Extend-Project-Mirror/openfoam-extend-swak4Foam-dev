@@ -35,6 +35,9 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+// #include "isoSurface.H"
+#include "sampledIsoSurface.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -45,6 +48,20 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValue
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+void SampledSurfaceValueExpressionDriver::setDebug() 
+{
+    if(debug>1) {
+        if(sampledSurface::debug<1) {
+            sampledSurface::debug=1;
+        }
+        if(sampledIsoSurface::debug<1) {
+            sampledIsoSurface::debug=1;
+        }
+//         if(isoSurface::debug<1) {
+//             isoSurface::debug=1;
+//         }
+    }
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -56,6 +73,7 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValue
         interpolate_(orig.interpolate_),
         interpolationType_(orig.interpolationType_)
 {
+    setDebug();
 }
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
@@ -69,6 +87,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     interpolate_(false),
     interpolationType_("nix")
 {
+    setDebug();
 }
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
@@ -90,6 +109,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const d
         word("nix")
     )
 {
+    setDebug();
 }
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -102,7 +122,10 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 bool SampledSurfaceValueExpressionDriver::update()
 {
     bool updated=theSurface_->update();
-    //    Info << "Updated: " << updated << " " << this->size() << endl;
+    if(debug) {
+        Info << "Updated: " << updated << " " << this->size() << endl;
+    }
+
     return updated;
 }
 
