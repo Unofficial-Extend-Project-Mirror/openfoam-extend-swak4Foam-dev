@@ -457,10 +457,11 @@ functions
         outputControl timeStep;
         outputInterval 1;
         fieldName magU;
-        expression "mag(U)*sin(time())";
+        expression "mag(U)";
+        //        expression "mag(U)*sin(time())";
         autowrite true;        
     }
-    surfaceU40
+    surfaceU45
     {
         type swakExpression;
         valueType surface;
@@ -468,8 +469,48 @@ functions
         surface {
             type isoSurface;
             isoField magU;
-            isoValue 40;
+            isoValue 45;
             interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        // expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceU45b
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type isoSurfaceCell;
+            isoField magU;
+            isoValue 45;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        // expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceU45c
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName test;
+        surface {
+            type thresholdCellFaces;
+            field magU;
+            upperLimit 46;
+            lowerLimit 44;
         }
         verbose true;
         //        variables "p=pts();";
