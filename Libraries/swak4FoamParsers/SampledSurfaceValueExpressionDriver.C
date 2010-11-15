@@ -66,29 +66,29 @@ void SampledSurfaceValueExpressionDriver::setDebug()
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-    SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const sampledSurface &surf,const SampledSurfaceValueExpressionDriver& orig)
-:
-        SubsetValueExpressionDriver(orig),
-        theSurface_(surf.clone()),
-        interpolate_(orig.interpolate_),
-        interpolationType_(orig.interpolationType_)
-{
-    setDebug();
-}
+//     SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const sampledSurface &surf,const SampledSurfaceValueExpressionDriver& orig)
+// :
+//         SubsetValueExpressionDriver(orig),
+//         theSurface_(surf.clone()),
+//         interpolate_(orig.interpolate_),
+//         interpolationType_(orig.interpolationType_)
+// {
+//     setDebug();
+// }
 
-SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
-    const sampledSurface &surf,
-    bool autoInterpolate,
-    bool warnAutoInterpolate
-)
-:
-    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
-    theSurface_(surf.clone()),
-    interpolate_(false),
-    interpolationType_("nix")
-{
-    setDebug();
-}
+// SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
+//     const sampledSurface &surf,
+//     bool autoInterpolate,
+//     bool warnAutoInterpolate
+// )
+// :
+//     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
+//     theSurface_(surf.clone()),
+//     interpolate_(false),
+//     interpolationType_("nix")
+// {
+//     setDebug();
+// }
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
