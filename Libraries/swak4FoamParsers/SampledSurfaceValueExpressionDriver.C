@@ -76,19 +76,19 @@ void SampledSurfaceValueExpressionDriver::setDebug()
 //     setDebug();
 // }
 
-// SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
-//     const sampledSurface &surf,
-//     bool autoInterpolate,
-//     bool warnAutoInterpolate
-// )
-// :
-//     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
-//     theSurface_(surf.clone()),
-//     interpolate_(false),
-//     interpolationType_("nix")
-// {
-//     setDebug();
-// }
+SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
+    sampledSurface &surf,
+    bool autoInterpolate,
+    bool warnAutoInterpolate
+)
+:
+    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
+    theSurface_(surf),
+    interpolate_(false),
+    interpolationType_("nix")
+{
+    setDebug();
+}
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :

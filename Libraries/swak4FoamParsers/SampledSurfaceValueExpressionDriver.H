@@ -88,12 +88,12 @@ public:
 
    // Constructors
 
-//     //- Construct from components
-//     SampledSurfaceValueExpressionDriver(
-//         const sampledSurface &,
-//         bool autoInterpolate=false,
-//         bool warnAutoInterpolate=true
-//     );
+    //- Construct from components
+    SampledSurfaceValueExpressionDriver(
+        sampledSurface &,
+        bool autoInterpolate=false,
+        bool warnAutoInterpolate=true
+    );
     
     //- Construct from a dictionary
     SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);

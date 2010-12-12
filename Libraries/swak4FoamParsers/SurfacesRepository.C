@@ -74,6 +74,28 @@ SurfacesRepository &SurfacesRepository::getRepository()
 }
 
 sampledSurface &SurfacesRepository::getSurface(
+    const word &name,
+    const fvMesh &mesh
+)
+{
+    if(debug) {
+        Info << "SurfacesRepository: Lookuing up" << name << " (assuming it exists)" << endl;
+    }
+
+    sampledSurface &found=*(surfaces_[name]);
+        
+    if((&mesh)!=(&(found.mesh()))) {
+        FatalErrorIn("SampledSurface &SurfacesRepository::getSurface")
+            << "Found a mesh named " << name << " which is not for the mesh "
+                << mesh.name() << "but for the mesh " << found.mesh().name()
+                << endl
+                << abort(FatalError);
+    }
+
+    return found;
+}
+
+sampledSurface &SurfacesRepository::getSurface(
     const dictionary &dict,
     const fvMesh &mesh
 )
@@ -88,8 +110,6 @@ sampledSurface &SurfacesRepository::getSurface(
         if(debug) {
             Info << "SurfacesRepository: " << name << " already exists" << endl;
         }
-
-        sampledSurface &found=*(surfaces_[name]);
         
         if(dict.found("surface")) {
             WarningIn("SampledSurface &SurfacesRepository::getSurface")
@@ -99,15 +119,7 @@ sampledSurface &SurfacesRepository::getSurface(
                     << dict.subDict("surface") << endl;
         }
         
-        if((&mesh)!=(&(found.mesh()))) {
-            FatalErrorIn("SampledSurface &SurfacesRepository::getSurface")
-                << "Found a mesh named " << name << " which is not for the mesh "
-                    << mesh.name() << "but for the mesh " << found.mesh().name()
-                    << endl
-                    << abort(FatalError);
-        }
-
-        return found;
+        return getSurface(name,mesh);
     } else {
         if(debug) {
             Info << "SurfacesRepository: " << name << " does not exist" << endl;

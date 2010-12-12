@@ -81,8 +81,15 @@ public:
     //- Get the Singleton of this class
     static SurfacesRepository &getRepository();
 
+    //- get a surface using a dictionary (surface will be constructed if not existing)
     sampledSurface &getSurface(
         const dictionary &dict,
+        const fvMesh &mesh
+    );
+
+    //- get a surface using its name (surface must exist)
+    sampledSurface &getSurface(
+        const word &name,
         const fvMesh &mesh
     );
 };

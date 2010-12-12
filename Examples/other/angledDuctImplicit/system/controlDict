@@ -318,6 +318,24 @@ functions
             max
         );
     }
+    surfaceDiffPlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane3;
+        surface {
+            type plane;
+            basePoint       (0 0 0.01);
+            normalVector    (0 0 1);
+            interpolate true;
+        }
+        verbose true;
+        variables "Umiddle{surface'testPlane2}=sum(mag(U)*area())/sum(area());";
+        expression "sum(mag(U)*area())/sum(area())-Umiddle";
+        accumulations (
+            min
+        );
+    }
     surfacePatch
     {
         type swakExpression;
