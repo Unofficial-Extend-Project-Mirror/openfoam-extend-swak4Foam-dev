@@ -63,7 +63,7 @@ class SampledSurfaceValueExpressionDriver
     public SubsetValueExpressionDriver
 {
     // Private data
-    autoPtr<sampledSurface> theSurface_;
+    sampledSurface &theSurface_;
 
     // Private Member Functions
 

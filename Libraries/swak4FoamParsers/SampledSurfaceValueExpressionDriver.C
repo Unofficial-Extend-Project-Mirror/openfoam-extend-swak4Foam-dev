@@ -32,10 +32,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "SampledSurfaceValueExpressionDriver.H"
+#include "SurfacesRepository.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-// #include "isoSurface.H"
 #include "sampledIsoSurface.H"
 
 namespace Foam {
@@ -94,10 +94,9 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const d
  :
     SubsetValueExpressionDriver(dict),
     theSurface_(
-        sampledSurface::New(
-            dict.lookup("surfaceName"),
-            mesh,
-            dict.subDict("surface")
+        SurfacesRepository::getRepository().getSurface(
+            dict,
+            mesh
         )
     ),
     interpolate_(dict.lookupOrDefault<bool>("interpolate",false)),
@@ -121,7 +120,7 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 bool SampledSurfaceValueExpressionDriver::update()
 {
-    bool updated=theSurface_->update();
+    bool updated=theSurface_.update();
     if(debug) {
         Info << "Updated: " << updated << " " << this->size() << endl;
     }
@@ -171,7 +170,7 @@ Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorF
 
 vectorField *SampledSurfaceValueExpressionDriver::makePositionField()
 {
-    return new vectorField(theSurface_->Cf());
+    return new vectorField(theSurface_.Cf());
 }
 
 scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
@@ -191,7 +190,7 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
 
 scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
 {
-    return new scalarField(theSurface_->magSf());
+    return new scalarField(theSurface_.magSf());
 }
 
 scalarField *SampledSurfaceValueExpressionDriver::makeFaceFlipField()
@@ -211,7 +210,7 @@ vectorField *SampledSurfaceValueExpressionDriver::makeFaceNormalField()
 
 vectorField *SampledSurfaceValueExpressionDriver::makeFaceAreaField()
 {
-    return new vectorField(theSurface_->Sf());
+    return new vectorField(theSurface_.Sf());
 }
 
 // ************************************************************************* //

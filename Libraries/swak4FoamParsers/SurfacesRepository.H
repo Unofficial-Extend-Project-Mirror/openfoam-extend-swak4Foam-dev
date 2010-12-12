@@ -28,68 +28,76 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+    Foam::SurfacesRepository
+
+Description
+
+SourceFiles
+    SurfacesRepositoryI.H
+    SurfacesRepository.C
+    SurfacesRepositoryIO.C
+
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
+#ifndef SurfacesRepository_H
+#define SurfacesRepository_H
+
+#include "PtrMap.H"
+#include "sampledSurface.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "surfaceMesh.H"
-#include "fvsPatchField.H"
-#include "pointPatchField.H"
-#include "primitivePatchInterpolation.H"
+namespace Foam
+{
 
-#include <cassert>
+/*---------------------------------------------------------------------------*\
+                           Class SurfacesRepository Declaration
+\*---------------------------------------------------------------------------*/
 
-namespace Foam {
-    label SampledSurfaceValueExpressionDriver::size() const
-    {
-        return theSurface_.faces().size();
-    }
+class SurfacesRepository
+{
+    // Private data
 
-    label SampledSurfaceValueExpressionDriver::pointSize() const
-    {
-        return theSurface_.points().size();
-    }
+    HashPtrTable<sampledSurface,word> surfaces_;
 
-    const fvMesh &SampledSurfaceValueExpressionDriver::mesh() const
-    {
-        //        return dynamicCast<const fvMesh&>(faceZone_.zoneMesh().mesh()); // doesn't work with gcc 4.2
-        return dynamic_cast<const fvMesh&>(theSurface_.mesh());
-    }
+    // Constructors
 
-    template<class Type,class volField,class surfField>
-    Field<Type> *SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(const word &name)
-    {
-        if(this->variables_.found(name)) {
-            return this->variables_[name].getResult<Type>(true).ptr();
-        }
-        Field<Type> *result;
+    //- Construct null
+    SurfacesRepository();
 
-        if(interpolate_) {
-            autoPtr<interpolation<Type> > inter(
-                interpolation<Type>::New(
-                    interpolationType_,
-                    this->mesh().lookupObject<volField>(name)
-                )
-            );
-            
-            result=new Field<Type>(
-                this->theSurface_.interpolate(
-                    inter()
-                )
-            );
-        } else {
-            result=new Field<Type>(
-                this->theSurface_.sample(
-                    this->mesh().lookupObject<volField>(name)
-                )
-            );
-        }
+    //- The only instance of this repository
+    static SurfacesRepository *repositoryInstance;
 
-        return result;
-    }
+public:
+     //- Runtime type information
+    TypeName("SurfacesRepository");
 
-}
+    //- Destructor
 
+    ~SurfacesRepository();
+
+    //- Get the Singleton of this class
+    static SurfacesRepository &getRepository();
+
+    sampledSurface &getSurface(
+        const dictionary &dict,
+        const fvMesh &mesh
+    );
+};
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "SurfacesRepositoryI.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

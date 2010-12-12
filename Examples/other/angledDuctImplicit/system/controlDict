@@ -274,7 +274,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testPlane;
         surface {
             type plane;
             basePoint       (0 0 0);
@@ -288,11 +288,23 @@ functions
             max
         );
     }
+    surfacePlaneReuse
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        verbose true;
+        expression "p";
+        accumulations (
+            min
+            max
+        );
+    }
     surfacePlane2
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testPlane2;
         surface {
             type plane;
             basePoint       (0 0 0);
@@ -310,7 +322,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testPatch;
         surface {
             type patch;
             patchName outlet;
@@ -327,7 +339,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testCuttingPlane;
         surface {
             type cuttingPlane;
             planeType       pointAndNormal;
@@ -358,7 +370,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoDist;
         surface {
             type isoSurface;
             isoField distanceFromZero;
@@ -376,7 +388,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoDist2;
         surface {
             type isoSurface;
             isoField distanceFromZero;
@@ -395,7 +407,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoInterpolateOn;
         surface {
             type isoSurface;
             isoField distanceFromZero;
@@ -416,7 +428,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoInterpolateOff;
         surface {
             type isoSurface;
             isoField distanceFromZero;
@@ -436,7 +448,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoSurfaceCell;
         surface {
             type isoSurfaceCell;
             isoField distanceFromZero;
@@ -465,7 +477,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoU45;
         surface {
             type isoSurface;
             isoField magU;
@@ -485,7 +497,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoU45b;
         surface {
             type isoSurfaceCell;
             isoField magU;
@@ -505,7 +517,7 @@ functions
     {
         type swakExpression;
         valueType surface;
-        surfaceName test;
+        surfaceName testIsoU45c;
         surface {
             type thresholdCellFaces;
             field magU;
