@@ -189,23 +189,35 @@ stringList CommonValueExpressionDriver::readVariableStrings(const dictionary &di
     ITstream data(dict.lookup("variables"));
     token nextToken;
     data.read(nextToken);
-    data.rewind();
     if(nextToken.isString()) {
+        data.rewind();
         return stringList(1,string(data));
     } else if(
         nextToken.type()==token::PUNCTUATION
         &&
         nextToken.pToken()==token::BEGIN_LIST
     ) {
+        data.rewind();
         return stringList(data);
-    } else {
-        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
-            << " Entry 'variables' must either be a string or a list of strings"
-                << endl
-                << abort(FatalError);
-
-        return stringList();
+    } if(nextToken.isLabel()) {
+        token anotherToken;
+        data.read(anotherToken);
+        if(
+            anotherToken.type()==token::PUNCTUATION
+            &&
+            anotherToken.pToken()==token::BEGIN_LIST
+        ) {
+            data.rewind();
+            return stringList(data);
+        }
     }
+
+    FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
+        << " Entry 'variables' must either be a string or a list of strings"
+            << endl
+            << abort(FatalError);
+    
+    return stringList();
 }
 
 void CommonValueExpressionDriver::setVariableStrings(const dictionary &dict)
