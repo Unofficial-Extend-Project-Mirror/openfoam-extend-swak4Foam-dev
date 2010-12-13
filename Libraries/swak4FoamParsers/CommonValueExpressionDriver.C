@@ -45,6 +45,9 @@ License
 
 #include "FaceSetValueExpressionDriver.H"
 
+#include "SampledSurfaceValueExpressionDriver.H"
+#include "SurfacesRepository.H"
+
 #include "Random.H"
 
 namespace Foam {
@@ -347,8 +350,14 @@ scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
     return result;
 }
 
+bool CommonValueExpressionDriver::update()
+{
+    return true;
+}
+
 void CommonValueExpressionDriver::clearVariables()
 {
+    this->update();
     variables_.clear();
     if(variableString_!="") {
         addVariables(variableString_,false);
@@ -487,6 +496,11 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         }
         const faceZone &otherZone=region.faceZones()[zoneI];
         FaceZoneValueExpressionDriver otherDriver(otherZone,true,false);
+        otherDriver.parse(expr);
+        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
+    } else if(type=="surface") {
+        sampledSurface &theSurf=SurfacesRepository::getRepository().getSurface(id,region);
+        SampledSurfaceValueExpressionDriver otherDriver(theSurf,true,false);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else {

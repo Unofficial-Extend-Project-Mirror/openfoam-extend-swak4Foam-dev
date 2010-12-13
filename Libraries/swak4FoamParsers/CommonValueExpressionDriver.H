@@ -89,6 +89,9 @@ protected:
     virtual void scan_begin()=0;
     virtual void scan_end()=0;
 
+    //- update stuff that needs updating
+    virtual bool update();
+
     //- actual size of the field
     virtual label size() const = 0;
 

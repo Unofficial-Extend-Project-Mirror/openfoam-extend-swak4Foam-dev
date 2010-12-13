@@ -259,6 +259,298 @@ functions
         );
         verbose true;
     }
+    velocityExtreme
+    {
+        type swakExpression;
+        valueType internalField;
+        accumulations (
+            min
+            max
+        );
+        expression "mag(U)";
+        verbose true;
+    }
+    surfacePlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        surface {
+            type plane;
+            basePoint       (0 0 0);
+            normalVector    (0 0 1);
+            interpolate false;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfacePlaneReuse
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        verbose true;
+        expression "p";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfacePlane2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane2;
+        surface {
+            type plane;
+            basePoint       (0 0 0);
+            normalVector    (0 0 1);
+            interpolate true;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceDiffPlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane3;
+        surface {
+            type plane;
+            basePoint       (0 0 0.01);
+            normalVector    (0 0 1);
+            interpolate true;
+        }
+        verbose true;
+        variables "Umiddle{surface'testPlane2}=sum(mag(U)*area())/sum(area());";
+        expression "sum(mag(U)*area())/sum(area())-Umiddle";
+        accumulations (
+            min
+        );
+    }
+    surfacePatch
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPatch;
+        surface {
+            type patch;
+            patchName outlet;
+            //            triangulate      false;      
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceCuttingPlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testCuttingPlane;
+        surface {
+            type cuttingPlane;
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                basePoint       (0 0 0);
+                normalVector    (0 0 1);
+            }
+            interpolate false;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    distField
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName distanceFromZero;
+        expression "mag(pos())";
+        autowrite true;        
+    }
+    surfaceIsoDist
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoDist;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceIsoDist2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoDist2;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceIsoInterpolateOn
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoInterpolateOn;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "p";
+        accumulations (
+            min
+            max
+        );
+        interpolate on;
+        interpolationType cellPointWallModified;
+    }
+    surfaceIsoInterpolateOff
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoInterpolateOff;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "p";
+        accumulations (
+            min
+            max
+        );
+        interpolate off;
+    }
+    surfaceIsoDistCell
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoSurfaceCell;
+        surface {
+            type isoSurfaceCell;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate false;
+            //            regularise      false;      
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    velocityMagnitude
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName magU;
+        expression "mag(U)";
+        //        expression "mag(U)*sin(time())";
+        autowrite true;        
+    }
+    surfaceU45
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoU45;
+        surface {
+            type isoSurface;
+            isoField magU;
+            isoValue 45;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        // expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceU45b
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoU45b;
+        surface {
+            type isoSurfaceCell;
+            isoField magU;
+            isoValue 45;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        // expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceU45c
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoU45c;
+        surface {
+            type thresholdCellFaces;
+            field magU;
+            upperLimit 46;
+            lowerLimit 44;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        // expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
 );
 
 libs ( 
