@@ -416,9 +416,7 @@ void CommonValueExpressionDriver::clearVariables()
 {
     this->update();
     variables_.clear();
-    forAll(variableStrings_,i) {
-        addVariables(variableStrings_[i],false);
-    }
+    addVariables(variableStrings_,false);
 }
 
 void CommonValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
@@ -566,6 +564,16 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
                 << "Valid types are 'patch', 'internalField', 'cellSet', 'cellZone', 'faceSet' and 'faceZone'"
                 << endl
                 << abort(FatalError);
+    }
+}
+
+void CommonValueExpressionDriver::addVariables(const stringList &exprList,bool clear)
+{
+    if(clear) {
+        clearVariables();
+    }
+    forAll(exprList,i) {
+        addVariables(exprList[i],false);
     }
 }
 

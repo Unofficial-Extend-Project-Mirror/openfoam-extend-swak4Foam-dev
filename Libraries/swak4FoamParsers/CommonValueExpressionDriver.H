@@ -73,9 +73,6 @@ class CommonValueExpressionDriver
 
 protected:
 
-    //- read the list of variable strings (or initialize with a single string)
-    static stringList readVariableStrings(const dictionary &dict);
- 
     ExpressionResult result_;
 
     HashTable<ExpressionResult,word> variables_;
@@ -209,11 +206,16 @@ public:
     void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);
 
     //- read the list of variable strings (or initialize with a single string)
+    static stringList readVariableStrings(const dictionary &dict);
+ 
+    //- read the list of variable strings (or initialize with a single string)
     void setVariableStrings(const dictionary &dict);
 
     Ostream &writeVariableStrings(Ostream &out) const;
 
     void addVariables(const string &exprList,bool clear=true);
+
+    void addVariables(const stringList &exprList,bool clear=true);
 
     template<class Type>
     void setResult(Field<Type> *,bool isPoint=false);

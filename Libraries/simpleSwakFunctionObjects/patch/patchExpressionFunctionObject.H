@@ -71,7 +71,7 @@ class patchExpressionFunctionObject
     string expression_;
 
     //- expressions for variables
-    string variables_;
+    stringList variables_;
 
     //- list with the accumulations of evaluated expression
     wordList accumulations_;

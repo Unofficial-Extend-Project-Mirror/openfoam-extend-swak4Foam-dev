@@ -56,7 +56,7 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
 :
     patchFunctionObject(name,t,dict),
     expression_(dict.lookup("expression")),
-    variables_(dict.lookupOrDefault("variables",string(""))),
+    variables_(CommonValueExpressionDriver::readVariableStrings(dict)),
     accumulations_(dict.lookup("accumulations"))
 {
 }

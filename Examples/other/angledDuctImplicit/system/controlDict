@@ -52,7 +52,7 @@ functions
     pressureToFilterVolAvg
     {
         type patchExpression;
-        variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";
+        variables ( "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());");
         accumulations (
             average
         );
