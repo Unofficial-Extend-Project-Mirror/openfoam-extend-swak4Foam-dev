@@ -71,7 +71,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const CommonValueExpressionDriver& orig
 )
 :
-    variableString_(""),
+    variableStrings_(),
     result_(orig.result_),
     variables_(orig.variables_),
     lines_(orig.lines_),
@@ -88,7 +88,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
 :
-    variableString_(dict.lookupOrDefault("variables",string(""))),
+    variableStrings_(readVariableStrings(dict)),
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
@@ -106,7 +106,6 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
     if(dict.found("timelines")) {
         readLines(dict.lookup("timelines"));
     }
-    //    addVariables(variableString_);
 }
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(
@@ -115,7 +114,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool searchOnDisc
 )
 :
-    variableString_(""),
+    variableStrings_(),
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
@@ -181,6 +180,33 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+stringList CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)
+{
+    if(!dict.found("variables")) {
+        return stringList();
+    }
+    ITstream data(dict.lookup("variables"));
+    token nextToken;
+    data.read(nextToken);
+    data.rewind();
+    if(nextToken.isString()) {
+        return stringList(1,string(data));
+    } else if(
+        nextToken.type()==token::PUNCTUATION
+        &&
+        nextToken.pToken()==token::BEGIN_LIST
+    ) {
+        return stringList(data);
+    } else {
+        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
+            << " Entry 'variables' must either be a string or a list of strings"
+                << endl
+                << abort(FatalError);
+
+        return stringList();
+    }
+}
 
 word CommonValueExpressionDriver::getResultType()
 {
@@ -359,8 +385,10 @@ void CommonValueExpressionDriver::clearVariables()
 {
     this->update();
     variables_.clear();
-    if(variableString_!="") {
-        addVariables(variableString_,false);
+    if(variableStrings_.size()>0) {
+        forAll(variableStrings_,i) {
+            addVariables(variableStrings_[i],false);
+        }
     }
 }
 

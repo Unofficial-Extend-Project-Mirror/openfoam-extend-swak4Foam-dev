@@ -69,8 +69,11 @@ class CommonValueExpressionDriver
     void operator=(const CommonValueExpressionDriver&);
 
     //- variables from a dictionary
-    string variableString_;
+    stringList variableStrings_;
 
+    //- read the list of variable strings (or initialize with a single string)
+    static stringList readVariableStrings(const dictionary &dict);
+ 
 protected:
 
     ExpressionResult result_;
