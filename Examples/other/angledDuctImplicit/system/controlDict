@@ -158,7 +158,9 @@ functions
         type swakExpression;
         valueType faceZone;
         zoneName beforeFilter;
-        variables "pAfter{faceSet'afterFilter}=average(p);";
+        variables (
+            "pAfter{faceSet'afterFilter}=average(p);"
+        );
         accumulations (
             average
         );
@@ -172,7 +174,10 @@ functions
         type swakExpression;
         valueType patch;
         patchName outlet;
-        variables "pAfter{faceSet'afterFilter}=average(p);";
+        variables (
+            "dummy=p-mag(U);"
+            "pAfter{faceSet'afterFilter}=average(p);"
+        );
         accumulations (
             average
         );
