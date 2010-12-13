@@ -49,6 +49,19 @@ runTimeModifiable yes;
 
 functions
 (
+    pressureDrop
+    {
+        type patchExpression;
+        variables ( "pOut{patch'outlet}=sum(p*area())/sum(area());");
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+        );
+        expression "p-pOut";
+        verbose true;
+    }
     pressureToFilterVolAvg
     {
         type patchExpression;

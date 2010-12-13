@@ -501,15 +501,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
     const fvMesh &region=*pRegion;
 
     if(type=="patch") {
-        label patchI=region.boundaryMesh().findPatchID(id);
-        if(patchI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a patch named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const fvPatch &otherPatch=region.boundary()[patchI];
-        PatchValueExpressionDriver otherDriver(otherPatch);
+        PatchValueExpressionDriver otherDriver(id,region);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));
     } else if(type=="internalField") {
