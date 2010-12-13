@@ -57,6 +57,7 @@ namespace Foam {
 
 defineTypeNameAndDebug(CommonValueExpressionDriver,0);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
+defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
     // Currently not working
 bool CommonValueExpressionDriver::cacheSets_=true;
@@ -170,6 +171,39 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     return autoPtr<CommonValueExpressionDriver>
     (
         cstrIter()(dict,mesh)
+    );
+}
+
+autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
+(
+    const word& driverType,
+    const word& id,
+    const fvMesh& mesh
+)
+{
+    idNameConstructorTable::iterator cstrIter =
+        idNameConstructorTablePtr_->find(driverType);
+
+    if (cstrIter == idNameConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New"
+        )   << "Unknown  CommonValueExpressionDriver type " << driverType
+            << endl << endl
+            << "Valid valueTypes are :" << endl
+	  //            << idNameConstructorTablePtr_->sortedToc() // does not work in 1.6
+            << idNameConstructorTablePtr_->toc()
+            << exit(FatalError);
+    }
+
+    if(debug) {
+        Info << "Creating driver of type " << driverType << endl;
+    }
+
+    return autoPtr<CommonValueExpressionDriver>
+    (
+        cstrIter()(id,mesh)
     );
 }
 
