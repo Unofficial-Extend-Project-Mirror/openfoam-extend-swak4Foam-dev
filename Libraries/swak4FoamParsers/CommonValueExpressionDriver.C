@@ -71,7 +71,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const CommonValueExpressionDriver& orig
 )
 :
-    variableStrings_(),
+    variableStrings_(orig.variableStrings_),
     result_(orig.result_),
     variables_(orig.variables_),
     lines_(orig.lines_),
@@ -207,6 +207,25 @@ stringList CommonValueExpressionDriver::readVariableStrings(const dictionary &di
         return stringList();
     }
 }
+
+void CommonValueExpressionDriver::setVariableStrings(const dictionary &dict)
+{
+    variableStrings_=readVariableStrings(dict);
+}
+
+Ostream &CommonValueExpressionDriver::writeVariableStrings(Ostream &out) const
+{
+    if(variableStrings_.size()==0) {
+        out << string("");
+    } else if(variableStrings_.size()==1) {
+        out << variableStrings_[0];
+    } else {
+        out << variableStrings_;
+    }
+
+    return out;
+}
+
 
 word CommonValueExpressionDriver::getResultType()
 {
@@ -385,10 +404,8 @@ void CommonValueExpressionDriver::clearVariables()
 {
     this->update();
     variables_.clear();
-    if(variableStrings_.size()>0) {
-        forAll(variableStrings_,i) {
-            addVariables(variableStrings_[i],false);
-        }
+    forAll(variableStrings_,i) {
+        addVariables(variableStrings_[i],false);
     }
 }
 

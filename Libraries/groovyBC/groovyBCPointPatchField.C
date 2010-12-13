@@ -86,7 +86,6 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 :
     mixedPointPatchFieldType(p, iF),
     fractionExpression_("toPoint(0)"),
-    variables_(""),
     driver_(getFvPatch(this->patch()))
 {
     this->refValue() = pTraits<Type>::zero;
@@ -107,9 +106,10 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 :
     mixedPointPatchFieldType(p, iF),
     fractionExpression_(dict.lookupOrDefault("fractionExpression",string("toPoint(1)"))),
-    variables_(dict.lookupOrDefault("variables",string(""))),
     driver_(getFvPatch(this->patch()))
 {
+    driver_.setVariableStrings(dict);
+
     if (dict.found("valueExpression"))
     {
         dict.lookup("valueExpression") >> valueExpression_;
@@ -164,7 +164,6 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     valueExpression_(ptf.valueExpression_),
     //    gradientExpression_(ptf.gradientExpression_),
     fractionExpression_(ptf.fractionExpression_),
-    variables_(ptf.variables_),
     driver_(getFvPatch(this->patch()),ptf.driver_)
 {
 }
@@ -181,7 +180,6 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     valueExpression_(ptf.valueExpression_),
     //    gradientExpression_(ptf.gradientExpression_),
     fractionExpression_(ptf.fractionExpression_),
-    variables_(ptf.variables_),
     driver_(getFvPatch(this->patch()),ptf.driver_)
 {
 }
@@ -200,14 +198,15 @@ void groovyBCPointPatchField<Type>::updateCoeffs()
         Info << "Value: " << valueExpression_ << endl;
         //        Info << "Gradient: " << gradientExpression_ << endl;
         Info << "Fraction: " << fractionExpression_ << endl;
-        Info << "Variables: " << variables_ << endl;
+        Info << "Variables: ";
+        driver_.writeVariableStrings(Info)  << endl;
     }
 //     if (this->updated())
 //     {
 //         return;
 //     }
 
-    driver_.addVariables(variables_);
+    driver_.clearVariables();
 
     this->refValue() = driver_.evaluate<Type>(valueExpression_,true);
     //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);
@@ -231,8 +230,8 @@ void groovyBCPointPatchField<Type>::write(Ostream& os) const
 //         << gradientExpression_ << token::END_STATEMENT << nl;
     os.writeKeyword("fractionExpression")
         << fractionExpression_ << token::END_STATEMENT << nl;
-    os.writeKeyword("variables")
-        << variables_ << token::END_STATEMENT << nl;
+    os.writeKeyword("variables");
+    driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
     os.writeKeyword("timelines");
     driver_.writeLines(os);
     os << token::END_STATEMENT << nl;

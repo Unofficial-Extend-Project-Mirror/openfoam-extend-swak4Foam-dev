@@ -67,7 +67,6 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(p, iF),
     fractionExpression_("0"),
-    variables_(""),
     driver_(this->patch())
 {
     if(debug) {
@@ -95,7 +94,6 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     valueExpression_(ptf.valueExpression_),
     gradientExpression_(ptf.gradientExpression_),
     fractionExpression_(ptf.fractionExpression_),
-    variables_(ptf.variables_),
     driver_(this->patch(),ptf.driver_)
 {
     if(debug) {
@@ -114,9 +112,10 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(p, iF),
     fractionExpression_(dict.lookupOrDefault("fractionExpression",string("1"))),
-    variables_(dict.lookupOrDefault("variables",string(""))),
     driver_(this->patch())
 {
+    driver_.setVariableStrings(dict);
+
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
     }
@@ -166,7 +165,6 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     valueExpression_(ptf.valueExpression_),
     gradientExpression_(ptf.gradientExpression_),
     fractionExpression_(ptf.fractionExpression_),
-    variables_(ptf.variables_),
     driver_(this->patch(),ptf.driver_)
 {
     if(debug) {
@@ -186,7 +184,6 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     valueExpression_(ptf.valueExpression_),
     gradientExpression_(ptf.gradientExpression_),
     fractionExpression_(ptf.fractionExpression_),
-    variables_(ptf.variables_),
     driver_(this->patch(),ptf.driver_)
 {
     if(debug) {
@@ -205,7 +202,8 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         Info << "Value: " << valueExpression_ << endl;
         Info << "Gradient: " << gradientExpression_ << endl;
         Info << "Fraction: " << fractionExpression_ << endl;
-        Info << "Variables: " << variables_ << endl;
+        Info << "Variables: ";
+        driver_.writeVariableStrings(Info) << endl;
     }
     if (this->updated())
     {
@@ -216,7 +214,7 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
         Info << "groovyBCFvPatchField<Type>::updateCoeffs - updating" << endl;
     }
 
-    driver_.addVariables(variables_);
+    driver_.clearVariables();
 
     this->refValue() = driver_.evaluate<Type>(valueExpression_);
     this->refGrad() = driver_.evaluate<Type>(gradientExpression_);
@@ -239,8 +237,8 @@ void groovyBCFvPatchField<Type>::write(Ostream& os) const
         << gradientExpression_ << token::END_STATEMENT << nl;
     os.writeKeyword("fractionExpression")
         << fractionExpression_ << token::END_STATEMENT << nl;
-    os.writeKeyword("variables")
-        << variables_ << token::END_STATEMENT << nl;
+    os.writeKeyword("variables");
+    driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
     os.writeKeyword("timelines");
     driver_.writeLines(os);
     os << token::END_STATEMENT << nl;

@@ -70,7 +70,6 @@ protected:
     string valueExpression_;
     string gradientExpression_;
     string fractionExpression_;
-    string variables_;
 
     PatchValueExpressionDriver driver_;
 
