@@ -52,5 +52,62 @@ maxAlphaCo      0.2;
 
 maxDeltaT       1;
 
+libs (
+    "libtwoPhaseInterfaceProperties.so"
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+);
+
+functions
+(
+    createInterface
+    {
+        type createSampledSurface;
+        outputControl timeStep;
+        outputInterval 1;
+        surfaceName interface;
+        surface {
+            type isoSurface;
+            isoField alpha1;
+            isoValue 0.5;
+            interpolate true;
+        }
+    }
+    height
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "pos().y";
+        accumulations (
+            min
+            max
+        );        
+    }
+    deviation
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "pow(pos().y-yAvg,2)*area()/sum(area())";
+        variables "yAvg=sum(pos().y*area())/sum(area());";
+        accumulations (
+            sum
+        );        
+    }
+    velocity
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            max
+        );        
+    }
+);
 
 // ************************************************************************* //

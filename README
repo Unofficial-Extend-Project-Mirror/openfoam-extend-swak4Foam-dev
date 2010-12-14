@@ -123,6 +123,11 @@
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
           =swakExpression=-functionObject
+**** =capillaryRise=
+     - Solver :: interFoam
+     - Case preparation :: run the supplied script =prepareCase.sh=
+     - Demonstrates :: Usage of a sampled surface to track the
+                       interface in a VOF-simulation
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the

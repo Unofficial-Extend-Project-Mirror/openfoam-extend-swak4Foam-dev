@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
+|  \\    /   O peration     | Version:  1.7.x                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -8038,8 +8038,9 @@ boundaryField
     walls
     {
         type            constantAlphaContactAngle;
-        theta0          45;
+        gradient        uniform 0;
         limit           gradient;
+        theta0          45;
         value           nonuniform List<scalar> 
 800
 (
