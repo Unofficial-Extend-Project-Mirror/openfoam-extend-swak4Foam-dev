@@ -48,6 +48,20 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellZoneValueExpres
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+label getCellZoneID(const fvMesh &mesh,const word &name)
+{
+    label result=mesh.cellZones().findZoneID(name);
+    if(result<0) {
+        FatalErrorIn("getCellZoneID(const fvMesh &mesh,const word &name)")
+            << "The cellZone " << name << " was not found in "
+                << mesh.cellZones().names()
+                << endl
+                << abort(FatalError);
+
+    }
+    return result;
+}
+
 
     CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const cellZone &zone,const CellZoneValueExpressionDriver& orig)
 :
@@ -66,15 +80,32 @@ CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const dictionary& d
     SubsetValueExpressionDriver(dict),
     cellZone_(
         regionMesh(dict,mesh).cellZones()[
-            regionMesh(dict,mesh).cellZones().findZoneID(
+            getCellZoneID(
+                regionMesh(dict,mesh),
                 dict.lookup(
                     "zoneName"
-                )
+                )                
             )
         ]
     )
 {
 }
+
+CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const word& id,const fvMesh&mesh)
+ :
+    SubsetValueExpressionDriver(),
+    cellZone_(
+        mesh.cellZones()[
+            getCellZoneID(
+                mesh,
+                id
+            )
+        ]
+    )
+{
+}
+
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 CellZoneValueExpressionDriver::~CellZoneValueExpressionDriver()

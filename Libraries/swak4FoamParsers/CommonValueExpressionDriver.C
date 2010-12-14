@@ -535,15 +535,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="cellZone") {
-        label zoneI=region.cellZones().findZoneID(id);
-        if(zoneI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a cellZone named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const cellZone &otherZone=region.cellZones()[zoneI];
-        CellZoneValueExpressionDriver otherDriver(otherZone);
+        CellZoneValueExpressionDriver otherDriver(id,region);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else if(type=="faceSet") {
@@ -551,15 +543,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="faceZone") {
-        label zoneI=region.faceZones().findZoneID(id);
-        if(zoneI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a faceZone named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const faceZone &otherZone=region.faceZones()[zoneI];
-        FaceZoneValueExpressionDriver otherDriver(otherZone,true,false);
+        FaceZoneValueExpressionDriver otherDriver(id,region);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else if(type=="surface") {
