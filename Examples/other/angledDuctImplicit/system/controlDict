@@ -300,10 +300,11 @@ functions
             max
         );
     }
-    surfacePlane2
+    createsurfacePlane2
     {
-        type swakExpression;
-        valueType surface;
+        type createSampledSurface;
+        outputControl timeStep;
+        outputInterval 1;
         surfaceName testPlane2;
         surface {
             type plane;
@@ -311,6 +312,12 @@ functions
             normalVector    (0 0 1);
             interpolate true;
         }
+    }
+    surfacePlane2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane2;
         verbose true;
         expression "mag(U)";
         accumulations (

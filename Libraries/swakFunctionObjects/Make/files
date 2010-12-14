@@ -4,5 +4,7 @@ expressionField.C
 expressionFieldFunctionObject.C
 clearExpressionField.C
 clearExpressionFieldFunctionObject.C
+createSampledSurface.C
+createSampledSurfaceFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects
