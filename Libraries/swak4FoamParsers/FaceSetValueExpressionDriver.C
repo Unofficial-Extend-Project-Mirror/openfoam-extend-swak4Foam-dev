@@ -93,6 +93,21 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dic
     )
 {
 }
+
+FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const word& id,const fvMesh&mesh)
+ :
+    SubsetValueExpressionDriver(true,false),
+    faceSet_(
+        mesh,
+        id,
+        getSet<faceSet>(
+            mesh,
+            id
+        )()
+    )
+{
+}
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 FaceSetValueExpressionDriver::~FaceSetValueExpressionDriver()

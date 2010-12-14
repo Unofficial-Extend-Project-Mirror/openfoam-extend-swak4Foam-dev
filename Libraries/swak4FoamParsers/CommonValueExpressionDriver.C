@@ -531,17 +531,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         }
         variables_.insert(name,result.getUniform(this->size(),false));
     } else if(type=="cellSet") {
-        cellSet otherSet(
-            region,
-            id,
-            IOobject::MUST_READ
-        );
-        CellSetValueExpressionDriver otherDriver(
-            getSet<cellSet>(
-                region,
-                id
-            )()
-        );
+        CellSetValueExpressionDriver otherDriver(id,region);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="cellZone") {
@@ -557,14 +547,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));        
     } else if(type=="faceSet") {
-        FaceSetValueExpressionDriver otherDriver(
-                getSet<faceSet>(
-                    region,
-                    id
-                )(),
-                true,
-                false
-            );
+        FaceSetValueExpressionDriver otherDriver(id,region);
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
     } else if(type=="faceZone") {

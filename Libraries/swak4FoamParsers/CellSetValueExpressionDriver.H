@@ -80,6 +80,9 @@ public:
     //- Construct from a dictionary
     CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
+    //- Construct from an id
+    CellSetValueExpressionDriver(const word& id,const fvMesh&mesh);
+    
     //- Copy construct
     CellSetValueExpressionDriver(const cellSet &,const CellSetValueExpressionDriver&);
 

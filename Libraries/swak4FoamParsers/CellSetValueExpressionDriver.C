@@ -73,6 +73,20 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
     )
 {}
 
+CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const fvMesh&mesh)
+ :
+    SubsetValueExpressionDriver(),
+    cellSet_(
+        mesh,
+        id,
+        getSet<cellSet>(
+            mesh,
+            id
+        )()
+    )
+{
+}
+
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
     SubsetValueExpressionDriver(dict),
