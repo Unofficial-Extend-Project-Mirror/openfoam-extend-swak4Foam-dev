@@ -79,6 +79,9 @@ public:
     //- Construct from dictionary
     FieldValueExpressionDriver(const dictionary &,const fvMesh &);
 
+    //- Construct from an id
+    FieldValueExpressionDriver(const word& id,const fvMesh&mesh);
+    
     virtual ~FieldValueExpressionDriver();
 
     // necessary to override Common

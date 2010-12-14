@@ -39,6 +39,23 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
 }
 
 FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const word &id,
+    const fvMesh &mesh
+)
+    : CommonValueExpressionDriver(
+        false,
+        true,
+        false        
+    ),
+      time_(""),
+      mesh_(mesh),
+      runTime_(mesh.time()),
+      typ_(NO_TYPE),
+      resultDimension_(0,0,0,0,0,0,0)
+{
+}
+
+FieldValueExpressionDriver::FieldValueExpressionDriver (
     const fvMesh &mesh,
     bool cacheReadFields,
     bool searchInMemory,

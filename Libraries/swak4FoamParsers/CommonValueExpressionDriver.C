@@ -505,31 +505,9 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         otherDriver.parse(expr);
         variables_.insert(name,otherDriver.getUniform(this->size(),false));
     } else if(type=="internalField") {
-        FieldValueExpressionDriver fieldDriver(
-            region,
-            false,
-            true,
-            false
-        );
+        FieldValueExpressionDriver fieldDriver(id,region);
         fieldDriver.parse(expr);
-
-        ExpressionResult result;
-
-        if(fieldDriver.resultIsVector()) {
-            result.setResult(
-                fieldDriver.getVector().internalField()
-            );            
-        } else if(fieldDriver.resultIsScalar()) {
-            result.setResult(
-                fieldDriver.getScalar().internalField()
-            );            
-        } else {
-            WarningIn("CommonValueExpressionDriver::evaluateVariableRemote")
-                << "Expression '" << expr 
-                    << "' evaluated to an unsupported type"
-                    << endl;
-        }
-        variables_.insert(name,result.getUniform(this->size(),false));
+        variables_.insert(name,fieldDriver.getUniform(this->size(),false));
     } else if(type=="cellSet") {
         CellSetValueExpressionDriver otherDriver(id,region);
         otherDriver.parse(expr);

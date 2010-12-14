@@ -76,6 +76,20 @@ functions
         expression "p-pFilter";
         verbose true;
     }
+    pressureToVol
+    {
+        type patchExpression;
+        variables ( "pTotal{internalField}=sum(p*vol())/sum(vol());");
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "p-pTotal";
+        verbose true;
+    }
     pressureToFilter
     {
         type patchExpression;
