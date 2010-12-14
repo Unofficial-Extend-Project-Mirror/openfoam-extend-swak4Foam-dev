@@ -13,7 +13,7 @@
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
 ** Requirements
-   - Version 1.7 of OpenFOAM (1.6 should work, too)
+   - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
    - the compiler generators =bison= and =flex=
    - =simpleSwakFunctionObjects= needs the =simpleFunctionObjects=
      (see
@@ -123,6 +123,13 @@
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
           =swakExpression=-functionObject
+* Copyright
+  =swak4Foam= is free software; you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by the
+  Free Software Foundation; either version 2 of the License, or (at your
+  option) any later version.  See the file COPYING in this directory,
+  for a description of the GNU General Public License terms under which 
+  you can copy the files.
 * History
 ** 2010-09-13
    First Release
