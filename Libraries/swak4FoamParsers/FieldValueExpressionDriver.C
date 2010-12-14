@@ -15,7 +15,9 @@
 namespace Foam {
 
 defineTypeNameAndDebug(FieldValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, dictionary, internalField);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, idName, internalField);
 
 FieldValueExpressionDriver::FieldValueExpressionDriver (
     const string& time,
@@ -33,6 +35,23 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       time_(time),
       mesh_(mesh),
       runTime_(runTime),
+      typ_(NO_TYPE),
+      resultDimension_(0,0,0,0,0,0,0)
+{
+}
+
+FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const word &id,
+    const fvMesh &mesh
+)
+    : CommonValueExpressionDriver(
+        false,
+        true,
+        false        
+    ),
+      time_(""),
+      mesh_(mesh),
+      runTime_(mesh.time()),
       typ_(NO_TYPE),
       resultDimension_(0,0,0,0,0,0,0)
 {

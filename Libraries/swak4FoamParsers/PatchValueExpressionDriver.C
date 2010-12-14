@@ -47,6 +47,7 @@ namespace Foam {
 
 defineTypeNameAndDebug(PatchValueExpressionDriver, 0);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, dictionary, patch);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, idName, patch);
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -90,6 +91,20 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
                 dict.lookup(
                     "patchName"
                 )
+            )
+        ]
+    )
+{
+}
+
+PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMesh&mesh)
+ :
+    CommonValueExpressionDriver(),
+    patch_(
+        mesh.boundary()[
+            getPatchID(
+                mesh,
+                id
             )
         ]
     )

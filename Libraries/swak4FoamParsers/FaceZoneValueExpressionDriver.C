@@ -40,13 +40,29 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(FaceZoneValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceZoneValueExpressionDriver, dictionary, faceZone);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceZoneValueExpressionDriver, idName, faceZone);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+label getFaceZoneID(const fvMesh &mesh,const word &name)
+{
+    label result=mesh.faceZones().findZoneID(name);
+    if(result<0) {
+        FatalErrorIn("getFaceZoneID(const fvMesh &mesh,const word &name)")
+            << "The faceZone " << name << " was not found in "
+                << mesh.faceZones().names()
+                << endl
+                << abort(FatalError);
+
+    }
+    return result;
+}
 
 
     FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(const faceZone &zone,const FaceZoneValueExpressionDriver& orig)
@@ -70,7 +86,8 @@ FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(const dictionary& d
     SubsetValueExpressionDriver(dict),
     faceZone_(
         regionMesh(dict,mesh).faceZones()[
-            regionMesh(dict,mesh).faceZones().findZoneID(
+            getFaceZoneID(
+                regionMesh(dict,mesh),
                 dict.lookup(
                     "zoneName"
                 )
@@ -79,6 +96,21 @@ FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(const dictionary& d
     )
 {
 }
+
+FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(const word& id,const fvMesh&mesh)
+ :
+    SubsetValueExpressionDriver(true,false),
+    faceZone_(
+        mesh.faceZones()[
+            getFaceZoneID(
+                mesh,
+                id
+            )
+        ]
+    )
+{
+}
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 FaceZoneValueExpressionDriver::~FaceZoneValueExpressionDriver()

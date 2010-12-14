@@ -84,6 +84,9 @@ public:
     //- Construct from a dictionary
     FaceSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
+    //- Construct from an id
+    FaceSetValueExpressionDriver(const word& id,const fvMesh&mesh);
+    
     //- Copy construct
     FaceSetValueExpressionDriver(const faceSet &,const FaceSetValueExpressionDriver&);
 

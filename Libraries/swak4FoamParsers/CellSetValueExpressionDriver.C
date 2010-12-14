@@ -40,7 +40,9 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(CellSetValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpressionDriver, dictionary, cellSet);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpressionDriver, idName, cellSet);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -72,6 +74,20 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
             set
     )
 {}
+
+CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const fvMesh&mesh)
+ :
+    SubsetValueExpressionDriver(),
+    cellSet_(
+        mesh,
+        id,
+        getSet<cellSet>(
+            mesh,
+            id
+        )()
+    )
+{
+}
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :

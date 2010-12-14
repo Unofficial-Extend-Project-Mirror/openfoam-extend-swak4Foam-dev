@@ -33,21 +33,6 @@ License
 
 #include "CommonValueExpressionDriver.H"
 
-#include "FieldValueExpressionDriver.H"
-
-#include "PatchValueExpressionDriver.H"
-
-#include "CellZoneValueExpressionDriver.H"
-
-#include "CellSetValueExpressionDriver.H"
-
-#include "FaceZoneValueExpressionDriver.H"
-
-#include "FaceSetValueExpressionDriver.H"
-
-#include "SampledSurfaceValueExpressionDriver.H"
-#include "SurfacesRepository.H"
-
 #include "Random.H"
 
 namespace Foam {
@@ -57,6 +42,7 @@ namespace Foam {
 
 defineTypeNameAndDebug(CommonValueExpressionDriver,0);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
+defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
     // Currently not working
 bool CommonValueExpressionDriver::cacheSets_=true;
@@ -170,6 +156,39 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     return autoPtr<CommonValueExpressionDriver>
     (
         cstrIter()(dict,mesh)
+    );
+}
+
+autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
+(
+    const word& driverType,
+    const word& id,
+    const fvMesh& mesh
+)
+{
+    idNameConstructorTable::iterator cstrIter =
+        idNameConstructorTablePtr_->find(driverType);
+
+    if (cstrIter == idNameConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New"
+        )   << "Unknown  CommonValueExpressionDriver type " << driverType
+            << endl << endl
+            << "Valid valueTypes are :" << endl
+	  //            << idNameConstructorTablePtr_->sortedToc() // does not work in 1.6
+            << idNameConstructorTablePtr_->toc()
+            << exit(FatalError);
+    }
+
+    if(debug) {
+        Info << "Creating driver of type " << driverType << endl;
+    }
+
+    return autoPtr<CommonValueExpressionDriver>
+    (
+        cstrIter()(id,mesh)
     );
 }
 
@@ -466,105 +485,14 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
 
     const fvMesh &region=*pRegion;
 
-    if(type=="patch") {
-        label patchI=region.boundaryMesh().findPatchID(id);
-        if(patchI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a patch named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const fvPatch &otherPatch=region.boundary()[patchI];
-        PatchValueExpressionDriver otherDriver(otherPatch);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));
-    } else if(type=="internalField") {
-        FieldValueExpressionDriver fieldDriver(
-            region,
-            false,
-            true,
-            false
-        );
-        fieldDriver.parse(expr);
+    autoPtr<CommonValueExpressionDriver> otherDriver=CommonValueExpressionDriver::New(
+        type,
+        id,
+        region
+    );
 
-        ExpressionResult result;
-
-        if(fieldDriver.resultIsVector()) {
-            result.setResult(
-                fieldDriver.getVector().internalField()
-            );            
-        } else if(fieldDriver.resultIsScalar()) {
-            result.setResult(
-                fieldDriver.getScalar().internalField()
-            );            
-        } else {
-            WarningIn("CommonValueExpressionDriver::evaluateVariableRemote")
-                << "Expression '" << expr 
-                    << "' evaluated to an unsupported type"
-                    << endl;
-        }
-        variables_.insert(name,result.getUniform(this->size(),false));
-    } else if(type=="cellSet") {
-        cellSet otherSet(
-            region,
-            id,
-            IOobject::MUST_READ
-        );
-        CellSetValueExpressionDriver otherDriver(
-            getSet<cellSet>(
-                region,
-                id
-            )()
-        );
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
-    } else if(type=="cellZone") {
-        label zoneI=region.cellZones().findZoneID(id);
-        if(zoneI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a cellZone named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const cellZone &otherZone=region.cellZones()[zoneI];
-        CellZoneValueExpressionDriver otherDriver(otherZone);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
-    } else if(type=="faceSet") {
-        FaceSetValueExpressionDriver otherDriver(
-                getSet<faceSet>(
-                    region,
-                    id
-                )(),
-                true,
-                false
-            );
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
-    } else if(type=="faceZone") {
-        label zoneI=region.faceZones().findZoneID(id);
-        if(zoneI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a faceZone named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const faceZone &otherZone=region.faceZones()[zoneI];
-        FaceZoneValueExpressionDriver otherDriver(otherZone,true,false);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
-    } else if(type=="surface") {
-        sampledSurface &theSurf=SurfacesRepository::getRepository().getSurface(id,region);
-        SampledSurfaceValueExpressionDriver otherDriver(theSurf,true,false);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
-    } else {
-        FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote")
-            << "The type '" << type << "' is not implemented. " 
-                << "Valid types are 'patch', 'internalField', 'cellSet', 'cellZone', 'faceSet' and 'faceZone'"
-                << endl
-                << abort(FatalError);
-    }
+    otherDriver->parse(expr);
+    variables_.insert(name,otherDriver->getUniform(this->size(),false));
 }
 
 void CommonValueExpressionDriver::addVariables(const stringList &exprList,bool clear)

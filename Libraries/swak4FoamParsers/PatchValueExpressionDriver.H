@@ -115,6 +115,9 @@ public:
     //- Construct from and an old Version
     PatchValueExpressionDriver(const fvPatch& patch_,const PatchValueExpressionDriver& old);
 
+    //- Construct from an id
+    PatchValueExpressionDriver(const word& id,const fvMesh&mesh);
+    
     //- Copy construct
     PatchValueExpressionDriver(const PatchValueExpressionDriver&);
 

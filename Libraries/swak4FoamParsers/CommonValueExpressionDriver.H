@@ -161,6 +161,18 @@ public:
         (dict,mesh)
     );
 
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        CommonValueExpressionDriver,
+        idName,
+        (
+            const word& id,
+            const fvMesh& mesh
+        ),
+        (id,mesh)
+    );
+
     // Constructors
 
     //- Construct from components
@@ -182,6 +194,14 @@ public:
     static autoPtr<CommonValueExpressionDriver> New
     (
         const dictionary& dict,
+        const fvMesh& mesh
+    );
+
+    //- Return a reference to the selected value driver
+    static autoPtr<CommonValueExpressionDriver> New
+    (
+        const word& type,
+        const word& id,
         const fvMesh& mesh
     );
 
