@@ -48,6 +48,117 @@ adjustTimeStep  no;
 
 maxCo           0.2;
 
-libs ( "libOpenFOAM.so" "libgroovyBC.so" ) ;
+libs ( 
+    "libOpenFOAM.so" 
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+) ;
+
+functions
+(
+    planeAverage
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName middlePlane;
+        surface {
+            type plane;
+            basePoint       (0 0.00125 0);
+            normalVector    (0 1 0);
+            interpolate false;
+        }
+        verbose true;
+        expression "sum(pos().x*area())/sum(area())";
+        accumulations (
+            average
+        );
+    }
+    flowThrough
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName middlePlane;
+        verbose true;
+        expression "U & Sf()";
+        accumulations (
+            sum
+        );
+    }
+    flowThroughAlternate
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName middlePlane;
+        verbose true;
+        expression "U.y * area()";
+        accumulations (
+            sum
+        );
+    }
+    yExtreme
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control1;
+        surface {
+            type plane;
+            basePoint       (-0.005 0 0);
+            normalVector    (1 0 0);
+            interpolate false;
+        }
+        verbose true;
+        expression "pos().y";
+        accumulations (
+            min
+            max
+        );
+    }
+    yFlow1
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control1;
+        verbose true;
+        expression "U & Sf()";
+        accumulations (
+            sum
+        );
+    }
+    yFlow2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control2;
+        verbose true;
+        expression "U & Sf()";
+        surface {
+            type plane;
+            basePoint       (-0.007 0 0);
+            normalVector    (1 0 0);
+            interpolate false;
+        }
+        accumulations (
+            sum
+        );
+    }
+    yFlow3
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control3;
+        surface {
+            type plane;
+            basePoint       (-0.002 0 0);
+            normalVector    (1 0 0);
+            interpolate false;
+        }
+        verbose true;
+        expression "U & Sf()";
+        accumulations (
+            sum
+        );
+    }
+);
 
 // ************************************************************************* //
