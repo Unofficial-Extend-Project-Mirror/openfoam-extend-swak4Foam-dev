@@ -15,7 +15,9 @@
 namespace Foam {
 
 defineTypeNameAndDebug(FieldValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, dictionary, internalField);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, idName, internalField);
 
 FieldValueExpressionDriver::FieldValueExpressionDriver (
     const string& time,
