@@ -62,7 +62,7 @@ void Foam::createSampledSurface::read(const dictionary& dict)
     if(active_) {
         SurfacesRepository::getRepository().getSurface(
             dict,
-            dynamicCast<const fvMesh &>(obr_)
+            dynamic_cast<const fvMesh &>(obr_)
         );
     }
 }
