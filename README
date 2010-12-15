@@ -28,6 +28,14 @@
 
   The main library =swak4FoamParsers= can't be built in parallel (no
   values of =WM_NCOMPPROCS= bigger than 1)
+** Global installation
+   If the libraries and utilities are considered stable and the should
+   be available to everyone (without having to recompile them) the
+   script =copySwakFilesToGlobal.sh= can be used to copy them to the
+   global directories.
+
+   The script =removeSwakFilesFromGlobal.sh= removes all these files
+   from the global directories
 * Contents
 ** Libraries
    Collection of Libraries
