@@ -90,6 +90,8 @@
                 you can fix it: Be my guest
 **** movingConeDistorted
     - Solver :: pimpleDyMFoam
+    - Also demonstrates :: =swakExpression= with =surface=. Due to a
+      problem described below this currently doesn't work
 **** average-t-junction
     - Solver :: pimpleFoam
 **** multiRegionHeaterFeedback
@@ -135,6 +137,12 @@
   option) any later version.  See the file COPYING in this directory,
   for a description of the GNU General Public License terms under which 
   you can copy the files.
+* Known bugs
+** Moving meshes and =sampledSurfaces= 
+   It seems that with moving meshes =sampledSurfaces= don't get
+   updated. This seems to be a problem with OpenFOAM itself (the
+   regular =surfaces=-functionObject doesn't get updated. This is
+   currently investigated
 * History
 ** 2010-09-13
    First Release
