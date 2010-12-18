@@ -15,43 +15,32 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-6
+4
 (
-    front
-    {
-        type            wall;
-        nFaces          700;
-        startFace       63400;
-    }
-    back
-    {
-        type            wall;
-        nFaces          700;
-        startFace       64100;
-    }
-    wall
-    {
-        type            wall;
-        nFaces          1400;
-        startFace       64800;
-    }
-    porosityWall
-    {
-        type            wall;
-        nFaces          1600;
-        startFace       66200;
-    }
     inlet
     {
         type            patch;
-        nFaces          400;
-        startFace       67800;
+        nFaces          20;
+        startFace       15580;
     }
-    outlet
+    atmosphere
     {
         type            patch;
-        nFaces          400;
-        startFace       68200;
+        physicalType    atmosphere;
+        nFaces          20;
+        startFace       15600;
+    }
+    walls
+    {
+        type            wall;
+        nFaces          800;
+        startFace       15620;
+    }
+    frontAndBack
+    {
+        type            empty;
+        nFaces          16000;
+        startFace       16420;
     }
 )
 

@@ -1,0 +1,113 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          1e-5;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.2;
+maxAlphaCo      0.2;
+
+maxDeltaT       1e-3;
+
+libs (
+    "libtwoPhaseInterfaceProperties.so"
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+);
+
+functions
+(
+    createInterface
+    {
+        type createSampledSurface;
+        outputControl timeStep;
+        outputInterval 1;
+        surfaceName interface;
+        surface {
+            type isoSurface;
+            isoField alpha1;
+            isoValue 0.5;
+            interpolate true;
+        }
+    }
+    height
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "pos().y";
+        accumulations (
+            min
+            max
+        );        
+    }
+    deviation
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "pow(pos().y-yAvg,2)*area()/sum(area())";
+        variables "yAvg=sum(pos().y*area())/sum(area());";
+        accumulations (
+            sum
+        );        
+    }
+    velocity
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            max
+        );        
+    }
+);
+
+// ************************************************************************* //
