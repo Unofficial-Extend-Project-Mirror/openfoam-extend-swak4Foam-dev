@@ -154,3 +154,29 @@
 * History
 ** 2010-09-13
    First Release
+** 2010-12-18
+   New release
+   Most importannt changes
+*** Parser for =sampledSurfaces=
+    Now expressions for the field on a sampled surface can be
+    evaluated. All =sampledSurfaces= offered by OpenFOAM now can be
+    used 
+*** Multiline =variables=
+    The =variables= entry (most notably used in =groovyBC= and
+    =swakExpression=) now can be a list of strings. This allows some
+    kind of "formatting" (one expression per line) and should improve
+    readability
+*** Two maintainance-scripts were added 
+    These can copy the libraries and utilities to the global
+    installation (for those who think that the swak4Foam-stuff is
+    stable enough and want to 'bless' all users at their site with
+    it). Note that any local installation still takes precedence
+    (because =$FOAM_USER_APPBIN= is before =$FOAM_APPBIN= in the
+    =$PATH= 
+*** Parsers using 'external variables' are now run-time selectable
+    This allows the inclusion of other parsers with the regular
+    =swak4Foam= parsers and include them seamlessly with the
+    =variables=-mechanism for 'externals' (in other words: you can add
+    your own parser in a separate library without having to change
+    anything about the overall =swak4Foam=, but it behaves as if it
+    was part of it)
