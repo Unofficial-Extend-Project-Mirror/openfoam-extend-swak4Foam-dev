@@ -156,7 +156,7 @@
    First Release
 ** 2010-12-18
    New release
-   Most importannt changes
+   Most important changes
 *** Parser for =sampledSurfaces=
     Now expressions for the field on a sampled surface can be
     evaluated. All =sampledSurfaces= offered by OpenFOAM now can be
