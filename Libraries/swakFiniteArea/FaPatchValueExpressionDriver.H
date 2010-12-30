@@ -84,6 +84,9 @@ class FaPatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const FaPatchValueExpressionDriver&);
 
+    template<class T>
+    inline tmp<T> readAndRegister(const word &name);
+
 protected:
 
     // Handling the scanner 

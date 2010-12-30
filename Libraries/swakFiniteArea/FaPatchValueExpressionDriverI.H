@@ -42,6 +42,32 @@ License
 
 namespace Foam {
  
+    template<class T>
+    inline tmp<T> FaPatchValueExpressionDriver::readAndRegister(const word &name)
+    {
+        tmp<T>f(
+            new T(
+                IOobject
+                (
+                    name,
+                    this->time(),
+                    this->mesh(),
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                ),
+                patch_.boundaryMesh().mesh()
+            )
+        );
+        if(cacheReadFields()) {
+            if(debug) {
+                Info << "Registering a copy of " << name << " with mesh" << endl;
+            }
+            T* toCache=new T(f());
+            toCache->store();
+        }
+        return f;
+    }
+
     template<class Type>
     Field<Type> *FaPatchValueExpressionDriver::getField(const string &name)
     {
@@ -68,11 +94,9 @@ namespace Foam {
         ) {
             word fType=this->getTypeOfField(name);
             if(fType==localAreaField::typeName) {
-                notImplemented("getting Area Fields");
-                //tmpVol.set(this->readAndRegister<localAreaField>(name).ptr());
+                tmpVol.set(this->readAndRegister<localAreaField>(name).ptr());
             } else if(fType==localEdgeField::typeName) {
-                notImplemented("getting Edge Fields");
-                //tmpSurf.set(this->readAndRegister<localEdgeField>(name).ptr());
+                tmpSurf.set(this->readAndRegister<localEdgeField>(name).ptr());
             } 
             // TODO: this constructor doesn't work
             // else if(fType==localPointField::typeName) {
