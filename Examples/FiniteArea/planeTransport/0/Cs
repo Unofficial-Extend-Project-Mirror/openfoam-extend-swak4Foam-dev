@@ -24,8 +24,13 @@ referenceLevel      0;
 boundaryField
 {
     inlet {
-        type fixedValue;
+        type groovyBC;
         value uniform 1;
+        variables (
+            "minY=min(pos().y);"
+            "maxY=max(pos().y);"
+        );
+        valueExpression "1+0.5*sin(2*time())*4*(pos().y-minY)*(maxY-pos().y)/pow(maxY-minY,2)";
     }
     outlet {
         type inletOutlet;

@@ -5,4 +5,6 @@ FaPatchValueExpressionParser.yy
 FaPatchValueExpressionLexer.ll
 FaPatchValueExpressionDriver.C
 
+groovyBCFaPatchFields.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakFiniteArea

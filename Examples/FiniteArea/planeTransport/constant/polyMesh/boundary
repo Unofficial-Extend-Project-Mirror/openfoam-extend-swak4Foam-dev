@@ -21,31 +21,31 @@ FoamFile
     {
         type            patch;
         nFaces          20;
-        startFace       760;
+        startFace       2320;
     }
     bound
     {
         type            wall;
-        nFaces          40;
-        startFace       780;
+        nFaces          120;
+        startFace       2340;
     }
     outlet
     {
         type            patch;
         nFaces          20;
-        startFace       820;
+        startFace       2460;
     }
     bottom
     {
         type            patch;
-        nFaces          400;
-        startFace       840;
+        nFaces          1200;
+        startFace       2480;
     }
     top
     {
         type            patch;
-        nFaces          400;
-        startFace       1240;
+        nFaces          1200;
+        startFace       3680;
     }
 )
 
