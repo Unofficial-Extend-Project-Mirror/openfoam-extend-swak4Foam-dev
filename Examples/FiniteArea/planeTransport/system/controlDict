@@ -43,6 +43,35 @@ timePrecision       6;
 
 runTimeModifiable   yes;
 
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFiniteArea.so"
+);
+
+functions (
+    faOut {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        expression "Cs";
+        accumulations (
+            min
+            max
+        );
+        verbose true;
+    }
+    faOutFlow {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        expression "Cs*phis";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+);
+
 // ************************************************************************* //
 
 

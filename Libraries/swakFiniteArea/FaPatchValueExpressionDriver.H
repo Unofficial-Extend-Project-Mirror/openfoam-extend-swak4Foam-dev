@@ -103,7 +103,7 @@ protected:
     virtual const fvMesh &mesh() const;
 
     static const faMesh &faRegionMesh(
-        const dictionary &dict,
+        //        const dictionary &dict,
         const fvMesh &mesh
     );
 
@@ -172,6 +172,12 @@ public:
 
     template<class Type>
     Field<Type> *toPoint(const Field<Type> &);
+
+    template<class Type>
+    bool is(const string &name,bool isPoint=false) const;
+
+    template<class Type>
+    bool isField(const string &name,bool isPoint=false) const;
 };
 
 

@@ -69,6 +69,46 @@ namespace Foam {
     }
 
     template<class Type>
+    bool FaPatchValueExpressionDriver::is(const string &name,bool isPoint) const
+    {
+        if(isVariable<Type>(name,isPoint)) {
+            return true;
+        } else {
+            return isField<Type>(name,isPoint);
+        }
+    }
+
+    template<class Type>
+    bool FaPatchValueExpressionDriver::isField(const string &name,bool isPoint) const
+    {
+        typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;
+        typedef GeometricField<Type,faePatchField,edgeMesh> localEdgeField;
+        typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
+
+        if(isPoint) {
+            if(
+                isThere<localPointField>(name)
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if(
+                isThere<localAreaField>(name)
+            ) {
+                return true;
+            } else if(
+                isThere<localEdgeField>(name)
+            ) {
+                return true;
+            } else{
+                return false;
+            }
+        }
+    }
+
+    template<class Type>
     Field<Type> *FaPatchValueExpressionDriver::getField(const string &name)
     {
         typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;

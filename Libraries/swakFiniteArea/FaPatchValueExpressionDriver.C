@@ -79,31 +79,33 @@ label getPatchID(const faMesh &mesh,const word &name)
 
 const faMesh &FaPatchValueExpressionDriver::faRegionMesh
 (
-    const dictionary &dict,
+    //    const dictionary &dict,
     const fvMesh &mesh
 )
 {
-    word regionName;
+    // word regionName;
 
-    if(!dict.found("faRegion")) {
-        if(debug) {
-            Info << "Using original faMesh " << endl;
-        }
+    // if(!dict.found("faRegion")) {
+    //     if(debug) {
+    //         Info << "Using original faMesh " << endl;
+    //     }
 
-        regionName="faMesh";
-    } else {
-        regionName=word(dict.lookup("faRegion"));
-        if(debug) {
-            Info << "Using faMesh " << regionName  << endl;
-        }
-    }
+    //     regionName="faMesh";
+    // } else {
+    //     regionName=word(dict.lookup("faRegion"));
+    //     if(debug) {
+    //         Info << "Using faMesh " << regionName  << endl;
+    //     }
+    // }
 
     
-    //     return dynamicCast<const fvMesh&>( // soesn't work with gcc 3.2
+    //     return dynamicCast<const fvMesh&>( // doesn't work with gcc 4.2
     return dynamic_cast<const faMesh&>(
-        mesh.time().lookupObject<objectRegistry>(
-            regionName
-        )
+        //        mesh.subRegistry(
+        mesh.lookupObject<edgeVectorField>(
+            // this field must exist and is our only hint to the faMesh (as it doesn't seem to be registered)
+            "edgeCentres"
+        ).mesh()
     );    
 }
 
@@ -112,12 +114,9 @@ FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const dictionary& dic
  :
     CommonValueExpressionDriver(dict),
     patch_(
-        faRegionMesh(dict,regionMesh(dict,mesh)).boundary()[
+        faRegionMesh(regionMesh(dict,mesh)).boundary()[
             getPatchID(
-                faRegionMesh(dict,regionMesh(
-                    dict
-                    ,mesh
-                )),
+                faRegionMesh(regionMesh(dict,mesh)),
                 dict.lookup(
                     "faPatchName"
                 )
@@ -131,17 +130,9 @@ FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const word& id,const 
  :
     CommonValueExpressionDriver(),
     patch_(
-        dynamic_cast<const faMesh&>(
-            mesh.time().lookupObject<objectRegistry>(
-                "faMesh"
-            )
-        ).boundary()[
+        faRegionMesh(mesh).boundary()[
             getPatchID(
-                dynamic_cast<const faMesh&>(
-                    mesh.time().lookupObject<objectRegistry>(
-                        "faMesh"
-                    )
-                ),
+                faRegionMesh(mesh),
                 id
             )
         ]
@@ -212,7 +203,7 @@ scalarField *FaPatchValueExpressionDriver::makeWeightsField()
 
 const fvMesh &FaPatchValueExpressionDriver::mesh() const
 {
-    return dynamic_cast<const fvMesh&>(patch_.boundaryMesh().mesh());
+    return dynamic_cast<const fvMesh&>(patch_.boundaryMesh().mesh().thisDb());
 }
 
 label FaPatchValueExpressionDriver::size() const
