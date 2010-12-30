@@ -29,19 +29,19 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FaPatchValueExpressionDriver
+    Foam::FaCommonValueExpressionDriver
 
 Description
 
 SourceFiles
-    FaPatchValueExpressionDriverI.H
-    FaPatchValueExpressionDriver.C
+    FaCommonValueExpressionDriverI.H
+    FaCommonValueExpressionDriver.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef FaPatchValueExpressionDriver_H
-#define FaPatchValueExpressionDriver_H
+#ifndef FaCommonValueExpressionDriver_H
+#define FaCommonValueExpressionDriver_H
 
 #include "areaFields.H"
 
@@ -49,123 +49,66 @@ SourceFiles
 
 #include "ExpressionResult.H"
 
-#include "FaCommonValueExpressionDriver.H"
+#include "CommonValueExpressionDriver.H"
 
-namespace Foam {
-    class FaPatchValueExpressionDriver;
-}
-
-using Foam::FaPatchValueExpressionDriver;
-
-#include "FaPatchValueExpressionParser.tab.hh"
-
-namespace parserFaPatch {
-    class location;
-    class FaPatchValueExpressionParser;
-}
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class FaPatchValueExpressionDriver Declaration
+                           Class FaCommonValueExpressionDriver Declaration
 \*---------------------------------------------------------------------------*/
 
-class FaPatchValueExpressionDriver
+class FaCommonValueExpressionDriver
 :
-    public FaCommonValueExpressionDriver
+    public CommonValueExpressionDriver
 {
     // Private data
-
-    const faPatch &patch_;
 
     // Private Member Functions
 
     //- Disallow default bitwise assignment
-    void operator=(const FaPatchValueExpressionDriver&);
+    void operator=(const FaCommonValueExpressionDriver&);
 
 protected:
 
-    // Handling the scanner 
-    void scan_begin();
-    void scan_end();
+    template<class T>
+    inline tmp<T> readAndRegister(const word &name);
 
-    //- actual size of the field
-    virtual label size() const;
-
-    //- actual size of the supporting point-field
-    virtual label pointSize() const;
-
-    //- get the mesh we're living on
-    virtual const fvMesh &mesh() const;
-
-    virtual const faMesh &aMesh() const;
+    static const faMesh &faRegionMesh(
+        const fvMesh &mesh
+    );
 
 public:
 
     //- Runtime type information
-    TypeName("FaPatchValueExpressionDriver");
+    TypeName("FaCommonValueExpressionDriver");
 
     // Constructors
 
-    //- Construct from components
-    FaPatchValueExpressionDriver(const faPatch& patch_);
-    
-    //- Construct from a dictionary
-    FaPatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
-    //- Construct from and an old Version
-    FaPatchValueExpressionDriver(const faPatch& patch_,const FaPatchValueExpressionDriver& old);
+    //- Empty
+    FaCommonValueExpressionDriver();
 
-    //- Construct from an id
-    FaPatchValueExpressionDriver(const word& id,const fvMesh&mesh);
+    //- Construct from a dictionary
+    FaCommonValueExpressionDriver(const dictionary& dict);
     
     //- Copy construct
-    FaPatchValueExpressionDriver(const FaPatchValueExpressionDriver&);
+    FaCommonValueExpressionDriver(const FaCommonValueExpressionDriver&);
 
     // Destructor
 
-    ~FaPatchValueExpressionDriver();
+    ~FaCommonValueExpressionDriver();
 
 
     // Member Functions
 
-    vectorField *makePositionField();
-
-    vectorField *makePointField();
-
-    vectorField *makeFaceNormalField();
-
-    vectorField *makeFaceAreaField();
-
-    vectorField *makeCellNeighbourField();
-
-    vectorField *makeDeltaField();
-
-    scalarField *makeWeightsField();
-
-    scalarField *makeFaceIdField();
+    template<class Type>
+    bool is(const string &name,bool isPoint=false) const;
 
     template<class Type>
-    Field<Type> *getField(const string &name);
+    bool isField(const string &name,bool isPoint=false) const;
 
-    template<class Type>
-    Field<Type> *getSurfaceNormalField(const string &name);
-
-    template<class Type>
-    Field<Type> *getPatchInternalField(const string &name);
-
-    template<class Type>
-    Field<Type> *getPatchNeighbourField(const string &name);
-
-    // Handling the parser
-    void parse(const std::string& f);
-
-    template<class Type>
-    Field<Type> *toFace(const Field<Type> &);
-
-    template<class Type>
-    Field<Type> *toPoint(const Field<Type> &);
+    virtual const faMesh &aMesh() const =0;
 };
 
 
@@ -175,7 +118,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "FaPatchValueExpressionDriverI.H"
+#include "FaCommonValueExpressionDriverI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
