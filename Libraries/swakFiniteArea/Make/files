@@ -1,2 +1,6 @@
+FaPatchValueExpressionParser.yy
+
+FaPatchValueExpressionLexer.ll
+FaPatchValueExpressionDriver.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFiniteArea

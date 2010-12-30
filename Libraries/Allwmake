@@ -14,5 +14,5 @@ wmake libso swakSourceFields
 
 if [ "$FOAM_DEV" != "" ]
 then
-    wmake libso swakFiniteArea
+    (export WM_NCOMPPROCS= ; wmake libso swakFiniteArea)
 fi
