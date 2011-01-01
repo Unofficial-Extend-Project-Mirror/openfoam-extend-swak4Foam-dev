@@ -11,4 +11,6 @@ FaFieldValueExpressionDriver.C
 
 groovyBCFaPatchFields.C
 
+faExpressionSource.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakFiniteArea
