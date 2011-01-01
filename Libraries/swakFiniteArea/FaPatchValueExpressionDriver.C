@@ -143,17 +143,17 @@ vectorField *FaPatchValueExpressionDriver::makePositionField()
 //     return new vectorField(patch_.patch().localPoints());
 // }
 
-vectorField *FaPatchValueExpressionDriver::makeFaceNormalField()
+vectorField *FaPatchValueExpressionDriver::makeEdgeNormalField()
 {
     return new vectorField(patch_.edgeNormals());
 }
 
-vectorField *FaPatchValueExpressionDriver::makeFaceAreaField()
+vectorField *FaPatchValueExpressionDriver::makeEdgeLengthField()
 {
     return new vectorField(patch_.edgeLengths());
 }
 
-vectorField *FaPatchValueExpressionDriver::makeCellNeighbourField()
+vectorField *FaPatchValueExpressionDriver::makeFaceNeighbourField()
 {
     return new vectorField(patch_.edgeFaceCentres());
 }
@@ -188,7 +188,7 @@ label FaPatchValueExpressionDriver::pointSize() const
     return patch_.nPoints();
 }
 
-scalarField *FaPatchValueExpressionDriver::makeFaceIdField()
+scalarField *FaPatchValueExpressionDriver::makeEdgeIdField()
 {
     scalarField *result=new scalarField(patch_.size());
     forAll(*result,i) {

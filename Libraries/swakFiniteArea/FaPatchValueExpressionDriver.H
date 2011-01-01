@@ -134,17 +134,17 @@ public:
 
     vectorField *makePointField();
 
-    vectorField *makeFaceNormalField();
+    vectorField *makeEdgeNormalField();
 
-    vectorField *makeFaceAreaField();
+    vectorField *makeEdgeLengthField();
 
-    vectorField *makeCellNeighbourField();
+    vectorField *makeFaceNeighbourField();
 
     vectorField *makeDeltaField();
 
     scalarField *makeWeightsField();
 
-    scalarField *makeFaceIdField();
+    scalarField *makeEdgeIdField();
 
     template<class Type>
     Field<Type> *getField(const string &name);

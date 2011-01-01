@@ -81,13 +81,13 @@ negative              return token::TOKEN_neg;
 
 pi                    return token::TOKEN_pi;
 pos                   return token::TOKEN_position;
-area                  return token::TOKEN_area;
+length                return token::TOKEN_length;
 pts                   return token::TOKEN_points;
 Sf                    return token::TOKEN_Sf;
-Cn                    return token::TOKEN_Cn;
+Fn                    return token::TOKEN_Fn;
 delta                 return token::TOKEN_delta;
 weights               return token::TOKEN_weights;
-snGrad                return token::TOKEN_snGrad;
+lnGrad                return token::TOKEN_lnGrad;
 internalField         return token::TOKEN_internalField;
 neighbourField        return token::TOKEN_neighbourField;
 normal                return token::TOKEN_normal;

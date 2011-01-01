@@ -111,13 +111,13 @@
 %token TOKEN_id
 %token TOKEN_randNormal
 %token TOKEN_position
-%token TOKEN_area
+%token TOKEN_length
 %token TOKEN_Sf
-%token TOKEN_Cn
+%token TOKEN_Fn
 %token TOKEN_delta
 %token TOKEN_weights
 %token TOKEN_normal
-%token TOKEN_snGrad
+%token TOKEN_lnGrad
 %token TOKEN_internalField
 %token TOKEN_neighbourField
 
@@ -231,15 +231,15 @@ vexp:   vector                  { $$ = $1; }
 //        | TOKEN_diag '(' texp ')'       { $$ = new Foam::vectorField( Foam::diag(*$3) ); delete $3; }
         | lexp '?' vexp ':' vexp        { $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_position '(' ')'        { $$ = driver.makePositionField(); }
-        | TOKEN_normal '(' ')'          { $$ = driver.makeFaceNormalField(); }
-        | TOKEN_Sf '(' ')'              { $$ = driver.makeFaceAreaField(); }
-        | TOKEN_Cn '(' ')'              { $$ = driver.makeCellNeighbourField(); }
+        | TOKEN_normal '(' ')'          { $$ = driver.makeEdgeNormalField(); }
+        | TOKEN_Sf '(' ')'              { $$ = driver.makeEdgeLengthField(); }
+        | TOKEN_Fn '(' ')'              { $$ = driver.makeFaceNeighbourField(); }
         | TOKEN_delta '(' ')'              { $$ = driver.makeDeltaField(); }
         | TOKEN_toFace '(' pvexp ')'        { $$ = driver.toFace(*$3); delete $3; }
         | TOKEN_VID {
             $$=driver.getField<Foam::vector>(*$1); delete $1;
                     }
-        | TOKEN_snGrad '(' TOKEN_VID ')' {
+        | TOKEN_lnGrad '(' TOKEN_VID ')' {
             $$=driver.getSurfaceNormalField<Foam::vector>(*$3); delete $3;
                     }
         | TOKEN_internalField '(' TOKEN_VID ')' {
@@ -374,7 +374,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | hexp '.' TOKEN_ii       { $$ = new Foam::scalarField($1->component(0)); delete $1; }
         | lexp '?' exp ':' exp        { $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_pi { $$ = driver.makeField(M_PI); }
-        | TOKEN_id '(' ')'                         { $$ = driver.makeFaceIdField(); }
+        | TOKEN_id '(' ')'                         { $$ = driver.makeEdgeIdField(); }
         | TOKEN_cpu '(' ')'       { $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo())); }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField(); }
         | TOKEN_weights '(' ')'              { $$ = driver.makeWeightsField(); }
@@ -382,8 +382,8 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_deltaT '(' ')'   { $$ = driver.makeField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'   { $$ = driver.makeField(driver.runTime().time().value()); }
         | TOKEN_toFace '(' pexp ')'        { $$ = driver.toFace(*$3); delete $3;}
-        | TOKEN_area '(' ')'              { 
-            Foam::vectorField *Sf=driver.makeFaceAreaField();
+        | TOKEN_length '(' ')'              { 
+            Foam::vectorField *Sf=driver.makeEdgeLengthField();
             $$ = new Foam::scalarField(Foam::mag(*Sf)); 
             delete Sf;}
 	| TOKEN_SID		{ 
@@ -392,7 +392,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
 	| TOKEN_LINE		{ 
             $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
 				}
-        | TOKEN_snGrad '(' TOKEN_SID ')' {
+        | TOKEN_lnGrad '(' TOKEN_SID ')' {
             $$=driver.getSurfaceNormalField<Foam::scalar>(*$3); delete $3;
                     }
         | TOKEN_internalField '(' TOKEN_SID ')' {
@@ -433,7 +433,7 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_TID {
             $$=driver.getField<Foam::tensor>(*$1); delete $1;
                     }
-        | TOKEN_snGrad '(' TOKEN_TID ')' {
+        | TOKEN_lnGrad '(' TOKEN_TID ')' {
             $$=driver.getSurfaceNormalField<Foam::tensor>(*$3); delete $3;
                     }
         | TOKEN_internalField '(' TOKEN_TID ')' {
@@ -467,7 +467,7 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_YID {
             $$=driver.getField<Foam::symmTensor>(*$1); delete $1;
                     }
-        | TOKEN_snGrad '(' TOKEN_YID ')' {
+        | TOKEN_lnGrad '(' TOKEN_YID ')' {
             $$=driver.getSurfaceNormalField<Foam::symmTensor>(*$3); delete $3;
                     }
         | TOKEN_internalField '(' TOKEN_YID ')' {
@@ -493,7 +493,7 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_HID {
             $$=driver.getField<Foam::sphericalTensor>(*$1); delete $1;
                     }
-        | TOKEN_snGrad '(' TOKEN_HID ')' {
+        | TOKEN_lnGrad '(' TOKEN_HID ')' {
             $$=driver.getSurfaceNormalField<Foam::sphericalTensor>(*$3); delete $3;
                     }
         | TOKEN_internalField '(' TOKEN_HID ')' {

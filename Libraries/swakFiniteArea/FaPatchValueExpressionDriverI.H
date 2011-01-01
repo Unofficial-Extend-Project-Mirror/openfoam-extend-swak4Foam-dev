@@ -187,7 +187,7 @@ namespace Foam {
         } else{
             FatalErrorIn("Field<Type> *FaPatchValueExpressionDriver::getSurfaceNormalField(const string &name)")
                 << "No field of type " << pTraits<scalar>::typeName
-                    << " with the name " << name << " found or unsupported type for snGrad\n"
+                    << " with the name " << name << " found or unsupported type for lnGrad\n"
                     << endl
                     << abort(FatalError);
 
