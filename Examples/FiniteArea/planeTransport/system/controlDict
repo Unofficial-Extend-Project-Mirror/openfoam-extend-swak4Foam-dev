@@ -70,6 +70,16 @@ functions (
         );
         verbose true;
     }
+    faOutFlow2 {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        expression "Cs*(Sf()&Us)";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
     faTotalSurf {
         type swakExpression;
         valueType internalFaField;
