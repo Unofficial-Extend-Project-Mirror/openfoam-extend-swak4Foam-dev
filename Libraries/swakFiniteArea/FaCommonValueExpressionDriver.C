@@ -70,9 +70,13 @@ const faMesh &FaCommonValueExpressionDriver::faRegionMesh
 }
 
 
-FaCommonValueExpressionDriver::FaCommonValueExpressionDriver()
+FaCommonValueExpressionDriver::FaCommonValueExpressionDriver(        
+    bool cacheReadFields,
+    bool searchInMemory,
+    bool searchOnDisc
+)
  :
-    CommonValueExpressionDriver()
+    CommonValueExpressionDriver(cacheReadFields,searchInMemory,searchOnDisc)
 {
 }
 

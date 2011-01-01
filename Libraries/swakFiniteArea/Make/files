@@ -1,9 +1,13 @@
 FaCommonValueExpressionDriver.C
 
 FaPatchValueExpressionParser.yy
+FaFieldValueExpressionParser.yy
 
 FaPatchValueExpressionLexer.ll
 FaPatchValueExpressionDriver.C
+
+FaFieldValueExpressionLexer.ll
+FaFieldValueExpressionDriver.C
 
 groovyBCFaPatchFields.C
 

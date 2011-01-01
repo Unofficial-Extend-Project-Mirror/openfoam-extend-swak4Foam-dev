@@ -86,8 +86,12 @@ public:
 
     // Constructors
 
-    //- Empty
-    FaCommonValueExpressionDriver();
+    //- Construct and determine behaviour
+    FaCommonValueExpressionDriver(        
+        bool cacheReadFields=false,
+        bool searchInMemory=true,
+        bool searchOnDisc=false
+    );
 
     //- Construct from a dictionary
     FaCommonValueExpressionDriver(const dictionary& dict);
