@@ -14,6 +14,7 @@
 * Installation/Compilation
 ** Requirements
    - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
+     - The =finiteArea=-stuff will only work with version 1.6-ext
    - the compiler generators =bison= and =flex=
    - =simpleSwakFunctionObjects= needs the =simpleFunctionObjects=
      (see
@@ -61,6 +62,9 @@
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities 
+*** =swakFiniteArea=
+    Implements parsers for the =finiteArea=-stuff in 1.6-ext. Also
+    implements =groovyBC= for =areaField= and =expressionField=
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -122,6 +126,17 @@
 **** =mixingThing=
      Demonstration case for it.
      - Preparation :: Run the script =prepare.sh= to prepare the case
+*** FiniteArea
+    Demonstration of the =finiteArea=-stuff that works with 1.6-ext
+**** =swakSurfactantFoam=
+     Variation of =surfactantFoam= that adds an =expressionSource=
+**** =planeTransport=
+     Demonstration case
+     - Preparation :: Use =blockMesh= and =makeFaMesh=
+     - Solver :: =surfactantFoam= (without source term) or
+                 =swakSurfactantFoam=
+     - Demonstrates :: FAM-specific =swakExpressions= and =groovyBC=
+                       (as well as the =expressionSource=)
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
@@ -151,6 +166,10 @@
    updated. This seems to be a problem with OpenFOAM itself (the
    regular =surfaces=-functionObject doesn't get updated. This is
    currently investigated
+** Missing support for interpolation and point-Fields
+   Apart from patches and internal fields the support for
+   interpolation from cells to faces (and vice versa) is incomplete as
+   well as point fields (although they are supported in the grammar)
 * History
 ** 2010-09-13
    First Release

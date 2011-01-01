@@ -1,0 +1,106 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application    surfactantFoam;
+
+startFrom           startTime;
+
+startTime           0;
+
+stopAt              endTime;
+
+endTime             6;
+
+deltaT              0.1;
+
+writeControl        runTime;
+
+writeInterval       0.2;
+
+purgeWrite          0;
+
+writeFormat         ascii;
+
+writeCompression    uncompressed;
+
+timeFormat          general;
+
+timePrecision       6;
+
+runTimeModifiable   yes;
+
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFiniteArea.so"
+);
+
+functions (
+    faOut {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        expression "Cs";
+        accumulations (
+            min
+            max
+        );
+        verbose true;
+    }
+    faOutFlow {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        expression "Cs*phis";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    faOutFlow2 {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        expression "Cs*(Sf()&Us)";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    faTotalSurf {
+        type swakExpression;
+        valueType internalFaField;
+        expression "Cs*area()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    fvTotalSurf {
+        type swakExpression;
+        valueType patch;
+        patchName top;
+        expression "Cvf*area()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+);
+
+// ************************************************************************* //
+
+
