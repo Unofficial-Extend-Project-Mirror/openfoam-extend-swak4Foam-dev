@@ -32,6 +32,8 @@ Description
 #include "fvCFD.H"
 #include "faCFD.H"
 
+#include "faExpressionSource.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
@@ -58,6 +60,8 @@ int main(int argc, char *argv[])
             fam::ddt(Cs)
           + fam::div(phis, Cs)
           - fam::laplacian(Ds, Cs)
+            ==
+            surfactantSource()
         );
 
         CsEqn.solve();

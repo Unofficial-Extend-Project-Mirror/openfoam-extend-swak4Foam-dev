@@ -53,7 +53,7 @@ faExpressionSource<T>::faExpressionSource
 )
 :
     FaFieldValueExpressionDriver(dict,mesh),
-    expression_(dict.lookup("faExpression"))
+    expression_(dict.lookup("expression"))
 {}
 
 

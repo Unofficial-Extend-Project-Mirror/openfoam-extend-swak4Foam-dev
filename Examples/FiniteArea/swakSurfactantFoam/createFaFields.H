@@ -61,3 +61,18 @@ edgeScalarField phis
     linearEdgeInterpolate(Us) & aMesh.Le()
 );
 
+faExpressionSource<scalar> surfactantSource
+(
+    IOdictionary
+    (
+        IOobject
+        (
+            "surfactantSourceDict",
+            runTime.constant(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        )
+    ),
+    mesh
+);
