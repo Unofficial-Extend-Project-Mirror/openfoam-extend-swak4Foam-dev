@@ -70,6 +70,25 @@ functions (
         );
         verbose true;
     }
+    faTotalSurf {
+        type swakExpression;
+        valueType internalFaField;
+        expression "Cs*area()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    fvTotalSurf {
+        type swakExpression;
+        valueType patch;
+        patchName top;
+        expression "Cvf*area()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
 );
 
 // ************************************************************************* //
