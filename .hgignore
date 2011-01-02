@@ -14,3 +14,7 @@ darwin*Opt
 darwin*Debug
 
 lnInclude
+
+GTAGS
+GPATH
+GRTAGS
