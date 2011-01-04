@@ -6,7 +6,7 @@
 
 %option noyywrap nounput batch debug 
 %option stack
-%option prefix="fvexpr"
+%option prefix="parserFaField"
 
 id      [[:alpha:]_][[:alnum:]_]*
 int     [[:digit:]]+
@@ -148,10 +148,12 @@ false                  return token::TOKEN_FALSE;
 
 %%
 
+YY_BUFFER_STATE bufferFaField;
+
 void FaFieldValueExpressionDriver::scan_begin ()
 {
     yy_flex_debug = trace_scanning_;
-    yy_scan_string(content_.c_str());
+    bufferFaField=yy_scan_string(content_.c_str());
 //    if (!(yyin = fopen (file.c_str (), "r")))
 //        error (std::string ("cannot open ") + file);
 }
@@ -159,4 +161,5 @@ void FaFieldValueExpressionDriver::scan_begin ()
 void FaFieldValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
+    yy_delete_buffer(bufferFaField);
 }
