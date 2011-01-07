@@ -13,4 +13,7 @@ boundaryConditions/groovyBCFaPatchFields.C
 
 expressionSource/faExpressionSource.C
 
+functionObjects/expressionFaField.C
+functionObjects/expressionFaFieldFunctionObject.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakFiniteArea
