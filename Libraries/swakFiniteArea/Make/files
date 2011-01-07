@@ -9,8 +9,8 @@ FaPatchValueExpressionDriver.C
 FaFieldValueExpressionLexer.ll
 FaFieldValueExpressionDriver.C
 
-groovyBCFaPatchFields.C
+boundaryConditions/groovyBCFaPatchFields.C
 
-faExpressionSource.C
+expressionSource/faExpressionSource.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFiniteArea
