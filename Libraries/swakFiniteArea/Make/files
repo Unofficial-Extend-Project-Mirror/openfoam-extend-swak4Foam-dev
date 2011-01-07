@@ -15,5 +15,9 @@ expressionSource/faExpressionSource.C
 
 functionObjects/expressionFaField.C
 functionObjects/expressionFaFieldFunctionObject.C
+functionObjects/manipulateFaField.C
+functionObjects/manipulateFaFieldFunctionObject.C
+functionObjects/clearExpressionFaField.C
+functionObjects/clearExpressionFaFieldFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFiniteArea
