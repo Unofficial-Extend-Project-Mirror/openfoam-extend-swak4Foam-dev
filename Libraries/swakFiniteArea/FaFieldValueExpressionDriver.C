@@ -107,8 +107,15 @@ void FaFieldValueExpressionDriver::setVectorResult(areaVectorField *r) {
 void FaFieldValueExpressionDriver::parse (const std::string &f)
 {
     content_ = f;
+    if(debug) {
+        Info << "FaField-parsing: " << content_ << endl;
+    }
     scan_begin ();
     parserFaField::FaFieldValueExpressionParser parser (*this);
+    if(debug) {
+        Info << "FaFieldTrace: " << trace_parsing_ << endl;
+        trace_parsing_=1;
+    }
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
     scan_end ();

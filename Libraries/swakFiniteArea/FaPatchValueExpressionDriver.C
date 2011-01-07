@@ -138,10 +138,12 @@ vectorField *FaPatchValueExpressionDriver::makePositionField()
     return new vectorField(patch_.edgeFaceCentres());
 }
 
-// vectorField *FaPatchValueExpressionDriver::makePointField()
-// {
-//     return new vectorField(patch_.patch().localPoints());
-// }
+vectorField *FaPatchValueExpressionDriver::makePointField()
+{
+    notImplemented("FaPatchValueExpressionDriver::makePointField()");
+
+    return new vectorField(0);
+}
 
 vectorField *FaPatchValueExpressionDriver::makeEdgeNormalField()
 {
