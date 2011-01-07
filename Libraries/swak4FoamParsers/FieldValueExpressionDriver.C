@@ -3,6 +3,7 @@
 #include "FieldValueExpressionDriver.H"
 #include <Random.H>
 #include <wallDist.H>
+#include <nearWallDist.H>
 #include <dimensionedVector.H>
 #include "cellSet.H"
 #include "faceSet.H"
@@ -460,6 +461,30 @@ volScalarField *FieldValueExpressionDriver::makeDistanceField()
     f->dimensions().reset(mesh_.C().dimensions());
     wallDist dist(mesh_);
     *f=dist;
+    f->dimensions().reset(nullDim);
+    return f;
+
+}
+
+volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
+{
+    dimensionSet nullDim(0,0,0,0,0);
+    volScalarField *f=new volScalarField(
+        IOobject
+        (
+            "dist",
+            time(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh_,
+        0.,
+        "fixedValue"
+    );
+    f->dimensions().reset(mesh_.C().dimensions());
+    nearWallDist dist(mesh_);
+    f->boundaryField()==dist;
     f->dimensions().reset(nullDim);
     return f;
 
