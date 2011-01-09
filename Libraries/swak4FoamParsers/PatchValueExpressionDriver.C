@@ -41,6 +41,8 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+#include <nearWallDist.H>
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -193,6 +195,14 @@ scalarField *PatchValueExpressionDriver::makeFaceIdField()
     forAll(*result,i) {
         (*result)[i]=i;
     }
+    return result;
+}
+
+scalarField *PatchValueExpressionDriver::makeNearDistField()
+{
+    scalarField *result=new scalarField(patch_.size());
+    nearWallDist dist(this->mesh());
+    (*result)=dist[patch_.index()];
     return result;
 }
 

@@ -109,6 +109,7 @@
 %token TOKEN_pi
 %token TOKEN_rand
 %token TOKEN_id
+%token TOKEN_dist
 %token TOKEN_randNormal
 %token TOKEN_position
 %token TOKEN_area
@@ -375,6 +376,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | lexp '?' exp ':' exp        { $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_pi { $$ = driver.makeField(M_PI); }
         | TOKEN_id '(' ')'                         { $$ = driver.makeFaceIdField(); }
+        | TOKEN_dist '(' ')'                       { $$ = driver.makeNearDistField(); }
         | TOKEN_cpu '(' ')'       { $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo())); }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField(); }
         | TOKEN_weights '(' ')'              { $$ = driver.makeWeightsField(); }

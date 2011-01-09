@@ -144,6 +144,8 @@ public:
 
     scalarField *makeFaceIdField();
 
+    scalarField *makeNearDistField();
+
     template<class Type>
     Field<Type> *getField(const string &name);
 
