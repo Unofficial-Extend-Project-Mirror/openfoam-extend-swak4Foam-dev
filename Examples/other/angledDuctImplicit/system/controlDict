@@ -423,6 +423,27 @@ functions
         expression "mag(pos())";
         autowrite true;        
     }
+    yPlusField
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName yPlus;
+        expression "pow(0.09,0.25)*sqr(k)*nearDist()/mu";
+        autowrite true;
+    }
+    yPlusWall
+    {
+        type patchExpression;
+        expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
+        accumulations (
+            min
+            max
+            average
+        );
+        patches (wall);
+        verbose true;
+    }
     surfaceIsoDist
     {
         type swakExpression;
