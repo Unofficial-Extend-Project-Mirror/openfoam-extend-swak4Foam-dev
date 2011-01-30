@@ -199,3 +199,19 @@
     your own parser in a separate library without having to change
     anything about the overall =swak4Foam=, but it behaves as if it
     was part of it)
+** 2011-01-30
+*** Support for /Finite Area/-stuff
+    Now there is support for the =finiteArea=-library found in
+    1.6-dev. The support is found in a separate library
+    =swakFiniteArea=. It has
+    - a parser =faField= for =areaFields=
+    - a parser =faPatch= for patches of =areaFields=
+    - a variant of =groovyBC= for these patches
+    - a computed source =faExpressionSource=
+    - Function-object-variants for =areaFields=: =clearExpression=,
+      =expressionField= and =manipulateField=. These work the same as
+      their =volField=-counterparts
+*** Bugfix for compiling in single precision
+    See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=49
+*** New function =nearDist=
+    See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=44
