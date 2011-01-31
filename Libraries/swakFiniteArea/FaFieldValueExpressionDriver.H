@@ -146,11 +146,11 @@ public:
     template <class T,class Field>
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
-    // template<class T>
-    // static void makePatches(GeometricField<T,fvPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    template<class T>
+    static void makePatches(GeometricField<T,faPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
 
-    // template<class T>
-    // static void setValuePatches(GeometricField<T,fvPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    template<class T>
+    static void setValuePatches(GeometricField<T,faPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
 
 };
 
