@@ -37,6 +37,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "faCFD.H"
 
 #include "FaFieldValueExpressionDriver.H"
 
@@ -48,18 +49,21 @@ void setField
     const string &name,
     const faMesh &mesh,
     const string &time,
-    const T &result,
+    const GeometricField<T,faPatchField,areaMesh> &result,
     const areaScalarField &cond,
     bool create,
     const dimensionSet &dim,
     bool keepPatches,
-    const wordList &valuePatches
+    const wordList &valuePatches,
+    bool createVolumeField
 ) {
-    dimensioned<typename T::value_type> init("nix",dim,typename T::value_type());
+    dimensioned<T> init("nix",dim,pTraits<T>::zero);
+    typedef GeometricField<T,faPatchField,areaMesh> aField;
+    typedef GeometricField<T,fvPatchField,volMesh> vField;
 
-    T *tmp;
+    aField *tmp;
     if(create) {
-      tmp=new T
+      tmp=new aField
         (
             IOobject  
             (
@@ -73,7 +77,7 @@ void setField
             init
         );
     } else {
-      tmp=new T
+      tmp=new aField
         (
             IOobject  
             (
@@ -106,6 +110,29 @@ void setField
 
     tmp->write();
 
+    if(createVolumeField) {
+        word vName(name+"Volume");
+        Info << " Writing volume field to " << vName << endl;
+        
+        vField volField(
+            IOobject  
+            (
+                vName,
+                time,
+                dynamic_cast<const fvMesh&>(mesh.thisDb()),
+		IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            dynamic_cast<const fvMesh&>(mesh.thisDb()),
+            init,
+            "fixedValue"
+        );
+
+        volSurfaceMapping mapper(mesh);
+
+        mapper.mapToVolume(*tmp, volField.boundaryField());
+        volField.write();       
+    }
     delete tmp;
 }
 
@@ -121,7 +148,8 @@ void doAnExpression
     bool cacheVariables,
     const dimensionSet &dim,
     bool keepPatches,
-    const wordList &valuePatches
+    const wordList &valuePatches,
+    bool createVolumeField
 ) {
     const string &time = runTime.timeName();
     bool isScalar=false;
@@ -219,7 +247,8 @@ void doAnExpression
                 create,
                 dim,
                 keepPatches,
-                valuePatches
+                valuePatches,
+                createVolumeField
             );
         } else {
 	  setField(
@@ -231,7 +260,8 @@ void doAnExpression
               create,
               dim,
               keepPatches,
-              valuePatches
+              valuePatches,
+              createVolumeField
           );
         }
     }
@@ -254,6 +284,7 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("debugParser","");
     argList::validOptions.insert("noCacheVariables","");
     argList::validOptions.insert("create","");
+    argList::validOptions.insert("createVolumeField","");
     argList::validOptions.insert("keepPatches","");
     argList::validOptions.insert("valuePatches","<list of patches that get a fixed value>");
     argList::validOptions.insert("dictExt","<extension to the default funkySetFieldsDict-dictionary>");
@@ -276,7 +307,7 @@ int main(int argc, char *argv[])
 #   include "createNamedMesh.H"
 
     faMesh aMesh(mesh);
-    aMesh.edgeCentres();
+    aMesh.edgeCentres(); // to force the creation of a field that enables the areaMesh to be found
 
     forAll(timeDirs, timeI)
     {
@@ -340,7 +371,8 @@ int main(int argc, char *argv[])
                 !args.options().found("noCacheVariables"),
                 dim,
                 keepPatches,
-                valuePatches
+                valuePatches,
+                args.options().found("createVolumeField")
             );
         } else {
             Info << " Using funkySetFieldsDict \n" << endl;
@@ -440,7 +472,8 @@ int main(int argc, char *argv[])
                     !args.options().found("noCacheVariables"),
                     dim,
                     keepPatches,
-                    valuePatches
+                    valuePatches,
+                    args.options().found("createVolumeField")
                 );
             }
         }
