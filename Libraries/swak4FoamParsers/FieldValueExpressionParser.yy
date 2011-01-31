@@ -105,6 +105,7 @@
 %token TOKEN_area
 %token TOKEN_volume
 %token TOKEN_dist
+%token TOKEN_nearDist
 %token TOKEN_rdist
 
 %token TOKEN_set
@@ -353,8 +354,9 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField
         | vexp '.' 'y'                             { $$ = new Foam::volScalarField($1->component(1)); delete $1; }
         | vexp '.' 'z'                             { $$ = new Foam::volScalarField($1->component(2)); delete $1; }
         | lexp '?' exp ':' exp                     { $$ = driver.doConditional($1,$3,$5,driver.makeScalarField(0.)); delete $1; delete $3; delete $5; }
-        | TOKEN_pi                                 { $$ = driver.makeScalarField(M_PI); }
+        | TOKEN_pi                                 { $$ = driver.makeScalarField(Foam::mathematicalConstant::pi); }
         | TOKEN_dist '(' ')'                       { $$ = driver.makeDistanceField(); }
+        | TOKEN_nearDist '(' ')'                   { $$ = driver.makeNearDistanceField(); }
         | TOKEN_rdist '(' vexp ')'                 { $$ = driver.makeRDistanceField(*$3); delete $3; }
         | TOKEN_volume '(' ')'                     { $$ = driver.makeVolumeField(); }
         | TOKEN_rand '(' ')'                       { $$ = driver.makeRandomField(); }

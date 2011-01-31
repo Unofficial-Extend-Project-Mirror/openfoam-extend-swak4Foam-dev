@@ -143,6 +143,7 @@ public:
     surfaceScalarField *makeAreaField();
     volVectorField *makePositionField();
     volScalarField *makeDistanceField();
+    volScalarField *makeNearDistanceField();
     volScalarField *makeRDistanceField(const volVectorField &r);
     volScalarField *makeVolumeField();
     volScalarField *makeRandomField();
