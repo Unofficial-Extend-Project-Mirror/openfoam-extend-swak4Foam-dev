@@ -8,6 +8,7 @@ EXE_INC = -I$(OBJECTS_DIR) \
 	
 
 EXE_LIBS = -lfiniteVolume \
+        -lfiniteArea \
 	-lmeshTools \
 	-L$(FOAM_USER_LIBBIN) \
 	-lswakFiniteArea \
