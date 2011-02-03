@@ -11,3 +11,5 @@ wclean simpleSwakFunctionObjects
 wclean swakTopoSources
 
 wclean swakSourceFields
+
+wclean swakFiniteArea

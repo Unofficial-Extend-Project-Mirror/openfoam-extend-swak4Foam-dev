@@ -6,3 +6,4 @@ wclean funkySetBoundaryField
 
 wclean replayTransientBC
 
+wclean funkySetAreaFields

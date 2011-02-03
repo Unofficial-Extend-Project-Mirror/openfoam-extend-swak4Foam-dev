@@ -3,6 +3,9 @@
 #ifndef VALUE_EXPRESSION_DRIVER_I_H
 #define VALUE_EXPRESSION_DRIVER_I_H
 
+#include "fixedValueFaPatchFields.H"
+#include "zeroGradientFaPatchFields.H"
+
 namespace Foam {
 
 template<class T>
@@ -117,6 +120,94 @@ inline const faMesh &FaFieldValueExpressionDriver::aMesh() const
 inline const fvMesh &FaFieldValueExpressionDriver::mesh() const
 {
     return dynamic_cast<const fvMesh&>(mesh_.thisDb());
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::makePatches
+(
+    GeometricField<T,faPatchField,areaMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<faPatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const faPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            || 
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(fvPatch)
+        )
+    ) {
+        if(isValuePatch){
+            bfNew[patchI]=new fixedValueFaPatchField<T>(patch,field);  
+        } else {
+            bfNew[patchI]=new zeroGradientFaPatchField<T>(patch,field);      
+        }
+    } else {
+        bfNew[patchI]=bf[patchI].clone().ptr();
+    }
+  }
+
+  bf.clear();
+  bf.setSize(bfNew.size());
+  forAll(bf,i) {
+      bf.set(i,bfNew[i]);
+  }
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::setValuePatches
+(
+    GeometricField<T,faPatchField,areaMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<faPatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const faPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            ||
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(fvPatch)
+        )
+    ) {
+        if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFaPatchField<T>)) {
+            faPatchField<T> &pf=field.boundaryField()[patchI];
+            
+            pf==pf.patchInternalField();
+        }
+    }
+  }
 }
 
 } // end namespace

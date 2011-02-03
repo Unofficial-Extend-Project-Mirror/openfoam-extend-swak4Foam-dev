@@ -12,3 +12,8 @@ fi
 export SWAKUTILS=(funkySetBoundaryField \
     funkySetFields \
     replayTransientBC)
+
+if [ "$FOAM_DEV" != "" ]
+then
+    SWAKUTILS+=(funkySetAreaFields)
+fi

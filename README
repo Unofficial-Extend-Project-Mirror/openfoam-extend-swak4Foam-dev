@@ -69,6 +69,9 @@
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
     expressions 
+*** =funkySetAreaFields=
+    Utility like =funkySetFields= for =areaFields= (only works with
+    1.6-ext) 
 *** =funkySetBoundaryField=
     Sets any field on a boundary to a non-uniform value based on an
     expression. 

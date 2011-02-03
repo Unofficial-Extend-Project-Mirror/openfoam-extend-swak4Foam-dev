@@ -1,0 +1,17 @@
+
+EXE_INC = -I$(OBJECTS_DIR) \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/finiteArea/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I../../Libraries/swakFiniteArea/lnInclude/ \
+    -I../../Libraries/swak4FoamParsers/lnInclude/
+	
+
+EXE_LIBS = -lfiniteVolume \
+        -lfiniteArea \
+	-lmeshTools \
+	-L$(FOAM_USER_LIBBIN) \
+	-lswakFiniteArea \
+	-lswak4FoamParsers
+
+
