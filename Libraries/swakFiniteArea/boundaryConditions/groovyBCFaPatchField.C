@@ -133,6 +133,17 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
     else
     {
         faPatchField<Type>::operator=(this->refValue());
+        WarningIn(
+            "groovyBCFaPatchField<Type>::groovyBCFaPatchField"
+            "("
+            "const faPatch& p,"
+            "const DimensionedField<Type, areaMesh>& iF,"
+            "const dictionary& dict"
+            ")"
+        ) << "No value defined for " << this->dimensionedInternalField().name()
+            << " on " << this->patch().name() << " therefore using "
+            << this->refValue()
+            << endl;
     }
 
     this->refGrad() = pTraits<Type>::zero;
