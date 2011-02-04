@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
+    \\  /    A nd           | Copyright  held by original author
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,98 +29,92 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::ExpressionResult
+    Foam::groovyBCCommon
 
 Description
+    Foam::groovyBCCommon
 
 SourceFiles
-    ExpressionResultI.H
-    ExpressionResult.C
-    ExpressionResultIO.C
+    groovyBCCommon.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef ExpressionResult_H
-#define ExpressionResult_H
-
-#include "Field.H"
+#ifndef groovyBCCommon_H
+#define groovyBCCommon_H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "dictionary.H"
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class ExpressionResult Declaration
+                     Class groovyBCFvPatch Declaration
 \*---------------------------------------------------------------------------*/
 
-class ExpressionResult
+template<class Type>
+class groovyBCCommon
 {
-    // Private data
 
-    string valType_;
+protected:
 
-    void *valPtr_;
-    
-    bool isPoint_;
+    // Protected data
 
-    void uglyDelete();
+    bool debug_;
+    bool hasGradient_;
 
-    template<class Type>
-    ExpressionResult getUniformInternal(const label size,bool noWarn);
+    // the expressions
+    string valueExpression_;
+    string gradientExpression_;
+    string fractionExpression_;
 
+    string nullValue();
 public:
 
     // Constructors
 
-    //- Construct null
-    ExpressionResult();
+    //- Construct from nothing
+    groovyBCCommon
+    (
+        bool hasGradient,
+        bool isPoint=false
+    );
 
-    //- Construct as copy
-    ExpressionResult(const ExpressionResult&);
+    //- Construct from dictionary
+    groovyBCCommon
+    (
+        const dictionary&,
+        bool hasGradient,
+        bool isPoint=false
+    );
 
-    // Destructor
+    //- Copy constructor
+    groovyBCCommon
+    (
+        const groovyBCCommon<Type> &
+    );
 
-    ~ExpressionResult();
+    // Member functions
 
-    void operator=(const ExpressionResult&);
-
-    template<class Type>
-    inline void setResult(Field<Type> *,bool isPoint=false);
-
-    template<class Type>
-    inline void setResult(const Field<Type> &,bool isPoint=false);
-
-    template<class Type>
-    inline void setResult(Type val,label size);
-
-    template<class Type>
-    inline tmp<Field<Type> > getResult(bool keep=false);
-
-    // Construct a uniform field from the current results
-    ExpressionResult getUniform(const label size,bool noWarn);
-
-    void clearResult();
-
-    inline const string &type() const;
-
-    inline bool isPoint() const;
-
-    friend Ostream & operator<<(Ostream &,const ExpressionResult &);
+    //- Write
+    void write(Ostream&) const;
 };
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "ExpressionResultI.H"
+    #ifdef NoRepository
+    #   include "groovyBCCommon.C"
+    #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+    #endif
 
 // ************************************************************************* //

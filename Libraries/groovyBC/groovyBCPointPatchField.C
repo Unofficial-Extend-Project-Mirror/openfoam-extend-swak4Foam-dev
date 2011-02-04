@@ -57,24 +57,6 @@ const fvPatch &getFvPatch(const pointPatch &pp) {
 }
 
 
-template<class Type>
-string groovyBCPointPatchField<Type>::nullValue()
-{
-    if(string(pTraits<Type>::typeName)==string("vector")) {
-        return string("toPoint(vector(0,0,0))");
-    } else if(string(pTraits<Type>::typeName)==string("tensor")) {
-        return string("toPoint(tensor(0,0,0,0,0,0,0,0,0))");
-    } else if(string(pTraits<Type>::typeName)==string("symmTensor")) {
-        return string("toPoint(symmTensor(0,0,0,0,0,0))");
-    } else if(string(pTraits<Type>::typeName)==string("sphericalTensor")) {
-        return string("toPoint(sphericalTensor(0))");
-    } else {
-        OStringStream tmp;
-        tmp << "toPoint(" << pTraits<Type>::zero << ")";
-        return tmp.str();
-    }
-}
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
@@ -85,13 +67,10 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 )
 :
     mixedPointPatchFieldType(p, iF),
-    fractionExpression_("toPoint(0)"),
+    groovyBCCommon<Type>(false,true),
     driver_(getFvPatch(this->patch()))
 {
     this->refValue() = pTraits<Type>::zero;
-    valueExpression_ = nullValue();
-    //    this->refGrad() = pTraits<Type>::zero;
-    //    gradientExpression_ = nullValue();
     this->valueFraction() = 0.0;
 }
 
@@ -105,23 +84,11 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 )
 :
     mixedPointPatchFieldType(p, iF),
-    fractionExpression_(dict.lookupOrDefault("fractionExpression",string("toPoint(1)"))),
+    groovyBCCommon<Type>(dict,false,true),
     driver_(getFvPatch(this->patch()))
 {
     driver_.setVariableStrings(dict);
 
-    if (dict.found("valueExpression"))
-    {
-        dict.lookup("valueExpression") >> valueExpression_;
-    } else {
-        valueExpression_ = nullValue();
-    }
-//     if (dict.found("gradientExpression"))
-//     {
-//         dict.lookup("gradientExpression") >> gradientExpression_;
-//     } else {
-//         gradientExpression_ = nullValue();
-//     }
     if(dict.found("timelines")) {
         driver_.readLines(dict.lookup("timelines"));
     }
@@ -138,6 +105,17 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     else
     {
         Field<Type>::operator=(this->refValue());
+        WarningIn(
+            "groovyBCPointPatchField<Type>::groovyBCPointPatchField"
+            "("
+            "const pointPatch& p,"
+            "const DimensionedField<Type, pointMesh>& iF,"
+            "const dictionary& dict"
+            ")"
+        ) << "No value defined for " << this->dimensionedInternalField().name()
+            << " on " << this->patch().name() << " therefore using "
+            << this->refValue()
+            << endl;
     }
 
     //    this->refGrad() = pTraits<Type>::zero;
@@ -161,9 +139,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
         iF,
         mapper
     ),
-    valueExpression_(ptf.valueExpression_),
-    //    gradientExpression_(ptf.gradientExpression_),
-    fractionExpression_(ptf.fractionExpression_),
+    groovyBCCommon<Type>(ptf),
     driver_(getFvPatch(this->patch()),ptf.driver_)
 {
 }
@@ -177,9 +153,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 )
 :
     mixedPointPatchFieldType(ptf, iF),
-    valueExpression_(ptf.valueExpression_),
-    //    gradientExpression_(ptf.gradientExpression_),
-    fractionExpression_(ptf.fractionExpression_),
+    groovyBCCommon<Type>(ptf),
     driver_(getFvPatch(this->patch()),ptf.driver_)
 {
 }
@@ -195,9 +169,9 @@ void groovyBCPointPatchField<Type>::updateCoeffs()
     if(debug) 
     {
         Info << "groovyBCFvPatchField<Type>::updateCoeffs" << endl;
-        Info << "Value: " << valueExpression_ << endl;
+        Info << "Value: " << this->valueExpression_ << endl;
         //        Info << "Gradient: " << gradientExpression_ << endl;
-        Info << "Fraction: " << fractionExpression_ << endl;
+        Info << "Fraction: " << this->fractionExpression_ << endl;
         Info << "Variables: ";
         driver_.writeVariableStrings(Info)  << endl;
     }
@@ -208,9 +182,9 @@ void groovyBCPointPatchField<Type>::updateCoeffs()
 
     driver_.clearVariables();
 
-    this->refValue() = driver_.evaluate<Type>(valueExpression_,true);
+    this->refValue() = driver_.evaluate<Type>(this->valueExpression_,true);
     //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);
-    this->valueFraction() = driver_.evaluate<scalar>(fractionExpression_,true);
+    this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_,true);
     
     mixedPointPatchFieldType::updateCoeffs();
 }
@@ -221,17 +195,13 @@ template<class Type>
 void groovyBCPointPatchField<Type>::write(Ostream& os) const
 {
     mixedPointPatchFieldType::write(os);
+    groovyBCCommon<Type>::write(os);
 
     this->writeEntry("value", os);
 
-    os.writeKeyword("valueExpression")
-        << valueExpression_ << token::END_STATEMENT << nl;
-//     os.writeKeyword("gradientExpression")
-//         << gradientExpression_ << token::END_STATEMENT << nl;
-    os.writeKeyword("fractionExpression")
-        << fractionExpression_ << token::END_STATEMENT << nl;
     os.writeKeyword("variables");
     driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
+
     os.writeKeyword("timelines");
     driver_.writeLines(os);
     os << token::END_STATEMENT << nl;
