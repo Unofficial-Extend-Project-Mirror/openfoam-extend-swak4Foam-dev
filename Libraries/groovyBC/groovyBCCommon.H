@@ -78,14 +78,16 @@ public:
     //- Construct from nothing
     groovyBCCommon
     (
-        bool hasGradient
+        bool hasGradient,
+        bool isPoint=false
     );
 
     //- Construct from dictionary
     groovyBCCommon
     (
         const dictionary&,
-        bool hasGradient
+        bool hasGradient,
+        bool isPoint=false
     );
 
     //- Copy constructor

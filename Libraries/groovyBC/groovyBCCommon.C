@@ -61,12 +61,13 @@ string groovyBCCommon<Type>::nullValue()
 template<class Type>
 groovyBCCommon<Type>::groovyBCCommon
 (
-    bool hasGradient
+    bool hasGradient,
+    bool isPoint
 )
 :
     debug_(false),
     hasGradient_(hasGradient),
-    fractionExpression_("1")
+    fractionExpression_(isPoint ? "toPoint" : "1")
 {
     valueExpression_ = nullValue();
     if(hasGradient_) {
@@ -94,12 +95,16 @@ template<class Type>
 groovyBCCommon<Type>::groovyBCCommon
 (
     const dictionary& dict,
-    bool hasGradient
+    bool hasGradient,
+    bool isPoint
 )
 :
     debug_(dict.lookupOrDefault<bool>("debug",false)),
     hasGradient_(hasGradient),
-    fractionExpression_(dict.lookupOrDefault("fractionExpression",string("1")))
+    fractionExpression_(dict.lookupOrDefault(
+                            "fractionExpression",
+                            isPoint ? string("toPoint(1)") : string("1"))
+    )
 {
     if (dict.found("valueExpression"))
     {
@@ -124,8 +129,10 @@ void groovyBCCommon<Type>::write(Ostream& os) const
 {
     os.writeKeyword("valueExpression")
         << valueExpression_ << token::END_STATEMENT << nl;
-    os.writeKeyword("gradientExpression")
-        << gradientExpression_ << token::END_STATEMENT << nl;
+    if(hasGradient_) {
+        os.writeKeyword("gradientExpression")
+            << gradientExpression_ << token::END_STATEMENT << nl;
+    }
     os.writeKeyword("fractionExpression")
         << fractionExpression_ << token::END_STATEMENT << nl;
 
