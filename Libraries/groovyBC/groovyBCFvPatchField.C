@@ -242,6 +242,11 @@ void groovyBCFvPatchField<Type>::write(Ostream& os) const
     os.writeKeyword("timelines");
     driver_.writeLines(os);
     os << token::END_STATEMENT << nl;
+    if(debug) {
+        os.writeKeyword("variableValues");
+        os << driver_.variables() << endl;
+        os << token::END_STATEMENT << nl;
+    }
 }
 
 

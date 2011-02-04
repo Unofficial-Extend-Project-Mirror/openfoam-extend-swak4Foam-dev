@@ -106,6 +106,8 @@ public:
     inline const string &type() const;
 
     inline bool isPoint() const;
+
+    friend Ostream & operator<<(Ostream &,const ExpressionResult &);
 };
 
 

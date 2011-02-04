@@ -158,6 +158,32 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
+Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
+{
+    if( data.valPtr_ ) {
+        out << "Type:" << data.valType_ << tab;
+        out << "Point:" << data.isPoint_ << tab;
+        if(data.valType_==pTraits<scalar>::typeName) {
+            out << *static_cast<scalarField*>(data.valPtr_);
+        } else if(data.valType_==vector::typeName) {
+            out << *static_cast<Field<vector>*>(data.valPtr_);
+        } else if(data.valType_==tensor::typeName) {
+            out << *static_cast<Field<tensor>*>(data.valPtr_);
+        } else if(data.valType_==symmTensor::typeName) {
+            out << *static_cast<Field<symmTensor>*>(data.valPtr_);
+        } else if(data.valType_==sphericalTensor::typeName) {
+            out << *static_cast<Field<sphericalTensor>*>(data.valPtr_);
+        } else if(data.valType_==pTraits<bool>::typeName) {
+            out << *static_cast<Field<bool>*>(data.valPtr_);
+        } else {
+            out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+        }
+    } else {
+        out << "ExpressionResult: not data defined";
+    }
+
+    return out;
+}
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
