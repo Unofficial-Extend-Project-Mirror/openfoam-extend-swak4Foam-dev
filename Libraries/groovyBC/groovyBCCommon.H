@@ -29,27 +29,23 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::groovyBCFvPatchField
+    Foam::groovyBCCommon
 
 Description
-    Foam::groovyBCFvPatchField
+    Foam::groovyBCCommon
 
 SourceFiles
-    groovyBCFvPatchField.C
+    groovyBCCommon.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef groovyBCFvPatchField_H
-#define groovyBCFvPatchField_H
-
-#include "mixedFvPatchField.H"
-
-#include "PatchValueExpressionDriver.H"
-
-#include "groovyBCCommon.H"
+#ifndef groovyBCCommon_H
+#define groovyBCCommon_H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "dictionary.H"
 
 namespace Foam
 {
@@ -59,92 +55,49 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
-class groovyBCFvPatchField
-:
-    public mixedFvPatchField<Type>,
-    public groovyBCCommon<Type>
+class groovyBCCommon
 {
 
 protected:
 
     // Protected data
 
-    PatchValueExpressionDriver driver_;
+    bool debug_;
+    bool hasGradient_;
 
+    // the expressions
+    string valueExpression_;
+    string gradientExpression_;
+    string fractionExpression_;
+
+    string nullValue();
 public:
-
-    //- Runtime type information
-    TypeName("groovyBC");
-
 
     // Constructors
 
-    //- Construct from patch and internal field
-    groovyBCFvPatchField
+    //- Construct from nothing
+    groovyBCCommon
     (
-        const fvPatch&,
-        const DimensionedField<Type, volMesh>&
+        bool hasGradient
     );
 
-    //- Construct from patch, internal field and dictionary
-    groovyBCFvPatchField
+    //- Construct from dictionary
+    groovyBCCommon
     (
-        const fvPatch&,
-        const DimensionedField<Type, volMesh>&,
-        const dictionary&
+        const dictionary&,
+        bool hasGradient
     );
 
-    //- Construct by mapping given groovyBCFvPatchField onto a new patch
-    groovyBCFvPatchField
+    //- Copy constructor
+    groovyBCCommon
     (
-        const groovyBCFvPatchField<Type>&,
-        const fvPatch&,
-        const DimensionedField<Type, volMesh>&,
-        const fvPatchFieldMapper&
+        const groovyBCCommon<Type> &
     );
-
-    //- Construct as copy
-    groovyBCFvPatchField
-    (
-        const groovyBCFvPatchField<Type>&
-    );
-
-    //- Construct and return a clone
-    virtual tmp<fvPatchField<Type> > clone() const
-        {
-            return tmp<fvPatchField<Type> >
-                (
-                    new groovyBCFvPatchField<Type>(*this)
-                );
-        }
-
-    //- Construct as copy setting internal field reference
-    groovyBCFvPatchField
-    (
-        const groovyBCFvPatchField<Type>&,
-        const DimensionedField<Type, volMesh>&
-    );
-
-    //- Construct and return a clone setting internal field reference
-    virtual tmp<fvPatchField<Type> > clone
-    (
-        const DimensionedField<Type, volMesh>& iF
-    ) const
-        {
-            return tmp<fvPatchField<Type> >
-                (
-                    new groovyBCFvPatchField<Type>(*this, iF)
-                );
-        }
-
 
     // Member functions
 
-    //- Update the coefficients associated with the patch field
-    virtual void updateCoeffs();
-
     //- Write
-    virtual void write(Ostream&) const;
+    void write(Ostream&) const;
 };
 
 
@@ -155,7 +108,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     #ifdef NoRepository
-    #   include "groovyBCFvPatchField.C"
+    #   include "groovyBCCommon.C"
     #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
