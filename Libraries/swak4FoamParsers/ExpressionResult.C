@@ -160,9 +160,16 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
 {
+    out << token::BEGIN_BLOCK << endl;
+
     if( data.valPtr_ ) {
-        out << "Type:" << data.valType_ << tab;
-        out << "Point:" << data.isPoint_ << tab;
+        out.writeKeyword("valueType");
+        out << word(data.valType_) << token::END_STATEMENT << nl;
+
+        out.writeKeyword("isPoint");
+        out << data.isPoint_ << token::END_STATEMENT << nl;
+
+        out.writeKeyword("value");
         if(data.valType_==pTraits<scalar>::typeName) {
             out << *static_cast<scalarField*>(data.valPtr_);
         } else if(data.valType_==vector::typeName) {
@@ -178,9 +185,12 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
         } else {
             out << "ExpressionResult: unknown data type " << data.valType_ << endl;
         }
+        out << token::END_STATEMENT << nl;
     } else {
         out << "ExpressionResult: not data defined";
     }
+
+    out << token::END_BLOCK << endl;
 
     return out;
 }
