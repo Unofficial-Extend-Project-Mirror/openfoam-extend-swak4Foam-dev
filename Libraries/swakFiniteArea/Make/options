@@ -10,7 +10,8 @@ EXE_INC = -I$(OBJECTS_DIR) \
 	$(FOAM_DEV_OPTION) 	\
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/finiteArea/lnInclude \
-    -I../swak4FoamParsers/lnInclude/
+    -I../swak4FoamParsers/lnInclude/ \
+    -I../groovyBC/lnInclude/
 
 LIB_LIBS = -lfiniteVolume \
 	-lfiniteArea \
