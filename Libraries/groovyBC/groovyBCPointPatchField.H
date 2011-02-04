@@ -58,6 +58,8 @@ SourceFiles
 
 #include "PatchValueExpressionDriver.H"
 
+#include "groovyBCCommon.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -70,17 +72,13 @@ namespace Foam
 template<class Type>
 class groovyBCPointPatchField
 :
-    public mixedPointPatchFieldType
+    public mixedPointPatchFieldType,
+    public groovyBCCommon<Type>
 {
 
 protected:
 
     // Protected data
-
-    // the expressions
-    string valueExpression_;
-    //    string gradientExpression_;
-    string fractionExpression_;
 
     PatchValueExpressionDriver driver_;
 

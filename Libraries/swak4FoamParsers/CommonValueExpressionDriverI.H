@@ -370,6 +370,10 @@ namespace Foam {
         //    Foam::Info << buff.str() << ": " << m << Foam::endl;
     }
 
+    inline const HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables() const
+    {
+        return variables_;
+    }
 }
 
 

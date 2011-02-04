@@ -212,6 +212,8 @@ public:
 
     // Member Functions
 
+    inline const HashTable<ExpressionResult,word> &variables() const;
+
     void setSearchBehaviour(
         bool cacheReadFields,
         bool searchInMemory,

@@ -47,6 +47,8 @@ SourceFiles
 
 #include "PatchValueExpressionDriver.H"
 
+#include "groovyBCCommon.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -59,21 +61,16 @@ namespace Foam
 template<class Type>
 class groovyBCFvPatchField
 :
-    public mixedFvPatchField<Type>
+    public mixedFvPatchField<Type>,
+    public groovyBCCommon<Type>
 {
 
 protected:
 
     // Protected data
 
-    // the expressions
-    string valueExpression_;
-    string gradientExpression_;
-    string fractionExpression_;
-
     PatchValueExpressionDriver driver_;
 
-    string nullValue();
 public:
 
     //- Runtime type information
