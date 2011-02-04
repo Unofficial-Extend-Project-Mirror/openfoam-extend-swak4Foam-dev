@@ -39,6 +39,8 @@ SourceFiles
 
 #include "FaPatchValueExpressionDriver.H"
 
+#include "groovyBCCommon.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -51,21 +53,15 @@ namespace Foam
 template<class Type>
 class groovyBCFaPatchField
 :
-    public mixedFaPatchField<Type>
+    public mixedFaPatchField<Type>,
+    public groovyBCCommon<Type>
 {
 
 protected:
 
     // Protected data
 
-    // the expressions
-    string valueExpression_;
-    string gradientExpression_;
-    string fractionExpression_;
-
     FaPatchValueExpressionDriver driver_;
-
-    string nullValue();
 
 public:
 
