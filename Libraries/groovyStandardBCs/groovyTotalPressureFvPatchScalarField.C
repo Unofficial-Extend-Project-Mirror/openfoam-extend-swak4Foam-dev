@@ -125,6 +125,12 @@ void Foam::groovyTotalPressureFvPatchScalarField::write(Ostream& os) const
     os.writeKeyword("p0Expression")
         << p0Expression_ << token::END_STATEMENT << nl;
     
+    os.writeKeyword("variables");
+    driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
+
+    os.writeKeyword("timelines");
+    driver_.writeLines(os);
+    os << token::END_STATEMENT << nl;
 }
 
 
