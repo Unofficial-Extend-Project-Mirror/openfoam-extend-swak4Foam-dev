@@ -27,8 +27,10 @@ boundaryField
 
     outlet          
     {
-        type            fixedValue;
+        //        type            fixedValue;
+        type            groovyTotalPressure;
         value           uniform 0;
+        p0Expression "0+pos().y";
     }
 
     upperWall       

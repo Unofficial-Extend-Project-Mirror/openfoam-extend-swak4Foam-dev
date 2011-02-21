@@ -1,2 +1,3 @@
+groovyTotalPressureFvPatchScalarField.C
 
 LIB = $(FOAM_USER_LIBBIN)/libgroovyStandardBCs
