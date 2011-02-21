@@ -257,6 +257,23 @@ Ostream &CommonValueExpressionDriver::writeVariableStrings(Ostream &out) const
     return out;
 }
 
+Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
+{
+    os.writeKeyword("variables");
+    writeVariableStrings(os) << token::END_STATEMENT << nl;
+
+    os.writeKeyword("timelines");
+    writeLines(os);
+    os << token::END_STATEMENT << nl;
+
+    if(debug) {
+        os.writeKeyword("variableValues");
+        os << variables() << endl;
+        os << token::END_STATEMENT << nl;
+    }
+
+    return os;
+}
 
 word CommonValueExpressionDriver::getResultType()
 {

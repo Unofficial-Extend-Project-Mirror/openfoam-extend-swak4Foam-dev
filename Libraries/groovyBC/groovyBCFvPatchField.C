@@ -205,18 +205,7 @@ void groovyBCFvPatchField<Type>::write(Ostream& os) const
     mixedFvPatchField<Type>::write(os);
     groovyBCCommon<Type>::write(os);
 
-    os.writeKeyword("variables");
-    driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
-
-    os.writeKeyword("timelines");
-    driver_.writeLines(os);
-    os << token::END_STATEMENT << nl;
-
-    if(this->debug_ || debug) {
-        os.writeKeyword("variableValues");
-        os << driver_.variables() << endl;
-        os << token::END_STATEMENT << nl;
-    }
+    driver_.writeCommon(os,this->debug_ || debug);
 }
 
 

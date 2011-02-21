@@ -235,6 +235,8 @@ public:
 
     Ostream &writeVariableStrings(Ostream &out) const;
 
+    Ostream &writeCommon(Ostream &out,bool debug=false) const;
+
     void addVariables(const string &exprList,bool clear=true);
 
     void addVariables(const stringList &exprList,bool clear=true);
