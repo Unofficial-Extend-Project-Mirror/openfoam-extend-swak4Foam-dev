@@ -13,3 +13,5 @@ wclean swakTopoSources
 wclean swakSourceFields
 
 wclean swakFiniteArea
+
+wclean groovyStandardBCs

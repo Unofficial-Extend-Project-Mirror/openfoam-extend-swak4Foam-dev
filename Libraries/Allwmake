@@ -16,3 +16,5 @@ if [ "$FOAM_DEV" != "" ]
 then
     (export WM_NCOMPPROCS= ; wmake libso swakFiniteArea)
 fi
+
+wmake libso groovyStandardBCs
