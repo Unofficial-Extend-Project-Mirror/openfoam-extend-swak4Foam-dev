@@ -223,6 +223,9 @@ public:
     template<class Type>
     tmp<Field<Type> > evaluate(const string &expr,bool qPoint=false);
 
+    template<class Type>
+    Type evaluateUniform(const string &expr,bool qPoint=false);
+
     void evaluateVariable(const word &name,const string &expr);
 
     void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);

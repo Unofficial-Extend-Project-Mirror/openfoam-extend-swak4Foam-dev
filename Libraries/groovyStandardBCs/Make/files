@@ -1,3 +1,4 @@
 groovyTotalPressureFvPatchScalarField.C
+groovyFlowRateInletVelocityFvPatchVectorField.C
 
 LIB = $(FOAM_USER_LIBBIN)/libgroovyStandardBCs

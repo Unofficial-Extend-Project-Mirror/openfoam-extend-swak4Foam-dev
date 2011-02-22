@@ -60,7 +60,7 @@ Foam::groovyTotalPressureFvPatchScalarField::groovyTotalPressureFvPatchScalarFie
 :
     totalPressureFvPatchScalarField(p, iF),
     p0Expression_(dict.lookup("p0Expression")),
-    driver_(this->patch())
+    driver_(dict,this->patch())
 {
 }
 
