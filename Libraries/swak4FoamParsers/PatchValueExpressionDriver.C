@@ -69,6 +69,12 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
     patch_(patch)
 {}
 
+PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch)
+:
+    CommonValueExpressionDriver(dict),
+    patch_(patch)
+{}
+
 label getPatchID(const fvMesh &mesh,const word &name)
 {
     label result=mesh.boundaryMesh().findPatchID(name);

@@ -109,6 +109,9 @@ public:
     //- Construct from components
     PatchValueExpressionDriver(const fvPatch& patch_);
     
+    //- Construct from components
+    PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch_);
+    
     //- Construct from a dictionary
     PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     

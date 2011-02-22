@@ -199,12 +199,7 @@ void groovyBCPointPatchField<Type>::write(Ostream& os) const
 
     this->writeEntry("value", os);
 
-    os.writeKeyword("variables");
-    driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
-
-    os.writeKeyword("timelines");
-    driver_.writeLines(os);
-    os << token::END_STATEMENT << nl;
+    driver_.writeCommon(os,this->debug_ || debug);
 }
     
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

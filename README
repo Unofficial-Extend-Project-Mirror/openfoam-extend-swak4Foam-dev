@@ -65,6 +65,9 @@
 *** =swakFiniteArea=
     Implements parsers for the =finiteArea=-stuff in 1.6-ext. Also
     implements =groovyBC= for =areaField= and =expressionField=
+*** =groovyStandardBCs=
+    Collection of boundary conditions that give standard boundary
+    conditions the possibility to use expression for the coefficients
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
