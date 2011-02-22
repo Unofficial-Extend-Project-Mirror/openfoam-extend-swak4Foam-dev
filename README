@@ -68,6 +68,10 @@
 *** =groovyStandardBCs=
     Collection of boundary conditions that give standard boundary
     conditions the possibility to use expression for the coefficients
+
+    Contributions to this library are explicitly encouraged. Please
+    use the Mercurial-branch =groovyStandardBCs= to /groovyify/
+    standard boundary conditions.
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
