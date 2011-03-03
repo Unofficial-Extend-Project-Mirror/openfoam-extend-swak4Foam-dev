@@ -1,4 +1,6 @@
 export SWAKLIBS=(groovyBC \
+    groovyStandardBCs \
+    swakSourceFields \
     simpleSwakFunctionObjects \
     swakTopoSources \
     swak4FoamParsers \
