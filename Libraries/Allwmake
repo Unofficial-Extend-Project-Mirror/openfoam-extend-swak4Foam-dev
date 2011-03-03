@@ -6,7 +6,25 @@ wmake libso groovyBC
 
 wmake libso swakFunctionObjects
 
-wmake libso simpleSwakFunctionObjects
+unset WE_HAVE_SIMPLE_FUNCTION_OBJECTS
+
+if [ -d simpleFunctionObjects ]; then 
+    WE_HAVE_SIMPLE_FUNCTION_OBJECTS=1
+    
+    wmake libso simpleFunctionObjects
+else
+    if [ -d "$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects/lnInclude" ]; then 
+	WE_HAVE_SIMPLE_FUNCTION_OBJECTS=1
+    fi
+fi
+
+if [ "$WE_HAVE_SIMPLE_FUNCTION_OBJECTS" ]; then
+    wmake libso simpleSwakFunctionObjects
+else
+    echo "\n   simpleSwakFunctionObjects not compiled because no simpleFunctionObjects installation found\n"
+fi
+
+unset WE_HAVE_SIMPLE_FUNCTION_OBJECTS
 
 wmake libso swakTopoSources
 
