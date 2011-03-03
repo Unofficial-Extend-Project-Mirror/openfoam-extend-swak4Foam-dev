@@ -25,3 +25,5 @@ auto
 doc
 \#*\#
 *.orig
+
+Libraries/simpleFunctionObjects
