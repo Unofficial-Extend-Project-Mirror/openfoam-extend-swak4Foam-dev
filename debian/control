@@ -1,0 +1,23 @@
+Source: swak4foam
+Priority: extra
+Maintainer: bgschaid <bgschaid@ice-sf.at>
+Build-Depends: debhelper (>= 7.0.50~)
+Standards-Version: 3.9.1
+Section: libs
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://git.debian.org/collab-maint/swak4foam.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/swak4foam.git;a=summary
+
+Package: swak4foam-dev
+Section: libdevel
+Architecture: any
+Depends: swak4foamBROKEN (= ${binary:Version})
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+Package: swak4foamBROKEN
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
