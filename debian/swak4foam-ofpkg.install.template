@@ -1,2 +1,2 @@
-tmpbuild/bin/*	%(ofproject)s/applications/bin
-tmpbuild/lib/*	%(ofproject)s/lib
+tmpbuild/bin/*	%(appbin)s
+tmpbuild/lib/*	%(libbin)s

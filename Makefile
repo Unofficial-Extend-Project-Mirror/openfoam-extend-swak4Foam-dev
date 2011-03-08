@@ -1,5 +1,11 @@
+default:
+	echo "Use ./Allwmake"
 
-dpkg:
+getSimple:
 	./downloadSimpleFunctionObjects.sh
+
+dpkg-only:
 	cd debian; ./prepareForPackaging.py
 	dpkg-buildpackage -us -uc
+
+dpkg: getSimple dpkg-only

@@ -21,7 +21,7 @@ Description: swak4Foam - The "Swiss Army Knife For OpenFOAM"
 Package: swak4foam-%(ofpkg)s
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: %(ofpkg)s, ${shlibs:Depends}, ${misc:Depends}
 Description: swak4Foam - A number of libraries that allows
    to use general expressions in OpenFOAM-cases. Successor of
    funkSetFields and groovyBC
