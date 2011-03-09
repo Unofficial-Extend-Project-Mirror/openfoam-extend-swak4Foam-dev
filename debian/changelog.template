@@ -1,3 +1,7 @@
+swak4foam-%(ofpkg)s (0.1-3) unstable; urgency=low
+
+  * Change building the package to debuild
+
 swak4foam-%(ofpkg)s (0.1-2) unstable; urgency=low
 
   * Fix some paths and omit unnecessary files
