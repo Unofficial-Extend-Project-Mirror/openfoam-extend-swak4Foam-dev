@@ -3,6 +3,7 @@ default:
 
 getSimple:
 	./downloadSimpleFunctionObjects.sh
+	wcleanLnIncludeAll
 
 dpkg-only:
 	cd debian; ./prepareForPackaging.py

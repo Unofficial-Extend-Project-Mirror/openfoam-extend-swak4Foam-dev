@@ -1,7 +1,7 @@
 Source: swak4foam-%(ofpkg)s
 Priority: extra
 Maintainer: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
-Build-Depends: debhelper (>= 7.0.50~), devscripts, mercurial-buildpackage,
+Build-Depends: debhelper (>= 7.0.50~), devscripts,
 	 %(ofpkg)s      
 Standards-Version: 3.9.1
 Section: libs
