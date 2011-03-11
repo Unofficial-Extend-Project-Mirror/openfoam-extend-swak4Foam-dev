@@ -36,8 +36,6 @@ License
 
 #include "FieldValueExpressionDriver.H"
 
-#include "DynamicList.H"
-
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -79,10 +77,9 @@ forceEquation<T>::~forceEquation()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<>
-void forceEquation<scalar>::operator()(fvMatrix<scalar> &eq)
+template<class T>
+bool forceEquation<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
 {
-    clearVariables();
     parse(maskExpression_);
     if(!resultIsLogical()) {
         FatalErrorIn("forceEquation<scalar>::operator()(fvMatrix<T> &)")
@@ -91,7 +88,6 @@ void forceEquation<scalar>::operator()(fvMatrix<scalar> &eq)
                 << abort(FatalError);
     }
 
-    DynamicList<label> cellIDs;
     const volScalarField &cond=getScalar();
 
     forAll(cond,cellI) {
@@ -106,18 +102,55 @@ void forceEquation<scalar>::operator()(fvMatrix<scalar> &eq)
 
     if(size==0) {
         if(verbose_) {
-            Info << "No cells fixed for field " << eq.psi() << endl;
+            Info << "No cells fixed for field " << psi << endl;
         }
-        return;
+        return false;
     }
     if(verbose_) {
-        Info << size << " cells fixed for field " << eq.psi() << endl;
+        Info << size << " cells fixed for field " << psi << endl;
+    }
+
+    return true;
+}
+
+template<>
+void forceEquation<scalar>::operator()(fvMatrix<scalar> &eq)
+{
+    clearVariables();
+
+    DynamicList<label> cellIDs;
+
+    if(!getMask(cellIDs,eq.psi().name())) {
+        return;
     }
 
     Field<scalar> values(cellIDs.size());
 
     parse(valueExpression_);
     const volScalarField &calculated=getScalar();
+
+    forAll(cellIDs,i) {
+        values[i]=calculated[cellIDs[i]];
+    }
+
+    eq.setValues(cellIDs,values);
+}
+
+template<>
+void forceEquation<vector>::operator()(fvMatrix<vector> &eq)
+{
+    clearVariables();
+
+    DynamicList<label> cellIDs;
+
+    if(!getMask(cellIDs,eq.psi().name())) {
+        return;
+    }
+
+    Field<vector> values(cellIDs.size());
+
+    parse(valueExpression_);
+    const volVectorField &calculated=getVector();
 
     forAll(cellIDs,i) {
         values[i]=calculated[cellIDs[i]];

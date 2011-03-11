@@ -46,6 +46,8 @@ SourceFiles
 
 #include "fvMatrix.H"
 
+#include "DynamicList.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -69,6 +71,8 @@ class forceEquation
     string maskExpression_;
 
     bool verbose_;
+
+    bool getMask(DynamicList<label> &,const word &psi);
 
 public:
 
