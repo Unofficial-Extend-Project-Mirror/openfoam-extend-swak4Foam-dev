@@ -56,7 +56,7 @@ forceEquation<T>::forceEquation
     FieldValueExpressionDriver(dict,mesh),
     valueExpression_(dict.lookup("valueExpression")),
     maskExpression_(dict.lookup("maskExpression")),
-    verbose_(dict.lookupOrDefault<bool>("verbose",false))
+    verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
     if(verbose_) {
         WarningIn(string("forceEquation<") + pTraits<T>::typeName + ">::forceEquation") 
