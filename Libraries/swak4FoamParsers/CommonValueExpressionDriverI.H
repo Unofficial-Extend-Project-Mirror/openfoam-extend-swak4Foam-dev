@@ -51,6 +51,17 @@ namespace Foam {
     }
 
     template<class Type>
+    Type CommonValueExpressionDriver::evaluateUniform(const string &expr,bool qPoint)
+    {
+        parse(expr);
+
+        ExpressionResult result=this->getUniform(1,true);
+        Type val=result.getResult<Type>()()[0];
+
+        return val;
+    }
+
+    template<class Type>
     Field<Type> *CommonValueExpressionDriver::makeField(Type val,bool isPoint)
     {
         label size=this->size();

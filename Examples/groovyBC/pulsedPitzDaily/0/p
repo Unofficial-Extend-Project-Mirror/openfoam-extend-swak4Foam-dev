@@ -27,8 +27,19 @@ boundaryField
 
     outlet          
     {
-        type            fixedValue;
+        //        type            fixedValue;
+        type            groovyTotalPressure;
         value           uniform 0;
+        variables (
+            "base=0.;"
+            "maxP{}=max(p);"
+            "minP{}=min(p);"
+            "yp=pts().y;"
+            "minY=min(yp);"
+            "maxY=max(yp);"
+            "scale=0.1*(maxP-minP)/(maxY-minY);"
+        );
+        p0Expression "base+scale*(pos().y-minY)";
     }
 
     upperWall       

@@ -1,0 +1,17 @@
+
+ifdef FOAM_DEV
+FOAM_DEV_OPTION = -DFOAM_DEV
+endif
+
+EXE_INC = -I$(OBJECTS_DIR) \
+	$(FOAM_DEV_OPTION) 	\
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I../groovyBC/lnInclude/ \
+    -I../swak4FoamParsers/lnInclude/
+
+LIB_LIBS = -lfiniteVolume \
+	-lOpenFOAM \
+	-lsampling \
+	-L$(FOAM_USER_LIBBIN) \
+	-lgroovyBC \
+	-lswak4FoamParsers

@@ -29,8 +29,10 @@ dictionaryReplacement
             }
             minX
             {
-                type            fixedValue;
-                value           uniform ( 0.1 0 0 );
+                type            groovyFlowRateInletVelocity;
+                value           uniform ( 0 0 0 );
+                flowRate        0;
+                flowRateExpression "0.3e-3*(1+0.5*sin(10*time()))";
             }
             maxX
             {
