@@ -89,8 +89,11 @@ public:
 
         virtual ~forceEquation();
 
-    //- give back a Field
+    //- fix equations
     void operator()(fvMatrix<T> &);
+
+    //- where are the equations fixed
+    tmp<volScalarField> getMask();
     
 };
 

@@ -93,6 +93,12 @@ int main(int argc, char *argv[])
 
         turbulence->correct();
 
+        if(runTime.write()) {
+            volScalarField mask=momentumFixed.getMask()();
+            mask.rename("momMask");
+            mask.write();
+        }
+
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

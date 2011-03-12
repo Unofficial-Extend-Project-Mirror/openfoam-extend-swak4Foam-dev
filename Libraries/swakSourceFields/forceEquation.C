@@ -113,6 +113,21 @@ bool forceEquation<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
     return true;
 }
 
+template<class T>
+tmp<volScalarField> forceEquation<T>::getMask()
+{
+    clearVariables();
+    parse(maskExpression_);
+
+    return tmp<volScalarField>
+        (
+            new volScalarField
+            (
+                getScalar()
+            )
+        );
+}
+
 template<>
 void forceEquation<scalar>::operator()(fvMatrix<scalar> &eq)
 {
