@@ -12,6 +12,7 @@ FaFieldValueExpressionDriver.C
 boundaryConditions/groovyBCFaPatchFields.C
 
 expressionSource/faExpressionSource.C
+expressionSource/faForceEquation.C
 
 functionObjects/expressionFaField.C
 functionObjects/expressionFaFieldFunctionObject.C

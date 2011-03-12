@@ -33,6 +33,7 @@ Description
 #include "faCFD.H"
 
 #include "faExpressionSource.H"
+#include "faForceEquation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,6 +64,8 @@ int main(int argc, char *argv[])
             ==
             surfactantSource()
         );
+
+        surfactantForce(CsEqn);
 
         CsEqn.solve();
 
