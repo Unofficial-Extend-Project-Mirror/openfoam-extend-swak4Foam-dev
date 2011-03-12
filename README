@@ -63,8 +63,14 @@
 
     Evaluate expressions and output the results
 *** =swakSourceFields=
-    Field that is calculated from an expression. To be used as
-    source-term or coefficient in some solver
+    These classes allow to manipulate the solution. To use these the
+    solver has to be modified.
+    - expressionSource :: Field that is calculated from an
+         expression. To be used as source-term or coefficient in some
+         solver
+    - forceEquation :: force an equation to fixed values in selected
+                       locations. Has to be used after constructing
+                       the equation and before solving
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities 
@@ -134,7 +140,9 @@
     Example dictionary for =funkySetBoundaryFields=. Sets nonsense
     boundary conditions for the world famous =damBreak=-case
 *** InterFoamWithSources
-    Demonstrates usage of =swakSourceFields=
+    Demonstrates usage of =expressionSource=
+*** InterFoamWithFixed
+    Demonstrates usage of =forceEquation=
 **** =interFoamWithSources=
      Slightly modified version of =interFoam=. Adds a source term to
      the momentum equation. The source term is an expression that is
