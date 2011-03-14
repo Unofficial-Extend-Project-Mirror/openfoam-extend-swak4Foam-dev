@@ -10,3 +10,5 @@ if [ "$FOAM_DEV" != "" ]
 then
     wmake funkySetAreaFields
 fi
+
+wmake funkyDoCalc
