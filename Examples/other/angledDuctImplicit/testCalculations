@@ -15,6 +15,18 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+dummy
+{
+    valueType patch;
+
+    accumulations (
+        average
+    );
+    patchName inlet;
+
+    expression "p";
+}
+
 pressureDrop
 {
     valueType patch;
@@ -36,10 +48,7 @@ pressureToFilterVolAvg
     accumulations (
         average
     );
-    patches (
-        inlet 
-        outlet
-    );
+    patchName inlet;
     expression "p-pFilter";
 }
 

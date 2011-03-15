@@ -44,6 +44,37 @@ Description
 
 #include "IFstream.H"
 
+template <class T>
+void writeData(
+    CommonValueExpressionDriver &driver,
+    const wordList &accumulations
+)
+{
+    Field<T> result=driver.getResult<T>();
+
+    forAll(accumulations,i) {
+        const word &aName=accumulations[i];
+        T val=pTraits<T>::zero;
+
+        if(aName=="min") {
+            val=gMin(result);
+        } else if(aName=="max") {
+            val=gMax(result);
+        } else if(aName=="sum") {
+            val=gSum(result);
+        } else if(aName=="average") {
+            val=gAverage(result);
+        } else {
+            WarningIn("swakExpressionFunctionObject::writeData")
+                << "Unknown accumultation type " << aName
+                    << ". Currently only 'min', 'max', 'sum' and 'average' are supported"
+                    << endl;
+        }
+
+        Info << " " << aName << "=" << val;
+    }
+}
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -79,13 +110,44 @@ int main(int argc, char *argv[])
 
         mesh.readUpdate();
        
-       forAllConstIter(IDLList<entry>, theExpressions, iter) 
-       {
-	  Info << iter().keyword() << ":" << endl;
+        forAllConstIter(IDLList<entry>, theExpressions, iter) 
+        {
+            Info << iter().keyword() << " : " << flush;
 
-          autoPtr<CommonValueExpressionDriver> driver=
-              CommonValueExpressionDriver::New(iter().dict(),mesh); 
-       }
+            const dictionary &dict=iter().dict();
+
+            autoPtr<CommonValueExpressionDriver> driver=
+                CommonValueExpressionDriver::New(dict,mesh); 
+            wordList accumulations(dict.lookup("accumulations"));
+
+            driver->setSearchBehaviour(
+                true,
+                true,
+                true         // search on disc
+            );
+
+            driver->clearVariables();
+            driver->parse(string(dict.lookup("expression")));
+            word rType=driver->getResultType();
+            
+            if(rType==pTraits<scalar>::typeName) {
+                writeData<scalar>(driver(),accumulations);
+            } else if(rType==pTraits<vector>::typeName) {
+                writeData<vector>(driver(),accumulations);
+            } else if(rType==pTraits<tensor>::typeName) {
+                writeData<tensor>(driver(),accumulations);
+            } else if(rType==pTraits<symmTensor>::typeName) {
+                writeData<symmTensor>(driver(),accumulations);
+            } else if(rType==pTraits<sphericalTensor>::typeName) {
+                writeData<sphericalTensor>(driver(),accumulations);
+            } else {
+                WarningIn(args.executable())
+                    << "Don't know how to handle type " << rType 
+                        << endl;
+            }
+
+            Info << endl;
+        }
     }
     
     Info << "End\n" << endl;
