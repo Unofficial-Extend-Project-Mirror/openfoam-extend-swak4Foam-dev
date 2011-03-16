@@ -619,6 +619,7 @@ libs (
     "libsimpleSwakFunctionObjects.so" 
     "libswakFunctionObjects.so" 
     "libswakTopoSources.so" 
+    //    "libcompressibleRASModels.so"
 ) ;
 
 // ************************************************************************* //

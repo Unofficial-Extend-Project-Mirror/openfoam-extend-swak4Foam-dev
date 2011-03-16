@@ -406,18 +406,18 @@ surfaceCuttingPlane
         max
     );
 }
-yPlusWall
-{
-    valueType patch;
-    expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
-    accumulations (
-        min
-        max
-        average
-    );
-    patchName wall;
-    verbose true;
-}
+// yPlusWall
+// {
+//     valueType patch;
+//     expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
+//     accumulations (
+//         min
+//         max
+//         average
+//     );
+//     patchName wall;
+//     verbose true;
+// }
 surfaceIsoDist
 {
     type swakExpression;
@@ -515,16 +515,16 @@ surfaceIsoDistCell
         max
     );
 }
-velocityMagnitude
-{
-    type expressionField;
-    outputControl timeStep;
-    outputInterval 1;
-    fieldName magU;
-    expression "mag(U)";
-    //        expression "mag(U)*sin(time())";
-    autowrite true;        
-}
+// velocityMagnitude
+// {
+//     type expressionField;
+//     outputControl timeStep;
+//     outputInterval 1;
+//     fieldName magU;
+//     expression "mag(U)";
+//     //        expression "mag(U)*sin(time())";
+//     autowrite true;        
+// }
 surfaceU45
 {
     type swakExpression;

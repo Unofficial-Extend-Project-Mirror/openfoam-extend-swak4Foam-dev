@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     {
         runTime.setTime(timeDirs[timeI], timeI);
 
-        Foam::Info<< "Time = " << runTime.timeName() << Foam::endl;
+        Foam::Info << "\nTime = " << runTime.timeName() << Foam::endl;
 
         mesh.readUpdate();
        
