@@ -196,7 +196,10 @@ namespace Foam {
     }
 
     template<class T>
-    autoPtr<T> CommonValueExpressionDriver::getOrReadField(const string &name)
+    autoPtr<T> CommonValueExpressionDriver::getOrReadField(
+        const string &name,
+        bool failIfNoneFound
+    )
     {
         if(debug) {
             Info << "CommonValueExpressionDriver::getOrReadField. Name: " << name 
@@ -273,6 +276,8 @@ namespace Foam {
             );
         } else if(
             searchOnDisc()
+            &&
+            getTypeOfField(name)==T::typeName
         ) {
             if(debug) {
                 Info << "Reading " << name << " from disc" << endl;
@@ -283,14 +288,20 @@ namespace Foam {
             );
         }
 
-        if(!f.valid()) {
+        if(
+            !f.valid()
+            && 
+            failIfNoneFound
+        ) {
             FatalErrorIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
                 << "Could not find the field " << name 
                     << " in memory or on disc" << endl
                     << abort(FatalError);
         }
     
-        f->dimensions().reset(nullDim);
+        if(f.valid()) {
+            f->dimensions().reset(nullDim);
+        }
 
         return f;
     }

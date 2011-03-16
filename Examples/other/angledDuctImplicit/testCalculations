@@ -60,10 +60,8 @@ pressureToVol
     accumulations (
         average
     );
-    patches (
-        inlet 
-        outlet
-    );
+    patchName inlet;
+
     expression "p-pTotal";
     verbose true;
 }
@@ -75,10 +73,8 @@ pressureToFilter
     accumulations (
         average
     );
-    patches (
-        inlet 
-        outlet
-    );
+    patchName inlet;
+
     expression "p-pFilter";
     verbose true;
 }
@@ -90,75 +86,74 @@ distanceToFilter
     accumulations (
         average
     );
-    patches (
-        inlet 
-        outlet
-    );
+    patchName inlet;
+
     expression "mag(pos()-pFilter)";
     verbose true;
 }
-    alternatePressureToFilter
-    {
-        type swakExpression;
-        valueType patch;
-        patchName outlet;
-        variables "pFilter{cellZone'porosity}=average(p);";
-        accumulations (
-            average
-        );
-        expression "p-pFilter";
-        verbose true;
-    }
-    alternatePressureToFilter2
-    {
-        type swakExpression;
-        valueType cellZone;
-        zoneName porosity;
-        variables "pRaus{outlet}=average(p);";
-        accumulations (
-            average
-        );
-        expression "pRaus-p";
-        verbose true;
-    }
-    alternatePressureToFilter3
-    {
-        type swakExpression;
-        valueType cellSet;
-        setName porosity;
-        variables "pRaus{outlet}=average(p);";
-        accumulations (
-            average
-        );
-        expression "pRaus-p";
-        verbose true;
-    }
-    alternatePressureToFilter4
-    {
-        type swakExpression;
-        valueType patch;
-        patchName outlet;
-        variables "pFilter{cellSet'porosity}=average(p);";
-        accumulations (
-            average
-        );
-        expression "p-pFilter";
-        verbose true;
-    }
-    pressureInletToFilter
-    {
-        type swakExpression;
-        valueType patch;
-        patchName inlet;
-        variables "pBefore{faceZone'beforeFilter}=average(p);";
-        accumulations (
-            average
-        );
-        expression "p-pBefore";
-        verbose true;
-        autoInterpolate true;
-        warnAutoInterpolate false;
-    }
+
+alternatePressureToFilter
+{
+    type swakExpression;
+    valueType patch;
+    patchName outlet;
+    variables "pFilter{cellZone'porosity}=average(p);";
+    accumulations (
+        average
+    );
+    expression "p-pFilter";
+    verbose true;
+}
+alternatePressureToFilter2
+{
+    type swakExpression;
+    valueType cellZone;
+    zoneName porosity;
+    variables "pRaus{outlet}=average(p);";
+    accumulations (
+        average
+    );
+    expression "pRaus-p";
+    verbose true;
+}
+alternatePressureToFilter3
+{
+    type swakExpression;
+    valueType cellSet;
+    setName porosity;
+    variables "pRaus{outlet}=average(p);";
+    accumulations (
+        average
+    );
+    expression "pRaus-p";
+    verbose true;
+}
+alternatePressureToFilter4
+{
+    type swakExpression;
+    valueType patch;
+    patchName outlet;
+    variables "pFilter{cellSet'porosity}=average(p);";
+    accumulations (
+        average
+    );
+    expression "p-pFilter";
+    verbose true;
+}
+pressureInletToFilter
+{
+    type swakExpression;
+    valueType patch;
+    patchName inlet;
+    variables "pBefore{faceZone'beforeFilter}=average(p);";
+    accumulations (
+        average
+    );
+    expression "p-pBefore";
+    verbose true;
+    autoInterpolate true;
+    warnAutoInterpolate false;
+}
     pressureOverFilter
     {
         type swakExpression;

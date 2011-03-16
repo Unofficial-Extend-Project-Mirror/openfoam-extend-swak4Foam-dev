@@ -77,15 +77,20 @@ namespace Foam {
     template<class FieldType,class IFieldType,class Subset,class T>
     Field<T> *SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)
     {
+        // Yeah. I know. Code duplication without end
+
         if(this->variables_.found(name)) {
             return this->variables_[name].getResult<T>(true).ptr();
         }
 
         Field<T> *result=new Field<T>(this->size());
+
+        bool done=false;
+
         if(
+            this->searchInMemory()
+            &&
             this->mesh().foundObject<FieldType>(name)
-            ||
-            !this->autoInterpolate_
         ) {
             const FieldType &f=this->mesh().lookupObject<FieldType>(name);
             label cnt=0;
@@ -96,32 +101,92 @@ namespace Foam {
             }
             
             assert(cnt==this->size());
+
+            done=true;
         } else {
-            if(this->warnAutoInterpolate_) {
+            autoPtr<FieldType> f=this->getOrReadField<FieldType>(name,false);
+            if(f.valid()) {
+                label cnt=0;
+                forAllConstIter(typename Subset,sub,iter) {
+                    (*result)[cnt]=f()[getIndexFromIterator(iter)];
+                    cnt++;
+                }            
+                done=true;
+            }
+        } 
+
+        if(
+            !done
+            &&
+            this->autoInterpolate_
+        ) {
+            if(
+                this->warnAutoInterpolate_
+            ) {
                 WarningIn("Field<T> *SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)")
                     << "Going to interpolate " << name
                         << endl;
-
             }
-            const IFieldType &f=this->mesh().lookupObject<IFieldType>(name);
-            label cnt=0;
 
             const labelList &own=this->mesh().faceOwner();
             const labelList &nei=this->mesh().faceNeighbour();
             const surfaceScalarField &weights=this->mesh().weights();
-
-            forAllConstIter(typename Subset,sub,iter) {
-                label faceI=getIndexFromIterator(iter);
-                if(faceI<this->mesh().nInternalFaces()) {
-                    (*result)[cnt]=weights[faceI]*f[own[faceI]]+(1-weights[faceI])*f[nei[faceI]];
-                } else {
-                    // OK. We could also try to get the value from the original face
-                    (*result)[cnt]=f[own[faceI]];
+                
+            if(
+                this->searchInMemory()
+                &&
+                this->mesh().foundObject<IFieldType>(name)
+            ) {
+                const IFieldType &f=this->mesh().lookupObject<IFieldType>(name);
+                label cnt=0;
+                
+                forAllConstIter(typename Subset,sub,iter) {
+                    label faceI=getIndexFromIterator(iter);
+                    if(faceI<this->mesh().nInternalFaces()) {
+                        (*result)[cnt]=weights[faceI]*f[own[faceI]]+(1-weights[faceI])*f[nei[faceI]];
+                    } else {
+                        // OK. We could also try to get the value from the original face
+                        (*result)[cnt]=f[own[faceI]];
+                    }
+                    cnt++;
                 }
-                cnt++;
+                
+                assert(cnt==this->size());
+
+                done=true;
+            } else {
+                autoPtr<IFieldType> f=this->getOrReadField<IFieldType>(name,false);
+
+                if(f.valid()) {
+                    label cnt=0;
+                    
+                    forAllConstIter(typename Subset,sub,iter) {
+                        label faceI=getIndexFromIterator(iter);
+                        if(faceI<this->mesh().nInternalFaces()) {
+                            (*result)[cnt]=weights[faceI]*f()[own[faceI]]+(1-weights[faceI])*f()[nei[faceI]];
+                        } else {
+                            // OK. We could also try to get the value from the original face
+                            (*result)[cnt]=f()[own[faceI]];
+                        }
+                        cnt++;
+                    }
+                    
+                    assert(cnt==this->size());
+                    
+                    done=true;
+                }
             }
-            
-            assert(cnt==this->size());
+        }
+
+        if(!done) {
+            FatalErrorIn("SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)")
+                << "Could not find a field name " << name 
+                    << " of type " << pTraits<T>::typeName
+                    << " (neither " << FieldType::typeName 
+                    << " nor " << IFieldType::typeName << ")"
+                    << " Autointerpolate: " << this->autoInterpolate_
+                    << endl
+                    << abort(FatalError);
         }
 
         return result;
