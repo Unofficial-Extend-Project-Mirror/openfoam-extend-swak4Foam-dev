@@ -196,6 +196,107 @@ namespace Foam {
     }
 
     template<class T>
+    autoPtr<T> CommonValueExpressionDriver::getOrReadField(const string &name)
+    {
+        if(debug) {
+            Info << "CommonValueExpressionDriver::getOrReadField. Name: " << name 
+                << " Type: " << T::typeName << endl;
+        }
+        
+        dimensionSet nullDim(0,0,0,0,0);
+        
+        autoPtr<T> f;
+        
+        if(variables_.found(name)) {
+            if(debug) {
+                Info << "Getting " << name << " from variables" << endl;
+            }
+            
+            typedef typename T::value_type Type;
+            
+            f.set(
+                new T(
+                    IOobject
+                    (
+                        name,
+                        this->mesh().time().timeName(),
+                        this->mesh(),
+                        IOobject::NO_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    this->mesh(),
+                    dimensioned<Type>(name,nullDim,pTraits<Type>::zero)
+                )
+            );
+
+            Field<Type> vals=variables_[name].getResult<Type>(true);
+
+            if(debug) {
+                Pout << "sizes: " << vals.size() << " " << f->size() << endl;
+            }
+            if(vals.size()==f->size()) {
+                f->internalField()=vals;
+            } else {
+                Type avg=gAverage(vals);
+
+                bool noWarn=false;
+
+                if(!noWarn) {
+                    Type minVal=gMin(vals);
+                    Type maxVal=gMax(vals);
+                    if(mag(minVal-maxVal)>SMALL) {
+                        WarningIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
+                            << "The minimum value " << minVal << " and the maximum " 
+                                << maxVal << " differ. I will use the average " << avg
+                                << endl;
+                    }
+                }
+ 
+                f->internalField()=avg;
+            }        
+            return f;
+        }
+
+        if(
+            searchInMemory()
+            &&
+            this->mesh().foundObject<T>(name)
+        ) {
+            if(debug) {
+                Info << "Getting " << name << " from memory" << endl;
+            }
+
+            f.set(
+                new T(
+                    this->mesh().lookupObject<T>(name)
+                )
+            );
+        } else if(
+            searchOnDisc()
+        ) {
+            if(debug) {
+                Info << "Reading " << name << " from disc" << endl;
+            }
+        
+            f.set(
+                this->readAndRegister<T>(name).ptr()
+            );
+        }
+
+        if(!f.valid()) {
+            FatalErrorIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
+                << "Could not find the field " << name 
+                    << " in memory or on disc" << endl
+                    << abort(FatalError);
+        }
+    
+        f->dimensions().reset(nullDim);
+
+        return f;
+    }
+
+
+    template<class T>
     inline tmp<T> CommonValueExpressionDriver::readAndRegister(const word &name)
     {
         tmp<T>f(

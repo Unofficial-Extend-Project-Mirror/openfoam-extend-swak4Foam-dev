@@ -49,15 +49,26 @@ namespace Foam {
             return this->variables_[name].getResult<T>(true).ptr();
         }
 
-        const FieldType &f=this->mesh().lookupObject<FieldType>(name);
         Field<T> *result=new Field<T>(this->size());
         label cnt=0;
+        
+        if(this->searchInMemory() && this->mesh().foundObject<FieldType>(name)) {
+            // Keep this separate to avoid copying if found in memory
+            const FieldType &f=this->mesh().lookupObject<FieldType>(name);
+            
+            forAllConstIter(typename Subset,sub,iter) {
+                (*result)[cnt]=f[getIndexFromIterator(iter)];
+                cnt++;
+            }
+        } else {
+            // otherwise try disc and memory
+            autoPtr<FieldType> f=this->getOrReadField<FieldType>(name);
 
-        forAllConstIter(typename Subset,sub,iter) {
-            (*result)[cnt]=f[getIndexFromIterator(iter)];
-            cnt++;
+            forAllConstIter(typename Subset,sub,iter) {
+                (*result)[cnt]=f()[getIndexFromIterator(iter)];
+                cnt++;
+            }            
         }
-
         assert(cnt==this->size());
 
         return result;
