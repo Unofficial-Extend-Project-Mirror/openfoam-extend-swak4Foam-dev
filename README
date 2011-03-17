@@ -43,6 +43,18 @@
 
    The script =removeSwakFilesFromGlobal.sh= removes all these files
    from the global directories
+** Packaging
+*** Debian
+    The command =build dpkg= builds a Debian/Ubuntu package for 
+    the *currently enabled* OpenFOAM-package. Note:
+    - it is assumed that the currently used OF-version was also
+      installed by the package manager
+    - the =dev= package is built but poorly maintained
+    - =simpleFunctionOjects= are automatically included in the
+      package. To avoid this remove the =simpleFunctionObjects= from
+      the =Libraries= directory and do =make dpkg-only=
+    Changes in the packaging should be done in the branch
+      =debianPackaging= of the Mercurial-repository
 * Contents
 ** Libraries
    Collection of Libraries

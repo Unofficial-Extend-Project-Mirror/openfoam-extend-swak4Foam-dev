@@ -1,0 +1,17 @@
+swak4foam-%(ofpkg)s (0.1-3) unstable; urgency=low
+
+  * Change building the package to debuild
+
+ -- bgschaid <bgschaid@ice-sf.at>  Wed, 09 Mar 2011 11:35:55 +0100
+
+swak4foam-%(ofpkg)s (0.1-2) unstable; urgency=low
+
+  * Fix some paths and omit unnecessary files
+
+ -- bgschaid <bgschaid@ice-sf.at>  Tue, 08 Mar 2011 18:35:55 +0100
+
+swak4foam-%(ofpkg)s (0.1-1) unstable; urgency=low
+
+  * Initial release 
+
+ -- bgschaid <bgschaid@ice-sf.at>  Fri, 04 Mar 2011 12:08:55 +0100
