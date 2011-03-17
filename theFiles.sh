@@ -1,3 +1,5 @@
+# Lists the files that are going to be used by other scripts
+
 export SWAKLIBS=(groovyBC \
     groovyStandardBCs \
     swakSourceFields \
@@ -14,6 +16,7 @@ fi
 
 export SWAKUTILS=(funkySetBoundaryField \
     funkySetFields \
+    funkyDoCalc \
     replayTransientBC)
 
 if [ "$FOAM_DEV" != "" ]
