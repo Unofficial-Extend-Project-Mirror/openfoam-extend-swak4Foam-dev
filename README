@@ -45,7 +45,7 @@
    from the global directories. The =removeSwakFilesFromLocal.sh= does
    the same for the user directories (this makes sure that no
    self-compiled version /shadows/ the global version (which would
-   lead to strnge results)
+   lead to strange results)
 
    There is a =Makefile= attached. =make install= compiles =swak4Foam=
    and installs it into the global directories
