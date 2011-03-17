@@ -119,7 +119,7 @@ public:
 
     // returning fields
     template<class T>
-    T *getField(const string &name);
+    T* getField(const string &name);
 
     // make constant fields
     volScalarField *makeScalarField(const scalar &val);

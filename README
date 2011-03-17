@@ -102,6 +102,10 @@
     condition but doesn't do anything else.
 
     Can be used for other BCs as well
+*** =funkyDoCalc=
+    Evaluates expressions that are listed in a dictionary using data
+    that is found on the disc and prints summarized data (min, max,
+    average, sum) to the screen
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -171,7 +175,8 @@
           an argument
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
-          =swakExpression=-functionObject
+          =swakExpression=-functionObject. Also an example dictionary
+          that demonstrates the use of =funkyDoCalc=
 **** =capillaryRise=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
@@ -194,6 +199,8 @@
    Apart from patches and internal fields the support for
    interpolation from cells to faces (and vice versa) is incomplete as
    well as point fields (although they are supported in the grammar)
+** Caching of loaded fields not working
+   This is especially evident for the =funkyDoCalc=-example
 * History
 ** 2010-09-13
    First Release

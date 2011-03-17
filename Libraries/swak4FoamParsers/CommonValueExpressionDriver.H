@@ -143,6 +143,9 @@ protected:
     template<class T>
     inline autoPtr<T> getSet(const fvMesh &,const word &);
 
+    template<class T>
+    autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");

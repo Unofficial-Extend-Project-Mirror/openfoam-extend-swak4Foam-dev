@@ -508,6 +508,12 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         region
     );
 
+    otherDriver->setSearchBehaviour(
+        this->cacheReadFields(),
+        this->searchInMemory(),
+        this->searchOnDisc()
+    );
+
     otherDriver->parse(expr);
     variables_.insert(name,otherDriver->getUniform(this->size(),false));
 }
