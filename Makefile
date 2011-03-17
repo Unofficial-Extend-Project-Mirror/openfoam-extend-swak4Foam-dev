@@ -11,3 +11,9 @@ dpkg-only:
 	debuild -us -uc
 
 dpkg: getSimple dpkg-only
+
+install:
+	./downloadSimpleFunctionObjects.sh
+	./Allwmake
+	./copySwakFilesToGlobal.sh
+	./removeSwakFilesFromLocal.sh

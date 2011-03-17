@@ -42,7 +42,13 @@
    global directories.
 
    The script =removeSwakFilesFromGlobal.sh= removes all these files
-   from the global directories
+   from the global directories. The =removeSwakFilesFromLocal.sh= does
+   the same for the user directories (this makes sure that no
+   self-compiled version /shadows/ the global version (which would
+   lead to strnge results)
+
+   There is a =Makefile= attached. =make install= compiles =swak4Foam=
+   and installs it into the global directories
 ** Packaging
 *** Debian
     The command =build dpkg= builds a Debian/Ubuntu package for 
