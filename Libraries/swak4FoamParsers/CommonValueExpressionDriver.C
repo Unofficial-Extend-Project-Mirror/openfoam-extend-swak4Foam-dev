@@ -61,6 +61,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     result_(orig.result_),
     variables_(orig.variables_),
     lines_(orig.lines_),
+    lookup_(orig.lookup_),
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_)
@@ -90,7 +91,11 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
     );
 
     if(dict.found("timelines")) {
-        readLines(dict.lookup("timelines"));
+        readTables(dict.lookup("timelines"),lines_);
+    }
+
+    if(dict.found("lookup")) {
+        readTables(dict.lookup("lookuptables"),lookup_);
     }
 }
 
@@ -263,7 +268,11 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
     writeVariableStrings(os) << token::END_STATEMENT << nl;
 
     os.writeKeyword("timelines");
-    writeLines(os);
+    writeTables(os,lines_);
+    os << token::END_STATEMENT << nl;
+
+    os.writeKeyword("lookuptables");
+    writeTables(os,lookup_);
     os << token::END_STATEMENT << nl;
 
     if(debug) {
@@ -422,6 +431,18 @@ scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
     return new scalarField(this->size(),lines_[name](t));
 }
 
+scalarField *CommonValueExpressionDriver::getLookup (const string &name,const scalarField &val)
+{
+    scalarField *result=new scalarField(val.size());
+    const interpolationTable<scalar> &table=lookup_[name];
+
+    forAll(val,i) {
+        (*result)[i]=table(val[i]);
+    }
+
+    return result;
+}
+
 scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
 {
     return lines_[name](t);
@@ -577,23 +598,23 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
     }
 }
 
-void CommonValueExpressionDriver::readLines(Istream &is,bool clear)
+void CommonValueExpressionDriver::readTables(Istream &is,HashTable<interpolationTable<scalar> > &tables,bool clear)
 {
     if(clear) {
-        lines_.clear();
+        tables.clear();
     }
     List<dictionary> lines(is);
 
     forAll(lines,i) {
         const dictionary &dict=lines[i];
-        lines_.insert(dict.lookup("name"),interpolationTable<scalar>(dict));
+        tables.insert(dict.lookup("name"),interpolationTable<scalar>(dict));
     }
 }
 
-void CommonValueExpressionDriver::writeLines(Ostream &os) const
+void CommonValueExpressionDriver::writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &tables) const
 {
     os << token::BEGIN_LIST << nl;
-    forAllConstIter(HashTable<interpolationTable<scalar> >,lines_,it) {
+    forAllConstIter(HashTable<interpolationTable<scalar> >,tables,it) {
         os << token::BEGIN_BLOCK << nl;
         os.writeKeyword("name") << it.key() << token::END_STATEMENT << nl;
         (*it).write(os);

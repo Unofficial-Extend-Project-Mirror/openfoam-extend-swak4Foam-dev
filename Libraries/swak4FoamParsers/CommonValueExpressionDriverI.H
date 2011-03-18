@@ -372,6 +372,11 @@ namespace Foam {
         return lines_.found(name);
     }
 
+    inline bool CommonValueExpressionDriver::isLookup(const string &name) const 
+    {
+        return lookup_.found(name);
+    }
+
     /*    template<class Type>
     Field<Type> *CommonValueExpressionDriver::getField(const string &name)
     {

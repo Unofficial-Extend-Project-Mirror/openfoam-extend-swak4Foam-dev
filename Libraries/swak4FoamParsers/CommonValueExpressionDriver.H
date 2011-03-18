@@ -79,6 +79,8 @@ protected:
 
     HashTable<interpolationTable<scalar>,word> lines_;
 
+    HashTable<interpolationTable<scalar>,word> lookup_;
+
     Foam::string content_;
 
     bool trace_scanning_;
@@ -293,12 +295,26 @@ public:
     template<class T>
     bool isThere(const string &name) const;
 
+    //- is this a timeline
     inline bool isLine(const string &name) const;
+
+    //- get the value for a timeline for a specific time
     scalarField *getLine(const string &name,scalar t);
+
+    //- value of the timeline
     scalar getLineValue(const string &name,scalar t);
 
-    void readLines(Istream &is,bool clear=true);
-    void writeLines(Ostream &os) const;
+    //- read some interpolation tables
+    void readTables(Istream &is,HashTable<interpolationTable<scalar> > &,bool clear=true);
+
+    //- write some interpolation tables
+    void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
+
+    //- is this a lookup table
+    inline bool isLookup(const string &name) const;
+
+    //- get the value for a lookuptable for a set of values
+    scalarField *getLookup(const string &name,const scalarField &val);
 
     scalarField *makeModuloField(const scalarField &a,const scalarField &b);
     scalarField *makeRandomField(label seed=0);
