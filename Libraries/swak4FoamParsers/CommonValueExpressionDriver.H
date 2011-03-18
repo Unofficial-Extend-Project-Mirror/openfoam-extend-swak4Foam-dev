@@ -143,6 +143,9 @@ protected:
     template<class T>
     inline autoPtr<T> getSet(const fvMesh &,const word &);
 
+    template<class T>
+    autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -223,6 +226,9 @@ public:
     template<class Type>
     tmp<Field<Type> > evaluate(const string &expr,bool qPoint=false);
 
+    template<class Type>
+    Type evaluateUniform(const string &expr,bool qPoint=false);
+
     void evaluateVariable(const word &name,const string &expr);
 
     void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);
@@ -234,6 +240,8 @@ public:
     void setVariableStrings(const dictionary &dict);
 
     Ostream &writeVariableStrings(Ostream &out) const;
+
+    Ostream &writeCommon(Ostream &out,bool debug=false) const;
 
     void addVariables(const string &exprList,bool clear=true);
 

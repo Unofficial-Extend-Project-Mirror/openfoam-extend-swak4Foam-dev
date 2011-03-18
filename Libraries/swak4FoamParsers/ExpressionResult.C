@@ -147,12 +147,36 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
             << abort(FatalError);
     }
 
-    valPtr_=rhs.valPtr_;
+    clearResult();
+
     valType_=rhs.valType_;
     isPoint_=rhs.isPoint_;
 
-    const_cast<ExpressionResult &>(rhs).valPtr_=NULL;
-    const_cast<ExpressionResult &>(rhs).clearResult();
+    if( rhs.valPtr_ ) {
+        if(valType_==pTraits<scalar>::typeName) {
+            valPtr_=new scalarField(*static_cast<scalarField*>(rhs.valPtr_));
+        } else if(valType_==pTraits<vector>::typeName) {
+            valPtr_=new Field<vector>(*static_cast<Field<vector>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<tensor>::typeName) {
+            valPtr_=new Field<tensor>(*static_cast<Field<tensor>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<symmTensor>::typeName) {
+            valPtr_=new Field<symmTensor>(*static_cast<Field<symmTensor>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<sphericalTensor>::typeName) {
+            valPtr_=new Field<sphericalTensor>(*static_cast<Field<sphericalTensor>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<bool>::typeName) {
+            valPtr_=new Field<bool>(*static_cast<Field<bool>*>(rhs.valPtr_));
+        } else {
+            FatalErrorIn("ExpressionResult::operator=(const ExpressionResult& rhs)")
+                << " Type " << valType_ << " can not be copied"
+                    << endl
+                    << abort(FatalError);
+        }
+    } else {
+        valPtr_=rhs.valPtr_;
+    }
+
+//     const_cast<ExpressionResult &>(rhs).valPtr_=NULL;
+//     const_cast<ExpressionResult &>(rhs).clearResult();
 }
 
 

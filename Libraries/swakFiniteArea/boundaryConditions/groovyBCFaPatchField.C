@@ -34,24 +34,6 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-string groovyBCFaPatchField<Type>::nullValue()
-{
-    if(string(pTraits<Type>::typeName)==string("vector")) {
-        return string("vector(0,0,0)");
-    } else if(string(pTraits<Type>::typeName)==string("tensor")) {
-        return string("tensor(0,0,0,0,0,0,0,0,0)");
-    } else if(string(pTraits<Type>::typeName)==string("symmTensor")) {
-        return string("symmTensor(0,0,0,0,0,0)");
-    } else if(string(pTraits<Type>::typeName)==string("sphericalTensor")) {
-        return string("sphericalTensor(0)");
-    } else {
-        OStringStream tmp;
-        tmp << pTraits<Type>::zero;
-        return tmp.str();
-    }
-}
-
-template<class Type>
 groovyBCFaPatchField<Type>::groovyBCFaPatchField
 (
     const faPatch& p,
@@ -59,13 +41,11 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
 )
 :
     mixedFaPatchField<Type>(p, iF),
-    fractionExpression_("0"),
+    groovyBCCommon<Type>(true),
     driver_(this->patch())
 {
     this->refValue() = pTraits<Type>::zero;
-    valueExpression_ = nullValue();
     this->refGrad() = pTraits<Type>::zero;
-    gradientExpression_ = nullValue();
     this->valueFraction() = 0.0;
 }
 
@@ -80,9 +60,7 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
 )
 :
     mixedFaPatchField<Type>(ptf, p, iF, mapper),
-    valueExpression_(ptf.valueExpression_),
-    gradientExpression_(ptf.gradientExpression_),
-    fractionExpression_(ptf.fractionExpression_),
+    groovyBCCommon<Type>(ptf),
     driver_(this->patch(),ptf.driver_)
 {}
 
@@ -96,7 +74,7 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
 )
 :
     mixedFaPatchField<Type>(p, iF),
-    fractionExpression_(dict.lookupOrDefault("fractionExpression",string("1"))),
+    groovyBCCommon<Type>(dict,true),
     driver_(this->patch())
 {
     driver_.setVariableStrings(dict);
@@ -105,18 +83,6 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
     }
 
-    if (dict.found("valueExpression"))
-    {
-        dict.lookup("valueExpression") >> valueExpression_;
-    } else {
-        valueExpression_ = nullValue();
-    }
-    if (dict.found("gradientExpression"))
-    {
-        dict.lookup("gradientExpression") >> gradientExpression_;
-    } else {
-        gradientExpression_ = nullValue();
-    }
     if(dict.found("timelines")) {
         driver_.readLines(dict.lookup("timelines"));
     }
@@ -133,6 +99,17 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
     else
     {
         faPatchField<Type>::operator=(this->refValue());
+        WarningIn(
+            "groovyBCFaPatchField<Type>::groovyBCFaPatchField"
+            "("
+            "const faPatch& p,"
+            "const DimensionedField<Type, areaMesh>& iF,"
+            "const dictionary& dict"
+            ")"
+        ) << "No value defined for " << this->dimensionedInternalField().name()
+            << " on " << this->patch().name() << " therefore using "
+            << this->refValue()
+            << endl;
     }
 
     this->refGrad() = pTraits<Type>::zero;
@@ -147,9 +124,7 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
 )
 :
     mixedFaPatchField<Type>(ptf),
-    valueExpression_(ptf.valueExpression_),
-    gradientExpression_(ptf.gradientExpression_),
-    fractionExpression_(ptf.fractionExpression_),
+    groovyBCCommon<Type>(ptf),
     driver_(this->patch(),ptf.driver_)
 {}
 
@@ -162,9 +137,7 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
 )
 :
     mixedFaPatchField<Type>(ptf, iF),
-    valueExpression_(ptf.valueExpression_),
-    gradientExpression_(ptf.gradientExpression_),
-    fractionExpression_(ptf.fractionExpression_),
+    groovyBCCommon<Type>(ptf),
     driver_(this->patch(),ptf.driver_)
 {}
 
@@ -176,9 +149,9 @@ void groovyBCFaPatchField<Type>::updateCoeffs()
 {
     if(debug) {
         Info << "groovyBCFaPatchField<Type>::updateCoeffs" << endl;
-        Info << "Value: " << valueExpression_ << endl;
-        Info << "Gradient: " << gradientExpression_ << endl;
-        Info << "Fraction: " << fractionExpression_ << endl;
+        Info << "Value: " << this->valueExpression_ << endl;
+        Info << "Gradient: " << this->gradientExpression_ << endl;
+        Info << "Fraction: " << this->fractionExpression_ << endl;
         Info << "Variables: ";
         driver_.writeVariableStrings(Info) << endl;
     }
@@ -190,9 +163,9 @@ void groovyBCFaPatchField<Type>::updateCoeffs()
 
      driver_.clearVariables();
 
-    this->refValue() = driver_.evaluate<Type>(valueExpression_);
-    this->refGrad() = driver_.evaluate<Type>(gradientExpression_);
-    this->valueFraction() = driver_.evaluate<scalar>(fractionExpression_);
+    this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
+    this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
+    this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_);
     
     mixedFaPatchField<Type>::updateCoeffs();
 }
@@ -202,17 +175,9 @@ template<class Type>
 void groovyBCFaPatchField<Type>::write(Ostream& os) const
 {
     mixedFaPatchField<Type>::write(os);
-    os.writeKeyword("valueExpression")
-        << valueExpression_ << token::END_STATEMENT << nl;
-    os.writeKeyword("gradientExpression")
-        << gradientExpression_ << token::END_STATEMENT << nl;
-    os.writeKeyword("fractionExpression")
-        << fractionExpression_ << token::END_STATEMENT << nl;
-    os.writeKeyword("variables");
-    driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
-    os.writeKeyword("timelines");
-    driver_.writeLines(os);
-    os << token::END_STATEMENT << nl;
+    groovyBCCommon<Type>::write(os);
+
+    driver_.writeCommon(os,this->debug_ || debug);
 }
 
 

@@ -65,25 +65,54 @@ namespace Foam {
         }
         Field<Type> *result;
 
-        if(interpolate_) {
-            autoPtr<interpolation<Type> > inter(
-                interpolation<Type>::New(
-                    interpolationType_,
-                    this->mesh().lookupObject<volField>(name)
-                )
-            );
-            
-            result=new Field<Type>(
-                this->theSurface_.interpolate(
-                    inter()
-                )
-            );
+        if(
+            this->searchInMemory() 
+            && 
+            this->mesh().foundObject<volField>(name)
+        ) {
+            if(interpolate_) {
+                autoPtr<interpolation<Type> > inter(
+                    interpolation<Type>::New(
+                        interpolationType_,
+                        this->mesh().lookupObject<volField>(name)
+                    )
+                );
+                
+                result=new Field<Type>(
+                    this->theSurface_.interpolate(
+                        inter()
+                    )
+                );
+            } else {
+                result=new Field<Type>(
+                    this->theSurface_.sample(
+                        this->mesh().lookupObject<volField>(name)
+                    )
+                );
+            }
         } else {
-            result=new Field<Type>(
-                this->theSurface_.sample(
-                    this->mesh().lookupObject<volField>(name)
-                )
-            );
+            autoPtr<volField> f=this->getOrReadField<volField>(name);
+
+            if(interpolate_) {
+                autoPtr<interpolation<Type> > inter(
+                    interpolation<Type>::New(
+                        interpolationType_,
+                        f()
+                    )
+                );
+                
+                result=new Field<Type>(
+                    this->theSurface_.interpolate(
+                        inter()
+                    )
+                );
+            } else {
+                result=new Field<Type>(
+                    this->theSurface_.sample(
+                        f()
+                    )
+                );
+            }
         }
 
         return result;

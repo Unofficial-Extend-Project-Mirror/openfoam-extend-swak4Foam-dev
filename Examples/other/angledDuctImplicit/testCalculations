@@ -1,0 +1,589 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dummy
+{
+    valueType patch;
+
+    accumulations (
+        average
+    );
+    patchName inlet;
+
+    expression "p";
+}
+
+pressureDrop
+{
+    valueType patch;
+
+    variables ( "pOut{patch'outlet}=sum(p*area())/sum(area());");
+    accumulations (
+        average
+    );
+    patchName inlet;
+
+    expression "p-pOut";
+}
+
+pressureToFilterVolAvg
+{
+    valueType patch;
+
+    variables ( "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());");
+    accumulations (
+        average
+    );
+    patchName inlet;
+    expression "p-pFilter";
+}
+
+pressureToVol
+{
+    valueType patch;
+
+    variables ( "pTotal{internalField}=sum(p*vol())/sum(vol());");
+    accumulations (
+        average
+    );
+    patchName inlet;
+
+    expression "p-pTotal";
+    verbose true;
+}
+
+pressureToFilter
+{
+    valueType patch;
+    variables "pFilter{cellZone'porosity}=average(p);";
+    accumulations (
+        average
+    );
+    patchName inlet;
+
+    expression "p-pFilter";
+    verbose true;
+}
+
+distanceToFilter
+{
+    valueType patch;
+    variables "pFilter{cellZone'porosity}=average(pos());";
+    accumulations (
+        average
+    );
+    patchName inlet;
+
+    expression "mag(pos()-pFilter)";
+    verbose true;
+}
+
+alternatePressureToFilter
+{
+    type swakExpression;
+    valueType patch;
+    patchName outlet;
+    variables "pFilter{cellZone'porosity}=average(p);";
+    accumulations (
+        average
+    );
+    expression "p-pFilter";
+    verbose true;
+}
+alternatePressureToFilter2
+{
+    type swakExpression;
+    valueType cellZone;
+    zoneName porosity;
+    variables "pRaus{outlet}=average(p);";
+    accumulations (
+        average
+    );
+    expression "pRaus-p";
+    verbose true;
+}
+alternatePressureToFilter3
+{
+    type swakExpression;
+    valueType cellSet;
+    setName porosity;
+    variables "pRaus{outlet}=average(p);";
+    accumulations (
+        average
+    );
+    expression "pRaus-p";
+    verbose true;
+}
+alternatePressureToFilter4
+{
+    type swakExpression;
+    valueType patch;
+    patchName outlet;
+    variables "pFilter{cellSet'porosity}=average(p);";
+    accumulations (
+        average
+    );
+    expression "p-pFilter";
+    verbose true;
+}
+pressureInletToFilter
+{
+    type swakExpression;
+    valueType patch;
+    patchName inlet;
+    variables "pBefore{faceZone'beforeFilter}=average(p);";
+    accumulations (
+        average
+    );
+    expression "p-pBefore";
+    verbose true;
+    autoInterpolate true;
+    warnAutoInterpolate false;
+}
+pressureOverFilter
+{
+    type swakExpression;
+    valueType faceZone;
+    zoneName beforeFilter;
+    variables (
+        "pAfter{faceSet'afterFilter}=average(p);"
+    );
+    accumulations (
+        average
+    );
+    expression "p-pAfter";
+    verbose true;
+    autoInterpolate true;
+    warnAutoInterpolate false;
+}
+pressureFilterToOutlet
+{
+    type swakExpression;
+    valueType patch;
+    patchName outlet;
+    variables (
+        "dummy=p-mag(U);"
+        "pAfter{faceSet'afterFilter}=average(p);"
+    );
+    accumulations (
+        average
+    );
+    expression "pAfter-p";
+    verbose true;
+    autoInterpolate true;
+    warnAutoInterpolate false;
+}
+flowBeforeSet
+{
+    type swakExpression;
+    valueType faceSet;
+    setName beforeFilter;
+    expression "phi*flip()";
+    accumulations (
+        sum
+    );
+    verbose true;
+}
+flowAfterSet
+{
+    type swakExpression;
+    valueType faceSet;
+    setName afterFilter;
+    expression "phi*flip()";
+    accumulations (
+        sum
+    );
+    verbose true;
+}
+flowBeforeZone
+{
+    type swakExpression;
+    valueType faceZone;
+    zoneName beforeFilter;
+    expression "phi*flip()";
+    accumulations (
+        sum
+    );
+    verbose true;
+}
+flowAfterZone
+{
+    type swakExpression;
+    valueType faceZone;
+    zoneName afterFilter;
+    expression "phi*flip()";
+    accumulations (
+        sum
+    );
+    verbose true;
+}
+flowInlet
+{
+    type swakExpression;
+    valueType patch;
+    patchName inlet;
+    expression "phi";
+    accumulations (
+        sum
+    );
+    verbose true;
+}
+flowOutlet
+{
+    type swakExpression;
+    valueType patch;
+    patchName outlet;
+    expression "phi";
+    accumulations (
+        sum
+    );
+    verbose true;
+}
+filterMeanDiff
+{
+    type swakExpression;
+    valueType internalField;
+    variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";        
+    expression "p-pFilter";
+    accumulations (
+        min
+        max
+    );
+    verbose true;
+}
+velocityExtreme
+{
+    type swakExpression;
+    valueType internalField;
+    accumulations (
+        min
+        max
+    );
+    expression "mag(U)";
+    verbose true;
+}
+surfacePlane
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testPlane;
+    surface {
+        type plane;
+        basePoint       (0 0 0);
+        normalVector    (0 0 1);
+        interpolate false;
+    }
+    verbose true;
+    expression "mag(U)";
+    accumulations (
+        min
+        max
+    );
+}
+surfacePlaneReuse
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testPlane;
+    verbose true;
+    expression "p";
+    accumulations (
+        min
+        max
+    );
+}
+// createsurfacePlane2
+// {
+//     type createSampledSurface;
+//     outputControl timeStep;
+//     outputInterval 1;
+//     surfaceName testPlane2;
+//     surface {
+//         type plane;
+//         basePoint       (0 0 0);
+//         normalVector    (0 0 1);
+//         interpolate true;
+//     }
+// }
+// surfacePlane2
+// {
+//     type swakExpression;
+//     valueType surface;
+//     surfaceName testPlane2;
+//     verbose true;
+//     expression "mag(U)";
+//     accumulations (
+//         min
+//         max
+//     );
+// }
+surfacePlane2
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testPlane2;
+    verbose true;
+    expression "mag(U)";
+    accumulations (
+        min
+        max
+    );
+    surface {
+        type plane;
+        basePoint       (0 0 0);
+        normalVector    (0 0 1);
+        interpolate true;
+    }
+}
+surfaceDiffPlane
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testPlane3;
+    surface {
+        type plane;
+        basePoint       (0 0 0.01);
+        normalVector    (0 0 1);
+        interpolate true;
+    }
+    verbose true;
+    variables "Umiddle{surface'testPlane2}=sum(mag(U)*area())/sum(area());";
+    expression "sum(mag(U)*area())/sum(area())-Umiddle";
+    accumulations (
+        min
+    );
+}
+surfacePatch
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testPatch;
+    surface {
+        type patch;
+        patchName outlet;
+        //            triangulate      false;      
+    }
+    verbose true;
+    expression "mag(U)";
+    accumulations (
+        min
+        max
+    );
+}
+surfaceCuttingPlane
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testCuttingPlane;
+    surface {
+        type cuttingPlane;
+        planeType       pointAndNormal;
+        pointAndNormalDict
+        {
+            basePoint       (0 0 0);
+            normalVector    (0 0 1);
+        }
+        interpolate false;
+    }
+    verbose true;
+    expression "mag(U)";
+    accumulations (
+        min
+        max
+    );
+}
+// yPlusWall
+// {
+//     valueType patch;
+//     expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
+//     accumulations (
+//         min
+//         max
+//         average
+//     );
+//     patchName wall;
+//     verbose true;
+// }
+surfaceIsoDist
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoDist;
+    surface {
+        type isoSurface;
+        isoField distanceFromZero;
+        isoValue 0.1;
+        interpolate true;
+    }
+    verbose true;
+    expression "mag(U)";
+    accumulations (
+        min
+        max
+    );
+}
+surfaceIsoDist2
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoDist2;
+    surface {
+        type isoSurface;
+        isoField distanceFromZero;
+        isoValue 0.1;
+        interpolate true;
+    }
+    verbose true;
+    //        variables "p=pts();";
+    expression "pos()";
+    accumulations (
+        min
+        max
+    );
+}
+surfaceIsoInterpolateOn
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoInterpolateOn;
+    surface {
+        type isoSurface;
+        isoField distanceFromZero;
+        isoValue 0.1;
+        interpolate true;
+    }
+    verbose true;
+    //        variables "p=pts();";
+    expression "p";
+    accumulations (
+        min
+        max
+    );
+    interpolate on;
+    interpolationType cellPointWallModified;
+}
+surfaceIsoInterpolateOff
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoInterpolateOff;
+    surface {
+        type isoSurface;
+        isoField distanceFromZero;
+        isoValue 0.1;
+        interpolate true;
+    }
+    verbose true;
+    //        variables "p=pts();";
+    expression "p";
+    accumulations (
+        min
+        max
+    );
+    interpolate off;
+}
+surfaceIsoDistCell
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoSurfaceCell;
+    surface {
+        type isoSurfaceCell;
+        isoField distanceFromZero;
+        isoValue 0.1;
+        interpolate false;
+        //            regularise      false;      
+    }
+    verbose true;
+    expression "mag(U)";
+    accumulations (
+        min
+        max
+    );
+}
+// velocityMagnitude
+// {
+//     type expressionField;
+//     outputControl timeStep;
+//     outputInterval 1;
+//     fieldName magU;
+//     expression "mag(U)";
+//     //        expression "mag(U)*sin(time())";
+//     autowrite true;        
+// }
+surfaceU45
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoU45;
+    surface {
+        type isoSurface;
+        isoField magU;
+        isoValue 45;
+        interpolate true;
+    }
+    verbose true;
+    //        variables "p=pts();";
+    expression "pos()";
+    // expression "U";
+    accumulations (
+        min
+        max
+    );
+}
+surfaceU45b
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoU45b;
+    surface {
+        type isoSurfaceCell;
+        isoField magU;
+        isoValue 45;
+        interpolate true;
+    }
+    verbose true;
+    //        variables "p=pts();";
+    expression "pos()";
+    // expression "U";
+    accumulations (
+        min
+        max
+    );
+}
+surfaceU45c
+{
+    type swakExpression;
+    valueType surface;
+    surfaceName testIsoU45c;
+    surface {
+        type thresholdCellFaces;
+        field magU;
+        upperLimit 46;
+        lowerLimit 44;
+    }
+    verbose true;
+    //        variables "p=pts();";
+    expression "pos()";
+    // expression "U";
+    accumulations (
+        min
+        max
+    );
+}
+
+// ************************************************************************* //

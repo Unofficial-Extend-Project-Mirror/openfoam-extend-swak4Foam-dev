@@ -222,6 +222,12 @@ functions
     }
 );
 
-libs ( "libOpenFOAM.so" "libgroovyBC.so" "libsimpleSwakFunctionObjects.so" "libswakFunctionObjects.so" ) ;
+libs ( 
+    "libOpenFOAM.so" 
+    "libgroovyBC.so" 
+    "libgroovyStandardBCs.so" 
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+) ;
 
 // ************************************************************************* //

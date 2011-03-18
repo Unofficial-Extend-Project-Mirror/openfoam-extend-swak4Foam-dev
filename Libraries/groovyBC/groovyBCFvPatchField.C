@@ -113,6 +113,17 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     else
     {
         fvPatchField<Type>::operator=(this->refValue());
+        WarningIn(
+            "groovyBCFvPatchField<Type>::groovyBCFvPatchField"
+            "("
+            "const fvPatch& p,"
+            "const DimensionedField<Type, volMesh>& iF,"
+            "const dictionary& dict"
+            ")"
+        ) << "No value defined for " << this->dimensionedInternalField().name()
+            << " on " << this->patch().name() << " therefore using "
+            << this->refValue()
+            << endl;
     }
 
     this->refGrad() = pTraits<Type>::zero;
@@ -194,18 +205,7 @@ void groovyBCFvPatchField<Type>::write(Ostream& os) const
     mixedFvPatchField<Type>::write(os);
     groovyBCCommon<Type>::write(os);
 
-    os.writeKeyword("variables");
-    driver_.writeVariableStrings(os) << token::END_STATEMENT << nl;
-
-    os.writeKeyword("timelines");
-    driver_.writeLines(os);
-    os << token::END_STATEMENT << nl;
-
-    if(this->debug_ || debug) {
-        os.writeKeyword("variableValues");
-        os << driver_.variables() << endl;
-        os << token::END_STATEMENT << nl;
-    }
+    driver_.writeCommon(os,this->debug_ || debug);
 }
 
 
