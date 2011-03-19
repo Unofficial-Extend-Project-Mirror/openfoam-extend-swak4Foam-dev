@@ -307,6 +307,9 @@ public:
     //- read some interpolation tables
     void readTables(Istream &is,HashTable<interpolationTable<scalar> > &,bool clear=true);
 
+    //- read all the interpolation tables known to man
+    void readTables(const dictionary &);
+
     //- write some interpolation tables
     void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
 

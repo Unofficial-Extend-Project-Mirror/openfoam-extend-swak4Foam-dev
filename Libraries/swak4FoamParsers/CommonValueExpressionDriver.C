@@ -90,13 +90,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
         dict.lookupOrDefault("searchOnDisc",false)
     );
 
-    if(dict.found("timelines")) {
-        readTables(dict.lookup("timelines"),lines_);
-    }
-
-    if(dict.found("lookup")) {
-        readTables(dict.lookup("lookuptables"),lookup_);
-    }
+    readTables(dict);
 }
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(
@@ -115,6 +109,17 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         searchInMemory,
         searchOnDisc
     );
+}
+
+void CommonValueExpressionDriver::readTables(const dictionary &dict)
+{
+    if(dict.found("timelines")) {
+        readTables(dict.lookup("timelines"),lines_);
+    }
+
+    if(dict.found("lookup")) {
+        readTables(dict.lookup("lookuptables"),lookup_);
+    }
 }
 
 void CommonValueExpressionDriver::setSearchBehaviour(

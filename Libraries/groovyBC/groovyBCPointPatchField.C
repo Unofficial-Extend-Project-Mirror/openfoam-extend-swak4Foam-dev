@@ -89,9 +89,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 {
     driver_.setVariableStrings(dict);
 
-    if(dict.found("timelines")) {
-        driver_.readLines(dict.lookup("timelines"));
-    }
+    driver_.readTables(dict);
 
     this->refValue() = pTraits<Type>::zero;
 
