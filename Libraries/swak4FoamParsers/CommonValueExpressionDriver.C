@@ -431,7 +431,7 @@ scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
     return new scalarField(this->size(),lines_[name](t));
 }
 
-scalarField *CommonValueExpressionDriver::getLookup (const string &name,const scalarField &val)
+tmp<scalarField> CommonValueExpressionDriver::getLookup(const string &name,const scalarField &val)
 {
     scalarField *result=new scalarField(val.size());
     const interpolationTable<scalar> &table=lookup_[name];
@@ -440,7 +440,7 @@ scalarField *CommonValueExpressionDriver::getLookup (const string &name,const sc
         (*result)[i]=table(val[i]);
     }
 
-    return result;
+    return tmp<scalarField>(result);
 }
 
 scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
