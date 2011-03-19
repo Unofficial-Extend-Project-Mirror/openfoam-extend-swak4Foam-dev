@@ -117,7 +117,7 @@ void CommonValueExpressionDriver::readTables(const dictionary &dict)
         readTables(dict.lookup("timelines"),lines_);
     }
 
-    if(dict.found("lookup")) {
+    if(dict.found("lookuptables")) {
         readTables(dict.lookup("lookuptables"),lookup_);
     }
 }
