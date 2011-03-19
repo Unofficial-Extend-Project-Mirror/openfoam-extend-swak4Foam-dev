@@ -8,13 +8,13 @@ namespace Foam {
 template<>
 areaScalarField *FaFieldValueExpressionDriver::makeLogicalField<areaScalarField>(scalar val)
 {
-    return makeScalarField(val);
+    return makeConstantField<areaScalarField>(val);
 }
 
 template<>
 edgeScalarField *FaFieldValueExpressionDriver::makeLogicalField<edgeScalarField>(scalar val)
 {
-    return makeEdgeScalarField(val);
+    return makeConstantField<edgeScalarField>(val);
 }
 
 #define getFaceValue(ding) (ding->boundaryField()[pI][fI])
