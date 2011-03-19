@@ -68,6 +68,7 @@
 %}
 
 %token <name>   TOKEN_LINE  "timeline"
+%token <name>   TOKEN_LOOKUP  "lookup"
 %token <name>   TOKEN_SID   "scalarID"
 %token <vname>  TOKEN_VID   "vectorID"
 %token <fsname> TOKEN_FSID  "faceScalarID"
@@ -180,7 +181,7 @@
 
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
-%destructor          { delete $$; } "timeline" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID"
+%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID"
 %printer             { debug_stream () << $$; } "number"  "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression"
 
@@ -269,6 +270,8 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeSurfaceScalarField
         | TOKEN_snGrad '(' exp ')'          { $$ = new Foam::surfaceScalarField(Foam::fvc::snGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::surfaceScalarField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_FSID                        { $$ = driver.getField<Foam::surfaceScalarField>(*$1); }
+        | TOKEN_LOOKUP '(' fsexp ')'	    { $$ = driver.makeField<Foam::surfaceScalarField>(driver.getLookup(*$1,*$3)); delete $1; }
+;
 ;
  
 fvexp:  fvector                            { $$ = $1; }
@@ -297,7 +300,7 @@ scalar:	TOKEN_NUM		        { $$ = $1; }
         | '-' TOKEN_NUM         	{ $$ = -$2; } 
 ;
 
-exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField($1); }
+exp:    TOKEN_NUM                                  { $$ = driver.makeConstantField<Foam::volScalarField>($1); }
         | exp '+' exp 		                   { $$ = new Foam::volScalarField(*$1 + *$3); delete $1; delete $3; }
         | exp '-' exp 		                   { $$ = new Foam::volScalarField(*$1 - *$3); delete $1; delete $3; }
         | exp '*' exp 		                   { $$ = new Foam::volScalarField(*$1 * *$3); delete $1; delete $3; }
@@ -366,7 +369,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeScalarField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeScalarField(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }
-        | TOKEN_LINE		                   { $$ = driver.makeScalarField(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
+        | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::volScalarField>(driver.getLookup(*$1,*$3)); delete $1; }
 ;
 
 lexp: TOKEN_TRUE                       { $$ = driver.makeScalarField(1); }

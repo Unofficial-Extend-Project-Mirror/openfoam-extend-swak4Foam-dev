@@ -153,6 +153,8 @@ false                  return token::TOKEN_FALSE;
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
+    } else if(driver.isLookup(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LOOKUP;
     } else if(       
         driver.isVariable<Foam::volVectorField::value_type>(*ptr)
         ||

@@ -124,6 +124,62 @@ void FieldValueExpressionDriver::setValuePatches
   }
 }
 
+template<class FType>
+inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)
+{
+    std::ostringstream buff;
+    buff << "field" << pTraits<typename FType::value_type>::typeName;
+
+    FType *f=new FType(
+        IOobject
+        (
+            buff.str(),
+            time(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh_,
+        pTraits<typename FType::value_type>::zero,
+        "zeroGradient"
+    );
+
+    if(val.size()!=f->internalField().size()) {
+        FatalErrorIn("FieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)")
+            << "Size " << val.size() << " of the assigned field is not the required "
+                << f->internalField().size()
+                << endl
+                << abort(FatalError);
+    }
+
+    f->internalField()=val;
+
+    return f;
+}
+
+template<class FType>
+inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType::value_type &val)
+{
+    std::ostringstream buff;
+    buff << "constant" << pTraits<typename FType::value_type>::typeName << val;
+
+    FType *f=new FType(
+        IOobject
+        (
+            buff.str(),
+            time(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh_,
+        val,
+        "zeroGradient"
+    );
+
+    return f;
+}
+
 } // end namespace
 
 #endif

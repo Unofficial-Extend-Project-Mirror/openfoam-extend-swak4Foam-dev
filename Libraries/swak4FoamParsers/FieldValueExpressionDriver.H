@@ -128,6 +128,13 @@ public:
     surfaceScalarField *makeSurfaceScalarField(const scalar &val);
     surfaceVectorField *makeSurfaceVectorField(const vector &vec);
     surfaceVectorField *makeSurfaceVectorField(surfaceScalarField *x,surfaceScalarField *y,surfaceScalarField *z);
+
+    template<class FType>
+    inline FType *makeConstantField(const typename FType::value_type &val);
+
+    template<class FType>
+    inline FType *makeField(const Field<typename FType::value_type> &val);
+
     volScalarField *makeCellSetField(const string &name);
     volScalarField *makeCellZoneField(const string &name);
     surfaceScalarField *makeFaceSetField(const string &name);
