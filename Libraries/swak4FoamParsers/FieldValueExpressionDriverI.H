@@ -161,7 +161,7 @@ template<class FType>
 inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType::value_type &val)
 {
     std::ostringstream buff;
-    buff << "constant" << pTraits<typename FType::value_type>::typeName << val;
+    buff << "constant" << pTraits<typename FType::value_type>::typeName;
 
     FType *f=new FType(
         IOobject
