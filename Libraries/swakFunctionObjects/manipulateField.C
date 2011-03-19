@@ -42,7 +42,8 @@ Foam::manipulateField::manipulateField
 )
 :
     active_(true),
-    obr_(obr)
+    obr_(obr),
+    dict_(dict)
 {
     if (!isA<fvMesh>(obr_))
     {
@@ -107,6 +108,11 @@ void Foam::manipulateField::execute()
             true,  // search fields in memory
             false  // don't look up files in memory
         );
+
+        driver.setVariableStrings(dict_);
+        driver.readTables(dict_);
+
+        driver.clearVariables();
 
         ldriver.parse(maskExpression_);
 
