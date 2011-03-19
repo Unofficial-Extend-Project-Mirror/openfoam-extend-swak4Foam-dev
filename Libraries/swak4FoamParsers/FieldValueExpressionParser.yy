@@ -369,6 +369,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }
+        | TOKEN_LINE            		   { $$ = driver.makeConstantField<Foam::volScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
         | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::volScalarField>(driver.getLookup(*$1,*$3)); delete $1; }
 ;
 
