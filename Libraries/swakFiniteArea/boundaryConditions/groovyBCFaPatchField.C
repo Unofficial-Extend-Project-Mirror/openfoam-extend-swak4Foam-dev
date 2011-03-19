@@ -83,9 +83,7 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
     }
 
-    if(dict.found("timelines")) {
-        driver_.readLines(dict.lookup("timelines"));
-    }
+    driver_.readTables(dict);
 
     this->refValue() = pTraits<Type>::zero;
 
