@@ -219,6 +219,11 @@
    well as point fields (although they are supported in the grammar)
 ** Caching of loaded fields not working
    This is especially evident for the =funkyDoCalc=-example
+** Possible enhancements of the code
+   Not really bugs, but stuff that bugs me
+*** Pointers in the driver code
+    This is necessary because of =bison=. Investigate possibilities to
+    replace these by =tmp= and =autoPtr= 
 * History
 ** 2010-09-13
    First Release
