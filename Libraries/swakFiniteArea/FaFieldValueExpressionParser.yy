@@ -347,7 +347,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::areaScalarField>(*$1); }
         | TOKEN_LINE		                   { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
-        | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::areaScalarField>(driver.getLookup(*$1,*$3)); delete $1; }
+        | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::areaScalarField>(driver.getLookup(*$1,*$3)); delete $1;  delete$3;}
 ;
 
 lexp: TOKEN_TRUE                       { $$ = driver.makeConstantField<Foam::areaScalarField>(1); }

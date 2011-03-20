@@ -378,7 +378,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
             $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
 				}
 	| TOKEN_LOOKUP '(' exp ')' { 
-            $$=driver.getLookup(*$1,*$3).ptr(); delete $1;
+            $$=driver.getLookup(*$1,*$3).ptr(); delete $1; delete$3;
                                     }
 ;
 
