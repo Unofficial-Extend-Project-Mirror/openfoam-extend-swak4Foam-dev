@@ -210,6 +210,62 @@ void FaFieldValueExpressionDriver::setValuePatches
   }
 }
 
+template<class FType>
+inline FType *FaFieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)
+{
+    std::ostringstream buff;
+    buff << "field" << pTraits<typename FType::value_type>::typeName;
+
+    FType *f=new FType(
+        IOobject
+        (
+            buff.str(),
+            time(),
+            mesh(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        aMesh(),
+        pTraits<typename FType::value_type>::zero,
+        "zeroGradient"
+    );
+
+    if(val.size()!=f->internalField().size()) {
+        FatalErrorIn("FaFieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)")
+            << "Size " << val.size() << " of the assigned field is not the required "
+                << f->internalField().size()
+                << endl
+                << abort(FatalError);
+    }
+
+    f->internalField()=val;
+
+    return f;
+}
+
+template<class FType>
+inline FType *FaFieldValueExpressionDriver::makeConstantField(const typename FType::value_type &val)
+{
+    std::ostringstream buff;
+    buff << "constant" << pTraits<typename FType::value_type>::typeName;
+
+    FType *f=new FType(
+        IOobject
+        (
+            buff.str(),
+            time(),
+            mesh(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        aMesh(),
+        val,
+        "zeroGradient"
+    );
+
+    return f;
+}
+
 } // end namespace
 
 #endif

@@ -423,6 +423,23 @@ functions
         expression "mag(pos())";
         autowrite true;        
     }
+    velocityClass
+    {
+        type expressionField;
+        outputControl outputTime;
+        //        outputInterval 1;
+        fieldName velClass;
+        lookuptables (
+            {
+                name velClass;
+                outOfBounds clamp;
+                fileName "$FOAM_CASE/velClass.data";
+            }
+        );
+        expression "velClass(mag(U))";
+        autowrite true;   
+        verbose true;
+    }
     yPlusField
     {
         type expressionField;

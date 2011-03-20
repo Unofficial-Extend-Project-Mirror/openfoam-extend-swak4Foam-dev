@@ -42,6 +42,7 @@ SourceFiles
 #include "pointFieldFwd.H"
 #include "Switch.H"
 #include "autoPtr.H"
+#include "dictionary.H"
 
 namespace Foam
 {
@@ -80,6 +81,8 @@ protected:
     autoPtr<volVectorField> vectorField_;
 
     autoPtr<volScalarField> scalarField_;
+
+    dictionary dict_;
 
     template<class T>
     void storeField(

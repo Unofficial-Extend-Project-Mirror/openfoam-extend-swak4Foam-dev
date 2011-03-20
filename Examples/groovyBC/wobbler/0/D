@@ -25,7 +25,15 @@ boundaryField
             fileName "$FOAM_CASE/impulse.data";
         }
     );
-    valueExpression "-impulse*normal()";
+    lookuptables (
+        {
+            name impulseLookup;
+            outOfBounds clamp;
+            fileName "$FOAM_CASE/impulse.data";
+        }
+    );
+    //    valueExpression "-impulse*normal()";
+    valueExpression "-impulseLookup(time())*normal()";
     gradientExpression "vector(0,0,0)";
     //    fractionExpression "(time()<1.5*pi) ? ((pos().x>0.45 && pos().x<0.55) ? 1 : 0) : 0";
     fractionExpression "(time()<5) ? ((pos().x>0.45 && pos().x<0.55) ? 1 : 0) : 0";

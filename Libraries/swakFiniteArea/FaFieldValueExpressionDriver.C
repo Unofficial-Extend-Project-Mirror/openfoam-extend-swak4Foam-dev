@@ -125,7 +125,7 @@ areaScalarField *FaFieldValueExpressionDriver::makeModuloField(
     const areaScalarField &a,
     const areaScalarField &b)
 {
-    areaScalarField *result_=makeScalarField(0.);
+    areaScalarField *result_=makeConstantField<areaScalarField>(0.);
 
     forAll(*result_,cellI) {
         scalar val=fmod(a[cellI],b[cellI]);
@@ -146,7 +146,7 @@ areaScalarField *FaFieldValueExpressionDriver::makeModuloField(
 
 areaScalarField *FaFieldValueExpressionDriver::makeRandomField()
 {
-    areaScalarField *f=makeScalarField(0.);
+    areaScalarField *f=makeConstantField<areaScalarField>(0.);
     Random rand(65);
 
     forAll(*f,cellI) {
@@ -158,7 +158,7 @@ areaScalarField *FaFieldValueExpressionDriver::makeRandomField()
 
 areaScalarField *FaFieldValueExpressionDriver::makeCellIdField()
 {
-    areaScalarField *f=makeScalarField(0.);
+    areaScalarField *f=makeConstantField<areaScalarField>(0.);
 
     forAll(*f,cellI) {
         (*f)[cellI]=scalar(cellI);
@@ -169,7 +169,7 @@ areaScalarField *FaFieldValueExpressionDriver::makeCellIdField()
 
 areaScalarField *FaFieldValueExpressionDriver::makeGaussRandomField()
 {
-    areaScalarField *f=makeScalarField(0.);
+    areaScalarField *f=makeConstantField<areaScalarField>(0.);
     Random rand(65);
 
     forAll(*f,cellI) {
@@ -407,109 +407,17 @@ areaScalarField *FaFieldValueExpressionDriver::makeRDistanceField(const areaVect
     return f;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeScalarField(const scalar &val)
-{
-    std::ostringstream buff;
-    buff << "constantScalar" << val;
-
-    areaScalarField *f=new areaScalarField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        aMesh(),
-        val,
-        "zeroGradient"
-    );
-
-    return f;
-}
-
-edgeScalarField *FaFieldValueExpressionDriver::makeEdgeScalarField
-(
-    const scalar &val
-){
-    std::ostringstream buff;
-    buff << "constantScalar" << val;
-
-    edgeScalarField *f=new edgeScalarField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        aMesh(),
-        val,
-        "fixedValue"
-    );
-
-    return f;
-}
-
-areaVectorField *FaFieldValueExpressionDriver::makeVectorField(const vector &vec)
-{
-    std::ostringstream buff;
-    buff << "constantVector" << vec.x() << "_" << vec.y() << "_" << vec.z() ;
-
-    areaVectorField *f=new areaVectorField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        aMesh(),
-        vec,
-        "zeroGradient"
-    );
-
-    return f;
-}
-
 areaVectorField *FaFieldValueExpressionDriver::makeVectorField
 (
     areaScalarField *x,
     areaScalarField *y,
     areaScalarField *z
 ) {
-    areaVectorField *f=makeVectorField(vector(0,0,0));
+    areaVectorField *f=makeConstantField<areaVectorField>(vector(0,0,0));
 
     forAll(*f,cellI) {
         (*f)[cellI]=vector((*x)[cellI],(*y)[cellI],(*z)[cellI]);
     }
-
-    return f;
-}
-
-edgeVectorField *FaFieldValueExpressionDriver::makeEdgeVectorField
-(
-    const vector &vec
-){
-    std::ostringstream buff;
-    buff << "constantVector" << vec.x() << "_" << vec.y() << "_" << vec.z() ;
-
-    edgeVectorField *f=new edgeVectorField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        aMesh(),
-        vec,
-        "fixedValue"
-    );
 
     return f;
 }
@@ -521,7 +429,7 @@ edgeVectorField *FaFieldValueExpressionDriver::makeEdgeVectorField
     edgeScalarField *z
 )
 {
-    edgeVectorField *f=makeEdgeVectorField(vector(0,0,0));
+    edgeVectorField *f=makeConstantField<edgeVectorField>(vector(0,0,0));
 
     forAll(*f,faceI) {
         (*f)[faceI]=vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);

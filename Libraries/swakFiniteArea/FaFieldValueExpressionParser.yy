@@ -66,6 +66,7 @@
 %}
 
 %token <name>   TOKEN_LINE  "timeline"
+%token <name>   TOKEN_LOOKUP  "lookup"
 %token <name>   TOKEN_SID   "scalarID"
 %token <vname>  TOKEN_VID   "vectorID"
 %token <fsname> TOKEN_FSID  "faceScalarID"
@@ -164,7 +165,7 @@
 
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" 
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
-%destructor          { delete $$; } "timeline" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  
+%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  
 %printer             { debug_stream () << $$; } "number"  "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression"
 
@@ -186,22 +187,22 @@ vexp:   vector                                    { $$ = $1; }
         | vexp '-' vexp 		          { $$ = new Foam::areaVectorField(*$1 - *$3); delete $1; delete $3;}
         | '-' vexp %prec TOKEN_NEG                { $$ = new Foam::areaVectorField(-*$2); delete $2; }
         | '(' vexp ')'		                  { $$ = $2; }  
-        | lexp '?' vexp ':' vexp                  { $$ = driver.doConditional($1,$3,$5,driver.makeVectorField(Foam::vector())); delete $1; delete $3; delete $5; }
+        | lexp '?' vexp ':' vexp                  { $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaVectorField>(Foam::vector())); delete $1; delete $3; delete $5; }
         | TOKEN_position '(' ')'                  { $$ = driver.makePositionField(); }
         | TOKEN_laplacian '(' fsexp ',' vexp ')'  { $$ = new Foam::areaVectorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_faceAverage '(' fvexp ')'         { $$ = new Foam::areaVectorField(Foam::fac::average(*$3)); delete $3; }
         | TOKEN_integrate '(' fvexp ')'           { $$ = new Foam::areaVectorField(Foam::fac::edgeIntegrate(*$3)); delete $3; }
         | TOKEN_surfSum '(' fvexp ')'             { $$ = new Foam::areaVectorField(Foam::fac::edgeSum(*$3)); delete $3; }
-        | TOKEN_min '(' vexp ')'                 { $$ = driver.makeVectorField(Foam::min(*$3).value()); delete $3; }
-        | TOKEN_max '(' vexp ')'                 { $$ = driver.makeVectorField(Foam::max(*$3).value()); delete $3; }
-        | TOKEN_sum '(' vexp ')'                 { $$ = driver.makeVectorField(Foam::sum(*$3).value()); delete $3; }
-        | TOKEN_average '(' vexp ')'             { $$ = driver.makeVectorField(Foam::average(*$3).value()); delete $3; }
+        | TOKEN_min '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_max '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_sum '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::sum(*$3).value()); delete $3; }
+        | TOKEN_average '(' vexp ')'             { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_grad '(' exp ')'                  { $$ = new Foam::areaVectorField(Foam::fac::grad(*$3)); delete $3; }
         | TOKEN_div '(' fsexp ',' vexp ')'        { $$ = new Foam::areaVectorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_VID                               { $$=driver.getField<Foam::areaVectorField>(*$1); }
 ;
 
-fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeEdgeScalarField($3); }
+fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam::edgeScalarField>($3); }
         | fsexp '+' fsexp 		    { $$ = new Foam::edgeScalarField(*$1 + *$3); delete $1; delete $3; }
         | fsexp '*' fsexp 		    { $$ = new Foam::edgeScalarField(*$1 * *$3); delete $1; delete $3; }
         | fvexp '&' fvexp 		    { $$ = new Foam::edgeScalarField(*$1 & *$3); delete $1; delete $3; }
@@ -235,16 +236,16 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeEdgeScalarField($3
         | TOKEN_sign '(' fsexp ')'          { $$ = new Foam::edgeScalarField(Foam::sign(*$3)); delete $3; }
         | TOKEN_pos '(' fsexp ')'           { $$ = new Foam::edgeScalarField(Foam::pos(*$3)); delete $3; }
         | TOKEN_neg '(' fsexp ')'           { $$ = new Foam::edgeScalarField(Foam::neg(*$3)); delete $3; }
-        | TOKEN_min '(' fsexp ')'           { $$ = driver.makeEdgeScalarField(Foam::min(*$3).value()); delete $3; }
-        | TOKEN_max '(' fsexp ')'           { $$ = driver.makeEdgeScalarField(Foam::max(*$3).value()); delete $3; }
-        | TOKEN_sum '(' fsexp ')'           { $$ = driver.makeEdgeScalarField(Foam::sum(*$3).value()); delete $3; }
-        | TOKEN_average '(' fsexp ')'       { $$ = driver.makeEdgeScalarField(Foam::average(*$3).value()); delete $3; }
+        | TOKEN_min '(' fsexp ')'           { $$ = driver.makeConstantField<Foam::edgeScalarField>(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_max '(' fsexp ')'           { $$ = driver.makeConstantField<Foam::edgeScalarField>(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_sum '(' fsexp ')'           { $$ = driver.makeConstantField<Foam::edgeScalarField>(Foam::sum(*$3).value()); delete $3; }
+        | TOKEN_average '(' fsexp ')'       { $$ = driver.makeConstantField<Foam::edgeScalarField>(Foam::average(*$3).value()); delete $3; }
         | '-' fsexp %prec TOKEN_NEG         { $$ = new Foam::edgeScalarField(-*$2); delete $2; }
         | '(' fsexp ')'		            { $$ = $2; }  
         | fvexp '.' 'x'                     { $$ = new Foam::edgeScalarField($1->component(0)); delete $1; }
         | fvexp '.' 'y'                     { $$ = new Foam::edgeScalarField($1->component(1)); delete $1; }
         | fvexp '.' 'z'                     { $$ = new Foam::edgeScalarField($1->component(2)); delete $1; }
-        | flexp '?' fsexp ':' fsexp         { $$ = driver.doConditional($1,$3,$5,driver.makeEdgeScalarField(0.)); delete $1; delete $3; delete $5; }
+        | flexp '?' fsexp ':' fsexp         { $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeScalarField>(0.)); delete $1; delete $3; delete $5; }
         | TOKEN_mag '(' fsexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' fvexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_length '(' ')'                { $$ = driver.makeLengthField(); }
@@ -262,16 +263,16 @@ fvexp:  fvector                            { $$ = $1; }
         | fvexp '-' fvexp 		   { $$ = new Foam::edgeVectorField(*$1 - *$3); delete $1; delete $3;}
         | '-' fvexp %prec TOKEN_NEG 	   { $$ = new Foam::edgeVectorField(-*$2); delete $2; }
         | '(' fvexp ')'		           { $$ = $2; }  
-        | flexp '?' fvexp ':' fvexp        { $$ = driver.doConditional($1,$3,$5,driver.makeEdgeVectorField(Foam::vector::zero)); delete $1; delete $3; delete $5; }
+        | flexp '?' fvexp ':' fvexp        { $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeVectorField>(Foam::vector::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_fposition '(' ')'          { $$ = driver.makeEdgePositionField(); }
         | TOKEN_fprojection '(' ')'        { $$ = driver.makeEdgeProjectionField(); }
         | TOKEN_face '(' ')'               { $$ = driver.makeEdgeField(); }
         | TOKEN_lnGrad '(' vexp ')'        { $$ = new Foam::edgeVectorField(Foam::fac::lnGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' vexp ')'   { $$ = new Foam::edgeVectorField(Foam::fac::interpolate(*$3)); delete $3; }
-        | TOKEN_min '(' fvexp ')'          { $$ = driver.makeEdgeVectorField(Foam::min(*$3).value()); delete $3; }
-        | TOKEN_max '(' fvexp ')'          { $$ = driver.makeEdgeVectorField(Foam::max(*$3).value()); delete $3; }
-        | TOKEN_sum '(' fvexp ')'          { $$ = driver.makeEdgeVectorField(Foam::sum(*$3).value()); delete $3; }
-        | TOKEN_average '(' fvexp ')'      { $$ = driver.makeEdgeVectorField(Foam::average(*$3).value()); delete $3; }
+        | TOKEN_min '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_max '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_sum '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::sum(*$3).value()); delete $3; }
+        | TOKEN_average '(' fvexp ')'      { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_FVID                       { $$ = driver.getField<Foam::edgeVectorField>(*$1); }
 ;
  
@@ -279,7 +280,7 @@ scalar:	TOKEN_NUM		        { $$ = $1; }
         | '-' TOKEN_NUM         	{ $$ = -$2; } 
 ;
 
-exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField($1); }
+exp:    TOKEN_NUM                                  { $$ = driver.makeConstantField<Foam::areaScalarField>($1); }
         | exp '+' exp 		                   { $$ = new Foam::areaScalarField(*$1 + *$3); delete $1; delete $3; }
         | exp '-' exp 		                   { $$ = new Foam::areaScalarField(*$1 - *$3); delete $1; delete $3; }
         | exp '*' exp 		                   { $$ = new Foam::areaScalarField(*$1 * *$3); delete $1; delete $3; }
@@ -316,10 +317,10 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField
         | TOKEN_sign '(' exp ')'                   { $$ = new Foam::areaScalarField(Foam::sign(*$3)); delete $3; }
         | TOKEN_pos '(' exp ')'                    { $$ = new Foam::areaScalarField(Foam::pos(*$3)); delete $3; }
         | TOKEN_neg '(' exp ')'                    { $$ = new Foam::areaScalarField(Foam::neg(*$3)); delete $3; }
-        | TOKEN_min '(' exp ')'                    { $$ = driver.makeScalarField(Foam::min(*$3).value()); delete $3; }
-        | TOKEN_max '(' exp ')'                    { $$ = driver.makeScalarField(Foam::max(*$3).value()); delete $3; }
-        | TOKEN_sum '(' exp ')'                    { $$ = driver.makeScalarField(Foam::sum(*$3).value()); delete $3; }
-        | TOKEN_average '(' exp ')'                { $$ = driver.makeScalarField(Foam::average(*$3).value()); delete $3; }
+        | TOKEN_min '(' exp ')'                    { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_max '(' exp ')'                    { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_sum '(' exp ')'                    { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::sum(*$3).value()); delete $3; }
+        | TOKEN_average '(' exp ')'                { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_mag '(' exp ')'                    { $$ = new Foam::areaScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' vexp ')'                   { $$ = new Foam::areaScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_div '(' vexp ')'                   { $$ = new Foam::areaScalarField(Foam::fac::div(*$3)); delete $3; }
@@ -334,22 +335,23 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeScalarField
         | vexp '.' 'x'                             { $$ = new Foam::areaScalarField($1->component(0)); delete $1; }
         | vexp '.' 'y'                             { $$ = new Foam::areaScalarField($1->component(1)); delete $1; }
         | vexp '.' 'z'                             { $$ = new Foam::areaScalarField($1->component(2)); delete $1; }
-        | lexp '?' exp ':' exp                     { $$ = driver.doConditional($1,$3,$5,driver.makeScalarField(0.)); delete $1; delete $3; delete $5; }
-        | TOKEN_pi                                 { $$ = driver.makeScalarField(M_PI); }
+        | lexp '?' exp ':' exp                     { $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaScalarField>(0.)); delete $1; delete $3; delete $5; }
+        | TOKEN_pi                                 { $$ = driver.makeConstantField<Foam::areaScalarField>(M_PI); }
         | TOKEN_rdist '(' vexp ')'                 { $$ = driver.makeRDistanceField(*$3); delete $3; }
         | TOKEN_area '(' ')'                       { $$ = driver.makeAreaField(); }
         | TOKEN_rand '(' ')'                       { $$ = driver.makeRandomField(); }
         | TOKEN_randNormal '(' ')'                 { $$ = driver.makeGaussRandomField(); }
         | TOKEN_id '(' ')'                         { $$ = driver.makeCellIdField(); }
-        | TOKEN_cpu'(' ')'                         { $$ = driver.makeScalarField(Foam::Pstream::myProcNo()); }
-        | TOKEN_deltaT '(' ')'                     { $$ = driver.makeScalarField(driver.runTime().deltaT().value()); }
-        | TOKEN_time '(' ')'                       { $$ = driver.makeScalarField(driver.runTime().time().value()); }
+        | TOKEN_cpu'(' ')'                         { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::Pstream::myProcNo()); }
+        | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.runTime().deltaT().value()); }
+        | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::areaScalarField>(*$1); }
-        | TOKEN_LINE		                   { $$ = driver.makeScalarField(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
+        | TOKEN_LINE		                   { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
+        | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::areaScalarField>(driver.getLookup(*$1,*$3)); delete $1;  delete$3;}
 ;
 
-lexp: TOKEN_TRUE                       { $$ = driver.makeScalarField(1); }
-    | TOKEN_FALSE                      { $$ = driver.makeScalarField(0); }
+lexp: TOKEN_TRUE                       { $$ = driver.makeConstantField<Foam::areaScalarField>(1); }
+    | TOKEN_FALSE                      { $$ = driver.makeConstantField<Foam::areaScalarField>(0); }
     | exp '<' exp                      { $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);  delete $1; delete $3; }
     | exp '>' exp                      { $$ = driver.doCompare($1,std::greater<Foam::scalar>(),$3);  delete $1; delete $3; }
     | exp TOKEN_LEQ exp                { $$ = driver.doCompare($1,std::less_equal<Foam::scalar>(),$3);  delete $1; delete $3; }
@@ -362,8 +364,8 @@ lexp: TOKEN_TRUE                       { $$ = driver.makeScalarField(1); }
     | '!' lexp %prec TOKEN_NOT         { $$ = driver.doLogicalNot($2); delete $2; }
 ;
 
-flexp: TOKEN_surf '(' TOKEN_TRUE ')'  { $$ = driver.makeEdgeScalarField(1); }
-    | TOKEN_surf '(' TOKEN_FALSE ')'  { $$ = driver.makeEdgeScalarField(0); }
+flexp: TOKEN_surf '(' TOKEN_TRUE ')'  { $$ = driver.makeConstantField<Foam::edgeScalarField>(1); }
+    | TOKEN_surf '(' TOKEN_FALSE ')'  { $$ = driver.makeConstantField<Foam::edgeScalarField>(0); }
     | fsexp '<' fsexp                 { $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);  delete $1; delete $3; }
     | fsexp '>' fsexp                 { $$ = driver.doCompare($1,std::greater<Foam::scalar>(),$3);  delete $1; delete $3; }
     | fsexp TOKEN_LEQ fsexp           { $$ = driver.doCompare($1,std::less_equal<Foam::scalar>(),$3);  delete $1; delete $3; }
