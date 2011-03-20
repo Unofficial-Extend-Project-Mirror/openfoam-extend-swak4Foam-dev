@@ -111,6 +111,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     );
 }
 
+void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
+{
+    setVariableStrings(dict);
+
+    readTables(dict);
+}
+
 void CommonValueExpressionDriver::readTables(const dictionary &dict)
 {
     if(dict.found("timelines")) {

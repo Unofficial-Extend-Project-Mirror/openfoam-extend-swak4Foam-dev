@@ -106,8 +106,7 @@ void Foam::expressionField::execute()
             false  // don't look up files in memory
         );
 
-        driver.setVariableStrings(dict_);
-        driver.readTables(dict_);
+        driver.readVariablesAndTables(dict_);
 
         driver.clearVariables();
 

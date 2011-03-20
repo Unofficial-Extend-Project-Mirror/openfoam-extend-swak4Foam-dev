@@ -310,6 +310,9 @@ public:
     //- read all the interpolation tables known to man
     void readTables(const dictionary &);
 
+    //- read variables and tables (for objects that were not constructed by a dictionary)
+    void readVariablesAndTables(const dictionary &);
+
     //- write some interpolation tables
     void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
 

@@ -87,9 +87,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     groovyBCCommon<Type>(dict,false,true),
     driver_(getFvPatch(this->patch()))
 {
-    driver_.setVariableStrings(dict);
-
-    driver_.readTables(dict);
+    driver_.readVariablesAndTables(dict);
 
     this->refValue() = pTraits<Type>::zero;
 
