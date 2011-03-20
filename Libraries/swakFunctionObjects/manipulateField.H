@@ -42,6 +42,7 @@ SourceFiles
 #include "pointFieldFwd.H"
 #include "Switch.H"
 #include "autoPtr.H"
+#include "dictionary.H"
 
 namespace Foam
 {
@@ -76,6 +77,8 @@ protected:
     string maskExpression_;
 
     const objectRegistry& obr_;
+
+    dictionary dict_;
 
     template<class T>
     void manipulate(

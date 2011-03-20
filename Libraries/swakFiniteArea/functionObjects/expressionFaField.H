@@ -77,6 +77,8 @@ protected:
 
     const objectRegistry& obr_;
 
+    const dictionary &dict_;
+
     autoPtr<areaVectorField> vectorField_;
 
     autoPtr<areaScalarField> scalarField_;

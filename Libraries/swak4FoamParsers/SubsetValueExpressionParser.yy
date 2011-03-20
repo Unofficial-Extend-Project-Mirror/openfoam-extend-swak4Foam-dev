@@ -53,6 +53,7 @@
 %}
 
 %token <name>   TOKEN_LINE  "timeline"
+%token <name>   TOKEN_LOOKUP  "lookup"
 %token <name>   TOKEN_SID   "scalarID"
 %token <name>   TOKEN_VID   "vectorID"
 %token <name>   TOKEN_LID   "logicalID"
@@ -187,7 +188,7 @@
 
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "tensorID" "pointTensorID" "symmTensorID" "pointSymmTensorID" "sphericalTensorID" "pointSphericalTensorID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
-%destructor          { delete $$; } "timeline" "scalarID"  "vectorID"  "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "vector" "expression" "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
+%destructor          { delete $$; } "timeline" "lookup" "scalarID"  "vectorID"  "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "vector" "expression" "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
 %printer             { debug_stream () << $$; } "value"  "sexpression"
 %printer             { debug_stream () << $$ /* ->name().c_str() */ ; } "expression"  "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
 
@@ -376,6 +377,9 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
 	| TOKEN_LINE		{ 
             $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
 				}
+	| TOKEN_LOOKUP '(' exp ')' { 
+            $$=driver.getLookup(*$1,*$3).ptr(); delete $1; delete$3;
+                                    }
 ;
 
 texp:   tensor                  { $$ = $1; }

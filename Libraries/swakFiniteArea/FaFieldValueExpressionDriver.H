@@ -103,12 +103,14 @@ public:
     template<class T>
     T *getField(const string &name);
 
+    template<class FType>
+    inline FType *makeConstantField(const typename FType::value_type &val);
+
+    template<class FType>
+    inline FType *makeField(const Field<typename FType::value_type> &val);
+
     // make constant fields
-    areaScalarField *makeScalarField(const scalar &val);
-    areaVectorField *makeVectorField(const vector &vec);
     areaVectorField *makeVectorField(areaScalarField *x,areaScalarField *y,areaScalarField *z);
-    edgeScalarField *makeEdgeScalarField(const scalar &val);
-    edgeVectorField *makeEdgeVectorField(const vector &vec);
     edgeVectorField *makeEdgeVectorField(edgeScalarField *x,edgeScalarField *y,edgeScalarField *z);
     // areaScalarField *makeCellSetField(const string &name);
     // areaScalarField *makeCellZoneField(const string &name);

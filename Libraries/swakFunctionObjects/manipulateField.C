@@ -42,7 +42,8 @@ Foam::manipulateField::manipulateField
 )
 :
     active_(true),
-    obr_(obr)
+    obr_(obr),
+    dict_(dict)
 {
     if (!isA<fvMesh>(obr_))
     {
@@ -97,36 +98,33 @@ void Foam::manipulateField::execute()
             false  // don't look up files in memory
         );
 
-        driver.parse(expression_);
+        driver.readVariablesAndTables(dict_);
 
-        FieldValueExpressionDriver ldriver(
-            mesh.time().timeName(),
-            mesh.time(),
-            mesh,
-            false, // no caching. No need
-            true,  // search fields in memory
-            false  // don't look up files in memory
-        );
+        driver.clearVariables();
 
-        ldriver.parse(maskExpression_);
+        driver.parse(maskExpression_);
 
-        if(!ldriver.resultIsLogical()) {
+        if(!driver.resultIsLogical()) {
             FatalErrorIn("manipulateField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
                     << abort(FatalError);
         }
 
+        volScalarField conditionField(driver.getScalar());
+
+        driver.parse(expression_);
+
         if(driver.resultIsVector()) {
             manipulate(
                 driver.getVector(),
-                ldriver.getScalar()
+                conditionField
             );
             
         } else if(driver.resultIsScalar()) {
             manipulate(
                 driver.getScalar(),
-                ldriver.getScalar()
+                conditionField
             );
         } else {
             WarningIn("Foam::manipulateField::execute()")

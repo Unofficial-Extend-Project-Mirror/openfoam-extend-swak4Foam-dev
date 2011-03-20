@@ -42,7 +42,8 @@ Foam::expressionField::expressionField
 )
 :
     active_(true),
-    obr_(obr)
+    obr_(obr),
+    dict_(dict)
 {
     if (!isA<fvMesh>(obr_))
     {
@@ -104,6 +105,10 @@ void Foam::expressionField::execute()
             true,  // search fields in memory
             false  // don't look up files in memory
         );
+
+        driver.readVariablesAndTables(dict_);
+
+        driver.clearVariables();
 
         driver.parse(expression_);
 

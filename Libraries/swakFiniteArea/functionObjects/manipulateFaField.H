@@ -77,6 +77,8 @@ protected:
 
     const objectRegistry& obr_;
 
+    const dictionary &dict_;
+
     template<class T>
     void manipulate(
         const T &data,
