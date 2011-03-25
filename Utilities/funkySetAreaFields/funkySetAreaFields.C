@@ -102,9 +102,13 @@ void setField
         }
     }
 
+    label totalCells=tmp->size();
+    reduce(totalCells,plusOp<label>());
+    reduce(setCells,plusOp<label>());
+
     FaFieldValueExpressionDriver::setValuePatches(*tmp,keepPatches,valuePatches);
 
-    Info << " Setting " << setCells << " of " << tmp->size() << " cells" << endl;
+    Info << " Setting " << setCells << " of " << totalCells << " cells" << endl;
 
     Info << " Writing to " << name << endl;
 
