@@ -14,6 +14,8 @@ else:
 from os import listdir,path
 from PyFoam.Applications.TimelinePlot import TimelinePlot
 
+gpFile=open("comparison.gnuplot","w")
+
 for f in listdir("baselineData"):
     print "\n\n Comparing:",f
     TimelinePlot(args=[".",
@@ -22,3 +24,13 @@ for f in listdir("baselineData"):
                        "--basic-mode=lines",
                        "--vector-mode="+vectorMode,
                        "--compare","--metrics"])
+    tmp=sys.stdout
+    sys.stdout=gpFile
+    TimelinePlot(args=[".",
+                       "--dir="+f,
+                       "--reference-dir="+path.join("baselineData",f),
+                       "--basic-mode=lines",
+                       "--vector-mode="+vectorMode])
+    sys.stdout=tmp
+
+gpFile.close()
