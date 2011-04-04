@@ -636,7 +636,8 @@ libs (
     "libsimpleSwakFunctionObjects.so" 
     "libswakFunctionObjects.so" 
     "libswakTopoSources.so" 
-    //    "libcompressibleRASModels.so"
+    // Needed to decompose on 1.7
+    "libcompressibleRASModels.so"
 ) ;
 
 // ************************************************************************* //
