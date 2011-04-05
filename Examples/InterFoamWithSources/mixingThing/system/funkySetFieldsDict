@@ -15,22 +15,28 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defaultFieldValues
+expressions
 (
-    volScalarFieldValue alpha1 0
-);
-
-regions
-(
-    boxToCell
+    setLower
     {
-        box (0 0 -1) (0.1461 0.292 1);
-        fieldValues
-        (
-            volScalarFieldValue alpha1 1
-        );
-    }
-);
+        field alpha1;
+        keepPatches true;
 
+        // this is just for finding a reported bug
+        /*        variables (
+            "Xmin=-0.15;"
+            "Ymin=0.0;"
+            "Zmin=-0.15;"
+            "Xmax=0.15;"
+            "Ymax=0.3;"
+            "Zmax=0.15;"
+            "power=27000;"
+            "V=(Xmax-Xmin)*(Ymax-Ymin)*(Zmax-Zmin);"
+            "powerDens=power/V;"
+            ); */
+        expression "pos().y<0 ? 1 : 0";
+    }
+
+);
 
 // ************************************************************************* //
