@@ -121,6 +121,21 @@ functions
             max
         );        
     }
+    swakSurfInterface
+    {
+        type surfaces;
+        outputControl outputTime;
+        //        outputControl timeStep;
+        outputInterval 1;
+        fields ( U );
+        surfaceFormat vtk;
+        surfaces (
+            interface {
+                type swakRegistryProxy;
+                surfaceName interface;
+            }
+        );
+    }
 );
 
 // ************************************************************************* //
