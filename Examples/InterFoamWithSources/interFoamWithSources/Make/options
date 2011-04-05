@@ -9,6 +9,7 @@ EXE_INC = \
 
 
 EXE_LIBS = \
+    -ltwoPhaseInterfaceProperties \
     -linterfaceProperties \
     -lincompressibleTransportModels \
     -lincompressibleTurbulenceModel \
