@@ -55,6 +55,7 @@ maxAlphaCo      0.2;
 maxDeltaT       1e-3;
 
 libs (
+    "libOpenFOAM.so" // keeps paraFoam happy
     "libtwoPhaseInterfaceProperties.so"
     "libinterfaceProperties.so"
     "libsimpleSwakFunctionObjects.so" 
@@ -136,7 +137,7 @@ functions
                 surfaceName interface;
             }
         );
-    }
+    } 
 );
 
 // ************************************************************************* //
