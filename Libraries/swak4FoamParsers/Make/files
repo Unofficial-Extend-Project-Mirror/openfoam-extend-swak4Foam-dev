@@ -1,5 +1,6 @@
 SurfacesRepository.C
 ExpressionResult.C
+StoredExpressionResult.C
 
 FieldValueExpressionParser.yy
 PatchValueExpressionParser.yy

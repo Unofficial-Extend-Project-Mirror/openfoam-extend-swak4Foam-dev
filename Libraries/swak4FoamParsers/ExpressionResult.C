@@ -59,6 +59,35 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     (*this)=rhs;
 }
 
+ExpressionResult::ExpressionResult(const dictionary &dict)
+:
+    valType_(dict.lookupOrDefault<word>("valueType","None")),
+    valPtr_(NULL),
+    isPoint_(dict.lookupOrDefault<bool>("isPoint",false))
+{
+    if(
+        dict.found("value")
+    ) {
+        if(valType_==pTraits<scalar>::typeName) {
+            valPtr_=new scalarField(dict.lookup("value"));
+        } else if(valType_==vector::typeName) {
+            valPtr_=new Field<vector>(dict.lookup("value"));
+        } else if(valType_==tensor::typeName) {
+            valPtr_=new Field<tensor>(dict.lookup("value"));
+        } else if(valType_==symmTensor::typeName) {
+            valPtr_=new Field<symmTensor>(dict.lookup("value"));
+        } else if(valType_==sphericalTensor::typeName) {
+            valPtr_=new Field<sphericalTensor>(dict.lookup("value"));
+        } else if(valType_==pTraits<bool>::typeName) {
+            valPtr_=new Field<bool>(dict.lookup("value"));
+        } else {
+            FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
+                << "Don't know how to read data type " << valType_ << endl
+                    << abort(FatalError);
+        }
+    }
+}
+
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -69,6 +98,11 @@ ExpressionResult::~ExpressionResult()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool ExpressionResult::hasValue() const
+{
+    return valType_!="None" && valPtr_!=NULL;
+}
 
 void ExpressionResult::clearResult()
 {
