@@ -63,10 +63,29 @@ functions (
     }
     biggestDFreeMem
     {
-        //        type patchExpression; // currently not working
         type swakExpression;
         valueType patch;
         patchName free;
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        accumulations (
+            max
+        );
+        expression "maxD";
+        verbose true;
+    }
+    biggestDFreeMem2
+    {
+        type patchExpression; 
+        patches (
+            free
+            forced
+        );
         storedVariables (
             {
                 name maxD;
