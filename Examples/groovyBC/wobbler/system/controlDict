@@ -46,6 +46,74 @@ graphFormat     raw;
 
 runTimeModifiable yes;
 
-libs ("libOpenFOAM.so" "libgroovyBC.so");
+functions (
+    biggestD
+    {
+        type patchExpression;
+        patches ( 
+            free 
+            forced 
+            other
+        );
+        expression "mag(D)";
+        accumulations (
+            max
+        );
+        verbose true;
+    }
+    biggestDFreeMem
+    {
+        //        type patchExpression; // currently not working
+        type swakExpression;
+        valueType patch;
+        patchName free;
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        accumulations (
+            max
+        );
+        expression "maxD";
+        verbose true;
+    }
+    biggestDVolMem
+    {
+        type swakExpression;
+        valueType internalField;
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        accumulations (
+            max
+        );
+        expression "maxD";
+        verbose true;
+    }
+    biggestDVol
+    {
+        type swakExpression;
+        valueType internalField;
+        accumulations (
+            max
+        );
+        expression "mag(D)";
+        verbose true;
+    }
+);
+
+libs (
+    "libOpenFOAM.so" 
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+);
 
 // ************************************************************************* //
