@@ -121,6 +121,10 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
+
     setVariableStrings(dict);
 
     readTables(dict);
@@ -500,10 +504,17 @@ bool CommonValueExpressionDriver::update()
 void CommonValueExpressionDriver::updateStoredVariables(bool force)
 {
     if(storedVariablesIndex_<0) {
+        if(debug) {
+            Info << "First update: " << mesh().time().timeIndex() << endl;
+        }
         storedVariablesIndex_=mesh().time().timeIndex();
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(!v.hasValue()) {
+                if(debug) {
+                    Info << "First valuate: " << v.initialValueExpression() 
+                        << " -> " << v.name() << endl;
+                }
                 parse(v.initialValueExpression());
                 v=result_;
             }
@@ -515,9 +526,17 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
         ||
         storedVariablesIndex_!=mesh().time().timeIndex()
     ) {
+        if(debug) {
+            Info << "Store variables: " << force << " " 
+                << storedVariablesIndex_ << " " << mesh().time().timeIndex() << endl;
+        }
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(variables_.found(v.name())) {
+                if(debug) {
+                    Info << "Storing variable: " << v.name() << " " 
+                        << variables_[v.name()] << endl;
+                }
                 v=variables_[v.name()];
             }
         }
@@ -527,6 +546,10 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
 
 void CommonValueExpressionDriver::clearVariables()
 {
+    if(debug) {
+        Info << "Clearing variables" << endl;
+    }
+
     this->update();
 
     updateStoredVariables();
@@ -542,7 +565,13 @@ void CommonValueExpressionDriver::clearVariables()
 void CommonValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
 {
     parse(expr);
-    variables_.insert(name,ExpressionResult(result_));
+
+    if(debug) {
+        Info << "Evaluating: " << expr << " -> " << name << endl;
+        Info << result_;
+    }
+
+    variables_.set(name,ExpressionResult(result_));
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
