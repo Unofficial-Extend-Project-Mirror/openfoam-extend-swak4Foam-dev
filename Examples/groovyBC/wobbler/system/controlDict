@@ -126,6 +126,22 @@ functions (
         expression "mag(D)";
         verbose true;
     }
+    biggestDField
+    {
+        type expressionField;
+        fieldName maxDField;
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        expression "maxD";
+        autowrite true;
+        outputControl timeStep;
+        outputInterval 1;
+    }
 );
 
 libs (
