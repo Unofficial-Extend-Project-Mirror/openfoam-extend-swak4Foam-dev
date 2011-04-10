@@ -332,6 +332,28 @@ functions
             max
         );
     }
+    surfacePlaneMaxU
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        verbose true;
+        variables (
+            "maxU=(maxU<mag(U)) ? mag(U) : maxU;"
+        );
+        storedVariables (
+            {
+                name maxU;
+                initialValue "0";
+            }
+        );
+        expression "maxU";
+        accumulations (            
+            average
+            max
+            min
+        );
+    }
     createsurfacePlane2
     {
         type createSampledSurface;
