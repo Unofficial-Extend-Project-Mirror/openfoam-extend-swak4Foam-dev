@@ -38,20 +38,25 @@ Description
 #ifndef swakChecks_H
 #define swakChecks_H
 
+#include "OStringStream.H"
+
 namespace Foam {
     template<class T1,class T2>
-    void swakAssertSameSize(const T1 *a,const T2 *b,const char *file,const char *where) 
+    string swakAssertSameSize(const T1 *a,const T2 *b) 
     {
         if(a->size()!=b->size()) {
-            FatalErrorIn(string(file)+" - Operand \""+where+"\"")
-                << "Operands have different sizes: " 
-                    << a->size() << " and " << b->size()
-                    << endl
-                    << abort(FatalError);
+            OStringStream o;
+
+            o << "Operands have different sizes: " 
+                << a->size() << " and " << b->size();
+
+            return string(o.str());
         }
+
+        return string("");
     }
 }
 
-#define sameSize(a,b,op) Foam::swakAssertSameSize(a,b,__FILE__,op)
+#define sameSize(a,b) {Foam::string err=Foam::swakAssertSameSize(a,b); if(err!="") { error(yylloc,err); YYERROR; }}
 
 #endif
