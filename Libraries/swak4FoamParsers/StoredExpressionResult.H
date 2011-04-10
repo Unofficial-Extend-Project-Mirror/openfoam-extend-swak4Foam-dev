@@ -29,22 +29,22 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::ExpressionResult
+    Foam::StoredExpressionResult
 
 Description
 
 SourceFiles
-    ExpressionResultI.H
-    ExpressionResult.C
-    ExpressionResultIO.C
+    StoredExpressionResultI.H
+    StoredExpressionResult.C
+    StoredExpressionResultIO.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef ExpressionResult_H
-#define ExpressionResult_H
+#ifndef StoredExpressionResult_H
+#define StoredExpressionResult_H
 
-#include "Field.H"
+#include "ExpressionResult.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,67 +52,49 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class ExpressionResult Declaration
+                           Class StoredExpressionResult Declaration
 \*---------------------------------------------------------------------------*/
 
-class ExpressionResult
+class StoredExpressionResult
+:
+    public ExpressionResult
 {
     // Private data
 
-    string valType_;
+    word name_;
 
-    void *valPtr_;
-    
-    bool isPoint_;
-
-    void uglyDelete();
-
-    template<class Type>
-    ExpressionResult getUniformInternal(const label size,bool noWarn);
+    string initialValueExpression_;
 
 public:
 
     // Constructors
 
     //- Construct null
-    ExpressionResult();
+    StoredExpressionResult();
 
     //- Construct as copy
-    ExpressionResult(const ExpressionResult&);
+    StoredExpressionResult(const StoredExpressionResult&);
 
     //- Construct from a dictionary
-    ExpressionResult(const dictionary&);
+    StoredExpressionResult(const dictionary&);
 
     // Destructor
 
-    ~ExpressionResult();
+    ~StoredExpressionResult();
+
+    void operator=(const StoredExpressionResult&);
 
     void operator=(const ExpressionResult&);
 
-    template<class Type>
-    inline void setResult(Field<Type> *,bool isPoint=false);
+    const word name() const { return name_; }
 
-    template<class Type>
-    inline void setResult(const Field<Type> &,bool isPoint=false);
+    const string initialValueExpression() const { return initialValueExpression_; }
 
-    template<class Type>
-    inline void setResult(Type val,label size);
+    friend Ostream & operator<<(Ostream &,const StoredExpressionResult &);
 
-    template<class Type>
-    inline tmp<Field<Type> > getResult(bool keep=false);
-
-    // Construct a uniform field from the current results
-    ExpressionResult getUniform(const label size,bool noWarn);
-
-    void clearResult();
-
-    inline const string &type() const;
-
-    inline bool isPoint() const;
-
-    bool hasValue() const;
-
-    friend Ostream & operator<<(Ostream &,const ExpressionResult &);
+    friend Istream & operator>>(Istream &,StoredExpressionResult &);
+    
+    friend bool operator!=(const StoredExpressionResult &,const StoredExpressionResult &);
 };
 
 
@@ -122,7 +104,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "ExpressionResultI.H"
+#include "StoredExpressionResultI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

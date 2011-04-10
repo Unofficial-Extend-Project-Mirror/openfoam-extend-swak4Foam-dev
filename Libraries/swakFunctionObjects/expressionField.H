@@ -51,6 +51,7 @@ class objectRegistry;
 class dictionary;
 class mapPolyMesh;
 
+class FieldValueExpressionDriver;
 
 class expressionField
 {
@@ -89,6 +90,8 @@ protected:
         const T &data,
         autoPtr<T> &store
     );
+
+    autoPtr<FieldValueExpressionDriver> driver_;
 
 public:
 

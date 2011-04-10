@@ -89,22 +89,26 @@ void Foam::expressionFaField::read(const dictionary& dict)
         name_=word(dict.lookup("fieldName"));
         expression_=string(dict.lookup("expression"));
         autowrite_=Switch(dict.lookup("autowrite"));
+
+        const fvMesh& mesh = refCast<const fvMesh>(obr_);
+        
+        driver_.set(
+            new FaFieldValueExpressionDriver(
+                mesh,
+                false, // no caching. No need
+                true,  // search fields in memory
+                false  // don't look up files in memory
+            )
+        );
+        
+        driver_->readVariablesAndTables(dict_);
     }
 }
 
 void Foam::expressionFaField::execute()
 {
     if(active_) {
-        const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
-        FaFieldValueExpressionDriver driver(
-            mesh,
-            false, // no caching. No need
-            true,  // search fields in memory
-            false  // don't look up files in memory
-        );
-        
-        driver.readVariablesAndTables(dict_);
+        FaFieldValueExpressionDriver &driver=driver_();
 
         driver.clearVariables();
 
