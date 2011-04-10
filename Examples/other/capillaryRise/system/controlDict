@@ -89,6 +89,25 @@ functions
             max
         );        
     }
+    moved
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "mag(startPos-pos())";
+        storedVariables (
+            {
+                name startPos;
+                initialValue "pos()";
+            }
+        );
+        accumulations (
+            min
+            max
+            average
+        );        
+    }
     surface
     {
         type swakExpression;

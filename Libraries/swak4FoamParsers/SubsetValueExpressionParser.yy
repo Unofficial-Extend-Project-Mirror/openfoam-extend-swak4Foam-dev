@@ -50,6 +50,7 @@
 
 %{
 #include "SubsetValueExpressionDriverYY.H"
+#include "swakChecks.H"
 %}
 
 %token <name>   TOKEN_LINE  "timeline"
@@ -223,7 +224,7 @@ vexp:   vector                  { $$ = $1; }
         | vexp '&' hexp 		{ $$ = new Foam::vectorField(*$1 & *$3); delete $1; delete $3; }
         | vexp '/' exp 		        { $$ = new Foam::vectorField(*$1 / *$3); delete $1; delete $3; }
         | vexp '^' vexp 		{ $$ = new Foam::vectorField(*$1 ^ *$3); delete $1; delete $3; }
-        | vexp '-' vexp 		{ $$ = new Foam::vectorField(*$1 - *$3); delete $1; delete $3;}
+| vexp '-' vexp 		{ sameSize($1,$3,"vexp - vexp"); $$ = new Foam::vectorField(*$1 - *$3); delete $1; delete $3;}
         | '-' vexp %prec TOKEN_NEG 	        { $$ = new Foam::vectorField(-*$2); delete $2; }
         | '(' vexp ')'		        { $$ = $2; }  
 //        | TOKEN_diag '(' texp ')'       { $$ = new Foam::vectorField( Foam::diag(*$3) ); delete $3; }
