@@ -36,7 +36,8 @@ License
 #include "surfaceMesh.H"
 #include "fvsPatchField.H"
 #include "pointPatchField.H"
-#include "primitivePatchInterpolation.H"
+//#include "primitivePatchInterpolation.H"
+#include "interpolation.H"
 
 #include <cassert>
 
@@ -65,60 +66,90 @@ namespace Foam {
     template<class Type,class volField,class surfField>
     Field<Type> *SampledSetValueExpressionDriver::sampleOrInterpolateInternal(const word &name)
     {
-//         if(this->variables_.found(name)) {
-//             return this->variables_[name].getResult<Type>(true).ptr();
-//         }
-//         Field<Type> *result;
+        if(this->variables_.found(name)) {
+            return this->variables_[name].getResult<Type>(true).ptr();
+        }
 
-//         if(
-//             this->searchInMemory() 
-//             && 
-//             this->mesh().foundObject<volField>(name)
-//         ) {
-//             if(interpolate_) {
-//                 autoPtr<interpolation<Type> > inter(
-//                     interpolation<Type>::New(
-//                         interpolationType_,
-//                         this->mesh().lookupObject<volField>(name)
-//                     )
-//                 );
-                
-//                 result=new Field<Type>(
-//                     this->theSet_.interpolate(
-//                         inter()
-//                     )
-//                 );
-//             } else {
-//                 result=new Field<Type>(
-//                     this->theSet_.sample(
-//                         this->mesh().lookupObject<volField>(name)
-//                     )
-//                 );
-//             }
-//         } else {
-//             autoPtr<volField> f=this->getOrReadField<volField>(name);
+        Field<Type> *result;
+        const sampledSet& samples = this->theSet_;
 
-//             if(interpolate_) {
-//                 autoPtr<interpolation<Type> > inter(
-//                     interpolation<Type>::New(
-//                         interpolationType_,
-//                         f()
-//                     )
-//                 );
+        if(
+            this->searchInMemory() 
+            && 
+            this->mesh().foundObject<volField>(name)
+        ) {
+            if(interpolate_) {
+                autoPtr<interpolation<Type> > inter(
+                    interpolation<Type>::New(
+                        interpolationType_,
+                        this->mesh().lookupObject<volField>(name)
+                    )
+                );
                 
-//                 result=new Field<Type>(
-//                     this->theSet_.interpolate(
-//                         inter()
-//                     )
-//                 );
-//             } else {
-//                 result=new Field<Type>(
-//                     this->theSet_.sample(
-//                         f()
-//                     )
-//                 );
-//             }
-//         }
+                result=new Field<Type>(this->theSet_.size());
+                Field<Type> &values=*result;
+
+                forAll(samples, samplei)
+                {
+                    const point& samplePt = samples[samplei];
+                    label celli = samples.cells()[samplei];
+                    label facei = samples.faces()[samplei];
+                    
+                    values[samplei] = inter().interpolate
+                        (
+                            samplePt,
+                            celli,
+                            facei
+                        );
+                }                
+            } else {
+                result=new Field<Type>(this->theSet_.size());
+                Field<Type> &values=*result;
+                const volField &field=this->mesh().lookupObject<volField>(name);
+
+                forAll(samples, samplei)
+                {
+                    values[samplei] = field[samples.cells()[samplei]];
+                }                
+            }
+        } else {
+            autoPtr<volField> f=this->getOrReadField<volField>(name);
+
+            if(interpolate_) {
+                autoPtr<interpolation<Type> > inter(
+                    interpolation<Type>::New(
+                        interpolationType_,
+                        f()
+                    )
+                );
+                
+                result=new Field<Type>(this->theSet_.size());
+                Field<Type> &values=*result;
+
+                forAll(samples, samplei)
+                {
+                    const point& samplePt = samples[samplei];
+                    label celli = samples.cells()[samplei];
+                    label facei = samples.faces()[samplei];
+                    
+                    values[samplei] = inter().interpolate
+                        (
+                            samplePt,
+                            celli,
+                            facei
+                        );
+                }                
+            } else {
+                result=new Field<Type>(this->theSet_.size());
+                Field<Type> &values=*result;
+                const volField &field=f();
+
+                forAll(samples, samplei)
+                {
+                    values[samplei] = field[samples.cells()[samplei]];
+                }                
+            }
+        }
 
         return new Field<Type>(0);
     }
