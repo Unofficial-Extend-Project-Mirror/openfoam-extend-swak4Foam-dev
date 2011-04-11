@@ -143,7 +143,7 @@ public:
     // Handling the parser
     //    void parse(const std::string& f);
 
-    inline virtual label size() const;
+    virtual label size() const;
 
     inline virtual label pointSize() const;
 

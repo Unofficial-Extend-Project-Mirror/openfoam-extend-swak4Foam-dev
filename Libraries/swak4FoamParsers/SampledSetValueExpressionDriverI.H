@@ -42,10 +42,6 @@ License
 #include <cassert>
 
 namespace Foam {
-    label SampledSetValueExpressionDriver::size() const
-    {
-        return theSet_.faces().size();
-    }
 
     label SampledSetValueExpressionDriver::pointSize() const
     {

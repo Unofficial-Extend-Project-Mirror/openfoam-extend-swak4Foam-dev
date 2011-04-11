@@ -130,6 +130,11 @@ SampledSetValueExpressionDriver::~SampledSetValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+label SampledSetValueExpressionDriver::size() const
+{
+    return theSet_.faces().size();
+}
+
 bool SampledSetValueExpressionDriver::update()
 {
     bool updated=false; // nu update in sampledSet

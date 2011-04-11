@@ -93,6 +93,13 @@ Foam::swakRegistryProxySet::swakRegistryProxySet
     ),
     setName_(dict.lookup("setName"))
 {
+    setSamples(
+        realSet(),
+        realSet().cells(),
+        realSet().faces(),
+        realSet().segments(),
+        realSet().curveDist()        
+    );
 }
 
 
