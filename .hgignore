@@ -14,3 +14,19 @@ darwin*Opt
 darwin*Debug
 
 lnInclude
+
+GTAGS
+GPATH
+GRTAGS
+
+*.tex
+*.pdf
+auto
+doc
+\#*\#
+*.orig
+
+debian/rules
+debian/control
+
+Libraries/simpleFunctionObjects

@@ -90,6 +90,7 @@ face                  return token::TOKEN_face;
 area                  return token::TOKEN_area;
 vol                   return token::TOKEN_volume;
 dist                  return token::TOKEN_dist;
+nearDist              return token::TOKEN_nearDist;
 rdist                 return token::TOKEN_rdist;
 rand                  return token::TOKEN_rand;
 id                    return token::TOKEN_id;
@@ -152,6 +153,8 @@ false                  return token::TOKEN_FALSE;
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
+    } else if(driver.isLookup(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LOOKUP;
     } else if(       
         driver.isVariable<Foam::volVectorField::value_type>(*ptr)
         ||

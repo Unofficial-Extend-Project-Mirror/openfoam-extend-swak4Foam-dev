@@ -1,0 +1,163 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5; // Time till convergence
+
+// endTime         0.05; // time for baseline-comparison
+
+deltaT          1e-5;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.2;
+maxAlphaCo      0.2;
+
+maxDeltaT       1e-3;
+
+libs (
+    "libOpenFOAM.so" // keeps paraFoam happy
+    "libtwoPhaseInterfaceProperties.so"
+    "libinterfaceProperties.so"
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+);
+
+functions
+(
+    createInterface
+    {
+        type createSampledSurface;
+        outputControl timeStep;
+        outputInterval 1;
+        surfaceName interface;
+        surface {
+            type isoSurface;
+            isoField alpha1;
+            isoValue 0.5;
+            interpolate true;
+        }
+    }
+    height
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "pos().y";
+        accumulations (
+            min
+            max
+        );        
+    }
+    // This should fail because the size of the variable changes
+//     moved
+//     {
+//         type swakExpression;
+//         valueType surface;
+//         surfaceName interface;
+//         verbose true;
+//         expression "mag(startPos-pos())";
+//         storedVariables (
+//             {
+//                 name startPos;
+//                 initialValue "pos()";
+//             }
+//         );
+//         accumulations (
+//             min
+//             max
+//             average
+//         );        
+//     }
+    surface
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "area()/0.001";
+        accumulations (
+            sum
+        );
+    }
+    deviation
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "pow(pos().y-yAvg,2)*area()/sum(area())";
+        variables "yAvg=sum(pos().y*area())/sum(area());";
+        accumulations (
+            sum
+        );        
+    }
+    velocity
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            max
+        );        
+    }
+    swakSurfInterface
+    {
+        type surfaces;
+        outputControl outputTime;
+        //        outputControl timeStep;
+        outputInterval 1;
+        fields ( U );
+        surfaceFormat vtk;
+        surfaces (
+            interface {
+                type swakRegistryProxy;
+                surfaceName interface;
+            }
+        );
+    } 
+);
+
+// ************************************************************************* //

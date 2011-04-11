@@ -1,0 +1,21 @@
+
+ifdef FOAM_DEV
+FOAM_DEV_OPTION = -DFOAM_DEV
+endif
+
+include $(OBJECTS_DIR)/../mybison
+include $(OBJECTS_DIR)/../myflex
+
+EXE_INC = -I$(OBJECTS_DIR) \
+	$(FOAM_DEV_OPTION) 	\
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/finiteArea/lnInclude \
+    -I../swak4FoamParsers/lnInclude/ \
+    -I../groovyBC/lnInclude/
+
+LIB_LIBS = -lfiniteVolume \
+	-lfiniteArea \
+	-lOpenFOAM \
+	-lsampling \
+	-L$(FOAM_USER_LIBBIN) \
+	-lswak4FoamParsers

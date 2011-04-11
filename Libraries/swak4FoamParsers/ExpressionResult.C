@@ -59,6 +59,35 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     (*this)=rhs;
 }
 
+ExpressionResult::ExpressionResult(const dictionary &dict)
+:
+    valType_(dict.lookupOrDefault<word>("valueType","None")),
+    valPtr_(NULL),
+    isPoint_(dict.lookupOrDefault<bool>("isPoint",false))
+{
+    if(
+        dict.found("value")
+    ) {
+        if(valType_==pTraits<scalar>::typeName) {
+            valPtr_=new scalarField(dict.lookup("value"));
+        } else if(valType_==vector::typeName) {
+            valPtr_=new Field<vector>(dict.lookup("value"));
+        } else if(valType_==tensor::typeName) {
+            valPtr_=new Field<tensor>(dict.lookup("value"));
+        } else if(valType_==symmTensor::typeName) {
+            valPtr_=new Field<symmTensor>(dict.lookup("value"));
+        } else if(valType_==sphericalTensor::typeName) {
+            valPtr_=new Field<sphericalTensor>(dict.lookup("value"));
+        } else if(valType_==pTraits<bool>::typeName) {
+            valPtr_=new Field<bool>(dict.lookup("value"));
+        } else {
+            FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
+                << "Don't know how to read data type " << valType_ << endl
+                    << abort(FatalError);
+        }
+    }
+}
+
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -69,6 +98,11 @@ ExpressionResult::~ExpressionResult()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool ExpressionResult::hasValue() const
+{
+    return valType_!="None" && valPtr_!=NULL;
+}
 
 void ExpressionResult::clearResult()
 {
@@ -147,17 +181,77 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
             << abort(FatalError);
     }
 
-    valPtr_=rhs.valPtr_;
+    clearResult();
+
     valType_=rhs.valType_;
     isPoint_=rhs.isPoint_;
 
-    const_cast<ExpressionResult &>(rhs).valPtr_=NULL;
-    const_cast<ExpressionResult &>(rhs).clearResult();
+    if( rhs.valPtr_ ) {
+        if(valType_==pTraits<scalar>::typeName) {
+            valPtr_=new scalarField(*static_cast<scalarField*>(rhs.valPtr_));
+        } else if(valType_==pTraits<vector>::typeName) {
+            valPtr_=new Field<vector>(*static_cast<Field<vector>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<tensor>::typeName) {
+            valPtr_=new Field<tensor>(*static_cast<Field<tensor>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<symmTensor>::typeName) {
+            valPtr_=new Field<symmTensor>(*static_cast<Field<symmTensor>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<sphericalTensor>::typeName) {
+            valPtr_=new Field<sphericalTensor>(*static_cast<Field<sphericalTensor>*>(rhs.valPtr_));
+        } else if(valType_==pTraits<bool>::typeName) {
+            valPtr_=new Field<bool>(*static_cast<Field<bool>*>(rhs.valPtr_));
+        } else {
+            FatalErrorIn("ExpressionResult::operator=(const ExpressionResult& rhs)")
+                << " Type " << valType_ << " can not be copied"
+                    << endl
+                    << abort(FatalError);
+        }
+    } else {
+        valPtr_=rhs.valPtr_;
+    }
+
+//     const_cast<ExpressionResult &>(rhs).valPtr_=NULL;
+//     const_cast<ExpressionResult &>(rhs).clearResult();
 }
 
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
+Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
+{
+    out << token::BEGIN_BLOCK << endl;
+
+    if( data.valPtr_ ) {
+        out.writeKeyword("valueType");
+        out << word(data.valType_) << token::END_STATEMENT << nl;
+
+        out.writeKeyword("isPoint");
+        out << data.isPoint_ << token::END_STATEMENT << nl;
+
+        out.writeKeyword("value");
+        if(data.valType_==pTraits<scalar>::typeName) {
+            out << *static_cast<scalarField*>(data.valPtr_);
+        } else if(data.valType_==vector::typeName) {
+            out << *static_cast<Field<vector>*>(data.valPtr_);
+        } else if(data.valType_==tensor::typeName) {
+            out << *static_cast<Field<tensor>*>(data.valPtr_);
+        } else if(data.valType_==symmTensor::typeName) {
+            out << *static_cast<Field<symmTensor>*>(data.valPtr_);
+        } else if(data.valType_==sphericalTensor::typeName) {
+            out << *static_cast<Field<sphericalTensor>*>(data.valPtr_);
+        } else if(data.valType_==pTraits<bool>::typeName) {
+            out << *static_cast<Field<bool>*>(data.valPtr_);
+        } else {
+            out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+        }
+        out << token::END_STATEMENT << nl;
+    } else {
+        out << "ExpressionResult: not data defined";
+    }
+
+    out << token::END_BLOCK << endl;
+
+    return out;
+}
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 

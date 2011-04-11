@@ -51,6 +51,7 @@ SourceFiles
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "ExpressionResult.H"
+#include "StoredExpressionResult.H"
 
 namespace Foam
 {
@@ -69,7 +70,7 @@ class CommonValueExpressionDriver
     void operator=(const CommonValueExpressionDriver&);
 
     //- variables from a dictionary
-    string variableString_;
+    stringList variableStrings_;
 
 protected:
 
@@ -77,7 +78,13 @@ protected:
 
     HashTable<ExpressionResult,word> variables_;
 
+    List<StoredExpressionResult> storedVariables_;
+
+    label storedVariablesIndex_;
+
     HashTable<interpolationTable<scalar>,word> lines_;
+
+    HashTable<interpolationTable<scalar>,word> lookup_;
 
     Foam::string content_;
 
@@ -111,6 +118,9 @@ protected:
         const fvMesh &mesh
     );
 
+    //- look through the current variable values and update the stored variables
+    void updateStoredVariables(bool force=false);
+
 private:
     //- keep fields read from disc in memory
     bool cacheReadFields_;
@@ -143,6 +153,9 @@ protected:
     template<class T>
     inline autoPtr<T> getSet(const fvMesh &,const word &);
 
+    template<class T>
+    autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -159,6 +172,18 @@ public:
             const fvMesh& mesh
         ),
         (dict,mesh)
+    );
+
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        CommonValueExpressionDriver,
+        idName,
+        (
+            const word& id,
+            const fvMesh& mesh
+        ),
+        (id,mesh)
     );
 
     // Constructors
@@ -185,12 +210,22 @@ public:
         const fvMesh& mesh
     );
 
+    //- Return a reference to the selected value driver
+    static autoPtr<CommonValueExpressionDriver> New
+    (
+        const word& type,
+        const word& id,
+        const fvMesh& mesh
+    );
+
     // Destructor
 
     virtual ~CommonValueExpressionDriver();
 
 
     // Member Functions
+
+    inline const HashTable<ExpressionResult,word> &variables() const;
 
     void setSearchBehaviour(
         bool cacheReadFields,
@@ -201,11 +236,26 @@ public:
     template<class Type>
     tmp<Field<Type> > evaluate(const string &expr,bool qPoint=false);
 
+    template<class Type>
+    Type evaluateUniform(const string &expr,bool qPoint=false);
+
     void evaluateVariable(const word &name,const string &expr);
 
     void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);
 
+    //- read the list of variable strings (or initialize with a single string)
+    static stringList readVariableStrings(const dictionary &dict);
+ 
+    //- read the list of variable strings (or initialize with a single string)
+    void setVariableStrings(const dictionary &dict);
+
+    Ostream &writeVariableStrings(Ostream &out) const;
+
+    Ostream &writeCommon(Ostream &out,bool debug=false) const;
+
     void addVariables(const string &exprList,bool clear=true);
+
+    void addVariables(const stringList &exprList,bool clear=true);
 
     template<class Type>
     void setResult(Field<Type> *,bool isPoint=false);
@@ -253,12 +303,32 @@ public:
     template<class T>
     bool isThere(const string &name) const;
 
+    //- is this a timeline
     inline bool isLine(const string &name) const;
+
+    //- get the value for a timeline for a specific time
     scalarField *getLine(const string &name,scalar t);
+
+    //- value of the timeline
     scalar getLineValue(const string &name,scalar t);
 
-    void readLines(Istream &is,bool clear=true);
-    void writeLines(Ostream &os) const;
+    //- read some interpolation tables
+    void readTables(Istream &is,HashTable<interpolationTable<scalar> > &,bool clear=true);
+
+    //- read all the interpolation tables known to man
+    void readTables(const dictionary &);
+
+    //- read variables and tables (for objects that were not constructed by a dictionary)
+    void readVariablesAndTables(const dictionary &);
+
+    //- write some interpolation tables
+    void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
+
+    //- is this a lookup table
+    inline bool isLookup(const string &name) const;
+
+    //- get the value for a lookuptable for a set of values
+    tmp<scalarField> getLookup(const string &name,const scalarField &val);
 
     scalarField *makeModuloField(const scalarField &a,const scalarField &b);
     scalarField *makeRandomField(label seed=0);

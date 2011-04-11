@@ -9,7 +9,7 @@ EXE_INC = -I$(OBJECTS_DIR) \
     -I$(LIB_SRC)/meshTools/lnInclude
 	
 
-EXE_LIBS = -lfiniteVolume \
+LIB_LIBS = -lfiniteVolume \
 	-lsampling \
 	-lmeshTools
 

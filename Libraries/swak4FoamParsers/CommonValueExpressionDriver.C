@@ -33,21 +33,6 @@ License
 
 #include "CommonValueExpressionDriver.H"
 
-#include "FieldValueExpressionDriver.H"
-
-#include "PatchValueExpressionDriver.H"
-
-#include "CellZoneValueExpressionDriver.H"
-
-#include "CellSetValueExpressionDriver.H"
-
-#include "FaceZoneValueExpressionDriver.H"
-
-#include "FaceSetValueExpressionDriver.H"
-
-#include "SampledSurfaceValueExpressionDriver.H"
-#include "SurfacesRepository.H"
-
 #include "Random.H"
 
 namespace Foam {
@@ -57,6 +42,7 @@ namespace Foam {
 
 defineTypeNameAndDebug(CommonValueExpressionDriver,0);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
+defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
     // Currently not working
 bool CommonValueExpressionDriver::cacheSets_=true;
@@ -71,10 +57,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const CommonValueExpressionDriver& orig
 )
 :
-    variableString_(""),
+    variableStrings_(orig.variableStrings_),
     result_(orig.result_),
     variables_(orig.variables_),
+    storedVariables_(orig.storedVariables_),
+    storedVariablesIndex_(orig.storedVariablesIndex_),
     lines_(orig.lines_),
+    lookup_(orig.lookup_),
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_)
@@ -88,11 +77,16 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
 :
-    variableString_(dict.lookupOrDefault("variables",string(""))),
+    variableStrings_(readVariableStrings(dict)),
+    storedVariablesIndex_(-1),
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
 {
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
+
     if(debug) {
         Info << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
@@ -103,10 +97,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
         dict.lookupOrDefault("searchOnDisc",false)
     );
 
-    if(dict.found("timelines")) {
-        readLines(dict.lookup("timelines"));
-    }
-    //    addVariables(variableString_);
+    readTables(dict);
 }
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(
@@ -115,7 +106,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool searchOnDisc
 )
 :
-    variableString_(""),
+    variableStrings_(),
+    storedVariablesIndex_(-1),
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
@@ -125,6 +117,28 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         searchInMemory,
         searchOnDisc
     );
+}
+
+void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
+{
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
+
+    setVariableStrings(dict);
+
+    readTables(dict);
+}
+
+void CommonValueExpressionDriver::readTables(const dictionary &dict)
+{
+    if(dict.found("timelines")) {
+        readTables(dict.lookup("timelines"),lines_);
+    }
+
+    if(dict.found("lookuptables")) {
+        readTables(dict.lookup("lookuptables"),lookup_);
+    }
 }
 
 void CommonValueExpressionDriver::setSearchBehaviour(
@@ -174,6 +188,39 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     );
 }
 
+autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
+(
+    const word& driverType,
+    const word& id,
+    const fvMesh& mesh
+)
+{
+    idNameConstructorTable::iterator cstrIter =
+        idNameConstructorTablePtr_->find(driverType);
+
+    if (cstrIter == idNameConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New"
+        )   << "Unknown  CommonValueExpressionDriver type " << driverType
+            << endl << endl
+            << "Valid valueTypes are :" << endl
+	  //            << idNameConstructorTablePtr_->sortedToc() // does not work in 1.6
+            << idNameConstructorTablePtr_->toc()
+            << exit(FatalError);
+    }
+
+    if(debug) {
+        Info << "Creating driver of type " << driverType << endl;
+    }
+
+    return autoPtr<CommonValueExpressionDriver>
+    (
+        cstrIter()(id,mesh)
+    );
+}
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 CommonValueExpressionDriver::~CommonValueExpressionDriver()
@@ -181,6 +228,93 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+stringList CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)
+{
+    if(!dict.found("variables")) {
+        return stringList();
+    }
+    ITstream data(dict.lookup("variables"));
+    token nextToken;
+    data.read(nextToken);
+    if(nextToken.isString()) {
+        data.rewind();
+        return stringList(1,string(data));
+    } else if(
+        nextToken.type()==token::PUNCTUATION
+        &&
+        nextToken.pToken()==token::BEGIN_LIST
+    ) {
+        data.rewind();
+        return stringList(data);
+    } if(nextToken.isLabel()) {
+        token anotherToken;
+        data.read(anotherToken);
+        if(
+            anotherToken.type()==token::PUNCTUATION
+            &&
+            anotherToken.pToken()==token::BEGIN_LIST
+        ) {
+            data.rewind();
+            return stringList(data);
+        }
+    }
+
+    FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
+        << " Entry 'variables' must either be a string or a list of strings"
+            << endl
+            << abort(FatalError);
+    
+    return stringList();
+}
+
+void CommonValueExpressionDriver::setVariableStrings(const dictionary &dict)
+{
+    variableStrings_=readVariableStrings(dict);
+}
+
+Ostream &CommonValueExpressionDriver::writeVariableStrings(Ostream &out) const
+{
+    if(variableStrings_.size()==0) {
+        out << string("");
+    } else if(variableStrings_.size()==1) {
+        out << variableStrings_[0];
+    } else {
+        out << variableStrings_;
+    }
+
+    return out;
+}
+
+Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
+{
+    os.writeKeyword("variables");
+    writeVariableStrings(os) << token::END_STATEMENT << nl;
+
+    os.writeKeyword("timelines");
+    writeTables(os,lines_);
+    os << token::END_STATEMENT << nl;
+
+    os.writeKeyword("lookuptables");
+    writeTables(os,lookup_);
+    os << token::END_STATEMENT << nl;
+
+    if(debug) {
+        os.writeKeyword("variableValues");
+        os << variables() << endl;
+        os << token::END_STATEMENT << nl;
+    }
+    
+    if(storedVariables_.size()>0) {
+        const_cast<CommonValueExpressionDriver&>(*this).updateStoredVariables(true);
+        
+        os.writeKeyword("storedVariables");
+        os << storedVariables_ << endl;
+        os << token::END_STATEMENT << nl;
+    }
+
+    return os;
+}
 
 word CommonValueExpressionDriver::getResultType()
 {
@@ -329,6 +463,18 @@ scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
     return new scalarField(this->size(),lines_[name](t));
 }
 
+tmp<scalarField> CommonValueExpressionDriver::getLookup(const string &name,const scalarField &val)
+{
+    scalarField *result=new scalarField(val.size());
+    const interpolationTable<scalar> &table=lookup_[name];
+
+    forAll(val,i) {
+        (*result)[i]=table(val[i]);
+    }
+
+    return tmp<scalarField>(result);
+}
+
 scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
 {
     return lines_[name](t);
@@ -355,19 +501,77 @@ bool CommonValueExpressionDriver::update()
     return true;
 }
 
+void CommonValueExpressionDriver::updateStoredVariables(bool force)
+{
+    if(storedVariablesIndex_<0) {
+        if(debug) {
+            Info << "First update: " << mesh().time().timeIndex() << endl;
+        }
+        storedVariablesIndex_=mesh().time().timeIndex();
+        forAll(storedVariables_,i) {
+            StoredExpressionResult &v=storedVariables_[i];
+            if(!v.hasValue()) {
+                if(debug) {
+                    Info << "First valuate: " << v.initialValueExpression() 
+                        << " -> " << v.name() << endl;
+                }
+                parse(v.initialValueExpression());
+                v=result_;
+            }
+        }        
+    }
+
+    if(
+        force
+        ||
+        storedVariablesIndex_!=mesh().time().timeIndex()
+    ) {
+        if(debug) {
+            Info << "Store variables: " << force << " " 
+                << storedVariablesIndex_ << " " << mesh().time().timeIndex() << endl;
+        }
+        forAll(storedVariables_,i) {
+            StoredExpressionResult &v=storedVariables_[i];
+            if(variables_.found(v.name())) {
+                if(debug) {
+                    Info << "Storing variable: " << v.name() << " " 
+                        << variables_[v.name()] << endl;
+                }
+                v=variables_[v.name()];
+            }
+        }
+        storedVariablesIndex_=mesh().time().timeIndex();
+    }
+}
+
 void CommonValueExpressionDriver::clearVariables()
 {
-    this->update();
-    variables_.clear();
-    if(variableString_!="") {
-        addVariables(variableString_,false);
+    if(debug) {
+        Info << "Clearing variables" << endl;
     }
+
+    this->update();
+
+    updateStoredVariables();
+    variables_.clear();
+    forAll(storedVariables_,i) {
+        StoredExpressionResult &v=storedVariables_[i];
+        variables_.insert(v.name(),v);
+    }
+    
+    addVariables(variableStrings_,false);
 }
 
 void CommonValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
 {
     parse(expr);
-    variables_.insert(name,ExpressionResult(result_));
+
+    if(debug) {
+        Info << "Evaluating: " << expr << " -> " << name << endl;
+        Info << result_;
+    }
+
+    variables_.set(name,ExpressionResult(result_));
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
@@ -411,104 +615,29 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
 
     const fvMesh &region=*pRegion;
 
-    if(type=="patch") {
-        label patchI=region.boundaryMesh().findPatchID(id);
-        if(patchI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a patch named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const fvPatch &otherPatch=region.boundary()[patchI];
-        PatchValueExpressionDriver otherDriver(otherPatch);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));
-    } else if(type=="internalField") {
-        FieldValueExpressionDriver fieldDriver(
-            region,
-            false,
-            true,
-            false
-        );
-        fieldDriver.parse(expr);
+    autoPtr<CommonValueExpressionDriver> otherDriver=CommonValueExpressionDriver::New(
+        type,
+        id,
+        region
+    );
 
-        ExpressionResult result;
+    otherDriver->setSearchBehaviour(
+        this->cacheReadFields(),
+        this->searchInMemory(),
+        this->searchOnDisc()
+    );
 
-        if(fieldDriver.resultIsVector()) {
-            result.setResult(
-                fieldDriver.getVector().internalField()
-            );            
-        } else if(fieldDriver.resultIsScalar()) {
-            result.setResult(
-                fieldDriver.getScalar().internalField()
-            );            
-        } else {
-            WarningIn("CommonValueExpressionDriver::evaluateVariableRemote")
-                << "Expression '" << expr 
-                    << "' evaluated to an unsupported type"
-                    << endl;
-        }
-        variables_.insert(name,result.getUniform(this->size(),false));
-    } else if(type=="cellSet") {
-        cellSet otherSet(
-            region,
-            id,
-            IOobject::MUST_READ
-        );
-        CellSetValueExpressionDriver otherDriver(
-            getSet<cellSet>(
-                region,
-                id
-            )()
-        );
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
-    } else if(type=="cellZone") {
-        label zoneI=region.cellZones().findZoneID(id);
-        if(zoneI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a cellZone named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const cellZone &otherZone=region.cellZones()[zoneI];
-        CellZoneValueExpressionDriver otherDriver(otherZone);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
-    } else if(type=="faceSet") {
-        FaceSetValueExpressionDriver otherDriver(
-                getSet<faceSet>(
-                    region,
-                    id
-                )(),
-                true,
-                false
-            );
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false)); 
-    } else if(type=="faceZone") {
-        label zoneI=region.faceZones().findZoneID(id);
-        if(zoneI<0) {
-            FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote(const word &patchName,const word &name,const string &expr)")
-                << " This mesh does not have a faceZone named " << id
-                    << endl
-                    << abort(FatalError);
-        }
-        const faceZone &otherZone=region.faceZones()[zoneI];
-        FaceZoneValueExpressionDriver otherDriver(otherZone,true,false);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
-    } else if(type=="surface") {
-        sampledSurface &theSurf=SurfacesRepository::getRepository().getSurface(id,region);
-        SampledSurfaceValueExpressionDriver otherDriver(theSurf,true,false);
-        otherDriver.parse(expr);
-        variables_.insert(name,otherDriver.getUniform(this->size(),false));        
-    } else {
-        FatalErrorIn("CommonValueExpressionDriver::evaluateVariableRemote")
-            << "The type '" << type << "' is not implemented. " 
-                << "Valid types are 'patch', 'internalField', 'cellSet', 'cellZone', 'faceSet' and 'faceZone'"
-                << endl
-                << abort(FatalError);
+    otherDriver->parse(expr);
+    variables_.insert(name,otherDriver->getUniform(this->size(),false));
+}
+
+void CommonValueExpressionDriver::addVariables(const stringList &exprList,bool clear)
+{
+    if(clear) {
+        clearVariables();
+    }
+    forAll(exprList,i) {
+        addVariables(exprList[i],false);
     }
 }
 
@@ -561,23 +690,23 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
     }
 }
 
-void CommonValueExpressionDriver::readLines(Istream &is,bool clear)
+void CommonValueExpressionDriver::readTables(Istream &is,HashTable<interpolationTable<scalar> > &tables,bool clear)
 {
     if(clear) {
-        lines_.clear();
+        tables.clear();
     }
     List<dictionary> lines(is);
 
     forAll(lines,i) {
         const dictionary &dict=lines[i];
-        lines_.insert(dict.lookup("name"),interpolationTable<scalar>(dict));
+        tables.insert(dict.lookup("name"),interpolationTable<scalar>(dict));
     }
 }
 
-void CommonValueExpressionDriver::writeLines(Ostream &os) const
+void CommonValueExpressionDriver::writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &tables) const
 {
     os << token::BEGIN_LIST << nl;
-    forAllConstIter(HashTable<interpolationTable<scalar> >,lines_,it) {
+    forAllConstIter(HashTable<interpolationTable<scalar> >,tables,it) {
         os << token::BEGIN_BLOCK << nl;
         os.writeKeyword("name") << it.key() << token::END_STATEMENT << nl;
         (*it).write(os);

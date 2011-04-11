@@ -43,7 +43,9 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(SampledSurfaceValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, dictionary, surface);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, idName, surface);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -90,6 +92,24 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     setDebug();
 }
 
+SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
+    const word &id,
+    const fvMesh &mesh
+)
+:
+    SubsetValueExpressionDriver(true,false),
+    theSurface_(
+        SurfacesRepository::getRepository().getSurface(
+            id,
+            mesh
+        )
+    ),
+    interpolate_(false),
+    interpolationType_("nix")
+{
+    setDebug();
+}
+
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
     SubsetValueExpressionDriver(dict),
@@ -120,7 +140,7 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 bool SampledSurfaceValueExpressionDriver::update()
 {
-    bool updated=theSurface_.update();
+    bool updated=theSurface_.update(); // valgrind reports huge memory losses here
     if(debug) {
         Info << "Updated: " << updated << " " << this->size() << endl;
     }
@@ -170,7 +190,7 @@ Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorF
 
 vectorField *SampledSurfaceValueExpressionDriver::makePositionField()
 {
-    return new vectorField(theSurface_.Cf());
+    return new vectorField(theSurface_.Cf());  // valgrind reports huge memory losses here
 }
 
 scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()

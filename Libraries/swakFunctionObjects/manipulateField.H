@@ -42,6 +42,7 @@ SourceFiles
 #include "pointFieldFwd.H"
 #include "Switch.H"
 #include "autoPtr.H"
+#include "dictionary.H"
 
 namespace Foam
 {
@@ -50,6 +51,7 @@ class objectRegistry;
 class dictionary;
 class mapPolyMesh;
 
+class FieldValueExpressionDriver;
 
 class manipulateField
 {
@@ -77,11 +79,15 @@ protected:
 
     const objectRegistry& obr_;
 
+    dictionary dict_;
+
     template<class T>
     void manipulate(
         const T &data,
         const volScalarField &mask
     );
+
+    autoPtr<FieldValueExpressionDriver> driver_;
 
 public:
 

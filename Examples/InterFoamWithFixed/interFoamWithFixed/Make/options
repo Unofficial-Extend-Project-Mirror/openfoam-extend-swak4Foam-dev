@@ -1,0 +1,21 @@
+EXE_INC = \
+    -I$(LIB_SRC)/transportModels \
+    -I$(LIB_SRC)/transportModels/incompressible/lnInclude \
+    -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
+    -I$(LIB_SRC)/turbulenceModels/incompressible/turbulenceModel \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I../../../Libraries/swak4FoamParsers/lnInclude/ \
+    -I../../../Libraries/swakSourceFields/lnInclude/
+
+
+EXE_LIBS = \
+    -ltwoPhaseInterfaceProperties \
+    -linterfaceProperties \
+    -lincompressibleTransportModels \
+    -lincompressibleTurbulenceModel \
+    -lincompressibleRASModels \
+    -lincompressibleLESModels \
+    -lfiniteVolume \
+    -L$(FOAM_USER_LIBBIN) \
+    -lswak4FoamParsers \
+    -lswakSourceFields

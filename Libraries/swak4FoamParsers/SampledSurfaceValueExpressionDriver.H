@@ -95,6 +95,9 @@ public:
         bool warnAutoInterpolate=true
     );
     
+    //- Construct from an id
+    SampledSurfaceValueExpressionDriver(const word& id,const fvMesh&mesh);
+    
     //- Construct from a dictionary
     SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     

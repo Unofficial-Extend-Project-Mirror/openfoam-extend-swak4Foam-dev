@@ -109,12 +109,18 @@ public:
     //- Construct from components
     PatchValueExpressionDriver(const fvPatch& patch_);
     
+    //- Construct from components
+    PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch_);
+    
     //- Construct from a dictionary
     PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
     //- Construct from and an old Version
     PatchValueExpressionDriver(const fvPatch& patch_,const PatchValueExpressionDriver& old);
 
+    //- Construct from an id
+    PatchValueExpressionDriver(const word& id,const fvMesh&mesh);
+    
     //- Copy construct
     PatchValueExpressionDriver(const PatchValueExpressionDriver&);
 
@@ -140,6 +146,8 @@ public:
     scalarField *makeWeightsField();
 
     scalarField *makeFaceIdField();
+
+    scalarField *makeNearDistField();
 
     template<class Type>
     Field<Type> *getField(const string &name);

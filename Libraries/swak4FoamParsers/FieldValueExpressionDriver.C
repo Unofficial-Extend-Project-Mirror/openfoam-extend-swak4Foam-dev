@@ -3,10 +3,8 @@
 #include "FieldValueExpressionDriver.H"
 #include <Random.H>
 #include <wallDist.H>
+#include <nearWallDist.H>
 #include <dimensionedVector.H>
-#include "zeroGradientFvPatchFields.H"
-#include "fixedValueFvPatchFields.H"
-#include "wallFvPatch.H"
 #include "cellSet.H"
 #include "faceSet.H"
 
@@ -15,7 +13,9 @@
 namespace Foam {
 
 defineTypeNameAndDebug(FieldValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, dictionary, internalField);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, idName, internalField);
 
 FieldValueExpressionDriver::FieldValueExpressionDriver (
     const string& time,
@@ -33,6 +33,23 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       time_(time),
       mesh_(mesh),
       runTime_(runTime),
+      typ_(NO_TYPE),
+      resultDimension_(0,0,0,0,0,0,0)
+{
+}
+
+FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const word &id,
+    const fvMesh &mesh
+)
+    : CommonValueExpressionDriver(
+        false,
+        true,
+        false        
+    ),
+      time_(""),
+      mesh_(mesh),
+      runTime_(mesh.time()),
       typ_(NO_TYPE),
       resultDimension_(0,0,0,0,0,0,0)
 {
@@ -167,7 +184,7 @@ volScalarField *FieldValueExpressionDriver::makeModuloField(
     const volScalarField &a,
     const volScalarField &b)
 {
-    volScalarField *result_=makeScalarField(0.);
+    volScalarField *result_=makeConstantField<volScalarField>(0.);
 
     forAll(*result_,cellI) {
         scalar val=fmod(a[cellI],b[cellI]);
@@ -188,7 +205,7 @@ volScalarField *FieldValueExpressionDriver::makeModuloField(
 
 volScalarField *FieldValueExpressionDriver::makeRandomField()
 {
-    volScalarField *f=makeScalarField(0.);
+    volScalarField *f=makeConstantField<volScalarField>(0.);
     Random rand(65);
 
     forAll(*f,cellI) {
@@ -200,7 +217,7 @@ volScalarField *FieldValueExpressionDriver::makeRandomField()
 
 volScalarField *FieldValueExpressionDriver::makeCellIdField()
 {
-    volScalarField *f=makeScalarField(0.);
+    volScalarField *f=makeConstantField<volScalarField>(0.);
 
     forAll(*f,cellI) {
         (*f)[cellI]=scalar(cellI);
@@ -211,7 +228,7 @@ volScalarField *FieldValueExpressionDriver::makeCellIdField()
 
 volScalarField *FieldValueExpressionDriver::makeGaussRandomField()
 {
-    volScalarField *f=makeScalarField(0.);
+    volScalarField *f=makeConstantField<volScalarField>(0.);
     Random rand(65);
 
     forAll(*f,cellI) {
@@ -449,6 +466,30 @@ volScalarField *FieldValueExpressionDriver::makeDistanceField()
 
 }
 
+volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
+{
+    dimensionSet nullDim(0,0,0,0,0);
+    volScalarField *f=new volScalarField(
+        IOobject
+        (
+            "dist",
+            time(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh_,
+        0.,
+        "fixedValue"
+    );
+    f->dimensions().reset(mesh_.C().dimensions());
+    nearWallDist dist(mesh_);
+    f->boundaryField()==dist;
+    f->dimensions().reset(nullDim);
+    return f;
+
+}
+
 volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorField& r)
 {
     dimensionSet nullDim(0,0,0,0,0);
@@ -472,55 +513,9 @@ volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorFi
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeScalarField(const scalar &val)
-{
-    std::ostringstream buff;
-    buff << "constantScalar" << val;
-
-    volScalarField *f=new volScalarField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        val,
-        "zeroGradient"
-    );
-
-    return f;
-}
-
-surfaceScalarField *FieldValueExpressionDriver::makeSurfaceScalarField
-(
-    const scalar &val
-){
-    std::ostringstream buff;
-    buff << "constantScalar" << val;
-
-    surfaceScalarField *f=new surfaceScalarField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        val,
-        "fixedValue"
-    );
-
-    return f;
-}
-
 volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
 {
-  volScalarField *f=makeScalarField(0);
+  volScalarField *f=makeConstantField<volScalarField>(0);
 
   IOobject head 
       (
@@ -557,7 +552,7 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
 
 surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &name)
 {
-  surfaceScalarField *f=makeSurfaceScalarField(0);
+  surfaceScalarField *f=makeConstantField<surfaceScalarField>(0);
 
   IOobject head 
       (
@@ -594,7 +589,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
 
 volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name)
 {
-  volScalarField *f=makeScalarField(0);
+  volScalarField *f=makeConstantField<volScalarField>(0);
   label zoneID=mesh_.cellZones().findZoneID(name);
 
   const cellZone &zone=mesh_.cellZones()[zoneID];
@@ -609,7 +604,7 @@ volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name
 
 surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &name)
 {
-  surfaceScalarField *f=makeSurfaceScalarField(0);
+  surfaceScalarField *f=makeConstantField<surfaceScalarField>(0);
   label zoneID=mesh_.faceZones().findZoneID(name);
 
   const faceZone &zone=mesh_.faceZones()[zoneID];
@@ -622,63 +617,17 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &
   return f;
 }
 
-volVectorField *FieldValueExpressionDriver::makeVectorField(const vector &vec)
-{
-    std::ostringstream buff;
-    buff << "constantVector" << vec.x() << "_" << vec.y() << "_" << vec.z() ;
-
-    volVectorField *f=new volVectorField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        vec,
-        "zeroGradient"
-    );
-
-    return f;
-}
-
 volVectorField *FieldValueExpressionDriver::makeVectorField
 (
     volScalarField *x,
     volScalarField *y,
     volScalarField *z
 ) {
-    volVectorField *f=makeVectorField(vector(0,0,0));
+    volVectorField *f=makeConstantField<volVectorField>(vector(0,0,0));
 
     forAll(*f,cellI) {
         (*f)[cellI]=vector((*x)[cellI],(*y)[cellI],(*z)[cellI]);
     }
-
-    return f;
-}
-
-surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
-(
-    const vector &vec
-){
-    std::ostringstream buff;
-    buff << "constantVector" << vec.x() << "_" << vec.y() << "_" << vec.z() ;
-
-    surfaceVectorField *f=new surfaceVectorField(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        vec,
-        "fixedValue"
-    );
 
     return f;
 }
@@ -690,107 +639,13 @@ surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
     surfaceScalarField *z
 )
 {
-    surfaceVectorField *f=makeSurfaceVectorField(vector(0,0,0));
+    surfaceVectorField *f=makeConstantField<surfaceVectorField>(vector(0,0,0));
 
     forAll(*f,faceI) {
         (*f)[faceI]=vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
     }
 
     return f;
-}
-
-template<class T>
-void FieldValueExpressionDriver::makePatches
-(
-    GeometricField<T,fvPatchField,volMesh> &field,
-    bool keepPatches,
-    const wordList &fixedPatches
-) {
-  typename GeometricField<T,fvPatchField,volMesh>::GeometricBoundaryField &bf=field.boundaryField();
-  List<fvPatchField<T> *>bfNew(bf.size());
-
-  forAll(bf,patchI) {
-    const fvPatch &patch=bf[patchI].patch();
-
-    bool isValuePatch=false;
-    forAll(fixedPatches,i) {
-      if(fixedPatches[i]==patch.name()) {
-	isValuePatch=true;
-      }
-    }
-
-    if(
-        (
-            !keepPatches 
-            || 
-            isValuePatch
-        ) 
-        && 
-        (
-            typeid(patch)==typeid(wallFvPatch)
-            || 
-            typeid(patch)==typeid(fvPatch
-            )
-        )
-    ) {
-        if(isValuePatch){
-            bfNew[patchI]=new fixedValueFvPatchField<T>(patch,field);  
-        } else {
-            bfNew[patchI]=new zeroGradientFvPatchField<T>(patch,field);      
-        }
-    } else {
-        bfNew[patchI]=bf[patchI].clone().ptr();
-    }
-  }
-
-  bf.clear();
-  bf.setSize(bfNew.size());
-  forAll(bf,i) {
-      bf.set(i,bfNew[i]);
-  }
-}
-
-template<class T>
-void FieldValueExpressionDriver::setValuePatches
-(
-    GeometricField<T,fvPatchField,volMesh> &field,
-    bool keepPatches,
-    const wordList &fixedPatches
-) {
-  typename GeometricField<T,fvPatchField,volMesh>::GeometricBoundaryField &bf=field.boundaryField();
-  List<fvPatchField<T> *>bfNew(bf.size());
-
-  forAll(bf,patchI) {
-    const fvPatch &patch=bf[patchI].patch();
-
-    bool isValuePatch=false;
-    forAll(fixedPatches,i) {
-      if(fixedPatches[i]==patch.name()) {
-	isValuePatch=true;
-      }
-    }
-
-    if(
-        (
-            !keepPatches 
-            ||
-            isValuePatch
-        ) 
-        && 
-        (
-            typeid(patch)==typeid(wallFvPatch)
-            ||
-            typeid(patch)==typeid(fvPatch
-            )
-        )
-    ) {
-        if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFvPatchField<T>)) {
-            fvPatchField<T> &pf=field.boundaryField()[patchI];
-            
-            pf==pf.patchInternalField();
-        }
-    }
-  }
 }
 
 const word FieldValueExpressionDriver::time() const
@@ -800,17 +655,6 @@ const word FieldValueExpressionDriver::time() const
     } else {
         return CommonValueExpressionDriver::time();
     }
-}
-
-// Force the compiler to generate the code, there'S a better way but I'm too stupid
-void dummyS(GeometricField<scalar,fvPatchField,volMesh>  &f,bool keepPatches,const wordList &fixedPatches) {
-    FieldValueExpressionDriver::makePatches(f,keepPatches,fixedPatches);
-    FieldValueExpressionDriver::setValuePatches(f,keepPatches,fixedPatches);
-}
-
-void dummyV(GeometricField<vector,fvPatchField,volMesh>  &f,bool keepPatches,const wordList &fixedPatches) {
-    FieldValueExpressionDriver::makePatches(f,keepPatches,fixedPatches);
-    FieldValueExpressionDriver::setValuePatches(f,keepPatches,fixedPatches);
 }
 
 } // end namespace

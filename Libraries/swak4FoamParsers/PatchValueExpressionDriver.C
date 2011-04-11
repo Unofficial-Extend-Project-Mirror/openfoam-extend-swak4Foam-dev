@@ -41,12 +41,15 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+#include <nearWallDist.H>
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(PatchValueExpressionDriver, 0);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, dictionary, patch);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, idName, patch);
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -63,6 +66,12 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const PatchValueExpressio
 PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
 :
     CommonValueExpressionDriver(),
+    patch_(patch)
+{}
+
+PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch)
+:
+    CommonValueExpressionDriver(dict),
     patch_(patch)
 {}
 
@@ -90,6 +99,20 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
                 dict.lookup(
                     "patchName"
                 )
+            )
+        ]
+    )
+{
+}
+
+PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMesh&mesh)
+ :
+    CommonValueExpressionDriver(),
+    patch_(
+        mesh.boundary()[
+            getPatchID(
+                mesh,
+                id
             )
         ]
     )
@@ -178,6 +201,14 @@ scalarField *PatchValueExpressionDriver::makeFaceIdField()
     forAll(*result,i) {
         (*result)[i]=i;
     }
+    return result;
+}
+
+scalarField *PatchValueExpressionDriver::makeNearDistField()
+{
+    scalarField *result=new scalarField(patch_.size());
+    nearWallDist dist(this->mesh());
+    (*result)=dist[patch_.index()];
     return result;
 }
 

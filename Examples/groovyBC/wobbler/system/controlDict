@@ -16,7 +16,7 @@ FoamFile
 
 application     solidDisplacementFoam;
 
-startFrom       startTime;
+startFrom       latestTime;
 
 startTime       0;
 
@@ -46,6 +46,109 @@ graphFormat     raw;
 
 runTimeModifiable yes;
 
-libs ("libOpenFOAM.so" "libgroovyBC.so");
+functions (
+    biggestD
+    {
+        type patchExpression;
+        patches ( 
+            free 
+            forced 
+            other
+        );
+        expression "mag(D)";
+        accumulations (
+            max
+        );
+        verbose true;
+    }
+    biggestDFreeMem
+    {
+        type swakExpression;
+        valueType patch;
+        patchName free;
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        accumulations (
+            max
+        );
+        expression "maxD";
+        verbose true;
+    }
+    biggestDFreeMem2
+    {
+        type patchExpression; 
+        patches (
+            free
+            forced
+        );
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        accumulations (
+            max
+        );
+        expression "maxD";
+        verbose true;
+    }
+    biggestDVolMem
+    {
+        type swakExpression;
+        valueType internalField;
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        accumulations (
+            max
+        );
+        expression "maxD";
+        verbose true;
+    }
+    biggestDVol
+    {
+        type swakExpression;
+        valueType internalField;
+        accumulations (
+            max
+        );
+        expression "mag(D)";
+        verbose true;
+    }
+    biggestDField
+    {
+        type expressionField;
+        fieldName maxDField;
+        storedVariables (
+            {
+                name maxD;
+                initialValue "0";
+            }
+        );
+        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        expression "maxD";
+        autowrite true;
+        outputControl timeStep;
+        outputInterval 1;
+    }
+);
+
+libs (
+    "libOpenFOAM.so" 
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+);
 
 // ************************************************************************* //

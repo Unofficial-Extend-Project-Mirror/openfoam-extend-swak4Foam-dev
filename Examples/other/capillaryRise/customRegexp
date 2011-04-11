@@ -1,0 +1,26 @@
+height
+{
+	expr "Expression height :  min=(%f%) max=(%f%)";
+	theTitle "Liquid height";
+	titles (min max);
+	progress "h [$0 $1]";
+}
+deviation
+{
+	expr "Expression deviation :  sum=(%f%)";
+	theTitle "Deviation from plane";
+	logscale true;
+	progress "dev $0";
+}
+velocity
+{
+	expr "Expression velocity :  max=(%f%)";
+	theTitle "Maximum velocity of interface";
+	progress "vel $0";
+}
+surface
+{
+	theTitle "Area of the surface";
+	expr "Expression surface :  sum=(%f%)";
+	progress "A: $0";
+}

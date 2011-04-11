@@ -1,5 +1,8 @@
 SurfacesRepository.C
 ExpressionResult.C
+StoredExpressionResult.C
+
+swakRegistryProxySurface.C
 
 FieldValueExpressionParser.yy
 PatchValueExpressionParser.yy

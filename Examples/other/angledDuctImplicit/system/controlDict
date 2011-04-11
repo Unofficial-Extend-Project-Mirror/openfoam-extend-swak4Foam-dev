@@ -49,10 +49,23 @@ runTimeModifiable yes;
 
 functions
 (
+    pressureDrop
+    {
+        type patchExpression;
+        variables ( "pOut{patch'outlet}=sum(p*area())/sum(area());");
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+        );
+        expression "p-pOut";
+        verbose true;
+    }
     pressureToFilterVolAvg
     {
         type patchExpression;
-        variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";
+        variables ( "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());");
         accumulations (
             average
         );
@@ -61,6 +74,20 @@ functions
             outlet
         );
         expression "p-pFilter";
+        verbose true;
+    }
+    pressureToVol
+    {
+        type patchExpression;
+        variables ( "pTotal{internalField}=sum(p*vol())/sum(vol());");
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "p-pTotal";
         verbose true;
     }
     pressureToFilter
@@ -158,7 +185,9 @@ functions
         type swakExpression;
         valueType faceZone;
         zoneName beforeFilter;
-        variables "pAfter{faceSet'afterFilter}=average(p);";
+        variables (
+            "pAfter{faceSet'afterFilter}=average(p);"
+        );
         accumulations (
             average
         );
@@ -172,7 +201,10 @@ functions
         type swakExpression;
         valueType patch;
         patchName outlet;
-        variables "pAfter{faceSet'afterFilter}=average(p);";
+        variables (
+            "dummy=p-mag(U);"
+            "pAfter{faceSet'afterFilter}=average(p);"
+        );
         accumulations (
             average
         );
@@ -300,6 +332,28 @@ functions
             max
         );
     }
+    surfacePlaneMaxU
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        verbose true;
+        variables (
+            "maxU=(maxU<mag(U)) ? mag(U) : maxU;"
+        );
+        storedVariables (
+            {
+                name maxU;
+                initialValue "0";
+            }
+        );
+        expression "maxU";
+        accumulations (            
+            average
+            max
+            min
+        );
+    }
     createsurfacePlane2
     {
         type createSampledSurface;
@@ -390,6 +444,44 @@ functions
         fieldName distanceFromZero;
         expression "mag(pos())";
         autowrite true;        
+    }
+    velocityClass
+    {
+        type expressionField;
+        outputControl outputTime;
+        //        outputInterval 1;
+        fieldName velClass;
+        lookuptables (
+            {
+                name velClass;
+                outOfBounds clamp;
+                fileName "$FOAM_CASE/velClass.data";
+            }
+        );
+        expression "velClass(mag(U))";
+        autowrite true;   
+        verbose true;
+    }
+    yPlusField
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName yPlus;
+        expression "pow(0.09,0.25)*sqr(k)*nearDist()/mu";
+        autowrite true;
+    }
+    yPlusWall
+    {
+        type patchExpression;
+        expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
+        accumulations (
+            min
+            max
+            average
+        );
+        patches (wall);
+        verbose true;
     }
     surfaceIsoDist
     {
@@ -566,6 +658,8 @@ libs (
     "libsimpleSwakFunctionObjects.so" 
     "libswakFunctionObjects.so" 
     "libswakTopoSources.so" 
+    // Needed to decompose on 1.7
+    "libcompressibleRASModels.so"
 ) ;
 
 // ************************************************************************* //
