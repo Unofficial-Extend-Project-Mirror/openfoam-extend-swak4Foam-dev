@@ -28,5 +28,6 @@ CellZoneValueExpressionDriver.C
 FaceZoneValueExpressionDriver.C
 
 SampledSurfaceValueExpressionDriver.C
+SampledSetValueExpressionDriver.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers
