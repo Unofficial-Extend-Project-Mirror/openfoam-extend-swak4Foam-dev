@@ -1,14 +1,9 @@
+//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
- ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
- ##  ##     ####       |
- ##  ##     ##         | http://www.ice-sf.at
- ##   ####  ######     |
--------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
+    \\  /    A nd           | Copyright  held by original author
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,17 +23,31 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Class
+    createSampledSetFunctionObject
+
+Description
+    Function object that creates a sampledSet and adds it to the 
+    repository swak keeps for use with other functionObjects
+
+SourceFiles
+    createSampledSetFunctionObject.C
+
 \*---------------------------------------------------------------------------*/
 
-namespace Foam {
- 
+#ifndef createSampledSetFunctionObject_H
+#define createSampledSetFunctionObject_H
+
+#include "createSampledSet.H"
+#include "OutputFilterFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+namespace Foam
+{
+    typedef OutputFilterFunctionObject<createSampledSet> createSampledSetFunctionObject;
 }
 
-// ************************************************************************* //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif

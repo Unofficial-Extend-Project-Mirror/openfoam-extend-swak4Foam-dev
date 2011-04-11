@@ -8,16 +8,16 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
+    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is based on OpenFOAM.
 
-    OpenFOAM is free software; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version.
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -25,27 +25,27 @@ License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM; if not, write to the Free Software Foundation,
-    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SurfacesRepository
+    Foam::swakRegistryProxySet
 
 Description
+    A sampledSet that is only a Proxy for one found in the 
+    Set-registry of swak4Foam
 
 SourceFiles
-    SurfacesRepositoryI.H
-    SurfacesRepository.C
-    SurfacesRepositoryIO.C
+    swakRegistryProxySet.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef SurfacesRepository_H
-#define SurfacesRepository_H
+#ifndef swakRegistryProxySet_H
+#define swakRegistryProxySet_H
 
-#include "PtrMap.H"
-#include "sampledSurface.H"
+#include "sampledSet.H"
+
+#include "SetsRepository.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,45 +53,46 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SurfacesRepository Declaration
+                       Class swakRegistryProxySet Declaration
 \*---------------------------------------------------------------------------*/
 
-class SurfacesRepository
+class swakRegistryProxySet
+:
+    public sampledSet
 {
     // Private data
 
-    HashPtrTable<sampledSurface,word> surfaces_;
+    word setName_;
+
+    const sampledSet &realSet() const;
+
+    sampledSet &realSet();
+
+public:
+
+    //- Runtime type information
+    TypeName("swakRegistryProxy");
+
 
     // Constructors
 
-    //- Construct null
-    SurfacesRepository();
+        //- Construct from dictionary
+        swakRegistryProxySet
+        (
+            const word& name,
+            const polyMesh& mesh,
+            meshSearch& search,
+            const dictionary& dict
+        );
 
-    //- The only instance of this repository
-    static SurfacesRepository *repositoryInstance;
 
-public:
-     //- Runtime type information
-    TypeName("SurfacesRepository");
+    // Destructor
 
-    //- Destructor
+        virtual ~swakRegistryProxySet();
 
-    virtual ~SurfacesRepository();
 
-    //- Get the Singleton of this class
-    static SurfacesRepository &getRepository();
-
-    //- get a surface using a dictionary (surface will be constructed if not existing)
-    sampledSurface &getSurface(
-        const dictionary &dict,
-        const fvMesh &mesh
-    );
-
-    //- get a surface using its name (surface must exist)
-    sampledSurface &getSurface(
-        const word &name,
-        const fvMesh &mesh
-    );
+    // Member Functions
+    virtual point getRefPoint (const List< point > &) const;
 };
 
 

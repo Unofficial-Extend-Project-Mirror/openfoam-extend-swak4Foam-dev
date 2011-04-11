@@ -29,23 +29,23 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::SurfacesRepository
+    Foam::SetsRepository
 
 Description
 
 SourceFiles
-    SurfacesRepositoryI.H
-    SurfacesRepository.C
-    SurfacesRepositoryIO.C
+    SetsRepositoryI.H
+    SetsRepository.C
+    SetsRepositoryIO.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef SurfacesRepository_H
-#define SurfacesRepository_H
+#ifndef SetsRepository_H
+#define SetsRepository_H
 
 #include "PtrMap.H"
-#include "sampledSurface.H"
+#include "sampledSet.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,45 +53,53 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SurfacesRepository Declaration
+                           Class SetsRepository Declaration
 \*---------------------------------------------------------------------------*/
 
-class SurfacesRepository
+class SetsRepository
 {
     // Private data
 
-    HashPtrTable<sampledSurface,word> surfaces_;
+    HashPtrTable<sampledSet,word> sets_;
+
+    HashPtrTable<meshSearch,word> meshSearches_;
 
     // Constructors
 
     //- Construct null
-    SurfacesRepository();
+    SetsRepository();
 
     //- The only instance of this repository
-    static SurfacesRepository *repositoryInstance;
+    static SetsRepository *repositoryInstance;
+
+    //- get a meshSearch using the mesh (construct new if missing)
+    meshSearch &getSearch(
+        const polyMesh &mesh
+    );
 
 public:
      //- Runtime type information
-    TypeName("SurfacesRepository");
+    TypeName("SetsRepository");
 
     //- Destructor
 
-    virtual ~SurfacesRepository();
+    virtual ~SetsRepository();
 
     //- Get the Singleton of this class
-    static SurfacesRepository &getRepository();
+    static SetsRepository &getRepository();
 
-    //- get a surface using a dictionary (surface will be constructed if not existing)
-    sampledSurface &getSurface(
+    //- get a set using a dictionary (set will be constructed if not existing)
+    sampledSet &getSet(
         const dictionary &dict,
-        const fvMesh &mesh
+        const polyMesh &mesh
     );
 
-    //- get a surface using its name (surface must exist)
-    sampledSurface &getSurface(
+    //- get a set using its name (set must exist)
+    sampledSet &getSet(
         const word &name,
-        const fvMesh &mesh
+        const polyMesh &mesh
     );
+
 };
 
 

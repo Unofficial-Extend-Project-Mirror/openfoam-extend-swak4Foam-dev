@@ -156,6 +156,12 @@
          directory 
     - Also demonstrated :: =patchExpression= and =swakExpression= from
          =simpleSwakFunctionObjects=. 
+**** fillingTheDam
+     - Solver :: interFoam
+     - Also demonstrates :: Usage of a =sampledSet= defined in the
+          =controlDict= do determine the average filling height. Also
+          stored variables for not switching back once the criterion
+          is reached
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
