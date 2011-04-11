@@ -137,6 +137,11 @@ sampledSet &SetsRepository::getSet(
             ).ptr()
         );
 
+        if(debug) {
+            Info << "Created set " << name << " :" << endl;
+            sets_[name]->write(Info);
+            Info << endl;
+        }
         return *sets_[name];
     }
 }

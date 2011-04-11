@@ -5,6 +5,7 @@ ExpressionResult.C
 StoredExpressionResult.C
 
 swakRegistryProxySurface.C
+swakRegistryProxySet.C
 
 FieldValueExpressionParser.yy
 PatchValueExpressionParser.yy

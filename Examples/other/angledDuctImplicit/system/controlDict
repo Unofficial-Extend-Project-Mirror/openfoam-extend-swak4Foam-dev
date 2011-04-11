@@ -436,6 +436,102 @@ functions
             max
         );
     }
+    createThrePointSet
+    {
+        type createSampledSet;
+        outputControl timeStep;
+        outputInterval 1;
+        setName threePoints;
+        set {
+            type cloud;
+            axis x;
+            points (
+                (0.1 0.14 0.0001)
+                (0.0 0.02 0.0001)
+                (-0.1 0.02 0.0001)
+            );
+        }
+    }
+    setsPressureChangeProxy
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsCopy;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type swakRegistryProxy;
+            axis x;
+            setName threePoints;
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+    }
+    setsPressureChangeProxyInter
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsCopy2;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type swakRegistryProxy;
+            axis x;
+            setName threePoints;
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+        interpolate true;
+        interpolationType cellPoint;
+    }
+    setsPressureChange
+    {
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsOwn;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type cloud;
+            axis x;
+            points (
+                (0.1 0.14 0.0001)
+                (0.0 0.02 0.0001)
+                (-0.1 0.02 0.0001)
+            );
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+    }
     distField
     {
         type expressionField;

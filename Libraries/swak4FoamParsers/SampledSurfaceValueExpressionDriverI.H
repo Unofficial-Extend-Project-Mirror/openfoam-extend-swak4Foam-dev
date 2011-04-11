@@ -63,7 +63,7 @@ namespace Foam {
         if(this->variables_.found(name)) {
             return this->variables_[name].getResult<Type>(true).ptr();
         }
-        Field<Type> *result;
+        Field<Type> *result=NULL;
 
         if(
             this->searchInMemory() 
@@ -113,6 +113,13 @@ namespace Foam {
                     )
                 );
             }
+        }
+
+        if(result==NULL) {
+            FatalErrorIn("SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(const word &name)")
+                << "No valid result" 
+                    << endl
+                    << abort(FatalError);
         }
 
         return result;

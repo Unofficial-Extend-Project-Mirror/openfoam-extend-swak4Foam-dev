@@ -66,11 +66,21 @@ namespace Foam {
     template<class Type,class volField,class surfField>
     Field<Type> *SampledSetValueExpressionDriver::sampleOrInterpolateInternal(const word &name)
     {
+        if(debug) {
+            Info << "Sampling set: " << name << " on set " 
+                << this->theSet_.name() << " with " << this->size() 
+                << " points" << endl; 
+            //            this->theSet_.write(Info);
+            Info << "Search memory: " << this->searchInMemory()
+                << " Field there: " << this->mesh().foundObject<volField>(name)
+                << " Is variable: " << this->variables_.found(name)
+                << endl;
+        }
         if(this->variables_.found(name)) {
             return this->variables_[name].getResult<Type>(true).ptr();
         }
 
-        Field<Type> *result;
+        Field<Type> *result=NULL;
         const sampledSet& samples = this->theSet_;
 
         if(
@@ -102,6 +112,9 @@ namespace Foam {
                             facei
                         );
                 }                
+                if(debug) {
+                    Info << "Interpolated values: " << values << endl;
+                }
             } else {
                 result=new Field<Type>(this->theSet_.size());
                 Field<Type> &values=*result;
@@ -111,6 +124,9 @@ namespace Foam {
                 {
                     values[samplei] = field[samples.cells()[samplei]];
                 }                
+                if(debug) {
+                    Info << "Values: " << values << endl;
+                }
             }
         } else {
             autoPtr<volField> f=this->getOrReadField<volField>(name);
@@ -151,7 +167,14 @@ namespace Foam {
             }
         }
 
-        return new Field<Type>(0);
+        if(result==NULL) {
+            FatalErrorIn("SampledSetValueExpressionDriver::sampleOrInterpolateInternal(const word &name)")
+                << "No valid result" 
+                    << endl
+                    << abort(FatalError);
+        }
+
+        return result;
     }
 
 }
