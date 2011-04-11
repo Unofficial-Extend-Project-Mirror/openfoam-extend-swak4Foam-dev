@@ -56,7 +56,7 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
 :
     patchFunctionObject(name,t,dict),
     expression_(dict.lookup("expression")),
-    variables_(CommonValueExpressionDriver::readVariableStrings(dict)),
+    data_(dict),
     accumulations_(dict.lookup("accumulations"))
 {
 }
@@ -105,19 +105,17 @@ string patchExpressionFunctionObject::firstLine()
 
 void patchExpressionFunctionObject::write()
 {
-    const fvMesh &mesh=refCast<const fvMesh>(obr_);
-    
     forAll(patchIndizes_,i) {
         if(patchIndizes_[i]<0) {
             continue;
         }
-        PatchValueExpressionDriver driver(mesh.boundary()[patchIndizes_[i]]);
+        PatchValueExpressionDriver &driver=drivers_[i];
 
         if(verbose()) {
             Info << "Expression " << name() << " on " << patchNames_[i] << ": ";
         }
         
-        driver.addVariables(variables_);
+        driver.clearVariables();
         driver.parse(expression_);
         word rType=driver.getResultType();
 
@@ -137,6 +135,27 @@ void patchExpressionFunctionObject::write()
             Info << endl;
         }
     }
+}
+
+bool patchExpressionFunctionObject::start()
+{
+    const fvMesh &mesh=refCast<const fvMesh>(obr_);
+    
+    bool result=patchFunctionObject::start();
+    
+    drivers_.clear();
+    drivers_.resize(patchIndizes_.size());
+
+    forAll(drivers_,i) {
+        drivers_.set(
+            i,
+            new PatchValueExpressionDriver(
+                data_,
+                mesh.boundary()[patchIndizes_[i]]
+            )
+        );
+    }
+    return result;
 }
 
 } // namespace Foam

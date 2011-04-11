@@ -51,6 +51,7 @@ SourceFiles
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "ExpressionResult.H"
+#include "StoredExpressionResult.H"
 
 namespace Foam
 {
@@ -76,6 +77,10 @@ protected:
     ExpressionResult result_;
 
     HashTable<ExpressionResult,word> variables_;
+
+    List<StoredExpressionResult> storedVariables_;
+
+    label storedVariablesIndex_;
 
     HashTable<interpolationTable<scalar>,word> lines_;
 
@@ -112,6 +117,9 @@ protected:
         const dictionary &dict,
         const fvMesh &mesh
     );
+
+    //- look through the current variable values and update the stored variables
+    void updateStoredVariables(bool force=false);
 
 private:
     //- keep fields read from disc in memory

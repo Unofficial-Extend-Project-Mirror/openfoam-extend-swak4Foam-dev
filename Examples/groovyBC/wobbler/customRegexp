@@ -1,0 +1,25 @@
+maxDOnFreeMem {
+	titles ("on free so far");
+	expr "Expression biggestDFreeMem :  max=(%f%)";	
+	type slave;
+	master 	maxDOnFree;
+}
+maxDOnFree {
+	theTitle "Maximum Displacement";
+	titles ("on ");
+	expr "Expression biggestD on (.+):  max=(%f%)";	
+	type dynamic;
+	idNr 1;	
+}
+maxDVol {
+	titles ("in volume");
+	expr "Expression biggestDVol :  max=(%f%)";	
+	type slave;
+	master 	maxDOnFree;
+}
+maxDVolMem {
+	titles ("in volume so far");
+	expr "Expression biggestDVolMem :  max=(%f%)";	
+	type slave;
+	master 	maxDOnFree;
+}

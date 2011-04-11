@@ -156,6 +156,12 @@
          directory 
     - Also demonstrated :: =patchExpression= and =swakExpression= from
          =simpleSwakFunctionObjects=. 
+**** fillingTheDam
+     - Solver :: interFoam
+     - Also demonstrates :: Usage of a =sampledSet= defined in the
+          =controlDict= do determine the average filling height. Also
+          stored variables for not switching back once the criterion
+          is reached
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -224,6 +230,12 @@
 *** Pointers in the driver code
     This is necessary because of =bison=. Investigate possibilities to
     replace these by =tmp= and =autoPtr= 
+** Possible memory loss
+   =valgrind= reports some lost memory for stuff that is not directly
+   allocated by =swak4Foam= (in OpenFOAM-sources)
+
+   Will investigate. Relevant places are marked by comments in the
+   code. Also the construction of =sampledSet= seems to loose memory
 * History
 ** 2010-09-13
    First Release

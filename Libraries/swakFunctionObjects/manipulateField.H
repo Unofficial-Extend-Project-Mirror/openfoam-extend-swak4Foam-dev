@@ -51,6 +51,7 @@ class objectRegistry;
 class dictionary;
 class mapPolyMesh;
 
+class FieldValueExpressionDriver;
 
 class manipulateField
 {
@@ -85,6 +86,8 @@ protected:
         const T &data,
         const volScalarField &mask
     );
+
+    autoPtr<FieldValueExpressionDriver> driver_;
 
 public:
 
