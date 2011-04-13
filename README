@@ -42,7 +42,25 @@
    global directories.
 
    The script =removeSwakFilesFromGlobal.sh= removes all these files
-   from the global directories
+   from the global directories. The =removeSwakFilesFromLocal.sh= does
+   the same for the user directories (this makes sure that no
+   self-compiled version /shadows/ the global version (which would
+   lead to strange results)
+
+   There is a =Makefile= attached. =make install= compiles =swak4Foam=
+   and installs it into the global directories
+** Packaging
+*** Debian
+    The command =build dpkg= builds a Debian/Ubuntu package for 
+    the *currently enabled* OpenFOAM-package. Note:
+    - it is assumed that the currently used OF-version was also
+      installed by the package manager
+    - the =dev= package is built but poorly maintained
+    - =simpleFunctionOjects= are automatically included in the
+      package. To avoid this remove the =simpleFunctionObjects= from
+      the =Libraries= directory and do =make dpkg-only=
+    Changes in the packaging should be done in the branch
+      =debianPackaging= of the Mercurial-repository
 * Contents
 ** Libraries
    Collection of Libraries
@@ -102,6 +120,10 @@
     condition but doesn't do anything else.
 
     Can be used for other BCs as well
+*** =funkyDoCalc=
+    Evaluates expressions that are listed in a dictionary using data
+    that is found on the disc and prints summarized data (min, max,
+    average, sum) to the screen
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -134,6 +156,12 @@
          directory 
     - Also demonstrated :: =patchExpression= and =swakExpression= from
          =simpleSwakFunctionObjects=. 
+**** fillingTheDam
+     - Solver :: interFoam
+     - Also demonstrates :: Usage of a =sampledSet= defined in the
+          =controlDict= do determine the average filling height. Also
+          stored variables for not switching back once the criterion
+          is reached
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -171,7 +199,8 @@
           an argument
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
-          =swakExpression=-functionObject
+          =swakExpression=-functionObject. Also an example dictionary
+          that demonstrates the use of =funkyDoCalc=
 **** =capillaryRise=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
@@ -194,6 +223,19 @@
    Apart from patches and internal fields the support for
    interpolation from cells to faces (and vice versa) is incomplete as
    well as point fields (although they are supported in the grammar)
+** Caching of loaded fields not working
+   This is especially evident for the =funkyDoCalc=-example
+** Possible enhancements of the code
+   Not really bugs, but stuff that bugs me
+*** Pointers in the driver code
+    This is necessary because of =bison=. Investigate possibilities to
+    replace these by =tmp= and =autoPtr= 
+** Possible memory loss
+   =valgrind= reports some lost memory for stuff that is not directly
+   allocated by =swak4Foam= (in OpenFOAM-sources)
+
+   Will investigate. Relevant places are marked by comments in the
+   code. Also the construction of =sampledSet= seems to loose memory
 * History
 ** 2010-09-13
    First Release

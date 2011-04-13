@@ -1,0 +1,127 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         5;
+
+deltaT          0.001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.5;
+maxAlphaCo      0.5;
+
+maxDeltaT       1;
+
+functions 
+(
+    createFillingLine {
+        type createSampledSet;
+        outputControl timeStep;
+        outputInterval 1;
+        setName fillingLine;
+        set {
+            type uniform;
+            axis y;
+            start (0.1 0 0.007);
+            end (0.1 0.584 0.007);
+            nPoints 200;
+        }
+    }
+    fillingHeight
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  fillingHeight;
+        expression "(alpha1 > 0.5) ? pos().y : 0";
+        accumulations (
+            max
+        );
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        interpolate true;
+        interpolationType cellPoint;
+    }
+    maxFilling
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  fillingHeight2;
+        expression "pegel";
+        accumulations (
+            max
+        );
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        storedVariables (
+            {
+                name pegel;
+                initialValue "0";
+            }
+        );
+        variables (
+            "currentPegel=(alpha1 > 0.5) ? pos().y : 0;"
+            "pegel=(currentPegel > pegel) ? currentPegel : pegel;"
+        );
+        interpolate true;
+        interpolationType cellPoint;
+    }
+);
+
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+);
+
+// ************************************************************************* //

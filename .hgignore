@@ -26,4 +26,7 @@ doc
 \#*\#
 *.orig
 
+debian/rules
+debian/control
+
 Libraries/simpleFunctionObjects

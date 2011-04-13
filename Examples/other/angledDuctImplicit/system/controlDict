@@ -332,6 +332,28 @@ functions
             max
         );
     }
+    surfacePlaneMaxU
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        verbose true;
+        variables (
+            "maxU=(maxU<mag(U)) ? mag(U) : maxU;"
+        );
+        storedVariables (
+            {
+                name maxU;
+                initialValue "0";
+            }
+        );
+        expression "maxU";
+        accumulations (            
+            average
+            max
+            min
+        );
+    }
     createsurfacePlane2
     {
         type createSampledSurface;
@@ -414,6 +436,102 @@ functions
             max
         );
     }
+    createThrePointSet
+    {
+        type createSampledSet;
+        outputControl timeStep;
+        outputInterval 1;
+        setName threePoints;
+        set {
+            type cloud;
+            axis x;
+            points (
+                (0.1 0.14 0.0001)
+                (0.0 0.02 0.0001)
+                (-0.1 0.02 0.0001)
+            );
+        }
+    }
+    setsPressureChangeProxy
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsCopy;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type swakRegistryProxy;
+            axis x;
+            setName threePoints;
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+    }
+    setsPressureChangeProxyInter
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsCopy2;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type swakRegistryProxy;
+            axis x;
+            setName threePoints;
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+        interpolate true;
+        interpolationType cellPoint;
+    }
+    setsPressureChange
+    {
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsOwn;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type cloud;
+            axis x;
+            points (
+                (0.1 0.14 0.0001)
+                (0.0 0.02 0.0001)
+                (-0.1 0.02 0.0001)
+            );
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+    }
     distField
     {
         type expressionField;
@@ -422,6 +540,23 @@ functions
         fieldName distanceFromZero;
         expression "mag(pos())";
         autowrite true;        
+    }
+    velocityClass
+    {
+        type expressionField;
+        outputControl outputTime;
+        //        outputInterval 1;
+        fieldName velClass;
+        lookuptables (
+            {
+                name velClass;
+                outOfBounds clamp;
+                fileName "$FOAM_CASE/velClass.data";
+            }
+        );
+        expression "velClass(mag(U))";
+        autowrite true;   
+        verbose true;
     }
     yPlusField
     {
@@ -619,6 +754,8 @@ libs (
     "libsimpleSwakFunctionObjects.so" 
     "libswakFunctionObjects.so" 
     "libswakTopoSources.so" 
+    // Needed to decompose on 1.7
+    "libcompressibleRASModels.so"
 ) ;
 
 // ************************************************************************* //

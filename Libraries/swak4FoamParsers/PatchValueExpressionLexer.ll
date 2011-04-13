@@ -134,6 +134,8 @@ inv                    return token::TOKEN_inv;
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
+    } else if(driver.isLookup(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LOOKUP;
     } else if(driver.is<Foam::scalar>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_SID;
     } else if(driver.is<Foam::vector>(*ptr)) {

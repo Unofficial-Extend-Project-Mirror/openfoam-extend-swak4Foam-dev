@@ -80,6 +80,9 @@ public:
     //- Construct as copy
     ExpressionResult(const ExpressionResult&);
 
+    //- Construct from a dictionary
+    ExpressionResult(const dictionary&);
+
     // Destructor
 
     ~ExpressionResult();
@@ -106,6 +109,8 @@ public:
     inline const string &type() const;
 
     inline bool isPoint() const;
+
+    bool hasValue() const;
 
     friend Ostream & operator<<(Ostream &,const ExpressionResult &);
 };

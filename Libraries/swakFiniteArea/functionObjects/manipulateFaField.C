@@ -42,7 +42,8 @@ Foam::manipulateFaField::manipulateFaField
 )
 :
     active_(true),
-    obr_(obr)
+    obr_(obr),
+    dict_(dict)
 {
     if (!isA<fvMesh>(obr_))
     {
@@ -80,49 +81,52 @@ void Foam::manipulateFaField::read(const dictionary& dict)
         name_=word(dict.lookup("fieldName"));
         expression_=string(dict.lookup("expression"));
         maskExpression_=string(dict.lookup("mask"));
+
+        const fvMesh& mesh = refCast<const fvMesh>(obr_);
+        
+        driver_.set(
+            new FaFieldValueExpressionDriver(
+                mesh,
+                false, // no caching. No need
+                true,  // search fields in memory
+                false  // don't look up files in memory
+            )
+        );
+
+        driver_->readVariablesAndTables(dict_);
     }
 }
 
 void Foam::manipulateFaField::execute()
 {
     if(active_) {
-        const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
-        FaFieldValueExpressionDriver driver(
-            mesh,
-            false, // no caching. No need
-            true,  // search fields in memory
-            false  // don't look up files in memory
-        );
+        FaFieldValueExpressionDriver &driver=driver_();
 
-        driver.parse(expression_);
+        driver.clearVariables();
 
-        FaFieldValueExpressionDriver ldriver(
-            mesh,
-            false, // no caching. No need
-            true,  // search fields in memory
-            false  // don't look up files in memory
-        );
+        driver.parse(maskExpression_);
 
-        ldriver.parse(maskExpression_);
-
-        if(!ldriver.resultIsLogical()) {
+        if(!driver.resultIsLogical()) {
             FatalErrorIn("manipulateFaField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
                     << abort(FatalError);
         }
+        
+        areaScalarField conditionField(driver.getScalar());
+
+        driver.parse(expression_);
 
         if(driver.resultIsVector()) {
             manipulate(
                 driver.getVector(),
-                ldriver.getScalar()
+                conditionField
             );
             
         } else if(driver.resultIsScalar()) {
             manipulate(
                 driver.getScalar(),
-                ldriver.getScalar()
+                conditionField
             );
         } else {
             WarningIn("Foam::manipulateFaField::execute()")

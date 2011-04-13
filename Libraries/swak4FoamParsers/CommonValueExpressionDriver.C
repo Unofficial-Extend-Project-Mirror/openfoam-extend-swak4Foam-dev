@@ -60,7 +60,10 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     variableStrings_(orig.variableStrings_),
     result_(orig.result_),
     variables_(orig.variables_),
+    storedVariables_(orig.storedVariables_),
+    storedVariablesIndex_(orig.storedVariablesIndex_),
     lines_(orig.lines_),
+    lookup_(orig.lookup_),
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_)
@@ -75,10 +78,15 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
 :
     variableStrings_(readVariableStrings(dict)),
+    storedVariablesIndex_(-1),
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
 {
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
+
     if(debug) {
         Info << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
@@ -89,9 +97,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
         dict.lookupOrDefault("searchOnDisc",false)
     );
 
-    if(dict.found("timelines")) {
-        readLines(dict.lookup("timelines"));
-    }
+    readTables(dict);
 }
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(
@@ -101,6 +107,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 )
 :
     variableStrings_(),
+    storedVariablesIndex_(-1),
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
@@ -110,6 +117,28 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         searchInMemory,
         searchOnDisc
     );
+}
+
+void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
+{
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
+
+    setVariableStrings(dict);
+
+    readTables(dict);
+}
+
+void CommonValueExpressionDriver::readTables(const dictionary &dict)
+{
+    if(dict.found("timelines")) {
+        readTables(dict.lookup("timelines"),lines_);
+    }
+
+    if(dict.found("lookuptables")) {
+        readTables(dict.lookup("lookuptables"),lookup_);
+    }
 }
 
 void CommonValueExpressionDriver::setSearchBehaviour(
@@ -263,12 +292,24 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
     writeVariableStrings(os) << token::END_STATEMENT << nl;
 
     os.writeKeyword("timelines");
-    writeLines(os);
+    writeTables(os,lines_);
+    os << token::END_STATEMENT << nl;
+
+    os.writeKeyword("lookuptables");
+    writeTables(os,lookup_);
     os << token::END_STATEMENT << nl;
 
     if(debug) {
         os.writeKeyword("variableValues");
         os << variables() << endl;
+        os << token::END_STATEMENT << nl;
+    }
+    
+    if(storedVariables_.size()>0) {
+        const_cast<CommonValueExpressionDriver&>(*this).updateStoredVariables(true);
+        
+        os.writeKeyword("storedVariables");
+        os << storedVariables_ << endl;
         os << token::END_STATEMENT << nl;
     }
 
@@ -422,6 +463,18 @@ scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
     return new scalarField(this->size(),lines_[name](t));
 }
 
+tmp<scalarField> CommonValueExpressionDriver::getLookup(const string &name,const scalarField &val)
+{
+    scalarField *result=new scalarField(val.size());
+    const interpolationTable<scalar> &table=lookup_[name];
+
+    forAll(val,i) {
+        (*result)[i]=table(val[i]);
+    }
+
+    return tmp<scalarField>(result);
+}
+
 scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
 {
     return lines_[name](t);
@@ -448,17 +501,77 @@ bool CommonValueExpressionDriver::update()
     return true;
 }
 
+void CommonValueExpressionDriver::updateStoredVariables(bool force)
+{
+    if(storedVariablesIndex_<0) {
+        if(debug) {
+            Info << "First update: " << mesh().time().timeIndex() << endl;
+        }
+        storedVariablesIndex_=mesh().time().timeIndex();
+        forAll(storedVariables_,i) {
+            StoredExpressionResult &v=storedVariables_[i];
+            if(!v.hasValue()) {
+                if(debug) {
+                    Info << "First valuate: " << v.initialValueExpression() 
+                        << " -> " << v.name() << endl;
+                }
+                parse(v.initialValueExpression());
+                v=result_;
+            }
+        }        
+    }
+
+    if(
+        force
+        ||
+        storedVariablesIndex_!=mesh().time().timeIndex()
+    ) {
+        if(debug) {
+            Info << "Store variables: " << force << " " 
+                << storedVariablesIndex_ << " " << mesh().time().timeIndex() << endl;
+        }
+        forAll(storedVariables_,i) {
+            StoredExpressionResult &v=storedVariables_[i];
+            if(variables_.found(v.name())) {
+                if(debug) {
+                    Info << "Storing variable: " << v.name() << " " 
+                        << variables_[v.name()] << endl;
+                }
+                v=variables_[v.name()];
+            }
+        }
+        storedVariablesIndex_=mesh().time().timeIndex();
+    }
+}
+
 void CommonValueExpressionDriver::clearVariables()
 {
+    if(debug) {
+        Info << "Clearing variables" << endl;
+    }
+
     this->update();
+
+    updateStoredVariables();
     variables_.clear();
+    forAll(storedVariables_,i) {
+        StoredExpressionResult &v=storedVariables_[i];
+        variables_.insert(v.name(),v);
+    }
+    
     addVariables(variableStrings_,false);
 }
 
 void CommonValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
 {
     parse(expr);
-    variables_.insert(name,ExpressionResult(result_));
+
+    if(debug) {
+        Info << "Evaluating: " << expr << " -> " << name << endl;
+        Info << result_;
+    }
+
+    variables_.set(name,ExpressionResult(result_));
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
@@ -506,6 +619,12 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         type,
         id,
         region
+    );
+
+    otherDriver->setSearchBehaviour(
+        this->cacheReadFields(),
+        this->searchInMemory(),
+        this->searchOnDisc()
     );
 
     otherDriver->parse(expr);
@@ -571,23 +690,23 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
     }
 }
 
-void CommonValueExpressionDriver::readLines(Istream &is,bool clear)
+void CommonValueExpressionDriver::readTables(Istream &is,HashTable<interpolationTable<scalar> > &tables,bool clear)
 {
     if(clear) {
-        lines_.clear();
+        tables.clear();
     }
     List<dictionary> lines(is);
 
     forAll(lines,i) {
         const dictionary &dict=lines[i];
-        lines_.insert(dict.lookup("name"),interpolationTable<scalar>(dict));
+        tables.insert(dict.lookup("name"),interpolationTable<scalar>(dict));
     }
 }
 
-void CommonValueExpressionDriver::writeLines(Ostream &os) const
+void CommonValueExpressionDriver::writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &tables) const
 {
     os << token::BEGIN_LIST << nl;
-    forAllConstIter(HashTable<interpolationTable<scalar> >,lines_,it) {
+    forAllConstIter(HashTable<interpolationTable<scalar> >,tables,it) {
         os << token::BEGIN_BLOCK << nl;
         os.writeKeyword("name") << it.key() << token::END_STATEMENT << nl;
         (*it).write(os);

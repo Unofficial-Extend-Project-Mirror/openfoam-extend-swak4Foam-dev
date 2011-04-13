@@ -8,13 +8,13 @@ namespace Foam {
 template<>
 volScalarField *FieldValueExpressionDriver::makeLogicalField<volScalarField>(scalar val)
 {
-    return makeScalarField(val);
+    return makeConstantField<volScalarField>(val);
 }
 
 template<>
 surfaceScalarField *FieldValueExpressionDriver::makeLogicalField<surfaceScalarField>(scalar val)
 {
-    return makeSurfaceScalarField(val);
+    return makeConstantField<surfaceScalarField>(val);
 }
 
 #define getFaceValue(ding) (ding->boundaryField()[pI][fI])

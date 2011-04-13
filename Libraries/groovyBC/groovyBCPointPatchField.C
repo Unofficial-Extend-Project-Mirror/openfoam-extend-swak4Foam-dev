@@ -87,11 +87,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     groovyBCCommon<Type>(dict,false,true),
     driver_(getFvPatch(this->patch()))
 {
-    driver_.setVariableStrings(dict);
-
-    if(dict.found("timelines")) {
-        driver_.readLines(dict.lookup("timelines"));
-    }
+    driver_.readVariablesAndTables(dict);
 
     this->refValue() = pTraits<Type>::zero;
 
