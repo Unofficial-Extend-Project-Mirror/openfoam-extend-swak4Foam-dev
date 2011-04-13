@@ -7,8 +7,8 @@ getSimple:
 
 dpkg-only:
 	cd debian; ./prepareForPackaging.py
-#	dpkg-buildpackage -us -uc
-	dpkg-buildpackage -kBernhard.Gschaider@ice-sf.at
+	dpkg-buildpackage -us -uc
+#	dpkg-buildpackage -k<PACKAGER_ID>
 #	debuild -us -uc
 
 dpkg: getSimple dpkg-only
