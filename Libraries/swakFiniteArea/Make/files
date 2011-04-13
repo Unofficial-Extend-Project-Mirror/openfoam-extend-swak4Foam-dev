@@ -16,6 +16,8 @@ expressionSource/faForceEquation.C
 
 functionObjects/expressionFaField.C
 functionObjects/expressionFaFieldFunctionObject.C
+functionObjects/volFromFaField.C
+functionObjects/volFromFaFieldFunctionObject.C
 functionObjects/manipulateFaField.C
 functionObjects/manipulateFaFieldFunctionObject.C
 functionObjects/clearExpressionFaField.C
