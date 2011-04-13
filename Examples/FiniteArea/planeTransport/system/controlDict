@@ -99,6 +99,25 @@ functions (
         );
         verbose true;
     }
+    UsTimesCs {
+        type expressionFaField;
+        outputControl outputTime;
+        fieldName UsCs;
+        expression "Us*Cs";
+        autowrite true;
+    }
+    writeUsCs {
+        type volFromFaField;
+        outputControl outputTime;
+        fieldName UsCs;
+        autowrite true;
+    }
+    writeCs {
+        type volFromFaField;
+        outputControl outputTime;
+        fieldName Cs;
+        autowrite true;
+    }
 );
 
 // ************************************************************************* //
