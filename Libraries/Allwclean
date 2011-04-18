@@ -19,3 +19,6 @@ wclean swakSourceFields
 wclean swakFiniteArea
 
 wclean groovyStandardBCs
+
+# remove residual from bison
+rm -f */*.output

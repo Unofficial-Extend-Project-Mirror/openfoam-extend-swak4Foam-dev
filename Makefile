@@ -5,9 +5,13 @@ getSimple:
 	./downloadSimpleFunctionObjects.sh
 	wcleanLnIncludeAll
 
-dpkg-only:
+cleanStuff:
+	./Allwclean
+	wcleanLnIncludeAll
+
+dpkg-only: cleanStuff
 	cd debian; ./prepareForPackaging.py
-	dpkg-buildpackage -us -uc
+	export DH_ALWAYS_EXCLUDE=.svn:.dep:.o; dpkg-buildpackage -us -uc
 #	dpkg-buildpackage -k<PACKAGER_ID>
 #	debuild -us -uc
 
