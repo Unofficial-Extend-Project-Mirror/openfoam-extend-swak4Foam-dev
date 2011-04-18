@@ -101,7 +101,8 @@
     =cellSet= and =faceSet=-utilities 
 *** =swakFiniteArea=
     Implements parsers for the =finiteArea=-stuff in 1.6-ext. Also
-    implements =groovyBC= for =areaField= and =expressionField=
+    implements =groovyBC= for =areaField= and =expressionField= and
+    other function objects
 *** =groovyStandardBCs=
     Collection of boundary conditions that give standard boundary
     conditions the possibility to use expression for the coefficients
