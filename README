@@ -49,6 +49,9 @@
 
    There is a =Makefile= attached. =make install= compiles =swak4Foam=
    and installs it into the global directories
+
+   *Note:* Due to the order in which library direcories are searched
+   for with =-L= a global installation might break the compilation
 ** Packaging
 *** Debian
     The command =build dpkg= builds a Debian/Ubuntu package for 
@@ -61,6 +64,10 @@
       the =Libraries= directory and do =make dpkg-only=
     Changes in the packaging should be done in the branch
       =debianPackaging= of the Mercurial-repository
+
+    *Note:* Due to the problem described with the global installation
+    it might be necessary to deinstall a previously installed package
+    to successfully build a new package
 * Contents
 ** Libraries
    Collection of Libraries
