@@ -289,3 +289,35 @@
     See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=49
 *** New function =nearDist=
     See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=44
+** 2011-04-20
+   New features and changes are (this list is not complete):
+*** New utility =funkySetAreaField=
+    Like =funkySetFields= for /finiteArea/. Also writes out a volume
+    field for easier post-processing
+*** Refactoring of =groovyBC= and groovified boundary conditions
+    Makes it easier to use the =groovyBC=-machinery for other boundary
+    conditions. Two standard boundary conditions were
+    /groovified/. Others may follow
+*** Easier deployment
+    If no =simpleFunctionObjects= are present they can be downloaded
+    by a script.
+    Also scripts to handle global installations of =swak4Foam=
+*** Force equations
+    A class to force equations to certain values according to
+    expressions
+*** New utility =funkyDoCalc=
+    Utility does calculations on saved results and outputs single
+    numbers (min, max, sum, average) to the terminal. Can be used for
+    reporting or validity checks
+*** Debian packaging
+    Crude packaging for Debian
+*** Lookup-tables
+    A single-argument function can be specified as a piecewise linear
+    function. Basically works like timelines but the argument can be
+    something else (not only the time)
+*** Stored variables
+    Variables that store their values between time-steps. Applications
+    are statistics or switches
+*** Sampled sets
+    Sampled sets can now also be used as en entity on which
+    calculation is possible.
