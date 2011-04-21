@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 if [ ! -d Libraries/simpleFunctionObjects ]; then 
     if [ ! -d "$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects/lnInclude" ]; then 
@@ -8,6 +8,19 @@ if [ ! -d Libraries/simpleFunctionObjects ]; then
 	echo "Using simpleFunctionObjects at $WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects/"
     fi
 fi
+
+. theFiles.sh
+
+for lib in ${SWAKLIBS[@]}
+do
+    if [ -e $FOAM_LIBBIN/lib$lib.so ]; then 
+	echo "$FOAM_LIBBIN/lib$lib.so shadows library that will be compiled. This might break the compilation of the utilities"
+	if [ -z $I_KNOW_THE_RISCS ]; then 
+	    echo "Set the environment variable I_KNOW_THE_RISCS if you want to continue nevertheless"
+	    exit
+	fi
+    fi
+done
 
 (cd Libraries; wmake all )
 
