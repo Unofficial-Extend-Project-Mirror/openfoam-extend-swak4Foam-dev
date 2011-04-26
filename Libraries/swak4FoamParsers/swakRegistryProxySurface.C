@@ -100,19 +100,49 @@ Foam::swakRegistryProxySurface::~swakRegistryProxySurface()
 
 bool Foam::swakRegistryProxySurface::needsUpdate() const
 {
-    return realSurface().needsUpdate();
+    bool originalUpdate=realSurface().needsUpdate();
+
+    if(debug) {
+        Info << "Foam::swakRegistryProxySurface::needsUpdate(): " << originalUpdate << endl;
+    }
+
+    return originalUpdate;
 }
 
 
 bool Foam::swakRegistryProxySurface::expire()
 {
-    return realSurface().expire();
+    bool originalExpire=realSurface().expire();
+
+    if(debug) {
+        Info << "Foam::swakRegistryProxySurface::expire(): " << originalExpire << endl;
+    }
+
+    return originalExpire;
 }
 
 
 bool Foam::swakRegistryProxySurface::update()
 {
-    return realSurface().update();
+    bool originalUpdate=realSurface().update();
+
+    if(
+        this->Sf().size() != realSurface().Sf().size()
+        ||
+        this->Cf().size() != realSurface().Cf().size()
+        ||
+        this->magSf().size() != realSurface().magSf().size()
+    ) {
+        if(debug) {
+            Info << "Foam::swakRegistryProxySurface::update(): Clearin Geometry" << endl;
+        }
+        clearGeom();
+    }
+
+    if(debug) {
+        Info << "Foam::swakRegistryProxySurface::update(): " << originalUpdate << endl;
+    }
+    return originalUpdate;
 }
 
 

@@ -210,6 +210,11 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
 
 scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
 {
+    if(debug) {
+        Info << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
+            << " size: " << this->size() << " magSf: " << theSurface_.magSf().size() 
+            << endl;
+    }
     return new scalarField(theSurface_.magSf());
 }
 

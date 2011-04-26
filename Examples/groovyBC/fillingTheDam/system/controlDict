@@ -115,6 +115,41 @@ functions
         interpolate true;
         interpolationType cellPoint;
     }
+    surfaceVel {
+        type swakExpression;
+        valueType surface;
+        verbose true;
+        surfaceName liquidSurf;
+        surface {
+            type isoSurface;
+            isoField alpha1;
+            isoValue 0.5;
+            interpolate true;
+        }
+        expression "mag(U)";
+        accumulations (
+            max
+            average
+        );
+    }
+    surfaceSize {
+        type swakExpression;
+        valueType surface;
+        verbose true;
+        surfaceName liquidSurf2;
+        surface {
+//             type isoSurface;
+//             isoField alpha1;
+//             isoValue 0.5;
+//             interpolate true;
+            type swakRegistryProxy;
+            surfaceName liquidSurf;
+        }
+        expression "area()/0.0146";
+        accumulations (
+            sum
+        );
+    }
 );
 
 libs (
