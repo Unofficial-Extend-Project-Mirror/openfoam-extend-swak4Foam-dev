@@ -33,11 +33,21 @@ solvers
         relTol          0.05;
     }
 
+    pd
+    {
+        $p_rgh;
+    }
+
     p_rghFinal
     {
         $p_rgh;
         tolerance       1e-07;
         relTol          0;
+    }
+
+    pdFinal
+    {
+        $p_rghFinal;
     }
 
     U
