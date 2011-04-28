@@ -1,3 +1,15 @@
+swak4foam-%(ofpkg)s (0.1.1-1~ppa1~lucid1) lucid; urgency=low
+
+  * Adding addiditional dependencies without which launchpad won't consider building
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Thu, 28 Apr 2011 22:48:29 +0200
+
+swak4foam-%(ofpkg)s (0.1-6) lucid; urgency=low
+
+  * Adding addiditional dependencies without which launchpad won't consider building
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Thu, 28 Apr 2011 22:48:29 +0200
+
 swak4foam-%(ofpkg)s (0.1-5) lucid; urgency=low
 
   * Preparing for launchpad.net
