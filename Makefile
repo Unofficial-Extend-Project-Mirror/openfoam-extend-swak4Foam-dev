@@ -26,5 +26,5 @@ dpkg: getSimple dpkg-only
 install:
 	./downloadSimpleFunctionObjects.sh
 	./Allwmake
-	./copySwakFilesToGlobal.sh
+	./copySwakFilesToSite.sh
 	./removeSwakFilesFromLocal.sh

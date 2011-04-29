@@ -38,10 +38,10 @@
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
-   script =copySwakFilesToGlobal.sh= can be used to copy them to the
-   global directories.
+   script =copySwakFilesToSite.sh= can be used to copy them to the
+   global site-specific directories.
 
-   The script =removeSwakFilesFromGlobal.sh= removes all these files
+   The script =removeSwakFilesFromSite.sh= removes all these files
    from the global directories. The =removeSwakFilesFromLocal.sh= does
    the same for the user directories (this makes sure that no
    self-compiled version /shadows/ the global version (which would
