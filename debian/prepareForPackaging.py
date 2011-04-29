@@ -9,7 +9,14 @@ vals={}
 vals["libbin"]=environ["FOAM_LIBBIN"][1:]
 vals["appbin"]=environ["FOAM_APPBIN"][1:]
 interFoam = Popen(["which", "interFoam"], stdout=PIPE).communicate()[0].strip()
-vals["ofpkg"] = Popen(["dpkg", "--search",interFoam], stdout=PIPE).communicate()[0].split(":")[0]
+vals["ofpkg"] = Popen(   ["dpkg", 
+                          "--search",
+                          interFoam], 
+                       stdout=PIPE).communicate()[0].split(":")[0]
+vals["ofpkgdev"] = Popen(   ["dpkg", 
+                             "--search",
+                             path.join(environ["FOAM_SRC"],"OpenFOAM")], 
+                         stdout=PIPE).communicate()[0].split(":")[0]
 vals["ofproject"]=environ["WM_PROJECT_DIR"][1:]
 
 print "Preparing with vals",vals
