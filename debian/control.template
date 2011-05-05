@@ -23,7 +23,6 @@ Package: swak4foam-%(ofpkg)s
 Section: libs
 Architecture: any
 Depends: %(ofpkg)s, ${shlibs:Depends}, ${misc:Depends}
-Provides: funkysetfields, groovybc, simplefunctionobjects
 Conflicts: funkysetfields, groovybc, simplefunctionobjects
 Replaces: funkysetfields, groovybc, simplefunctionobjects
 Description: swak4Foam - A number of libraries that allows

@@ -1,3 +1,9 @@
+swak4foam-%(ofpkg)s (0.1.2-2~ppa1~lucid1) lucid; urgency=low
+
+  * The provideds clause in the control makes the installation of two swak-packages impossible
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Thu, 5 May 2011 15:32:29 +0200
+
 swak4foam-%(ofpkg)s (0.1.2-1~ppa1~lucid1) lucid; urgency=low
 
   * Make sure that the development-package is used
