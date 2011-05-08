@@ -29,124 +29,77 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FaceSetValueExpressionDriver
+    Foam::SetSubsetValueExpressionDriver
 
 Description
 
 SourceFiles
-    FaceSetValueExpressionDriverI.H
-    FaceSetValueExpressionDriver.C
+    SetSubsetValueExpressionDriverI.H
+    SetSubsetValueExpressionDriver.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef FaceSetValueExpressionDriver_H
-#define FaceSetValueExpressionDriver_H
-
-#include "volFields.H"
-
-#include "faceSet.H"
+#ifndef SetSubsetValueExpressionDriver_H
+#define SetSubsetValueExpressionDriver_H
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "SetSubsetValueExpressionDriver.H"
+#include "SubsetValueExpressionDriver.H"
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class FaceSetValueExpressionDriver Declaration
+                           Class SetSubsetValueExpressionDriver Declaration
 \*---------------------------------------------------------------------------*/
 
-class FaceSetValueExpressionDriver
+class SetSubsetValueExpressionDriver
 :
-    public SetSubsetValueExpressionDriver
+    public SubsetValueExpressionDriver
 {
-    // Private data
-    autoPtr<faceSet> faceSet_;
-
     // Private Member Functions
 
 protected:
 
-    //- update stuff that needs updating
-    virtual bool update();
+    const word id_;
+
+    SetOrigin origin_;
 
 public:
 
      //- Runtime type information
-    TypeName("FaceSetValueExpressionDriver");
+    TypeName("SetSubsetValueExpressionDriver");
 
-   // Constructors
+    // Constructors
 
     //- Construct from components
-    FaceSetValueExpressionDriver(
-        const faceSet &,
+    SetSubsetValueExpressionDriver(
+        const word &id,
+        const SetOrigin origin,
         bool autoInterpolate=false,
         bool warnAutoInterpolate=true
     );
     
-    //- Construct from a dictionary
-    FaceSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
-    //- Construct from an id
-    FaceSetValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
     //- Copy construct
-    FaceSetValueExpressionDriver(const faceSet &,const FaceSetValueExpressionDriver&);
+    SetSubsetValueExpressionDriver(const SetSubsetValueExpressionDriver&);
+
+    //- Copy from a dictionary
+    SetSubsetValueExpressionDriver(
+        const dictionary&,
+        const word &id,
+        const SetOrigin origin
+    );
 
     // Destructor
 
-    ~FaceSetValueExpressionDriver();
+    ~SetSubsetValueExpressionDriver();
 
 
     // Member Functions
 
-    virtual vectorField *makePositionField();
 
-    virtual scalarField *makeFaceAreaMagField();
-
-    virtual scalarField *makeCellVolumeField();
-
-    //     virtual vectorField *makePointField()=0;
-
-    virtual scalarField *makeFaceFlipField();
-
-    virtual vectorField *makeFaceNormalField();
-
-    virtual vectorField *makeFaceAreaField();
-
-//     template<class Type>
-//     Field<Type> *getField(const string &name);
-
-    virtual bool isCell() { return false; }
-
-    virtual Field<scalar> *getScalarField(const string &name);
-
-    virtual Field<vector> *getVectorField(const string &name);
-
-    virtual Field<tensor> *getTensorField(const string &name);
-
-    virtual Field<symmTensor> *getSymmTensorField(const string &name);
-
-    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name);
-
-    // Handling the parser
-    //    void parse(const std::string& f);
-
-    inline virtual label size() const;
-
-    inline virtual label pointSize() const;
-
-    inline virtual const fvMesh &mesh() const;
-
-//     template<class Type>
-//     virtual Field<Type> *toFace(const Field<Type> &)=0;
-
-//     template<class Type>
-//     virtual Field<Type> *toPoint(const Field<Type> &)=0;
 };
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -154,7 +107,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "FaceSetValueExpressionDriverI.H"
+#include "SetSubsetValueExpressionDriverI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

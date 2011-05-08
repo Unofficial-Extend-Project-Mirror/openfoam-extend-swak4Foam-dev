@@ -49,7 +49,7 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "SubsetValueExpressionDriver.H"
+#include "SetSubsetValueExpressionDriver.H"
 
 namespace Foam
 {
@@ -60,9 +60,10 @@ namespace Foam
 
 class CellSetValueExpressionDriver
 :
-    public SubsetValueExpressionDriver
+    public SetSubsetValueExpressionDriver
 {
     // Private data
+
     autoPtr<cellSet> cellSet_;
 
     // Private Member Functions

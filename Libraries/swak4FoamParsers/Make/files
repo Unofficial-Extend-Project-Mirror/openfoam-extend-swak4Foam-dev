@@ -21,6 +21,7 @@ PatchValueExpressionDriver.C
 
 SubsetValueExpressionLexer.ll
 SubsetValueExpressionDriver.C
+SetSubsetValueExpressionDriver.C
 
 CellSetValueExpressionDriver.C
 FaceSetValueExpressionDriver.C

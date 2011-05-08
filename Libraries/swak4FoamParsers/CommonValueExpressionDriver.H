@@ -150,8 +150,19 @@ protected:
     template<class T>
     inline tmp<T> readAndRegister(const word &name);
 
+    enum SetOrigin {
+        NEW,
+        FILE,
+        MEMORY,
+        CACHE,
+        INVALID
+    };
+
     template<class T>
-    inline autoPtr<T> getSet(const fvMesh &,const word &);
+    inline autoPtr<T> getSet(const fvMesh &,const word &,SetOrigin &origin);
+
+    template<class T>
+    inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
 
     template<class T>
     autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);

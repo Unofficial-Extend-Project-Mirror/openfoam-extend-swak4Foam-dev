@@ -53,7 +53,7 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpress
 
     CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set,const CellSetValueExpressionDriver& orig)
 :
-        SubsetValueExpressionDriver(orig),
+        SetSubsetValueExpressionDriver(orig),
         cellSet_(
             new cellSet(
                 dynamic_cast<const fvMesh&>(set.db()),
@@ -67,7 +67,7 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpress
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
 :
-    SubsetValueExpressionDriver(),
+    SetSubsetValueExpressionDriver(set.name(),NEW),
     cellSet_(
         new cellSet
         (
@@ -82,11 +82,12 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(),
+    SetSubsetValueExpressionDriver(id,INVALID),
     cellSet_(
         getSet<cellSet>(
             mesh,
-            id
+            id,
+            origin_
         )
     )
 {
@@ -94,11 +95,12 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const 
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(dict),
+    SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),NEW),
     cellSet_(
         getSet<cellSet>(
             regionMesh(dict,mesh),
-            dict.lookup("setName")
+            dict.lookup("setName"),
+            origin_
         )
     )
 {
@@ -197,10 +199,11 @@ vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
 bool CellSetValueExpressionDriver::update()
 {
     if(debug) {
-        Info << "CellSet: update " << cellSet_->name() << endl;
+        Info << "CellSet: update " << cellSet_->name() 
+            << endl;
     }
 
-    return true;
+    return updateSet(cellSet_,id_,origin_);
 }
 
 // ************************************************************************* //

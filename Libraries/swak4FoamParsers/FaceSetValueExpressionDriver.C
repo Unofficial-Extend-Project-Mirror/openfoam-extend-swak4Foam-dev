@@ -56,7 +56,7 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceSetValueExpress
 
     FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const faceSet &set,const FaceSetValueExpressionDriver& orig)
 :
-        SubsetValueExpressionDriver(orig),
+        SetSubsetValueExpressionDriver(orig),
         faceSet_(
             //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
             new faceSet(
@@ -74,7 +74,12 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
     bool warnAutoInterpolate
 )
 :
-    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
+    SetSubsetValueExpressionDriver(
+        set.name(),
+        INVALID,
+        autoInterpolate,
+        warnAutoInterpolate
+    ),
     faceSet_(
         //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
         new faceSet(
@@ -88,11 +93,12 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
 
 FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(dict),
+    SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),INVALID),
     faceSet_(
         getSet<faceSet>(
             regionMesh(dict,mesh),
-            dict.lookup("setName")
+            dict.lookup("setName"),
+            origin_
         )
     )
 {
@@ -100,11 +106,17 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dic
 
 FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const word& id,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(true,false),
+    SetSubsetValueExpressionDriver(
+        id,
+        INVALID,
+        true,
+        false
+    ),
     faceSet_(
         getSet<faceSet>(
             mesh,
-            id
+            id,
+            origin_
         )
     )
 {
@@ -177,14 +189,19 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
     word setName(faceSet_->name() + "SlaveCells");
     const fvMesh &mesh=this->mesh();
 
+    SetOrigin origin=INVALID;
+
     cellSet cells(
         mesh,
         setName,
         getSet<cellSet>(
             mesh,
-            setName
+            setName,
+            origin
         )
     );
+    assert(origin!=INVALID);
+
     SortableList<label> faceLabels(faceSet_->toc());
 
     forAll(faceLabels, i)
