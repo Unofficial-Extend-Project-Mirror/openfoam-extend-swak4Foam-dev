@@ -154,16 +154,26 @@ namespace Foam {
         const word regName=name+"RegisteredNameFor"+T::typeName;
 
         if(debug) {
-            Info << "Looking for " << T::typeName << " named " << name << " with mesh ";
-            Info << "Caching: " << cacheSets() << " Found: " << mesh.foundObject<T>(regName) << endl;
+            Info << "Looking for " << T::typeName << " named " << name 
+                << " or  registered as " << regName << " with mesh ";
+            Info << "Caching: " << cacheSets() 
+                << " Found: " << mesh.foundObject<T>(name)
+                << " Found registered: " << mesh.foundObject<T>(regName) << endl;
         }
         if(
             !cacheSets()
             ||
-            !mesh.thisDb().foundObject<T>(regName)
+            (
+                !mesh.thisDb().foundObject<T>(regName)
+                &&
+                !mesh.thisDb().foundObject<T>(name)
+            )
         ) {
             if(debug) {
-                Info << "Constructing a new " << name << endl;
+                Info << "Constructing a new " << T::typeName << " " << name << endl;
+                if(debug>1) {
+                    Info << mesh.thisDb().names();
+                }
             }
             autoPtr<T> s(
                 new T(
@@ -182,16 +192,29 @@ namespace Foam {
             }
             return s;
         } else {
-            if(debug) {
-                Info << "Getting existing " << regName << endl;
+            if(mesh.thisDb().foundObject<T>(name)) {
+                if(debug) {
+                    Info << "Getting existing " << name << endl;
+                }
+                return autoPtr<T>(
+                    new T(
+                        mesh,
+                        name,
+                        mesh.lookupObject<T>(name)
+                    )
+                );
+            } else {
+                if(debug) {
+                    Info << "Getting existing " << regName << endl;
+                }
+                return autoPtr<T>(
+                    new T(
+                        mesh,
+                        name,
+                        mesh.lookupObject<T>(regName)
+                    )
+                );
             }
-            return autoPtr<T>(
-                new T(
-                    mesh,
-                    name,
-                    mesh.lookupObject<T>(regName)
-                )
-            );
         }
     }
 

@@ -59,10 +59,12 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceSetValueExpress
         SubsetValueExpressionDriver(orig),
         faceSet_(
             //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
-            dynamic_cast<const fvMesh&>(set.db()),
-            //            set.name()+"_copy",
-            set.name(),
-            set
+            new faceSet(
+                dynamic_cast<const fvMesh&>(set.db()),
+                //            set.name()+"_copy",
+                set.name(),
+                set
+            )
         )
 {}
 
@@ -75,10 +77,12 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
     SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
     faceSet_(
         //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
+        new faceSet(
             dynamic_cast<const fvMesh&>(set.db()),
             //            set.name()+"_copy",
             set.name(),
             set
+        )
     )
 {}
 
@@ -86,8 +90,6 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dic
  :
     SubsetValueExpressionDriver(dict),
     faceSet_(
-        regionMesh(dict,mesh),
-        dict.lookup("setName"),        
         getSet<faceSet>(
             regionMesh(dict,mesh),
             dict.lookup("setName")
@@ -100,12 +102,10 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const word& id,const 
  :
     SubsetValueExpressionDriver(true,false),
     faceSet_(
-        mesh,
-        id,
         getSet<faceSet>(
             mesh,
             id
-        )()
+        )
     )
 {
 }
@@ -151,7 +151,7 @@ Field<sphericalTensor> *FaceSetValueExpressionDriver::getSphericalTensorField(co
 
 vectorField *FaceSetValueExpressionDriver::makePositionField()
 {
-    return getFromFieldInternal(this->mesh().Cf(),faceSet_);
+    return getFromFieldInternal(this->mesh().Cf(),faceSet_());
 }
 
 scalarField *FaceSetValueExpressionDriver::makeCellVolumeField()
@@ -173,8 +173,8 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
 {
     // inspired by the setsToZones-utility
 
-    scalarField *result=new scalarField(faceSet_.size());
-    word setName(faceSet_.name() + "SlaveCells");
+    scalarField *result=new scalarField(faceSet_->size());
+    word setName(faceSet_->name() + "SlaveCells");
     const fvMesh &mesh=this->mesh();
 
     cellSet cells(
@@ -185,7 +185,7 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
             setName
         )
     );
-    SortableList<label> faceLabels(faceSet_.toc());
+    SortableList<label> faceLabels(faceSet_->toc());
 
     forAll(faceLabels, i)
     {
@@ -247,7 +247,7 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
 
 scalarField *FaceSetValueExpressionDriver::makeFaceAreaMagField()
 {
-    return getFromFieldInternal(this->mesh().magSf(),faceSet_);
+    return getFromFieldInternal(this->mesh().magSf(),faceSet_());
 }
 
 vectorField *FaceSetValueExpressionDriver::makeFaceNormalField()
@@ -260,7 +260,16 @@ vectorField *FaceSetValueExpressionDriver::makeFaceNormalField()
 
 vectorField *FaceSetValueExpressionDriver::makeFaceAreaField()
 {
-    return getFromFieldInternal(this->mesh().Sf(),faceSet_);
+    return getFromFieldInternal(this->mesh().Sf(),faceSet_());
+}
+
+bool FaceSetValueExpressionDriver::update()
+{
+    if(debug) {
+        Info << "FaceSet: update " << faceSet_->name() << endl;
+    }
+
+    return true;
 }
 
 // ************************************************************************* //

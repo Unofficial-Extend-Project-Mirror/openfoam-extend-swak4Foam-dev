@@ -107,6 +107,9 @@ protected:
     Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
 public:
 
+     //- Runtime type information
+    TypeName("SubsetValueExpressionDriver");
+
     // Constructors
 
     //- Construct from components

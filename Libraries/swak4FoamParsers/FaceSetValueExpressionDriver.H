@@ -63,9 +63,14 @@ class FaceSetValueExpressionDriver
     public SubsetValueExpressionDriver
 {
     // Private data
-    faceSet faceSet_;
+    autoPtr<faceSet> faceSet_;
 
     // Private Member Functions
+
+protected:
+
+    //- update stuff that needs updating
+    virtual bool update();
 
 public:
 

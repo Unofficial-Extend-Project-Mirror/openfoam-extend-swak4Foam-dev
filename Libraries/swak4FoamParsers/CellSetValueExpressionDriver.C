@@ -55,11 +55,13 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpress
 :
         SubsetValueExpressionDriver(orig),
         cellSet_(
-            dynamic_cast<const fvMesh&>(set.db()),
-            //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with f++ 4.2
-            //            set.name()+"_copy",
-            set.name(),
-            set
+            new cellSet(
+                dynamic_cast<const fvMesh&>(set.db()),
+                //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with f++ 4.2
+                //            set.name()+"_copy",
+                set.name(),
+                set
+            )
         )
 {}
 
@@ -67,11 +69,14 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
 :
     SubsetValueExpressionDriver(),
     cellSet_(
+        new cellSet
+        (
             dynamic_cast<const fvMesh&>(set.db()),
             //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
             //            set.name()+"_copy",
             set.name(),
             set
+        )
     )
 {}
 
@@ -79,12 +84,10 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const 
  :
     SubsetValueExpressionDriver(),
     cellSet_(
-        mesh,
-        id,
         getSet<cellSet>(
             mesh,
             id
-        )()
+        )
     )
 {
 }
@@ -93,8 +96,6 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dic
  :
     SubsetValueExpressionDriver(dict),
     cellSet_(
-        regionMesh(dict,mesh),
-        dict.lookup("setName"),
         getSet<cellSet>(
             regionMesh(dict,mesh),
             dict.lookup("setName")
@@ -143,12 +144,12 @@ Field<sphericalTensor> *CellSetValueExpressionDriver::getSphericalTensorField(co
 
 vectorField *CellSetValueExpressionDriver::makePositionField()
 {
-    return getFromFieldInternal(this->mesh().C(),cellSet_);
+    return getFromFieldInternal(this->mesh().C(),cellSet_());
 }
 
 scalarField *CellSetValueExpressionDriver::makeCellVolumeField()
 {
-    return getFromFieldInternal(this->mesh().V(),cellSet_);
+    return getFromFieldInternal(this->mesh().V(),cellSet_());
 }
 
 
@@ -191,6 +192,15 @@ vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
             << endl
             << abort(FatalError);
     return new vectorField(0);
+}
+
+bool CellSetValueExpressionDriver::update()
+{
+    if(debug) {
+        Info << "CellSet: update " << cellSet_->name() << endl;
+    }
+
+    return true;
 }
 
 // ************************************************************************* //
