@@ -177,8 +177,22 @@
     boundary conditions for the world famous =damBreak=-case
 *** InterFoamWithSources
     Demonstrates usage of =expressionSource=
+
+    Due to differences in the original =interFoam=-solver this doesn't
+    work on certain OpenFOAM-versions (most specifically
+    =1.6-ext=).
+
+    The only modifications to the original solver are found at the end
+    of =createFields.H= and in =UEqn.H= (the added source terms).
 *** InterFoamWithFixed
     Demonstrates usage of =forceEquation=
+
+    Due to differences in the original =interFoam=-solver this doesn't
+    work on certain OpenFOAM-versions (most specifically
+    =1.6-ext=).
+
+    The only modifications to the original solver are found at the end
+    of =createFields.H= and in =UEqn.H= (the fixing of the velocities).
 **** =interFoamWithSources=
      Slightly modified version of =interFoam=. Adds a source term to
      the momentum equation. The source term is an expression that is
