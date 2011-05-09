@@ -1,8 +1,8 @@
 Source: swak4foam-%(ofpkg)s
 Priority: extra
 Maintainer: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
-Build-Depends: debhelper (>= 7.0.50~), devscripts,
-	 bison, flex,
+Build-Depends: debhelper (>= 7.0.50~), devscripts, cdbs,
+	 bison, flex, binutils-dev,
 	 %(ofpkg)s      
 Standards-Version: 3.9.1
 Section: libs
@@ -23,6 +23,9 @@ Package: swak4foam-%(ofpkg)s
 Section: libs
 Architecture: any
 Depends: %(ofpkg)s, ${shlibs:Depends}, ${misc:Depends}
+Provides: funkysetfields, groovybc, simplefunctionobjects
+Conflicts: funkysetfields, groovybc, simplefunctionobjects
+Replaces: funkysetfields, groovybc, simplefunctionobjects
 Description: swak4Foam - A number of libraries that allows
    to use general expressions in OpenFOAM-cases. Successor of
    funkSetFields and groovyBC

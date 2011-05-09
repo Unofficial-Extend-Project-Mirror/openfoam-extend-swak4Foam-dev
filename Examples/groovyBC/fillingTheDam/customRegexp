@@ -1,0 +1,26 @@
+filled {
+	theTitle "Filling height";
+	titles (current);
+	expr "Expression fillingHeight :  max=(%f%)";
+}
+maxFilled {
+	titles (maximum);
+	expr "Expression maxFilling :  max=(%f%)";
+	type slave;
+	master filled;
+}
+averageFraction {
+	theTitle "Volume fraction of alpha1";
+	titles (average);
+	expr "Liquid phase volume fraction = (%f%)";
+}
+surfaceVel {
+	theTitle "Velocity of the surface";
+	titles (max average);
+	expr "Expression surfaceVel :  max=(%f%) average=(%f%)";
+}
+surfaceSize {
+	theTitle "Area of the liquid surface";
+	titles (total);
+	expr "Expression surfaceSize :  sum=(%f%)";
+}

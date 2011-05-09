@@ -5,15 +5,26 @@ getSimple:
 	./downloadSimpleFunctionObjects.sh
 	wcleanLnIncludeAll
 
-dpkg-only:
+cleanStuff:
+	./Allwclean
+	wcleanLnIncludeAll
+
+prepareDebian:
 	cd debian; ./prepareForPackaging.py
-#	dpkg-buildpackage -us -uc
-	debuild -us -uc
+
+dpkg-only: cleanStuff prepareDebian
+#	export DH_ALWAYS_EXCLUDE=.svn:.dep:.o; dpkg-buildpackage -us -uc
+#	dpkg-buildpackage -k<PACKAGER_ID>
+#	debuild -us -uc
+	export DH_ALWAYS_EXCLUDE=.svn:.dep:.o; dpkg-buildpackage
+
+source-dpkg: cleanStuff prepareDebian
+	export DH_ALWAYS_EXCLUDE=.svn:.dep:.o; dpkg-buildpackage -S -sa
 
 dpkg: getSimple dpkg-only
 
 install:
 	./downloadSimpleFunctionObjects.sh
 	./Allwmake
-	./copySwakFilesToGlobal.sh
+	./copySwakFilesToSite.sh
 	./removeSwakFilesFromLocal.sh

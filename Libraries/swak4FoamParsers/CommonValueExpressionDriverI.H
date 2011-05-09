@@ -148,23 +148,128 @@ namespace Foam {
     }
 
     template<class T>
-    inline autoPtr<T> CommonValueExpressionDriver::getSet(const fvMesh &mesh,const word &name)
+    inline bool CommonValueExpressionDriver::updateSet(
+        autoPtr<T> &theSet,
+        const word &name,
+        SetOrigin origin)
+    {
+        label oldSize=theSet->size();
+
+        bool updated=false;
+        const polyMesh &mesh=dynamic_cast<const polyMesh &>(theSet->db());
+
+        if(debug) {
+            Info << "UpdateSet: " << theSet->name() 
+                << " Id: " << name << " Origin: " << int(origin) << endl;
+        }
+
+        switch(origin) {
+            case FILE:
+                { // Scope to make sure header is not present in the other cases
+                    IOobject header
+                        (
+                            name,
+                            mesh.time().timeName(),
+                            polyMesh::meshSubDir/"sets",
+                            mesh,
+                            IOobject::MUST_READ,
+                            IOobject::NO_WRITE
+                        );
+                    if(
+                        header.headerOk()
+                        &&
+                        header.headerClassName()==T::typeName
+                    ) {
+                        if(debug) {
+                            Info << "Rereading from " << header.filePath() << endl;
+                        }
+                        theSet.reset(
+                            new T(
+                                header
+                            )
+                        );
+                        updated=true;
+                    }
+                }
+                break;
+            case NEW:
+                WarningIn("CommonValueExpressionDriver::updateSet")
+                    << "State NEW shouldn't exist"
+                        << endl;
+            case MEMORY:
+            case CACHE:
+                {
+                    word sName=name;
+                    if(mesh.thisDb().foundObject<T>(name)) {
+                        if(debug) {
+                            Info << "Found " << name << " and rereading it" << endl;
+                        }
+                        theSet.reset(
+                            new T(
+                                mesh,
+                                name,
+                                mesh.thisDb().lookupObject<T>(name)
+                            )
+                        );
+                    } else {
+                        FatalErrorIn("CommonValueExpressionDriver::updateSet")
+                            << name << " Not found" << endl
+                                << "In db: " << mesh.thisDb().names() << endl
+                                << abort(FatalError);
+                    }
+                    
+                    updated=true;
+                }
+                break;
+            case INVALID:
+                FatalErrorIn("CommonValueExpressionDriver::updateSet")
+                    << T::typeName << " " << name << " is invalid"
+                        << endl
+                        << abort(FatalError);
+            default:
+                if(debug) {
+                    Info << "Origin " << int(origin) << " not implemented" << endl;
+                }
+        }
+
+        if(debug) {
+            Info << name << " old size " << oldSize << " new: " << theSet->size()
+                << endl;
+        }
+
+        return updated;
+    }
+
+    template<class T>
+    inline autoPtr<T> CommonValueExpressionDriver::getSet(const fvMesh &mesh,const word &name,SetOrigin &origin)
     {
         // avoid the possibility of name-clashes
         const word regName=name+"RegisteredNameFor"+T::typeName;
 
         if(debug) {
-            Info << "Looking for " << T::typeName << " named " << name << " with mesh ";
-            Info << "Caching: " << cacheSets() << " Found: " << mesh.foundObject<T>(regName) << endl;
+            Info << "Looking for " << T::typeName << " named " << name 
+                << " or  registered as " << regName << " with mesh ";
+            Info << "Caching: " << cacheSets() 
+                << " Found: " << mesh.foundObject<T>(name)
+                << " Found registered: " << mesh.foundObject<T>(regName) << endl;
         }
         if(
             !cacheSets()
             ||
-            !mesh.thisDb().foundObject<T>(regName)
+            (
+                !mesh.thisDb().foundObject<T>(regName)
+                &&
+                !mesh.thisDb().foundObject<T>(name)
+            )
         ) {
             if(debug) {
-                Info << "Constructing a new " << name << endl;
+                Info << "Constructing a new " << T::typeName << " " << name << endl;
+                if(debug>1) {
+                    Info << mesh.thisDb().names();
+                }
             }
+            origin=FILE;
+
             autoPtr<T> s(
                 new T(
                     mesh,
@@ -182,16 +287,35 @@ namespace Foam {
             }
             return s;
         } else {
-            if(debug) {
-                Info << "Getting existing " << regName << endl;
+            if(mesh.thisDb().foundObject<T>(name)) {
+                if(debug) {
+                    Info << "Getting existing " << name << endl;
+                }
+
+                origin=MEMORY;
+
+                return autoPtr<T>(
+                    new T(
+                        mesh,
+                        name,
+                        mesh.lookupObject<T>(name)
+                    )
+                );
+            } else {
+                if(debug) {
+                    Info << "Getting existing " << regName << endl;
+                }
+
+                origin=CACHE;
+
+                return autoPtr<T>(
+                    new T(
+                        mesh,
+                        name,
+                        mesh.lookupObject<T>(regName)
+                    )
+                );
             }
-            return autoPtr<T>(
-                new T(
-                    mesh,
-                    name,
-                    mesh.lookupObject<T>(regName)
-                )
-            );
         }
     }
 

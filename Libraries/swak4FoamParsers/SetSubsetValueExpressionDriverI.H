@@ -33,30 +33,7 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "surfaceMesh.H"
-#include "fvsPatchField.H"
-#include "pointPatchField.H"
-#include "primitivePatchInterpolation.H"
-
-#include <cassert>
-
 namespace Foam {
-    label CellSetValueExpressionDriver::size() const
-    {
-        return cellSet_->size();
-    }
-
-    label CellSetValueExpressionDriver::pointSize() const
-    {
-        notImplemented("CellSetValueExpressionDriver::pointSize()");
-        return 0;
-    }
-
-    const fvMesh &CellSetValueExpressionDriver::mesh() const
-    {
-        return dynamic_cast<const fvMesh&>(cellSet_->db());
-        //        return dynamicCast<const fvMesh&>(cellSet_->db()); // doesn't wor with gcc 4.2
-    }
 
 }
 

@@ -171,9 +171,9 @@ void doAnExpression
         f.headerOk();
         
         word classN=f.headerClassName();
-        if(classN=="volScalarField") {
+        if(classN=="areaScalarField") {
             isScalar=true;
-        } else if (classN!="volVectorField") {
+        } else if (classN!="areaVectorField") {
             FatalErrorIn("doAnExpression()")
                 //            << args.executable()
                 << " unsupported type " << classN << " of field " 
@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("createVolumeField","");
     argList::validOptions.insert("keepPatches","");
     argList::validOptions.insert("valuePatches","<list of patches that get a fixed value>");
-    argList::validOptions.insert("dictExt","<extension to the default funkySetFieldsDict-dictionary>");
+    argList::validOptions.insert("dictExt","<extension to the default funkySetAreaFieldsDict-dictionary>");
 
 #   include "setRootCase.H"
 
@@ -389,7 +389,7 @@ int main(int argc, char *argv[])
                 args.options().found("createVolumeField")
             );
         } else {
-            Info << " Using funkySetFieldsDict \n" << endl;
+            Info << " Using funkySetAreaFieldsDict \n" << endl;
         
             if(
                 args.options().found("keepPatches") 
@@ -406,11 +406,11 @@ int main(int argc, char *argv[])
             ) {
                 FatalErrorIn("main()")
                     << args.executable()
-                        << ": No other options than -time valid when using funkySetFieldsDict"
+                        << ": No other options than -time valid when using funkySetAreaFieldsDict"
                         << exit(FatalError);
             }
 
-            word dictName="funkySetFieldsDict";
+            word dictName="funkySetAreaFieldsDict";
 
             if(args.options().found("region")) {                
                 dictName+="."+args.options()["region"];

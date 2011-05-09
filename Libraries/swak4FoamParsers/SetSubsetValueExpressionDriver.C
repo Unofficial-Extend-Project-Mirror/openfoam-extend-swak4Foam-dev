@@ -31,34 +31,61 @@ License
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include "SetSubsetValueExpressionDriver.H"
 
-#include "surfaceMesh.H"
-#include "fvsPatchField.H"
-#include "pointPatchField.H"
-#include "primitivePatchInterpolation.H"
-
-#include <cassert>
+#include "Random.H"
 
 namespace Foam {
-    label CellSetValueExpressionDriver::size() const
-    {
-        return cellSet_->size();
-    }
 
-    label CellSetValueExpressionDriver::pointSize() const
-    {
-        notImplemented("CellSetValueExpressionDriver::pointSize()");
-        return 0;
-    }
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-    const fvMesh &CellSetValueExpressionDriver::mesh() const
-    {
-        return dynamic_cast<const fvMesh&>(cellSet_->db());
-        //        return dynamicCast<const fvMesh&>(cellSet_->db()); // doesn't wor with gcc 4.2
-    }
+defineTypeNameAndDebug(SetSubsetValueExpressionDriver, 0);
 
-}
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+
+SetSubsetValueExpressionDriver::SetSubsetValueExpressionDriver(const SetSubsetValueExpressionDriver& orig)
+:
+    SubsetValueExpressionDriver(orig),
+    id_(orig.id_),
+    origin_(orig.origin_)
+{}
+
+SetSubsetValueExpressionDriver::SetSubsetValueExpressionDriver(
+    const dictionary& dict,
+    const word &id,
+    const SetOrigin origin
+)
+:
+    SubsetValueExpressionDriver(dict),
+    id_(id),
+    origin_(origin)
+{}
+
+SetSubsetValueExpressionDriver::SetSubsetValueExpressionDriver(
+        const word &id,
+        const SetOrigin origin,
+        bool autoInterpolate,
+        bool warnAutoInterpolate
+)
+:
+    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
+    id_(id),
+    origin_(origin)
+{}
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+SetSubsetValueExpressionDriver::~SetSubsetValueExpressionDriver()
+{}
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
 // ************************************************************************* //
+
+} // namespace
