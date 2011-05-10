@@ -352,7 +352,8 @@ namespace Foam {
                         IOobject::NO_WRITE
                     ),
                     this->mesh(),
-                    dimensioned<Type>(name,nullDim,pTraits<Type>::zero)
+                    dimensioned<Type>(name,nullDim,pTraits<Type>::zero),
+                    "zeroGradient"
                 )
             );
 

@@ -6,6 +6,7 @@
 #include "wallFvPatch.H"
 #include "fixedValueFvPatchFields.H"
 #include "zeroGradientFvPatchFields.H"
+#include "calculatedFvPatchFields.H"
 
 namespace Foam {
 
@@ -79,6 +80,26 @@ void FieldValueExpressionDriver::makePatches
   forAll(bf,i) {
       bf.set(i,bfNew[i]);
   }
+}
+
+template<class T>
+void FieldValueExpressionDriver::setCalculatedPatches
+(
+    GeometricField<T,fvPatchField,volMesh> &field
+) {
+    typename GeometricField<T,fvPatchField,volMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    List<fvPatchField<T> *>bfNew(bf.size());
+    
+    forAll(bf,patchI) {
+        fvPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFvPatchField<T>)
+        ) {
+            pf==pf.patchInternalField();
+        }
+    }
+    field.correctBoundaryConditions();
 }
 
 template<class T>
