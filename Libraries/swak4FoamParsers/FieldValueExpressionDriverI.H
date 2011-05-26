@@ -175,6 +175,8 @@ inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::
 
     f->internalField()=val;
 
+    correctField(*f);
+
     return f;
 }
 
