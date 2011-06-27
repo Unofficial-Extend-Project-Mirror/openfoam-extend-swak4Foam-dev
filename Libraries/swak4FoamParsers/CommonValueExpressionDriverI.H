@@ -653,7 +653,7 @@ namespace Foam {
             place+=" ";
         }
         
-        Foam::FatalErrorIn("parsingValue")
+        FatalErrorIn("parsingValue")
             //        << Foam::args.executable()
             << " Parser Error at " << buff.str() << " :"  << m << Foam::endl
                 << content_ << Foam::endl << place

@@ -411,7 +411,7 @@ ExpressionResult CommonValueExpressionDriver::getUniform(label size,bool noWarni
 
 void CommonValueExpressionDriver::error (const std::string& m)
 {
-    Foam::FatalErrorIn("parsingValue")
+    FatalErrorIn("parsingValue")
         //        << Foam::args.executable()
             << " Parser Error: " << m
             << Foam::exit(Foam::FatalError);

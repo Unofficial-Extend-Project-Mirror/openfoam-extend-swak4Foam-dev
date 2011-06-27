@@ -108,10 +108,10 @@ Foam::swakRegistryProxySet::swakRegistryProxySet
 Foam::swakRegistryProxySet::~swakRegistryProxySet()
 {}
 
-Foam::point Foam::swakRegistryProxySet::getRefPoint (const List< point > &pl) const
-{
-    return realSet().getRefPoint(pl);
-}
+// Foam::point Foam::swakRegistryProxySet::getRefPoint (const List< point > &pl) const
+// {
+//     return realSet().getRefPoint(pl);
+// }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

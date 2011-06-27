@@ -92,7 +92,7 @@ public:
 
 
     // Member Functions
-    virtual point getRefPoint (const List< point > &) const;
+    //    virtual point getRefPoint (const List< point > &) const;
 };
 
 
