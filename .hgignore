@@ -28,5 +28,3 @@ doc
 
 debian/rules
 debian/control
-
-Libraries/simpleFunctionObjects

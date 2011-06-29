@@ -29,7 +29,7 @@ gradSchemes
 divSchemes
 {
     default             none;
-    div(phis,Cs)        Gauss linear;
+    div(phis,Cs)        Gauss linar;
 }
 
 laplacianSchemes
