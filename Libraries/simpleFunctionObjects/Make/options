@@ -1,0 +1,19 @@
+ifdef FOAM_DEV
+FOAM_DEV_OPTION = -DFOAM_DEV
+endif
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION) \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/triSurface/lnInclude \
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude 
+
+
+LIB_LIBS = \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lsampling \
+    -ltriSurface \
+    -llagrangian 

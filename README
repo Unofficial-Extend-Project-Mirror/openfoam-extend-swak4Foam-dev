@@ -16,19 +16,6 @@
    - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
      - The =finiteArea=-stuff will only work with version 1.6-ext
    - the compiler generators =bison= and =flex=
-   - =simpleSwakFunctionObjects= needs the =simpleFunctionObjects=
-     (see
-     http://openfoamwiki.net/index.php/Contrib_simpleFunctionObjects)
-     all other functionality has no additional requirements
-     (=simpleSwakFunctionObjects= is only required by some examples)
-     It is assumed that the sources are installed at
-     =$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects= 
-
-     A script =downloadSimpleFunctionObjects.sh= is provided that
-     automatically downloads the =simpleFunctionObjects= into the
-     Libraries-directory and compiles it. *Warning:* Don't mix this
-     with an installation at =$WM_PROJECT_USER_DIR/Libraries/= unless
-     you know what you're doing
 ** Building
   =wmake all= at the base directory should build all the libraries and
   tools.
@@ -59,9 +46,6 @@
     - it is assumed that the currently used OF-version was also
       installed by the package manager
     - the =dev= package is built but poorly maintained
-    - =simpleFunctionOjects= are automatically included in the
-      package. To avoid this remove the =simpleFunctionObjects= from
-      the =Libraries= directory and do =make dpkg-only=
     Changes in the packaging should be done in the branch
       =debianPackaging= of the Mercurial-repository
 
@@ -76,6 +60,13 @@
     access the /OpenFOAM/ data-structures.
 
     None of the other software pieces compile without it
+*** =simpleFunctionObjects=
+    A collection of function objects that was previously separately
+    available at
+    http://openfoamwiki.net/index.php/Contrib_simpleFunctionObjects.
+
+    Provides consistent output of values (on patches and fields) and
+    more.
 *** =groovyBC=
     Implements the infamous =groovyBC=. A boundary condition that
     allows arbitrary expressions in the field-file
