@@ -138,6 +138,11 @@ Foam::expressionToCell::~expressionToCell()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+Foam::topoSetSource::sourceType Foam::expressionToCell::setType() const
+{
+    return CELLSETSOURCE;
+}
+
 void Foam::expressionToCell::applyToSet
 (
     const topoSetSource::setAction action,

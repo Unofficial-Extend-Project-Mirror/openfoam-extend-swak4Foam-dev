@@ -149,6 +149,11 @@ Foam::expressionToFace::~expressionToFace()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+Foam::topoSetSource::sourceType Foam::expressionToFace::setType() const
+{
+    return FACESETSOURCE;
+}
+
 void Foam::expressionToFace::applyToSet
 (
     const topoSetSource::setAction action,

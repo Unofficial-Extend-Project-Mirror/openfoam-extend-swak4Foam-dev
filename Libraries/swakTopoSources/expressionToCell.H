@@ -109,6 +109,8 @@ public:
             topoSet&
         ) const;
 
+        virtual sourceType setType() const;
+
 };
 
 
