@@ -224,7 +224,7 @@ public:
     virtual bool start();
 
     //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
+    virtual bool execute(const bool forceWrite);
 
     //- Read and set the function object if its data has changed
     virtual bool read(const dictionary& dict);

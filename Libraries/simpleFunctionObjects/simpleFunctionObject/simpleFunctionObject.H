@@ -95,7 +95,7 @@ protected:
     bool verbose() const { return verbose_; }
 
     //- Do output this time?
-    virtual bool outputTime();
+    virtual bool outputTime(const bool forceWrite);
 
 public:
 
@@ -120,7 +120,7 @@ public:
     virtual bool start();
 
     //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
+    virtual bool execute(const bool forceWrite);
 
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);

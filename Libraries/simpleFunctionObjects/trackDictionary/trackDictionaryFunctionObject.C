@@ -162,7 +162,7 @@ bool Foam::trackDictionaryFunctionObject::start()
 }
 
 //- Verify if any dictionaries have been modified
-bool Foam::trackDictionaryFunctionObject::execute()
+bool Foam::trackDictionaryFunctionObject::execute(const bool forceWrite)
 {
     forAll(dictionaries_, dictI)
     {

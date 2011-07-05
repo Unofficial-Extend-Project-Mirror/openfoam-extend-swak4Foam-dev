@@ -85,15 +85,20 @@ bool simpleFunctionObject::start()
     return true;
 }
 
-bool simpleFunctionObject::outputTime()
+bool simpleFunctionObject::outputTime(const bool forceWrite)
 {
-    return (
-        ((outputInterval_>0) && (timeSteps_>=outputInterval_))
-        &&
-        time_.time().value()>=after_);
+    return 
+        (
+            ((outputInterval_>0) && (timeSteps_>=outputInterval_))
+            &&
+            time_.time().value()>=after_
+        ) 
+        ||
+        forceWrite
+        ;
 }
 
-bool simpleFunctionObject::execute()
+bool simpleFunctionObject::execute(const bool forceWrite)
 {
     if(time_.time().value()<after_) {
         return true;
@@ -101,7 +106,7 @@ bool simpleFunctionObject::execute()
 
     timeSteps_++;
 
-    if(this->outputTime()) {
+    if(this->outputTime(forceWrite)) {
         timeSteps_=0;
         write();
         flush();
