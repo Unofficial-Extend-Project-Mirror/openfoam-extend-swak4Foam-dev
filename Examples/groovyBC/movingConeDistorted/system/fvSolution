@@ -48,6 +48,13 @@ solvers
         relTol           0;
     };
 
+    UFinal
+    {
+        $U;
+        tolerance       1e-05;
+        relTol          0;
+    }
+
     cellMotionUx 
     {
         solver PCG;

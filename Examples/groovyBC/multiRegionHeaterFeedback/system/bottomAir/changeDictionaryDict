@@ -57,7 +57,8 @@ dictionaryReplacement
             {
                 type            compressible::turbulentTemperatureCoupledBaffle;
                 neighbourFieldName T;
-                K               K;
+                K               basicThermo;
+                KName           none;
                 value           uniform 300;
             }
             minY

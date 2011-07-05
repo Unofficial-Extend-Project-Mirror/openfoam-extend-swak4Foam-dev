@@ -77,7 +77,8 @@ functions
     energyRegionheater{
         type swakExpression;
         region heater;
-        expression "vol()*T*cp*rho";
+        //        expression "vol()*T*cp*rho";
+        expression "vol()*T*rho";
         accumulations ( sum );
         valueType internalField;
         verbose true;
@@ -94,8 +95,10 @@ functions
     energyRegionSolid{
         type swakExpression;
         region leftSolid;
-        variables "rightE{/rightSolid}=sum(T*cp*rho*vol());";
-        expression "sum(T*cp*rho*vol())+rightE";
+        //        variables "rightE{/rightSolid}=sum(T*cp*rho*vol());";
+        variables "rightE{/rightSolid}=sum(T*rho*vol());";
+        //        expression "sum(T*cp*rho*vol())+rightE";
+        expression "sum(T*rho*vol())+rightE";
         accumulations ( average );
         valueType internalField;
         verbose true;

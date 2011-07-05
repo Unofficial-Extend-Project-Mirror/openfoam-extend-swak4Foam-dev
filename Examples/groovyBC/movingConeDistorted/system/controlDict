@@ -182,6 +182,7 @@ functions
                 interpolate false;
             }
         );
+        interpolationScheme nix;
     } 
 );
 
