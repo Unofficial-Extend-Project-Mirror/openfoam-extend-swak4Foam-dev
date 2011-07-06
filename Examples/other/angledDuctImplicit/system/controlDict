@@ -404,7 +404,7 @@ functions
         surfaceName testPatch;
         surface {
             type patch;
-            patchName outlet;
+            patches ( outlet );
             //            triangulate      false;      
         }
         verbose true;

@@ -17,7 +17,24 @@ FoamFile
 
 thermoType      hPsiThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>;
 
-mixture         air 1 28.9 1007 0 1.4792e-06 116;
+mixture
+{
+    specie
+    {
+        nMoles      1;
+        molWeight   28.9;
+    }
+    thermodynamics
+    {
+        Cp          1007;
+        Hf          0;
+    }
+    transport
+    {
+        As          1.4792e-06;
+        Ts          116;
+    }
+}
 
 
 // ************************************************************************* //

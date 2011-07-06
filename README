@@ -205,7 +205,7 @@
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
-     - Solver :: rhoPorousSimpleFoam
+     - Solver :: rhoPorousMRFSimpleFoam
      - Mesh preparation :: Execute the =makeMesh.sh=-script in that
           directory. If you want to run in parallel call the
           =decomposeMesh.sh=-script with the number of processors as

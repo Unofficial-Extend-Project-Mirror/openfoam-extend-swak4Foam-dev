@@ -15,19 +15,58 @@ FoamFile
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// Name of set to operate on
-name afterFilter;
-
-// One of clear/new/invert/add/delete|subset/list
-action new;
-
-// Actions to apply to pointSet. These are all the topoSetSource's ending
-// in ..ToFace (see the meshTools library).
-topoSetSources
-(
-    expressionToFace
+actions (
     {
-        expression "set(outlet)";
+        type faceSet;
+
+        name beforeFilter;
+
+        action new;
+        
+        source expressionToFace;
+        
+        sourceInfo {
+            expression "set(inlet)";
+        }
+    }
+    {
+        type faceSet;
+
+        name afterFilter;
+
+        action new;
+        
+        source expressionToFace;
+        
+        sourceInfo {
+            expression "set(outlet)";
+        }
+    }
+    {
+        type cellSet;
+
+        name afterFilterSlaveCells;
+
+        action new;
+        
+        source expressionToCell;
+        
+        sourceInfo {
+            expression "set(outlet)";
+        }
+    }
+    {
+        type cellSet;
+
+        name beforeFilterSlaveCells;
+
+        action new;
+        
+        source expressionToCell;
+        
+        sourceInfo {
+            expression "set(inlet)";
+        }
     }
 );
 

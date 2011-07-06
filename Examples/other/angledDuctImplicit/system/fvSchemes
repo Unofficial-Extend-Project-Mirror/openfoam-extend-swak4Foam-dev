@@ -1,14 +1,14 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.0                                 |
+|  \\    /   O peration     | Version:  2.0.0                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
-    format      binary;
+    format      ascii;
     class       dictionary;
     location    "system";
     object      fvSchemes;
@@ -23,18 +23,16 @@ ddtSchemes
 gradSchemes
 {
     default         Gauss linear;
-    grad(U)         Gauss linear;
-    grad(p)         Gauss linear;
 }
 
 divSchemes
 {
     div(phi,U)      Gauss upwind;
-    div((muEff*dev2(grad(U).T()))) Gauss linear;
+    div((muEff*dev2(T(grad(U))))) Gauss linear;
     div(phi,h)      Gauss upwind;
     div(phi,epsilon) Gauss upwind;
     div(phi,k)      Gauss upwind;
-    div(phid,p)     Gauss linear;
+    div(U,p)        Gauss upwind;
 }
 
 laplacianSchemes
@@ -50,7 +48,6 @@ laplacianSchemes
 interpolationSchemes
 {
     default         linear;
-    div(U,p)        upwind phi;
 }
 
 snGradSchemes
