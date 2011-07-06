@@ -7,7 +7,7 @@
         zeroGradientFvPatchScalarField::typeName
     );
 
-    for (label i=0; i<p_rgh.boundaryField().size(); i++)
+    forAll (p_rgh.boundaryField(), i)
     {
         if (p_rgh.boundaryField()[i].fixesValue())
         {
@@ -34,7 +34,7 @@
 
     adjustPhi(phi, U, pcorr);
 
-    for(int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
+    for (int nonOrth=0; nonOrth<=pimple.nNonOrthCorr(); nonOrth++)
     {
         fvScalarMatrix pcorrEqn
         (
@@ -44,7 +44,7 @@
         pcorrEqn.setReference(pRefCell, pRefValue);
         pcorrEqn.solve();
 
-        if (nonOrth == nNonOrthCorr)
+        if (nonOrth == pimple.nNonOrthCorr())
         {
             phi -= pcorrEqn.flux();
         }
