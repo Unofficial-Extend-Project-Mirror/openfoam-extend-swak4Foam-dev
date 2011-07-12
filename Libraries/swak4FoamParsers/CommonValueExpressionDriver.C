@@ -447,7 +447,7 @@ scalarField *CommonValueExpressionDriver::makeRandomField(label seed)
     scalarField *result=new scalarField(this->size());
 
     if(seed<=0) {
-        seed=runTime().timeIndex();
+        seed=runTime().timeIndex()-seed;
     }
 
     Foam::Random rand(seed);
@@ -485,7 +485,7 @@ scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
     scalarField *result=new scalarField(this->size());
 
     if(seed<=0) {
-        seed=runTime().timeIndex();
+        seed=runTime().timeIndex()-seed;
     }
 
     Foam::Random rand(seed);
