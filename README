@@ -280,11 +280,16 @@
     Currently the main branches are:
     - default :: The *main* branch. This is the brancht that the
                  general public will receive. It compiles under 1.7
+                 and 1.6-ext
     - port_2.0.x :: The branch that compiles under OpenFOAM 2.0. This
                     will eventually become the =default=-branch
     - debianPackaging :: Branch for generating new Debian-packages of
          =swak4Foam=. If somebody wants to "inherit" this: contact the
          maintainer 
+    - finiteArea :: In this branch the things for the
+                    =finiteArea=-discretization (only present in
+                    =1.6-ext=) is developed. Usually gets merged back
+                    into the =default=-branch once a feature is completed
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the

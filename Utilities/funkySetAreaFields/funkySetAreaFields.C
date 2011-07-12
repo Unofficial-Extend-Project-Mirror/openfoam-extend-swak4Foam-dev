@@ -55,7 +55,8 @@ void setField
     const dimensionSet &dim,
     bool keepPatches,
     const wordList &valuePatches,
-    bool createVolumeField
+    bool createVolumeField,
+    bool noWrite
 ) {
     dimensioned<T> init("nix",dim,pTraits<T>::zero);
     typedef GeometricField<T,faPatchField,areaMesh> aField;
@@ -110,9 +111,11 @@ void setField
 
     Info << " Setting " << setCells << " of " << totalCells << " cells" << endl;
 
-    Info << " Writing to " << name << endl;
-
-    tmp->write();
+    if(!noWrite) {
+        Info << " Writing to " << name << endl;
+        
+        tmp->write();
+    }
 
     if(createVolumeField) {
         word vName(name+"Volume");
@@ -154,7 +157,8 @@ void doAnExpression
     const dimensionSet &dim,
     bool keepPatches,
     const wordList &valuePatches,
-    bool createVolumeField
+    bool createVolumeField,
+    bool noWrite
 ) {
     const string &time = runTime.timeName();
     bool isScalar=false;
@@ -259,7 +263,8 @@ void doAnExpression
                 dim,
                 keepPatches,
                 valuePatches,
-                createVolumeField
+                createVolumeField,
+                noWrite
             );
         } else {
 	  setField(
@@ -272,7 +277,8 @@ void doAnExpression
               dim,
               keepPatches,
               valuePatches,
-              createVolumeField
+              createVolumeField,
+              noWrite
           );
         }
     }
@@ -296,6 +302,7 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("noCacheVariables","");
     argList::validOptions.insert("create","");
     argList::validOptions.insert("createVolumeField","");
+    argList::validOptions.insert("onlyVolumeField","");
     argList::validOptions.insert("keepPatches","");
     argList::validOptions.insert("valuePatches","<list of patches that get a fixed value>");
     argList::validOptions.insert("dictExt","<extension to the default funkySetAreaFieldsDict-dictionary>");
@@ -373,6 +380,14 @@ int main(int argc, char *argv[])
 
             dictionary dummyDict;
 
+            bool createVolumeField=(
+                args.options().found("createVolumeField")
+                ||
+                args.options().found("onlyVolumeField")
+            );
+
+            bool noWrite=args.options().found("onlyVolumeField");
+
             doAnExpression(
                 mesh,
                 field,
@@ -386,7 +401,8 @@ int main(int argc, char *argv[])
                 dim,
                 keepPatches,
                 valuePatches,
-                args.options().found("createVolumeField")
+                createVolumeField,
+                noWrite
             );
         } else {
             Info << " Using funkySetAreaFieldsDict \n" << endl;
@@ -476,6 +492,14 @@ int main(int argc, char *argv[])
                     valuePatches=wordList(part.lookup("valuePatches"));
                 }
 
+                bool createVolumeField=(
+                    args.options().found("createVolumeField")
+                    ||
+                    args.options().found("onlyVolumeField")
+                );
+
+                bool noWrite=args.options().found("onlyVolumeField");
+
                 doAnExpression(
                     mesh,
                     field,
@@ -488,7 +512,8 @@ int main(int argc, char *argv[])
                     dim,
                     keepPatches,
                     valuePatches,
-                    args.options().found("createVolumeField")
+                    createVolumeField,
+                    noWrite
                 );
             }
         }
