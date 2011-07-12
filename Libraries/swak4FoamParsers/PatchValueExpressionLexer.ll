@@ -92,10 +92,14 @@ internalField         return token::TOKEN_internalField;
 neighbourField        return token::TOKEN_neighbourField;
 normal                return token::TOKEN_normal;
 rand                  return token::TOKEN_rand;
+rand1                 return token::TOKEN_rand1;
+rand2                 return token::TOKEN_rand2;
 dist                  return token::TOKEN_dist;
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
 randNormal            return token::TOKEN_randNormal;
+randNormal1           return token::TOKEN_randNormal1;
+randNormal2           return token::TOKEN_randNormal2;
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;

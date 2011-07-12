@@ -110,9 +110,13 @@
 
 %token TOKEN_pi
 %token TOKEN_rand
+%token TOKEN_rand1
+%token TOKEN_rand2
 %token TOKEN_id
 %token TOKEN_dist
 %token TOKEN_randNormal
+%token TOKEN_randNormal1
+%token TOKEN_randNormal2
 %token TOKEN_position
 %token TOKEN_area
 %token TOKEN_Sf
@@ -383,8 +387,12 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_dist '(' ')'                       { $$ = driver.makeNearDistField(); }
         | TOKEN_cpu '(' ')'       { $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo())); }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField(); }
+        | TOKEN_rand1 '(' ')'       { $$ = driver.makeRandomField1(); }
+        | TOKEN_rand2 '(' ')'       { $$ = driver.makeRandomField2(); }
         | TOKEN_weights '(' ')'              { $$ = driver.makeWeightsField(); }
         | TOKEN_randNormal '(' ')'        { $$ = driver.makeGaussRandomField(); }
+        | TOKEN_randNormal1 '(' ')'        { $$ = driver.makeGaussRandomField1(); }
+        | TOKEN_randNormal2 '(' ')'        { $$ = driver.makeGaussRandomField2(); }
         | TOKEN_deltaT '(' ')'   { $$ = driver.makeField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'   { $$ = driver.makeField(driver.runTime().time().value()); }
         | TOKEN_toFace '(' pexp ')'        { $$ = driver.toFace(*$3); delete $3;}
