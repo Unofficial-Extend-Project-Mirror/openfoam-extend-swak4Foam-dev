@@ -178,6 +178,9 @@ public:
     template<class T>
     static void setValuePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
 
+    template<class T>
+    static void setCalculatedPatches(GeometricField<T,fvPatchField,volMesh> &field);
+
 };
 
 } // end namespace

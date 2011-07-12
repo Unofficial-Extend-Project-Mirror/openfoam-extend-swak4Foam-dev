@@ -200,6 +200,8 @@ volScalarField *FieldValueExpressionDriver::makeModuloField(
         (*result_)[cellI]=val;
     }
 
+    result_->correctBoundaryConditions();
+
     return result_;
 }
 
@@ -212,6 +214,8 @@ volScalarField *FieldValueExpressionDriver::makeRandomField()
         (*f)[cellI]=rand.scalar01();
     }
 
+    f->correctBoundaryConditions();
+
     return f;
 }
 
@@ -222,6 +226,8 @@ volScalarField *FieldValueExpressionDriver::makeCellIdField()
     forAll(*f,cellI) {
         (*f)[cellI]=scalar(cellI);
     }
+
+    f->correctBoundaryConditions();
 
     return f;
 }
@@ -234,6 +240,8 @@ volScalarField *FieldValueExpressionDriver::makeGaussRandomField()
     forAll(*f,cellI) {
         (*f)[cellI]=rand.GaussNormal();
     }
+
+    f->correctBoundaryConditions();
 
     return f;
 }
@@ -256,6 +264,9 @@ volVectorField *FieldValueExpressionDriver::makePositionField()
     f->dimensions().reset(mesh_.C().dimensions());
     *f=mesh_.C();
     f->dimensions().reset(nullDim);
+
+    f->correctBoundaryConditions();
+
     return f;
 }
 
@@ -277,6 +288,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFacePositionField()
     f->dimensions().reset(mesh_.Cf().dimensions());
     *f=mesh_.Cf();
     f->dimensions().reset(nullDim);
+
     return f;
 }
 
@@ -375,6 +387,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
     }
 
     f->dimensions().reset(nullDim);
+
     return f;
 }
 
@@ -396,6 +409,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceField()
     f->dimensions().reset(mesh_.Sf().dimensions());
     *f=mesh_.Sf();
     f->dimensions().reset(nullDim);
+
     return f;
 }
 
@@ -417,6 +431,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeAreaField()
     f->dimensions().reset(mesh_.magSf().dimensions());
     *f=mesh_.magSf();
     f->dimensions().reset(nullDim);
+
     return f;
 }
 
@@ -440,6 +455,8 @@ volScalarField *FieldValueExpressionDriver::makeVolumeField()
         (*f)[cellI]=V[cellI];
     }
 
+    f->correctBoundaryConditions();
+
     return f;
 }
 
@@ -462,8 +479,10 @@ volScalarField *FieldValueExpressionDriver::makeDistanceField()
     wallDist dist(mesh_);
     *f=dist;
     f->dimensions().reset(nullDim);
-    return f;
 
+    f->correctBoundaryConditions();
+
+    return f;
 }
 
 volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
@@ -486,8 +505,10 @@ volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
     nearWallDist dist(mesh_);
     f->boundaryField()==dist;
     f->dimensions().reset(nullDim);
-    return f;
 
+    f->correctBoundaryConditions();
+
+    return f;
 }
 
 volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorField& r)
@@ -509,6 +530,8 @@ volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorFi
     forAll(*f,cellI) {
         (*f)[cellI]=mag(mesh_.C()[cellI] - r[cellI]);
     }
+
+    f->correctBoundaryConditions();
 
     return f;
 }
@@ -546,6 +569,8 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
   forAll(cells,cellI) {
     (*f)[cells[cellI]]=1.;
   }
+
+  f->correctBoundaryConditions();
 
   return f;
 }
@@ -599,6 +624,8 @@ volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name
       (*f)[cellI]=1.;
   }
 
+  f->correctBoundaryConditions();
+
   return f;
 }
 
@@ -628,6 +655,8 @@ volVectorField *FieldValueExpressionDriver::makeVectorField
     forAll(*f,cellI) {
         (*f)[cellI]=vector((*x)[cellI],(*y)[cellI],(*z)[cellI]);
     }
+
+    f->correctBoundaryConditions();
 
     return f;
 }

@@ -250,6 +250,8 @@ vexp:   vector                  { $$ = $1; }
         | TOKEN_neighbourField '(' TOKEN_VID ')' {
             $$=driver.getPatchNeighbourField<Foam::vector>(*$3); delete $3;
                     }
+        | TOKEN_min '(' vexp ',' vexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' vexp ',' vexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
   
@@ -406,6 +408,8 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_neighbourField '(' TOKEN_SID ')' {
             $$=driver.getPatchNeighbourField<Foam::scalar>(*$3); delete $3;
                     }
+        | TOKEN_min '(' exp ',' exp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' exp ',' exp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
 texp:   tensor                  { $$ = $1; }
@@ -447,6 +451,8 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_neighbourField '(' TOKEN_TID ')' {
             $$=driver.getPatchNeighbourField<Foam::tensor>(*$3); delete $3;
                     }
+        | TOKEN_min '(' texp ',' texp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' texp ',' texp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
 yexp:   symmTensor                  { $$ = $1; }
@@ -481,6 +487,8 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_neighbourField '(' TOKEN_YID ')' {
             $$=driver.getPatchNeighbourField<Foam::symmTensor>(*$3); delete $3;
                     }
+        | TOKEN_min '(' yexp ',' yexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' yexp ',' yexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
 hexp:   sphericalTensor                  { $$ = $1; }
@@ -507,6 +515,8 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_neighbourField '(' TOKEN_HID ')' {
             $$=driver.getPatchNeighbourField<Foam::sphericalTensor>(*$3); delete $3;
                     }
+        | TOKEN_min '(' hexp ',' hexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' hexp ',' hexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
 
@@ -556,6 +566,8 @@ pvexp:  pvexp '+' pvexp 		{ sameSize($1,$3); $$ = new Foam::vectorField(*$1 + *$
         | TOKEN_PVID {
             $$=driver.getField<Foam::vector>(*$1); delete $1;
                     }
+        | TOKEN_min '(' pvexp ',' pvexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' pvexp ',' pvexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
   
 pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3); delete $1; delete $3; }
@@ -607,6 +619,8 @@ pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3)
 	| TOKEN_PSID		{ 
             $$=driver.getField<Foam::scalar>(*$1);delete $1;
 				}
+        | TOKEN_min '(' pexp ',' pexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' pexp ',' pexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
 ptexp:  ptexp '+' ptexp 		{ sameSize($1,$3); $$ = new Foam::tensorField(*$1 + *$3); delete $1; delete $3; }
@@ -627,6 +641,8 @@ ptexp:  ptexp '+' ptexp 		{ sameSize($1,$3); $$ = new Foam::tensorField(*$1 + *$
         | TOKEN_PTID {
             $$=driver.getField<Foam::tensor>(*$1); delete $1;
                     }
+        | TOKEN_min '(' ptexp ',' ptexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' ptexp ',' ptexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
   
 pyexp:  pyexp '+' pyexp 		{ sameSize($1,$3); $$ = new Foam::symmTensorField(*$1 + *$3); delete $1; delete $3; }
@@ -644,6 +660,8 @@ pyexp:  pyexp '+' pyexp 		{ sameSize($1,$3); $$ = new Foam::symmTensorField(*$1 
         | TOKEN_PYID {
             $$=driver.getField<Foam::symmTensor>(*$1); delete $1;
                     }
+        | TOKEN_min '(' pyexp ',' pyexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' pyexp ',' pyexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
   
 phexp:  phexp '+' phexp 		{ sameSize($1,$3); $$ = new Foam::sphericalTensorField(*$1 + *$3); delete $1; delete $3; }
@@ -659,6 +677,8 @@ phexp:  phexp '+' phexp 		{ sameSize($1,$3); $$ = new Foam::sphericalTensorField
         | TOKEN_PHID {
             $$=driver.getField<Foam::sphericalTensor>(*$1); delete $1;
                     }
+        | TOKEN_min '(' phexp ',' phexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_max '(' phexp ',' phexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
   
 plexp: pexp '<' pexp  { sameSize($1,$3); $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);  delete $1; delete $3; }

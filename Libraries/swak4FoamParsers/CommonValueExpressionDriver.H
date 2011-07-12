@@ -167,6 +167,8 @@ protected:
     template<class T>
     autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
 
+    template<class T>
+    inline void correctField(T &f) const;
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");

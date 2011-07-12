@@ -319,6 +319,41 @@ namespace Foam {
         }
     }
 
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volScalarField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volVectorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volTensorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volSymmTensorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volSphericalTensorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<class T>
+    inline void CommonValueExpressionDriver::correctField(T &f) const
+    {
+    }
+
     template<class T>
     autoPtr<T> CommonValueExpressionDriver::getOrReadField(
         const string &name,
@@ -352,7 +387,8 @@ namespace Foam {
                         IOobject::NO_WRITE
                     ),
                     this->mesh(),
-                    dimensioned<Type>(name,nullDim,pTraits<Type>::zero)
+                    dimensioned<Type>(name,nullDim,pTraits<Type>::zero),
+                    "zeroGradient"
                 )
             );
 
@@ -380,7 +416,10 @@ namespace Foam {
                 }
  
                 f->internalField()=avg;
-            }        
+            }   
+
+            correctField(f());
+
             return f;
         }
 

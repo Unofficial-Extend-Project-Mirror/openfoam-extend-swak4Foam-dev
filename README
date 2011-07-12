@@ -228,6 +228,63 @@
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
+* Bug reporting and Development
+** Bug reports
+   The preferred place for bug reports is
+   http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90 
+   
+   A sourceforge-account is required for reporting
+** Development
+   Contributions to to =swak4Foam= are most welcome. If you want to
+   contribute clone the Mercurial archive of the sources
+: hg clone http://openfoam-extend.hg.sourceforge.net:8000/hgroot/openfoam-extend/swak4Foam
+   Change to the branch that you want to improve (usually =default=)
+   and create a new branch
+: hg branch <branchName>
+   where =<branchname>= is an easily identifiable name that makes the
+   purpose of the branch clear (for instance
+   =bugfixWrongRandomFunction= or =featureHyperbolicFunctions=). Don't
+   work on the =default= branch or any other branches that are not
+   "yours". Such contributions will not be merged
+
+   Once development on the branch is finished export the relevant
+   changesets with 
+: hg export <nodeID>
+   (=nodeID= being the ids of "your" changesets) and send them to the
+   maintainer (or attach them to a bug report on Manits). The changes
+   will be reviewed and merged into the =default= branch (do not
+   attempt to do this yourself). Patches generated with =hg export=
+   make sure that all changes are attributed to the original developer
+   (you).
+
+   Once you have proven by successfully submitting changesets via =hg
+   export= you can ask for write access to the mercurial repository.
+*** Suggest reading
+    These topics may be "new" for the average OF-developer:
+    - Mercurial :: A short tutorial on this can be found at
+                   http://mercurial.selenic.com/guide/. If you already
+                   know =git= the
+                   http://mercurial.selenic.com/wiki/GitConcepts may
+                   be enough for you
+    - bison/flex :: This pair of compiler generator tools generate the
+                    parsers for the expressions. Google for a tutorial
+                    that looks promising to you.
+
+		    For a short example that shows how a new function
+		    was added to two parsers have a look at this
+		    changeset that added the =cpu()=-function to the
+		    field and the the patch-parser (usually you'll
+		    have to write a new method for the driver too):
+: hg diff -c 8604e865cce6
+*** Special branches
+    Currently the main branches are:
+    - default :: The *main* branch. This is the brancht that the
+                 general public will receive. It compiles under 1.7
+    - port_2.0.x :: The branch that compiles under OpenFOAM 2.0. This
+                    will eventually become the =default=-branch
+    - debianPackaging :: Branch for generating new Debian-packages of
+         =swak4Foam=. If somebody wants to "inherit" this: contact the
+         maintainer 
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the
