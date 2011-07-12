@@ -38,6 +38,7 @@
 %union
 {
     Foam::scalar val;
+    Foam::label integer;
     Foam::vector *vec;
     Foam::string *name;
     Foam::vectorField *vfield;
@@ -68,6 +69,7 @@
 %token <name>   TOKEN_PYID   "pointSymmTensorID"
 %token <name>   TOKEN_PHID   "pointSphericalTensorID"
 %token <val>    TOKEN_NUM   "value"
+%token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
 %type  <val>    scalar      "sexpression"  
 %type  <val>    sreduced;
@@ -110,13 +112,9 @@
 
 %token TOKEN_pi
 %token TOKEN_rand
-%token TOKEN_rand1
-%token TOKEN_rand2
 %token TOKEN_id
 %token TOKEN_dist
 %token TOKEN_randNormal
-%token TOKEN_randNormal1
-%token TOKEN_randNormal2
 %token TOKEN_position
 %token TOKEN_area
 %token TOKEN_Sf
@@ -198,7 +196,7 @@
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "tensorID" "pointTensorID" "symmTensorID" "pointSymmTensorID" "sphericalTensorID" "pointSphericalTensorID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
 %destructor          { delete $$; } "timeline" "lookup" "scalarID"  "vectorID"  "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "vector" "expression" "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
-%printer             { debug_stream () << $$; } "value"  "sexpression"
+%printer             { debug_stream () << $$; } "value" "integer" "sexpression"
 %printer             { debug_stream () << $$ /* ->name().c_str() */ ; } "expression"  "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
 
 
@@ -387,12 +385,10 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_dist '(' ')'                       { $$ = driver.makeNearDistField(); }
         | TOKEN_cpu '(' ')'       { $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo())); }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField(); }
-        | TOKEN_rand1 '(' ')'       { $$ = driver.makeRandomField1(); }
-        | TOKEN_rand2 '(' ')'       { $$ = driver.makeRandomField2(); }
+        | TOKEN_rand '(' TOKEN_INT ')'        { $$ = driver.makeRandomField(-$3); }
         | TOKEN_weights '(' ')'              { $$ = driver.makeWeightsField(); }
         | TOKEN_randNormal '(' ')'        { $$ = driver.makeGaussRandomField(); }
-        | TOKEN_randNormal1 '(' ')'        { $$ = driver.makeGaussRandomField1(); }
-        | TOKEN_randNormal2 '(' ')'        { $$ = driver.makeGaussRandomField2(); }
+        | TOKEN_randNormal '(' TOKEN_INT ')'        { $$ = driver.makeGaussRandomField(-$3); }
         | TOKEN_deltaT '(' ')'   { $$ = driver.makeField(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'   { $$ = driver.makeField(driver.runTime().time().value()); }
         | TOKEN_toFace '(' pexp ')'        { $$ = driver.toFace(*$3); delete $3;}
