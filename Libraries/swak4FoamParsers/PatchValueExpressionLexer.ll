@@ -132,7 +132,7 @@ inv                    return token::TOKEN_inv;
 
 {int}                {
                        errno = 0;
-                       yylval->val = atoi(yytext);
+                       yylval->integer = atoi(yytext);
                        return token::TOKEN_INT;
                      }
 

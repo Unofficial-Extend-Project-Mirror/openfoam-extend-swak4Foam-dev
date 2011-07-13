@@ -87,10 +87,12 @@ pts                   return token::TOKEN_points;
 Sf                    return token::TOKEN_Sf;
 normal                return token::TOKEN_normal;
 rand                  return token::TOKEN_rand;
+randFixed             return token::TOKEN_randFixed;
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
 flip                  return token::TOKEN_flip;
 randNormal            return token::TOKEN_randNormal;
+randNormalFixed       return token::TOKEN_randNormalFixed;
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
@@ -121,6 +123,12 @@ inv                    return token::TOKEN_inv;
                        errno = 0;
                        yylval->val = atof(yytext);
                        return token::TOKEN_NUM;
+                     }
+
+{int}                {
+                       errno = 0;
+                       yylval->integer = atoi(yytext);
+                       return token::TOKEN_INT;
                      }
 
 [xyz]                return yytext[0];

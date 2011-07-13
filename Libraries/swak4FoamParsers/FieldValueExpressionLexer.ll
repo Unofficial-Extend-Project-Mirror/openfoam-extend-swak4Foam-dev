@@ -93,8 +93,10 @@ dist                  return token::TOKEN_dist;
 nearDist              return token::TOKEN_nearDist;
 rdist                 return token::TOKEN_rdist;
 rand                  return token::TOKEN_rand;
+randFixed             return token::TOKEN_randFixed;
 id                    return token::TOKEN_id;
 randNormal            return token::TOKEN_randNormal;
+randNormalFixed       return token::TOKEN_randNormalFixed;
 
 cpu                   return token::TOKEN_cpu;
 
@@ -145,6 +147,12 @@ false                  return token::TOKEN_FALSE;
                        errno = 0;
                        yylval->val = atof(yytext);
                        return token::TOKEN_NUM;
+                     }
+
+{int}                {
+                       errno = 0;
+                       yylval->integer = atoi(yytext);
+                       return token::TOKEN_INT;
                      }
 
 [xyz]                return yytext[0];
