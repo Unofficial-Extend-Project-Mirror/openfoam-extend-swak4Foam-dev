@@ -24,14 +24,14 @@ boundaryField
     {
         type            groovyBC;
         value           uniform 0;
-        valueExpression "rand()";
+        valueExpression "rand()*10-5";
     }
 
     fixedWalls      
     {
         type            groovyBC;
         value           uniform 0;
-        valueExpression "rand(42)";
+        valueExpression "rand(42)*10-5";
     }
 
     frontAndBack    

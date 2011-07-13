@@ -5,6 +5,7 @@
 %}
 
 %s setname
+%x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
 %option stack
@@ -27,10 +28,13 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname>[ \t]+             yylloc->step ();
+<INITIAL,setname,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
+
+<needsIntegerParameter>[(] return yytext[0];
+<needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
 
 %{
     typedef parserSubset::SubsetValueExpressionParser::token token;
@@ -86,13 +90,13 @@ vol                   return token::TOKEN_volume;
 pts                   return token::TOKEN_points;
 Sf                    return token::TOKEN_Sf;
 normal                return token::TOKEN_normal;
-rand                  return token::TOKEN_rand;
-randFixed             return token::TOKEN_randFixed;
+rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
+randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
 flip                  return token::TOKEN_flip;
-randNormal            return token::TOKEN_randNormal;
-randNormalFixed       return token::TOKEN_randNormalFixed;
+randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
+randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
@@ -125,7 +129,7 @@ inv                    return token::TOKEN_inv;
                        return token::TOKEN_NUM;
                      }
 
-{int}                {
+<needsIntegerParameter>{int}                {
                        errno = 0;
                        yylval->integer = atoi(yytext);
                        return token::TOKEN_INT;

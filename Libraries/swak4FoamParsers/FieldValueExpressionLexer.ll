@@ -8,6 +8,7 @@
 %s zonename
 %s fsetname
 %s fzonename
+%x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
 %option stack
@@ -30,10 +31,13 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname,zonename,fsetname,fzonename>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,fsetname,fzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
 <INITIAL,setname,zonename,fsetname,fzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
+
+<needsIntegerParameter>[(] return yytext[0];
+<needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
 
 %{
     typedef parserField::FieldValueExpressionParser::token token;
@@ -92,11 +96,11 @@ vol                   return token::TOKEN_volume;
 dist                  return token::TOKEN_dist;
 nearDist              return token::TOKEN_nearDist;
 rdist                 return token::TOKEN_rdist;
-rand                  return token::TOKEN_rand;
-randFixed             return token::TOKEN_randFixed;
+rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
+randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 id                    return token::TOKEN_id;
-randNormal            return token::TOKEN_randNormal;
-randNormalFixed       return token::TOKEN_randNormalFixed;
+randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
+randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 cpu                   return token::TOKEN_cpu;
 
@@ -149,7 +153,7 @@ false                  return token::TOKEN_FALSE;
                        return token::TOKEN_NUM;
                      }
 
-{int}                {
+<needsIntegerParameter>{int}                {
                        errno = 0;
                        yylval->integer = atoi(yytext);
                        return token::TOKEN_INT;
