@@ -205,14 +205,12 @@ volScalarField *FieldValueExpressionDriver::makeModuloField(
     return result_;
 }
 
-volScalarField *FieldValueExpressionDriver::makeRandomField()
+volScalarField *FieldValueExpressionDriver::makeRandomField(label seed)
 {
     volScalarField *f=makeConstantField<volScalarField>(0.);
-    Random rand(65);
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=rand.scalar01();
-    }
+    autoPtr<scalarField> rField(CommonValueExpressionDriver::makeRandomField(seed));
+    f->internalField()=rField();
 
     f->correctBoundaryConditions();
 
@@ -232,14 +230,12 @@ volScalarField *FieldValueExpressionDriver::makeCellIdField()
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeGaussRandomField()
+volScalarField *FieldValueExpressionDriver::makeGaussRandomField(label seed)
 {
     volScalarField *f=makeConstantField<volScalarField>(0.);
-    Random rand(65);
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=rand.GaussNormal();
-    }
+    autoPtr<scalarField> rField(CommonValueExpressionDriver::makeGaussRandomField(seed));
+    f->internalField()=rField();
 
     f->correctBoundaryConditions();
 
