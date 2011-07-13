@@ -178,6 +178,7 @@ inv                    return token::TOKEN_inv;
                      }
 
 .                    driver.error (*yylloc, "invalid character");
+<needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
 
 
 %%
