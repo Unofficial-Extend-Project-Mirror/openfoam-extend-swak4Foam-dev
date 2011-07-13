@@ -49,6 +49,7 @@
 %union
 {
     Foam::scalar val;
+    Foam::label integer;
     Foam::vector *vec;
     Foam::string *name;
     Foam::string *vname;
@@ -80,6 +81,7 @@
 %token <setname> TOKEN_FSETID "faceSetID" 
 %token <zonename> TOKEN_FZONEID "faceZoneID" 
 %token <val>    TOKEN_NUM   "number"
+%token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
 %type  <val>    scalar      "sexpression"  
 %type  <sfield>    exp        "expression"
@@ -98,9 +100,11 @@
 
 %token TOKEN_pi
 %token TOKEN_rand
+%token TOKEN_randFixed
 %token TOKEN_id
 %token TOKEN_cpu
 %token TOKEN_randNormal
+%token TOKEN_randNormalFixed
 %token TOKEN_position
 %token TOKEN_fposition
 %token TOKEN_fprojection
@@ -184,7 +188,7 @@
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
 %destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID"
-%printer             { debug_stream () << $$; } "number"  "sexpression"
+%printer             { debug_stream () << $$; } "number" "integer" "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression"
 
 
@@ -373,7 +377,13 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_rdist '(' vexp ')'                 { $$ = driver.makeRDistanceField(*$3); delete $3; }
         | TOKEN_volume '(' ')'                     { $$ = driver.makeVolumeField(); }
         | TOKEN_rand '(' ')'                       { $$ = driver.makeRandomField(); }
+        | TOKEN_rand '(' TOKEN_INT ')'                       { $$ = driver.makeRandomField(-$3); }
         | TOKEN_randNormal '(' ')'                 { $$ = driver.makeGaussRandomField(); }
+        | TOKEN_randNormal '(' TOKEN_INT ')'                 { $$ = driver.makeGaussRandomField(-$3); }
+        | TOKEN_randFixed '(' ')'                       { $$ = driver.makeRandomField(1); }
+        | TOKEN_randFixed '(' TOKEN_INT ')'                       { $$ = driver.makeRandomField($3+1); }
+        | TOKEN_randNormalFixed '(' ')'                 { $$ = driver.makeGaussRandomField(1); }
+        | TOKEN_randNormalFixed '(' TOKEN_INT ')'                 { $$ = driver.makeGaussRandomField($3+1); }
         | TOKEN_id '(' ')'                         { $$ = driver.makeCellIdField(); }
         | TOKEN_cpu'(' ')'                         { $$ = driver.makeConstantField<Foam::volScalarField>(Foam::Pstream::myProcNo()); }
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().deltaT().value()); }
