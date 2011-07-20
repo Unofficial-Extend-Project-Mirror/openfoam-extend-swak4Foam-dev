@@ -149,6 +149,9 @@
       problem described below this currently doesn't work
 **** average-t-junction
     - Solver :: pimpleFoam
+    - Mesh preparation :: Execute the script =prepare.sh= in that
+         directory (requires PyFoam: if not installed change in the
+         =boundary=-file the type of the =defaultFaces= to =wall=)
 **** multiRegionHeaterFeedback
     - Solver :: chtMultiRegionFoam
     - Mesh preparation :: Execute the script =prepare.sh= in that
