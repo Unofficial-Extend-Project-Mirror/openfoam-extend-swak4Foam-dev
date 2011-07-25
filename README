@@ -396,7 +396,7 @@
 *** Sampled sets
     Sampled sets can now also be used as en entity on which
     calculation is possible.
-** Not yet released
+** 2011-07-26
 *** New features:
 **** Rewrite of =rand= and =randNormal=
      - These two functions now can receive an integer seed that
