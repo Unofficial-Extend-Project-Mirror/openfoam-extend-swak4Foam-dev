@@ -13,8 +13,10 @@
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
 ** Requirements
-   - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
-     - The =finiteArea=-stuff will only work with version 1.6-ext
+   - Version 2.0 of OpenFOAM (a version that works with 1.6, 1.6-ext
+     and 1.7 is available separately)
+     - The =finiteArea=-stuff will probably work with version 2.0-ext
+       (once that is available)
    - the compiler generators =bison= and =flex=
 ** Building
   =wmake all= at the base directory should build all the libraries and
@@ -397,6 +399,11 @@
     Sampled sets can now also be used as en entity on which
     calculation is possible.
 ** 2011-07-26
+*** Port to OpenFOAM 2.0
+    This is the first release that officially supports OpenFOAM 2.0
+    
+    Also it is the first release that incorporates the
+    =simpleFunctionObjects=-library 
 *** New features:
 **** Rewrite of =rand= and =randNormal=
      - These two functions now can receive an integer seed that
