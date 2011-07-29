@@ -295,6 +295,18 @@
                     =finiteArea=-discretization (only present in
                     =1.6-ext=) is developed. Usually gets merged back
                     into the =default=-branch once a feature is completed
+*** Distributed bug-tracking
+    As an experimental feature distributed bug-tracking was introduced
+    using the /Artemis/-extension for /Mercurial/ (see
+    =http://hg.mrzv.org/Artemis/=). An up-to-date version can be
+    installed by 
+: hg clone http://hg.mrzv.org/Artemis/
+    somewhere and installing the plugin by editing =.hgrc=.
+
+    This is *not* the official bug-tracker for =swak4Foam=. It is used
+    for keeping track of new features that are to be introduced to
+    =swak4Foam= and may be discontinued if the experiment proves to be
+    unsuccessful.
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the

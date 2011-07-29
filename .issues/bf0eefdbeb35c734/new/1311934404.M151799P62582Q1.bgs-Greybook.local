@@ -1,0 +1,16 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 29 Jul 2011 12:07:26 +0200
+State: in-progress
+Subject: Add global variables
+Message-Id: <bf0eefdbeb35c734-0-artemis@bgs-Greybook.local>
+
+Variables that are global for all swak4Foam-objects. This would for
+instance allow the introduction of a consistent TInf throughout a case
+(boundary conditions, functionObjects ....)
+
+Add a function object to set the variables
+
+Variables should be uniform
+
+Implement as a static variable in =CommonExpressionDriver= and search
+them before everything else.
