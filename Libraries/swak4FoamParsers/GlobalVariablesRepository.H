@@ -68,6 +68,8 @@ class GlobalVariablesRepository
     //- The only instance of this repository
     static GlobalVariablesRepository *repositoryInstance;
 
+    static ExpressionResult zero_;
+
 public:
      //- Runtime type information
     TypeName("GlobalVariablesRepository");
@@ -80,7 +82,7 @@ public:
     static GlobalVariablesRepository &getGlobalVariables();
 
     //- get a global variable (if there is one)
-    ExpressionResult get(
+    const ExpressionResult &get(
         const word &name,
         const wordList &scopes
     );

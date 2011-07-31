@@ -41,6 +41,8 @@ defineTypeNameAndDebug(GlobalVariablesRepository, 0);
 
 GlobalVariablesRepository *GlobalVariablesRepository::repositoryInstance(NULL);
 
+ExpressionResult GlobalVariablesRepository::zero_;
+
 GlobalVariablesRepository::GlobalVariablesRepository()
 {
 }
@@ -73,7 +75,7 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
     return *repositoryInstance;
 }
 
-ExpressionResult GlobalVariablesRepository::get(
+const ExpressionResult &GlobalVariablesRepository::get(
     const word &name,
     const wordList &scopes
 )
@@ -96,7 +98,7 @@ ExpressionResult GlobalVariablesRepository::get(
         }
     }
 
-    return ExpressionResult();
+    return zero_;
 }
 
 void GlobalVariablesRepository::addValue(

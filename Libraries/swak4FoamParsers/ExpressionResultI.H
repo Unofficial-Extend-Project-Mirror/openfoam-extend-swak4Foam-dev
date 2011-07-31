@@ -70,7 +70,7 @@ namespace Foam {
     }
 
     template<class Type>
-    tmp<Field<Type> > ExpressionResult::getResult(bool keep)
+    inline tmp<Field<Type> > ExpressionResult::getResult(bool keep)
     {
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Field<Type> > ExpressionResult::getResult()")
