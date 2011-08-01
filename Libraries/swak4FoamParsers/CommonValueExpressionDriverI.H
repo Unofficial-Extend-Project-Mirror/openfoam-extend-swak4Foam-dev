@@ -421,7 +421,7 @@ namespace Foam {
             } else {
                 vals=const_cast<ExpressionResult &>(
                     lookupGlobal(name)
-                ).getResult<Type>();
+                ).getResult<Type>(true);
             }
 
             if(debug) {

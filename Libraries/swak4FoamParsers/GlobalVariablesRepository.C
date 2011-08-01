@@ -85,7 +85,7 @@ const ExpressionResult &GlobalVariablesRepository::get(
 
         if(!globalVariables_.found(scopeName)) {
             WarningIn("GlobalVariablesRepository::get")
-                << "There is nno scope " << scopeName 
+                << "There is no scope " << scopeName 
                     << " in the list of global scopes "
                     << globalVariables_.toc()
                     << " when looking for " << name << endl;
@@ -94,6 +94,9 @@ const ExpressionResult &GlobalVariablesRepository::get(
 
         const ResultTable &scope=globalVariables_[scopeName];
         if(scope.found(name)) {
+            if(debug) {
+                Info << name << " ( " << scopeName << " )= " << scope[name] << endl;
+            }
             return scope[name];
         }
     }
@@ -110,7 +113,7 @@ void GlobalVariablesRepository::addValue(
     addValue(
         name,
         scope,
-        ExpressionResult(dict)
+        ExpressionResult(dict,true)
     );
 }
 

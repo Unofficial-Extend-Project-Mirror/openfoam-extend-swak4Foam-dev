@@ -45,7 +45,8 @@ ExpressionResult::ExpressionResult()
 :
     valType_("None"),
     valPtr_(NULL),
-    isPoint_(false)
+    isPoint_(false),
+    isSingleValue_(true)
 {
     clearResult();
 }
@@ -54,36 +55,60 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 :
     valType_("None"),
     valPtr_(NULL),
-    isPoint_(false)
+    isPoint_(false),
+    isSingleValue_(true)
 {
     (*this)=rhs;
 }
 
-ExpressionResult::ExpressionResult(const dictionary &dict)
+ExpressionResult::ExpressionResult(
+    const dictionary &dict,
+    bool isSingleValue
+)
 :
     valType_(dict.lookupOrDefault<word>("valueType","None")),
     valPtr_(NULL),
-    isPoint_(dict.lookupOrDefault<bool>("isPoint",false))
+    isPoint_(dict.lookupOrDefault<bool>("isPoint",false)),
+    isSingleValue_(isSingleValue)
 {
     if(
         dict.found("value")
     ) {
-        if(valType_==pTraits<scalar>::typeName) {
-            valPtr_=new scalarField(dict.lookup("value"));
-        } else if(valType_==vector::typeName) {
-            valPtr_=new Field<vector>(dict.lookup("value"));
-        } else if(valType_==tensor::typeName) {
-            valPtr_=new Field<tensor>(dict.lookup("value"));
-        } else if(valType_==symmTensor::typeName) {
-            valPtr_=new Field<symmTensor>(dict.lookup("value"));
-        } else if(valType_==sphericalTensor::typeName) {
-            valPtr_=new Field<sphericalTensor>(dict.lookup("value"));
-        } else if(valType_==pTraits<bool>::typeName) {
-            valPtr_=new Field<bool>(dict.lookup("value"));
+        if(isSingleValue) {
+            if(valType_==pTraits<scalar>::typeName) {
+                valPtr_=new scalarField(1,pTraits<scalar>(dict.lookup("value")));
+            } else if(valType_==pTraits<vector>::typeName) {
+                valPtr_=new Field<vector>(1,pTraits<vector>(dict.lookup("value")));
+            } else if(valType_==pTraits<tensor>::typeName) {
+                valPtr_=new Field<tensor>(1,pTraits<tensor>(dict.lookup("value")));
+            } else if(valType_==pTraits<symmTensor>::typeName) {
+                valPtr_=new Field<symmTensor>(1,pTraits<symmTensor>(dict.lookup("value")));
+            } else if(valType_==pTraits<sphericalTensor>::typeName) {
+                valPtr_=new Field<sphericalTensor>(1,pTraits<sphericalTensor>(dict.lookup("value")));
+            } else {
+                FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
+                    << "Don't know how to read data type " << valType_ 
+                        << " as a single value" << endl
+                        << abort(FatalError);
+            }
         } else {
-            FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
-                << "Don't know how to read data type " << valType_ << endl
-                    << abort(FatalError);
+            if(valType_==pTraits<scalar>::typeName) {
+                valPtr_=new scalarField(dict.lookup("value"));
+            } else if(valType_==vector::typeName) {
+                valPtr_=new Field<vector>(dict.lookup("value"));
+            } else if(valType_==tensor::typeName) {
+                valPtr_=new Field<tensor>(dict.lookup("value"));
+            } else if(valType_==symmTensor::typeName) {
+                valPtr_=new Field<symmTensor>(dict.lookup("value"));
+            } else if(valType_==sphericalTensor::typeName) {
+                valPtr_=new Field<sphericalTensor>(dict.lookup("value"));
+            } else if(valType_==pTraits<bool>::typeName) {
+                valPtr_=new Field<bool>(dict.lookup("value"));
+            } else {
+                FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
+                    << "Don't know how to read data type " << valType_ << endl
+                        << abort(FatalError);
+            }
         }
     }
 }
@@ -185,6 +210,7 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
     valType_=rhs.valType_;
     isPoint_=rhs.isPoint_;
+    isSingleValue_=rhs.isSingleValue_;
 
     if( rhs.valPtr_ ) {
         if(valType_==pTraits<scalar>::typeName) {
@@ -226,6 +252,9 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 
         out.writeKeyword("isPoint");
         out << data.isPoint_ << token::END_STATEMENT << nl;
+
+        out.writeKeyword("isSingleValue");
+        out << data.isSingleValue_ << token::END_STATEMENT << nl;
 
         out.writeKeyword("value");
         if(data.valType_==pTraits<scalar>::typeName) {

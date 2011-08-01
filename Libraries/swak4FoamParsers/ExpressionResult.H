@@ -65,6 +65,8 @@ class ExpressionResult
     
     bool isPoint_;
 
+    bool isSingleValue_;
+
     void uglyDelete();
 
     template<class Type>
@@ -81,7 +83,7 @@ public:
     ExpressionResult(const ExpressionResult&);
 
     //- Construct from a dictionary
-    ExpressionResult(const dictionary&);
+    ExpressionResult(const dictionary&,bool isSingleValue=false);
 
     // Destructor
 
@@ -109,6 +111,8 @@ public:
     inline const string &type() const;
 
     inline bool isPoint() const;
+
+    inline bool isSingleValue() const;
 
     bool hasValue() const;
 

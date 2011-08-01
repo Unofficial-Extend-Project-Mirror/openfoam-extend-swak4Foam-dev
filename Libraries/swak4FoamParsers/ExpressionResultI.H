@@ -45,6 +45,7 @@ namespace Foam {
         valPtr_=static_cast<void *>(new Field<Type>(val));
 
         isPoint_=isPoint;
+        isSingleValue_=false;
     }
 
     template<class Type>
@@ -56,6 +57,7 @@ namespace Foam {
         valPtr_=static_cast<void *>(val);
 
         isPoint_=isPoint;
+        isSingleValue_=false;
     }
 
     template<class Type>
@@ -67,6 +69,7 @@ namespace Foam {
         valPtr_=static_cast<void *>(new Field<Type>(size,val));
 
         isPoint_=false;
+        isSingleValue_=false;
     }
 
     template<class Type>
@@ -125,6 +128,11 @@ namespace Foam {
     inline bool ExpressionResult::isPoint() const
     {
         return isPoint_;
+    }
+
+    inline bool ExpressionResult::isSingleValue() const
+    {
+        return isSingleValue_;
     }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
