@@ -125,6 +125,10 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+    if(dict.found("globalScopes")) {
+        setGlobalScopes(wordList(dict.lookup("globalScopes")));
+    }
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
     }
