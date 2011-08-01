@@ -102,6 +102,19 @@ const ExpressionResult &GlobalVariablesRepository::get(
 }
 
 void GlobalVariablesRepository::addValue(
+    const dictionary &dict
+) {
+    word name(dict.lookup("globalName"));
+    word scope(dict.lookup("globalScope"));
+
+    addValue(
+        name,
+        scope,
+        ExpressionResult(dict)
+    );
+}
+
+void GlobalVariablesRepository::addValue(
     const word &name,
     const word &scope,
     const ExpressionResult &value

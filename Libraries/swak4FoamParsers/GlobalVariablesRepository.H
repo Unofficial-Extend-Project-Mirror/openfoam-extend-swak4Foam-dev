@@ -92,6 +92,11 @@ public:
         const word &scope,
         const ExpressionResult &value
     );
+
+    void addValue(
+        const dictionary &dict
+    );
+
 };
 
 
