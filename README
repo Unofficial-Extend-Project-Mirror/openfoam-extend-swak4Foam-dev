@@ -445,3 +445,7 @@
 **** Deployment scripts
      Now install to =FOAM_SITE_APPBIN/LIBBIN=
 ** Next release
+*** New features
+**** =replayTransientBC= now supports multiple regions
+     Uses the usual =-region=-option. Looks for a separate dictionary
+     in the =system=-directory of that region
