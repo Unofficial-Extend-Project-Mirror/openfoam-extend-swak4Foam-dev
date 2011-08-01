@@ -1,5 +1,6 @@
 SurfacesRepository.C
 SetsRepository.C
+GlobalVariablesRepository.C
 
 ExpressionResult.C
 StoredExpressionResult.C
