@@ -29,22 +29,20 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::ExpressionResult
+    Foam::GlobalVariablesRepository
 
 Description
 
 SourceFiles
-    ExpressionResultI.H
-    ExpressionResult.C
-    ExpressionResultIO.C
+    GlobalVariablesRepository.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef ExpressionResult_H
-#define ExpressionResult_H
+#ifndef GlobalVariablesRepository_H
+#define GlobalVariablesRepository_H
 
-#include "Field.H"
+#include "ExpressionResult.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,71 +50,53 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class ExpressionResult Declaration
+                           Class GlobalVariablesRepository Declaration
 \*---------------------------------------------------------------------------*/
 
-class ExpressionResult
+class GlobalVariablesRepository
 {
     // Private data
 
-    string valType_;
-
-    void *valPtr_;
-    
-    bool isPoint_;
-
-    bool isSingleValue_;
-
-    void uglyDelete();
-
-    template<class Type>
-    ExpressionResult getUniformInternal(const label size,bool noWarn);
-
-public:
+    typedef HashTable<ExpressionResult,word> ResultTable;
+    HashTable<ResultTable,word> globalVariables_;
 
     // Constructors
 
     //- Construct null
-    ExpressionResult();
+    GlobalVariablesRepository();
 
-    //- Construct as copy
-    ExpressionResult(const ExpressionResult&);
+    //- The only instance of this repository
+    static GlobalVariablesRepository *repositoryInstance;
 
-    //- Construct from a dictionary
-    ExpressionResult(const dictionary&,bool isSingleValue=false);
+    static ExpressionResult zero_;
 
-    // Destructor
+public:
+     //- Runtime type information
+    TypeName("GlobalVariablesRepository");
 
-    ~ExpressionResult();
+    //- Destructor
 
-    void operator=(const ExpressionResult&);
+    virtual ~GlobalVariablesRepository();
 
-    template<class Type>
-    inline void setResult(Field<Type> *,bool isPoint=false);
+    //- Get the Singleton of this class
+    static GlobalVariablesRepository &getGlobalVariables();
 
-    template<class Type>
-    inline void setResult(const Field<Type> &,bool isPoint=false);
+    //- get a global variable (if there is one)
+    const ExpressionResult &get(
+        const word &name,
+        const wordList &scopes
+    );
 
-    template<class Type>
-    inline void setResult(Type val,label size);
+    void addValue(
+        const word &name,
+        const word &scope,
+        const ExpressionResult &value
+    );
 
-    template<class Type>
-    inline tmp<Field<Type> > getResult(bool keep=false);
+    void addValue(
+        const dictionary &dict
+    );
 
-    // Construct a uniform field from the current results
-    ExpressionResult getUniform(const label size,bool noWarn);
-
-    void clearResult();
-
-    inline const string &type() const;
-
-    inline bool isPoint() const;
-
-    inline bool isSingleValue() const;
-
-    bool hasValue() const;
-
-    friend Ostream & operator<<(Ostream &,const ExpressionResult &);
 };
 
 
@@ -125,8 +105,6 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "ExpressionResultI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

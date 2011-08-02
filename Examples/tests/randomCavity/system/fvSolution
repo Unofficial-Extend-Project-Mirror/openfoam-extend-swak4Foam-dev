@@ -9,47 +9,38 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      alpha;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
+solvers
 {
-    leftWall
+    p
     {
-        type            zeroGradient;
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-06;
+        relTol          0;
     }
 
-    rightWall
+    U
     {
-        type groovyBC;
-        globalScopes ( "fillDamBC" );
-        valueExpression "1";
-        fractionExpression "(pos().y < inHeight) ? 1 : 0";
-        value uniform 0;
-    }
-
-    lowerWall
-    {
-        type            zeroGradient;
-    }
-
-    atmosphere
-    {
-        type            inletOutlet;
-        inletValue      uniform 0;
-        value           uniform 0;
-    }
-
-    defaultFaces
-    {
-        type            empty;
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-05;
+        relTol          0;
     }
 }
+
+PISO
+{
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 0;
+    pRefCell        0;
+    pRefValue       0;
+}
+
 
 // ************************************************************************* //

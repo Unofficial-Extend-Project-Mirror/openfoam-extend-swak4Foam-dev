@@ -149,8 +149,8 @@ public:
     volScalarField *makeNearDistanceField();
     volScalarField *makeRDistanceField(const volVectorField &r);
     volScalarField *makeVolumeField();
-    volScalarField *makeRandomField();
-    volScalarField *makeGaussRandomField();
+    volScalarField *makeRandomField(label seed=0);
+    volScalarField *makeGaussRandomField(label seed=0);
     volScalarField *makeCellIdField();
     
     // return Time object

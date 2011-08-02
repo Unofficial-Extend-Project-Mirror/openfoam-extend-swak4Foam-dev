@@ -10,7 +10,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      alpha;
+    object      rand;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -20,33 +20,21 @@ internalField   uniform 0;
 
 boundaryField
 {
-    leftWall
+    movingWall      
     {
-        type            zeroGradient;
-    }
-
-    rightWall
-    {
-        type groovyBC;
-        globalScopes ( "fillDamBC" );
-        valueExpression "1";
-        fractionExpression "(pos().y < inHeight) ? 1 : 0";
-        value uniform 0;
-    }
-
-    lowerWall
-    {
-        type            zeroGradient;
-    }
-
-    atmosphere
-    {
-        type            inletOutlet;
-        inletValue      uniform 0;
+        type            groovyBC;
         value           uniform 0;
+        valueExpression "rand()*10-5";
     }
 
-    defaultFaces
+    fixedWalls      
+    {
+        type            groovyBC;
+        value           uniform 0;
+        valueExpression "rand(42)*10-5";
+    }
+
+    frontAndBack    
     {
         type            empty;
     }

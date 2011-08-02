@@ -128,8 +128,8 @@ public:
     areaVectorField *makePositionField();
     areaScalarField *makeRDistanceField(const areaVectorField &r);
     areaScalarField *makeAreaField();
-    areaScalarField *makeRandomField();
-    areaScalarField *makeGaussRandomField();
+    areaScalarField *makeRandomField(label seed=0);
+    areaScalarField *makeGaussRandomField(label seed=0);
     areaScalarField *makeCellIdField();
     
     // Logical expressions
