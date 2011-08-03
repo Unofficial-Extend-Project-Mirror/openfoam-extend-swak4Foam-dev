@@ -26,11 +26,12 @@ boundaryField
     inlet {
         type groovyBC;
         value uniform 1;
+        globalScopes ("planeInlet");
         variables (
             "minY=min(pos().y);"
             "maxY=max(pos().y);"
         );
-        valueExpression "1+0.5*sin(2*time())*4*(pos().y-minY)*(maxY-pos().y)/pow(maxY-minY,2)";
+        valueExpression "const+amplitude*sin(freq*time())*amplitude2*(pos().y-minY)*(maxY-pos().y)/pow(maxY-minY,2)";
     }
     outlet {
         type inletOutlet;
