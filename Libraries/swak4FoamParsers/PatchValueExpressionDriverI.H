@@ -59,13 +59,15 @@ namespace Foam {
                     lookupGlobal(name)
                 ).getResult<Type>(true).ptr();
             }
-            if(vals->size()>0) {
-                if(vals->size()==this->size()) {
-                    return vals;
-                } else {
-                    Field<Type> *result=new Field<Type>(this->size(),gAverage(*vals));
-                    delete vals;
-                    return result;
+            if(vals) {
+                if(vals->size()>0) {
+                    if(vals->size()==this->size()) {
+                        return vals;
+                    } else {
+                        Field<Type> *result=new Field<Type>(this->size(),gAverage(*vals));
+                        delete vals;
+                        return result;
+                    }
                 }
             }
         }
