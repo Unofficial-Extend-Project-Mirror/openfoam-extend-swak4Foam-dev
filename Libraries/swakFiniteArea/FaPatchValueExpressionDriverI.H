@@ -53,10 +53,8 @@ namespace Foam {
             Field<Type> *vals=NULL;
             
             if(variables_.found(name)) {
-                Info << "Var: "<< name << endl;
                 vals=variables_[name].getResult<Type>(true).ptr();
             } else if(isGlobal<Type>(name,false)) {
-                Info << "Global: "<< name << endl;
                 vals=const_cast<ExpressionResult &>(
                     lookupGlobal(name)
                 ).getResult<Type>(true).ptr();
