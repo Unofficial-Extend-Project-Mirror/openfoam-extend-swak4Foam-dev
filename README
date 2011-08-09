@@ -455,6 +455,8 @@
 **** =replayTransientBC= now supports multiple regions
      Uses the usual =-region=-option. Looks for a separate dictionary
      in the =system=-directory of that region
+**** =replayTransientBC= allows execution of functionObjects
+     This can be switched on using the =allowFunctionObjects=-option
 **** Global variables
      It is now possible to define variables that are 'global': They
      can be read in any entity. 
