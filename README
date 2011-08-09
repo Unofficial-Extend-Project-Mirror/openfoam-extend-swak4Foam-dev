@@ -169,7 +169,7 @@
      - Also demonstrates :: Usage of a =sampledSet= defined in the
           =controlDict= do determine the average filling height. Also
           stored variables for not switching back once the criterion
-          is reached
+          is reached. Global variables defined by a function object
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -449,3 +449,13 @@
 **** =replayTransientBC= now supports multiple regions
      Uses the usual =-region=-option. Looks for a separate dictionary
      in the =system=-directory of that region
+**** Global variables
+     It is now possible to define variables that are 'global': They
+     can be read in any entity. 
+
+     Currently these variables can only be uniform.
+
+     To access global variables the specification-dictionary has to
+     have a =wordList= named =globalScopes=. The scopes are searched
+     in that order for the names of global variables. Having scopes
+     allows some kind of separation of the variables

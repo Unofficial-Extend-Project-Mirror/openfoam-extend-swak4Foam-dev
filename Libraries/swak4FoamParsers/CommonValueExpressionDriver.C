@@ -32,6 +32,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "CommonValueExpressionDriver.H"
+#include "GlobalVariablesRepository.H"
 
 #include "Random.H"
 
@@ -62,6 +63,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     variables_(orig.variables_),
     storedVariables_(orig.storedVariables_),
     storedVariablesIndex_(orig.storedVariablesIndex_),
+    globalVariableScopes_(orig.globalVariableScopes_),
     lines_(orig.lines_),
     lookup_(orig.lookup_),
     content_(""),
@@ -79,6 +81,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
 :
     variableStrings_(readVariableStrings(dict)),
     storedVariablesIndex_(-1),
+    globalVariableScopes_(dict.lookupOrDefault("globalScopes",wordList())),
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
@@ -108,6 +111,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 :
     variableStrings_(),
     storedVariablesIndex_(-1),
+    globalVariableScopes_(),
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false)
@@ -121,6 +125,10 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+    if(dict.found("globalScopes")) {
+        setGlobalScopes(wordList(dict.lookup("globalScopes")));
+    }
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
     }
@@ -626,6 +634,9 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         this->searchInMemory(),
         this->searchOnDisc()
     );
+    otherDriver->setGlobalScopes(
+        this->globalVariableScopes_
+    );
 
     otherDriver->parse(expr);
     variables_.insert(name,otherDriver->getUniform(this->size(),false));
@@ -848,6 +859,21 @@ string CommonValueExpressionDriver::outputEntry()
 const word CommonValueExpressionDriver::time() const
 {
     return this->mesh().time().timeName();
+}
+
+const ExpressionResult &CommonValueExpressionDriver::lookupGlobal(
+    const word &name
+) const
+{
+    return GlobalVariablesRepository::getGlobalVariables().get(
+        name,
+        globalVariableScopes_
+    );
+}
+
+void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
+{
+    globalVariableScopes_=other;
 }
 
 // ************************************************************************* //

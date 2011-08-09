@@ -28,8 +28,9 @@ boundaryField
     rightWall
     {
         type groovyBC;
+        globalScopes ( "fillDamBC" );
         valueExpression "1";
-        fractionExpression "(pos().y < 0.1) ? 1 : 0";
+        fractionExpression "(pos().y < inHeight) ? 1 : 0";
         value uniform 0;
     }
 

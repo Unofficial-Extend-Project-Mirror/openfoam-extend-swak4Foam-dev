@@ -82,6 +82,15 @@ protected:
 
     label storedVariablesIndex_;
 
+    wordList globalVariableScopes_;
+
+    const ExpressionResult &lookupGlobal(const word &name) const;
+
+    template<class T>
+    bool isGlobal(const word &name,bool isPoint) const;
+
+    void setGlobalScopes(const wordList &);
+
     HashTable<interpolationTable<scalar>,word> lines_;
 
     HashTable<interpolationTable<scalar>,word> lookup_;
