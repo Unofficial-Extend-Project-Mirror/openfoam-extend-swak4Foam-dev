@@ -36,7 +36,7 @@ License
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 1);
+    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
@@ -80,6 +80,8 @@ pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
 {
     PyThreadState_Swap(pythonState_);
     Py_EndInterpreter(pythonState_);
+    pythonState_=NULL;
+
     if(debug) {
         Info << "Currently " << interpreterCount 
             << " Python interpreters (deleted one)" << endl;
@@ -144,7 +146,7 @@ bool pythonIntegrationFunctionObject::read(const dictionary& dict)
     writeCode_=string(dict.lookup("writeCode"));
     executeCode_=string(dict.lookup("executeCode"));
 
-    return start();
+    return true; // start();
 }
 
 } // namespace Foam
