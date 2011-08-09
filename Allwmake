@@ -1,5 +1,9 @@
 #! /bin/bash
 
+if [ -e swakConfiguration ]; then
+    source swakConfiguration
+fi
+
 if [ ! -d Libraries/simpleFunctionObjects ]; then 
     if [ ! -d "$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects/lnInclude" ]; then 
 	echo "No simpleFuctionsObject existing. Press ENTER to continue compilation or abort and download it with the downloadSimpleFunctionObjects.sh script"
