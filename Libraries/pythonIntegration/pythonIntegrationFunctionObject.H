@@ -73,9 +73,23 @@ class pythonIntegrationFunctionObject
     //- state of 'my' Python subinterpreter
     PyThreadState *pythonState_;
 
+    //- should exceptions be tolerated or lead to a fatal error?
+    bool tolerateExceptions_;
+
+    //- Code to be executed at the start
+    string startCode_;
+
+    //- Code to be executed at write
+    string writeCode_;
+  
+    //- Code to be executed at execute
+    string executeCode_;
+
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;
+
+    void executeCode(const string &code);
 
 public:
 

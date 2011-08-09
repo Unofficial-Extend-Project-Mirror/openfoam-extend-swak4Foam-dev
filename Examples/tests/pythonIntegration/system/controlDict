@@ -46,13 +46,21 @@ timePrecision   6;
 runTimeModifiable yes;
 
 functions (
-    py1
+    pythonSimple
     {
         type pythonIntegration;
+        startCode "print 'Starting';a=0";
+        executeCode "a+=1; print 'a:',a";
+        writeCode "print 'Never been here'";
+        //        tolerateExceptions true;
     }
-    py2
+    pythonPyFoam
     {
         type pythonIntegration;
+        startCode "from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile";
+        executeCode "print 'End Time:',ParsedParameterFile('system/controlDict')['endTime']";
+        writeCode "print 'Never been here'";
+        //        tolerateExceptions true;
     }
 );
 

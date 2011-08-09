@@ -72,6 +72,8 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
         Info << "Currently " << interpreterCount 
             << " Python interpreters (created one)" << endl;
     }
+
+    read(dict);
 }
 
 pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
@@ -99,6 +101,8 @@ bool pythonIntegrationFunctionObject::start()
 {
     PyThreadState_Swap(pythonState_);
 
+    executeCode(startCode_);
+
     return true;
 }
 
@@ -106,16 +110,40 @@ bool pythonIntegrationFunctionObject::execute()
 {
     PyThreadState_Swap(pythonState_);
 
+    executeCode(executeCode_);
+
     return true;
 }
 
 void pythonIntegrationFunctionObject::write()
 {
     PyThreadState_Swap(pythonState_);
+
+    executeCode(writeCode_);
+}
+
+void pythonIntegrationFunctionObject::executeCode(const string &code)
+{
+    int success=PyRun_SimpleString(code.c_str());
+    if(
+        success!=0
+        &&
+        !tolerateExceptions_
+    ) {
+        FatalErrorIn("pythonIntegrationFunctionObject::executeCode(const string &code)")
+            << "Python exception raised by " << nl
+                << code
+                << endl << abort(FatalError);
+    }
 }
 
 bool pythonIntegrationFunctionObject::read(const dictionary& dict)
 {
+    tolerateExceptions_=dict.lookupOrDefault<bool>("tolerateExceptions",false);
+    startCode_=string(dict.lookup("startCode"));
+    writeCode_=string(dict.lookup("writeCode"));
+    executeCode_=string(dict.lookup("executeCode"));
+
     return start();
 }
 
