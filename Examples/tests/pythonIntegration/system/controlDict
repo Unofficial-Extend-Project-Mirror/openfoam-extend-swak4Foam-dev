@@ -62,6 +62,14 @@ functions (
         writeCode "print 'Never been here'";
         //        tolerateExceptions true;
     }
+    pythonPythonFlu
+    {
+        type pythonIntegration;
+        startCode "import Foam.OpenFOAM as OF";
+        writeCode "print ";
+        executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
+        tolerateExceptions true;
+    }
 );
 
 libs (
