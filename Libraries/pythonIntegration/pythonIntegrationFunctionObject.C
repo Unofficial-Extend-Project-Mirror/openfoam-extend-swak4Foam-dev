@@ -31,6 +31,7 @@ License
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
+#include "IFstream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -159,12 +160,60 @@ void pythonIntegrationFunctionObject::executeCode(const string &code)
     }
 }
 
+void pythonIntegrationFunctionObject::readCode(
+    const dictionary &dict,
+    const word &prefix,
+    string &code
+) {
+    if(
+        dict.found(prefix+"Code")
+        &&
+        dict.found(prefix+"File")
+    ) {
+        FatalErrorIn("pythonIntegrationFunctionObject::readCode")
+            << "Either specify " << prefix+"Code" << " or " 
+                << prefix+"File" << " but not both" << endl
+                << abort(FatalError);
+    }
+    if(
+        !dict.found(prefix+"Code")
+        &&
+        !dict.found(prefix+"File")
+    ) {
+        FatalErrorIn("pythonIntegrationFunctionObject::readCode")
+            << "Neither " << prefix+"Code" << " nor " 
+                << prefix+"File" << " specified" << endl
+                << abort(FatalError);
+    }
+    if(dict.found(prefix+"Code")) {
+        code=string(dict.lookup(prefix+"Code"));
+    } else {
+        fileName fName(dict.lookup(prefix+"File"));
+        fName.expand();
+        if(!exists(fName)) {
+            FatalErrorIn("pythonIntegrationFunctionObject::readCode")
+                << "Can't find source file " << fName 
+                    << endl << abort(FatalError);
+        }
+
+        IFstream in(fName);
+        code="";
+        while(in.good()) {
+            char c;
+            in.get(c);
+            code+=c;
+        }
+    }
+}
+
+
 bool pythonIntegrationFunctionObject::read(const dictionary& dict)
 {
     tolerateExceptions_=dict.lookupOrDefault<bool>("tolerateExceptions",false);
-    startCode_=string(dict.lookup("startCode"));
-    writeCode_=string(dict.lookup("writeCode"));
-    executeCode_=string(dict.lookup("executeCode"));
+
+    readCode(dict,"start",startCode_);
+    readCode(dict,"write",writeCode_);
+    readCode(dict,"execute",executeCode_);
 
     return true; // start();
 }

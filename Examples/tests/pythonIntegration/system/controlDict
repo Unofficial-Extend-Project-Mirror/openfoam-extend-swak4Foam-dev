@@ -58,7 +58,8 @@ functions (
     {
         type pythonIntegration;
         startCode "from os import path;from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile";
-        executeCode "print 'Time till end:',float(ParsedParameterFile(path.join(caseDir,'system','controlDict'))['endTime'])-runTime";
+        // executeCode "print 'Time till end:',float(ParsedParameterFile(path.join(caseDir,'system','controlDict'))['endTime'])-runTime";
+        executeFile "$FOAM_CASE/executePyFoam.py";
         writeCode "print 'Never been here'";
         //        tolerateExceptions true;
     }

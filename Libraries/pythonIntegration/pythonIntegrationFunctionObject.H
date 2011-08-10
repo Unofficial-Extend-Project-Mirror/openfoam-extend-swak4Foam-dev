@@ -97,6 +97,9 @@ protected:
 
     void executeCode(const string &code);
 
+    //- Read code according to the dictionary
+    void readCode(const dictionary &dict,const word &prefix,string &code);
+
 public:
 
     //- Runtime type information
