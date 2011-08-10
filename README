@@ -116,6 +116,15 @@
     Contributions to this library are explicitly encouraged. Please
     use the Mercurial-branch =groovyStandardBCs= to /groovyify/
     standard boundary conditions.
+*** =pythonIntegration=
+    Embeds a =Python=-interpreter.
+
+    - =pythonIntegrationFunctionObject= :: Executes =Python=-code
+         at the usual execution times of functionObjects. The
+         interpreter keeps its state
+
+    This library is only compiled if the paths to the Python-Headers
+    are configured in the =swakConfiguration=-file (see above)
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -457,6 +466,11 @@
      in the =system=-directory of that region
 **** =replayTransientBC= allows execution of functionObjects
      This can be switched on using the =allowFunctionObjects=-option
+**** =Python=-embedding
+     Allows the execution of Python-Code in a functionObject
+
+     This feature is still experimental and the organization of the
+     libraries is subject to change
 **** Global variables
      It is now possible to define variables that are 'global': They
      can be read in any entity. 
