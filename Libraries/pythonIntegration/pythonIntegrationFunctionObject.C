@@ -56,7 +56,8 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(name)
+    functionObject(name),
+    time_(t)
 {
     if(interpreterCount==0) {
         if(debug) {
@@ -72,6 +73,14 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
         Info << "Currently " << interpreterCount 
             << " Python interpreters (created one)" << endl;
     }
+
+    PyObject *m = PyImport_AddModule("__main__");
+
+    PyObject_SetAttrString(m,"caseDir",PyString_FromString(t.path().c_str()));
+    PyObject_SetAttrString(m,"parRun",PyBool_FromLong(Pstream::parRun()));
+    PyObject_SetAttrString(m,"myProcNo",PyInt_FromLong(Pstream::myProcNo()));
+
+    PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time_.value()));
 
     read(dict);
 }
@@ -99,9 +108,16 @@ pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void pythonIntegrationFunctionObject::setRunTime()
+{
+    PyObject *m = PyImport_AddModule("__main__");
+    PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time_.value()));
+}
+
 bool pythonIntegrationFunctionObject::start()
 {
     PyThreadState_Swap(pythonState_);
+    setRunTime();
 
     executeCode(startCode_);
 
@@ -111,6 +127,7 @@ bool pythonIntegrationFunctionObject::start()
 bool pythonIntegrationFunctionObject::execute()
 {
     PyThreadState_Swap(pythonState_);
+    setRunTime();
 
     executeCode(executeCode_);
 
@@ -120,6 +137,7 @@ bool pythonIntegrationFunctionObject::execute()
 void pythonIntegrationFunctionObject::write()
 {
     PyThreadState_Swap(pythonState_);
+    setRunTime();
 
     executeCode(writeCode_);
 }

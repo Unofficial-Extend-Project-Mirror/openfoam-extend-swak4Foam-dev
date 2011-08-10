@@ -85,6 +85,12 @@ class pythonIntegrationFunctionObject
     //- Code to be executed at execute
     string executeCode_;
 
+    //- reference to the time
+    const Time& time_;
+
+    //- set the python variable with the time to the current runTime
+    void setRunTime();
+
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;

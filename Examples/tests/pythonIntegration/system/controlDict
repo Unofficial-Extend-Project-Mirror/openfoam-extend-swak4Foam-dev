@@ -49,7 +49,7 @@ functions (
     pythonSimple
     {
         type pythonIntegration;
-        startCode "print 'Starting';a=0";
+        startCode "print 'Starting';a=0; print dir()";
         executeCode "a+=1; print 'a:',a";
         writeCode "print 'Never been here'";
         //        tolerateExceptions true;
@@ -58,7 +58,7 @@ functions (
     {
         type pythonIntegration;
         startCode "from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile";
-        executeCode "print 'End Time:',ParsedParameterFile('system/controlDict')['endTime']";
+        executeCode "print 'End Time:',ParsedParameterFile('system/controlDict')['endTime'];print caseDir,parRun,myProcNo,runTime";
         writeCode "print 'Never been here'";
         //        tolerateExceptions true;
     }
