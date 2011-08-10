@@ -102,7 +102,9 @@ pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
             Info << "Finalizing Python" << endl;
         }
         PyThreadState_Swap(NULL);
-        Py_Finalize();        
+
+        // This causes a segfault
+        //        Py_Finalize();        
     }
 }
 
