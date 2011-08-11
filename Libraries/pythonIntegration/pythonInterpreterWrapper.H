@@ -24,27 +24,23 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    pythonIntegrationFunctionObject
+    pythonInterpreterWrapper
 
 Description
-    Integrates a python-interpreter that allows the execution of Python-scripts
+    Makes sure that the object receives a python-Interpreter on its own
 
 SourceFiles
-    pythonIntegrationFunctionObject.C
+    pythonInterpreterWrapper.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef pythonIntegrationFunctionObject_H
-#define pythonIntegrationFunctionObject_H
+#ifndef pythonInterpreterWrapper_H
+#define pythonInterpreterWrapper_H
 
-#include "functionObject.H"
 #include "dictionary.H"
-#include "OFstream.H"
-#include "HashPtrTable.H"
-#include "boolList.H"
-#include "Field.H"
+#include "Time.H"
 
-#include "pythonInterpreterWrapper.H"
+#include "Python.h"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,71 +48,58 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class pythonIntegrationFunctionObject Declaration
+                           Class pythonInterpreterWrapper Declaration
 \*---------------------------------------------------------------------------*/
 
 
-class pythonIntegrationFunctionObject
-:
-    public functionObject,
-    public pythonInterpreterWrapper
+class pythonInterpreterWrapper
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    pythonIntegrationFunctionObject(const pythonIntegrationFunctionObject&);
+    pythonInterpreterWrapper(const pythonInterpreterWrapper&);
     
     //- Disallow default bitwise assignment
-    void operator=(const pythonIntegrationFunctionObject&);
+    void operator=(const pythonInterpreterWrapper&);
 
     // Private data
 
-    //- Code to be executed at the start
-    string startCode_;
+    //- state of 'my' Python subinterpreter
+    PyThreadState *pythonState_;
 
-    //- Code to be executed at write
-    string writeCode_;
-  
-    //- Code to be executed at execute
-    string executeCode_;
+    //- should exceptions be tolerated or lead to a fatal error?
+    bool tolerateExceptions_;
 
-    //- reference to the time
-    const Time& time_;
+protected:
+    //- how many instances exist (we need a separate interpreter for each of those)
+    static label interpreterCount;
 
-    //- set the python variable with the time to the current runTime
-    void setRunTime();
+    void executeCode(const string &code);
+
+    //- Read code according to the dictionary
+    void readCode(const dictionary &dict,const word &prefix,string &code);
+
+    //- set the state to "my" interpreter
+    void setInterpreter();
+
+    //- set the variable 'runTime' in the interpreter
+    void setRunTime(const Time &time);
 
 public:
 
     //- Runtime type information
-    TypeName("pythonIntegration");
+    TypeName("pythonInterpreterWrapper");
 
 
     // Constructors
 
     //- Construct from components
-    pythonIntegrationFunctionObject
+    pythonInterpreterWrapper
     (
-        const word&,
-        const Time&,
         const dictionary&
     );
 
-    virtual ~pythonIntegrationFunctionObject();
-
-    // Member Functions
-
-    //- start is called at the start of the time-loop
-    virtual bool start();
-
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
-
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
-
-    //- Sample and write
-    virtual void write();
+    virtual ~pythonInterpreterWrapper();
 
 };
 

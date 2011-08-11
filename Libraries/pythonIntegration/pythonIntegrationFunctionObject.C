@@ -46,8 +46,6 @@ namespace Foam
         dictionary
     );
 
-    label pythonIntegrationFunctionObject::interpreterCount=0;
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
@@ -58,22 +56,9 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
 )
 :
     functionObject(name),
+    pythonInterpreterWrapper(dict),
     time_(t)
 {
-    if(interpreterCount==0) {
-        if(debug) {
-            Info << "Initializing Python" << endl;
-        }
-        Py_Initialize();        
-    }
-    interpreterCount++;
-
-    pythonState_=Py_NewInterpreter();
-
-    if(debug) {
-        Info << "Currently " << interpreterCount 
-            << " Python interpreters (created one)" << endl;
-    }
 
     PyObject *m = PyImport_AddModule("__main__");
 
@@ -81,45 +66,24 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
     PyObject_SetAttrString(m,"parRun",PyBool_FromLong(Pstream::parRun()));
     PyObject_SetAttrString(m,"myProcNo",PyInt_FromLong(Pstream::myProcNo()));
 
-    PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time_.value()));
+    setRunTime();
 
     read(dict);
 }
 
 pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
 {
-    PyThreadState_Swap(pythonState_);
-    Py_EndInterpreter(pythonState_);
-    pythonState_=NULL;
-
-    if(debug) {
-        Info << "Currently " << interpreterCount 
-            << " Python interpreters (deleted one)" << endl;
-    }
-
-    interpreterCount--;
-    if(interpreterCount==0) {
-        if(debug) {
-            Info << "Finalizing Python" << endl;
-        }
-        PyThreadState_Swap(NULL);
-
-        // This causes a segfault
-        //        Py_Finalize();        
-    }
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void pythonIntegrationFunctionObject::setRunTime()
 {
-    PyObject *m = PyImport_AddModule("__main__");
-    PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time_.value()));
+    pythonInterpreterWrapper::setRunTime(time_);
 }
 
 bool pythonIntegrationFunctionObject::start()
 {
-    PyThreadState_Swap(pythonState_);
     setRunTime();
 
     executeCode(startCode_);
@@ -129,7 +93,6 @@ bool pythonIntegrationFunctionObject::start()
 
 bool pythonIntegrationFunctionObject::execute()
 {
-    PyThreadState_Swap(pythonState_);
     setRunTime();
 
     executeCode(executeCode_);
@@ -139,78 +102,13 @@ bool pythonIntegrationFunctionObject::execute()
 
 void pythonIntegrationFunctionObject::write()
 {
-    PyThreadState_Swap(pythonState_);
     setRunTime();
 
     executeCode(writeCode_);
 }
 
-void pythonIntegrationFunctionObject::executeCode(const string &code)
-{
-    int success=PyRun_SimpleString(code.c_str());
-    if(
-        success!=0
-        &&
-        !tolerateExceptions_
-    ) {
-        FatalErrorIn("pythonIntegrationFunctionObject::executeCode(const string &code)")
-            << "Python exception raised by " << nl
-                << code
-                << endl << abort(FatalError);
-    }
-}
-
-void pythonIntegrationFunctionObject::readCode(
-    const dictionary &dict,
-    const word &prefix,
-    string &code
-) {
-    if(
-        dict.found(prefix+"Code")
-        &&
-        dict.found(prefix+"File")
-    ) {
-        FatalErrorIn("pythonIntegrationFunctionObject::readCode")
-            << "Either specify " << prefix+"Code" << " or " 
-                << prefix+"File" << " but not both" << endl
-                << abort(FatalError);
-    }
-    if(
-        !dict.found(prefix+"Code")
-        &&
-        !dict.found(prefix+"File")
-    ) {
-        FatalErrorIn("pythonIntegrationFunctionObject::readCode")
-            << "Neither " << prefix+"Code" << " nor " 
-                << prefix+"File" << " specified" << endl
-                << abort(FatalError);
-    }
-    if(dict.found(prefix+"Code")) {
-        code=string(dict.lookup(prefix+"Code"));
-    } else {
-        fileName fName(dict.lookup(prefix+"File"));
-        fName.expand();
-        if(!exists(fName)) {
-            FatalErrorIn("pythonIntegrationFunctionObject::readCode")
-                << "Can't find source file " << fName 
-                    << endl << abort(FatalError);
-        }
-
-        IFstream in(fName);
-        code="";
-        while(in.good()) {
-            char c;
-            in.get(c);
-            code+=c;
-        }
-    }
-}
-
-
 bool pythonIntegrationFunctionObject::read(const dictionary& dict)
 {
-    tolerateExceptions_=dict.lookupOrDefault<bool>("tolerateExceptions",false);
-
     readCode(dict,"start",startCode_);
     readCode(dict,"write",writeCode_);
     readCode(dict,"execute",executeCode_);

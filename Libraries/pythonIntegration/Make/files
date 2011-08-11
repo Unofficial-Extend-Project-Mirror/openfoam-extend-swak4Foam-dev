@@ -1,3 +1,4 @@
+pythonInterpreterWrapper.C
 pythonIntegrationFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libpythonIntegration
