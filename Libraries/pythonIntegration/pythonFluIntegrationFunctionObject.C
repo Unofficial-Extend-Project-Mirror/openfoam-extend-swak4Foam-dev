@@ -57,7 +57,12 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 :
     pythonIntegrationFunctionObject(name,t,dict)
 {
-    executeCode("import Foam");
+    if(!executeCode("import Foam")) {
+        FatalErrorIn("pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject")
+            << "Python can not import module Foam. Probably no pythonFlu installed"
+                << endl
+                << abort(FatalError);
+    }
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()

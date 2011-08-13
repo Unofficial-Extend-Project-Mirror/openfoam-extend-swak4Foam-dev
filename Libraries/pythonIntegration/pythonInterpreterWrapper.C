@@ -100,7 +100,7 @@ void pythonInterpreterWrapper::setInterpreter()
     PyThreadState_Swap(pythonState_);
 }
 
-void pythonInterpreterWrapper::executeCode(const string &code)
+bool pythonInterpreterWrapper::executeCode(const string &code)
 {
     setInterpreter();
 
@@ -115,6 +115,8 @@ void pythonInterpreterWrapper::executeCode(const string &code)
                 << code
                 << endl << abort(FatalError);
     }
+
+    return success==0;
 }
 
 void pythonInterpreterWrapper::readCode(

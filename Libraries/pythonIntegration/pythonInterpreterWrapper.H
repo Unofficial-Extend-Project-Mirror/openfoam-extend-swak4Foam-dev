@@ -74,7 +74,8 @@ protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;
 
-    void executeCode(const string &code);
+    //- Execute code. Return true if there was no problem
+    bool executeCode(const string &code);
 
     //- Read code according to the dictionary
     void readCode(const dictionary &dict,const word &prefix,string &code);
