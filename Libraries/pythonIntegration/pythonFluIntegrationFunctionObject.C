@@ -63,6 +63,8 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
                 << endl
                 << abort(FatalError);
     }
+    executeCode("import Foam.OpenFOAM as OpenFOAM",true);
+    executeCode("import Foam.finiteVolume as finiteVolume",true);
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()

@@ -75,9 +75,9 @@ functions (
     pythonPythonFluFull
     {
         type pythonFluIntegration;
-        startCode "import Foam.OpenFOAM";
+        startCode "print dir()";
         writeCode "print ";
-        executeCode "print 'Nr of Procs:',Foam.OpenFOAM.Pstream.nProcs()";
+        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs()";
         //        tolerateExceptions true;
     }
 );

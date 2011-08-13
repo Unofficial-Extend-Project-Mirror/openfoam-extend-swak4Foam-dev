@@ -100,7 +100,7 @@ void pythonInterpreterWrapper::setInterpreter()
     PyThreadState_Swap(pythonState_);
 }
 
-bool pythonInterpreterWrapper::executeCode(const string &code)
+bool pythonInterpreterWrapper::executeCode(const string &code,bool failOnException)
 {
     setInterpreter();
 
@@ -108,7 +108,11 @@ bool pythonInterpreterWrapper::executeCode(const string &code)
     if(
         success!=0
         &&
-        !tolerateExceptions_
+        (
+            !tolerateExceptions_
+            ||
+            failOnException
+        )
     ) {
         FatalErrorIn("pythonInterpreterWrapper::executeCode(const string &code)")
             << "Python exception raised by " << nl
