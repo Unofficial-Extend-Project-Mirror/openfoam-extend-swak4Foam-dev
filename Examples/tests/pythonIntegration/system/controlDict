@@ -71,6 +71,15 @@ functions (
         executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
         tolerateExceptions true;
     }
+
+    pythonPythonFluFull
+    {
+        type pythonFluIntegration;
+        startCode "import Foam.OpenFOAM";
+        writeCode "print ";
+        executeCode "print 'Nr of Procs:',Foam.OpenFOAM.Pstream.nProcs()";
+        //        tolerateExceptions true;
+    }
 );
 
 libs (

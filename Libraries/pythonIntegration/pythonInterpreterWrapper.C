@@ -34,7 +34,7 @@ License
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonInterpreterWrapper, 1);
+    defineTypeNameAndDebug(pythonInterpreterWrapper, 0);
 
     label pythonInterpreterWrapper::interpreterCount=0;
 
