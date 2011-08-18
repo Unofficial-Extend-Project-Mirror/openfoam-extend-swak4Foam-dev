@@ -25,151 +25,125 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pyFunctionObjectDriver.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "IFstream.H"
+#include "dictionary.H"
+#include "string.H"
+#include "word.H"
+
+#include <Python.h>
+
+#include <memory>
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+/*---------------------------------------------------------------------------*\
+                           Class pythonInterpreterWrapper Declaration
+\*---------------------------------------------------------------------------*/
+class pyFunctionObjectDriver
+{
+    // Private Member Functions
+
+    //- Disallow default bitwise copy construct
+    pyFunctionObjectDriver( const pyFunctionObjectDriver& );
+    
+    //- Disallow default bitwise assignment
+    void operator = ( const pyFunctionObjectDriver& );
+
+    // Private data
+
+    //- state of 'my' Python subinterpreter
+    PyThreadState *pythonState_;
+
+public:
+    //- Runtime type information
+    TypeName( "pyFunctionObjectDriver" );
+
+    //- Execute code. Return true if there was no problem
+    bool executeCode( const string &code, bool failOnException = false );
+
+    // Constructors
+
+    pyFunctionObjectDriver( const string &code );
+
+    virtual ~pyFunctionObjectDriver();
+};
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+} // End namespace Foam
+
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonInterpreterWrapper, 0);
+    defineTypeNameAndDebug( pyFunctionObjectDriver, 0 );
 
-    label pythonInterpreterWrapper::interpreterCount=0;
+    std::auto_ptr< pyFunctionObjectDriver > 
+    DRIVER( new pyFunctionObjectDriver( "import Foam.functionObjects" ) );
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonInterpreterWrapper::pythonInterpreterWrapper
-(
-    const dictionary& dict
-):
-    tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false))
+pyFunctionObjectDriver::pyFunctionObjectDriver( const string &code )
 {
-    if(interpreterCount==0) {
-        if(debug) {
-            Info << "Initializing Python" << endl;
-        }
-        Py_Initialize();        
+    if(debug) {
+        Info << "Initializing Python" << endl;
     }
-    interpreterCount++;
+    Py_Initialize();        
 
-    pythonState_=Py_NewInterpreter();
+    pythonState_ = Py_NewInterpreter();
 
     if(debug) {
-        Info << "Currently " << interpreterCount 
-            << " Python interpreters (created one)" << endl;
+        Info << "Currently " << pythonState_ 
+	     << " Python interpreters (created one)" << endl;
     }
+
+    executeCode( code );
 }
 
-pythonInterpreterWrapper::~pythonInterpreterWrapper()
+pyFunctionObjectDriver::~pyFunctionObjectDriver()
 {
-    PyThreadState_Swap(pythonState_);
-    Py_EndInterpreter(pythonState_);
-    pythonState_=NULL;
+    PyThreadState_Swap( pythonState_ );
+    Py_EndInterpreter( pythonState_ );
 
     if(debug) {
-        Info << "Currently " << interpreterCount 
-            << " Python interpreters (deleting one)" << endl;
+        Info << "Currently " << pythonState_ 
+	     << " Python interpreters (deleting one)" << endl;
     }
 
-    interpreterCount--;
-    if(interpreterCount==0) {
-        if(debug) {
-            Info << "Finalizing Python" << endl;
-        }
-        PyThreadState_Swap(NULL);
-
-        // This causes a segfault
-        //        Py_Finalize();        
+    if(debug) {
+        Info << "Finalizing Python" << endl;
     }
+    pythonState_ = NULL;
+    PyThreadState_Swap( NULL );
+
+    // This causes a segfault
+    // Py_Finalize();        
 }
+
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonInterpreterWrapper::setRunTime(const Time &time)
+bool pyFunctionObjectDriver::executeCode( const string &code, bool failOnException )
 {
-    setInterpreter();
-
-    PyObject *m = PyImport_AddModule("__main__");
-    PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
-}
-
-void pythonInterpreterWrapper::setInterpreter()
-{
-    PyThreadState_Swap(pythonState_);
-}
-
-bool pythonInterpreterWrapper::executeCode(const string &code,bool failOnException)
-{
-    setInterpreter();
-
-    int success=PyRun_SimpleString(code.c_str());
-    if(
-        success!=0
-        &&
-        (
-            !tolerateExceptions_
-            ||
-            failOnException
-        )
-    ) {
-        FatalErrorIn("pythonInterpreterWrapper::executeCode(const string &code)")
+    int success = PyRun_SimpleString( code.c_str() );
+    if( success != 0 && failOnException ){
+        FatalErrorIn("pyFunctionObjectDriver::executeCode(const string &code)")
             << "Python exception raised by " << nl
                 << code
                 << endl << abort(FatalError);
     }
 
-    return success==0;
+    return success == 0;
 }
-
-void pythonInterpreterWrapper::readCode(
-    const dictionary &dict,
-    const word &prefix,
-    string &code
-) {
-    if(
-        dict.found(prefix+"Code")
-        &&
-        dict.found(prefix+"File")
-    ) {
-        FatalErrorIn("pythonInterpreterWrapper::readCode")
-            << "Either specify " << prefix+"Code" << " or " 
-                << prefix+"File" << " but not both" << endl
-                << abort(FatalError);
-    }
-    if(
-        !dict.found(prefix+"Code")
-        &&
-        !dict.found(prefix+"File")
-    ) {
-        FatalErrorIn("pythonInterpreterWrapper::readCode")
-            << "Neither " << prefix+"Code" << " nor " 
-                << prefix+"File" << " specified" << endl
-                << abort(FatalError);
-    }
-    if(dict.found(prefix+"Code")) {
-        code=string(dict.lookup(prefix+"Code"));
-    } else {
-        fileName fName(dict.lookup(prefix+"File"));
-        fName.expand();
-        if(!exists(fName)) {
-            FatalErrorIn("pythonInterpreterWrapper::readCode")
-                << "Can't find source file " << fName 
-                    << endl << abort(FatalError);
-        }
-
-        IFstream in(fName);
-        code="";
-        while(in.good()) {
-            char c;
-            in.get(c);
-            code+=c;
-        }
-    }
-}
-
 
 } // namespace Foam
+
 
 // ************************************************************************* //
