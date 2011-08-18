@@ -50,7 +50,7 @@ functions (
     {
         type pythonFlu;
         startCode "print 'Starting';a=0; print dir()";
-        executeCode "a+=1; print 'a:',a";
+        executeCode "a += runTime.value(); print 'a:',a";
         endCode "print 'The End!!!'";
     }
 );

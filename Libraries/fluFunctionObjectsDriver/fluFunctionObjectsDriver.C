@@ -82,7 +82,7 @@ public:
 
 namespace Foam
 {
-    defineTypeNameAndDebug( pyFunctionObjectDriver, 0 );
+    defineTypeNameAndDebug( pyFunctionObjectDriver, 1 );
 
     std::auto_ptr< pyFunctionObjectDriver > 
     DRIVER( new pyFunctionObjectDriver( "import Foam.functionObjects" ) );
@@ -97,10 +97,10 @@ pyFunctionObjectDriver::pyFunctionObjectDriver( const string &code )
     }
     Py_Initialize();        
 
-    pythonState_ = Py_NewInterpreter();
+    // pythonState_ = Py_NewInterpreter();
 
     if(debug) {
-        Info << "Currently " << pythonState_ 
+      Info << "Currently " << pythonState_ 
 	     << " Python interpreters (created one)" << endl;
     }
 
@@ -109,22 +109,22 @@ pyFunctionObjectDriver::pyFunctionObjectDriver( const string &code )
 
 pyFunctionObjectDriver::~pyFunctionObjectDriver()
 {
-    PyThreadState_Swap( pythonState_ );
-    Py_EndInterpreter( pythonState_ );
-
     if(debug) {
         Info << "Currently " << pythonState_ 
 	     << " Python interpreters (deleting one)" << endl;
     }
 
+    // PyThreadState_Swap( pythonState_ );
+    // Py_EndInterpreter( pythonState_ );
+
     if(debug) {
         Info << "Finalizing Python" << endl;
     }
     pythonState_ = NULL;
-    PyThreadState_Swap( NULL );
+    // PyThreadState_Swap( NULL );
 
     // This causes a segfault
-    // Py_Finalize();        
+    Py_Finalize();        
 }
 
 
