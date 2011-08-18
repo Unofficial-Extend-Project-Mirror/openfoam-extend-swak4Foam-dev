@@ -20,9 +20,9 @@ wclean swakFiniteArea
 
 wclean groovyStandardBCs
 
-wclean fluFunctionObjectsDriver
-
 wclean pythonIntegration
+
+wclean fluFunctionObjectsDriver
 
 # remove residual from bison
 rm -f */*.output
