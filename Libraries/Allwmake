@@ -40,4 +40,5 @@ wmake libso groovyStandardBCs
 if [ "$SWAK_PYTHON_INCLUDE" != "" ]
 then
     wmake libso pythonIntegration
+    wmake libso fluFunctionObjectsDriver
 fi

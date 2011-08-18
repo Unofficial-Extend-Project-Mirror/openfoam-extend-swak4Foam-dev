@@ -20,6 +20,8 @@ wclean swakFiniteArea
 
 wclean groovyStandardBCs
 
+wclean fluFunctionObjectsDriver
+
 wclean pythonIntegration
 
 # remove residual from bison
