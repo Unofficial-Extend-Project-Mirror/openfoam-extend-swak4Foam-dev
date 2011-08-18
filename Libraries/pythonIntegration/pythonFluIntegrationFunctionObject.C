@@ -65,6 +65,17 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
     }
     executeCode("import Foam.OpenFOAM as OpenFOAM",true);
     executeCode("import Foam.finiteVolume as finiteVolume",true);
+
+    // This code snipplet from http://www.swig.org/Doc1.3/Python.html#Python_nn64
+    // doesn't work
+    // a) because these functions are unknown (and there is no header)
+    // b) can't find an equivalent for $input
+//     const Time *f=&t;
+//     if (SWIG_ConvertPtr($input, (void **) &f, SWIGTYPE_p_Foo, SWIG_POINTER_EXCEPTION) == -1)
+//         return NULL;
+
+//     PyObject *obj;
+//     obj = SWIG_NewPointerObj(f, SWIGTYPE_p_Foo, 0);
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()
