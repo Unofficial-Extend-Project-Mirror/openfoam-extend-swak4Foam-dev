@@ -64,8 +64,8 @@ functions (
 );
 
 libs (
-    "libpythonIntegration.so"
     "libfluFunctionObjectsDriver.so"
+    "libpythonIntegration.so"
 );
 
 // ************************************************************************* //
