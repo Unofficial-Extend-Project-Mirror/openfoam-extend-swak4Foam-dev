@@ -44,33 +44,33 @@ namespace Foam
 /*---------------------------------------------------------------------------*\
                            Class pythonInterpreterWrapper Declaration
 \*---------------------------------------------------------------------------*/
-class pyFunctionObjectDriver
+class fluFunctionObjectsDriver
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    pyFunctionObjectDriver( const pyFunctionObjectDriver& );
+    fluFunctionObjectsDriver( const fluFunctionObjectsDriver& );
     
     //- Disallow default bitwise assignment
-    void operator = ( const pyFunctionObjectDriver& );
+    void operator = ( const fluFunctionObjectsDriver& );
 
     // Private data
 
     //- state of 'my' Python subinterpreter
-    PyThreadState *pythonState_;
+    bool _wasInitialized;
 
 public:
     //- Runtime type information
-    TypeName( "pyFunctionObjectDriver" );
+    TypeName( "fluFunctionObjectsDriver" );
 
     //- Execute code. Return true if there was no problem
     bool executeCode( const string &code, bool failOnException = false );
 
     // Constructors
 
-    pyFunctionObjectDriver( const string &code );
+    fluFunctionObjectsDriver( const string &code );
 
-    virtual ~pyFunctionObjectDriver();
+    virtual ~fluFunctionObjectsDriver();
 };
 
 
@@ -82,59 +82,46 @@ public:
 
 namespace Foam
 {
-    defineTypeNameAndDebug( pyFunctionObjectDriver, 1 );
+    defineTypeNameAndDebug( fluFunctionObjectsDriver, 1 );
 
-    std::auto_ptr< pyFunctionObjectDriver > 
-    DRIVER( new pyFunctionObjectDriver( "import Foam.functionObjects" ) );
+    std::auto_ptr< fluFunctionObjectsDriver > 
+    DRIVER( new fluFunctionObjectsDriver( "import Foam.functionObjects" ) );
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pyFunctionObjectDriver::pyFunctionObjectDriver( const string &code )
+fluFunctionObjectsDriver::fluFunctionObjectsDriver( const string &code )
+    : _wasInitialized( Py_IsInitialized() )
 {
-    if(debug) {
-        Info << "Initializing Python" << endl;
-    }
-    Py_Initialize();        
-
-    // pythonState_ = Py_NewInterpreter();
-
-    if(debug) {
-      Info << "Currently " << pythonState_ 
-	     << " Python interpreters (created one)" << endl;
+    if ( !this->_wasInitialized ) {
+        if(debug) {
+	    std::cout << "Initializing Python - " << this << std::endl;
+	}
+	Py_Initialize();        
     }
 
     executeCode( code );
 }
 
-pyFunctionObjectDriver::~pyFunctionObjectDriver()
+fluFunctionObjectsDriver::~fluFunctionObjectsDriver()
 {
-    if(debug) {
-        Info << "Currently " << pythonState_ 
-	     << " Python interpreters (deleting one)" << endl;
+    if ( !this->_wasInitialized ) {
+        Py_Finalize();        
+
+	if(debug) {
+          std::cout << "Finalizing Python - " << this << std::endl;
+	}
     }
-
-    // PyThreadState_Swap( pythonState_ );
-    // Py_EndInterpreter( pythonState_ );
-
-    if(debug) {
-        Info << "Finalizing Python" << endl;
-    }
-    pythonState_ = NULL;
-    // PyThreadState_Swap( NULL );
-
-    // This causes a segfault
-    Py_Finalize();        
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool pyFunctionObjectDriver::executeCode( const string &code, bool failOnException )
+bool fluFunctionObjectsDriver::executeCode( const string &code, bool failOnException )
 {
     int success = PyRun_SimpleString( code.c_str() );
     if( success != 0 && failOnException ){
-        FatalErrorIn("pyFunctionObjectDriver::executeCode(const string &code)")
+        FatalErrorIn("fluFunctionObjectsDriver::executeCode(const string &code)")
             << "Python exception raised by " << nl
                 << code
                 << endl << abort(FatalError);
