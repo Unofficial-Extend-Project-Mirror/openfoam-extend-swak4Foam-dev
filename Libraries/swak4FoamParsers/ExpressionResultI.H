@@ -100,7 +100,7 @@ namespace Foam {
     }
 
     template<class Type>
-    ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn)
+    ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn) const
     {
         ExpressionResult result;
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
