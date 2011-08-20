@@ -30,6 +30,10 @@ License
 
 #include "IFstream.H"
 
+#include "GlobalVariablesRepository.H"
+
+#include "vector.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -44,7 +48,26 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 (
     const dictionary& dict
 ):
-    tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false))
+    tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
+    warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
+    swakToPythonNamespaces_(
+        dict.lookupOrDefault<wordList>(
+            "swakToPythonNamespaces",
+            wordList(0)
+        )
+    ),
+    pythonToSwakNamespace_(
+        dict.lookupOrDefault<word>(
+            "pythonToSwakNamespace",
+            word("")
+        )
+    ),
+    pythonToSwakVariables_(
+        dict.lookupOrDefault<wordList>(
+            "pythonToSwakVariables",
+            wordList(0)
+        )
+    )
 {
     if(interpreterCount==0) {
         if(debug) {
@@ -52,6 +75,20 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         }
         Py_Initialize();        
     }
+
+    if(
+        pythonToSwakVariables_.size()>0
+        &&
+        pythonToSwakNamespace_==""
+    ) {
+        FatalErrorIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+            << "There are outgoing variables " << pythonToSwakVariables_
+                << " defined, but no namespace 'pythonToSwakNamespace'"
+                << " to write them to"
+                << endl
+                << abort(FatalError);
+    }
+
     interpreterCount++;
 
     pythonState_=Py_NewInterpreter();
@@ -104,6 +141,8 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool failOnExcepti
 {
     setInterpreter();
 
+    getGlobals();
+
     int success=PyRun_SimpleString(code.c_str());
     if(
         success!=0
@@ -120,7 +159,81 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool failOnExcepti
                 << endl << abort(FatalError);
     }
 
+    setGlobals();
+
     return success==0;
+}
+
+void pythonInterpreterWrapper::getGlobals()
+{
+    if(swakToPythonNamespaces_.size()==0) {
+        return;
+    }
+
+    if(debug) {
+        Info << "Getting global variables from namespaces " 
+            << swakToPythonNamespaces_ << endl;
+    }
+
+    PyObject *m = PyImport_AddModule("__main__");
+
+    forAll(swakToPythonNamespaces_,nameI) {
+        const GlobalVariablesRepository::ResultTable &vars=
+            GlobalVariablesRepository::getGlobalVariables().getNamespace(
+               swakToPythonNamespaces_[nameI]
+            );
+        forAllConstIter(
+            GlobalVariablesRepository::ResultTable,
+            vars,
+            iter
+        ) {
+            ExpressionResult val=(*iter).getUniform(
+                1,
+                !warnOnNonUniform_
+            );
+            const word &var=iter.key();
+            if(val.type()==pTraits<scalar>::typeName) {
+                PyObject_SetAttrString
+                    (
+                        m,
+                        var.c_str(),
+                        PyFloat_FromDouble(
+                            val.getResult<scalar>()()[0]
+                        )
+                    );                
+            } else if(val.type()==pTraits<vector>::typeName) {
+                const vector v=val.getResult<vector>()()[0];
+                PyObject_SetAttrString
+                    (
+                        m,
+                        var.c_str(),
+                        Py_BuildValue(
+                            "ddd",
+                            double(v.x()),
+                            double(v.y()),
+                            double(v.z())
+                        )
+                    );
+            } else {
+                FatalErrorIn("pythonInterpreterWrapper::getGlobals()")
+                    << "The variable " << var << " has the unsupported type " 
+                        << val.type() << endl
+                        << abort(FatalError);
+            }
+        }        
+    } 
+}
+
+void pythonInterpreterWrapper::setGlobals()
+{
+    if(pythonToSwakVariables_.size()==0) {
+        return;
+    }
+
+    if(debug) {
+        Info << "Writing variables " << pythonToSwakVariables_ 
+            << " to namespace " << pythonToSwakNamespace_ << endl;
+    }
 }
 
 void pythonInterpreterWrapper::readCode(

@@ -70,6 +70,30 @@ class pythonInterpreterWrapper
     //- should exceptions be tolerated or lead to a fatal error?
     bool tolerateExceptions_;
 
+    //- Should a non-uniform variable result in a warning?
+    bool warnOnNonUniform_;
+
+    //- List of global swak namespaces to get values
+
+    //- variables in those namespaces should be inserted into the 
+    //- Python namespace before running the snipplet
+    wordList swakToPythonNamespaces_;
+
+    //- Namespace to write values to
+
+    //- this global swak-namespace will get all values (if the user request such)
+    word pythonToSwakNamespace_;
+
+    //- Python variables that swak will receive
+
+    //- the values of these variables will get written to the global swak namespace
+    //- only variables that can be either interpreted as a scalar or a vector are
+    //- supported
+    wordList pythonToSwakVariables_;
+
+    void getGlobals();
+
+    void setGlobals();
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;

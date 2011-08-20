@@ -63,7 +63,7 @@ functions (
         writeCode "print 'Never been here'";
         //        tolerateExceptions true;
     }
-    pythonPythonFlu
+    /*    pythonPythonFlu
     {
         type pythonIntegration;
         startCode "import Foam.OpenFOAM as OF";
@@ -71,7 +71,6 @@ functions (
         executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
         tolerateExceptions true;
     }
-
     pythonPythonFluFull
     {
         type pythonFluIntegration;
@@ -79,12 +78,43 @@ functions (
         writeCode "print ";
         executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs()";
         //        tolerateExceptions true;
+        } */
+
+    addScalar
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope pythonVars;
+        globalName aScalar;
+        valueType scalar;
+        value 42;
+    }
+    addVector
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope pythonVars;
+        globalName aVector;
+        valueType vector;
+        value (1 2 3);
+    }
+    pythonGetGlobals
+    {
+        type pythonIntegration;
+        swakToPythonNamespaces ( pythonVars );
+        startCode "print 'Start:',aVector,aScalar";
+        executeCode "print 'Running:',map(lambda x:x*(runTime+aScalar),aVector)";
+        writeCode "print 'Never been here'";
+        //        tolerateExceptions true;
     }
 );
 
 libs (
     "libgroovyBC.so"
     "libpythonIntegration.so"
+    "libswakFunctionObjects.so"
 );
 
 // ************************************************************************* //
