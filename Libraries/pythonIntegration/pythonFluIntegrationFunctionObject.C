@@ -57,14 +57,14 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 :
     pythonIntegrationFunctionObject(name,t,dict)
 {
-    if(!executeCode("import Foam")) {
+    if(!executeCode("import Foam",false)) {
         FatalErrorIn("pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject")
             << "Python can not import module Foam. Probably no pythonFlu installed"
                 << endl
                 << abort(FatalError);
     }
-    executeCode("import Foam.OpenFOAM as OpenFOAM",true);
-    executeCode("import Foam.finiteVolume as finiteVolume",true);
+    executeCode("import Foam.OpenFOAM as OpenFOAM",false,true);
+    executeCode("import Foam.finiteVolume as finiteVolume",false,true);
 
     // This code snipplet from http://www.swig.org/Doc1.3/Python.html#Python_nn64
     // doesn't work

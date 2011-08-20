@@ -100,14 +100,39 @@ functions (
         valueType vector;
         value (1 2 3);
     }
+
+    // Clumsy, but we need these two for the first initialization
+    testScalar
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope testPython;
+        globalName newTime;
+        valueType scalar;
+        value 42;
+    }
+    testVector
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope testPython;
+        globalName newVector;
+        valueType vector;
+        value (1 2 3);
+    }
+
     pythonGetGlobals
     {
         type pythonIntegration;
         swakToPythonNamespaces ( pythonVars );
         startCode "print 'Start:',aVector,aScalar";
-        executeCode "print 'Running:',map(lambda x:x*(runTime+aScalar),aVector)";
+        executeCode "print 'Running:',map(lambda x:x*(runTime+aScalar),aVector);newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
         writeCode "print 'Never been here'";
         //        tolerateExceptions true;
+        pythonToSwakNamespace testPython;
+        pythonToSwakVariables (  newTime newVector );
     }
 );
 

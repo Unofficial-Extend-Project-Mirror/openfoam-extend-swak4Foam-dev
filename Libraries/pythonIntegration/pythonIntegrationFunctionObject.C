@@ -86,7 +86,7 @@ bool pythonIntegrationFunctionObject::start()
 {
     setRunTime();
 
-    executeCode(startCode_);
+    executeCode(startCode_,false);
 
     return true;
 }
@@ -95,7 +95,7 @@ bool pythonIntegrationFunctionObject::execute()
 {
     setRunTime();
 
-    executeCode(executeCode_);
+    executeCode(executeCode_,true);
 
     return true;
 }
@@ -104,7 +104,7 @@ void pythonIntegrationFunctionObject::write()
 {
     setRunTime();
 
-    executeCode(writeCode_);
+    executeCode(writeCode_,false);
 }
 
 bool pythonIntegrationFunctionObject::read(const dictionary& dict)

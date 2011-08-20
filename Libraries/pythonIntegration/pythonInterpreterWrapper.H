@@ -99,7 +99,7 @@ protected:
     static label interpreterCount;
 
     //- Execute code. Return true if there was no problem
-    bool executeCode(const string &code,bool failOnException=false);
+    bool executeCode(const string &code,bool putVariables,bool failOnException=false);
 
     //- Read code according to the dictionary
     void readCode(const dictionary &dict,const word &prefix,string &code);

@@ -137,7 +137,7 @@ void pythonInterpreterWrapper::setInterpreter()
     PyThreadState_Swap(pythonState_);
 }
 
-bool pythonInterpreterWrapper::executeCode(const string &code,bool failOnException)
+bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,bool failOnException)
 {
     setInterpreter();
 
@@ -159,7 +159,9 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool failOnExcepti
                 << endl << abort(FatalError);
     }
 
-    setGlobals();
+    if(putVariables) {
+        setGlobals();
+    }
 
     return success==0;
 }
@@ -233,6 +235,81 @@ void pythonInterpreterWrapper::setGlobals()
     if(debug) {
         Info << "Writing variables " << pythonToSwakVariables_ 
             << " to namespace " << pythonToSwakNamespace_ << endl;
+    }
+
+    PyObject *m = PyImport_AddModule("__main__");
+
+    forAll(pythonToSwakVariables_,i) {
+        const word &name=pythonToSwakVariables_[i];
+        if(debug) {
+            Info << "Getting variable "<< name << endl;
+        }
+
+        if(!PyObject_HasAttrString(m,name.c_str())) {
+            FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                << "Variable " << name << " not found in Python __main__"
+                    << abort(FatalError)
+                    << endl;
+        }
+        PyObject *pVar=PyObject_GetAttrString(m,name.c_str());
+
+        ExpressionResult eResult;
+        
+        if(PyNumber_Check(pVar)) {
+            if(debug) {
+                Info << name << " is a scalar" << endl;
+            }
+            PyObject *val=PyNumber_Float(pVar);
+            scalar result=PyFloat_AsDouble(val);
+            Py_DECREF(val);
+            if(debug) {
+                Info << name << " is " << result << endl;
+            }
+        
+            eResult.setResult(result,1);
+                
+        } else if(PySequence_Check(pVar)) {
+            if(debug) {
+                Info << name << " is a sequence" << endl;
+            }
+            PyObject *tuple=PySequence_Tuple(pVar);
+            if(PyTuple_GET_SIZE(tuple)==3) {
+                if(debug) {
+                    Info << name << " is a vector" << endl;
+                }
+                vector val;
+                bool success=PyArg_ParseTuple(tuple,"ddd",&(val.x()),&(val.y()),&(val.z()));
+                if(!success) {
+                    FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                        << "Variable " << name << " is not a valid vector"
+                            << abort(FatalError)
+                            << endl;
+                }
+                if(debug) {
+                    Info << name << " is " << val << endl;
+                }
+
+                eResult.setResult(val,1);
+            } else {
+                FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                    << "Variable " << name << " is a tuple with the unknown size "
+                        << PyTuple_GET_SIZE(tuple)
+                        << abort(FatalError)
+                        << endl;
+            }
+            Py_DECREF(tuple);
+        } else {
+            FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                << "Variable " << name << " is of an unknown type"
+                    << abort(FatalError)
+                    << endl;
+        }
+
+        GlobalVariablesRepository::getGlobalVariables().addValue(
+            name,
+            pythonToSwakNamespace_,
+            eResult
+        );
     }
 }
 
