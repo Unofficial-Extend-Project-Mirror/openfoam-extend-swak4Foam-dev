@@ -86,7 +86,7 @@ bool pythonIntegrationFunctionObject::start()
 {
     setRunTime();
 
-    executeCode(startCode_,false);
+    executeCode(startCode_,true);
 
     return true;
 }
