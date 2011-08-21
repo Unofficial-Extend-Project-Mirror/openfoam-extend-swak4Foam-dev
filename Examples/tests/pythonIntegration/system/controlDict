@@ -112,6 +112,17 @@ functions (
         pythonToSwakNamespace testPython;
         pythonToSwakVariables (  newTime newVector );
     }
+    pythonGetPyFoamGlobals
+    {
+        type pythonIntegration;
+        swakToPythonNamespaces ( testPython );
+        startCode "print 'Start PyFoam:',newVector;from PyFoam.Basics.FoamFileGenerator import Vector;foamVector=Vector(0,0,0)";
+        executeCode "foamVector=Vector(newVector[0],newVector[1],newVector[2]);print foamVector";
+        writeCode "print 'Never been here'";
+        //        tolerateExceptions true;
+        pythonToSwakNamespace testPyFoam;
+        pythonToSwakVariables ( foamVector );
+    }
 );
 
 libs (
