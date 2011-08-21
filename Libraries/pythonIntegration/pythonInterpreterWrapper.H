@@ -73,6 +73,9 @@ class pythonInterpreterWrapper
     //- Should a non-uniform variable result in a warning?
     bool warnOnNonUniform_;
 
+    //- Should parallel runs only run on the master
+    bool parallelMasterOnly_;
+
     //- List of global swak namespaces to get values
 
     //- variables in those namespaces should be inserted into the 
@@ -110,6 +113,8 @@ protected:
     //- set the variable 'runTime' in the interpreter
     void setRunTime(const Time &time);
 
+    //- Check whether we want to continue (parallel)
+    bool parallelNoRun();
 public:
 
     //- Runtime type information

@@ -55,7 +55,8 @@ functions (
         type pythonIntegration;
         startFile "$FOAM_CASE/startResidualScaling.py";
         executeFile "$FOAM_CASE/executeResidualScaling.py";
-        writeCode "";        
+        writeCode "";      
+        parallelMasterOnly true;  // In parallel runs only the master needs to execute this
     }
 );
 

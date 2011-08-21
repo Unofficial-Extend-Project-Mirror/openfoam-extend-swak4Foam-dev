@@ -50,6 +50,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 ):
     tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
     warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
+    parallelMasterOnly_(false),
     swakToPythonNamespaces_(
         dict.lookupOrDefault<wordList>(
             "swakToPythonNamespaces",
@@ -76,6 +77,17 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         Py_Initialize();        
     }
 
+    if(Pstream::parRun()) {
+        if(debug) {
+            Info << "This is a parallel run" << endl;
+        } 
+        parallelMasterOnly_=readBool(dict.lookup("parallelMasterOnly"));
+    }
+
+    if(parallelNoRun()) {
+        return;
+    }
+
     if(
         pythonToSwakVariables_.size()>0
         &&
@@ -99,8 +111,25 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     }
 }
 
+bool pythonInterpreterWrapper::parallelNoRun()
+{
+    if(Pstream::parRun()) {
+        if(parallelMasterOnly_) {
+            return !Pstream::master();
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
 pythonInterpreterWrapper::~pythonInterpreterWrapper()
 {
+    if(parallelNoRun()) {
+        return;
+    }
+
     PyThreadState_Swap(pythonState_);
     Py_EndInterpreter(pythonState_);
     pythonState_=NULL;
