@@ -46,6 +46,10 @@ timePrecision   6;
 runTimeModifiable yes;
 
 functions (
+    // Currently, there is a limitation on working with "pythonFlu"
+    // registered "functionObjects", namely the corresponding 
+    // functions should be mentioned before any other Python 
+    // integrated "functionObject" in the "functions" list
     your_favorite_function_name
     {
         type pythonFlu;
@@ -64,6 +68,11 @@ functions (
 );
 
 libs (
+    // Currently, there is a limitation on working with "pythonFlu"
+    // registered "functionObjects", namely the corresponding 
+    // library ("libfluFunctionObjectsDriver.so") should be mentioned
+    // before any other Python integrating "functionObject" library
+    // in the "libs" list
     "libfluFunctionObjectsDriver.so"
     "libpythonIntegration.so"
 );
