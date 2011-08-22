@@ -63,7 +63,7 @@ functions (
         writeCode "print 'Never been here'";
         //        tolerateExceptions true;
     }
-    /*    pythonPythonFlu
+    pythonPythonFlu
     {
         type pythonIntegration;
         startCode "import Foam.OpenFOAM as OF";
@@ -76,10 +76,9 @@ functions (
         type pythonFluIntegration;
         startCode "print dir()";
         writeCode "print ";
-        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs()";
+        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs(),type(theTime),theTime";
         //        tolerateExceptions true;
-        } */
-
+        }
     addScalar
     {
         type addGlobalVariable;

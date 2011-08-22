@@ -80,6 +80,12 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 
 //     PyObject *obj;
 //     obj = SWIG_NewPointerObj(f, SWIGTYPE_p_Foo, 0);
+
+    PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
+    //    PyObject *mesh=PyCObject_FromVoidPtr((void*)(&(t); // which mexh?
+
+    PyObject *m = PyImport_AddModule("__main__");
+    PyObject_SetAttrString(m,"theTime",time);
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()
