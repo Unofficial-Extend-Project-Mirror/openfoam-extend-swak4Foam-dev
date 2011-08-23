@@ -76,7 +76,7 @@ functions (
         type pythonFluIntegration;
         startCode "print dir()";
         writeCode "print ";
-        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs(),type(theTime),theTime";
+        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs();print time.timePath();print dir(time)";
         //        tolerateExceptions true;
         }
     addScalar

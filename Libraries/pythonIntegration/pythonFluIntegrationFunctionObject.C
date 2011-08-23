@@ -86,6 +86,8 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject_SetAttrString(m,"theTime",time);
+    PyRun_SimpleString("time=OpenFOAM.getTimeFromPtr(theTime)");
+    PyRun_SimpleString("del theTime");
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()
