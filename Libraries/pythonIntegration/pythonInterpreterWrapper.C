@@ -227,7 +227,7 @@ void pythonInterpreterWrapper::getGlobals()
                 PyObject_SetAttrString
                     (
                         m,
-                        var.c_str(),
+                        const_cast<char*>(var.c_str()),
                         PyFloat_FromDouble(
                             val.getResult<scalar>()()[0]
                         )
@@ -237,7 +237,7 @@ void pythonInterpreterWrapper::getGlobals()
                 PyObject_SetAttrString
                     (
                         m,
-                        var.c_str(),
+                        const_cast<char*>(var.c_str()),
                         Py_BuildValue(
                             "ddd",
                             double(v.x()),
@@ -274,13 +274,20 @@ void pythonInterpreterWrapper::setGlobals()
             Info << "Getting variable "<< name << endl;
         }
 
-        if(!PyObject_HasAttrString(m,name.c_str())) {
+        if(
+            !PyObject_HasAttrString(
+                m,
+                const_cast<char *>(name.c_str()))
+        ) {
             FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                 << "Variable " << name << " not found in Python __main__"
                     << abort(FatalError)
                     << endl;
         }
-        PyObject *pVar=PyObject_GetAttrString(m,name.c_str());
+        PyObject *pVar=PyObject_GetAttrString(
+            m,
+            const_cast<char *>(name.c_str())
+        );
 
         ExpressionResult eResult;
         
