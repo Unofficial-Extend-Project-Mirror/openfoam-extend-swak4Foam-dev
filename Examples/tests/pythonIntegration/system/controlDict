@@ -71,20 +71,63 @@ functions (
         executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
         tolerateExceptions true;
     }
-
     pythonPythonFluFull
     {
         type pythonFluIntegration;
         startCode "print dir()";
         writeCode "print ";
-        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs()";
+        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs(),type(theTime),theTime";
         //        tolerateExceptions true;
+        }
+    addScalar
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope pythonVars;
+        globalName aScalar;
+        valueType scalar;
+        value 42;
+    }
+    addVector
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope pythonVars;
+        globalName aVector;
+        valueType vector;
+        value (1 2 3);
+    }
+
+    pythonGetGlobals
+    {
+        type pythonIntegration;
+        swakToPythonNamespaces ( pythonVars );
+        startCode "print 'Start:',aVector,aScalar;newTime=0;newVector=range(3)";
+        executeCode "print 'Running:',map(lambda x:x*(runTime+aScalar),aVector);newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
+        writeCode "print 'Never been here'";
+        //        tolerateExceptions true;
+        pythonToSwakNamespace testPython;
+        pythonToSwakVariables (  newTime newVector );
+    }
+    pythonGetPyFoamGlobals
+    {
+        type pythonIntegration;
+        swakToPythonNamespaces ( testPython );
+        startCode "print 'Start PyFoam:',newVector;from PyFoam.Basics.FoamFileGenerator import Vector;foamVector=Vector(0,0,0)";
+        executeCode "foamVector=Vector(newVector[0],newVector[1],newVector[2]);print foamVector";
+        writeCode "print 'Never been here'";
+        //        tolerateExceptions true;
+        pythonToSwakNamespace testPyFoam;
+        pythonToSwakVariables ( foamVector );
     }
 );
 
 libs (
     "libgroovyBC.so"
     "libpythonIntegration.so"
+    "libswakFunctionObjects.so"
 );
 
 // ************************************************************************* //

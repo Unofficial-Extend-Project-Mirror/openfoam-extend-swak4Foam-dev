@@ -9,37 +9,55 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      rand;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
+application     simpleFoam;
 
-internalField   uniform 0;
+startFrom       startTime;
 
-boundaryField
-{
-    movingWall      
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libpythonIntegration.so"
+);
+
+functions (
+    adaptRelaxation
     {
-        type            groovyBC;
-        globalScopes ( testPython );
-        value           uniform 0;
-        valueExpression "newTime";
+        type pythonIntegration;
+        startFile "$FOAM_CASE/startResidualScaling.py";
+        executeFile "$FOAM_CASE/executeResidualScaling.py";
+        writeCode "";      
+        parallelMasterOnly true;  // In parallel runs only the master needs to execute this
     }
-
-    fixedWalls      
-    {
-        type            groovyBC;
-        value           uniform 0;
-        globalScopes ( testPython );
-        valueExpression "newVector.x";
-    }
-
-    frontAndBack    
-    {
-        type            empty;
-    }
-}
+);
 
 // ************************************************************************* //

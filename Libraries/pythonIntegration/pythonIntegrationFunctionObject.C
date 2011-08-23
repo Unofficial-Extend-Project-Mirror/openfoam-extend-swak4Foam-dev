@@ -59,6 +59,9 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
     pythonInterpreterWrapper(dict),
     time_(t)
 {
+    if(parallelNoRun()) {
+        return;
+    }
 
     PyObject *m = PyImport_AddModule("__main__");
 
@@ -84,31 +87,47 @@ void pythonIntegrationFunctionObject::setRunTime()
 
 bool pythonIntegrationFunctionObject::start()
 {
+    if(parallelNoRun()) {
+        return true;
+    }
+
     setRunTime();
 
-    executeCode(startCode_);
+    executeCode(startCode_,true);
 
     return true;
 }
 
 bool pythonIntegrationFunctionObject::execute()
 {
+    if(parallelNoRun()) {
+        return true;
+    }
+
     setRunTime();
 
-    executeCode(executeCode_);
+    executeCode(executeCode_,true);
 
     return true;
 }
 
 void pythonIntegrationFunctionObject::write()
 {
+    if(parallelNoRun()) {
+        return;
+    }
+
     setRunTime();
 
-    executeCode(writeCode_);
+    executeCode(writeCode_,false);
 }
 
 bool pythonIntegrationFunctionObject::read(const dictionary& dict)
 {
+    if(parallelNoRun()) {
+        return true;
+    }
+
     readCode(dict,"start",startCode_);
     readCode(dict,"write",writeCode_);
     readCode(dict,"execute",executeCode_);

@@ -10,36 +10,41 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      rand;
+    location    "0";
+    object      epsilon;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
+dimensions      [0 2 -3 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 14.855;
 
 boundaryField
 {
-    movingWall      
+    inlet
     {
-        type            groovyBC;
-        globalScopes ( testPython );
-        value           uniform 0;
-        valueExpression "newTime";
+        type            fixedValue;
+        value           uniform 14.855;
     }
-
-    fixedWalls      
+    outlet
     {
-        type            groovyBC;
-        value           uniform 0;
-        globalScopes ( testPython );
-        valueExpression "newVector.x";
+        type            zeroGradient;
     }
-
-    frontAndBack    
+    upperWall
+    {
+        type            epsilonWallFunction;
+        value           uniform 14.855;
+    }
+    lowerWall
+    {
+        type            epsilonWallFunction;
+        value           uniform 14.855;
+    }
+    frontAndBack
     {
         type            empty;
     }
 }
+
 
 // ************************************************************************* //

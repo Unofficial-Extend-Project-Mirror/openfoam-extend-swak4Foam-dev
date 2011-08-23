@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
+|  \\    /   O peration     | Version:  1.7.x                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -9,37 +9,44 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      rand;
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
-{
-    movingWall      
+5
+(
+    inlet
     {
-        type            groovyBC;
-        globalScopes ( testPython );
-        value           uniform 0;
-        valueExpression "newTime";
+        type            patch;
+        nFaces          30;
+        startFace       24170;
     }
-
-    fixedWalls      
+    outlet
     {
-        type            groovyBC;
-        value           uniform 0;
-        globalScopes ( testPython );
-        valueExpression "newVector.x";
+        type            patch;
+        nFaces          57;
+        startFace       24200;
     }
-
-    frontAndBack    
+    upperWall
+    {
+        type            wall;
+        nFaces          223;
+        startFace       24257;
+    }
+    lowerWall
+    {
+        type            wall;
+        nFaces          250;
+        startFace       24480;
+    }
+    frontAndBack
     {
         type            empty;
+        nFaces          24450;
+        startFace       24730;
     }
-}
+)
 
 // ************************************************************************* //

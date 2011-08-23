@@ -57,14 +57,18 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 :
     pythonIntegrationFunctionObject(name,t,dict)
 {
-    if(!executeCode("import Foam")) {
+    if(parallelNoRun()) {
+        return;
+    }
+
+    if(!executeCode("import Foam",false)) {
         FatalErrorIn("pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject")
             << "Python can not import module Foam. Probably no pythonFlu installed"
                 << endl
                 << abort(FatalError);
     }
-    executeCode("import Foam.OpenFOAM as OpenFOAM",true);
-    executeCode("import Foam.finiteVolume as finiteVolume",true);
+    executeCode("import Foam.OpenFOAM as OpenFOAM",false,true);
+    executeCode("import Foam.finiteVolume as finiteVolume",false,true);
 
     // This code snipplet from http://www.swig.org/Doc1.3/Python.html#Python_nn64
     // doesn't work
@@ -76,6 +80,12 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 
 //     PyObject *obj;
 //     obj = SWIG_NewPointerObj(f, SWIGTYPE_p_Foo, 0);
+
+    PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
+    //    PyObject *mesh=PyCObject_FromVoidPtr((void*)(&(t); // which mexh?
+
+    PyObject *m = PyImport_AddModule("__main__");
+    PyObject_SetAttrString(m,"theTime",time);
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()

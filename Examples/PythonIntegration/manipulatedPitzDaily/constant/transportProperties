@@ -9,37 +9,31 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      rand;
+    class       dictionary;
+    location    "constant";
+    object      transportProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
+transportModel  Newtonian;
 
-internalField   uniform 0;
+nu              nu [ 0 2 -1 0 0 0 0 ] 1e-05;
 
-boundaryField
+CrossPowerLawCoeffs
 {
-    movingWall      
-    {
-        type            groovyBC;
-        globalScopes ( testPython );
-        value           uniform 0;
-        valueExpression "newTime";
-    }
-
-    fixedWalls      
-    {
-        type            groovyBC;
-        value           uniform 0;
-        globalScopes ( testPython );
-        valueExpression "newVector.x";
-    }
-
-    frontAndBack    
-    {
-        type            empty;
-    }
+    nu0             nu0 [ 0 2 -1 0 0 0 0 ] 1e-06;
+    nuInf           nuInf [ 0 2 -1 0 0 0 0 ] 1e-06;
+    m               m [ 0 0 1 0 0 0 0 ] 1;
+    n               n [ 0 0 0 0 0 0 0 ] 1;
 }
+
+BirdCarreauCoeffs
+{
+    nu0             nu0 [ 0 2 -1 0 0 0 0 ] 1e-06;
+    nuInf           nuInf [ 0 2 -1 0 0 0 0 ] 1e-06;
+    k               k [ 0 0 1 0 0 0 0 ] 0;
+    n               n [ 0 0 0 0 0 0 0 ] 1;
+}
+
 
 // ************************************************************************* //
