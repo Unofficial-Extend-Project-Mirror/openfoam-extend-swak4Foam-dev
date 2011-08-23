@@ -81,13 +81,20 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 //     PyObject *obj;
 //     obj = SWIG_NewPointerObj(f, SWIGTYPE_p_Foo, 0);
 
+    //    executeCode("from Foam.integrationHelpers.getObjectsFromPointers import getTimeFromPtr",false,true);
+    //    executeCode("import Foam.integrationHelpers.getObjectsFromPointers as getObjectsFromPointers",false,true);
+
     PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
     //    PyObject *mesh=PyCObject_FromVoidPtr((void*)(&(t); // which mexh?
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject_SetAttrString(m,"theTime",time);
+    // executeCode("time=getObjectsFromPointers.getTimeFromPtr(theTime)",true,false);
+    //    PyRun_SimpleString("time=getTimeFromPtr(theTime)");
     PyRun_SimpleString("time=OpenFOAM.getTimeFromPtr(theTime)");
+    // Get rid of the helper stuff
     PyRun_SimpleString("del theTime");
+    //    PyRun_SimpleString("del getTimeFromPtr");
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()
