@@ -70,31 +70,18 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
     executeCode("import Foam.OpenFOAM as OpenFOAM",false,true);
     executeCode("import Foam.finiteVolume as finiteVolume",false,true);
 
-    // This code snipplet from http://www.swig.org/Doc1.3/Python.html#Python_nn64
-    // doesn't work
-    // a) because these functions are unknown (and there is no header)
-    // b) can't find an equivalent for $input
-//     const Time *f=&t;
-//     if (SWIG_ConvertPtr($input, (void **) &f, SWIGTYPE_p_Foo, SWIG_POINTER_EXCEPTION) == -1)
-//         return NULL;
-
-//     PyObject *obj;
-//     obj = SWIG_NewPointerObj(f, SWIGTYPE_p_Foo, 0);
-
-    //    executeCode("from Foam.integrationHelpers.getObjectsFromPointers import getTimeFromPtr",false,true);
-    //    executeCode("import Foam.integrationHelpers.getObjectsFromPointers as getObjectsFromPointers",false,true);
+    //    executeCode("from Foam.integrationHelpers.getObjectsFromPointers import getTimeFromPtr",false,true); // this should work, but doesn't
+    executeCode("from Foam.src.OpenFOAM.db.Time.Time import getTimeFromPtrOld as getTimeFromPtr",false,true); // This works
 
     PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
-    //    PyObject *mesh=PyCObject_FromVoidPtr((void*)(&(t); // which mexh?
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject_SetAttrString(m,"theTime",time);
-    // executeCode("time=getObjectsFromPointers.getTimeFromPtr(theTime)",true,false);
-    //    PyRun_SimpleString("time=getTimeFromPtr(theTime)");
-    PyRun_SimpleString("time=OpenFOAM.getTimeFromPtr(theTime)");
+    executeCode("time=getTimeFromPtr(theTime)",true,false);
+
     // Get rid of the helper stuff
     PyRun_SimpleString("del theTime");
-    //    PyRun_SimpleString("del getTimeFromPtr");
+    PyRun_SimpleString("del getTimeFromPtr");
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()
