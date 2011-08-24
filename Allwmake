@@ -33,3 +33,5 @@ done
 
 (cd Utilities; wmake all )
 
+(cd Examples/tests/fluIntegration/libRegistered; wmake)
+
