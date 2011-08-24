@@ -106,10 +106,14 @@ fluFunctionObjectsDriver::fluFunctionObjectsDriver( const string &code )
 fluFunctionObjectsDriver::~fluFunctionObjectsDriver()
 {
     if ( !this->_wasInitialized ) {
+	if(debug) {
+            std::cout << "Finalizing Python - " << this << std::endl;
+	}
+
         Py_Finalize();        
 
 	if(debug) {
-          std::cout << "Finalizing Python - " << this << std::endl;
+            std::cout << "Finalized Python - " << this << std::endl;
 	}
     }
 }
