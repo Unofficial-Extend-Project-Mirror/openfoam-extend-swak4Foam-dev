@@ -16,7 +16,9 @@ args = setRootCase( argc, argv )
 from Foam.OpenFOAM.include import createTime
 runTime = createTime( args )
 
+dummy_main = None
 while runTime.loop() :
+    dummy_loop = None
     pass
 
 
