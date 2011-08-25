@@ -111,15 +111,17 @@ bool pythonIntegrationFunctionObject::execute()
     return true;
 }
 
-void pythonIntegrationFunctionObject::write()
+bool pythonIntegrationFunctionObject::end()
 {
     if(parallelNoRun()) {
-        return;
+        return true;
     }
 
     setRunTime();
 
-    executeCode(writeCode_,false);
+    executeCode(endCode_,true);
+
+    return true;
 }
 
 bool pythonIntegrationFunctionObject::read(const dictionary& dict)
@@ -129,7 +131,7 @@ bool pythonIntegrationFunctionObject::read(const dictionary& dict)
     }
 
     readCode(dict,"start",startCode_);
-    readCode(dict,"write",writeCode_);
+    readCode(dict,"end",endCode_);
     readCode(dict,"execute",executeCode_);
 
     return true; // start();

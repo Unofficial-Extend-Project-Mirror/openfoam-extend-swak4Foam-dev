@@ -6,8 +6,4 @@ if runTime<=scaleTill:
     print "Maybe this will not be read by the solver at every time-step"
     fvSol.writeFile()
 
-if runTime==end:
-    print "Restoring fvSolution to its old glory"
-    fvSol.restore()
-
 print

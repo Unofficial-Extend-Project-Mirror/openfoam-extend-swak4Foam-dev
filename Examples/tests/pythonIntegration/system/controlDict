@@ -51,7 +51,7 @@ functions (
         type pythonIntegration;
         startCode "print 'Starting';a=0; print dir()";
         executeCode "a+=1; print 'a:',a";
-        writeCode "print 'Never been here'";
+        endCode "print 'Never been here'";
         //        tolerateExceptions true;
     }
     pythonPyFoam
@@ -60,14 +60,14 @@ functions (
         startCode "from os import path;from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile";
         // executeCode "print 'Time till end:',float(ParsedParameterFile(path.join(caseDir,'system','controlDict'))['endTime'])-runTime";
         executeFile "$FOAM_CASE/executePyFoam.py";
-        writeCode "print 'Never been here'";
+        endCode "print 'Never been here'";
         //        tolerateExceptions true;
     }
     pythonPythonFlu
     {
         type pythonIntegration;
         startCode "import Foam.OpenFOAM as OF";
-        writeCode "print ";
+        endCode "print ";
         executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
         tolerateExceptions true;
     }
@@ -75,7 +75,7 @@ functions (
     {
         type pythonFluIntegration;
         startCode "print dir()";
-        writeCode "print ";
+        endCode "print ";
         executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs();print type(time);print dir();print time.timePath()";
         //        tolerateExceptions true;
         }
@@ -106,7 +106,7 @@ functions (
         swakToPythonNamespaces ( pythonVars );
         startCode "print 'Start:',aVector,aScalar;newTime=0;newVector=range(3)";
         executeCode "print 'Running:',map(lambda x:x*(runTime+aScalar),aVector);newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
-        writeCode "print 'Never been here'";
+        endCode "print 'Never been here'";
         //        tolerateExceptions true;
         pythonToSwakNamespace testPython;
         pythonToSwakVariables (  newTime newVector );
@@ -117,7 +117,7 @@ functions (
         swakToPythonNamespaces ( testPython );
         startCode "print 'Start PyFoam:',newVector;from PyFoam.Basics.FoamFileGenerator import Vector;foamVector=Vector(0,0,0)";
         executeCode "foamVector=Vector(newVector[0],newVector[1],newVector[2]);print foamVector";
-        writeCode "print 'Never been here'";
+        endCode "print 'Never been here'";
         //        tolerateExceptions true;
         pythonToSwakNamespace testPyFoam;
         pythonToSwakVariables ( foamVector );
