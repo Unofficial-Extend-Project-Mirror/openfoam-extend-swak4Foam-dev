@@ -74,7 +74,7 @@ functions (
     pythonPythonFluFull
     {
         type pythonFluIntegration;
-        startCode "print dir()";
+        startCode "print type(time)";
         endCode "print ";
         executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs();print type(time);print dir();print time.timePath()";
         //        tolerateExceptions true;
