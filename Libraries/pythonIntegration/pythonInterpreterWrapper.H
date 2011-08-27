@@ -94,6 +94,11 @@ class pythonInterpreterWrapper
     //- supported
     wordList pythonToSwakVariables_;
 
+    //- should we get an interactive Python-Shell after every code-Execution?
+
+    //- used for debugging the Python-program
+    bool interactiveAfterExecute_;
+
     void getGlobals();
 
     void setGlobals();

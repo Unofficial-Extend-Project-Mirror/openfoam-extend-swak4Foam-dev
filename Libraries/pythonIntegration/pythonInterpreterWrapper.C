@@ -34,6 +34,8 @@ License
 
 #include "vector.H"
 
+// #include <fcntl.h>
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -68,6 +70,9 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
             "pythonToSwakVariables",
             wordList(0)
         )
+    ),
+    interactiveAfterExecute_(
+        dict.lookupOrDefault<bool>("interactiveAfterExecute",false)
     )
 {
     if(interpreterCount==0) {
@@ -108,6 +113,15 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     if(debug) {
         Info << "Currently " << interpreterCount 
             << " Python interpreters (created one)" << endl;
+    }
+
+    if(interactiveAfterExecute_) {
+        if(debug) {
+            Info << "Preparing interpreter for convenient history editing" << endl;
+        }
+        PyRun_SimpleString("import rlcompleter, readline");
+        // this currently has no effect in the embedded shell
+        PyRun_SimpleString("readline.parse_and_bind('tab: complete')"); 
     }
 }
 
@@ -186,6 +200,13 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
             << "Python exception raised by " << nl
                 << code
                 << endl << abort(FatalError);
+    }
+
+    if(interactiveAfterExecute_) {
+        Info << "Executed "<< code
+            << " now you can interact. Continue with Ctrl-D" << endl;
+        PyRun_InteractiveLoop(::stdin,"test");
+        clearerr(::stdin);
     }
 
     if(putVariables) {
