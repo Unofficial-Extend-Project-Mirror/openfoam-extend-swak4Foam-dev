@@ -13,3 +13,10 @@ for i in faceIDs:
 
 print "Ux changed direction at",xRevert
 
+if hasPlot:
+    tValues.append(time.value())
+    xValues.append(xRevert)
+    axis.set_xbound(lower=0,upper=time.value()+1)
+    line.set_xdata(tValues)
+    line.set_ydata(xValues)
+    plt.draw()

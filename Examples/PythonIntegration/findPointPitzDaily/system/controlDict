@@ -58,7 +58,7 @@ functions (
         endFile "$FOAM_CASE/endFindPoint.py";
         parallelMasterOnly false;  
         //        interactiveAfterExecute true;
-        
+        //        interactiveAfterException true;
     }
 );
 

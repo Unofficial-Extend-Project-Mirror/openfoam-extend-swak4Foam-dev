@@ -1,5 +1,20 @@
+hasPlot=False
+
 try:
     import matplotlib
+    matplotlib.use('Agg')
+
+    import matplotlib.pyplot as plt
+
+    figure=plt.figure()
+    axis=figure.add_subplot(111)
+    line,=axis.plot([],[],label="x")
+    axis.legend()
+
+    tValues=[]
+    xValues=[]
+    
+    hasPlot=True
 except ImportError:
     print "No Matplotlib .... no plotting"
 
@@ -15,6 +30,9 @@ yMin=Upatch.patch().Cf().gMin().y()
 xMin=Upatch.patch().Cf().gMax().x()
 xMax=Upatch.patch().Cf().gMin().x()
 
+if hasPlot:
+    axis.set_ybound(lower=xMin,upper=xMax)
+    
 lst=[]
 for i in range(Upatch.patch().Cf().size()):
    if abs(Upatch.patch().Cf()[i].y()-yMin)<1e-5:
