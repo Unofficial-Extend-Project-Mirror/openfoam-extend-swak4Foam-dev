@@ -99,6 +99,9 @@ class pythonInterpreterWrapper
     //- used for debugging the Python-program
     bool interactiveAfterExecute_;
 
+    //- used for debugging of failed Python-program
+    bool interactiveAfterException_;
+
     void getGlobals();
 
     void setGlobals();

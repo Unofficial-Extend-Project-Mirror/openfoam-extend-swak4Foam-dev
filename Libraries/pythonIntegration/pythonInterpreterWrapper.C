@@ -73,6 +73,9 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     ),
     interactiveAfterExecute_(
         dict.lookupOrDefault<bool>("interactiveAfterExecute",false)
+    ),
+    interactiveAfterException_(
+        dict.lookupOrDefault<bool>("interactiveAfterException",false)
     )
 {
     if(interpreterCount==0) {
@@ -115,7 +118,11 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
             << " Python interpreters (created one)" << endl;
     }
 
-    if(interactiveAfterExecute_) {
+    if(
+        interactiveAfterExecute_
+        ||
+        interactiveAfterException_
+    ) {
         if(debug) {
             Info << "Preparing interpreter for convenient history editing" << endl;
         }
@@ -187,6 +194,16 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
     getGlobals();
 
     int success=PyRun_SimpleString(code.c_str());
+    if(
+        interactiveAfterException_
+        &&
+        success!=0
+    ) {
+        Info << "Got an exception for "<< code
+            << " now you can interact. Continue with Ctrl-D" << endl;
+        PyRun_InteractiveLoop(::stdin,"test");
+        clearerr(::stdin);
+    }
     if(
         success!=0
         &&
