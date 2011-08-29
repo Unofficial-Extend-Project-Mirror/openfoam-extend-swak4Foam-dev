@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.0.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -21,7 +21,7 @@ solvers
     {
         solver          GAMG;
         tolerance       1e-08;
-        relTol          0;
+        relTol          0.1;
         smoother        DIC;
         nPreSweeps      0;
         nPostSweeps     2;
@@ -32,15 +32,22 @@ solvers
         mergeLevels     1;
     }
 
-    Ua
+    pFinal
+    {
+        $p;
+        tolerance       1e-08;
+        relTol          0;
+    }
+
+    "(k|epsilon)"
     {
         solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-05;
-        relTol          0;
+        relTol          0.1;
     }
 
-    Ub
+    "(k|epsilon)Final"
     {
         solver          PBiCG;
         preconditioner  DILU;
@@ -53,43 +60,19 @@ solvers
         solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-10;
-        relTol          0;
+        relTol          0.1;
     }
 
-    beta
+    alphaFinal
     {
         solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-10;
         relTol          0;
     }
-
-    Theta
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0;
-    }
-
-    k
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0;
-    }
-
-    epsilon
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0;
-    }
 }
 
-PISO
+PIMPLE
 {
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
@@ -97,17 +80,6 @@ PISO
     correctAlpha    yes;
     pRefCell        0;
     pRefValue       0;
-}
-
-relaxationFactors
-{
-    Ua              1;
-    Ub              1;
-    alpha           1;
-    beta            1;
-    Theta           1;
-    k               1;
-    epsilon         1;
 }
 
 

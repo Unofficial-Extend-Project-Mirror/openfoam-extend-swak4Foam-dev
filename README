@@ -263,6 +263,7 @@
      - Demonstrates :: Usage of =PyFoam= to read the direction of
                        gravity and feeding it into a =goovyBC= via
                        global variables
+     - Case preparation :: Just call =funkySetFields -time 0=
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
