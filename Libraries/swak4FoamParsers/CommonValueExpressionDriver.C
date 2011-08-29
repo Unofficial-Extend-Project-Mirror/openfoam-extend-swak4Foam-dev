@@ -321,6 +321,12 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
         os << token::END_STATEMENT << nl;
     }
 
+    if(globalVariableScopes_.size()>0) {
+        os.writeKeyword("globalScopes");
+        os << globalVariableScopes_ << endl;
+        os << token::END_STATEMENT << nl;
+    }
+
     return os;
 }
 
