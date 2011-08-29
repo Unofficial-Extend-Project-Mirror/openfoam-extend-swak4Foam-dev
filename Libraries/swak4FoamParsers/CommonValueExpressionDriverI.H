@@ -104,7 +104,26 @@ namespace Foam {
             } 
         }
 
-        return false;
+        return isGlobal<Type>(name,isPoint);
+    }
+
+    template<class Type>
+    bool CommonValueExpressionDriver::isGlobal(
+        const word &name,
+        bool isPoint
+    ) const
+    {
+        const ExpressionResult &aGlobal=lookupGlobal(name);
+
+        if(
+            aGlobal.type()==pTraits<Type>::typeName 
+            && 
+            aGlobal.isPoint()==isPoint
+        ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     template<class Type>
@@ -369,12 +388,16 @@ namespace Foam {
         
         autoPtr<T> f;
         
-        if(variables_.found(name)) {
+        typedef typename T::value_type Type;
+            
+        if(
+            variables_.found(name)
+            ||
+            isGlobal<Type>(name,false)
+        ) {
             if(debug) {
                 Info << "Getting " << name << " from variables" << endl;
             }
-            
-            typedef typename T::value_type Type;
             
             f.set(
                 new T(
@@ -392,7 +415,14 @@ namespace Foam {
                 )
             );
 
-            Field<Type> vals=variables_[name].getResult<Type>(true);
+            Field<Type> vals;
+            if(variables_.found(name)) {
+                vals=variables_[name].getResult<Type>(true);
+            } else {
+                vals=const_cast<ExpressionResult &>(
+                    lookupGlobal(name)
+                ).getResult<Type>(true);
+            }
 
             if(debug) {
                 Pout << "sizes: " << vals.size() << " " << f->size() << endl;

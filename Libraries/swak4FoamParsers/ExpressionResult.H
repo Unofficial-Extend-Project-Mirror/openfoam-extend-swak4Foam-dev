@@ -65,10 +65,12 @@ class ExpressionResult
     
     bool isPoint_;
 
+    bool isSingleValue_;
+
     void uglyDelete();
 
     template<class Type>
-    ExpressionResult getUniformInternal(const label size,bool noWarn);
+    ExpressionResult getUniformInternal(const label size,bool noWarn) const;
 
 public:
 
@@ -81,7 +83,7 @@ public:
     ExpressionResult(const ExpressionResult&);
 
     //- Construct from a dictionary
-    ExpressionResult(const dictionary&);
+    ExpressionResult(const dictionary&,bool isSingleValue=false);
 
     // Destructor
 
@@ -102,13 +104,15 @@ public:
     inline tmp<Field<Type> > getResult(bool keep=false);
 
     // Construct a uniform field from the current results
-    ExpressionResult getUniform(const label size,bool noWarn);
+    ExpressionResult getUniform(const label size,bool noWarn) const;
 
     void clearResult();
 
     inline const string &type() const;
 
     inline bool isPoint() const;
+
+    inline bool isSingleValue() const;
 
     bool hasValue() const;
 

@@ -66,12 +66,17 @@ void Foam::manipulateField::manipulate(
 )
 {
     T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
-
+    label cnt=0;
     forAll(original,cellI) {
         if(mask[cellI]>SMALL) {
+            cnt++;
             original[cellI]=data[cellI];
         }
     }
+
+    reduce(cnt,plusOp<label>());
+    Info << "Manipulated field " << name_ << " in " << cnt
+        << " cells with the expression " << expression_ << endl;
     original.correctBoundaryConditions();
 }
 

@@ -8,7 +8,7 @@
 ** Current Maintainer
    Bernhard Gschaider (bgschaid@ice-sf.at)
 ** Contributors
-   /None yet/
+   - Alexey Petrov :: =pythonFlu=-integration
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -24,6 +24,12 @@
 
   The main library =swak4FoamParsers= can't be built in parallel (no
   values of =WM_NCOMPPROCS= bigger than 1)
+*** Additional configuration
+    Some features (currently only the =Python=-integration may need
+    third party software. The paths to these packages an be configured
+    in a file =swakConfiguration= (an example file
+    =swakConfiguration.example= is provided). If that file is not
+    present these unconfigured features will not be compiled.
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
@@ -103,6 +109,18 @@
     Contributions to this library are explicitly encouraged. Please
     use the Mercurial-branch =groovyStandardBCs= to /groovyify/
     standard boundary conditions.
+*** =pythonIntegration=
+    Embeds a =Python=-interpreter.
+
+    - =pythonIntegrationFunctionObject= :: Executes =Python=-code
+         at the usual execution times of functionObjects. The
+         interpreter keeps its state
+
+    This library is only compiled if the paths to the Python-Headers
+    are configured in the =swakConfiguration=-file (see above)
+*** =fluFunctionObjectDriver=
+    Driver for =functionObjects= that implemented entirely in =Python=
+    using the =pythonFlu=-library
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -165,7 +183,7 @@
      - Also demonstrates :: Usage of a =sampledSet= defined in the
           =controlDict= do determine the average filling height. Also
           stored variables for not switching back once the criterion
-          is reached
+          is reached. Global variables defined by a function object
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -224,6 +242,27 @@
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
+*** PythonIntegration
+    Demonstrate the integration of =Python=. Mostly using =PyFoam= but
+    also with =pythonFlu=
+**** =manipulatedPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Usage of =PyFoam= to manipulate the
+                       =fvSolution=-file during the run (possible
+                       application: unphysical initial conditions
+                       cause the run to fail during startup with
+                       "normal" relaxation values)
+**** =findPointPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Usage of the =pythonFlu=-integration to find
+                       the point where the recirculation behind the
+                       step ends. Also tries to plot the result using
+                       the =matplotlib=-library
+**** =bed2OfPisa=
+     - Solver :: twoPhaseEulerFoam
+     - Demonstrates :: Usage of =PyFoam= to read the direction of
+                       gravity and feeding it into a =goovyBC= via
+                       global variables
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
@@ -446,3 +485,24 @@
 **** Deployment scripts
      Now install to =FOAM_SITE_APPBIN/LIBBIN=
 ** Next release
+*** New features
+**** =replayTransientBC= now supports multiple regions
+     Uses the usual =-region=-option. Looks for a separate dictionary
+     in the =system=-directory of that region
+**** =replayTransientBC= allows execution of functionObjects
+     This can be switched on using the =allowFunctionObjects=-option
+**** =Python=-embedding
+     Allows the execution of Python-Code in a functionObject
+
+     This feature is still experimental and the organization of the
+     libraries is subject to change
+**** Global variables
+     It is now possible to define variables that are 'global': They
+     can be read in any entity. 
+
+     Currently these variables can only be uniform.
+
+     To access global variables the specification-dictionary has to
+     have a =wordList= named =globalScopes=. The scopes are searched
+     in that order for the names of global variables. Having scopes
+     allows some kind of separation of the variables

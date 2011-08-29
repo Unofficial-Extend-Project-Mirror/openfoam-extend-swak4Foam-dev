@@ -1,0 +1,3 @@
+
+export SWAK_PYTHON_INCLUDE="-I/opt/local/include/python2.6"
+export SWAK_PYTHON_LINK="-L/opt/local/lib -lpython2.6"

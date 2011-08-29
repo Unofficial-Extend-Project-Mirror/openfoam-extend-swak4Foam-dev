@@ -1,0 +1,5 @@
+pythonInterpreterWrapper.C
+pythonIntegrationFunctionObject.C
+pythonFluIntegrationFunctionObject.C
+
+LIB = $(FOAM_USER_LIBBIN)/libpythonIntegration
