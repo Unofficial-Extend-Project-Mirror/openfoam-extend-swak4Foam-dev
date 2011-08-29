@@ -161,7 +161,7 @@ void ExpressionResult::uglyDelete()
     valPtr_=NULL;
 }
 
-ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn)
+ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn) const
 {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {

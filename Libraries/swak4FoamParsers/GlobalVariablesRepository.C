@@ -75,6 +75,12 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
     return *repositoryInstance;
 }
 
+
+GlobalVariablesRepository::ResultTable &GlobalVariablesRepository::getNamespace(const word &name) 
+{
+    return globalVariables_[name];
+}
+
 const ExpressionResult &GlobalVariablesRepository::get(
     const word &name,
     const wordList &scopes

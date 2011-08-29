@@ -70,7 +70,7 @@ class ExpressionResult
     void uglyDelete();
 
     template<class Type>
-    ExpressionResult getUniformInternal(const label size,bool noWarn);
+    ExpressionResult getUniformInternal(const label size,bool noWarn) const;
 
 public:
 
@@ -104,7 +104,7 @@ public:
     inline tmp<Field<Type> > getResult(bool keep=false);
 
     // Construct a uniform field from the current results
-    ExpressionResult getUniform(const label size,bool noWarn);
+    ExpressionResult getUniform(const label size,bool noWarn) const;
 
     void clearResult();
 

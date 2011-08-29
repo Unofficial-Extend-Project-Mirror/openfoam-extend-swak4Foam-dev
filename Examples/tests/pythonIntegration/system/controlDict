@@ -1,0 +1,133 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.005;
+
+writeControl    timeStep;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+functions (
+    pythonSimple
+    {
+        type pythonIntegration;
+        startCode "print 'Starting';a=0; print dir()";
+        executeCode "a+=1; print 'a:',a";
+        endCode "print 'Never been here'";
+        //        tolerateExceptions true;
+    }
+    pythonPyFoam
+    {
+        type pythonIntegration;
+        startCode "from os import path;from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile";
+        // executeCode "print 'Time till end:',float(ParsedParameterFile(path.join(caseDir,'system','controlDict'))['endTime'])-runTime";
+        executeFile "$FOAM_CASE/executePyFoam.py";
+        endCode "print 'Never been here'";
+        //        tolerateExceptions true;
+    }
+    pythonPythonFlu
+    {
+        type pythonIntegration;
+        startCode "import Foam.OpenFOAM as OF";
+        endCode "print ";
+        executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
+        tolerateExceptions true;
+    }
+    pythonPythonFluFull
+    {
+        type pythonFluIntegration;
+        startCode "print type(time)";
+        endCode "print ";
+        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs();print type(time);print dir();print time.timePath()";
+        //        tolerateExceptions true;
+        }
+    addScalar
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope pythonVars;
+        globalName aScalar;
+        valueType scalar;
+        value 42;
+    }
+    addVector
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope pythonVars;
+        globalName aVector;
+        valueType vector;
+        value (1 2 3);
+    }
+
+    pythonGetGlobals
+    {
+        type pythonIntegration;
+        swakToPythonNamespaces ( pythonVars );
+        startCode "print 'Start:',aVector,aScalar;newTime=0;newVector=range(3)";
+        executeCode "print 'Running:',map(lambda x:x*(runTime+aScalar),aVector);newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
+        endCode "print 'Never been here'";
+        //        tolerateExceptions true;
+        pythonToSwakNamespace testPython;
+        pythonToSwakVariables (  newTime newVector );
+    }
+    pythonGetPyFoamGlobals
+    {
+        type pythonIntegration;
+        swakToPythonNamespaces ( testPython );
+        startCode "print 'Start PyFoam:',newVector;from PyFoam.Basics.FoamFileGenerator import Vector;foamVector=Vector(0,0,0)";
+        executeCode "foamVector=Vector(newVector[0],newVector[1],newVector[2]);print foamVector";
+        endCode "print 'Never been here'";
+        //        tolerateExceptions true;
+        pythonToSwakNamespace testPyFoam;
+        pythonToSwakVariables ( foamVector );
+    }
+);
+
+libs (
+    "libgroovyBC.so"
+    "libpythonIntegration.so"
+    "libswakFunctionObjects.so"
+);
+
+// ************************************************************************* //
