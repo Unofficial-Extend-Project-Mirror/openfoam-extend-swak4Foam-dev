@@ -98,7 +98,7 @@ bool pythonIntegrationFunctionObject::start()
     return true;
 }
 
-bool pythonIntegrationFunctionObject::execute()
+bool pythonIntegrationFunctionObject::execute(bool)
 {
     if(parallelNoRun()) {
         return true;
