@@ -256,6 +256,17 @@
                        application: unphysical initial conditions
                        cause the run to fail during startup with
                        "normal" relaxation values)
+**** =findPointPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Usage of the =pythonFlu=-integration to find
+                       the point where the recirculation behind the
+                       step ends. Also tries to plot the result using
+                       the =matplotlib=-library
+**** =bed2OfPisa=
+     - Solver :: twoPhaseEulerFoam
+     - Demonstrates :: Usage of =PyFoam= to read the direction of
+                       gravity and feeding it into a =goovyBC= via
+                       global variables
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
