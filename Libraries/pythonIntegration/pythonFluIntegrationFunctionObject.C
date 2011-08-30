@@ -70,8 +70,8 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
     executeCode("import Foam.OpenFOAM as OpenFOAM",false,true);
     executeCode("import Foam.finiteVolume as finiteVolume",false,true);
 
-    //    executeCode("from Foam.integrationHelpers.getObjectsFromPointers import getTimeFromPtr",false,true); // this should work, but doesn't
-    executeCode("from Foam.src.OpenFOAM.db.Time.Time import getTimeFromPtrOld as getTimeFromPtr",false,true); // This works
+    executeCode("from Foam.integrationHelpers.getObjectsFromPointers import getTimeFromPtr",false,true); // this should work, but doesn't
+    // executeCode("from Foam.src.OpenFOAM.db.Time.Time import getTimeFromPtrOld as getTimeFromPtr",false,true); // This works
 
     PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
 
