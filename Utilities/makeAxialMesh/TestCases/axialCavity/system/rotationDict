@@ -33,7 +33,8 @@ makeAxialOffset 0.05;
 
 // used only in new mode
 rotationVector (1 0 0);
-originVector (0 0.15 0);
+originVector (0 0.15 0); //offset
+// originVector (0 0 0); // origin
 
 wedgeAngle 5;
 

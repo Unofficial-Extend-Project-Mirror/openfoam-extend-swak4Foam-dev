@@ -24,7 +24,7 @@ FoamFile
 
 application icoFoam;
 
-startFrom       startTime;
+startFrom       latestTime;
 
 startTime       0;
 
