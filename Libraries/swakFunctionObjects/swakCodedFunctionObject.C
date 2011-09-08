@@ -213,6 +213,15 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
         "",
         "\n//swakStuff\n#include \"GlobalVariablesRepository.H\"\n"
     );
+    
+    if(!env("SWAK4FOAM_SRC")) {
+        FatalErrorIn("swakCodedFunctionObject::read(const dictionary& dict)")
+            << "Compilation of the function object only works if "
+                << "the environment variable SWAK4FOAM_SRC points to the "
+                << "Libraries directory of the swak4Foam-sources"
+                << endl
+                << abort(FatalError);
+    }
     injectSwakCode(
         "codeOptions",
         "",
