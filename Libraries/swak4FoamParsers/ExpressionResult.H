@@ -45,6 +45,7 @@ SourceFiles
 #define ExpressionResult_H
 
 #include "Field.H"
+#include "dimensionedType.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -85,6 +86,24 @@ public:
     //- Construct from a dictionary
     ExpressionResult(const dictionary&,bool isSingleValue=false);
 
+    //- Construct from a field
+    template<class Type>
+    ExpressionResult(const Field<Type>  &f);
+
+    //- Construct from a dimensioned value
+    template<class Type>
+    ExpressionResult(const dimensioned<Type>  &f);
+
+    template <int, class T = void> struct enable_if_rank0 {};
+    template <class T> struct enable_if_rank0<0, T> { typedef T type; };
+
+    //- Construct from a value of rank 0
+
+    //- the enable_if_rank0-business avoids that the template is used for (for instance)
+    //- GeometricField
+    template<class Type>
+    ExpressionResult(const Type  &f,typename enable_if_rank0<pTraits<Type>::rank>::type* dummy=0);
+
     // Destructor
 
     ~ExpressionResult();
@@ -99,6 +118,9 @@ public:
 
     template<class Type>
     inline void setResult(Type val,label size);
+
+    template<class Type>
+    inline void setSingleValue(Type val);
 
     template<class Type>
     inline tmp<Field<Type> > getResult(bool keep=false);

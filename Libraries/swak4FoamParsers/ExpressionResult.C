@@ -69,12 +69,14 @@ ExpressionResult::ExpressionResult(
     valType_(dict.lookupOrDefault<word>("valueType","None")),
     valPtr_(NULL),
     isPoint_(dict.lookupOrDefault<bool>("isPoint",false)),
-    isSingleValue_(isSingleValue)
+    isSingleValue_(
+        dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
+    )
 {
     if(
         dict.found("value")
     ) {
-        if(isSingleValue) {
+        if(isSingleValue_) {
             if(valType_==pTraits<scalar>::typeName) {
                 valPtr_=new scalarField(1,pTraits<scalar>(dict.lookup("value")));
             } else if(valType_==pTraits<vector>::typeName) {
@@ -241,6 +243,29 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
+
+// I have NO idea why this is necessary, but since the introduction of the 
+// enable_if_rank0-stuff the function below does not compile without it
+
+template<>
+class pTraits<token::punctuationToken> 
+{};
+
+template<int N>
+class pTraits<char [N]> 
+{};
+
+template<>
+class pTraits<Ostream&(Ostream&)> 
+{};
+
+template<>
+class pTraits<char> 
+{};
+
+template<>
+class pTraits<const char *> 
+{};
 
 Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
 {
