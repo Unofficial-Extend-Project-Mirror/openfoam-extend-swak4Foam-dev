@@ -92,6 +92,13 @@
          other swak-entities (mainly boundary conditions)
     - createSampledSurface :: Create a sampled surface that can be used by
          other swak-entities (mainly boundary conditions)
+    - swakCoded :: Child of the =coded=-functionObject that can read
+                   and write global variables from and to
+                   swak-namespaces
+
+		   Assumes that the =SWAK4FOAM_SRC= environment
+                   variable is set to the =Libraries=-directory of the
+                   =swak4Foam=-sources 
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
