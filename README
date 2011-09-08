@@ -88,6 +88,17 @@
 *** =swakFunctionObjects=
     Function objects that have no additional requirements. Mainly used
     for manipulating and creating fields with expressions
+    - addGlobalVariable :: Adds a variable to a global
+         swak-namespace. Mainly used for debugging and resolving
+         issues where a variable is needed in a BC before it is defined.
+    - expressionField :: Create a new field from an expression
+    - clearExpressionField :: Erase a field created with
+         =expressionField=
+    - manipulateField :: Modify a field in memory
+    - createSampledSet :: Create a sampled set that can be used by
+         other swak-entities (mainly boundary conditions)
+    - createSampledSurface :: Create a sampled surface that can be used by
+         other swak-entities (mainly boundary conditions)
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
