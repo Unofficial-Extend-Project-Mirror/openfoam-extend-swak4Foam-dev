@@ -57,7 +57,8 @@ functions
         globalName error;
         globalScope errorResults;
         valueType scalar;
-        value 1;
+        value (1 2 3);
+        isSingleValue false;
     }
     addTest {
         type addGlobalVariable;
