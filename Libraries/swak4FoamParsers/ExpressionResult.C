@@ -69,12 +69,14 @@ ExpressionResult::ExpressionResult(
     valType_(dict.lookupOrDefault<word>("valueType","None")),
     valPtr_(NULL),
     isPoint_(dict.lookupOrDefault<bool>("isPoint",false)),
-    isSingleValue_(isSingleValue)
+    isSingleValue_(
+        dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
+    )
 {
     if(
         dict.found("value")
     ) {
-        if(isSingleValue) {
+        if(isSingleValue_) {
             if(valType_==pTraits<scalar>::typeName) {
                 valPtr_=new scalarField(1,pTraits<scalar>(dict.lookup("value")));
             } else if(valType_==pTraits<vector>::typeName) {
