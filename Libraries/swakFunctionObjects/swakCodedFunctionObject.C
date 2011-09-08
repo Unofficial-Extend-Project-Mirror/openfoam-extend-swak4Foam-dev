@@ -33,6 +33,9 @@ License
 #include "stringOps.H"
 #include "addToRunTimeSelectionTable.H"
 
+#include "GlobalVariablesRepository.H"
+
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -47,139 +50,6 @@ namespace Foam
     );
 }
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-// void Foam::swakCodedFunctionObject::createLibrary
-// (
-//     dynamicCode& dynCode,
-//     const dynamicCodeContext& context
-// ) const
-// {
-//     bool create = Pstream::master();
-
-//     if (create)
-//     {
-//         // Write files for new library
-//         if (!dynCode.upToDate(context))
-//         {
-//             // filter with this context
-//             dynCode.reset(context);
-
-//             // Set additional rewrite rules
-//             dynCode.setFilterVariable("typeName", redirectType_);
-//             dynCode.setFilterVariable("codeRead", codeRead_);
-//             dynCode.setFilterVariable("codeExecute", codeExecute_);
-//             dynCode.setFilterVariable("codeEnd", codeEnd_);
-//             //dynCode.setFilterVariable("codeWrite", codeWrite_);
-
-//             // compile filtered C template
-//             dynCode.addCompileFile("functionObjectTemplate.C");
-//             dynCode.addCompileFile("FilterFunctionObjectTemplate.C");
-
-//             // copy filtered H template
-//             dynCode.addCopyFile("FilterFunctionObjectTemplate.H");
-//             dynCode.addCopyFile("functionObjectTemplate.H");
-//             dynCode.addCopyFile("IOfunctionObjectTemplate.H");
-
-//             // debugging: make BC verbose
-//             //         dynCode.setFilterVariable("verbose", "true");
-//             //         Info<<"compile " << redirectType_ << " sha1: "
-//             //             << context.sha1() << endl;
-
-//             // define Make/options
-//             dynCode.setMakeOptions
-//             (
-//                 "EXE_INC = -g \\\n"
-//                 "-I$(LIB_SRC)/finiteVolume/lnInclude \\\n"
-//               + context.options()
-//               + "\n\nLIB_LIBS = \\\n"
-//               + "    -lOpenFOAM \\\n"
-//               + "    -lfiniteVolume \\\n"
-//               + context.libs()
-//             );
-
-//             if (!dynCode.copyOrCreateFiles(true))
-//             {
-//                 FatalIOErrorIn
-//                 (
-//                     "swakCodedFunctionObject::createLibrary(..)",
-//                     context.dict()
-//                 )   << "Failed writing files for" << nl
-//                     << dynCode.libRelPath() << nl
-//                     << exit(FatalIOError);
-//             }
-//         }
-
-//         if (!dynCode.wmakeLibso())
-//         {
-//             FatalIOErrorIn
-//             (
-//                 "swakCodedFunctionObject::createLibrary(..)",
-//                 context.dict()
-//             )   << "Failed wmake " << dynCode.libRelPath() << nl
-//                 << exit(FatalIOError);
-//         }
-//     }
-
-
-//     // all processes must wait for compile to finish
-//     reduce(create, orOp<bool>());
-// }
-
-
-// void Foam::swakCodedFunctionObject::updateLibrary() const
-// {
-//     dynamicCode::checkSecurity
-//     (
-//         "swakCodedFunctionObject::updateLibrary()",
-//         dict_
-//     );
-
-//     dynamicCodeContext context(dict_);
-
-//     // codeName: redirectType + _<sha1>
-//     // swakCodedir : redirectType
-//     dynamicCode dynCode
-//     (
-//         redirectType_ + context.sha1().str(true),
-//         redirectType_
-//     );
-//     const fileName libPath = dynCode.libPath();
-
-
-//     // the correct library was already loaded => we are done
-//     if (const_cast<Time&>(time_).libs().findLibrary(libPath))
-//     {
-//         return;
-//     }
-
-//     Info<< "Using dynamicCode for functionObject " << name()
-//         << " at line " << dict_.startLineNumber()
-//         << " in " << dict_.name() << endl;
-
-
-//     // remove instantiation of fvPatchField provided by library
-//     redirectFunctionObjectPtr_.clear();
-
-//     // may need to unload old library
-//     unloadLibrary
-//     (
-//         oldLibPath_,
-//         dynamicCode::libraryBaseName(oldLibPath_),
-//         context.dict()
-//     );
-
-//     // try loading an existing library (avoid compilation when possible)
-//     if (!loadLibrary(libPath, dynCode.codeName(), context.dict()))
-//     {
-//         createLibrary(dynCode, context);
-
-//         loadLibrary(libPath, dynCode.codeName(), context.dict());
-//     }
-
-//     // retain for future reference
-//     oldLibPath_ = libPath;
-// }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -191,8 +61,49 @@ Foam::swakCodedFunctionObject::swakCodedFunctionObject
     const dictionary& dict
 )
 :
-    codedFunctionObject(name,time,dict)
+    codedFunctionObject(name,time,dict),
+    swakToCodedNamespaces_(
+        dict.lookupOrDefault<wordList>(
+            "swakToCodedNamespaces",
+            wordList(0)
+        )
+    ),
+    codedToSwakNamespace_(
+        dict.lookupOrDefault<word>(
+            "codedToSwakNamespace",
+            word("")
+        )
+    ),
+    codedToSwakVariables_(
+        dict.lookupOrDefault<wordList>(
+            "codedToSwakVariables",
+            wordList(0)
+        )
+    ),
+    verboseCode_(
+        dict.lookupOrDefault<bool>("verboseCode",false)
+    )
 {
+    if(
+        (
+            codedToSwakVariables_.size()>0
+            &&
+            codedToSwakNamespace_==""
+        )
+        ||
+        (
+            codedToSwakVariables_.size()==0
+            &&
+            codedToSwakNamespace_!=""
+        )
+    ) {
+        FatalErrorIn("swakCodedFunctionObject::swakCodedFunctionObject")
+            << "'codedToSwakVariables' (Value: " << codedToSwakVariables_ << ") "
+                << "and 'codedToSwakNamespace' (Value: " << codedToSwakNamespace_
+                << ") both have to be set (or none)"
+                << endl
+                << abort(FatalError);
+    }
     read(dict_);
 }
 
@@ -205,50 +116,115 @@ Foam::swakCodedFunctionObject::~swakCodedFunctionObject()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// Foam::functionObject&
-// Foam::swakCodedFunctionObject::redirectFunctionObject() const
-// {
-//     if (!redirectFunctionObjectPtr_.valid())
-//     {
-//         dictionary constructDict(dict_);
-//         constructDict.set("type", redirectType_);
+void Foam::swakCodedFunctionObject::injectSwakCode(const word &key,const string &pre,const string &post)
+{
+    entry *code=dict_.lookupEntryPtr(key,false,false);
+    string codeValue;
 
-//         redirectFunctionObjectPtr_ = functionObject::New
-//         (
-//             redirectType_,
-//             time_,
-//             constructDict
-//         );
-//     }
-//     return redirectFunctionObjectPtr_();
-// }
-
-
-// bool Foam::swakCodedFunctionObject::start()
-// {
-//     updateLibrary();
-//     return redirectFunctionObject().start();
-// }
-
-
-// bool Foam::swakCodedFunctionObject::execute(const bool forceWrite)
-// {
-//     updateLibrary();
-//     return redirectFunctionObject().execute(forceWrite);
-// }
-
-
-// bool Foam::swakCodedFunctionObject::end()
-// {
-//     updateLibrary();
-//     return redirectFunctionObject().end();
-// }
+    if(code) {
+        codeValue=string(code->stream());
+    }
+    if(!dict_.found(key+"Original")) {
+        // avoid inserting the stuff twice
+        dict_.add(word(key+"Original"),codeValue);
+    }
+     
+    // doesn't work because of length restriction in IStringStream
+    //            dict_.set("code",codePrefix+codeValue+codePostfix);
+    dict_.set(
+        primitiveEntry(key,token(string(pre+codeValue+post)))
+    );            
+}
 
 
 bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
 {
     //    bool success=codedFunctionObject::read(dict);
-    dict.lookup("redirectType") >> redirectType_;
+    //  Info << dict.lookup("code") << dict.lookup("code") << endl;
+    string codePrefix="// inserted by swak - start\n";
+    forAll(swakToCodedNamespaces_,nameI) {
+        const word name(swakToCodedNamespaces_[nameI]);
+        const GlobalVariablesRepository::ResultTable &vars=
+            GlobalVariablesRepository::getGlobalVariables().getNamespace(
+               name
+            );
+        if(verboseCode_) {
+            codePrefix+="Info << \"Reading from Namespace " + name + "\" << endl;\n";
+        }
+
+        const word scopeName("swakGlobalNamespace_"+name);
+        codePrefix+="GlobalVariablesRepository::ResultTable &"+scopeName
+            +"=GlobalVariablesRepository::getGlobalVariables().getNamespace(\""
+            +name+"\");\n";
+        forAllConstIter(
+            GlobalVariablesRepository::ResultTable,
+            vars,
+            iter
+        ) {
+            const ExpressionResult &val=(*iter);
+            if(val.hasValue()) {
+                if(val.isSingleValue()) {
+                    codePrefix+=val.type()+" "+iter.key()
+                        +"("+scopeName+"[\""+iter.key()+"\"].getResult<"
+                        +val.type()+">(true)()[0]);\n";
+                } else {
+                    codePrefix+="Field<"+val.type()+"> "+iter.key()
+                        +"("+scopeName+"[\""+iter.key()+"\"].getResult<"
+                        +val.type()+">(true));\n";
+                }
+                if(verboseCode_) {
+                    codePrefix+="Info << \"Got variable: " + iter.key() + ": \" << " 
+                        + iter.key() + " << \" from \" << "
+                        +scopeName+"[\""+iter.key()+"\"]" + "<< endl;\n";  
+                }
+            } else {
+                codePrefix+="// Variable " + iter.key() + " has no value\n";
+            }
+        }
+    }
+    codePrefix+="// inserted by swak - end\n\n";
+
+    string codePostfix="\n// inserted by swak - start\n";
+    if(codedToSwakNamespace_!="") {
+        forAll(codedToSwakVariables_,i) {
+            word name=codedToSwakVariables_[i];
+            codePostfix+="GlobalVariablesRepository::getGlobalVariables().";
+            codePostfix+="addValue(\""+name+"\",\""+codedToSwakNamespace_+
+                "\",ExpressionResult("+name+"));\n";
+            if(verboseCode_ && 0) {
+                codePostfix+="Info << \"Wrote " + name + " as: \" << "
+                    +"GlobalVariablesRepository::getGlobalVariables()."
+                    +"getNamespace(\""+codedToSwakNamespace_+"\")"
+                    +"[\""+name+"\"] << endl;\n";
+            }
+        }
+    }
+    codePostfix+="// inserted by swak - end\n";
+
+    // the stuff here only works because we assume that dict and dict_ are the same
+    // which IMHO is implicitly assumed for the original codedFunctionObject
+    injectSwakCode(
+        "code",
+        codePrefix,
+        codePostfix
+    );
+    injectSwakCode(
+        "codeInclude",
+        "",
+        "\n//swakStuff\n#include \"GlobalVariablesRepository.H\"\n"
+    );
+    injectSwakCode(
+        "codeOptions",
+        "",
+        " -I$(SWAK4FOAM_SRC)/swak4FoamParsers/lnInclude "
+    );
+
+    // the insertion of the #line breaks Make/options. Luckily we don't need this
+//     injectSwakCode(
+//         "codeLibs",
+//         " -L$(FOAM_USER_LIBBIN) -lswak4FoamParsers ",
+//         ""
+//     );
 
     const entry* readPtr = dict.lookupEntryPtr
     (
@@ -258,7 +234,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     );
     if (readPtr)
     {
-        codeRead_ = stringOps::trim(readPtr->stream());
+        codeRead_ = stringOps::trim(codePrefix+string(readPtr->stream())+codePostfix);
         stringOps::inplaceExpand(codeRead_, dict);
         dynamicCodeContext::addLineDirective
         (
@@ -276,7 +252,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     );
     if (execPtr)
     {
-        codeExecute_ = stringOps::trim(execPtr->stream());
+        codeExecute_ = stringOps::trim(codePrefix+string(readPtr->stream())+codePostfix);
         stringOps::inplaceExpand(codeExecute_, dict);
         dynamicCodeContext::addLineDirective
         (
@@ -294,7 +270,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     );
     if (execPtr)
     {
-        codeEnd_ = stringOps::trim(endPtr->stream());
+        codeEnd_ = stringOps::trim(codePrefix+string(readPtr->stream())+codePostfix);
         stringOps::inplaceExpand(codeEnd_, dict);
         dynamicCodeContext::addLineDirective
         (

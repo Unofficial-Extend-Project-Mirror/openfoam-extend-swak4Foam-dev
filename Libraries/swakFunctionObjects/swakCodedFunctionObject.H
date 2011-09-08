@@ -52,40 +52,35 @@ class swakCodedFunctionObject
 :
     public codedFunctionObject
 {
-protected:
-
-//         //- Load specified library and execute globalFuncName(true)
-//         void* loadLibrary
-//         (
-//             const fileName& libPath,
-//             const string& globalFuncName,
-//             const dictionary& contextDict
-//         ) const;
-
-//         //- Execute globalFuncName(false) and unload specified library
-//         void unloadLibrary
-//         (
-//             const fileName& libPath,
-//             const string& globalFuncName,
-//             const dictionary& contextDict
-//         ) const;
-
-
-//         //- Create library based on the dynamicCodeContext
-//         void createLibrary(dynamicCode&, const dynamicCodeContext&) const;
-
-//         //- Update library as required
-//         void updateLibrary() const;
-
-//         //- Read relevant dictionary entries
-//         void readDict();
-
         //- Disallow default bitwise copy construct
         swakCodedFunctionObject(const swakCodedFunctionObject&);
 
         //- Disallow default bitwise assignment
         void operator=(const swakCodedFunctionObject&);
 
+    //- variables in those namespaces should be inserted into the 
+    //- Coded namespace before running the snipplet
+    wordList swakToCodedNamespaces_;
+
+    //- Namespace to write values to
+
+    //- this global swak-namespace will get all values (if the user request such)
+    word codedToSwakNamespace_;
+
+    //- Coded variables that swak will receive
+
+    //- the values of these variables will get written to the global swak namespace
+    //- only variables that can be either interpreted as a scalar or a vector are
+    //- supported
+    wordList codedToSwakVariables_;
+
+    //- should the code have Debug-Information
+    bool verboseCode_;
+
+protected:
+
+    //- insert swak-specific code
+    void injectSwakCode(const word &key,const string &pre,const string &post);
 
 public:
 
@@ -110,20 +105,6 @@ public:
 
 
     // Member Functions
-
-//         //- Dynamically compiled functionObject
-//         functionObject& redirectFunctionObject() const;
-
-//         //- Called at the start of the time-loop
-//         virtual bool start();
-
-//         //- Called at each ++ or += of the time-loop. forceWrite overrides the
-//         //  outputControl behaviour.
-//         virtual bool execute(const bool forceWrite);
-
-//         //- Called when Time::run() determines that the time-loop exits.
-//         //  By default it simply calls execute().
-//         virtual bool end();
 
         //- Read and set the function object if its data have changed
         virtual bool read(const dictionary&);
