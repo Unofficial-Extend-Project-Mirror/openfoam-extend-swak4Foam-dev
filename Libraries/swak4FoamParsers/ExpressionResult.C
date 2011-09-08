@@ -242,6 +242,29 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
+// I have NO idea why this is necessary, but since the introduction of the 
+// enable_if_rank0-stuff the function below does not compile without it
+
+template<>
+class pTraits<token::punctuationToken> 
+{};
+
+template<int N>
+class pTraits<char [N]> 
+{};
+
+template<>
+class pTraits<Ostream&(Ostream&)> 
+{};
+
+template<>
+class pTraits<char> 
+{};
+
+template<>
+class pTraits<const char *> 
+{};
+
 Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
 {
     out << token::BEGIN_BLOCK << endl;
