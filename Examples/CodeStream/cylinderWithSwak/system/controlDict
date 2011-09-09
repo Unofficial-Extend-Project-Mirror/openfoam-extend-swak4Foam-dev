@@ -47,6 +47,7 @@ runTimeModifiable true;
 
 libs (
     "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
 );
 
 functions
@@ -91,7 +92,7 @@ functions
         // Name of on-the-fly generated functionObject
         redirectType error;
         codedToSwakNamespace errorResults;
-        codedToSwakVariables (error radius test);
+        codedToSwakVariables (error radius test UA);
         swakToCodedNamespaces (errorInput);
         //        verboseCode true;
         code
@@ -168,7 +169,7 @@ functions
         type swakCoded;
         // Name of on-the-fly generated functionObject
         redirectType errorDump;
-        verboseCode true;
+        //        verboseCode true;
         swakToCodedNamespaces (errorInput errorResults);
         code
         #{
@@ -180,6 +181,37 @@ functions
         expression "error+test+radius";
         globalScopes ( errorResults );
         autowrite true;
+    }
+    errorExtreme {
+        type swakExpression;
+        valueType internalField;
+        globalScopes ( errorResults );
+        expression "error";
+        accumulations (
+            min max
+        );
+        verbose true;
+    }
+    averageError {
+        type swakExpression;
+        valueType internalField;
+        globalScopes ( errorResults );
+        expression "vol()*mag(error)/sum(vol())";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    differentError {
+        type swakExpression;
+        valueType internalField;
+        globalScopes ( errorResults );
+        expression "mag(U-UA)-mag(UA)*error";
+        accumulations (
+            min
+            max
+        );
+        verbose true;
     }
 }
 
