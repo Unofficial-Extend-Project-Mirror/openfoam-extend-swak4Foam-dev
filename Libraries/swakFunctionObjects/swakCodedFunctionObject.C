@@ -61,7 +61,12 @@ Foam::swakCodedFunctionObject::swakCodedFunctionObject
     const dictionary& dict
 )
 :
-    codedFunctionObject(name,time,dict),
+    codedFunctionObject(
+        name,
+        time,
+        dict,
+        false  // don't compile in parent class
+    ),
     swakToCodedNamespaces_(
         dict.lookupOrDefault<wordList>(
             "swakToCodedNamespaces",
