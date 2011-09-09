@@ -34,6 +34,8 @@ License
 
 #include "vector.H"
 
+#include "stringOps.H"
+
 // #include <fcntl.h>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -431,6 +433,7 @@ void pythonInterpreterWrapper::readCode(
             code+=c;
         }
     }
+    code=stringOps::trim(code);
 }
 
 
