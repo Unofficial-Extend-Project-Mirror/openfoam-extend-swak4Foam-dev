@@ -1,3 +1,0 @@
-fluFunctionObjectsDriver.C
-
-LIB = $(FOAM_USER_LIBBIN)/libfluFunctionObjectsDriver

@@ -22,7 +22,5 @@ wclean groovyStandardBCs
 
 wclean pythonIntegration
 
-wclean fluFunctionObjectsDriver
-
 # remove residual from bison
 rm -f */*.output
