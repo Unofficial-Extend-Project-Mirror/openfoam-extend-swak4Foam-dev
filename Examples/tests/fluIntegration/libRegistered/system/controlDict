@@ -62,7 +62,7 @@ functions (
         type pythonIntegration;
         startCode "print 'Starting';a=0; print dir()";
         executeCode "a+=1; print 'a:',a";
-        writeCode "print 'Never been here'";
+        endCode "print 'Never been here'";
         //        tolerateExceptions true;
     }
 );

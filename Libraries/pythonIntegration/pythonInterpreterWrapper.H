@@ -70,12 +70,47 @@ class pythonInterpreterWrapper
     //- should exceptions be tolerated or lead to a fatal error?
     bool tolerateExceptions_;
 
+    //- Should a non-uniform variable result in a warning?
+    bool warnOnNonUniform_;
+
+    //- Should parallel runs only run on the master
+    bool parallelMasterOnly_;
+
+    //- List of global swak namespaces to get values
+
+    //- variables in those namespaces should be inserted into the 
+    //- Python namespace before running the snipplet
+    wordList swakToPythonNamespaces_;
+
+    //- Namespace to write values to
+
+    //- this global swak-namespace will get all values (if the user request such)
+    word pythonToSwakNamespace_;
+
+    //- Python variables that swak will receive
+
+    //- the values of these variables will get written to the global swak namespace
+    //- only variables that can be either interpreted as a scalar or a vector are
+    //- supported
+    wordList pythonToSwakVariables_;
+
+    //- should we get an interactive Python-Shell after every code-Execution?
+
+    //- used for debugging the Python-program
+    bool interactiveAfterExecute_;
+
+    //- used for debugging of failed Python-program
+    bool interactiveAfterException_;
+
+    void getGlobals();
+
+    void setGlobals();
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;
 
     //- Execute code. Return true if there was no problem
-    bool executeCode(const string &code,bool failOnException=false);
+    bool executeCode(const string &code,bool putVariables,bool failOnException=false);
 
     //- Read code according to the dictionary
     void readCode(const dictionary &dict,const word &prefix,string &code);
@@ -86,6 +121,8 @@ protected:
     //- set the variable 'runTime' in the interpreter
     void setRunTime(const Time &time);
 
+    //- Check whether we want to continue (parallel)
+    bool parallelNoRun();
 public:
 
     //- Runtime type information

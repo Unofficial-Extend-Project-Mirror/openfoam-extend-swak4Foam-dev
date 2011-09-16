@@ -74,8 +74,8 @@ class pythonIntegrationFunctionObject
     //- Code to be executed at the start
     string startCode_;
 
-    //- Code to be executed at write
-    string writeCode_;
+    //- Code to be executed at the end
+    string endCode_;
   
     //- Code to be executed at execute
     string executeCode_;
@@ -115,8 +115,8 @@ public:
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
 
-    //- Sample and write
-    virtual void write();
+    //- Execute in the end
+    virtual bool end();
 
 };
 

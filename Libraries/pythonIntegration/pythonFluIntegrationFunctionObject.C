@@ -57,14 +57,31 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 :
     pythonIntegrationFunctionObject(name,t,dict)
 {
-    if(!executeCode("import Foam")) {
+    if(parallelNoRun()) {
+        return;
+    }
+
+    if(!executeCode("import Foam",false)) {
         FatalErrorIn("pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject")
             << "Python can not import module Foam. Probably no pythonFlu installed"
                 << endl
                 << abort(FatalError);
     }
-    executeCode("import Foam.OpenFOAM as OpenFOAM",true);
-    executeCode("import Foam.finiteVolume as finiteVolume",true);
+    executeCode("import Foam.OpenFOAM as OpenFOAM",false,true);
+    executeCode("import Foam.finiteVolume as finiteVolume",false,true);
+
+    executeCode("from Foam.integrationHelpers.getObjectsFromPointers import getTimeFromPtr",false,true); // this should work, but doesn't
+    // executeCode("from Foam.src.OpenFOAM.db.Time.Time import getTimeFromPtrOld as getTimeFromPtr",false,true); // This works
+
+    PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
+
+    PyObject *m = PyImport_AddModule("__main__");
+    PyObject_SetAttrString(m,"theTime",time);
+    executeCode("time=getTimeFromPtr(theTime)",true,false);
+
+    // Get rid of the helper stuff
+    PyRun_SimpleString("del theTime");
+    PyRun_SimpleString("del getTimeFromPtr");
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()

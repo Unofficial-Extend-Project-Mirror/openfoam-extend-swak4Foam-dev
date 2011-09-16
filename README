@@ -8,7 +8,7 @@
 ** Current Maintainer
    Bernhard Gschaider (bgschaid@ice-sf.at)
 ** Contributors
-   /None yet/
+   - Alexey Petrov :: =pythonFlu=-integration
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -88,6 +88,17 @@
 *** =swakFunctionObjects=
     Function objects that have no additional requirements. Mainly used
     for manipulating and creating fields with expressions
+    - addGlobalVariable :: Adds a variable to a global
+         swak-namespace. Mainly used for debugging and resolving
+         issues where a variable is needed in a BC before it is defined.
+    - expressionField :: Create a new field from an expression
+    - clearExpressionField :: Erase a field created with
+         =expressionField=
+    - manipulateField :: Modify a field in memory
+    - createSampledSet :: Create a sampled set that can be used by
+         other swak-entities (mainly boundary conditions)
+    - createSampledSurface :: Create a sampled surface that can be used by
+         other swak-entities (mainly boundary conditions)
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
@@ -125,6 +136,9 @@
 
     This library is only compiled if the paths to the Python-Headers
     are configured in the =swakConfiguration=-file (see above)
+*** =fluFunctionObjectDriver=
+    Driver for =functionObjects= that implemented entirely in =Python=
+    using the =pythonFlu=-library
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -243,6 +257,28 @@
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
+*** PythonIntegration
+    Demonstrate the integration of =Python=. Mostly using =PyFoam= but
+    also with =pythonFlu=
+**** =manipulatedPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Usage of =PyFoam= to manipulate the
+                       =fvSolution=-file during the run (possible
+                       application: unphysical initial conditions
+                       cause the run to fail during startup with
+                       "normal" relaxation values)
+**** =findPointPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Usage of the =pythonFlu=-integration to find
+                       the point where the recirculation behind the
+                       step ends. Also tries to plot the result using
+                       the =matplotlib=-library
+**** =bed2OfPisa=
+     - Solver :: twoPhaseEulerFoam
+     - Demonstrates :: Usage of =PyFoam= to read the direction of
+                       gravity and feeding it into a =goovyBC= via
+                       global variables
+     - Case preparation :: Just call =funkySetFields -time 0=
 *** tests
     Simple test cases for specific features
 **** =randomCavity=

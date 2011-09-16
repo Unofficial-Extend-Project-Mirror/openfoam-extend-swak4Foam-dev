@@ -55,10 +55,13 @@ namespace Foam
 
 class GlobalVariablesRepository
 {
-    // Private data
+public:
+   typedef HashTable<ExpressionResult,word> ResultTable;
 
-    typedef HashTable<ExpressionResult,word> ResultTable;
-    HashTable<ResultTable,word> globalVariables_;
+private:
+   // Private data
+
+     HashTable<ResultTable,word> globalVariables_;
 
     // Constructors
 
@@ -97,6 +100,8 @@ public:
         const dictionary &dict
     );
 
+    //- get a global namespace
+    ResultTable &getNamespace(const word &name);
 };
 
 

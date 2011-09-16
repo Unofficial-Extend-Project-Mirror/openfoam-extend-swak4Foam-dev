@@ -1,7 +1,10 @@
 #! /bin/bash
 
 if [ -e swakConfiguration ]; then
+    echo "Reading variables from 'swakConfiguration'"
     source swakConfiguration
+else
+    echo "No 'swakConfiguration'. Python etc won't work"
 fi
 
 if [ ! -d Libraries/simpleFunctionObjects ]; then 
@@ -30,5 +33,5 @@ done
 
 (cd Utilities; wmake all )
 
-(cd Examples/tests/fluIntegration/libRegistered; wmake)
+# (cd Examples/tests/fluIntegration/libRegistered; wmake)
 
