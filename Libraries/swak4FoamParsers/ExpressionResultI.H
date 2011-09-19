@@ -37,6 +37,39 @@ namespace Foam {
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     template<class Type>
+    ExpressionResult::ExpressionResult(const Field<Type>  &f)
+        :
+        valType_("None"),
+        valPtr_(NULL),
+        isPoint_(false),
+        isSingleValue_(true)
+    {
+        setResult(f);
+    }
+
+    template<class Type>
+    ExpressionResult::ExpressionResult(const dimensioned<Type>  &f)
+        :
+        valType_("None"),
+        valPtr_(NULL),
+        isPoint_(false),
+        isSingleValue_(true)
+    {
+        setSingleValue(f.value());
+    }
+
+    template<class Type>
+    ExpressionResult::ExpressionResult(const Type  &f,typename enable_if_rank0<pTraits<Type>::rank>::type* dummy)
+        :
+        valType_("None"),
+        valPtr_(NULL),
+        isPoint_(false),
+        isSingleValue_(true)
+    {
+        setSingleValue(f);
+    }
+
+    template<class Type>
     void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)
     {
         clearResult();
@@ -73,6 +106,18 @@ namespace Foam {
     }
 
     template<class Type>
+    void ExpressionResult::setSingleValue(Type val)
+    {
+        clearResult();
+
+        valType_=pTraits<Type>::typeName;
+        valPtr_=static_cast<void *>(new Field<Type>(1,val));
+
+        isPoint_=false;
+        isSingleValue_=true;
+    }
+
+    template<class Type>
     inline tmp<Field<Type> > ExpressionResult::getResult(bool keep)
     {
         if(valType_!=pTraits<Type>::typeName) {
@@ -100,7 +145,7 @@ namespace Foam {
     }
 
     template<class Type>
-    ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn)
+    ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn) const
     {
         ExpressionResult result;
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
