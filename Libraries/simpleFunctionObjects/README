@@ -1,0 +1,46 @@
+Description
+===========
+A small collection of simple functionObjects that average, integrate 
+etc fields in the whole volume or on patches
+
+Original Author
+===============
+Bernhard Gschaider (bgschaid@ice-sf.at)
+
+Current Maintainer
+==================
+Bernhard Gschaider (bgschaid@ice-sf.at)
+
+Contributors
+============
+Bernhard Gschaider: basic integration etc stuff
+Hannes Kroeger (hannes@kroegeronline.net): mtv-writer.
+Martin Beaudoin (beaudoin.martin@ireq.ca): trackDictionary.
+Oliver Borm (oli.borm@web.de): patchMassFlowAverage.
+
+Documentation
+=============
+See: http://openfoamwiki.net/index.php/Contrib_simpleFunctionObjects
+
+Installation/Compilation
+========================
+
+The library can be compiled with "wmake libso". It doesn't have to be
+installed in a specific location.
+
+Required OpenFOAM-Version (Known to work with)
+==============================================
+1.6
+1.7
+There are different versions that works with 1.4.1 and 1.5
+
+History
+=======
+
+ - The sampleSurfaceFunctionObject, volumeAverage and patchForces were removed
+   because this functionality is present in 1.5
+ - volumeAverage was reintroduced because the average-functionObject in OF 1.5
+   does time-averages of complete fields
+ - compiles for 1.6
+ - compiles for 1.7
+

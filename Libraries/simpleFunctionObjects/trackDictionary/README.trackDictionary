@@ -1,0 +1,83 @@
+Original Author
+    Martin Beaudoin, Hydro-Quebec (2008) (beaudoin.martin@ireq.ca)
+
+Current Maintainer
+    Martin Beaudoin
+
+SourceFiles
+    README.trackDictionary
+
+
+Description
+    This functionObject is tracking the modifications of a list of OpenFOAM
+    dictionaries throughout the duration of a simulation.
+
+    The list of dictionaries to track is supplied as a parameter to the
+    functionObject.
+
+    At the start of the simulation, the content of all the specified
+    dictionaries will be read and printed out to the console, including
+    the list of all the switches values known to the application
+    (DebugSwitches, InfoSwitches, OptimisationSwitches, Tolerances,
+    DimensionedConstants, etc.)
+
+    If the parameter "runTimeModifiable" is set to "yes" in the case
+    system/controlDict file, then this list of dictionaries will also
+    be checked at every time step in order to detect possible file modifications.
+    If so, their content will be dumped to screen again.
+
+    This feature allows to keep a log of all the selected case dictionary
+    parameters throughout the simulation run. Using this information,
+    one can keep track of all the modifications that occured during
+    a given run, or between successive runs.
+
+    Here is an example of such a functionObject declaration that needs to
+    be added to your case controlDict:
+
+///////////////////////////////////////////////////////////////////////////////
+// Track the content of a given list of dictionaries for modification
+// throughout a simulation run, and print them to the console when
+// modified.
+//
+// The list of all known switches (DebugSwitches, etc) defined in the
+// main controlDict and by the application and libraries is also echoed
+// at the beginning of the run.
+//
+// It is also possible to specify optional user-defined start and end
+// of section separators in order to facilitate the recovery of the
+// information  at runtime or during the postProcessing of the logged
+// information
+//
+functions
+(
+    trackDictionaryContent
+    {
+        type trackDictionary;
+
+        // Where to load it from (if not already in solver)
+        functionObjectLibs ("libsimpleFunctionObjects.so");
+
+        // Names of dictionaries to track.
+        dictionaryNameList
+        (
+            "system/controlDict"
+            "system/fvSchemes"
+            "system/fvSolution"
+            "constant/transportProperties"
+            "constant/RASProperties"
+        );
+
+        // Section separators (optional)
+        // If the string "_sectionIdToken_" explicitely appears in the
+        // specification of the following section separators, this token
+        // string will be replaced by the name of the dictionary beeing
+        // dumped to the console, plus the file modification date and time.
+        sectionStartSeparator "############ Start of: _sectionIdToken_ ############";
+        sectionEndSeparator   "############ End of: _sectionIdToken_ ############";
+    }
+);
+///////////////////////////////////////////////////////////////////////////////
+
+    
+Author
+    Martin Beaudoin, Hydro-Quebec (2008)
