@@ -92,6 +92,13 @@
          other swak-entities (mainly boundary conditions)
     - createSampledSurface :: Create a sampled surface that can be used by
          other swak-entities (mainly boundary conditions)
+    - swakCoded :: Child of the =coded=-functionObject that can read
+                   and write global variables from and to
+                   swak-namespaces
+
+		   Assumes that the =SWAK4FOAM_SRC= environment
+                   variable is set to the =Libraries=-directory of the
+                   =swak4Foam=-sources 
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
@@ -275,6 +282,8 @@
                        gravity and feeding it into a =goovyBC= via
                        global variables
      - Case preparation :: Just call =funkySetFields -time 0=
+*** =CodeStream=
+    Demonstrates working together with the =coded=-stuff in OpenFOAM 2.0
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
@@ -518,3 +527,6 @@
      have a =wordList= named =globalScopes=. The scopes are searched
      in that order for the names of global variables. Having scopes
      allows some kind of separation of the variables
+**** Using OF 2.0 codeStreams
+     Adds a functionObject =swakCoded= that extends the
+     =coded=-functionObject to read and write global variables

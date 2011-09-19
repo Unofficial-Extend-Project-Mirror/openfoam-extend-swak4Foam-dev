@@ -1,0 +1,219 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     potentialFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+libs (
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+functions
+{
+    // dummy values to allow startup
+    addError {
+        type addGlobalVariable;
+        globalName error;
+        globalScope errorResults;
+        valueType scalar;
+        value (1 2 3);
+        isSingleValue false;
+    }
+    addTest {
+        type addGlobalVariable;
+        globalName test;
+        globalScope errorResults;
+        valueType scalar;
+        value 2;
+    }
+    addRadius {
+        type addGlobalVariable;
+        globalName radius;
+        globalScope errorResults;
+        valueType scalar;
+        value 3;
+    }
+    // Variables for testing
+    addRadiusBC {
+        type addGlobalVariable;
+        globalName radiusBC;
+        globalScope errorInput;
+        valueType scalar;
+        value 4;
+    }
+
+    difference
+    {
+        // Load the library containing the 'coded' functionObject
+        functionObjectLibs ("libswakFunctionObjects.so");
+        type swakCoded;
+        // Name of on-the-fly generated functionObject
+        redirectType error;
+        codedToSwakNamespace errorResults;
+        codedToSwakVariables (error radius test UA);
+        swakToCodedNamespaces (errorInput);
+        //        verboseCode true;
+        code
+        #{
+            // Lookup U
+            Info<< "Looking up field U\n" << endl;
+            const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+
+            Info<< "Reading inlet velocity  uInfX\n" << endl;
+
+            dimensionedScalar uInfX
+            (
+                "uInfx",
+                dimensionSet(0, 1, -1, 0, 0),
+                U.boundaryField()[3][0].x()
+            );
+            Info << "U at inlet = " << uInfX.value() << " m/s" << endl;
+
+            dimensionedScalar radius
+            (
+                "radius",
+                dimensionSet(0, 1, 0, 0, 0),
+                mag(U.mesh().boundary()[4].Cf()[0])
+                //                mag(U.mesh().boundary()[label(radiusBC)].Cf()[0]) // this doesn't work yet
+            );
+
+            Info << "Cylinder radius = " << radius.value() << " m" << endl;
+            
+            volVectorField UA
+            (
+                IOobject
+                (
+                    "UA",
+                    mesh().time().timeName(),
+                    U.mesh(),
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                U
+            );
+
+            Info<< "\nEvaluating analytical solution" << endl;
+
+            const volVectorField& centres = UA.mesh().C();
+            volScalarField magCentres(mag(centres));
+            volScalarField theta(acos((centres & vector(1,0,0))/magCentres));
+
+            volVectorField cs2theta
+            (
+                cos(2*theta)*vector(1,0,0)
+              + sin(2*theta)*vector(0,1,0)
+            );
+
+            UA = uInfX*(dimensionedVector(vector(1,0,0))
+              - pow((radius/magCentres),2)*cs2theta);
+
+            // Force writing of UA (since time has not changed)
+            UA.write();
+
+            volScalarField error("error", mag(U-UA)/mag(UA));
+
+            Info<<"Writing relative error in U to " << error.objectPath()
+                << endl;
+
+            error.write();
+
+            scalar test=0;
+        #};
+    }
+    postDifference
+    {
+        // Load the library containing the 'coded' functionObject
+        functionObjectLibs ("libswakFunctionObjects.so");
+        type swakCoded;
+        // Name of on-the-fly generated functionObject
+        redirectType errorDump;
+        //        verboseCode true;
+        swakToCodedNamespaces (errorInput errorResults);
+        code
+        #{
+        #}
+    }
+    testField {
+        type expressionField;
+        fieldName test;
+        expression "error+test+radius";
+        globalScopes ( errorResults );
+        autowrite true;
+    }
+    errorExtreme {
+        type swakExpression;
+        valueType internalField;
+        globalScopes ( errorResults );
+        expression "error";
+        accumulations (
+            min max
+        );
+        verbose true;
+    }
+    averageError {
+        type swakExpression;
+        valueType internalField;
+        globalScopes ( errorResults );
+        expression "vol()*mag(error)/sum(vol())";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    differentError {
+        type swakExpression;
+        valueType internalField;
+        globalScopes ( errorResults );
+        expression "mag(U-UA)-mag(UA)*error";
+        accumulations (
+            min
+            max
+        );
+        verbose true;
+    }
+}
+
+
+// ************************************************************************* //
