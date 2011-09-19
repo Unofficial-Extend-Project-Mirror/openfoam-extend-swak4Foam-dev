@@ -21,7 +21,7 @@ fi
 SOEXT=so
 
 if [ `uname -s`=="Darwin" ]; then
-    SOEXT=dyli
+    SOEXT=dylib
 fi
 
 for lib in ${SWAKLIBS[@]}
