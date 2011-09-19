@@ -87,3 +87,10 @@ def findAndProcessMake(main):
 for d in [srcDir,appDir,tutDir]:
     print "Processing Make-directories in",d
     findAndProcessMake(d)
+
+appMake=path.join(appDir,"Allwmake")
+print "Adding 'build libraries' to",appMake
+
+lines=open(appMake).readlines()
+lines=lines[:2]+["wmake all $FOAM_SRC/swak4Foam\n","\n"]+lines[2:]
+open(appMake,"w").writelines(lines)
