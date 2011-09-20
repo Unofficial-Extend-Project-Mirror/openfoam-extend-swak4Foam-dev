@@ -275,6 +275,9 @@
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
+** =maintainanceScripts=
+   Undocumented scripts used for maintaining =swak4Foam=. *If you
+   don't understand them, don't use them*
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
@@ -508,3 +511,14 @@
      have a =wordList= named =globalScopes=. The scopes are searched
      in that order for the names of global variables. Having scopes
      allows some kind of separation of the variables
+*** Administrative and packaging
+**** Inject =swak4Foam= into a distro
+     Added a script that takes the current sources, copies them into
+     the appropriate places of a =OpenFOAM=-installation and slightly
+     rewrites them to compile in this place. What happens then
+     (committing them into the repository or just plain compilation)
+     is up to the maintainer
+**** Absorb =simpleFunctionObjects=
+     As many parts of =swak4Foam= depend on it the
+     =simpleFunctionObjects= have now been absorbed into
+     =swak4Foam=. They can still be compiled on their own
