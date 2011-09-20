@@ -45,10 +45,47 @@ runTimeModifiable   yes;
 
 libs (
     "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
     "libswakFiniteArea.so"
 );
 
 functions (
+    defineConstant {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName const;
+        globalScope planeInlet;
+        valueType scalar;
+        value 1;
+    };
+    defineAmp {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName amplitude;
+        globalScope planeInlet;
+        valueType scalar;
+        value 1;
+    };
+    defineAmp2 {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName amplitude2;
+        globalScope planeInlet;
+        valueType scalar;
+        value 4;
+    };
+    defineFreq {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName freq;
+        globalScope planeInlet;
+        valueType scalar;
+        value 2;
+    };
     faOut {
         type swakExpression;
         valueType faPatch;
