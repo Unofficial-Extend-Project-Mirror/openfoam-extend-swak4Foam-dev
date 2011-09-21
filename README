@@ -307,6 +307,12 @@
    make sure that all changes are attributed to the original developer
    (you).
 
+   An alternative would be the =bundle= command. Just do
+: hg bundle <bundlefile>
+   and then send the =bundlefile=. This will include *all* commits
+   that are not in the upstream repository and will allow similar
+   inclusion in the upstream as =export=.
+
    Once you have proven by successfully submitting changesets via =hg
    export= you can ask for write access to the mercurial repository.
 *** Suggest reading
