@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    wall
+    {
+        type            zeroGradient;
+    }
+
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 0;
+        value           uniform 0;
+    }
+    hole
+    {
+      type    groovyBC;
+      value   uniform 0;
+      variables (
+          "vel=10.0;"
+          "width=max(pos().x)-min(pos().x);"
+          "height=max(pos().y)-min(pos().y);"
+          "rad=0.5*width;"
+          "pi=3.1415926;"
+          "rps=1.0;"
+          "alph=pi+time()*2.0*pi*rps;"
+          "posx=cos(alph)*rad;"
+          "posy=sin(alph)*rad;"
+          "distW=width*0.1;"
+       );
+       valueExpression
+//              "(pos().x>posx-distW)&&(pos().x<posx+distW)&&(pos().y<posy+distW)&&(pos().y>posy-distW)?1:0"
+             "posy<0?((pos().x>posx-distW)&&(pos().x<posx+distW)&&(pos().y<posy+distW)&&(pos().y>posy-distW)?1:0):((pos().x>posx-distW)&&(pos().x<posx+distW)&&(pos().y<-posy+distW)&&(pos().y>-posy-distW)?1:0)"
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

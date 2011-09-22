@@ -7,8 +7,14 @@
    Bernhard Gschaider (bgschaid@ice-sf.at)
 ** Current Maintainer
    Bernhard Gschaider (bgschaid@ice-sf.at)
-** Contributors
+** Contributors 
+   In alphabetical order of the surname
+   - Peter Keller :: =sprinklerInlet=-case
    - Alexey Petrov :: =pythonFlu=-integration
+   If anyone is forgotten: let me know
+
+   Contributors to =simpleFunctionObjects= are listed separately in
+   the =README= of that library
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -190,6 +196,10 @@
           =controlDict= do determine the average filling height. Also
           stored variables for not switching back once the criterion
           is reached. Global variables defined by a function object
+**** sprinklingInlet
+     - Solver :: interFoam
+     - Description :: Winner of the =swak4Foam=-competition at the 6th
+                      OpenFOAM-Workshop (2011). By Peter Keller
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
