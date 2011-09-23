@@ -5,6 +5,7 @@
 %}
 
 %s setname
+%x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
 %option stack
@@ -27,10 +28,13 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname>[ \t]+             yylloc->step ();
+<INITIAL,setname,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
+
+<needsIntegerParameter>[(] return yytext[0];
+<needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
 
 %{
     typedef parserPatch::PatchValueExpressionParser::token token;
@@ -91,11 +95,13 @@ snGrad                return token::TOKEN_snGrad;
 internalField         return token::TOKEN_internalField;
 neighbourField        return token::TOKEN_neighbourField;
 normal                return token::TOKEN_normal;
-rand                  return token::TOKEN_rand;
+rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
+randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 dist                  return token::TOKEN_dist;
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
-randNormal            return token::TOKEN_randNormal;
+randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
+randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
@@ -128,12 +134,20 @@ inv                    return token::TOKEN_inv;
                        return token::TOKEN_NUM;
                      }
 
+<needsIntegerParameter>{int}                {
+                       errno = 0;
+                       yylval->integer = atoi(yytext);
+                       return token::TOKEN_INT;
+                     }
+
 [xyz]                return yytext[0];
 
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
+    } else if(driver.isLookup(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LOOKUP;
     } else if(driver.is<Foam::scalar>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_SID;
     } else if(driver.is<Foam::vector>(*ptr)) {
@@ -164,6 +178,7 @@ inv                    return token::TOKEN_inv;
                      }
 
 .                    driver.error (*yylloc, "invalid character");
+<needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
 
 
 %%

@@ -7,8 +7,14 @@
    Bernhard Gschaider (bgschaid@ice-sf.at)
 ** Current Maintainer
    Bernhard Gschaider (bgschaid@ice-sf.at)
-** Contributors
-   /None yet/
+** Contributors 
+   In alphabetical order of the surname
+   - Peter Keller :: =sprinklerInlet=-case
+   - Alexey Petrov :: =pythonFlu=-integration
+   If anyone is forgotten: let me know
+
+   Contributors to =simpleFunctionObjects= are listed separately in
+   the =README= of that library
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -16,27 +22,48 @@
    - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
      - The =finiteArea=-stuff will only work with version 1.6-ext
    - the compiler generators =bison= and =flex=
-   - =simpleSwakFunctionObjects= needs the =simpleFunctionObjects=
-     (see
-     http://openfoamwiki.net/index.php/Contrib_simpleFunctionObjects)
-     all other functionality has no additional requirements
-     (=simpleSwakFunctionObjects= is only required by some examples)
-     It is assumed that the sources are installed at
-     =$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects= 
 ** Building
   =wmake all= at the base directory should build all the libraries and
   tools.
 
   The main library =swak4FoamParsers= can't be built in parallel (no
   values of =WM_NCOMPPROCS= bigger than 1)
+*** Additional configuration
+    Some features (currently only the =Python=-integration may need
+    third party software. The paths to these packages an be configured
+    in a file =swakConfiguration= (an example file
+    =swakConfiguration.example= is provided). If that file is not
+    present these unconfigured features will not be compiled.
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
-   script =copySwakFilesToGlobal.sh= can be used to copy them to the
-   global directories.
+   script =copySwakFilesToSite.sh= can be used to copy them to the
+   global site-specific directories.
 
-   The script =removeSwakFilesFromGlobal.sh= removes all these files
-   from the global directories
+   The script =removeSwakFilesFromSite.sh= removes all these files
+   from the global directories. The =removeSwakFilesFromLocal.sh= does
+   the same for the user directories (this makes sure that no
+   self-compiled version /shadows/ the global version (which would
+   lead to strange results)
+
+   There is a =Makefile= attached. =make install= compiles =swak4Foam=
+   and installs it into the global directories
+
+   *Note:* Due to the order in which library direcories are searched
+   for with =-L= a global installation might break the compilation
+** Packaging
+*** Debian
+    The command =build dpkg= builds a Debian/Ubuntu package for 
+    the *currently enabled* OpenFOAM-package. Note:
+    - it is assumed that the currently used OF-version was also
+      installed by the package manager
+    - the =dev= package is built but poorly maintained
+    Changes in the packaging should be done in the branch
+      =debianPackaging= of the Mercurial-repository
+
+    *Note:* Due to the problem described with the global installation
+    it might be necessary to deinstall a previously installed package
+    to successfully build a new package
 * Contents
 ** Libraries
    Collection of Libraries
@@ -45,29 +72,70 @@
     access the /OpenFOAM/ data-structures.
 
     None of the other software pieces compile without it
+*** =simpleFunctionObjects=
+    A collection of function objects that was previously separately
+    available at
+    http://openfoamwiki.net/index.php/Contrib_simpleFunctionObjects.
+
+    Provides consistent output of values (on patches and fields) and
+    more.
 *** =groovyBC=
     Implements the infamous =groovyBC=. A boundary condition that
     allows arbitrary expressions in the field-file
 *** =swakFunctionObjects=
     Function objects that have no additional requirements. Mainly used
     for manipulating and creating fields with expressions
+    - addGlobalVariable :: Adds a variable to a global
+         swak-namespace. Mainly used for debugging and resolving
+         issues where a variable is needed in a BC before it is defined.
+    - expressionField :: Create a new field from an expression
+    - clearExpressionField :: Erase a field created with
+         =expressionField=
+    - manipulateField :: Modify a field in memory
+    - createSampledSet :: Create a sampled set that can be used by
+         other swak-entities (mainly boundary conditions)
+    - createSampledSurface :: Create a sampled surface that can be used by
+         other swak-entities (mainly boundary conditions)
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
 
     Evaluate expressions and output the results
 *** =swakSourceFields=
-    Field that is calculated from an expression. To be used as
-    source-term or coefficient in some solver
+    These classes allow to manipulate the solution. To use these the
+    solver has to be modified.
+    - expressionSource :: Field that is calculated from an
+         expression. To be used as source-term or coefficient in some
+         solver
+    - forceEquation :: force an equation to fixed values in selected
+                       locations. Has to be used after constructing
+                       the equation and before solving
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities 
 *** =swakFiniteArea=
     Implements parsers for the =finiteArea=-stuff in 1.6-ext. Also
-    implements =groovyBC= for =areaField= and =expressionField=
+    implements =groovyBC= for =areaField= and =expressionField= and
+    other function objects
 *** =groovyStandardBCs=
     Collection of boundary conditions that give standard boundary
     conditions the possibility to use expression for the coefficients
+
+    Contributions to this library are explicitly encouraged. Please
+    use the Mercurial-branch =groovyStandardBCs= to /groovyify/
+    standard boundary conditions.
+*** =pythonIntegration=
+    Embeds a =Python=-interpreter.
+
+    - =pythonIntegrationFunctionObject= :: Executes =Python=-code
+         at the usual execution times of functionObjects. The
+         interpreter keeps its state
+
+    This library is only compiled if the paths to the Python-Headers
+    are configured in the =swakConfiguration=-file (see above)
+*** =fluFunctionObjectDriver=
+    Driver for =functionObjects= that implemented entirely in =Python=
+    using the =pythonFlu=-library
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -86,6 +154,10 @@
     condition but doesn't do anything else.
 
     Can be used for other BCs as well
+*** =funkyDoCalc=
+    Evaluates expressions that are listed in a dictionary using data
+    that is found on the disc and prints summarized data (min, max,
+    average, sum) to the screen
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -118,13 +190,39 @@
          directory 
     - Also demonstrated :: =patchExpression= and =swakExpression= from
          =simpleSwakFunctionObjects=. 
+**** fillingTheDam
+     - Solver :: interFoam
+     - Also demonstrates :: Usage of a =sampledSet= defined in the
+          =controlDict= do determine the average filling height. Also
+          stored variables for not switching back once the criterion
+          is reached. Global variables defined by a function object
+**** sprinklingInlet
+     - Solver :: interFoam
+     - Description :: Winner of the =swak4Foam=-competition at the 6th
+                      OpenFOAM-Workshop (2011). By Peter Keller
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
     Example dictionary for =funkySetBoundaryFields=. Sets nonsense
     boundary conditions for the world famous =damBreak=-case
 *** InterFoamWithSources
-    Demonstrates usage of =swakSourceFields=
+    Demonstrates usage of =expressionSource=
+
+    Due to differences in the original =interFoam=-solver this doesn't
+    work on certain OpenFOAM-versions (most specifically
+    =1.6-ext=).
+
+    The only modifications to the original solver are found at the end
+    of =createFields.H= and in =UEqn.H= (the added source terms).
+*** InterFoamWithFixed
+    Demonstrates usage of =forceEquation=
+
+    Due to differences in the original =interFoam=-solver this doesn't
+    work on certain OpenFOAM-versions (most specifically
+    =1.6-ext=).
+
+    The only modifications to the original solver are found at the end
+    of =createFields.H= and in =UEqn.H= (the fixing of the velocities).
 **** =interFoamWithSources=
      Slightly modified version of =interFoam=. Adds a source term to
      the momentum equation. The source term is an expression that is
@@ -153,12 +251,123 @@
           an argument
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
-          =swakExpression=-functionObject
+          =swakExpression=-functionObject. Also an example dictionary
+          that demonstrates the use of =funkyDoCalc=
 **** =capillaryRise=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
+*** PythonIntegration
+    Demonstrate the integration of =Python=. Mostly using =PyFoam= but
+    also with =pythonFlu=
+**** =manipulatedPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Usage of =PyFoam= to manipulate the
+                       =fvSolution=-file during the run (possible
+                       application: unphysical initial conditions
+                       cause the run to fail during startup with
+                       "normal" relaxation values)
+**** =findPointPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Usage of the =pythonFlu=-integration to find
+                       the point where the recirculation behind the
+                       step ends. Also tries to plot the result using
+                       the =matplotlib=-library
+**** =bed2OfPisa=
+     - Solver :: twoPhaseEulerFoam
+     - Demonstrates :: Usage of =PyFoam= to read the direction of
+                       gravity and feeding it into a =goovyBC= via
+                       global variables
+     - Case preparation :: Just call =funkySetFields -time 0=
+*** tests
+    Simple test cases for specific features
+**** =randomCavity=
+     Testing of different seeds for the =rand=-function. Also tests
+     the =randFixed=-function
+** =maintainanceScripts=
+   Undocumented scripts used for maintaining =swak4Foam=. *If you
+   don't understand them, don't use them*
+* Bug reporting and Development
+** Bug reports
+   The preferred place for bug reports is
+   http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90 
+   
+   A sourceforge-account is required for reporting
+** Development
+   Contributions to to =swak4Foam= are most welcome. If you want to
+   contribute clone the Mercurial archive of the sources
+: hg clone http://openfoam-extend.hg.sourceforge.net:8000/hgroot/openfoam-extend/swak4Foam
+   Change to the branch that you want to improve (usually =default=)
+   and create a new branch
+: hg branch <branchName>
+   where =<branchname>= is an easily identifiable name that makes the
+   purpose of the branch clear (for instance
+   =bugfixWrongRandomFunction= or =featureHyperbolicFunctions=). Don't
+   work on the =default= branch or any other branches that are not
+   "yours". Such contributions will not be merged
+
+   Once development on the branch is finished export the relevant
+   changesets with 
+: hg export <nodeID>
+   (=nodeID= being the ids of "your" changesets) and send them to the
+   maintainer (or attach them to a bug report on Manits). The changes
+   will be reviewed and merged into the =default= branch (do not
+   attempt to do this yourself). Patches generated with =hg export=
+   make sure that all changes are attributed to the original developer
+   (you).
+
+   An alternative would be the =bundle= command. Just do
+: hg bundle <bundlefile>
+   and then send the =bundlefile=. This will include *all* commits
+   that are not in the upstream repository and will allow similar
+   inclusion in the upstream as =export=.
+
+   Once you have proven by successfully submitting changesets via =hg
+   export= you can ask for write access to the mercurial repository.
+*** Suggest reading
+    These topics may be "new" for the average OF-developer:
+    - Mercurial :: A short tutorial on this can be found at
+                   http://mercurial.selenic.com/guide/. If you already
+                   know =git= the
+                   http://mercurial.selenic.com/wiki/GitConcepts may
+                   be enough for you
+    - bison/flex :: This pair of compiler generator tools generate the
+                    parsers for the expressions. Google for a tutorial
+                    that looks promising to you.
+
+		    For a short example that shows how a new function
+		    was added to two parsers have a look at this
+		    changeset that added the =cpu()=-function to the
+		    field and the the patch-parser (usually you'll
+		    have to write a new method for the driver too):
+: hg diff -c 8604e865cce6
+*** Special branches
+    Currently the main branches are:
+    - default :: The *main* branch. This is the brancht that the
+                 general public will receive. It compiles under 1.7
+                 and 1.6-ext
+    - port_2.0.x :: The branch that compiles under OpenFOAM 2.0. This
+                    will eventually become the =default=-branch
+    - debianPackaging :: Branch for generating new Debian-packages of
+         =swak4Foam=. If somebody wants to "inherit" this: contact the
+         maintainer 
+    - finiteArea :: In this branch the things for the
+                    =finiteArea=-discretization (only present in
+                    =1.6-ext=) is developed. Usually gets merged back
+                    into the =default=-branch once a feature is completed
+*** Distributed bug-tracking
+    As an experimental feature distributed bug-tracking was introduced
+    using the /Artemis/-extension for /Mercurial/ (see
+    =http://hg.mrzv.org/Artemis/=). An up-to-date version can be
+    installed by 
+: hg clone http://hg.mrzv.org/Artemis/
+    somewhere and installing the plugin by editing =.hgrc=.
+
+    This is *not* the official bug-tracker for =swak4Foam=. It is used
+    for keeping track of new features that are to be introduced to
+    =swak4Foam= and may be discontinued if the experiment proves to be
+    unsuccessful.
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the
@@ -176,6 +385,19 @@
    Apart from patches and internal fields the support for
    interpolation from cells to faces (and vice versa) is incomplete as
    well as point fields (although they are supported in the grammar)
+** Caching of loaded fields not working
+   This is especially evident for the =funkyDoCalc=-example
+** Possible enhancements of the code
+   Not really bugs, but stuff that bugs me
+*** Pointers in the driver code
+    This is necessary because of =bison=. Investigate possibilities to
+    replace these by =tmp= and =autoPtr= 
+** Possible memory loss
+   =valgrind= reports some lost memory for stuff that is not directly
+   allocated by =swak4Foam= (in OpenFOAM-sources)
+
+   Will investigate. Relevant places are marked by comments in the
+   code. Also the construction of =sampledSet= seems to loose memory
 * History
 ** 2010-09-13
    First Release
@@ -221,3 +443,98 @@
     See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=49
 *** New function =nearDist=
     See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=44
+** 2011-04-20
+   New features and changes are (this list is not complete):
+*** New utility =funkySetAreaField=
+    Like =funkySetFields= for /finiteArea/. Also writes out a volume
+    field for easier post-processing
+*** Refactoring of =groovyBC= and groovified boundary conditions
+    Makes it easier to use the =groovyBC=-machinery for other boundary
+    conditions. Two standard boundary conditions were
+    /groovified/. Others may follow
+*** Easier deployment
+    If no =simpleFunctionObjects= are present they can be downloaded
+    by a script.
+    Also scripts to handle global installations of =swak4Foam=
+*** Force equations
+    A class to force equations to certain values according to
+    expressions
+*** New utility =funkyDoCalc=
+    Utility does calculations on saved results and outputs single
+    numbers (min, max, sum, average) to the terminal. Can be used for
+    reporting or validity checks
+*** Debian packaging
+    Crude packaging for Debian
+*** Lookup-tables
+    A single-argument function can be specified as a piecewise linear
+    function. Basically works like timelines but the argument can be
+    something else (not only the time)
+*** Stored variables
+    Variables that store their values between time-steps. Applications
+    are statistics or switches
+*** Sampled sets
+    Sampled sets can now also be used as en entity on which
+    calculation is possible.
+** 2011-07-26
+*** New features:
+**** Rewrite of =rand= and =randNormal=
+     - These two functions now can receive an integer seed that
+       determines the pseudo-randooom sequence generated by  these functions
+     - Two functions =randFixed= and =randNormalFixed= were
+       added. While the usual =rand= functions generate a different
+       result at every time-steps for these functions the pseudo-random
+       sequence is determined *only* by the seed (not by the timestep)
+**** Binary =min= and =max=
+     Take the bigger/smaller of two fields. Helps avoid =?:=-operations
+**** Allow writing of only volume-fields in =funkySetAreaFields=
+     Application: If the results of the calculation are only needed in
+     ParaView
+**** Internal changes
+     - Use =autoPtr= for sets
+     - Update sets that change in memory or on disc
+*** Bug-fixes
+**** =funkySetAreaFields= did not check for the correct fields
+     Fixed by Petr Vita
+**** =surfaceProxy= uses the wrong geometric data
+**** Avoid floating point exceptions with division of fields
+     Calculated boundaries were $0$ and caused a division by zero
+*** Packaging
+**** Update Debian packaging
+     - Packaging information for the currently used OF-version is
+       generated (allows a separate =swak=-package for every OF-version
+     - Submission to launchpad added
+**** Deployment scripts
+     Now install to =FOAM_SITE_APPBIN/LIBBIN=
+** Next release
+*** New features
+**** =replayTransientBC= now supports multiple regions
+     Uses the usual =-region=-option. Looks for a separate dictionary
+     in the =system=-directory of that region
+**** =replayTransientBC= allows execution of functionObjects
+     This can be switched on using the =allowFunctionObjects=-option
+**** =Python=-embedding
+     Allows the execution of Python-Code in a functionObject
+
+     This feature is still experimental and the organization of the
+     libraries is subject to change
+**** Global variables
+     It is now possible to define variables that are 'global': They
+     can be read in any entity. 
+
+     Currently these variables can only be uniform.
+
+     To access global variables the specification-dictionary has to
+     have a =wordList= named =globalScopes=. The scopes are searched
+     in that order for the names of global variables. Having scopes
+     allows some kind of separation of the variables
+*** Administrative and packaging
+**** Inject =swak4Foam= into a distro
+     Added a script that takes the current sources, copies them into
+     the appropriate places of a =OpenFOAM=-installation and slightly
+     rewrites them to compile in this place. What happens then
+     (committing them into the repository or just plain compilation)
+     is up to the maintainer
+**** Absorb =simpleFunctionObjects=
+     As many parts of =swak4Foam= depend on it the
+     =simpleFunctionObjects= have now been absorbed into
+     =swak4Foam=. They can still be compiled on their own

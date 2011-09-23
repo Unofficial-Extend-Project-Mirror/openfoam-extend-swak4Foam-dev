@@ -18,3 +18,9 @@ velocity
 	theTitle "Maximum velocity of interface";
 	progress "vel $0";
 }
+surface
+{
+	theTitle "Area of the surface";
+	expr "Expression surface :  sum=(%f%)";
+	progress "A: $0";
+}

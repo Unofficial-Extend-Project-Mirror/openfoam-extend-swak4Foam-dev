@@ -45,7 +45,8 @@ ExpressionResult::ExpressionResult()
 :
     valType_("None"),
     valPtr_(NULL),
-    isPoint_(false)
+    isPoint_(false),
+    isSingleValue_(true)
 {
     clearResult();
 }
@@ -54,9 +55,64 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 :
     valType_("None"),
     valPtr_(NULL),
-    isPoint_(false)
+    isPoint_(false),
+    isSingleValue_(true)
 {
     (*this)=rhs;
+}
+
+ExpressionResult::ExpressionResult(
+    const dictionary &dict,
+    bool isSingleValue
+)
+:
+    valType_(dict.lookupOrDefault<word>("valueType","None")),
+    valPtr_(NULL),
+    isPoint_(dict.lookupOrDefault<bool>("isPoint",false)),
+    isSingleValue_(
+        dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
+    )
+{
+    if(
+        dict.found("value")
+    ) {
+        if(isSingleValue_) {
+            if(valType_==pTraits<scalar>::typeName) {
+                valPtr_=new scalarField(1,pTraits<scalar>(dict.lookup("value")));
+            } else if(valType_==pTraits<vector>::typeName) {
+                valPtr_=new Field<vector>(1,pTraits<vector>(dict.lookup("value")));
+            } else if(valType_==pTraits<tensor>::typeName) {
+                valPtr_=new Field<tensor>(1,pTraits<tensor>(dict.lookup("value")));
+            } else if(valType_==pTraits<symmTensor>::typeName) {
+                valPtr_=new Field<symmTensor>(1,pTraits<symmTensor>(dict.lookup("value")));
+            } else if(valType_==pTraits<sphericalTensor>::typeName) {
+                valPtr_=new Field<sphericalTensor>(1,pTraits<sphericalTensor>(dict.lookup("value")));
+            } else {
+                FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
+                    << "Don't know how to read data type " << valType_ 
+                        << " as a single value" << endl
+                        << abort(FatalError);
+            }
+        } else {
+            if(valType_==pTraits<scalar>::typeName) {
+                valPtr_=new scalarField(dict.lookup("value"));
+            } else if(valType_==vector::typeName) {
+                valPtr_=new Field<vector>(dict.lookup("value"));
+            } else if(valType_==tensor::typeName) {
+                valPtr_=new Field<tensor>(dict.lookup("value"));
+            } else if(valType_==symmTensor::typeName) {
+                valPtr_=new Field<symmTensor>(dict.lookup("value"));
+            } else if(valType_==sphericalTensor::typeName) {
+                valPtr_=new Field<sphericalTensor>(dict.lookup("value"));
+            } else if(valType_==pTraits<bool>::typeName) {
+                valPtr_=new Field<bool>(dict.lookup("value"));
+            } else {
+                FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
+                    << "Don't know how to read data type " << valType_ << endl
+                        << abort(FatalError);
+            }
+        }
+    }
 }
 
 
@@ -69,6 +125,11 @@ ExpressionResult::~ExpressionResult()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+bool ExpressionResult::hasValue() const
+{
+    return valType_!="None" && valPtr_!=NULL;
+}
 
 void ExpressionResult::clearResult()
 {
@@ -102,7 +163,7 @@ void ExpressionResult::uglyDelete()
     valPtr_=NULL;
 }
 
-ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn)
+ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn) const
 {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {
@@ -151,6 +212,7 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
     valType_=rhs.valType_;
     isPoint_=rhs.isPoint_;
+    isSingleValue_=rhs.isSingleValue_;
 
     if( rhs.valPtr_ ) {
         if(valType_==pTraits<scalar>::typeName) {
@@ -182,6 +244,29 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
+// I have NO idea why this is necessary, but since the introduction of the 
+// enable_if_rank0-stuff the function below does not compile without it
+
+template<>
+class pTraits<token::punctuationToken> 
+{};
+
+template<int N>
+class pTraits<char [N]> 
+{};
+
+template<>
+class pTraits<Ostream&(Ostream&)> 
+{};
+
+template<>
+class pTraits<char> 
+{};
+
+template<>
+class pTraits<const char *> 
+{};
+
 Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
 {
     out << token::BEGIN_BLOCK << endl;
@@ -192,6 +277,9 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 
         out.writeKeyword("isPoint");
         out << data.isPoint_ << token::END_STATEMENT << nl;
+
+        out.writeKeyword("isSingleValue");
+        out << data.isSingleValue_ << token::END_STATEMENT << nl;
 
         out.writeKeyword("value");
         if(data.valType_==pTraits<scalar>::typeName) {

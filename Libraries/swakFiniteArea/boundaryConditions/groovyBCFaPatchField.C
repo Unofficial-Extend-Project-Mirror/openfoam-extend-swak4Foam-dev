@@ -77,15 +77,11 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
     groovyBCCommon<Type>(dict,true),
     driver_(this->patch())
 {
-    driver_.setVariableStrings(dict);
-
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
     }
 
-    if(dict.found("timelines")) {
-        driver_.readLines(dict.lookup("timelines"));
-    }
+    driver_.readVariablesAndTables(dict);
 
     this->refValue() = pTraits<Type>::zero;
 

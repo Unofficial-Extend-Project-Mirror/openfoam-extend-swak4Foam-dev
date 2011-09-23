@@ -140,7 +140,7 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 bool SampledSurfaceValueExpressionDriver::update()
 {
-    bool updated=theSurface_.update();
+    bool updated=theSurface_.update(); // valgrind reports huge memory losses here
     if(debug) {
         Info << "Updated: " << updated << " " << this->size() << endl;
     }
@@ -190,7 +190,7 @@ Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorF
 
 vectorField *SampledSurfaceValueExpressionDriver::makePositionField()
 {
-    return new vectorField(theSurface_.Cf());
+    return new vectorField(theSurface_.Cf());  // valgrind reports huge memory losses here
 }
 
 scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
@@ -210,6 +210,11 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
 
 scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
 {
+    if(debug) {
+        Info << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
+            << " size: " << this->size() << " magSf: " << theSurface_.magSf().size() 
+            << endl;
+    }
     return new scalarField(theSurface_.magSf());
 }
 

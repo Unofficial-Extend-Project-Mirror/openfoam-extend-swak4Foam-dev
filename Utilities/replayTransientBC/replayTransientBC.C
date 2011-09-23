@@ -53,12 +53,17 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
+#   include "addRegionOption.H"
+    argList::validOptions.insert("allowFunctionObjects","");
+
 #   include "setRootCase.H"
 #   include "createTime.H"
 
-    runTime.functionObjects().off();
+    if(!args.options().found("allowFunctionObjects")) {
+        runTime.functionObjects().off();
+    }
 
-#   include "createMesh.H"
+#   include "createNamedMesh.H"
 
     IOdictionary replayDict
     (

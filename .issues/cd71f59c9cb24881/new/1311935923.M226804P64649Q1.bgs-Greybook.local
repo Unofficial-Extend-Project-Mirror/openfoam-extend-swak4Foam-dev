@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 29 Jul 2011 12:35:11 +0200
+State: new
+Subject: Allow non-uniform external variables
+Message-Id: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+
+This would allow cases like fillingTheDam to be more flexible as every
+sensor could be switched separately according to the state there.
+
+Opens a whole can of worms as it has to be made sure that the variable
+originates from the same geometric entity (everything else wouldn't
+make sense)

@@ -53,51 +53,54 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpress
 
     CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set,const CellSetValueExpressionDriver& orig)
 :
-        SubsetValueExpressionDriver(orig),
+        SetSubsetValueExpressionDriver(orig),
         cellSet_(
-            dynamic_cast<const fvMesh&>(set.db()),
-            //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with f++ 4.2
-            //            set.name()+"_copy",
-            set.name(),
-            set
+            new cellSet(
+                dynamic_cast<const fvMesh&>(set.db()),
+                //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with f++ 4.2
+                //            set.name()+"_copy",
+                set.name(),
+                set
+            )
         )
 {}
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
 :
-    SubsetValueExpressionDriver(),
+    SetSubsetValueExpressionDriver(set.name(),NEW),
     cellSet_(
+        new cellSet
+        (
             dynamic_cast<const fvMesh&>(set.db()),
             //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
             //            set.name()+"_copy",
             set.name(),
             set
+        )
     )
 {}
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(),
+    SetSubsetValueExpressionDriver(id,INVALID),
     cellSet_(
-        mesh,
-        id,
         getSet<cellSet>(
             mesh,
-            id
-        )()
+            id,
+            origin_
+        )
     )
 {
 }
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(dict),
+    SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),NEW),
     cellSet_(
-        regionMesh(dict,mesh),
-        dict.lookup("setName"),
         getSet<cellSet>(
             regionMesh(dict,mesh),
-            dict.lookup("setName")
+            dict.lookup("setName"),
+            origin_
         )
     )
 {
@@ -143,12 +146,12 @@ Field<sphericalTensor> *CellSetValueExpressionDriver::getSphericalTensorField(co
 
 vectorField *CellSetValueExpressionDriver::makePositionField()
 {
-    return getFromFieldInternal(this->mesh().C(),cellSet_);
+    return getFromFieldInternal(this->mesh().C(),cellSet_());
 }
 
 scalarField *CellSetValueExpressionDriver::makeCellVolumeField()
 {
-    return getFromFieldInternal(this->mesh().V(),cellSet_);
+    return getFromFieldInternal(this->mesh().V(),cellSet_());
 }
 
 
@@ -191,6 +194,16 @@ vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
             << endl
             << abort(FatalError);
     return new vectorField(0);
+}
+
+bool CellSetValueExpressionDriver::update()
+{
+    if(debug) {
+        Info << "CellSet: update " << cellSet_->name() 
+            << endl;
+    }
+
+    return updateSet(cellSet_,id_,origin_);
 }
 
 // ************************************************************************* //

@@ -4,3 +4,4 @@
 
 (cd Utilities; ./Allwclean )
 
+# (cd Examples/tests/fluIntegration/libRegistered; wclean)

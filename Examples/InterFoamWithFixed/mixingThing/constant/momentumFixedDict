@@ -1,0 +1,33 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+variables (
+    "angle=0.6*sin(time());"
+    "direction=vector(sin(angle),cos(angle),0);"
+    "tPos=vector(pos().x*cos(-angle)+pos().y*sin(-angle),pos().y*cos(-angle)-pos().x*sin(-angle),0);"
+    "strength=(time()<2.5? 1 : (time()>3.5 ? 10 : (1+(time()-2.5)*9)));"
+);
+
+valueExpression   "direction*strength";
+
+maskExpression "tPos.x>-0.05 && tPos.x<0.05 && tPos.y>-0.4 && tPos.y<0.1";
+
+// dimensions [1 -2 -2 0 0 0 0];
+
+// verbose false;
+
+// ************************************************************************* //

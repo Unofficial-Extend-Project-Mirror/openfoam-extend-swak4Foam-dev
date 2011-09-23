@@ -51,6 +51,7 @@ SourceFiles
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "ExpressionResult.H"
+#include "StoredExpressionResult.H"
 
 namespace Foam
 {
@@ -77,7 +78,22 @@ protected:
 
     HashTable<ExpressionResult,word> variables_;
 
+    List<StoredExpressionResult> storedVariables_;
+
+    label storedVariablesIndex_;
+
+    wordList globalVariableScopes_;
+
+    const ExpressionResult &lookupGlobal(const word &name) const;
+
+    template<class T>
+    bool isGlobal(const word &name,bool isPoint) const;
+
+    void setGlobalScopes(const wordList &);
+
     HashTable<interpolationTable<scalar>,word> lines_;
+
+    HashTable<interpolationTable<scalar>,word> lookup_;
 
     Foam::string content_;
 
@@ -111,6 +127,9 @@ protected:
         const fvMesh &mesh
     );
 
+    //- look through the current variable values and update the stored variables
+    void updateStoredVariables(bool force=false);
+
 private:
     //- keep fields read from disc in memory
     bool cacheReadFields_;
@@ -140,9 +159,25 @@ protected:
     template<class T>
     inline tmp<T> readAndRegister(const word &name);
 
-    template<class T>
-    inline autoPtr<T> getSet(const fvMesh &,const word &);
+    enum SetOrigin {
+        NEW,
+        FILE,
+        MEMORY,
+        CACHE,
+        INVALID
+    };
 
+    template<class T>
+    inline autoPtr<T> getSet(const fvMesh &,const word &,SetOrigin &origin);
+
+    template<class T>
+    inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
+
+    template<class T>
+    autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
+
+    template<class T>
+    inline void correctField(T &f) const;
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -290,12 +325,32 @@ public:
     template<class T>
     bool isThere(const string &name) const;
 
+    //- is this a timeline
     inline bool isLine(const string &name) const;
+
+    //- get the value for a timeline for a specific time
     scalarField *getLine(const string &name,scalar t);
+
+    //- value of the timeline
     scalar getLineValue(const string &name,scalar t);
 
-    void readLines(Istream &is,bool clear=true);
-    void writeLines(Ostream &os) const;
+    //- read some interpolation tables
+    void readTables(Istream &is,HashTable<interpolationTable<scalar> > &,bool clear=true);
+
+    //- read all the interpolation tables known to man
+    void readTables(const dictionary &);
+
+    //- read variables and tables (for objects that were not constructed by a dictionary)
+    void readVariablesAndTables(const dictionary &);
+
+    //- write some interpolation tables
+    void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
+
+    //- is this a lookup table
+    inline bool isLookup(const string &name) const;
+
+    //- get the value for a lookuptable for a set of values
+    tmp<scalarField> getLookup(const string &name,const scalarField &val);
 
     scalarField *makeModuloField(const scalarField &a,const scalarField &b);
     scalarField *makeRandomField(label seed=0);

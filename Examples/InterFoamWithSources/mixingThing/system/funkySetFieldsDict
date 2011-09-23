@@ -1,0 +1,42 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+expressions
+(
+    setLower
+    {
+        field alpha1;
+        keepPatches true;
+
+        // this is just for finding a reported bug
+        /*        variables (
+            "Xmin=-0.15;"
+            "Ymin=0.0;"
+            "Zmin=-0.15;"
+            "Xmax=0.15;"
+            "Ymax=0.3;"
+            "Zmax=0.15;"
+            "power=27000;"
+            "V=(Xmax-Xmin)*(Ymax-Ymin)*(Zmax-Zmin);"
+            "powerDens=power/V;"
+            ); */
+        expression "pos().y<0 ? 1 : 0";
+    }
+
+);
+
+// ************************************************************************* //

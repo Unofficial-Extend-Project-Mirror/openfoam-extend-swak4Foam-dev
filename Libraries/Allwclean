@@ -1,5 +1,9 @@
 #! /bin/sh
 
+if [ -d simpleFunctionObjects ]; then 
+    wclean simpleFunctionObjects
+fi
+
 wclean swak4FoamParsers
 
 wclean groovyBC
@@ -15,3 +19,8 @@ wclean swakSourceFields
 wclean swakFiniteArea
 
 wclean groovyStandardBCs
+
+wclean pythonIntegration
+
+# remove residual from bison
+rm -f */*.output

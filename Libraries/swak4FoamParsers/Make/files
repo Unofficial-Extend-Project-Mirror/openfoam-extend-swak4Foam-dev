@@ -1,5 +1,12 @@
 SurfacesRepository.C
+SetsRepository.C
+GlobalVariablesRepository.C
+
 ExpressionResult.C
+StoredExpressionResult.C
+
+swakRegistryProxySurface.C
+swakRegistryProxySet.C
 
 FieldValueExpressionParser.yy
 PatchValueExpressionParser.yy
@@ -15,6 +22,7 @@ PatchValueExpressionDriver.C
 
 SubsetValueExpressionLexer.ll
 SubsetValueExpressionDriver.C
+SetSubsetValueExpressionDriver.C
 
 CellSetValueExpressionDriver.C
 FaceSetValueExpressionDriver.C
@@ -23,5 +31,6 @@ CellZoneValueExpressionDriver.C
 FaceZoneValueExpressionDriver.C
 
 SampledSurfaceValueExpressionDriver.C
+SampledSetValueExpressionDriver.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers

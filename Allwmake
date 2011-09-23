@@ -1,6 +1,34 @@
-#! /bin/sh
+#! /bin/bash
+
+if [ -e swakConfiguration ]; then
+    echo "Reading variables from 'swakConfiguration'"
+    source swakConfiguration
+else
+    echo "No 'swakConfiguration'. Python etc won't work"
+fi
+
+. theFiles.sh
+
+SOEXT=so
+
+if [ `uname -s`=="Darwin" ]; then
+    SOEXT=dylib
+fi
+
+for lib in ${SWAKLIBS[@]}
+do
+    if [ -e $FOAM_LIBBIN/lib$lib.$SOEXT ]; then 
+	echo "$FOAM_LIBBIN/lib$lib.$SOEXT shadows library that will be compiled. This might break the compilation of the utilities"
+	if [ -z $I_KNOW_THE_RISCS ]; then 
+	    echo "Set the environment variable I_KNOW_THE_RISCS if you want to continue nevertheless"
+	    exit
+	fi
+    fi
+done
 
 (cd Libraries; wmake all )
 
 (cd Utilities; wmake all )
+
+# (cd Examples/tests/fluIntegration/libRegistered; wmake)
 

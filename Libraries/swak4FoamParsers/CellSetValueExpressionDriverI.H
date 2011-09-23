@@ -43,7 +43,7 @@ License
 namespace Foam {
     label CellSetValueExpressionDriver::size() const
     {
-        return cellSet_.size();
+        return cellSet_->size();
     }
 
     label CellSetValueExpressionDriver::pointSize() const
@@ -54,8 +54,8 @@ namespace Foam {
 
     const fvMesh &CellSetValueExpressionDriver::mesh() const
     {
-        return dynamic_cast<const fvMesh&>(cellSet_.db());
-        //        return dynamicCast<const fvMesh&>(cellSet_.db()); // doesn't wor with gcc 4.2
+        return dynamic_cast<const fvMesh&>(cellSet_->db());
+        //        return dynamicCast<const fvMesh&>(cellSet_->db()); // doesn't wor with gcc 4.2
     }
 
 }

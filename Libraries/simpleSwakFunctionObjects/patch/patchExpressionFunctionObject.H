@@ -70,11 +70,14 @@ class patchExpressionFunctionObject
     //- the expression that is to be evaluated 
     string expression_;
 
-    //- expressions for variables
-    stringList variables_;
+    //- the specification
+    dictionary data_;
 
     //- list with the accumulations of evaluated expression
     wordList accumulations_;
+
+    PtrList<PatchValueExpressionDriver> drivers_;
+
 protected:
 
     word dirName();
@@ -104,6 +107,8 @@ public:
     //- Do the writing
     virtual void write();
 
+    //- read the stuff
+    virtual bool start();
 };
 
 

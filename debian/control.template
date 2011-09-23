@@ -1,0 +1,31 @@
+Source: swak4foam-%(ofpkg)s
+Priority: extra
+Maintainer: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Build-Depends: debhelper (>= 7.0.50~), devscripts, cdbs,
+	 bison, flex, binutils-dev,
+	 %(ofpkg)s      
+Standards-Version: 3.9.1
+Section: libs
+Homepage: http://openfoamwiki.net/index.php/Contrib/swak4Foam
+#Vcs-Git: git://git.debian.org/collab-maint/swak4foam.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/swak4foam.git;a=summary
+
+Package: swak4foam-%(ofpkg)s-dev
+Section: libdevel
+Architecture: any
+Depends: swak4foam-%(ofpkg)s (= ${binary:Version}), bison, flex
+Description: swak4Foam - The "Swiss Army Knife For OpenFOAM"
+   A number of libraries that allows
+   to use general expressions in OpenFOAM-cases. Successor of
+   funkSetFields and groovyBC
+
+Package: swak4foam-%(ofpkg)s
+Section: libs
+Architecture: any
+Depends: %(ofpkg)s, ${shlibs:Depends}, ${misc:Depends}
+Provides: funkysetfields, groovybc, simplefunctionobjects
+Conflicts: funkysetfields, groovybc, simplefunctionobjects
+Replaces: funkysetfields, groovybc, simplefunctionobjects
+Description: swak4Foam - A number of libraries that allows
+   to use general expressions in OpenFOAM-cases. Successor of
+   funkSetFields and groovyBC

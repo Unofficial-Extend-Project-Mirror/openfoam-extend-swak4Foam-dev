@@ -23,7 +23,9 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         0.5;
+endTime         0.5; // Time till convergence
+
+// endTime         0.05; // time for baseline-comparison
 
 deltaT          1e-5;
 
@@ -37,7 +39,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression uncompressed;
+writeCompression compressed;
 
 timeFormat      general;
 
@@ -53,7 +55,9 @@ maxAlphaCo      0.2;
 maxDeltaT       1e-3;
 
 libs (
+    "libOpenFOAM.so" // keeps paraFoam happy
     "libtwoPhaseInterfaceProperties.so"
+    "libinterfaceProperties.so"
     "libsimpleSwakFunctionObjects.so" 
     "libswakFunctionObjects.so" 
 );
@@ -85,6 +89,37 @@ functions
             max
         );        
     }
+    // This should fail because the size of the variable changes
+//     moved
+//     {
+//         type swakExpression;
+//         valueType surface;
+//         surfaceName interface;
+//         verbose true;
+//         expression "mag(startPos-pos())";
+//         storedVariables (
+//             {
+//                 name startPos;
+//                 initialValue "pos()";
+//             }
+//         );
+//         accumulations (
+//             min
+//             max
+//             average
+//         );        
+//     }
+    surface
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName interface;
+        verbose true;
+        expression "area()/0.001";
+        accumulations (
+            sum
+        );
+    }
     deviation
     {
         type swakExpression;
@@ -108,6 +143,21 @@ functions
             max
         );        
     }
+    swakSurfInterface
+    {
+        type surfaces;
+        outputControl outputTime;
+        //        outputControl timeStep;
+        outputInterval 1;
+        fields ( U );
+        surfaceFormat vtk;
+        surfaces (
+            interface {
+                type swakRegistryProxy;
+                surfaceName interface;
+            }
+        );
+    } 
 );
 
 // ************************************************************************* //

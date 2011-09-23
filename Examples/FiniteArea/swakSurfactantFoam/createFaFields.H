@@ -76,3 +76,19 @@ faExpressionSource<scalar> surfactantSource
     ),
     mesh
 );
+
+faForceEquation<scalar> surfactantForce
+(
+    IOdictionary
+    (
+        IOobject
+        (
+            "surfactantForceDict",
+            runTime.constant(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        )
+    ),
+    mesh
+);

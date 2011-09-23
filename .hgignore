@@ -25,3 +25,9 @@ auto
 doc
 \#*\#
 *.orig
+
+debian/rules
+debian/control
+
+swakConfiguration
+

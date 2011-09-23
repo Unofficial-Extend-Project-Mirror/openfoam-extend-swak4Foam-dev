@@ -4,6 +4,8 @@
 #include <errno.h>
 %}
 
+%x needsIntegerParameter
+
 %option noyywrap nounput batch debug 
 %option stack
 %option prefix="parserFaField"
@@ -24,10 +26,13 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL>[ \t]+             yylloc->step ();
+<INITIAL,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
 <INITIAL>[-+*/%(),&^<>!?:.]               return yytext[0];
+
+<needsIntegerParameter>[(] return yytext[0];
+<needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
 
 %{
     typedef parserFaField::FaFieldValueExpressionParser::token token;
@@ -84,9 +89,11 @@ face                  return token::TOKEN_face;
 length                return token::TOKEN_length;
 area                  return token::TOKEN_area;
 rdist                 return token::TOKEN_rdist;
-rand                  return token::TOKEN_rand;
+rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
 id                    return token::TOKEN_id;
-randNormal            return token::TOKEN_randNormal;
+randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
+randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
+randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 cpu                   return token::TOKEN_cpu;
 
@@ -114,6 +121,12 @@ false                  return token::TOKEN_FALSE;
                        errno = 0;
                        yylval->val = atof(yytext);
                        return token::TOKEN_NUM;
+                     }
+
+<needsIntegerParameter>{int}                {
+                       errno = 0;
+                       yylval->integer = atoi(yytext);
+                       return token::TOKEN_INT;
                      }
 
 [xyz]                return yytext[0];
@@ -144,7 +157,7 @@ false                  return token::TOKEN_FALSE;
                      }
 
 .                    driver.error (*yylloc, "invalid character");
-
+<needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only a integer is expeced");
 
 %%
 

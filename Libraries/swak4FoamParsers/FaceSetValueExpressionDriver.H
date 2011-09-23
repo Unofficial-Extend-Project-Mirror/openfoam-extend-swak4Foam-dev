@@ -49,7 +49,7 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "SubsetValueExpressionDriver.H"
+#include "SetSubsetValueExpressionDriver.H"
 
 namespace Foam
 {
@@ -60,12 +60,17 @@ namespace Foam
 
 class FaceSetValueExpressionDriver
 :
-    public SubsetValueExpressionDriver
+    public SetSubsetValueExpressionDriver
 {
     // Private data
-    faceSet faceSet_;
+    autoPtr<faceSet> faceSet_;
 
     // Private Member Functions
+
+protected:
+
+    //- update stuff that needs updating
+    virtual bool update();
 
 public:
 

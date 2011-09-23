@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 29 Jul 2011 12:33:05 +0200
+Subject: Re: Add global variables
+Message-Id: <bf0eefdbeb35c734-9f7c62810a02119e-artemis@bgs-Greybook.local>
+References: <bf0eefdbeb35c734-0-artemis@bgs-Greybook.local>
+In-Reply-To: <bf0eefdbeb35c734-0-artemis@bgs-Greybook.local>
+
+Start work on this in a new branch feature/globalVariables

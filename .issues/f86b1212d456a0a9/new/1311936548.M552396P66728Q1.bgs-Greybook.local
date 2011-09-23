@@ -1,0 +1,13 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 29 Jul 2011 12:47:00 +0200
+State: new
+Subject: Generalize FieldValueDriver
+Message-Id: <f86b1212d456a0a9-0-artemis@bgs-Greybook.local>
+
+Currently can only handle Volume-Fields and there only return scalars
+and vectors (all the other drivers handle all types although this is
+seldom used)
+
+Goal:
+- return surfaceFields too
+- return the three tensor-classes

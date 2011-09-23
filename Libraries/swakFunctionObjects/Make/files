@@ -6,5 +6,9 @@ clearExpressionField.C
 clearExpressionFieldFunctionObject.C
 createSampledSurface.C
 createSampledSurfaceFunctionObject.C
+createSampledSet.C
+createSampledSetFunctionObject.C
+addGlobalVariable.C
+addGlobalVariableFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects

@@ -98,9 +98,13 @@ void setField
         }
     }
 
+    label totalCells=tmp->size();
+    reduce(totalCells,plusOp<label>());
+    reduce(setCells,plusOp<label>());
+
     FieldValueExpressionDriver::setValuePatches(*tmp,keepPatches,valuePatches);
 
-    Info << " Setting " << setCells << " of " << tmp->size() << " cells" << endl;
+    Info << " Setting " << setCells << " of " << totalCells << " cells" << endl;
 
     Info << " Writing to " << name << endl;
 
@@ -119,6 +123,7 @@ void doAnExpression
     bool doDebug,
     bool create,
     bool cacheVariables,
+    const dictionary &dict,
     const dimensionSet &dim,
     bool keepPatches,
     const wordList &valuePatches
@@ -169,12 +174,14 @@ void doAnExpression
         time,
         runTime,
         mesh,
-        cacheVariables);
-    FieldValueExpressionDriver ldriver(
-        time,
-        runTime,
-        mesh,
-        cacheVariables);
+        cacheVariables
+    );
+    driver.readVariablesAndTables(dict);
+//     FieldValueExpressionDriver ldriver(
+//         time,
+//         runTime,
+//         mesh,
+//         cacheVariables);
 
     if (doDebug) {
         Info << "Parsing expression: " << expression << "\nand condition " 
@@ -182,13 +189,16 @@ void doAnExpression
         driver.setTrace(true,true);
     }
 
-    ldriver.parse(condition);
-    if(!ldriver.resultIsLogical()) {
+    driver.clearVariables();
+
+    driver.parse(condition);
+    if(!driver.resultIsLogical()) {
         FatalErrorIn("doAnExpression()")
                 << " condition: " << condition 
                     << " does not evaluate to a logical expression" 
                     << exit(FatalError);
     }
+    volScalarField conditionField(driver.getScalar());
 
     driver.parse(expression);
 
@@ -219,7 +229,7 @@ void doAnExpression
                 mesh,
                 time,
                 driver.getScalar(),
-                ldriver.getScalar(),
+                conditionField,
                 create,
                 dim,
                 keepPatches,
@@ -231,7 +241,7 @@ void doAnExpression
               mesh,
               time,
               driver.getVector(),
-              ldriver.getScalar(),
+              conditionField,
               create,
               dim,
               keepPatches,
@@ -330,6 +340,8 @@ int main(int argc, char *argv[])
             IStringStream valuePatchesStream("("+valuePatchesString+")"); 
             wordList valuePatches(valuePatchesStream);
 
+            dictionary dummyDict;
+
             doAnExpression(
                 mesh,
                 field,
@@ -339,6 +351,7 @@ int main(int argc, char *argv[])
                 args.options().found("debugParser"),
                 create,
                 !args.options().found("noCacheVariables"),
+                dummyDict,
                 dim,
                 keepPatches,
                 valuePatches
@@ -439,6 +452,7 @@ int main(int argc, char *argv[])
                     args.options().found("debugParser"),
                     create,
                     !args.options().found("noCacheVariables"),
+                    part,
                     dim,
                     keepPatches,
                     valuePatches
