@@ -527,6 +527,10 @@
      have a =wordList= named =globalScopes=. The scopes are searched
      in that order for the names of global variables. Having scopes
      allows some kind of separation of the variables
+**** Simplified boundary condition =groovyBCFixedValue=
+     Added a boundary condition than allows to only fix the
+     values. This should help to avoid problems with cases that don't
+     like =mixed= (on which the regular =groovyBC= is based)
 *** Administrative and packaging
 **** Inject =swak4Foam= into a distro
      Added a script that takes the current sources, copies them into

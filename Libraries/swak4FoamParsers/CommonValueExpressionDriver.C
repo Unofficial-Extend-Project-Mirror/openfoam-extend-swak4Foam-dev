@@ -86,6 +86,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
 {
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
     }

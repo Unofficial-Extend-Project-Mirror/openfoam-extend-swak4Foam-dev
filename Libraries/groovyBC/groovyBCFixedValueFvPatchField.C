@@ -31,7 +31,7 @@ License
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#include "groovyBCFvPatchField.H"
+#include "groovyBCFixedValueFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -41,63 +41,58 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-groovyBCFvPatchField<Type>::groovyBCFvPatchField
+groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF
 )
 :
-    mixedFvPatchField<Type>(p, iF),
-    groovyBCCommon<Type>(true),
+    fixedValueFvPatchField<Type>(p, iF),
+    groovyBCCommon<Type>(false),
     driver_(this->patch())
 {
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 1" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField 1" << endl;
     }
-
-    this->refValue() = pTraits<Type>::zero;
-    this->refGrad() = pTraits<Type>::zero;
 }
 
 
 template<class Type>
-groovyBCFvPatchField<Type>::groovyBCFvPatchField
+groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
 (
-    const groovyBCFvPatchField<Type>& ptf,
+    const groovyBCFixedValueFvPatchField<Type>& ptf,
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
 :
-    mixedFvPatchField<Type>(ptf, p, iF, mapper),
+    fixedValueFvPatchField<Type>(ptf, p, iF, mapper),
     groovyBCCommon<Type>(ptf),
     driver_(this->patch(),ptf.driver_)
 {
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 2" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField 2" << endl;
     }
 }
 
 
 template<class Type>
-groovyBCFvPatchField<Type>::groovyBCFvPatchField
+groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
     const dictionary& dict
 )
 :
-    mixedFvPatchField<Type>(p, iF),
-    groovyBCCommon<Type>(dict,true),
+    fixedValueFvPatchField<Type>(p, iF),
+    groovyBCCommon<Type>(dict,false),
     driver_(dict,this->patch())
 {
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField 3" << endl;
     }
 
     driver_.readVariablesAndTables(dict);
-
-    this->refValue() = pTraits<Type>::zero;
 
     if (dict.found("value"))
     {
@@ -108,54 +103,52 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     }
     else
     {
-        fvPatchField<Type>::operator=(this->refValue());
+        (*this)==pTraits<Type>::zero;
+
         WarningIn(
-            "groovyBCFvPatchField<Type>::groovyBCFvPatchField"
+            "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField"
             "("
             "const fvPatch& p,"
             "const DimensionedField<Type, volMesh>& iF,"
             "const dictionary& dict"
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
-            << " on " << this->patch().name() << " therefore using "
-            << this->refValue()
+            << " on " << this->patch().name() << " therefore would be undefined "
+            << pTraits<Type>::zero
             << endl;
     }
-
-    this->refGrad() = pTraits<Type>::zero;
-    this->valueFraction() = 1;
 }
 
 
 template<class Type>
-groovyBCFvPatchField<Type>::groovyBCFvPatchField
+groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
 (
-    const groovyBCFvPatchField<Type>& ptf
+    const groovyBCFixedValueFvPatchField<Type>& ptf
 )
 :
-    mixedFvPatchField<Type>(ptf),
+    fixedValueFvPatchField<Type>(ptf),
     groovyBCCommon<Type>(ptf),
     driver_(this->patch(),ptf.driver_)
 {
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 4" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField 4" << endl;
     }
 }
 
 
 template<class Type>
-groovyBCFvPatchField<Type>::groovyBCFvPatchField
+groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
 (
-    const groovyBCFvPatchField<Type>& ptf,
+    const groovyBCFixedValueFvPatchField<Type>& ptf,
     const DimensionedField<Type, volMesh>& iF
 )
 :
-    mixedFvPatchField<Type>(ptf, iF),
+    fixedValueFvPatchField<Type>(ptf, iF),
     groovyBCCommon<Type>(ptf),
     driver_(this->patch(),ptf.driver_)
 {
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 5" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField 5" << endl;
     }
 }
 
@@ -163,10 +156,10 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-void groovyBCFvPatchField<Type>::updateCoeffs()
+void groovyBCFixedValueFvPatchField<Type>::updateCoeffs()
 {
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::updateCoeffs" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::updateCoeffs" << endl;
         Info << "Value: " << this->valueExpression_ << endl;
         Info << "Gradient: " << this->gradientExpression_ << endl;
         Info << "Fraction: " << this->fractionExpression_ << endl;
@@ -179,26 +172,24 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
     }
 
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::updateCoeffs - updating" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::updateCoeffs - updating" << endl;
     }
 
     driver_.clearVariables();
 
-    this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
-    this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
-    this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_);
+    (*this) == driver_.evaluate<Type>(this->valueExpression_);
     
-    mixedFvPatchField<Type>::updateCoeffs();
+    fixedValueFvPatchField<Type>::updateCoeffs();
 }
 
 
 template<class Type>
-void groovyBCFvPatchField<Type>::write(Ostream& os) const
+void groovyBCFixedValueFvPatchField<Type>::write(Ostream& os) const
 {
     if(debug) {
-        Info << "groovyBCFvPatchField<Type>::write" << endl;
+        Info << "groovyBCFixedValueFvPatchField<Type>::write" << endl;
     }
-    mixedFvPatchField<Type>::write(os);
+    fixedValueFvPatchField<Type>::write(os);
     groovyBCCommon<Type>::write(os);
 
     driver_.writeCommon(os,this->debug_ || debug);
