@@ -7,8 +7,14 @@
    Bernhard Gschaider (bgschaid@ice-sf.at)
 ** Current Maintainer
    Bernhard Gschaider (bgschaid@ice-sf.at)
-** Contributors
+** Contributors 
+   In alphabetical order of the surname
+   - Peter Keller :: =sprinklerInlet=-case
    - Alexey Petrov :: =pythonFlu=-integration
+   If anyone is forgotten: let me know
+
+   Contributors to =simpleFunctionObjects= are listed separately in
+   the =README= of that library
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -202,6 +208,10 @@
           =controlDict= do determine the average filling height. Also
           stored variables for not switching back once the criterion
           is reached. Global variables defined by a function object
+**** sprinklingInlet
+     - Solver :: interFoam
+     - Description :: Winner of the =swak4Foam=-competition at the 6th
+                      OpenFOAM-Workshop (2011). By Peter Keller
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -289,6 +299,9 @@
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
+** =maintainanceScripts=
+   Undocumented scripts used for maintaining =swak4Foam=. *If you
+   don't understand them, don't use them*
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
@@ -317,6 +330,12 @@
    attempt to do this yourself). Patches generated with =hg export=
    make sure that all changes are attributed to the original developer
    (you).
+
+   An alternative would be the =bundle= command. Just do
+: hg bundle <bundlefile>
+   and then send the =bundlefile=. This will include *all* commits
+   that are not in the upstream repository and will allow similar
+   inclusion in the upstream as =export=.
 
    Once you have proven by successfully submitting changesets via =hg
    export= you can ask for write access to the mercurial repository.
@@ -530,3 +549,18 @@
 **** Using OF 2.0 codeStreams
      Adds a functionObject =swakCoded= that extends the
      =coded=-functionObject to read and write global variables
+**** Simplified boundary condition =groovyBCFixedValue=
+     Added a boundary condition than allows to only fix the
+     values. This should help to avoid problems with cases that don't
+     like =mixed= (on which the regular =groovyBC= is based)
+*** Administrative and packaging
+**** Inject =swak4Foam= into a distro
+     Added a script that takes the current sources, copies them into
+     the appropriate places of a =OpenFOAM=-installation and slightly
+     rewrites them to compile in this place. What happens then
+     (committing them into the repository or just plain compilation)
+     is up to the maintainer
+**** Absorb =simpleFunctionObjects=
+     As many parts of =swak4Foam= depend on it the
+     =simpleFunctionObjects= have now been absorbed into
+     =swak4Foam=. They can still be compiled on their own

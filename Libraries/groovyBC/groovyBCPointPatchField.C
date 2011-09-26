@@ -85,7 +85,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 :
     mixedPointPatchFieldType(p, iF),
     groovyBCCommon<Type>(dict,false,true),
-    driver_(getFvPatch(this->patch()))
+    driver_(dict,getFvPatch(this->patch()))
 {
     driver_.readVariablesAndTables(dict);
 

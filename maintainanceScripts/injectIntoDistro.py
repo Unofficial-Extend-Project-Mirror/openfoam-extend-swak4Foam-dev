@@ -44,6 +44,9 @@ for orig,dest in destTuples:
         print "Problem"
         sys.exit(-1)
 
+    print "Generating Mercurial information"
+    call(["hg","sum"],stdout=open(path.join(dest,"upstreamMerurialSummary"),"w"))
+
 testDir=path.join(tutDir,"tests")
 print "Removing tests in",testDir
 rmtree(testDir)
