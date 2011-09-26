@@ -89,7 +89,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(p, iF),
     groovyBCCommon<Type>(dict,true),
-    driver_(this->patch())
+    driver_(dict,this->patch())
 {
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;

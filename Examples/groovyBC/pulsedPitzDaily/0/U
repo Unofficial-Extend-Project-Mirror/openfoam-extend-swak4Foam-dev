@@ -28,6 +28,9 @@ boundaryField
 
         //        type            groovyBC;
         type            groovyBCFixedValue;
+
+        //        debugCommonDriver 0;
+
       variables (
           "yp=pts().y;"
           "minY=min(yp);"

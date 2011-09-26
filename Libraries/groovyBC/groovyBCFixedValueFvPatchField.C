@@ -86,7 +86,7 @@ groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
 :
     fixedValueFvPatchField<Type>(p, iF),
     groovyBCCommon<Type>(dict,false),
-    driver_(this->patch())
+    driver_(dict,this->patch())
 {
     if(debug) {
         Info << "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField 3" << endl;
