@@ -94,14 +94,30 @@ namespace Foam {
     template<class Type>
     bool CommonValueExpressionDriver::isVariable(const string &name,bool isPoint) const
     {
+        if(debug) {
+            Info << "CommonValueExpressionDriver::isVariable " 
+                << " looking for " << name << " isPoint: " << isPoint;
+        }
+
         if(variables_.found(name)) {
+            if(debug) {
+                Info << " - name found";
+            }
             if(
                 variables_[name].type()==pTraits<Type>::typeName 
                 && 
                 variables_[name].isPoint()==isPoint
             ) {
+                if(debug) {
+                    Info << " - OK" << endl;
+                }
+
                 return true;
             } 
+        }
+
+        if(debug) {
+            Info << " - not OK -> trying global" << endl;
         }
 
         return isGlobal<Type>(name,isPoint);
@@ -113,15 +129,31 @@ namespace Foam {
         bool isPoint
     ) const
     {
+        if(debug) {
+            Info << "CommonValueExpressionDriver::isGlobal "
+                << " looking for " << name << " isPoint: " << isPoint << flush;
+        }
+
         const ExpressionResult &aGlobal=lookupGlobal(name);
+
+        if (debug) {
+            Info << " - found type " << aGlobal.type()  
+                << " isPoint " << isPoint;
+        }
 
         if(
             aGlobal.type()==pTraits<Type>::typeName 
             && 
             aGlobal.isPoint()==isPoint
         ) {
+            if(debug) {
+                Info << " - OK" << endl;
+            }
             return true;
         } else {
+            if(debug) {
+                Info << " - not OK" << endl;
+            }
             return false;
         }
     }

@@ -629,7 +629,7 @@ pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3)
         | plexp '?' pexp ':' pexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toPoint '(' exp ')'        { $$ = driver.toPoint(*$3); delete $3;}
 	| TOKEN_PSID		{ 
-            $$=driver.getField<Foam::scalar>(*$1);delete $1;
+            $$=driver.getField<Foam::scalar>(*$1); delete $1;
 				}
 	| TOKEN_LOOKUP '(' pexp ')' { 
             $$=driver.getLookup(*$1,*$3).ptr(); delete $1; delete$3;
