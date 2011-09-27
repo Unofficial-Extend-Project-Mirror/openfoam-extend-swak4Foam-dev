@@ -17,6 +17,7 @@ FoamFile
 ddtSchemes
 {
     default backward;
+    //    ddt(distance) steadyState;
 }
 
 gradSchemes
@@ -46,6 +47,9 @@ laplacianSchemes
     laplacian(DkEff,k) Gauss linear corrected;
     laplacian(DBEff,B) Gauss linear corrected;
     laplacian(DnuTildaEff,nuTilda) Gauss linear corrected;
+
+    laplacian(lambda,distance) Gauss linear uncorrected;
+    laplacian(lambda,heat) Gauss linear corrected;
 }
 
 interpolationSchemes
