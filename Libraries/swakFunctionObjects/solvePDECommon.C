@@ -136,6 +136,7 @@ void Foam::solvePDECommon::execute()
 
 void Foam::solvePDECommon::end()
 {
+    execute();
 }
 
 void Foam::solvePDECommon::write()
