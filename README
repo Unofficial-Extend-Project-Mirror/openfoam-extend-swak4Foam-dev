@@ -542,3 +542,8 @@
      As many parts of =swak4Foam= depend on it the
      =simpleFunctionObjects= have now been absorbed into
      =swak4Foam=. They can still be compiled on their own
+*** Bugfixes
+**** Variables not working for parallel computations
+     If a variable is defined and the patch which it is defined on
+     doesn't have any faces the variable is reported on that processor
+     as /not existing/ and the whole run fails

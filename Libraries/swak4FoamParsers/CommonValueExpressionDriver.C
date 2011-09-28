@@ -588,6 +588,9 @@ void CommonValueExpressionDriver::evaluateVariable(const word &name,const string
     }
 
     variables_.set(name,ExpressionResult(result_));
+    if(debug>1) {
+        Pout << "Value stored: " << variables_[name] << endl;
+    }
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
