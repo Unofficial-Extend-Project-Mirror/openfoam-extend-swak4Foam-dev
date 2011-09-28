@@ -30,13 +30,16 @@ divSchemes
     default         none;
     div(phi,T)      Gauss limitedLinear 1;
     div(phi,TCompare)      Gauss limitedLinear 1;
+    div(phi,TLinear)      Gauss linear;
+    div(phi,TUpwind)      Gauss upwind;
+    div(phi,TSteady)      Gauss limitedLinear 1;
 }
 
 laplacianSchemes
 {
     default         none;
     laplacian(DT,T) Gauss linear corrected;
-    laplacian(diffusion,TCompare) Gauss linear corrected;
+    "laplacian\(diffusion,T.+\)" Gauss linear corrected;
 }
 
 interpolationSchemes
