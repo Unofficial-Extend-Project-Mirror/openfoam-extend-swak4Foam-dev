@@ -148,6 +148,7 @@ void Foam::solvePDECommon::write()
         mesh.time().outputTime()
     ) {
         solve();
+        theField_->write();
     }
 }
 
