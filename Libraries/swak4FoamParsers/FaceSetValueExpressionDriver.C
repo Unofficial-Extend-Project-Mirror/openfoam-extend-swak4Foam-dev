@@ -283,7 +283,7 @@ vectorField *FaceSetValueExpressionDriver::makeFaceAreaField()
 bool FaceSetValueExpressionDriver::update()
 {
     if(debug) {
-        Info << "FaceSet: update " << faceSet_->name() << endl;
+        Pout << "FaceSet: update " << faceSet_->name() << endl;
     }
 
     return true;

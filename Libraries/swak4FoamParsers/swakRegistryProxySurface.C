@@ -53,7 +53,7 @@ namespace Foam
 // {
 //     if (debug)
 //     {
-//         Info<< "swakRegistryProxySurface::createGeometry() - doing nothing" 
+//         Pout<< "swakRegistryProxySurface::createGeometry() - doing nothing" 
 //             << endl;
 //     }
 // }
@@ -103,7 +103,7 @@ bool Foam::swakRegistryProxySurface::needsUpdate() const
     bool originalUpdate=realSurface().needsUpdate();
 
     if(debug) {
-        Info << "Foam::swakRegistryProxySurface::needsUpdate(): " << originalUpdate << endl;
+        Pout << "Foam::swakRegistryProxySurface::needsUpdate(): " << originalUpdate << endl;
     }
 
     return originalUpdate;
@@ -115,7 +115,7 @@ bool Foam::swakRegistryProxySurface::expire()
     bool originalExpire=realSurface().expire();
 
     if(debug) {
-        Info << "Foam::swakRegistryProxySurface::expire(): " << originalExpire << endl;
+        Pout << "Foam::swakRegistryProxySurface::expire(): " << originalExpire << endl;
     }
 
     return originalExpire;
@@ -134,13 +134,13 @@ bool Foam::swakRegistryProxySurface::update()
         this->magSf().size() != realSurface().magSf().size()
     ) {
         if(debug) {
-            Info << "Foam::swakRegistryProxySurface::update(): Clearin Geometry" << endl;
+            Pout << "Foam::swakRegistryProxySurface::update(): Clearin Geometry" << endl;
         }
         clearGeom();
     }
 
     if(debug) {
-        Info << "Foam::swakRegistryProxySurface::update(): " << originalUpdate << endl;
+        Pout << "Foam::swakRegistryProxySurface::update(): " << originalUpdate << endl;
     }
     return originalUpdate;
 }
