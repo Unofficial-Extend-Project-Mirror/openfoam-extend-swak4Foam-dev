@@ -199,7 +199,7 @@ vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
 bool CellSetValueExpressionDriver::update()
 {
     if(debug) {
-        Info << "CellSet: update " << cellSet_->name() 
+        Pout << "CellSet: update " << cellSet_->name() 
             << endl;
     }
 

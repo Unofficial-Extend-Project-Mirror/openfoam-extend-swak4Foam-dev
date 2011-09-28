@@ -96,7 +96,7 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 
 void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
     if(debug) {
-        Info << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
+        Pout << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
     }
 
     sresult_.reset(r);
@@ -110,7 +110,7 @@ void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
 
 void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
     if(debug) {
-        Info << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
+        Pout << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
     }
 
     sresult_.reset(r);
@@ -121,7 +121,7 @@ void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
 
 void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
     if(debug) {
-        Info << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
+        Pout << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
     }
 
     vresult_.reset(r);

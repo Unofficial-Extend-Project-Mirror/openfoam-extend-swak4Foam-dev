@@ -63,11 +63,11 @@ namespace Foam {
     Field<Type> *SampledSetValueExpressionDriver::sampleOrInterpolateInternal(const word &name)
     {
         if(debug) {
-            Info << "Sampling set: " << name << " on set " 
+            Pout << "Sampling set: " << name << " on set " 
                 << this->theSet_.name() << " with " << this->size() 
                 << " points" << endl; 
-            //            this->theSet_.write(Info);
-            Info << "Search memory: " << this->searchInMemory()
+            //            this->theSet_.write(Pout);
+            Pout << "Search memory: " << this->searchInMemory()
                 << " Field there: " << this->mesh().foundObject<volField>(name)
                 << " Is variable: " << this->variables_.found(name)
                 << endl;
@@ -109,7 +109,7 @@ namespace Foam {
                         );
                 }                
                 if(debug) {
-                    Info << "Interpolated values: " << values << endl;
+                    Pout << "Interpolated values: " << values << endl;
                 }
             } else {
                 result=new Field<Type>(this->theSet_.size());
@@ -121,7 +121,7 @@ namespace Foam {
                     values[samplei] = field[samples.cells()[samplei]];
                 }                
                 if(debug) {
-                    Info << "Values: " << values << endl;
+                    Pout << "Values: " << values << endl;
                 }
             }
         } else {

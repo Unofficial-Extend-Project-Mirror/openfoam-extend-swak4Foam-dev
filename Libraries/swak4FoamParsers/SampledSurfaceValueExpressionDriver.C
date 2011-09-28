@@ -142,7 +142,7 @@ bool SampledSurfaceValueExpressionDriver::update()
 {
     bool updated=theSurface_.update(); // valgrind reports huge memory losses here
     if(debug) {
-        Info << "Updated: " << updated << " " << this->size() << endl;
+        Pout << "Updated: " << updated << " " << this->size() << endl;
     }
 
     return updated;
@@ -211,7 +211,7 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
 scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
 {
     if(debug) {
-        Info << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
+        Pout << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
             << " size: " << this->size() << " magSf: " << theSurface_.magSf().size() 
             << endl;
     }

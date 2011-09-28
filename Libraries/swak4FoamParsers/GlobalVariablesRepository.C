@@ -61,11 +61,11 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
     GlobalVariablesRepository*  ptr=repositoryInstance;
     
     if(debug) {
-        Info << "GlobalVariablesRepository: asking for Singleton" << endl;
+        Pout << "GlobalVariablesRepository: asking for Singleton" << endl;
     }
 
     if(ptr==NULL) {
-        Info << "swak4Foam: Allocating new repository for sampledGlobalVariables\n";
+        Pout << "swak4Foam: Allocating new repository for sampledGlobalVariables\n";
 
         ptr=new GlobalVariablesRepository();
     }
@@ -101,7 +101,7 @@ const ExpressionResult &GlobalVariablesRepository::get(
         const ResultTable &scope=globalVariables_[scopeName];
         if(scope.found(name)) {
             if(debug) {
-                Info << name << " ( " << scopeName << " )= " << scope[name] << endl;
+                Pout << name << " ( " << scopeName << " )= " << scope[name] << endl;
             }
             return scope[name];
         }
@@ -131,7 +131,7 @@ void GlobalVariablesRepository::addValue(
 {
     if(!globalVariables_.found(scope)) {
         if(debug) {
-            Info << "Creating global scope " << scope << endl;
+            Pout << "Creating global scope " << scope << endl;
         }
         globalVariables_.insert(scope,ResultTable());
     }
