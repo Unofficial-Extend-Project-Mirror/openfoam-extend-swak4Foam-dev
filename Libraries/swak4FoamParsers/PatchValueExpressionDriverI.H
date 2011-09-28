@@ -62,26 +62,24 @@ namespace Foam {
                 ).getResult<Type>(true).ptr();
             }
             if(vals) {
-                if(vals->size()>0) {
-                    if(
-                        (
-                            ! isPoint
-                            &&
-                            vals->size()==this->size()
-                        )
-                        ||
-                        (
-                            isPoint
-                            &&
-                            vals->size()==this->pointSize()
-                        )
-                    ) {
-                        return vals;
-                    } else {
-                        Field<Type> *result=new Field<Type>(this->size(),gAverage(*vals));
-                        delete vals;
-                        return result;
-                    }
+                if(
+                    (
+                        ! isPoint
+                        &&
+                        vals->size()==this->size()
+                    )
+                    ||
+                    (
+                        isPoint
+                        &&
+                        vals->size()==this->pointSize()
+                    )
+                ) {
+                    return vals;
+                } else {
+                    Field<Type> *result=new Field<Type>(this->size(),gAverage(*vals));
+                    delete vals;
+                    return result;
                 }
             }
         }
