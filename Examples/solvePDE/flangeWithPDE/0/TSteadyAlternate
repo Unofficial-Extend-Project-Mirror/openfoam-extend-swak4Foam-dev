@@ -9,53 +9,11 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      fvSolution;
+    class       volScalarField;
+    object      TSteadyAlternate;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-solvers
-{
-    T
-    {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-06;
-        relTol          0;
-    }
-    TSteady 
-    {
-        $T;
-    }
-    TSteadyAlternate 
-    {
-        $T;
-    }
-    TTransient 
-    {
-        $T;
-    }
-}
-
-SIMPLE
-{
-    nNonOrthogonalCorrectors 2;
-}
-
-TSteadyLaplacianPDE
-{
-    $SIMPLE;
-}
-
-TSteadyAlternateLaplacianPDE
-{
-    $SIMPLE;
-}
-
-TTransientLaplacianPDE
-{
-    $SIMPLE;
-}
+#include "T"
 
 // ************************************************************************* //

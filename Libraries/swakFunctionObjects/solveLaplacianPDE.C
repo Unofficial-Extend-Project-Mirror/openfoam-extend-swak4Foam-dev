@@ -239,7 +239,12 @@ void Foam::solveLaplacianPDE::solve()
 
 void Foam::solveLaplacianPDE::write()
 {
-    if(solveAt_==saWrite) {
+    const fvMesh& mesh = refCast<const fvMesh>(obr_);
+    if(
+        solveAt_==saWrite
+        &&
+        mesh.time().outputTime()
+    ) {
         solve();
     }
 }

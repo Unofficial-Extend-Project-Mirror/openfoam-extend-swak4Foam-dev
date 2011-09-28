@@ -71,10 +71,33 @@ functions
         lambda "4e-5" [0 2 -1 0 0 0 0];
         source "0" [0 0 -1 1 0 0 0];
     }
+    TSteadyAlternate {
+        type solveLaplacianPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt write;
+        fieldName TSteadyAlternate;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        lambda "4e-5" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 1 0 0 0];
+    }
     compareSteady {
         type swakExpression;
         verbose true;
         expression "T-TSteady";
+        accumulations (
+            min
+            max
+            average
+        );
+        valueType internalField;
+    }
+    compareSteadyAlternate {
+        type swakExpression;
+        verbose true;
+        expression "T-TSteadyAlternate";
         accumulations (
             min
             max
