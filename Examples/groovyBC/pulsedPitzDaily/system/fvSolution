@@ -79,5 +79,13 @@ PISO
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
 }
+distanceLaplacianPDE
+{
+    $PISO;
+}
+heatLaplacianPDE
+{
+    $PISO;
+}
 
 // ************************************************************************* //

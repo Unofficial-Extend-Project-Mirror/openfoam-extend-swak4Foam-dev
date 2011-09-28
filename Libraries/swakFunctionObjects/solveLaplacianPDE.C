@@ -162,6 +162,9 @@ void Foam::solveLaplacianPDE::end()
 void Foam::solveLaplacianPDE::solve()
 {
     if(active_) {
+        const fvMesh& mesh = refCast<const fvMesh>(obr_);
+        dictionary sol=mesh.solutionDict().subDict(fieldName_+"LaplacianPDE");
+        
         FieldValueExpressionDriver &driver=driver_();
 
         driver.clearVariables();
@@ -222,7 +225,11 @@ void Foam::solveLaplacianPDE::solve()
             eq-=fvm::SuSp(sourceImplicitField,f);
         }
 
-        eq.solve();
+        int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
+        for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
+        {
+            eq.solve();
+        }
     }
 }
 

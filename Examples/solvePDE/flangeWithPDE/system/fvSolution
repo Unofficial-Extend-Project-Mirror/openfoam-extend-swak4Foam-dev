@@ -39,5 +39,14 @@ SIMPLE
     nNonOrthogonalCorrectors 2;
 }
 
+TSteadyLaplacianPDE
+{
+    $SIMPLE;
+}
+
+TTransientLaplacianPDE
+{
+    $SIMPLE;
+}
 
 // ************************************************************************* //
