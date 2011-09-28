@@ -27,8 +27,6 @@ License
 
 #include "solveLaplacianPDE.H"
 
-#include "SetsRepository.H"
-
 #include "polyMesh.H"
 
 #include "volFields.H"
@@ -43,16 +41,6 @@ namespace Foam {
     defineTypeNameAndDebug(solveLaplacianPDE,0);
 }
 
-template<>
-const char* Foam::NamedEnum<Foam::solveLaplacianPDE::solveAt,3>::names[]=
-{
-    "startup",
-    "timestep",
-    "write"
-};
-
-const Foam::NamedEnum<Foam::solveLaplacianPDE::solveAt,3> Foam::solveLaplacianPDE::solveAtNames_;
-
 Foam::solveLaplacianPDE::solveLaplacianPDE
 (
     const word& name,
@@ -60,8 +48,12 @@ Foam::solveLaplacianPDE::solveLaplacianPDE
     const dictionary& dict,
     const bool loadFromFiles
 ):
-    active_(true),
-    obr_(obr),
+    solvePDECommon(
+        name,
+        obr,
+        dict,
+        loadFromFiles
+    ),
     rhoDimension_(dimless),
     lambdaDimension_(dimless),
     sourceDimension_(dimless),
@@ -87,54 +79,9 @@ Foam::solveLaplacianPDE::~solveLaplacianPDE()
 
 void Foam::solveLaplacianPDE::read(const dictionary& dict)
 {
+    solvePDECommon::read(dict);
+
     if(active_) {
-        const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
-        solveAt_=
-            solveAtNames_.read(
-                dict.lookup("solveAt")
-            );
-        fieldName_=word(dict.lookup("fieldName"));
-        if(
-            theField_.valid()
-            &&
-            fieldName_!=theField_->name()
-        ) {
-            WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")
-                << "Throwing out field " << theField_->name()
-                    << " and loading " << fieldName_ << ". "
-                    << "This might lead to unpredicatable behaviour" << endl;
-            theField_.clear();
-        }
-        if(!theField_.valid()) {
-            theField_.set(
-                new volScalarField(
-                    IOobject (
-                        fieldName_,
-                        mesh.time().timeName(),
-                        mesh,
-                        IOobject::MUST_READ,
-                        IOobject::AUTO_WRITE
-                    ),
-                    mesh
-                )
-            );
-        }
-
-        driver_.set(
-            new FieldValueExpressionDriver(
-                mesh.time().timeName(),
-                mesh.time(),
-                mesh,
-                false, // no caching. No need
-                true,  // search fields in memory
-                false  // don't look up files in memory
-            )
-        );
-
-        driver_->readVariablesAndTables(dict);
-        
-        steady_=readBool(dict.lookup("steady"));
         if(!steady_) {
             dict.lookup("rho") >> rhoExpression_ >> rhoDimension_;
         }
@@ -145,18 +92,6 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
         }
     }
-}
-
-void Foam::solveLaplacianPDE::execute()
-{
-    if(solveAt_==saTimestep) {
-        solve();
-    }
-}
-
-
-void Foam::solveLaplacianPDE::end()
-{
 }
 
 void Foam::solveLaplacianPDE::solve()
@@ -247,21 +182,5 @@ void Foam::solveLaplacianPDE::solve()
         }
     }
 }
-
-void Foam::solveLaplacianPDE::write()
-{
-    const fvMesh& mesh = refCast<const fvMesh>(obr_);
-    if(
-        solveAt_==saWrite
-        &&
-        mesh.time().outputTime()
-    ) {
-        solve();
-    }
-}
-
-// void Foam::solveLaplacianPDE::clearData()
-// {
-// }
 
 // ************************************************************************* //

@@ -24,66 +24,83 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    solveLaplacianPDE
+    solvePDECommon
 
 Description
-    Function object that solves the laplacian (Poisson) equation
+    Common functionality for functionObjects that solve PDEs
 
 SourceFiles
-    solveLaplacianPDE.C
+    solvePDECommon.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef solveLaplacianPDE_H
-#define solveLaplacianPDE_H
+#ifndef solvePDECommon_H
+#define solvePDECommon_H
 
-#include "solvePDECommon.H"
+#include "primitiveFieldsFwd.H"
+#include "pointFieldFwd.H"
+#include "NamedEnum.H"
+#include "volFields.H"
 
 namespace Foam
 {
+// Forward declaration of classes
+class objectRegistry;
+class dictionary;
+class mapPolyMesh;
+class FieldValueExpressionDriver;
 
-class solveLaplacianPDE
-:
-    public solvePDECommon
+class solvePDECommon
 {
     //- Disallow default bitwise copy construct
-    solveLaplacianPDE(const solveLaplacianPDE&);
+    solvePDECommon(const solvePDECommon&);
     
     //- Disallow default bitwise assignment
-    void operator=(const solveLaplacianPDE&);
+    void operator=(const solvePDECommon&);
 
+public:
+    enum solveAt {
+        saStartup,
+        saTimestep,
+        saWrite
+    };
 protected:
 
-    //- the coefficent for the time-derivative
-    string rhoExpression_;
-    dimensionSet rhoDimension_;
+    //- are we working?
+    bool active_;
 
-    //- the coefficient for the laplacian term
-    string lambdaExpression_;
-    dimensionSet lambdaDimension_;
+    //- mesh where the set goes
+    const objectRegistry& obr_;
 
-    //- the right hand side
-    string sourceExpression_;
-    dimensionSet sourceDimension_;
+    //- name of the field that is being solved for 
+    word fieldName_;
 
-    //- the right hand side
-    string sourceImplicitExpression_;
-    dimensionSet sourceImplicitDimension_;
+    //- the actual field
+    autoPtr<volScalarField> theField_;
+
+    //- the driver that calculates the coefficients
+    autoPtr<FieldValueExpressionDriver> driver_;
+
+    //- is this a steady calculation
+    bool steady_;
 
     //- do the actual solving
-    void solve();
+    virtual void solve() = 0;
+
+    static const NamedEnum<solveAt,3> solveAtNames_;
+    solveAt solveAt_;
 
 public:
 
     //- Runtime type information
-    TypeName("solveLaplacianPDE");
+    TypeName("solvePDECommon");
 
 
     // Constructors
     
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
-    solveLaplacianPDE
+    solvePDECommon
     (
         const word& name,
         const objectRegistry&,
@@ -93,13 +110,30 @@ public:
 
 
     //- Destructor
-    virtual ~solveLaplacianPDE();
+    virtual ~solvePDECommon();
 
 
     // Member Functions
 
     //- Read the forces data
     virtual void read(const dictionary&);
+    
+    //- Execute
+    virtual void execute();
+    
+    //- Execute at the final time-loop
+    virtual void end();
+    
+    //- Write the forces
+    virtual void write();
+
+    //- Update for changes of mesh
+    virtual void updateMesh(const mapPolyMesh&)
+        {}
+    
+    //- Update for changes of mesh
+    virtual void movePoints(const pointField&)
+        {}
 
 };
 
