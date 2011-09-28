@@ -46,6 +46,68 @@ runTimeModifiable yes;
 
 functions
 (
+    distance {
+        // should  be the distance from the inlet. Currently wrong
+        type solveLaplacianPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt startup;
+        fieldName distance;
+        steady true;
+        //        steady false;
+        //        rho "1" [0 -2 1 0 0 0 0];
+        lambda "1" [0 0 0 0 0 0 0];
+        source "0" [0 -1 0 0 0 0 0];
+    }
+    heat {
+        // result doubtful
+        type solveLaplacianPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName heat;
+        steady false;
+        //        steady true;
+        rho "1" [0 -3 1 0 0 0 0];
+        lambda "1e-2*mag(U)" [0 -1 0 0 0 0 0];
+        source "0" [0 -3 0 1 0 0 0];
+        sourceImplicit "0" [0 -3 0 0 0 0 0];
+    }
+    residualTime {
+        // result doubtful
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt write;
+        fieldName residualTime;
+        steady true;
+
+        diffusion "1e-4" [0 2 -1 0 0 0 0];
+        source "1" [0 0 0 0 0 0 0];
+
+        phi phi;
+    }
+    scalarTransport {
+        // result doubtful
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName scalar;
+        steady false;
+
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "1e-4" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 0 0 0 0];
+
+        phi phi;
+    }
     probes1
     {
         // Type of functionObject
