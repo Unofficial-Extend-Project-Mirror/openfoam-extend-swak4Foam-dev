@@ -189,7 +189,7 @@ void Foam::solveLaplacianPDE::solve()
         volScalarField &f=theField_();
 
         fvMatrix<scalar> eq(
-            fvm::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")
+            -fvm::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")
             ==
             sourceField
         );
