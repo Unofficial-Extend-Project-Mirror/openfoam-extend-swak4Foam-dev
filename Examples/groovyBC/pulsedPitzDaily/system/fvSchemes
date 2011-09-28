@@ -18,6 +18,7 @@ ddtSchemes
 {
     default backward;
     //    ddt(distance) steadyState;
+    ddt(heat) Euler;
 }
 
 gradSchemes

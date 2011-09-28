@@ -70,8 +70,8 @@ functions
         fieldName heat;
         steady false;
         //        steady true;
-        rho "1e-6" [0 -3 1 0 0 0 0];
-        lambda "1e2*mag(U)" [0 -1 0 0 0 0 0];
+        rho "1" [0 -3 1 0 0 0 0];
+        lambda "1e-2*mag(U)" [0 -1 0 0 0 0 0];
         source "0" [0 -3 0 1 0 0 0];
         sourceImplicit "0" [0 -3 0 0 0 0 0];
     }
