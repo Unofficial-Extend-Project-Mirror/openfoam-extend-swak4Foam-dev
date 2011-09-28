@@ -96,6 +96,19 @@
          other swak-entities (mainly boundary conditions)
     - createSampledSurface :: Create a sampled surface that can be used by
          other swak-entities (mainly boundary conditions)
+    - solveLaplacianPDE :: Solve the Poisson equation
+\begin{equation}
+\frac{\partial \rho T}{\partial t} - \nabla \lambda \nabla T =
+S_{expl} + S_{impl} T  
+\end{equation}
+         for $T$ where $\rho$, $\lambda$ and $S$ can be specified
+    - solveTransportPDE :: Solve the transport equation
+\begin{equation}
+\frac{\partial \rho T}{\partial t} + \div(\phi,T) - \nabla \lambda \nabla T =
+S_{expl} + S_{impl} T  
+\end{equation}
+         for $T$ where $\rho$, $\lambda$ and $S$ can be
+         specified. Plus the name of the field $\phi$
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
@@ -171,7 +184,8 @@
     - Also demonstrates :: =manipulateField=, =expressionField= and
          =clearField= from the
          =swakFunctionObjects=. =patchExpression= from
-         =simpleSwakFunctionObjects=. 
+         =simpleSwakFunctionObjects=. =solveLaplacianPDE= and
+         =solveTransportPDE= for solving equations
 **** wobbler
     - Solver :: solidDisplacementFoam
 **** circulatingSplash 
@@ -290,6 +304,9 @@
                        (hopefully) that it gets the same result as the
                        native solver
      - Case preparation :: =Allrun=-script is provided
+**** pitzDailyWithPDE
+     - Solver :: scalarTransportFoam
+     - Demonstrates :: Solving additional transport equations
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
@@ -541,6 +558,13 @@
      Added a boundary condition than allows to only fix the
      values. This should help to avoid problems with cases that don't
      like =mixed= (on which the regular =groovyBC= is based)
+**** Function objects to solve PDEs
+     Two function objects that solve /Partial Differential Equations/
+     during a run have been added:
+     - one that solves a laplacian (Poisson) equation
+     - one that solves the transport equation for a scalar
+     The relevant coefficients (including explicit and implicit source
+     terms) can be specified using expressions
 *** Administrative and packaging
 **** Inject =swak4Foam= into a distro
      Added a script that takes the current sources, copies them into
