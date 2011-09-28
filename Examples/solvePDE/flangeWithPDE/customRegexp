@@ -1,0 +1,7 @@
+compareSteady {
+	theTitle "FunctionObject compared to native";
+	expr "Expression compare(\S+) :  min=(%f%) max=(%f%) average=(%f%)";
+	type dynamic;
+	titles (min max average);
+	idNr 1;
+}

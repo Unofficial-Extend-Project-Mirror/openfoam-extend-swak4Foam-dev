@@ -112,7 +112,7 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
                     IOobject (
                         fieldName_,
                         mesh.time().timeName(),
-                        mesh.time(),
+                        mesh,
                         IOobject::MUST_READ,
                         IOobject::AUTO_WRITE
                     ),

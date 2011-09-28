@@ -23,7 +23,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         3;
+endTime         10;
 
 deltaT          0.005;
 
@@ -74,7 +74,18 @@ functions
     compareSteady {
         type swakExpression;
         verbose true;
-        expression "T-T";
+        expression "T-TSteady";
+        accumulations (
+            min
+            max
+            average
+        );
+        valueType internalField;
+    }
+    compareTransient {
+        type swakExpression;
+        verbose true;
+        expression "T-TTransient";
         accumulations (
             min
             max
