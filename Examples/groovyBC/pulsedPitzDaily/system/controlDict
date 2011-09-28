@@ -75,6 +75,22 @@ functions
         source "0" [0 -3 0 1 0 0 0];
         sourceImplicit "0" [0 -3 0 0 0 0 0];
     }
+    residualTime {
+        // result doubtful
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt write;
+        fieldName residualTime;
+        steady true;
+
+        diffusion "1e-4" [0 2 -1 0 0 0 0];
+        source "1" [0 0 0 0 0 0 0];
+
+        phi phi;
+    }
     probes1
     {
         // Type of functionObject
