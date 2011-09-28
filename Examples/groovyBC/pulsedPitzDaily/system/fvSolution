@@ -79,6 +79,13 @@ solvers
         tolerance        1e-05;
         relTol           0;
     };
+    scalar 
+    {
+        solver PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0;
+    };
 }
 
 PISO
@@ -91,6 +98,11 @@ distanceLaplacianPDE
     $PISO;
 }
 heatLaplacianPDE
+{
+    $PISO;
+}
+
+scalarTransportPDE
 {
     $PISO;
 }

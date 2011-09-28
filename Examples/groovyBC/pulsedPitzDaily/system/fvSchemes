@@ -40,6 +40,7 @@ divSchemes
     div((nuEff*dev(grad(U).T()))) Gauss linear;
 
     div(phi,residualTime)      Gauss linear;
+    div(phi,scalar)      Gauss linear;
 }
 
 laplacianSchemes
@@ -55,6 +56,7 @@ laplacianSchemes
     laplacian(lambda,heat) Gauss linear corrected;
 
     laplacian(diffusion,residualTime) Gauss linear corrected;
+    laplacian(diffusion,scalar) Gauss linear corrected;
 }
 
 interpolationSchemes
