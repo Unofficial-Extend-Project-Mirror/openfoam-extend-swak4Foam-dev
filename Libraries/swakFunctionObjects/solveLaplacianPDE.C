@@ -211,7 +211,18 @@ void Foam::solveLaplacianPDE::solve()
                 volScalarField rhoField(driver.getScalar());
                 rhoField.dimensions().reset(rhoDimension_);
             
-                eq+=rhoField*fvm::ddt(f);
+                fvMatrix<scalar> ddtMatrix=fvm::ddt(f);
+                if(
+                    !ddtMatrix.diagonal()
+                    &&
+                    !ddtMatrix.symmetric()
+                    &&
+                    !ddtMatrix.asymmetric()
+                ) {
+                    // Adding would fail
+                } else {
+                    eq+=rhoField*ddtMatrix;
+                }
             }
 
             if(sourceImplicitExpression_!="") {
