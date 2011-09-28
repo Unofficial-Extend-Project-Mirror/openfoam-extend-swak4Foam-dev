@@ -46,14 +46,14 @@ namespace Foam {
     Field<T> *SubsetValueExpressionDriver::getFieldInternal(const string &name,const Subset &sub)
     {
         if(debug) {
-            Info << "SubsetValueExpressionDriver::getFieldInternal"
+            Pout << "SubsetValueExpressionDriver::getFieldInternal"
                 << " searching for " << name << " Type: " << Subset::typeName
                 << endl;
         }
 
         if(this->variables_.found(name)) {
             if(debug) {
-                Info << name << " is a variable" << endl;
+                Pout << name << " is a variable" << endl;
             }
             return this->variables_[name].getResult<T>(true).ptr();
         }
@@ -62,14 +62,14 @@ namespace Foam {
         label cnt=0;
         
         if(debug) {
-            Info << "searchInMemory: " << this->searchInMemory()
+            Pout << "searchInMemory: " << this->searchInMemory()
                 << " found: " << this->mesh().foundObject<FieldType>(name)
                 << endl;
         }
 
         if(this->searchInMemory() && this->mesh().foundObject<FieldType>(name)) {
             if(debug) {
-                Info << name << " was found in memory" << endl;
+                Pout << name << " was found in memory" << endl;
             }
             // Keep this separate to avoid copying if found in memory
             const FieldType &f=this->mesh().lookupObject<FieldType>(name);
@@ -80,7 +80,7 @@ namespace Foam {
             }
         } else {
             if(debug) {
-                Info << name << " was found on disc" << endl;
+                Pout << name << " was found on disc" << endl;
             }
             // otherwise try disc and memory
             autoPtr<FieldType> f=this->getOrReadField<FieldType>(name);

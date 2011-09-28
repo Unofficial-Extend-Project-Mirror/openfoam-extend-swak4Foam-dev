@@ -62,11 +62,11 @@ SetsRepository &SetsRepository::getRepository()
     SetsRepository*  ptr=repositoryInstance;
     
     if(debug) {
-        Info << "SetsRepository: asking for Singleton" << endl;
+        Pout << "SetsRepository: asking for Singleton" << endl;
     }
 
     if(ptr==NULL) {
-        Info << "swak4Foam: Allocating new repository for sampledSets\n";
+        Pout << "swak4Foam: Allocating new repository for sampledSets\n";
 
         ptr=new SetsRepository();
     }
@@ -82,7 +82,7 @@ sampledSet &SetsRepository::getSet(
 )
 {
     if(debug) {
-        Info << "SetsRepository: Lookuing up" << name << " (assuming it exists)" << endl;
+        Pout << "SetsRepository: Lookuing up" << name << " (assuming it exists)" << endl;
     }
 
     sampledSet &found=*(sets_[name]);
@@ -106,12 +106,12 @@ sampledSet &SetsRepository::getSet(
     word name(dict.lookup("setName"));
 
     if(debug) {
-        Info << "SetsRepository: getting set " << name << endl;
+        Pout << "SetsRepository: getting set " << name << endl;
     }
 
     if(sets_.found(name)) {
         if(debug) {
-            Info << "SetsRepository: " << name << " already exists" << endl;
+            Pout << "SetsRepository: " << name << " already exists" << endl;
         }
         
         if(dict.found("set")) {
@@ -125,7 +125,7 @@ sampledSet &SetsRepository::getSet(
         return getSet(name,mesh);
     } else {
         if(debug) {
-            Info << "SetsRepository: " << name << " does not exist" << endl;
+            Pout << "SetsRepository: " << name << " does not exist" << endl;
         }
         sets_.insert(
             name,
@@ -138,9 +138,9 @@ sampledSet &SetsRepository::getSet(
         );
 
         if(debug) {
-            Info << "Created set " << name << " :" << endl;
-            sets_[name]->write(Info);
-            Info << endl;
+            Pout << "Created set " << name << " :" << endl;
+            sets_[name]->write(Pout);
+            Pout << endl;
         }
         return *sets_[name];
     }
@@ -153,12 +153,12 @@ meshSearch &SetsRepository::getSearch(
     word name(mesh.name());
 
     if(debug) {
-        Info << "SetsRepository: getting meshSearch " << name << endl;
+        Pout << "SetsRepository: getting meshSearch " << name << endl;
     }
 
     if(meshSearches_.found(name)) {
         if(debug) {
-            Info << "SetsRepository: meshSearch for mesh " << name << " already exists" << endl;
+            Pout << "SetsRepository: meshSearch for mesh " << name << " already exists" << endl;
         }
         
         meshSearch &found=*(meshSearches_[name]);
@@ -174,7 +174,7 @@ meshSearch &SetsRepository::getSearch(
         return found;
     } else {
         if(debug) {
-            Info << "SetsRepository: meshSearch for mesh " << name << " does not exist" << endl;
+            Pout << "SetsRepository: meshSearch for mesh " << name << " does not exist" << endl;
         }
         meshSearches_.insert(
             name,

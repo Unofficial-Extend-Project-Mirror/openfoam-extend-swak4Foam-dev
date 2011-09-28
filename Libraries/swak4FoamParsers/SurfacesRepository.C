@@ -59,11 +59,11 @@ SurfacesRepository &SurfacesRepository::getRepository()
     SurfacesRepository*  ptr=repositoryInstance;
     
     if(debug) {
-        Info << "SurfacesRepository: asking for Singleton" << endl;
+        Pout << "SurfacesRepository: asking for Singleton" << endl;
     }
 
     if(ptr==NULL) {
-        Info << "swak4Foam: Allocating new repository for sampledSurfaces\n";
+        Pout << "swak4Foam: Allocating new repository for sampledSurfaces\n";
 
         ptr=new SurfacesRepository();
     }
@@ -79,7 +79,7 @@ sampledSurface &SurfacesRepository::getSurface(
 )
 {
     if(debug) {
-        Info << "SurfacesRepository: Lookuing up" << name << " (assuming it exists)" << endl;
+        Pout << "SurfacesRepository: Lookuing up" << name << " (assuming it exists)" << endl;
     }
 
     sampledSurface &found=*(surfaces_[name]);
@@ -103,12 +103,12 @@ sampledSurface &SurfacesRepository::getSurface(
     word name(dict.lookup("surfaceName"));
 
     if(debug) {
-        Info << "SurfacesRepository: getting surface " << name << endl;
+        Pout << "SurfacesRepository: getting surface " << name << endl;
     }
 
     if(surfaces_.found(name)) {
         if(debug) {
-            Info << "SurfacesRepository: " << name << " already exists" << endl;
+            Pout << "SurfacesRepository: " << name << " already exists" << endl;
         }
         
         if(dict.found("surface")) {
@@ -122,7 +122,7 @@ sampledSurface &SurfacesRepository::getSurface(
         return getSurface(name,mesh);
     } else {
         if(debug) {
-            Info << "SurfacesRepository: " << name << " does not exist" << endl;
+            Pout << "SurfacesRepository: " << name << " does not exist" << endl;
         }
         surfaces_.insert(
             name,
