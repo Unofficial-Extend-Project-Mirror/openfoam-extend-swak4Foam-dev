@@ -1,6 +1,6 @@
 From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Date: Tue, 09 Aug 2011 22:52:06 +0200
-State: in-progress
+State: fixed
 Subject: Python integration
 Message-Id: <b52b52ebd0cc6a87-0-artemis@178.113.160.225.wireless.dyn.drei.com>
 
