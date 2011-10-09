@@ -33,7 +33,8 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       time_(time),
       mesh_(mesh),
       runTime_(runTime),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -50,7 +51,8 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       time_(""),
       mesh_(mesh),
       runTime_(mesh.time()),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -69,7 +71,8 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       time_(""),
       mesh_(mesh),
       runTime_(mesh.time()),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -82,7 +85,8 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       time_(""),
       mesh_(mesh),
       runTime_(mesh.time()),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
     if(dict.found("dimensions")) {
@@ -99,13 +103,7 @@ void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
         Pout << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
     }
 
-    sresult_.reset(r);
-
-    if(!resultDimension_.dimensionless()) {
-        sresult_->dimensions().reset(resultDimension_);
-    }
-    typ_=SCALAR_TYPE;
-    result_.setResult(sresult_->internalField());
+    setResult(r);
 }
 
 void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
@@ -113,10 +111,7 @@ void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
         Pout << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
     }
 
-    sresult_.reset(r);
-
-    typ_=LOGICAL_TYPE;
-    result_.setResult(sresult_->internalField());
+    setResult(r,true);
 }
 
 void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
@@ -124,13 +119,7 @@ void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
         Pout << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
     }
 
-    vresult_.reset(r);
-
-    if(!resultDimension_.dimensionless()) {
-        vresult_->dimensions().reset(resultDimension_);
-    }
-    typ_=VECTOR_TYPE;
-    result_.setResult(vresult_->internalField());
+    setResult(r);
 }
 
 void FieldValueExpressionDriver::parse (const std::string &f)
@@ -680,6 +669,21 @@ const word FieldValueExpressionDriver::time() const
     } else {
         return CommonValueExpressionDriver::time();
     }
+}
+
+bool FieldValueExpressionDriver::resultIsVector()
+{ 
+    return isTyp<volVectorField>(); 
+}
+
+bool FieldValueExpressionDriver::resultIsScalar() 
+{
+    return isTyp<volScalarField>(); 
+}
+
+bool FieldValueExpressionDriver::resultIsLogical()
+{ 
+    return isTyp<volScalarField>(true); 
 }
 
 } // end namespace

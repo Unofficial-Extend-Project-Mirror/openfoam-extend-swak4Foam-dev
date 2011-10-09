@@ -583,3 +583,5 @@ S_{expl} + S_{impl} T
      doesn't have any faces the variable is reported on that processor
      as /not existing/ and the whole run fails
 ** Next release
+*** Refactoring of the FieldDriver
+    Allow more types than previously (scalar, vector and logical)

@@ -35,25 +35,32 @@ class FieldValueExpressionDriver
     FieldValueExpressionDriver(const FieldValueExpressionDriver &);
     void operator=(const FieldValueExpressionDriver&);
 
-public:
-    enum ExpressionType{
-        NO_TYPE,
-        SCALAR_TYPE,
-        VECTOR_TYPE,
-        LOGICAL_TYPE
-    };
-
-private:
     const string time_;
     const fvMesh &mesh_;
     const Time& runTime_;
 
-    autoPtr<volScalarField> sresult_;
-    autoPtr<volVectorField> vresult_;
+//     autoPtr<volScalarField> sresult_;
+//     autoPtr<volVectorField> vresult_;
+    
+    autoPtr<regIOobject> resultField_;
 
-    ExpressionType typ_;
+    word typ_;
+
+    bool isLogical_;
 
     dimensionSet resultDimension_;
+
+    //- get the result field (if it is of the right type)
+    template<class T>
+    const T &getResult();
+
+    //- set the result field
+    template<class T>
+    void setResult(T *,bool isLogical=false);
+
+    //- check if field is of requested type
+    template<class T>
+    bool isTyp(bool isLogical=false);
 
 public:
     TypeName("FieldValueExpressionDriver");
@@ -91,9 +98,9 @@ public:
     const word time() const;
 
     // Check the result type
-    bool resultIsVector() { return typ_==VECTOR_TYPE; }
-    bool resultIsScalar() { return typ_==SCALAR_TYPE; }
-    bool resultIsLogical() { return typ_==LOGICAL_TYPE; }
+    bool resultIsVector();
+    bool resultIsScalar();
+    bool resultIsLogical();
 
     // Setting the result
     void setScalarResult(volScalarField *);
@@ -101,8 +108,8 @@ public:
     void setVectorResult(volVectorField *);
 
     // Getting the results
-    const volScalarField &getScalar() { return sresult_; }
-    const volVectorField &getVector() { return vresult_; }
+    inline const volScalarField &getScalar();
+    inline const volVectorField &getVector();
 
     // Handling the scanner.
     void scan_begin ();

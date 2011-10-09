@@ -203,6 +203,66 @@ inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType
     return f;
 }
 
+template<class T>
+void FieldValueExpressionDriver::setResult(T *r,bool isLogical) 
+{
+    resultField_.reset(r);
+
+    T &result=dynamicCast<T &>(resultField_());
+
+    if(!resultDimension_.dimensionless()) {
+        result.dimensions().reset(resultDimension_);
+    }
+
+    typ_=pTraits<T>::typeName;
+
+    result_.setResult(result.internalField());
+
+    isLogical_=isLogical;
+}
+
+template<class T>
+const T &FieldValueExpressionDriver::getResult() 
+{
+    if(!resultField_.valid()) {
+        FatalErrorIn("FieldValueExpressionDriver::getResult()")
+            << "When asking for a " << pTraits<T>::typeName
+                << ": No result present"
+                << endl
+                << abort(FatalError);
+    }
+
+    return dynamicCast<const T &>(resultField_());
+}
+
+template<class T>
+bool FieldValueExpressionDriver::isTyp(bool isLogical) 
+{
+    if(!resultField_.valid()) {
+        FatalErrorIn("FieldValueExpressionDriver::isTyp(bool isLogical)")
+            << "When asking for a " << pTraits<T>::typeName
+                << ": No result present"
+                << endl
+                << abort(FatalError);
+    }
+
+    return (
+        typ_ == pTraits<T>::typeName
+        &&
+        isLogical == isLogical_
+    );
+}
+
+const volScalarField &FieldValueExpressionDriver::getScalar() 
+{
+    return getResult<volScalarField>();
+}
+
+const volVectorField &FieldValueExpressionDriver::getVector() 
+{ 
+    return getResult<volVectorField>(); 
+}
+
 } // end namespace
 
 #endif
