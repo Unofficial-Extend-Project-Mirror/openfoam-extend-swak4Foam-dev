@@ -57,7 +57,7 @@ functions {
         rho "1" [0 0 0 0 0 0 0];
         diffusion "0.01" [0 2 -1 0 0 0 0];
         source "0" [0 0 -1 1 0 0 0];
-        phi phi;
+        phi "phi" [0 3 -1 0 0];
     }
     TUpwind {
         $TCompare;

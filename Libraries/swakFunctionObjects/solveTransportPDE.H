@@ -63,8 +63,8 @@ protected:
     dimensionSet diffusionDimension_;
 
     //- the name of the phi-field. 
-    //- We'll have to use that until FieldExpressionDriver can return surface fields
-    word phiName_;
+    string phiExpression_;
+    dimensionSet phiDimension_;
 
     //- the right hand side
     string sourceExpression_;

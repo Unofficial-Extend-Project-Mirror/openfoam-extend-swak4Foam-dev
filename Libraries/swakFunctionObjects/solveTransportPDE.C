@@ -56,6 +56,7 @@ Foam::solveTransportPDE::solveTransportPDE
     ),
     rhoDimension_(dimless),
     diffusionDimension_(dimless),
+    phiDimension_(dimless),
     sourceDimension_(dimless),
     sourceImplicitDimension_(dimless)
 {
@@ -91,7 +92,7 @@ void Foam::solveTransportPDE::read(const dictionary& dict)
             dict.lookup("sourceImplicit") 
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
         }
-        dict.lookup("phi") >> phiName_;
+        dict.lookup("phi") >> phiExpression_ >> phiDimension_;
     }
 }
 
@@ -128,13 +129,20 @@ void Foam::solveTransportPDE::solve()
             volScalarField sourceField(driver.getResult<volScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
 
+            driver.parse(phiExpression_);
+            if(!driver.resultIsTyp<surfaceScalarField>()) {
+                FatalErrorIn("Foam::solveTransportPDE::solve()")
+                    << phiExpression_ << " does not evaluate to a surface scalar"
+                        << endl
+                        << abort(FatalError);
+            }
+            surfaceScalarField phiField(driver.getResult<surfaceScalarField>());
+            phiField.dimensions().reset(phiDimension_);
+
             volScalarField &f=theField_();
-            const surfaceScalarField &phi=mesh.lookupObject<surfaceScalarField>(
-                phiName_
-            );
 
             fvMatrix<scalar> eq(
-                fvm::div(phi,f)
+                fvm::div(phiField,f)
                 -fvm::laplacian(diffusionField,f,"laplacian(diffusion,"+f.name()+")")
                 ==
                 sourceField

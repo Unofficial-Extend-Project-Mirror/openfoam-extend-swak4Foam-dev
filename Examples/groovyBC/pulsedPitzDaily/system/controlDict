@@ -89,7 +89,7 @@ functions
         diffusion "1e-4" [0 2 -1 0 0 0 0];
         source "1" [0 0 0 0 0 0 0];
 
-        phi phi;
+        phi "phi" [0 3 -1 0 0];
     }
     scalarTransport {
         // result doubtful
@@ -106,7 +106,7 @@ functions
         diffusion "1e-4" [0 2 -1 0 0 0 0];
         source "0" [0 0 -1 0 0 0 0];
 
-        phi phi;
+        phi "phi" [0 3 -1 0 0];
     }
     probes1
     {

@@ -583,5 +583,11 @@ S_{expl} + S_{impl} T
      doesn't have any faces the variable is reported on that processor
      as /not existing/ and the whole run fails
 ** Next release
-*** Refactoring of the FieldDriver
-    Allow more types than previously (scalar, vector and logical)
+*** Technical
+**** Refactoring of the FieldDriver
+     - now can also produce surfaceFields
+*** New features
+**** General =phi= in =solveTransportPDE=
+     Due to the refactoring of the =FieldDriver= now =phi= can be
+     specified by a general expression (instead of 'only' a
+     field-name) 
