@@ -236,7 +236,7 @@ const T &FieldValueExpressionDriver::getResult()
 }
 
 template<class T>
-bool FieldValueExpressionDriver::isTyp(bool isLogical) 
+bool FieldValueExpressionDriver::resultIsTyp(bool isLogical) 
 {
     if(!resultField_.valid()) {
         FatalErrorIn("FieldValueExpressionDriver::isTyp(bool isLogical)")

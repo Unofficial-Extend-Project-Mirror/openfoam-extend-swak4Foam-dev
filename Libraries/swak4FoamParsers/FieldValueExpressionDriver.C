@@ -673,17 +673,17 @@ const word FieldValueExpressionDriver::time() const
 
 bool FieldValueExpressionDriver::resultIsVector()
 { 
-    return isTyp<volVectorField>(); 
+    return resultIsTyp<volVectorField>(); 
 }
 
 bool FieldValueExpressionDriver::resultIsScalar() 
 {
-    return isTyp<volScalarField>(); 
+    return resultIsTyp<volScalarField>(); 
 }
 
 bool FieldValueExpressionDriver::resultIsLogical()
 { 
-    return isTyp<volScalarField>(true); 
+    return resultIsTyp<volScalarField>(true); 
 }
 
 } // end namespace

@@ -540,6 +540,27 @@ functions
         fieldName distanceFromZero;
         expression "mag(pos())";
         autowrite true;        
+    } 
+    myPhi
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName myPhi;
+        expression "interpolate(rho*U)&face()";
+        autowrite true;        
+    }
+    phiError
+    {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        expression "mag(phi-myPhi)";
+        accumulations (
+            average
+            sum
+            max
+        );
     }
     velocityClass
     {

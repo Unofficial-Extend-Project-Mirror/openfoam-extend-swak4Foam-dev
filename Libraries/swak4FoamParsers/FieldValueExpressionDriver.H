@@ -50,19 +50,8 @@ class FieldValueExpressionDriver
 
     dimensionSet resultDimension_;
 
-    //- get the result field (if it is of the right type)
-    template<class T>
-    const T &getResult();
-
-    //- set the result field
-    template<class T>
-    void setResult(T *,bool isLogical=false);
-
-    //- check if field is of requested type
-    template<class T>
-    bool isTyp(bool isLogical=false);
-
 public:
+
     TypeName("FieldValueExpressionDriver");
 
     //- old style constructor
@@ -97,15 +86,27 @@ public:
     inline const fvMesh &mesh() const;
     const word time() const;
 
+    //- check if field is of requested type
+    template<class T>
+    bool resultIsTyp(bool isLogical=false);
+
     // Check the result type
     bool resultIsVector();
     bool resultIsScalar();
     bool resultIsLogical();
 
+    //- set the result field
+    template<class T>
+    void setResult(T *,bool isLogical=false);
+
     // Setting the result
     void setScalarResult(volScalarField *);
     void setLogicalResult(volScalarField *);
     void setVectorResult(volVectorField *);
+
+    //- get the result field (if it is of the right type)
+    template<class T>
+    const T &getResult();
 
     // Getting the results
     inline const volScalarField &getScalar();
@@ -160,8 +161,11 @@ public:
     volScalarField *makeGaussRandomField(label seed=0);
     volScalarField *makeCellIdField();
     
-    // return Time object
+    //- return Time object
     const Time& runTime() const { return runTime_; }
+
+    //- what type
+    const word &typ() const { return typ_; }
 
     // Logical expressions
     template <class Field>
