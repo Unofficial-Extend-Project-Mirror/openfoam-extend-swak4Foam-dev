@@ -81,14 +81,14 @@ template<class T>
 bool forceEquation<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
 {
     parse(maskExpression_);
-    if(!resultIsLogical()) {
+    if(!resultIsTyp<volScalarField>(true)) {
         FatalErrorIn("forceEquation<scalar>::operator()(fvMatrix<T> &)")
             << "Result of " << maskExpression_ << " is not a logical expression"
                 << endl
                 << abort(FatalError);
     }
 
-    const volScalarField &cond=getScalar();
+    const volScalarField &cond=getResult<volScalarField>();
 
     forAll(cond,cellI) {
         if(cond[cellI]!=0) {
@@ -123,7 +123,7 @@ tmp<volScalarField> forceEquation<T>::getMask()
         (
             new volScalarField
             (
-                getScalar()
+                getResult<volScalarField>()
             )
         );
 }
@@ -142,7 +142,7 @@ void forceEquation<scalar>::operator()(fvMatrix<scalar> &eq)
     Field<scalar> values(cellIDs.size());
 
     parse(valueExpression_);
-    const volScalarField &calculated=getScalar();
+    const volScalarField &calculated=getResult<volScalarField>();
 
     forAll(cellIDs,i) {
         values[i]=calculated[cellIDs[i]];
@@ -165,7 +165,7 @@ void forceEquation<vector>::operator()(fvMatrix<vector> &eq)
     Field<vector> values(cellIDs.size());
 
     parse(valueExpression_);
-    const volVectorField &calculated=getVector();
+    const volVectorField &calculated=getResult<volVectorField>();
 
     forAll(cellIDs,i) {
         values[i]=calculated[cellIDs[i]];

@@ -90,27 +90,13 @@ public:
     template<class T>
     bool resultIsTyp(bool isLogical=false);
 
-    // Check the result type
-    bool resultIsVector();
-    bool resultIsScalar();
-    bool resultIsLogical();
-
     //- set the result field
     template<class T>
     void setResult(T *,bool isLogical=false);
 
-    // Setting the result
-    void setScalarResult(volScalarField *);
-    void setLogicalResult(volScalarField *);
-    void setVectorResult(volVectorField *);
-
     //- get the result field (if it is of the right type)
     template<class T>
     const T &getResult();
-
-    // Getting the results
-    inline const volScalarField &getScalar();
-    inline const volVectorField &getVector();
 
     // Handling the scanner.
     void scan_begin ();

@@ -192,20 +192,20 @@ void doAnExpression
     driver.clearVariables();
 
     driver.parse(condition);
-    if(!driver.resultIsLogical()) {
+    if(!driver.resultIsTyp<volScalarField>(true)) {
         FatalErrorIn("doAnExpression()")
                 << " condition: " << condition 
                     << " does not evaluate to a logical expression" 
                     << exit(FatalError);
     }
-    volScalarField conditionField(driver.getScalar());
+    volScalarField conditionField(driver.getResult<volScalarField>());
 
     driver.parse(expression);
 
     if(create) {
-        if(driver.resultIsVector()) {
+        if(driver.resultIsTyp<volVectorField>()) {
             isScalar=false;
-        } else if(driver.resultIsScalar()) {
+        } else if(driver.resultIsTyp<volScalarField>()) {
             isScalar=true;
         } else {
             FatalErrorIn("doAnExpression()")
@@ -214,13 +214,13 @@ void doAnExpression
         }
     }
 
-    if(driver.resultIsVector()==isScalar) {
+    if(driver.resultIsTyp<volVectorField>()==isScalar) {
         FatalErrorIn("doAnExpression()")
             //            << args.executable()
                 << " inconsistent types: " << field << " is  " 
                     << (isScalar ? "scalar" : "vector" ) 
                     << " while the expression evaluates to a " 
-                    << (!driver.resultIsVector() ? "scalar" : "vector" )
+                    << (!driver.resultIsTyp<volVectorField>() ? "scalar" : "vector" )
             << exit(FatalError);
     } else {
         if(isScalar) {
@@ -228,7 +228,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getScalar(),
+                driver.getResult<volScalarField>(),
                 conditionField,
                 create,
                 dim,
@@ -240,7 +240,7 @@ void doAnExpression
               field,
               mesh,
               time,
-              driver.getVector(),
+              driver.getResult<volVectorField>(),
               conditionField,
               create,
               dim,

@@ -253,16 +253,6 @@ bool FieldValueExpressionDriver::resultIsTyp(bool isLogical)
     );
 }
 
-const volScalarField &FieldValueExpressionDriver::getScalar() 
-{
-    return getResult<volScalarField>();
-}
-
-const volVectorField &FieldValueExpressionDriver::getVector() 
-{ 
-    return getResult<volVectorField>(); 
-}
-
 } // end namespace
 
 #endif

@@ -98,30 +98,6 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 {
 }
 
-void FieldValueExpressionDriver::setScalarResult(volScalarField *r) {
-    if(debug) {
-        Pout << "FieldValueExpressionDriver::setScalarResult(volScalarField *r)" << endl;
-    }
-
-    setResult(r);
-}
-
-void FieldValueExpressionDriver::setLogicalResult(volScalarField *r) {
-    if(debug) {
-        Pout << "FieldValueExpressionDriver::setLogicalResult(volScalarField *r)" << endl;
-    }
-
-    setResult(r,true);
-}
-
-void FieldValueExpressionDriver::setVectorResult(volVectorField *r) {
-    if(debug) {
-        Pout << "FieldValueExpressionDriver::setVectorResult(volVectorField *r)" << endl;
-    }
-
-    setResult(r);
-}
-
 void FieldValueExpressionDriver::parse (const std::string &f)
 {
     content_ = f;
@@ -669,21 +645,6 @@ const word FieldValueExpressionDriver::time() const
     } else {
         return CommonValueExpressionDriver::time();
     }
-}
-
-bool FieldValueExpressionDriver::resultIsVector()
-{ 
-    return resultIsTyp<volVectorField>(); 
-}
-
-bool FieldValueExpressionDriver::resultIsScalar() 
-{
-    return resultIsTyp<volScalarField>(); 
-}
-
-bool FieldValueExpressionDriver::resultIsLogical()
-{ 
-    return resultIsTyp<volScalarField>(true); 
 }
 
 } // end namespace
