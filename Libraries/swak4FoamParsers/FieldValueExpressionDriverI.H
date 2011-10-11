@@ -5,8 +5,10 @@
 
 #include "wallFvPatch.H"
 #include "fixedValueFvPatchFields.H"
+#include "fixedValueFvsPatchFields.H"
 #include "zeroGradientFvPatchFields.H"
 #include "calculatedFvPatchFields.H"
+#include "calculatedFvsPatchFields.H"
 
 namespace Foam {
 
@@ -82,6 +84,59 @@ void FieldValueExpressionDriver::makePatches
   }
 }
 
+// code duplication from the template above
+template<class T>
+void FieldValueExpressionDriver::makePatches
+(
+    GeometricField<T,fvsPatchField,surfaceMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,fvsPatchField,surfaceMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<fvsPatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const fvPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            || 
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(wallFvPatch)
+            || 
+            typeid(patch)==typeid(fvPatch
+            )
+        )
+    ) {
+        if(isValuePatch){
+            bfNew[patchI]=new fixedValueFvsPatchField<T>(patch,field);  
+        } else {
+            // this is the only line that is REALLY different
+            bfNew[patchI]=new calculatedFvsPatchField<T>(patch,field);      
+        }
+    } else {
+        bfNew[patchI]=bf[patchI].clone().ptr();
+    }
+  }
+
+  bf.clear();
+  bf.setSize(bfNew.size());
+  forAll(bf,i) {
+      bf.set(i,bfNew[i]);
+  }
+}
+
 template<class T>
 void FieldValueExpressionDriver::setCalculatedPatches
 (
@@ -140,6 +195,58 @@ void FieldValueExpressionDriver::setValuePatches
             fvPatchField<T> &pf=field.boundaryField()[patchI];
             
             pf==pf.patchInternalField();
+        }
+    }
+  }
+}
+
+// Code duplication from above ... maybe there is a better way
+template<class T>
+void FieldValueExpressionDriver::setValuePatches
+(
+    GeometricField<T,fvsPatchField,surfaceMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,fvsPatchField,surfaceMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<fvsPatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const fvPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            ||
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(wallFvPatch)
+            ||
+            typeid(patch)==typeid(fvPatch
+            )
+        )
+    ) {
+        if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFvsPatchField<T>)) {
+            //            fvsPatchField<T> &pf=field.boundaryField()[patchI];
+            //            pf==pf.patchInternalField();
+            WarningIn(
+                "FieldValueExpressionDriver::setValuePatches"
+                "("
+                "GeometricField<T,fvsPatchField,surfaceMesh> &field,"
+                "bool keepPatches,"
+                "const wordList &fixedPatches"
+                ")" 
+            ) << "There is no patchInternalField() for fvsPatchField. " 
+                << "Nothing done for patch " << patch.name() << endl;
         }
     }
   }

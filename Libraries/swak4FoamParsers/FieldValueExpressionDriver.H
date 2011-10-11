@@ -189,6 +189,12 @@ public:
     static void setValuePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
 
     template<class T>
+    static void makePatches(GeometricField<T,fvsPatchField,surfaceMesh> &field,bool keepPatches,const wordList &fixedPatches);
+
+    template<class T>
+    static void setValuePatches(GeometricField<T,fvsPatchField,surfaceMesh> &field,bool keepPatches,const wordList &fixedPatches);
+
+    template<class T>
     static void setCalculatedPatches(GeometricField<T,fvPatchField,volMesh> &field);
 
     // allow acces to the setResult-method

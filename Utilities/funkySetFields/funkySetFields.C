@@ -272,30 +272,30 @@ void doAnExpression
                 keepPatches,
                 valuePatches
             );
-//         } else if(driver.typ()==pTraits<surfaceScalarField>::typeName) {
-//             setField(
-//                 field,
-//                 mesh,
-//                 time,
-//                 driver.getResult<surfaceScalarField>(),
-//                 conditionField,
-//                 create,
-//                 dim,
-//                 keepPatches,
-//                 valuePatches
-//             );
-//         } else if(driver.typ()==pTraits<surfaceVectorField>::typeName) {
-//             setField(
-//                 field,
-//                 mesh,
-//                 time,
-//                 driver.getResult<surfaceVectorField>(),
-//                 conditionField,
-//                 create,
-//                 dim,
-//                 keepPatches,
-//                 valuePatches
-//             );
+        } else if(driver.typ()==pTraits<surfaceScalarField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<surfaceScalarField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<surfaceVectorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<surfaceVectorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
         } else {
             FatalErrorIn("doAnExpression")
                 << "Expression " << expression

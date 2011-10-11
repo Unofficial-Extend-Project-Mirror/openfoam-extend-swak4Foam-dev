@@ -591,6 +591,9 @@ S_{expl} + S_{impl} T
      Due to the refactoring of the =FieldDriver= now =phi= can be
      specified by a general expression (instead of 'only' a
      field-name) 
+**** =funkySetFields= now also writes surfaceFields
+     Can write =surfaceVector= and =surfaceScalar=-Fields. Condition
+     has to be consistent
 *** Bug fixes
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template
