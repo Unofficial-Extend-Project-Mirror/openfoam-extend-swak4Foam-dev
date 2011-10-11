@@ -198,13 +198,14 @@ inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType
         mesh_,
         val,
         "zeroGradient"
+        //        "calculated" // for surfaceFields
     );
 
     return f;
 }
 
 template<class T>
-void FieldValueExpressionDriver::setResult(T *r,bool isLogical) 
+void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField,bool isLogical) 
 {
     resultField_.reset(r);
 
@@ -219,6 +220,7 @@ void FieldValueExpressionDriver::setResult(T *r,bool isLogical)
     result_.setResult(result.internalField());
 
     isLogical_=isLogical;
+    isSurfaceField_=isSurfaceField;
 }
 
 template<class T>

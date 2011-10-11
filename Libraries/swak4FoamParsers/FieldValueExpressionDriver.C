@@ -35,6 +35,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(runTime),
       typ_("nothing"),
       isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -53,6 +54,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(mesh.time()),
       typ_("nothing"),
       isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -73,6 +75,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(mesh.time()),
       typ_("nothing"),
       isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -87,6 +90,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       runTime_(mesh.time()),
       typ_("nothing"),
       isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
     if(dict.found("dimensions")) {

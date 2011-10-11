@@ -48,6 +48,8 @@ class FieldValueExpressionDriver
 
     bool isLogical_;
 
+    bool isSurfaceField_;
+
     dimensionSet resultDimension_;
 
 public:
@@ -90,10 +92,15 @@ public:
     template<class T>
     bool resultIsTyp(bool isLogical=false);
 
-    //- set the result field
-    template<class T>
-    void setResult(T *,bool isLogical=false);
+protected:
 
+    //- set the result field
+
+    //. Not everyone should be allowed to use this
+    template<class T>
+    void setResult(T *,bool isSurfaceField,bool isLogical=false);
+
+public:
     //- get the result field (if it is of the right type)
     template<class T>
     const T &getResult();
@@ -153,6 +160,12 @@ public:
     //- what type
     const word &typ() const { return typ_; }
 
+    //- is this a logical field
+    bool isLogical() const { return isLogical_; }
+
+    //- is this a surface field
+    bool isSurfaceField() const { return isSurfaceField_; }
+
     // Logical expressions
     template <class Field>
     Field *makeLogicalField(scalar v);
@@ -178,6 +191,8 @@ public:
     template<class T>
     static void setCalculatedPatches(GeometricField<T,fvPatchField,volMesh> &field);
 
+    // allow acces to the setResult-method
+    friend class parserField::FieldValueExpressionParser;
 };
 
 } // end namespace

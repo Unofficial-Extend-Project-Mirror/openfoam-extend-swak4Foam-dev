@@ -49,7 +49,7 @@ void setField
     const fvMesh &mesh,
     const string &time,
     const T &result,
-    const volScalarField &cond,
+    const scalarField &cond,
     bool create,
     const dimensionSet &dim,
     bool keepPatches,
@@ -129,7 +129,7 @@ void doAnExpression
     const wordList &valuePatches
 ) {
     const string &time = runTime.timeName();
-    bool isScalar=false;
+    word oldFieldType="none";
 
     if(!create) {
         IOobject f 
@@ -142,16 +142,10 @@ void doAnExpression
             );
         f.headerOk();
         
-        word classN=f.headerClassName();
-        if(classN=="volScalarField") {
-            isScalar=true;
-        } else if (classN!="volVectorField") {
-            FatalErrorIn("doAnExpression()")
-                //            << args.executable()
-                << " unsupported type " << classN << " of field " 
-                    << field << " or not existing at time " << time
-                    << exit(FatalError);
-        }
+        oldFieldType=f.headerClassName();
+
+        Info << " Modifying field " << field 
+            << " of type " << oldFieldType << "\n" << endl;
     } else {
         Info << " Creating field " << field << "\n" << endl;
     }
@@ -191,39 +185,70 @@ void doAnExpression
 
     driver.clearVariables();
 
-    driver.parse(condition);
-    if(!driver.resultIsTyp<volScalarField>(true)) {
-        FatalErrorIn("doAnExpression()")
+    scalarField conditionField;
+    bool evaluatedCondition=false;
+    bool conditionIsSurface=false;
+    if(condition!="true") {
+        evaluatedCondition=true;
+
+        driver.parse(condition);
+        if(
+            !driver.resultIsTyp<volScalarField>(true)
+            &&
+            !driver.resultIsTyp<surfaceScalarField>(true)
+        ) {
+            FatalErrorIn("doAnExpression()")
                 << " condition: " << condition 
                     << " does not evaluate to a logical expression" 
                     << exit(FatalError);
-    }
-    volScalarField conditionField(driver.getResult<volScalarField>());
+        }
 
-    driver.parse(expression);
-
-    if(create) {
-        if(driver.resultIsTyp<volVectorField>()) {
-            isScalar=false;
-        } else if(driver.resultIsTyp<volScalarField>()) {
-            isScalar=true;
+        if(driver.resultIsTyp<volScalarField>(true)) {
+            conditionField=driver.getResult<volScalarField>().internalField();
+            conditionIsSurface=false;
         } else {
-            FatalErrorIn("doAnExpression()")
-                << " result is neither scalar nor vector" 
-            << exit(FatalError);
+            conditionField=driver.getResult<surfaceScalarField>().internalField();
+            conditionIsSurface=true;
         }
     }
 
-    if(driver.resultIsTyp<volVectorField>()==isScalar) {
+    driver.parse(expression);
+
+    if(!evaluatedCondition) {
+        conditionIsSurface=driver.isSurfaceField();
+
+        if(conditionIsSurface) {
+            conditionField=scalarField(mesh.cells().size(),1);
+        } else {
+            conditionField=scalarField(mesh.nInternalFaces(),1);
+        }
+    }
+
+    if(create) {
+        oldFieldType=driver.typ();
+    }
+
+    if(conditionIsSurface!=driver.isSurfaceField()) {
+        FatalErrorIn("doAnExpression()")
+            << "Inconsistent expression and condition. "
+                << "Expression " << expression << " is defined on the "
+                << (driver.isSurfaceField() ? "faces" : "cells")
+                << " while condition " << condition << " is defined on "
+                << (conditionIsSurface ? "faces" : "cells")
+                << endl
+                << abort(FatalError);
+    }
+
+    if(driver.typ()!=oldFieldType) {
         FatalErrorIn("doAnExpression()")
             //            << args.executable()
                 << " inconsistent types: " << field << " is  " 
-                    << (isScalar ? "scalar" : "vector" ) 
+                    << oldFieldType
                     << " while the expression evaluates to a " 
-                    << (!driver.resultIsTyp<volVectorField>() ? "scalar" : "vector" )
+                    << driver.typ()
             << exit(FatalError);
     } else {
-        if(isScalar) {
+        if(driver.typ()==pTraits<volScalarField>::typeName) {
             setField(
                 field,
                 mesh,
@@ -235,18 +260,48 @@ void doAnExpression
                 keepPatches,
                 valuePatches
             );
+        } else if(driver.typ()==pTraits<volVectorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<volVectorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+//         } else if(driver.typ()==pTraits<surfaceScalarField>::typeName) {
+//             setField(
+//                 field,
+//                 mesh,
+//                 time,
+//                 driver.getResult<surfaceScalarField>(),
+//                 conditionField,
+//                 create,
+//                 dim,
+//                 keepPatches,
+//                 valuePatches
+//             );
+//         } else if(driver.typ()==pTraits<surfaceVectorField>::typeName) {
+//             setField(
+//                 field,
+//                 mesh,
+//                 time,
+//                 driver.getResult<surfaceVectorField>(),
+//                 conditionField,
+//                 create,
+//                 dim,
+//                 keepPatches,
+//                 valuePatches
+//             );
         } else {
-	  setField(
-              field,
-              mesh,
-              time,
-              driver.getResult<volVectorField>(),
-              conditionField,
-              create,
-              dim,
-              keepPatches,
-              valuePatches
-          );
+            FatalErrorIn("doAnExpression")
+                << "Expression " << expression
+                    << " evaluates to an unsupported type "
+                    << driver.typ() << endl
+                    << abort(FatalError);
         }
     }
 }

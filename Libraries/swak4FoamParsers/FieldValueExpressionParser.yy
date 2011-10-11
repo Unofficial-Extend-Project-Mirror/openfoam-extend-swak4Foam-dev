@@ -195,12 +195,12 @@
 %%
 %start unit;
 
-unit:   exp                     { driver.setResult($1);  }
-        | vexp                  { driver.setResult($1);  }
-        | lexp                  { driver.setResult($1,true); }
-        | fsexp                 { driver.setResult($1);  }
-        | fvexp                 { driver.setResult($1);  }
-        | flexp                 { driver.setResult($1,true); }
+unit:   exp                     { driver.setResult($1,false);  }
+        | vexp                  { driver.setResult($1,false);  }
+        | lexp                  { driver.setResult($1,false,true); }
+        | fsexp                 { driver.setResult($1,true);  }
+        | fvexp                 { driver.setResult($1,true);  }
+        | flexp                 { driver.setResult($1,true,true); }
 ;
 
 vexp:   vector                                    { $$ = $1; }
