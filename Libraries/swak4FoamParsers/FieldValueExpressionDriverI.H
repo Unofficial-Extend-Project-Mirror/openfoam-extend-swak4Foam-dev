@@ -186,6 +186,11 @@ inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType
     std::ostringstream buff;
     buff << "constant" << pTraits<typename FType::value_type>::typeName;
 
+    word defaultBC="calculated";
+    if(pTraits<typename FType::PatchFieldType>::typeName=="fvPatchField") {
+        defaultBC="zeroGradient";
+    }
+
     FType *f=new FType(
         IOobject
         (
@@ -197,8 +202,7 @@ inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType
         ),
         mesh_,
         val,
-        "zeroGradient"
-        //        "calculated" // for surfaceFields
+        defaultBC
     );
 
     return f;

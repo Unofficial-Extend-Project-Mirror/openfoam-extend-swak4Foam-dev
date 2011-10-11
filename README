@@ -591,3 +591,7 @@ S_{expl} + S_{impl} T
      Due to the refactoring of the =FieldDriver= now =phi= can be
      specified by a general expression (instead of 'only' a
      field-name) 
+*** Bug fixes
+**** Constants for surfaceFields not working
+     Because surfaceFields know no =zeroGradient= the template
+     =makeConstant= did not work
