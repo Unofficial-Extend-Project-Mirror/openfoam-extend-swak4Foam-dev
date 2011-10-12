@@ -88,7 +88,8 @@ void setField
     }
 
     FieldValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
-
+    FieldValueExpressionDriver::copyCalculatedPatches(*tmp,result);
+    
     label setCells=0;
 
     forAll(*tmp,cellI) {

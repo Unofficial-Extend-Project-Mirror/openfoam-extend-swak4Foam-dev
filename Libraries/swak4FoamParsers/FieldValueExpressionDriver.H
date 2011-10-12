@@ -183,19 +183,56 @@ public:
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
     template<class T>
-    static void makePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void makePatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void setValuePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void setValuePatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void makePatches(GeometricField<T,fvsPatchField,surfaceMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void makePatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void setValuePatches(GeometricField<T,fvsPatchField,surfaceMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void setValuePatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void setCalculatedPatches(GeometricField<T,fvPatchField,volMesh> &field);
+    static void setCalculatedPatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        T unusedValue=pTraits<T>::zero
+    );
+
+    template<class T>
+    static void setCalculatedPatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        T value=pTraits<T>::zero
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        const GeometricField<T,fvPatchField,volMesh> &orig
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        const GeometricField<T,fvsPatchField,surfaceMesh> &orig
+    );
 
     // allow acces to the setResult-method
     friend class parserField::FieldValueExpressionParser;

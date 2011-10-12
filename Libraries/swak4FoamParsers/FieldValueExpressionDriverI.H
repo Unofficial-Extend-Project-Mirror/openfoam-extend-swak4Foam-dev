@@ -63,8 +63,7 @@ void FieldValueExpressionDriver::makePatches
         (
             typeid(patch)==typeid(wallFvPatch)
             || 
-            typeid(patch)==typeid(fvPatch
-            )
+            typeid(patch)==typeid(fvPatch)
         )
     ) {
         if(isValuePatch){
@@ -115,15 +114,15 @@ void FieldValueExpressionDriver::makePatches
         (
             typeid(patch)==typeid(wallFvPatch)
             || 
-            typeid(patch)==typeid(fvPatch
-            )
+            typeid(patch)==typeid(fvPatch)
         )
     ) {
         if(isValuePatch){
             bfNew[patchI]=new fixedValueFvsPatchField<T>(patch,field);  
         } else {
             // this is the only line that is REALLY different
-            bfNew[patchI]=new calculatedFvsPatchField<T>(patch,field);      
+            bfNew[patchI]=new calculatedFvsPatchField<T>(patch,field);
+            (*bfNew[patchI])==bf[patchI];
         }
     } else {
         bfNew[patchI]=bf[patchI].clone().ptr();
@@ -140,7 +139,8 @@ void FieldValueExpressionDriver::makePatches
 template<class T>
 void FieldValueExpressionDriver::setCalculatedPatches
 (
-    GeometricField<T,fvPatchField,volMesh> &field
+    GeometricField<T,fvPatchField,volMesh> &field,
+    T unusedValue
 ) {
     typename GeometricField<T,fvPatchField,volMesh>::GeometricBoundaryField &bf=field.boundaryField();
     List<fvPatchField<T> *>bfNew(bf.size());
@@ -155,6 +155,72 @@ void FieldValueExpressionDriver::setCalculatedPatches
         }
     }
     field.correctBoundaryConditions();
+}
+
+template<class T>
+void FieldValueExpressionDriver::setCalculatedPatches
+(
+    GeometricField<T,fvsPatchField,surfaceMesh> &field,
+    T value
+) {
+    typename GeometricField<T,fvsPatchField,surfaceMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    List<fvsPatchField<T> *>bfNew(bf.size());
+    
+    forAll(bf,patchI) {
+        fvsPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFvsPatchField<T>)
+        ) {
+            //            pf==pf.patchInternalField();
+            pf==value;
+        }
+    }
+    //     field.correctBoundaryConditions();
+}
+
+template<class T>
+void FieldValueExpressionDriver::copyCalculatedPatches
+(
+    GeometricField<T,fvPatchField,volMesh> &field,
+    const GeometricField<T,fvPatchField,volMesh> &orig
+) {
+    typename GeometricField<T,fvPatchField,volMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    List<fvPatchField<T> *>bfNew(bf.size());
+    
+    forAll(bf,patchI) {
+        fvPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFvPatchField<T>)
+        ) {
+            pf==pf.patchInternalField();
+        }
+    }
+    field.correctBoundaryConditions();
+}
+
+template<class T>
+void FieldValueExpressionDriver::copyCalculatedPatches
+(
+    GeometricField<T,fvsPatchField,surfaceMesh> &field,
+    const GeometricField<T,fvsPatchField,surfaceMesh> &orig
+) {
+    typename GeometricField<T,fvsPatchField,surfaceMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    const typename GeometricField<T,fvsPatchField,surfaceMesh>::GeometricBoundaryField &bfOrig=orig.boundaryField();
+
+    forAll(bf,patchI) {
+        fvsPatchField<T> &pf=bf[patchI];
+        const fvsPatchField<T> &pfOrig=bfOrig[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFvsPatchField<T>)
+            &&
+            typeid(pfOrig)==typeid(calculatedFvsPatchField<T>)
+        ) {
+            pf==pfOrig;
+        }
+    }
 }
 
 template<class T>
@@ -236,7 +302,7 @@ void FieldValueExpressionDriver::setValuePatches
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFvsPatchField<T>)) {
-            //            fvsPatchField<T> &pf=field.boundaryField()[patchI];
+            fvsPatchField<T> &pf=field.boundaryField()[patchI];
             //            pf==pf.patchInternalField();
             WarningIn(
                 "FieldValueExpressionDriver::setValuePatches"
@@ -246,7 +312,9 @@ void FieldValueExpressionDriver::setValuePatches
                 "const wordList &fixedPatches"
                 ")" 
             ) << "There is no patchInternalField() for fvsPatchField. " 
-                << "Nothing done for patch " << patch.name() << endl;
+                << "Nothing done for patch " << patch.name() 
+                << " but setting it to " << pTraits<T>::zero << endl;
+            pf==pTraits<T>::zero;
         }
     }
   }
@@ -311,6 +379,9 @@ inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType
         val,
         defaultBC
     );
+    if(pTraits<typename FType::PatchFieldType>::typeName=="fvsPatchField") {
+        setCalculatedPatches(*f,val);
+    }
 
     return f;
 }
