@@ -605,3 +605,18 @@ S_{expl} + S_{impl} T
      doesn't have any faces the variable is reported on that processor
      as /not existing/ and the whole run fails
 ** Next release
+*** Technical
+**** Refactoring of the FieldDriver
+     - now can also produce surfaceFields
+*** New features
+**** General =phi= in =solveTransportPDE=
+     Due to the refactoring of the =FieldDriver= now =phi= can be
+     specified by a general expression (instead of 'only' a
+     field-name) 
+**** =funkySetFields= now also writes surfaceFields
+     Can write =surfaceVector= and =surfaceScalar=-Fields. Condition
+     has to be consistent
+*** Bug fixes
+**** Constants for surfaceFields not working
+     Because surfaceFields know no =zeroGradient= the template
+     =makeConstant= did not work

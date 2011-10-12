@@ -113,26 +113,26 @@ void Foam::manipulateField::execute()
 
         driver.parse(maskExpression_);
 
-        if(!driver.resultIsLogical()) {
+        if(!driver.resultIsTyp<volScalarField>(true)) {
             FatalErrorIn("manipulateField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
                     << abort(FatalError);
         }
 
-        volScalarField conditionField(driver.getScalar());
+        volScalarField conditionField(driver.getResult<volScalarField>());
 
         driver.parse(expression_);
 
-        if(driver.resultIsVector()) {
+        if(driver.resultIsTyp<volVectorField>()) {
             manipulate(
-                driver.getVector(),
+                driver.getResult<volVectorField>(),
                 conditionField
             );
             
-        } else if(driver.resultIsScalar()) {
+        } else if(driver.resultIsTyp<volScalarField>()) {
             manipulate(
-                driver.getScalar(),
+                driver.getResult<volScalarField>(),
                 conditionField
             );
         } else {

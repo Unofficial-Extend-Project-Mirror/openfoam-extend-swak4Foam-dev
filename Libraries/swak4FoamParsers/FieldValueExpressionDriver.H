@@ -35,27 +35,25 @@ class FieldValueExpressionDriver
     FieldValueExpressionDriver(const FieldValueExpressionDriver &);
     void operator=(const FieldValueExpressionDriver&);
 
-public:
-    enum ExpressionType{
-        NO_TYPE,
-        SCALAR_TYPE,
-        VECTOR_TYPE,
-        LOGICAL_TYPE
-    };
-
-private:
     const string time_;
     const fvMesh &mesh_;
     const Time& runTime_;
 
-    autoPtr<volScalarField> sresult_;
-    autoPtr<volVectorField> vresult_;
+//     autoPtr<volScalarField> sresult_;
+//     autoPtr<volVectorField> vresult_;
+    
+    autoPtr<regIOobject> resultField_;
 
-    ExpressionType typ_;
+    word typ_;
+
+    bool isLogical_;
+
+    bool isSurfaceField_;
 
     dimensionSet resultDimension_;
 
 public:
+
     TypeName("FieldValueExpressionDriver");
 
     //- old style constructor
@@ -90,19 +88,22 @@ public:
     inline const fvMesh &mesh() const;
     const word time() const;
 
-    // Check the result type
-    bool resultIsVector() { return typ_==VECTOR_TYPE; }
-    bool resultIsScalar() { return typ_==SCALAR_TYPE; }
-    bool resultIsLogical() { return typ_==LOGICAL_TYPE; }
+    //- check if field is of requested type
+    template<class T>
+    bool resultIsTyp(bool isLogical=false);
 
-    // Setting the result
-    void setScalarResult(volScalarField *);
-    void setLogicalResult(volScalarField *);
-    void setVectorResult(volVectorField *);
+protected:
 
-    // Getting the results
-    const volScalarField &getScalar() { return sresult_; }
-    const volVectorField &getVector() { return vresult_; }
+    //- set the result field
+
+    //. Not everyone should be allowed to use this
+    template<class T>
+    void setResult(T *,bool isSurfaceField,bool isLogical=false);
+
+public:
+    //- get the result field (if it is of the right type)
+    template<class T>
+    const T &getResult();
 
     // Handling the scanner.
     void scan_begin ();
@@ -153,8 +154,17 @@ public:
     volScalarField *makeGaussRandomField(label seed=0);
     volScalarField *makeCellIdField();
     
-    // return Time object
+    //- return Time object
     const Time& runTime() const { return runTime_; }
+
+    //- what type
+    const word &typ() const { return typ_; }
+
+    //- is this a logical field
+    bool isLogical() const { return isLogical_; }
+
+    //- is this a surface field
+    bool isSurfaceField() const { return isSurfaceField_; }
 
     // Logical expressions
     template <class Field>
@@ -173,14 +183,59 @@ public:
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
     template<class T>
-    static void makePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void makePatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void setValuePatches(GeometricField<T,fvPatchField,volMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void setValuePatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void setCalculatedPatches(GeometricField<T,fvPatchField,volMesh> &field);
+    static void makePatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
+    template<class T>
+    static void setValuePatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void setCalculatedPatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        T unusedValue=pTraits<T>::zero
+    );
+
+    template<class T>
+    static void setCalculatedPatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        T value=pTraits<T>::zero
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,fvPatchField,volMesh> &field,
+        const GeometricField<T,fvPatchField,volMesh> &orig
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        const GeometricField<T,fvsPatchField,surfaceMesh> &orig
+    );
+
+    // allow acces to the setResult-method
+    friend class parserField::FieldValueExpressionParser;
 };
 
 } // end namespace

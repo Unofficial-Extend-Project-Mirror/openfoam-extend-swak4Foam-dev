@@ -72,14 +72,14 @@ tmp<expressionSource<scalar>::resultField> expressionSource<scalar>::operator()(
 {
     clearVariables();
     parse(expression_);
-    if(!resultIsScalar()) {
+    if(!resultIsTyp<resultField>()) {
         FatalErrorIn("expressionSource<scalar>::operator()()")
             << "Result of " << expression_ << " is not a scalar"
                 << endl
                 << abort(FatalError);
     }
 
-    tmp<resultField> result(new resultField(getScalar()));
+    tmp<resultField> result(new resultField(getResult<resultField>()));
     
     return result;
 }
@@ -89,14 +89,14 @@ tmp<expressionSource<vector>::resultField> expressionSource<vector>::operator()(
 {
     clearVariables();
     parse(expression_);
-    if(!resultIsVector()) {
+    if(!resultIsTyp<resultField>()) {
         FatalErrorIn("expressionSource<vector>::operator()()")
             << "Result of " << expression_ << " is not a vector"
                 << endl
                 << abort(FatalError);
     }
 
-    tmp<resultField> result(new resultField(getVector()));
+    tmp<resultField> result(new resultField(getResult<resultField>()));
 
     return result;
 }

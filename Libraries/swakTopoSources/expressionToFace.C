@@ -82,13 +82,13 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
             true  // search on disc
         );
     driver.parse(expression_);
-    if(!driver.resultIsLogical()) {
+    if(!driver.resultIsTyp<volScalarField>(true)) {
         FatalErrorIn("Foam::expressionToFace::combine(topoSet& set, const bool add) const")
             << "Expression " << expression_ << " does not evaluate to a logical expression"
                 << endl
                 << abort(FatalError);
     }
-    const volScalarField &condition=driver.getScalar();
+    const volScalarField &condition=driver.getResult<volScalarField>();
 
     const labelList &own=condition.mesh().faceOwner();
     const labelList &nei=condition.mesh().faceNeighbour();

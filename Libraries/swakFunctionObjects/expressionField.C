@@ -61,12 +61,11 @@ Foam::expressionField::~expressionField()
 
 template<class T>
 void Foam::expressionField::storeField(
-    const T &data,
-    autoPtr<T> &store
+    const T &data
 )
 {
-    if(store.empty()) {
-        store.reset(
+    if(field_.empty()) {
+        field_.reset(
             new T(
                 IOobject(
                     name_,
@@ -79,7 +78,7 @@ void Foam::expressionField::storeField(
             )
         );
     } else {
-        store()==data;
+        dynamicCast<T &>(field_())==data;
     }
 }
 
@@ -116,21 +115,29 @@ void Foam::expressionField::execute()
 
         driver.parse(expression_);
 
-        if(driver.resultIsVector()) {
+        if(driver.resultIsTyp<volVectorField>()) {
             storeField(
-                driver.getVector(),
-                vectorField_
+                driver.getResult<volVectorField>()
             );
             
-        } else if(driver.resultIsScalar()) {
+        } else if(driver.resultIsTyp<volScalarField>()) {
             storeField(
-                driver.getScalar(),
-                scalarField_
+                driver.getResult<volScalarField>()
+            );
+        } else if(driver.resultIsTyp<surfaceVectorField>()) {
+            storeField(
+                driver.getResult<surfaceVectorField>()
+            );
+            
+        } else if(driver.resultIsTyp<surfaceScalarField>()) {
+            storeField(
+                driver.getResult<surfaceScalarField>()
             );
         } else {
             WarningIn("Foam::expressionField::execute()")
                 << "Expression '" << expression_ 
-                    << "' evaluated to an unsupported type"
+                    << "' evaluated to an unsupported type "
+                    << driver.typ()
                     << endl;
         }
     }
@@ -147,8 +154,7 @@ void Foam::expressionField::write()
 
 void Foam::expressionField::clearData()
 {
-    scalarField_.clear();
-    vectorField_.clear();
+    field_.clear();
 }
 
 // ************************************************************************* //
