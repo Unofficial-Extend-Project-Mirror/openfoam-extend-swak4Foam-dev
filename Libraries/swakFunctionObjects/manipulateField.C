@@ -59,13 +59,13 @@ Foam::manipulateField::manipulateField
 Foam::manipulateField::~manipulateField()
 {}
 
-template<class T>
+template<class TData,class TMask>
 void Foam::manipulateField::manipulate(
-    const T &data,
-    const volScalarField &mask
+    const TData &data,
+    const TMask &mask
 )
 {
-    T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
+    TData &original=const_cast<TData &>(obr_.lookupObject<TData>(name_));
     label cnt=0;
     forAll(original,cellI) {
         if(mask[cellI]>SMALL) {
@@ -78,6 +78,29 @@ void Foam::manipulateField::manipulate(
     Info << "Manipulated field " << name_ << " in " << cnt
         << " cells with the expression " << expression_ << endl;
     original.correctBoundaryConditions();
+}
+
+template<class TData,class TMask>
+void Foam::manipulateField::manipulateSurface(
+    const TData &data,
+    const TMask &mask
+)
+{
+    TData &original=const_cast<TData &>(obr_.lookupObject<TData>(name_));
+    label cnt=0;
+    forAll(original,cellI) {
+        if(mask[cellI]>SMALL) {
+            cnt++;
+            original[cellI]=data[cellI];
+        }
+    }
+
+    reduce(cnt,plusOp<label>());
+    Info << "Manipulated field " << name_ << " on " << cnt
+        << " faces with the expression " << expression_ << endl;
+
+    // this does not work for surface fields
+    //    original.correctBoundaryConditions();
 }
 
 void Foam::manipulateField::read(const dictionary& dict)
@@ -113,33 +136,64 @@ void Foam::manipulateField::execute()
 
         driver.parse(maskExpression_);
 
-        if(!driver.resultIsTyp<volScalarField>(true)) {
+        if(!driver.isLogical()) {
             FatalErrorIn("manipulateField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
                     << abort(FatalError);
         }
 
-        volScalarField conditionField(driver.getResult<volScalarField>());
-
-        driver.parse(expression_);
-
-        if(driver.resultIsTyp<volVectorField>()) {
-            manipulate(
-                driver.getResult<volVectorField>(),
-                conditionField
-            );
+        if(driver.resultIsTyp<volScalarField>(true)) {
+            volScalarField conditionField(driver.getResult<volScalarField>());
             
-        } else if(driver.resultIsTyp<volScalarField>()) {
-            manipulate(
-                driver.getResult<volScalarField>(),
-                conditionField
-            );
+            driver.parse(expression_);
+            
+            if(driver.resultIsTyp<volVectorField>()) {
+                manipulate(
+                    driver.getResult<volVectorField>(),
+                    conditionField
+                );
+                
+            } else if(driver.resultIsTyp<volScalarField>()) {
+                manipulate(
+                    driver.getResult<volScalarField>(),
+                    conditionField
+                );
+            } else {
+                WarningIn("Foam::manipulateField::execute()")
+                    << "Expression '" << expression_ 
+                        << "' evaluated to an unsupported type "
+                        << driver.typ() << " that is incompatible with a mask defined on cells"
+                        << endl;
+            }
+        } else if(driver.resultIsTyp<surfaceScalarField>(true)) {
+            surfaceScalarField conditionField(driver.getResult<surfaceScalarField>());
+            
+            driver.parse(expression_);
+            
+            if(driver.resultIsTyp<surfaceVectorField>()) {
+                manipulateSurface(
+                    driver.getResult<surfaceVectorField>(),
+                    conditionField
+                );
+                
+            } else if(driver.resultIsTyp<surfaceScalarField>()) {
+                manipulateSurface(
+                    driver.getResult<surfaceScalarField>(),
+                    conditionField
+                );
+            } else {
+                WarningIn("Foam::manipulateField::execute()")
+                    << "Expression '" << expression_ 
+                        << "' evaluated to an unsupported type "
+                        << driver.typ() << " that is incompatible with a mask defined on faces"
+                        << endl;
+            }
         } else {
-            WarningIn("Foam::manipulateField::execute()")
-                << "Expression '" << expression_ 
-                    << "' evaluated to an unsupported type"
-                    << endl;
+                WarningIn("Foam::manipulateField::execute()")
+                    << "Mask " << maskExpression_ << " evaluates to type "
+                        << driver.typ() << " which is an unsupported field type for logical"
+                        << endl;
         }
     }
 }

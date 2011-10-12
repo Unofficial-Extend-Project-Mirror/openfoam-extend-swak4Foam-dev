@@ -594,6 +594,9 @@ S_{expl} + S_{impl} T
 **** =funkySetFields= now also writes surfaceFields
      Can write =surfaceVector= and =surfaceScalar=-Fields. Condition
      has to be consistent
+**** Function objects now =surfaceField=-aware
+     =expressionField= and =manipulateField= now can create or modify
+     =surfaceFields= 
 *** Bug fixes
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template
