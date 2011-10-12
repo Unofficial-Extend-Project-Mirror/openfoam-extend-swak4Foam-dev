@@ -597,6 +597,14 @@ S_{expl} + S_{impl} T
 **** Function objects now =surfaceField=-aware
      =expressionField= and =manipulateField= now can create or modify
      =surfaceFields= 
+**** Extension of the =expressionToFace= =topoSet=
+     If the expression evaluates to a =surfaceField= then this is used
+     as a flag whether or not the face is in the =faceSet=. If the
+     expression evaluates to a =volScalarField= then the old semantic
+     applies (faces are in the set if one cell is =true= and the other
+     is =false=).
+     
+     This only works for internal faces
 *** Bug fixes
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template
