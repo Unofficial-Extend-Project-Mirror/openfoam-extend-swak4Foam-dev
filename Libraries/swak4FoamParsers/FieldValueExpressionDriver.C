@@ -626,6 +626,65 @@ volVectorField *FieldValueExpressionDriver::makeVectorField
     return f;
 }
 
+volTensorField *FieldValueExpressionDriver::makeTensorField
+(
+    volScalarField *xx,volScalarField *xy,volScalarField *xz,
+    volScalarField *yx,volScalarField *yy,volScalarField *yz,
+    volScalarField *zx,volScalarField *zy,volScalarField *zz
+) {
+    volTensorField *f=makeConstantField<volTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+
+    forAll(*f,cellI) {
+        (*f)[cellI]=tensor(
+            (*xx)[cellI],(*xy)[cellI],(*xz)[cellI],
+            (*yx)[cellI],(*yy)[cellI],(*yz)[cellI],
+            (*zx)[cellI],(*zy)[cellI],(*zz)[cellI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+volSymmTensorField *FieldValueExpressionDriver::makeSymmTensorField
+(
+    volScalarField *xx,volScalarField *xy,volScalarField *xz,
+    volScalarField *yy,volScalarField *yz,
+    volScalarField *zz
+) {
+    volSymmTensorField *f=makeConstantField<volSymmTensorField>(symmTensor(0,0,0,0,0,0));
+
+    forAll(*f,cellI) {
+        (*f)[cellI]=symmTensor(
+            (*xx)[cellI],(*xy)[cellI],(*xz)[cellI],
+            (*yy)[cellI],(*yz)[cellI],
+            (*zz)[cellI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+volSphericalTensorField *FieldValueExpressionDriver::makeSphericalTensorField
+(
+    volScalarField *xx
+) {
+    volSphericalTensorField *f=makeConstantField<volSphericalTensorField>(sphericalTensor(0));
+
+    forAll(*f,cellI) {
+        (*f)[cellI]=sphericalTensor(
+            (*xx)[cellI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
 surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
 (
     surfaceScalarField *x,
@@ -637,6 +696,59 @@ surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
 
     forAll(*f,faceI) {
         (*f)[faceI]=vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
+    }
+
+    return f;
+}
+
+surfaceTensorField *FieldValueExpressionDriver::makeSurfaceTensorField
+(
+    surfaceScalarField *xx,surfaceScalarField *xy,surfaceScalarField *xz,
+    surfaceScalarField *yx,surfaceScalarField *yy,surfaceScalarField *yz,
+    surfaceScalarField *zx,surfaceScalarField *zy,surfaceScalarField *zz
+) {
+    surfaceTensorField *f=makeConstantField<surfaceTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=tensor(
+            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
+            (*yx)[faceI],(*yy)[faceI],(*yz)[faceI],
+            (*zx)[faceI],(*zy)[faceI],(*zz)[faceI]
+        );
+    }
+
+    return f;
+}
+
+surfaceSymmTensorField *FieldValueExpressionDriver::makeSurfaceSymmTensorField
+(
+    surfaceScalarField *xx,surfaceScalarField *xy,surfaceScalarField *xz,
+    surfaceScalarField *yy,surfaceScalarField *yz,
+    surfaceScalarField *zz
+) {
+    surfaceSymmTensorField *f=makeConstantField<surfaceSymmTensorField>(symmTensor(0,0,0,0,0,0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=symmTensor(
+            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
+            (*yy)[faceI],(*yz)[faceI],
+            (*zz)[faceI]
+        );
+    }
+
+    return f;
+}
+
+surfaceSphericalTensorField *FieldValueExpressionDriver::makeSurfaceSphericalTensorField
+(
+    surfaceScalarField *xx
+) {
+    surfaceSphericalTensorField *f=makeConstantField<surfaceSphericalTensorField>(sphericalTensor(0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=sphericalTensor(
+            (*xx)[faceI]
+        );
     }
 
     return f;

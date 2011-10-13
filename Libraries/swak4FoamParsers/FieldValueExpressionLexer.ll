@@ -141,6 +141,9 @@ deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
 
 vector                 return token::TOKEN_VECTOR;
+tensor                 return token::TOKEN_TENSOR;
+symmTensor             return token::TOKEN_SYMM_TENSOR;
+sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
 
@@ -167,22 +170,46 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isLookup(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LOOKUP;
-    } else if(       
-        driver.isVariable<Foam::volVectorField::value_type>(*ptr)
-        ||
-        driver.isThere<Foam::volVectorField>(*ptr)
-    ) {
-        yylval->vname = ptr; return token::TOKEN_VID;
     } else if(
         driver.isVariable<Foam::volScalarField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volScalarField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_SID;
-    } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
-        yylval->name = ptr; return token::TOKEN_FSID;
+    } else if(       
+        driver.isVariable<Foam::volVectorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volVectorField>(*ptr)
+    ) {
+        yylval->vname = ptr; return token::TOKEN_VID;
+    } else if(       
+        driver.isVariable<Foam::volTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volTensorField>(*ptr)
+    ) {
+        yylval->vname = ptr; return token::TOKEN_TID;
+    } else if(       
+        driver.isVariable<Foam::volSymmTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volSymmTensorField>(*ptr)
+    ) {
+        yylval->vname = ptr; return token::TOKEN_YID;
+    } else if(       
+        driver.isVariable<Foam::volSphericalTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volSphericalTensorField>(*ptr)
+    ) {
+        yylval->vname = ptr; return token::TOKEN_HID;
     } else if(driver.isThere<Foam::surfaceVectorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FVID;
+    } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FSID;
+    } else if(driver.isThere<Foam::surfaceTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FTID;
+    } else if(driver.isThere<Foam::surfaceSymmTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FYID;
+    } else if(driver.isThere<Foam::surfaceSphericalTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FHID;
     } else {
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }

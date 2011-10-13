@@ -51,6 +51,9 @@
     Foam::scalar val;
     Foam::label integer;
     Foam::vector *vec;
+    Foam::tensor *ten;
+    Foam::symmTensor *yten;
+    Foam::sphericalTensor *hten;
     Foam::string *name;
     Foam::string *vname;
     Foam::string *fsname;
@@ -59,8 +62,14 @@
     Foam::string *zonename;
     Foam::volVectorField *vfield;
     Foam::volScalarField *sfield;
+    Foam::volTensorField *tfield;
+    Foam::volSymmTensorField *yfield;
+    Foam::volSphericalTensorField *hfield;
     Foam::surfaceScalarField *fsfield;
     Foam::surfaceVectorField *fvfield;
+    Foam::surfaceTensorField *ftfield;
+    Foam::surfaceSymmTensorField *fyfield;
+    Foam::surfaceSphericalTensorField *fhfield;
 };
 
 %{
@@ -74,8 +83,14 @@
 %token <name>   TOKEN_LOOKUP  "lookup"
 %token <name>   TOKEN_SID   "scalarID"
 %token <vname>  TOKEN_VID   "vectorID"
+%token <name>  TOKEN_TID   "tensorID"
+%token <name>  TOKEN_YID   "symmTensorID"
+%token <name>  TOKEN_HID   "sphericalTensorID"
 %token <fsname> TOKEN_FSID  "faceScalarID"
 %token <fvname> TOKEN_FVID  "faceVectorID"
+%token <name>  TOKEN_FTID   "faceTensorID"
+%token <name>  TOKEN_FYID   "faceSymmTensorID"
+%token <name>  TOKEN_FHID   "faceSphericalTensorID"
 %token <setname> TOKEN_SETID "cellSetID" 
 %token <zonename> TOKEN_ZONEID "cellZoneID" 
 %token <setname> TOKEN_FSETID "faceSetID" 
@@ -83,6 +98,9 @@
 %token <val>    TOKEN_NUM   "number"
 %token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
+%token <ten>    TOKEN_TEN   "tensor"
+%token <yten>    TOKEN_YTEN   "symmTensor"
+%token <hten>    TOKEN_HTEN   "sphericalTensor"
 %type  <val>    scalar      "sexpression"  
 %type  <sfield>    exp        "expression"
 %type  <sfield>    lexp       "lexpression"
@@ -90,13 +108,39 @@
 %type  <vfield>    vexp       "vexpression"
 %type  <fsfield>   fsexp      "fsexpression"
 %type  <fvfield>   fvexp      "fvexpression"
+%type  <tfield>    texp       "texpression"
+%type  <yfield>    yexp       "yexpression"
+%type  <hfield>    hexp       "hexpression"
+%type  <ftfield>    ftexp       "ftexpression"
+%type  <fyfield>    fyexp       "fyexpression"
+%type  <fhfield>    fhexp       "fhexpression"
 %type  <vfield>    vector     
 %type  <fvfield>    fvector     
+%type  <tfield>    tensor     
+%type  <yfield>    symmTensor     
+%type  <hfield>    sphericalTensor     
+%type  <ftfield>    ftensor     
+%type  <fyfield>    fsymmTensor     
+%type  <fhfield>    fsphericalTensor     
 
 %token TOKEN_VECTOR
+%token TOKEN_TENSOR
+%token TOKEN_SYMM_TENSOR
+%token TOKEN_SPHERICAL_TENSOR
 
 %token TOKEN_TRUE
 %token TOKEN_FALSE
+
+%token TOKEN_xx
+%token TOKEN_xy
+%token TOKEN_xz
+%token TOKEN_yx
+%token TOKEN_yy
+%token TOKEN_yz
+%token TOKEN_zx
+%token TOKEN_zy
+%token TOKEN_zz
+%token TOKEN_ii
 
 %token TOKEN_pi
 %token TOKEN_rand
@@ -185,11 +229,11 @@
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID"
-%printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
-%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression"  "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID"
+%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID"
+%printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector" "tensor" "symmTensor" "sphericalTensor"
+%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector"  "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID"
 %printer             { debug_stream () << $$; } "number" "integer" "sexpression"
-%printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression"
+%printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression"
 
 
 %%
@@ -197,9 +241,15 @@
 
 unit:   exp                     { driver.setResult($1,false);  }
         | vexp                  { driver.setResult($1,false);  }
+        | texp                  { driver.setResult($1,false);  }
+        | yexp                  { driver.setResult($1,false);  }
+        | hexp                  { driver.setResult($1,false);  }
         | lexp                  { driver.setResult($1,false,true); }
         | fsexp                 { driver.setResult($1,true);  }
         | fvexp                 { driver.setResult($1,true);  }
+        | ftexp                 { driver.setResult($1,true);  }
+        | fyexp                 { driver.setResult($1,true);  }
+        | fhexp                 { driver.setResult($1,true);  }
         | flexp                 { driver.setResult($1,true,true); }
 ;
 
@@ -428,10 +478,46 @@ flexp: TOKEN_surf '(' TOKEN_TRUE ')'  { $$ = driver.makeConstantField<Foam::surf
     | '!' flexp %prec TOKEN_NOT       { $$ = driver.doLogicalNot($2); delete $2; }
 ;
 
+texp:   tensor                  { $$ = $1; }
+;
+
+yexp:   symmTensor                  { $$ = $1; }
+;
+
+hexp:   sphericalTensor                  { $$ = $1; }
+;
+
+ftexp:   ftensor                  { $$ = $1; }
+;
+
+fyexp:   fsymmTensor                  { $$ = $1; }
+;
+
+fhexp:   fsphericalTensor                  { $$ = $1; }
+;
+
 vector: TOKEN_VECTOR '(' exp ',' exp ',' exp ')' {     $$ = driver.makeVectorField($3,$5,$7);  delete $3; delete $5; delete $7;}
 ;
 
+tensor: TOKEN_TENSOR '(' exp ',' exp ',' exp ',' exp ',' exp ',' exp ',' exp ',' exp ',' exp ')' {     $$ = driver.makeTensorField($3,$5,$7,$9,$11,$13,$15,$17,$19);  delete $3; delete $5; delete $7; delete $9; delete $11; delete $13; delete $15; delete $17; delete $19; }
+;
+
+symmTensor: TOKEN_SYMM_TENSOR '(' exp ',' exp ',' exp ',' exp ',' exp ',' exp ')' {     $$ = driver.makeSymmTensorField($3,$5,$7,$9,$11,$13);  delete $3; delete $5; delete $7; delete $9; delete $11; delete $13;}
+;
+
+sphericalTensor: TOKEN_SPHERICAL_TENSOR '(' exp ')' {     $$ = driver.makeSphericalTensorField($3);  delete $3; }
+;
+
 fvector: TOKEN_VECTOR '(' fsexp ',' fsexp ',' fsexp ')' {     $$ = driver.makeSurfaceVectorField($3,$5,$7);  delete $3; delete $5; delete $7;}
+;
+
+ftensor: TOKEN_TENSOR '(' fsexp ',' fsexp ',' fsexp ',' fsexp ',' fsexp ',' fsexp ',' fsexp ',' fsexp ',' fsexp ')' {     $$ = driver.makeSurfaceTensorField($3,$5,$7,$9,$11,$13,$15,$17,$19);  delete $3; delete $5; delete $7; delete $9; delete $11; delete $13; delete $15; delete $17; delete $19; }
+;
+
+fsymmTensor: TOKEN_SYMM_TENSOR '(' fsexp ',' fsexp ',' fsexp ',' fsexp ',' fsexp ',' fsexp ')' {     $$ = driver.makeSurfaceSymmTensorField($3,$5,$7,$9,$11,$13);  delete $3; delete $5; delete $7; delete $9; delete $11; delete $13;}
+;
+
+fsphericalTensor: TOKEN_SPHERICAL_TENSOR '(' fsexp ')' {     $$ = driver.makeSurfaceSphericalTensorField($3);  delete $3; }
 ;
 
 %%
