@@ -159,6 +159,21 @@ void Foam::manipulateField::execute()
                     driver.getResult<volScalarField>(),
                     conditionField
                 );
+            } else if(driver.resultIsTyp<volTensorField>()) {
+                manipulate(
+                    driver.getResult<volTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<volSymmTensorField>()) {
+                manipulate(
+                    driver.getResult<volSymmTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<volSphericalTensorField>()) {
+                manipulate(
+                    driver.getResult<volSphericalTensorField>(),
+                    conditionField
+                );
             } else {
                 WarningIn("Foam::manipulateField::execute()")
                     << "Expression '" << expression_ 
@@ -180,6 +195,21 @@ void Foam::manipulateField::execute()
             } else if(driver.resultIsTyp<surfaceScalarField>()) {
                 manipulateSurface(
                     driver.getResult<surfaceScalarField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<surfaceTensorField>()) {
+                manipulateSurface(
+                    driver.getResult<surfaceTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<surfaceSymmTensorField>()) {
+                manipulateSurface(
+                    driver.getResult<surfaceSymmTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<surfaceSphericalTensorField>()) {
+                manipulateSurface(
+                    driver.getResult<surfaceSphericalTensorField>(),
                     conditionField
                 );
             } else {

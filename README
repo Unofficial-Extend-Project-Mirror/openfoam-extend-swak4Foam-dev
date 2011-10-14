@@ -598,6 +598,9 @@ S_{expl} + S_{impl} T
 **** Function objects now =surfaceField=-aware
      =expressionField= and =manipulateField= now can create or modify
      =surfaceFields= 
+**** =funkySetFields= and function objects support tensors
+     =funkySetFields= and the function objects =expressionField= and
+     =manipulateField=  now also work with the three tensor-types
 **** Extension of the =expressionToFace= =topoSet=
      If the expression evaluates to a =surfaceField= then this is used
      as a flag whether or not the face is in the =faceSet=. If the

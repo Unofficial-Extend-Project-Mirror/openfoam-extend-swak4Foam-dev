@@ -124,6 +124,18 @@ void Foam::expressionField::execute()
             storeField(
                 driver.getResult<volScalarField>()
             );
+        } else if(driver.resultIsTyp<volTensorField>()) {
+            storeField(
+                driver.getResult<volTensorField>()
+            );
+        } else if(driver.resultIsTyp<volSymmTensorField>()) {
+            storeField(
+                driver.getResult<volSymmTensorField>()
+            );
+        } else if(driver.resultIsTyp<volSphericalTensorField>()) {
+            storeField(
+                driver.getResult<volSphericalTensorField>()
+            );
         } else if(driver.resultIsTyp<surfaceVectorField>()) {
             storeField(
                 driver.getResult<surfaceVectorField>()
@@ -132,6 +144,18 @@ void Foam::expressionField::execute()
         } else if(driver.resultIsTyp<surfaceScalarField>()) {
             storeField(
                 driver.getResult<surfaceScalarField>()
+            );
+        } else if(driver.resultIsTyp<surfaceTensorField>()) {
+            storeField(
+                driver.getResult<surfaceTensorField>()
+            );
+        } else if(driver.resultIsTyp<surfaceSymmTensorField>()) {
+            storeField(
+                driver.getResult<surfaceSymmTensorField>()
+            );
+        } else if(driver.resultIsTyp<surfaceSphericalTensorField>()) {
+            storeField(
+                driver.getResult<surfaceSphericalTensorField>()
             );
         } else {
             WarningIn("Foam::expressionField::execute()")
