@@ -10,6 +10,7 @@
 ** Contributors 
    In alphabetical order of the surname
    - Peter Keller :: =sprinklerInlet=-case
+   - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
    If anyone is forgotten: let me know
 
@@ -191,8 +192,6 @@ S_{expl} + S_{impl} T
     - Solver :: solidDisplacementFoam
 **** circulatingSplash 
     - Solver :: interDyMFoam 
-    - Remark :: this one crashes halfway through the calculation. If
-                you can fix it: Be my guest
 **** movingConeDistorted
     - Solver :: pimpleDyMFoam
     - Also demonstrates :: =swakExpression= with =surface=. Due to a
@@ -583,3 +582,7 @@ S_{expl} + S_{impl} T
      doesn't have any faces the variable is reported on that processor
      as /not existing/ and the whole run fails
 ** Next release
+*** Cases changed
+**** =circulatingSplash=
+     Fixed according to a suggestion by Andreas Otto. Now runs again
+     (used to crash some time-steps into the beginning)
