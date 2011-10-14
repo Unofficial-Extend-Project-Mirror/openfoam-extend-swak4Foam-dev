@@ -147,6 +147,16 @@ sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
 
+transpose              return token::TOKEN_transpose;
+diag                   return token::TOKEN_diag;
+tr                     return token::TOKEN_tr;
+dev                    return token::TOKEN_dev;
+symm                   return token::TOKEN_symm;
+skew                   return token::TOKEN_skew;
+det                    return token::TOKEN_det;
+cof                    return token::TOKEN_cof;
+inv                    return token::TOKEN_inv;
+
 true                   return token::TOKEN_TRUE;
 false                  return token::TOKEN_FALSE;
 
