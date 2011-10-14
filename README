@@ -586,6 +586,7 @@ S_{expl} + S_{impl} T
 *** Technical
 **** Refactoring of the FieldDriver
      - now can also produce surfaceFields
+     - full support of =tensor=, =symmTensor= and =sphericalTensor=
 *** New features
 **** General =phi= in =solveTransportPDE=
      Due to the refactoring of the =FieldDriver= now =phi= can be
