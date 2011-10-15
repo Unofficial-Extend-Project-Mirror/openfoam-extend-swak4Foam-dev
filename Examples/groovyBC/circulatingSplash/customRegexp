@@ -1,3 +1,28 @@
-{"expr":"Selected %f% cells for refinement out of (%f%).","name":"Grid size","titles":["cells"]}
-{"expr":"Liquid phase volume fraction = (%f%)","name":"Liquid Phase","titles":["fraction"]}
-{"expr":"Execution time for mesh.update\(\) = (%f%) s","name":"Mesh update Time","titles":["seconds"]}
+GridSize
+{
+  expr "Selected %f% cells for refinement out of (%f%).";
+  theTitle "Grid size";
+  titles
+    (
+      cells
+    );
+}
+LiquidFraction
+{
+  expr "Liquid phase volume fraction = (%f%)";
+  theTitle "Liquid Phase";
+  titles
+    (
+      fraction
+    );
+  progress "Liquid: $0";
+}
+MeshExecutionTime
+{
+  expr "Execution time for mesh.update\(\) = (%f%) s";
+  theTitle "Custom 3 - Mesh update Time";
+  titles
+    (
+      seconds
+    );
+}

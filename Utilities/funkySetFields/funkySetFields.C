@@ -273,6 +273,42 @@ void doAnExpression
                 keepPatches,
                 valuePatches
             );
+        } else if(driver.typ()==pTraits<volTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<volTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<volSymmTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<volSymmTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<volSphericalTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<volSphericalTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
         } else if(driver.typ()==pTraits<surfaceScalarField>::typeName) {
             setField(
                 field,
@@ -291,6 +327,42 @@ void doAnExpression
                 mesh,
                 time,
                 driver.getResult<surfaceVectorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<surfaceTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<surfaceTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<surfaceSymmTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<surfaceSymmTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<surfaceSphericalTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                time,
+                driver.getResult<surfaceSphericalTensorField>(),
                 conditionField,
                 create,
                 dim,

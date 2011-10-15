@@ -126,6 +126,29 @@ public:
     volVectorField *makeVectorField(volScalarField *x,volScalarField *y,volScalarField *z);
     surfaceVectorField *makeSurfaceVectorField(surfaceScalarField *x,surfaceScalarField *y,surfaceScalarField *z);
 
+    volTensorField *makeTensorField(
+        volScalarField *,volScalarField *,volScalarField *,
+        volScalarField *,volScalarField *,volScalarField *,
+        volScalarField *,volScalarField *,volScalarField *
+    );
+    surfaceTensorField *makeSurfaceTensorField(
+        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *,
+        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *,
+        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *
+    );
+
+    volSymmTensorField *makeSymmTensorField(
+        volScalarField *,volScalarField *,volScalarField *,
+        volScalarField *,volScalarField *,volScalarField *
+    );
+    surfaceSymmTensorField *makeSurfaceSymmTensorField(
+        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *,
+        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *
+    );
+
+    volSphericalTensorField *makeSphericalTensorField(volScalarField *);
+    surfaceSphericalTensorField *makeSurfaceSphericalTensorField(surfaceScalarField *);
+
     template<class FType>
     inline FType *makeConstantField(const typename FType::value_type &val);
 

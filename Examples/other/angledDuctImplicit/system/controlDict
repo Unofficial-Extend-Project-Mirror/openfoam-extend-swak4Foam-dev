@@ -562,6 +562,24 @@ functions
             max
         );
     }
+    myPhi2
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName myPhi2;
+        expression "myPhi";
+        autowrite true;        
+    }
+    changeMyPhi2
+    {
+        type manipulateField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName myPhi2;
+        expression "interpolate(0)";
+        mask "fpos().x<interpolate(0)";
+    }
     velocityClass
     {
         type expressionField;
