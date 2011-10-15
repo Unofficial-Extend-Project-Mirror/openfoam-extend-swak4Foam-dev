@@ -36,3 +36,10 @@ then
 fi
 
 wmake libso groovyStandardBCs
+
+if [ "$SWAK_PYTHON_INCLUDE" != "" ]
+then
+    wmake libso pythonIntegration
+else
+    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration"
+fi

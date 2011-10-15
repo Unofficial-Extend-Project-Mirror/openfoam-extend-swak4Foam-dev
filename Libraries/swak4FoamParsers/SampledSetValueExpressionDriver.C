@@ -139,7 +139,7 @@ bool SampledSetValueExpressionDriver::update()
 {
     bool updated=false; // nu update in sampledSet
     if(debug) {
-        Info << "Updated: " << updated << " " << this->size() << endl;
+        Pout << "Updated: " << updated << " " << this->size() << endl;
     }
 
     return updated;

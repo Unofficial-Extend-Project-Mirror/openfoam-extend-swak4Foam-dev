@@ -86,12 +86,14 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
 {
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
     }
 
     if(debug) {
-        Info << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
+        Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
     setSearchBehaviour(
@@ -187,7 +189,7 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     }
 
     if(debug) {
-        Info << "Creating driver of type " << driverType << endl;
+        Pout << "Creating driver of type " << driverType << endl;
     }
 
     return autoPtr<CommonValueExpressionDriver>
@@ -220,7 +222,7 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     }
 
     if(debug) {
-        Info << "Creating driver of type " << driverType << endl;
+        Pout << "Creating driver of type " << driverType << endl;
     }
 
     return autoPtr<CommonValueExpressionDriver>
@@ -318,6 +320,12 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
         
         os.writeKeyword("storedVariables");
         os << storedVariables_ << endl;
+        os << token::END_STATEMENT << nl;
+    }
+
+    if(globalVariableScopes_.size()>0) {
+        os.writeKeyword("globalScopes");
+        os << globalVariableScopes_ << endl;
         os << token::END_STATEMENT << nl;
     }
 
@@ -513,14 +521,14 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
 {
     if(storedVariablesIndex_<0) {
         if(debug) {
-            Info << "First update: " << mesh().time().timeIndex() << endl;
+            Pout << "First update: " << mesh().time().timeIndex() << endl;
         }
         storedVariablesIndex_=mesh().time().timeIndex();
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(!v.hasValue()) {
                 if(debug) {
-                    Info << "First valuate: " << v.initialValueExpression() 
+                    Pout << "First valuate: " << v.initialValueExpression() 
                         << " -> " << v.name() << endl;
                 }
                 parse(v.initialValueExpression());
@@ -535,14 +543,14 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
         storedVariablesIndex_!=mesh().time().timeIndex()
     ) {
         if(debug) {
-            Info << "Store variables: " << force << " " 
+            Pout << "Store variables: " << force << " " 
                 << storedVariablesIndex_ << " " << mesh().time().timeIndex() << endl;
         }
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(variables_.found(v.name())) {
                 if(debug) {
-                    Info << "Storing variable: " << v.name() << " " 
+                    Pout << "Storing variable: " << v.name() << " " 
                         << variables_[v.name()] << endl;
                 }
                 v=variables_[v.name()];
@@ -555,7 +563,7 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
 void CommonValueExpressionDriver::clearVariables()
 {
     if(debug) {
-        Info << "Clearing variables" << endl;
+        Pout << "Clearing variables" << endl;
     }
 
     this->update();
@@ -575,11 +583,14 @@ void CommonValueExpressionDriver::evaluateVariable(const word &name,const string
     parse(expr);
 
     if(debug) {
-        Info << "Evaluating: " << expr << " -> " << name << endl;
-        Info << result_;
+        Pout << "Evaluating: " << expr << " -> " << name << endl;
+        Pout << result_;
     }
 
     variables_.set(name,ExpressionResult(result_));
+    if(debug>1) {
+        Pout << "Value stored: " << variables_[name] << endl;
+    }
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
@@ -734,14 +745,14 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
 {
     if(!dict.found("region")) {
         if(debug) {
-            Info << "Using original mesh " << endl;
+            Pout << "Using original mesh " << endl;
         }
 
         return mesh;
     }
 
     if(debug) {
-        Info << "Using mesh " << dict.lookup("region")  << endl;
+        Pout << "Using mesh " << dict.lookup("region")  << endl;
     }
     
     //     return dynamicCast<const fvMesh&>( // soesn't work with gcc 3.2
@@ -765,7 +776,7 @@ string CommonValueExpressionDriver::getTypeOfField(const string &name) const
     f.headerOk();
 
     if(debug) {
-        Info << "Name: " << name << " Time: " << mesh().time().timeName() 
+        Pout << "Name: " << name << " Time: " << mesh().time().timeName() 
             << " Path: " << f.filePath() << " Class: " << f.headerClassName() << endl;
     }
 
@@ -775,7 +786,7 @@ string CommonValueExpressionDriver::getTypeOfField(const string &name) const
 string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
 {
     if(debug) {
-        Info << "Lookinh for set named " << name << endl;
+        Pout << "Looking for set named " << name << endl;
     }
     IOobject f 
         (
@@ -790,7 +801,7 @@ string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
     if(f.headerOk()) {;
         return f.headerClassName();
     } else {
-        Info << "No set " << name << " at t=" << mesh().time().timeName() 
+        Pout << "No set " << name << " at t=" << mesh().time().timeName() 
             << " falling back to 'constant'" << endl;
         f=IOobject 
         (

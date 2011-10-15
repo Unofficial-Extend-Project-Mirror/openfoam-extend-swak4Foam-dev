@@ -51,8 +51,10 @@ namespace Foam {
 
         {
             Field<Type> *vals=NULL;
-         
+            bool isPoint=false;
+
             if(variables_.found(name)) {
+                isPoint=variables_[name].isPoint();
                 vals=variables_[name].getResult<Type>(true).ptr();
             } else if(isGlobal<Type>(name,false)) {
                 vals=const_cast<ExpressionResult &>(
@@ -60,14 +62,24 @@ namespace Foam {
                 ).getResult<Type>(true).ptr();
             }
             if(vals) {
-                if(vals->size()>0) {
-                    if(vals->size()==this->size()) {
-                        return vals;
-                    } else {
-                        Field<Type> *result=new Field<Type>(this->size(),gAverage(*vals));
-                        delete vals;
-                        return result;
-                    }
+                if(
+                    (
+                        ! isPoint
+                        &&
+                        vals->size()==this->size()
+                    )
+                    ||
+                    (
+                        isPoint
+                        &&
+                        vals->size()==this->pointSize()
+                    )
+                ) {
+                    return vals;
+                } else {
+                    Field<Type> *result=new Field<Type>(this->size(),gAverage(*vals));
+                    delete vals;
+                    return result;
                 }
             }
         }

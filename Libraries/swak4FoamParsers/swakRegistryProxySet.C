@@ -53,7 +53,7 @@ namespace Foam
 // {
 //     if (debug)
 //     {
-//         Info<< "swakRegistryProxySet::createGeometry() - doing nothing" 
+//         Pout<< "swakRegistryProxySet::createGeometry() - doing nothing" 
 //             << endl;
 //     }
 // }

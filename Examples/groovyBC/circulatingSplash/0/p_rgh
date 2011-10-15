@@ -28,7 +28,8 @@ boundaryField
 
     sides       
     {
-        type            buoyantPressure;
+        type            totalPressure;
+        //        type            buoyantPressure;
         value           uniform 0;
 //         type            inletOutlet;
 //         inletValue      uniform 0;
@@ -62,7 +63,8 @@ boundaryField
 
     atmosphere
     {
-        type            totalPressure;
+        type            buoyantPressure;
+        //        type            totalPressure;
         p0              uniform 0;
         U               U;
         phi             phi;

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 15 Oct 2011 13:12:22 +0200
+Subject: Re: Generalize FieldValueDriver
+Message-Id: <f86b1212d456a0a9-cc5c25ced68499b0-artemis@bgs-Greybook.local>
+References: <f86b1212d456a0a9-0-artemis@bgs-Greybook.local>
+In-Reply-To: <f86b1212d456a0a9-0-artemis@bgs-Greybook.local>
+
+Now works for surfaceFields and tensors. Mission accomplished

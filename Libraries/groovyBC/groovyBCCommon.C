@@ -132,9 +132,9 @@ void groovyBCCommon<Type>::write(Ostream& os) const
     if(hasGradient_) {
         os.writeKeyword("gradientExpression")
             << gradientExpression_ << token::END_STATEMENT << nl;
+        os.writeKeyword("fractionExpression")
+            << fractionExpression_ << token::END_STATEMENT << nl;
     }
-    os.writeKeyword("fractionExpression")
-        << fractionExpression_ << token::END_STATEMENT << nl;
 
     // debug_ not written on purpose
 }

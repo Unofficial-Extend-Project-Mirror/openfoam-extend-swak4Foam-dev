@@ -20,5 +20,7 @@ wclean swakFiniteArea
 
 wclean groovyStandardBCs
 
+wclean pythonIntegration
+
 # remove residual from bison
 rm -f */*.output
