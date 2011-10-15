@@ -608,3 +608,33 @@ S_{expl} + S_{impl} T
 **** =circulatingSplash=
      Fixed according to a suggestion by Andreas Otto. Now runs again
      (used to crash some time-steps into the beginning)
+*** Technical
+**** Refactoring of the FieldDriver
+     - now can also produce surfaceFields
+     - full support of =tensor=, =symmTensor= and =sphericalTensor=
+*** New features
+**** General =phi= in =solveTransportPDE=
+     Due to the refactoring of the =FieldDriver= now =phi= can be
+     specified by a general expression (instead of 'only' a
+     field-name) 
+**** =funkySetFields= now also writes surfaceFields
+     Can write =surfaceVector= and =surfaceScalar=-Fields. Condition
+     has to be consistent
+**** Function objects now =surfaceField=-aware
+     =expressionField= and =manipulateField= now can create or modify
+     =surfaceFields= 
+**** =funkySetFields= and function objects support tensors
+     =funkySetFields= and the function objects =expressionField= and
+     =manipulateField=  now also work with the three tensor-types
+**** Extension of the =expressionToFace= =topoSet=
+     If the expression evaluates to a =surfaceField= then this is used
+     as a flag whether or not the face is in the =faceSet=. If the
+     expression evaluates to a =volScalarField= then the old semantic
+     applies (faces are in the set if one cell is =true= and the other
+     is =false=).
+     
+     This only works for internal faces
+*** Bug fixes
+**** Constants for surfaceFields not working
+     Because surfaceFields know no =zeroGradient= the template
+     =makeConstant= did not work

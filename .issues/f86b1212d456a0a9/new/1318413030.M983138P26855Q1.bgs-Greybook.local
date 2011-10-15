@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 12 Oct 2011 11:49:50 +0200
+Subject: Re: Generalize FieldValueDriver
+Message-Id: <f86b1212d456a0a9-fda8d2bdd2809cc1-artemis@bgs-Greybook.local>
+References: <f86b1212d456a0a9-0-artemis@bgs-Greybook.local>
+In-Reply-To: <f86b1212d456a0a9-0-artemis@bgs-Greybook.local>
+
+SurfaceFields now seem to work. Problem with calculated worked around.
