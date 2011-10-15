@@ -111,10 +111,17 @@ const ExpressionResult &GlobalVariablesRepository::get(
 }
 
 void GlobalVariablesRepository::addValue(
-    const dictionary &dict
+    const dictionary &dict,
+    const word scopeIn
 ) {
     word name(dict.lookup("globalName"));
-    word scope(dict.lookup("globalScope"));
+    word scope;
+
+    if(scopeIn!="") {
+        scope=scopeIn;
+    } else {
+        scope=word(dict.lookup("globalScope"));
+    }
 
     addValue(
         name,

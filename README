@@ -612,6 +612,9 @@ S_{expl} + S_{impl} T
      is =false=).
      
      This only works for internal faces
+**** =addGlobalVariable= allows setting more than one value
+     If there is an entry =globalVariables= then this dictionary is
+     used to set the variables
 *** Bug fixes
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template

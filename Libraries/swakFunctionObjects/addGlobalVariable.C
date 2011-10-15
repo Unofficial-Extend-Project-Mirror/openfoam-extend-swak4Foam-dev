@@ -50,7 +50,24 @@ Foam::addGlobalVariable::~addGlobalVariable()
 
 void Foam::addGlobalVariable::read(const dictionary& dict)
 {
-    GlobalVariablesRepository::getGlobalVariables().addValue(dict);
+    if(dict.found("globalVariables")) {
+        const dictionary variables(dict.subDict("globalVariables"));
+        const word scope(dict.lookup("globalScope"));
+        
+        wordList names(variables.toc());
+        forAll(names,i) {
+            const word &name=names[i];
+            const dictionary &dict=variables.subDict(name);
+
+            GlobalVariablesRepository::getGlobalVariables().addValue(
+                name,
+                scope,
+                ExpressionResult(dict,true)
+            );
+        }
+    } else {
+        GlobalVariablesRepository::getGlobalVariables().addValue(dict);
+    }
 }
 
 void Foam::addGlobalVariable::execute()

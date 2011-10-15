@@ -97,7 +97,8 @@ public:
     );
 
     void addValue(
-        const dictionary &dict
+        const dictionary &dict,
+        const word scope=""
     );
 
     //- get a global namespace
