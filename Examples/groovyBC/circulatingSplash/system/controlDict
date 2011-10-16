@@ -68,8 +68,10 @@ functions (
         variables (
             "r1=0.25*(max(pts().x)-min(pts().x));"
             "inletRadius=r1*0.2*(1-0.5*cos(54*time()));"
+            "currentArea=inletRadius*inletRadius*pi;"
+            "targetMassFlow=1*0.005*0.005*pi;"
             "inletCenter=vector(r1*sin(10*time()),max(pos().y),r1*cos(15*time()));"
-            "inletVelocity=1;"
+            "inletVelocity=targetMassFlow/currentArea;"
         );
     }
 );
