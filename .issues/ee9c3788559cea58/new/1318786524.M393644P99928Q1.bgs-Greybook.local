@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 16 Oct 2011 19:32:44 +0200
+Subject: Re: functionObject calculateGlobalVariable
+Message-Id: <ee9c3788559cea58-92cc6ba5a9bf25fd-artemis@bgs-Greybook.local>
+References: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+In-Reply-To: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+
+Possible problem: when the functionObject is evaluated for the first
+time (during construction) then not all the fields (that may be used)
+are present. 
+
+Possible solution: different expression during startup

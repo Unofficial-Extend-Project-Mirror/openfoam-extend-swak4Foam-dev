@@ -52,6 +52,32 @@ maxCo           0.1;
 
 maxDeltaT       0.00025;
 
-libs ( "libOpenFOAM.so" "libgroovyBC.so" ) ;
+functions (
+    calculateInletVariables {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+        valueType patch;
+        patchName atmosphere;
+        toGlobalNamespace inletPos;
+        toGlobalVariables (
+            inletCenter
+            inletRadius
+            inletVelocity
+        );
+        variables (
+            "r1=0.25*(max(pts().x)-min(pts().x));"
+            "inletRadius=r1*0.2*(1-0.5*cos(54*time()));"
+            "inletCenter=vector(r1*sin(10*time()),max(pos().y),r1*cos(15*time()));"
+            "inletVelocity=1;"
+        );
+    }
+);
+
+libs ( 
+    "libOpenFOAM.so" 
+    "libgroovyBC.so" 
+    "libswakFunctionObjects.so"
+) ;
 
 // ************************************************************************* //
