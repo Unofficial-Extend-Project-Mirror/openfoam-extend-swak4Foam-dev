@@ -617,6 +617,9 @@ S_{expl} + S_{impl} T
      used to set the variables
 **** Function object =calculateGlobalVariables=
      Calculates variables and then pushes them to a global namespace
+**** Generate a dummy =phi= in =replayTransientBC=
+     New option added that generates a =phi= field with value $0$ to
+     keep boundary conditions like =inletOutlet= happy
 *** Bug fixes
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template
