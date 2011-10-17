@@ -111,6 +111,30 @@ functions {
         variables ();
         expression "inletRadius*inletRadius*pi";
     }
+    totalInMassflow {
+        type swakExpression;
+        verbose true;
+        accumulations (average );
+        valueType patch;
+        patchName atmosphere;
+        variables (
+            "totalIn=totalIn+sum(alpha1*mag(U)*area()*deltaT());"
+        );
+        expression "totalIn";
+        storedVariables (
+            {
+                name totalIn;
+                initialValue "0";
+            }
+        );
+    }
+    totalAlpha {
+        type swakExpression;
+        verbose true;
+        accumulations ( sum );
+        valueType internalField;
+        expression "vol()*alpha1";
+    }
 }
 
 libs ( 

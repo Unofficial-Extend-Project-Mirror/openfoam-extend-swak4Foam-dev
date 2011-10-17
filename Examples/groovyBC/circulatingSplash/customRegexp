@@ -58,3 +58,16 @@ Divergence
 	type slave;
 	master Area;
 }
+totalFrac
+{
+	expr "Expression totalAlpha :  sum=(%f%)";
+	theTitle "Fluid volume";
+	titles ( total );
+}
+massInflow
+{
+	expr "Expression totalInMassflow :  average=(%f%)";
+	titles ( "inFlow - accumulated" );
+	type slave;
+	master totalFrac;
+}
