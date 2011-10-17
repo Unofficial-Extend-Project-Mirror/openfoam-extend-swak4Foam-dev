@@ -47,6 +47,17 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
+xx                    return token::TOKEN_xx;
+xy                    return token::TOKEN_xy;
+xz                    return token::TOKEN_xz;
+yx                    return token::TOKEN_yx;
+yy                    return token::TOKEN_yy;
+yz                    return token::TOKEN_yz;
+zx                    return token::TOKEN_zx;
+zy                    return token::TOKEN_zy;
+zz                    return token::TOKEN_zz;
+ii                    return token::TOKEN_ii;
+
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
 log                   return token::TOKEN_log;
