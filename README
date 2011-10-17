@@ -613,6 +613,9 @@ S_{expl} + S_{impl} T
      
      This only works for internal faces
 *** Bug fixes
+**** Access to tensor-components not working
+     Because the tokens were not defined in the =flex=-files getting
+     tensor components with =tensor.xx= did not work. Fixed
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template
      =makeConstant= did not work
