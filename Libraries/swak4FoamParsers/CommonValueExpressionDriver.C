@@ -34,6 +34,8 @@ License
 #include "CommonValueExpressionDriver.H"
 #include "GlobalVariablesRepository.H"
 
+#include "ExpressionDriverWriter.H"
+
 #include "Random.H"
 
 namespace Foam {
@@ -885,6 +887,20 @@ const ExpressionResult &CommonValueExpressionDriver::lookupGlobal(
 void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
 {
     globalVariableScopes_=other;
+}
+
+void CommonValueExpressionDriver::createWriterAndRead(objectRegistry &master,const word &name)
+{
+}
+
+bool CommonValueExpressionDriver::readData(Istream &)
+{
+    return true;
+}
+
+bool CommonValueExpressionDriver::writeData(Ostream &) const
+{
+    return true;
 }
 
 // ************************************************************************* //

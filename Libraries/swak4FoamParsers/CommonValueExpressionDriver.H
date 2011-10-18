@@ -60,6 +60,8 @@ namespace Foam
                            Class CommonValueExpressionDriver Declaration
 \*---------------------------------------------------------------------------*/
 
+class ExpressionDriverWriter;
+
 class CommonValueExpressionDriver
 {
     // Private data
@@ -71,6 +73,12 @@ class CommonValueExpressionDriver
 
     //- variables from a dictionary
     stringList variableStrings_;
+
+    //- this one is in charge for writing and restoring 
+
+    //- by using it this class doesn't have to inherit from regIOobject 
+    //- (which would be an overkill and inconvenient)
+    autoPtr<ExpressionDriverWriter> writer_;
 
 protected:
 
@@ -386,6 +394,15 @@ public:
         bool scanning,
         bool parsing
     );
+
+    //- create a writer for this object
+    void createWriterAndRead(objectRegistry &master,const word &name);
+
+    //- read data from the writer
+    virtual bool readData(Istream &);
+
+    //- write data
+    virtual bool writeData(Ostream &) const;
 };
 
 
