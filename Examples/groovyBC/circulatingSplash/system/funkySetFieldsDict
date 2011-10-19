@@ -18,7 +18,7 @@ expressions
 	{
 		field alpha1;
 		expression "1";
-		condition "pos().y<-0.075";
+		condition "pos().y<-0.075 && pos().x<0.1 && pos().z <0.1";
 		keepPatches true;
 	}
 );
