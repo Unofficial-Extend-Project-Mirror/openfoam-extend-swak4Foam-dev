@@ -51,9 +51,13 @@ boundaryField
 //         valueExpression "vector(0,0,0)";
 //         gradientExpression "vector(0,0,0)";
 //         fractionExpression "(phi>0) ? ((alpha1>1e-3) ? 0 : 0.5) : 1";
-         type            pressureInletOutletVelocity;
-         phi             phi;
-         value           uniform (0 0 0);
+
+//          type            pressureInletOutletVelocity;
+//          phi             phi;
+//          value           uniform (0 0 0);
+
+        type            fixedValue;
+        value           uniform (0 0 0);
     }
 }
 

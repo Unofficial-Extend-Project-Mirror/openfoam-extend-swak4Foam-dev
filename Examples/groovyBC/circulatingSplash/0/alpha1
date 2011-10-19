@@ -27,13 +27,16 @@ boundaryField
 
     sides       
     {
-        type            inletOutlet;
+        type            zeroGradient;
+        //        type            inletOutlet;
         inletValue      uniform 0;
         value           uniform 0;
     }
 
     spill       
     {
+        //        type            zeroGradient;
+
         type            inletOutlet;
         inletValue      uniform 0;
         value           uniform 0;
