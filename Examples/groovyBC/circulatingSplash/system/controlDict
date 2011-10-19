@@ -69,6 +69,7 @@ functions {
             "r1=0.25*(max(pts().x)-min(pts().x));"
             "inletRadius=r1*0.2*(1-0.5*cos(54*time()));"
             "idealArea=inletRadius*inletRadius*pi;"
+            //            "realArea=idealArea;"
             "realArea=sum(area()*alpha1);"
             "currentArea=0.5*(realArea+idealArea);"
             "targetMassFlow=5*0.005*0.005*pi;"

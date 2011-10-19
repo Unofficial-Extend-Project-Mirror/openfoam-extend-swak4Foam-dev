@@ -620,6 +620,10 @@ S_{expl} + S_{impl} T
 **** Generate a dummy =phi= in =replayTransientBC=
      New option added that generates a =phi= field with value $0$ to
      keep boundary conditions like =inletOutlet= happy
+**** Additional options for =funkySetFields=
+     Add the options =allowFunctionObjects= and =addDummyPhi= to
+     execute functionObjects and add a =phi=-field (for fields that
+     require these)
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting
