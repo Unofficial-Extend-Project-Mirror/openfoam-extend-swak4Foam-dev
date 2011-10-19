@@ -41,7 +41,6 @@ boundaryField
 //         rho             none;
 //         psi             none;
         gamma           1;
-        value           uniform 0;
     }
 
     spill       
@@ -58,7 +57,6 @@ boundaryField
 //         rho             none;
 //         psi             none;
         gamma           1;
-        value           uniform 0;
     }
 
     atmosphere

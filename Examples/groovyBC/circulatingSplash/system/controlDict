@@ -53,6 +53,30 @@ maxCo           0.1;
 maxDeltaT       0.00025;
 
 functions {
+//     makeReadHappy {
+//         type addGlobalVariable;
+//         outputControl timeStep;
+//         outputInterval 1;
+//         globalScope inletPosInit;
+//         globalVariables {
+//             inletCenter {
+//                 valueType vector;
+//                 value (0 0.1 0.05);
+//             }
+//             inletRadius {
+//                 valueType scalar;
+//                 value 0.005;
+//             }
+//         }
+//     }
+//     getAlpha {
+//         type readFields;
+//         outputControl timeStep;
+//         outputInterval 1;
+//         fields (
+//             alpha1
+//         )
+//     }
     calculateInletVariables {
         type calculateGlobalVariables;
         outputControl timeStep;
@@ -143,6 +167,7 @@ libs (
     "libgroovyBC.so" 
     "libswakFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
+    "libfieldFunctionObjects.so"
 ) ;
 
 // ************************************************************************* //
