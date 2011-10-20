@@ -62,7 +62,9 @@ ExpressionDriverWriter::ExpressionDriverWriter(
     }
 
     if(headerOk()) {
-        Pout << "Found a file " <<  objectPath() << endl;
+        if(debug) {
+            Pout << "Found a file " <<  objectPath() << endl;
+        }
 
         readData(readStream("ExpressionDriverWriter"));
     }

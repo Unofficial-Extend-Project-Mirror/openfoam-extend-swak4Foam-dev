@@ -138,6 +138,15 @@ protected:
     //- look through the current variable values and update the stored variables
     void updateStoredVariables(bool force=false);
 
+    //- read data from the writer
+    virtual void getData(const dictionary &);
+
+    //- write data
+    virtual void prepareData(dictionary &) const;
+
+    //- do we need a datafile written
+    virtual bool hasDataToWrite() const;
+
 private:
     //- keep fields read from disc in memory
     bool cacheReadFields_;
@@ -397,12 +406,6 @@ public:
 
     //- create a writer for this object
     void createWriterAndRead(const word &name);
-
-    //- read data from the writer
-    virtual void getData(const dictionary &);
-
-    //- write data
-    virtual void prepareData(dictionary &) const;
 
     friend class ExpressionDriverWriter;
 };

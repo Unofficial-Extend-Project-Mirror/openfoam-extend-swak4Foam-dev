@@ -891,12 +891,23 @@ void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
 
 void CommonValueExpressionDriver::createWriterAndRead(const word &name)
 {
-    writer_.set(
-        new ExpressionDriverWriter(
-            name+"_"+this->type(),
-            *this
-        )
-    );
+    if(hasDataToWrite()) {
+        writer_.set(
+            new ExpressionDriverWriter(
+                name+"_"+this->type(),
+                *this
+            )
+        );
+    }
+}
+
+bool CommonValueExpressionDriver::hasDataToWrite() const
+{
+    if(storedVariables_.size()>0) {
+        return true;
+    }
+
+    return false;
 }
 
 void CommonValueExpressionDriver::getData(const dictionary &dict)
