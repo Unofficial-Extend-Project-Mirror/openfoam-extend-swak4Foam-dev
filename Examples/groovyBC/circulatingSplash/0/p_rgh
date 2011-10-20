@@ -46,11 +46,13 @@ boundaryField
     spill       
     {
         //        type            buoyantPressure;
+        type            zeroGradient;
         value           uniform 0;
-//         type            inletOutlet;
-//         inletValue      uniform 0;
+        //        type            inletOutlet;
+        //        type fixedValue;
+        inletValue      uniform 0;
 //         value           uniform 0;
-        type            totalPressure;
+        //        type            totalPressure;
         p0              uniform 0;
         U               U;
         phi             phi;
@@ -61,8 +63,9 @@ boundaryField
 
     atmosphere
     {
-        type            buoyantPressure;
-        //        type            totalPressure;
+        //        type            buoyantPressure;
+        // type            totalPressure;
+        type fixedValue;
         p0              uniform 0;
         U               U;
         phi             phi;
