@@ -391,7 +391,9 @@ void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField,bool isLogic
 {
     resultField_.reset(r);
 
-    T &result=dynamicCast<T &>(resultField_());
+    //    T &result=dynamicCast<T &>(resultField_()); // doesn't work with gcc 4.2
+
+    T &result=dynamic_cast<T &>(resultField_());
 
     if(!resultDimension_.dimensionless()) {
         result.dimensions().reset(resultDimension_);
@@ -416,7 +418,8 @@ const T &FieldValueExpressionDriver::getResult()
                 << abort(FatalError);
     }
 
-    return dynamicCast<const T &>(resultField_());
+    //    return dynamicCast<const T &>(resultField_()); // doesn't work with gcc 4.2
+    return dynamic_cast<const T &>(resultField_());
 }
 
 template<class T>
