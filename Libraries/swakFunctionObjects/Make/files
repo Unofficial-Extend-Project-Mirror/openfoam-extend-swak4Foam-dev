@@ -11,4 +11,10 @@ createSampledSetFunctionObject.C
 addGlobalVariable.C
 addGlobalVariableFunctionObject.C
 
+solvePDECommon.C
+solveLaplacianPDE.C
+solveLaplacianPDEFunctionObject.C
+solveTransportPDE.C
+solveTransportPDEFunctionObject.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects
