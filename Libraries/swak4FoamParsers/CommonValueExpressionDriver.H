@@ -407,6 +407,10 @@ public:
     //- create a writer for this object
     void createWriterAndRead(const word &name);
 
+    //- Write data if apropriate
+    //- Should enable exact restarts
+    void tryWrite() const;
+
     friend class ExpressionDriverWriter;
 };
 

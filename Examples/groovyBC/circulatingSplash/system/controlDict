@@ -131,6 +131,23 @@ functions {
             }
         );
     }
+    totalOutMassFlow {
+        $totalInMassflow;
+        patchName spill;
+    }
+    stepCount {
+        $totalInMassflow;
+        variables (
+            "nr=nr+1;"
+        );
+        expression "nr";
+        storedVariables (
+            {
+                name nr;
+                initialValue "0";
+            }
+        );
+    }
     totalAlpha {
         type swakExpression;
         verbose true;

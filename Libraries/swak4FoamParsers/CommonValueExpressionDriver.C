@@ -901,6 +901,17 @@ void CommonValueExpressionDriver::createWriterAndRead(const word &name)
     }
 }
 
+void CommonValueExpressionDriver::tryWrite() const
+{
+    if(
+        writer_.valid()
+        &&
+        mesh().time().outputTime()
+    ) {
+        writer_->write();
+    }
+}
+
 bool CommonValueExpressionDriver::hasDataToWrite() const
 {
     if(storedVariables_.size()>0) {

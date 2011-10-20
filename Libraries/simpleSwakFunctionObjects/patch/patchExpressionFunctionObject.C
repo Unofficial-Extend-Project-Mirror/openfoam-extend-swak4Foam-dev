@@ -134,6 +134,9 @@ void patchExpressionFunctionObject::write()
         if(verbose()) {
             Info << endl;
         }
+
+        // make sure that the stored Variables are consistently written
+        driver.tryWrite();
     }
 }
 

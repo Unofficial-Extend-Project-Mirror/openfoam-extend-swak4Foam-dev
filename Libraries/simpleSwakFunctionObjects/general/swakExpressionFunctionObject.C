@@ -120,6 +120,9 @@ void swakExpressionFunctionObject::write()
     if(verbose()) {
         Info << endl;
     }
+
+    // make sure that the stored Variables are consistently written
+    driver_->tryWrite();
 }
 
 } // namespace Foam
