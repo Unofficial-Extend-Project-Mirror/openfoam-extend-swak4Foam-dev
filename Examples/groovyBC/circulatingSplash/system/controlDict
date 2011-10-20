@@ -53,30 +53,6 @@ maxCo           0.1;
 maxDeltaT       0.00025;
 
 functions {
-//     makeReadHappy {
-//         type addGlobalVariable;
-//         outputControl timeStep;
-//         outputInterval 1;
-//         globalScope inletPosInit;
-//         globalVariables {
-//             inletCenter {
-//                 valueType vector;
-//                 value (0 0.1 0.05);
-//             }
-//             inletRadius {
-//                 valueType scalar;
-//                 value 0.005;
-//             }
-//         }
-//     }
-//     getAlpha {
-//         type readFields;
-//         outputControl timeStep;
-//         outputInterval 1;
-//         fields (
-//             alpha1
-//         )
-//     }
     calculateInletVariables {
         type calculateGlobalVariables;
         outputControl timeStep;
@@ -93,13 +69,15 @@ functions {
             "r1=0.25*(max(pts().x)-min(pts().x));"
             "inletRadius=r1*0.2*(1-0.5*cos(54*time()));"
             "idealArea=inletRadius*inletRadius*pi;"
-            //            "realArea=idealArea;"
             "realArea=sum(area()*alpha1);"
             "currentArea=0.5*(realArea+idealArea);"
             "targetMassFlow=5*0.005*0.005*pi;"
             "inletCenter=vector(r1*sin(10*time()),max(pos().y),r1*cos(15*time()));"
             "inletVelocity=targetMassFlow/currentArea;"
         );
+
+        // this allows alpha1 to be found when funkySetFields is called
+        searchOnDisc true;
     }
     printInletRadius {
         type swakExpression;
