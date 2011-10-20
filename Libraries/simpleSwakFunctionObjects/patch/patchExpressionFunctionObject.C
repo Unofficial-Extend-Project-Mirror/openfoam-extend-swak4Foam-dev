@@ -154,6 +154,7 @@ bool patchExpressionFunctionObject::start()
                 mesh.boundary()[patchIndizes_[i]]
             )
         );
+        drivers_[i].createWriterAndRead(name()+"_"+mesh.boundary()[patchIndizes_[i]].name()+"_"+type());
     }
     return result;
 }

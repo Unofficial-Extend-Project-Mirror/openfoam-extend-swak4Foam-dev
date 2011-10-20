@@ -76,7 +76,7 @@ public:
 
     //- constructor
     ExpressionDriverWriter(
-        const IOobject &ob,
+        const word &name,
         CommonValueExpressionDriver &driver
     );
 

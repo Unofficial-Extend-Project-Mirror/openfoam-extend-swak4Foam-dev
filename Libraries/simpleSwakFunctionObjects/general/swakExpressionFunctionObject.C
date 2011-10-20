@@ -64,6 +64,7 @@ swakExpressionFunctionObject::swakExpressionFunctionObject
         )
     ) 
 {
+    driver_->createWriterAndRead(name+"_"+type());
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

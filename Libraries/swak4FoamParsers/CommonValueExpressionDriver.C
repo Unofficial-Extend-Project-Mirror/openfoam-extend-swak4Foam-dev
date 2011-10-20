@@ -889,18 +889,33 @@ void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
     globalVariableScopes_=other;
 }
 
-void CommonValueExpressionDriver::createWriterAndRead(objectRegistry &master,const word &name)
+void CommonValueExpressionDriver::createWriterAndRead(const word &name)
 {
+    writer_.set(
+        new ExpressionDriverWriter(
+            name+"_"+this->type(),
+            *this
+        )
+    );
 }
 
-bool CommonValueExpressionDriver::readData(Istream &)
+void CommonValueExpressionDriver::getData(const dictionary &dict)
 {
-    return true;
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
 }
 
-bool CommonValueExpressionDriver::writeData(Ostream &) const
+void CommonValueExpressionDriver::prepareData(dictionary &dict) const
 {
-    return true;
+    if(storedVariables_.size()>0) {
+        const_cast<CommonValueExpressionDriver&>(*this).updateStoredVariables(true);
+        
+        dict.add(
+            "storedVariables",
+            storedVariables_
+        );
+    }
 }
 
 // ************************************************************************* //

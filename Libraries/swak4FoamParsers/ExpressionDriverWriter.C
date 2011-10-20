@@ -42,12 +42,30 @@ namespace Foam {
 defineTypeNameAndDebug(ExpressionDriverWriter, 0);
 
 ExpressionDriverWriter::ExpressionDriverWriter(
-        const IOobject &ob,
+        const word &name,
         CommonValueExpressionDriver &driver
 ):
-    regIOobject(ob),
+    regIOobject(
+        IOobject(
+            name,
+            driver.mesh().time().timeName(),
+            "swak4Foam",
+            driver.mesh().time(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        )
+    ),
     driver_(driver)
 {
+    if(debug) {
+        Pout << "ExpressionDriverWriter at " << objectPath() << " created" << endl;
+    }
+
+    if(headerOk()) {
+        Pout << "Found a file " <<  objectPath() << endl;
+
+        readData(readStream("ExpressionDriverWriter"));
+    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -61,12 +79,40 @@ ExpressionDriverWriter::~ExpressionDriverWriter()
 
 bool ExpressionDriverWriter::writeData(Ostream &os) const 
 {
-    return driver_.writeData(os);
+    if(debug) {
+        Pout << "ExpressionDriverWriter at " << objectPath() 
+            << " writing" << endl;
+    }
+
+    dictionary dict;
+
+    driver_.prepareData(dict);
+
+    dict.write(os,false);
+
+    if(debug) {
+        Pout << "written " << dict << endl;
+    }
+
+    return os.good();    
 }
 
 bool ExpressionDriverWriter::readData(Istream &is)
 {
-    return driver_.readData(is);
+    if(debug) {
+        Pout << "ExpressionDriverWriter at " << objectPath() 
+            << " reading" << endl;
+    }
+
+    const dictionary dict(is);
+
+    if(debug) {
+        Pout << "reading " << dict << endl;
+    }
+
+    driver_.getData(dict);
+
+    return !is.bad();
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

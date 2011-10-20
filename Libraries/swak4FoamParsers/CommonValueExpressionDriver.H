@@ -396,13 +396,15 @@ public:
     );
 
     //- create a writer for this object
-    void createWriterAndRead(objectRegistry &master,const word &name);
+    void createWriterAndRead(const word &name);
 
     //- read data from the writer
-    virtual bool readData(Istream &);
+    virtual void getData(const dictionary &);
 
     //- write data
-    virtual bool writeData(Ostream &) const;
+    virtual void prepareData(dictionary &) const;
+
+    friend class ExpressionDriverWriter;
 };
 
 
