@@ -25,66 +25,21 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "addGlobalVariable.H"
+#include "calculateGlobalVariablesFunctionObject.H"
 
-#include "GlobalVariablesRepository.H"
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-namespace Foam {
-    defineTypeNameAndDebug(addGlobalVariable,0);
-}
-
-Foam::addGlobalVariable::addGlobalVariable
-(
-    const word& name,
-    const objectRegistry& obr,
-    const dictionary& dict,
-    const bool loadFromFiles
-)
+namespace Foam
 {
-    read(dict);
-    execute();
+    defineNamedTemplateTypeNameAndDebug(calculateGlobalVariablesFunctionObject, 0);
+
+    addToRunTimeSelectionTable
+    (
+        functionObject,
+        calculateGlobalVariablesFunctionObject,
+        dictionary
+    );
 }
 
-Foam::addGlobalVariable::~addGlobalVariable()
-{}
-
-void Foam::addGlobalVariable::read(const dictionary& dict)
-{
-    if(dict.found("globalVariables")) {
-        const dictionary variables(dict.subDict("globalVariables"));
-        const word scope(dict.lookup("globalScope"));
-        
-        wordList names(variables.toc());
-        forAll(names,i) {
-            const word &name=names[i];
-            const dictionary &dict=variables.subDict(name);
-
-            GlobalVariablesRepository::getGlobalVariables().addValue(
-                name,
-                scope,
-                ExpressionResult(dict,true)
-            );
-        }
-    } else {
-        GlobalVariablesRepository::getGlobalVariables().addValue(dict);
-    }
-}
-
-void Foam::addGlobalVariable::execute()
-{
-}
-
-
-void Foam::addGlobalVariable::end()
-{
-}
-
-void Foam::addGlobalVariable::write()
-{
-}
-
-void Foam::addGlobalVariable::clearData()
-{
-}
 
 // ************************************************************************* //

@@ -590,6 +590,12 @@ S_{expl} + S_{impl} T
 **** Refactoring of the FieldDriver
      - now can also produce surfaceFields
      - full support of =tensor=, =symmTensor= and =sphericalTensor=
+**** Writing of =storedVariables=
+     If necessary (for instance =swakExpression=-functionObject) the
+     =storedVariables= are written to disc (into a subdirectory
+     =swak4Foam= of the timestep) and are reread at the start. This
+     allows consistent restarts (for instance if a flow was summed
+     using the variable) *if the expressions stay the same*.
 *** New features
 **** General =phi= in =solveTransportPDE=
      Due to the refactoring of the =FieldDriver= now =phi= can be
@@ -612,6 +618,18 @@ S_{expl} + S_{impl} T
      is =false=).
      
      This only works for internal faces
+**** =addGlobalVariable= allows setting more than one value
+     If there is an entry =globalVariables= then this dictionary is
+     used to set the variables
+**** Function object =calculateGlobalVariables=
+     Calculates variables and then pushes them to a global namespace
+**** Generate a dummy =phi= in =replayTransientBC=
+     New option added that generates a =phi= field with value $0$ to
+     keep boundary conditions like =inletOutlet= happy
+**** Additional options for =funkySetFields=
+     Add the options =allowFunctionObjects= and =addDummyPhi= to
+     execute functionObjects and add a =phi=-field (for fields that
+     require these)
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting
