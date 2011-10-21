@@ -612,6 +612,18 @@ S_{expl} + S_{impl} T
      is =false=).
      
      This only works for internal faces
+**** =addGlobalVariable= allows setting more than one value
+     If there is an entry =globalVariables= then this dictionary is
+     used to set the variables
+**** Function object =calculateGlobalVariables=
+     Calculates variables and then pushes them to a global namespace
+**** Generate a dummy =phi= in =replayTransientBC=
+     New option added that generates a =phi= field with value $0$ to
+     keep boundary conditions like =inletOutlet= happy
+**** Additional options for =funkySetFields=
+     Add the options =allowFunctionObjects= and =addDummyPhi= to
+     execute functionObjects and add a =phi=-field (for fields that
+     require these)
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting

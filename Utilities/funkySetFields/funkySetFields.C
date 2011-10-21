@@ -399,6 +399,8 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("keepPatches","");
     argList::validOptions.insert("valuePatches","<list of patches that get a fixed value>");
     argList::validOptions.insert("dictExt","<extension to the default funkySetFieldsDict-dictionary>");
+    argList::validOptions.insert("allowFunctionObjects","");
+    argList::validOptions.insert("addDummyPhi","");
 
 #   include "setRootCase.H"
 
@@ -415,7 +417,13 @@ int main(int argc, char *argv[])
 #   include "createTime.H"
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
+    autoPtr<surfaceScalarField> dummyPhi;
+
 #   include "createNamedMesh.H"
+
+    if(!args.options().found("allowFunctionObjects")) {
+        runTime.functionObjects().off();
+    }
 
     forAll(timeDirs, timeI)
     {
@@ -424,6 +432,28 @@ int main(int argc, char *argv[])
         Foam::Info<< "Time = " << runTime.timeName() << Foam::endl;
 
         mesh.readUpdate();
+
+        if(args.options().found("addDummyPhi")) {
+            Info << "Adding a dummy phi to make inletOutlet happy" << endl;
+            dummyPhi.set(
+                new surfaceScalarField(
+                    IOobject
+                    (
+                        "phi",
+                        mesh.time().system(),
+                        mesh,
+                        IOobject::NO_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar("phi",dimless,0)
+                )
+            );
+        }
+
+        if(args.options().found("allowFunctionObjects")) {
+            runTime.functionObjects().start();
+        }
 
         if(args.options().found("field")) {
             Info << " Using command-line options\n" << endl;

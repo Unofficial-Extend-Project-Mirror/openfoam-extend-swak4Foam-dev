@@ -134,6 +134,9 @@ void patchExpressionFunctionObject::write()
         if(verbose()) {
             Info << endl;
         }
+
+        // make sure that the stored Variables are consistently written
+        driver.tryWrite();
     }
 }
 
@@ -154,6 +157,7 @@ bool patchExpressionFunctionObject::start()
                 mesh.boundary()[patchIndizes_[i]]
             )
         );
+        drivers_[i].createWriterAndRead(name()+"_"+mesh.boundary()[patchIndizes_[i]].name()+"_"+type());
     }
     return result;
 }

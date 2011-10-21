@@ -29,20 +29,22 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::GlobalVariablesRepository
+    Foam::ExpressionDriverWriter
+
 
 Description
 
 SourceFiles
-    GlobalVariablesRepository.C
+    ExpressionDriverWriter
+.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef GlobalVariablesRepository_H
-#define GlobalVariablesRepository_H
+#ifndef ExpressionDriverWriter_H
+#define ExpressionDriverWriter_H
 
-#include "ExpressionResult.H"
+#include "regIOobject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,59 +52,41 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class GlobalVariablesRepository Declaration
+                           Class ExpressionDriverWriter
+ Declaration
 \*---------------------------------------------------------------------------*/
 
-class GlobalVariablesRepository
+class CommonValueExpressionDriver;
+
+class ExpressionDriverWriter
+:
+    public regIOobject
 {
-public:
-   typedef HashTable<ExpressionResult,word> ResultTable;
-
-private:
-   // Private data
-
-     HashTable<ResultTable,word> globalVariables_;
+    //- the driver whos data should be written
+    CommonValueExpressionDriver &driver_;
 
     // Constructors
 
     //- Construct null
-    GlobalVariablesRepository();
-
-    //- The only instance of this repository
-    static GlobalVariablesRepository *repositoryInstance;
-
-    static ExpressionResult zero_;
+    ExpressionDriverWriter();
 
 public:
      //- Runtime type information
-    TypeName("GlobalVariablesRepository");
+    TypeName("ExpressionDriverWriter");
+
+    //- constructor
+    ExpressionDriverWriter(
+        const word &name,
+        CommonValueExpressionDriver &driver
+    );
 
     //- Destructor
 
-    virtual ~GlobalVariablesRepository();
+    virtual ~ExpressionDriverWriter();
 
-    //- Get the Singleton of this class
-    static GlobalVariablesRepository &getGlobalVariables();
+    virtual bool writeData(Ostream &) const ;
 
-    //- get a global variable (if there is one)
-    const ExpressionResult &get(
-        const word &name,
-        const wordList &scopes
-    );
-
-    void addValue(
-        const word &name,
-        const word &scope,
-        const ExpressionResult &value
-    );
-
-    void addValue(
-        const dictionary &dict,
-        const word scope=""
-    );
-
-    //- get a global namespace
-    ResultTable &getNamespace(const word &name);
+    virtual bool readData(Istream &);
 };
 
 
