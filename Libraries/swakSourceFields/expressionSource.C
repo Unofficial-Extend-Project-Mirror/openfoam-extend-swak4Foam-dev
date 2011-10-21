@@ -55,7 +55,10 @@ expressionSource<T>::expressionSource
 :
     FieldValueExpressionDriver(dict,mesh),
     expression_(dict.lookup("expression"))
-{}
+{
+    // Doesn't make sense because no name is known
+    //    createWriterAndRead(this->type());
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

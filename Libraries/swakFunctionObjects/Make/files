@@ -10,7 +10,11 @@ createSampledSet.C
 createSampledSetFunctionObject.C
 addGlobalVariable.C
 addGlobalVariableFunctionObject.C
+
 swakCodedFunctionObject.C
+
+calculateGlobalVariables.C
+calculateGlobalVariablesFunctionObject.C
 
 solvePDECommon.C
 solveLaplacianPDE.C

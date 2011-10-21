@@ -34,6 +34,8 @@ License
 #include "CommonValueExpressionDriver.H"
 #include "GlobalVariablesRepository.H"
 
+#include "ExpressionDriverWriter.H"
+
 #include "Random.H"
 
 namespace Foam {
@@ -885,6 +887,57 @@ const ExpressionResult &CommonValueExpressionDriver::lookupGlobal(
 void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
 {
     globalVariableScopes_=other;
+}
+
+void CommonValueExpressionDriver::createWriterAndRead(const word &name)
+{
+    if(hasDataToWrite()) {
+        writer_.set(
+            new ExpressionDriverWriter(
+                name+"_"+this->type(),
+                *this
+            )
+        );
+    }
+}
+
+void CommonValueExpressionDriver::tryWrite() const
+{
+    if(
+        writer_.valid()
+        &&
+        mesh().time().outputTime()
+    ) {
+        writer_->write();
+    }
+}
+
+bool CommonValueExpressionDriver::hasDataToWrite() const
+{
+    if(storedVariables_.size()>0) {
+        return true;
+    }
+
+    return false;
+}
+
+void CommonValueExpressionDriver::getData(const dictionary &dict)
+{
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
+}
+
+void CommonValueExpressionDriver::prepareData(dictionary &dict) const
+{
+    if(storedVariables_.size()>0) {
+        const_cast<CommonValueExpressionDriver&>(*this).updateStoredVariables(true);
+        
+        dict.add(
+            "storedVariables",
+            storedVariables_
+        );
+    }
 }
 
 // ************************************************************************* //
