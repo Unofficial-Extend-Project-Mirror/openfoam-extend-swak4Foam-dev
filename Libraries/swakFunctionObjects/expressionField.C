@@ -80,7 +80,8 @@ void Foam::expressionField::storeField(
             )
         );
     } else {
-        dynamicCast<T &>(field_())==data;
+        //        dynamicCast<T &>(field_())==data; // doesn't work with gcc 4.2
+        dynamic_cast<T &>(field_())==data; 
     }
 }
 
