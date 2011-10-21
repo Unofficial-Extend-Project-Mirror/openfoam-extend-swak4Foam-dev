@@ -58,6 +58,10 @@ solvers
         mergeLevels      1;
     };
 
+    pd {
+        $p_rgh;
+    };
+
     p_rghFinal 
     {
         solver PCG;
@@ -83,6 +87,10 @@ solvers
         tolerance        1e-8;
         relTol           0;
         maxIter          20;
+    };
+
+    pdFinal {
+        $p_rghFinal;
     };
 
     U 
