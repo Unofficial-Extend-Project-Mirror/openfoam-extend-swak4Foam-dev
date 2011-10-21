@@ -53,6 +53,9 @@ Foam::calculateGlobalVariables::calculateGlobalVariables
     if(debug) {
         Info << "calculateGlobalVariables " << name << " created" << endl;
     }
+
+    driver_->createWriterAndRead(name+"_"+type());
+
     executeAndWriteToGlobal();
 }
 
@@ -92,6 +95,9 @@ void Foam::calculateGlobalVariables::read(const dictionary& dict)
 void Foam::calculateGlobalVariables::execute()
 {
     executeAndWriteToGlobal();
+
+    // make sure that the stored Variables are consistently written
+    driver_->tryWrite();
 }
 
 

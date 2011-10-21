@@ -45,6 +45,8 @@ Foam::expressionField::expressionField
     obr_(obr),
     dict_(dict)
 {
+    driver_->createWriterAndRead(name+"_"+type());
+
     if (!isA<fvMesh>(obr_))
     {
         active_=false;
@@ -103,6 +105,9 @@ void Foam::expressionField::read(const dictionary& dict)
         );
 
         driver_->readVariablesAndTables(dict_);
+
+        // this might not work when rereading ... but what is consistent in that case?
+        driver_->createWriterAndRead(name_+"_"+type());
     }
 }
 
@@ -165,6 +170,8 @@ void Foam::expressionField::execute()
                     << endl;
         }
     }
+
+    driver_->tryWrite();
 }
 
 
