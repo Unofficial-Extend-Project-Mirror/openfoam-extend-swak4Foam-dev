@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 21 Oct 2011 16:03:54 +0200
+State: new
+Subject: Allow xx, xy etc as field names
+Message-Id: <c7e7131ed2c69f4b-0-artemis@bgs-Greybook.local>
+
+As the lexer now converts 'xx' into a token to allow the access of
+idividual elements of tensors these names are not available as
+fields. Modify the lexers so that a '.' triggers a conditional lexer
+state and 'xx' and friends are only accepted for the next token
