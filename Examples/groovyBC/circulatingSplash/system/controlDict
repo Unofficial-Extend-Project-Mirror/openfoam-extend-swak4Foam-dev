@@ -68,11 +68,12 @@ functions {
         variables (
             "r1=0.25*(max(pts().x)-min(pts().x));"
             "inletRadius=r1*0.2*(1-0.5*cos(54*time()));"
+            "r0=r1*0.2*0.5;"
             "idealArea=inletRadius*inletRadius*pi;"
             "realArea=sum(area()*alpha1);"
             "currentArea=0.5*(realArea+idealArea);"
-            "targetMassFlow=5*idealArea;"
-            //            "targetMassFlow=5*0.005*0.005*pi;"
+            //            "targetMassFlow=5*idealArea;"
+            "targetMassFlow=5*r0*r0*pi;"
             "inletCenter=vector(r1*sin(10*time()),max(pos().y),r1*cos(15*time()));"
             "inletVelocity=targetMassFlow/currentArea;"
         );
