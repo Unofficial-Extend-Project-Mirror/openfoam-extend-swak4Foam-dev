@@ -72,6 +72,9 @@ protected:
     //- mesh where the set goes
     const objectRegistry& obr_;
 
+    //- name of the function object
+    const word name_;
+
     //- name of the field that is being solved for 
     word fieldName_;
 
