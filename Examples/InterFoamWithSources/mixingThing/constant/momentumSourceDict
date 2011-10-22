@@ -15,16 +15,25 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+UEqn {
 variables (
     "angle=0.6*sin(time());"
     "direction=vector(sin(angle),cos(angle),0);"
     "tPos=vector(pos().x*cos(-angle)+pos().y*sin(-angle),pos().y*cos(-angle)-pos().x*sin(-angle),0);"
     "strength=(time()<2.5? 1000 : (time()>3.5 ? 10000 : (1000+(time()-2.5)*9000)));"
+    "count=count+1;"
 );
 
 expression   "direction*((tPos.x>-0.05 && tPos.x<0.05 && tPos.y>-0.4 && tPos.y<0.1) ? strength*alpha1 : 0)";
 
 dimensions [1 -2 -2 0 0 0 0];
 
+storedVariables (
+    {
+        name count;
+        initialValue "0";
+    }
+);
+}
 
 // ************************************************************************* //

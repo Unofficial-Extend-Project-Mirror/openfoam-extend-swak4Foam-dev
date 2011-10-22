@@ -59,7 +59,8 @@ Foam::solvePDECommon::solvePDECommon
     const bool loadFromFiles
 ):
     active_(true),
-    obr_(obr)
+    obr_(obr),
+    name_(name)
 {
     if (!isA<polyMesh>(obr))
     {
@@ -109,19 +110,10 @@ void Foam::solvePDECommon::read(const dictionary& dict)
             );
         }
 
-        driver_.set(
-            new FieldValueExpressionDriver(
-                mesh.time().timeName(),
-                mesh.time(),
-                mesh,
-                false, // no caching. No need
-                true,  // search fields in memory
-                false  // don't look up files in memory
-            )
-        );
-
         driver_->readVariablesAndTables(dict);
         
+        driver_->createWriterAndRead(name_+"_"+fieldName_+"_"+type());
+
         steady_=readBool(dict.lookup("steady"));
     }
 }
@@ -129,7 +121,16 @@ void Foam::solvePDECommon::read(const dictionary& dict)
 void Foam::solvePDECommon::execute()
 {
     if(solveAt_==saTimestep) {
+        const fvMesh& mesh = refCast<const fvMesh>(obr_);
+
         solve();
+
+        // as this is executed after the general write, write the field separately 
+        if(mesh.time().outputTime()) {
+            theField_->write();
+        }
+
+        driver_->tryWrite();
     }
 }
 
@@ -149,6 +150,8 @@ void Foam::solvePDECommon::write()
     ) {
         solve();
         theField_->write();
+
+        driver_->tryWrite();
     }
 }
 

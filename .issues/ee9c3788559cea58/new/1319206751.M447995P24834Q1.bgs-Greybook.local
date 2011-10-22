@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 21 Oct 2011 16:18:38 +0200
+Subject: Re: functionObject calculateGlobalVariable
+Message-Id: <ee9c3788559cea58-80abd566e074d658-artemis@bgs-Greybook.local>
+References: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+In-Reply-To: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+
+Add writing of stored variables to manipulateField and expressionField
