@@ -57,6 +57,8 @@ faForceEquation<T>::faForceEquation
     maskExpression_(dict.lookup("maskExpression")),
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
+    createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
+
     if(verbose_) {
         WarningIn(string("faForceEquation<") + pTraits<T>::typeName + ">::faForceEquation") 
             << "Fixing to the values " << valueExpression_ 
