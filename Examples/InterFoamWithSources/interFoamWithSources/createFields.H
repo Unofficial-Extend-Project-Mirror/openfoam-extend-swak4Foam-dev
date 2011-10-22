@@ -156,6 +156,6 @@
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             )
-        ),
+        ).subDict("UEqn"),
         mesh
     );
