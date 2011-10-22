@@ -58,6 +58,11 @@ forceEquation<T>::forceEquation
     maskExpression_(dict.lookup("maskExpression")),
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
+    createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
+    
+    // seems to be coming in OF 2.0
+    //    createWriterAndRead(dict.dictName()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
+
     if(verbose_) {
         WarningIn(string("forceEquation<") + pTraits<T>::typeName + ">::forceEquation") 
             << "Fixing to the values " << valueExpression_ 

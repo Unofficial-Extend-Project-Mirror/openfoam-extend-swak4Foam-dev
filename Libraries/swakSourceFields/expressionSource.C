@@ -56,8 +56,10 @@ expressionSource<T>::expressionSource
     FieldValueExpressionDriver(dict,mesh),
     expression_(dict.lookup("expression"))
 {
-    // Doesn't make sense because no name is known
-    //    createWriterAndRead(this->type());
+    createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
+    
+    // seems to be coming in OF 2.0
+    //    createWriterAndRead(dict.dictName()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
 }
 
 
