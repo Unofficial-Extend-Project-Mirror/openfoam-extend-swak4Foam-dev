@@ -57,9 +57,6 @@ expressionSource<T>::expressionSource
     expression_(dict.lookup("expression"))
 {
     createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
-    
-    // seems to be coming in OF 2.0
-    //    createWriterAndRead(dict.dictName()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
 }
 
 
