@@ -134,7 +134,18 @@ void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
     }
 
     if(dict.found("storedVariables")) {
-        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+        if(
+            writer_.valid()
+            &&
+            storedVariables_.size()>0
+        ) {
+            WarningIn("CommonValueExpressionDriver::readVariablesAndTables")
+                << "Seems like 'storedVariables' was already read. No update from "
+                    << dict.lookup("storedVariables")
+                    << endl;
+        } else {
+            storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+        }
     }
 
     setVariableStrings(dict);
@@ -891,7 +902,11 @@ void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
 
 void CommonValueExpressionDriver::createWriterAndRead(const word &name)
 {
-    if(hasDataToWrite()) {
+    if(
+        hasDataToWrite()
+        &&
+        !writer_.valid()
+    ) {
         writer_.set(
             new ExpressionDriverWriter(
                 name+"_"+this->type(),
