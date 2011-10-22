@@ -45,6 +45,8 @@ Foam::manipulateFaField::manipulateFaField
     obr_(obr),
     dict_(dict)
 {
+    driver_->createWriterAndRead(name+"_"+type());
+
     if (!isA<fvMesh>(obr_))
     {
         active_=false;
@@ -94,6 +96,8 @@ void Foam::manipulateFaField::read(const dictionary& dict)
         );
 
         driver_->readVariablesAndTables(dict_);
+
+        driver_->createWriterAndRead(name_+"_"+type());
     }
 }
 
@@ -135,6 +139,8 @@ void Foam::manipulateFaField::execute()
                     << endl;
         }
     }
+
+    driver_->tryWrite();
 }
 
 

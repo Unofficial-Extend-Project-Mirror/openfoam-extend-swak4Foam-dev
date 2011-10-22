@@ -54,7 +54,9 @@ faExpressionSource<T>::faExpressionSource
 :
     FaFieldValueExpressionDriver(dict,mesh),
     expression_(dict.lookup("expression"))
-{}
+{
+    createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
