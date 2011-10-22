@@ -1,0 +1,17 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 22 Oct 2011 14:15:09 +0200
+Subject: Re: Conditional function object
+Message-Id: <b197ca3b6e9f1b97-9cbadd94e7e20f8c-artemis@bgs-Greybook.local>
+References: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+In-Reply-To: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+
+Comment uncomment no yet the problem anymore. Nevertheless
+interesting.
+
+Conditions could depend on:
+- environment (the solver/utility-name for instance)
+- swakExpressions
+- existence of fields
+
+Together with a loop-functionObject and a sequence-functionObject
+swak4Foam would become turing-complete (although weitd)
