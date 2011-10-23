@@ -79,7 +79,8 @@ public:
     groovyBCCommon
     (
         bool hasGradient,
-        bool isPoint=false
+        bool isPoint=false,
+        string fractionExpression="1"
     );
 
     //- Construct from dictionary
@@ -87,7 +88,8 @@ public:
     (
         const dictionary&,
         bool hasGradient,
-        bool isPoint=false
+        bool isPoint=false,
+        string fractionExpression="1"
     );
 
     //- Copy constructor

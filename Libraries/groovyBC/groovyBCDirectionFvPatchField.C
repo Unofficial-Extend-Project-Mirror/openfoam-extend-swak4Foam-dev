@@ -48,7 +48,11 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
 )
 :
     directionMixedFvPatchField<Type>(p, iF),
-    groovyBCCommon<Type>(true),
+    groovyBCCommon<Type>(
+        true,
+        false,
+        "symmTensor(1,0,0,1,0,1)"
+    ),
     driver_(this->patch())
 {
     if(debug) {
@@ -88,7 +92,12 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
 )
 :
     directionMixedFvPatchField<Type>(p, iF),
-    groovyBCCommon<Type>(dict,true),
+    groovyBCCommon<Type>(
+        dict,
+        true,
+        false,
+        "symmTensor(1,0,0,1,0,1)"
+    ),
     driver_(dict,this->patch())
 {
     if(debug) {
@@ -186,10 +195,6 @@ void groovyBCDirectionFvPatchField<Type>::updateCoeffs()
 
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
     this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
-    // this should be more elegant
-    if(this->fractionExpression_=="1") {
-        this->fractionExpression_="symmTensor(1,0,0,1,0,1)";
-    }
     this->valueFraction() = driver_.evaluate<symmTensor>(this->fractionExpression_);
     
     directionMixedFvPatchField<Type>::updateCoeffs();
