@@ -1,5 +1,6 @@
 groovyBCCommons.C
 groovyBCFvPatchFields.C
+groovyBCDirectionFvPatchFields.C
 groovyBCFixedValueFvPatchFields.C
 groovyBCPointPatchFields.C
 
