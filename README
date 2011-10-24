@@ -648,6 +648,10 @@ S_{expl} + S_{impl} T
 **** Generate a dummy =phi= in =replayTransientBC=
      New option added that generates a =phi= field with value $0$ to
      keep boundary conditions like =inletOutlet= happy
+**** Function object to dump expression results
+     The functionObject =dumpSwakExpression= dumps the complete
+     results of a swakExpression to file at each timestep. This
+     produces huge files and is therefor not endorsed
 **** Additional options for =funkySetFields=
      Add the options =allowFunctionObjects= and =addDummyPhi= to
      execute functionObjects and add a =phi=-field (for fields that
