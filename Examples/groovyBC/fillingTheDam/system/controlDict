@@ -191,6 +191,7 @@ functions
             sum
         );
     }
+    /* Commented out because this needs much space
     massFlow
     {
         // Currently not working because the proxy doesn't work
@@ -233,6 +234,14 @@ functions
         expression "pos()";
         //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
     }
+    rightDump 
+    {
+        type  dumpSwakExpression;
+        valueType patch;
+        patchName rightWall;
+        expression "alpha1";
+    }
+        */
 );
 
 libs (
