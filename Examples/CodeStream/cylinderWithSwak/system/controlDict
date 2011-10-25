@@ -115,8 +115,8 @@ functions
             (
                 "radius",
                 dimensionSet(0, 1, 0, 0, 0),
-                mag(U.mesh().boundary()[4].Cf()[0])
-                //                mag(U.mesh().boundary()[label(radiusBC)].Cf()[0]) // this doesn't work yet
+                //                mag(U.mesh().boundary()[4].Cf()[0])
+                mag(U.mesh().boundary()[label(radiusBC)].Cf()[0]) // this doesn't work yet
             );
 
             Info << "Cylinder radius = " << radius.value() << " m" << endl;

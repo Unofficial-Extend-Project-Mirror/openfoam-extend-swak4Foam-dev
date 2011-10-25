@@ -38,6 +38,12 @@
     in a file =swakConfiguration= (an example file
     =swakConfiguration.example= is provided). If that file is not
     present these unconfigured features will not be compiled.
+*** Possible compilation failure with old 2.0.x-versions
+    With older versions of 2.0.x (or 2.0 or 2.0.1) it is possible that
+    the compilation of  =swakCodedFunctionObject= will fail. In that
+    case remove the last parameter to the
+    =codedFunctionObject=-constructor in =swakCodedFunctionObject.C=
+    (it is clearly marked by a comment)
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
