@@ -91,9 +91,6 @@ Foam::swakCodedFunctionObject::swakCodedFunctionObject
         dict.lookupOrDefault<bool>("verboseCode",false)
     )
 {
-    // for some reason the superclass doesn't take care of this
-    dict_=dict;
-
     if(
         (
             codedToSwakVariables_.size()>0
