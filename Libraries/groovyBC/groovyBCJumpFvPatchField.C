@@ -161,6 +161,7 @@ void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
     }
     jumpCyclicFvPatchField<Type>::write(os);
     os.writeKeyword("patchType") << "cyclic" << token::END_STATEMENT << nl;
+    os.writeKeyword("jumpValue") << jump() << token::END_STATEMENT << nl;
     os.writeKeyword("jumpExpression")
         << jumpExpression_ << token::END_STATEMENT << nl;
 

@@ -38,11 +38,13 @@ boundaryField
     {
         type            groovyBCJump;
         patchType       cyclic;
-        jumpExpression  "-1";
+        jumpExpression  "(normal() & U)>0 ? -1 : 1";
     }
     jump2
     {
-        type            cyclic;
+        type            groovyBCJump;
+        patchType       cyclic;
+        jumpExpression  "((normal() & U)>0 ? -1 : 1)*10*mag(U)";
     }
     frontAndBack
     {
