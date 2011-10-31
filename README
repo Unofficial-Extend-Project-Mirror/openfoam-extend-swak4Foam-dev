@@ -635,6 +635,10 @@ S_{expl} + S_{impl} T
      set a boundary condition as a Dirichlet-condition only in certain
      directions while in the other directions it is a
      gradient-condition
+**** Boundary condition =groovyBCJump=
+     Boundary condition that imposes a jump in the value on a cyclic
+     boundary condition pair (based on =jumpCyclic=). Only works for
+     scalar values
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting
