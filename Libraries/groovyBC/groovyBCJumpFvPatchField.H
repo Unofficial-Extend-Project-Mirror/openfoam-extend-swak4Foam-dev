@@ -43,7 +43,7 @@ SourceFiles
 #ifndef groovyBCJumpFvPatchField_H
 #define groovyBCJumpFvPatchField_H
 
-#include "jumpCyclicFvPatchField.H"
+#include "fixedJumpFvPatchField.H"
 
 #include "PatchValueExpressionDriver.H"
 
@@ -59,7 +59,7 @@ namespace Foam
 template<class Type>
 class groovyBCJumpFvPatchField
 :
-    public jumpCyclicFvPatchField<Type>
+    public fixedJumpFvPatchField<Type>
 {
 
 protected:
@@ -137,14 +137,20 @@ public:
         }
 
 
-    // Member functions
+    // Evaluation functions
+    
+    //- Update the coefficients associated with the patch field
+    virtual void updateCoeffs();
 
-    //- Return the "jump" across the patch as a "half" field 
-    tmp<Field<scalar> > jump() const;
+    // Member functions
 
     //- Write
     virtual void write(Ostream&) const;
 };
+
+//- Specialisation of the jump-condition for the pressure
+template<>
+void groovyBCJumpFvPatchField<scalar>::updateCoeffs();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

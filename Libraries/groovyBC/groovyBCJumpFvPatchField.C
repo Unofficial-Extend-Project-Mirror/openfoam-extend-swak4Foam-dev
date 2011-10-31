@@ -47,7 +47,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     const DimensionedField<Type, volMesh>& iF
 )
 :
-    jumpCyclicFvPatchField<Type>(p, iF),
+    fixedJumpFvPatchField<Type>(p, iF),
     driver_(this->patch()),
     jumpExpression_("0")
 {
@@ -66,7 +66,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     const fvPatchFieldMapper& mapper
 )
 :
-    jumpCyclicFvPatchField<Type>(ptf, p, iF, mapper),
+    fixedJumpFvPatchField<Type>(ptf, p, iF, mapper),
     driver_(this->patch(),ptf.driver_),
     jumpExpression_(ptf.jumpExpression_)
 {
@@ -84,7 +84,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     const dictionary& dict
 )
 :
-    jumpCyclicFvPatchField<Type>(p, iF),
+    fixedJumpFvPatchField<Type>(p, iF),
     driver_(dict,this->patch()),
     jumpExpression_(dict.lookup("jumpExpression"))
 {
@@ -93,6 +93,18 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     }
 
     driver_.readVariablesAndTables(dict);
+
+    if (dict.found("value"))
+    {
+        fvPatchField<Type>::operator=
+        (
+            Field<Type>("value", dict, p.size())
+        );
+    }
+    else
+    {
+        this->evaluate(Pstream::blocking);
+    }
 }
 
 
@@ -102,7 +114,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     const groovyBCJumpFvPatchField<Type>& ptf
 )
 :
-    jumpCyclicFvPatchField<Type>(ptf),
+    fixedJumpFvPatchField<Type>(ptf),
     driver_(this->patch(),ptf.driver_),
     jumpExpression_(ptf.jumpExpression_)
 {
@@ -119,7 +131,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     const DimensionedField<Type, volMesh>& iF
 )
 :
-    jumpCyclicFvPatchField<Type>(ptf, iF),
+    fixedJumpFvPatchField<Type>(ptf, iF),
     driver_(this->patch(),ptf.driver_),
     jumpExpression_(ptf.jumpExpression_)
 {
@@ -132,40 +144,18 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-tmp<Field<scalar> > groovyBCJumpFvPatchField<Type>::jump() const
-{
-    if(debug) {
-        Info << "groovyBCJumpFvPatchField<Type>::jump() with "
-            << jumpExpression_ << endl;
-    }
-
-    PatchValueExpressionDriver &driver=const_cast<PatchValueExpressionDriver &>(driver_);
-
-    driver.clearVariables();
-
-    tmp<Field<scalar> > tjf(
-        new Field<scalar>(this->size())
-    );
-    Field<scalar> &jf=tjf();
-
-    jf = driver.evaluate<scalar>(this->jumpExpression_);
-
-    return tjf;
-}
-
-template<class Type>
 void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
 {
     if(debug) {
         Info << "groovyBCJumpFvPatchField<Type>::write" << endl;
     }
-    jumpCyclicFvPatchField<Type>::write(os);
-    os.writeKeyword("patchType") << "cyclic" << token::END_STATEMENT << nl;
-    os.writeKeyword("jumpValue") << jump() << token::END_STATEMENT << nl;
+    fixedJumpFvPatchField<Type>::write(os);
     os.writeKeyword("jumpExpression")
         << jumpExpression_ << token::END_STATEMENT << nl;
 
     driver_.writeCommon(os,debug);
+
+    this->writeEntry("value", os);
 }
 
 
