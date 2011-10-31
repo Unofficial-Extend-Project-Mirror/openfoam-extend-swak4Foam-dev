@@ -45,7 +45,7 @@ namespace Foam
 
 namespace Foam
 {
-    makePatchTypeField(fvPatchScalarField, groovyBCJumpFvPatchScalarField);
+    makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpFvPatchScalarField);
 }
 
 
