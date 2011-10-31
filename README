@@ -662,6 +662,11 @@ S_{expl} + S_{impl} T
      Add the options =allowFunctionObjects= and =addDummyPhi= to
      execute functionObjects and add a =phi=-field (for fields that
      require these)
+**** Boundary condition =groovcBCDirection=
+     Based on the =directionMixed= boundary condition this allows to
+     set a boundary condition as a Dirichlet-condition only in certain
+     directions while in the other directions it is a
+     gradient-condition
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting

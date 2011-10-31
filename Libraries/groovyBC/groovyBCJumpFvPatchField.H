@@ -29,23 +29,25 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::groovyBCCommon
+    Foam::groovyBCJumpFvPatchField
 
 Description
-    Foam::groovyBCCommon
+    Foam::groovyBCJumpFvPatchField
 
 SourceFiles
-    groovyBCCommon.C
+    groovyBCJumpFvPatchField.C
 
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef groovyBCCommon_H
-#define groovyBCCommon_H
+#ifndef groovyBCJumpFvPatchField_H
+#define groovyBCJumpFvPatchField_H
+
+#include "jumpCyclicFvPatchField.H"
+
+#include "PatchValueExpressionDriver.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "dictionary.H"
 
 namespace Foam
 {
@@ -55,55 +57,94 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
-class groovyBCCommon
+class groovyBCJumpFvPatchField
+:
+    public jumpCyclicFvPatchField<Type>
 {
 
 protected:
 
     // Protected data
 
-    bool debug_;
-    bool hasGradient_;
+    PatchValueExpressionDriver driver_;
 
-    // the expressions
-    string valueExpression_;
-    string gradientExpression_;
-    string fractionExpression_;
+    string jumpExpression_;
 
-    string nullValue();
 public:
+
+    //- Runtime type information
+    TypeName("groovyBCJump");
+
 
     // Constructors
 
-    //- Construct from nothing
-    groovyBCCommon
+    //- Construct from patch and internal field
+    groovyBCJumpFvPatchField
     (
-        bool hasGradient,
-        bool isPoint=false,
-        string fractionExpression="1"
+        const fvPatch&,
+        const DimensionedField<Type, volMesh>&
     );
 
-    //- Construct from dictionary
-    groovyBCCommon
+    //- Construct from patch, internal field and dictionary
+    groovyBCJumpFvPatchField
     (
-        const dictionary&,
-        bool hasGradient,
-        bool isPoint=false,
-        string fractionExpression="1"
+        const fvPatch&,
+        const DimensionedField<Type, volMesh>&,
+        const dictionary&
     );
 
-    //- Copy constructor
-    groovyBCCommon
+    //- Construct by mapping given groovyBCJumpFvPatchField onto a new patch
+    groovyBCJumpFvPatchField
     (
-        const groovyBCCommon<Type> &
+        const groovyBCJumpFvPatchField<Type>&,
+        const fvPatch&,
+        const DimensionedField<Type, volMesh>&,
+        const fvPatchFieldMapper&
     );
+
+    //- Construct as copy
+    groovyBCJumpFvPatchField
+    (
+        const groovyBCJumpFvPatchField<Type>&
+    );
+
+    //- Construct and return a clone
+    virtual tmp<fvPatchField<Type> > clone() const
+        {
+            return tmp<fvPatchField<Type> >
+                (
+                    new groovyBCJumpFvPatchField<Type>(*this)
+                );
+        }
+
+    //- Construct as copy setting internal field reference
+    groovyBCJumpFvPatchField
+    (
+        const groovyBCJumpFvPatchField<Type>&,
+        const DimensionedField<Type, volMesh>&
+    );
+
+    //- Construct and return a clone setting internal field reference
+    virtual tmp<fvPatchField<Type> > clone
+    (
+        const DimensionedField<Type, volMesh>& iF
+    ) const
+        {
+            return tmp<fvPatchField<Type> >
+                (
+                    new groovyBCJumpFvPatchField<Type>(*this, iF)
+                );
+        }
+
 
     // Member functions
 
-    //- Write
-    void write(Ostream&) const;
-};
+    //- Return the "jump" across the patch as a "half" field 
+    tmp<Field<scalar> > jump() const;
 
+    //- Write
+    virtual void write(Ostream&) const;
+};
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -112,7 +153,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     #ifdef NoRepository
-    #   include "groovyBCCommon.C"
+    #   include "groovyBCJumpFvPatchField.C"
     #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

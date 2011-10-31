@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 23 Oct 2011 21:23:31 +0200
+Subject: Re: directionMixed-variant of groovyBC
+Message-Id: <cd1564603027f51d-e79a0051c4af446d-artemis@bgs-Greybook.local>
+References: <cd1564603027f51d-0-artemis@bgs-Greybook.local>
+In-Reply-To: <cd1564603027f51d-0-artemis@bgs-Greybook.local>
+
+Started with a small example
+
+The ecaluation should also accept other tensors
