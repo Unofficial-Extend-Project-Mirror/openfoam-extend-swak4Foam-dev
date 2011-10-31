@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+8
+(
+    walls
+    {
+        type            walls;
+        nFaces          400;
+        startFace       7740;
+        faces           ( ( 3 7 6 2 ) ( 1 5 4 0 ) );
+    }
+    inlet
+    {
+        type            patch;
+        nFaces          20;
+        startFace       8140;
+    }
+    outlet
+    {
+        type            patch;
+        nFaces          20;
+        startFace       8160;
+    }
+    frontAndBack
+    {
+        type            empty;
+        nFaces          8000;
+        startFace       8180;
+    }
+    jump1_master
+    {
+        type            cyclic;
+        nFaces          20;
+        startFace       16180;
+        matchTolerance  0.0001;
+        neighbourPatch  jump1_slave;
+    }
+    jump1_slave
+    {
+        type            cyclic;
+        nFaces          20;
+        startFace       16200;
+        matchTolerance  0.0001;
+        neighbourPatch  jump1_master;
+    }
+    jump2_master
+    {
+        type            cyclic;
+        nFaces          20;
+        startFace       16220;
+        matchTolerance  0.0001;
+        neighbourPatch  jump2_slave;
+    }
+    jump2_slave
+    {
+        type            cyclic;
+        nFaces          20;
+        startFace       16240;
+        matchTolerance  0.0001;
+        neighbourPatch  jump2_master;
+    }
+)
+
+// ************************************************************************* //

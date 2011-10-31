@@ -28,95 +28,41 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    Foam::groovyBCCommon
-
-Description
-    Foam::groovyBCCommon
-
-SourceFiles
-    groovyBCCommon.C
-
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#ifndef groovyBCCommon_H
-#define groovyBCCommon_H
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "groovyBCJumpFvPatchFields.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "dictionary.H"
 
 namespace Foam
 {
 
-/*---------------------------------------------------------------------------*\
-                     Class groovyBCFvPatch Declaration
-\*---------------------------------------------------------------------------*/
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-template<class Type>
-class groovyBCCommon
+    makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpFvPatchScalarField);
+
+template<>
+void Foam::groovyBCJumpFvPatchField<Foam::scalar>::updateCoeffs()
 {
+    if(debug) {
+        Info << "groovyBCJumpFvPatchField<Type>::jump() with "
+            << jumpExpression_ << endl;
+    }
 
-protected:
+    driver_.clearVariables();
 
-    // Protected data
+    jump_ = driver_.evaluate<scalar>(this->jumpExpression_);
 
-    bool debug_;
-    bool hasGradient_;
-
-    // the expressions
-    string valueExpression_;
-    string gradientExpression_;
-    string fractionExpression_;
-
-    string nullValue();
-public:
-
-    // Constructors
-
-    //- Construct from nothing
-    groovyBCCommon
-    (
-        bool hasGradient,
-        bool isPoint=false,
-        string fractionExpression="1"
-    );
-
-    //- Construct from dictionary
-    groovyBCCommon
-    (
-        const dictionary&,
-        bool hasGradient,
-        bool isPoint=false,
-        string fractionExpression="1"
-    );
-
-    //- Copy constructor
-    groovyBCCommon
-    (
-        const groovyBCCommon<Type> &
-    );
-
-    // Member functions
-
-    //- Write
-    void write(Ostream&) const;
-};
+    fixedJumpFvPatchField<scalar>::updateCoeffs();
+}
 
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-    #ifdef NoRepository
-    #   include "groovyBCCommon.C"
-    #endif
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-    #endif
 
 // ************************************************************************* //
