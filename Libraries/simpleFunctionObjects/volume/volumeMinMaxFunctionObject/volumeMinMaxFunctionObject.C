@@ -90,9 +90,12 @@ Field<tensor> volumeMinMaxFunctionObject::process(const word& fieldName,tensor p
     return minMax(fieldName,preset);
 }
 
-string volumeMinMaxFunctionObject::firstLine()
+stringList volumeMinMaxFunctionObject::columnNames()
 {
-    return " minimum maximum";
+    stringList result(2);
+    result[0]="minimum";
+    result[1]="maximum";
+    return result;
 }
 
 } // namespace Foam

@@ -73,17 +73,9 @@ void volumeFieldFunctionObject::processAndWrite(const word& fieldName)
 
     if (Pstream::master())
     {
-        unsigned int w = IOstream::defaultPrecision() + 7;
-
-        OFstream& probeStream = *filePtrs_[fieldName];
-
-        probeStream << setw(w) << fld.time().value();
-
-        forAll(vals, probeI)
-        {
-            probeStream << setw(w) << vals[probeI];
-        }
-        probeStream << nl;
+        writeTime(fieldName,fld.time().value());
+        writeData(fieldName,vals);
+        endData(fieldName);
     }
 }
 

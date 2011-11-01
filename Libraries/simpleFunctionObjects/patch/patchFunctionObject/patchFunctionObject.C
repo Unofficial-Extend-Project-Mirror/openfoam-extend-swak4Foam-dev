@@ -87,15 +87,13 @@ bool patchFunctionObject::start()
     return true;
 }
 
-string patchFunctionObject::firstLine()
+stringList patchFunctionObject::columnNames()
 {
-    OStringStream o;
-
-    forAll(patchNames_,patchI) {
-        o << token::SPACE << patchNames_[patchI];
+    stringList result(patchNames_.size());
+    forAll(result,i) {
+        result[i]=patchNames_[i];
     }
-
-    return o.str();
+    return result;
 }
 
 } // namespace Foam

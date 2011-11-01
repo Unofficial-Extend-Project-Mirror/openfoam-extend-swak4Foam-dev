@@ -79,12 +79,12 @@ wordList swakExpressionFunctionObject::fileNames()
     return wordList(1,name());
 }
 
-string swakExpressionFunctionObject::firstLine()
+stringList swakExpressionFunctionObject::columnNames()
 {
-    string result="";
+    stringList result(accumulations_.size());
 
     forAll(accumulations_,i) {
-        result+=" "+accumulations_[i];
+        result[i]=accumulations_[i];
     }
 
     return result;

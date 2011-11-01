@@ -87,9 +87,9 @@ wordList dumpSwakExpressionFunctionObject::fileNames()
     return wordList(1,name());
 }
 
-string dumpSwakExpressionFunctionObject::firstLine()
+stringList dumpSwakExpressionFunctionObject::columnNames()
 {
-    return " No way to know how much data will follow";
+    return stringList(1,"No way to know how much data will follow");
 }
 
 void dumpSwakExpressionFunctionObject::write()

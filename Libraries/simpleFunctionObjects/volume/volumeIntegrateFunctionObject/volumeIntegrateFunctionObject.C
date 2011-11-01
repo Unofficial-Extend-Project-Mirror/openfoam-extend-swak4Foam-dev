@@ -90,9 +90,9 @@ Field<tensor> volumeIntegrateFunctionObject::process(const word& fieldName,tenso
     return integrate(fieldName,preset);
 }
 
-string volumeIntegrateFunctionObject::firstLine()
+stringList volumeIntegrateFunctionObject::columnNames()
 {
-    return " integrale";
+    return stringList(1,"integrale");
 }
 
 } // namespace Foam

@@ -59,15 +59,9 @@ void dumpSwakExpressionFunctionObject::writeData(CommonValueExpressionDriver &dr
     Field<T> result=driver.getResult<T>();
 
     if (Pstream::master()) {
-        unsigned int w = IOstream::defaultPrecision() + 7;
-        
-        OFstream& o=*filePtrs_[name()];
-        
-        o << setw(w) << time().value();
-        forAll(result,i) {
-            writeValue(o,result[i],w);
-        }
-        o << nl;
+        writeTime(name(),time().value());
+        //        writeData(name(),result);
+        endData(name());
     } else {
         Pout << "My data is lost because for dumpSwakExpressionFunctionObject"
             << " only the masters data gets written" << endl;

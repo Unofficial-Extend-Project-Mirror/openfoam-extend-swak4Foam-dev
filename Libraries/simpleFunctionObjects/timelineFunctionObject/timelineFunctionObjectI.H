@@ -23,89 +23,63 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    volumeMinMaxFunctionObject
-
-Description
-    Calculates max and min of the fields on a volume
-
-SourceFiles
-    volumeMinMaxFunctionObject.C
-
 \*---------------------------------------------------------------------------*/
 
-#ifndef volumeMinMaxFunctionObject_H
-#define volumeMinMaxFunctionObject_H
-
-#include "volumeFieldFunctionObject.H"
+#include "timelineFunctionObject.H"
+#include "IOmanip.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-
+namespace Foam {
 /*---------------------------------------------------------------------------*\
-                           Class volumeMinMaxFunctionObject Declaration
+                           Class timelineFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class volumeMinMaxFunctionObject
-:
-    public volumeFieldFunctionObject
-{
+template<class T>
+void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
+    Ostream &s=*filePtrs_[name];
+    forAll(data,index) {
+        switch(outputFileMode_) {
+            case ofmRaw:
+                s << setw(IOstream::defaultPrecision() + 7) << data[index];
+                break;
+            case ofmCsv:
+                s << separator_ << data[index];
+                break;
+            default:
+                FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
+                    << "Don't know how to write files of type " 
+                        << outputFileModeNames_[outputFileMode_] << endl
+                        << abort(FatalError);
+        }
+    }
+}
 
-    // Private Member Functions
-
-    //- Disallow default bitwise copy construct
-    volumeMinMaxFunctionObject(const volumeMinMaxFunctionObject&);
-    
-    //- Disallow default bitwise assignment
-    void operator=(const volumeMinMaxFunctionObject&);
-
-    //- calculates minimum and maximum of a field
-    template <class T>
-    Field<T> minMax(const word& fieldName,T preset) const;
-    
-protected:
-
-    word dirName();
-
-    stringList columnNames();
-    
-    virtual scalarField process(const word& fieldName,scalar preset);
-    virtual Field<vector> process(const word& fieldName,vector preset);
-    virtual Field<sphericalTensor> process(const word& fieldName,sphericalTensor preset);
-    virtual Field<symmTensor> process(const word& fieldName,symmTensor preset);
-    virtual Field<tensor> process(const word& fieldName,tensor preset);
-
-public:
-
-    //- Runtime type information
-    TypeName("volumeMinMax");
-
-
-    // Constructors
-
-    //- Construct from components
-    volumeMinMaxFunctionObject
-    (
-        const word&,
-        const Time&,
-        const dictionary&
-    );
-
-};
+template<class T>
+void timelineFunctionObject::writeTime(const word &name,const T &time) {
+    Ostream &s=*filePtrs_[name];
+    switch(outputFileMode_) {
+        case ofmRaw:
+            s << setw(IOstream::defaultPrecision() + 7) << time;
+            break;
+        case ofmCsv:
+            s <<  time;
+            break;
+        default:
+            FatalErrorIn("timelineFunctionObject::writeTime(const word &name,const UList<T> &data)")
+                    << "Don't know how to write files of type " 
+                        << outputFileModeNames_[outputFileMode_] << endl
+                        << abort(FatalError);
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 
-#ifdef NoRepository
-#   include "volumeMinMaxFunctionObjectTemplates.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
 
 // ************************************************************************* //

@@ -1,6 +1,6 @@
 From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Date: Sat, 22 Oct 2011 14:22:18 +0200
-State: new
+State: in-progress
 Subject: Generalize simpleFunctionObjects data-writing to allow CSV-files
 Message-Id: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
 
