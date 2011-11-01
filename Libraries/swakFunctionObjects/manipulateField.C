@@ -45,8 +45,6 @@ Foam::manipulateField::manipulateField
     obr_(obr),
     dict_(dict)
 {
-    driver_->createWriterAndRead(name+"_"+type());
-
     if (!isA<fvMesh>(obr_))
     {
         active_=false;
