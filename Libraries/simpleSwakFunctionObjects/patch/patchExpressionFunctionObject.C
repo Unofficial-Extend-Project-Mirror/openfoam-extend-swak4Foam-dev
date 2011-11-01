@@ -92,12 +92,12 @@ wordList patchExpressionFunctionObject::fileNames()
     return patchNames_;
 }
 
-string patchExpressionFunctionObject::firstLine()
+stringList patchExpressionFunctionObject::columnNames()
 {
-    string result="";
+    stringList result(accumulations_.size());
 
     forAll(accumulations_,i) {
-        result+=" "+accumulations_[i];
+        result[i]=accumulations_[i];
     }
 
     return result;

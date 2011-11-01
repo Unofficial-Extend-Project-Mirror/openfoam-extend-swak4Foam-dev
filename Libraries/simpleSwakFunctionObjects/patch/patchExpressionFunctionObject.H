@@ -82,7 +82,7 @@ protected:
 
     word dirName();
 
-    string firstLine();
+    stringList columnNames();
 
     wordList fileNames();
 
