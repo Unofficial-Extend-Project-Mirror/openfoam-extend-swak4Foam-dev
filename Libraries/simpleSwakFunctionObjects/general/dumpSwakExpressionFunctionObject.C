@@ -104,15 +104,15 @@ void dumpSwakExpressionFunctionObject::write()
     word rType=driver_->getResultType();
 
     if(rType==pTraits<scalar>::typeName) {
-        writeData<scalar>(driver_());
+        writeTheData<scalar>(driver_());
     } else if(rType==pTraits<vector>::typeName) {
-        writeData<vector>(driver_());
+        writeTheData<vector>(driver_());
     } else if(rType==pTraits<tensor>::typeName) {
-        writeData<tensor>(driver_());
+        writeTheData<tensor>(driver_());
     } else if(rType==pTraits<symmTensor>::typeName) {
-        writeData<symmTensor>(driver_());
+        writeTheData<symmTensor>(driver_());
     } else if(rType==pTraits<sphericalTensor>::typeName) {
-        writeData<sphericalTensor>(driver_());
+        writeTheData<sphericalTensor>(driver_());
     } else {
         WarningIn("dumpSwakExpressionFunctionObject::write()")
             << "Don't know how to handle type " << rType 

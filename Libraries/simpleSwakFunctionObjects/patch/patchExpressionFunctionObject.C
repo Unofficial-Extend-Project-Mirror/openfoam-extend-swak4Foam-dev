@@ -120,15 +120,15 @@ void patchExpressionFunctionObject::write()
         word rType=driver.getResultType();
 
         if(rType==pTraits<scalar>::typeName) {
-            writeData<scalar>(patchNames_[i],driver);
+            writeTheData<scalar>(patchNames_[i],driver);
         } else if(rType==pTraits<vector>::typeName) {
-            writeData<vector>(patchNames_[i],driver);
+            writeTheData<vector>(patchNames_[i],driver);
         } else if(rType==pTraits<tensor>::typeName) {
-            writeData<tensor>(patchNames_[i],driver);
+            writeTheData<tensor>(patchNames_[i],driver);
         } else if(rType==pTraits<symmTensor>::typeName) {
-            writeData<symmTensor>(patchNames_[i],driver);
+            writeTheData<symmTensor>(patchNames_[i],driver);
         } else if(rType==pTraits<sphericalTensor>::typeName) {
-            writeData<sphericalTensor>(patchNames_[i],driver);
+            writeTheData<sphericalTensor>(patchNames_[i],driver);
         }  
 
         if(verbose()) {

@@ -84,7 +84,7 @@ protected:
     wordList fileNames();
 
     template<class T>
-    void writeData(CommonValueExpressionDriver &driver);
+    void writeTheData(CommonValueExpressionDriver &driver);
 public:
 
     //- Runtime type information

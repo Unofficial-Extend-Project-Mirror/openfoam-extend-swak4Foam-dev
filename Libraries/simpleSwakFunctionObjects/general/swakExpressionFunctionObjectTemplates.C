@@ -40,7 +40,7 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template <class T>
-void swakExpressionFunctionObject::writeData(CommonValueExpressionDriver &driver)
+void swakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &driver)
 {
     Field<T> result=driver.getResult<T>();
 
@@ -72,7 +72,7 @@ void swakExpressionFunctionObject::writeData(CommonValueExpressionDriver &driver
 
     if (Pstream::master()) {
         writeTime(name(),time().value());
-        //        writeData(name(),results);
+        writeData(name(),results);
         endData(name());
     }
 }

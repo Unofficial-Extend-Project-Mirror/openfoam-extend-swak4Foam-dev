@@ -54,13 +54,13 @@ void dumpSwakExpressionFunctionObject::writeValue(Ostream &o,const Type &val,uns
 }
 
 template <class T>
-void dumpSwakExpressionFunctionObject::writeData(CommonValueExpressionDriver &driver)
+void dumpSwakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &driver)
 {
     Field<T> result=driver.getResult<T>();
 
     if (Pstream::master()) {
         writeTime(name(),time().value());
-        //        writeData(name(),result);
+        writeData(name(),result);
         endData(name());
     } else {
         Pout << "My data is lost because for dumpSwakExpressionFunctionObject"
