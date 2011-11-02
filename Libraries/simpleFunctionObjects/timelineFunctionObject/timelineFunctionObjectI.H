@@ -35,8 +35,28 @@ namespace Foam {
                            Class timelineFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class T>
-void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
+template<>
+inline void timelineFunctionObject::writeData(const word &name,const UList<string> &data) {
+    Ostream &s=*filePtrs_[name];
+    forAll(data,index) {
+        switch(outputFileMode_) {
+            case ofmRaw:
+                s << setw(IOstream::defaultPrecision() + 7) << data[index].c_str();
+                break;
+            case ofmCsv:
+                s << separator_.c_str() << data[index].c_str();
+                break;
+            default:
+                FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
+                    << "Don't know how to write files of type " 
+                        << outputFileModeNames_[outputFileMode_] << endl
+                        << abort(FatalError);
+        }
+    }
+}
+
+template<>
+inline void timelineFunctionObject::writeData(const word &name,const UList<scalar> &data) {
     Ostream &s=*filePtrs_[name];
     forAll(data,index) {
         switch(outputFileMode_) {
@@ -51,6 +71,28 @@ void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
                     << "Don't know how to write files of type " 
                         << outputFileModeNames_[outputFileMode_] << endl
                         << abort(FatalError);
+        }
+    }
+}
+
+template<class T>
+void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
+    Ostream &s=*filePtrs_[name];
+    forAll(data,index) {
+        for(label i=0;i<pTraits<T>::nComponents;i++) {
+            switch(outputFileMode_) {
+                case ofmRaw:
+                    s << setw(IOstream::defaultPrecision() + 7) << data[index][i];
+                    break;
+                case ofmCsv:
+                    s << separator_.c_str() << data[index][i];
+                    break;
+                default:
+                    FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
+                        << "Don't know how to write files of type " 
+                            << outputFileModeNames_[outputFileMode_] << endl
+                            << abort(FatalError);
+            }
         }
     }
 }
