@@ -44,7 +44,7 @@ void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
                 s << setw(IOstream::defaultPrecision() + 7) << data[index];
                 break;
             case ofmCsv:
-                s << separator_ << data[index];
+                s << separator_.c_str() << data[index];
                 break;
             default:
                 FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
