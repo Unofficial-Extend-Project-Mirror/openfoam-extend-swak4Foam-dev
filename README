@@ -624,6 +624,9 @@ S_{expl} + S_{impl} T
      =swak4Foam= of the timestep) and are reread at the start. This
      allows consistent restarts (for instance if a flow was summed
      using the variable) *if the expressions stay the same*.
+**** =simpleFunctionObjects= now write vectors and tensors without brackets
+     Data files can now be written without brackets but each component on
+     its own. The number of entries in the header is not adjusted
 *** New features
 **** General =phi= in =solveTransportPDE=
      Due to the refactoring of the =FieldDriver= now =phi= can be
@@ -671,6 +674,11 @@ S_{expl} + S_{impl} T
      Boundary condition that imposes a jump in the value on a cyclic
      boundary condition pair (based on =jumpCyclic=). Only works for
      scalar values
+**** =simpleFunctionObjects= write CSV-files
+     Setting the option =outputFileMode= to =csv= writes
+     CSV-files. The option-value =foam= is the default (old style). The
+     option-value =raw= writes the values delimited by spaces (no
+     brackets for vectors and tensors)
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting

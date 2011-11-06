@@ -82,12 +82,12 @@ protected:
 
     word dirName();
 
-    string firstLine();
+    stringList columnNames();
 
     wordList fileNames();
 
     template<class T>
-    void writeData(const word &pName,PatchValueExpressionDriver &driver);
+    void writeTheData(const word &pName,PatchValueExpressionDriver &driver);
 public:
 
     //- Runtime type information

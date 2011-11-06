@@ -90,9 +90,9 @@ Field<tensor> volumeAverageFunctionObject::process(const word& fieldName,tensor 
     return average(fieldName,preset);
 }
 
-string volumeAverageFunctionObject::firstLine()
+stringList volumeAverageFunctionObject::columnNames()
 {
-    return " average";
+    return stringList(1,"average");
 }
 
 } // namespace Foam

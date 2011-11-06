@@ -69,7 +69,7 @@ protected:
 
     word dirName();
 
-    string firstLine();
+    virtual stringList columnNames();
     
     virtual scalarField process(const word& fieldName,scalar preset);
     virtual Field<vector> process(const word& fieldName,vector preset);

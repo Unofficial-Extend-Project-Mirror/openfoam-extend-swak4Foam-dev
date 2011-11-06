@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 06 Nov 2011 08:39:34 +0100
+Subject: Re: Generalize simpleFunctionObjects data-writing to allow CSV-files
+Message-Id: <fd8dce5be1f425af-807990630c242f2b-artemis@bgs-Greybook.local>
+References: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
+In-Reply-To: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
+
+Make the old behaviour the default (writing brackets for vectors;
+called OpenFOAM) and raw an option

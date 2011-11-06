@@ -40,7 +40,7 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template <class T>
-void patchExpressionFunctionObject::writeData(const word &pName,PatchValueExpressionDriver &driver)
+void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExpressionDriver &driver)
 {
     Field<T> result=driver.getResult<T>();
 
@@ -71,15 +71,9 @@ void patchExpressionFunctionObject::writeData(const word &pName,PatchValueExpres
     }
 
     if (Pstream::master()) {
-        unsigned int w = IOstream::defaultPrecision() + 7;
-        
-        OFstream& o=*filePtrs_[pName];
-        
-        o << setw(w) << time().value();
-        forAll(results,i) {
-            o << setw(w) << results[i];
-        }
-        o << nl;
+        writeTime(pName,time().value());
+        writeData(pName,results);
+        endData(pName);
     }
 }
 
