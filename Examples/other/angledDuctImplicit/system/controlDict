@@ -48,7 +48,7 @@ graphFormat     raw;
 runTimeModifiable yes;
 
 functions
-(
+{
     pressureDrop
     {
         type patchExpression;
@@ -61,6 +61,36 @@ functions
         );
         expression "p-pOut";
         verbose true;
+    }
+    pressureDropCSV
+    {
+        $pressureDrop;
+
+        outputFileMode csv;
+    }
+    velocityCSV
+    {
+        type patchExpression;
+        accumulations (
+            min
+            max
+            average
+        );
+        expression "U";
+        patches (
+            outlet
+        );
+        outputFileMode csv;        
+    }
+    velocityRaw 
+    {
+        $velocityCSV;
+        outputFileMode raw;
+    }
+    velocityFoam 
+    {
+        $velocityCSV;
+        outputFileMode foam;
     }
     pressureToFilterVolAvg
     {
@@ -785,7 +815,7 @@ functions
             max
         );
     }
-);
+};
 
 libs ( 
     "libOpenFOAM.so" 
