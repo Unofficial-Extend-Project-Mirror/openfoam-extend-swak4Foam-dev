@@ -25,4 +25,6 @@ writeFields/writeFieldsGeneral/writeFieldsGeneralFunctionObject.C
 
 trackDictionary/trackDictionaryFunctionObject.C
 
+functionObjectProxy/functionObjectListProxy/functionObjectListProxy.C
+
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects
