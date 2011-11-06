@@ -66,6 +66,7 @@ class timelineFunctionObject
 
 public:
     enum outputFileMode {
+        ofmFoam,
         ofmRaw,
         ofmCsv
     };
@@ -90,7 +91,7 @@ protected:
     scalar factor() const { return factor_; }
 
     //- possible output-modes
-    static const NamedEnum<outputFileMode,2> outputFileModeNames_;
+    static const NamedEnum<outputFileMode,3> outputFileModeNames_;
     outputFileMode outputFileMode_;
 
     //- the file extension that fits the file-mode

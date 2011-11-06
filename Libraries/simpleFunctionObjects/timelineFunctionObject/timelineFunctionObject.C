@@ -43,12 +43,13 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<>
-const char* NamedEnum<Foam::timelineFunctionObject::outputFileMode,2>::names[]=
+const char* NamedEnum<Foam::timelineFunctionObject::outputFileMode,3>::names[]=
 {
+    "foam",
     "raw",
     "csv"
 };
-const NamedEnum<timelineFunctionObject::outputFileMode,2> timelineFunctionObject::outputFileModeNames_;
+const NamedEnum<timelineFunctionObject::outputFileMode,3> timelineFunctionObject::outputFileModeNames_;
 
 timelineFunctionObject::timelineFunctionObject
 (
@@ -62,12 +63,16 @@ timelineFunctionObject::timelineFunctionObject
         dict.lookupOrDefault<scalar>("factor",1)
     ),
     outputFileMode_(
-        outputFileModeNames_[dict.lookupOrDefault<word>("outputFileMode","raw")]
+        outputFileModeNames_[dict.lookupOrDefault<word>("outputFileMode","foam")]
     )
 {
     switch(outputFileMode_) {
-        case ofmRaw:
+        case ofmFoam:
             fileExtension_="";
+            separator_=" ";
+            break;
+        case ofmRaw:
+            fileExtension_=".raw";
             separator_=" ";
             break;
         case ofmCsv:
@@ -131,7 +136,11 @@ bool timelineFunctionObject::start()
                
                 OFstream &s=*sPtr;
 
-                if(outputFileMode_==ofmRaw) {
+                if(
+                    outputFileMode_==ofmRaw
+                    ||
+                    outputFileMode_==ofmFoam
+                ) {
                     s << '#';
                 }
 

@@ -82,10 +82,15 @@ functions
         );
         outputFileMode csv;        
     }
-    veloctiyRaw 
+    velocityRaw 
     {
         $velocityCSV;
         outputFileMode raw;
+    }
+    velocityFoam 
+    {
+        $velocityCSV;
+        outputFileMode foam;
     }
     pressureToFilterVolAvg
     {

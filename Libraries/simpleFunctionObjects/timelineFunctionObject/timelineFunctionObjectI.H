@@ -40,6 +40,7 @@ inline void timelineFunctionObject::writeData(const word &name,const UList<strin
     Ostream &s=*filePtrs_[name];
     forAll(data,index) {
         switch(outputFileMode_) {
+            case ofmFoam:
             case ofmRaw:
                 s << setw(IOstream::defaultPrecision() + 7) << data[index].c_str();
                 break;
@@ -60,6 +61,7 @@ inline void timelineFunctionObject::writeData(const word &name,const UList<scala
     Ostream &s=*filePtrs_[name];
     forAll(data,index) {
         switch(outputFileMode_) {
+            case ofmFoam:
             case ofmRaw:
                 s << setw(IOstream::defaultPrecision() + 7) << data[index];
                 break;
@@ -79,19 +81,23 @@ template<class T>
 void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
     Ostream &s=*filePtrs_[name];
     forAll(data,index) {
-        for(label i=0;i<pTraits<T>::nComponents;i++) {
-            switch(outputFileMode_) {
-                case ofmRaw:
-                    s << setw(IOstream::defaultPrecision() + 7) << data[index][i];
-                    break;
-                case ofmCsv:
-                    s << separator_.c_str() << data[index][i];
-                    break;
-                default:
-                    FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
-                        << "Don't know how to write files of type " 
-                            << outputFileModeNames_[outputFileMode_] << endl
-                            << abort(FatalError);
+        if(outputFileMode_==ofmFoam) {
+            s << setw(IOstream::defaultPrecision() + 7) << data[index];
+        } else {
+            for(label i=0;i<pTraits<T>::nComponents;i++) {
+                switch(outputFileMode_) {
+                    case ofmRaw:
+                        s << setw(IOstream::defaultPrecision() + 7) << data[index][i];
+                        break;
+                    case ofmCsv:
+                        s << separator_.c_str() << data[index][i];
+                        break;
+                    default:
+                        FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
+                            << "Don't know how to write files of type " 
+                                << outputFileModeNames_[outputFileMode_] << endl
+                                << abort(FatalError);
+                }
             }
         }
     }
@@ -101,6 +107,7 @@ template<class T>
 void timelineFunctionObject::writeTime(const word &name,const T &time) {
     Ostream &s=*filePtrs_[name];
     switch(outputFileMode_) {
+        case ofmFoam:
         case ofmRaw:
             s << setw(IOstream::defaultPrecision() + 7) << time;
             break;
