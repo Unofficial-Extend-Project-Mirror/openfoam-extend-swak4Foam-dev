@@ -68,29 +68,35 @@ functions
 
         outputFileMode csv;
     }
-    velocityCSV
-    {
-        type patchExpression;
-        accumulations (
-            min
-            max
-            average
-        );
-        expression "U";
-        patches (
-            outlet
-        );
-        outputFileMode csv;        
-    }
-    velocityRaw 
-    {
-        $velocityCSV;
-        outputFileMode raw;
-    }
-    velocityFoam 
-    {
-        $velocityCSV;
-        outputFileMode foam;
+    velocityFormats {
+        type functionObjectListProxy;
+        functions {
+            velocityCSV
+            {
+                type patchExpression;
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                expression "U";
+                patches (
+                    outlet
+                );
+                outputFileMode csv; 
+                //             verbose true;
+            }
+            velocityRaw 
+            {
+                $velocityCSV;
+                outputFileMode raw;
+            }
+            velocityFoam 
+            {
+                $velocityCSV;
+                outputFileMode foam;
+            }
+        }
     }
     pressureToFilterVolAvg
     {

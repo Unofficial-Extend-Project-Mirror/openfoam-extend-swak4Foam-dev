@@ -38,6 +38,14 @@ namespace Foam
 {
     defineTypeNameAndDebug(functionObjectListProxy, 0);
 
+    addToRunTimeSelectionTable
+    (
+        functionObject,
+        functionObjectListProxy,
+        dictionary
+    );
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 functionObjectListProxy::functionObjectListProxy
@@ -53,6 +61,12 @@ functionObjectListProxy::functionObjectListProxy
         dict
     )
 {
+    if(!dict.found("functions")) {
+        FatalErrorIn("functionObjectListProxy::functionObjectListProxy")
+            << "No entry 'functions' in dictionary of " << name << endl
+                << abort(FatalError);
+    }
+    read(dict);
 }
 
 
