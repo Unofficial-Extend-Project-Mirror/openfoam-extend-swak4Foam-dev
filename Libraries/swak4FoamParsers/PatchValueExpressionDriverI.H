@@ -151,6 +151,16 @@ namespace Foam {
             return variables_[name].getResult<Type>(true).ptr();
         }
 
+        autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
+        if(
+            !patch_.boundaryMesh().mesh().
+            objectRegistry::foundObject<localVolField>(name)
+            &&
+            searchOnDisc()
+        ) {
+            dummy=this->getOrReadField<localVolField>(name,false);
+        }
+
         if(
             patch_.boundaryMesh().mesh().
             objectRegistry::foundObject<localVolField>(name)
@@ -185,6 +195,16 @@ namespace Foam {
             return variables_[name].getResult<Type>(true).ptr();
         }
 
+        autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
+        if(
+            !patch_.boundaryMesh().mesh().
+            objectRegistry::foundObject<localVolField>(name)
+            &&
+            searchOnDisc()
+        ) {
+            dummy=this->getOrReadField<localVolField>(name,false);
+        }
+
         if(
             patch_.boundaryMesh().mesh().
             objectRegistry::foundObject<localVolField>(name)
@@ -208,6 +228,16 @@ namespace Foam {
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
 
+        autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
+        if(
+            !patch_.boundaryMesh().mesh().
+            objectRegistry::foundObject<localVolField>(name)
+            &&
+            searchOnDisc()
+        ) {
+            dummy=this->getOrReadField<localVolField>(name,false);
+        }
+
         if(
             patch_.boundaryMesh().mesh().
             objectRegistry::foundObject<localVolField>(name)
@@ -218,7 +248,13 @@ namespace Foam {
         } else{
             FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getSurfaceNormalField(const string &name)")
                 << "No field of type " << pTraits<scalar>::typeName
+                    << "( " << pTraits<localVolField>::typeName << ")"
                     << " with the name " << name << " found or unsupported type for snGrad\n"
+                    << "Fields of type: " 
+                    << patch_.boundaryMesh().mesh().objectRegistry::names<localVolField>()
+                    << "\nAll registered objects:"
+                    << patch_.boundaryMesh().mesh().objectRegistry::names()
+
                     << endl
                     << abort(FatalError);
 
