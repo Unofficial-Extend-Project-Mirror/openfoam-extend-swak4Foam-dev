@@ -81,9 +81,17 @@ CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const dictionary& d
  :
     SubsetValueExpressionDriver(dict),
     cellZone_(
-        regionMesh(dict,mesh).cellZones()[
+        regionMesh(
+            dict,
+            mesh,
+            searchOnDisc()
+        ).cellZones()[
             getCellZoneID(
-                regionMesh(dict,mesh),
+                regionMesh(
+                    dict,
+                    mesh,
+                    searchOnDisc()
+                ),
                 dict.lookup(
                     "zoneName"
                 )                

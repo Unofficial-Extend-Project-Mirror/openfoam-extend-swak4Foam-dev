@@ -642,6 +642,9 @@ S_{expl} + S_{impl} T
      CSV-files. The option-value =foam= is the default (old style). The
      option-value =raw= writes the values delimited by spaces (no
      brackets for vectors and tensors)
+**** Submeshes automatically read if =searchOnDisc= specified
+     If a submesh is not yet in memory and the option =searchOnDisc=
+     is set, the mesh is automatically read into memory and kept there
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting

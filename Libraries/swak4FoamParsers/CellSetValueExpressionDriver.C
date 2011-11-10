@@ -98,7 +98,11 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dic
     SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),NEW),
     cellSet_(
         getSet<cellSet>(
-            regionMesh(dict,mesh),
+            regionMesh(
+                dict,
+                mesh,
+                searchOnDisc()
+            ),
             dict.lookup("setName"),
             origin_
         )

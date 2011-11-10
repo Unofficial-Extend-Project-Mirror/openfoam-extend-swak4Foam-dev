@@ -132,7 +132,8 @@ protected:
     static const fvMesh &regionMesh
     (
         const dictionary &dict,
-        const fvMesh &mesh
+        const fvMesh &mesh,
+        bool readIfNecessary
     );
 
     //- look through the current variable values and update the stored variables

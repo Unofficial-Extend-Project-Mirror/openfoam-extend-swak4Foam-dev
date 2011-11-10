@@ -96,7 +96,11 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dic
     SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),INVALID),
     faceSet_(
         getSet<faceSet>(
-            regionMesh(dict,mesh),
+            regionMesh(
+                dict,
+                mesh,
+                searchOnDisc()
+            ),
             dict.lookup("setName"),
             origin_
         )
