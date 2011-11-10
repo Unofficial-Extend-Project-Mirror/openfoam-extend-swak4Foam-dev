@@ -649,3 +649,7 @@ S_{expl} + S_{impl} T
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template
      =makeConstant= did not work
+**** =snGrad= does not work for patches if the file is on disc
+     Change so that the field gets temporarily loaded to calculate the
+     gradient on the patch. Same for =internalField= and
+     =neighbourField=
