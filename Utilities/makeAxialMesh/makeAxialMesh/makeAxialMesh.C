@@ -50,11 +50,7 @@ Description
 
 #include "argList.H"
 #include "Time.H"
-#ifdef FOAM_DEV
-#include "repatch.H"
-#else
 #include "repatchPolyTopoChanger.H"
-#endif
 
 #include "plane.H"
 #include "line.H"
@@ -187,11 +183,7 @@ void changeCoordinates(
   else 		  Info << "Projecting nodes" << endl;
   const scalar angle=wedgeAngle/2;
 
-#ifdef FOAM_DEV
-  repatch topo(mesh);
-#else
   repatchPolyTopoChanger topo(mesh);
-#endif
 
   pointField oldPoints=mesh.points();                //DPS the old points will be rotated too
   pointField newPoints(oldPoints.size());
@@ -244,11 +236,7 @@ void changeCoordinates(
 // Split the wedge-patch into two patches
  
 void splitWedge(polyMesh &mesh,word wname,plane pl) {
-#ifdef FOAM_DEV
-  repatch topo(mesh);
-#else
   repatchPolyTopoChanger topo(mesh);
-#endif
 
   const polyBoundaryMesh& patches = mesh.boundaryMesh();
   const polyPatch &wedge=patches[patches.findPatchID(wname)];
@@ -371,19 +359,11 @@ void splitWedge(polyMesh &mesh,word wname,plane pl) {
 
   Info << " Changing patches\n" << endl;
 
-#ifdef FOAM_DEV
-  topo.execute();
-#else
   topo.repatch();
-#endif
 }
 
 void changeTypes(polyMesh &mesh,word wedge,word axis,bool hasOffset) {
-#ifdef FOAM_DEV
-  repatch topo(mesh);
-#else
   repatchPolyTopoChanger topo(mesh);
-#endif
   const polyBoundaryMesh& patches = mesh.boundaryMesh();
 
   List<polyPatch*> newPatches(patches.size());
