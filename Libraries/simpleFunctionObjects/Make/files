@@ -27,5 +27,6 @@ trackDictionary/trackDictionaryFunctionObject.C
 
 functionObjectProxy/functionObjectListProxy/functionObjectListProxy.C
 functionObjectProxy/conditionalFunctionObjectListProxy/conditionalFunctionObjectListProxy.C
+functionObjectProxy/executeIfExecutableFitsFunctionObject/executeIfExecutableFitsFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects

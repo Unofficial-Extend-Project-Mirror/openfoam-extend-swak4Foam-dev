@@ -577,44 +577,51 @@ functions
         expression "mag(pos())";
         autowrite true;        
     } 
-    myPhi
-    {
-        type expressionField;
-        outputControl timeStep;
-        outputInterval 1;
-        fieldName myPhi;
-        expression "interpolate(rho*U)&face()";
-        autowrite true;        
-    }
-    phiError
-    {
-        type swakExpression;
-        valueType internalField;
-        verbose true;
-        expression "mag(phi-myPhi)";
-        accumulations (
-            average
-            sum
-            max
-        );
-    }
-    myPhi2
-    {
-        type expressionField;
-        outputControl timeStep;
-        outputInterval 1;
-        fieldName myPhi2;
-        expression "myPhi";
-        autowrite true;        
-    }
-    changeMyPhi2
-    {
-        type manipulateField;
-        outputControl timeStep;
-        outputInterval 1;
-        fieldName myPhi2;
-        expression "interpolate(0)";
-        mask "fpos().x<interpolate(0)";
+    onlyForSolver {
+        type executeIfExecutableFits;
+        executableNameRegexp "rho.+Foam";
+
+        functions {
+            myPhi
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi;
+                expression "interpolate(rho*U)&face()";
+                autowrite true;        
+            }
+            phiError
+            {
+                type swakExpression;
+                valueType internalField;
+                verbose true;
+                expression "mag(phi-myPhi)";
+                accumulations (
+                    average
+                    sum
+                    max
+                );
+            }
+            myPhi2
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi2;
+                expression "myPhi";
+                autowrite true;        
+            }
+            changeMyPhi2
+            {
+                type manipulateField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi2;
+                expression "interpolate(0)";
+                mask "fpos().x<interpolate(0)";
+            }
+        }
     }
     velocityClass
     {

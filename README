@@ -425,6 +425,9 @@ S_{expl} + S_{impl} T
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
+** Conditional function objects are executed once during construction
+   As the super-class constructs the list of function objects they are
+   executed once before the condition is evaluated
 * History
 ** 2010-09-13
    First Release
@@ -645,6 +648,14 @@ S_{expl} + S_{impl} T
 **** Submeshes automatically read if =searchOnDisc= specified
      If a submesh is not yet in memory and the option =searchOnDisc=
      is set, the mesh is automatically read into memory and kept there
+**** Conditional =functionObjects=
+     The =simpleFunctionObjects=-library now has a number of
+     functionObjects that allow the conditional execution of a list of
+     function objects.
+
+     These are
+     - executeIfExecutableFits :: if the name of the executable fits a
+          regular expression the fubction objects are executed
 *** Bug fixes
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting
