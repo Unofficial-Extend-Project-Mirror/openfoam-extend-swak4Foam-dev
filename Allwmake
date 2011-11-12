@@ -28,7 +28,12 @@ done
 
 (cd Libraries; wmake all )
 
-(cd Utilities; wmake all )
+(
+  #revert back to the default Gcc compiler, due to some problems that Icc has
+  #with overly complex classes
+  [ "$WM_COMPILER" = "Icc" ] && export WM_COMPILER=Gcc
+  cd Utilities; wmake all
+)
 
 # (cd Examples/tests/fluIntegration/libRegistered; wmake)
 

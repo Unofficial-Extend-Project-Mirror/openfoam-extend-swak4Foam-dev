@@ -12,6 +12,7 @@
    - Peter Keller :: =sprinklerInlet=-case
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
+   - Bruno Santos :: Compilation with Intel compiler
    If anyone is forgotten: let me know
 
    Contributors to =simpleFunctionObjects= are listed separately in
