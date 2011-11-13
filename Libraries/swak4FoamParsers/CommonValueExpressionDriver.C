@@ -753,7 +753,8 @@ void CommonValueExpressionDriver::writeTables(Ostream &os,const HashTable<interp
 const fvMesh &CommonValueExpressionDriver::regionMesh
 (
     const dictionary &dict,
-    const fvMesh &mesh
+    const fvMesh &mesh,
+    bool readIfNecessary
 )
 {
     if(!dict.found("region")) {
@@ -768,6 +769,33 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
         Pout << "Using mesh " << dict.lookup("region")  << endl;
     }
     
+    if(
+        !mesh.time().foundObject<objectRegistry>(
+            dict.lookup("region")
+        )
+        &&
+        readIfNecessary
+    ) {
+        WarningIn("CommonValueExpressionDriver::regionMesh")
+            << "Region " << dict.lookup("region")
+                << " not in memory. Trying to register it"
+                << endl;
+
+        autoPtr<polyMesh> temporary(
+            new fvMesh
+            (
+                IOobject(
+                    word(dict.lookup("region")),
+                    mesh.time().constant(),
+                    mesh.time(),
+                    IOobject::MUST_READ
+                )
+            )
+        );
+        Info << "Hepp: "<< temporary->polyMesh::ownedByRegistry() << endl;
+        temporary->polyMesh::store(temporary.ptr());
+    }
+
     //     return dynamicCast<const fvMesh&>( // soesn't work with gcc 3.2
     return dynamic_cast<const fvMesh&>(
         mesh.time().lookupObject<objectRegistry>(

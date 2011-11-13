@@ -85,9 +85,17 @@ FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(const dictionary& d
  :
     SubsetValueExpressionDriver(dict),
     faceZone_(
-        regionMesh(dict,mesh).faceZones()[
+        regionMesh(
+            dict,
+            mesh,
+            searchOnDisc()
+        ).faceZones()[
             getFaceZoneID(
-                regionMesh(dict,mesh),
+                regionMesh(
+                    dict,
+                    mesh,
+                    searchOnDisc()
+                ),
                 dict.lookup(
                     "zoneName"
                 )

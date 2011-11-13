@@ -93,9 +93,17 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
  :
     CommonValueExpressionDriver(dict),
     patch_(
-        regionMesh(dict,mesh).boundary()[
+        regionMesh(
+            dict,
+            mesh,
+            searchOnDisc()
+        ).boundary()[
             getPatchID(
-                regionMesh(dict,mesh),
+                regionMesh(
+                    dict,
+                    mesh,
+                    searchOnDisc()
+                ),
                 dict.lookup(
                     "patchName"
                 )

@@ -79,12 +79,12 @@ protected:
 
     word dirName();
 
-    string firstLine();
+    stringList columnNames();
 
     wordList fileNames();
 
     template<class T>
-    void writeData(CommonValueExpressionDriver &driver);
+    void writeTheData(CommonValueExpressionDriver &driver);
 public:
 
     //- Runtime type information

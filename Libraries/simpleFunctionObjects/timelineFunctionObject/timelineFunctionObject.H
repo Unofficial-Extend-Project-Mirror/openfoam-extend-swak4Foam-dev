@@ -38,6 +38,7 @@ SourceFiles
 #define timelineFunctionObject_H
 
 #include "simpleDataFunctionObject.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,10 +64,19 @@ class timelineFunctionObject
     //- Factor to multiply results with (to account for symmetries etc)
     scalar factor_;
 
-protected:
+public:
+    enum outputFileMode {
+        ofmFoam,
+        ofmRaw,
+        ofmCsv
+    };
+
+private:
 
     //- Current open files
     HashPtrTable<OFstream> filePtrs_;
+
+protected:
 
     //- Name of the sub-dictionary of the case
     virtual word dirName()=0;
@@ -75,11 +85,31 @@ protected:
     virtual wordList fileNames()=0;
 
     //- Text in the first line
-    virtual string firstLine()=0;
+    virtual stringList columnNames()=0;
 
     //- Factor to multiply results with (for symmetries etc)
     scalar factor() const { return factor_; }
 
+    //- possible output-modes
+    static const NamedEnum<outputFileMode,3> outputFileModeNames_;
+    outputFileMode outputFileMode_;
+
+    //- the file extension that fits the file-mode
+    word fileExtension_;
+
+    //- character that separates fields
+    std::string separator_;
+
+    //- write similar data items
+    template<class T>
+    void writeData(const word &name,const UList<T> &data);
+
+    //- write the time
+    template<class T>
+    void writeTime(const word &name,const T &time);
+
+    //- ends a dataset (usually by writing an endline)
+    void endData(const word &name);
 public:
 
     //- Runtime type information
@@ -112,6 +142,10 @@ public:
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "timelineFunctionObjectI.H"
+#endif
 
 #endif
 

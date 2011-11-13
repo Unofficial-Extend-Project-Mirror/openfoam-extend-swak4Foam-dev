@@ -68,7 +68,7 @@ protected:
     //- indizes of the patches
     List<label> patchIndizes_;
 
-    virtual string firstLine();
+    virtual stringList columnNames();
 public:
 
     //- Runtime type information
