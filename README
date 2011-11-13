@@ -13,6 +13,8 @@
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
    - Bruno Santos :: Compilation with Intel compiler and Mingw
+   - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
+                      problem with =groovyBC=)
    If anyone is forgotten: let me know
 
    Contributors to =simpleFunctionObjects= are listed separately in
@@ -215,6 +217,11 @@ S_{expl} + S_{impl} T
      - Solver :: interFoam
      - Description :: Winner of the =swak4Foam=-competition at the 6th
                       OpenFOAM-Workshop (2011). By Peter Keller
+**** potentialPitzDaily
+     - Solver :: potentialFoam
+     - Description :: Demonstrates the use of =groovyB= with
+                      =potentialFoam= (also a problem connected with
+                      that). Provided by Martin Backer
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
