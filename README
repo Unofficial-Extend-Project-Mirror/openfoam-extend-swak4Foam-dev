@@ -12,6 +12,7 @@
    - Peter Keller :: =sprinklerInlet=-case
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
+   - Bruno Santos :: Compilation with Intel compiler and Mingw
    If anyone is forgotten: let me know
 
    Contributors to =simpleFunctionObjects= are listed separately in
@@ -646,6 +647,9 @@ S_{expl} + S_{impl} T
      If a submesh is not yet in memory and the option =searchOnDisc=
      is set, the mesh is automatically read into memory and kept there
 *** Bug fixes
+**** Compilation with Intel-Compiler possible
+     The =Utilities= failed with the Intel-compiler. Compilation now
+     falls back to good old =g++=
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting
      tensor components with =tensor.xx= did not work. Fixed
