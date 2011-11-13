@@ -667,3 +667,9 @@ S_{expl} + S_{impl} T
      Change so that the field gets temporarily loaded to calculate the
      gradient on the patch. Same for =internalField= and
      =neighbourField=
+**** =potentialFoam= does not correctly use a =groovyBC=
+     The reason is that =groovyBC= usually doesn't get evaluated
+     during construction. The reason is that it is hard to tell
+     whether all required fields are already in memory. The current
+     fix is a workaround: setting =evaluateDuringConstruction= to
+     =true= forces the BC to be evaluated during construction
