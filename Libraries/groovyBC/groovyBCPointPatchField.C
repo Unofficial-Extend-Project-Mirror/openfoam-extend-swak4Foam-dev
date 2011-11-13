@@ -116,6 +116,11 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 
     //    this->refGrad() = pTraits<Type>::zero;
     this->valueFraction() = 1;
+
+    if(this->evaluateDuringConstruction()) {
+        // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
+        this->evaluate();
+    }
 }
 
 
