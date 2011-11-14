@@ -36,7 +36,9 @@ License
 #ifdef darwin
 #include "mach-o/dyld.h"
 #endif
-
+#ifdef linux
+#include <unistd.h>
+#endif
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -71,9 +73,19 @@ executeIfExecutableFitsFunctionObject::executeIfExecutableFitsFunctionObject
     fileName exePath;
     
 #ifdef darwin
-    char path[1024];
-    uint32_t size = sizeof(path);
-    if (_NSGetExecutablePath(path, &size) == 0) {
+    {
+        char path[1024];
+        uint32_t size = sizeof(path);
+        if (_NSGetExecutablePath(path, &size) == 0) {
+            exePath=string(path);
+        }
+    }
+#elif defined(linux)
+    {
+        const int bufSize=1024;
+        char path[bufSize];
+        label length=readlink("/proc/self/exe",path,bufSize-1);
+        path[length]='\0';
         exePath=string(path);
     }
 #else
@@ -82,7 +94,9 @@ executeIfExecutableFitsFunctionObject::executeIfExecutableFitsFunctionObject
 
     executable_=exePath.name();
 
-    //    Info << "Executable: " << executable_ << " "<< exePath << endl;
+    if(debug) {
+        Info << "Executable: " << executable_ << " "<< exePath << endl;
+    }
 }
 
 
