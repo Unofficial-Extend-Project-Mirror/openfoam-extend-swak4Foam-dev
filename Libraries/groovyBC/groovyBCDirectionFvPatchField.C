@@ -133,6 +133,11 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
 
     this->refGrad() = pTraits<Type>::zero;
     this->valueFraction() = I;
+
+    if(this->evaluateDuringConstruction()) {
+        // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
+        this->evaluate();
+    }
 }
 
 

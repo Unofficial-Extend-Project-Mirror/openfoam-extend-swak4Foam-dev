@@ -58,6 +58,8 @@ template<class Type>
 class groovyBCCommon
 {
 
+    bool evaluateDuringConstruction_;
+
 protected:
 
     // Protected data
@@ -71,6 +73,10 @@ protected:
     string fractionExpression_;
 
     string nullValue();
+
+    bool evaluateDuringConstruction() const 
+        { return evaluateDuringConstruction_; }
+
 public:
 
     // Constructors
