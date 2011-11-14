@@ -667,3 +667,8 @@ S_{expl} + S_{impl} T
      Change so that the field gets temporarily loaded to calculate the
      gradient on the patch. Same for =internalField= and
      =neighbourField=
+**** Extra evaluation of boundary conditions causes failure
+     Extra evaluation of boundary condition that should fix the
+     problem with =calculated= patches causes =funkySetFields= to fail
+     with stock boundary conditions if not all fields are present in
+     memory 
