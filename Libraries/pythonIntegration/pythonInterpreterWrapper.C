@@ -201,8 +201,8 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
     ) {
         Info << "Got an exception for "<< code
             << " now you can interact. Continue with Ctrl-D" << endl;
-        PyRun_InteractiveLoop(::stdin,"test");
-        clearerr(::stdin);
+        PyRun_InteractiveLoop(stdin,"test");
+        clearerr(stdin);
     }
     if(
         success!=0
@@ -222,8 +222,8 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
     if(interactiveAfterExecute_) {
         Info << "Executed "<< code
             << " now you can interact. Continue with Ctrl-D" << endl;
-        PyRun_InteractiveLoop(::stdin,"test");
-        clearerr(::stdin);
+        PyRun_InteractiveLoop(stdin,"test");
+        clearerr(stdin);
     }
 
     if(putVariables) {

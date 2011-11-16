@@ -1,0 +1,97 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+
+    p
+    {
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-06;
+        relTol           0.01;
+    };
+    /*
+     p
+     {
+         solver          amgSolver;
+         cycle           W-cycle;
+         policy          AAMG;
+         nPreSweeps      0;
+         nPostSweeps     2;
+         groupSize       4;
+         minCoarseEqns   50;
+         nMaxLevels      100;
+         scale           on;
+         smoother        ILU;
+         tolerance       1e-7;
+         relTol          0.1;
+     }
+        */
+
+    U
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0.1;
+    };
+    k
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0.1;
+    };
+    epsilon
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0.1;
+    };
+    R
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0.1;
+    };
+    nuTilda
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0.1;
+    };
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    p               0.3;
+    U               0.7;
+    k               0.7;
+    epsilon         0.7;
+    R               0.7;
+    nuTilda         0.7;
+}
+
+// ************************************************************************* //

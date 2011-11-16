@@ -197,7 +197,7 @@ void FieldValueExpressionDriver::copyCalculatedPatches
             pf==pf.patchInternalField();
         }
     }
-    field.correctBoundaryConditions();
+    //    field.correctBoundaryConditions();
 }
 
 template<class T>
