@@ -38,6 +38,7 @@ SourceFiles
 #define functionObjectListProxy_H
 
 #include "functionObjectList.H"
+#include "simpleFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,7 +51,7 @@ namespace Foam
 
 class functionObjectListProxy
 :
-    public functionObject
+    public simpleFunctionObject
 {
     // Private Member Functions
 
@@ -93,6 +94,9 @@ public:
     
     //- Read and set the function object if its data have changed
     virtual bool read(const dictionary&);
+
+    //- write from the simpleFunctionObjects
+    virtual void write();
 };
 
 

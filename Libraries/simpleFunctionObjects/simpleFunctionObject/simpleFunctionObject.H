@@ -72,6 +72,9 @@ class simpleFunctionObject
     //- Do output on the terminal
     bool verbose_;
 
+    //- Write debug-information to the terminal
+    bool writeDebug_;
+
     //- Time after which calculation should start
     scalar after_;
 
@@ -93,6 +96,9 @@ protected:
 
     //- Do output on the terminal
     bool verbose() const { return verbose_; }
+
+    //- Write debug-information to tthe terminal
+    bool writeDebug() const { return writeDebug_; }
 
     //- Do output this time?
     virtual bool outputTime();
@@ -136,6 +142,8 @@ public:
 
     //- the actual time
     scalar after() const { return after_; }
+
+    const objectRegistry &obr() { return obr_; }
 };
 
 

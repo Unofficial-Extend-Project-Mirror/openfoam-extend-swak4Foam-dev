@@ -663,7 +663,10 @@ S_{expl} + S_{impl} T
 
      These are
      - executeIfExecutableFits :: if the name of the executable fits a
-          regular expression the fubction objects are executed
+          regular expression the function objects are executed
+     - executeIfObjectExists :: if a named object exists (or
+          alternatively: doesn't exist) in the registry execute the
+          function objects. Type checking also implemented
 *** Bug fixes
 **** Compilation with Intel-Compiler possible
      The =Utilities= failed with the Intel-compiler. Compilation now

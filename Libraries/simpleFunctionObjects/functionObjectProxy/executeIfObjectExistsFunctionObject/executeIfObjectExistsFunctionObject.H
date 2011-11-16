@@ -24,23 +24,21 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    executeIfExecutableFitsFunctionObject
+    executeIfObjectExistsFunctionObject
 
 Description
-    This proxy-functionObject only executs its childrens if the name of the 
-    current executable fits a regular expression
-
+    This proxy-functionObject only executs its childrens if a certain
+    object exists (or does not exist) in the registry
 
 SourceFiles
-    executeIfExecutableFitsFunctionObject.C
+    executeIfObjectExistsFunctionObject.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef executeIfExecutableFitsFunctionObject_H
-#define executeIfExecutableFitsFunctionObject_H
+#ifndef executeIfObjectExistsFunctionObject_H
+#define executeIfObjectExistsFunctionObject_H
 
 #include "conditionalFunctionObjectListProxy.H"
-#include "regExp.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,30 +46,34 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class executeIfExecutableFitsFunctionObject Declaration
+                           Class executeIfObjectExistsFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class executeIfExecutableFitsFunctionObject
+class executeIfObjectExistsFunctionObject
 :
     public conditionalFunctionObjectListProxy
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    executeIfExecutableFitsFunctionObject(const executeIfExecutableFitsFunctionObject&);
+    executeIfObjectExistsFunctionObject(const executeIfObjectExistsFunctionObject&);
     
     //- Disallow default bitwise assignment
-    void operator=(const executeIfExecutableFitsFunctionObject&);
+    void operator=(const executeIfObjectExistsFunctionObject&);
 
-    //- the regular expression against which the executable name should be matched
-    regExp executableNameRegexp_;
+    //- name of the object to look for 
+    word objectName_;
 
-    //- reread the regular expression
-    void readRegexp(const dictionary& dict);
+    //- should the type be checked or ist the name sufficient
+    bool checkType_;
 
-    //- Name of the executable
-    word executable_;
+    //- type of the object
+    word objectType_;
 
+    //- should the object exist or not
+    bool objectShouldExist_;
+
+    void readParameters(const dictionary &);
 protected:
     
     //- the actual conition that determines whether the FO should be executed
@@ -80,13 +82,13 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("executeIfExecutableFits");
+    TypeName("executeIfObjectExists");
 
 
     // Constructors
 
     //- Construct from components
-    executeIfExecutableFitsFunctionObject
+    executeIfObjectExistsFunctionObject
     (
         const word&,
         const Time&,

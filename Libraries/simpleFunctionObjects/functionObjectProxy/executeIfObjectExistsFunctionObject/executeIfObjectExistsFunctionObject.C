@@ -25,80 +25,92 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "functionObjectListProxy.H"
+#include "executeIfObjectExistsFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
+#include "argList.H"
+
+#include "objectRegistry.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(functionObjectListProxy, 0);
+    defineTypeNameAndDebug(executeIfObjectExistsFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        functionObjectListProxy,
+        executeIfObjectExistsFunctionObject,
         dictionary
     );
 
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-functionObjectListProxy::functionObjectListProxy
+executeIfObjectExistsFunctionObject::executeIfObjectExistsFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    simpleFunctionObject(
+    conditionalFunctionObjectListProxy(
         name,
-        t,
-        dict
-    ),
-    functions_(
         t,
         dict
     )
 {
-    if(!dict.found("functions")) {
-        FatalErrorIn("functionObjectListProxy::functionObjectListProxy")
-            << "No entry 'functions' in dictionary of " << name << endl
-                << abort(FatalError);
-    }
-    read(dict);
+    readParameters(dict);
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool functionObjectListProxy::execute()
+bool executeIfObjectExistsFunctionObject::condition()
 {
-    return functions_.execute();
+    if(writeDebug()) {
+        Info << "Looking for object " << objectName_
+            << " -> " << obr().foundObject<IOobject>(objectName_) << endl;
+    }
+    if( ! obr().foundObject<IOobject>(objectName_) ) {
+        return ! objectShouldExist_;
+    } else if(checkType_) {
+        const IOobject &theOb=obr().lookupObject<IOobject>(objectName_);
+        if(writeDebug()) {
+            Info << "Type of " << objectName_ << " is "
+                << theOb.type()
+                << ". Looking for " << objectType_ << endl;
+        }
+
+        if(theOb.type()==objectType_) {
+            return objectShouldExist_;
+        } else {
+            return ! objectShouldExist_;
+        }
+    } else {
+        return objectShouldExist_;
+    }
 }
 
-bool functionObjectListProxy::start()
+bool executeIfObjectExistsFunctionObject::read(const dictionary& dict)
 {
-    return functions_.start();
+    readParameters(dict);
+    return conditionalFunctionObjectListProxy::read(dict);
 }
 
-bool functionObjectListProxy::end()
+void executeIfObjectExistsFunctionObject::readParameters(const dictionary &dict) 
 {
-    return functions_.end();
-}
-
-bool functionObjectListProxy::read(const dictionary& dict)
-{
-    return functions_.read();
-}
-
-void functionObjectListProxy::write()
-{
-    // Don't want to be abstract
+    objectName_=word(dict.lookup("objectName"));
+    checkType_=readBool(dict.lookup("checkType"));
+    if(checkType_) {
+        objectType_=word(dict.lookup("objectType"));
+    } else {
+        objectType_="";
+    }
+    objectShouldExist_=readBool(dict.lookup("objectShouldExist"));
 }
 
 } // namespace Foam
