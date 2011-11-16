@@ -59,10 +59,6 @@ functionObjectListProxy::functionObjectListProxy
         name,
         t,
         dict
-    ),
-    functions_(
-        t,
-        dict
     )
 {
     if(!dict.found("functions")) {
@@ -70,30 +66,78 @@ functionObjectListProxy::functionObjectListProxy
             << "No entry 'functions' in dictionary of " << name << endl
                 << abort(FatalError);
     }
-    read(dict);
+    if(readBool(dict.lookup("readDuringConstruction"))) {
+        if(writeDebug()) {
+            Info << this->name() << " list initialized during construction" << endl;
+        }
+        //        initFunctions();
+        read(dict);
+    }
 }
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void functionObjectListProxy::initFunctions()
+{
+    functions_.set(
+        new functionObjectList(
+            time(),
+            dict_
+        )
+    );
+
+    if(writeDebug()) {
+        Info << this->name() << " list initialized with "
+            << functions_->size() << " FOs" << endl;
+    }
+}
+
+functionObjectList &functionObjectListProxy::functions()
+{
+    if(!functions_.valid()) {
+        if(writeDebug()) {
+            Info << this->name() << " list initialized on demand" << endl;
+        }
+        initFunctions();
+    }
+
+    return functions_();
+}
+
 bool functionObjectListProxy::execute()
 {
-    return functions_.execute();
+    if(writeDebug()) {
+        Info << this->name() << " functionObjectListProxy::execute()" << endl;
+    }
+
+    return functions().execute();
 }
 
 bool functionObjectListProxy::start()
 {
-    return functions_.start();
+    if(writeDebug()) {
+        Info << this->name() << " functionObjectListProxy::start()" << endl;
+    }
+
+    return functions().start();
 }
 
 bool functionObjectListProxy::end()
 {
-    return functions_.end();
+    if(writeDebug()) {
+        Info << this->name() << " functionObjectListProxy::end()" << endl;
+    }
+
+    return functions().end();
 }
 
 bool functionObjectListProxy::read(const dictionary& dict)
 {
-    return functions_.read();
+    if(writeDebug()) {
+        Info << this->name() << " functionObjectListProxy::read()" << endl;
+    }
+
+    return functions().read();
 }
 
 void functionObjectListProxy::write()

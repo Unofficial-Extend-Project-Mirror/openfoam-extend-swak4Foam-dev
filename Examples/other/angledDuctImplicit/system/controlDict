@@ -70,6 +70,9 @@ functions
     }
     velocityFormats {
         type functionObjectListProxy;
+        //        writeDebug true;
+        readDuringConstruction true;
+
         functions {
             velocityCSV
             {
@@ -580,6 +583,8 @@ functions
     onlyForSolver {
         type executeIfExecutableFits;
         executableNameRegexp "rho.+Foam";
+        //        writeDebug true;
+        readDuringConstruction false;
 
         functions {
             myPhi
@@ -648,6 +653,7 @@ functions
         objectType volScalarField;
         objectShouldExist true;
         //        writeDebug true;
+        readDuringConstruction false;
 
         functions {
             yPlusField

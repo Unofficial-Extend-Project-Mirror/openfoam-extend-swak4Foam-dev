@@ -61,8 +61,14 @@ class functionObjectListProxy
     //- Disallow default bitwise assignment
     void operator=(const functionObjectListProxy&);
 
-    // the actual function Objects that this encapsulates
-    functionObjectList functions_;
+    //- the actual function Objects that this encapsulates
+    autoPtr<functionObjectList> functions_;
+
+    //- get the functionObject list (read if not yet done so)
+    functionObjectList &functions();
+
+    //- initialize the function-objects
+    void initFunctions();
 
 public:
 

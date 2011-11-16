@@ -61,6 +61,11 @@ conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
 
 bool conditionalFunctionObjectListProxy::execute()
 {
+    if(writeDebug()) {
+        Info << this->name() << " condition::execute() condition: " 
+            << condition() << endl;
+    }
+
     if(condition()) {
         return functionObjectListProxy::execute();
     } else {
@@ -70,6 +75,11 @@ bool conditionalFunctionObjectListProxy::execute()
 
 bool conditionalFunctionObjectListProxy::start()
 {
+    if(writeDebug()) {
+        Info << this->name() << " condition::start() condition: " 
+            << condition() << endl;
+    }
+
     if(condition()) {
         return functionObjectListProxy::start();
     } else {
@@ -79,6 +89,11 @@ bool conditionalFunctionObjectListProxy::start()
 
 bool conditionalFunctionObjectListProxy::end()
 {
+    if(writeDebug()) {
+        Info << this->name() << " condition::end() condition: " 
+            << condition() << endl;
+    }
+
     if(condition()) {
         return functionObjectListProxy::end();
     } else {
@@ -88,6 +103,11 @@ bool conditionalFunctionObjectListProxy::end()
 
 bool conditionalFunctionObjectListProxy::read(const dictionary& dict)
 {
+    if(writeDebug()) {
+        Info << this->name() << " condition::read() condition: " 
+            << condition() << endl;
+    }
+
     if(condition()) {
         return functionObjectListProxy::read(dict);
     } else {
