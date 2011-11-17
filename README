@@ -667,6 +667,12 @@ S_{expl} + S_{impl} T
      - executeIfObjectExists :: if a named object exists (or
           alternatively: doesn't exist) in the registry execute the
           function objects. Type checking also implemented
+**** =functionObject= that reads gravitation
+     =simpleFunctionObjects= has an additional function object that
+     reads the direction of gravitation. The purpose is to assist
+     boundary conditions like =buoyantPressure= that rely on it to
+     work. Best used together with conditional function objects ("If
+     =g= is missing ....")
 *** Bug fixes
 **** Compilation with Intel-Compiler possible
      The =Utilities= failed with the Intel-compiler. Compilation now
