@@ -91,6 +91,12 @@ namespace Foam {
         return result_.getResult<Type>();
     }
 
+    template<template<class> class BinOp,class Type>
+    inline Type CommonValueExpressionDriver::getReduced(BinOp<Type> op,Type initial)
+    {
+        return result_.getReduced(op,initial);
+    }
+
     template<class Type>
     bool CommonValueExpressionDriver::isVariable(const string &name,bool isPoint) const
     {
