@@ -98,7 +98,10 @@ protected:
 
     //. Not everyone should be allowed to use this
     template<class T>
-    void setResult(T *,bool isSurfaceField,bool isLogical=false);
+    void setResult(T *,bool isSurfaceField);
+
+    template<class T>
+    void setLogicalResult(T *,bool isSurfaceField);
 
 public:
     //- get the result field (if it is of the right type)
