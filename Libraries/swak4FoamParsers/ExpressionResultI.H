@@ -184,7 +184,7 @@ namespace Foam {
 
         reduce(result,op);
 
-        return initial;
+        return result;
     }
 
     inline const string &ExpressionResult::type() const

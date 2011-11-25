@@ -433,9 +433,6 @@ S_{expl} + S_{impl} T
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
-** Conditional function objects are executed once during construction
-   As the super-class constructs the list of function objects they are
-   executed once before the condition is evaluated
 * History
 ** 2010-09-13
    First Release
@@ -667,6 +664,12 @@ S_{expl} + S_{impl} T
      - executeIfObjectExists :: if a named object exists (or
           alternatively: doesn't exist) in the registry execute the
           function objects. Type checking also implemented
+     In addition the =simpleSwakFunctionObjects=-library has
+     - executeIfSwakObject :: Evaluates a logical swak-expression. The
+          results are either accumulated using logical /or/ (if *one*
+          value is true the result will be true) or logical /and/ (all
+          values have to be true)
+
 **** =functionObject= that reads gravitation
      =simpleFunctionObjects= has an additional function object that
      reads the direction of gravitation. The purpose is to assist

@@ -491,6 +491,44 @@ functions
             );
         }
     }
+    onlyHighPressure {
+        type executeIfSwakExpression;
+        //        readDuringConstruction false;
+        readDuringConstruction true;
+        //        writeDebug true;
+
+        valueType set;
+        setName threePoints;
+        variables (
+            "pMin=min(p);"
+            "pMax=max(p);"
+        );
+
+        logicalExpression "(pMax-pMin)>3000";
+        logicalAccumulation and;
+
+        functions {
+            setsPressureProxy
+            {
+                // Currently not working because the proxy doesn't work
+                type swakExpression;
+                verbose true;
+                valueType set;
+                setName  threePointsCopy;
+                expression "p";
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                set {
+                    type swakRegistryProxy;
+                    axis x;
+                    setName threePoints;
+                }
+            }
+        }
+    }
     setsPressureChangeProxy
     {
         // Currently not working because the proxy doesn't work
