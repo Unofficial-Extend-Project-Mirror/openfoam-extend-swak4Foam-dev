@@ -664,6 +664,9 @@ S_{expl} + S_{impl} T
      - executeIfObjectExists :: if a named object exists (or
           alternatively: doesn't exist) in the registry execute the
           function objects. Type checking also implemented
+     - executeIfEnvironmentVariable :: execute if an environment
+          variable satisfies a certain condition (exists, doesn't
+          exist, fits a regular expression)
      In addition the =simpleSwakFunctionObjects=-library has
      - executeIfSwakObject :: Evaluates a logical swak-expression. The
           results are either accumulated using logical /or/ (if *one*

@@ -62,11 +62,27 @@ functions
         expression "p-pOut";
         verbose true;
     }
-    pressureDropCSV
-    {
-        $pressureDrop;
+    ifUser {
+        type executeIfEnvironmentVariable;
+        readDuringConstruction false;
+        
+        //        fitVariableMode exists;
+        //        fitVariableMode doesNotExist;
+        fitVariableMode fitsRegexp;
 
-        outputFileMode csv;
+        writeDebug true;
+        variableName USER;
+        contentRegexp"[a-z]+";
+        //        contentRegexp"[c-z]+";
+
+        functions {
+            pressureDropCSV
+            {
+                $pressureDrop;
+                
+                outputFileMode csv;
+            }
+        }
     }
     velocityFormats {
         type functionObjectListProxy;

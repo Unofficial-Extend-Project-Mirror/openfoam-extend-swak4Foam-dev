@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 26 Nov 2011 12:19:54 +0100
+Subject: Re: Conditional function object
+Message-Id: <b197ca3b6e9f1b97-b4069d3e2db08148-artemis@bgs-Greybook.local>
+References: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+In-Reply-To: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+
+Two more conditional objects:
+- executeIfPython: in the Python-Integration
+- executeIfFunctionObjectExists: only execute if a specific function
+object exists (in simpleFunctionObjects)
