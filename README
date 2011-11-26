@@ -667,6 +667,9 @@ S_{expl} + S_{impl} T
      - executeIfEnvironmentVariable :: execute if an environment
           variable satisfies a certain condition (exists, doesn't
           exist, fits a regular expression)
+     - executeIfFunctionObjectPresent :: execute if a specific
+          functionObject is present. This can help prevent failures if
+          a functionObject is missing for technical reasons
      In addition the =simpleSwakFunctionObjects=-library has
      - executeIfSwakObject :: Evaluates a logical swak-expression. The
           results are either accumulated using logical /or/ (if *one*

@@ -70,7 +70,7 @@ functions
         //        fitVariableMode doesNotExist;
         fitVariableMode fitsRegexp;
 
-        writeDebug true;
+        //        writeDebug true;
         variableName USER;
         contentRegexp"[a-z]+";
         //        contentRegexp"[c-z]+";
@@ -880,6 +880,12 @@ functions
             max
         );
     }
+    ifSwakExpressionFO {
+        type executeIfFunctionObjectPresent;
+        readDuringConstruction false;
+        functionObjectName swakExpression;
+
+        functions {
     surfaceU45c
     {
         type swakExpression;
@@ -899,6 +905,8 @@ functions
             min
             max
         );
+    }
+        }
     }
 };
 
