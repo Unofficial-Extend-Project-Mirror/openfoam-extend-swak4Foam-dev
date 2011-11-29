@@ -24,25 +24,26 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    executeIfEnvironmentVariableFunctionObject
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    This proxy-functionObject only executs its childrens if an environment 
+    variable fits a certain condition:
+    - exists
+    - does not exist
+    - fits a regular expression
 
 SourceFiles
-    simpleFunctionObject.C
+    executeIfEnvironmentVariableFunctionObject.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleFunctionObject_H
-#define simpleFunctionObject_H
+#ifndef executeIfEnvironmentVariableFunctionObject_H
+#define executeIfEnvironmentVariableFunctionObject_H
 
-#include "functionObject.H"
-#include "dictionary.H"
-#include "OFstream.H"
-#include "HashPtrTable.H"
-#include "boolList.H"
-#include "Field.H"
+#include "conditionalFunctionObjectListProxy.H"
+#include "regExp.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,100 +51,63 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleFunctionObject Declaration
+                           Class executeIfEnvironmentVariableFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-    class objectRegistry;
-
-class simpleFunctionObject
+class executeIfEnvironmentVariableFunctionObject
 :
-    public functionObject
+    public conditionalFunctionObjectListProxy
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleFunctionObject(const simpleFunctionObject&);
+    executeIfEnvironmentVariableFunctionObject(const executeIfEnvironmentVariableFunctionObject&);
     
     //- Disallow default bitwise assignment
-    void operator=(const simpleFunctionObject&);
+    void operator=(const executeIfEnvironmentVariableFunctionObject&);
 
-    // Private data
+    //- Name of the variable
+    word variableName_;
 
-    //- Do output on the terminal
-    bool verbose_;
+    //- the regular expression against which the content of the environment variable should be matched
+    regExp contentRegexp_;
 
-    //- Write debug-information to the terminal
-    bool writeDebug_;
+    //- reread the data
+    void readData(const dictionary& dict);
 
-    //- Time after which calculation should start
-    scalar after_;
+    enum fitVariableMode {
+        fvmExists,
+        fvmDoesNotExist,
+        fvmFitsRegexp
+    };
+    
+    static const NamedEnum<fitVariableMode,3> fitVariableModeNames_;
 
-    //- how many time-steps since last output
-    label timeSteps_;
-
-    //- how many time-steps between outputs
-    label outputInterval_;
-
-    const Time& time_;
-
+    //- the mode with which the variable should be fitted
+    fitVariableMode fitVariableMode_; 
 protected:
-
-    dictionary dict_;
-
-    word regionName_;
-
-    const objectRegistry& obr_;
-
-    //- Do output on the terminal
-    bool verbose() const { return verbose_; }
-
-    //- Write debug-information to tthe terminal
-    bool writeDebug() const { return writeDebug_; }
-
-    //- Do output this time?
-    virtual bool outputTime(const bool forceWrite);
+    
+    //- the actual conition that determines whether the FO should be executed
+    virtual bool condition();
 
 public:
 
     //- Runtime type information
-    TypeName("simpleFunctionObject");
+    TypeName("executeIfEnvironmentVariable");
 
 
     // Constructors
 
     //- Construct from components
-    simpleFunctionObject
+    executeIfEnvironmentVariableFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
+    bool read(const dictionary& dict);
 
-    // Member Functions
-
-    //- start is called at the start of the time-loop
-    virtual bool start();
-
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute(const bool forceWrite);
-
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
-
-    //- Sample and write
-    virtual void write()=0;
-
-    //- Optional stuff to do after write
-    virtual void flush();
-
-    //- the actual time
-    const Time &time() const { return time_; }
-
-    //- the actual time
-    scalar after() const { return after_; }
-
-    const objectRegistry &obr() { return obr_; }
 };
 
 

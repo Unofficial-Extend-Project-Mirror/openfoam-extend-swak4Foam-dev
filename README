@@ -690,6 +690,38 @@ S_{expl} + S_{impl} T
 **** Submeshes automatically read if =searchOnDisc= specified
      If a submesh is not yet in memory and the option =searchOnDisc=
      is set, the mesh is automatically read into memory and kept there
+**** Conditional =functionObjects=
+     The =simpleFunctionObjects=-library now has a number of
+     functionObjects that allow the conditional execution of a list of
+     function objects.
+
+     These are
+     - executeIfExecutableFits :: if the name of the executable fits a
+          regular expression the function objects are executed
+     - executeIfObjectExists :: if a named object exists (or
+          alternatively: doesn't exist) in the registry execute the
+          function objects. Type checking also implemented
+     - executeIfEnvironmentVariable :: execute if an environment
+          variable satisfies a certain condition (exists, doesn't
+          exist, fits a regular expression)
+     - executeIfFunctionObjectPresent :: execute if a specific
+          functionObject is present. This can help prevent failures if
+          a functionObject is missing for technical reasons
+     In addition the =simpleSwakFunctionObjects=-library has
+     - executeIfSwakObject :: Evaluates a logical swak-expression. The
+          results are either accumulated using logical /or/ (if *one*
+          value is true the result will be true) or logical /and/ (all
+          values have to be true)
+     The =pythonIntegration=-library has
+     - executeIfPython :: Evaluates a Python-code-snipplet that
+          returns a value. If this value is "true" in Pythons
+          standards then the functionObjects are executed
+**** =functionObject= that reads gravitation
+     =simpleFunctionObjects= has an additional function object that
+     reads the direction of gravitation. The purpose is to assist
+     boundary conditions like =buoyantPressure= that rely on it to
+     work. Best used together with conditional function objects ("If
+     =g= is missing ....")
 *** Bug fixes
 **** Compilation with Intel-Compiler possible
      The =Utilities= failed with the Intel-compiler. Compilation now

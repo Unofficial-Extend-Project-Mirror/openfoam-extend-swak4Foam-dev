@@ -25,112 +25,58 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pythonIntegrationFunctionObject.H"
+#include "readGravitationFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "polyMesh.H"
+#include "fvMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
-#include "IFstream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
+    defineTypeNameAndDebug(readGravitationFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        pythonIntegrationFunctionObject,
+        readGravitationFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
+readGravitationFunctionObject::readGravitationFunctionObject
 (
-    const word& name,
+    const word &name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
-    time_(t)
+    simpleFunctionObject(
+        name,
+        t,
+        dict
+    ),
+    g_(
+        IOobject
+        (
+            "g",
+            t.constant(),
+            dynamic_cast<const fvMesh&>(obr()),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        )
+    )
 {
-    if(parallelNoRun()) {
-        return;
-    }
-
-    initEnvironment(t);
-
-    setRunTime();
-
-    read(dict);
 }
 
-pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
-{
-}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonIntegrationFunctionObject::setRunTime()
+void readGravitationFunctionObject::write()
 {
-    pythonInterpreterWrapper::setRunTime(time_);
-}
-
-bool pythonIntegrationFunctionObject::start()
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::execute(bool)
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(executeCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::end()
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(endCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::read(const dictionary& dict)
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    readCode(dict,"start",startCode_);
-    readCode(dict,"end",endCode_);
-    readCode(dict,"execute",executeCode_);
-
-    return true; // start();
 }
 
 } // namespace Foam

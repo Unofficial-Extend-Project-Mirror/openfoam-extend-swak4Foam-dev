@@ -25,112 +25,62 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pythonIntegrationFunctionObject.H"
+#include "executeIfFunctionObjectPresentFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
-#include "IFstream.H"
+#include "argList.H"
 
+#ifdef darwin
+#include "mach-o/dyld.h"
+#endif
+#ifdef linux
+#include <unistd.h>
+#endif
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
+    defineTypeNameAndDebug(executeIfFunctionObjectPresentFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        pythonIntegrationFunctionObject,
+        executeIfFunctionObjectPresentFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
+executeIfFunctionObjectPresentFunctionObject::executeIfFunctionObjectPresentFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
-    time_(t)
-{
-    if(parallelNoRun()) {
-        return;
-    }
-
-    initEnvironment(t);
-
-    setRunTime();
-
-    read(dict);
-}
-
-pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
+    conditionalFunctionObjectListProxy(
+        name,
+        t,
+        dict
+    ),
+    functionObjectName_(
+        dict.lookup("functionObjectName")
+    )
 {
 }
+
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonIntegrationFunctionObject::setRunTime()
+bool executeIfFunctionObjectPresentFunctionObject::condition()
 {
-    pythonInterpreterWrapper::setRunTime(time_);
-}
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(functionObjectName_);
 
-bool pythonIntegrationFunctionObject::start()
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::execute(bool)
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(executeCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::end()
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(endCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::read(const dictionary& dict)
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    readCode(dict,"start",startCode_);
-    readCode(dict,"end",endCode_);
-    readCode(dict,"execute",executeCode_);
-
-    return true; // start();
+    return cstrIter != dictionaryConstructorTablePtr_->end();
 }
 
 } // namespace Foam

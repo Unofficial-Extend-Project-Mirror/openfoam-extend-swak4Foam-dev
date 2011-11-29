@@ -24,25 +24,21 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    functionObjectListProxy
 
 Description
     Basis for the other function objects here. Evaluates the most common options
 
 SourceFiles
-    simpleFunctionObject.C
+    functionObjectListProxy.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleFunctionObject_H
-#define simpleFunctionObject_H
+#ifndef functionObjectListProxy_H
+#define functionObjectListProxy_H
 
-#include "functionObject.H"
-#include "dictionary.H"
-#include "OFstream.H"
-#include "HashPtrTable.H"
-#include "boolList.H"
-#include "Field.H"
+#include "functionObjectList.H"
+#include "simpleFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,75 +46,45 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleFunctionObject Declaration
+                           Class functionObjectListProxy Declaration
 \*---------------------------------------------------------------------------*/
 
-    class objectRegistry;
-
-class simpleFunctionObject
+class functionObjectListProxy
 :
-    public functionObject
+    public simpleFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleFunctionObject(const simpleFunctionObject&);
+    functionObjectListProxy(const functionObjectListProxy&);
     
     //- Disallow default bitwise assignment
-    void operator=(const simpleFunctionObject&);
+    void operator=(const functionObjectListProxy&);
 
-    // Private data
+    //- the actual function Objects that this encapsulates
+    autoPtr<functionObjectList> functions_;
 
-    //- Do output on the terminal
-    bool verbose_;
+    //- get the functionObject list (read if not yet done so)
+    functionObjectList &functions();
 
-    //- Write debug-information to the terminal
-    bool writeDebug_;
-
-    //- Time after which calculation should start
-    scalar after_;
-
-    //- how many time-steps since last output
-    label timeSteps_;
-
-    //- how many time-steps between outputs
-    label outputInterval_;
-
-    const Time& time_;
-
-protected:
-
-    dictionary dict_;
-
-    word regionName_;
-
-    const objectRegistry& obr_;
-
-    //- Do output on the terminal
-    bool verbose() const { return verbose_; }
-
-    //- Write debug-information to tthe terminal
-    bool writeDebug() const { return writeDebug_; }
-
-    //- Do output this time?
-    virtual bool outputTime(const bool forceWrite);
+    //- initialize the function-objects
+    void initFunctions();
 
 public:
 
     //- Runtime type information
-    TypeName("simpleFunctionObject");
+    TypeName("functionObjectListProxy");
 
 
     // Constructors
 
     //- Construct from components
-    simpleFunctionObject
+    functionObjectListProxy
     (
         const word&,
         const Time&,
         const dictionary&
     );
-
 
     // Member Functions
 
@@ -128,22 +94,15 @@ public:
     //- execute is called at each ++ or += of the time-loop
     virtual bool execute(const bool forceWrite);
 
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
+    //- Called when Time::run() determines that the time-loop exits.
+    //  By default it simply calls execute().
+    virtual bool end();
+    
+    //- Read and set the function object if its data have changed
+    virtual bool read(const dictionary&);
 
-    //- Sample and write
-    virtual void write()=0;
-
-    //- Optional stuff to do after write
-    virtual void flush();
-
-    //- the actual time
-    const Time &time() const { return time_; }
-
-    //- the actual time
-    scalar after() const { return after_; }
-
-    const objectRegistry &obr() { return obr_; }
+    //- write from the simpleFunctionObjects
+    virtual void write();
 };
 
 

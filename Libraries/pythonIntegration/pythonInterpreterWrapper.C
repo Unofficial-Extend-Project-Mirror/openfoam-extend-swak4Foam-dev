@@ -108,7 +108,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
                 << " defined, but no namespace 'pythonToSwakNamespace'"
                 << " to write them to"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     interpreterCount++;
@@ -132,6 +132,15 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         // this currently has no effect in the embedded shell
         PyRun_SimpleString("readline.parse_and_bind('tab: complete')"); 
     }
+}
+
+void pythonInterpreterWrapper::initEnvironment(const Time &t)
+{
+    PyObject *m = PyImport_AddModule("__main__");
+
+    PyObject_SetAttrString(m,"caseDir",PyString_FromString(t.path().c_str()));
+    PyObject_SetAttrString(m,"parRun",PyBool_FromLong(Pstream::parRun()));
+    PyObject_SetAttrString(m,"myProcNo",PyInt_FromLong(Pstream::myProcNo()));
 }
 
 bool pythonInterpreterWrapper::parallelNoRun()
@@ -195,11 +204,92 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
 
     getGlobals();
 
-    int success=PyRun_SimpleString(code.c_str());
+    int fail=PyRun_SimpleString(code.c_str());
+
+    doAfterExecution(fail,code,putVariables,failOnException);
+
+    return fail==0;
+}
+
+bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool failOnException)
+{
+    setInterpreter();
+
+    getGlobals();
+
+    const word funcName("decisionFunction");
+    string functionCode="def "+funcName+"():\n";
+
+    std::stringstream ss(code.c_str());
+    std::string line;
+    while(std::getline(ss, line)) {
+        functionCode+="    "+line+"\n";
+    }
+
+    if(debug) {
+        Info << "Function code:" << endl
+            << functionCode;
+    }
+
+    PyObject *m = PyImport_AddModule("__main__");
+    PyObject *d = PyModule_GetDict(m);
+
+    PyObject *pResult=NULL;
+    PyObject *pCode=(Py_CompileString(functionCode.c_str(),"<string from swak>",Py_file_input));
+
+    if( pCode!=NULL && !PyErr_Occurred()) {
+        if(debug) {
+            Info << "Compiled " << code << endl;
+        }
+        PyObject *pFunc=PyFunction_New(pCode,d);
+        if(debug) {
+            Info << "Is function: " << PyFunction_Check(pFunc) << endl;
+        }
+
+        PyObject *pTemp=PyObject_CallFunction(pFunc,NULL);
+        Py_DECREF(pTemp);
+
+        pResult=PyRun_String((funcName+"()").c_str(),Py_eval_input,d,d);
+
+        Py_DECREF(pFunc);
+        Py_DECREF(pCode);
+    }
+    bool result=false;
+
+    if(pResult!=NULL) {
+        if(debug) {
+            PyObject *str=PyObject_Str(pResult);
+            
+            Info << "Result is " << PyString_AsString(str) << endl;
+
+            Py_DECREF(str);
+        }
+        result=PyObject_IsTrue(pResult);
+        if(debug) {
+            Info << "Evaluated to " << result << endl;
+        }
+        Py_DECREF(pResult);
+    }
+
+    bool success=(pResult!=NULL && !PyErr_Occurred());
+    if(debug) {
+        Info << "Success of execution " << success << endl;
+    }
+    doAfterExecution(!success,code,false,failOnException);
+    return result;
+}
+
+void pythonInterpreterWrapper::doAfterExecution(bool fail,const string &code,bool putVariables,bool failOnException)
+{
+    if(fail!=0) {
+        Info << "Python Exception" << endl;
+        PyErr_Print();
+    }
+
     if(
         interactiveAfterException_
         &&
-        success!=0
+        fail!=0
     ) {
         Info << "Got an exception for "<< code
             << " now you can interact. Continue with Ctrl-D" << endl;
@@ -207,7 +297,7 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
         clearerr(stdin);
     }
     if(
-        success!=0
+        fail!=0
         &&
         (
             !tolerateExceptions_
@@ -215,10 +305,10 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
             failOnException
         )
     ) {
-        FatalErrorIn("pythonInterpreterWrapper::executeCode(const string &code)")
+        FatalErrorIn("pythonInterpreterWrapper::doAfterExecution")
             << "Python exception raised by " << nl
                 << code
-                << endl << abort(FatalError);
+                << endl << exit(FatalError);
     }
 
     if(interactiveAfterExecute_) {
@@ -231,8 +321,6 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
     if(putVariables) {
         setGlobals();
     }
-
-    return success==0;
 }
 
 void pythonInterpreterWrapper::getGlobals()
@@ -289,7 +377,7 @@ void pythonInterpreterWrapper::getGlobals()
                 FatalErrorIn("pythonInterpreterWrapper::getGlobals()")
                     << "The variable " << var << " has the unsupported type " 
                         << val.type() << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
         }        
     } 
@@ -321,7 +409,7 @@ void pythonInterpreterWrapper::setGlobals()
         ) {
             FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                 << "Variable " << name << " not found in Python __main__"
-                    << abort(FatalError)
+                    << exit(FatalError)
                     << endl;
         }
         PyObject *pVar=PyObject_GetAttrString(
@@ -358,7 +446,7 @@ void pythonInterpreterWrapper::setGlobals()
                 if(!success) {
                     FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                         << "Variable " << name << " is not a valid vector"
-                            << abort(FatalError)
+                            << exit(FatalError)
                             << endl;
                 }
                 if(debug) {
@@ -370,14 +458,14 @@ void pythonInterpreterWrapper::setGlobals()
                 FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                     << "Variable " << name << " is a tuple with the unknown size "
                         << PyTuple_GET_SIZE(tuple)
-                        << abort(FatalError)
+                        << exit(FatalError)
                         << endl;
             }
             Py_DECREF(tuple);
         } else {
             FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                 << "Variable " << name << " is of an unknown type"
-                    << abort(FatalError)
+                    << exit(FatalError)
                     << endl;
         }
 
@@ -402,7 +490,7 @@ void pythonInterpreterWrapper::readCode(
         FatalErrorIn("pythonInterpreterWrapper::readCode")
             << "Either specify " << prefix+"Code" << " or " 
                 << prefix+"File" << " but not both" << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     if(
         !dict.found(prefix+"Code")
@@ -412,7 +500,7 @@ void pythonInterpreterWrapper::readCode(
         FatalErrorIn("pythonInterpreterWrapper::readCode")
             << "Neither " << prefix+"Code" << " nor " 
                 << prefix+"File" << " specified" << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     if(dict.found(prefix+"Code")) {
         code=string(dict.lookup(prefix+"Code"));
@@ -422,7 +510,7 @@ void pythonInterpreterWrapper::readCode(
         if(!exists(fName)) {
             FatalErrorIn("pythonInterpreterWrapper::readCode")
                 << "Can't find source file " << fName 
-                    << endl << abort(FatalError);
+                    << endl << exit(FatalError);
         }
 
         IFstream in(fName);

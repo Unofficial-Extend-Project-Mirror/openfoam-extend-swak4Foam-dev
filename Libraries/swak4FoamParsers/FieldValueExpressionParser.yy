@@ -254,13 +254,13 @@ unit:   exp                     { driver.setResult($1,false);  }
         | texp                  { driver.setResult($1,false);  }
         | yexp                  { driver.setResult($1,false);  }
         | hexp                  { driver.setResult($1,false);  }
-        | lexp                  { driver.setResult($1,false,true); }
+        | lexp                  { driver.setLogicalResult($1,false); }
         | fsexp                 { driver.setResult($1,true);  }
         | fvexp                 { driver.setResult($1,true);  }
         | ftexp                 { driver.setResult($1,true);  }
         | fyexp                 { driver.setResult($1,true);  }
         | fhexp                 { driver.setResult($1,true);  }
-        | flexp                 { driver.setResult($1,true,true); }
+        | flexp                 { driver.setLogicalResult($1,true); }
 ;
 
 vexp:   vector                                    { $$ = $1; }

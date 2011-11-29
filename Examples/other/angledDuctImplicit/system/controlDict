@@ -62,35 +62,60 @@ functions
         expression "p-pOut";
         verbose true;
     }
-    pressureDropCSV
-    {
-        $pressureDrop;
+    ifUser {
+        type executeIfEnvironmentVariable;
+        readDuringConstruction false;
+        
+        //        fitVariableMode exists;
+        //        fitVariableMode doesNotExist;
+        fitVariableMode fitsRegexp;
 
-        outputFileMode csv;
+        //        writeDebug true;
+        variableName USER;
+        contentRegexp"[a-z]+";
+        //        contentRegexp"[c-z]+";
+
+        functions {
+            pressureDropCSV
+            {
+                $pressureDrop;
+                
+                outputFileMode csv;
+            }
+        }
     }
-    velocityCSV
-    {
-        type patchExpression;
-        accumulations (
-            min
-            max
-            average
-        );
-        expression "U";
-        patches (
-            outlet
-        );
-        outputFileMode csv;        
-    }
-    velocityRaw 
-    {
-        $velocityCSV;
-        outputFileMode raw;
-    }
-    velocityFoam 
-    {
-        $velocityCSV;
-        outputFileMode foam;
+    velocityFormats {
+        type functionObjectListProxy;
+        //        writeDebug true;
+        readDuringConstruction true;
+
+        functions {
+            velocityCSV
+            {
+                type patchExpression;
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                expression "U";
+                patches (
+                    outlet
+                );
+                outputFileMode csv; 
+                //             verbose true;
+            }
+            velocityRaw 
+            {
+                $velocityCSV;
+                outputFileMode raw;
+            }
+            velocityFoam 
+            {
+                $velocityCSV;
+                outputFileMode foam;
+            }
+        }
     }
     pressureToFilterVolAvg
     {
@@ -482,6 +507,44 @@ functions
             );
         }
     }
+    onlyHighPressure {
+        type executeIfSwakExpression;
+        //        readDuringConstruction false;
+        readDuringConstruction true;
+        //        writeDebug true;
+
+        valueType set;
+        setName threePoints;
+        variables (
+            "pMin=min(p);"
+            "pMax=max(p);"
+        );
+
+        logicalExpression "(pMax-pMin)>3000";
+        logicalAccumulation and;
+
+        functions {
+            setsPressureProxy
+            {
+                // Currently not working because the proxy doesn't work
+                type swakExpression;
+                verbose true;
+                valueType set;
+                setName  threePointsCopy;
+                expression "p";
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                set {
+                    type swakRegistryProxy;
+                    axis x;
+                    setName threePoints;
+                }
+            }
+        }
+    }
     setsPressureChangeProxy
     {
         // Currently not working because the proxy doesn't work
@@ -571,44 +634,53 @@ functions
         expression "mag(pos())";
         autowrite true;        
     } 
-    myPhi
-    {
-        type expressionField;
-        outputControl timeStep;
-        outputInterval 1;
-        fieldName myPhi;
-        expression "interpolate(rho*U)&face()";
-        autowrite true;        
-    }
-    phiError
-    {
-        type swakExpression;
-        valueType internalField;
-        verbose true;
-        expression "mag(phi-myPhi)";
-        accumulations (
-            average
-            sum
-            max
-        );
-    }
-    myPhi2
-    {
-        type expressionField;
-        outputControl timeStep;
-        outputInterval 1;
-        fieldName myPhi2;
-        expression "myPhi";
-        autowrite true;        
-    }
-    changeMyPhi2
-    {
-        type manipulateField;
-        outputControl timeStep;
-        outputInterval 1;
-        fieldName myPhi2;
-        expression "interpolate(0)";
-        mask "fpos().x<interpolate(0)";
+    onlyForSolver {
+        type executeIfExecutableFits;
+        executableNameRegexp "rho.+Foam";
+        //        writeDebug true;
+        readDuringConstruction false;
+
+        functions {
+            myPhi
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi;
+                expression "interpolate(rho*U)&face()";
+                autowrite true;        
+            }
+            phiError
+            {
+                type swakExpression;
+                valueType internalField;
+                verbose true;
+                expression "mag(phi-myPhi)";
+                accumulations (
+                    average
+                    sum
+                    max
+                );
+            }
+            myPhi2
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi2;
+                expression "myPhi";
+                autowrite true;        
+            }
+            changeMyPhi2
+            {
+                type manipulateField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi2;
+                expression "interpolate(0)";
+                mask "fpos().x<interpolate(0)";
+            }
+        }
     }
     velocityClass
     {
@@ -627,26 +699,39 @@ functions
         autowrite true;   
         verbose true;
     }
-    yPlusField
-    {
-        type expressionField;
-        outputControl timeStep;
-        outputInterval 1;
-        fieldName yPlus;
-        expression "pow(0.09,0.25)*sqr(k)*nearDist()/mu";
-        autowrite true;
-    }
-    yPlusWall
-    {
-        type patchExpression;
-        expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
-        accumulations (
-            min
-            max
-            average
-        );
-        patches (wall);
-        verbose true;
+    turbulence {
+        type executeIfObjectExists;
+        objectName k;
+        checkType true;
+        //        checkType false;
+        objectType volScalarField;
+        objectShouldExist true;
+        //        writeDebug true;
+        readDuringConstruction false;
+
+        functions {
+            yPlusField
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName yPlus;
+                expression "pow(0.09,0.25)*sqr(k)*nearDist()/mu";
+                autowrite true;
+            }
+            yPlusWall
+            {
+                type patchExpression;
+                expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                patches (wall);
+                verbose true;
+            }
+        }
     }
     surfaceIsoDist
     {
@@ -795,25 +880,47 @@ functions
             max
         );
     }
-    surfaceU45c
-    {
-        type swakExpression;
-        valueType surface;
-        surfaceName testIsoU45c;
-        surface {
-            type thresholdCellFaces;
-            field magU;
-            upperLimit 46;
-            lowerLimit 44;
+    ifPythonExpressionFO {
+        type executeIfFunctionObjectPresent;
+        readDuringConstruction false;
+        functionObjectName executeIfPython;
+
+        functions {
+            doEveryThreeSteps {
+                type executeIfPython;
+                readDuringConstruction false;
+
+                conditionCode "return abs(runTime % 3)<1e-5";
+                //                conditionFile "$FOAM_CASE/test.py"
+
+
+                //                writeDebug true;
+                //                interactiveAfterExecute true;
+
+                functions {
+                    surfaceU45c
+                    {
+                        type swakExpression;
+                        valueType surface;
+                        surfaceName testIsoU45c;
+                        surface {
+                            type thresholdCellFaces;
+                            field magU;
+                            upperLimit 46;
+                            lowerLimit 44;
+                        }
+                        verbose true;
+                        //        variables "p=pts();";
+                        expression "pos()";
+                        // expression "U";
+                        accumulations (
+                            min
+                            max
+                        );
+                    }
+                }
+            }
         }
-        verbose true;
-        //        variables "p=pts();";
-        expression "pos()";
-        // expression "U";
-        accumulations (
-            min
-            max
-        );
     }
 };
 
@@ -825,6 +932,7 @@ libs (
     "libswakTopoSources.so" 
     // Needed to decompose on 1.7
     "libcompressibleRASModels.so"
+    "libpythonIntegration.so"
 ) ;
 
 // ************************************************************************* //

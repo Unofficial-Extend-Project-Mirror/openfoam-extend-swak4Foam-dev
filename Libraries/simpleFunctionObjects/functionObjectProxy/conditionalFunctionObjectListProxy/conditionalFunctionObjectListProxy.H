@@ -24,25 +24,20 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    conditionalFunctionObjectListProxy
 
 Description
     Basis for the other function objects here. Evaluates the most common options
 
 SourceFiles
-    simpleFunctionObject.C
+    conditionalFunctionObjectListProxy.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleFunctionObject_H
-#define simpleFunctionObject_H
+#ifndef conditionalFunctionObjectListProxy_H
+#define conditionalFunctionObjectListProxy_H
 
-#include "functionObject.H"
-#include "dictionary.H"
-#include "OFstream.H"
-#include "HashPtrTable.H"
-#include "boolList.H"
-#include "Field.H"
+#include "functionObjectListProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,75 +45,41 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleFunctionObject Declaration
+                           Class conditionalFunctionObjectListProxy Declaration
 \*---------------------------------------------------------------------------*/
 
-    class objectRegistry;
-
-class simpleFunctionObject
+class conditionalFunctionObjectListProxy
 :
-    public functionObject
+    public functionObjectListProxy
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleFunctionObject(const simpleFunctionObject&);
+    conditionalFunctionObjectListProxy(const conditionalFunctionObjectListProxy&);
     
     //- Disallow default bitwise assignment
-    void operator=(const simpleFunctionObject&);
-
-    // Private data
-
-    //- Do output on the terminal
-    bool verbose_;
-
-    //- Write debug-information to the terminal
-    bool writeDebug_;
-
-    //- Time after which calculation should start
-    scalar after_;
-
-    //- how many time-steps since last output
-    label timeSteps_;
-
-    //- how many time-steps between outputs
-    label outputInterval_;
-
-    const Time& time_;
+    void operator=(const conditionalFunctionObjectListProxy&);
 
 protected:
-
-    dictionary dict_;
-
-    word regionName_;
-
-    const objectRegistry& obr_;
-
-    //- Do output on the terminal
-    bool verbose() const { return verbose_; }
-
-    //- Write debug-information to tthe terminal
-    bool writeDebug() const { return writeDebug_; }
-
-    //- Do output this time?
-    virtual bool outputTime(const bool forceWrite);
+    
+    //- the actual conition that determines whether the FO should be executed
+    virtual bool condition()=0;
 
 public:
 
     //- Runtime type information
-    TypeName("simpleFunctionObject");
+    TypeName("conditionalFunctionObjectListProxy");
 
 
     // Constructors
 
     //- Construct from components
-    simpleFunctionObject
+    conditionalFunctionObjectListProxy
     (
         const word&,
         const Time&,
         const dictionary&
     );
-
 
     // Member Functions
 
@@ -128,22 +89,12 @@ public:
     //- execute is called at each ++ or += of the time-loop
     virtual bool execute(const bool forceWrite);
 
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
-
-    //- Sample and write
-    virtual void write()=0;
-
-    //- Optional stuff to do after write
-    virtual void flush();
-
-    //- the actual time
-    const Time &time() const { return time_; }
-
-    //- the actual time
-    scalar after() const { return after_; }
-
-    const objectRegistry &obr() { return obr_; }
+    //- Called when Time::run() determines that the time-loop exits.
+    //  By default it simply calls execute().
+    virtual bool end();
+    
+    //- Read and set the function object if its data have changed
+    virtual bool read(const dictionary&);
 };
 
 

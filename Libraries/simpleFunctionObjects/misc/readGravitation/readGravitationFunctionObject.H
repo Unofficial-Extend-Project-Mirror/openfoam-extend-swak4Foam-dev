@@ -24,25 +24,22 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    readGravitationFunctionObject
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    Read the gravitational acceleration. This is done to satisfy boundary
+    conditions that rely on it for solvers/utilities that don't provide it
 
 SourceFiles
-    simpleFunctionObject.C
+    readGravitationFunctionObject.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleFunctionObject_H
-#define simpleFunctionObject_H
+#ifndef readGravitationFunctionObject_H
+#define readGravitationFunctionObject_H
 
-#include "functionObject.H"
-#include "dictionary.H"
-#include "OFstream.H"
-#include "HashPtrTable.H"
-#include "boolList.H"
-#include "Field.H"
+#include "simpleFunctionObject.H"
+#include "uniformDimensionedFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,107 +47,47 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleFunctionObject Declaration
+                           Class readGravitationFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-    class objectRegistry;
-
-class simpleFunctionObject
+class readGravitationFunctionObject
 :
-    public functionObject
+    public simpleFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleFunctionObject(const simpleFunctionObject&);
+    readGravitationFunctionObject(const readGravitationFunctionObject&);
     
     //- Disallow default bitwise assignment
-    void operator=(const simpleFunctionObject&);
+    void operator=(const readGravitationFunctionObject&);
 
-    // Private data
-
-    //- Do output on the terminal
-    bool verbose_;
-
-    //- Write debug-information to the terminal
-    bool writeDebug_;
-
-    //- Time after which calculation should start
-    scalar after_;
-
-    //- how many time-steps since last output
-    label timeSteps_;
-
-    //- how many time-steps between outputs
-    label outputInterval_;
-
-    const Time& time_;
-
-protected:
-
-    dictionary dict_;
-
-    word regionName_;
-
-    const objectRegistry& obr_;
-
-    //- Do output on the terminal
-    bool verbose() const { return verbose_; }
-
-    //- Write debug-information to tthe terminal
-    bool writeDebug() const { return writeDebug_; }
-
-    //- Do output this time?
-    virtual bool outputTime(const bool forceWrite);
+    //- the actual field
+    uniformDimensionedVectorField g_;
 
 public:
 
     //- Runtime type information
-    TypeName("simpleFunctionObject");
+    TypeName("readGravitation");
 
 
     // Constructors
 
     //- Construct from components
-    simpleFunctionObject
+    readGravitationFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-
-    // Member Functions
-
-    //- start is called at the start of the time-loop
-    virtual bool start();
-
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute(const bool forceWrite);
-
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
-
-    //- Sample and write
-    virtual void write()=0;
-
-    //- Optional stuff to do after write
-    virtual void flush();
-
-    //- the actual time
-    const Time &time() const { return time_; }
-
-    //- the actual time
-    scalar after() const { return after_; }
-
-    const objectRegistry &obr() { return obr_; }
+    void write();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
