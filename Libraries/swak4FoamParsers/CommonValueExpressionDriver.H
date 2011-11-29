@@ -311,6 +311,9 @@ public:
 
     ExpressionResult getUniform(label size,bool noWarning);
 
+    template<template<class> class BinOp,class Type>
+    inline Type getReduced(BinOp<Type> op,Type initial=pTraits<Type>::zero);
+
     void clearResult();
 
     template <class Op,class Type>

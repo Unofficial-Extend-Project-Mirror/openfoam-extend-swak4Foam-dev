@@ -191,6 +191,21 @@ functions
             sum
         );
     }
+    getG {
+        type executeIfObjectExists;
+        readDuringConstruction true;
+
+        objectName g;
+        checkType true;
+        objectType uniformDimensionedVectorField;
+        objectShouldExist false;
+
+        functions {
+            loadG {
+                type readGravitation;
+            }
+        }
+    }
     /* Commented out because this needs much space
     massFlow
     {

@@ -25,112 +25,92 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pythonIntegrationFunctionObject.H"
+#include "executeIfObjectExistsFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
-#include "IFstream.H"
+#include "argList.H"
+
+#include "objectRegistry.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
+    defineTypeNameAndDebug(executeIfObjectExistsFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        pythonIntegrationFunctionObject,
+        executeIfObjectExistsFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
+executeIfObjectExistsFunctionObject::executeIfObjectExistsFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
-    time_(t)
+    conditionalFunctionObjectListProxy(
+        name,
+        t,
+        dict
+    )
 {
-    if(parallelNoRun()) {
-        return;
-    }
-
-    initEnvironment(t);
-
-    setRunTime();
-
-    read(dict);
+    readParameters(dict);
 }
 
-pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
-{
-}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonIntegrationFunctionObject::setRunTime()
+bool executeIfObjectExistsFunctionObject::condition()
 {
-    pythonInterpreterWrapper::setRunTime(time_);
+    if(writeDebug()) {
+        Info << "Looking for object " << objectName_
+            << " -> " << obr().foundObject<IOobject>(objectName_) << endl;
+    }
+    if( ! obr().foundObject<IOobject>(objectName_) ) {
+        return ! objectShouldExist_;
+    } else if(checkType_) {
+        const IOobject &theOb=obr().lookupObject<IOobject>(objectName_);
+        if(writeDebug()) {
+            Info << "Type of " << objectName_ << " is "
+                << theOb.type()
+                << ". Looking for " << objectType_ << endl;
+        }
+
+        if(theOb.type()==objectType_) {
+            return objectShouldExist_;
+        } else {
+            return ! objectShouldExist_;
+        }
+    } else {
+        return objectShouldExist_;
+    }
 }
 
-bool pythonIntegrationFunctionObject::start()
+bool executeIfObjectExistsFunctionObject::read(const dictionary& dict)
 {
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
+    readParameters(dict);
+    return conditionalFunctionObjectListProxy::read(dict);
 }
 
-bool pythonIntegrationFunctionObject::execute()
+void executeIfObjectExistsFunctionObject::readParameters(const dictionary &dict) 
 {
-    if(parallelNoRun()) {
-        return true;
+    objectName_=word(dict.lookup("objectName"));
+    checkType_=readBool(dict.lookup("checkType"));
+    if(checkType_) {
+        objectType_=word(dict.lookup("objectType"));
+    } else {
+        objectType_="";
     }
-
-    setRunTime();
-
-    executeCode(executeCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::end()
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(endCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::read(const dictionary& dict)
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    readCode(dict,"start",startCode_);
-    readCode(dict,"end",endCode_);
-    readCode(dict,"execute",executeCode_);
-
-    return true; // start();
+    objectShouldExist_=readBool(dict.lookup("objectShouldExist"));
 }
 
 } // namespace Foam

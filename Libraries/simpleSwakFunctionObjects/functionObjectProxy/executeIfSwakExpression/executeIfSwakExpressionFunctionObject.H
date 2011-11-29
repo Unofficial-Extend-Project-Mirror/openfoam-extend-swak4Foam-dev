@@ -24,25 +24,25 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    executeIfSwakExpressionFunctionObject
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    This proxy-functionObject only executs its childrens if a 
+    swak-expression evaluates to true
 
 SourceFiles
-    simpleFunctionObject.C
+    executeIfSwakExpressionFunctionObject.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleFunctionObject_H
-#define simpleFunctionObject_H
+#ifndef executeIfSwakExpressionFunctionObject_H
+#define executeIfSwakExpressionFunctionObject_H
 
-#include "functionObject.H"
-#include "dictionary.H"
-#include "OFstream.H"
-#include "HashPtrTable.H"
-#include "boolList.H"
-#include "Field.H"
+#include "conditionalFunctionObjectListProxy.H"
+
+#include "CommonValueExpressionDriver.H"
+
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,100 +50,63 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleFunctionObject Declaration
+                           Class executeIfSwakExpressionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-    class objectRegistry;
-
-class simpleFunctionObject
+class executeIfSwakExpressionFunctionObject
 :
-    public functionObject
+    public conditionalFunctionObjectListProxy
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleFunctionObject(const simpleFunctionObject&);
+    executeIfSwakExpressionFunctionObject(const executeIfSwakExpressionFunctionObject&);
     
     //- Disallow default bitwise assignment
-    void operator=(const simpleFunctionObject&);
+    void operator=(const executeIfSwakExpressionFunctionObject&);
 
-    // Private data
+    //- the expression driver
+    autoPtr<CommonValueExpressionDriver> driver_;
 
-    //- Do output on the terminal
-    bool verbose_;
+    //- the logical expression
+    string logicalExpression_;
 
-    //- Write debug-information to the terminal
-    bool writeDebug_;
+    void readParameters(const dictionary &);
 
-    //- Time after which calculation should start
-    scalar after_;
+public:
+    enum logicalAccumulations {
+        logAnd,
+        logOr
+    };
 
-    //- how many time-steps since last output
-    label timeSteps_;
-
-    //- how many time-steps between outputs
-    label outputInterval_;
-
-    const Time& time_;
+private:
+    //- possible logical accumulations
+    static const NamedEnum<logicalAccumulations,2> logicalAccumulationsNames_;
+    logicalAccumulations logicalAccumulation_;
 
 protected:
-
-    dictionary dict_;
-
-    word regionName_;
-
-    const objectRegistry& obr_;
-
-    //- Do output on the terminal
-    bool verbose() const { return verbose_; }
-
-    //- Write debug-information to tthe terminal
-    bool writeDebug() const { return writeDebug_; }
-
-    //- Do output this time?
-    virtual bool outputTime();
+    
+    //- the actual conition that determines whether the FO should be executed
+    virtual bool condition();
 
 public:
 
     //- Runtime type information
-    TypeName("simpleFunctionObject");
+    TypeName("executeIfSwakExpression");
 
 
     // Constructors
 
     //- Construct from components
-    simpleFunctionObject
+    executeIfSwakExpressionFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
+    bool read(const dictionary& dict);
 
-    // Member Functions
-
-    //- start is called at the start of the time-loop
-    virtual bool start();
-
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
-
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
-
-    //- Sample and write
-    virtual void write()=0;
-
-    //- Optional stuff to do after write
-    virtual void flush();
-
-    //- the actual time
-    const Time &time() const { return time_; }
-
-    //- the actual time
-    scalar after() const { return after_; }
-
-    const objectRegistry &obr() { return obr_; }
 };
 
 

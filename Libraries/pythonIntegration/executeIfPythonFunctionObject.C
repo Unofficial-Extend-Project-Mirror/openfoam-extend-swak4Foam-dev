@@ -25,39 +25,44 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pythonIntegrationFunctionObject.H"
+#include "executeIfPythonFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
-#include "IFstream.H"
+#include "argList.H"
+
+#include "objectRegistry.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
+    defineTypeNameAndDebug(executeIfPythonFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        pythonIntegrationFunctionObject,
+        executeIfPythonFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
+executeIfPythonFunctionObject::executeIfPythonFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
-    time_(t)
+    conditionalFunctionObjectListProxy(
+        name,
+        t,
+        dict
+    ),
+    pythonInterpreterWrapper(dict)
 {
     if(parallelNoRun()) {
         return;
@@ -65,72 +70,37 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
 
     initEnvironment(t);
 
-    setRunTime();
+    setRunTime(t);
 
-    read(dict);
+    readParameters(dict);
 }
 
-pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
-{
-}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonIntegrationFunctionObject::setRunTime()
+bool executeIfPythonFunctionObject::condition()
 {
-    pythonInterpreterWrapper::setRunTime(time_);
+    setRunTime(time());
+
+    if(writeDebug()) {
+        Info << "Evaluating " << conditionCode_ << endl;
+    }
+    bool result=evaluateCodeTrueOrFalse(conditionCode_,true);
+    if(writeDebug()) {
+        Info << "Evaluated to " << result << endl;
+    }
+    return result;
 }
 
-bool pythonIntegrationFunctionObject::start()
+bool executeIfPythonFunctionObject::read(const dictionary& dict)
 {
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
+    readParameters(dict);
+    return conditionalFunctionObjectListProxy::read(dict);
 }
 
-bool pythonIntegrationFunctionObject::execute()
+void executeIfPythonFunctionObject::readParameters(const dictionary &dict) 
 {
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(executeCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::end()
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(endCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::read(const dictionary& dict)
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    readCode(dict,"start",startCode_);
-    readCode(dict,"end",endCode_);
-    readCode(dict,"execute",executeCode_);
-
-    return true; // start();
+    readCode(dict,"condition",conditionCode_);
 }
 
 } // namespace Foam

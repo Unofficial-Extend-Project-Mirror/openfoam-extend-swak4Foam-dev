@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 25 Nov 2011 17:01:55 +0100
+Subject: Re: Conditional function object
+Message-Id: <b197ca3b6e9f1b97-d71d01c7b745f9e8-artemis@bgs-Greybook.local>
+References: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+In-Reply-To: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+
+swakExpression can now be used as a condition.
+
+One last object: based on an environment-variable

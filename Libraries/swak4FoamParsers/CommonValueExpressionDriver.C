@@ -792,7 +792,7 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
                 )
             )
         );
-        Info << "Hepp: "<< temporary->polyMesh::ownedByRegistry() << endl;
+        //        Info << "Hepp: "<< temporary->polyMesh::ownedByRegistry() << endl;
         temporary->polyMesh::store(temporary.ptr());
     }
 

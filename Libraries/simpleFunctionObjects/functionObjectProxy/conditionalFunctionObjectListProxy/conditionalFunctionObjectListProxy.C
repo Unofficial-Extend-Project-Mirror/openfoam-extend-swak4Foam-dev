@@ -25,112 +25,94 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pythonIntegrationFunctionObject.H"
+#include "conditionalFunctionObjectListProxy.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
-#include "IFstream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
+    defineTypeNameAndDebug(conditionalFunctionObjectListProxy, 0);
 
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        pythonIntegrationFunctionObject,
-        dictionary
-    );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
+conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
-    time_(t)
-{
-    if(parallelNoRun()) {
-        return;
-    }
-
-    initEnvironment(t);
-
-    setRunTime();
-
-    read(dict);
-}
-
-pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
+    functionObjectListProxy(
+        name,
+        t,
+        dict
+    )
 {
 }
+
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonIntegrationFunctionObject::setRunTime()
+bool conditionalFunctionObjectListProxy::execute()
 {
-    pythonInterpreterWrapper::setRunTime(time_);
-}
-
-bool pythonIntegrationFunctionObject::start()
-{
-    if(parallelNoRun()) {
-        return true;
+    if(writeDebug()) {
+        Info << this->name() << " condition::execute() condition: " 
+            << condition() << endl;
     }
 
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::execute()
-{
-    if(parallelNoRun()) {
+    if(condition()) {
+        return functionObjectListProxy::execute();
+    } else {
         return true;
     }
-
-    setRunTime();
-
-    executeCode(executeCode_,true);
-
-    return true;
 }
 
-bool pythonIntegrationFunctionObject::end()
+bool conditionalFunctionObjectListProxy::start()
 {
-    if(parallelNoRun()) {
-        return true;
+    if(writeDebug()) {
+        Info << this->name() << " condition::start() condition: " 
+            << condition() << endl;
     }
 
-    setRunTime();
-
-    executeCode(endCode_,true);
-
-    return true;
+    if(condition()) {
+        return functionObjectListProxy::start();
+    } else {
+        return true;
+    }
 }
 
-bool pythonIntegrationFunctionObject::read(const dictionary& dict)
+bool conditionalFunctionObjectListProxy::end()
 {
-    if(parallelNoRun()) {
-        return true;
+    if(writeDebug()) {
+        Info << this->name() << " condition::end() condition: " 
+            << condition() << endl;
     }
 
-    readCode(dict,"start",startCode_);
-    readCode(dict,"end",endCode_);
-    readCode(dict,"execute",executeCode_);
+    if(condition()) {
+        return functionObjectListProxy::end();
+    } else {
+        return true;
+    }
+}
 
-    return true; // start();
+bool conditionalFunctionObjectListProxy::read(const dictionary& dict)
+{
+    if(writeDebug()) {
+        Info << this->name() << " condition::read() condition: " 
+            << condition() << endl;
+    }
+
+    if(condition()) {
+        return functionObjectListProxy::read(dict);
+    } else {
+        return true;
+    }
 }
 
 } // namespace Foam

@@ -25,112 +25,100 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pythonIntegrationFunctionObject.H"
+#include "executeIfExecutableFitsFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
-#include "IFstream.H"
+#include "argList.H"
 
+#ifdef darwin
+#include "mach-o/dyld.h"
+#endif
+#ifdef linux
+#include <unistd.h>
+#endif
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
+    defineTypeNameAndDebug(executeIfExecutableFitsFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        pythonIntegrationFunctionObject,
+        executeIfExecutableFitsFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
+executeIfExecutableFitsFunctionObject::executeIfExecutableFitsFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
-    time_(t)
+    conditionalFunctionObjectListProxy(
+        name,
+        t,
+        dict
+    )
 {
-    if(parallelNoRun()) {
-        return;
+    // do it here to avoid the superclass-read being read twice
+    readRegexp(dict);
+
+    fileName exePath;
+    
+#ifdef darwin
+    {
+        char path[1024];
+        uint32_t size = sizeof(path);
+        if (_NSGetExecutablePath(path, &size) == 0) {
+            exePath=string(path);
+        }
     }
+#elif defined(linux)
+    {
+        const int bufSize=1024;
+        char path[bufSize];
+        label length=readlink("/proc/self/exe",path,bufSize-1);
+        path[length]='\0';
+        exePath=string(path);
+    }
+#else
+    Not yet implemented;
+#endif
 
-    initEnvironment(t);
+    executable_=exePath.name();
 
-    setRunTime();
-
-    read(dict);
+    if(debug) {
+        Info << "Executable: " << executable_ << " "<< exePath << endl;
+    }
 }
 
-pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
-{
-}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonIntegrationFunctionObject::setRunTime()
+bool executeIfExecutableFitsFunctionObject::condition()
 {
-    pythonInterpreterWrapper::setRunTime(time_);
+    return executableNameRegexp_.match(executable_);
 }
 
-bool pythonIntegrationFunctionObject::start()
+void executeIfExecutableFitsFunctionObject::readRegexp(const dictionary& dict)
 {
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
+    executableNameRegexp_.set(
+        string(dict.lookup("executableNameRegexp")),
+        dict.lookupOrDefault<bool>("ignoreCase",false)
+    );
 }
 
-bool pythonIntegrationFunctionObject::execute()
+bool executeIfExecutableFitsFunctionObject::read(const dictionary& dict)
 {
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(executeCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::end()
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(endCode_,true);
-
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::read(const dictionary& dict)
-{
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    readCode(dict,"start",startCode_);
-    readCode(dict,"end",endCode_);
-    readCode(dict,"execute",executeCode_);
-
-    return true; // start();
+    readRegexp(dict);
+    return conditionalFunctionObjectListProxy::read(dict);
 }
 
 } // namespace Foam
