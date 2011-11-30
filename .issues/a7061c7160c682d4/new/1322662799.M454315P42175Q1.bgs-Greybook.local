@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 30 Nov 2011 15:19:24 +0100
+Subject: Re: Make Allwmake check for bison
+Message-Id: <a7061c7160c682d4-f4631bfed04abd5f-artemis@bgs-Greybook.local>
+References: <a7061c7160c682d4-0-artemis@178.114.153.215.wireless.dyn.drei.com>
+In-Reply-To: <a7061c7160c682d4-0-artemis@178.114.153.215.wireless.dyn.drei.com>
+
+Checks for Bison-version 2.3
+
+Fails if that one isn't there

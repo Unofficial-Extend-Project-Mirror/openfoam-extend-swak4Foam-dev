@@ -26,6 +26,9 @@
    - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
      - The =finiteArea=-stuff will only work with version 1.6-ext
    - the compiler generators =bison= and =flex=
+     - =swak4Foam= is known to work with =bison= version 2.3 and
+       higher. Lower versions *may* work. If it works with a lower
+       version please report it
 ** Building
 : wmake all 
    at the base directory should build all the libraries and
@@ -594,6 +597,11 @@ S_{expl} + S_{impl} T
 **** =circulatingSplash=
      Fixed according to a suggestion by Andreas Otto. Now runs again
      (used to crash some time-steps into the beginning)
+*** Infrastructure
+**** Check for correct =bison=-version
+     The =Allwmake=-script now checks for the correct bison-version
+     (and the existence of =bison=) and fails if it doesn't seem to be
+     the right one
 *** Technical
 **** Refactoring of the FieldDriver
      - now can also produce surfaceFields

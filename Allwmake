@@ -1,5 +1,29 @@
 #! /bin/bash
 
+BISOMPATH=`which bison`
+NOBISON=$?
+
+if [[ $NOBISON != 0 ]]; then
+    echo "No 'bison' found. This is absolutely essential for swak4Foam. Can't go on"
+    exit
+fi
+
+BISONVER=`bison -V | head -n 1| tr ' ' '\n' | tail -n 1`
+
+echo "Bison is version $BISONVER"
+
+if [[ $BISONVER < 2.3 ]]; then 
+    echo "swak4Foam only confirmed to work with Bison >= 2.3"
+    if [ -z $USE_OLD_BISON ]; then 
+	echo "Set the environment variable USE_OLD_BISON if you want to continue anyway"
+	exit
+    else
+	echo "I continue under protest. Should swak4Foam work with your bison-version, then please report it"
+	echo
+	echo
+    fi
+fi
+
 if [ -e swakConfiguration ]; then
     echo "Reading variables from 'swakConfiguration'"
     source swakConfiguration
