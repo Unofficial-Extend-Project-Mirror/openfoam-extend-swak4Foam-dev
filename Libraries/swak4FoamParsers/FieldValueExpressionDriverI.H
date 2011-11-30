@@ -460,7 +460,7 @@ bool FieldValueExpressionDriver::resultIsTyp(bool isLogical)
     }
 
     return (
-        typ_ == pTraits<T>::typeName
+        resultField_().type() == pTraits<T>::typeName
         &&
         isLogical == isLogical_
     );
