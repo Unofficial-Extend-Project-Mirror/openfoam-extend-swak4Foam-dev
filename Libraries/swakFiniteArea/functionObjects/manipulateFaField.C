@@ -114,7 +114,7 @@ void Foam::manipulateFaField::execute()
             FatalErrorIn("manipulateFaField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
         
         areaScalarField conditionField(driver.getScalar());

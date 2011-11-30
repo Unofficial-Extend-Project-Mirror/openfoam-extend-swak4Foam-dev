@@ -86,7 +86,7 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
         FatalErrorIn("Foam::expressionToFace::combine(topoSet& set, const bool add) const")
             << "Expression " << expression_ << " does not evaluate to a logical expression"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     if(driver.resultIsTyp<volScalarField>(true)) {
@@ -114,7 +114,7 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
             << "Don't know how to handle a logical field of type "
                 << driver.typ()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 }
 

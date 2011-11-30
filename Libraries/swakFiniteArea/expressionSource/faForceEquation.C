@@ -86,7 +86,7 @@ bool faForceEquation<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
         FatalErrorIn("faForceEquation<scalar>::operator()(faMatrix<T> &)")
             << "Result of " << maskExpression_ << " is not a logical expression"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     const areaScalarField &cond=getScalar();
@@ -185,7 +185,7 @@ void faForceEquation<T>::operator()(faMatrix<T> &)
         <<  "not implemented for for T="
             << pTraits<T>::typeName
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
 }
 
 template

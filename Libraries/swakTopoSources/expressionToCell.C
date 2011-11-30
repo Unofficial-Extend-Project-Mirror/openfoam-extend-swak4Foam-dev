@@ -79,7 +79,7 @@ void Foam::expressionToCell::combine(topoSet& set, const bool add) const
         FatalErrorIn("Foam::expressionToCell::combine(topoSet& set, const bool add) const")
             << "Expression " << expression_ << " does not evaluate to a logical expression"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     const volScalarField &condition=driver.getResult<volScalarField>();
 

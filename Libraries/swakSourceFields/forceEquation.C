@@ -87,7 +87,7 @@ bool forceEquation<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
         FatalErrorIn("forceEquation<scalar>::operator()(fvMatrix<T> &)")
             << "Result of " << maskExpression_ << " is not a logical expression"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     const volScalarField &cond=getResult<volScalarField>();

@@ -77,7 +77,7 @@ tmp<faExpressionSource<scalar>::resultField> faExpressionSource<scalar>::operato
         FatalErrorIn("faExpressionSource<scalar>::operator()()")
             << "Result of " << expression_ << " is not a scalar"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     tmp<resultField> result(new resultField(getScalar()));
@@ -94,7 +94,7 @@ tmp<faExpressionSource<vector>::resultField> faExpressionSource<vector>::operato
         FatalErrorIn("faExpressionSource<vector>::operator()()")
             << "Result of " << expression_ << " is not a vector"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     tmp<resultField> result(new resultField(getVector()));
@@ -112,7 +112,7 @@ tmp<typename faExpressionSource<T>::resultField> faExpressionSource<T>::operator
         <<  "not implemented for for T="
             << pTraits<T>::typeName
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
 }
 
 template

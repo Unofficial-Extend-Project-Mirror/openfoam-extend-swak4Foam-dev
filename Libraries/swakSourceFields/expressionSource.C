@@ -78,7 +78,7 @@ tmp<typename expressionSource<T>::resultField> expressionSource<T>::operator()()
         FatalErrorIn("expressionSource<"+word(pTraits<T>::typeName)+">::operator()()")
             << "Result of " << expression_ << " is not a " << pTraits<T>::typeName
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     tmp<resultField> result(new resultField(getResult<resultField>()));

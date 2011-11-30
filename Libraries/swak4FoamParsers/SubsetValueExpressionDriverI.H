@@ -207,7 +207,7 @@ namespace Foam {
                     << " nor " << IFieldType::typeName << ")"
                     << " Autointerpolate: " << this->autoInterpolate_
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         return result;

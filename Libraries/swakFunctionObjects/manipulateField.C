@@ -143,7 +143,7 @@ void Foam::manipulateField::execute()
             FatalErrorIn("manipulateField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         if(driver.resultIsTyp<volScalarField>(true)) {

@@ -135,7 +135,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }
@@ -180,7 +180,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for patchInternalField\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }
@@ -217,7 +217,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for patchNeighbourField\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }
@@ -256,7 +256,7 @@ namespace Foam {
                     << patch_.boundaryMesh().mesh().objectRegistry::names()
 
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }

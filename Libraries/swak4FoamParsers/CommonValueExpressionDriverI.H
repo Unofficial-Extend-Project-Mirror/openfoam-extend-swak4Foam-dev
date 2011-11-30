@@ -85,7 +85,7 @@ namespace Foam {
                 << "A " << (qPoint ? "point" : "face" ) << "-field was wanted"
                     << " but we got a " << (!qPoint ? "point" : "face" ) 
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         return result_.getResult<Type>();
@@ -272,7 +272,7 @@ namespace Foam {
                         FatalErrorIn("CommonValueExpressionDriver::updateSet")
                             << name << " Not found" << endl
                                 << "In db: " << mesh.thisDb().names() << endl
-                                << abort(FatalError);
+                                << exit(FatalError);
                     }
                     
                     updated=true;
@@ -282,7 +282,7 @@ namespace Foam {
                 FatalErrorIn("CommonValueExpressionDriver::updateSet")
                     << T::typeName << " " << name << " is invalid"
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             default:
                 if(debug) {
                     Pout << "Origin " << int(origin) << " not implemented" << endl;
@@ -527,7 +527,7 @@ namespace Foam {
             FatalErrorIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
                 << "Could not find the field " << name 
                     << " in memory or on disc" << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
     
         if(f.valid()) {
@@ -645,7 +645,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }

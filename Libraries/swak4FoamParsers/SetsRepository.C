@@ -92,7 +92,7 @@ sampledSet &SetsRepository::getSet(
             << "Found a mesh named " << name << " which is not for the mesh "
                 << mesh.name() << "but for the mesh " << found.mesh().name()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     return found;
@@ -168,7 +168,7 @@ meshSearch &SetsRepository::getSearch(
             << "Found a mesh named " << name << " which is not for the mesh "
                 << mesh.name() << "but for the mesh " << found.mesh().name()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
         }
 
         return found;

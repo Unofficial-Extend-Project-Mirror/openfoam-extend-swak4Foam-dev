@@ -109,7 +109,7 @@ Foam::swakCodedFunctionObject::swakCodedFunctionObject
                 << "and 'codedToSwakNamespace' (Value: " << codedToSwakNamespace_
                 << ") both have to be set (or none)"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     read(dict_);
 }
@@ -227,7 +227,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
                 << "the environment variable SWAK4FOAM_SRC points to the "
                 << "Libraries directory of the swak4Foam-sources"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     injectSwakCode(
         "codeOptions",
