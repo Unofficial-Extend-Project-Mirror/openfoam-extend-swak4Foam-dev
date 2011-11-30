@@ -112,6 +112,12 @@ protected:
     //- Execute code. Return true if there was no problem
     bool executeCode(const string &code,bool putVariables,bool failOnException=false);
 
+    //- Execute code and see if it returns to true or false
+    bool evaluateCodeTrueOrFalse(const string &code,bool failOnException=false);
+
+    //- Execute after the python-code has been called
+    void doAfterExecution(bool fail,const string &code,bool putVariables,bool failOnException=false);
+
     //- Read code according to the dictionary
     void readCode(const dictionary &dict,const word &prefix,string &code);
 
@@ -123,6 +129,10 @@ protected:
 
     //- Check whether we want to continue (parallel)
     bool parallelNoRun();
+
+    //- set up the environment with the basic variables
+    void initEnvironment(const Time &t);
+
 public:
 
     //- Runtime type information

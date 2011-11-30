@@ -675,7 +675,10 @@ S_{expl} + S_{impl} T
           results are either accumulated using logical /or/ (if *one*
           value is true the result will be true) or logical /and/ (all
           values have to be true)
-
+     The =pythonIntegration=-library has
+     - executeIfPython :: Evaluates a Python-code-snipplet that
+          returns a value. If this value is "true" in Pythons
+          standards then the functionObjects are executed
 **** =functionObject= that reads gravitation
      =simpleFunctionObjects= has an additional function object that
      reads the direction of gravitation. The purpose is to assist

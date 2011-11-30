@@ -880,32 +880,46 @@ functions
             max
         );
     }
-    ifSwakExpressionFO {
+    ifPythonExpressionFO {
         type executeIfFunctionObjectPresent;
         readDuringConstruction false;
-        functionObjectName swakExpression;
+        functionObjectName executeIfPython;
 
         functions {
-    surfaceU45c
-    {
-        type swakExpression;
-        valueType surface;
-        surfaceName testIsoU45c;
-        surface {
-            type thresholdCellFaces;
-            field magU;
-            upperLimit 46;
-            lowerLimit 44;
-        }
-        verbose true;
-        //        variables "p=pts();";
-        expression "pos()";
-        // expression "U";
-        accumulations (
-            min
-            max
-        );
-    }
+            doEveryThreeSteps {
+                type executeIfPython;
+                readDuringConstruction false;
+
+                conditionCode "return abs(runTime % 3)<1e-5";
+                //                conditionFile "$FOAM_CASE/test.py"
+
+
+                //                writeDebug true;
+                //                interactiveAfterExecute true;
+
+                functions {
+                    surfaceU45c
+                    {
+                        type swakExpression;
+                        valueType surface;
+                        surfaceName testIsoU45c;
+                        surface {
+                            type thresholdCellFaces;
+                            field magU;
+                            upperLimit 46;
+                            lowerLimit 44;
+                        }
+                        verbose true;
+                        //        variables "p=pts();";
+                        expression "pos()";
+                        // expression "U";
+                        accumulations (
+                            min
+                            max
+                        );
+                    }
+                }
+            }
         }
     }
 };
@@ -918,6 +932,7 @@ libs (
     "libswakTopoSources.so" 
     // Needed to decompose on 1.7
     "libcompressibleRASModels.so"
+    "libpythonIntegration.so"
 ) ;
 
 // ************************************************************************* //

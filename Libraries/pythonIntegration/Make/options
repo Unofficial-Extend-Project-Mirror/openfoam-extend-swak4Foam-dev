@@ -1,9 +1,11 @@
 EXE_INC = \
 	$(SWAK_PYTHON_INCLUDE) \
-	-I../swak4FoamParsers/lnInclude
+	-I../swak4FoamParsers/lnInclude \
+	-I../simpleFunctionObjects/lnInclude
 
 LIB_LIBS = \
 	$(SWAK_PYTHON_LINK) \
 	-L$(FOAM_USER_LIBBIN) \
-	-lswak4FoamParsers
+	-lswak4FoamParsers \
+	-lsimpleFunctionObjects
 
