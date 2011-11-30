@@ -345,7 +345,7 @@ inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::
             << "Size " << val.size() << " of the assigned field is not the required "
                 << f->internalField().size()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     f->internalField()=val;
@@ -441,7 +441,7 @@ const T &FieldValueExpressionDriver::getResult()
             << "When asking for a " << pTraits<T>::typeName
                 << ": No result present"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     //    return dynamicCast<const T &>(resultField_()); // doesn't work with gcc 4.2
@@ -456,7 +456,7 @@ bool FieldValueExpressionDriver::resultIsTyp(bool isLogical)
             << "When asking for a " << pTraits<T>::typeName
                 << ": No result present"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     return (

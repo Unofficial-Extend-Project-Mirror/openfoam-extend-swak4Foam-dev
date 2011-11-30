@@ -286,7 +286,7 @@ stringList CommonValueExpressionDriver::readVariableStrings(const dictionary &di
     FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
         << " Entry 'variables' must either be a string or a list of strings"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     
     return stringList();
 }
@@ -692,7 +692,7 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
                 << "No terminating ';' found in expression '"
                     << exprList.substr(start) << "'\n"
                     << endl
-                    << abort(FatalError);            
+                    << exit(FatalError);            
         }
         std::string::size_type  eqPos=exprList.find('=',start);
         if(eqPos==std::string::npos || eqPos > end) {
@@ -700,7 +700,7 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
                 << "No '=' found in expression '"
                     << exprList.substr(start,end-start) << "'\n"
                     << endl
-                    << abort(FatalError);            
+                    << exit(FatalError);            
         }
         string expr(exprList.substr(eqPos+1,end-eqPos-1));
 
@@ -712,7 +712,7 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
                     << "No closing '}' found in " 
                         << exprList.substr(start,eqPos-start)
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
             word name(exprList.substr(start,startPos-start));
             string remoteExpr(exprList.substr(startPos+1,endPos-startPos-1));

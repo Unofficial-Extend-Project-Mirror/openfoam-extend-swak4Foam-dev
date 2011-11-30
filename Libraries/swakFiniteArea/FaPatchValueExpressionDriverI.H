@@ -123,7 +123,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }
@@ -158,7 +158,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for patchInternalField\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }
@@ -185,7 +185,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for patchNeighbourField\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }
@@ -208,7 +208,7 @@ namespace Foam {
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for lnGrad\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }

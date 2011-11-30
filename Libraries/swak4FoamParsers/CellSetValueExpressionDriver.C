@@ -169,7 +169,7 @@ scalarField *CellSetValueExpressionDriver::makeFaceAreaMagField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceAreaField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -178,7 +178,7 @@ scalarField *CellSetValueExpressionDriver::makeFaceFlipField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceFlipField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -187,7 +187,7 @@ vectorField *CellSetValueExpressionDriver::makeFaceNormalField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceNormalField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new vectorField(0);
 }
 
@@ -196,7 +196,7 @@ vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceAreaField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new vectorField(0);
 }
 

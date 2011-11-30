@@ -175,7 +175,7 @@ scalarField *FaceSetValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("FaceSetValueExpressionDriver::makeCellVolumeField()")
         << "faceSet knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -245,7 +245,7 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
                         << " nei:" << mesh.faceNeighbour()[faceI]
                         << " NeiInCellSet:"
                         << cells.found(mesh.faceNeighbour()[faceI])
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
         }
         else

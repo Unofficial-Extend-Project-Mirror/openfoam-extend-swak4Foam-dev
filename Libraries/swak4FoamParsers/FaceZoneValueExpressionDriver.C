@@ -58,7 +58,7 @@ label getFaceZoneID(const fvMesh &mesh,const word &name)
             << "The faceZone " << name << " was not found in "
                 << mesh.faceZones().names()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
 
     }
     return result;
@@ -167,7 +167,7 @@ scalarField *FaceZoneValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("FaceZoneValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 

@@ -51,7 +51,7 @@ inline void timelineFunctionObject::writeData(const word &name,const UList<strin
                 FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
                     << "Don't know how to write files of type " 
                         << outputFileModeNames_[outputFileMode_] << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
         }
     }
 }
@@ -72,7 +72,7 @@ inline void timelineFunctionObject::writeData(const word &name,const UList<scala
                 FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
                     << "Don't know how to write files of type " 
                         << outputFileModeNames_[outputFileMode_] << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
         }
     }
 }
@@ -96,7 +96,7 @@ void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
                         FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
                             << "Don't know how to write files of type " 
                                 << outputFileModeNames_[outputFileMode_] << endl
-                                << abort(FatalError);
+                                << exit(FatalError);
                 }
             }
         }
@@ -118,7 +118,7 @@ void timelineFunctionObject::writeTime(const word &name,const T &time) {
             FatalErrorIn("timelineFunctionObject::writeTime(const word &name,const UList<T> &data)")
                     << "Don't know how to write files of type " 
                         << outputFileModeNames_[outputFileMode_] << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
     }
 }
 

@@ -64,7 +64,7 @@ functionObjectListProxy::functionObjectListProxy
     if(!dict.found("functions")) {
         FatalErrorIn("functionObjectListProxy::functionObjectListProxy")
             << "No entry 'functions' in dictionary of " << name << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     if(readBool(dict.lookup("readDuringConstruction"))) {
         if(writeDebug()) {

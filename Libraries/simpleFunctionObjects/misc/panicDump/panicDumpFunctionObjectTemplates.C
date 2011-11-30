@@ -91,7 +91,7 @@ bool panicDumpFunctionObject::check() const
                     << " exceeds the valid limits [ " << minimum_ << " , " 
                     << maximum_ << " ] with the current limits [ " 
                     << mini << " , " << maxi << " ]\n" << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         return true;

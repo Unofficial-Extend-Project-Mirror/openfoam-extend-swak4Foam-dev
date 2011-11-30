@@ -125,7 +125,7 @@ namespace Foam {
                 << "The expected return type " << pTraits<Type>::typeName 
                     << " is different from the stored result type "
                     << valType_ << "\n" << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         tmp<Field<Type> > result;
@@ -173,7 +173,7 @@ namespace Foam {
                 << "The expected return type " << pTraits<Type>::typeName 
                     << " is different from the stored result type "
                     << valType_ << "\n" << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         Type result=initial;

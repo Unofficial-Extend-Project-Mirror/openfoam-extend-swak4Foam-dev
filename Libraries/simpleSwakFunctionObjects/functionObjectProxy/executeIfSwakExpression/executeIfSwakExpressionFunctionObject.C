@@ -88,7 +88,7 @@ bool executeIfSwakExpressionFunctionObject::condition()
                 << " evaluates to type " << driver_->getResultType() 
                 << " when it should be " << pTraits<bool>::typeName
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     bool result=false;
@@ -105,7 +105,7 @@ bool executeIfSwakExpressionFunctionObject::condition()
                 << "Unimplemented logical accumulation "
                     << logicalAccumulationsNames_[logicalAccumulation_]
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
     }
     if(writeDebug()) {
         Info << "Expression " << logicalExpression_ 

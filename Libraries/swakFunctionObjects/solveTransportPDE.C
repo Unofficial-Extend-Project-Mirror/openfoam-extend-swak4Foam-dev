@@ -114,7 +114,7 @@ void Foam::solveTransportPDE::solve()
                 FatalErrorIn("Foam::solveTransportPDE::solve()")
                     << diffusionExpression_ << " does not evaluate to a scalar"
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
             volScalarField diffusionField(driver.getResult<volScalarField>());
             diffusionField.dimensions().reset(diffusionDimension_);
@@ -124,7 +124,7 @@ void Foam::solveTransportPDE::solve()
                 FatalErrorIn("Foam::solveTransportPDE::solve()")
                     << sourceExpression_ << " does not evaluate to a scalar"
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
             volScalarField sourceField(driver.getResult<volScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
@@ -134,7 +134,7 @@ void Foam::solveTransportPDE::solve()
                 FatalErrorIn("Foam::solveTransportPDE::solve()")
                     << phiExpression_ << " does not evaluate to a surface scalar"
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
             surfaceScalarField phiField(driver.getResult<surfaceScalarField>());
             phiField.dimensions().reset(phiDimension_);
@@ -154,7 +154,7 @@ void Foam::solveTransportPDE::solve()
                     FatalErrorIn("Foam::solveTransportPDE::solve()")
                         << rhoExpression_ << " does not evaluate to a scalar"
                             << endl
-                            << abort(FatalError);
+                            << exit(FatalError);
                 }
                 volScalarField rhoField(driver.getResult<volScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
@@ -179,7 +179,7 @@ void Foam::solveTransportPDE::solve()
                     FatalErrorIn("Foam::solveTransportPDE::solve()")
                         << sourceImplicitExpression_ << " does not evaluate to a scalar"
                             << endl
-                            << abort(FatalError);
+                            << exit(FatalError);
                 }
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);

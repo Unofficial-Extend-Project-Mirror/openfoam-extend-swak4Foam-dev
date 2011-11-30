@@ -237,7 +237,7 @@ void doAnExpression
                 << " while condition " << condition << " is defined on "
                 << (conditionIsSurface ? "faces" : "cells")
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     if(driver.typ()!=oldFieldType) {
@@ -374,7 +374,7 @@ void doAnExpression
                 << "Expression " << expression
                     << " evaluates to an unsupported type "
                     << driver.typ() << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
     }
 }

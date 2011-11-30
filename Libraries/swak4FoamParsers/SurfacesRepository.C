@@ -89,7 +89,7 @@ sampledSurface &SurfacesRepository::getSurface(
             << "Found a mesh named " << name << " which is not for the mesh "
                 << mesh.name() << "but for the mesh " << found.mesh().name()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     return found;
