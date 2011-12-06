@@ -195,7 +195,7 @@ scalarField *SampledSetValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("SampledSetValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -210,7 +210,7 @@ scalarField *SampledSetValueExpressionDriver::makeFaceAreaMagField()
     FatalErrorIn("SampledSetValueExpressionDriver::makeFaceAreaMagField()")
         << "sampledSets knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
 
     return new scalarField(0);
 }
@@ -235,7 +235,7 @@ vectorField *SampledSetValueExpressionDriver::makeFaceAreaField()
     FatalErrorIn("SampledSetValueExpressionDriver::makeFaceAreaField()")
         << "sampledSets knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
 
     return new vectorField(0);
 }

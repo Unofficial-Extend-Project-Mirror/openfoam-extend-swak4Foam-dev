@@ -119,7 +119,7 @@ namespace Foam {
             FatalErrorIn("SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(const word &name)")
                 << "No valid result" 
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         return result;

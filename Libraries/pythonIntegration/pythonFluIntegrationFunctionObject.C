@@ -65,7 +65,7 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
         FatalErrorIn("pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject")
             << "Python can not import module Foam. Probably no pythonFlu installed"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     executeCode("import Foam.OpenFOAM as OpenFOAM",false,true);
     executeCode("import Foam.finiteVolume as finiteVolume",false,true);

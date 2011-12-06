@@ -80,7 +80,8 @@ groovyFlowRateInletVelocityFvPatchVectorField
     flowRateInletVelocityFvPatchVectorField(p, iF, dict),
     flowRateExpression_(dict.lookup("flowRateExpression")),
     driver_(dict,this->patch())
-{}
+{
+}
 
 
 Foam::

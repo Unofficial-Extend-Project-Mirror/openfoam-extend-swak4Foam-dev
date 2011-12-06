@@ -94,7 +94,7 @@ T *FaFieldValueExpressionDriver::getField(const string &name)
         FatalErrorIn("FaFieldValueExpressionDriver::getField(const string &name)")
             << "Could not find the field " << name 
                 << " in memory or on disc" << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     
     f->dimensions().reset(nullDim);
@@ -235,7 +235,7 @@ inline FType *FaFieldValueExpressionDriver::makeField(const Field<typename FType
             << "Size " << val.size() << " of the assigned field is not the required "
                 << f->internalField().size()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     f->internalField()=val;

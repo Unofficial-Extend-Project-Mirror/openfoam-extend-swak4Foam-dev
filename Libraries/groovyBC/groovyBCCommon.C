@@ -65,6 +65,7 @@ groovyBCCommon<Type>::groovyBCCommon
     bool isPoint
 )
 :
+    evaluateDuringConstruction_(false),  
     debug_(false),
     hasGradient_(hasGradient),
     fractionExpression_(isPoint ? "toPoint" : "1")
@@ -82,6 +83,7 @@ groovyBCCommon<Type>::groovyBCCommon
     const groovyBCCommon<Type>& ptf
 )
 :
+    evaluateDuringConstruction_(ptf.evaluateDuringConstruction_),  
     debug_(ptf.debug_),
     hasGradient_(ptf.hasGradient_),
     valueExpression_(ptf.valueExpression_),
@@ -99,6 +101,9 @@ groovyBCCommon<Type>::groovyBCCommon
     bool isPoint
 )
 :
+    evaluateDuringConstruction_(
+        dict.lookupOrDefault<bool>("evaluateDuringConstruction",false)
+    ),  
     debug_(dict.lookupOrDefault<bool>("debug",false)),
     hasGradient_(hasGradient),
     fractionExpression_(dict.lookupOrDefault(
@@ -135,6 +140,8 @@ void groovyBCCommon<Type>::write(Ostream& os) const
         os.writeKeyword("fractionExpression")
             << fractionExpression_ << token::END_STATEMENT << nl;
     }
+    os.writeKeyword("evaluateDuringConstruction")
+        << evaluateDuringConstruction_ << token::END_STATEMENT << nl;
 
     // debug_ not written on purpose
 }

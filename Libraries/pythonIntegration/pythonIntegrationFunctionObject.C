@@ -63,11 +63,7 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
         return;
     }
 
-    PyObject *m = PyImport_AddModule("__main__");
-
-    PyObject_SetAttrString(m,"caseDir",PyString_FromString(t.path().c_str()));
-    PyObject_SetAttrString(m,"parRun",PyBool_FromLong(Pstream::parRun()));
-    PyObject_SetAttrString(m,"myProcNo",PyInt_FromLong(Pstream::myProcNo()));
+    initEnvironment(t);
 
     setRunTime();
 

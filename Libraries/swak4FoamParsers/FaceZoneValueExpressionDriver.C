@@ -58,7 +58,7 @@ label getFaceZoneID(const fvMesh &mesh,const word &name)
             << "The faceZone " << name << " was not found in "
                 << mesh.faceZones().names()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
 
     }
     return result;
@@ -85,9 +85,17 @@ FaceZoneValueExpressionDriver::FaceZoneValueExpressionDriver(const dictionary& d
  :
     SubsetValueExpressionDriver(dict),
     faceZone_(
-        regionMesh(dict,mesh).faceZones()[
+        regionMesh(
+            dict,
+            mesh,
+            searchOnDisc()
+        ).faceZones()[
             getFaceZoneID(
-                regionMesh(dict,mesh),
+                regionMesh(
+                    dict,
+                    mesh,
+                    searchOnDisc()
+                ),
                 dict.lookup(
                     "zoneName"
                 )
@@ -159,7 +167,7 @@ scalarField *FaceZoneValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("FaceZoneValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 

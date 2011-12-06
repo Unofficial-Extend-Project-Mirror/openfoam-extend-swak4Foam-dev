@@ -48,7 +48,7 @@ namespace Foam {
         FatalErrorIn("SampledSetValueExpressionDriver::pointSize()")
         << "sampledSets are a collection of points. So the 'cell' functionality should be used"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
         
         return 0;
     }
@@ -167,7 +167,7 @@ namespace Foam {
             FatalErrorIn("SampledSetValueExpressionDriver::sampleOrInterpolateInternal(const word &name)")
                 << "No valid result" 
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         return result;

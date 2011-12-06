@@ -198,7 +198,7 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("SampledSurfaceValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 

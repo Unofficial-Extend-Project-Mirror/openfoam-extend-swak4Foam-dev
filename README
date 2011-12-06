@@ -12,6 +12,9 @@
    - Peter Keller :: =sprinklerInlet=-case
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
+   - Bruno Santos :: Compilation with Intel compiler and Mingw
+   - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
+                      problem with =groovyBC=)
    If anyone is forgotten: let me know
 
    Contributors to =simpleFunctionObjects= are listed separately in
@@ -23,6 +26,9 @@
    - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
      - The =finiteArea=-stuff will only work with version 1.6-ext
    - the compiler generators =bison= and =flex=
+     - =swak4Foam= is known to work with =bison= version 2.3 and
+       higher. Lower versions *may* work. If it works with a lower
+       version please report it
 ** Building
 : wmake all 
    at the base directory should build all the libraries and
@@ -214,6 +220,11 @@ S_{expl} + S_{impl} T
      - Solver :: interFoam
      - Description :: Winner of the =swak4Foam=-competition at the 6th
                       OpenFOAM-Workshop (2011). By Peter Keller
+**** potentialPitzDaily
+     - Solver :: potentialFoam
+     - Description :: Demonstrates the use of =groovyB= with
+                      =potentialFoam= (also a problem connected with
+                      that). Provided by Martin Backer
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -586,6 +597,11 @@ S_{expl} + S_{impl} T
 **** =circulatingSplash=
      Fixed according to a suggestion by Andreas Otto. Now runs again
      (used to crash some time-steps into the beginning)
+*** Infrastructure
+**** Check for correct =bison=-version
+     The =Allwmake=-script now checks for the correct bison-version
+     (and the existence of =bison=) and fails if it doesn't seem to be
+     the right one
 *** Technical
 **** Refactoring of the FieldDriver
      - now can also produce surfaceFields
@@ -596,6 +612,9 @@ S_{expl} + S_{impl} T
      =swak4Foam= of the timestep) and are reread at the start. This
      allows consistent restarts (for instance if a flow was summed
      using the variable) *if the expressions stay the same*.
+**** =simpleFunctionObjects= now write vectors and tensors without brackets
+     Data files can now be written without brackets but each component on
+     its own. The number of entries in the header is not adjusted
 *** New features
 **** General =phi= in =solveTransportPDE=
      Due to the refactoring of the =FieldDriver= now =phi= can be
@@ -626,14 +645,76 @@ S_{expl} + S_{impl} T
 **** Generate a dummy =phi= in =replayTransientBC=
      New option added that generates a =phi= field with value $0$ to
      keep boundary conditions like =inletOutlet= happy
+**** Function object to dump expression results
+     The functionObject =dumpSwakExpression= dumps the complete
+     results of a swakExpression to file at each timestep. This
+     produces huge files and is therefor not endorsed
 **** Additional options for =funkySetFields=
      Add the options =allowFunctionObjects= and =addDummyPhi= to
      execute functionObjects and add a =phi=-field (for fields that
      require these)
+**** =simpleFunctionObjects= write CSV-files
+     Setting the option =outputFileMode= to =csv= writes
+     CSV-files. The option-value =foam= is the default (old style). The
+     option-value =raw= writes the values delimited by spaces (no
+     brackets for vectors and tensors)
+**** Submeshes automatically read if =searchOnDisc= specified
+     If a submesh is not yet in memory and the option =searchOnDisc=
+     is set, the mesh is automatically read into memory and kept there
+**** Conditional =functionObjects=
+     The =simpleFunctionObjects=-library now has a number of
+     functionObjects that allow the conditional execution of a list of
+     function objects.
+
+     These are
+     - executeIfExecutableFits :: if the name of the executable fits a
+          regular expression the function objects are executed
+     - executeIfObjectExists :: if a named object exists (or
+          alternatively: doesn't exist) in the registry execute the
+          function objects. Type checking also implemented
+     - executeIfEnvironmentVariable :: execute if an environment
+          variable satisfies a certain condition (exists, doesn't
+          exist, fits a regular expression)
+     - executeIfFunctionObjectPresent :: execute if a specific
+          functionObject is present. This can help prevent failures if
+          a functionObject is missing for technical reasons
+     In addition the =simpleSwakFunctionObjects=-library has
+     - executeIfSwakObject :: Evaluates a logical swak-expression. The
+          results are either accumulated using logical /or/ (if *one*
+          value is true the result will be true) or logical /and/ (all
+          values have to be true)
+     The =pythonIntegration=-library has
+     - executeIfPython :: Evaluates a Python-code-snipplet that
+          returns a value. If this value is "true" in Pythons
+          standards then the functionObjects are executed
+**** =functionObject= that reads gravitation
+     =simpleFunctionObjects= has an additional function object that
+     reads the direction of gravitation. The purpose is to assist
+     boundary conditions like =buoyantPressure= that rely on it to
+     work. Best used together with conditional function objects ("If
+     =g= is missing ....")
 *** Bug fixes
+**** Compilation with Intel-Compiler possible
+     The =Utilities= failed with the Intel-compiler. Compilation now
+     falls back to good old =g++=
 **** Access to tensor-components not working
      Because the tokens were not defined in the =flex=-files getting
      tensor components with =tensor.xx= did not work. Fixed
 **** Constants for surfaceFields not working
      Because surfaceFields know no =zeroGradient= the template
      =makeConstant= did not work
+**** =snGrad= does not work for patches if the file is on disc
+     Change so that the field gets temporarily loaded to calculate the
+     gradient on the patch. Same for =internalField= and
+     =neighbourField=
+**** =potentialFoam= does not correctly use a =groovyBC=
+     The reason is that =groovyBC= usually doesn't get evaluated
+     during construction. The reason is that it is hard to tell
+     whether all required fields are already in memory. The current
+     fix is a workaround: setting =evaluateDuringConstruction= to
+     =true= forces the BC to be evaluated during construction
+**** Extra evaluation of boundary conditions causes failure
+     Extra evaluation of boundary condition that should fix the
+     problem with =calculated= patches causes =funkySetFields= to fail
+     with stock boundary conditions if not all fields are present in
+     memory 

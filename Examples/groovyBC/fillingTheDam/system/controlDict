@@ -191,6 +191,72 @@ functions
             sum
         );
     }
+    getG {
+        type executeIfObjectExists;
+        readDuringConstruction true;
+
+        objectName g;
+        checkType true;
+        objectType uniformDimensionedVectorField;
+        objectShouldExist false;
+
+        functions {
+            loadG {
+                type readGravitation;
+            }
+        }
+    }
+    /* Commented out because this needs much space
+    massFlow
+    {
+        // Currently not working because the proxy doesn't work
+        type dumpSwakExpression;
+        valueType set;
+        setName  fillingHeight3;
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        expression "alpha1*U";
+        //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
+    }
+    alphaDump
+    {
+        // Currently not working because the proxy doesn't work
+        type dumpSwakExpression;
+        valueType set;
+        setName  fillingHeight4;
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        expression "alpha1";
+        //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
+    }
+    posDump
+    {
+        // Currently not working because the proxy doesn't work
+        type dumpSwakExpression;
+        valueType set;
+        setName  fillingHeight4;
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        expression "pos()";
+        //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
+    }
+    rightDump 
+    {
+        type  dumpSwakExpression;
+        valueType patch;
+        patchName rightWall;
+        expression "alpha1";
+    }
+        */
 );
 
 libs (

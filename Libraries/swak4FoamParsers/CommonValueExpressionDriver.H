@@ -132,7 +132,8 @@ protected:
     static const fvMesh &regionMesh
     (
         const dictionary &dict,
-        const fvMesh &mesh
+        const fvMesh &mesh,
+        bool readIfNecessary
     );
 
     //- look through the current variable values and update the stored variables
@@ -309,6 +310,9 @@ public:
     word getResultType();
 
     ExpressionResult getUniform(label size,bool noWarning);
+
+    template<template<class> class BinOp,class Type>
+    inline Type getReduced(BinOp<Type> op,Type initial=pTraits<Type>::zero);
 
     void clearResult();
 

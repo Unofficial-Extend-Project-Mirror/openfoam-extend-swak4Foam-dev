@@ -53,6 +53,11 @@ simpleFunctionObject::simpleFunctionObject
         ? readBool(dict.lookup("verbose"))
         : false
     ),
+    writeDebug_(
+        dict.found("writeDebug")
+        ? readBool(dict.lookup("writeDebug"))
+        : false
+    ),
     after_(
         dict.found("after")
         ? readScalar(dict.lookup("after"))

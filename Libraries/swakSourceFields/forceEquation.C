@@ -59,9 +59,6 @@ forceEquation<T>::forceEquation
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
     createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
-    
-    // seems to be coming in OF 2.0
-    //    createWriterAndRead(dict.dictName()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
 
     if(verbose_) {
         WarningIn(string("forceEquation<") + pTraits<T>::typeName + ">::forceEquation") 
@@ -90,7 +87,7 @@ bool forceEquation<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
         FatalErrorIn("forceEquation<scalar>::operator()(fvMatrix<T> &)")
             << "Result of " << maskExpression_ << " is not a logical expression"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
     const volScalarField &cond=getResult<volScalarField>();

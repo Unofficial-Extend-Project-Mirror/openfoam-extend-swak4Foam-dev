@@ -96,7 +96,11 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dic
     SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),INVALID),
     faceSet_(
         getSet<faceSet>(
-            regionMesh(dict,mesh),
+            regionMesh(
+                dict,
+                mesh,
+                searchOnDisc()
+            ),
             dict.lookup("setName"),
             origin_
         )
@@ -171,7 +175,7 @@ scalarField *FaceSetValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("FaceSetValueExpressionDriver::makeCellVolumeField()")
         << "faceSet knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -241,7 +245,7 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
                         << " nei:" << mesh.faceNeighbour()[faceI]
                         << " NeiInCellSet:"
                         << cells.found(mesh.faceNeighbour()[faceI])
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
         }
         else

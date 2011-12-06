@@ -50,7 +50,7 @@ const fvPatch &getFvPatch(const pointPatch &pp) {
             << " This will only work if I can find a fvMesh, but I only found a "
                 << typeid(pp.boundaryMesh().mesh().db()).name()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
     const fvMesh &fv=dynamic_cast<const fvMesh &>(pp.boundaryMesh().mesh().db());
     return fv.boundary()[pp.index()];
@@ -116,6 +116,11 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 
     //    this->refGrad() = pTraits<Type>::zero;
     this->valueFraction() = 1;
+
+    if(this->evaluateDuringConstruction()) {
+        // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
+        this->evaluate();
+    }
 }
 
 

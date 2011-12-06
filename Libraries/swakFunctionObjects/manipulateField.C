@@ -45,8 +45,6 @@ Foam::manipulateField::manipulateField
     obr_(obr),
     dict_(dict)
 {
-    driver_->createWriterAndRead(name+"_"+type());
-
     if (!isA<fvMesh>(obr_))
     {
         active_=false;
@@ -145,7 +143,7 @@ void Foam::manipulateField::execute()
             FatalErrorIn("manipulateField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         if(driver.resultIsTyp<volScalarField>(true)) {

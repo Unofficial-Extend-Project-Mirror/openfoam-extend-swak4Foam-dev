@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 01 Nov 2011 20:22:26 +0100
+Subject: Re: Generalize simpleFunctionObjects data-writing to allow CSV-files
+Message-Id: <fd8dce5be1f425af-acd3deb543583f76-artemis@bgs-Greybook.local>
+References: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
+In-Reply-To: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
+
+Rework output for tensors and vectors

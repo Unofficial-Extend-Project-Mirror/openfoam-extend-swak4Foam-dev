@@ -128,6 +128,9 @@ public:
     // Construct a uniform field from the current results
     ExpressionResult getUniform(const label size,bool noWarn) const;
 
+    template<template<class> class BinOp,class Type>
+    inline Type getReduced(BinOp<Type> op,Type initial=pTraits<Type>::zero);
+
     void clearResult();
 
     inline const string &type() const;

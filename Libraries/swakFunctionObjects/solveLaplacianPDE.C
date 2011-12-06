@@ -112,7 +112,7 @@ void Foam::solveLaplacianPDE::solve()
                 FatalErrorIn("Foam::solveLaplacianPDE::solve()")
                     << lambdaExpression_ << " does not evaluate to a scalar"
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
             volScalarField lambdaField(driver.getResult<volScalarField>());
             lambdaField.dimensions().reset(lambdaDimension_);
@@ -122,7 +122,7 @@ void Foam::solveLaplacianPDE::solve()
                 FatalErrorIn("Foam::solveLaplacianPDE::solve()")
                     << sourceExpression_ << " does not evaluate to a scalar"
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
             volScalarField sourceField(driver.getResult<volScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
@@ -141,7 +141,7 @@ void Foam::solveLaplacianPDE::solve()
                     FatalErrorIn("Foam::solveLaplacianPDE::solve()")
                         << rhoExpression_ << " does not evaluate to a scalar"
                             << endl
-                            << abort(FatalError);
+                            << exit(FatalError);
                 }
                 volScalarField rhoField(driver.getResult<volScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
@@ -166,7 +166,7 @@ void Foam::solveLaplacianPDE::solve()
                     FatalErrorIn("Foam::solveLaplacianPDE::solve()")
                         << sourceImplicitExpression_ << " does not evaluate to a scalar"
                             << endl
-                            << abort(FatalError);
+                            << exit(FatalError);
                 }
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);

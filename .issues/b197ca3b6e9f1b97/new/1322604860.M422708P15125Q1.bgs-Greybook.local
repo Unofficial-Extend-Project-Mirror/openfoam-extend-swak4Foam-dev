@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 29 Nov 2011 23:13:22 +0100
+Subject: Re: Conditional function object
+Message-Id: <b197ca3b6e9f1b97-ff98dd7bfb086893-artemis@bgs-Greybook.local>
+References: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+In-Reply-To: <b197ca3b6e9f1b97-0-artemis@178.113.228.200.wireless.dyn.drei.com>
+
+Python-conditional and dependence on the existence of a function
+object are now implemented. Consider this fixed
