@@ -52,7 +52,13 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
     const fvMesh &mesh
 )
     : FaCommonValueExpressionDriver(dict),
-      mesh_(faRegionMesh(regionMesh(dict,mesh))),
+      mesh_(
+          faRegionMesh(
+              regionMesh(
+                  dict,
+                  mesh,
+                  searchOnDisc()
+              ))),
       typ_(NO_TYPE),
       resultDimension_(0,0,0,0,0,0,0)
 {
