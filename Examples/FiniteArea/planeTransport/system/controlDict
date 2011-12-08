@@ -49,7 +49,7 @@ libs (
     "libswakFiniteArea.so"
 );
 
-functions (
+functions {
     defineConstant {
         type addGlobalVariable;
         outputControl timeStep;
@@ -155,7 +155,47 @@ functions (
         fieldName Cs;
         autowrite true;
     }
-);
+    solveTransientT {
+        type solveAreaLaplacianPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName TTransient;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        lambda "4e-2" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 1 0 0 0];
+    }
+    writeTTransient {
+        type volFromFaField;
+        outputControl outputTime;
+        fieldName TTransient;
+        autowrite true;
+    }
+    solveSteadyT {
+        $solveTransientT;
+
+        fieldName TSteady;
+        steady true;
+        solveAt startup;
+    }
+    writeTSteady {
+        $writeTTransient;
+
+        fieldName TSteady;
+    }
+    compareTSteadyTransient {
+        type swakExpression;
+        verbose true;
+        expression "TSteady-TTransient";
+        accumulations (
+            min
+            max
+            average
+        );
+        valueType internalFaField;
+ }
 
 // ************************************************************************* //
 

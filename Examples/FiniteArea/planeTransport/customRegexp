@@ -1,0 +1,5 @@
+compateT {
+	theTitle "Difference TSteady/Transient";
+	expr "Expression compareTSteadyTransient :  min=(%f%) max=(%f%) average=(%f%)";
+	titles (min max average);
+}

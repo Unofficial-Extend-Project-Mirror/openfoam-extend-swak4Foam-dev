@@ -11,11 +11,13 @@ EXE_INC = -I$(OBJECTS_DIR) \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/finiteArea/lnInclude \
     -I../swak4FoamParsers/lnInclude/ \
-    -I../groovyBC/lnInclude/
+    -I../groovyBC/lnInclude/ \
+    -I../swakFunctionObjects/lnInclude/ 
 
 LIB_LIBS = -lfiniteVolume \
 	-lfiniteArea \
 	-lOpenFOAM \
 	-lsampling \
 	-L$(FOAM_USER_LIBBIN) \
-	-lswak4FoamParsers
+	-lswak4FoamParsers \
+        -lswakFunctionObjects

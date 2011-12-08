@@ -29,13 +29,16 @@ gradSchemes
 divSchemes
 {
     default             none;
-    div(phis,Cs)        Gauss linar;
+    div(phis,Cs)        Gauss linear;
 }
 
 laplacianSchemes
 {
     default             none;
     laplacian(Ds,Cs)    Gauss linear corrected;
+
+    laplacian(lambda,TTransient) Gauss linear corrected;
+    laplacian(lambda,TSteady) Gauss linear corrected;
 }
 
 interpolationSchemes
