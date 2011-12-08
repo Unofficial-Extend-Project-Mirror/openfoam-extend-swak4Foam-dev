@@ -100,6 +100,17 @@ void Foam::solvePDECommonFiniteVolume::read(const dictionary& dict)
             );
         }
 
+        driver_.set(
+            new FieldValueExpressionDriver(
+                mesh.time().timeName(),
+                mesh.time(),
+                mesh,
+                false, // no caching. No need
+                true,  // search fields in memory
+                false  // don't look up files on disc
+            )
+        );
+        
         driver_->readVariablesAndTables(dict);
         
         driver_->createWriterAndRead(name_+"_"+fieldName_+"_"+type());

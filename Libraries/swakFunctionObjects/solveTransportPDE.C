@@ -80,7 +80,7 @@ Foam::solveTransportPDE::~solveTransportPDE()
 
 void Foam::solveTransportPDE::read(const dictionary& dict)
 {
-    solvePDECommon::read(dict);
+    solvePDECommonFiniteVolume::read(dict);
 
     if(active_) {
         if(!steady_) {
