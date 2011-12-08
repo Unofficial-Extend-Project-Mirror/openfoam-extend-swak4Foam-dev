@@ -48,7 +48,6 @@ namespace Foam
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
-class FieldValueExpressionDriver;
 
 class solvePDECommon
 {
@@ -78,17 +77,14 @@ protected:
     //- name of the field that is being solved for 
     word fieldName_;
 
-    //- the actual field
-    autoPtr<volScalarField> theField_;
-
-    //- the driver that calculates the coefficients
-    autoPtr<FieldValueExpressionDriver> driver_;
-
     //- is this a steady calculation
     bool steady_;
 
     //- do the actual solving
     virtual void solve() = 0;
+
+    //- write specific data
+    virtual void writeData() = 0;
 
     static const NamedEnum<solveAt,3> solveAtNames_;
     solveAt solveAt_;

@@ -48,7 +48,7 @@ Foam::solveLaplacianPDE::solveLaplacianPDE
     const dictionary& dict,
     const bool loadFromFiles
 ):
-    solvePDECommon(
+    solvePDECommonFiniteVolume(
         name,
         obr,
         dict,

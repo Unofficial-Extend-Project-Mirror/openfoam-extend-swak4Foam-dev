@@ -24,70 +24,59 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    solveTransportPDE
+    solvePDECommonFiniteVolume
 
 Description
-    Function object that solves the transport equation
+    Common functionality for functionObjects that solve PDEs - for finite volume
 
 SourceFiles
-    solveTransportPDE.C
+    solvePDECommonFiniteVolume.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef solveTransportPDE_H
-#define solveTransportPDE_H
+#ifndef solvePDECommonFiniteVolume_H
+#define solvePDECommonFiniteVolume_H
 
-#include "solvePDECommonFiniteVolume.H"
+#include "solvePDECommon.H"
 
 namespace Foam
 {
 
-class solveTransportPDE
+// Forward declaration of classes
+class FieldValueExpressionDriver;
+
+class solvePDECommonFiniteVolume
 :
-    public solvePDECommonFiniteVolume
+    public solvePDECommon
 {
     //- Disallow default bitwise copy construct
-    solveTransportPDE(const solveTransportPDE&);
+    solvePDECommonFiniteVolume(const solvePDECommonFiniteVolume&);
     
     //- Disallow default bitwise assignment
-    void operator=(const solveTransportPDE&);
+    void operator=(const solvePDECommonFiniteVolume&);
 
 protected:
 
-    //- the coefficent for the time-derivative
-    string rhoExpression_;
-    dimensionSet rhoDimension_;
+    //- the actual field
+    autoPtr<volScalarField> theField_;
 
-    //- the coefficient for the laplacian term
-    string diffusionExpression_;
-    dimensionSet diffusionDimension_;
+    //- the driver that calculates the coefficients
+    autoPtr<FieldValueExpressionDriver> driver_;
 
-    //- the name of the phi-field. 
-    string phiExpression_;
-    dimensionSet phiDimension_;
-
-    //- the right hand side
-    string sourceExpression_;
-    dimensionSet sourceDimension_;
-
-    //- the right hand side
-    string sourceImplicitExpression_;
-    dimensionSet sourceImplicitDimension_;
-
-    //- do the actual solving
-    void solve();
+    //- write specific data
+    virtual void writeData();
 
 public:
 
     //- Runtime type information
-    TypeName("solveTransportPDE");
+    TypeName("solvePDECommonFiniteVolume");
 
 
     // Constructors
     
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
-    solveTransportPDE
+    solvePDECommonFiniteVolume
     (
         const word& name,
         const objectRegistry&,
@@ -97,14 +86,14 @@ public:
 
 
     //- Destructor
-    virtual ~solveTransportPDE();
+    virtual ~solvePDECommonFiniteVolume();
 
 
     // Member Functions
 
     //- Read the forces data
     virtual void read(const dictionary&);
-
+    
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -48,7 +48,7 @@ Foam::solveTransportPDE::solveTransportPDE
     const dictionary& dict,
     const bool loadFromFiles
 ):
-    solvePDECommon(
+    solvePDECommonFiniteVolume(
         name,
         obr,
         dict,
