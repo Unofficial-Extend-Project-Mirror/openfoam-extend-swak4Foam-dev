@@ -61,17 +61,18 @@ Foam::volFromFaField::volFromFaField
 Foam::volFromFaField::~volFromFaField()
 {}
 
-template<class T,class VF>
+template<class T>
 void Foam::volFromFaField::makeVolField(
-    const T &data,
-    autoPtr<VF> &store
+    const T &data
 )
 {
-    dimensioned<typename VF::value_type> init("nix",data.dimensions(),pTraits<typename VF::value_type>::zero);
+    dimensioned<typename T::value_type> init("nix",data.dimensions(),pTraits<typename T::value_type>::zero);
+    typedef GeometricField<typename T::value_type,fvPatchField,volMesh> VF;
+
     const fvMesh& mesh = refCast<const fvMesh>(obr_);
 
-    if(store.empty()) {
-        store.reset(
+    if(field_.empty()) {
+        field_.reset(
             new VF(
                 IOobject(
                     name_+"Vol",
@@ -89,7 +90,7 @@ void Foam::volFromFaField::makeVolField(
 
     volSurfaceMapping mapper(data.mesh());
     
-    mapper.mapToVolume(data, store->boundaryField());
+    mapper.mapToVolume(data,  dynamic_cast<VF &>(field_()).boundaryField());
 }
 
 void Foam::volFromFaField::read(const dictionary& dict)
@@ -123,16 +124,25 @@ void Foam::volFromFaField::execute()
 
         driver.parse(name_);
 
-        if(driver.resultIsVector()) {
+        if(driver.resultIsTyp<areaVectorField>()) {
             makeVolField(
-                driver.getVector(),
-                vectorField_
+                driver.getResult<areaVectorField>()
             );
-            
-        } else if(driver.resultIsScalar()) {
+        } else if(driver.resultIsTyp<areaScalarField>()) {
             makeVolField(
-                driver.getScalar(),
-                scalarField_
+                driver.getResult<areaScalarField>()
+            );
+        } else if(driver.resultIsTyp<areaTensorField>()) {
+            makeVolField(
+                driver.getResult<areaTensorField>()
+            );
+        } else if(driver.resultIsTyp<areaSymmTensorField>()) {
+            makeVolField(
+                driver.getResult<areaSymmTensorField>()
+            );
+        } else if(driver.resultIsTyp<areaSphericalTensorField>()) {
+            makeVolField(
+                driver.getResult<areaSphericalTensorField>()
             );
         } else {
             WarningIn("Foam::volFromFaField::execute()")
@@ -154,8 +164,7 @@ void Foam::volFromFaField::write()
 
 void Foam::volFromFaField::clearData()
 {
-    scalarField_.clear();
-    vectorField_.clear();
+    field_.clear();
 }
 
 // ************************************************************************* //

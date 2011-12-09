@@ -24,83 +24,70 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    volFromFaField
+    solveAreaTransportPDE
 
 Description
-    Function object that generates a volField from a faField. 
-    The field has only a useful definition on the patch that the faField 
-    is defined for
+    Function object that solves the transport equation
 
 SourceFiles
-    volFromFaField.C
+    solveAreaTransportPDE.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef volFromFaField_H
-#define volFromFaField_H
+#ifndef solveAreaTransportPDE_H
+#define solveAreaTransportPDE_H
 
-#include "primitiveFieldsFwd.H"
-#include "areaFieldsFwd.H"
-#include "pointFieldFwd.H"
-#include "Switch.H"
-#include "autoPtr.H"
-#include "volFieldsFwd.H"
+#include "solvePDECommonFiniteArea.H"
 
 namespace Foam
 {
-// Forward declaration of classes
-class objectRegistry;
-class dictionary;
-class mapPolyMesh;
 
-class FaFieldValueExpressionDriver;
-class regIOobject;
-
-class volFromFaField
+class solveAreaTransportPDE
+:
+    public solvePDECommonFiniteArea
 {
     //- Disallow default bitwise copy construct
-    volFromFaField(const volFromFaField&);
+    solveAreaTransportPDE(const solveAreaTransportPDE&);
     
     //- Disallow default bitwise assignment
-    void operator=(const volFromFaField&);
+    void operator=(const solveAreaTransportPDE&);
 
 protected:
 
-    // Private data
+    //- the coefficent for the time-derivative
+    string rhoExpression_;
+    dimensionSet rhoDimension_;
 
-    //- are we working?
-    bool active_;
+    //- the coefficient for the laplacian term
+    string diffusionExpression_;
+    dimensionSet diffusionDimension_;
 
-    //- Name of the field
-    word name_;
+    //- the name of the phi-field. 
+    string phiExpression_;
+    dimensionSet phiDimension_;
 
-    //- should the file be autowrite
-    Switch autowrite_;
+    //- the right hand side
+    string sourceExpression_;
+    dimensionSet sourceDimension_;
 
-    const objectRegistry& obr_;
+    //- the right hand side
+    string sourceImplicitExpression_;
+    dimensionSet sourceImplicitDimension_;
 
-    const dictionary &dict_;
-
-    autoPtr<regIOobject> field_;
-
-    template<class T>
-    void makeVolField(
-        const T &data
-    );
-
-    autoPtr<FaFieldValueExpressionDriver> driver_;
+    //- do the actual solving
+    void solve();
 
 public:
 
     //- Runtime type information
-    TypeName("volFromFaField");
+    TypeName("solveAreaTransportPDE");
 
 
     // Constructors
     
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
-    volFromFaField
+    solveAreaTransportPDE
     (
         const word& name,
         const objectRegistry&,
@@ -110,39 +97,14 @@ public:
 
 
     //- Destructor
-    virtual ~volFromFaField();
+    virtual ~solveAreaTransportPDE();
 
 
     // Member Functions
 
-    //- Return name of the set of forces
-    virtual const word& name() const
-        {
-            return name_;
-        }
-
     //- Read the forces data
     virtual void read(const dictionary&);
-    
-    //- Execute, currently does nothing
-    virtual void execute();
-    
-    //- Execute at the final time-loop, currently does nothing
-    virtual void end();
-    
-    //- Write the forces
-    virtual void write();
 
-    //- Update for changes of mesh
-    virtual void updateMesh(const mapPolyMesh&)
-        {}
-    
-    //- Update for changes of mesh
-    virtual void movePoints(const pointField&)
-        {}
-
-    //- Clear all data
-    void clearData();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

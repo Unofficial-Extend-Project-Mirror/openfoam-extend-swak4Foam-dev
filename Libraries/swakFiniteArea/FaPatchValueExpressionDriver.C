@@ -81,9 +81,19 @@ FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const dictionary& dic
  :
     FaCommonValueExpressionDriver(dict),
     patch_(
-        faRegionMesh(regionMesh(dict,mesh)).boundary()[
+        faRegionMesh(
+            regionMesh(
+                dict,
+                mesh,
+                searchOnDisc()
+            )).boundary()[
             getPatchID(
-                faRegionMesh(regionMesh(dict,mesh)),
+                faRegionMesh(
+                    regionMesh(
+                        dict,
+                        mesh,
+                        searchOnDisc()
+                    )),
                 dict.lookup(
                     "faPatchName"
                 )

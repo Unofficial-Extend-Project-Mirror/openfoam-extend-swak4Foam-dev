@@ -48,7 +48,7 @@ Foam::solveLaplacianPDE::solveLaplacianPDE
     const dictionary& dict,
     const bool loadFromFiles
 ):
-    solvePDECommon(
+    solvePDECommonFiniteVolume(
         name,
         obr,
         dict,
@@ -79,7 +79,7 @@ Foam::solveLaplacianPDE::~solveLaplacianPDE()
 
 void Foam::solveLaplacianPDE::read(const dictionary& dict)
 {
-    solvePDECommon::read(dict);
+    solvePDECommonFiniteVolume::read(dict);
 
     if(active_) {
         if(!steady_) {

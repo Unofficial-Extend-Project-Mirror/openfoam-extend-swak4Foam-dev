@@ -25,45 +25,42 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "solveTransportPDE.H"
+#include "solveAreaLaplacianPDE.H"
 
 #include "polyMesh.H"
 
-#include "volFields.H"
+#include "FaFieldValueExpressionDriver.H"
 
-#include "FieldValueExpressionDriver.H"
+#include "faScalarMatrix.H"
 
-#include "fvScalarMatrix.H"
-
-#include "fvm.H"
+#include "fam.H"
 
 namespace Foam {
-    defineTypeNameAndDebug(solveTransportPDE,0);
+    defineTypeNameAndDebug(solveAreaLaplacianPDE,0);
 }
 
-Foam::solveTransportPDE::solveTransportPDE
+Foam::solveAreaLaplacianPDE::solveAreaLaplacianPDE
 (
     const word& name,
     const objectRegistry& obr,
     const dictionary& dict,
     const bool loadFromFiles
 ):
-    solvePDECommonFiniteVolume(
+    solvePDECommonFiniteArea(
         name,
         obr,
         dict,
         loadFromFiles
     ),
     rhoDimension_(dimless),
-    diffusionDimension_(dimless),
-    phiDimension_(dimless),
+    lambdaDimension_(dimless),
     sourceDimension_(dimless),
     sourceImplicitDimension_(dimless)
 {
     if (!isA<polyMesh>(obr))
     {
         active_=false;
-        WarningIn("solveTransportPDE::solveTransportPDE")
+        WarningIn("solveAreaLaplacianPDE::solveAreaLaplacianPDE")
             << "Not a polyMesh. Nothing I can do"
                 << endl;
     }
@@ -75,91 +72,82 @@ Foam::solveTransportPDE::solveTransportPDE
     }
 }
 
-Foam::solveTransportPDE::~solveTransportPDE()
+Foam::solveAreaLaplacianPDE::~solveAreaLaplacianPDE()
 {}
 
-void Foam::solveTransportPDE::read(const dictionary& dict)
+void Foam::solveAreaLaplacianPDE::read(const dictionary& dict)
 {
-    solvePDECommonFiniteVolume::read(dict);
+    solvePDECommonFiniteArea::read(dict);
 
     if(active_) {
         if(!steady_) {
             dict.lookup("rho") >> rhoExpression_ >> rhoDimension_;
         }
-        dict.lookup("diffusion") >> diffusionExpression_ >> diffusionDimension_;
+        dict.lookup("lambda") >> lambdaExpression_ >> lambdaDimension_;
         dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
         if(dict.found("sourceImplicit")) {
             dict.lookup("sourceImplicit") 
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
         }
-        dict.lookup("phi") >> phiExpression_ >> phiDimension_;
     }
 }
 
-void Foam::solveTransportPDE::solve()
+void Foam::solveAreaLaplacianPDE::solve()
 {
     if(active_) {
-        const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        dictionary sol=mesh.solutionDict().subDict(fieldName_+"TransportPDE");
+        const faMesh& mesh = driver_->aMesh();
+        dictionary sol=mesh.solutionDict().subDict(fieldName_+"LaplacianPDE");
         
-        FieldValueExpressionDriver &driver=driver_();
+        FaFieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
         for (int corr=0; corr<=nCorr; corr++) {
 
             driver.clearVariables();
 
-            driver.parse(diffusionExpression_);
-            if(!driver.resultIsTyp<volScalarField>()) {
-                FatalErrorIn("Foam::solveTransportPDE::solve()")
-                    << diffusionExpression_ << " does not evaluate to a scalar"
+            driver.parse(lambdaExpression_);
+            if(!driver.resultIsTyp<areaScalarField>()) {
+                FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
+                    << lambdaExpression_ << " does not evaluate to a scalar"
                         << endl
                         << exit(FatalError);
             }
-            volScalarField diffusionField(driver.getResult<volScalarField>());
-            diffusionField.dimensions().reset(diffusionDimension_);
+
+            areaScalarField lambdaField(driver.getResult<areaScalarField>());
+            lambdaField.dimensions().reset(lambdaDimension_);
 
             driver.parse(sourceExpression_);
-            if(!driver.resultIsTyp<volScalarField>()) {
-                FatalErrorIn("Foam::solveTransportPDE::solve()")
+            if(!driver.resultIsTyp<areaScalarField>()) {
+                FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
                     << sourceExpression_ << " does not evaluate to a scalar"
                         << endl
                         << exit(FatalError);
             }
-            volScalarField sourceField(driver.getResult<volScalarField>());
+
+            areaScalarField sourceField(driver.getResult<areaScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
 
-            driver.parse(phiExpression_);
-            if(!driver.resultIsTyp<surfaceScalarField>()) {
-                FatalErrorIn("Foam::solveTransportPDE::solve()")
-                    << phiExpression_ << " does not evaluate to a surface scalar"
-                        << endl
-                        << exit(FatalError);
-            }
-            surfaceScalarField phiField(driver.getResult<surfaceScalarField>());
-            phiField.dimensions().reset(phiDimension_);
+            areaScalarField &f=theField_();
 
-            volScalarField &f=theField_();
-
-            fvMatrix<scalar> eq(
-                fvm::div(phiField,f)
-                -fvm::laplacian(diffusionField,f,"laplacian(diffusion,"+f.name()+")")
+            faMatrix<scalar> eq(
+                -fam::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")
                 ==
                 sourceField
             );
 
             if(!steady_) {
                 driver.parse(rhoExpression_);
-                if(!driver.resultIsTyp<volScalarField>()) {
-                    FatalErrorIn("Foam::solveTransportPDE::solve()")
+                if(!driver.resultIsTyp<areaScalarField>()) {
+                    FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
                         << rhoExpression_ << " does not evaluate to a scalar"
                             << endl
                             << exit(FatalError);
                 }
-                volScalarField rhoField(driver.getResult<volScalarField>());
+
+                areaScalarField rhoField(driver.getResult<areaScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
             
-                fvMatrix<scalar> ddtMatrix=fvm::ddt(f);
+                faMatrix<scalar> ddtMatrix=fam::ddt(f);
                 if(
                     !ddtMatrix.diagonal()
                     &&
@@ -175,16 +163,17 @@ void Foam::solveTransportPDE::solve()
 
             if(sourceImplicitExpression_!="") {
                 driver.parse(sourceImplicitExpression_);
-                if(!driver.resultIsTyp<volScalarField>()) {
-                    FatalErrorIn("Foam::solveTransportPDE::solve()")
+                if(!driver.resultIsTyp<areaScalarField>()) {
+                    FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
                         << sourceImplicitExpression_ << " does not evaluate to a scalar"
                             << endl
                             << exit(FatalError);
                 }
-                volScalarField sourceImplicitField(driver.getResult<volScalarField>());
+
+                areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
             
-                eq-=fvm::SuSp(sourceImplicitField,f);
+                eq-=fam::SuSp(sourceImplicitField,f);
             }
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);

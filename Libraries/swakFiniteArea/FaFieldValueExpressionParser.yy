@@ -179,9 +179,12 @@
 %%
 %start unit;
 
-unit:   exp                     { driver.setScalarResult($1);  }
-        | vexp                  { driver.setVectorResult($1);  }
-        | lexp                  { driver.setLogicalResult($1); }
+unit:   exp                     { driver.setResult($1,false);  }
+        | vexp                  { driver.setResult($1,false);  }
+        | lexp                  { driver.setLogicalResult($1,false); }
+        | fsexp                 { driver.setResult($1,true);  }
+        | fvexp                 { driver.setResult($1,true);  }
+        | flexp                 { driver.setLogicalResult($1,true); }
 ;
 
 vexp:   vector                                    { $$ = $1; }

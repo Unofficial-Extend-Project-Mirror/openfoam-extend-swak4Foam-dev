@@ -37,14 +37,14 @@ SourceFiles
 #ifndef solveTransportPDE_H
 #define solveTransportPDE_H
 
-#include "solvePDECommon.H"
+#include "solvePDECommonFiniteVolume.H"
 
 namespace Foam
 {
 
 class solveTransportPDE
 :
-    public solvePDECommon
+    public solvePDECommonFiniteVolume
 {
     //- Disallow default bitwise copy construct
     solveTransportPDE(const solveTransportPDE&);

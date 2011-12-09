@@ -24,83 +24,59 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    volFromFaField
+    solvePDECommonFiniteVolume
 
 Description
-    Function object that generates a volField from a faField. 
-    The field has only a useful definition on the patch that the faField 
-    is defined for
+    Common functionality for functionObjects that solve PDEs - for finite volume
 
 SourceFiles
-    volFromFaField.C
+    solvePDECommonFiniteVolume.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef volFromFaField_H
-#define volFromFaField_H
+#ifndef solvePDECommonFiniteVolume_H
+#define solvePDECommonFiniteVolume_H
 
-#include "primitiveFieldsFwd.H"
-#include "areaFieldsFwd.H"
-#include "pointFieldFwd.H"
-#include "Switch.H"
-#include "autoPtr.H"
-#include "volFieldsFwd.H"
+#include "solvePDECommon.H"
 
 namespace Foam
 {
+
 // Forward declaration of classes
-class objectRegistry;
-class dictionary;
-class mapPolyMesh;
+class FieldValueExpressionDriver;
 
-class FaFieldValueExpressionDriver;
-class regIOobject;
-
-class volFromFaField
+class solvePDECommonFiniteVolume
+:
+    public solvePDECommon
 {
     //- Disallow default bitwise copy construct
-    volFromFaField(const volFromFaField&);
+    solvePDECommonFiniteVolume(const solvePDECommonFiniteVolume&);
     
     //- Disallow default bitwise assignment
-    void operator=(const volFromFaField&);
+    void operator=(const solvePDECommonFiniteVolume&);
 
 protected:
 
-    // Private data
+    //- the actual field
+    autoPtr<volScalarField> theField_;
 
-    //- are we working?
-    bool active_;
+    //- the driver that calculates the coefficients
+    autoPtr<FieldValueExpressionDriver> driver_;
 
-    //- Name of the field
-    word name_;
-
-    //- should the file be autowrite
-    Switch autowrite_;
-
-    const objectRegistry& obr_;
-
-    const dictionary &dict_;
-
-    autoPtr<regIOobject> field_;
-
-    template<class T>
-    void makeVolField(
-        const T &data
-    );
-
-    autoPtr<FaFieldValueExpressionDriver> driver_;
+    //- write specific data
+    virtual void writeData();
 
 public:
 
     //- Runtime type information
-    TypeName("volFromFaField");
+    TypeName("solvePDECommonFiniteVolume");
 
 
     // Constructors
     
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
-    volFromFaField
+    solvePDECommonFiniteVolume
     (
         const word& name,
         const objectRegistry&,
@@ -110,39 +86,14 @@ public:
 
 
     //- Destructor
-    virtual ~volFromFaField();
+    virtual ~solvePDECommonFiniteVolume();
 
 
     // Member Functions
 
-    //- Return name of the set of forces
-    virtual const word& name() const
-        {
-            return name_;
-        }
-
     //- Read the forces data
     virtual void read(const dictionary&);
     
-    //- Execute, currently does nothing
-    virtual void execute();
-    
-    //- Execute at the final time-loop, currently does nothing
-    virtual void end();
-    
-    //- Write the forces
-    virtual void write();
-
-    //- Update for changes of mesh
-    virtual void updateMesh(const mapPolyMesh&)
-        {}
-    
-    //- Update for changes of mesh
-    virtual void movePoints(const pointField&)
-        {}
-
-    //- Clear all data
-    void clearData();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

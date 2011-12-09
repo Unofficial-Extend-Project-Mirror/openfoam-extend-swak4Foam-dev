@@ -80,10 +80,16 @@ protected:
 
     const dictionary &dict_;
 
-    template<class T>
+    template<class T,class TMask>
     void manipulate(
         const T &data,
-        const areaScalarField &mask
+        const TMask &mask
+    );
+
+    template<class T,class TMask>
+    void manipulateEdge(
+        const T &data,
+        const TMask &mask
     );
 
     autoPtr<FaFieldValueExpressionDriver> driver_;

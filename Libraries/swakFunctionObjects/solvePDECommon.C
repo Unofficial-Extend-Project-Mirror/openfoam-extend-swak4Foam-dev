@@ -29,14 +29,6 @@ License
 
 #include "polyMesh.H"
 
-#include "volFields.H"
-
-#include "FieldValueExpressionDriver.H"
-
-#include "fvScalarMatrix.H"
-
-#include "fvm.H"
-
 namespace Foam {
     defineTypeNameAndDebug(solvePDECommon,0);
 }
@@ -77,42 +69,11 @@ Foam::solvePDECommon::~solvePDECommon()
 void Foam::solvePDECommon::read(const dictionary& dict)
 {
     if(active_) {
-        const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
         solveAt_=
             solveAtNames_.read(
                 dict.lookup("solveAt")
             );
         fieldName_=word(dict.lookup("fieldName"));
-        if(
-            theField_.valid()
-            &&
-            fieldName_!=theField_->name()
-        ) {
-            WarningIn("Foam::solvePDECommon::read(const dictionary& dict)")
-                << "Throwing out field " << theField_->name()
-                    << " and loading " << fieldName_ << ". "
-                    << "This might lead to unpredicatable behaviour" << endl;
-            theField_.clear();
-        }
-        if(!theField_.valid()) {
-            theField_.set(
-                new volScalarField(
-                    IOobject (
-                        fieldName_,
-                        mesh.time().timeName(),
-                        mesh,
-                        IOobject::MUST_READ,
-                        IOobject::AUTO_WRITE
-                    ),
-                    mesh
-                )
-            );
-        }
-
-        driver_->readVariablesAndTables(dict);
-        
-        driver_->createWriterAndRead(name_+"_"+fieldName_+"_"+type());
 
         steady_=readBool(dict.lookup("steady"));
     }
@@ -127,10 +88,8 @@ void Foam::solvePDECommon::execute()
 
         // as this is executed after the general write, write the field separately 
         if(mesh.time().outputTime()) {
-            theField_->write();
+            writeData();
         }
-
-        driver_->tryWrite();
     }
 }
 
@@ -149,9 +108,8 @@ void Foam::solvePDECommon::write()
         mesh.time().outputTime()
     ) {
         solve();
-        theField_->write();
 
-        driver_->tryWrite();
+        writeData();
     }
 }
 

@@ -123,7 +123,6 @@ void Foam::expressionField::execute()
             storeField(
                 driver.getResult<volVectorField>()
             );
-            
         } else if(driver.resultIsTyp<volScalarField>()) {
             storeField(
                 driver.getResult<volScalarField>()
@@ -144,7 +143,6 @@ void Foam::expressionField::execute()
             storeField(
                 driver.getResult<surfaceVectorField>()
             );
-            
         } else if(driver.resultIsTyp<surfaceScalarField>()) {
             storeField(
                 driver.getResult<surfaceScalarField>()

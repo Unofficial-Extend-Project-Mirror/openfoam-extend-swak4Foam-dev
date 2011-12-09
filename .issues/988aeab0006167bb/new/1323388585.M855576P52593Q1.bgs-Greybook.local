@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 09 Dec 2011 00:55:54 +0100
+Subject: Re: Add PDE-functionObjects to 1.6-ext
+Message-Id: <988aeab0006167bb-a3604fd4cd729651-artemis@bgs-Greybook.local>
+References: <988aeab0006167bb-0-artemis@bgs-Greybook.local>
+In-Reply-To: <988aeab0006167bb-0-artemis@bgs-Greybook.local>
+
+Now transport equation works too
