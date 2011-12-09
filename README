@@ -1,7 +1,21 @@
 # -*- mode: org -*-
+#+TITLE: =README= for =swak4Foam=
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
+* About this document
+** Scope
+   This file gives an overview of =swak4Foam= and a history of the
+   features. It is not a canonical documentation.
+** Technical
+   This file is written in the mighty =org-mode= (see
+   [[http://orgmode.org/]]) a markup/outline-mode for (X)Emacs. Using this
+   mode it can be easily (using 3 keystrokes ... it's Emacs) to PDF or
+   HTML to make it more readable (and add a table of contents).
+
+   Please don't try to "beautify" it with any other text editor as
+   this will surly mess up the markup (and keeping the file
+   /org-compatible/ outside of the =org-mode= is a pain in the neck.
 * Contributors etc
 ** Original Author
    Bernhard Gschaider (bgschaid@ice-sf.at)
