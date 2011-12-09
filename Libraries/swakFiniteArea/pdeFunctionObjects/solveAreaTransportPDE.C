@@ -99,7 +99,7 @@ void Foam::solveAreaTransportPDE::read(const dictionary& dict)
 void Foam::solveAreaTransportPDE::solve()
 {
     if(active_) {
-        const fvMesh& mesh = refCast<const fvMesh>(obr_);
+        const faMesh& mesh = driver_->aMesh();
         dictionary sol=mesh.solutionDict().subDict(fieldName_+"TransportPDE");
         
         FaFieldValueExpressionDriver &driver=driver_();
@@ -110,42 +110,35 @@ void Foam::solveAreaTransportPDE::solve()
             driver.clearVariables();
 
             driver.parse(diffusionExpression_);
-            //            if(!driver.resultIsTyp<areaScalarField>()) {
-            if(!driver.resultIsScalar()) {
+            if(!driver.resultIsTyp<areaScalarField>()) {
                 FatalErrorIn("Foam::solveAreaTransportPDE::solve()")
                     << diffusionExpression_ << " does not evaluate to a scalar"
                         << endl
                         << exit(FatalError);
             }
-            //            areaScalarField diffusionField(driver.getResult<areaScalarField>());
-            areaScalarField diffusionField(driver.getScalar());
+            areaScalarField diffusionField(driver.getResult<areaScalarField>());
             diffusionField.dimensions().reset(diffusionDimension_);
 
             driver.parse(sourceExpression_);
-            //            if(!driver.resultIsTyp<areaScalarField>()) {
-            if(!driver.resultIsScalar()) {
+            if(!driver.resultIsTyp<areaScalarField>()) {
                 FatalErrorIn("Foam::solveAreaTransportPDE::solve()")
                     << sourceExpression_ << " does not evaluate to a scalar"
                         << endl
                         << exit(FatalError);
             }
-            //            areaScalarField sourceField(driver.getResult<areaScalarField>());
-            areaScalarField sourceField(driver.getScalar());
+            areaScalarField sourceField(driver.getResult<areaScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
 
             driver.parse(phiExpression_);
-            //            if(!driver.resultIsTyp<surfaceScalarField>()) {
-            if(!driver.resultIsScalar()) {
+            if(!driver.resultIsTyp<edgeScalarField>()) {
                 FatalErrorIn("Foam::solveAreaTransportPDE::solve()")
-                    << phiExpression_ << " does not evaluate to a surface scalar"
+                    << phiExpression_ << " does not evaluate to a edge scalar"
                         << endl
                         << exit(FatalError);
             }
-            //            surfaceScalarField phiField(driver.getResult<surfaceScalarField>());
-            //            edgeScalarField phiField(driver.getResult<surfaceScalarField>());
 
-            // this is wrong but the FaField can't evaluate to edge-fields yet
-            edgeScalarField phiField(fac::interpolate(driver.getScalar()));
+            edgeScalarField phiField(driver.getResult<edgeScalarField>());
+
             phiField.dimensions().reset(phiDimension_);
 
             areaScalarField &f=theField_();
@@ -159,15 +152,13 @@ void Foam::solveAreaTransportPDE::solve()
 
             if(!steady_) {
                 driver.parse(rhoExpression_);
-                //                if(!driver.resultIsTyp<areaScalarField>()) {
-                if(!driver.resultIsScalar()) {
+                if(!driver.resultIsTyp<areaScalarField>()) {
                     FatalErrorIn("Foam::solveAreaTransportPDE::solve()")
                         << rhoExpression_ << " does not evaluate to a scalar"
                             << endl
                             << exit(FatalError);
                 }
-                //                areaScalarField rhoField(driver.getResult<areaScalarField>());
-                areaScalarField rhoField(driver.getScalar());
+                areaScalarField rhoField(driver.getResult<areaScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
             
                 faMatrix<scalar> ddtMatrix=fam::ddt(f);
@@ -186,15 +177,13 @@ void Foam::solveAreaTransportPDE::solve()
 
             if(sourceImplicitExpression_!="") {
                 driver.parse(sourceImplicitExpression_);
-                //                if(!driver.resultIsTyp<areaScalarField>()) {
-                if(!driver.resultIsScalar()) {
+                if(!driver.resultIsTyp<areaScalarField>()) {
                     FatalErrorIn("Foam::solveAreaTransportPDE::solve()")
                         << sourceImplicitExpression_ << " does not evaluate to a scalar"
                             << endl
                             << exit(FatalError);
                 }
-                //                areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
-                areaScalarField sourceImplicitField(driver.getScalar());
+                areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
             
                 eq-=fam::SuSp(sourceImplicitField,f);

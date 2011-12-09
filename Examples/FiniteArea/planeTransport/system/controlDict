@@ -195,6 +195,41 @@ functions {
             average
         );
         valueType internalFaField;
+    }
+    solveYTransient {
+        type solveAreaTransportPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName YTransient;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "0.01" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 0 0 0 0];
+        phi "phis" [0 2 -1 0 0];
+    }    
+    writeYTransient {
+        $writeTTransient;
+
+        fieldName YTransient;
+    }
+    solveYSteady {
+        $solveYTransient;
+        
+        fieldName YSteady;
+        steady true;
+        solveAt startup;
+    }
+    writeYSteady {
+        $writeYTransient;
+
+        fieldName YSteady;
+    }
+    compareYSteadyTransient {
+        $compareTSteadyTransient;
+        expression "YSteady-YTransient";
+    }
  }
 
 // ************************************************************************* //

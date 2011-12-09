@@ -266,6 +266,86 @@ inline FType *FaFieldValueExpressionDriver::makeConstantField(const typename FTy
     return f;
 }
 
+template<class T>
+void FaFieldValueExpressionDriver::setResult(T *r,bool isSurfaceField) 
+{
+    resultField_.reset(r);
+
+    //    T &result=dynamicCast<T &>(resultField_()); // doesn't work with gcc 4.2
+
+    T &result=dynamic_cast<T &>(resultField_());
+
+    if(!resultDimension_.dimensionless()) {
+        result.dimensions().reset(resultDimension_);
+    }
+
+    typ_=pTraits<T>::typeName;
+
+    result_.setResult(result.internalField());
+
+    isLogical_=false;
+    isSurfaceField_=isSurfaceField;
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField) 
+{
+    resultField_.reset(r);
+
+    //    T &result=dynamicCast<T &>(resultField_()); // doesn't work with gcc 4.2
+
+    T &result=dynamic_cast<T &>(resultField_());
+
+    if(!resultDimension_.dimensionless()) {
+        result.dimensions().reset(resultDimension_);
+    }
+
+    typ_=pTraits<bool>::typeName;
+
+    Field<bool> yesOrNo(result.internalField().size());
+    forAll(yesOrNo,i) {
+        yesOrNo[i]=mag(result.internalField()[i])>SMALL;
+    }
+
+    result_.setResult(yesOrNo);
+
+    isLogical_=true;
+    isSurfaceField_=isSurfaceField;
+}
+
+template<class T>
+const T &FaFieldValueExpressionDriver::getResult() 
+{
+    if(!resultField_.valid()) {
+        FatalErrorIn("FaFieldValueExpressionDriver::getResult()")
+            << "When asking for a " << pTraits<T>::typeName
+                << ": No result present"
+                << endl
+                << exit(FatalError);
+    }
+
+    //    return dynamicCast<const T &>(resultField_()); // doesn't work with gcc 4.2
+    return dynamic_cast<const T &>(resultField_());
+}
+
+template<class T>
+bool FaFieldValueExpressionDriver::resultIsTyp(bool isLogical) 
+{
+    if(!resultField_.valid()) {
+        FatalErrorIn("FaFieldValueExpressionDriver::isTyp(bool isLogical)")
+            << "When asking for a " << pTraits<T>::typeName
+                << ": No result present"
+                << endl
+                << exit(FatalError);
+    }
+
+    return (
+        resultField_().type() == pTraits<T>::typeName
+        &&
+        isLogical == isLogical_
+    );
+}
+
 } // end namespace
 
 #endif

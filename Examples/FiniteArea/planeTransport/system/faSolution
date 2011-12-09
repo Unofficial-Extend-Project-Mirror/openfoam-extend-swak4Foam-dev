@@ -34,6 +34,12 @@ solvers
     TSteady {
         $TTransient;
     }
+    YTransient {
+        $Cs;
+    }
+    YSteady {
+        $Cs;
+    }
 }
 
 PISO
@@ -58,10 +64,18 @@ relaxationFactors
 }
 
 TTransientLaplacianPDE {
-    $SIMPLE;
+    $PISO;
 }
 
 TSteadyLaplacianPDE {
+    $SIMPLE;
+}
+
+YTransientTransportPDE {
+    $PISO;
+}
+
+YSteadyTransportPDE {
     $SIMPLE;
 }
 

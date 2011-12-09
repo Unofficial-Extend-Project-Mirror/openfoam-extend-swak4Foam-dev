@@ -106,27 +106,25 @@ void Foam::solveAreaLaplacianPDE::solve()
             driver.clearVariables();
 
             driver.parse(lambdaExpression_);
-            //            if(!driver.resultIsTyp<areaScalarField>()) { TODO
-            if(!driver.resultIsScalar()) {
+            if(!driver.resultIsTyp<areaScalarField>()) {
                 FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
                     << lambdaExpression_ << " does not evaluate to a scalar"
                         << endl
                         << exit(FatalError);
             }
-            //            areaScalarField lambdaField(driver.getResult<areaScalarField>()); TODO
-            areaScalarField lambdaField(driver.getScalar());
+
+            areaScalarField lambdaField(driver.getResult<areaScalarField>());
             lambdaField.dimensions().reset(lambdaDimension_);
 
             driver.parse(sourceExpression_);
-            //            if(!driver.resultIsTyp<areaScalarField>()) {
-            if(!driver.resultIsScalar()) {
+            if(!driver.resultIsTyp<areaScalarField>()) {
                 FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
                     << sourceExpression_ << " does not evaluate to a scalar"
                         << endl
                         << exit(FatalError);
             }
-            //            areaScalarField sourceField(driver.getResult<areaScalarField>()); TODO
-            areaScalarField sourceField(driver.getScalar());
+
+            areaScalarField sourceField(driver.getResult<areaScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
 
             areaScalarField &f=theField_();
@@ -139,15 +137,14 @@ void Foam::solveAreaLaplacianPDE::solve()
 
             if(!steady_) {
                 driver.parse(rhoExpression_);
-                //                if(!driver.resultIsTyp<volScalarField>()) { //TODO
-                if(!driver.resultIsScalar()) {
+                if(!driver.resultIsTyp<areaScalarField>()) {
                     FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
                         << rhoExpression_ << " does not evaluate to a scalar"
                             << endl
                             << exit(FatalError);
                 }
-                //                volScalarField rhoField(driver.getResult<volScalarField>()); TODO
-                areaScalarField rhoField(driver.getScalar());
+
+                areaScalarField rhoField(driver.getResult<areaScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
             
                 faMatrix<scalar> ddtMatrix=fam::ddt(f);
@@ -166,15 +163,14 @@ void Foam::solveAreaLaplacianPDE::solve()
 
             if(sourceImplicitExpression_!="") {
                 driver.parse(sourceImplicitExpression_);
-                //                if(!driver.resultIsTyp<areaScalarField>()) { TODO
-                if(!driver.resultIsScalar()) {
+                if(!driver.resultIsTyp<areaScalarField>()) {
                     FatalErrorIn("Foam::solveAreaLaplacianPDE::solve()")
                         << sourceImplicitExpression_ << " does not evaluate to a scalar"
                             << endl
                             << exit(FatalError);
                 }
-                //                areaScalarField sourceImplicitField(driver.getResult<volScalarField>()); TODO
-                areaScalarField sourceImplicitField(driver.getScalar());
+
+                areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
             
                 eq-=fam::SuSp(sourceImplicitField,f);

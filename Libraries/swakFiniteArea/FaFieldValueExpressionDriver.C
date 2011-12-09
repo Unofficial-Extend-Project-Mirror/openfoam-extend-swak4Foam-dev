@@ -25,7 +25,9 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
         false        
     ),
       mesh_(faRegionMesh(mesh)),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -42,7 +44,9 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
         searchOnDisc        
     ),
       mesh_(faRegionMesh(mesh)),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -59,7 +63,9 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
                   mesh,
                   searchOnDisc()
               ))),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
     if(dict.found("dimensions")) {
@@ -69,45 +75,6 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
 
 FaFieldValueExpressionDriver::~FaFieldValueExpressionDriver ()
 {
-}
-
-void FaFieldValueExpressionDriver::setScalarResult(areaScalarField *r) {
-    if(debug) {
-        Info << "FaFieldValueExpressionDriver::setScalarResult(areaScalarField *r)" << endl;
-    }
-
-    sresult_.reset(r);
-
-    if(!resultDimension_.dimensionless()) {
-        sresult_->dimensions().reset(resultDimension_);
-    }
-    typ_=SCALAR_TYPE;
-    result_.setResult(sresult_->internalField());
-}
-
-void FaFieldValueExpressionDriver::setLogicalResult(areaScalarField *r) {
-    if(debug) {
-        Info << "FaFieldValueExpressionDriver::setLogicalResult(areaScalarField *r)" << endl;
-    }
-
-    sresult_.reset(r);
-
-    typ_=LOGICAL_TYPE;
-    result_.setResult(sresult_->internalField());
-}
-
-void FaFieldValueExpressionDriver::setVectorResult(areaVectorField *r) {
-    if(debug) {
-        Info << "FaFieldValueExpressionDriver::setVectorResult(areaVectorField *r)" << endl;
-    }
-
-    vresult_.reset(r);
-
-    if(!resultDimension_.dimensionless()) {
-        vresult_->dimensions().reset(resultDimension_);
-    }
-    typ_=VECTOR_TYPE;
-    result_.setResult(vresult_->internalField());
 }
 
 void FaFieldValueExpressionDriver::parse (const std::string &f)

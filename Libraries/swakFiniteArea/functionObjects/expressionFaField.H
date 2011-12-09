@@ -51,6 +51,7 @@ class dictionary;
 class mapPolyMesh;
 
 class FaFieldValueExpressionDriver;
+class regIOobject;
 
 class expressionFaField
 {
@@ -78,16 +79,13 @@ protected:
 
     const objectRegistry& obr_;
 
+    autoPtr<regIOobject> field_;
+
     const dictionary &dict_;
-
-    autoPtr<areaVectorField> vectorField_;
-
-    autoPtr<areaScalarField> scalarField_;
 
     template<class T>
     void storeField(
-        const T &data,
-        autoPtr<T> &store
+        const T &data
     );
 
     autoPtr<FaFieldValueExpressionDriver> driver_;

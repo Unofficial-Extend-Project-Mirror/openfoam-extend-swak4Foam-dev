@@ -414,6 +414,10 @@ S_{expl} + S_{impl} T
   for a description of the GNU General Public License terms under which 
   you can copy the files.
 * Known bugs
+  The following list is not complete. If the Artemis extension (see
+  above) is installed then
+: hg ilist
+  gives a more up-to-date list
 ** Moving meshes and =sampledSurfaces= 
    It seems that with moving meshes =sampledSurfaces= don't get
    updated. This seems to be a problem with OpenFOAM itself (the
@@ -606,6 +610,9 @@ S_{expl} + S_{impl} T
 **** Refactoring of the FieldDriver
      - now can also produce surfaceFields
      - full support of =tensor=, =symmTensor= and =sphericalTensor=
+**** Refactoring of the FaFieldDriver
+     - now can also produce edgeFields
+     No support for tensors yet
 **** Writing of =storedVariables=
      If necessary (for instance =swakExpression=-functionObject) the
      =storedVariables= are written to disc (into a subdirectory
@@ -693,6 +700,8 @@ S_{expl} + S_{impl} T
      boundary conditions like =buoyantPressure= that rely on it to
      work. Best used together with conditional function objects ("If
      =g= is missing ....")
+**** PDE-functionObjects for =finiteArea=
+     Solve transport and laplacian equation
 *** Bug fixes
 **** Compilation with Intel-Compiler possible
      The =Utilities= failed with the Intel-compiler. Compilation now
