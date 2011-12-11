@@ -149,10 +149,9 @@ void setField
         );
     }
 
-    // TODO: edgeFields
-    //    FaFieldValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
+    FaFieldValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
 
-    //    FaFieldValueExpressionDriver::copyCalculatedPatches(*tmp,result);
+    FaFieldValueExpressionDriver::copyCalculatedPatches(*tmp,result);
 
     label setCells=0;
 
@@ -167,8 +166,7 @@ void setField
     reduce(totalCells,plusOp<label>());
     reduce(setCells,plusOp<label>());
 
-    // TODO: edgeFields
-    //    FaFieldValueExpressionDriver::setValuePatches(*tmp,keepPatches,valuePatches);
+    FaFieldValueExpressionDriver::setValuePatches(*tmp,keepPatches,valuePatches);
 
     Info << " Setting " << setCells << " of " << totalCells << " cells" << endl;
 

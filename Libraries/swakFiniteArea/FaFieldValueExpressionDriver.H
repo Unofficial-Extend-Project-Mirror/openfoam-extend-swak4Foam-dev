@@ -171,10 +171,44 @@ public:
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
     template<class T>
-    static void makePatches(GeometricField<T,faPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void makePatches(
+        GeometricField<T,faPatchField,areaMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void setValuePatches(GeometricField<T,faPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void setValuePatches(
+        GeometricField<T,faPatchField,areaMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void makePatches(
+        GeometricField<T,faePatchField,edgeMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void setValuePatches(
+        GeometricField<T,faePatchField,edgeMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,faPatchField,areaMesh> &field,
+        const GeometricField<T,faPatchField,areaMesh> &orig
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,faePatchField,edgeMesh> &field,
+        const GeometricField<T,faePatchField,edgeMesh> &orig
+    );
 
     // allow acces to the setResult-method
     friend class parserFaField::FaFieldValueExpressionParser;
