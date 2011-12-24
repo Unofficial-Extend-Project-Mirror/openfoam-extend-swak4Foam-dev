@@ -620,6 +620,14 @@ S_{expl} + S_{impl} T
      The =Allwmake=-script now checks for the correct bison-version
      (and the existence of =bison=) and fails if it doesn't seem to be
      the right one
+**** Supply a header with preprocessor-symbols about the used OF-version
+     To allow distinguishing different OF-versions as discussed in the
+     bug report
+     [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=114]]
+     the =Allwmake=-script now generates a header file
+     =foamVersion4swak.H= that defines the symbols
+     =FOAM_VERSION4SWAK_MAJOR=, =FOAM_VERSION4SWAK_MINOR= and
+     =FOAM_VERSION4SWAK_PATCH= 
 *** Technical
 **** Refactoring of the FieldDriver
      - now can also produce surfaceFields
