@@ -31,3 +31,4 @@ debian/control
 
 swakConfiguration
 
+Libraries/swak4FoamParsers/foamVersion4swak.H
