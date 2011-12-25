@@ -37,14 +37,14 @@ SourceFiles
 #ifndef solveLaplacianPDE_H
 #define solveLaplacianPDE_H
 
-#include "solvePDECommon.H"
+#include "solvePDECommonFiniteVolume.H"
 
 namespace Foam
 {
 
 class solveLaplacianPDE
 :
-    public solvePDECommon
+    public solvePDECommonFiniteVolume
 {
     //- Disallow default bitwise copy construct
     solveLaplacianPDE(const solveLaplacianPDE&);

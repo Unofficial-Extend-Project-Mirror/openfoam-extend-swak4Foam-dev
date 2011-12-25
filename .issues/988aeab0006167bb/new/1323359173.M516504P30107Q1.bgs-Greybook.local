@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 08 Dec 2011 16:45:11 +0100
+Subject: Re: Add PDE-functionObjects to 1.6-ext
+Message-Id: <988aeab0006167bb-f23d968de05159ce-artemis@bgs-Greybook.local>
+References: <988aeab0006167bb-0-artemis@bgs-Greybook.local>
+In-Reply-To: <988aeab0006167bb-0-artemis@bgs-Greybook.local>
+
+Works for Laplaciant equation.
+
+Problem with transport equation is that currently there is no way to
+get the edgeFields out of the FaField-Driver

@@ -49,8 +49,8 @@ void setField
     const string &name,
     const faMesh &mesh,
     const string &time,
-    const GeometricField<T,faPatchField,areaMesh> &result,
-    const areaScalarField &cond,
+    const T &result,
+    const scalarField &cond,
     bool create,
     const dimensionSet &dim,
     bool keepPatches,
@@ -58,13 +58,11 @@ void setField
     bool createVolumeField,
     bool noWrite
 ) {
-    dimensioned<T> init("nix",dim,pTraits<T>::zero);
-    typedef GeometricField<T,faPatchField,areaMesh> aField;
-    typedef GeometricField<T,fvPatchField,volMesh> vField;
+    dimensioned<typename T::value_type> init("nix",dim,typename T::value_type());
 
-    aField *tmp;
+    T *tmp;
     if(create) {
-      tmp=new aField
+      tmp=new T
         (
             IOobject  
             (
@@ -78,7 +76,7 @@ void setField
             init
         );
     } else {
-      tmp=new aField
+      tmp=new T
         (
             IOobject  
             (
@@ -93,6 +91,7 @@ void setField
     }
 
     FaFieldValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
+    //    FaFieldValueExpressionDriver::copyCalculatedPatches(*tmp,result);
 
     label setCells=0;
 
@@ -121,6 +120,8 @@ void setField
         word vName(name+"Volume");
         Info << " Writing volume field to " << vName << endl;
         
+        typedef GeometricField<typename T::value_type,fvPatchField,volMesh> vField;
+
         vField volField(
             IOobject  
             (
@@ -161,7 +162,7 @@ void doAnExpression
     bool noWrite
 ) {
     const string &time = runTime.timeName();
-    bool isScalar=false;
+    word oldFieldType="none";
 
     if(!create) {
         IOobject f 
@@ -174,16 +175,10 @@ void doAnExpression
             );
         f.headerOk();
         
-        word classN=f.headerClassName();
-        if(classN=="areaScalarField") {
-            isScalar=true;
-        } else if (classN!="areaVectorField") {
-            FatalErrorIn("doAnExpression()")
-                //            << args.executable()
-                << " unsupported type " << classN << " of field " 
-                    << field << " or not existing at time " << time
-                    << exit(FatalError);
-        }
+        oldFieldType=f.headerClassName();
+
+        Info << " Modifying field " << field 
+            << " of type " << oldFieldType << "\n" << endl;
     } else {
         Info << " Creating field " << field << "\n" << endl;
     }
@@ -219,45 +214,131 @@ void doAnExpression
 
     driver.clearVariables();
 
-    driver.parse(condition);
-    if(!driver.resultIsLogical()) {
-        FatalErrorIn("doAnExpression()")
+    scalarField conditionField;
+    bool evaluatedCondition=false;
+    bool conditionIsSurface=false;
+    if(condition!="true") {
+        evaluatedCondition=true;
+
+        driver.parse(condition);
+        if(
+            !driver.resultIsTyp<areaScalarField>(true)
+            &&
+            !driver.resultIsTyp<edgeScalarField>(true)
+        ) {
+            FatalErrorIn("doAnExpression()")
                 << " condition: " << condition 
                     << " does not evaluate to a logical expression" 
                     << exit(FatalError);
-    }
+        }
 
-    areaScalarField conditionField(driver.getScalar());
-
-    driver.parse(expression);
-
-    if(create) {
-        if(driver.resultIsVector()) {
-            isScalar=false;
-        } else if(driver.resultIsScalar()) {
-            isScalar=true;
+        if(driver.resultIsTyp<areaScalarField>(true)) {
+            conditionField=driver.getResult<areaScalarField>().internalField();
+            conditionIsSurface=false;
         } else {
-            FatalErrorIn("doAnExpression()")
-                << " result is neither scalar nor vector" 
-            << exit(FatalError);
+            conditionField=driver.getResult<edgeScalarField>().internalField();
+            conditionIsSurface=true;
         }
     }
 
-    if(driver.resultIsVector()==isScalar) {
+    driver.parse(expression);
+
+    if(!evaluatedCondition) {
+        conditionIsSurface=driver.isSurfaceField();
+
+        if(conditionIsSurface) {
+            conditionField=scalarField(driver.aMesh().faces().size(),1);
+        } else {
+            conditionField=scalarField(driver.aMesh().edges().size(),1);
+        }
+    }
+
+    if(create) {
+        oldFieldType=driver.typ();
+    }
+
+    if(conditionIsSurface!=driver.isSurfaceField()) {
+        FatalErrorIn("doAnExpression()")
+            << "Inconsistent expression and condition. "
+                << "Expression " << expression << " is defined on the "
+                << (driver.isSurfaceField() ? "edges" : "faces")
+                << " while condition " << condition << " is defined on "
+                << (conditionIsSurface ? "edges" : "faces")
+                << endl
+                << exit(FatalError);
+    }
+
+    if(driver.typ()!=oldFieldType) {
         FatalErrorIn("doAnExpression()")
             //            << args.executable()
                 << " inconsistent types: " << field << " is  " 
-                    << (isScalar ? "scalar" : "vector" ) 
+                    << oldFieldType
                     << " while the expression evaluates to a " 
-                    << (!driver.resultIsVector() ? "scalar" : "vector" )
+                    << driver.typ()
             << exit(FatalError);
     } else {
-        if(isScalar) {
+        if(driver.typ()==pTraits<areaScalarField>::typeName) {
             setField(
                 field,
                 driver.aMesh(),
                 time,
-                driver.getScalar(),
+                driver.getResult<areaScalarField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<areaVectorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<areaVectorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<areaTensorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<areaTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<areaSymmTensorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<areaSymmTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<areaSphericalTensorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<areaSphericalTensorField>(),
                 conditionField,
                 create,
                 dim,
@@ -267,19 +348,11 @@ void doAnExpression
                 noWrite
             );
         } else {
-	  setField(
-              field,
-              driver.aMesh(),
-              time,
-              driver.getVector(),
-              conditionField,
-              create,
-              dim,
-              keepPatches,
-              valuePatches,
-              createVolumeField,
-              noWrite
-          );
+            FatalErrorIn("doAnExpression")
+                << "Expression " << expression
+                    << " evaluates to an unsupported type "
+                    << driver.typ() << endl
+                    << exit(FatalError);
         }
     }
 }

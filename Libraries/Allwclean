@@ -6,6 +6,8 @@ fi
 
 wclean swak4FoamParsers
 
+rm -f swak4FoamParsers/foamVersion4swak.H
+
 wclean groovyBC
 
 wclean swakFunctionObjects

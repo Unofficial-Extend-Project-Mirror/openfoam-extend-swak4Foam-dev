@@ -17,6 +17,8 @@ calculateGlobalVariables.C
 calculateGlobalVariablesFunctionObject.C
 
 solvePDECommon.C
+solvePDECommonFiniteVolume.C
+
 solveLaplacianPDE.C
 solveLaplacianPDEFunctionObject.C
 solveTransportPDE.C

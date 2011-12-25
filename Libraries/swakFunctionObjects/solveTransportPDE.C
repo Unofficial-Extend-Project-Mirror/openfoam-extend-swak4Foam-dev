@@ -48,7 +48,7 @@ Foam::solveTransportPDE::solveTransportPDE
     const dictionary& dict,
     const bool loadFromFiles
 ):
-    solvePDECommon(
+    solvePDECommonFiniteVolume(
         name,
         obr,
         dict,
@@ -80,7 +80,7 @@ Foam::solveTransportPDE::~solveTransportPDE()
 
 void Foam::solveTransportPDE::read(const dictionary& dict)
 {
-    solvePDECommon::read(dict);
+    solvePDECommonFiniteVolume::read(dict);
 
     if(active_) {
         if(!steady_) {
