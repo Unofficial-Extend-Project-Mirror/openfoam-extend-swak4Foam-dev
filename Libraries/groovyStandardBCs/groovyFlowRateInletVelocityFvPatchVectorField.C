@@ -46,7 +46,13 @@ groovyFlowRateInletVelocityFvPatchVectorField
     const DimensionedField<vector, volMesh>& iF
 )
 :
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    fixedValueFvPatchField<vector>(p, iF),
+    phiName_("phi"),
+    rhoName_("rho"),
+#else
     flowRateInletVelocityFvPatchVectorField(p, iF),
+#endif
     flowRateExpression_("0"),
     driver_(this->patch())
 {}
@@ -62,7 +68,13 @@ groovyFlowRateInletVelocityFvPatchVectorField
     const fvPatchFieldMapper& mapper
 )
 :
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    fixedValueFvPatchField<vector>(ptf, p, iF, mapper),
+    phiName_(ptf.phiName_),
+    rhoName_(ptf.rhoName_),
+#else
     flowRateInletVelocityFvPatchVectorField(ptf, p, iF, mapper),
+#endif
     flowRateExpression_(ptf.flowRateExpression_),
     driver_(this->patch(),ptf.driver_)
 {}
@@ -77,10 +89,31 @@ groovyFlowRateInletVelocityFvPatchVectorField
     const dictionary& dict
 )
 :
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    fixedValueFvPatchField<vector>(p, iF, dict),
+    phiName_(dict.lookupOrDefault<word>("phi", "phi")),
+    rhoName_(dict.lookupOrDefault<word>("rho", "rho")),
+#else
     flowRateInletVelocityFvPatchVectorField(p, iF, dict),
+#endif
     flowRateExpression_(dict.lookup("flowRateExpression")),
     driver_(dict,this->patch())
 {
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    WarningIn(
+        "groovyFlowRateInletVelocityFvPatchVectorField::"
+        "groovyFlowRateInletVelocityFvPatchVectorField"
+        "("
+        "const fvPatch& p,"
+        "const DimensionedField<vector, volMesh>& iF,"
+        "const dictionary& dict"
+        ")"
+    ) 
+        << "Starting with OF 2.1 this boundary condition is deprecated. Use the"
+            << " regular flowRateInletVelocityFvPatch with the swak4Foam-DataEntry"
+            << endl
+            << endl;
+#endif
 }
 
 
@@ -91,7 +124,13 @@ groovyFlowRateInletVelocityFvPatchVectorField
     const groovyFlowRateInletVelocityFvPatchVectorField& ptf
 )
 :
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    fixedValueFvPatchField<vector>(ptf),
+    phiName_(ptf.phiName_),
+    rhoName_(ptf.rhoName_),
+#else
     flowRateInletVelocityFvPatchVectorField(ptf),
+#endif
     flowRateExpression_(ptf.flowRateExpression_),
     driver_(this->patch(),ptf.driver_)
 {}
@@ -105,7 +144,13 @@ groovyFlowRateInletVelocityFvPatchVectorField
     const DimensionedField<vector, volMesh>& iF
 )
 :
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    fixedValueFvPatchField<vector>(ptf, iF),
+    phiName_(ptf.phiName_),
+    rhoName_(ptf.rhoName_),
+#else
     flowRateInletVelocityFvPatchVectorField(ptf, iF),
+#endif
     flowRateExpression_(ptf.flowRateExpression_),
     driver_(this->patch(),ptf.driver_)
 {}
@@ -122,15 +167,58 @@ void Foam::groovyFlowRateInletVelocityFvPatchVectorField::updateCoeffs()
 
     driver_.clearVariables();
 
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    const scalar flowRate=driver_.evaluateUniform<scalar>(this->flowRateExpression_);
+
+    // Borrowed from the regular flowRateInletVelocityFvPatchVectorField
+    const scalar avgU = -flowRate/gSum(patch().magSf());
+
+    tmp<vectorField> n = patch().nf();
+
+    const surfaceScalarField& phi =
+        db().lookupObject<surfaceScalarField>(phiName_);
+
+    if (phi.dimensions() == dimVelocity*dimArea)
+    {
+        // volumetric flow-rate
+        operator==(n*avgU);
+    }
+    else if (phi.dimensions() == dimDensity*dimVelocity*dimArea)
+    {
+        const fvPatchField<scalar>& rhop =
+            patch().lookupPatchField<volScalarField, scalar>(rhoName_);
+
+        // mass flow-rate
+        operator==(n*avgU/rhop);
+    }
+    else
+    {
+        FatalErrorIn
+        (
+            "flowRateInletVelocityFvPatchVectorField::updateCoeffs()"
+        )   << "dimensions of " << phiName_ << " are incorrect" << nl
+            << "    on patch " << this->patch().name()
+            << " of field " << this->dimensionedInternalField().name()
+            << " in file " << this->dimensionedInternalField().objectPath()
+            << nl << exit(FatalError);
+    }
+
+    fixedValueFvPatchField<vector>::updateCoeffs();
+#else
     flowRate()=driver_.evaluateUniform<scalar>(this->flowRateExpression_);
-    
+
     flowRateInletVelocityFvPatchVectorField::updateCoeffs();
+#endif
 }
 
 
 void Foam::groovyFlowRateInletVelocityFvPatchVectorField::write(Ostream& os) const
 {
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    fixedValueFvPatchField<vector>::write(os);
+#else
     flowRateInletVelocityFvPatchVectorField::write(os);
+#endif
 
     os.writeKeyword("flowRateExpression")
         << flowRateExpression_ << token::END_STATEMENT << nl;

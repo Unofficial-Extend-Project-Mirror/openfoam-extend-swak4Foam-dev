@@ -37,8 +37,8 @@
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
 ** Requirements
-   - Version 2.0 of OpenFOAM (a version that works with 1.6, 1.6-ext
-     and 1.7 is available separately)
+   - Version 2.0 or 2.1 of OpenFOAM (a version that works with 1.6,
+     1.6-ext and 1.7 is available separately)
      - The =finiteArea=-stuff will probably work with version 2.0-ext
        (once that is available)
    - the compiler generators =bison= and =flex=
@@ -786,3 +786,9 @@ S_{expl} + S_{impl} T
      problem with =calculated= patches causes =funkySetFields= to fail
      with stock boundary conditions if not all fields are present in
      memory 
+
+*** Discontinued features
+**** =groovyFlowRateInletVelocity=
+     This boundary condition will be removed in future releases
+     because the base class now supports the more general
+     =DataEntry=-class for which a =swak=-subclass exists
