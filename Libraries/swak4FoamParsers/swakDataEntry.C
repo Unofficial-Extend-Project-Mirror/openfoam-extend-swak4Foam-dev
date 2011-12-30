@@ -45,11 +45,11 @@ Foam::swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary
     
     data_.read(is);
 
-    expression_=string(data_.lookup("expression"));
-
     driver_=CommonValueExpressionDriver::New(
         data_
     );
+
+    expression_=string(data_.lookup("expression"));
 }
 
 

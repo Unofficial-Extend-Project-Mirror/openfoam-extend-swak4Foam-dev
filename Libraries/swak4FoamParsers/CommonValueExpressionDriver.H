@@ -62,6 +62,8 @@ namespace Foam
 
 class ExpressionDriverWriter;
 
+class initSwakFunctionObject;
+
 class CommonValueExpressionDriver
 {
     // Private data
@@ -436,6 +438,8 @@ public:
     void tryWrite() const;
 
     friend class ExpressionDriverWriter;
+
+    friend class initSwakFunctionObject;
 };
 
 

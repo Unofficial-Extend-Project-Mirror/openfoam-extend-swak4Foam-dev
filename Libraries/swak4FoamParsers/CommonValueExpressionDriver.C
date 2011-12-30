@@ -56,7 +56,8 @@ const fvMesh &CommonValueExpressionDriver::getDefaultMesh()
 {
     if(defaultMeshPtr_==NULL) {
         FatalErrorIn("CommonValueExpressionDriver::getDefaultMesh()")
-            << "No default mesh set (value is NULL)"
+            << "No default mesh set (value is NULL)" << endl
+                << "Try using the 'initSwakFunctionObject' to work   around this"
                 << endl
                 << abort(FatalError);
     }

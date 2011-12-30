@@ -88,7 +88,7 @@ class swakDataEntry
 public:
 
     // Runtime type information
-    TypeName("constant");
+    TypeName("swak");
 
 
     // Constructors
