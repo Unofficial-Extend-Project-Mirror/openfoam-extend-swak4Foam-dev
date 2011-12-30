@@ -68,15 +68,19 @@ void SampledSurfaceValueExpressionDriver::setDebug()
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-//     SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const sampledSurface &surf,const SampledSurfaceValueExpressionDriver& orig)
-// :
-//         SubsetValueExpressionDriver(orig),
-//         theSurface_(surf.clone()),
-//         interpolate_(orig.interpolate_),
-//         interpolationType_(orig.interpolationType_)
-// {
-//     setDebug();
-// }
+SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
+    const sampledSurface &surf,
+    const SampledSurfaceValueExpressionDriver& orig
+)
+:
+        SubsetValueExpressionDriver(orig),
+        //        theSurface_(surf.clone()),
+        theSurface_(surf),
+        interpolate_(orig.interpolate_),
+        interpolationType_(orig.interpolationType_)
+{
+    setDebug();
+}
 
 SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     sampledSurface &surf,
@@ -140,7 +144,7 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 bool SampledSurfaceValueExpressionDriver::update()
 {
-    bool updated=theSurface_.update(); // valgrind reports huge memory losses here
+    bool updated=const_cast<sampledSurface &>(theSurface_).update(); // valgrind reports huge memory losses here
     if(debug) {
         Pout << "Updated: " << updated << " " << this->size() << endl;
     }

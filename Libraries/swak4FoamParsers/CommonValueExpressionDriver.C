@@ -50,6 +50,40 @@ defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
     // Currently not working
 bool CommonValueExpressionDriver::cacheSets_=true;
 
+const fvMesh *CommonValueExpressionDriver::defaultMeshPtr_=NULL;
+
+const fvMesh &CommonValueExpressionDriver::getDefaultMesh()
+{
+    if(defaultMeshPtr_==NULL) {
+        FatalErrorIn("CommonValueExpressionDriver::getDefaultMesh()")
+            << "No default mesh set (value is NULL)"
+                << endl
+                << abort(FatalError);
+    }
+    return *defaultMeshPtr_;
+}
+
+bool CommonValueExpressionDriver::resetDefaultMesh(const fvMesh &mesh)
+{
+    bool wasSet=defaultMeshPtr_!=NULL;
+
+    defaultMeshPtr_=&mesh;
+    
+    return wasSet;
+}
+
+bool CommonValueExpressionDriver::setUnsetDefaultMesh(const fvMesh &mesh)
+{
+    if(defaultMeshPtr_==NULL) {
+        Info << "swak4Foam: Setting default mesh" << endl;
+        defaultMeshPtr_=&mesh;
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 
@@ -180,10 +214,23 @@ void CommonValueExpressionDriver::setSearchBehaviour(
 
 autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
 (
+    const dictionary& dict
+)
+{
+    return CommonValueExpressionDriver::New(
+        dict,
+        getDefaultMesh()
+    );
+}
+
+autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
+(
     const dictionary& dict,
     const fvMesh& mesh
 )
 {
+    setUnsetDefaultMesh(mesh);
+
     word driverType(dict.lookup("valueType"));
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(driverType);
@@ -218,6 +265,8 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     const fvMesh& mesh
 )
 {
+    setUnsetDefaultMesh(mesh);
+
     idNameConstructorTable::iterator cstrIter =
         idNameConstructorTablePtr_->find(driverType);
 

@@ -80,6 +80,9 @@ class CommonValueExpressionDriver
     //- (which would be an overkill and inconvenient)
     autoPtr<ExpressionDriverWriter> writer_;
 
+    //- pointer to the "default" mesh
+    static const fvMesh *defaultMeshPtr_;
+
 protected:
 
     ExpressionResult result_;
@@ -127,6 +130,15 @@ protected:
 
     //- get the current time
     virtual const word time() const;
+
+    //- set the default Mesh (if it is unset)
+    static bool setUnsetDefaultMesh(const fvMesh &);
+
+    //- set the default Mesh 
+    static bool resetDefaultMesh(const fvMesh &);
+
+    //- get the default Mesh (if one is defined)
+    static const fvMesh &getDefaultMesh();
 
     //- find out which mesh is meant from the dictionary
     static const fvMesh &regionMesh
@@ -240,6 +252,8 @@ public:
         const CommonValueExpressionDriver&
     );
 
+    virtual autoPtr<CommonValueExpressionDriver> clone() const = 0;
+
     //- Construct from a dictionary
     CommonValueExpressionDriver(const dictionary&);
 
@@ -248,6 +262,12 @@ public:
     (
         const dictionary& dict,
         const fvMesh& mesh
+    );
+
+    //- Return a reference to the selected value driver
+    static autoPtr<CommonValueExpressionDriver> New
+    (
+        const dictionary& dict
     );
 
     //- Return a reference to the selected value driver

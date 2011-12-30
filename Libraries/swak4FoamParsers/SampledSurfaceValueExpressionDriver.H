@@ -63,7 +63,7 @@ class SampledSurfaceValueExpressionDriver
     public SubsetValueExpressionDriver
 {
     // Private data
-    sampledSurface &theSurface_;
+    const sampledSurface &theSurface_;
 
     // Private Member Functions
 
@@ -102,7 +102,14 @@ public:
     SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
 //     //- Copy construct
-//     SampledSurfaceValueExpressionDriver(const sampledSurface &,const SampledSurfaceValueExpressionDriver&);
+    SampledSurfaceValueExpressionDriver(const sampledSurface &,const SampledSurfaceValueExpressionDriver&);
+
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new SampledSurfaceValueExpressionDriver(theSurface_,*this)
+            );
+        }
 
     // Destructor
 

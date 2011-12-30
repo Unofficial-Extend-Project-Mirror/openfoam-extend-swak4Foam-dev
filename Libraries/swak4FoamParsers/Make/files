@@ -15,6 +15,7 @@ PatchValueExpressionParser.yy
 SubsetValueExpressionParser.yy
 
 CommonValueExpressionDriver.C
+makeSwakDataEntry.C
 
 FieldValueExpressionLexer.ll
 FieldValueExpressionDriver.C
