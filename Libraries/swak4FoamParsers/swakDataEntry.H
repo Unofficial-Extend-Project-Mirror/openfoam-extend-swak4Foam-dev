@@ -85,6 +85,9 @@ class swakDataEntry
         void operator=(const swakDataEntry<Type>&);
 
 
+    //- get (and set if necessary) the driver
+    CommonValueExpressionDriver &driver();
+
 public:
 
     // Runtime type information

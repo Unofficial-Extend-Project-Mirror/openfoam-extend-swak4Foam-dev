@@ -45,10 +45,6 @@ Foam::swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary
     
     data_.read(is);
 
-    driver_=CommonValueExpressionDriver::New(
-        data_
-    );
-
     expression_=string(data_.lookup("expression"));
 }
 
@@ -58,7 +54,7 @@ Foam::swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
 :
     DataEntry<Type>(cnst),
     data_(cnst.data_),
-    driver_(cnst.driver_->clone()),
+    //    driver_(cnst.driver_->clone()),
     expression_(cnst.expression_)
 {}
 
@@ -73,15 +69,28 @@ Foam::swakDataEntry<Type>::~swakDataEntry()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
+Foam::CommonValueExpressionDriver &Foam::swakDataEntry<Type>::driver()
+{
+    if(!driver_.valid()) {
+        driver_=CommonValueExpressionDriver::New(
+            data_
+        );
+    }
+
+    return driver_();
+}
+
+template<class Type>
 Type Foam::swakDataEntry<Type>::value(const scalar x) const
 {
-    CommonValueExpressionDriver &driver=const_cast<CommonValueExpressionDriver &>(
-        driver_()
-    );
-    // TODO: set x as a variable
-    driver.clearVariables();
+    CommonValueExpressionDriver &theDriver=const_cast<swakDataEntry<Type> &>(
+        *this
+    ).driver();    
 
-    return driver.evaluateUniform<Type>(expression_);
+    // TODO: set x as a variable
+    theDriver.clearVariables();
+
+    return theDriver.evaluateUniform<Type>(expression_);
 }
 
 // * * * * * * * * * * * * * *  IOStream operators * * * * * * * * * * * * * //

@@ -101,7 +101,11 @@
     The basis of =swak4Foam=: the expression parsers with the logic to
     access the /OpenFOAM/ data-structures.
 
-    None of the other software pieces compile without it
+    None of the other software pieces compile without it.
+
+    Also defines a subclass to =DataEntry= that uses
+    =swak=-expressions and a function object =initSwakFunctionObject=
+    that might be used if this fails
 *** =simpleFunctionObjects=
     A collection of function objects that was previously separately
     available at
@@ -672,6 +676,13 @@ S_{expl} + S_{impl} T
 **** =simpleFunctionObjects= now write vectors and tensors without brackets
      Data files can now be written without brackets but each component on
      its own. The number of entries in the header is not adjusted
+**** A /default mesh/ for the drivers exists
+     For drivers that don't have access to a =fvMesh= a default mesh
+     exists. This default mesh is defined by the first =fvMesh= that
+     is used during the construction of *any* driver.
+
+     Definition of the default mesh can be forced using the
+     =initSwakFunctionObject= (see the test case =flowRateAngledDuct=)
 *** New features
 **** General =phi= in =solveTransportPDE=
      Due to the refactoring of the =FieldDriver= now =phi= can be
@@ -761,6 +772,12 @@ S_{expl} + S_{impl} T
      =g= is missing ....")
 **** PDE-functionObjects for =finiteArea=
      Solve transport and laplacian equation
+**** Subclass to =DataEntry= that uses /swak/-expressions
+     This is defined in the =swak4FoamParsers=-library. The class
+     needs a default mesh defined to construct the driver. Definition
+     of the default mesh (if no other driver was constructed in some
+     function-object or by a =groovyBC=) can be forced using the
+     =initSwakFunctionObject= (see the test case =flowRateAngledDuct=)
 *** Bug fixes
 **** Compilation with Intel-Compiler possible
      The =Utilities= failed with the Intel-compiler. Compilation now
