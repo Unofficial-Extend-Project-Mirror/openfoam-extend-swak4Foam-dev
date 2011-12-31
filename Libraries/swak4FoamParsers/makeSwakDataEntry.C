@@ -38,9 +38,11 @@ License
 namespace Foam {
     makeDataEntryType(swakDataEntry,scalar);
     makeDataEntryType(swakDataEntry,vector);
+#if (FOAM_VERSION4SWAK_MAJOR>=2) && (FOAM_VERSION4SWAK_MINOR>0)
     makeDataEntryType(swakDataEntry,tensor);
     makeDataEntryType(swakDataEntry,sphericalTensor);
     makeDataEntryType(swakDataEntry,symmTensor);
+#endif
 }
 
 // ************************************************************************* //

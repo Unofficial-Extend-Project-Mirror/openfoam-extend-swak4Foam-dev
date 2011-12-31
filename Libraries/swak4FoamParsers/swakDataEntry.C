@@ -123,7 +123,7 @@ Foam::Ostream& Foam::operator<<
     return os;
 }
 
-
+#if (FOAM_VERSION4SWAK_MAJOR>=2) && (FOAM_VERSION4SWAK_MINOR>0)
 template<class Type>
 void Foam::swakDataEntry<Type>::writeData(Ostream& os) const
 {
@@ -133,5 +133,6 @@ void Foam::swakDataEntry<Type>::writeData(Ostream& os) const
     data_.write(os,true);
     os  << token::END_STATEMENT << nl;
 }
+#endif
 
 // ************************************************************************* //
