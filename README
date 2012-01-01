@@ -478,6 +478,12 @@ S_{expl} + S_{impl} T
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
+** Non-treatment of the inner product =&= of symmetric tensors
+   Before OpenFOAM 2.1 the inner product of two symmetric tensors was
+   a symmetric tensor. Since 2.1 it is a general tensor. As the
+   general treatment in the grammar would be confusing currently the
+   this product was removed from the grammar and therefor will not be
+   correctly parsed
 * History
 ** 2010-09-13
    First Release
