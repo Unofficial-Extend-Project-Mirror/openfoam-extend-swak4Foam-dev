@@ -613,7 +613,8 @@ yexp:   symmTensor                  { $$ = $1; }
         | yexp '+' hexp 		          { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | exp '*' yexp 	   	                  { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | yexp '*' exp 	   	                  { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | yexp '&' yexp 	   	          { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+// This worked before gcc4.6 (or the Problem is OF 2.1)
+//        | yexp '&' yexp 	   	          { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | hexp '&' yexp 	   	          { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | yexp '&' hexp 	   	          { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | yexp '/' exp 	   	                  { sameSize($1,$3); $$ = new Foam::volSymmTensorField(*$1 / *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
@@ -709,7 +710,8 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | fyexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | fsexp '*' fyexp 	   	                  { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | fyexp '*' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | fyexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+// This worked before gcc4.6 (or the Problem is OF 2.1)
+//        | fyexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | fhexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | fyexp '&' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | fyexp '/' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::surfaceSymmTensorField(*$1 / *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
