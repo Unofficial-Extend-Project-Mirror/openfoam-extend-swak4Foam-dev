@@ -124,6 +124,13 @@ public:
     //- Copy construct
     PatchValueExpressionDriver(const PatchValueExpressionDriver&);
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new PatchValueExpressionDriver(*this)
+            );
+        }
+
     // Destructor
 
     ~PatchValueExpressionDriver();

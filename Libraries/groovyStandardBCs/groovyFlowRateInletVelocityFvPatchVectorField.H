@@ -55,9 +55,21 @@ namespace Foam
 
 class groovyFlowRateInletVelocityFvPatchVectorField
 :
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+    public fixedValueFvPatchVectorField
+#else
     public flowRateInletVelocityFvPatchVectorField
+#endif
 {
     // Private data
+
+#if FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR>=2
+        //- Name of the flux transporting the field
+        word phiName_;
+
+        //- Name of the density field used to normalize the mass flux
+        word rhoName_;
+#endif
 
     string flowRateExpression_;
 

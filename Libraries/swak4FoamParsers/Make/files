@@ -15,6 +15,7 @@ PatchValueExpressionParser.yy
 SubsetValueExpressionParser.yy
 
 CommonValueExpressionDriver.C
+makeSwakDataEntry.C
 
 FieldValueExpressionLexer.ll
 FieldValueExpressionDriver.C
@@ -34,5 +35,7 @@ FaceZoneValueExpressionDriver.C
 
 SampledSurfaceValueExpressionDriver.C
 SampledSetValueExpressionDriver.C
+
+initSwakFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers

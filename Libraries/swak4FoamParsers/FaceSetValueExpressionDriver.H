@@ -95,6 +95,14 @@ public:
     //- Copy construct
     FaceSetValueExpressionDriver(const faceSet &,const FaceSetValueExpressionDriver&);
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new FaceSetValueExpressionDriver(faceSet_(),*this)
+            );
+        }
+
+
     // Destructor
 
     ~FaceSetValueExpressionDriver();
