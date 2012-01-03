@@ -724,6 +724,8 @@ S_{expl} + S_{impl} T
      =g= is missing ....")
 **** PDE-functionObjects for =finiteArea=
      Solve transport and laplacian equation
+**** =funkySetAreaField= now also writes edgeFields
+     Similar to the =surfaceFields= in =funkySetFields=
 *** Bug fixes
 **** Compilation with Intel-Compiler possible
      The =Utilities= failed with the Intel-compiler. Compilation now
