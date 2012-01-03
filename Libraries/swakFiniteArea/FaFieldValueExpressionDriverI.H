@@ -4,6 +4,7 @@
 #define VALUE_EXPRESSION_DRIVER_I_H
 
 #include "fixedValueFaPatchFields.H"
+#include "fixedValueFaePatchFields.H"
 #include "zeroGradientFaPatchFields.H"
 
 namespace Foam {
@@ -150,7 +151,7 @@ void FaFieldValueExpressionDriver::makePatches
         ) 
         && 
         (
-            typeid(patch)==typeid(fvPatch)
+            typeid(patch)==typeid(faPatch)
         )
     ) {
         if(isValuePatch){
@@ -168,6 +169,100 @@ void FaFieldValueExpressionDriver::makePatches
   forAll(bf,i) {
       bf.set(i,bfNew[i]);
   }
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::makePatches
+(
+    GeometricField<T,faePatchField,edgeMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<faePatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const faPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            || 
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(faPatch)
+        )
+    ) {
+        if(isValuePatch){
+            bfNew[patchI]=new fixedValueFaePatchField<T>(patch,field);  
+        } else {
+            // this is different because there is no zeroGradient for edge fields
+            bfNew[patchI]=new calculatedFaePatchField<T>(patch,field);      
+        }
+    } else {
+        bfNew[patchI]=bf[patchI].clone().ptr();
+    }
+  }
+
+  bf.clear();
+  bf.setSize(bfNew.size());
+  forAll(bf,i) {
+      bf.set(i,bfNew[i]);
+  }
+}
+
+
+template<class T>
+void FaFieldValueExpressionDriver::copyCalculatedPatches
+(
+    GeometricField<T,faPatchField,areaMesh> &field,
+    const GeometricField<T,faPatchField,areaMesh> &orig
+) {
+    typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    List<faPatchField<T> *>bfNew(bf.size());
+    
+    forAll(bf,patchI) {
+        faPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFaPatchField<T>)
+        ) {
+            pf==pf.patchInternalField();
+        }
+    }
+    //    field.correctBoundaryConditions();
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::copyCalculatedPatches
+(
+    GeometricField<T,faePatchField,edgeMesh> &field,
+    const GeometricField<T,faePatchField,edgeMesh> &orig
+) {
+    typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    const typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bfOrig=orig.boundaryField();
+
+    forAll(bf,patchI) {
+        faePatchField<T> &pf=bf[patchI];
+        const faePatchField<T> &pfOrig=bfOrig[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFaePatchField<T>)
+            &&
+            typeid(pfOrig)==typeid(calculatedFaePatchField<T>)
+        ) {
+            pf==pfOrig;
+        }
+    }
 }
 
 template<class T>
@@ -198,13 +293,63 @@ void FaFieldValueExpressionDriver::setValuePatches
         ) 
         && 
         (
-            typeid(patch)==typeid(fvPatch)
+            typeid(patch)==typeid(faPatch)
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFaPatchField<T>)) {
             faPatchField<T> &pf=field.boundaryField()[patchI];
             
             pf==pf.patchInternalField();
+        }
+    }
+  }
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::setValuePatches
+(
+    GeometricField<T,faePatchField,edgeMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<faePatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const faPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            ||
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(faPatch)
+        )
+    ) {
+        if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFaePatchField<T>)) {
+            faePatchField<T> &pf=field.boundaryField()[patchI];
+            //            pf==pf.patchInternalField();
+            WarningIn(
+                "FaFieldValueExpressionDriver::setValuePatches"
+                "("
+                "GeometricField<T,faePatchField,edgeMesh> &field,"
+                "bool keepPatches,"
+                "const wordList &fixedPatches"
+                ")" 
+            ) << "There is no patchInternalField() for faePatchField. " 
+                << "Nothing done for patch " << patch.name() 
+                << " but setting it to " << pTraits<T>::zero << endl;            
+            pf==pTraits<T>::zero;
         }
     }
   }

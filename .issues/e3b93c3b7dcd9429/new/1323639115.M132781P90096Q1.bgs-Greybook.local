@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 11 Dec 2011 22:30:59 +0100
+Subject: Re: calculated-BC separate treatment in finiteArea
+Message-Id: <e3b93c3b7dcd9429-a1f238aad185ab20-artemis@bgs-Greybook.local>
+References: <e3b93c3b7dcd9429-0-artemis@bgs-Greybook.local>
+In-Reply-To: <e3b93c3b7dcd9429-0-artemis@bgs-Greybook.local>
+
+Was needed to resolve b3eb710a3d256713 (funkySetAreaField does not
+support edge fields) 
+
+Done
+

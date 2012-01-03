@@ -43,6 +43,65 @@ Description
 
 #include "timeSelector.H"
 
+#include "areaFields.H"
+
+template<class T,template<class> class PField,class Mesh>
+void writeVolumeField(
+    const string &name,
+    const faMesh &mesh,
+    const string &time,
+    const dimensioned<T> &init,
+    const GeometricField<T,PField,Mesh> &theField
+);
+
+template<class T,class Mesh>
+void writeVolumeField(
+    const string &name,
+    const faMesh &mesh,
+    const string &time,
+    const dimensioned<T> &init,
+    const GeometricField<T,faPatchField,Mesh> &theField
+) {
+    word vName(name+"Volume");
+    Info << " Writing volume field to " << vName << endl;
+    
+    typedef GeometricField<T,fvPatchField,volMesh> vField;
+    
+    vField volField(
+        IOobject  
+        (
+            vName,
+            time,
+            dynamic_cast<const fvMesh&>(mesh.thisDb()),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        dynamic_cast<const fvMesh&>(mesh.thisDb()),
+        init,
+        "fixedValue"
+    );
+    
+    volSurfaceMapping mapper(mesh);
+    
+    mapper.mapToVolume(theField, volField.boundaryField());
+    volField.write();       
+}
+
+template<class T,template<class> class PField,class Mesh>
+void writeVolumeField(
+    const string &name,
+    const faMesh &mesh,
+    const string &time,
+    const dimensioned<T> &init,
+    const GeometricField<T,PField,Mesh> &theField
+) {
+    typedef GeometricField<T,PField,Mesh> aFieldType;
+
+    WarningIn("template<class T,template<class> class PField,class Mesh> void writeVolumeField")
+        << "No way to interpolate a " << pTraits<aFieldType>::typeName
+            << " to a volume-field. Skipping" << endl;
+}
+
 template<class T>
 void setField
 (
@@ -91,7 +150,8 @@ void setField
     }
 
     FaFieldValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
-    //    FaFieldValueExpressionDriver::copyCalculatedPatches(*tmp,result);
+
+    FaFieldValueExpressionDriver::copyCalculatedPatches(*tmp,result);
 
     label setCells=0;
 
@@ -117,29 +177,13 @@ void setField
     }
 
     if(createVolumeField) {
-        word vName(name+"Volume");
-        Info << " Writing volume field to " << vName << endl;
-        
-        typedef GeometricField<typename T::value_type,fvPatchField,volMesh> vField;
-
-        vField volField(
-            IOobject  
-            (
-                vName,
-                time,
-                dynamic_cast<const fvMesh&>(mesh.thisDb()),
-		IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            dynamic_cast<const fvMesh&>(mesh.thisDb()),
+        writeVolumeField(
+            name,
+            mesh,
+            time,
             init,
-            "fixedValue"
+            *tmp
         );
-
-        volSurfaceMapping mapper(mesh);
-
-        mapper.mapToVolume(*tmp, volField.boundaryField());
-        volField.write();       
     }
     delete tmp;
 }
@@ -339,6 +383,76 @@ void doAnExpression
                 driver.aMesh(),
                 time,
                 driver.getResult<areaSphericalTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<edgeScalarField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<edgeScalarField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<edgeVectorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<edgeVectorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<edgeTensorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<edgeTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<edgeSymmTensorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<edgeSymmTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches,
+                createVolumeField,
+                noWrite
+            );
+        } else if(driver.typ()==pTraits<edgeSphericalTensorField>::typeName) {
+            setField(
+                field,
+                driver.aMesh(),
+                time,
+                driver.getResult<edgeSphericalTensorField>(),
                 conditionField,
                 create,
                 dim,
