@@ -69,7 +69,8 @@ Field<T> patchMassFlowAverageFunctionObject::average(const word& fieldName,T uns
     }
 
     if(verbose()) {
-        Info << " Mass-Flow-Weighted Averages of " << fieldName << " :";
+        Info<< regionString() 
+            << " Mass-Flow-Weighted Averages of " << fieldName << " :";
 
         forAll(patchNames_, patchI)
         {

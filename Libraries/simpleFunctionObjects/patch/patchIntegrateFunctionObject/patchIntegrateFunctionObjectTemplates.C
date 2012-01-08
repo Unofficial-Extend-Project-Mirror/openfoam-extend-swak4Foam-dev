@@ -68,7 +68,8 @@ Field<T> patchIntegrateFunctionObject::integrate(const word& fieldName,T unsetVa
     }
 
     if(verbose()) {
-        Info << " Integrals of " << fieldName << " :";
+        Info<< regionString() 
+            << " Integrals of " << fieldName << " :";
 
         forAll(patchNames_, patchI)
         {

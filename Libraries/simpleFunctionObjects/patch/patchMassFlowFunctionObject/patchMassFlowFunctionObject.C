@@ -93,7 +93,8 @@ void patchMassFlowFunctionObject::write()
     }
 
     if(verbose()) {
-        Info << " MassFlows: ";
+        Info<< regionString() 
+            << " MassFlows: ";
 
         forAll(patchNames_, patchI)
         {

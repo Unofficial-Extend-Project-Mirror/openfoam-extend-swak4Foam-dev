@@ -92,6 +92,10 @@ protected:
 
     word regionName_;
 
+    string regionString_;
+
+    const char *regionString() const { return regionString_.c_str(); }
+
     const objectRegistry& obr_;
 
     //- Do output on the terminal
