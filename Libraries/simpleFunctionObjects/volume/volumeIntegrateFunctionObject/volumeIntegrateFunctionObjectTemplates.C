@@ -64,7 +64,8 @@ Field<T> volumeIntegrateFunctionObject::integrate(const word& fieldName,T unsetV
     }
 
     if(verbose()) {
-        Info << " Integral of " << fieldName << " = "
+        Info<< regionString() 
+            << " Integral of " << fieldName << " = "
             << vals[0] << "  " 
             << fld.dimensions()*dimensionSet(0,3,0,0,0,0,0)
             << endl;

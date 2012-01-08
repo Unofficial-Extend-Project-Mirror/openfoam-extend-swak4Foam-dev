@@ -70,7 +70,8 @@ Field<T> patchAverageFunctionObject::average(const word& fieldName,T unsetVal) c
     }
 
     if(verbose()) {
-        Info << " Averages of " << fieldName << " :";
+        Info<< regionString() 
+            << " Averages of " << fieldName << " :";
 
         forAll(patchNames_, patchI)
         {

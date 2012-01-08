@@ -71,7 +71,8 @@ Field<T> patchFieldFlowFunctionObject::fieldFlow(const word& fieldName,T unsetVa
     }
 
     if(verbose()) {
-        Info << " Flows of " << fieldName << " :";
+        Info<< regionString() 
+            << " Flows of " << fieldName << " :";
 
         forAll(patchNames_, patchI)
         {

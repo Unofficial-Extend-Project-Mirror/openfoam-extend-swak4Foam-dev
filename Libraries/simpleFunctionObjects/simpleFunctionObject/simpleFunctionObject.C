@@ -78,6 +78,11 @@ simpleFunctionObject::simpleFunctionObject
     ),
     obr_(time_.lookupObject<objectRegistry>(regionName_))
 {
+    if(regionName_==polyMesh::defaultRegion) {
+        regionString_ = "";
+    } else {
+        regionString_ = " Region: "+regionName_+" :";
+    }
 }
 
 
