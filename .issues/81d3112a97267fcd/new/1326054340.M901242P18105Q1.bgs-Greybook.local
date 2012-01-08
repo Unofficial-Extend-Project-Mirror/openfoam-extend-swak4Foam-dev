@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 08 Jan 2012 21:25:11 +0100
+Subject: Re: Output name of region in simpleFunctionObjects
+Message-Id: <81d3112a97267fcd-9326b85bf7db2bb1-artemis@bgs-Greybook.local>
+References: <81d3112a97267fcd-0-artemis@bgs-Greybook.local>
+In-Reply-To: <81d3112a97267fcd-0-artemis@bgs-Greybook.local>
+
+Compiles and runs on 1.x and 2.x
