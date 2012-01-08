@@ -817,3 +817,11 @@ S_{expl} + S_{impl} T
      because the base class now supports the more general
      =DataEntry=-class for which a =swak=-subclass exists
 ** Next release
+*** New features
+**** Region name in =simpleFunctionObject=.outputs
+     To distinguish the output of various instances of
+     =functionObjects= from the =simpleFunctionObjects=-library in
+     multi-region cases the screen-output is prefixed with the region
+     name. For the default region nothing changes. Directory names
+     stay the same as they are unambiguous anyway (they contain the
+     name of the functionObject)

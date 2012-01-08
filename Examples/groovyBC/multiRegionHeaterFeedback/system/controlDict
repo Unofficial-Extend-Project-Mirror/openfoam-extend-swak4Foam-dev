@@ -53,7 +53,7 @@ maxDi           10.0;
 adjustTimeStep  yes;
 
 functions
-(
+{
     tempOut{
         type patchExpression;
         accumulations (
@@ -103,10 +103,35 @@ functions
         valueType internalField;
         verbose true;
     }
-);
+    tBottom {
+        type volumeAverage;
+        region bottomAir;
+        verbose true;
+        fields (
+            T
+        );
+    }
+    tHeater {
+        $tBottom;
+        region heater;
+    }
+    tLeft {
+        $tBottom;
+        region leftSolid;
+    }
+    tRight {
+        $tBottom;
+        region rightSolid;
+    }
+    tTop {
+        $tBottom;
+        region topAir;
+    }
+};
 
 libs (
     "libgroovyBC.so"  
+    "libsimpleFunctionObjects.so" 
     "libsimpleSwakFunctionObjects.so" 
     "libswakFunctionObjects.so" 
     "libgroovyStandardBCs.so"
