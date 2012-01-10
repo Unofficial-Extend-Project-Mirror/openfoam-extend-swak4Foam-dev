@@ -63,7 +63,8 @@ Field<T> volumeMinMaxFunctionObject::minMax(const word& fieldName,T unsetVal) co
         ).value();
 
     if(verbose()) {
-        Info << " Range of " << fieldName << " [ "
+        Info<< regionString() 
+            << " Range of " << fieldName << " [ "
             << vals[0] << " , " << vals[1] << " ] "
             << fld.dimensions() << endl;
     }

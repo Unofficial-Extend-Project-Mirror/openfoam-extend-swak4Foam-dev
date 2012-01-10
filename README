@@ -610,7 +610,7 @@ S_{expl} + S_{impl} T
      If a variable is defined and the patch which it is defined on
      doesn't have any faces the variable is reported on that processor
      as /not existing/ and the whole run fails
-** Next release
+** 2012-01-04
 *** Cases changed
 **** =circulatingSplash=
      Fixed according to a suggestion by Andreas Otto. Now runs again
@@ -751,3 +751,12 @@ S_{expl} + S_{impl} T
      problem with =calculated= patches causes =funkySetFields= to fail
      with stock boundary conditions if not all fields are present in
      memory 
+** Next release
+*** New features
+**** Region name in =simpleFunctionObject=.outputs
+     To distinguish the output of various instances of
+     =functionObjects= from the =simpleFunctionObjects=-library in
+     multi-region cases the screen-output is prefixed with the region
+     name. For the default region nothing changes. Directory names
+     stay the same as they are unambiguous anyway (they contain the
+     name of the functionObject)

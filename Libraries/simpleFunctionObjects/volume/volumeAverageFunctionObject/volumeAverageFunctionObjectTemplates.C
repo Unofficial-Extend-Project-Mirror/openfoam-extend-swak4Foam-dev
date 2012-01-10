@@ -60,7 +60,8 @@ Field<T> volumeAverageFunctionObject::average(const word& fieldName,T unsetVal) 
     ).value();
 
     if(verbose()) {
-        Info << " Average of " << fieldName << " = "
+        Info<< regionString() 
+            << " Average of " << fieldName << " = "
             << vals[0] << "  " << fld.dimensions() << endl;
     }
 
