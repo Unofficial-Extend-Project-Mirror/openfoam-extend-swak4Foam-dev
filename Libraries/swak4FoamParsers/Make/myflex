@@ -1,10 +1,6 @@
 .SUFFIXES: .ll
 
-ifeq (,$(WM_NCOMPPROCS))
-lltoo = rm -f $*.C ; flex -f $$SOURCE ; mv *.c $*.C ; $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $*.C -o $@ 
-else
-lltoo = echo "Can't compile $$SOURCE with a value of WM_NCOMPPROCS of $(WM_NCOMPPROCS). Please clear it"
-endif
+lltoo = rm -f $*.C ; mkdir $$$$; cd $$$$; flex -f ../$$SOURCE ; mv *.c ../$*.C ; cd ..; rm -r $$$$; $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $*.C -o $@ 
 
 .ll.dep:
 	$(MAKE_DEP)
