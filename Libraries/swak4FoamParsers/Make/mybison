@@ -1,10 +1,6 @@
 .SUFFIXES: .yy
 
-ifeq (,$(WM_NCOMPPROCS))
-yytoo = rm -f $*.C $*.tab.hh; bison -ra -v $(YYPREFIX) -d $$SOURCE ;  mv *.tab.cc $*.C ; sed -i.bak "s/position.hh/$(*F)_position.hh/" location.hh ; mv location.hh lnInclude/$(*F)_location.hh ; mv stack.hh lnInclude/$(*F)_stack.hh ; mv position.hh lnInclude/$(*F)_position.hh ; sed -i.bak "s/stack.hh/$(*F)_stack.hh/;s/location.hh/$(*F)_location.hh/" $(*F).tab.hh ;mv *.hh lnInclude ; touch -r $$SOURCE lnInclude/$(*F)*.hh ;  $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c  $*.C -o $@ 
-else
-yytoo = echo "Can't compile $$SOURCE with a value of WM_NCOMPPROCS of $(WM_NCOMPPROCS). Please clear it"
-endif
+yytoo = rm -f $*.C $*.tab.hh; mkdir $$$$; cd $$$$; bison -ra -v $(YYPREFIX) -d ../$$SOURCE ; mv *.tab.cc ../$*.C ; sed -i.bak "s/position.hh/$(*F)_position.hh/" location.hh ; mv location.hh ../lnInclude/$(*F)_location.hh ; mv stack.hh ../lnInclude/$(*F)_stack.hh ; mv position.hh ../lnInclude/$(*F)_position.hh ; sed -i.bak "s/stack.hh/$(*F)_stack.hh/;s/location.hh/$(*F)_location.hh/" $(*F).tab.hh ;mv *.hh ../lnInclude ; touch -r ../$$SOURCE ../lnInclude/$(*F)*.hh ; cd ..; rm -r $$$$; $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c  $*.C -o $@ 
 
 .yy.dep:
 	$(MAKE_DEP)
