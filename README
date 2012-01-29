@@ -26,7 +26,10 @@
    - Peter Keller :: =sprinklerInlet=-case
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
-   - Bruno Santos :: Compilation with Intel compiler and Mingw
+   - Bruno Santos :: 
+     - Compilation with Intel compiler and Mingw
+     - Rewrite of =mybison= and =myflex= to allow parallel compilation
+       with =WM_COMPPROCS=
    - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
                       problem with =groovyBC=)
    If anyone is forgotten: let me know
@@ -825,3 +828,8 @@ S_{expl} + S_{impl} T
      name. For the default region nothing changes. Directory names
      stay the same as they are unambiguous anyway (they contain the
      name of the functionObject)
+*** Infrastructure
+**** Full parallel compilation
+     Thanks to patches supplied by Bruno Santos (see
+     [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
+     compilation of the libraries is now possible in parallel
