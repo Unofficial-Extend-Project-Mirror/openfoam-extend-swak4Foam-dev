@@ -18,6 +18,7 @@
 #include <fvcAverage.H>
 #include <surfaceInterpolate.H>
 #include <fvcLaplacian.H>
+#include <fvcDdt.H>
 
 #include <fvMatrix.H>
 
@@ -170,6 +171,7 @@
 %token TOKEN_snGrad
 %token TOKEN_magSqrGradGrad;
 %token TOKEN_laplacian
+%token TOKEN_ddt
 
 %token TOKEN_integrate
 %token TOKEN_surfSum
@@ -531,6 +533,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }
+        | TOKEN_ddt '(' TOKEN_SID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volScalarField>(*$3)() ).ptr(); }
         | TOKEN_LINE            		   { $$ = driver.makeConstantField<Foam::volScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
         | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::volScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete$3; }
 ;

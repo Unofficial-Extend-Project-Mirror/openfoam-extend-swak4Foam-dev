@@ -141,6 +141,7 @@ magSqrGradGrad        return token::TOKEN_magSqrGradGrad;
 snGrad                return token::TOKEN_snGrad;
 div                   return token::TOKEN_div;
 laplacian             return token::TOKEN_laplacian;
+ddt                   return token::TOKEN_ddt;
 
 integrate             return token::TOKEN_integrate;
 surfSum               return token::TOKEN_surfSum;
