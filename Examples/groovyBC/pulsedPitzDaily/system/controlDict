@@ -304,6 +304,21 @@ functions
         );
         verbose true;
     }
+    pressureChangeInTimeWall
+    {
+        type patchExpression;
+        valueType patch;
+        patches ( 
+            lowerWall 
+            upperWall
+        );
+        expression "mag((p-oldTime(p))/deltaT())";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
 );
 
 libs ( 
