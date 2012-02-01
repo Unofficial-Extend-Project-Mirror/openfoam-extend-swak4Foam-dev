@@ -192,7 +192,11 @@ protected:
     inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
 
     template<class T>
-    autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
+    autoPtr<T> getOrReadField(
+        const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
 
     template<class T>
     inline void correctField(T &f) const;

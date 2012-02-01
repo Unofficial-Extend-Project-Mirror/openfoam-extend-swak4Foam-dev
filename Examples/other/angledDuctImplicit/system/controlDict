@@ -922,17 +922,6 @@ functions
             }
         }
     }
-    pressureChangeInTime
-    {
-        type swakExpression;
-        valueType internalField;
-        expression "mag(ddt(p))";
-        accumulations (
-            average
-            max
-        );
-        verbose true;
-    }
 };
 
 libs ( 

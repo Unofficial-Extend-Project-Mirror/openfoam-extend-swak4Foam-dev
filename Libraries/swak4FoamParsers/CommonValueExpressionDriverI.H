@@ -414,7 +414,8 @@ namespace Foam {
     template<class T>
     autoPtr<T> CommonValueExpressionDriver::getOrReadField(
         const string &name,
-        bool failIfNoneFound
+        bool failIfNoneFound,
+        bool getOldTime
     )
     {
         if(debug) {
@@ -505,6 +506,9 @@ namespace Foam {
                     this->mesh().lookupObject<T>(name)
                 )
             );
+            if(getOldTime) {
+                f->oldTime()=this->mesh().lookupObject<T>(name).oldTime();
+            }
         } else if(
             searchOnDisc()
             &&
@@ -517,6 +521,16 @@ namespace Foam {
             f.set(
                 this->readAndRegister<T>(name).ptr()
             );
+            if(getOldTime) {
+                word oldName=name+"_0";
+                if(this->isThere<T>(oldName)) {
+                    f->oldTime()=this->getOrReadField<T>(
+                        oldName,
+                        failIfNoneFound,
+                        false
+                    );
+                }
+            }
         }
 
         if(
@@ -532,6 +546,9 @@ namespace Foam {
     
         if(f.valid()) {
             f->dimensions().reset(nullDim);
+            if(f->nOldTimes()>0) {
+                f->oldTime().dimensions().reset(nullDim);
+            }
         }
 
         return f;

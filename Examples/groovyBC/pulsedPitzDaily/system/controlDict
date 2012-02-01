@@ -282,6 +282,17 @@ functions
         outputInterval 1;
         fieldName kineticEnergy;
     }
+    pressureChangeInTime
+    {
+        type swakExpression;
+        valueType internalField;
+        expression "mag(ddt(p))";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
 );
 
 libs ( 
