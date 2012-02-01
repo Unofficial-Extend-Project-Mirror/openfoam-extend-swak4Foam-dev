@@ -43,7 +43,11 @@ License
 namespace Foam {
 
     template<class FieldType,class Subset,class T>
-    Field<T> *SubsetValueExpressionDriver::getFieldInternal(const string &name,const Subset &sub)
+    Field<T> *SubsetValueExpressionDriver::getFieldInternal(
+        const string &name,
+        const Subset &sub,
+        bool oldTime
+    )
     {
         if(debug) {
             Pout << "SubsetValueExpressionDriver::getFieldInternal"
@@ -72,11 +76,20 @@ namespace Foam {
                 Pout << name << " was found in memory" << endl;
             }
             // Keep this separate to avoid copying if found in memory
-            const FieldType &f=this->mesh().lookupObject<FieldType>(name);
-            
-            forAllConstIter(typename Subset,sub,iter) {
-                (*result)[cnt]=f[getIndexFromIterator(iter)];
-                cnt++;
+            if(!oldTime) {
+                const FieldType &f=this->mesh().lookupObject<FieldType>(name);
+                
+                forAllConstIter(typename Subset,sub,iter) {
+                    (*result)[cnt]=f[getIndexFromIterator(iter)];
+                    cnt++;
+                }
+            } else {
+                const FieldType &f=this->mesh().lookupObject<FieldType>(name).oldTime();
+                
+                forAllConstIter(typename Subset,sub,iter) {
+                    (*result)[cnt]=f[getIndexFromIterator(iter)];
+                    cnt++;
+                }
             }
         } else {
             if(debug) {
@@ -84,11 +97,18 @@ namespace Foam {
             }
             // otherwise try disc and memory
             autoPtr<FieldType> f=this->getOrReadField<FieldType>(name);
-
-            forAllConstIter(typename Subset,sub,iter) {
-                (*result)[cnt]=f()[getIndexFromIterator(iter)];
-                cnt++;
-            }            
+                
+            if(!oldTime) {
+                forAllConstIter(typename Subset,sub,iter) {
+                    (*result)[cnt]=f()[getIndexFromIterator(iter)];
+                    cnt++;
+                }            
+            } else {
+                forAllConstIter(typename Subset,sub,iter) {
+                    (*result)[cnt]=f->oldTime()[getIndexFromIterator(iter)];
+                    cnt++;
+                }            
+            }
         }
         assert(cnt==this->size());
 
