@@ -298,6 +298,8 @@ vexp:   vector                                    { $$ = $1; }
         | TOKEN_curl '(' vexp ')'                 { $$ = new Foam::volVectorField(Foam::fvc::curl(*$3)); delete $3; }
         | TOKEN_div '(' fsexp ',' vexp ')'        { $$ = new Foam::volVectorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_VID                               { $$=driver.getField<Foam::volVectorField>(*$1); }
+        | TOKEN_ddt '(' TOKEN_VID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volVectorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_VID ')'		   { $$ = new Foam::volVectorField( driver.getOrReadField<Foam::volVectorField>(*$3,true,true)->oldTime()); }
 ;
 
 fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam::surfaceScalarField>($3); }
@@ -386,6 +388,8 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_snGrad '(' exp ')'          { $$ = new Foam::surfaceScalarField(Foam::fvc::snGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::surfaceScalarField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_FSID                        { $$ = driver.getField<Foam::surfaceScalarField>(*$1); }
+//        | TOKEN_ddt '(' TOKEN_FSID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceScalarField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
+        | TOKEN_oldTime '(' TOKEN_FSID ')'		   { $$ = new Foam::surfaceScalarField( driver.getOrReadField<Foam::surfaceScalarField>(*$3,true,true)->oldTime()); }
         | TOKEN_LOOKUP '(' fsexp ')'	    { $$ = driver.makeField<Foam::surfaceScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete $3; }
 ;
 
@@ -417,6 +421,8 @@ fvexp:  fvector                            { $$ = $1; }
         | TOKEN_sum '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::surfaceVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fvexp ')'      { $$ = driver.makeConstantField<Foam::surfaceVectorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_FVID                       { $$ = driver.getField<Foam::surfaceVectorField>(*$1); }
+//        | TOKEN_ddt '(' TOKEN_FVID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceVectorField>(*$3,true,true)() ).ptr(); }// no fvc::ddt for surface Fields
+        | TOKEN_oldTime '(' TOKEN_FVID ')'		   { $$ = new Foam::surfaceVectorField( driver.getOrReadField<Foam::surfaceVectorField>(*$3,true,true)->oldTime()); }
 ;
  
 scalar:	TOKEN_NUM		        { $$ = $1; }
@@ -535,7 +541,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }
         | TOKEN_ddt '(' TOKEN_SID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)() ).ptr(); }
-| TOKEN_oldTime '(' TOKEN_SID ')'		   { $$ = new Foam::volScalarField( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)->oldTime()); }
+        | TOKEN_oldTime '(' TOKEN_SID ')'	   { $$ = new Foam::volScalarField( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)->oldTime()); }
         | TOKEN_LINE            		   { $$ = driver.makeConstantField<Foam::volScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
         | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::volScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete$3; }
 ;
@@ -610,6 +616,8 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_average '(' texp ')'             { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_div '(' fsexp ',' texp ')'        { $$ = new Foam::volTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_TID                               { $$=driver.getField<Foam::volTensorField>(*$1); }
+        | TOKEN_ddt '(' TOKEN_TID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_TID ')'		   { $$ = new Foam::volTensorField( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 yexp:   symmTensor                  { $$ = $1; }
@@ -644,6 +652,8 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_average '(' yexp ')'             { $$ = driver.makeConstantField<Foam::volSymmTensorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_div '(' fsexp ',' yexp ')'        { $$ = new Foam::volSymmTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_YID                               { $$=driver.getField<Foam::volSymmTensorField>(*$1); }
+        | TOKEN_ddt '(' TOKEN_YID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volSymmTensorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_YID ')'	   { $$ = new Foam::volSymmTensorField( driver.getOrReadField<Foam::volSymmTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 hexp:   sphericalTensor                  { $$ = $1; }
@@ -669,6 +679,8 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_average '(' hexp ')'             { $$ = driver.makeConstantField<Foam::volSphericalTensorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_div '(' fsexp ',' hexp ')'        { $$ = new Foam::volSphericalTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_HID                               { $$=driver.getField<Foam::volSphericalTensorField>(*$1); }
+        | TOKEN_ddt '(' TOKEN_HID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volSphericalTensorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_HID ')'	   { $$ = new Foam::volSphericalTensorField( driver.getOrReadField<Foam::volSphericalTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 ftexp:   ftensor                  { $$ = $1; }
@@ -706,6 +718,8 @@ ftexp:   ftensor                  { $$ = $1; }
         | TOKEN_sum '(' ftexp ')'                 { $$ = driver.makeConstantField<Foam::surfaceTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' ftexp ')'             { $$ = driver.makeConstantField<Foam::surfaceTensorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_FTID                               { $$=driver.getField<Foam::surfaceTensorField>(*$1); }
+//        | TOKEN_ddt '(' TOKEN_FTID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceTensorField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
+        | TOKEN_oldTime '(' TOKEN_FTID ')'	   { $$ = new Foam::surfaceTensorField( driver.getOrReadField<Foam::surfaceTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 fyexp:   fsymmTensor                  { $$ = $1; }
@@ -737,6 +751,8 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | TOKEN_sum '(' fyexp ')'                 { $$ = driver.makeConstantField<Foam::surfaceSymmTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fyexp ')'             { $$ = driver.makeConstantField<Foam::surfaceSymmTensorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_FYID                               { $$=driver.getField<Foam::surfaceSymmTensorField>(*$1); }
+//        | TOKEN_ddt '(' TOKEN_FYID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceSymmTensorField>(*$3,true,true)() ).ptr(); }// no fvc::ddt for surface Fields
+        | TOKEN_oldTime '(' TOKEN_FYID ')'	   { $$ = new Foam::surfaceSymmTensorField( driver.getOrReadField<Foam::surfaceSymmTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 fhexp:   fsphericalTensor                  { $$ = $1; }
@@ -759,6 +775,8 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
         | TOKEN_sum '(' fhexp ')'                 { $$ = driver.makeConstantField<Foam::surfaceSphericalTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fhexp ')'             { $$ = driver.makeConstantField<Foam::surfaceSphericalTensorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_FHID                               { $$=driver.getField<Foam::surfaceSphericalTensorField>(*$1); }
+//        | TOKEN_ddt '(' TOKEN_FHID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceSphericalTensorField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
+        | TOKEN_oldTime '(' TOKEN_FHID ')'	   { $$ = new Foam::surfaceSphericalTensorField( driver.getOrReadField<Foam::surfaceSphericalTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 vector: TOKEN_VECTOR '(' exp ',' exp ',' exp ')' {     $$ = driver.makeVectorField($3,$5,$7);  delete $3; delete $5; delete $7;}

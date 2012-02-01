@@ -763,6 +763,18 @@ S_{expl} + S_{impl} T
      name. For the default region nothing changes. Directory names
      stay the same as they are unambiguous anyway (they contain the
      name of the functionObject)
+**** Temporal operators =ddt= and =oldTime=
+     For fields (not expressions!) the value at a previous timestep
+     can be gotten via =oldTime(field)= if that information exists
+     (also for =funkySetFields= if the corresponding file =field_0=
+     exists. 
+     
+     For fields that support it (basically volume-fields) there is
+     also a =ddt=-operator that calculates the explicit
+     time-derivative (if information about the last timestep exists)
+     
+     Currently implemented for
+     - internalFields :: =oldTime= and =ddt=
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see

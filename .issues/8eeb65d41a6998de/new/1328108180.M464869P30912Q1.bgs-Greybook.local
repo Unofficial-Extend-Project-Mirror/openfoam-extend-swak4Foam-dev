@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 01 Feb 2012 15:55:52 +0100
+Subject: Re: Temporal expressions in FieldExpressions
+Message-Id: <8eeb65d41a6998de-8966c19a771adb86-artemis@bgs-Greybook.local>
+References: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+In-Reply-To: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+
+Complete implementation in FieldValue-driver
