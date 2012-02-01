@@ -521,16 +521,7 @@ namespace Foam {
             f.set(
                 this->readAndRegister<T>(name).ptr()
             );
-            if(getOldTime) {
-                word oldName=name+"_0";
-                if(this->isThere<T>(oldName)) {
-                    f->oldTime()=this->getOrReadField<T>(
-                        oldName,
-                        failIfNoneFound,
-                        false
-                    );
-                }
-            }
+            // oldTime automatically read
         }
 
         if(
