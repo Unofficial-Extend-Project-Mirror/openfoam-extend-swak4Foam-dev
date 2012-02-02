@@ -87,12 +87,12 @@ int main(int argc, char *argv[])
         #include "alphaEqnSubCycle.H"
 
         // --- Pressure-velocity PIMPLE corrector loop
-        while (pimple.loop())
+        for (pimple.start(); pimple.loop(); pimple++)
         {
             #include "UEqn.H"
 
-            // --- Pressure corrector loop
-            while (pimple.correct())
+            // --- PISO loop
+            for (int corr=0; corr<pimple.nCorr(); corr++)
             {
                 #include "pEqn.H"
             }

@@ -46,7 +46,7 @@ Description
 #include "interpolationTable.H"
 #include "pimpleControl.H"
 
-#include "expressionSource.H"
+#include "forceEquation.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -87,12 +87,12 @@ int main(int argc, char *argv[])
         #include "alphaEqnSubCycle.H"
 
         // --- Pressure-velocity PIMPLE corrector loop
-        while (pimple.loop())
+        for (pimple.start(); pimple.loop(); pimple++)
         {
             #include "UEqn.H"
 
-            // --- Pressure corrector loop
-            while (pimple.correct())
+            // --- PISO loop
+            for (int corr=0; corr<pimple.nCorr(); corr++)
             {
                 #include "pEqn.H"
             }
@@ -103,11 +103,10 @@ int main(int argc, char *argv[])
             }
         }
 
-        if(runTime.write()) 
-        {
-            volVectorField momSrc=momentumSource();
-            momSrc.rename("momSrc");
-            momSrc.write();
+        if(runTime.write()) {
+            volScalarField mask=momentumFixed.getMask()();
+            mask.rename("momMask");
+            mask.write();
         }
 
         runTime.write();

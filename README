@@ -274,7 +274,8 @@ S_{expl} + S_{impl} T
 
     Due to differences in the original =interFoam=-solver this doesn't
     work on certain OpenFOAM-versions (most specifically
-    =1.6-ext=).
+    =1.6-ext=). The current solver works with 2.1. For older
+    OF-versions use the sources labeled =_pre2.1=.
 
     The only modifications to the original solver are found at the end
     of =createFields.H= and in =UEqn.H= (the added source terms).
@@ -283,7 +284,8 @@ S_{expl} + S_{impl} T
 
     Due to differences in the original =interFoam=-solver this doesn't
     work on certain OpenFOAM-versions (most specifically
-    =1.6-ext=).
+    =1.6-ext=). The current solver works with 2.1. For older
+    OF-versions use the sources labeled =_pre2.1=.
 
     The only modifications to the original solver are found at the end
     of =createFields.H= and in =UEqn.H= (the fixing of the velocities).
@@ -820,6 +822,17 @@ S_{expl} + S_{impl} T
      because the base class now supports the more general
      =DataEntry=-class for which a =swak=-subclass exists
 ** Next release
+*** Bugfixes
+**** =interFoam=-based example solvers do not compile on 2.1
+     As reported in
+     [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=119]]
+     due to a change the way the PISO-loop is treated the
+     =interFoamWithSources= and =interFoamWithFixed= don't compile
+     with 2.1 anymore.
+
+     To avoid =#ifdef= in the solver sources there is now a separate
+     set of sources (labeled =pre2.1=) for older versions. The regular
+     sources work with 2.1 (and hopefully the following)
 *** New features
 **** Region name in =simpleFunctionObject=.outputs
      To distinguish the output of various instances of
