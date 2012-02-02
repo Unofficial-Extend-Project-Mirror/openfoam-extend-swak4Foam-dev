@@ -507,6 +507,11 @@ namespace Foam {
                 )
             );
             if(getOldTime) {
+                if(debug) {
+                    Info << "Getting oldTime of " << name 
+                        << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
+                        << endl;
+                }
                 f->oldTime()=this->mesh().lookupObject<T>(name).oldTime();
             }
         } else if(
@@ -538,7 +543,18 @@ namespace Foam {
         if(f.valid()) {
             f->dimensions().reset(nullDim);
             if(f->nOldTimes()>0) {
-                f->oldTime().dimensions().reset(nullDim);
+                if(debug) {
+                    Info << "Removing dimensions of oldTime of " << name 
+                        << " has " << f->nOldTimes()
+                        << endl;
+                }
+                
+                // go through ALL old times
+                T *fp=f.operator->();
+                while(fp->nOldTimes()>0) {
+                    fp=&(fp->oldTime());
+                    fp->dimensions().reset(nullDim);
+                }
             }
         }
 
