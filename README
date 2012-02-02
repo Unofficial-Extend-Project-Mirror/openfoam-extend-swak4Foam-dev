@@ -777,7 +777,8 @@ S_{expl} + S_{impl} T
      - internalFields :: =oldTime= and =ddt=
      - patch :: only =oldTime=
      - cellSet,cellZone :: only =oldTime=
-     - faceSet,faceZone,sampledSurface,sampledSet :: =oldTime=
+     - sampledSurface,sampledSet :: only =oldTime=
+     - faceSet,faceZone :: =oldTime=
           currently only issues a warning
 *** Infrastructure
 **** Full parallel compilation

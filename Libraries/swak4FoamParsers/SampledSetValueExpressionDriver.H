@@ -68,7 +68,7 @@ class SampledSetValueExpressionDriver
     // Private Member Functions
 
     template<class Type,class volField,class surfField>
-    Field<Type> *sampleOrInterpolateInternal(const word &name);
+    Field<Type> *sampleOrInterpolateInternal(const word &name,bool oldTime=false);
 
     static void setDebug();
 

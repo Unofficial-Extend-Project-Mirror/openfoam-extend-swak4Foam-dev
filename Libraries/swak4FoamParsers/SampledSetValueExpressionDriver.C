@@ -147,71 +147,46 @@ bool SampledSetValueExpressionDriver::update()
 
 Field<scalar> *SampledSetValueExpressionDriver::getScalarField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("SampledSetValueExpressionDriver::getScalarField")
-            << "Getting the old time not yet implemented for sampledSet" 
-                << endl;
-    }
-
     return sampleOrInterpolateInternal<scalar,volScalarField,surfaceScalarField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
 Field<vector> *SampledSetValueExpressionDriver::getVectorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("SampledSetValueExpressionDriver::getVectorField")
-            << "Getting the old time not yet implemented for sampledSet" 
-                << endl;
-    }
-
     return sampleOrInterpolateInternal<vector,volVectorField,surfaceVectorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
 Field<tensor> *SampledSetValueExpressionDriver::getTensorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("SampledSetValueExpressionDriver::getTensorField")
-            << "Getting the old time not yet implemented for sampledSet" 
-                << endl;
-    }
-
     return sampleOrInterpolateInternal<tensor,volTensorField,surfaceTensorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
 Field<symmTensor> *SampledSetValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("SampledSetValueExpressionDriver::getSymmTensorField")
-            << "Getting the old time not yet implemented for sampledSet" 
-                << endl;
-    }
-
     return sampleOrInterpolateInternal<symmTensor,volSymmTensorField,surfaceSymmTensorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
     Field<sphericalTensor> *SampledSetValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("SampledSetValueExpressionDriver::getSphericalTensorField")
-            << "Getting the old time not yet implemented for sampledSet" 
-                << endl;
-    }
-
     return sampleOrInterpolateInternal<sphericalTensor,volSphericalTensorField,surfaceSphericalTensorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
