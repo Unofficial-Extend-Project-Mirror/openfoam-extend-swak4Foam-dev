@@ -512,7 +512,7 @@ namespace Foam {
                         << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
                         << endl;
                 }
-                f->oldTime()=this->mesh().lookupObject<T>(name).oldTime();
+                //                f->oldTime()=this->mesh().lookupObject<T>(name).oldTime();
             }
         } else if(
             searchOnDisc()
