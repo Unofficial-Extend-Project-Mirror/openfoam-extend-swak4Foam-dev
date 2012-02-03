@@ -926,7 +926,7 @@ functions
             }
         }
     }
-    pressureChangeInTime
+    pressureChangeInTimeField
     {
         type swakExpression;
         valueType internalField;
@@ -937,7 +937,7 @@ functions
         );
         verbose true;
     }
-    pressureChangeInTime2
+    pressureChangeInTimeField2
     {
         type swakExpression;
         valueType internalField;
@@ -952,56 +952,56 @@ functions
     }
     pressureChangeInTimeWall
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType patch;
         patchName wall;
     }
     pressureChangeInTimeCellZone
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType cellZone;
         zoneName porosity;
     }
     pressureChangeInTimeCellSet
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType cellSet;
         setName porosity;
     }
     pressureChangeInTimeCellSet
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType set;
         setName threePoints;
     }
     pressureChangeInTimeSurfaceTestPlane
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType surface;
         surfaceName testPlane;
     }
     pressureChangeInTimeFaceZoneAfter
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType faceZone;
         zoneName afterFilter;
     }
     pressureChangeInTimeFaceSetAfter
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType faceSet;
         setName afterFilter;
     }
     pressureChangeInTimeFaceZoneAfter
     {
-        $pressureChangeInTime2;
+        $pressureChangeInTimeField2;
 
         valueType faceZone;
         zoneName afterFilter;
