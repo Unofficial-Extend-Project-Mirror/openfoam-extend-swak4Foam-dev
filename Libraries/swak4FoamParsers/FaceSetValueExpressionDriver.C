@@ -142,57 +142,47 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceSet::co
 
 Field<scalar> *FaceSetValueExpressionDriver::getScalarField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("FaceSetValueExpressionDriver::getScalarField")
-            << "Getting the old time not yet implemented for faceSets" 
-                << endl;
-    }
-
-    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceSet,scalar>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceSet,scalar>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
 Field<vector> *FaceSetValueExpressionDriver::getVectorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("FaceSetValueExpressionDriver::getVectorField")
-            << "Getting the old time not yet implemented for faceSets" 
-                << endl;
-    }
-
-    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceSet,vector>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceSet,vector>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
 Field<tensor> *FaceSetValueExpressionDriver::getTensorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("FaceSetValueExpressionDriver::getTensorField")
-            << "Getting the old time not yet implemented for faceSets" 
-                << endl;
-    }
-
-    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceSet,tensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceSet,tensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
 Field<symmTensor> *FaceSetValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("FaceSetValueExpressionDriver::getSymmTensorField")
-            << "Getting the old time not yet implemented for faceSets" 
-                << endl;
-    }
-
-    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceSet,symmTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceSet,symmTensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
 Field<sphericalTensor> *FaceSetValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
 {
-    if(oldTime) {
-        WarningIn("FaceSetValueExpressionDriver::getSphericalTensorField")
-            << "Getting the old time not yet implemented for faceSets" 
-                << endl;
-    }
-
-    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceSet,sphericalTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceSet,sphericalTensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
 vectorField *FaceSetValueExpressionDriver::makePositionField()

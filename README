@@ -779,7 +779,6 @@ S_{expl} + S_{impl} T
      - cellSet,cellZone :: only =oldTime=
      - sampledSurface,sampledSet :: only =oldTime=
      - faceSet,faceZone :: =oldTime=
-          currently only issues a warning
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see

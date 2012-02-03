@@ -104,7 +104,11 @@ protected:
 
     //- General Method to get the values and interpolate
     template<class FieldType,class IFieldType,class Subset,class T>
-    Field<T> *getFieldInternalAndInterpolate(const string &name,const Subset &sub);
+    Field<T> *getFieldInternalAndInterpolate(
+        const string &name,
+        const Subset &sub,
+        bool oldTime=false
+    );
 
     //- General Method to get values from a field
     template<class Subset,class T>

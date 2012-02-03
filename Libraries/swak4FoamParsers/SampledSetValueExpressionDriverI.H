@@ -136,7 +136,11 @@ namespace Foam {
                 }
             }
         } else {
-            autoPtr<volField> f=this->getOrReadField<volField>(name);
+            autoPtr<volField> f=this->getOrReadField<volField>(
+                name,
+                true, // fail if not found
+                oldTime
+            );
 
             if(interpolate_) {
                 autoPtr<interpolation<Type> > inter(
