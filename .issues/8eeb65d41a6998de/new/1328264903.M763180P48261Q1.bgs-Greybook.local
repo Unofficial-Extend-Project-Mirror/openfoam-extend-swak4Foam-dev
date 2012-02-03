@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 03 Feb 2012 11:27:30 +0100
+Subject: Re: Temporal expressions in FieldExpressions
+Message-Id: <8eeb65d41a6998de-a8f1a1af970c3e79-artemis@bgs-Greybook.local>
+References: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+In-Reply-To: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+
+Uses the previous iteration if asked for. But currently there is no
+difference in the values visible

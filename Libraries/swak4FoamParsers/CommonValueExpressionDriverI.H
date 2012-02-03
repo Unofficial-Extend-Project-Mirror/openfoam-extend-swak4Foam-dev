@@ -512,7 +512,16 @@ namespace Foam {
                         << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
                         << endl;
                 }
-                //                f->oldTime()=this->mesh().lookupObject<T>(name).oldTime();
+                if(
+                    this->mesh().lookupObject<T>(name).nOldTimes()==0
+                    &&
+                    this->prevIterIsOldTime()
+                ) {
+                    if(debug) {
+                        Info << "Using the previous iteration, because there is no oldTime" << endl;
+                    }
+                    f->oldTime()=this->mesh().lookupObject<T>(name).prevIter();
+                }
             }
         } else if(
             searchOnDisc()
