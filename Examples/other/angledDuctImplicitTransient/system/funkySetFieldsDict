@@ -1,0 +1,36 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+expressions
+(
+	// just for testing that the variables etc worl
+	velClass
+	{
+		field velClassFunky;
+		create true;
+		expression "velClass(Usize)+1";
+		condition "Uy>=0";
+	        lookuptables (
+        	    {
+                	name velClass;
+	                outOfBounds clamp;
+        	        fileName "$FOAM_CASE/velClass.data";
+            	    }
+        	);
+		variables (
+			"Usize=mag(U);"
+			"Uy=U.y;"
+		);
+	}
+);
