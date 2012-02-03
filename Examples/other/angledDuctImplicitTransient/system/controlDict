@@ -947,6 +947,8 @@ functions
             max
         );
         verbose true;
+        autoInterpolate true;
+        warnAutoInterpolate false;
     }
     pressureChangeInTimeWall
     {
@@ -976,12 +978,12 @@ functions
         valueType set;
         setName threePoints;
     }
-    pressureChangeInTimeSurfaceIsoU45
+    pressureChangeInTimeSurfaceTestPlane
     {
         $pressureChangeInTime2;
 
         valueType surface;
-        surfaceName testIsoU45;
+        surfaceName testPlane;
     }
     pressureChangeInTimeFaceZoneAfter
     {
