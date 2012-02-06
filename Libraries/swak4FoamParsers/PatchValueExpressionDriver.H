@@ -160,6 +160,9 @@ public:
     Field<Type> *getField(const string &name);
 
     template<class Type>
+    Field<Type> *getOldTimeField(const string &name);
+
+    template<class Type>
     Field<Type> *getSurfaceNormalField(const string &name);
 
     template<class Type>

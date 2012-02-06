@@ -1,0 +1,8 @@
+pressureChange {
+   expr "Expression pressureChangeInTime(.+) :  average=%f% max=(%f%)";
+   theTitle "Pressure change";
+   titles ( max );
+   type dynamic;
+   idNr 1;
+   logscale true;
+}

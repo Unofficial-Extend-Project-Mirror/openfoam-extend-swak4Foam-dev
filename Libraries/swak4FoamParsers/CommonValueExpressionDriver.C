@@ -105,7 +105,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     lookup_(orig.lookup_),
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
-    trace_parsing_ (orig.trace_parsing_)
+    trace_parsing_ (orig.trace_parsing_),
+    prevIterIsOldTime_(orig.prevIterIsOldTime_)
 {
     setSearchBehaviour(
         orig.cacheReadFields_,
@@ -121,7 +122,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
     globalVariableScopes_(dict.lookupOrDefault("globalScopes",wordList())),
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
-    trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
+    trace_parsing_ (dict.lookupOrDefault("traceParsing",false)),
+    prevIterIsOldTime_(dict.lookupOrDefault("prevIterIsOldTime",false))
 {
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
 
@@ -153,7 +155,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     globalVariableScopes_(),
     content_(""),
     trace_scanning_ (false),
-    trace_parsing_ (false)
+    trace_parsing_ (false),
+    prevIterIsOldTime_(false)
 {
     setSearchBehaviour(
         cacheReadFields,

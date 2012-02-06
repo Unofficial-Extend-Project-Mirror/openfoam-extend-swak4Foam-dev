@@ -13,9 +13,13 @@
 namespace Foam {
 
 template<class T>
-T* FieldValueExpressionDriver::getField(const string &name)
+T* FieldValueExpressionDriver::getField(const string &name,bool getOldTime)
 {
-    return this->getOrReadField<T>(name).ptr();
+    return this->getOrReadField<T>(
+        name,
+        true,  // fail if not found
+        getOldTime
+    ).ptr();
 }
 
 inline label FieldValueExpressionDriver::size() const

@@ -282,6 +282,66 @@ functions
         outputInterval 1;
         fieldName kineticEnergy;
     }
+    velocityChangeInTime
+    {
+        type swakExpression;
+        valueType internalField;
+        expression "mag(ddt(U))";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
+    pressureChangeInTime
+    {
+        type swakExpression;
+        valueType internalField;
+        expression "mag(ddt(p))";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
+    pressureChangeInTime2
+    {
+        type swakExpression;
+        valueType internalField;
+        expression "mag((p-oldTime(p))/deltaT())";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
+    pressureChangeInTimeCenter
+    {
+        type swakExpression;
+        valueType cellZone;
+        zoneName center;
+        expression "mag((p-oldTime(p))/deltaT())";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
+    pressureChangeInTimeWall
+    {
+        type patchExpression;
+        valueType patch;
+        patches ( 
+            lowerWall 
+            upperWall
+        );
+        expression "mag((p-oldTime(p))/deltaT())";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
 );
 
 libs ( 

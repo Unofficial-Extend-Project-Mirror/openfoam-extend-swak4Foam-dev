@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 06 Feb 2012 12:02:51 +0100
+Subject: Re: Temporal expressions in FieldExpressions
+Message-Id: <8eeb65d41a6998de-b5ffbb0772ac695c-artemis@bgs-Greybook.local>
+References: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+In-Reply-To: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+
+Now works for all entities in the swak4Foam-library.
+
+finiteArea will be treated separately

@@ -1,0 +1,1028 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rhoPorousSimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.1;
+
+deltaT          1e-5;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1e-2;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           1;
+
+functions
+{
+    pressureDrop
+    {
+        type patchExpression;
+        variables ( "pOut{patch'outlet}=sum(p*area())/sum(area());");
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+        );
+        expression "p-pOut";
+        verbose true;
+    }
+    ifUser {
+        type executeIfEnvironmentVariable;
+        readDuringConstruction false;
+        
+        //        fitVariableMode exists;
+        //        fitVariableMode doesNotExist;
+        fitVariableMode fitsRegexp;
+
+        //        writeDebug true;
+        variableName USER;
+        contentRegexp"[a-z]+";
+        //        contentRegexp"[c-z]+";
+
+        functions {
+            pressureDropCSV
+            {
+                $pressureDrop;
+                
+                outputFileMode csv;
+            }
+        }
+    }
+    velocityFormats {
+        type functionObjectListProxy;
+        //        writeDebug true;
+        readDuringConstruction true;
+
+        functions {
+            velocityCSV
+            {
+                type patchExpression;
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                expression "U";
+                patches (
+                    outlet
+                );
+                outputFileMode csv; 
+                //             verbose true;
+            }
+            velocityRaw 
+            {
+                $velocityCSV;
+                outputFileMode raw;
+            }
+            velocityFoam 
+            {
+                $velocityCSV;
+                outputFileMode foam;
+            }
+        }
+    }
+    pressureToFilterVolAvg
+    {
+        type patchExpression;
+        variables ( "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());");
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "p-pFilter";
+        verbose true;
+    }
+    pressureToVol
+    {
+        type patchExpression;
+        variables ( "pTotal{internalField}=sum(p*vol())/sum(vol());");
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "p-pTotal";
+        verbose true;
+    }
+    pressureToFilter
+    {
+        type patchExpression;
+        variables "pFilter{cellZone'porosity}=average(p);";
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "p-pFilter";
+        verbose true;
+    }
+    distanceToFilter
+    {
+        type patchExpression;
+        variables "pFilter{cellZone'porosity}=average(pos());";
+        accumulations (
+            average
+        );
+        patches (
+            inlet 
+            outlet
+        );
+        expression "mag(pos()-pFilter)";
+        verbose true;
+    }
+    alternatePressureToFilter
+    {
+        type swakExpression;
+        valueType patch;
+        patchName outlet;
+        variables "pFilter{cellZone'porosity}=average(p);";
+        accumulations (
+            average
+        );
+        expression "p-pFilter";
+        verbose true;
+    }
+    alternatePressureToFilter2
+    {
+        type swakExpression;
+        valueType cellZone;
+        zoneName porosity;
+        variables "pRaus{outlet}=average(p);";
+        accumulations (
+            average
+        );
+        expression "pRaus-p";
+        verbose true;
+    }
+    alternatePressureToFilter3
+    {
+        type swakExpression;
+        valueType cellSet;
+        setName porosity;
+        variables "pRaus{outlet}=average(p);";
+        accumulations (
+            average
+        );
+        expression "pRaus-p";
+        verbose true;
+    }
+    alternatePressureToFilter4
+    {
+        type swakExpression;
+        valueType patch;
+        patchName outlet;
+        variables "pFilter{cellSet'porosity}=average(p);";
+        accumulations (
+            average
+        );
+        expression "p-pFilter";
+        verbose true;
+    }
+    pressureInletToFilter
+    {
+        type swakExpression;
+        valueType patch;
+        patchName inlet;
+        variables "pBefore{faceZone'beforeFilter}=average(p);";
+        accumulations (
+            average
+        );
+        expression "p-pBefore";
+        verbose true;
+        autoInterpolate true;
+        warnAutoInterpolate false;
+    }
+    pressureOverFilter
+    {
+        type swakExpression;
+        valueType faceZone;
+        zoneName beforeFilter;
+        variables (
+            "pAfter{faceSet'afterFilter}=average(p);"
+        );
+        accumulations (
+            average
+        );
+        expression "p-pAfter";
+        verbose true;
+        autoInterpolate true;
+        warnAutoInterpolate false;
+    }
+    pressureFilterToOutlet
+    {
+        type swakExpression;
+        valueType patch;
+        patchName outlet;
+        variables (
+            "dummy=p-mag(U);"
+            "pAfter{faceSet'afterFilter}=average(p);"
+        );
+        accumulations (
+            average
+        );
+        expression "pAfter-p";
+        verbose true;
+        autoInterpolate true;
+        warnAutoInterpolate false;
+    }
+    flowBeforeSet
+    {
+        type swakExpression;
+        valueType faceSet;
+        setName beforeFilter;
+        expression "phi*flip()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowAfterSet
+    {
+        type swakExpression;
+        valueType faceSet;
+        setName afterFilter;
+        expression "phi*flip()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowBeforeZone
+    {
+        type swakExpression;
+        valueType faceZone;
+        zoneName beforeFilter;
+        expression "phi*flip()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowAfterZone
+    {
+        type swakExpression;
+        valueType faceZone;
+        zoneName afterFilter;
+        expression "phi*flip()";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowInlet
+    {
+        type swakExpression;
+        valueType patch;
+        patchName inlet;
+        expression "phi";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    flowOutlet
+    {
+        type swakExpression;
+        valueType patch;
+        patchName outlet;
+        expression "phi";
+        accumulations (
+            sum
+        );
+        verbose true;
+    }
+    filterMeanDiff
+    {
+        type swakExpression;
+        valueType internalField;
+        variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";        
+        expression "p-pFilter";
+        accumulations (
+            min
+            max
+        );
+        verbose true;
+    }
+    velocityExtreme
+    {
+        type swakExpression;
+        valueType internalField;
+        accumulations (
+            min
+            max
+        );
+        expression "mag(U)";
+        verbose true;
+    }
+    surfacePlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        surface {
+            type plane;
+            basePoint       (0 0 0);
+            normalVector    (0 0 1);
+            interpolate false;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfacePlaneReuse
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        verbose true;
+        expression "p";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfacePlaneMaxU
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane;
+        verbose true;
+        variables (
+            "maxU=(maxU<mag(U)) ? mag(U) : maxU;"
+        );
+        storedVariables (
+            {
+                name maxU;
+                initialValue "0";
+            }
+        );
+        expression "maxU";
+        accumulations (            
+            average
+            max
+            min
+        );
+    }
+    createsurfacePlane2
+    {
+        type createSampledSurface;
+        outputControl timeStep;
+        outputInterval 1;
+        surfaceName testPlane2;
+        surface {
+            type plane;
+            basePoint       (0 0 0);
+            normalVector    (0 0 1);
+            interpolate true;
+        }
+    }
+    surfacePlane2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane2;
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceDiffPlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPlane3;
+        surface {
+            type plane;
+            basePoint       (0 0 0.01);
+            normalVector    (0 0 1);
+            interpolate true;
+        }
+        verbose true;
+        variables "Umiddle{surface'testPlane2}=sum(mag(U)*area())/sum(area());";
+        expression "sum(mag(U)*area())/sum(area())-Umiddle";
+        accumulations (
+            min
+        );
+    }
+    surfacePatch
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testPatch;
+        surface {
+            type patch;
+            patches ( outlet );
+            //            triangulate      false;      
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceCuttingPlane
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testCuttingPlane;
+        surface {
+            type cuttingPlane;
+            planeType       pointAndNormal;
+            pointAndNormalDict
+            {
+                basePoint       (0 0 0);
+                normalVector    (0 0 1);
+            }
+            interpolate false;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    createThrePointSet
+    {
+        type createSampledSet;
+        outputControl timeStep;
+        outputInterval 1;
+        setName threePoints;
+        set {
+            type cloud;
+            axis x;
+            points (
+                (0.1 0.14 0.0001)
+                (0.0 0.02 0.0001)
+                (-0.1 0.02 0.0001)
+            );
+        }
+    }
+    onlyHighPressure {
+        type executeIfSwakExpression;
+        //        readDuringConstruction false;
+        readDuringConstruction true;
+        //        writeDebug true;
+
+        valueType set;
+        setName threePoints;
+        variables (
+            "pMin=min(p);"
+            "pMax=max(p);"
+        );
+
+        logicalExpression "(pMax-pMin)>3000";
+        logicalAccumulation and;
+
+        functions {
+            setsPressureProxy
+            {
+                // Currently not working because the proxy doesn't work
+                type swakExpression;
+                verbose true;
+                valueType set;
+                setName  threePointsCopy;
+                expression "p";
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                set {
+                    type swakRegistryProxy;
+                    axis x;
+                    setName threePoints;
+                }
+            }
+        }
+    }
+    setsPressureChangeProxy
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsCopy;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type swakRegistryProxy;
+            axis x;
+            setName threePoints;
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+    }
+    setsPressureChangeProxyInter
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsCopy2;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type swakRegistryProxy;
+            axis x;
+            setName threePoints;
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+        interpolate true;
+        interpolationType cellPoint;
+    }
+    setsPressureChange
+    {
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  threePointsOwn;
+        expression "p-pInit";
+        accumulations (
+            min
+            max
+            average
+        );
+        set {
+            type cloud;
+            axis x;
+            points (
+                (0.1 0.14 0.0001)
+                (0.0 0.02 0.0001)
+                (-0.1 0.02 0.0001)
+            );
+        }
+        storedVariables (
+            {
+                name pInit;
+                initialValue "p";
+            }
+        );
+    }
+    distField
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName distanceFromZero;
+        expression "mag(pos())";
+        autowrite true;        
+    } 
+    onlyForSolver {
+        type executeIfExecutableFits;
+        executableNameRegexp "rho.+Foam";
+        //        writeDebug true;
+        readDuringConstruction false;
+
+        functions {
+            myPhi
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi;
+                expression "interpolate(rho*U)&face()";
+                autowrite true;        
+            }
+            phiError
+            {
+                type swakExpression;
+                valueType internalField;
+                verbose true;
+                expression "mag(phi-myPhi)";
+                accumulations (
+                    average
+                    sum
+                    max
+                );
+            }
+            myPhi2
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi2;
+                expression "myPhi";
+                autowrite true;        
+            }
+            changeMyPhi2
+            {
+                type manipulateField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi2;
+                expression "interpolate(0)";
+                mask "fpos().x<interpolate(0)";
+            }
+        }
+    }
+    velocityClass
+    {
+        type expressionField;
+        outputControl outputTime;
+        //        outputInterval 1;
+        fieldName velClass;
+        lookuptables (
+            {
+                name velClass;
+                outOfBounds clamp;
+                fileName "$FOAM_CASE/velClass.data";
+            }
+        );
+        expression "velClass(mag(U))";
+        autowrite true;   
+        verbose true;
+    }
+    turbulence {
+        type executeIfObjectExists;
+        objectName k;
+        checkType true;
+        //        checkType false;
+        objectType volScalarField;
+        objectShouldExist true;
+        //        writeDebug true;
+        readDuringConstruction false;
+
+        functions {
+            yPlusField
+            {
+                type expressionField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName yPlus;
+                expression "pow(0.09,0.25)*sqr(k)*nearDist()/mu";
+                autowrite true;
+            }
+            yPlusWall
+            {
+                type patchExpression;
+                expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
+                accumulations (
+                    min
+                    max
+                    average
+                );
+                patches (wall);
+                verbose true;
+            }
+        }
+    }
+    surfaceIsoDist
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoDist;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceIsoDist2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoDist2;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceIsoInterpolateOn
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoInterpolateOn;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "p";
+        accumulations (
+            min
+            max
+        );
+        interpolate on;
+        interpolationType cellPointWallModified;
+    }
+    surfaceIsoInterpolateOff
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoInterpolateOff;
+        surface {
+            type isoSurface;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "p";
+        accumulations (
+            min
+            max
+        );
+        interpolate off;
+    }
+    surfaceIsoDistCell
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoSurfaceCell;
+        surface {
+            type isoSurfaceCell;
+            isoField distanceFromZero;
+            isoValue 0.1;
+            interpolate false;
+            //            regularise      false;      
+        }
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            max
+        );
+    }
+    velocityMagnitude
+    {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName magU;
+        expression "mag(U)";
+        //        expression "mag(U)*sin(time())";
+        autowrite true;        
+    }
+    surfaceU45
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoU45;
+        surface {
+            type isoSurface;
+            isoField magU;
+            isoValue 45;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        // expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
+    surfaceU45b
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName testIsoU45b;
+        surface {
+            type isoSurfaceCell;
+            isoField magU;
+            isoValue 45;
+            interpolate true;
+        }
+        verbose true;
+        //        variables "p=pts();";
+        expression "pos()";
+        // expression "U";
+        accumulations (
+            min
+            max
+        );
+    }
+    ifPythonExpressionFO {
+        type executeIfFunctionObjectPresent;
+        readDuringConstruction false;
+        functionObjectName executeIfPython;
+
+        functions {
+            doEveryThreeSteps {
+                type executeIfPython;
+                readDuringConstruction false;
+
+                conditionCode "return abs(runTime % 3)<1e-5";
+                //                conditionFile "$FOAM_CASE/test.py"
+
+
+                //                writeDebug true;
+                //                interactiveAfterExecute true;
+
+                functions {
+                    surfaceU45c
+                    {
+                        type swakExpression;
+                        valueType surface;
+                        surfaceName testIsoU45c;
+                        surface {
+                            type thresholdCellFaces;
+                            field magU;
+                            upperLimit 46;
+                            lowerLimit 44;
+                        }
+                        verbose true;
+                        //        variables "p=pts();";
+                        expression "pos()";
+                        // expression "U";
+                        accumulations (
+                            min
+                            max
+                        );
+                    }
+                }
+            }
+        }
+    }
+    pressureChangeInTimeField
+    {
+        type swakExpression;
+        valueType internalField;
+        expression "mag(ddt(p))";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+    }
+    pressureChangeInTimeField2
+    {
+        type swakExpression;
+        valueType internalField;
+        expression "mag((p-oldTime(p))/deltaT())";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+        autoInterpolate true;
+        warnAutoInterpolate false;
+    }
+    pressureChangeInTimeWall
+    {
+        $pressureChangeInTimeField2;
+
+        valueType patch;
+        patchName wall;
+    }
+    pressureChangeInTimeCellZone
+    {
+        $pressureChangeInTimeField2;
+
+        valueType cellZone;
+        zoneName porosity;
+    }
+    pressureChangeInTimeCellSet
+    {
+        $pressureChangeInTimeField2;
+
+        valueType cellSet;
+        setName porosity;
+    }
+    pressureChangeInTimeCellSet
+    {
+        $pressureChangeInTimeField2;
+
+        valueType set;
+        setName threePoints;
+    }
+    pressureChangeInTimeSurfaceTestPlane
+    {
+        $pressureChangeInTimeField2;
+
+        valueType surface;
+        surfaceName testPlane;
+    }
+    pressureChangeInTimeFaceZoneAfter
+    {
+        $pressureChangeInTimeField2;
+
+        valueType faceZone;
+        zoneName afterFilter;
+    }
+    pressureChangeInTimeFaceSetAfter
+    {
+        $pressureChangeInTimeField2;
+
+        valueType faceSet;
+        setName afterFilter;
+    }
+    pressureChangeInTimeFaceZoneAfter
+    {
+        $pressureChangeInTimeField2;
+
+        valueType faceZone;
+        zoneName afterFilter;
+    }
+    pressureChangeInTimeFaceZoneBefore
+    {
+        $pressureChangeInTimeFaceZoneAfter;
+
+        zoneName beforeFilter;
+    }
+};
+
+libs ( 
+    "libOpenFOAM.so" 
+    "libgroovyBC.so" 
+    "libsimpleSwakFunctionObjects.so" 
+    "libswakFunctionObjects.so" 
+    "libswakTopoSources.so" 
+    // Needed to decompose on 1.7
+    "libcompressibleRASModels.so"
+    "libpythonIntegration.so"
+) ;
+
+// ************************************************************************* //
