@@ -161,6 +161,9 @@ private:
     //- should cellSets and faceSets be cached instead of read from disc every time
     static bool cacheSets_;
 
+    //- use the value of the previous iteration if the old time ist asked for
+    bool prevIterIsOldTime_;
+
 protected:
    
     inline bool cacheReadFields() const { return cacheReadFields_; }
@@ -170,6 +173,8 @@ protected:
     inline bool searchOnDisc() const { return searchOnDisc_; }
 
     inline bool cacheSets() const { return cacheSets_; }
+
+    inline bool prevIterIsOldTime() const { return prevIterIsOldTime_; }
 
     string getTypeOfField(const string &name) const;
     string getTypeOfSet(const string &name) const;
@@ -192,7 +197,11 @@ protected:
     inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
 
     template<class T>
-    autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
+    autoPtr<T> getOrReadField(
+        const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
 
     template<class T>
     inline void correctField(T &f) const;

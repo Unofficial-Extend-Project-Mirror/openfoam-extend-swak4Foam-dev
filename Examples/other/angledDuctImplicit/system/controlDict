@@ -922,6 +922,20 @@ functions
             }
         }
     }
+    pressureChangeInTime
+    {
+        // for some reason this is always 0
+
+        type swakExpression;
+        valueType internalField;
+        expression "mag(ddt(p))";
+        accumulations (
+            average
+            max
+        );
+        verbose true;
+        prevIterIsOldTime true;
+    }
 };
 
 libs ( 

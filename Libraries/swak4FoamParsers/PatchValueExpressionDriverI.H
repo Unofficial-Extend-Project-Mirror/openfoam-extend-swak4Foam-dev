@@ -142,6 +142,73 @@ namespace Foam {
     }
 
     template<class Type>
+    Field<Type> *PatchValueExpressionDriver::getOldTimeField(const string &name)
+    {
+        typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
+        typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
+        typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
+
+        autoPtr<localVolField> tmpVol;
+        autoPtr<localSurfaceField> tmpSurf;
+        autoPtr<localPointField> tmpPoint;
+
+        if(
+            searchOnDisc()
+            &&
+            !mesh().foundObject<localVolField>(name)
+            &&
+            !mesh().foundObject<localSurfaceField>(name)
+            &&
+            !mesh().foundObject<localPointField>(name)
+        ) {
+            word fType=this->getTypeOfField(name);
+            if(fType==localVolField::typeName) {
+                tmpVol.set(this->readAndRegister<localVolField>(name).ptr());
+            } else if(fType==localSurfaceField::typeName) {
+                tmpSurf.set(this->readAndRegister<localSurfaceField>(name).ptr());
+            } 
+            // TODO: this constructor doesn't work
+            // else if(fType==localPointField::typeName) {
+            //     tmpPoint.set(this->readAndRegister<localPointField>(name).ptr());
+            // }
+        }
+
+        label patchI=this->patch_.index();
+        const fvMesh &mesh=patch_.boundaryMesh().mesh();
+
+        if(
+            mesh.objectRegistry::foundObject<localVolField>(name)
+        ) {
+            const typename localVolField::PatchFieldType &pField=
+                mesh.lookupObject<localVolField>(name).
+                oldTime().boundaryField()[patchI];
+            return new Field<Type>(pField);
+        } else if(
+            mesh.objectRegistry::foundObject<localSurfaceField>(name)
+        ) {
+            const typename localSurfaceField::PatchFieldType &pField=
+                mesh.lookupObject<localSurfaceField>(name).
+                oldTime().boundaryField()[patchI];
+            return new Field<Type>(pField);
+        } else if(
+            mesh.objectRegistry::foundObject<localPointField>(name)
+        ) {
+            const typename localPointField::PatchFieldType &pField=
+                mesh.lookupObject<localPointField>(name).
+                oldTime().boundaryField()[patchI];
+            return new Field<Type>(pField.patchInternalField());
+        } else{
+            FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getOldTimeField(const string &name)")
+                << "No field of type " << pTraits<scalar>::typeName
+                    << " with the name " << name << " found\n"
+                    << endl
+                    << exit(FatalError);
+
+            return NULL;
+        }
+    }
+
+    template<class Type>
     Field<Type> *PatchValueExpressionDriver::getPatchInternalField(const string &name)
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;

@@ -127,6 +127,7 @@
 %token TOKEN_snGrad
 %token TOKEN_internalField
 %token TOKEN_neighbourField
+%token TOKEN_oldTime
 
 %token TOKEN_deltaT
 %token TOKEN_time
@@ -246,6 +247,9 @@ vexp:   vector                  { $$ = $1; }
         | TOKEN_VID {
             $$=driver.getField<Foam::vector>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_VID ')'		{ 
+            $$=driver.getOldTimeField<Foam::vector>(*$3);delete $3;
+				}
         | TOKEN_snGrad '(' TOKEN_VID ')' {
             $$=driver.getSurfaceNormalField<Foam::vector>(*$3); delete $3;
                     }
@@ -413,6 +417,9 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
 	| TOKEN_SID		{ 
             $$=driver.getField<Foam::scalar>(*$1);delete $1;
 				}
+	| TOKEN_oldTime '(' TOKEN_SID ')'		{ 
+            $$=driver.getOldTimeField<Foam::scalar>(*$3);delete $3;
+				}
 	| TOKEN_LINE		{ 
             $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
 				}
@@ -462,6 +469,9 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_TID {
             $$=driver.getField<Foam::tensor>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_TID ')'		{ 
+            $$=driver.getOldTimeField<Foam::tensor>(*$3);delete $3;
+				}
         | TOKEN_snGrad '(' TOKEN_TID ')' {
             $$=driver.getSurfaceNormalField<Foam::tensor>(*$3); delete $3;
                     }
@@ -498,6 +508,9 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_YID {
             $$=driver.getField<Foam::symmTensor>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_YID ')'		{ 
+            $$=driver.getOldTimeField<Foam::symmTensor>(*$3);delete $3;
+				}
         | TOKEN_snGrad '(' TOKEN_YID ')' {
             $$=driver.getSurfaceNormalField<Foam::symmTensor>(*$3); delete $3;
                     }
@@ -526,6 +539,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_HID {
             $$=driver.getField<Foam::sphericalTensor>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_HID ')'		{ 
+            $$=driver.getOldTimeField<Foam::sphericalTensor>(*$3);delete $3;
+				}
         | TOKEN_snGrad '(' TOKEN_HID ')' {
             $$=driver.getSurfaceNormalField<Foam::sphericalTensor>(*$3); delete $3;
                     }
@@ -586,6 +602,9 @@ pvexp:  pvexp '+' pvexp 		{ sameSize($1,$3); $$ = new Foam::vectorField(*$1 + *$
         | TOKEN_PVID {
             $$=driver.getField<Foam::vector>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_PVID ')'		{ 
+            $$=driver.getOldTimeField<Foam::vector>(*$3);delete $3;
+				}
         | TOKEN_min '(' pvexp ',' pvexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' pvexp ',' pvexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
@@ -648,6 +667,9 @@ pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3)
 	| TOKEN_PSID		{ 
             $$=driver.getField<Foam::scalar>(*$1); delete $1;
 				}
+	| TOKEN_oldTime '(' TOKEN_PSID ')'		{ 
+            $$=driver.getOldTimeField<Foam::scalar>(*$3);delete $3;
+				}
 	| TOKEN_LOOKUP '(' pexp ')' { 
             $$=driver.getLookup(*$1,*$3).ptr(); delete $1; delete$3;
 				}
@@ -673,6 +695,9 @@ ptexp:  ptexp '+' ptexp 		{ sameSize($1,$3); $$ = new Foam::tensorField(*$1 + *$
         | TOKEN_PTID {
             $$=driver.getField<Foam::tensor>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_PTID ')'		{ 
+            $$=driver.getOldTimeField<Foam::tensor>(*$3);delete $3;
+				}
         | TOKEN_min '(' ptexp ',' ptexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' ptexp ',' ptexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
@@ -692,6 +717,9 @@ pyexp:  pyexp '+' pyexp 		{ sameSize($1,$3); $$ = new Foam::symmTensorField(*$1 
         | TOKEN_PYID {
             $$=driver.getField<Foam::symmTensor>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_PYID ')'		{ 
+            $$=driver.getOldTimeField<Foam::symmTensor>(*$3);delete $3;
+				}
         | TOKEN_min '(' pyexp ',' pyexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' pyexp ',' pyexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
@@ -709,6 +737,9 @@ phexp:  phexp '+' phexp 		{ sameSize($1,$3); $$ = new Foam::sphericalTensorField
         | TOKEN_PHID {
             $$=driver.getField<Foam::sphericalTensor>(*$1); delete $1;
                     }
+	| TOKEN_oldTime '(' TOKEN_PHID ')'		{ 
+            $$=driver.getOldTimeField<Foam::sphericalTensor>(*$3);delete $3;
+				}
         | TOKEN_min '(' phexp ',' phexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' phexp ',' phexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;

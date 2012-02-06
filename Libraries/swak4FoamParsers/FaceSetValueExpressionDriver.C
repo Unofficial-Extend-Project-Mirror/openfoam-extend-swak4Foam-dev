@@ -140,29 +140,49 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceSet::co
     return it.key();
 }
 
-Field<scalar> *FaceSetValueExpressionDriver::getScalarField(const string &name)
+Field<scalar> *FaceSetValueExpressionDriver::getScalarField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceSet,scalar>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceSet,scalar>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<vector> *FaceSetValueExpressionDriver::getVectorField(const string &name)
+Field<vector> *FaceSetValueExpressionDriver::getVectorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceSet,vector>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceSet,vector>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<tensor> *FaceSetValueExpressionDriver::getTensorField(const string &name)
+Field<tensor> *FaceSetValueExpressionDriver::getTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceSet,tensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceSet,tensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<symmTensor> *FaceSetValueExpressionDriver::getSymmTensorField(const string &name)
+Field<symmTensor> *FaceSetValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceSet,symmTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceSet,symmTensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<sphericalTensor> *FaceSetValueExpressionDriver::getSphericalTensorField(const string &name)
+Field<sphericalTensor> *FaceSetValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceSet,sphericalTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceSet,sphericalTensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
 vectorField *FaceSetValueExpressionDriver::makePositionField()
