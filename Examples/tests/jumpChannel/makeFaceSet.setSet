@@ -1,0 +1,2 @@
+faceSet jump1 new expressionToFace "pos().x>0.3"
+faceSet jump2 new expressionToFace "pos().x>0.6"

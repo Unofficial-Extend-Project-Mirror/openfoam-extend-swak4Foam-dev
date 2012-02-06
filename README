@@ -791,6 +791,21 @@ S_{expl} + S_{impl} T
      If there is no old time value stored and in the parser dictionary
      the parameter =prevIterIsOldTime= is set, then the previous
      iteration value is used as the old time.
+**** Boundary condition =groovcBCDirection=
+     Based on the =directionMixed= boundary condition this allows to
+     set a boundary condition as a Dirichlet-condition only in certain
+     directions while in the other directions it is a
+     gradient-condition
+
+     *Note*: this should have been in the last release but was
+      forgotten to merge into the default branch 
+**** Boundary condition =groovyBCJump=
+     Boundary condition that imposes a jump in the value on a cyclic
+     boundary condition pair (based on =jumpCyclic=). Only works for
+     scalar values
+
+     *Note*: this should have been in the last release but was
+      forgotten to merge into the default branch 
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
