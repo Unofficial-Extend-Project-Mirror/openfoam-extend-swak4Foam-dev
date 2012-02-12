@@ -14,3 +14,9 @@ changeOfCs {
 	titles (max);
 	expr "Expression changeScalar :  max=(%f%)";
 }
+outletChange {
+	type slave;
+	master changeOfCs;
+	titles ( outlet );
+	expr "Expression outletChange :  max=(%f%)";
+}

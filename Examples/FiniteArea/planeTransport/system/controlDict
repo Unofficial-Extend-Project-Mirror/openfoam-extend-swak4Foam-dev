@@ -23,7 +23,7 @@ startTime           0;
 
 stopAt              endTime;
 
-endTime             6;
+endTime             10;
 
 deltaT              0.1;
 
@@ -242,6 +242,16 @@ functions {
     changeScalar2 {
         $changeScalar;
         expression "mag(Cs-oldTime(Cs))/deltaT()";
+    }
+    outletChange {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        verbose true;
+        expression "mag(Cs-oldTime(Cs))/deltaT()";
+        accumulations (
+            max
+        );
     }
  }
 

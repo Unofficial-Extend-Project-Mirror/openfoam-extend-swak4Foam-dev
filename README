@@ -788,6 +788,7 @@ S_{expl} + S_{impl} T
      - sampledSurface,sampledSet :: only =oldTime=
      - faceSet,faceZone :: =oldTime=
      - internalFaFields :: =oldTime= and =ddt=
+     - faPatch :: only =oldTime=
 
      If there is no old time value stored and in the parser dictionary
      the parameter =prevIterIsOldTime= is set, then the previous
