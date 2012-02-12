@@ -114,7 +114,10 @@ public:
 
     // returning fields
     template<class T>
-    T *getField(const string &name);
+    autoPtr<T> getField(
+        const string &name,
+        bool getOldTime=false
+    );
 
     template<class FType>
     inline FType *makeConstantField(const typename FType::value_type &val);

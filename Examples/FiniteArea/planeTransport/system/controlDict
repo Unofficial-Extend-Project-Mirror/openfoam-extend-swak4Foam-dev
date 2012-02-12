@@ -230,6 +230,19 @@ functions {
         $compareTSteadyTransient;
         expression "YSteady-YTransient";
     }
+    changeScalar {
+        type swakExpression;
+        valueType internalFaField;
+        verbose true;
+        expression "mag(ddt(Cs))";
+        accumulations (
+            max
+        );
+    }
+    changeScalar2 {
+        $changeScalar;
+        expression "mag(Cs-oldTime(Cs))/deltaT()";
+    }
  }
 
 // ************************************************************************* //
