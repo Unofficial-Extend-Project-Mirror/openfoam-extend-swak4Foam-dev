@@ -58,7 +58,7 @@ else
     mv $versionFile.tmp $versionFile
 fi
 
-(export WM_NCOMPPROCS= ; wmake libso swak4FoamParsers)
+wmake libso swak4FoamParsers
 
 wmake libso groovyBC
 
@@ -90,7 +90,7 @@ wmake libso swakSourceFields
 
 if [ "$FOAM_DEV" != "" ]
 then
-    (export WM_NCOMPPROCS= ; wmake libso swakFiniteArea)
+    wmake libso swakFiniteArea
 fi
 
 wmake libso groovyStandardBCs

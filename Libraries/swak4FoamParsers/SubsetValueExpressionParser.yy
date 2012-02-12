@@ -126,6 +126,7 @@
 
 %token TOKEN_deltaT
 %token TOKEN_time
+%token TOKEN_oldTime
 
 %token TOKEN_pow
 %token TOKEN_log
@@ -241,6 +242,9 @@ vexp:   vector                  { $$ = $1; }
 //        | TOKEN_toFace '(' pvexp ')'        { $$ = driver.toFace(*$3); delete $3; }
         | TOKEN_VID {
             $$=driver.getVectorField(*$1); delete $1;
+                    }
+        | TOKEN_oldTime '(' TOKEN_VID ')' {
+            $$=driver.getVectorField(*$3,true); delete $3;
                     }
         | TOKEN_min '(' vexp ',' vexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' vexp ',' vexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -397,6 +401,9 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
 	| TOKEN_SID		{ 
             $$=driver.getScalarField(*$1);delete $1;
 				}
+        | TOKEN_oldTime '(' TOKEN_SID ')' {
+            $$=driver.getScalarField(*$3,true); delete $3;
+                    }
 	| TOKEN_LINE		{ 
             $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
 				}
@@ -437,6 +444,9 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_TID {
             $$=driver.getTensorField(*$1); delete $1;
                     }
+        | TOKEN_oldTime '(' TOKEN_TID ')' {
+            $$=driver.getTensorField(*$3,true); delete $3;
+                    }
         | TOKEN_min '(' texp ',' texp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' texp ',' texp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
@@ -464,6 +474,9 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_YID {
             $$=driver.getSymmTensorField(*$1); delete $1;
                     }
+        | TOKEN_oldTime '(' TOKEN_YID ')' {
+            $$=driver.getSymmTensorField(*$3,true); delete $3;
+                    }
         | TOKEN_min '(' yexp ',' yexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' yexp ',' yexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
@@ -482,6 +495,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
 //        | TOKEN_toFace '(' phexp ')'        { $$ = driver.toFace(*$3); delete $3; }
         | TOKEN_HID {
             $$=driver.getSphericalTensorField(*$1); delete $1;
+                    }
+        | TOKEN_oldTime '(' TOKEN_HID ')' {
+            $$=driver.getSphericalTensorField(*$3,true); delete $3;
                     }
         | TOKEN_min '(' hexp ',' hexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' hexp ',' hexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }

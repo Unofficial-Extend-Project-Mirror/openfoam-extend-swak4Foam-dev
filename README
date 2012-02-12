@@ -26,7 +26,10 @@
    - Peter Keller :: =sprinklerInlet=-case
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
-   - Bruno Santos :: Compilation with Intel compiler and Mingw
+   - Bruno Santos :: 
+     - Compilation with Intel compiler and Mingw
+     - Rewrite of =mybison= and =myflex= to allow parallel compilation
+       with =WM_COMPPROCS=
    - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
                       problem with =groovyBC=)
    If anyone is forgotten: let me know
@@ -292,6 +295,14 @@ S_{expl} + S_{impl} T
           different approaches to evaluating with the
           =swakExpression=-functionObject. Also an example dictionary
           that demonstrates the use of =funkyDoCalc=
+**** =angledDuctImplicitTransient=
+     - Solver :: rhoPorousMRFPimpleFoam
+     - Mesh preparation :: Execute the =makeMesh.sh=-script in that
+          directory. If you want to run in parallel call the
+          =decomposeMesh.sh=-script with the number of processors as
+          an argument
+     - Demonstrates :: The same as =angledDuctImplicit= but also the
+                       output of temporal changes
 **** =capillaryRise=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
@@ -760,3 +771,43 @@ S_{expl} + S_{impl} T
      name. For the default region nothing changes. Directory names
      stay the same as they are unambiguous anyway (they contain the
      name of the functionObject)
+**** Temporal operators =ddt= and =oldTime=
+     For fields (not expressions!) the value at a previous timestep
+     can be gotten via =oldTime(field)= if that information exists
+     (also for =funkySetFields= if the corresponding file =field_0=
+     exists. 
+     
+     For fields that support it (basically volume-fields) there is
+     also a =ddt=-operator that calculates the explicit
+     time-derivative (if information about the last timestep exists)
+     
+     Currently implemented for
+     - internalFields :: =oldTime= and =ddt=
+     - patch :: only =oldTime=
+     - cellSet,cellZone :: only =oldTime=
+     - sampledSurface,sampledSet :: only =oldTime=
+     - faceSet,faceZone :: =oldTime=
+
+     If there is no old time value stored and in the parser dictionary
+     the parameter =prevIterIsOldTime= is set, then the previous
+     iteration value is used as the old time.
+**** Boundary condition =groovcBCDirection=
+     Based on the =directionMixed= boundary condition this allows to
+     set a boundary condition as a Dirichlet-condition only in certain
+     directions while in the other directions it is a
+     gradient-condition
+
+     *Note*: this should have been in the last release but was
+      forgotten to merge into the default branch 
+**** Boundary condition =groovyBCJump=
+     Boundary condition that imposes a jump in the value on a cyclic
+     boundary condition pair (based on =jumpCyclic=). Only works for
+     scalar values
+
+     *Note*: this should have been in the last release but was
+      forgotten to merge into the default branch 
+*** Infrastructure
+**** Full parallel compilation
+     Thanks to patches supplied by Bruno Santos (see
+     [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
+     compilation of the libraries is now possible in parallel

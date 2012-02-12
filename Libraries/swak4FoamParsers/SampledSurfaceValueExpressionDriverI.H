@@ -58,7 +58,10 @@ namespace Foam {
     }
 
     template<class Type,class volField,class surfField>
-    Field<Type> *SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(const word &name)
+    Field<Type> *SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(
+        const word &name,
+        bool oldTime
+    )
     {
         if(this->variables_.found(name)) {
             return this->variables_[name].getResult<Type>(true).ptr();
@@ -74,7 +77,11 @@ namespace Foam {
                 autoPtr<interpolation<Type> > inter(
                     interpolation<Type>::New(
                         interpolationType_,
-                        this->mesh().lookupObject<volField>(name)
+                        ( 
+                            !oldTime ?
+                            this->mesh().lookupObject<volField>(name) :
+                            this->mesh().lookupObject<volField>(name).oldTime()
+                        ) 
                     )
                 );
                 
@@ -86,18 +93,30 @@ namespace Foam {
             } else {
                 result=new Field<Type>(
                     this->theSurface_.sample(
-                        this->mesh().lookupObject<volField>(name)
+                        (
+                            !oldTime ?
+                            this->mesh().lookupObject<volField>(name) :
+                            this->mesh().lookupObject<volField>(name).oldTime()
+                        )
                     )
                 );
             }
         } else {
-            autoPtr<volField> f=this->getOrReadField<volField>(name);
+            autoPtr<volField> f=this->getOrReadField<volField>(
+                name,
+                true, // fail if not found
+                oldTime
+            );
 
             if(interpolate_) {
                 autoPtr<interpolation<Type> > inter(
                     interpolation<Type>::New(
                         interpolationType_,
-                        f()
+                        (
+                            !oldTime ?
+                            f() :
+                            f->oldTime()
+                        )
                     )
                 );
                 
@@ -109,7 +128,11 @@ namespace Foam {
             } else {
                 result=new Field<Type>(
                     this->theSurface_.sample(
-                        f()
+                        (
+                            !oldTime ?
+                            f() :
+                            f->oldTime()
+                        )
                     )
                 );
             }

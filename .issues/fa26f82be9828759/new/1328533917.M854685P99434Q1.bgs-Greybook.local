@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 06 Feb 2012 14:11:16 +0100
+Subject: Re: Implement ddt/oldTime for finiteArea
+Message-Id: <fa26f82be9828759-dc7d89e0ab773e1d-artemis@bgs-Greybook.local>
+References: <fa26f82be9828759-0-artemis@bgs-Greybook.local>
+In-Reply-To: <fa26f82be9828759-0-artemis@bgs-Greybook.local>
+
+Now merged into the default branch
+
+Both test cases seem to run correctly

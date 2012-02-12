@@ -123,7 +123,7 @@ public:
 
     // returning fields
     template<class T>
-    T* getField(const string &name);
+    T* getField(const string &name,bool getOldTime=false);
 
     // make constant fields
     volVectorField *makeVectorField(volScalarField *x,volScalarField *y,volScalarField *z);

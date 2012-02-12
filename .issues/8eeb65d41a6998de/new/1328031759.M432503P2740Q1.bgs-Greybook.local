@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 31 Jan 2012 18:39:31 +0100
+State: fixed
+Subject: Temporal expressions in FieldExpressions
+Message-Id: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+
+Implement an operator ddt(field) that basically does a fvc::ddt and an
+operator prevTime(field) that gives the previous value for a field.
+
+Should only be implemented for fields. Not for general expressions
+(because these don't store their old values)

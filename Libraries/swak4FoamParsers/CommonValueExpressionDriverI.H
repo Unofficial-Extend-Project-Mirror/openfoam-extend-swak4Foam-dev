@@ -414,7 +414,8 @@ namespace Foam {
     template<class T>
     autoPtr<T> CommonValueExpressionDriver::getOrReadField(
         const string &name,
-        bool failIfNoneFound
+        bool failIfNoneFound,
+        bool getOldTime
     )
     {
         if(debug) {
@@ -505,6 +506,23 @@ namespace Foam {
                     this->mesh().lookupObject<T>(name)
                 )
             );
+            if(getOldTime) {
+                if(debug) {
+                    Info << "Getting oldTime of " << name 
+                        << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
+                        << endl;
+                }
+                if(
+                    this->mesh().lookupObject<T>(name).nOldTimes()==0
+                    &&
+                    this->prevIterIsOldTime()
+                ) {
+                    if(debug) {
+                        Info << "Using the previous iteration, because there is no oldTime" << endl;
+                    }
+                    f->oldTime()=this->mesh().lookupObject<T>(name).prevIter();
+                }
+            }
         } else if(
             searchOnDisc()
             &&
@@ -517,6 +535,7 @@ namespace Foam {
             f.set(
                 this->readAndRegister<T>(name).ptr()
             );
+            // oldTime automatically read
         }
 
         if(
@@ -532,6 +551,20 @@ namespace Foam {
     
         if(f.valid()) {
             f->dimensions().reset(nullDim);
+            if(f->nOldTimes()>0) {
+                if(debug) {
+                    Info << "Removing dimensions of oldTime of " << name 
+                        << " has " << f->nOldTimes()
+                        << endl;
+                }
+                
+                // go through ALL old times
+                T *fp=f.operator->();
+                while(fp->nOldTimes()>0) {
+                    fp=&(fp->oldTime());
+                    fp->dimensions().reset(nullDim);
+                }
+            }
         }
 
         return f;

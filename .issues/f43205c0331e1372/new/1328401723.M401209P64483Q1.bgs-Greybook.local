@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 05 Feb 2012 01:26:47 +0100
+State: fixed
+Subject: directionMixed and jump not in 1.x-branchj
+Message-Id: <f43205c0331e1372-0-artemis@bgs-Greybook.local>
+
+Seems like I forgot to merge feature/directionMixed into that
+branch. It is in 2.x
+
