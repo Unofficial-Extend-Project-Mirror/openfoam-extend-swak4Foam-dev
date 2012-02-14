@@ -132,7 +132,7 @@ namespace Foam {
             return new Field<Type>(pField.patchInternalField());
         } else{
             FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getField(const string &name)")
-                << "No field of type " << pTraits<scalar>::typeName
+                << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
                     << exit(FatalError);
@@ -199,7 +199,7 @@ namespace Foam {
             return new Field<Type>(pField.patchInternalField());
         } else{
             FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getOldTimeField(const string &name)")
-                << "No field of type " << pTraits<scalar>::typeName
+                << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
                     << exit(FatalError);
@@ -244,7 +244,7 @@ namespace Foam {
             return new Field<Type>(pField.patchInternalField());
         } else{
             FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getPatchInternalField(const string &name)")
-                << "No field of type " << pTraits<scalar>::typeName
+                << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found or unsupported type for patchInternalField\n"
                     << endl
                     << exit(FatalError);
@@ -281,7 +281,7 @@ namespace Foam {
             return new Field<Type>(pField.patchNeighbourField());
         } else{
             FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getPatchNeighbourField(const string &name)")
-                << "No field of type " << pTraits<scalar>::typeName
+                << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found or unsupported type for patchNeighbourField\n"
                     << endl
                     << exit(FatalError);
@@ -314,7 +314,7 @@ namespace Foam {
             return new Field<Type>(pField.snGrad());
         } else{
             FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getSurfaceNormalField(const string &name)")
-                << "No field of type " << pTraits<scalar>::typeName
+                << "No field of type " << pTraits<Type>::typeName
                     << "( " << pTraits<localVolField>::typeName << ")"
                     << " with the name " << name << " found or unsupported type for snGrad\n"
                     << "Fields of type: " 
