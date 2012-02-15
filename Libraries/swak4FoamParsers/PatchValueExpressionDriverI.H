@@ -144,6 +144,9 @@ namespace Foam {
                     << "Fields of type: " << localPointField::typeName
                     << patch_.boundaryMesh().mesh().objectRegistry::names<localPointField>()
                     << endl
+                    // << "All registered objects:"
+                    // << patch_.boundaryMesh().mesh().objectRegistry::names()
+                    // << endl
                     << exit(FatalError);
 
             return NULL;
