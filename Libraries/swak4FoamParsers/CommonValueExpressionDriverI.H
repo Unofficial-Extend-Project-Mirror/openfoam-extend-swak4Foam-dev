@@ -675,7 +675,7 @@ namespace Foam {
             return new Field<Type>(pField.patchInternalField());
         } else{
             FatalErrorIn("Field<Type> *CommonValueExpressionDriver::getField(const string &name)")
-                << "No field of type " << pTraits<scalar>::typeName
+                << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
                     << exit(FatalError);

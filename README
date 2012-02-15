@@ -874,3 +874,15 @@ S_{expl} + S_{impl} T
      Thanks to patches supplied by Bruno Santos (see
      [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
      compilation of the libraries is now possible in parallel
+*** Bug fixes
+**** Field itself can not be used in =funkySetBoundaryField=
+     Bug reported:
+     [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=124]]
+
+     An expression like =2*U= did not work for the field =U=. Reason
+     was that the registry already held an object called =U= (the
+     dictionary representation of the field) and therefor refused to
+     load/register another =U=.
+
+     Has been fixed by de-registering the dictionary =U= immediately
+     after loading.
