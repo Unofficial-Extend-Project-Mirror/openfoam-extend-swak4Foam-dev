@@ -135,6 +135,15 @@ namespace Foam {
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
+                    << "Fields of type: " << localVolField::typeName
+                    << patch_.boundaryMesh().mesh().objectRegistry::names<localVolField>()
+                    << endl
+                    << "Fields of type: " << localSurfaceField::typeName
+                    << patch_.boundaryMesh().mesh().objectRegistry::names<localSurfaceField>()
+                    << endl
+                    << "Fields of type: " << localPointField::typeName
+                    << patch_.boundaryMesh().mesh().objectRegistry::names<localPointField>()
+                    << endl
                     << exit(FatalError);
 
             return NULL;
