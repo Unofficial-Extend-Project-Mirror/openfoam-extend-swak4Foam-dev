@@ -986,6 +986,22 @@ void CommonValueExpressionDriver::prepareData(dictionary &dict) const
     }
 }
 
+vector CommonValueExpressionDriver::getPositionOfMinimum(
+    const scalarField &,
+    const vectorField &
+) const
+{
+    return vector::zero;
+}
+
+vector CommonValueExpressionDriver::getPositionOfMaximum(
+    const scalarField &,
+    const vectorField &
+) const
+{
+    return vector::zero;
+}
+
 // ************************************************************************* //
 
 } // namespace

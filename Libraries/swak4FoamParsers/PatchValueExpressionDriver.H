@@ -128,6 +128,7 @@ public:
 
     ~PatchValueExpressionDriver();
 
+    const fvPatch &patch() const { return patch_; }
 
     // Member Functions
 
