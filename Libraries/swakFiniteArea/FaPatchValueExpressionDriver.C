@@ -150,6 +150,7 @@ vectorField *FaPatchValueExpressionDriver::makePositionField()
 
 vectorField *FaPatchValueExpressionDriver::makePointField()
 {
+    // if implemented go to the call in the grammar and reuse there
     notImplemented("FaPatchValueExpressionDriver::makePointField()");
 
     return new vectorField(0);
