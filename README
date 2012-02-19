@@ -806,6 +806,11 @@ S_{expl} + S_{impl} T
 
      *Note*: this should have been in the last release but was
       forgotten to merge into the default branch 
+**** Function to return the position of minimum and maximum
+     The functions =minPosition= and =maxPosition= return the position
+     of the minimum or the maximum of a scalar field
+
+     This is implemented for all field types
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
