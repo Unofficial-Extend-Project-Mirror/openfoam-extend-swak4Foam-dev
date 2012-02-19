@@ -270,8 +270,31 @@ scalar:	TOKEN_NUM		        { $$ = $1; }
 
 sreduced: TOKEN_min '(' exp ')'       { $$ = Foam::gMin(*$3); delete $3; }
         | TOKEN_max '(' exp ')'       { $$ = Foam::gMax(*$3); delete $3; }
-        | TOKEN_min '(' pexp ')'      { $$ = Foam::gMin(*$3); delete $3; }
-        | TOKEN_max '(' pexp ')'      { $$ = Foam::gMax(*$3); delete $3; }
+        | TOKEN_min '(' pexp ')'      { 
+            $$ = Foam::gMin(*$3); delete $3; 
+            // Foam::scalar tmp(HugeVal);
+            // if(($3->size())>0) {
+            //     tmp=Foam::min(*$3);
+            // }
+            // Foam::Pout << "min " << tmp << Foam::endl;
+            // Foam::reduce(tmp,Foam::minOp<Foam::scalar>());
+            // Foam::Info << "min " << tmp << Foam::endl;
+            // Foam::reduce(tmp,Foam::minOp<Foam::scalar>());
+            // $$ = tmp;
+            // delete $3;
+          }
+        | TOKEN_max '(' pexp ')'      { 
+            $$ = Foam::gMax(*$3); delete $3; 
+            // Foam::scalar tmp(-HugeVal);
+            // if(($3->size())>0) {
+            //     tmp=Foam::max(*$3);
+            // }
+            // Foam::Pout << "max " << tmp << Foam::endl;
+            // Foam::reduce(tmp,Foam::maxOp<Foam::scalar>());
+            // Foam::Info << "max " << tmp << Foam::endl;
+            // $$ = tmp;
+            // delete $3;
+           }
         | TOKEN_sum '(' exp ')'       { $$ = Foam::gSum(*$3); delete $3; }
         | TOKEN_sum '(' pexp ')'      { $$ = Foam::gSum(*$3); delete $3; }
         | TOKEN_average '(' exp ')'   { $$ = Foam::gAverage(*$3); delete $3; }
