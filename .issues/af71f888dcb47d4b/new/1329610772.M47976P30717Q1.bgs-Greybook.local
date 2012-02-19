@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 19 Feb 2012 01:12:57 +0100
+Subject: Re: Find location of maximum and minimum
+Message-Id: <af71f888dcb47d4b-88b664fd8f1cb2de-artemis@bgs-Greybook.local>
+References: <af71f888dcb47d4b-0-artemis@bgs-Greybook.local>
+In-Reply-To: <af71f888dcb47d4b-0-artemis@bgs-Greybook.local>
+
+Now works in serial and parallel. Tested with fields
+
+Will be closed as soon as it is implemented for the finiteArea-stuff
