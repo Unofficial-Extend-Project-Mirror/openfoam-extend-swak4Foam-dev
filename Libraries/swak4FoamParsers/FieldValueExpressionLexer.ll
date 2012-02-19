@@ -161,6 +161,7 @@ symmTensor             return token::TOKEN_SYMM_TENSOR;
 sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
+point                  return token::TOKEN_point;
 
 transpose              return token::TOKEN_transpose;
 diag                   return token::TOKEN_diag;
@@ -235,6 +236,16 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_FYID;
     } else if(driver.isThere<Foam::surfaceSphericalTensorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FHID;
+    } else if(driver.isThere<Foam::pointVectorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PVID;
+    } else if(driver.isThere<Foam::pointScalarField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PSID;
+    } else if(driver.isThere<Foam::pointTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PTID;
+    } else if(driver.isThere<Foam::pointSymmTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PYID;
+    } else if(driver.isThere<Foam::pointSphericalTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PHID;
     } else {
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }

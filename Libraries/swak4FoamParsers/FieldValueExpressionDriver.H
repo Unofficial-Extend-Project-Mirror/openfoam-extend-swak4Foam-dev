@@ -8,6 +8,7 @@
 
 #include <volFields.H>
 #include <surfaceFields.H>
+#include <pointFields.H>
 
 namespace Foam {
     class FieldValueExpressionDriver;
@@ -39,6 +40,8 @@ class FieldValueExpressionDriver
     const fvMesh &mesh_;
     const Time& runTime_;
 
+    autoPtr<pointMesh> pMesh_;
+
 //     autoPtr<volScalarField> sresult_;
 //     autoPtr<volVectorField> vresult_;
     
@@ -49,6 +52,8 @@ class FieldValueExpressionDriver
     bool isLogical_;
 
     bool isSurfaceField_;
+
+    bool isPointField_;
 
     dimensionSet resultDimension_;
 
@@ -92,16 +97,18 @@ public:
     template<class T>
     bool resultIsTyp(bool isLogical=false);
 
+    inline const pointMesh &pMesh();
+
 protected:
 
     //- set the result field
 
     //. Not everyone should be allowed to use this
     template<class T>
-    void setResult(T *,bool isSurfaceField);
+    void setResult(T *,bool isSurfaceField,bool isPointField);
 
     template<class T>
-    void setLogicalResult(T *,bool isSurfaceField);
+    void setLogicalResult(T *,bool isSurfaceField,bool isPointField);
 
 public:
     //- get the result field (if it is of the right type)
@@ -126,8 +133,23 @@ public:
     T* getField(const string &name,bool getOldTime=false);
 
     // make constant fields
-    volVectorField *makeVectorField(volScalarField *x,volScalarField *y,volScalarField *z);
-    surfaceVectorField *makeSurfaceVectorField(surfaceScalarField *x,surfaceScalarField *y,surfaceScalarField *z);
+    volVectorField *makeVectorField(
+        volScalarField *x,
+        volScalarField *y,
+        volScalarField *z
+    );
+
+    surfaceVectorField *makeSurfaceVectorField(
+        surfaceScalarField *x,
+        surfaceScalarField *y,
+        surfaceScalarField *z
+    );
+
+    pointVectorField *makePointVectorField(
+        pointScalarField *x,
+        pointScalarField *y,
+        pointScalarField *z
+    );
 
     volTensorField *makeTensorField(
         volScalarField *,volScalarField *,volScalarField *,
@@ -140,20 +162,44 @@ public:
         surfaceScalarField *,surfaceScalarField *,surfaceScalarField *
     );
 
+    pointTensorField *makePointTensorField(
+        pointScalarField *,pointScalarField *,pointScalarField *,
+        pointScalarField *,pointScalarField *,pointScalarField *,
+        pointScalarField *,pointScalarField *,pointScalarField *
+    );
+
     volSymmTensorField *makeSymmTensorField(
         volScalarField *,volScalarField *,volScalarField *,
         volScalarField *,volScalarField *,volScalarField *
     );
+
     surfaceSymmTensorField *makeSurfaceSymmTensorField(
         surfaceScalarField *,surfaceScalarField *,surfaceScalarField *,
         surfaceScalarField *,surfaceScalarField *,surfaceScalarField *
     );
 
+    pointSymmTensorField *makePointSymmTensorField(
+        pointScalarField *,pointScalarField *,pointScalarField *,
+        pointScalarField *,pointScalarField *,pointScalarField *
+    );
+
     volSphericalTensorField *makeSphericalTensorField(volScalarField *);
+
     surfaceSphericalTensorField *makeSurfaceSphericalTensorField(surfaceScalarField *);
+
+    pointSphericalTensorField *makePointSphericalTensorField(pointScalarField *);
+
+    template<class FType,class Mesh>
+    inline FType *makeConstantFieldInternal(
+        const typename FType::value_type &val,
+        const Mesh &mesh
+    );
 
     template<class FType>
     inline FType *makeConstantField(const typename FType::value_type &val);
+
+    template<class FType>
+    inline FType *makePointConstantField(const typename FType::value_type &val);
 
     template<class FType>
     inline FType *makeField(const Field<typename FType::value_type> &val);
@@ -192,6 +238,9 @@ public:
     //- is this a surface field
     bool isSurfaceField() const { return isSurfaceField_; }
 
+    //- is this a point field
+    bool isPointField() const { return isPointField_; }
+
     // Logical expressions
     template <class Field>
     Field *makeLogicalField(scalar v);
@@ -200,14 +249,26 @@ public:
     Field *doCompare(Field *a,Op op,Field *b);
 
     template <class Op,class Field>
+    Field *doPointCompare(Field *a,Op op,Field *b);
+
+    template <class Op,class Field>
     Field *doLogicalOp(Field *a,Op op,Field *b);
+
+    template <class Op,class Field>
+    Field *doPointLogicalOp(Field *a,Op op,Field *b);
 
     template <class Field>
     Field *doLogicalNot(Field *a);
     
+    template <class Field>
+    Field *doPointLogicalNot(Field *a);
+    
     template <class T,class Field>
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
+    template <class T>
+    T * doConditional(pointScalarField *l,T* yes,T* no,T* result);
+
     template<class T>
     static void makePatches(
         GeometricField<T,fvPatchField,volMesh> &field,
@@ -232,6 +293,20 @@ public:
     template<class T>
     static void setValuePatches(
         GeometricField<T,fvsPatchField,surfaceMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void makePatches(
+        GeometricField<T,pointPatchField,pointMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void setValuePatches(
+        GeometricField<T,pointPatchField,pointMesh> &field,
         bool keepPatches,
         const wordList &fixedPatches
     );
@@ -249,6 +324,12 @@ public:
     );
 
     template<class T>
+    static void setCalculatedPatches(
+        GeometricField<T,pointPatchField,pointMesh> &field,
+        T value=pTraits<T>::zero
+    );
+
+    template<class T>
     static void copyCalculatedPatches(
         GeometricField<T,fvPatchField,volMesh> &field,
         const GeometricField<T,fvPatchField,volMesh> &orig
@@ -258,6 +339,12 @@ public:
     static void copyCalculatedPatches(
         GeometricField<T,fvsPatchField,surfaceMesh> &field,
         const GeometricField<T,fvsPatchField,surfaceMesh> &orig
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,pointPatchField,pointMesh> &field,
+        const GeometricField<T,pointPatchField,pointMesh> &orig
     );
 
     // allow acces to the setResult-method

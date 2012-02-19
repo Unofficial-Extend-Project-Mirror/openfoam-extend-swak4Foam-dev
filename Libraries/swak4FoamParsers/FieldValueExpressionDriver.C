@@ -36,6 +36,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       typ_("nothing"),
       isLogical_(false),
       isSurfaceField_(false),
+      isPointField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -55,6 +56,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       typ_("nothing"),
       isLogical_(false),
       isSurfaceField_(false),
+      isPointField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -76,6 +78,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       typ_("nothing"),
       isLogical_(false),
       isSurfaceField_(false),
+      isPointField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -91,6 +94,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       typ_("nothing"),
       isLogical_(false),
       isSurfaceField_(false),
+      isPointField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
     if(dict.found("dimensions")) {

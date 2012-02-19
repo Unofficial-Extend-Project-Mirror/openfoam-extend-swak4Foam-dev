@@ -4,11 +4,15 @@
 #define VALUE_EXPRESSION_DRIVER_I_H
 
 #include "wallFvPatch.H"
+#include "wallPointPatch.H"
 #include "fixedValueFvPatchFields.H"
 #include "fixedValueFvsPatchFields.H"
+#include "fixedValuePointPatchFields.H"
 #include "zeroGradientFvPatchFields.H"
+#include "zeroGradientPointPatchFields.H"
 #include "calculatedFvPatchFields.H"
 #include "calculatedFvsPatchFields.H"
+#include "calculatedPointPatchFields.H"
 
 namespace Foam {
 
@@ -35,6 +39,17 @@ inline label FieldValueExpressionDriver::pointSize() const
 inline const fvMesh &FieldValueExpressionDriver::mesh() const
 {
     return mesh_;
+}
+
+inline const pointMesh &FieldValueExpressionDriver::pMesh()
+{
+    if(!pMesh_.valid()) {
+        pMesh_.set(
+            new pointMesh(mesh())
+        );
+    }
+    
+    return pMesh_();
 }
 
 template<class T>
@@ -140,6 +155,57 @@ void FieldValueExpressionDriver::makePatches
   }
 }
 
+// code duplication from the template above
+template<class T>
+void FieldValueExpressionDriver::makePatches
+(
+    GeometricField<T,pointPatchField,pointMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,pointPatchField,pointMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<pointPatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const pointPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            || 
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(wallPointPatch)
+//             || 
+//             typeid(patch)==typeid(fvPatch)
+        )
+    ) {
+        if(isValuePatch){
+            bfNew[patchI]=new fixedValuePointPatchField<T>(patch,field);  
+        } else {
+            bfNew[patchI]=new zeroGradientPointPatchField<T>(patch,field);
+        }
+    } else {
+        bfNew[patchI]=bf[patchI].clone().ptr();
+    }
+  }
+
+  bf.clear();
+  bf.setSize(bfNew.size());
+  forAll(bf,i) {
+      bf.set(i,bfNew[i]);
+  }
+}
+
 template<class T>
 void FieldValueExpressionDriver::setCalculatedPatches
 (
@@ -225,6 +291,27 @@ void FieldValueExpressionDriver::copyCalculatedPatches
             pf==pfOrig;
         }
     }
+}
+
+template<class T>
+void FieldValueExpressionDriver::copyCalculatedPatches
+(
+    GeometricField<T,pointPatchField,pointMesh> &field,
+    const GeometricField<T,pointPatchField,pointMesh> &orig
+) {
+    typename GeometricField<T,pointPatchField,pointMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    List<pointPatchField<T> *>bfNew(bf.size());
+    
+    forAll(bf,patchI) {
+        pointPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedPointPatchField<T>)
+        ) {
+            pf==pf.patchInternalField();
+        }
+    }
+    //    field.correctBoundaryConditions();
 }
 
 template<class T>
@@ -323,6 +410,48 @@ void FieldValueExpressionDriver::setValuePatches
     }
   }
 }
+// Code duplication from above ... maybe there is a better way
+template<class T>
+void FieldValueExpressionDriver::setValuePatches
+(
+    GeometricField<T,pointPatchField,pointMesh> &field,
+    bool keepPatches,
+    const wordList &fixedPatches
+) {
+  typename GeometricField<T,pointPatchField,pointMesh>::GeometricBoundaryField &bf=field.boundaryField();
+  List<pointPatchField<T> *>bfNew(bf.size());
+
+  forAll(bf,patchI) {
+    const pointPatch &patch=bf[patchI].patch();
+
+    bool isValuePatch=false;
+    forAll(fixedPatches,i) {
+      if(fixedPatches[i]==patch.name()) {
+	isValuePatch=true;
+      }
+    }
+
+    if(
+        (
+            !keepPatches 
+            ||
+            isValuePatch
+        ) 
+        && 
+        (
+            typeid(patch)==typeid(wallPointPatch)
+//             ||
+//             typeid(patch)==typeid(fvPatch
+        )
+    ) {
+        if(typeid(field.boundaryField()[patchI])==typeid(fixedValuePointPatchField<T>)) {
+            pointPatchField<T> &pf=field.boundaryField()[patchI];
+            
+            pf==pf.patchInternalField();
+        }
+    }
+  }
+}
 
 template<class FType>
 inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)
@@ -360,7 +489,26 @@ inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::
 }
 
 template<class FType>
-inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType::value_type &val)
+inline FType *FieldValueExpressionDriver::makeConstantField(
+    const typename FType::value_type &val
+)
+{
+    return makeConstantFieldInternal<FType>(val,mesh_);
+}
+
+template<class FType>
+inline FType *FieldValueExpressionDriver::makePointConstantField(
+    const typename FType::value_type &val
+)
+{
+    return makeConstantFieldInternal<FType>(val,this->pMesh());
+}
+
+template<class FType,class Mesh>
+inline FType *FieldValueExpressionDriver::makeConstantFieldInternal(
+    const typename FType::value_type &val,
+    const Mesh &mesh
+)
 {
     std::ostringstream buff;
     buff << "constant" << pTraits<typename FType::value_type>::typeName;
@@ -379,7 +527,7 @@ inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        mesh_,
+        mesh,
         val,
         defaultBC
     );
@@ -391,7 +539,7 @@ inline FType *FieldValueExpressionDriver::makeConstantField(const typename FType
 }
 
 template<class T>
-void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField) 
+void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField,bool isPointField) 
 {
     resultField_.reset(r);
 
@@ -409,10 +557,11 @@ void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField)
 
     isLogical_=false;
     isSurfaceField_=isSurfaceField;
+    isPointField_=isPointField;
 }
 
 template<class T>
-void FieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField) 
+void FieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField,bool isPointField) 
 {
     resultField_.reset(r);
 
@@ -435,6 +584,7 @@ void FieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField)
 
     isLogical_=true;
     isSurfaceField_=isSurfaceField;
+    isPointField_=isPointField;
 }
 
 template<class T>

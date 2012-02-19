@@ -42,11 +42,12 @@ Description
 
 #include "timeSelector.H"
 
-template<class T>
+template<class T,class Mesh>
 void setField
 (
     const string &name,
     const fvMesh &mesh,
+    const Mesh &actualMesh,
     const string &time,
     const T &result,
     const scalarField &cond,
@@ -69,7 +70,7 @@ void setField
 		IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            mesh,
+            actualMesh,
             init
         );
     } else {
@@ -83,7 +84,7 @@ void setField
 		IOobject::MUST_READ,
                 IOobject::NO_WRITE
             ),
-            mesh
+            actualMesh
         );
     }
 
@@ -114,6 +115,32 @@ void setField
     delete tmp;
 }
 
+template<class T>
+void setField
+(
+    const string &name,
+    const fvMesh &mesh,
+    const string &time,
+    const T &result,
+    const scalarField &cond,
+    bool create,
+    const dimensionSet &dim,
+    bool keepPatches,
+    const wordList &valuePatches
+) {
+    setField(
+        name,
+        mesh,
+        mesh,
+        time,
+        result,
+        cond,
+        create,
+        dim,
+        keepPatches,
+        valuePatches
+    );
+}
 void doAnExpression
 (
     const fvMesh &mesh,
@@ -189,6 +216,9 @@ void doAnExpression
     scalarField conditionField;
     bool evaluatedCondition=false;
     bool conditionIsSurface=false;
+    bool conditionIsPoint=false;
+    autoPtr<pointMesh> pMesh;
+
     if(condition!="true") {
         evaluatedCondition=true;
 
@@ -197,6 +227,8 @@ void doAnExpression
             !driver.resultIsTyp<volScalarField>(true)
             &&
             !driver.resultIsTyp<surfaceScalarField>(true)
+            &&
+            !driver.resultIsTyp<pointScalarField>(true)
         ) {
             FatalErrorIn("doAnExpression()")
                 << " condition: " << condition 
@@ -207,9 +239,15 @@ void doAnExpression
         if(driver.resultIsTyp<volScalarField>(true)) {
             conditionField=driver.getResult<volScalarField>().internalField();
             conditionIsSurface=false;
-        } else {
+        } else if(driver.resultIsTyp<surfaceScalarField>(true)){
             conditionField=driver.getResult<surfaceScalarField>().internalField();
             conditionIsSurface=true;
+        } else {
+            conditionField=driver.getResult<pointScalarField>().internalField();
+            conditionIsPoint=true;
+            pMesh.set(
+                new pointMesh(mesh)
+            );
         }
     }
 
@@ -220,6 +258,8 @@ void doAnExpression
 
         if(conditionIsSurface) {
             conditionField=scalarField(mesh.cells().size(),1);
+        } else if(conditionIsPoint) {
+            conditionField=scalarField(mesh.nPoints(),1);
         } else {
             conditionField=scalarField(mesh.nInternalFaces(),1);
         }
@@ -229,13 +269,39 @@ void doAnExpression
         oldFieldType=driver.typ();
     }
 
-    if(conditionIsSurface!=driver.isSurfaceField()) {
+    if(
+        conditionIsSurface!=driver.isSurfaceField()
+        ||
+        conditionIsPoint!=driver.isPointField()
+    ) {
         FatalErrorIn("doAnExpression()")
             << "Inconsistent expression and condition. "
                 << "Expression " << expression << " is defined on the "
-                << (driver.isSurfaceField() ? "faces" : "cells")
+                << (
+                    driver.isSurfaceField() 
+                    ? 
+                    "faces" 
+                    : ( 
+                        driver.isPointField() 
+                        ?
+                        "points"
+                        :
+                        "cells"
+                    )
+                )
                 << " while condition " << condition << " is defined on "
-                << (conditionIsSurface ? "faces" : "cells")
+                << (
+                    conditionIsSurface 
+                    ? 
+                    "faces" 
+                    : (
+                        conditionIsPoint
+                        ?
+                        "points"
+                        :
+                        "cells"
+                    )
+                )
                 << endl
                 << exit(FatalError);
     }
@@ -363,6 +429,71 @@ void doAnExpression
                 mesh,
                 time,
                 driver.getResult<surfaceSphericalTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<pointScalarField>::typeName) {
+            setField(
+                field,
+                mesh,
+                pMesh,
+                time,
+                driver.getResult<pointScalarField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<pointVectorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                pMesh,
+                time,
+                driver.getResult<pointVectorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<pointTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                pMesh,
+                time,
+                driver.getResult<pointTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<pointSymmTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                pMesh,
+                time,
+                driver.getResult<pointSymmTensorField>(),
+                conditionField,
+                create,
+                dim,
+                keepPatches,
+                valuePatches
+            );
+        } else if(driver.typ()==pTraits<pointSphericalTensorField>::typeName) {
+            setField(
+                field,
+                mesh,
+                pMesh,
+                time,
+                driver.getResult<pointSphericalTensorField>(),
                 conditionField,
                 create,
                 dim,

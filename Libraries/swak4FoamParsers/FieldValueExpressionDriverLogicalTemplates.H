@@ -46,6 +46,22 @@ Field *FieldValueExpressionDriver::doCompare(Field *a,Op op,Field *b)
 }
 
 template <class Op,class Field>
+Field *FieldValueExpressionDriver::doPointCompare(Field *a,Op op,Field *b)
+{
+    Field *res=makeLogicalField<Field>(0.);
+
+    forAll(*res,cellI) {
+        if( op((*a)[cellI],(*b)[cellI]) ) {
+            (*res)[cellI]=1;
+        } else {
+            (*res)[cellI]=0;
+        }
+    }
+
+    return res;
+}
+
+template <class Op,class Field>
 Field *FieldValueExpressionDriver::doLogicalOp(Field *a,Op op,Field *b)
 {
     Field *res=makeLogicalField<Field>(0.);
@@ -70,6 +86,25 @@ Field *FieldValueExpressionDriver::doLogicalOp(Field *a,Op op,Field *b)
             } else {
                 getFaceValue(res)=0;
             }
+        }
+    }
+
+    return res;
+}
+
+template <class Op,class Field>
+Field *FieldValueExpressionDriver::doPointLogicalOp(Field *a,Op op,Field *b)
+{
+    Field *res=makeLogicalField<Field>(0.);
+
+    forAll(*res,cellI) {
+        bool av= (*a)[cellI] ? true : false;
+        bool bv= (*b)[cellI] ? true : false;
+
+        if( op(av,bv) ) {
+            (*res)[cellI]=1;
+        } else {
+            (*res)[cellI]=0;
         }
     }
 
@@ -102,6 +137,20 @@ T * FieldValueExpressionDriver::doConditional(Field *cond,T* yes,T* no,T* result
     return result;
 }
 
+template<class T>
+T* FieldValueExpressionDriver::doConditional(pointScalarField *cond,T* yes,T* no,T* result)
+{
+    forAll(*result,cellI) {
+        bool c= (*cond)[cellI] ? true : false;
+        if(c) {
+            (*result)[cellI]=(*yes)[cellI];
+        } else {
+            (*result)[cellI]=(*no)[cellI];
+        }
+    }
+    return result;
+}
+
 template <class Field>
 Field *FieldValueExpressionDriver::doLogicalNot(Field *a)
 {
@@ -125,6 +174,24 @@ Field *FieldValueExpressionDriver::doLogicalNot(Field *a)
             } else {
                 getFaceValue(res)=0;
             }
+        }
+    }
+
+    return res;
+}
+
+template <class Field>
+Field *FieldValueExpressionDriver::doPointLogicalNot(Field *a)
+{
+    Field *res=makeLogicalField<Field>(0.);
+
+    forAll(*res,cellI) {
+        bool av= (*a)[cellI] ? true : false;
+
+        if( !av ) {
+            (*res)[cellI]=1;
+        } else {
+            (*res)[cellI]=0;
         }
     }
 
