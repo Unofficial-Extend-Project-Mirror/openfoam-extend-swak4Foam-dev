@@ -245,9 +245,6 @@ void doAnExpression
         } else {
             conditionField=driver.getResult<pointScalarField>().internalField();
             conditionIsPoint=true;
-            pMesh.set(
-                new pointMesh(mesh)
-            );
         }
     }
 
@@ -255,6 +252,7 @@ void doAnExpression
 
     if(!evaluatedCondition) {
         conditionIsSurface=driver.isSurfaceField();
+        conditionIsPoint=driver.isPointField();
 
         if(conditionIsSurface) {
             conditionField=scalarField(mesh.cells().size(),1);
@@ -263,6 +261,12 @@ void doAnExpression
         } else {
             conditionField=scalarField(mesh.nInternalFaces(),1);
         }
+    }
+
+    if(conditionIsPoint) {
+        pMesh.set(
+            new pointMesh(mesh)
+        );
     }
 
     if(create) {
