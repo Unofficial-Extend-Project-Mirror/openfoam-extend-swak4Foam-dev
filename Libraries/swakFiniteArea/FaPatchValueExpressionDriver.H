@@ -130,6 +130,8 @@ public:
 
     // Member Functions
 
+    const faPatch & patch() const { return patch_; }
+
     vectorField *makePositionField();
 
     vectorField *makePointField();
