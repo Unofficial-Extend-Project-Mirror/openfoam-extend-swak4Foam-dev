@@ -386,6 +386,10 @@ public:
     scalarField *makeRandomField(label seed=0);
     scalarField *makeGaussRandomField(label seed=0);
 
+    vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
+
+    vector getPositionOfMaximum(const scalarField &,const vectorField &) const;
+
     const Time& runTime() const;
 
     vectorField *composeVectorField(scalarField *,scalarField *,scalarField *);

@@ -986,6 +986,83 @@ void CommonValueExpressionDriver::prepareData(dictionary &dict) const
     }
 }
 
+class lessOp {
+public:
+    bool operator()(scalar a,scalar b) {
+        return a<b;
+    }
+};
+
+class biggerOp {
+public:
+    bool operator()(scalar a,scalar b) {
+        return a>b;
+    }
+};
+
+ 
+template<class Op>
+class  extremeOp {
+    Op &op;
+public:
+    extremeOp(Op &op) 
+        : op(op)
+        {}
+    Tuple2<scalar,vector> operator()(
+        const Tuple2<scalar,vector> &a,
+        const Tuple2<scalar,vector> &b
+    ) const {
+        if(op(a.first(),b.first())) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+};
+
+template<class Op>
+vector getExtremePosition(
+    Op op,
+    const scalarField &vals,
+    const vectorField &locs
+) {
+    assert(vals.size()==locs.size());
+
+    vector pos(HUGE,HUGE,HUGE);
+    scalar val=op(1,-1) ? -HUGE : HUGE;
+    forAll(vals,i) {
+        if(op(vals[i],val)) {
+            val=vals[i];
+            pos=locs[i];
+        }
+    }
+    if(Pstream::parRun()) {
+        Tuple2<scalar,vector> info(val,pos);
+
+        reduce(info,extremeOp<Op>(op));
+
+        pos=info.second();
+    }
+    return pos;
+}
+
+vector CommonValueExpressionDriver::getPositionOfMinimum(
+    const scalarField &vals,
+    const vectorField &locs
+) const
+{
+    return getExtremePosition(lessOp(),vals,locs);
+}
+
+vector CommonValueExpressionDriver::getPositionOfMaximum(
+    const scalarField &vals,
+    const vectorField &locs
+) const
+{
+    return getExtremePosition(biggerOp(),vals,locs);
+
+}
+
 // ************************************************************************* //
 
 } // namespace

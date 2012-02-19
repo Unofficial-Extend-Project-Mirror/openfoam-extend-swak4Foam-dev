@@ -131,6 +131,8 @@
 %token TOKEN_tan
 %token TOKEN_min
 %token TOKEN_max
+%token TOKEN_minPosition
+%token TOKEN_maxPosition
 %token TOKEN_sum
 %token TOKEN_average
 %token TOKEN_sqr
@@ -205,7 +207,25 @@ vexp:   vector                                    { $$ = $1; }
         | TOKEN_min '(' vexp ',' vexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' vexp ',' vexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_min '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_minPosition '(' exp ')'           { 
+            $$ = driver.makeConstantField<Foam::areaVectorField>(
+                driver.getPositionOfMinimum(
+                    *$3,
+                    driver.aMesh().areaCentres()
+                )
+            ); 
+            delete $3; 
+        }
         | TOKEN_max '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_maxPosition '(' exp ')'           { 
+            $$ = driver.makeConstantField<Foam::areaVectorField>(
+                driver.getPositionOfMaximum(
+                    *$3,
+                    driver.aMesh().areaCentres()
+                )
+            ); 
+            delete $3; 
+        }
         | TOKEN_sum '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' vexp ')'             { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_grad '(' exp ')'                  { $$ = new Foam::areaVectorField(Foam::fac::grad(*$3)); delete $3; }
@@ -285,7 +305,25 @@ fvexp:  fvector                            { $$ = $1; }
         | TOKEN_min '(' fvexp ',' fvexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' fvexp ',' fvexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_min '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::min(*$3).value()); delete $3; }
+        | TOKEN_minPosition '(' fsexp ')'           { 
+            $$ = driver.makeConstantField<Foam::edgeVectorField>(
+                driver.getPositionOfMinimum(
+                    *$3,
+                    driver.aMesh().edgeCentres()
+                )
+            ); 
+            delete $3; 
+        }
         | TOKEN_max '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::max(*$3).value()); delete $3; }
+        | TOKEN_maxPosition '(' fsexp ')'           { 
+            $$ = driver.makeConstantField<Foam::edgeVectorField>(
+                driver.getPositionOfMaximum(
+                    *$3,
+                    driver.aMesh().edgeCentres()
+                )
+            ); 
+            delete $3; 
+        }
         | TOKEN_sum '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fvexp ')'      { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_FVID                       { $$ = driver.getField<Foam::edgeVectorField>(*$1); }

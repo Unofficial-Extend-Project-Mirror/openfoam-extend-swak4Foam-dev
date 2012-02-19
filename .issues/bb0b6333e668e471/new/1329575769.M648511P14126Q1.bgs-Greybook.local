@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 18 Feb 2012 15:34:33 +0100
+State: new
+Subject: Change grammar in FieldValueExpressionParser to have reduced
+Message-Id: <bb0b6333e668e471-0-artemis@bgs-Greybook.local>
+
+Similar to the other grammars
