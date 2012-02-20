@@ -820,6 +820,9 @@ S_{expl} + S_{impl} T
        positions
      - Functions =pzone= and =pset= generate logical fields according
        to existing pointZones or pointSets
+     - Functions =interpolateToCell= and =interpolateToPoint=
+       interpolate from pointFields to volFields and from volFields to
+       pointFields 
 
      Utilities and functionObjects affected by this are
      - =funkySetFields=

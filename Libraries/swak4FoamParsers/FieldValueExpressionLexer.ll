@@ -162,6 +162,8 @@ oldTime               return token::TOKEN_oldTime;
 integrate             return token::TOKEN_integrate;
 surfSum               return token::TOKEN_surfSum;
 interpolate           return token::TOKEN_interpolate;
+interpolateToPoint    return token::TOKEN_interpolateToPoint;
+interpolateToCell     return token::TOKEN_interpolateToCell;
 faceAverage           return token::TOKEN_faceAverage;
 reconstruct           return token::TOKEN_reconstruct;
 

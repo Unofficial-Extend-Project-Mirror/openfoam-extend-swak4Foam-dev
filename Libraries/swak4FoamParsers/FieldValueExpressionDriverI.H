@@ -14,6 +14,9 @@
 #include "calculatedFvsPatchFields.H"
 #include "calculatedPointPatchFields.H"
 
+#include "volPointInterpolation.H"
+#include "interpolatePointToCell.H"
+
 namespace Foam {
 
 template<class T>
@@ -639,6 +642,35 @@ bool FieldValueExpressionDriver::resultIsTyp(bool isLogical)
         isLogical == isLogical_
     );
 }
+
+template<class Type>
+inline autoPtr<GeometricField<Type,pointPatchField,pointMesh> >
+FieldValueExpressionDriver::cellToPointInterpolate(
+    const GeometricField<Type,fvPatchField,volMesh> &field
+) {
+    typedef GeometricField<Type,pointPatchField,pointMesh> rType;
+
+    volPointInterpolation interpol(this->mesh());
+    return autoPtr<rType>(interpol.interpolate(field).ptr());
+}
+
+template<class Type>
+inline autoPtr<GeometricField<Type,fvPatchField,volMesh> >
+FieldValueExpressionDriver::pointToCellInterpolate(
+    const GeometricField<Type,pointPatchField,pointMesh> &field
+) {
+    typedef GeometricField<Type,fvPatchField,volMesh> rType;
+    autoPtr<rType> result(
+        this->makeConstantField<rType>(pTraits<Type>::zero)
+    );
+    forAll(result(),cellI) {
+        result()[cellI]=interpolatePointToCell(field,cellI);
+    }
+    result->correctBoundaryConditions();
+
+    return result;
+}
+
 
 } // end namespace
 

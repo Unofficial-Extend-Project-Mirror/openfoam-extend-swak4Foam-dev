@@ -215,6 +215,18 @@ public:
     template<class FType>
     inline FType *makePointField(const Field<typename FType::value_type> &val);
 
+    template<class Type>
+    inline autoPtr<GeometricField<Type,pointPatchField,pointMesh> >
+    cellToPointInterpolate(
+        const GeometricField<Type,fvPatchField,volMesh> &field
+    );
+
+    template<class Type>
+    inline autoPtr<GeometricField<Type,fvPatchField,volMesh> >
+    pointToCellInterpolate(
+        const GeometricField<Type,pointPatchField,pointMesh> &field
+    );
+
     volScalarField *makeCellSetField(const string &name);
     volScalarField *makeCellZoneField(const string &name);
     surfaceScalarField *makeFaceSetField(const string &name);
