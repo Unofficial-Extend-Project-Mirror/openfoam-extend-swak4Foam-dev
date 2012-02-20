@@ -159,6 +159,26 @@ void Foam::expressionField::execute()
             storeField(
                 driver.getResult<surfaceSphericalTensorField>()
             );
+        } else if(driver.resultIsTyp<pointVectorField>()) {
+            storeField(
+                driver.getResult<pointVectorField>()
+            );
+        } else if(driver.resultIsTyp<pointScalarField>()) {
+            storeField(
+                driver.getResult<pointScalarField>()
+            );
+        } else if(driver.resultIsTyp<pointTensorField>()) {
+            storeField(
+                driver.getResult<pointTensorField>()
+            );
+        } else if(driver.resultIsTyp<pointSymmTensorField>()) {
+            storeField(
+                driver.getResult<pointSymmTensorField>()
+            );
+        } else if(driver.resultIsTyp<pointSphericalTensorField>()) {
+            storeField(
+                driver.getResult<pointSphericalTensorField>()
+            );
         } else {
             WarningIn("Foam::expressionField::execute()")
                 << "Expression '" << expression_ 

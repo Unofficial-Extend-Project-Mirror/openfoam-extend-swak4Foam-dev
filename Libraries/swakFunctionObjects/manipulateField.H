@@ -84,7 +84,8 @@ protected:
     template<class TData,class TMask>
     void manipulate(
         const TData &data,
-        const TMask &mask
+        const TMask &mask,
+        const word entity="cells"
     );
 
     template<class TData,class TMask>

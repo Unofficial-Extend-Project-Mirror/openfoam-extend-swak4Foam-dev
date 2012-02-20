@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 20 Feb 2012 15:36:06 +0100
+Subject: Re: Extend FieldValueParser to pointFields
+Message-Id: <b61412f2dcecac52-c944c7b27cdabff4-artemis@bgs-Greybook.local>
+References: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+In-Reply-To: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+
+Logical fields for pointSets and pointZones. Untested
