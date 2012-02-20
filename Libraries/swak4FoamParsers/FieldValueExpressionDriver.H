@@ -124,6 +124,9 @@ public:
     bool isFaceSet(const string &name);
     bool isFaceZone(const string &name);
 
+    bool isPointSet(const string &name);
+    bool isPointZone(const string &name);
+
     // returning fields
     template<class T>
     T* getField(const string &name,bool getOldTime=false);
@@ -216,6 +219,8 @@ public:
     volScalarField *makeCellZoneField(const string &name);
     surfaceScalarField *makeFaceSetField(const string &name);
     surfaceScalarField *makeFaceZoneField(const string &name);
+    pointScalarField *makePointSetField(const string &name);
+    pointScalarField *makePointZoneField(const string &name);
 
     // modulo operator
     volScalarField *makeModuloField(const volScalarField &a,const volScalarField &b);

@@ -7,6 +7,7 @@
 #include <dimensionedVector.H>
 #include "cellSet.H"
 #include "faceSet.H"
+#include "pointSet.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -147,6 +148,24 @@ bool FieldValueExpressionDriver::isFaceSet(const string &name)
 bool FieldValueExpressionDriver::isFaceZone(const string &name)
 {
     if(mesh_.faceZones().findZoneID(name)>=0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool FieldValueExpressionDriver::isPointSet(const string &name)
+{
+    if(getTypeOfSet(name)=="pointSet") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool FieldValueExpressionDriver::isPointZone(const string &name)
+{
+    if(mesh_.pointZones().findZoneID(name)>=0) {
         return true;
     } else {
         return false;
@@ -592,6 +611,43 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
   return f;
 }
 
+pointScalarField *FieldValueExpressionDriver::makePointSetField(const string &name)
+{
+  pointScalarField *f=makePointConstantField<pointScalarField>(0);
+
+  IOobject head 
+      (
+          name,
+          time(),
+          polyMesh::meshSubDir/"sets",
+          mesh_,
+          IOobject::MUST_READ,
+          IOobject::NO_WRITE
+      );
+  
+  if(!head.headerOk()) {;
+      head=IOobject 
+          (
+              name,
+              "constant",
+              polyMesh::meshSubDir/"sets",
+              mesh_,
+              IOobject::MUST_READ,
+              IOobject::NO_WRITE
+          );
+      head.headerOk();
+  }
+
+  pointSet cs(head);
+  labelList points(cs.toc());
+
+  forAll(points,pointI) {
+    (*f)[points[pointI]]=1.;
+  }
+
+  return f;
+}
+
 volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name)
 {
   volScalarField *f=makeConstantField<volScalarField>(0);
@@ -619,6 +675,21 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &
   forAll(zone,ind) {
       label faceI=zone[ind];
       (*f)[faceI]=1.;
+  }
+
+  return f;
+}
+
+pointScalarField *FieldValueExpressionDriver::makePointZoneField(const string &name)
+{
+  pointScalarField *f=makePointConstantField<pointScalarField>(0);
+  label zoneID=mesh_.pointZones().findZoneID(name);
+
+  const pointZone &zone=mesh_.pointZones()[zoneID];
+
+  forAll(zone,ind) {
+      label pointI=zone[ind];
+      (*f)[pointI]=1.;
   }
 
   return f;

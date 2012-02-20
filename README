@@ -818,6 +818,9 @@ S_{expl} + S_{impl} T
      - Function =point= generates a constant =pointScalarField=
      - Function =pts()= returns a =pointVectorField= with the point
        positions
+     - Functions =pzone= and =pset= generate logical fields according
+       to existing pointZones or pointSets
+
      Utilities and functionObjects affected by this are
      - =funkySetFields=
 *** Infrastructure

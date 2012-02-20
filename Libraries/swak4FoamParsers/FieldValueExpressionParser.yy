@@ -106,6 +106,8 @@
 %token <zonename> TOKEN_ZONEID "cellZoneID" 
 %token <setname> TOKEN_FSETID "faceSetID" 
 %token <zonename> TOKEN_FZONEID "faceZoneID" 
+%token <setname> TOKEN_PSETID "pointSetID" 
+%token <zonename> TOKEN_PZONEID "pointZoneID" 
 %token <val>    TOKEN_NUM   "number"
 %token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
@@ -185,6 +187,8 @@
 %token TOKEN_zone
 %token TOKEN_fset
 %token TOKEN_fzone
+%token TOKEN_pset
+%token TOKEN_pzone
 
 %token TOKEN_div
 %token TOKEN_grad
@@ -266,9 +270,9 @@
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
+%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector" "tensor" "symmTensor" "sphericalTensor"
-%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector"  "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
+%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector"  "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
 %printer             { debug_stream () << $$; } "number" "integer" "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "plexpression" "psexpression" "pvexpression" "ptexpression" "pyexpression" "phexpression"
 
@@ -1079,8 +1083,8 @@ phexp:   psphericalTensor                  { $$ = $1; }
 
 plexp: TOKEN_point '(' TOKEN_TRUE ')'  { $$ = driver.makePointConstantField<Foam::pointScalarField>(1); }
     | TOKEN_point '(' TOKEN_FALSE ')'  { $$ = driver.makePointConstantField<Foam::pointScalarField>(0); }
-// TODO    | TOKEN_pset '(' TOKEN_PSETID ')'    { $$ = driver.makeFaceSetField(*$3); }
-// TODO    | TOKEN_pzone '(' TOKEN_PZONEID ')'  { $$ = driver.makeFaceZoneField(*$3); }
+    | TOKEN_pset '(' TOKEN_PSETID ')'    { $$ = driver.makePointSetField(*$3); }
+    | TOKEN_pzone '(' TOKEN_PZONEID ')'  { $$ = driver.makePointZoneField(*$3); }
     | psexp '<' psexp                 { sameSize($1,$3); $$ = driver.doPointCompare($1,std::less<Foam::scalar>(),$3);  delete $1; delete $3; }
     | psexp '>' psexp                 { sameSize($1,$3); $$ = driver.doPointCompare($1,std::greater<Foam::scalar>(),$3);  delete $1; delete $3; }
     | psexp TOKEN_LEQ psexp           { sameSize($1,$3); $$ = driver.doPointCompare($1,std::less_equal<Foam::scalar>(),$3);  delete $1; delete $3; }

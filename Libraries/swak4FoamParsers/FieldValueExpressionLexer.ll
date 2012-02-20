@@ -8,6 +8,8 @@
 %s zonename
 %s fsetname
 %s fzonename
+%s psetname
+%s pzonename
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
@@ -31,10 +33,10 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname,zonename,fsetname,fzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname,zonename,fsetname,fzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 <needsIntegerParameter>[(] return yytext[0];
 <needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
@@ -136,6 +138,16 @@ fset                   {
 fzone                  {
     BEGIN(fzonename);
     return token::TOKEN_fzone;
+                      }
+
+pset                   {
+    BEGIN(psetname);
+    return token::TOKEN_pset;
+                      }
+
+pzone                  {
+    BEGIN(pzonename);
+    return token::TOKEN_pzone;
                       }
 
 grad                  return token::TOKEN_grad;
@@ -286,6 +298,25 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_FZONEID;
     } else {
         driver.error (*yylloc, "faceZone id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+
+<psetname>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isPointSet(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PSETID;
+    } else {
+        driver.error (*yylloc, "pointSet id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+<pzonename>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isPointZone(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PZONEID;
+    } else {
+        driver.error (*yylloc, "pointZone id "+*ptr+" not existing or of wrong type");
     }
                      }
 
