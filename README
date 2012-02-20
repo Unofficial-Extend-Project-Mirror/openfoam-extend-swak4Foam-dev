@@ -816,7 +816,8 @@ S_{expl} + S_{impl} T
 
      Detailed features (apart from the standard symbols) are:
      - Function =point= generates a constant =pointScalarField=
-     
+     - Function =pts()= returns a =pointVectorField= with the point
+       positions
      Utilities and functionObjects affected by this are
      - =funkySetFields=
 *** Infrastructure

@@ -173,6 +173,7 @@
 %token TOKEN_position
 %token TOKEN_fposition
 %token TOKEN_fprojection
+%token TOKEN_pposition
 %token TOKEN_face
 %token TOKEN_area
 %token TOKEN_volume
@@ -951,7 +952,7 @@ pvexp:  pvector                            { $$ = $1; }
         | '-' pvexp %prec TOKEN_NEG 	   { $$ = new Foam::pointVectorField(-*$2); delete $2; }
         | '(' pvexp ')'		           { $$ = $2; }  
         | plexp '?' pvexp ':' pvexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makePointConstantField<Foam::pointVectorField>(Foam::vector::zero)); delete $1; delete $3; delete $5; }
-// TODO        | TOKEN_fposition '(' ')'          { $$ = driver.makeFacePositionField(); }
+        | TOKEN_pposition '(' ')'          { $$ = driver.makePointPositionField(); }
 // TODO        | TOKEN_interpolate '(' vexp ')'   { $$ = new Foam::pointVectorField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_min '(' pvexp ',' pvexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' pvexp ',' pvexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }

@@ -226,6 +226,8 @@ public:
     surfaceVectorField *makeFaceField();
     surfaceScalarField *makeAreaField();
     volVectorField *makePositionField();
+    pointVectorField *makePointPositionField();
+
     volScalarField *makeDistanceField();
     volScalarField *makeNearDistanceField();
     volScalarField *makeRDistanceField(const volVectorField &r);

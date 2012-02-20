@@ -217,7 +217,6 @@ volScalarField *FieldValueExpressionDriver::makeGaussRandomField(label seed)
 
 volVectorField *FieldValueExpressionDriver::makePositionField()
 {
-    dimensionSet nullDim(0,0,0,0,0);
     volVectorField *f=new volVectorField(
         IOobject
         (
@@ -232,16 +231,35 @@ volVectorField *FieldValueExpressionDriver::makePositionField()
     );
     f->dimensions().reset(mesh_.C().dimensions());
     *f=mesh_.C();
-    f->dimensions().reset(nullDim);
+    f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
 
     return f;
 }
 
+pointVectorField *FieldValueExpressionDriver::makePointPositionField()
+{
+    pointVectorField *f=new pointVectorField(
+        IOobject
+        (
+            "fpos",
+            time(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        this->pMesh(),
+        vector::zero,
+        "zeroGradient"
+    );
+    f->internalField()=mesh_.points();
+
+    return f;
+}
+
 surfaceVectorField *FieldValueExpressionDriver::makeFacePositionField()
 {
-    dimensionSet nullDim(0,0,0,0,0);
     surfaceVectorField *f=new surfaceVectorField(
         IOobject
         (
@@ -252,19 +270,17 @@ surfaceVectorField *FieldValueExpressionDriver::makeFacePositionField()
             IOobject::NO_WRITE
         ),
         mesh_,
-        vector(0,0,0)
+        vector::zero
     );
     f->dimensions().reset(mesh_.Cf().dimensions());
     *f=mesh_.Cf();
-    f->dimensions().reset(nullDim);
+    f->dimensions().reset(dimless);
 
     return f;
 }
 
 surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
 {
-
-    dimensionSet nullDim(0,0,0,0,0);
     surfaceVectorField *f=new surfaceVectorField(
         IOobject
         (
@@ -355,14 +371,13 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
         }
     }
 
-    f->dimensions().reset(nullDim);
+    f->dimensions().reset(dimless);
 
     return f;
 }
 
 surfaceVectorField *FieldValueExpressionDriver::makeFaceField()
 {
-    dimensionSet nullDim(0,0,0,0,0);
     surfaceVectorField *f=new surfaceVectorField(
         IOobject
         (
@@ -377,14 +392,13 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceField()
     );
     f->dimensions().reset(mesh_.Sf().dimensions());
     *f=mesh_.Sf();
-    f->dimensions().reset(nullDim);
+    f->dimensions().reset(dimless);
 
     return f;
 }
 
 surfaceScalarField *FieldValueExpressionDriver::makeAreaField()
 {
-    dimensionSet nullDim(0,0,0,0,0);
     surfaceScalarField *f=new surfaceScalarField(
         IOobject
         (
@@ -399,7 +413,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeAreaField()
     );
     f->dimensions().reset(mesh_.magSf().dimensions());
     *f=mesh_.magSf();
-    f->dimensions().reset(nullDim);
+    f->dimensions().reset(dimless);
 
     return f;
 }
@@ -431,7 +445,6 @@ volScalarField *FieldValueExpressionDriver::makeVolumeField()
 
 volScalarField *FieldValueExpressionDriver::makeDistanceField()
 {
-    dimensionSet nullDim(0,0,0,0,0);
     volScalarField *f=new volScalarField(
         IOobject
         (
@@ -447,7 +460,7 @@ volScalarField *FieldValueExpressionDriver::makeDistanceField()
     f->dimensions().reset(mesh_.C().dimensions());
     wallDist dist(mesh_);
     *f=dist;
-    f->dimensions().reset(nullDim);
+    f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
 
@@ -456,7 +469,6 @@ volScalarField *FieldValueExpressionDriver::makeDistanceField()
 
 volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
 {
-    dimensionSet nullDim(0,0,0,0,0);
     volScalarField *f=new volScalarField(
         IOobject
         (
@@ -473,7 +485,7 @@ volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
     f->dimensions().reset(mesh_.C().dimensions());
     nearWallDist dist(mesh_);
     f->boundaryField()==dist;
-    f->dimensions().reset(nullDim);
+    f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
 
@@ -482,7 +494,6 @@ volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
 
 volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorField& r)
 {
-    dimensionSet nullDim(0,0,0,0,0);
     volScalarField *f=new volScalarField(
         IOobject
         (

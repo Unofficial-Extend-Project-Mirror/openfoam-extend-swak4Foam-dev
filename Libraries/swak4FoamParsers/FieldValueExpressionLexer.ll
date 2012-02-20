@@ -101,6 +101,7 @@ negative              return token::TOKEN_neg;
 
 pi                    return token::TOKEN_pi;
 pos                   return token::TOKEN_position;
+pts                   return token::TOKEN_pposition;
 fpos                  return token::TOKEN_fposition;
 fproj                 return token::TOKEN_fprojection;
 face                  return token::TOKEN_face;
