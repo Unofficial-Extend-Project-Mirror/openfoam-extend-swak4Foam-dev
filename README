@@ -827,6 +827,7 @@ S_{expl} + S_{impl} T
      Utilities and functionObjects affected by this are
      - =funkySetFields=
      - new topoSource =expressionToPoint=
+     - =expressionField= and =manipulateField= now can deal with pointFields
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see

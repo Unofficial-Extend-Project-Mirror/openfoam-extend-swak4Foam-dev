@@ -62,7 +62,8 @@ Foam::manipulateField::~manipulateField()
 template<class TData,class TMask>
 void Foam::manipulateField::manipulate(
     const TData &data,
-    const TMask &mask
+    const TMask &mask,
+    const word entity
 )
 {
     TData &original=const_cast<TData &>(obr_.lookupObject<TData>(name_));
@@ -76,7 +77,7 @@ void Foam::manipulateField::manipulate(
 
     reduce(cnt,plusOp<label>());
     Info << "Manipulated field " << name_ << " in " << cnt
-        << " cells with the expression " << expression_ << endl;
+        << " " << entity << " with the expression " << expression_ << endl;
     original.correctBoundaryConditions();
 }
 
@@ -214,6 +215,49 @@ void Foam::manipulateField::execute()
                 manipulateSurface(
                     driver.getResult<surfaceSphericalTensorField>(),
                     conditionField
+                );
+            } else {
+                WarningIn("Foam::manipulateField::execute()")
+                    << "Expression '" << expression_ 
+                        << "' evaluated to an unsupported type "
+                        << driver.typ() << " that is incompatible with a mask defined on faces"
+                        << endl;
+            }
+        } else if(driver.resultIsTyp<pointScalarField>(true)) {
+            pointScalarField conditionField(driver.getResult<pointScalarField>());
+            
+            driver.parse(expression_);
+            
+            if(driver.resultIsTyp<pointVectorField>()) {
+                manipulate(
+                    driver.getResult<pointVectorField>(),
+                    conditionField,
+                    "points"
+                );
+                
+            } else if(driver.resultIsTyp<pointScalarField>()) {
+                manipulate(
+                    driver.getResult<pointScalarField>(),
+                    conditionField,
+                    "points"
+                );
+            } else if(driver.resultIsTyp<pointTensorField>()) {
+                manipulate(
+                    driver.getResult<pointTensorField>(),
+                    conditionField,
+                    "points"
+                );
+            } else if(driver.resultIsTyp<pointSymmTensorField>()) {
+                manipulate(
+                    driver.getResult<pointSymmTensorField>(),
+                    conditionField,
+                    "points"
+                );
+            } else if(driver.resultIsTyp<pointSphericalTensorField>()) {
+                manipulate(
+                    driver.getResult<pointSphericalTensorField>(),
+                    conditionField,
+                    "points"
                 );
             } else {
                 WarningIn("Foam::manipulateField::execute()")
