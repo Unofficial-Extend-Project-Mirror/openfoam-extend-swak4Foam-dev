@@ -17,6 +17,12 @@ surfaceScalarField *FieldValueExpressionDriver::makeLogicalField<surfaceScalarFi
     return makeConstantField<surfaceScalarField>(val);
 }
 
+template<>
+pointScalarField *FieldValueExpressionDriver::makeLogicalField<pointScalarField>(scalar val)
+{
+    return makePointConstantField<pointScalarField>(val);
+}
+
 #define getFaceValue(ding) (ding->boundaryField()[pI][fI])
 
 template <class Op,class Field>
