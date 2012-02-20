@@ -811,6 +811,14 @@ S_{expl} + S_{impl} T
      of the minimum or the maximum of a scalar field
 
      This is implemented for all field types
+**** Support for =pointFields= in the field-parsers
+     Now can read and generate pointFields.
+
+     Detailed features (apart from the standard symbols) are:
+     - Function =point= generates a constant =pointScalarField=
+     
+     Utilities and functionObjects affected by this are
+     - =funkySetFields=
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see

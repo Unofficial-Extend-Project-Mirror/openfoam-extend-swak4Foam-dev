@@ -429,6 +429,37 @@ namespace Foam {
         bool getOldTime
     )
     {
+        return this->getOrReadFieldInternal<T>(
+            name,
+            this->mesh(),
+            failIfNoneFound,
+            getOldTime
+        );
+    }
+
+    template<class T>
+    autoPtr<T> CommonValueExpressionDriver::getOrReadPointField(
+        const string &name,
+        bool failIfNoneFound,
+        bool getOldTime
+    )
+    {
+        return this->getOrReadFieldInternal<T>(
+            name,
+            this->pMesh(),
+            failIfNoneFound,
+            getOldTime
+        );
+    }
+
+    template<class T,class Mesh>
+    autoPtr<T> CommonValueExpressionDriver::getOrReadFieldInternal(
+        const string &name,
+        const Mesh &actualMesh,
+        bool failIfNoneFound,
+        bool getOldTime
+    )
+    {
         if(debug) {
             Pout << "CommonValueExpressionDriver::getOrReadField. Name: " << name 
                 << " Type: " << T::typeName << endl;
@@ -459,7 +490,7 @@ namespace Foam {
                         IOobject::NO_READ,
                         IOobject::NO_WRITE
                     ),
-                    this->mesh(),
+                    actualMesh,
                     dimensioned<Type>(name,nullDim,pTraits<Type>::zero),
                     "zeroGradient"
                 )
@@ -544,7 +575,7 @@ namespace Foam {
             }
         
             f.set(
-                this->readAndRegister<T>(name).ptr()
+                this->readAndRegister<T>(name,actualMesh).ptr()
             );
             // oldTime automatically read
         }
@@ -582,8 +613,11 @@ namespace Foam {
     }
 
 
-    template<class T>
-    inline tmp<T> CommonValueExpressionDriver::readAndRegister(const word &name)
+    template<class T,class Mesh>
+    inline tmp<T> CommonValueExpressionDriver::readAndRegister(
+        const word &name,
+        const Mesh &actualMesh
+    )
     {
         tmp<T>f(
             new T(
@@ -595,7 +629,7 @@ namespace Foam {
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE
                 ),
-                this->mesh()
+                actualMesh
             )
         );
         if(cacheReadFields()) {

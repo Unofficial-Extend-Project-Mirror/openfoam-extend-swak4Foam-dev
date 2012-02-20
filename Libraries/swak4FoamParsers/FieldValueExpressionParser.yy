@@ -929,10 +929,10 @@ psexp:  TOKEN_point '(' scalar ')'           { $$ = driver.makePointConstantFiel
 //        | TOKEN_det '(' pyexp ')'           { $$ = new Foam::pointScalarField(Foam::det(*$3)); delete $3; }
 //        | TOKEN_det '(' phexp ')'           { $$ = new Foam::pointScalarField(Foam::det(*$3)); delete $3; }
 // TODO        | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::pointScalarField(Foam::fvc::interpolate(*$3)); delete $3; }
-//          | TOKEN_PSID                        { $$ = driver.getField<Foam::pointScalarField>(*$1); }
+          | TOKEN_PSID                        { $$ = driver.getPointField<Foam::pointScalarField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FSID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::pointScalarField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
-// TODO        | TOKEN_oldTime '(' TOKEN_PSID ')'		   { $$ = new Foam::pointScalarField( driver.getOrReadField<Foam::pointScalarField>(*$3,true,true)->oldTime()); }
-// TODO        | TOKEN_LOOKUP '(' psexp ')'	    { $$ = driver.makeField<Foam::pointScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete $3; }
+          | TOKEN_oldTime '(' TOKEN_PSID ')'		   { $$ = new Foam::pointScalarField( driver.getOrReadPointField<Foam::pointScalarField>(*$3,true,true)->oldTime()); }
+          | TOKEN_LOOKUP '(' psexp ')'	    { $$ = driver.makePointField<Foam::pointScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete $3; }
 ;
 
 pvexp:  pvector                            { $$ = $1; }
@@ -977,9 +977,9 @@ pvexp:  pvector                            { $$ = $1; }
         }
         | TOKEN_sum '(' pvexp ')'          { $$ = driver.makePointConstantField<Foam::pointVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' pvexp ')'      { $$ = driver.makePointConstantField<Foam::pointVectorField>(Foam::average(*$3).value()); delete $3; }
-// TODO        | TOKEN_PVID                       { $$ = driver.getField<Foam::pointVectorField>(*$1); }
+        | TOKEN_PVID                       { $$ = driver.getPointField<Foam::pointVectorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FVID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::pointVectorField>(*$3,true,true)() ).ptr(); }// no fvc::ddt for surface Fields
-// TODO        | TOKEN_oldTime '(' TOKEN_PVID ')'		   { $$ = new Foam::pointVectorField( driver.getOrReadField<Foam::pointVectorField>(*$3,true,true)->oldTime()); }
+        | TOKEN_oldTime '(' TOKEN_PVID ')'		   { $$ = new Foam::pointVectorField( driver.getOrReadPointField<Foam::pointVectorField>(*$3,true,true)->oldTime()); }
 ;
  
 ptexp:   ptensor                  { $$ = $1; }
@@ -1015,9 +1015,9 @@ ptexp:   ptensor                  { $$ = $1; }
 //        | TOKEN_max '(' ptexp ')'                 { $$ = driver.makePointConstantField<Foam::pointTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' ptexp ')'                 { $$ = driver.makePointConstantField<Foam::pointTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' ptexp ')'             { $$ = driver.makePointConstantField<Foam::pointTensorField>(Foam::average(*$3).value()); delete $3; }
-//        | TOKEN_PTID                               { $$=driver.getField<Foam::pointTensorField>(*$1); }
+        | TOKEN_PTID                               { $$=driver.getPointField<Foam::pointTensorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FTID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::pointTensorField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
-// TODO        | TOKEN_oldTime '(' TOKEN_PTID ')'	   { $$ = new Foam::pointTensorField( driver.getOrReadField<Foam::pointTensorField>(*$3,true,true)->oldTime()); }
+        | TOKEN_oldTime '(' TOKEN_PTID ')'	   { $$ = new Foam::pointTensorField( driver.getOrReadPointField<Foam::pointTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 pyexp:   psymmTensor                  { $$ = $1; }
@@ -1047,9 +1047,9 @@ pyexp:   psymmTensor                  { $$ = $1; }
 //        | TOKEN_max '(' pyexp ')'                 { $$ = driver.makePointConstantField<Foam::pointSymmTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' pyexp ')'                 { $$ = driver.makePointConstantField<Foam::pointSymmTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' pyexp ')'             { $$ = driver.makePointConstantField<Foam::pointSymmTensorField>(Foam::average(*$3).value()); delete $3; }
-// TODO        | TOKEN_PYID                               { $$=driver.getField<Foam::pointSymmTensorField>(*$1); }
+        | TOKEN_PYID                               { $$=driver.getPointField<Foam::pointSymmTensorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FYID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::pointSymmTensorField>(*$3,true,true)() ).ptr(); }// no fvc::ddt for surface Fields
-// TODO        | TOKEN_oldTime '(' TOKEN_PYID ')'	   { $$ = new Foam::pointSymmTensorField( driver.getOrReadField<Foam::pointSymmTensorField>(*$3,true,true)->oldTime()); }
+        | TOKEN_oldTime '(' TOKEN_PYID ')'	   { $$ = new Foam::pointSymmTensorField( driver.getOrReadPointField<Foam::pointSymmTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 phexp:   psphericalTensor                  { $$ = $1; }
@@ -1071,9 +1071,9 @@ phexp:   psphericalTensor                  { $$ = $1; }
 //        | TOKEN_max '(' phexp ')'                 { $$ = driver.makePointConstantField<Foam::pointSphericalTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' phexp ')'                 { $$ = driver.makePointConstantField<Foam::pointSphericalTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' phexp ')'             { $$ = driver.makePointConstantField<Foam::pointSphericalTensorField>(Foam::average(*$3).value()); delete $3; }
-// TODO        | TOKEN_PHID                               { $$=driver.getField<Foam::pointSphericalTensorField>(*$1); }
+        | TOKEN_PHID                               { $$=driver.getPointField<Foam::pointSphericalTensorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FHID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::pointSphericalTensorField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
-// TODO        | TOKEN_oldTime '(' TOKEN_PHID ')'	   { $$ = new Foam::pointSphericalTensorField( driver.getOrReadField<Foam::pointSphericalTensorField>(*$3,true,true)->oldTime()); }
+        | TOKEN_oldTime '(' TOKEN_PHID ')'	   { $$ = new Foam::pointSphericalTensorField( driver.getOrReadPointField<Foam::pointSphericalTensorField>(*$3,true,true)->oldTime()); }
 ;
 
 plexp: TOKEN_point '(' TOKEN_TRUE ')'  { $$ = driver.makePointConstantField<Foam::pointScalarField>(1); }

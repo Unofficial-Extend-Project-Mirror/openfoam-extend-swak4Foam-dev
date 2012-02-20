@@ -185,8 +185,11 @@ protected:
     string getTypeOfField(const string &name) const;
     string getTypeOfSet(const string &name) const;
 
-    template<class T>
-    inline tmp<T> readAndRegister(const word &name);
+    template<class T,class Mesh>
+    inline tmp<T> readAndRegister(
+        const word &name,
+        const Mesh &actualMesh
+    );
 
     enum SetOrigin {
         NEW,
@@ -205,6 +208,21 @@ protected:
     template<class T>
     autoPtr<T> getOrReadField(
         const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
+
+    template<class T>
+    autoPtr<T> getOrReadPointField(
+        const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
+
+    template<class T,class Mesh>
+    autoPtr<T> getOrReadFieldInternal(
+        const string &name,
+        const Mesh &mesh,
         bool failIfNoneFound=true,
         bool getOldTime=false
     );

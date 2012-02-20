@@ -26,6 +26,16 @@ T* FieldValueExpressionDriver::getField(const string &name,bool getOldTime)
     ).ptr();
 }
 
+template<class T>
+T* FieldValueExpressionDriver::getPointField(const string &name,bool getOldTime)
+{
+    return this->getOrReadPointField<T>(
+        name,
+        true,  // fail if not found
+        getOldTime
+    ).ptr();
+}
+
 inline label FieldValueExpressionDriver::size() const
 {
     return mesh_.nCells();
@@ -445,6 +455,27 @@ void FieldValueExpressionDriver::setValuePatches
 template<class FType>
 inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)
 {
+    return makeFieldInternal<FType>(
+        val,
+        this->mesh()
+    );
+}
+    
+template<class FType>
+inline FType *FieldValueExpressionDriver::makePointField(const Field<typename FType::value_type> &val)
+{
+    return makeFieldInternal<FType>(
+        val,
+        this->pMesh()
+    );
+}
+    
+template<class FType,class Mesh>
+inline FType *FieldValueExpressionDriver::makeFieldInternal(
+    const Field<typename FType::value_type> &val,
+    const Mesh &actualMesh
+)
+{
     std::ostringstream buff;
     buff << "field" << pTraits<typename FType::value_type>::typeName;
 
@@ -452,12 +483,12 @@ inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::
         IOobject
         (
             buff.str(),
-            time(),
-            mesh_,
+            this->time(),
+            this->mesh(),
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        mesh_,
+        actualMesh,
         pTraits<typename FType::value_type>::zero,
         "zeroGradient"
     );

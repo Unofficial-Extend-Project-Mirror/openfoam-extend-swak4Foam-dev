@@ -128,6 +128,9 @@ public:
     template<class T>
     T* getField(const string &name,bool getOldTime=false);
 
+    template<class T>
+    T* getPointField(const string &name,bool getOldTime=false);
+
     // make constant fields
     volVectorField *makeVectorField(
         volScalarField *x,
@@ -197,8 +200,17 @@ public:
     template<class FType>
     inline FType *makePointConstantField(const typename FType::value_type &val);
 
+    template<class FType,class Mesh>
+    inline FType *makeFieldInternal(
+        const Field<typename FType::value_type> &val,
+        const Mesh &actualMesh
+    );
+
     template<class FType>
     inline FType *makeField(const Field<typename FType::value_type> &val);
+
+    template<class FType>
+    inline FType *makePointField(const Field<typename FType::value_type> &val);
 
     volScalarField *makeCellSetField(const string &name);
     volScalarField *makeCellZoneField(const string &name);
