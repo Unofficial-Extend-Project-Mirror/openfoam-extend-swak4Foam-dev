@@ -823,6 +823,7 @@ S_{expl} + S_{impl} T
 
      Utilities and functionObjects affected by this are
      - =funkySetFields=
+     - new topoSource =expressionToPoint=
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
