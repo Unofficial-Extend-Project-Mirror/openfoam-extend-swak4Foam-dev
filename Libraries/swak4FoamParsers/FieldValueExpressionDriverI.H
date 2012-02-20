@@ -41,17 +41,6 @@ inline const fvMesh &FieldValueExpressionDriver::mesh() const
     return mesh_;
 }
 
-inline const pointMesh &FieldValueExpressionDriver::pMesh()
-{
-    if(!pMesh_.valid()) {
-        pMesh_.set(
-            new pointMesh(mesh())
-        );
-    }
-    
-    return pMesh_();
-}
-
 template<class T>
 void FieldValueExpressionDriver::makePatches
 (

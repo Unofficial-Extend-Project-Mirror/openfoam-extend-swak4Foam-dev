@@ -80,6 +80,9 @@ class CommonValueExpressionDriver
     //- (which would be an overkill and inconvenient)
     autoPtr<ExpressionDriverWriter> writer_;
 
+    //- getting our own pointMesh
+    autoPtr<pointMesh> pMesh_;
+
 protected:
 
     ExpressionResult result_;
@@ -124,6 +127,9 @@ protected:
 
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
+
+    //- get a point mesh (if needed)
+    inline const pointMesh & pMesh();
 
     //- get the current time
     virtual const word time() const;

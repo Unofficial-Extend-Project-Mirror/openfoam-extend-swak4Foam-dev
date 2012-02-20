@@ -42,6 +42,17 @@ License
 
 namespace Foam {
  
+    inline const pointMesh &CommonValueExpressionDriver::pMesh()
+    {
+        if(!pMesh_.valid()) {
+            pMesh_.set(
+                new pointMesh(mesh())
+            );
+        }
+        
+        return pMesh_();
+    }
+
     template<class Type>
     tmp<Field<Type> > CommonValueExpressionDriver::evaluate(const string &expr,bool qPoint)
     {

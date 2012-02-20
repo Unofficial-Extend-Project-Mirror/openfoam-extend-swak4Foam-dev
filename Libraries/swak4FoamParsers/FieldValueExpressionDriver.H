@@ -40,8 +40,6 @@ class FieldValueExpressionDriver
     const fvMesh &mesh_;
     const Time& runTime_;
 
-    autoPtr<pointMesh> pMesh_;
-
 //     autoPtr<volScalarField> sresult_;
 //     autoPtr<volVectorField> vresult_;
     
@@ -96,8 +94,6 @@ public:
     //- check if field is of requested type
     template<class T>
     bool resultIsTyp(bool isLogical=false);
-
-    inline const pointMesh &pMesh();
 
 protected:
 
