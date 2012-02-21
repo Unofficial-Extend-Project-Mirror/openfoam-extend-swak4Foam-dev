@@ -1,6 +1,6 @@
 From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Date: Sun, 18 Dec 2011 20:16:16 +0100
-State: new
+State: fixed
 Subject: Extend FieldValueParser to pointFields
 Message-Id: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
 

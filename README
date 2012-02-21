@@ -869,6 +869,28 @@ S_{expl} + S_{impl} T
      If there is no old time value stored and in the parser dictionary
      the parameter =prevIterIsOldTime= is set, then the previous
      iteration value is used as the old time.
+**** Function to return the position of minimum and maximum
+     The functions =minPosition= and =maxPosition= return the position
+     of the minimum or the maximum of a scalar field
+
+     This is implemented for all field types
+**** Support for =pointFields= in the field-parsers
+     Now can read and generate pointFields.
+
+     Detailed features (apart from the standard symbols) are:
+     - Function =point= generates a constant =pointScalarField=
+     - Function =pts()= returns a =pointVectorField= with the point
+       positions
+     - Functions =pzone= and =pset= generate logical fields according
+       to existing pointZones or pointSets
+     - Functions =interpolateToCell= and =interpolateToPoint=
+       interpolate from pointFields to volFields and from volFields to
+       pointFields 
+
+     Utilities and functionObjects affected by this are
+     - =funkySetFields=
+     - new topoSource =expressionToPoint=
+     - =expressionField= and =manipulateField= now can deal with pointFields
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see

@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 20 Feb 2012 19:02:22 +0100
+Subject: Re: Extend FieldValueParser to pointFields
+Message-Id: <b61412f2dcecac52-e55a931dcb66203e-artemis@bgs-Greybook.local>
+References: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+In-Reply-To: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+
+Functions now work too. Now only some functionObjects have to be
+extended to cope with the new fields

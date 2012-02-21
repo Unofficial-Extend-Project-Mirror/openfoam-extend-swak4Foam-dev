@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 17 Feb 2012 16:50:44 +0100
+Subject: Re: Find location of maximum and minimum
+Message-Id: <af71f888dcb47d4b-c32df1bc0f44fde9-artemis@bgs-Greybook.local>
+References: <af71f888dcb47d4b-0-artemis@bgs-Greybook.local>
+In-Reply-To: <af71f888dcb47d4b-0-artemis@bgs-Greybook.local>
+
+This will be only implemented for scalar values as for other types the
+result would not be unique ("Which is the correct component?")
+
+Write a general method in the CommonDriver to allow easy access in all
+possible Parsers

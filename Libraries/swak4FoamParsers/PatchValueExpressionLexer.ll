@@ -67,6 +67,8 @@ cos                   return token::TOKEN_cos;
 tan                   return token::TOKEN_tan;
 min                   return token::TOKEN_min;
 max                   return token::TOKEN_max;
+minPosition           return token::TOKEN_minPosition;
+maxPosition           return token::TOKEN_maxPosition;
 average               return token::TOKEN_average;
 sum                   return token::TOKEN_sum;
 sqr                   return token::TOKEN_sqr;

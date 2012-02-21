@@ -141,6 +141,8 @@
 %token TOKEN_tan
 %token TOKEN_min
 %token TOKEN_max
+%token TOKEN_minPosition
+%token TOKEN_maxPosition
 %token TOKEN_average
 %token TOKEN_sum
 %token TOKEN_sqr
@@ -310,6 +312,42 @@ vreduced: TOKEN_min '(' vexp ')'       {
             Foam::reduce(tmp,Foam::maxOp<Foam::vector>());
             $$ = new Foam::vector(tmp);
             delete $3; }
+        | TOKEN_minPosition '(' exp ')'           { 
+            $$ = new Foam::vector(
+                driver.getPositionOfMinimum(
+                    *$3,
+                    driver.patch().Cf()
+                )
+            ); 
+            delete $3; 
+        }
+        | TOKEN_maxPosition '(' exp ')'           { 
+            $$ = new Foam::vector(
+                driver.getPositionOfMaximum(
+                    *$3,
+                    driver.patch().Cf()
+                )
+            ); 
+            delete $3; 
+        }
+        | TOKEN_minPosition '(' pexp ')'           { 
+            $$ = new Foam::vector(
+                driver.getPositionOfMinimum(
+                    *$3,
+                    driver.patch().patch().localPoints()
+                )
+            ); 
+            delete $3; 
+        }
+        | TOKEN_maxPosition '(' pexp ')'           { 
+            $$ = new Foam::vector(
+                driver.getPositionOfMaximum(
+                    *$3,
+                    driver.patch().patch().localPoints()
+                )
+            ); 
+            delete $3; 
+        }
         | TOKEN_sum '(' vexp ')'       { $$ = new Foam::vector(Foam::gSum(*$3)); delete $3; }
         | TOKEN_sum '(' pvexp ')'      { $$ = new Foam::vector(Foam::gSum(*$3)); delete $3; }
         | TOKEN_average '(' vexp ')'   { $$ = new Foam::vector(Foam::gAverage(*$3)); delete $3; }

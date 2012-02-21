@@ -85,6 +85,9 @@ class CommonValueExpressionDriver
     //- pointer to the "default" mesh
     static const fvMesh *defaultMeshPtr_;
 
+    //- getting our own pointMesh
+    autoPtr<pointMesh> pMesh_;
+
 protected:
 
     ExpressionResult result_;
@@ -129,6 +132,9 @@ protected:
 
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
+
+    //- get a point mesh (if needed)
+    inline const pointMesh & pMesh();
 
     //- get the current time
     virtual const word time() const;
@@ -193,8 +199,11 @@ protected:
     string getTypeOfField(const string &name) const;
     string getTypeOfSet(const string &name) const;
 
-    template<class T>
-    inline tmp<T> readAndRegister(const word &name);
+    template<class T,class Mesh>
+    inline tmp<T> readAndRegister(
+        const word &name,
+        const Mesh &actualMesh
+    );
 
     enum SetOrigin {
         NEW,
@@ -213,6 +222,21 @@ protected:
     template<class T>
     autoPtr<T> getOrReadField(
         const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
+
+    template<class T>
+    autoPtr<T> getOrReadPointField(
+        const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
+
+    template<class T,class Mesh>
+    autoPtr<T> getOrReadFieldInternal(
+        const string &name,
+        const Mesh &mesh,
         bool failIfNoneFound=true,
         bool getOldTime=false
     );
@@ -407,6 +431,10 @@ public:
     scalarField *makeModuloField(const scalarField &a,const scalarField &b);
     scalarField *makeRandomField(label seed=0);
     scalarField *makeGaussRandomField(label seed=0);
+
+    vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
+
+    vector getPositionOfMaximum(const scalarField &,const vectorField &) const;
 
     const Time& runTime() const;
 
