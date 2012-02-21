@@ -99,13 +99,13 @@ namespace Foam {
         ) {
             word fType=this->getTypeOfField(name);
             if(fType==localVolField::typeName) {
-                tmpVol.set(this->readAndRegister<localVolField>(name).ptr());
+                tmpVol.set(this->readAndRegister<localVolField>(name,mesh()).ptr());
             } else if(fType==localSurfaceField::typeName) {
-                tmpSurf.set(this->readAndRegister<localSurfaceField>(name).ptr());
+                tmpSurf.set(this->readAndRegister<localSurfaceField>(name,mesh()).ptr());
             } 
             // TODO: this constructor doesn't work
             // else if(fType==localPointField::typeName) {
-            //     tmpPoint.set(this->readAndRegister<localPointField>(name).ptr());
+            //     tmpPoint.set(this->readAndRegister<localPointField>(name,mesh()).ptr());
             // }
         }
 
@@ -175,13 +175,13 @@ namespace Foam {
         ) {
             word fType=this->getTypeOfField(name);
             if(fType==localVolField::typeName) {
-                tmpVol.set(this->readAndRegister<localVolField>(name).ptr());
+                tmpVol.set(this->readAndRegister<localVolField>(name,mesh()).ptr());
             } else if(fType==localSurfaceField::typeName) {
-                tmpSurf.set(this->readAndRegister<localSurfaceField>(name).ptr());
+                tmpSurf.set(this->readAndRegister<localSurfaceField>(name,mesh()).ptr());
             } 
             // TODO: this constructor doesn't work
             // else if(fType==localPointField::typeName) {
-            //     tmpPoint.set(this->readAndRegister<localPointField>(name).ptr());
+            //     tmpPoint.set(this->readAndRegister<localPointField>(name,mesh()).ptr());
             // }
         }
 

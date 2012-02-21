@@ -8,6 +8,8 @@
 %s zonename
 %s fsetname
 %s fzonename
+%s psetname
+%s pzonename
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
@@ -31,10 +33,10 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname,zonename,fsetname,fzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname,zonename,fsetname,fzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 <needsIntegerParameter>[(] return yytext[0];
 <needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
@@ -101,6 +103,7 @@ negative              return token::TOKEN_neg;
 
 pi                    return token::TOKEN_pi;
 pos                   return token::TOKEN_position;
+pts                   return token::TOKEN_pposition;
 fpos                  return token::TOKEN_fposition;
 fproj                 return token::TOKEN_fprojection;
 face                  return token::TOKEN_face;
@@ -137,6 +140,16 @@ fzone                  {
     return token::TOKEN_fzone;
                       }
 
+pset                   {
+    BEGIN(psetname);
+    return token::TOKEN_pset;
+                      }
+
+pzone                  {
+    BEGIN(pzonename);
+    return token::TOKEN_pzone;
+                      }
+
 grad                  return token::TOKEN_grad;
 curl                  return token::TOKEN_curl;
 magSqrGradGrad        return token::TOKEN_magSqrGradGrad;
@@ -149,6 +162,8 @@ oldTime               return token::TOKEN_oldTime;
 integrate             return token::TOKEN_integrate;
 surfSum               return token::TOKEN_surfSum;
 interpolate           return token::TOKEN_interpolate;
+interpolateToPoint    return token::TOKEN_interpolateToPoint;
+interpolateToCell     return token::TOKEN_interpolateToCell;
 faceAverage           return token::TOKEN_faceAverage;
 reconstruct           return token::TOKEN_reconstruct;
 
@@ -161,6 +176,7 @@ symmTensor             return token::TOKEN_SYMM_TENSOR;
 sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
+point                  return token::TOKEN_point;
 
 transpose              return token::TOKEN_transpose;
 diag                   return token::TOKEN_diag;
@@ -235,6 +251,16 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_FYID;
     } else if(driver.isThere<Foam::surfaceSphericalTensorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FHID;
+    } else if(driver.isThere<Foam::pointVectorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PVID;
+    } else if(driver.isThere<Foam::pointScalarField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PSID;
+    } else if(driver.isThere<Foam::pointTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PTID;
+    } else if(driver.isThere<Foam::pointSymmTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PYID;
+    } else if(driver.isThere<Foam::pointSphericalTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PHID;
     } else {
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
@@ -274,6 +300,25 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_FZONEID;
     } else {
         driver.error (*yylloc, "faceZone id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+
+<psetname>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isPointSet(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PSETID;
+    } else {
+        driver.error (*yylloc, "pointSet id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+<pzonename>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isPointZone(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PZONEID;
+    } else {
+        driver.error (*yylloc, "pointZone id "+*ptr+" not existing or of wrong type");
     }
                      }
 
