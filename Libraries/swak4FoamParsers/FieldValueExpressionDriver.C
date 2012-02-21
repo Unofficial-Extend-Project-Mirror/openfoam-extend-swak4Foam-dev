@@ -840,6 +840,83 @@ surfaceSphericalTensorField *FieldValueExpressionDriver::makeSurfaceSphericalTen
     return f;
 }
 
+pointVectorField *FieldValueExpressionDriver::makePointVectorField
+(
+    pointScalarField *x,
+    pointScalarField *y,
+    pointScalarField *z
+)
+{
+    pointVectorField *f=makePointConstantField<pointVectorField>(vector(0,0,0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+pointTensorField *FieldValueExpressionDriver::makePointTensorField
+(
+    pointScalarField *xx,pointScalarField *xy,pointScalarField *xz,
+    pointScalarField *yx,pointScalarField *yy,pointScalarField *yz,
+    pointScalarField *zx,pointScalarField *zy,pointScalarField *zz
+) {
+    pointTensorField *f=makePointConstantField<pointTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=tensor(
+            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
+            (*yx)[faceI],(*yy)[faceI],(*yz)[faceI],
+            (*zx)[faceI],(*zy)[faceI],(*zz)[faceI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+pointSymmTensorField *FieldValueExpressionDriver::makePointSymmTensorField
+(
+    pointScalarField *xx,pointScalarField *xy,pointScalarField *xz,
+    pointScalarField *yy,pointScalarField *yz,
+    pointScalarField *zz
+) {
+    pointSymmTensorField *f=makePointConstantField<pointSymmTensorField>(symmTensor(0,0,0,0,0,0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=symmTensor(
+            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
+            (*yy)[faceI],(*yz)[faceI],
+            (*zz)[faceI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+pointSphericalTensorField *FieldValueExpressionDriver::makePointSphericalTensorField
+(
+    pointScalarField *xx
+) {
+    pointSphericalTensorField *f=makePointConstantField<pointSphericalTensorField>(sphericalTensor(0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=sphericalTensor(
+            (*xx)[faceI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
 const word FieldValueExpressionDriver::time() const
 {
     if(time_!="") {

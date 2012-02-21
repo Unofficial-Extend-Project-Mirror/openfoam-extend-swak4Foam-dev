@@ -215,7 +215,6 @@ void FieldValueExpressionDriver::setCalculatedPatches
     T unusedValue
 ) {
     typename GeometricField<T,fvPatchField,volMesh>::GeometricBoundaryField &bf=field.boundaryField();
-    List<fvPatchField<T> *>bfNew(bf.size());
     
     forAll(bf,patchI) {
         fvPatchField<T> &pf=bf[patchI];
@@ -236,7 +235,6 @@ void FieldValueExpressionDriver::setCalculatedPatches
     T value
 ) {
     typename GeometricField<T,fvsPatchField,surfaceMesh>::GeometricBoundaryField &bf=field.boundaryField();
-    List<fvsPatchField<T> *>bfNew(bf.size());
     
     forAll(bf,patchI) {
         fvsPatchField<T> &pf=bf[patchI];
@@ -249,6 +247,25 @@ void FieldValueExpressionDriver::setCalculatedPatches
         }
     }
     //     field.correctBoundaryConditions();
+}
+
+template<class T>
+void FieldValueExpressionDriver::setCalculatedPatches
+(
+    GeometricField<T,pointPatchField,pointMesh> &field,
+    T unusedValue
+) {
+    typename GeometricField<T,pointPatchField,pointMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    forAll(bf,patchI) {
+        pointPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedPointPatchField<T>)
+        ) {
+            pf==pf.patchInternalField();
+        }
+    }
+    field.correctBoundaryConditions();
 }
 
 template<class T>
