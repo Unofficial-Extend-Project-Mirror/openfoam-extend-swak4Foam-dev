@@ -85,7 +85,7 @@ functions (
         outputInterval 1;
         fieldName ghf;
         expression "interpolate(gDirection) & fpos()";
-        mask "true";
+        mask "surf(true)";
     }
     writeGH {
         type writeAdditionalFields;
