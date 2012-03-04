@@ -44,7 +44,13 @@ SourceFiles
 #ifndef ExpressionResult_H
 #define ExpressionResult_H
 
+#include "foamVersion4swak.H"
+#if (FOAM_VERSION4SWAK_MAJOR > 1)
+#error "This swak4Foam-version is only used for the 1.x-versions of OpenFOAM. For higher versions there is a special branch"
+#endif
+
 #include "Field.H"
+#include "dimensionedType.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,10 +71,12 @@ class ExpressionResult
     
     bool isPoint_;
 
+    bool isSingleValue_;
+
     void uglyDelete();
 
     template<class Type>
-    ExpressionResult getUniformInternal(const label size,bool noWarn);
+    ExpressionResult getUniformInternal(const label size,bool noWarn) const;
 
 public:
 
@@ -79,6 +87,27 @@ public:
 
     //- Construct as copy
     ExpressionResult(const ExpressionResult&);
+
+    //- Construct from a dictionary
+    ExpressionResult(const dictionary&,bool isSingleValue=false);
+
+    //- Construct from a field
+    template<class Type>
+    ExpressionResult(const Field<Type>  &f);
+
+    //- Construct from a dimensioned value
+    template<class Type>
+    ExpressionResult(const dimensioned<Type>  &f);
+
+    template <int, class T = void> struct enable_if_rank0 {};
+    template <class T> struct enable_if_rank0<0, T> { typedef T type; };
+
+    //- Construct from a value of rank 0
+
+    //- the enable_if_rank0-business avoids that the template is used for (for instance)
+    //- GeometricField
+    template<class Type>
+    ExpressionResult(const Type  &f,typename enable_if_rank0<pTraits<Type>::rank>::type* dummy=0);
 
     // Destructor
 
@@ -96,16 +125,28 @@ public:
     inline void setResult(Type val,label size);
 
     template<class Type>
+    inline void setSingleValue(Type val);
+
+    template<class Type>
     inline tmp<Field<Type> > getResult(bool keep=false);
 
     // Construct a uniform field from the current results
-    ExpressionResult getUniform(const label size,bool noWarn);
+    ExpressionResult getUniform(const label size,bool noWarn) const;
+
+    template<template<class> class BinOp,class Type>
+    inline Type getReduced(BinOp<Type> op,Type initial=pTraits<Type>::zero);
 
     void clearResult();
 
     inline const string &type() const;
 
     inline bool isPoint() const;
+
+    inline bool isSingleValue() const;
+
+    bool hasValue() const;
+
+    friend Ostream & operator<<(Ostream &,const ExpressionResult &);
 };
 
 

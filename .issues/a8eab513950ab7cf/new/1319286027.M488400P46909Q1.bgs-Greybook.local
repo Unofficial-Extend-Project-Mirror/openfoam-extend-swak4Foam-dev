@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 22 Oct 2011 14:18:08 +0200
+State: fixed
+Subject: functionObject to dump a whole variable into a file
+Message-Id: <a8eab513950ab7cf-0-artemis@bgs-Greybook.local>
+
+This would allow for instance to write separate values for an array of
+probes.
+
+Should be based on simpleFunctionObjects-timeline but this could be a
+challenge because the title-line would be generated automatically

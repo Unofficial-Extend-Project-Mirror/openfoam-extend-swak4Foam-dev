@@ -42,12 +42,34 @@ License
 
 namespace Foam {
  
+    inline const pointMesh &CommonValueExpressionDriver::pMesh()
+    {
+        if(!pMesh_.valid()) {
+            pMesh_.set(
+                new pointMesh(mesh())
+            );
+        }
+        
+        return pMesh_();
+    }
+
     template<class Type>
     tmp<Field<Type> > CommonValueExpressionDriver::evaluate(const string &expr,bool qPoint)
     {
         parse(expr);
 
         return getResult<Type>(qPoint);
+    }
+
+    template<class Type>
+    Type CommonValueExpressionDriver::evaluateUniform(const string &expr,bool qPoint)
+    {
+        parse(expr);
+
+        ExpressionResult result=this->getUniform(1,true);
+        Type val=result.getResult<Type>()()[0];
+
+        return val;
     }
 
     template<class Type>
@@ -74,26 +96,83 @@ namespace Foam {
                 << "A " << (qPoint ? "point" : "face" ) << "-field was wanted"
                     << " but we got a " << (!qPoint ? "point" : "face" ) 
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
 
         return result_.getResult<Type>();
     }
 
+    template<template<class> class BinOp,class Type>
+    inline Type CommonValueExpressionDriver::getReduced(BinOp<Type> op,Type initial)
+    {
+        return result_.getReduced(op,initial);
+    }
+
     template<class Type>
     bool CommonValueExpressionDriver::isVariable(const string &name,bool isPoint) const
     {
+        if(debug) {
+            Pout << "CommonValueExpressionDriver::isVariable " 
+                << " looking for " << name << " isPoint: " << isPoint;
+        }
+
         if(variables_.found(name)) {
+            if(debug) {
+                Pout << " - name found";
+            }
             if(
                 variables_[name].type()==pTraits<Type>::typeName 
                 && 
                 variables_[name].isPoint()==isPoint
             ) {
+                if(debug) {
+                    Pout << " - OK" << endl;
+                }
+
                 return true;
             } 
         }
 
-        return false;
+        if(debug) {
+            Pout << " - not OK -> trying global" << endl;
+        }
+
+        return isGlobal<Type>(name,isPoint);
+    }
+
+    template<class Type>
+    bool CommonValueExpressionDriver::isGlobal(
+        const word &name,
+        bool isPoint
+    ) const
+    {
+        if(debug) {
+            Pout << "CommonValueExpressionDriver::isGlobal "
+                << " looking for " << name << " isPoint: " << isPoint << flush;
+        }
+
+        const ExpressionResult &aGlobal=lookupGlobal(name);
+
+        if (debug) {
+            Pout << " - found type " << aGlobal.type()  
+                << " isPoint " << isPoint;
+        }
+
+        if(
+            aGlobal.type()==pTraits<Type>::typeName 
+            && 
+            aGlobal.isPoint()==isPoint
+        ) {
+            if(debug) {
+                Pout << " - OK" << endl;
+            }
+            return true;
+        } else {
+            if(debug) {
+                Pout << " - not OK" << endl;
+            }
+            return false;
+        }
     }
 
     template<class Type>
@@ -137,23 +216,128 @@ namespace Foam {
     }
 
     template<class T>
-    inline autoPtr<T> CommonValueExpressionDriver::getSet(const fvMesh &mesh,const word &name)
+    inline bool CommonValueExpressionDriver::updateSet(
+        autoPtr<T> &theSet,
+        const word &name,
+        SetOrigin origin)
+    {
+        label oldSize=theSet->size();
+
+        bool updated=false;
+        const polyMesh &mesh=dynamic_cast<const polyMesh &>(theSet->db());
+
+        if(debug) {
+            Pout << "UpdateSet: " << theSet->name() 
+                << " Id: " << name << " Origin: " << int(origin) << endl;
+        }
+
+        switch(origin) {
+            case FILE:
+                { // Scope to make sure header is not present in the other cases
+                    IOobject header
+                        (
+                            name,
+                            mesh.time().timeName(),
+                            polyMesh::meshSubDir/"sets",
+                            mesh,
+                            IOobject::MUST_READ,
+                            IOobject::NO_WRITE
+                        );
+                    if(
+                        header.headerOk()
+                        &&
+                        header.headerClassName()==T::typeName
+                    ) {
+                        if(debug) {
+                            Pout << "Rereading from " << header.filePath() << endl;
+                        }
+                        theSet.reset(
+                            new T(
+                                header
+                            )
+                        );
+                        updated=true;
+                    }
+                }
+                break;
+            case NEW:
+                WarningIn("CommonValueExpressionDriver::updateSet")
+                    << "State NEW shouldn't exist"
+                        << endl;
+            case MEMORY:
+            case CACHE:
+                {
+                    word sName=name;
+                    if(mesh.thisDb().foundObject<T>(name)) {
+                        if(debug) {
+                            Pout << "Found " << name << " and rereading it" << endl;
+                        }
+                        theSet.reset(
+                            new T(
+                                mesh,
+                                name,
+                                mesh.thisDb().lookupObject<T>(name)
+                            )
+                        );
+                    } else {
+                        FatalErrorIn("CommonValueExpressionDriver::updateSet")
+                            << name << " Not found" << endl
+                                << "In db: " << mesh.thisDb().names() << endl
+                                << exit(FatalError);
+                    }
+                    
+                    updated=true;
+                }
+                break;
+            case INVALID:
+                FatalErrorIn("CommonValueExpressionDriver::updateSet")
+                    << T::typeName << " " << name << " is invalid"
+                        << endl
+                        << exit(FatalError);
+            default:
+                if(debug) {
+                    Pout << "Origin " << int(origin) << " not implemented" << endl;
+                }
+        }
+
+        if(debug) {
+            Pout << name << " old size " << oldSize << " new: " << theSet->size()
+                << endl;
+        }
+
+        return updated;
+    }
+
+    template<class T>
+    inline autoPtr<T> CommonValueExpressionDriver::getSet(const fvMesh &mesh,const word &name,SetOrigin &origin)
     {
         // avoid the possibility of name-clashes
         const word regName=name+"RegisteredNameFor"+T::typeName;
 
         if(debug) {
-            Info << "Looking for " << T::typeName << " named " << name << " with mesh ";
-            Info << "Caching: " << cacheSets() << " Found: " << mesh.foundObject<T>(regName) << endl;
+            Pout << "Looking for " << T::typeName << " named " << name 
+                << " or  registered as " << regName << " with mesh ";
+            Pout << "Caching: " << cacheSets() 
+                << " Found: " << mesh.foundObject<T>(name)
+                << " Found registered: " << mesh.foundObject<T>(regName) << endl;
         }
         if(
             !cacheSets()
             ||
-            !mesh.thisDb().foundObject<T>(regName)
+            (
+                !mesh.thisDb().foundObject<T>(regName)
+                &&
+                !mesh.thisDb().foundObject<T>(name)
+            )
         ) {
             if(debug) {
-                Info << "Constructing a new " << name << endl;
+                Pout << "Constructing a new " << T::typeName << " " << name << endl;
+                if(debug>1) {
+                    Pout << mesh.thisDb().names();
+                }
             }
+            origin=FILE;
+
             autoPtr<T> s(
                 new T(
                     mesh,
@@ -164,28 +348,276 @@ namespace Foam {
         
             if(cacheSets()) {
                 if(debug) {
-                    Info << "Registering a copy of " << name << " with mesh" << endl;
+                    Pout << "Registering a copy of " << name << " with mesh" << endl;
                 }
                 T* toCache=new T(mesh,regName,s());
                 toCache->store();
             }
             return s;
         } else {
-            if(debug) {
-                Info << "Getting existing " << regName << endl;
+            if(mesh.thisDb().foundObject<T>(name)) {
+                if(debug) {
+                    Pout << "Getting existing " << name << endl;
+                }
+
+                origin=MEMORY;
+
+                return autoPtr<T>(
+                    new T(
+                        mesh,
+                        name,
+                        mesh.lookupObject<T>(name)
+                    )
+                );
+            } else {
+                if(debug) {
+                    Pout << "Getting existing " << regName << endl;
+                }
+
+                origin=CACHE;
+
+                return autoPtr<T>(
+                    new T(
+                        mesh,
+                        name,
+                        mesh.lookupObject<T>(regName)
+                    )
+                );
             }
-            return autoPtr<T>(
-                new T(
-                    mesh,
-                    name,
-                    mesh.lookupObject<T>(regName)
-                )
-            );
         }
     }
 
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volScalarField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volVectorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volTensorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volSymmTensorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
+    template<>
+    inline void CommonValueExpressionDriver::correctField(volSphericalTensorField &f) const
+    {
+        f.correctBoundaryConditions();
+    }
+
     template<class T>
-    inline tmp<T> CommonValueExpressionDriver::readAndRegister(const word &name)
+    inline void CommonValueExpressionDriver::correctField(T &f) const
+    {
+    }
+
+    template<class T>
+    autoPtr<T> CommonValueExpressionDriver::getOrReadField(
+        const string &name,
+        bool failIfNoneFound,
+        bool getOldTime
+    )
+    {
+        return this->getOrReadFieldInternal<T>(
+            name,
+            this->mesh(),
+            failIfNoneFound,
+            getOldTime
+        );
+    }
+
+    template<class T>
+    autoPtr<T> CommonValueExpressionDriver::getOrReadPointField(
+        const string &name,
+        bool failIfNoneFound,
+        bool getOldTime
+    )
+    {
+        return this->getOrReadFieldInternal<T>(
+            name,
+            this->pMesh(),
+            failIfNoneFound,
+            getOldTime
+        );
+    }
+
+    template<class T,class Mesh>
+    autoPtr<T> CommonValueExpressionDriver::getOrReadFieldInternal(
+        const string &name,
+        const Mesh &actualMesh,
+        bool failIfNoneFound,
+        bool getOldTime
+    )
+    {
+        if(debug) {
+            Pout << "CommonValueExpressionDriver::getOrReadField. Name: " << name 
+                << " Type: " << T::typeName << endl;
+        }
+        
+        dimensionSet nullDim(0,0,0,0,0);
+        
+        autoPtr<T> f;
+        
+        typedef typename T::value_type Type;
+            
+        if(
+            variables_.found(name)
+            ||
+            isGlobal<Type>(name,false)
+        ) {
+            if(debug) {
+                Pout << "Getting " << name << " from variables" << endl;
+            }
+            
+            f.set(
+                new T(
+                    IOobject
+                    (
+                        name,
+                        this->mesh().time().timeName(),
+                        this->mesh(),
+                        IOobject::NO_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    actualMesh,
+                    dimensioned<Type>(name,nullDim,pTraits<Type>::zero),
+                    "zeroGradient"
+                )
+            );
+
+            Field<Type> vals;
+            if(variables_.found(name)) {
+                vals=variables_[name].getResult<Type>(true);
+            } else {
+                vals=const_cast<ExpressionResult &>(
+                    lookupGlobal(name)
+                ).getResult<Type>(true);
+            }
+
+            if(debug) {
+                Pout << "sizes: " << vals.size() << " " << f->size() << endl;
+            }
+            if(vals.size()==f->size()) {
+                f->internalField()=vals;
+            } else {
+                Type avg=gAverage(vals);
+
+                bool noWarn=false;
+
+                if(!noWarn) {
+                    Type minVal=gMin(vals);
+                    Type maxVal=gMax(vals);
+                    if(mag(minVal-maxVal)>SMALL) {
+                        WarningIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
+                            << "The minimum value " << minVal << " and the maximum " 
+                                << maxVal << " differ. I will use the average " << avg
+                                << endl;
+                    }
+                }
+ 
+                f->internalField()=avg;
+            }   
+
+            correctField(f());
+
+            return f;
+        }
+
+        if(
+            searchInMemory()
+            &&
+            this->mesh().foundObject<T>(name)
+        ) {
+            if(debug) {
+                Pout << "Getting " << name << " from memory" << endl;
+            }
+
+            f.set(
+                new T(
+                    this->mesh().lookupObject<T>(name)
+                )
+            );
+            if(getOldTime) {
+                if(debug) {
+                    Info << "Getting oldTime of " << name 
+                        << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
+                        << endl;
+                }
+                if(
+                    this->mesh().lookupObject<T>(name).nOldTimes()==0
+                    &&
+                    this->prevIterIsOldTime()
+                ) {
+                    if(debug) {
+                        Info << "Using the previous iteration, because there is no oldTime" << endl;
+                    }
+                    f->oldTime()=this->mesh().lookupObject<T>(name).prevIter();
+                }
+            }
+        } else if(
+            searchOnDisc()
+            &&
+            getTypeOfField(name)==T::typeName
+        ) {
+            if(debug) {
+                Pout << "Reading " << name << " from disc" << endl;
+            }
+        
+            f.set(
+                this->readAndRegister<T>(name,actualMesh).ptr()
+            );
+            // oldTime automatically read
+        }
+
+        if(
+            !f.valid()
+            && 
+            failIfNoneFound
+        ) {
+            FatalErrorIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
+                << "Could not find the field " << name 
+                    << " in memory or on disc" << endl
+                    << exit(FatalError);
+        }
+    
+        if(f.valid()) {
+            f->dimensions().reset(nullDim);
+            if(f->nOldTimes()>0) {
+                if(debug) {
+                    Info << "Removing dimensions of oldTime of " << name 
+                        << " has " << f->nOldTimes()
+                        << endl;
+                }
+                
+                // go through ALL old times
+                T *fp=f.operator->();
+                while(fp->nOldTimes()>0) {
+                    fp=&(fp->oldTime());
+                    fp->dimensions().reset(nullDim);
+                }
+            }
+        }
+
+        return f;
+    }
+
+
+    template<class T,class Mesh>
+    inline tmp<T> CommonValueExpressionDriver::readAndRegister(
+        const word &name,
+        const Mesh &actualMesh
+    )
     {
         tmp<T>f(
             new T(
@@ -197,12 +629,12 @@ namespace Foam {
                     IOobject::MUST_READ,
                     IOobject::NO_WRITE
                 ),
-                this->mesh()
+                actualMesh
             )
         );
         if(cacheReadFields()) {
             if(debug) {
-                Info << "Registering a copy of " << name << " with mesh" << endl;
+                Pout << "Registering a copy of " << name << " with mesh" << endl;
             }
             T* toCache=new T(f());
             toCache->store();
@@ -214,14 +646,14 @@ namespace Foam {
     bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(const string &name) const
     {
         if(debug) {
-            Info << "CommonValueExpressionDriver::isThere. Name: " << name 
+            Pout << "CommonValueExpressionDriver::isThere. Name: " << name 
                 << " Type: " << T::typeName << " searchInMemory: " << searchInMemory()
                 << " searchOnDisc_: " << searchOnDisc() << endl;
         }
         if(searchInMemory()) {
             if(this->mesh().foundObject<T>(name)) {
                 if(debug) {
-                    Info << "Found " << name << " in memory" << endl;
+                    Pout << "Found " << name << " in memory" << endl;
                 }
                 return true;
             }
@@ -233,12 +665,12 @@ namespace Foam {
             getTypeOfField(name)==T::typeName
         ) {
             if(debug) {
-                Info << "Found " << name << " on disc" << endl;
+                Pout << "Found " << name << " on disc" << endl;
             }
             return true;
         } else {
             if(debug) {
-                Info << name << " not found" << endl;
+                Pout << name << " not found" << endl;
             }
             return false;
         }
@@ -247,6 +679,11 @@ namespace Foam {
     inline bool CommonValueExpressionDriver::isLine(const string &name) const 
     {
         return lines_.found(name);
+    }
+
+    inline bool CommonValueExpressionDriver::isLookup(const string &name) const 
+    {
+        return lookup_.found(name);
     }
 
     /*    template<class Type>
@@ -283,10 +720,10 @@ namespace Foam {
             return new Field<Type>(pField.patchInternalField());
         } else{
             FatalErrorIn("Field<Type> *CommonValueExpressionDriver::getField(const string &name)")
-                << "No field of type " << pTraits<scalar>::typeName
+                << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
 
             return NULL;
         }
@@ -367,9 +804,13 @@ namespace Foam {
             << " Parser Error at " << buff.str() << " :"  << m << Foam::endl
                 << content_ << Foam::endl << place
                 << Foam::exit(Foam::FatalError);
-        //    Foam::Info << buff.str() << ": " << m << Foam::endl;
+        //    Foam::Pout << buff.str() << ": " << m << Foam::endl;
     }
 
+    inline const HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables() const
+    {
+        return variables_;
+    }
 }
 
 

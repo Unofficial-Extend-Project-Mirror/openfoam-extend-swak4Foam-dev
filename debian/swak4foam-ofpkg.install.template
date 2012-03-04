@@ -1,0 +1,2 @@
+tmpbuild/bin/*	%(appbin)s
+tmpbuild/lib/*	%(libbin)s

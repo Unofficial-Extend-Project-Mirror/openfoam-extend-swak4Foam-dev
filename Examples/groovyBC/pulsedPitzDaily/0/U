@@ -25,7 +25,12 @@ boundaryField
 //         type            turbulentInlet;
 //         referenceField  uniform (10 0 0);
 //         fluctuationScale (0.02 0.01 0.01);
-      type            groovyBC;
+
+        //        type            groovyBC;
+        type            groovyBCFixedValue;
+
+        //        debugCommonDriver 0;
+
       variables (
           "yp=pts().y;"
           "minY=min(yp);"

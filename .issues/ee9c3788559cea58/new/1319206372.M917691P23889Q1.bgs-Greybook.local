@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 21 Oct 2011 16:12:20 +0200
+Subject: Re: functionObject calculateGlobalVariable
+Message-Id: <ee9c3788559cea58-e68c86e7b2f5cb39-artemis@bgs-Greybook.local>
+References: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+In-Reply-To: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+
+Compiles and runs on 1.6-ext

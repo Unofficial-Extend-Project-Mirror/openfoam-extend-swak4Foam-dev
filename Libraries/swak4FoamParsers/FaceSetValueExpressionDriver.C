@@ -56,13 +56,15 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaceSetValueExpress
 
     FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const faceSet &set,const FaceSetValueExpressionDriver& orig)
 :
-        SubsetValueExpressionDriver(orig),
+        SetSubsetValueExpressionDriver(orig),
         faceSet_(
             //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
-            dynamic_cast<const fvMesh&>(set.db()),
-            //            set.name()+"_copy",
-            set.name(),
-            set
+            new faceSet(
+                dynamic_cast<const fvMesh&>(set.db()),
+                //            set.name()+"_copy",
+                set.name(),
+                set
+            )
         )
 {}
 
@@ -72,25 +74,35 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
     bool warnAutoInterpolate
 )
 :
-    SubsetValueExpressionDriver(autoInterpolate,warnAutoInterpolate),
+    SetSubsetValueExpressionDriver(
+        set.name(),
+        INVALID,
+        autoInterpolate,
+        warnAutoInterpolate
+    ),
     faceSet_(
         //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
+        new faceSet(
             dynamic_cast<const fvMesh&>(set.db()),
             //            set.name()+"_copy",
             set.name(),
             set
+        )
     )
 {}
 
 FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(dict),
+    SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),INVALID),
     faceSet_(
-        regionMesh(dict,mesh),
-        dict.lookup("setName"),        
         getSet<faceSet>(
-            regionMesh(dict,mesh),
-            dict.lookup("setName")
+            regionMesh(
+                dict,
+                mesh,
+                searchOnDisc()
+            ),
+            dict.lookup("setName"),
+            origin_
         )
     )
 {
@@ -98,14 +110,18 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const dictionary& dic
 
 FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(const word& id,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(true,false),
-    faceSet_(
-        mesh,
+    SetSubsetValueExpressionDriver(
         id,
+        INVALID,
+        true,
+        false
+    ),
+    faceSet_(
         getSet<faceSet>(
             mesh,
-            id
-        )()
+            id,
+            origin_
+        )
     )
 {
 }
@@ -124,34 +140,54 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(const faceSet::co
     return it.key();
 }
 
-Field<scalar> *FaceSetValueExpressionDriver::getScalarField(const string &name)
+Field<scalar> *FaceSetValueExpressionDriver::getScalarField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceSet,scalar>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceSet,scalar>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<vector> *FaceSetValueExpressionDriver::getVectorField(const string &name)
+Field<vector> *FaceSetValueExpressionDriver::getVectorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceSet,vector>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceSet,vector>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<tensor> *FaceSetValueExpressionDriver::getTensorField(const string &name)
+Field<tensor> *FaceSetValueExpressionDriver::getTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceSet,tensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceSet,tensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<symmTensor> *FaceSetValueExpressionDriver::getSymmTensorField(const string &name)
+Field<symmTensor> *FaceSetValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceSet,symmTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceSet,symmTensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
-Field<sphericalTensor> *FaceSetValueExpressionDriver::getSphericalTensorField(const string &name)
+Field<sphericalTensor> *FaceSetValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceSet,sphericalTensor>(name,faceSet_);
+    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceSet,sphericalTensor>(
+        name,
+        faceSet_,
+        oldTime
+    );
 }
 
 vectorField *FaceSetValueExpressionDriver::makePositionField()
 {
-    return getFromFieldInternal(this->mesh().Cf(),faceSet_);
+    return getFromFieldInternal(this->mesh().Cf(),faceSet_());
 }
 
 scalarField *FaceSetValueExpressionDriver::makeCellVolumeField()
@@ -159,7 +195,7 @@ scalarField *FaceSetValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("FaceSetValueExpressionDriver::makeCellVolumeField()")
         << "faceSet knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -173,19 +209,24 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
 {
     // inspired by the setsToZones-utility
 
-    scalarField *result=new scalarField(faceSet_.size());
-    word setName(faceSet_.name() + "SlaveCells");
+    scalarField *result=new scalarField(faceSet_->size());
+    word setName(faceSet_->name() + "SlaveCells");
     const fvMesh &mesh=this->mesh();
+
+    SetOrigin origin=INVALID;
 
     cellSet cells(
         mesh,
         setName,
         getSet<cellSet>(
             mesh,
-            setName
+            setName,
+            origin
         )
     );
-    SortableList<label> faceLabels(faceSet_.toc());
+    assert(origin!=INVALID);
+
+    SortableList<label> faceLabels(faceSet_->toc());
 
     forAll(faceLabels, i)
     {
@@ -224,7 +265,7 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
                         << " nei:" << mesh.faceNeighbour()[faceI]
                         << " NeiInCellSet:"
                         << cells.found(mesh.faceNeighbour()[faceI])
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
         }
         else
@@ -247,7 +288,7 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
 
 scalarField *FaceSetValueExpressionDriver::makeFaceAreaMagField()
 {
-    return getFromFieldInternal(this->mesh().magSf(),faceSet_);
+    return getFromFieldInternal(this->mesh().magSf(),faceSet_());
 }
 
 vectorField *FaceSetValueExpressionDriver::makeFaceNormalField()
@@ -260,7 +301,16 @@ vectorField *FaceSetValueExpressionDriver::makeFaceNormalField()
 
 vectorField *FaceSetValueExpressionDriver::makeFaceAreaField()
 {
-    return getFromFieldInternal(this->mesh().Sf(),faceSet_);
+    return getFromFieldInternal(this->mesh().Sf(),faceSet_());
+}
+
+bool FaceSetValueExpressionDriver::update()
+{
+    if(debug) {
+        Pout << "FaceSet: update " << faceSet_->name() << endl;
+    }
+
+    return true;
 }
 
 // ************************************************************************* //

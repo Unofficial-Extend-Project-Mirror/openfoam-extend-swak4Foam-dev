@@ -1,0 +1,13 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 20 Feb 2012 10:16:31 +0100
+Subject: Re: Extend FieldValueParser to pointFields
+Message-Id: <b61412f2dcecac52-fc9a9e394edb0645-artemis@bgs-Greybook.local>
+References: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+In-Reply-To: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+
+Several things to do:
+- Read point-fields. This needs a generalization in getOrReadFields
+- Interpolation to cell fields
+- Workaround for the unimplemented functions
+- sets and zones
+

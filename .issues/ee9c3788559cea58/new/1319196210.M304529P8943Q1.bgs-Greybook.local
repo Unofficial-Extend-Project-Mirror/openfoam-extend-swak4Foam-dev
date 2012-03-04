@@ -1,0 +1,17 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 21 Oct 2011 13:20:54 +0200
+Subject: Re: functionObject calculateGlobalVariable
+Message-Id: <ee9c3788559cea58-ff5150b34593836a-artemis@bgs-Greybook.local>
+References: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+In-Reply-To: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+
+Function objects now write once again AFTER their evaluation (seems
+like a restart with storedVariables is consistent)
+
+Now only got to check whether this compiles/works on
+- 2.0
+- 1.6-ext
+
+Check whether
+- there are other instances where storing/rereading makes sense
+- rewrite the source so that it can work with stored variables

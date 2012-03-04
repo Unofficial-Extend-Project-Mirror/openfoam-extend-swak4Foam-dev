@@ -20,3 +20,11 @@ energyRegion
 	theTitle "Energy in the regions";
 	logscale true;
 }
+averageTemperatures
+{
+	expr "Region: (.+) : Average of T = (%f%)";
+	theTitle "Average temperatures in regions";
+	type dynamic;
+	idNr 1;
+	titles ( average );
+}

@@ -6,5 +6,19 @@ clearExpressionField.C
 clearExpressionFieldFunctionObject.C
 createSampledSurface.C
 createSampledSurfaceFunctionObject.C
+createSampledSet.C
+createSampledSetFunctionObject.C
+addGlobalVariable.C
+addGlobalVariableFunctionObject.C
+calculateGlobalVariables.C
+calculateGlobalVariablesFunctionObject.C
+
+solvePDECommon.C
+solvePDECommonFiniteVolume.C
+
+solveLaplacianPDE.C
+solveLaplacianPDEFunctionObject.C
+solveTransportPDE.C
+solveTransportPDEFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFunctionObjects

@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 14 Oct 2011 16:00:09 +0200
+State: fixed
+Subject: functionObject calculateGlobalVariable
+Message-Id: <ee9c3788559cea58-0-artemis@bgs-Greybook.local>
+
+Write a functionObject that calculates an arbitrary global variable
+(or a number of variables) and puts them into a global namespace.
+
+Use it to do the radius-calculations for circulatingSplash in one
+place for both fields that use them

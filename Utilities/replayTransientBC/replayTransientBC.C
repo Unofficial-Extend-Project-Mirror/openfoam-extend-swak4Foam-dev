@@ -53,12 +53,18 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
+#   include "addRegionOption.H"
+    argList::validOptions.insert("allowFunctionObjects","");
+    argList::validOptions.insert("addDummyPhi","");
+
 #   include "setRootCase.H"
 #   include "createTime.H"
 
-    runTime.functionObjects().off();
+    if(!args.options().found("allowFunctionObjects")) {
+        runTime.functionObjects().off();
+    }
 
-#   include "createMesh.H"
+#   include "createNamedMesh.H"
 
     IOdictionary replayDict
     (
@@ -71,6 +77,26 @@ int main(int argc, char *argv[])
             IOobject::NO_WRITE
         )
     );
+
+    autoPtr<surfaceScalarField> dummyPhi;
+
+    if(args.options().found("addDummyPhi")) {
+        Info << "Adding a dummy phi to make inletOutlet happy" << endl;
+        dummyPhi.set(
+            new surfaceScalarField(
+                IOobject
+                (
+                    "phi",
+                    mesh.time().system(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                mesh,
+                dimensionedScalar("phi",dimless,0)
+            )
+        );
+    }
 
     const wordList fieldNames = replayDict.lookup("fields");
 

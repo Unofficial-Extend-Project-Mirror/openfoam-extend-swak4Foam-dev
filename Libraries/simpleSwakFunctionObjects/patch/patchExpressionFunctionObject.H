@@ -70,21 +70,24 @@ class patchExpressionFunctionObject
     //- the expression that is to be evaluated 
     string expression_;
 
-    //- expressions for variables
-    stringList variables_;
+    //- the specification
+    dictionary data_;
 
     //- list with the accumulations of evaluated expression
     wordList accumulations_;
+
+    PtrList<PatchValueExpressionDriver> drivers_;
+
 protected:
 
     word dirName();
 
-    string firstLine();
+    stringList columnNames();
 
     wordList fileNames();
 
     template<class T>
-    void writeData(const word &pName,PatchValueExpressionDriver &driver);
+    void writeTheData(const word &pName,PatchValueExpressionDriver &driver);
 public:
 
     //- Runtime type information
@@ -104,6 +107,8 @@ public:
     //- Do the writing
     virtual void write();
 
+    //- read the stuff
+    virtual bool start();
 };
 
 

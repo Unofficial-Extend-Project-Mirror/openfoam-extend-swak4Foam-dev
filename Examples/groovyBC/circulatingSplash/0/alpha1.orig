@@ -1,0 +1,56 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    floor        
+    {
+        type            zeroGradient;
+    }
+
+    sides       
+    {
+        type            zeroGradient;
+        //        type            inletOutlet;
+        inletValue      uniform 0;
+        value           uniform 0;
+    }
+
+    spill       
+    {
+        //        type            zeroGradient;
+
+        type            inletOutlet;
+        inletValue      uniform 0;
+        value           uniform 0;
+    }
+
+    atmosphere      
+    {
+        type            groovyBC;
+        globalScopes ( inletPos inletPosInit );        
+//         variables "r1=0.25*(max(pts().x)-min(pts().x));r2=r1*0.2*(1-0.5*cos(54*time()));";
+//         valueExpression "(sqrt(pow(pos().x-r1*sin(10*time()),2)+pow(pos().z-r1*cos(15*time()),2))<r2) ? 1 : 0";
+        valueExpression "mag(pos()-inletCenter)<inletRadius ? 1 : 0";
+        value           uniform 0;
+    }
+}
+
+// ************************************************************************* //

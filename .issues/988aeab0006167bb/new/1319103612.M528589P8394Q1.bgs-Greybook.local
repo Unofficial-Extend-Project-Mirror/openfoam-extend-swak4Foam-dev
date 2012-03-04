@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 20 Oct 2011 11:39:19 +0200
+State: fixed
+Subject: Add PDE-functionObjects to 1.6-ext
+Message-Id: <988aeab0006167bb-0-artemis@bgs-Greybook.local>
+
+Make laplacian and transport available for finiteArea

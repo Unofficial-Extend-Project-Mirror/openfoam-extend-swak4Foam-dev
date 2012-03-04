@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 20 Oct 2011 19:13:27 +0200
+State: fixed
+Subject: directionMixed-variant of groovyBC
+Message-Id: <cd1564603027f51d-0-artemis@bgs-Greybook.local>
+
+Would allow direction-dependent boundary conditions

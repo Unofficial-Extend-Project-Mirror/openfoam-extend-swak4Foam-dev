@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 19 Feb 2012 13:55:54 +0100
+Subject: Re: Extend FieldValueParser to pointFields
+Message-Id: <b61412f2dcecac52-85270d1680d72113-artemis@bgs-Greybook.local>
+References: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+In-Reply-To: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+
+Waiting for later: pointSets and pointZones
+
+Also to do:
+- generate a field with the point-positions
+- interpolation (at least to cell)

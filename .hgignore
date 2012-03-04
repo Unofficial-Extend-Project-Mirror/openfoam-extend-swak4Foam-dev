@@ -14,3 +14,21 @@ darwin*Opt
 darwin*Debug
 
 lnInclude
+
+GTAGS
+GPATH
+GRTAGS
+
+*.tex
+*.pdf
+auto
+doc
+\#*\#
+*.orig
+
+debian/rules
+debian/control
+
+swakConfiguration
+
+Libraries/swak4FoamParsers/foamVersion4swak.H

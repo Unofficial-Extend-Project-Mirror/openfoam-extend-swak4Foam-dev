@@ -109,6 +109,9 @@ public:
     //- Construct from components
     PatchValueExpressionDriver(const fvPatch& patch_);
     
+    //- Construct from components
+    PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch_);
+    
     //- Construct from a dictionary
     PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
     
@@ -125,6 +128,7 @@ public:
 
     ~PatchValueExpressionDriver();
 
+    const fvPatch &patch() const { return patch_; }
 
     // Member Functions
 
@@ -144,8 +148,13 @@ public:
 
     scalarField *makeFaceIdField();
 
+    scalarField *makeNearDistField();
+
     template<class Type>
     Field<Type> *getField(const string &name);
+
+    template<class Type>
+    Field<Type> *getOldTimeField(const string &name);
 
     template<class Type>
     Field<Type> *getSurfaceNormalField(const string &name);

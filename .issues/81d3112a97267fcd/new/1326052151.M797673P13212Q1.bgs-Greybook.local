@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 08 Jan 2012 20:48:07 +0100
+Subject: Re: Output name of region in simpleFunctionObjects
+Message-Id: <81d3112a97267fcd-8df65a2163125d5c-artemis@bgs-Greybook.local>
+References: <81d3112a97267fcd-0-artemis@bgs-Greybook.local>
+In-Reply-To: <81d3112a97267fcd-0-artemis@bgs-Greybook.local>
+
+No subdirectory for the region: the usage of name() in the dir should
+take care of making the directory unambiguous 

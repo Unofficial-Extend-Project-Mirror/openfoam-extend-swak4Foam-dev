@@ -1,0 +1,11 @@
+compareT {
+	theTitle "Difference TSteady/Transient";
+	expr "Expression compareTSteadyTransient :  min=(%f%) max=(%f%) average=(%f%)";
+	titles (min max average);
+}
+
+compareY {
+	theTitle "Difference YSteady/Yransient";
+	expr "Expression compareYSteadyTransient :  min=(%f%) max=(%f%) average=(%f%)";
+	titles (min max average);
+}

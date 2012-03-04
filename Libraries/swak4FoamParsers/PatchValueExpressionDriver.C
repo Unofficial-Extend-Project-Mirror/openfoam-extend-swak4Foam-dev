@@ -41,6 +41,8 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+#include <nearWallDist.H>
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -67,6 +69,12 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
     patch_(patch)
 {}
 
+PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch)
+:
+    CommonValueExpressionDriver(dict),
+    patch_(patch)
+{}
+
 label getPatchID(const fvMesh &mesh,const word &name)
 {
     label result=mesh.boundaryMesh().findPatchID(name);
@@ -75,7 +83,7 @@ label getPatchID(const fvMesh &mesh,const word &name)
             << "The patch " << name << " was not found in "
                 << mesh.boundaryMesh().names()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
 
     }
     return result;
@@ -85,9 +93,17 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
  :
     CommonValueExpressionDriver(dict),
     patch_(
-        regionMesh(dict,mesh).boundary()[
+        regionMesh(
+            dict,
+            mesh,
+            searchOnDisc()
+        ).boundary()[
             getPatchID(
-                regionMesh(dict,mesh),
+                regionMesh(
+                    dict,
+                    mesh,
+                    searchOnDisc()
+                ),
                 dict.lookup(
                     "patchName"
                 )
@@ -193,6 +209,14 @@ scalarField *PatchValueExpressionDriver::makeFaceIdField()
     forAll(*result,i) {
         (*result)[i]=i;
     }
+    return result;
+}
+
+scalarField *PatchValueExpressionDriver::makeNearDistField()
+{
+    scalarField *result=new scalarField(patch_.size());
+    nearWallDist dist(this->mesh());
+    (*result)=dist[patch_.index()];
     return result;
 }
 

@@ -56,7 +56,7 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
 :
     patchFunctionObject(name,t,dict),
     expression_(dict.lookup("expression")),
-    variables_(CommonValueExpressionDriver::readVariableStrings(dict)),
+    data_(dict),
     accumulations_(dict.lookup("accumulations"))
 {
 }
@@ -92,12 +92,12 @@ wordList patchExpressionFunctionObject::fileNames()
     return patchNames_;
 }
 
-string patchExpressionFunctionObject::firstLine()
+stringList patchExpressionFunctionObject::columnNames()
 {
-    string result="";
+    stringList result(accumulations_.size());
 
     forAll(accumulations_,i) {
-        result+=" "+accumulations_[i];
+        result[i]=accumulations_[i];
     }
 
     return result;
@@ -105,38 +105,61 @@ string patchExpressionFunctionObject::firstLine()
 
 void patchExpressionFunctionObject::write()
 {
-    const fvMesh &mesh=refCast<const fvMesh>(obr_);
-    
     forAll(patchIndizes_,i) {
         if(patchIndizes_[i]<0) {
             continue;
         }
-        PatchValueExpressionDriver driver(mesh.boundary()[patchIndizes_[i]]);
+        PatchValueExpressionDriver &driver=drivers_[i];
 
         if(verbose()) {
             Info << "Expression " << name() << " on " << patchNames_[i] << ": ";
         }
         
-        driver.addVariables(variables_);
+        driver.clearVariables();
         driver.parse(expression_);
         word rType=driver.getResultType();
 
         if(rType==pTraits<scalar>::typeName) {
-            writeData<scalar>(patchNames_[i],driver);
+            writeTheData<scalar>(patchNames_[i],driver);
         } else if(rType==pTraits<vector>::typeName) {
-            writeData<vector>(patchNames_[i],driver);
+            writeTheData<vector>(patchNames_[i],driver);
         } else if(rType==pTraits<tensor>::typeName) {
-            writeData<tensor>(patchNames_[i],driver);
+            writeTheData<tensor>(patchNames_[i],driver);
         } else if(rType==pTraits<symmTensor>::typeName) {
-            writeData<symmTensor>(patchNames_[i],driver);
+            writeTheData<symmTensor>(patchNames_[i],driver);
         } else if(rType==pTraits<sphericalTensor>::typeName) {
-            writeData<sphericalTensor>(patchNames_[i],driver);
+            writeTheData<sphericalTensor>(patchNames_[i],driver);
         }  
 
         if(verbose()) {
             Info << endl;
         }
+
+        // make sure that the stored Variables are consistently written
+        driver.tryWrite();
     }
+}
+
+bool patchExpressionFunctionObject::start()
+{
+    const fvMesh &mesh=refCast<const fvMesh>(obr_);
+    
+    bool result=patchFunctionObject::start();
+    
+    drivers_.clear();
+    drivers_.resize(patchIndizes_.size());
+
+    forAll(drivers_,i) {
+        drivers_.set(
+            i,
+            new PatchValueExpressionDriver(
+                data_,
+                mesh.boundary()[patchIndizes_[i]]
+            )
+        );
+        drivers_[i].createWriterAndRead(name()+"_"+mesh.boundary()[patchIndizes_[i]].name()+"_"+type());
+    }
+    return result;
 }
 
 } // namespace Foam

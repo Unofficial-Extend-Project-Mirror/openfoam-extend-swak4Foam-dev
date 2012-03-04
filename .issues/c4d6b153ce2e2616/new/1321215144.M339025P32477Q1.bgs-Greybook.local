@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 13 Nov 2011 21:09:13 +0100
+State: new
+Subject: Find the variables an expression depends on
+Message-Id: <c4d6b153ce2e2616-0-artemis@bgs-Greybook.local>
+
+This would allow groovyBC to check whether all required variables are
+there and evaluate the BC thus avoiding the need to specify by the
+user by hand via  evaluateDuringConstruction
+
+Probably means reparsing expression and/or exception handling for
+handling variables that are not there

@@ -1,3 +1,73 @@
-{"expr":"Selected %f% cells for refinement out of (%f%).","name":"Grid size","titles":["cells"]}
-{"expr":"Liquid phase volume fraction = (%f%)","name":"Liquid Phase","titles":["fraction"]}
-{"expr":"Execution time for mesh.update\(\) = (%f%) s","name":"Mesh update Time","titles":["seconds"]}
+GridSize
+{
+  expr "Selected %f% cells for refinement out of (%f%).";
+  theTitle "Grid size";
+  titles
+    (
+      cells
+    );
+}
+LiquidFraction
+{
+  expr "Liquid phase volume fraction = (%f%)";
+  theTitle "Liquid Phase";
+  titles
+    (
+      fraction
+    );
+  progress "Liquid: $0";
+}
+MeshExecutionTime
+{
+  expr "Execution time for mesh.update\(\) = (%f%) s";
+  theTitle "Custom 3 - Mesh update Time";
+  titles
+    (
+      seconds
+    );
+}
+InletPos
+{
+	expr "Expression printInletPosition :  average=\((%f%) %f% (%f%)\)";
+	theTitle "Inlet position";
+	titles (x z);
+}
+InletRadius
+{
+	expr "Expression printInletRadius :  average=(%f%)";
+	type slave;
+	master InletPos;
+	titles (radius);
+}
+InletVelocity
+{
+	expr "Expression printInletVelocity :  average=(%f%)";
+	theTitle "Velocity at the inlet";
+	titles ( v );
+}
+Area 
+{
+	expr "Expression idealArea :  average=(%f%)";
+	theTitle "Area of the inlet";
+	titles ( "Ideal value");
+}
+Divergence 
+{
+	expr "Expression divergenceArea :  average=(%f%)";
+	titles ( "Real-Ideal" );
+	type slave;
+	master Area;
+}
+totalFrac
+{
+	expr "Expression totalAlpha :  sum=(%f%)";
+	theTitle "Fluid volume";
+	titles ( total );
+}
+massInflow
+{
+	expr "Expression totalInMassflow :  average=(%f%)";
+	titles ( "inFlow - accumulated" );
+	type slave;
+	master totalFrac;
+}

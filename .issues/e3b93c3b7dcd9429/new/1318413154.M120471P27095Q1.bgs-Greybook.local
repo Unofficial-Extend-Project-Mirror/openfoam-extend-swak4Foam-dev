@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 12 Oct 2011 11:51:20 +0200
+State: fixed
+Subject: calculated-BC separate treatment in finiteArea
+Message-Id: <e3b93c3b7dcd9429-0-artemis@bgs-Greybook.local>
+
+Is a similiar treatment for calculated-Boundary conditions as for
+surfaceFields for edgeFields necessary?
+
+Have to check

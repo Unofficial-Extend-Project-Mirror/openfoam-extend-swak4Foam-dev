@@ -96,16 +96,27 @@ protected:
 
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
-    Field<T> *getFieldInternal(const string &name,const Subset &sub);
+    Field<T> *getFieldInternal(
+        const string &name,
+        const Subset &sub,
+        bool oldTime=false
+    );
 
     //- General Method to get the values and interpolate
     template<class FieldType,class IFieldType,class Subset,class T>
-    Field<T> *getFieldInternalAndInterpolate(const string &name,const Subset &sub);
+    Field<T> *getFieldInternalAndInterpolate(
+        const string &name,
+        const Subset &sub,
+        bool oldTime=false
+    );
 
     //- General Method to get values from a field
     template<class Subset,class T>
     Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
 public:
+
+     //- Runtime type information
+    TypeName("SubsetValueExpressionDriver");
 
     // Constructors
 
@@ -149,15 +160,15 @@ public:
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
-    virtual Field<scalar> *getScalarField(const string &name)=0;
+    virtual Field<scalar> *getScalarField(const string &name,bool oldTime=false)=0;
 
-    virtual Field<vector> *getVectorField(const string &name)=0;
+    virtual Field<vector> *getVectorField(const string &name,bool oldTime=false)=0;
 
-    virtual Field<tensor> *getTensorField(const string &name)=0;
+    virtual Field<tensor> *getTensorField(const string &name,bool oldTime=false)=0;
 
-    virtual Field<symmTensor> *getSymmTensorField(const string &name)=0;
+    virtual Field<symmTensor> *getSymmTensorField(const string &name,bool oldTime=false)=0;
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name)=0;
+    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name,bool oldTime=false)=0;
 
     // Handling the parser
     void parse(const std::string& f);

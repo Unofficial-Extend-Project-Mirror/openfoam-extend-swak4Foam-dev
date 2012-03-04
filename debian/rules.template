@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+
+MY_OF = /%(ofproject)s
+
+clean::
+	@. $(MY_OF)/etc/bashrc; \
+	rm -r tmpbuild;  \
+	wclean all
+
+build/swak4foam-%(ofpkg)s::
+	@. $(MY_OF)/etc/bashrc; \
+		mkdir -p tmpbuild/bin; \
+		mkdir -p tmpbuild/lib; \
+		export FOAM_USER_APPBIN=$(CURDIR)/tmpbuild/bin; \
+		export FOAM_USER_LIBBIN=$(CURDIR)/tmpbuild/lib; \
+	wmake all
+
+

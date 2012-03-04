@@ -140,57 +140,62 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 bool SampledSurfaceValueExpressionDriver::update()
 {
-    bool updated=theSurface_.update();
+    bool updated=theSurface_.update(); // valgrind reports huge memory losses here
     if(debug) {
-        Info << "Updated: " << updated << " " << this->size() << endl;
+        Pout << "Updated: " << updated << " " << this->size() << endl;
     }
 
     return updated;
 }
 
-Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(const string &name)
+Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(const string &name,bool oldTime)
 {
     return sampleOrInterpolateInternal<scalar,volScalarField,surfaceScalarField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
-Field<vector> *SampledSurfaceValueExpressionDriver::getVectorField(const string &name)
+Field<vector> *SampledSurfaceValueExpressionDriver::getVectorField(const string &name,bool oldTime)
 {
     return sampleOrInterpolateInternal<vector,volVectorField,surfaceVectorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
-Field<tensor> *SampledSurfaceValueExpressionDriver::getTensorField(const string &name)
+Field<tensor> *SampledSurfaceValueExpressionDriver::getTensorField(const string &name,bool oldTime)
 {
     return sampleOrInterpolateInternal<tensor,volTensorField,surfaceTensorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
-Field<symmTensor> *SampledSurfaceValueExpressionDriver::getSymmTensorField(const string &name)
+Field<symmTensor> *SampledSurfaceValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
 {
     return sampleOrInterpolateInternal<symmTensor,volSymmTensorField,surfaceSymmTensorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
-Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorField(const string &name)
+Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
 {
     return sampleOrInterpolateInternal<sphericalTensor,volSphericalTensorField,surfaceSphericalTensorField>
         (
-            name
+            name,
+            oldTime
         );
 }
 
 vectorField *SampledSurfaceValueExpressionDriver::makePositionField()
 {
-    return new vectorField(theSurface_.Cf());
+    return new vectorField(theSurface_.Cf());  // valgrind reports huge memory losses here
 }
 
 scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
@@ -198,7 +203,7 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
     FatalErrorIn("SampledSurfaceValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -210,6 +215,11 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
 
 scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
 {
+    if(debug) {
+        Pout << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
+            << " size: " << this->size() << " magSf: " << theSurface_.magSf().size() 
+            << endl;
+    }
     return new scalarField(theSurface_.magSf());
 }
 

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 11 Dec 2011 19:40:21 +0100
+Subject: Re: funkySetAreaField does not support edge fields
+Message-Id: <b3eb710a3d256713-da667e9cb1f0f8c3-artemis@bgs-Greybook.local>
+References: <b3eb710a3d256713-0-artemis@bgs-Greybook.local>
+In-Reply-To: <b3eb710a3d256713-0-artemis@bgs-Greybook.local>
+
+Works. Now templates for setValuePatches and makePatches are needed

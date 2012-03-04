@@ -76,7 +76,7 @@ public:
 
     //- Destructor
 
-    ~SurfacesRepository();
+    virtual ~SurfacesRepository();
 
     //- Get the Singleton of this class
     static SurfacesRepository &getRepository();
@@ -100,8 +100,6 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "SurfacesRepositoryI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

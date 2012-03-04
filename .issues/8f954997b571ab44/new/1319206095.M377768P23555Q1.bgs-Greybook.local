@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 21 Oct 2011 16:07:26 +0200
+State: new
+Subject: Enable transpose for tensors
+Message-Id: <8f954997b571ab44-0-artemis@bgs-Greybook.local>
+
+Have to check this but currently there is no way to transpose tensors
+in the parsers I think

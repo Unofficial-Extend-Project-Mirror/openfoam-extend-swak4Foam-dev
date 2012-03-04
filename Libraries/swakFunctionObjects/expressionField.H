@@ -42,6 +42,7 @@ SourceFiles
 #include "pointFieldFwd.H"
 #include "Switch.H"
 #include "autoPtr.H"
+#include "dictionary.H"
 
 namespace Foam
 {
@@ -50,6 +51,8 @@ class objectRegistry;
 class dictionary;
 class mapPolyMesh;
 
+class FieldValueExpressionDriver;
+class regIOobject;
 
 class expressionField
 {
@@ -77,15 +80,16 @@ protected:
 
     const objectRegistry& obr_;
 
-    autoPtr<volVectorField> vectorField_;
+    autoPtr<regIOobject> field_;
 
-    autoPtr<volScalarField> scalarField_;
+    dictionary dict_;
 
     template<class T>
     void storeField(
-        const T &data,
-        autoPtr<T> &store
+        const T &data
     );
+
+    autoPtr<FieldValueExpressionDriver> driver_;
 
 public:
 
