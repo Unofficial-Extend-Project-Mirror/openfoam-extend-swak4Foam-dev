@@ -1,0 +1,25 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+expressions
+(
+	initLower
+	{
+		field alpha1;
+		keepPatches true;
+		expression "1";
+		condition "pos().y<0.1";
+		dimension [0 1 -1 0 0];
+	}
+);
