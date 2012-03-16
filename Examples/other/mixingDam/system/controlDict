@@ -1,0 +1,99 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10;
+
+deltaT          0.001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.5;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.5;
+maxAlphaCo      0.5;
+
+maxDeltaT       1;
+
+libs (
+    "libswakFunctionObjects.so"
+    "libsimpleFunctionObjects.so"
+);
+
+functions (
+    gravityDirection {
+        type expressionField;
+        fieldName gDirection;
+        autowrite true;
+        variables (
+            "duration=5;"
+            "maxAngle=45;"
+            "angle=pi/180*(time()<duration ? time()/duration*maxAngle : maxAngle);"
+        );
+        expression "-9.81*vector(sin(angle),cos(angle),0)";
+        outputControl timeStep;
+        outputInterval 1;
+    }
+    setGH {
+        type manipulateField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName gh;
+        expression "gDirection & pos()";
+        mask "true";
+    }
+    setGHF {
+        type manipulateField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName ghf;
+        expression "interpolate(gDirection) & fpos()";
+        mask "surf(true)";
+    }
+    writeGH {
+        type writeAdditionalFields;
+        fieldNames (
+            gh
+            ghf
+        );
+    }
+);
+
+// ************************************************************************* //

@@ -308,6 +308,12 @@ S_{expl} + S_{impl} T
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
+**** =mixingGam=
+     - Solver :: interFoam
+     - Case preparation :: run the supplied script =prepareCase.sh=
+     - Demonstrates :: Emulate a "moving gravitation" by using the
+                       =manipulateField=-functionObject to recalculate
+                       =gh= and =ghf=
 *** PythonIntegration
     Demonstrate the integration of =Python=. Mostly using =PyFoam= but
     also with =pythonFlu=
@@ -847,3 +853,6 @@ S_{expl} + S_{impl} T
 
      Has been fixed by de-registering the dictionary =U= immediately
      after loading.
+**** No gradient for vectors in FieldParser
+     The gradient for a vector field (result: a tensor field) was not
+     calculated. It is now part of the grammar
