@@ -689,6 +689,7 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_max '(' texp ')'                 { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' texp ')'                 { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' texp ')'             { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::average(*$3).value()); delete $3; }
+        | TOKEN_grad '(' vexp ')'                 { $$ = new Foam::volTensorField(Foam::fvc::grad(*$3)); delete $3; }
         | TOKEN_div '(' fsexp ',' texp ')'        { $$ = new Foam::volTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_TID                               { $$=driver.getField<Foam::volTensorField>(*$1); }
         | TOKEN_ddt '(' TOKEN_TID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)() ).ptr(); }

@@ -851,3 +851,6 @@ S_{expl} + S_{impl} T
 
      Has been fixed by de-registering the dictionary =U= immediately
      after loading.
+**** No gradient for vectors in FieldParser
+     The gradient for a vector field (result: a tensor field) was not
+     calculated. It is now part of the grammar
