@@ -18,6 +18,7 @@
 #include <facAverage.H>
 #include <edgeInterpolate.H>
 #include <facLaplacian.H>
+#include <facDdt.H>
 
 #include <faMatrix.H>
 
@@ -111,6 +112,8 @@
 %token TOKEN_grad
 %token TOKEN_lnGrad
 %token TOKEN_laplacian
+%token TOKEN_ddt
+%token TOKEN_oldTime
 
 %token TOKEN_integrate
 %token TOKEN_surfSum
@@ -230,7 +233,9 @@ vexp:   vector                                    { $$ = $1; }
         | TOKEN_average '(' vexp ')'             { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_grad '(' exp ')'                  { $$ = new Foam::areaVectorField(Foam::fac::grad(*$3)); delete $3; }
         | TOKEN_div '(' fsexp ',' vexp ')'        { $$ = new Foam::areaVectorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5; }
-        | TOKEN_VID                               { $$=driver.getField<Foam::areaVectorField>(*$1); }
+        | TOKEN_VID                               { $$=driver.getField<Foam::areaVectorField>(*$1).ptr(); }
+        | TOKEN_ddt '(' TOKEN_VID ')'             { $$ = Foam::fac::ddt( driver.getField<Foam::areaVectorField>(*$3,true)() ).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_VID ')'         { $$=new Foam::areaVectorField(driver.getField<Foam::areaVectorField>(*$3,true)->oldTime()); }
 ;
 
 fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam::edgeScalarField>($3); }
@@ -284,7 +289,8 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_length '(' ')'                { $$ = driver.makeLengthField(); }
         | TOKEN_lnGrad '(' exp ')'          { $$ = new Foam::edgeScalarField(Foam::fac::lnGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::edgeScalarField(Foam::fac::interpolate(*$3)); delete $3; }
-        | TOKEN_FSID                        { $$ = driver.getField<Foam::edgeScalarField>(*$1); }
+        | TOKEN_FSID                        { $$ = driver.getField<Foam::edgeScalarField>(*$1).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_FSID ')'  { $$=new Foam::edgeScalarField(driver.getField<Foam::edgeScalarField>(*$3,true)->oldTime()); }
 ;
  
 fvexp:  fvector                            { $$ = $1; }
@@ -326,7 +332,8 @@ fvexp:  fvector                            { $$ = $1; }
         }
         | TOKEN_sum '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fvexp ')'      { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_FVID                       { $$ = driver.getField<Foam::edgeVectorField>(*$1); }
+        | TOKEN_FVID                       { $$ = driver.getField<Foam::edgeVectorField>(*$1).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_FVID ')' { $$=new Foam::edgeVectorField(driver.getField<Foam::edgeVectorField>(*$3,true)->oldTime()); }
 ;
  
 scalar:	TOKEN_NUM		        { $$ = $1; }
@@ -406,7 +413,9 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_cpu'(' ')'                         { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::Pstream::myProcNo()); }
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.runTime().time().value()); }
-        | TOKEN_SID		                   { $$ = driver.getField<Foam::areaScalarField>(*$1); }
+        | TOKEN_SID		                   { $$ = driver.getField<Foam::areaScalarField>(*$1).ptr(); }
+        | TOKEN_ddt '(' TOKEN_SID ')'              { $$ = Foam::fac::ddt( driver.getField<Foam::areaScalarField>(*$3,true)() ).ptr(); }
+        | TOKEN_oldTime '(' TOKEN_SID ')'         { $$=new Foam::areaScalarField(driver.getField<Foam::areaScalarField>(*$3,true)->oldTime()); }
         | TOKEN_LINE		                   { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
         | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::areaScalarField>(driver.getLookup(*$1,*$3)); delete $1;  delete$3;}
 ;

@@ -96,6 +96,7 @@ weights               return token::TOKEN_weights;
 lnGrad                return token::TOKEN_lnGrad;
 internalField         return token::TOKEN_internalField;
 neighbourField        return token::TOKEN_neighbourField;
+oldTime               return token::TOKEN_oldTime;
 normal                return token::TOKEN_normal;
 rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
 id                    return token::TOKEN_id;

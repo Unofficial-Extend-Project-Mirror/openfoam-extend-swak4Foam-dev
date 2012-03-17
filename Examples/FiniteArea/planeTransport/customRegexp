@@ -9,3 +9,14 @@ compareY {
 	expr "Expression compareYSteadyTransient :  min=(%f%) max=(%f%) average=(%f%)";
 	titles (min max average);
 }
+changeOfCs {
+	theTitle "Change of Cs";
+	titles (max);
+	expr "Expression changeScalar :  max=(%f%)";
+}
+outletChange {
+	type slave;
+	master changeOfCs;
+	titles ( outlet );
+	expr "Expression outletChange :  max=(%f%)";
+}

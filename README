@@ -793,6 +793,8 @@ S_{expl} + S_{impl} T
      - cellSet,cellZone :: only =oldTime=
      - sampledSurface,sampledSet :: only =oldTime=
      - faceSet,faceZone :: =oldTime=
+     - internalFaFields :: =oldTime= and =ddt=
+     - faPatch :: only =oldTime=
 
      If there is no old time value stored and in the parser dictionary
      the parameter =prevIterIsOldTime= is set, then the previous
@@ -854,3 +856,10 @@ S_{expl} + S_{impl} T
 **** No gradient for vectors in FieldParser
      The gradient for a vector field (result: a tensor field) was not
      calculated. It is now part of the grammar
+**** Some operators for tensors not working in 1.6-ext
+     =tr=, =inv= and =det= were not working for some tensort types in
+     1.6-ext. The parser now fails if such a combination is
+     used. Works OK for other OF-versions
+
+     Also introduced a workaround for certain operators not being
+     properly defined for pointFields (by using the internal fields)

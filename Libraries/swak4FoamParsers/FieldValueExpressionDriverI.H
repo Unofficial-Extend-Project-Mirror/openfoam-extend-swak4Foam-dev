@@ -7,15 +7,22 @@
 #include "wallPointPatch.H"
 #include "fixedValueFvPatchFields.H"
 #include "fixedValueFvsPatchFields.H"
-#include "fixedValuePointPatchFields.H"
 #include "zeroGradientFvPatchFields.H"
-#include "zeroGradientPointPatchFields.H"
 #include "calculatedFvPatchFields.H"
 #include "calculatedFvsPatchFields.H"
-#include "calculatedPointPatchFields.H"
 
 #include "volPointInterpolation.H"
 #include "interpolatePointToCell.H"
+
+#ifdef FOAM_DEV
+#include "FixedValuePointPatchField.H"
+#include "ZeroGradientPointPatchField.H"
+#include "CalculatedPointPatchField.H"
+#else
+#include "fixedValuePointPatchFields.H"
+#include "zeroGradientPointPatchFields.H"
+#include "calculatedPointPatchFields.H"
+#endif
 
 namespace Foam {
 
@@ -192,9 +199,17 @@ void FieldValueExpressionDriver::makePatches
         )
     ) {
         if(isValuePatch){
+#ifdef FOAM_DEV
+            bfNew[patchI]=new FixedValuePointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>(patch,field);  
+#else
             bfNew[patchI]=new fixedValuePointPatchField<T>(patch,field);  
+#endif
         } else {
+#ifdef FOAM_DEV
+            bfNew[patchI]=new ZeroGradientPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>(patch,field);  
+#else
             bfNew[patchI]=new zeroGradientPointPatchField<T>(patch,field);
+#endif
         }
     } else {
         bfNew[patchI]=bf[patchI].clone().ptr();
@@ -260,7 +275,11 @@ void FieldValueExpressionDriver::setCalculatedPatches
         pointPatchField<T> &pf=bf[patchI];
         
         if(
+#ifdef FOAM_DEV
+            typeid(pf)==typeid(CalculatedPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
+#else
             typeid(pf)==typeid(calculatedPointPatchField<T>)
+#endif
         ) {
             pf==pf.patchInternalField();
         }
@@ -325,7 +344,11 @@ void FieldValueExpressionDriver::copyCalculatedPatches
         pointPatchField<T> &pf=bf[patchI];
         
         if(
+#ifdef FOAM_DEV
+            typeid(pf)==typeid(CalculatedPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
+#else
             typeid(pf)==typeid(calculatedPointPatchField<T>)
+#endif
         ) {
             pf==pf.patchInternalField();
         }
@@ -463,7 +486,13 @@ void FieldValueExpressionDriver::setValuePatches
 //             typeid(patch)==typeid(fvPatch
         )
     ) {
-        if(typeid(field.boundaryField()[patchI])==typeid(fixedValuePointPatchField<T>)) {
+        if(
+#ifdef FOAM_DEV
+            typeid(field.boundaryField()[patchI])==typeid(FixedValuePointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
+#else
+            typeid(field.boundaryField()[patchI])==typeid(fixedValuePointPatchField<T>)
+#endif
+        ) {
             pointPatchField<T> &pf=field.boundaryField()[patchI];
             
             pf==pf.patchInternalField();

@@ -10,7 +10,10 @@
 namespace Foam {
 
 template<class T>
-T *FaFieldValueExpressionDriver::getField(const string &name)
+autoPtr<T> FaFieldValueExpressionDriver::getField(
+    const string &name,
+    bool getOldTime
+)
 {
     if(debug) {
         Info << "FaFieldValueExpressionDriver::getField. Name: " << name 
@@ -19,7 +22,7 @@ T *FaFieldValueExpressionDriver::getField(const string &name)
 
     dimensionSet nullDim(0,0,0,0,0);
 
-    T *f=NULL;
+    autoPtr<T> f;
 
     if(variables_.found(name)) {
         if(debug) {
@@ -28,17 +31,19 @@ T *FaFieldValueExpressionDriver::getField(const string &name)
 
         typedef typename T::value_type Type;
 
-        f=new T(
-            IOobject
-            (
-                name,
-                this->time(),
-                this->mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            aMesh(),
-            dimensioned<Type>(name,nullDim,pTraits<Type>::zero)
+        f.set(
+            new T(
+                IOobject
+                (
+                    name,
+                    this->time(),
+                    this->mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                aMesh(),
+                dimensioned<Type>(name,nullDim,pTraits<Type>::zero)
+            )
         );
 
         Field<Type> vals=variables_[name].getResult<Type>(true);
@@ -78,9 +83,29 @@ T *FaFieldValueExpressionDriver::getField(const string &name)
             Info << "Getting " << name << " from memory" << endl;
         }
 
-        f=new T(
-            this->mesh().lookupObject<T>(name)
+        f.set(
+            new T(
+                this->mesh().lookupObject<T>(name)
+            )
         );
+
+        if(getOldTime) {
+            if(debug) {
+                Info << "Getting oldTime of " << name 
+                    << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
+                    << endl;
+            }
+            if(
+                this->mesh().lookupObject<T>(name).nOldTimes()==0
+                &&
+                this->prevIterIsOldTime()
+            ) {
+                if(debug) {
+                    Info << "Using the previous iteration, because there is no oldTime" << endl;
+                }
+                f->oldTime()=this->mesh().lookupObject<T>(name).prevIter();
+            }
+        }
     } else if(
         searchOnDisc()
     ) {
@@ -88,10 +113,12 @@ T *FaFieldValueExpressionDriver::getField(const string &name)
             Info << "Reading " << name << " from disc" << endl;
         }
         
-        f=this->readAndRegister<T>(name).ptr();
+        f.set(
+            this->readAndRegister<T>(name).ptr()
+        );
     }
 
-    if(f==NULL) {
+    if(!f.valid()) {
         FatalErrorIn("FaFieldValueExpressionDriver::getField(const string &name)")
             << "Could not find the field " << name 
                 << " in memory or on disc" << endl
@@ -99,7 +126,21 @@ T *FaFieldValueExpressionDriver::getField(const string &name)
     }
     
     f->dimensions().reset(nullDim);
-
+    if(f->nOldTimes()>0) {
+        if(debug) {
+            Info << "Removing dimensions of oldTime of " << name 
+                << " has " << f->nOldTimes()
+                << endl;
+        }
+        
+        // go through ALL old times
+        T *fp=f.operator->();
+        while(fp->nOldTimes()>0) {
+            fp=&(fp->oldTime());
+            fp->dimensions().reset(nullDim);
+        }
+    }
+    
     return f;
 }
 
