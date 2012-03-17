@@ -2,7 +2,7 @@ include $(OBJECTS_DIR)/../mybison
 include $(OBJECTS_DIR)/../myflex
 
 ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV -O1
+FOAM_DEV_OPTION = -DFOAM_DEV
 endif
 
 EXE_INC = -I$(OBJECTS_DIR) \

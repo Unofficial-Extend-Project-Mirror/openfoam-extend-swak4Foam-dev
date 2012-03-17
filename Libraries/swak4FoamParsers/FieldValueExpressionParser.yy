@@ -31,9 +31,12 @@
 
     using Foam::FieldValueExpressionDriver;
 
-#if ((FOAM_VERSION4SWAK_MAJOR<2) && (FOAM_VERSION4SWAK_MINOR<7))
+#include "foamVersion4swak.H"
+
+#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
 #define INCOMPLETE_OPERATORS
 #endif
+
 %}
 
 %name-prefix="parserField"
@@ -439,29 +442,14 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_mag '(' fhexp ')'           { $$ = new Foam::surfaceScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_tr '(' ftexp ')'            { $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }
         | TOKEN_tr '(' fyexp ')'            { $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }
+// doesn't work directly        | TOKEN_tr '(' fhexp ')'            {$$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }  
         | TOKEN_tr '(' fhexp ')'            { 
-#ifdef INCOMPLETE_OPERATORS
-            Foam::FatalErrorIn("FieldValueExpressionParser - TOKEN_tr '(' fhexp ')'")
-                << "Operator not implemented"
-                    << Foam::endl
-                    << Foam::abort(Foam::FatalError);
-
-#else
-            $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); 
-#endif
+            $$ = driver.makeField<Foam::surfaceScalarField>(Foam::tr($3->internalField())); 
             delete $3; }
         | TOKEN_det '(' ftexp ')'           { $$ = new Foam::surfaceScalarField(Foam::det(*$3)); delete $3; }
         | TOKEN_det '(' fyexp ')'           { $$ = new Foam::surfaceScalarField(Foam::det(*$3)); delete $3; }
         | TOKEN_det '(' fhexp ')'           { 
-#ifdef INCOMPLETE_OPERATORS
-            Foam::FatalErrorIn("FieldValueExpressionParser - TOKEN_det '(' fhexp ')'")
-                << "Operator not implemented"
-                    << Foam::endl
-                    << Foam::abort(Foam::FatalError);
-
-#else
-            $$ = new Foam::surfaceScalarField(Foam::det(*$3)); 
-#endif
+            $$ = driver.makeField<Foam::surfaceScalarField>(Foam::det($3->internalField())); 
             delete $3; }
         | TOKEN_area '(' ')'                { $$ = driver.makeAreaField(); }
         | TOKEN_snGrad '(' exp ')'          { $$ = new Foam::surfaceScalarField(Foam::fvc::snGrad(*$3)); delete $3; }
@@ -585,28 +573,12 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_tr '(' texp ')'                    { $$ = new Foam::volScalarField(Foam::tr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_tr '(' yexp ')'                    { $$ = new Foam::volScalarField(Foam::tr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_tr '(' hexp ')'                    { 
-#ifdef INCOMPLETE_OPERATORS
-            Foam::FatalErrorIn("FieldValueExpressionParser - TOKEN_tr '(' hexp ')'")
-                << "Operator not implemented"
-                    << Foam::endl
-                    << Foam::abort(Foam::FatalError);
-
-#else
-            $$ = new Foam::volScalarField(Foam::tr(*$3)); 
-#endif
+            $$ = driver.makeField<Foam::volScalarField>(Foam::tr($3->internalField())); 
             delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_det '(' texp ')'                   { $$ = new Foam::volScalarField(Foam::det(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_det '(' yexp ')'                   { $$ = new Foam::volScalarField(Foam::det(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_det '(' hexp ')'                   { 
-#ifdef INCOMPLETE_OPERATORS
-            Foam::FatalErrorIn("FieldValueExpressionParser - TOKEN_det '(' hexp ')'")
-                << "Operator not implemented"
-                    << Foam::endl
-                    << Foam::abort(Foam::FatalError);
-
-#else
-            $$ = new Foam::volScalarField(Foam::det(*$3)); 
-#endif
+            $$ = driver.makeField<Foam::volScalarField>(Foam::det($3->internalField())); 
             delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_magSqrGradGrad '(' exp ')'         { $$ = new Foam::volScalarField(Foam::fvc::magSqrGradGrad(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_mag '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
@@ -787,15 +759,7 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | '-' hexp %prec TOKEN_NEG 	           { $$ = new Foam::volSphericalTensorField(-*$2); delete $2;  driver.setCalculatedPatches(*$$); } 
         | '(' hexp ')'		        { $$ = $2; }  
         | TOKEN_inv '(' hexp ')' 	           { 
-#ifdef INCOMPLETE_OPERATORS
-            Foam::FatalErrorIn("FieldValueExpressionParser - TOKEN_inv '(' hexp ')'")
-                << "Operator not implemented"
-                    << Foam::endl
-                    << Foam::abort(Foam::FatalError);
-
-#else
-            $$ = new Foam::volSphericalTensorField( Foam::inv(*$3) ); 
-#endif
+            $$ = driver.makeField<Foam::volSphericalTensorField>( Foam::inv($3->internalField()) ); 
             delete $3;  driver.setCalculatedPatches(*$$); } 
         | lexp '?' hexp ':' hexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_laplacian '(' fsexp ',' hexp ')'  { $$ = new Foam::volSphericalTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; }
@@ -897,15 +861,7 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
         | '-' fhexp %prec TOKEN_NEG 	           { $$ = new Foam::surfaceSphericalTensorField(-*$2); delete $2;  driver.setCalculatedPatches(*$$); } 
         | '(' fhexp ')'		        { $$ = $2; }  
         | TOKEN_inv '(' fhexp ')' 	           { 
-#ifdef INCOMPLETE_OPERATORS
-            Foam::FatalErrorIn("FieldValueExpressionParser - TOKEN_inv '(' fhexp ')'")
-                << "Operator not implemented"
-                    << Foam::endl
-                    << Foam::abort(Foam::FatalError);
-
-#else
-            $$ = new Foam::surfaceSphericalTensorField( Foam::inv(*$3) ); 
-#endif
+            $$ = driver.makeField<Foam::surfaceSphericalTensorField>( Foam::inv($3->internalField()) ); 
             delete $3;  driver.setCalculatedPatches(*$$); } 
         | flexp '?' fhexp ':' fhexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::surfaceSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
          | TOKEN_snGrad '(' hexp ')'           { $$ = new Foam::surfaceSphericalTensorField(Foam::fvc::snGrad(*$3)); delete $3; }
@@ -925,7 +881,7 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
 
 psexp:  TOKEN_point '(' scalar ')'           { $$ = driver.makePointConstantField<Foam::pointScalarField>($3); }
         | psexp '+' psexp 		    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 + *$3); delete $1; delete $3; }
-        | psexp '*' psexp 		    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 * *$3); delete $1; delete $3; }
+        | psexp '*' psexp 		    { sameSize($1,$3); $$ = driver.makePointField<Foam::pointScalarField>( $1->internalField() * $3->internalField()); delete $1; delete $3; }
         | pvexp '&' pvexp 		    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 & *$3); delete $1; delete $3; }
         | ptexp TOKEN_AND ptexp 	    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 && *$3); delete $1; delete $3; }
         | pyexp TOKEN_AND ptexp 	    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 && *$3); delete $1; delete $3; }
