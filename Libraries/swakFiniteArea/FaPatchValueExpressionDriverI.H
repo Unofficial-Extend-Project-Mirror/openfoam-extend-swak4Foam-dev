@@ -130,6 +130,75 @@ namespace Foam {
     }
 
     template<class Type>
+    Field<Type> *FaPatchValueExpressionDriver::getOldTimeField(const string &name)
+    {
+        typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;
+        typedef GeometricField<Type,faePatchField,edgeMesh> localEdgeField;
+        typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
+
+        autoPtr<localAreaField> tmpVol;
+        autoPtr<localEdgeField> tmpSurf;
+        autoPtr<localPointField> tmpPoint;
+
+        if(
+            searchOnDisc()
+            &&
+            !mesh().foundObject<localAreaField>(name)
+            &&
+            !mesh().foundObject<localEdgeField>(name)
+            &&
+            !mesh().foundObject<localPointField>(name)
+        ) {
+            word fType=this->getTypeOfField(name);
+            if(fType==localAreaField::typeName) {
+                tmpVol.set(this->readAndRegister<localAreaField>(name).ptr());
+            } else if(fType==localEdgeField::typeName) {
+                tmpSurf.set(this->readAndRegister<localEdgeField>(name).ptr());
+            } 
+            // TODO: this constructor doesn't work
+            // else if(fType==localPointField::typeName) {
+            //     tmpPoint.set(this->readAndRegister<localPointField>(name).ptr());
+            // }
+        }
+
+        label patchI=this->patch_.index();
+
+        if(
+            patch_.boundaryMesh().mesh().thisDb().
+            objectRegistry::foundObject<localAreaField>(name)
+        ) {
+            const typename localAreaField::PatchFieldType &pField=
+                mesh().lookupObject<localAreaField>(name).
+                oldTime().boundaryField()[patchI];
+            return new Field<Type>(pField);
+        } else if(
+            patch_.boundaryMesh().mesh().thisDb().
+            objectRegistry::foundObject<localEdgeField>(name)
+        ) {
+            const typename localEdgeField::PatchFieldType &pField=
+                mesh().lookupObject<localEdgeField>(name).
+                oldTime().boundaryField()[patchI];
+            return new Field<Type>(pField);
+        } else if(
+            patch_.boundaryMesh().mesh().thisDb().
+            objectRegistry::foundObject<localPointField>(name)
+        ) {
+            const typename localPointField::PatchFieldType &pField=
+                mesh().lookupObject<localPointField>(name).
+                oldTime().boundaryField()[patchI];
+            return new Field<Type>(pField.patchInternalField());
+        } else{
+            FatalErrorIn("Field<Type> *FaPatchValueExpressionDriver::getField(const string &name)")
+                << "No field of type " << pTraits<scalar>::typeName
+                    << " with the name " << name << " found\n"
+                    << endl
+                    << exit(FatalError);
+
+            return NULL;
+        }
+    }
+
+    template<class Type>
     Field<Type> *FaPatchValueExpressionDriver::getPatchInternalField(const string &name)
     {
         typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;

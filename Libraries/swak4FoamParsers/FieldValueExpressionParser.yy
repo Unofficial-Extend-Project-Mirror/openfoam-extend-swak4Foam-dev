@@ -30,6 +30,13 @@
     }
 
     using Foam::FieldValueExpressionDriver;
+
+#include "foamVersion4swak.H"
+
+#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
+#define INCOMPLETE_OPERATORS
+#endif
+
 %}
 
 %name-prefix="parserField"
@@ -435,10 +442,15 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_mag '(' fhexp ')'           { $$ = new Foam::surfaceScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_tr '(' ftexp ')'            { $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }
         | TOKEN_tr '(' fyexp ')'            { $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }
-//        | TOKEN_tr '(' fhexp ')'            { $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }
+// doesn't work directly        | TOKEN_tr '(' fhexp ')'            {$$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }  
+        | TOKEN_tr '(' fhexp ')'            { 
+            $$ = driver.makeField<Foam::surfaceScalarField>(Foam::tr($3->internalField())); 
+            delete $3; }
         | TOKEN_det '(' ftexp ')'           { $$ = new Foam::surfaceScalarField(Foam::det(*$3)); delete $3; }
         | TOKEN_det '(' fyexp ')'           { $$ = new Foam::surfaceScalarField(Foam::det(*$3)); delete $3; }
-//        | TOKEN_det '(' fhexp ')'           { $$ = new Foam::surfaceScalarField(Foam::det(*$3)); delete $3; }
+        | TOKEN_det '(' fhexp ')'           { 
+            $$ = driver.makeField<Foam::surfaceScalarField>(Foam::det($3->internalField())); 
+            delete $3; }
         | TOKEN_area '(' ')'                { $$ = driver.makeAreaField(); }
         | TOKEN_snGrad '(' exp ')'          { $$ = new Foam::surfaceScalarField(Foam::fvc::snGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::surfaceScalarField(Foam::fvc::interpolate(*$3)); delete $3; }
@@ -560,10 +572,14 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_mag '(' hexp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_tr '(' texp ')'                    { $$ = new Foam::volScalarField(Foam::tr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_tr '(' yexp ')'                    { $$ = new Foam::volScalarField(Foam::tr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-//        | TOKEN_tr '(' hexp ')'                    { $$ = new Foam::volScalarField(Foam::tr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_tr '(' hexp ')'                    { 
+            $$ = driver.makeField<Foam::volScalarField>(Foam::tr($3->internalField())); 
+            delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_det '(' texp ')'                   { $$ = new Foam::volScalarField(Foam::det(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_det '(' yexp ')'                   { $$ = new Foam::volScalarField(Foam::det(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-//        | TOKEN_det '(' hexp ')'                   { $$ = new Foam::volScalarField(Foam::det(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_det '(' hexp ')'                   { 
+            $$ = driver.makeField<Foam::volScalarField>(Foam::det($3->internalField())); 
+            delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_magSqrGradGrad '(' exp ')'         { $$ = new Foam::volScalarField(Foam::fvc::magSqrGradGrad(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_mag '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_div '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::fvc::div(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
@@ -689,6 +705,7 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_max '(' texp ')'                 { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' texp ')'                 { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' texp ')'             { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::average(*$3).value()); delete $3; }
+        | TOKEN_grad '(' vexp ')'                 { $$ = new Foam::volTensorField(Foam::fvc::grad(*$3)); delete $3; }
         | TOKEN_div '(' fsexp ',' texp ')'        { $$ = new Foam::volTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_TID                               { $$=driver.getField<Foam::volTensorField>(*$1); }
         | TOKEN_ddt '(' TOKEN_TID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)() ).ptr(); }
@@ -742,7 +759,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | hexp '-' hexp 	   	          { sameSize($1,$3); $$ = new Foam::volSphericalTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | '-' hexp %prec TOKEN_NEG 	           { $$ = new Foam::volSphericalTensorField(-*$2); delete $2;  driver.setCalculatedPatches(*$$); } 
         | '(' hexp ')'		        { $$ = $2; }  
-//        | TOKEN_inv '(' hexp ')' 	           { $$ = new Foam::volSphericalTensorField( Foam::inv(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
+        | TOKEN_inv '(' hexp ')' 	           { 
+            $$ = driver.makeField<Foam::volSphericalTensorField>( Foam::inv($3->internalField()) ); 
+            delete $3;  driver.setCalculatedPatches(*$$); } 
         | lexp '?' hexp ':' hexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_laplacian '(' fsexp ',' hexp ')'  { $$ = new Foam::volSphericalTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_faceAverage '(' fhexp ')'         { $$ = new Foam::volSphericalTensorField(Foam::fvc::average(*$3)); delete $3; }
@@ -843,7 +862,9 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
         | fhexp '-' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::surfaceSphericalTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | '-' fhexp %prec TOKEN_NEG 	           { $$ = new Foam::surfaceSphericalTensorField(-*$2); delete $2;  driver.setCalculatedPatches(*$$); } 
         | '(' fhexp ')'		        { $$ = $2; }  
-//        | TOKEN_inv '(' hexp ')' 	           { $$ = new Foam::surfaceSphericalTensorField( Foam::inv(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
+        | TOKEN_inv '(' fhexp ')' 	           { 
+            $$ = driver.makeField<Foam::surfaceSphericalTensorField>( Foam::inv($3->internalField()) ); 
+            delete $3;  driver.setCalculatedPatches(*$$); } 
         | flexp '?' fhexp ':' fhexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::surfaceSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
          | TOKEN_snGrad '(' hexp ')'           { $$ = new Foam::surfaceSphericalTensorField(Foam::fvc::snGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' hexp ')'           { $$ = new Foam::surfaceSphericalTensorField(Foam::fvc::interpolate(*$3)); delete $3; }
@@ -862,7 +883,7 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
 
 psexp:  TOKEN_point '(' scalar ')'           { $$ = driver.makePointConstantField<Foam::pointScalarField>($3); }
         | psexp '+' psexp 		    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 + *$3); delete $1; delete $3; }
-// TODO - compiler has problem        | psexp '*' psexp 		    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 * *$3); delete $1; delete $3; }
+        | psexp '*' psexp 		    { sameSize($1,$3); $$ = driver.makePointField<Foam::pointScalarField>( $1->internalField() * $3->internalField()); delete $1; delete $3; }
         | pvexp '&' pvexp 		    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 & *$3); delete $1; delete $3; }
         | ptexp TOKEN_AND ptexp 	    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 && *$3); delete $1; delete $3; }
         | pyexp TOKEN_AND ptexp 	    { sameSize($1,$3); $$ = new Foam::pointScalarField(*$1 && *$3); delete $1; delete $3; }
@@ -903,13 +924,13 @@ psexp:  TOKEN_point '(' scalar ')'           { $$ = driver.makePointConstantFiel
         | TOKEN_sign '(' psexp ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::sign($3->internalField())()); delete $3; }
         | TOKEN_pos '(' psexp ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::pos($3->internalField())()); delete $3; }
         | TOKEN_neg '(' psexp ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::neg($3->internalField())()); delete $3; }
-        | TOKEN_min '(' psexp ',' psexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
-        | TOKEN_max '(' psexp ',' psexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_min '(' psexp ',' psexp  ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::min($3->internalField(),$5->internalField())); delete $3; delete $5; }
+        | TOKEN_max '(' psexp ',' psexp  ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::max($3->internalField(),$5->internalField())); delete $3; delete $5; }
         | TOKEN_min '(' psexp ')'           { $$ = driver.makePointConstantField<Foam::pointScalarField>(Foam::gMin($3->internalField())); delete $3; }
         | TOKEN_max '(' psexp ')'           { $$ = driver.makePointConstantField<Foam::pointScalarField>(Foam::gMax($3->internalField())); delete $3; }
         | TOKEN_sum '(' psexp ')'           { $$ = driver.makePointConstantField<Foam::pointScalarField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' psexp ')'       { $$ = driver.makePointConstantField<Foam::pointScalarField>(Foam::average(*$3).value()); delete $3; }
-        | '-' psexp %prec TOKEN_NEG         { $$ = new Foam::pointScalarField(-*$2); delete $2; }
+        | '-' psexp %prec TOKEN_NEG         { $$ = driver.makePointField<Foam::pointScalarField>(-$2->internalField()); delete $2; }
         | '(' psexp ')'		            { $$ = $2; }  
         | pvexp '.' 'x'                     { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
         | pvexp '.' 'y'                     { $$ = new Foam::pointScalarField($1->component(1)); delete $1; }
@@ -951,7 +972,13 @@ psexp:  TOKEN_point '(' scalar ')'           { $$ = driver.makePointConstantFiel
 pvexp:  pvector                            { $$ = $1; }
         | pvexp '+' pvexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 + *$3); delete $1; delete $3; }
         | psexp '*' pvexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 * *$3); delete $1; delete $3; }
-        | pvexp '*' psexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 * *$3); delete $1; delete $3; }
+        | pvexp '*' psexp 		   { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+            $$ = driver.makePointField<Foam::pointVectorField>($1->internalField() * $3->internalField());
+#else
+            $$ = new Foam::pointVectorField(*$1 * *$3); 
+#endif
+            delete $1; delete $3; }
         | ptexp '&' pvexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 & *$3); delete $1; delete $3; }
         | pvexp '&' ptexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 & *$3); delete $1; delete $3; }
         | phexp '&' pvexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 & *$3); delete $1; delete $3; }
@@ -961,13 +988,13 @@ pvexp:  pvector                            { $$ = $1; }
         | pvexp '^' pvexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 ^ *$3); delete $1; delete $3; }
         | pvexp '/' psexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 / *$3); delete $1; delete $3; }
         | pvexp '-' pvexp 		   { sameSize($1,$3); $$ = new Foam::pointVectorField(*$1 - *$3); delete $1; delete $3;}
-        | '-' pvexp %prec TOKEN_NEG 	   { $$ = new Foam::pointVectorField(-*$2); delete $2; }
+        | '-' pvexp %prec TOKEN_NEG         { $$ = driver.makePointField<Foam::pointVectorField>(-$2->internalField()); delete $2; }
         | '(' pvexp ')'		           { $$ = $2; }  
         | plexp '?' pvexp ':' pvexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makePointConstantField<Foam::pointVectorField>(Foam::vector::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_pposition '(' ')'          { $$ = driver.makePointPositionField(); }
         | TOKEN_interpolateToPoint '(' vexp ')'              { $$ = driver.cellToPointInterpolate(*$3).ptr(); delete $3; }
-        | TOKEN_min '(' pvexp ',' pvexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
-        | TOKEN_max '(' pvexp ',' pvexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_min '(' pvexp ',' pvexp  ')'           { $$ = driver.makePointField<Foam::pointVectorField>(Foam::min($3->internalField(),$5->internalField())); delete $3; delete $5; }
+        | TOKEN_max '(' pvexp ',' pvexp  ')'           { $$ = driver.makePointField<Foam::pointVectorField>(Foam::max($3->internalField(),$5->internalField())); delete $3; delete $5; }
         | TOKEN_min '(' pvexp ')'           { $$ = driver.makePointConstantField<Foam::pointVectorField>(Foam::gMin($3->internalField())); delete $3; }
         | TOKEN_minPosition '(' psexp ')'           { 
             $$ = driver.makePointConstantField<Foam::pointVectorField>(
@@ -996,12 +1023,42 @@ pvexp:  pvector                            { $$ = $1; }
  
 ptexp:   ptensor                  { $$ = $1; }
         | ptexp '+' ptexp 		          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | ptexp '+' pyexp 		          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | ptexp '+' phexp 		          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | pyexp '+' ptexp 		          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | phexp '+' ptexp 		          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | ptexp '+' pyexp 		          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() + $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 + *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | ptexp '+' phexp 		          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+            $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() + $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 + *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | pyexp '+' ptexp 		          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+            $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() + $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 + *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | phexp '+' ptexp 		          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() + $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 + *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | psexp '*' ptexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | ptexp '*' psexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | ptexp '*' psexp 	   	                  { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() * $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 * *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | pvexp '*' pvexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | ptexp '&' ptexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | pyexp '&' ptexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
@@ -1010,19 +1067,43 @@ ptexp:   ptensor                  { $$ = $1; }
         | ptexp '&' phexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | ptexp '/' psexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 / *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | ptexp '-' ptexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | ptexp '-' pyexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | ptexp '-' phexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | pyexp '-' ptexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | phexp '-' ptexp 	   	          { sameSize($1,$3); $$ = new Foam::pointTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | '-' ptexp %prec TOKEN_NEG 	           { $$ = new Foam::pointTensorField(-*$2); delete $2;  driver.setCalculatedPatches(*$$); } 
+        | ptexp '-' pyexp 	   	          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() - $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 - *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | ptexp '-' phexp 	   	          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() - $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 - *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | pyexp '-' ptexp 	   	          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() - $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 - *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | phexp '-' ptexp 	   	          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointTensorField>($1->internalField() - $3->internalField());
+#else
+     $$ = new Foam::pointTensorField(*$1 - *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | '-' ptexp %prec TOKEN_NEG         { $$ = driver.makePointField<Foam::pointTensorField>(-$2->internalField()); delete $2; }
         | '(' ptexp ')'		        { $$ = $2; }  
         | TOKEN_skew '(' ptexp ')' 	           { $$ = new Foam::pointTensorField( Foam::skew(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | TOKEN_inv '(' ptexp ')' 	           { $$ = new Foam::pointTensorField( Foam::inv(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | TOKEN_dev '(' ptexp ')' 	           { $$ = new Foam::pointTensorField( Foam::dev(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | plexp '?' ptexp ':' ptexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makePointConstantField<Foam::pointTensorField>(Foam::tensor::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_interpolateToPoint '(' texp ')'              { $$ = driver.cellToPointInterpolate(*$3).ptr(); delete $3; }
-        | TOKEN_min '(' ptexp ',' ptexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
-        | TOKEN_max '(' ptexp ',' ptexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_min '(' ptexp ',' ptexp  ')'           { $$ = driver.makePointField<Foam::pointTensorField>(Foam::min($3->internalField(),$5->internalField())); delete $3; delete $5; }
+        | TOKEN_max '(' ptexp ',' ptexp  ')'           { $$ = driver.makePointField<Foam::pointTensorField>(Foam::max($3->internalField(),$5->internalField())); delete $3; delete $5; }
         | TOKEN_min '(' ptexp ')'           { $$ = driver.makePointConstantField<Foam::pointTensorField>(Foam::gMin($3->internalField())); delete $3; }
         | TOKEN_max '(' ptexp ')'           { $$ = driver.makePointConstantField<Foam::pointTensorField>(Foam::gMax($3->internalField())); delete $3; }
         | TOKEN_sum '(' ptexp ')'                 { $$ = driver.makePointConstantField<Foam::pointTensorField>(Foam::sum(*$3).value()); delete $3; }
@@ -1033,18 +1114,43 @@ ptexp:   ptensor                  { $$ = $1; }
 
 pyexp:   psymmTensor                  { $$ = $1; }
         | pyexp '+' pyexp 		          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | phexp '+' pyexp 		          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | phexp '+' pyexp 		          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointSymmTensorField>($1->internalField() + $3->internalField());
+#else
+     $$ = new Foam::pointSymmTensorField(*$1 + *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | pyexp '+' phexp 		          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | psexp '*' pyexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | pyexp '*' psexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-// not working in 2.x ?        | pyexp '&' pyexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | pyexp '*' psexp 	   	                  { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointSymmTensorField>($1->internalField() * $3->internalField());
+#else
+     $$ = new Foam::pointSymmTensorField(*$1 * *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+// not working in 2.0        | pyexp '&' pyexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+// not working either | pyexp '&' pyexp 	   	          { sameSize($1,$3); $$ = driver.makePointField<Foam::pointSymmTensorField>(($1->internalField() & $3->internalField())()); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | phexp '&' pyexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | pyexp '&' phexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | pyexp '/' psexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 / *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | pyexp '-' pyexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | phexp '-' pyexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | pyexp '-' phexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSymmTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | '-' pyexp %prec TOKEN_NEG 	           { $$ = new Foam::pointSymmTensorField(-*$2); delete $2;  driver.setCalculatedPatches(*$$); } 
+        | phexp '-' pyexp 	   	          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointSymmTensorField>($1->internalField() - $3->internalField());
+#else
+     $$ = new Foam::pointSymmTensorField(*$1 - *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | pyexp '-' phexp 	   	          { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointSymmTensorField>($1->internalField() - $3->internalField());
+#else
+     $$ = new Foam::pointSymmTensorField(*$1 - *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | '-' pyexp %prec TOKEN_NEG         { $$ = driver.makePointField<Foam::pointSymmTensorField>(-$2->internalField()); delete $2; }
         | '(' pyexp ')'		        { $$ = $2; }  
         | TOKEN_symm '(' ptexp ')'           { $$ = driver.makePointField<Foam::pointSymmTensorField>(Foam::symm($3->internalField())()); delete $3; }
         | TOKEN_symm '(' pyexp ')'           { $$ = driver.makePointField<Foam::pointSymmTensorField>(Foam::symm($3->internalField())()); delete $3; }
@@ -1052,8 +1158,8 @@ pyexp:   psymmTensor                  { $$ = $1; }
         | TOKEN_dev '(' pyexp ')'           { $$ = driver.makePointField<Foam::pointSymmTensorField>(Foam::dev($3->internalField())()); delete $3; }
         | plexp '?' pyexp ':' pyexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makePointConstantField<Foam::pointSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_interpolateToPoint '(' yexp ')'              { $$ = driver.cellToPointInterpolate(*$3).ptr(); delete $3; }
-        | TOKEN_min '(' pyexp ',' pyexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
-        | TOKEN_max '(' pyexp ',' pyexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_min '(' pyexp ',' pyexp  ')'           { $$ = driver.makePointField<Foam::pointSymmTensorField>(Foam::min($3->internalField(),$5->internalField())); delete $3; delete $5; }
+        | TOKEN_max '(' pyexp ',' pyexp  ')'           { $$ = driver.makePointField<Foam::pointSymmTensorField>(Foam::max($3->internalField(),$5->internalField())); delete $3; delete $5; }
         | TOKEN_min '(' pyexp ')'           { $$ = driver.makePointConstantField<Foam::pointSymmTensorField>(Foam::gMin($3->internalField())); delete $3; }
         | TOKEN_max '(' pyexp ')'           { $$ = driver.makePointConstantField<Foam::pointSymmTensorField>(Foam::gMax($3->internalField())); delete $3; }
         | TOKEN_sum '(' pyexp ')'                 { $$ = driver.makePointConstantField<Foam::pointSymmTensorField>(Foam::sum(*$3).value()); delete $3; }
@@ -1065,17 +1171,23 @@ pyexp:   psymmTensor                  { $$ = $1; }
 phexp:   psphericalTensor                  { $$ = $1; }
         | phexp '+' phexp 		          { sameSize($1,$3); $$ = new Foam::pointSphericalTensorField(*$1 + *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | psexp '*' phexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointSphericalTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | phexp '*' psexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointSphericalTensorField(*$1 * *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
+        | phexp '*' psexp 	   	                  { sameSize($1,$3); 
+#ifdef INCOMPLETE_OPERATORS
+     $$ = driver.makePointField<Foam::pointSphericalTensorField>($1->internalField() * $3->internalField());
+#else
+     $$ = new Foam::pointSphericalTensorField(*$1 * *$3); 
+#endif
+     delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | phexp '&' phexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSphericalTensorField(*$1 & *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | phexp '/' psexp 	   	                  { sameSize($1,$3); $$ = new Foam::pointSphericalTensorField(*$1 / *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
         | phexp '-' phexp 	   	          { sameSize($1,$3); $$ = new Foam::pointSphericalTensorField(*$1 - *$3); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }  
-        | '-' phexp %prec TOKEN_NEG 	           { $$ = new Foam::pointSphericalTensorField(-*$2); delete $2;  driver.setCalculatedPatches(*$$); } 
+        | '-' phexp %prec TOKEN_NEG         { $$ = driver.makePointField<Foam::pointSphericalTensorField>(-$2->internalField()); delete $2; }
         | '(' phexp ')'		        { $$ = $2; }  
         | TOKEN_inv '(' phexp ')'           { $$ = driver.makePointField<Foam::pointSphericalTensorField>(Foam::inv($3->internalField())()); delete $3; }
         | plexp '?' phexp ':' phexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makePointConstantField<Foam::pointSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_interpolateToPoint '(' hexp ')'              { $$ = driver.cellToPointInterpolate(*$3).ptr(); delete $3; }
-       | TOKEN_min '(' phexp ',' phexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
-        | TOKEN_max '(' phexp ',' phexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_min '(' phexp ',' phexp  ')'           { $$ = driver.makePointField<Foam::pointSphericalTensorField>(Foam::min($3->internalField(),$5->internalField())); delete $3; delete $5; }
+        | TOKEN_max '(' phexp ',' phexp  ')'           { $$ = driver.makePointField<Foam::pointSphericalTensorField>(Foam::max($3->internalField(),$5->internalField())); delete $3; delete $5; }
         | TOKEN_min '(' phexp ')'           { $$ = driver.makePointConstantField<Foam::pointSphericalTensorField>(Foam::gMin($3->internalField())); delete $3; }
         | TOKEN_max '(' phexp ')'           { $$ = driver.makePointConstantField<Foam::pointSphericalTensorField>(Foam::gMax($3->internalField())); delete $3; }
         | TOKEN_sum '(' phexp ')'                 { $$ = driver.makePointConstantField<Foam::pointSphericalTensorField>(Foam::sum(*$3).value()); delete $3; }
