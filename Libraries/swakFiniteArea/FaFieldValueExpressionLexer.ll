@@ -132,8 +132,21 @@ deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
 
 vector                 return token::TOKEN_VECTOR;
+tensor                 return token::TOKEN_TENSOR;
+symmTensor             return token::TOKEN_SYMM_TENSOR;
+sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
+
+transpose              return token::TOKEN_transpose;
+diag                   return token::TOKEN_diag;
+tr                     return token::TOKEN_tr;
+dev                    return token::TOKEN_dev;
+symm                   return token::TOKEN_symm;
+skew                   return token::TOKEN_skew;
+det                    return token::TOKEN_det;
+cof                    return token::TOKEN_cof;
+inv                    return token::TOKEN_inv;
 
 true                   return token::TOKEN_TRUE;
 false                  return token::TOKEN_FALSE;
@@ -154,22 +167,46 @@ false                  return token::TOKEN_FALSE;
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
-    } else if(       
-        driver.isVariable<Foam::areaVectorField::value_type>(*ptr)
-        ||
-        driver.isThere<Foam::areaVectorField>(*ptr)
-    ) {
-        yylval->vname = ptr; return token::TOKEN_VID;
     } else if(
         driver.isVariable<Foam::areaScalarField::value_type>(*ptr)
         ||
         driver.isThere<Foam::areaScalarField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_SID;
+    } else if(       
+        driver.isVariable<Foam::areaVectorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaVectorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_VID;
+    } else if(
+        driver.isVariable<Foam::areaTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_TID;
+    } else if(
+        driver.isVariable<Foam::areaSymmTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaSymmTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_YID;
+    } else if(
+        driver.isVariable<Foam::areaSphericalTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaSphericalTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_HID;
     } else if(driver.isThere<Foam::edgeScalarField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FSID;
     } else if(driver.isThere<Foam::edgeVectorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FVID;
+    } else if(driver.isThere<Foam::edgeTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FTID;
+    } else if(driver.isThere<Foam::edgeSymmTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FYID;
+    } else if(driver.isThere<Foam::edgeSphericalTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FHID;
     } else {
         driver.error (*yylloc, "faField "+*ptr+" not existing or of wrong type");
     }

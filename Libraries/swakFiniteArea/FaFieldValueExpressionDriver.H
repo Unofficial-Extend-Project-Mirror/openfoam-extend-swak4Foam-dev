@@ -132,12 +132,42 @@ public:
     inline FType *makeField(const Field<typename FType::value_type> &val);
 
     // make constant fields
-    areaVectorField *makeVectorField(areaScalarField *x,areaScalarField *y,areaScalarField *z);
-    edgeVectorField *makeEdgeVectorField(edgeScalarField *x,edgeScalarField *y,edgeScalarField *z);
-    // areaScalarField *makeCellSetField(const string &name);
-    // areaScalarField *makeCellZoneField(const string &name);
-    // edgeScalarField *makeFaceSetField(const string &name);
-    // edgeScalarField *makeFaceZoneField(const string &name);
+    areaVectorField *makeVectorField(
+        areaScalarField *x,
+        areaScalarField *y,
+        areaScalarField *z
+    );
+
+    edgeVectorField *makeEdgeVectorField(
+        edgeScalarField *x,
+        edgeScalarField *y,
+        edgeScalarField *z
+    );
+
+    areaTensorField *makeTensorField(
+        areaScalarField *,areaScalarField *,areaScalarField *,
+        areaScalarField *,areaScalarField *,areaScalarField *,
+        areaScalarField *,areaScalarField *,areaScalarField *
+    );
+    edgeTensorField *makeEdgeTensorField(
+        edgeScalarField *,edgeScalarField *,edgeScalarField *,
+        edgeScalarField *,edgeScalarField *,edgeScalarField *,
+        edgeScalarField *,edgeScalarField *,edgeScalarField *
+    );
+
+    areaSymmTensorField *makeSymmTensorField(
+        areaScalarField *,areaScalarField *,areaScalarField *,
+        areaScalarField *,areaScalarField *,areaScalarField *
+    );
+
+    edgeSymmTensorField *makeEdgeSymmTensorField(
+        edgeScalarField *,edgeScalarField *,edgeScalarField *,
+        edgeScalarField *,edgeScalarField *,edgeScalarField *
+    );
+
+    areaSphericalTensorField *makeSphericalTensorField(areaScalarField *);
+
+    edgeSphericalTensorField *makeEdgeSphericalTensorField(edgeScalarField *);
 
     // modulo operator
     areaScalarField *makeModuloField(const areaScalarField &a,const areaScalarField &b);
