@@ -863,3 +863,10 @@ S_{expl} + S_{impl} T
 
      Also introduced a workaround for certain operators not being
      properly defined for pointFields (by using the internal fields)
+**** =x=, =y=, =z= and =xy= etc not available as field names
+     These symbols could not be used as field names because they were
+     used for the components of vectors and tensors
+
+     Now these names are only used if the =.=-operator asks for a
+     component. This is implemented for these parsers
+     - FieldValues
