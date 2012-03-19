@@ -4,6 +4,8 @@
 #include <errno.h>
 %}
 
+%s vectorcomponent
+%s tensorcomponent
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
@@ -44,6 +46,21 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 !=                   return token::TOKEN_NEQ;
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
+
+<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+
+<tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
+<tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
+<tensorcomponent>xz    { BEGIN(INITIAL); return token::TOKEN_xz; }
+<tensorcomponent>yx    { BEGIN(INITIAL); return token::TOKEN_yx; }
+<tensorcomponent>yy    { BEGIN(INITIAL); return token::TOKEN_yy; }
+<tensorcomponent>yz    { BEGIN(INITIAL); return token::TOKEN_yz; }
+<tensorcomponent>zx    { BEGIN(INITIAL); return token::TOKEN_zx; }
+<tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
+<tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
+<tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -133,8 +150,6 @@ false                  return token::TOKEN_FALSE;
                        return token::TOKEN_INT;
                      }
 
-[xyz]                return yytext[0];
-
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
@@ -179,4 +194,14 @@ void FaFieldValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
     yy_delete_buffer(bufferFaField);
+}
+
+void FaFieldValueExpressionDriver::startVectorComponent()
+{
+    BEGIN(vectorcomponent);
+}
+
+void FaFieldValueExpressionDriver::startTensorComponent()
+{
+    BEGIN(tensorcomponent);
 }

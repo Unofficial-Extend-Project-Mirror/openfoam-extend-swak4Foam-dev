@@ -113,6 +113,13 @@ protected:
     //- General Method to get values from a field
     template<class Subset,class T>
     Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
+
+    //- set the state of the lexer to scanning vector components
+    void startVectorComponent();
+
+    //- set the state of the lexer to scanning tensor components
+    void startTensorComponent();
+
 public:
 
      //- Runtime type information
@@ -178,6 +185,10 @@ public:
 
 //     template<class Type>
 //     virtual Field<Type> *toPoint(const Field<Type> &)=0;
+
+    // allow access to protected methods
+    friend class parserSubset::SubsetValueExpressionParser;
+
 };
 
 

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 19 Mar 2012 21:19:34 +0100
+Subject: Re: Allow xx, xy etc as field names
+Message-Id: <c7e7131ed2c69f4b-ee34d7ecb902b26d-artemis@bgs-cool-greybook.local>
+References: <c7e7131ed2c69f4b-0-artemis@bgs-Greybook.local>
+In-Reply-To: <c7e7131ed2c69f4b-0-artemis@bgs-Greybook.local>
+
+Now implemented in the finiteArea-Parsers too

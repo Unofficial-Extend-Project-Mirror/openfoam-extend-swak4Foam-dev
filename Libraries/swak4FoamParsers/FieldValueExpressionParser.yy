@@ -161,6 +161,10 @@
 %token TOKEN_TRUE
 %token TOKEN_FALSE
 
+%token TOKEN_x 
+%token TOKEN_y 
+%token TOKEN_z 
+
 %token TOKEN_xx
 %token TOKEN_xy
 %token TOKEN_xz
@@ -309,6 +313,13 @@ unit:   exp                     { driver.setResult($1,false,false);  }
         | plexp                 { driver.setLogicalResult($1,false,true); }
 ;
 
+vectorComponentSwitch: /* empty rule */{ driver.startVectorComponent(); } 
+;
+
+tensorComponentSwitch: /* empty rule */{ driver.startTensorComponent(); } 
+;
+
+
 vexp:   vector                                    { $$ = $1; }
         | vexp '+' vexp 		          { sameSize($1,$3); $$ = new Foam::volVectorField(*$1 + *$3); delete $1; delete $3; }
         | exp '*' vexp 		                  { sameSize($1,$3); $$ = new Foam::volVectorField(*$1 * *$3); delete $1; delete $3; }
@@ -415,25 +426,25 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_average '(' fsexp ')'       { $$ = driver.makeConstantField<Foam::surfaceScalarField>(Foam::average(*$3).value()); delete $3; }
         | '-' fsexp %prec TOKEN_NEG         { $$ = new Foam::surfaceScalarField(-*$2); delete $2; }
         | '(' fsexp ')'		            { $$ = $2; }  
-        | fvexp '.' 'x'                     { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
-        | fvexp '.' 'y'                     { $$ = new Foam::surfaceScalarField($1->component(1)); delete $1; }
-        | fvexp '.' 'z'                     { $$ = new Foam::surfaceScalarField($1->component(2)); delete $1; }
-        | ftexp '.' TOKEN_xx                { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
-        | ftexp '.' TOKEN_xy                { $$ = new Foam::surfaceScalarField($1->component(1)); delete $1; }
-        | ftexp '.' TOKEN_xz                { $$ = new Foam::surfaceScalarField($1->component(2)); delete $1; }
-        | ftexp '.' TOKEN_yx                { $$ = new Foam::surfaceScalarField($1->component(3)); delete $1; }
-        | ftexp '.' TOKEN_yy                { $$ = new Foam::surfaceScalarField($1->component(4)); delete $1; }
-        | ftexp '.' TOKEN_yz                { $$ = new Foam::surfaceScalarField($1->component(5)); delete $1; }
-        | ftexp '.' TOKEN_zx                { $$ = new Foam::surfaceScalarField($1->component(6)); delete $1; }
-        | ftexp '.' TOKEN_zy                { $$ = new Foam::surfaceScalarField($1->component(7)); delete $1; }
-        | ftexp '.' TOKEN_zz                { $$ = new Foam::surfaceScalarField($1->component(8)); delete $1; }
-        | fyexp '.' TOKEN_xx                { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
-        | fyexp '.' TOKEN_xy                { $$ = new Foam::surfaceScalarField($1->component(1)); delete $1; }
-        | fyexp '.' TOKEN_xz                { $$ = new Foam::surfaceScalarField($1->component(2)); delete $1; }
-        | fyexp '.' TOKEN_yy                { $$ = new Foam::surfaceScalarField($1->component(3)); delete $1; }
-        | fyexp '.' TOKEN_yz                { $$ = new Foam::surfaceScalarField($1->component(4)); delete $1; }
-        | fyexp '.' TOKEN_zz                { $$ = new Foam::surfaceScalarField($1->component(5)); delete $1; }
-        | fhexp '.' TOKEN_ii                { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
+        | fvexp '.' vectorComponentSwitch TOKEN_x                     { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
+        | fvexp '.' vectorComponentSwitch TOKEN_y                     { $$ = new Foam::surfaceScalarField($1->component(1)); delete $1; }
+        | fvexp '.' vectorComponentSwitch TOKEN_z                     { $$ = new Foam::surfaceScalarField($1->component(2)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_xx                { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_xy                { $$ = new Foam::surfaceScalarField($1->component(1)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_xz                { $$ = new Foam::surfaceScalarField($1->component(2)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_yx                { $$ = new Foam::surfaceScalarField($1->component(3)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_yy                { $$ = new Foam::surfaceScalarField($1->component(4)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_yz                { $$ = new Foam::surfaceScalarField($1->component(5)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_zx                { $$ = new Foam::surfaceScalarField($1->component(6)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_zy                { $$ = new Foam::surfaceScalarField($1->component(7)); delete $1; }
+        | ftexp '.' tensorComponentSwitch TOKEN_zz                { $$ = new Foam::surfaceScalarField($1->component(8)); delete $1; }
+        | fyexp '.' tensorComponentSwitch TOKEN_xx                { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
+        | fyexp '.' tensorComponentSwitch TOKEN_xy                { $$ = new Foam::surfaceScalarField($1->component(1)); delete $1; }
+        | fyexp '.' tensorComponentSwitch TOKEN_xz                { $$ = new Foam::surfaceScalarField($1->component(2)); delete $1; }
+        | fyexp '.' tensorComponentSwitch TOKEN_yy                { $$ = new Foam::surfaceScalarField($1->component(3)); delete $1; }
+        | fyexp '.' tensorComponentSwitch TOKEN_yz                { $$ = new Foam::surfaceScalarField($1->component(4)); delete $1; }
+        | fyexp '.' tensorComponentSwitch TOKEN_zz                { $$ = new Foam::surfaceScalarField($1->component(5)); delete $1; }
+        | fhexp '.' tensorComponentSwitch TOKEN_ii                { $$ = new Foam::surfaceScalarField($1->component(0)); delete $1; }
         | flexp '?' fsexp ':' fsexp         { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::surfaceScalarField>(0.)); delete $1; delete $3; delete $5; }
         | TOKEN_mag '(' fsexp ')'           { $$ = new Foam::surfaceScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' fvexp ')'           { $$ = new Foam::surfaceScalarField(Foam::mag(*$3)); delete $3; }
@@ -592,25 +603,25 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_integrate '(' fsexp ')'            { $$ = new Foam::volScalarField(Foam::fvc::surfaceIntegrate(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_surfSum '(' fsexp ')'              { $$ = new Foam::volScalarField(Foam::fvc::surfaceSum(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_interpolateToCell '(' psexp ')'              { $$ = driver.pointToCellInterpolate(*$3).ptr(); delete $3; }
-        | vexp '.' 'x'                             { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | vexp '.' 'y'                             { $$ = new Foam::volScalarField($1->component(1)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | vexp '.' 'z'                             { $$ = new Foam::volScalarField($1->component(2)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_xx                        { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_xy                        { $$ = new Foam::volScalarField($1->component(1)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_xz                        { $$ = new Foam::volScalarField($1->component(2)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_yx                        { $$ = new Foam::volScalarField($1->component(3)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_yy                        { $$ = new Foam::volScalarField($1->component(4)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_yz                        { $$ = new Foam::volScalarField($1->component(5)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_zx                        { $$ = new Foam::volScalarField($1->component(6)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_zy                        { $$ = new Foam::volScalarField($1->component(7)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | texp '.' TOKEN_zz                        { $$ = new Foam::volScalarField($1->component(8)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | yexp '.' TOKEN_xx                        { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | yexp '.' TOKEN_xy                        { $$ = new Foam::volScalarField($1->component(1)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | yexp '.' TOKEN_xz                        { $$ = new Foam::volScalarField($1->component(2)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | yexp '.' TOKEN_yy                        { $$ = new Foam::volScalarField($1->component(3)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | yexp '.' TOKEN_yz                        { $$ = new Foam::volScalarField($1->component(4)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | yexp '.' TOKEN_zz                        { $$ = new Foam::volScalarField($1->component(5)); delete $1;  driver.setCalculatedPatches(*$$); }
-        | hexp '.' TOKEN_ii                        { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | vexp '.' vectorComponentSwitch  TOKEN_x                             { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | vexp '.' vectorComponentSwitch  TOKEN_y                             { $$ = new Foam::volScalarField($1->component(1)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | vexp '.' vectorComponentSwitch  TOKEN_z                             { $$ = new Foam::volScalarField($1->component(2)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_xx                        { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_xy                        { $$ = new Foam::volScalarField($1->component(1)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_xz                        { $$ = new Foam::volScalarField($1->component(2)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_yx                        { $$ = new Foam::volScalarField($1->component(3)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_yy                        { $$ = new Foam::volScalarField($1->component(4)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_yz                        { $$ = new Foam::volScalarField($1->component(5)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_zx                        { $$ = new Foam::volScalarField($1->component(6)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_zy                        { $$ = new Foam::volScalarField($1->component(7)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | texp '.' tensorComponentSwitch TOKEN_zz                        { $$ = new Foam::volScalarField($1->component(8)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | yexp '.' tensorComponentSwitch TOKEN_xx                        { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | yexp '.' tensorComponentSwitch TOKEN_xy                        { $$ = new Foam::volScalarField($1->component(1)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | yexp '.' tensorComponentSwitch TOKEN_xz                        { $$ = new Foam::volScalarField($1->component(2)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | yexp '.' tensorComponentSwitch TOKEN_yy                        { $$ = new Foam::volScalarField($1->component(3)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | yexp '.' tensorComponentSwitch TOKEN_yz                        { $$ = new Foam::volScalarField($1->component(4)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | yexp '.' tensorComponentSwitch TOKEN_zz                        { $$ = new Foam::volScalarField($1->component(5)); delete $1;  driver.setCalculatedPatches(*$$); }
+        | hexp '.' tensorComponentSwitch TOKEN_ii                        { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
         | lexp '?' exp ':' exp                     { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volScalarField>(0.)); delete $1; delete $3; delete $5; }
         | TOKEN_pi                                 { $$ = driver.makeConstantField<Foam::volScalarField>(Foam::mathematicalConstant::pi); }
         | TOKEN_dist '(' ')'                       { $$ = driver.makeDistanceField(); }
@@ -930,25 +941,25 @@ psexp:  TOKEN_point '(' scalar ')'           { $$ = driver.makePointConstantFiel
         | TOKEN_average '(' psexp ')'       { $$ = driver.makePointConstantField<Foam::pointScalarField>(Foam::average(*$3).value()); delete $3; }
         | '-' psexp %prec TOKEN_NEG         { $$ = driver.makePointField<Foam::pointScalarField>(-$2->internalField()); delete $2; }
         | '(' psexp ')'		            { $$ = $2; }  
-        | pvexp '.' 'x'                     { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
-        | pvexp '.' 'y'                     { $$ = new Foam::pointScalarField($1->component(1)); delete $1; }
-        | pvexp '.' 'z'                     { $$ = new Foam::pointScalarField($1->component(2)); delete $1; }
-        | ptexp '.' TOKEN_xx                { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
-        | ptexp '.' TOKEN_xy                { $$ = new Foam::pointScalarField($1->component(1)); delete $1; }
-        | ptexp '.' TOKEN_xz                { $$ = new Foam::pointScalarField($1->component(2)); delete $1; }
-        | ptexp '.' TOKEN_yx                { $$ = new Foam::pointScalarField($1->component(3)); delete $1; }
-        | ptexp '.' TOKEN_yy                { $$ = new Foam::pointScalarField($1->component(4)); delete $1; }
-        | ptexp '.' TOKEN_yz                { $$ = new Foam::pointScalarField($1->component(5)); delete $1; }
-        | ptexp '.' TOKEN_zx                { $$ = new Foam::pointScalarField($1->component(6)); delete $1; }
-        | ptexp '.' TOKEN_zy                { $$ = new Foam::pointScalarField($1->component(7)); delete $1; }
-        | ptexp '.' TOKEN_zz                { $$ = new Foam::pointScalarField($1->component(8)); delete $1; }
-        | pyexp '.' TOKEN_xx                { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
-        | pyexp '.' TOKEN_xy                { $$ = new Foam::pointScalarField($1->component(1)); delete $1; }
-        | pyexp '.' TOKEN_xz                { $$ = new Foam::pointScalarField($1->component(2)); delete $1; }
-        | pyexp '.' TOKEN_yy                { $$ = new Foam::pointScalarField($1->component(3)); delete $1; }
-        | pyexp '.' TOKEN_yz                { $$ = new Foam::pointScalarField($1->component(4)); delete $1; }
-        | pyexp '.' TOKEN_zz                { $$ = new Foam::pointScalarField($1->component(5)); delete $1; }
-        | phexp '.' TOKEN_ii                { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
+        | pvexp '.' vectorComponentSwitch  TOKEN_x                     { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
+        | pvexp '.' vectorComponentSwitch  TOKEN_y                     { $$ = new Foam::pointScalarField($1->component(1)); delete $1; }
+        | pvexp '.' vectorComponentSwitch  TOKEN_z                     { $$ = new Foam::pointScalarField($1->component(2)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_xx                { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_xy                { $$ = new Foam::pointScalarField($1->component(1)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_xz                { $$ = new Foam::pointScalarField($1->component(2)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_yx                { $$ = new Foam::pointScalarField($1->component(3)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_yy                { $$ = new Foam::pointScalarField($1->component(4)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_yz                { $$ = new Foam::pointScalarField($1->component(5)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_zx                { $$ = new Foam::pointScalarField($1->component(6)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_zy                { $$ = new Foam::pointScalarField($1->component(7)); delete $1; }
+        | ptexp '.' tensorComponentSwitch TOKEN_zz                { $$ = new Foam::pointScalarField($1->component(8)); delete $1; }
+        | pyexp '.' tensorComponentSwitch TOKEN_xx                { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
+        | pyexp '.' tensorComponentSwitch TOKEN_xy                { $$ = new Foam::pointScalarField($1->component(1)); delete $1; }
+        | pyexp '.' tensorComponentSwitch TOKEN_xz                { $$ = new Foam::pointScalarField($1->component(2)); delete $1; }
+        | pyexp '.' tensorComponentSwitch TOKEN_yy                { $$ = new Foam::pointScalarField($1->component(3)); delete $1; }
+        | pyexp '.' tensorComponentSwitch TOKEN_yz                { $$ = new Foam::pointScalarField($1->component(4)); delete $1; }
+        | pyexp '.' tensorComponentSwitch TOKEN_zz                { $$ = new Foam::pointScalarField($1->component(5)); delete $1; }
+        | phexp '.' tensorComponentSwitch TOKEN_ii                { $$ = new Foam::pointScalarField($1->component(0)); delete $1; }
         | plexp '?' psexp ':' psexp         { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makePointConstantField<Foam::pointScalarField>(0.)); delete $1; delete $3; delete $5; }
         | TOKEN_mag '(' psexp ')'           { $$ = new Foam::pointScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' pvexp ')'           { $$ = new Foam::pointScalarField(Foam::mag(*$3)); delete $3; }
