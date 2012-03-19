@@ -640,7 +640,7 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_inv '(' yexp ')' 	           { $$ = new Foam::areaSymmTensorField( Foam::inv(*$3) ); delete $3;  } 
         | TOKEN_dev '(' yexp ')' 	           { $$ = new Foam::areaSymmTensorField( Foam::dev(*$3) ); delete $3;  } 
         | lexp '?' yexp ':' yexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_laplacian '(' fsexp ',' yexp ')'  { $$ = new Foam::areaSymmTensorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5; }
+// Not instantiated in 1.6-ext        | TOKEN_laplacian '(' fsexp ',' yexp ')'  { $$ = new Foam::areaSymmTensorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_faceAverage '(' fyexp ')'         { $$ = new Foam::areaSymmTensorField(Foam::fac::average(*$3)); delete $3; }
         | TOKEN_integrate '(' fyexp ')'           { $$ = new Foam::areaSymmTensorField(Foam::fac::edgeIntegrate(*$3)); delete $3; }
         | TOKEN_surfSum '(' fyexp ')'             { $$ = new Foam::areaSymmTensorField(Foam::fac::edgeSum(*$3)); delete $3; }
@@ -650,9 +650,9 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_max '(' yexp ')'                 { $$ = driver.makeConstantField<Foam::areaSymmTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' yexp ')'                 { $$ = driver.makeConstantField<Foam::areaSymmTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' yexp ')'             { $$ = driver.makeConstantField<Foam::areaSymmTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_div '(' fsexp ',' yexp ')'        { $$ = new Foam::areaSymmTensorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5; }
+// Not instantiated in 1.6-ext         | TOKEN_div '(' fsexp ',' yexp ')'        { $$ = new Foam::areaSymmTensorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_YID                               { $$=driver.getField<Foam::areaSymmTensorField>(*$1).ptr(); }
-        | TOKEN_ddt '(' TOKEN_YID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSymmTensorField>(*$3,true)() ).ptr(); }
+// Not instantiated in 1.6-ext?        | TOKEN_ddt '(' TOKEN_YID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSymmTensorField>(*$3,true)() ).ptr(); }
         | TOKEN_oldTime '(' TOKEN_YID ')'	   { $$ = new Foam::areaSymmTensorField( driver.getField<Foam::areaSymmTensorField>(*$3,true)->oldTime()); }
 ;
 
@@ -669,7 +669,7 @@ hexp:   sphericalTensor                  { $$ = $1; }
             $$ = driver.makeField<Foam::areaSphericalTensorField>( Foam::inv($3->internalField()) ); 
             delete $3;  } 
         | lexp '?' hexp ':' hexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_laplacian '(' fsexp ',' hexp ')'  { $$ = new Foam::areaSphericalTensorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5; }
+// Not instantiated in 1.6-ext         | TOKEN_laplacian '(' fsexp ',' hexp ')'  { $$ = new Foam::areaSphericalTensorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_faceAverage '(' fhexp ')'         { $$ = new Foam::areaSphericalTensorField(Foam::fac::average(*$3)); delete $3; }
         | TOKEN_integrate '(' fhexp ')'           { $$ = new Foam::areaSphericalTensorField(Foam::fac::edgeIntegrate(*$3)); delete $3; }
         | TOKEN_surfSum '(' fhexp ')'             { $$ = new Foam::areaSphericalTensorField(Foam::fac::edgeSum(*$3)); delete $3; }
@@ -679,9 +679,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_max '(' hexp ')'                 { $$ = driver.makeConstantField<Foam::areaSphericalTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' hexp ')'                 { $$ = driver.makeConstantField<Foam::areaSphericalTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' hexp ')'             { $$ = driver.makeConstantField<Foam::areaSphericalTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_div '(' fsexp ',' hexp ')'        { $$ = new Foam::areaSphericalTensorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5; }
+// Not instantiated in 1.6-ext         | TOKEN_div '(' fsexp ',' hexp ')'        { $$ = new Foam::areaSphericalTensorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5; }
         | TOKEN_HID                               { $$=driver.getField<Foam::areaSphericalTensorField>(*$1).ptr(); }
-        | TOKEN_ddt '(' TOKEN_HID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSphericalTensorField>(*$3,true)() ).ptr(); }
+// Not instantiated in 1.6-ext?        | TOKEN_ddt '(' TOKEN_HID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSphericalTensorField>(*$3,true)() ).ptr(); }
         | TOKEN_oldTime '(' TOKEN_HID ')'	   { $$ = new Foam::areaSphericalTensorField( driver.getField<Foam::areaSphericalTensorField>(*$3,true)->oldTime()); }
 ;
 
@@ -744,8 +744,8 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | TOKEN_inv '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::inv(*$3) ); delete $3;  } 
         | TOKEN_dev '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::dev(*$3) ); delete $3;  } 
         | flexp '?' fyexp ':' fyexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_lnGrad '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
-        | TOKEN_interpolate '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::interpolate(*$3)); delete $3; }
+//  Not instantiated in 1.6-ext?        | TOKEN_lnGrad '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
+//  Not instantiated in 1.6-ext?       | TOKEN_interpolate '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::interpolate(*$3)); delete $3; }
         | TOKEN_min '(' fyexp ',' fyexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' fyexp ',' fyexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_min '(' fyexp ')'                 { $$ = driver.makeConstantField<Foam::edgeSymmTensorField>(Foam::min(*$3).value()); delete $3; }
@@ -770,8 +770,8 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
             $$ = driver.makeField<Foam::edgeSphericalTensorField>( Foam::inv($3->internalField()) ); 
             delete $3;  } 
         | flexp '?' fhexp ':' fhexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
-         | TOKEN_lnGrad '(' hexp ')'           { $$ = new Foam::edgeSphericalTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
-        | TOKEN_interpolate '(' hexp ')'           { $$ = new Foam::edgeSphericalTensorField(Foam::fac::interpolate(*$3)); delete $3; }
+//  Not instantiated in 1.6-ext?         | TOKEN_lnGrad '(' hexp ')'           { $$ = new Foam::edgeSphericalTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
+// Not instantiated in 1.6-ext?       | TOKEN_interpolate '(' hexp ')'           { $$ = new Foam::edgeSphericalTensorField(Foam::fac::interpolate(*$3)); delete $3; }
        | TOKEN_min '(' fhexp ',' fhexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' fhexp ',' fhexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_min '(' fhexp ')'                 { $$ = driver.makeConstantField<Foam::edgeSphericalTensorField>(Foam::min(*$3).value()); delete $3; }

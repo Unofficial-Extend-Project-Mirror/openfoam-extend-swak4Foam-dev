@@ -836,6 +836,12 @@ S_{expl} + S_{impl} T
      - =funkySetFields=
      - new topoSource =expressionToPoint=
      - =expressionField= and =manipulateField= now can deal with pointFields
+**** Support for tensors in the =finiteArea=-field parser
+     The =faField=-parser now supports tensors, symmetric tensors and
+     spherical tensors.
+
+     Not all operators are supported because the are not instantiated
+     in 1.6-ext
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
