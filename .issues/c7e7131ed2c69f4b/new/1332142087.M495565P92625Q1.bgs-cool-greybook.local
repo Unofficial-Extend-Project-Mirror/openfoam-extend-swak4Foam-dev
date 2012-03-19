@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 19 Mar 2012 08:27:28 +0100
+Subject: Re: Allow xx, xy etc as field names
+Message-Id: <c7e7131ed2c69f4b-b3f990a5eebb2413-artemis@bgs-cool-greybook.local>
+References: <c7e7131ed2c69f4b-0-artemis@bgs-Greybook.local>
+In-Reply-To: <c7e7131ed2c69f4b-0-artemis@bgs-Greybook.local>
+
+Also make the literal 'x' in the grammars a token
