@@ -380,7 +380,7 @@ public:
         const GeometricField<T,pointPatchField,pointMesh> &orig
     );
 
-    // allow acces to the setResult-method
+    // allow access to the setResult-method
     friend class parserField::FieldValueExpressionParser;
 };
 
