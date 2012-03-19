@@ -63,11 +63,6 @@
     Foam::symmTensor *yten;
     Foam::sphericalTensor *hten;
     Foam::string *name;
-    Foam::string *vname;
-    Foam::string *fsname;
-    Foam::string *fvname;
-    Foam::string *setname;
-    Foam::string *zonename;
     Foam::volVectorField *vfield;
     Foam::volScalarField *sfield;
     Foam::volTensorField *tfield;
@@ -95,12 +90,12 @@
 %token <name>   TOKEN_LINE  "timeline"
 %token <name>   TOKEN_LOOKUP  "lookup"
 %token <name>   TOKEN_SID   "scalarID"
-%token <vname>  TOKEN_VID   "vectorID"
+%token <name>  TOKEN_VID   "vectorID"
 %token <name>  TOKEN_TID   "tensorID"
 %token <name>  TOKEN_YID   "symmTensorID"
 %token <name>  TOKEN_HID   "sphericalTensorID"
-%token <fsname> TOKEN_FSID  "faceScalarID"
-%token <fvname> TOKEN_FVID  "faceVectorID"
+%token <name> TOKEN_FSID  "faceScalarID"
+%token <name> TOKEN_FVID  "faceVectorID"
 %token <name>  TOKEN_FTID   "faceTensorID"
 %token <name>  TOKEN_FYID   "faceSymmTensorID"
 %token <name>  TOKEN_FHID   "faceSphericalTensorID"
@@ -109,12 +104,12 @@
 %token <name>  TOKEN_PTID   "pointTensorID"
 %token <name>  TOKEN_PYID   "pointSymmTensorID"
 %token <name>  TOKEN_PHID   "pointSphericalTensorID"
-%token <setname> TOKEN_SETID "cellSetID" 
-%token <zonename> TOKEN_ZONEID "cellZoneID" 
-%token <setname> TOKEN_FSETID "faceSetID" 
-%token <zonename> TOKEN_FZONEID "faceZoneID" 
-%token <setname> TOKEN_PSETID "pointSetID" 
-%token <zonename> TOKEN_PZONEID "pointZoneID" 
+%token <name> TOKEN_SETID "cellSetID" 
+%token <name> TOKEN_ZONEID "cellZoneID" 
+%token <name> TOKEN_FSETID "faceSetID" 
+%token <name> TOKEN_FZONEID "faceZoneID" 
+%token <name> TOKEN_PSETID "pointSetID" 
+%token <name> TOKEN_PZONEID "pointZoneID" 
 %token <val>    TOKEN_NUM   "number"
 %token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
@@ -285,7 +280,7 @@
 
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector" "tensor" "symmTensor" "sphericalTensor"
-%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector"  "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
+%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "tensor" "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
 %printer             { debug_stream () << $$; } "number" "integer" "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "plexpression" "psexpression" "pvexpression" "ptexpression" "pyexpression" "phexpression"
 

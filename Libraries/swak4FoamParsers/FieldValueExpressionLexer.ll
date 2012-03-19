@@ -226,25 +226,25 @@ false                  return token::TOKEN_FALSE;
         ||
         driver.isThere<Foam::volVectorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_VID;
+        yylval->name = ptr; return token::TOKEN_VID;
     } else if(       
         driver.isVariable<Foam::volTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volTensorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_TID;
+        yylval->name = ptr; return token::TOKEN_TID;
     } else if(       
         driver.isVariable<Foam::volSymmTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSymmTensorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_YID;
+        yylval->name = ptr; return token::TOKEN_YID;
     } else if(       
         driver.isVariable<Foam::volSphericalTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSphericalTensorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_HID;
+        yylval->name = ptr; return token::TOKEN_HID;
     } else if(driver.isThere<Foam::surfaceVectorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FVID;
     } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
