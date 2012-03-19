@@ -872,6 +872,7 @@ S_{expl} + S_{impl} T
      - FieldValues
      - PatchValues
      - SubsetValues (all Zones, sets and samples)
+     - finiteArea-Parsers: faPatch and faField
 **** Missing tensor components for point-Fields in some parsers
      All parsers except the field-parser were missing the access to
      tensor components in the grammar

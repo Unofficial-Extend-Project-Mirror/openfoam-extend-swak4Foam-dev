@@ -101,6 +101,12 @@ protected:
 
     virtual const faMesh &aMesh() const;
 
+    //- set the state of the lexer to scanning vector components
+    void startVectorComponent();
+
+    //- set the state of the lexer to scanning tensor components
+    void startTensorComponent();
+
 public:
 
     //- Runtime type information
@@ -171,6 +177,9 @@ public:
 
     template<class Type>
     Field<Type> *toPoint(const Field<Type> &);
+ 
+    // allow access of protected methods
+    friend class parserFaPatch::FaPatchValueExpressionParser;
 };
 
 

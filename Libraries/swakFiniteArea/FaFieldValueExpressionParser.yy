@@ -93,6 +93,21 @@
 %token TOKEN_TRUE
 %token TOKEN_FALSE
 
+%token TOKEN_x 
+%token TOKEN_y 
+%token TOKEN_z 
+
+%token TOKEN_xx
+%token TOKEN_xy
+%token TOKEN_xz
+%token TOKEN_yx
+%token TOKEN_yy
+%token TOKEN_yz
+%token TOKEN_zx
+%token TOKEN_zy
+%token TOKEN_zz
+%token TOKEN_ii
+
 %token TOKEN_pi
 %token TOKEN_rand
 %token TOKEN_randFixed
@@ -192,6 +207,12 @@ unit:   exp                     { driver.setResult($1,false);  }
         | flexp                 { driver.setLogicalResult($1,true); }
 ;
 
+vectorComponentSwitch: /* empty rule */{ driver.startVectorComponent(); } 
+;
+
+tensorComponentSwitch: /* empty rule */{ driver.startTensorComponent(); } 
+;
+
 vexp:   vector                                    { $$ = $1; }
         | vexp '+' vexp 		          { sameSize($1,$3); $$ = new Foam::areaVectorField(*$1 + *$3); delete $1; delete $3; }
         | exp '*' vexp 		                  { sameSize($1,$3); $$ = new Foam::areaVectorField(*$1 * *$3); delete $1; delete $3; }
@@ -280,9 +301,9 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_average '(' fsexp ')'       { $$ = driver.makeConstantField<Foam::edgeScalarField>(Foam::average(*$3).value()); delete $3; }
         | '-' fsexp %prec TOKEN_NEG         { $$ = new Foam::edgeScalarField(-*$2); delete $2; }
         | '(' fsexp ')'		            { $$ = $2; }  
-        | fvexp '.' 'x'                     { $$ = new Foam::edgeScalarField($1->component(0)); delete $1; }
-        | fvexp '.' 'y'                     { $$ = new Foam::edgeScalarField($1->component(1)); delete $1; }
-        | fvexp '.' 'z'                     { $$ = new Foam::edgeScalarField($1->component(2)); delete $1; }
+        | fvexp '.' vectorComponentSwitch TOKEN_x                     { $$ = new Foam::edgeScalarField($1->component(0)); delete $1; }
+        | fvexp '.' vectorComponentSwitch TOKEN_y                     { $$ = new Foam::edgeScalarField($1->component(1)); delete $1; }
+        | fvexp '.' vectorComponentSwitch TOKEN_z                     { $$ = new Foam::edgeScalarField($1->component(2)); delete $1; }
         | flexp '?' fsexp ':' fsexp         { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeScalarField>(0.)); delete $1; delete $3; delete $5; }
         | TOKEN_mag '(' fsexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' fvexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
@@ -394,9 +415,9 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_faceAverage '(' fsexp ')'          { $$ = new Foam::areaScalarField(Foam::fac::average(*$3)); delete $3; }
         | TOKEN_integrate '(' fsexp ')'            { $$ = new Foam::areaScalarField(Foam::fac::edgeIntegrate(*$3)); delete $3; }
         | TOKEN_surfSum '(' fsexp ')'              { $$ = new Foam::areaScalarField(Foam::fac::edgeSum(*$3)); delete $3; }
-        | vexp '.' 'x'                             { $$ = new Foam::areaScalarField($1->component(0)); delete $1; }
-        | vexp '.' 'y'                             { $$ = new Foam::areaScalarField($1->component(1)); delete $1; }
-        | vexp '.' 'z'                             { $$ = new Foam::areaScalarField($1->component(2)); delete $1; }
+        | vexp '.' vectorComponentSwitch TOKEN_x                             { $$ = new Foam::areaScalarField($1->component(0)); delete $1; }
+        | vexp '.' vectorComponentSwitch TOKEN_y                             { $$ = new Foam::areaScalarField($1->component(1)); delete $1; }
+        | vexp '.' vectorComponentSwitch TOKEN_z                             { $$ = new Foam::areaScalarField($1->component(2)); delete $1; }
         | lexp '?' exp ':' exp                     { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaScalarField>(0.)); delete $1; delete $3; delete $5; }
         | TOKEN_pi                                 { $$ = driver.makeConstantField<Foam::areaScalarField>(M_PI); }
         | TOKEN_rdist '(' vexp ')'                 { $$ = driver.makeRDistanceField(*$3); delete $3; }
