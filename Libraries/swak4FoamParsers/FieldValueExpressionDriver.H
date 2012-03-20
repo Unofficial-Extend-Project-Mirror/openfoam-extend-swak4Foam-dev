@@ -116,6 +116,12 @@ protected:
     template<class T>
     void setLogicalResult(T *,bool isSurfaceField,bool isPointField);
 
+    //- set the state of the lexer to scanning vector components
+    void startVectorComponent();
+
+    //- set the state of the lexer to scanning tensor components
+    void startTensorComponent();
+
 public:
     //- get the result field (if it is of the right type)
     template<class T>
@@ -384,7 +390,7 @@ public:
         const GeometricField<T,pointPatchField,pointMesh> &orig
     );
 
-    // allow acces to the setResult-method
+    // allow access to the setResult-method
     friend class parserField::FieldValueExpressionParser;
 };
 

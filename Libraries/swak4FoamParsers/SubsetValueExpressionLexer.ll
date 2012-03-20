@@ -5,6 +5,8 @@
 %}
 
 %s setname
+%s vectorcomponent
+%s tensorcomponent
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
@@ -47,16 +49,20 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
-xx                    return token::TOKEN_xx;
-xy                    return token::TOKEN_xy;
-xz                    return token::TOKEN_xz;
-yx                    return token::TOKEN_yx;
-yy                    return token::TOKEN_yy;
-yz                    return token::TOKEN_yz;
-zx                    return token::TOKEN_zx;
-zy                    return token::TOKEN_zy;
-zz                    return token::TOKEN_zz;
-ii                    return token::TOKEN_ii;
+<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+
+<tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
+<tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
+<tensorcomponent>xz    { BEGIN(INITIAL); return token::TOKEN_xz; }
+<tensorcomponent>yx    { BEGIN(INITIAL); return token::TOKEN_yx; }
+<tensorcomponent>yy    { BEGIN(INITIAL); return token::TOKEN_yy; }
+<tensorcomponent>yz    { BEGIN(INITIAL); return token::TOKEN_yz; }
+<tensorcomponent>zx    { BEGIN(INITIAL); return token::TOKEN_zx; }
+<tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
+<tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
+<tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -150,8 +156,6 @@ inv                    return token::TOKEN_inv;
                        return token::TOKEN_INT;
                      }
 
-[xyz]                return yytext[0];
-
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
@@ -209,4 +213,14 @@ void SubsetValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
     yy_delete_buffer(bufferSubset);
+}
+
+void SubsetValueExpressionDriver::startVectorComponent()
+{
+    BEGIN(vectorcomponent);
+}
+
+void SubsetValueExpressionDriver::startTensorComponent()
+{
+    BEGIN(tensorcomponent);
 }

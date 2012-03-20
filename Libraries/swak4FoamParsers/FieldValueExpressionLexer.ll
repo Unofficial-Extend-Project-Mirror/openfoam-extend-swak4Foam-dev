@@ -10,6 +10,8 @@
 %s fzonename
 %s psetname
 %s pzonename
+%s vectorcomponent
+%s tensorcomponent
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
@@ -52,16 +54,20 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
-xx                    return token::TOKEN_xx;
-xy                    return token::TOKEN_xy;
-xz                    return token::TOKEN_xz;
-yx                    return token::TOKEN_yx;
-yy                    return token::TOKEN_yy;
-yz                    return token::TOKEN_yz;
-zx                    return token::TOKEN_zx;
-zy                    return token::TOKEN_zy;
-zz                    return token::TOKEN_zz;
-ii                    return token::TOKEN_ii;
+<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+
+<tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
+<tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
+<tensorcomponent>xz    { BEGIN(INITIAL); return token::TOKEN_xz; }
+<tensorcomponent>yx    { BEGIN(INITIAL); return token::TOKEN_yx; }
+<tensorcomponent>yy    { BEGIN(INITIAL); return token::TOKEN_yy; }
+<tensorcomponent>yz    { BEGIN(INITIAL); return token::TOKEN_yz; }
+<tensorcomponent>zx    { BEGIN(INITIAL); return token::TOKEN_zx; }
+<tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
+<tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
+<tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -203,8 +209,6 @@ false                  return token::TOKEN_FALSE;
                        return token::TOKEN_INT;
                      }
 
-[xyz]                return yytext[0];
-
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
@@ -222,25 +226,25 @@ false                  return token::TOKEN_FALSE;
         ||
         driver.isThere<Foam::volVectorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_VID;
+        yylval->name = ptr; return token::TOKEN_VID;
     } else if(       
         driver.isVariable<Foam::volTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volTensorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_TID;
+        yylval->name = ptr; return token::TOKEN_TID;
     } else if(       
         driver.isVariable<Foam::volSymmTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSymmTensorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_YID;
+        yylval->name = ptr; return token::TOKEN_YID;
     } else if(       
         driver.isVariable<Foam::volSphericalTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSphericalTensorField>(*ptr)
     ) {
-        yylval->vname = ptr; return token::TOKEN_HID;
+        yylval->name = ptr; return token::TOKEN_HID;
     } else if(driver.isThere<Foam::surfaceVectorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FVID;
     } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
@@ -339,4 +343,14 @@ void FieldValueExpressionDriver::scan_begin ()
 void FieldValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
+}
+
+void FieldValueExpressionDriver::startVectorComponent()
+{
+    BEGIN(vectorcomponent);
+}
+
+void FieldValueExpressionDriver::startTensorComponent()
+{
+    BEGIN(tensorcomponent);
 }

@@ -4,6 +4,8 @@
 #include <errno.h>
 %}
 
+%s vectorcomponent
+%s tensorcomponent
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
@@ -44,6 +46,21 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 !=                   return token::TOKEN_NEQ;
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
+
+<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+
+<tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
+<tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
+<tensorcomponent>xz    { BEGIN(INITIAL); return token::TOKEN_xz; }
+<tensorcomponent>yx    { BEGIN(INITIAL); return token::TOKEN_yx; }
+<tensorcomponent>yy    { BEGIN(INITIAL); return token::TOKEN_yy; }
+<tensorcomponent>yz    { BEGIN(INITIAL); return token::TOKEN_yz; }
+<tensorcomponent>zx    { BEGIN(INITIAL); return token::TOKEN_zx; }
+<tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
+<tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
+<tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -115,8 +132,21 @@ deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
 
 vector                 return token::TOKEN_VECTOR;
+tensor                 return token::TOKEN_TENSOR;
+symmTensor             return token::TOKEN_SYMM_TENSOR;
+sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
+
+transpose              return token::TOKEN_transpose;
+diag                   return token::TOKEN_diag;
+tr                     return token::TOKEN_tr;
+dev                    return token::TOKEN_dev;
+symm                   return token::TOKEN_symm;
+skew                   return token::TOKEN_skew;
+det                    return token::TOKEN_det;
+cof                    return token::TOKEN_cof;
+inv                    return token::TOKEN_inv;
 
 true                   return token::TOKEN_TRUE;
 false                  return token::TOKEN_FALSE;
@@ -133,28 +163,50 @@ false                  return token::TOKEN_FALSE;
                        return token::TOKEN_INT;
                      }
 
-[xyz]                return yytext[0];
-
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
-    } else if(       
-        driver.isVariable<Foam::areaVectorField::value_type>(*ptr)
-        ||
-        driver.isThere<Foam::areaVectorField>(*ptr)
-    ) {
-        yylval->vname = ptr; return token::TOKEN_VID;
     } else if(
         driver.isVariable<Foam::areaScalarField::value_type>(*ptr)
         ||
         driver.isThere<Foam::areaScalarField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_SID;
+    } else if(       
+        driver.isVariable<Foam::areaVectorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaVectorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_VID;
+    } else if(
+        driver.isVariable<Foam::areaTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_TID;
+    } else if(
+        driver.isVariable<Foam::areaSymmTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaSymmTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_YID;
+    } else if(
+        driver.isVariable<Foam::areaSphericalTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::areaSphericalTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_HID;
     } else if(driver.isThere<Foam::edgeScalarField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FSID;
     } else if(driver.isThere<Foam::edgeVectorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FVID;
+    } else if(driver.isThere<Foam::edgeTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FTID;
+    } else if(driver.isThere<Foam::edgeSymmTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FYID;
+    } else if(driver.isThere<Foam::edgeSphericalTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FHID;
     } else {
         driver.error (*yylloc, "faField "+*ptr+" not existing or of wrong type");
     }
@@ -179,4 +231,14 @@ void FaFieldValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
     yy_delete_buffer(bufferFaField);
+}
+
+void FaFieldValueExpressionDriver::startVectorComponent()
+{
+    BEGIN(vectorcomponent);
+}
+
+void FaFieldValueExpressionDriver::startTensorComponent()
+{
+    BEGIN(tensorcomponent);
 }
