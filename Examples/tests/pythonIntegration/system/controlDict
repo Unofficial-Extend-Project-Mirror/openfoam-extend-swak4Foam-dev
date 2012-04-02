@@ -56,11 +56,21 @@ functions (
         parallelMasterOnly false;
         isParallelized true;
     }
+    pythonOutput
+    {
+        type pythonIntegration;
+
+        startCode "";
+        executeCode "print 'timeName :',timeName,'outputTime:',outputTime";
+        endCode "print 'Never been here'";
+        //        tolerateExceptions true;
+        parallelMasterOnly true;
+    }
     pythonPaths
     {
         type pythonIntegration;
         startFile "$FOAM_CASE/printPaths.py";
-        executeCode "from os import environ;print 'FOAM_CASE=',environ['FOAM_CASE']";
+        executeCode "from os import environ;print 'FOAM_CASE=',environ['FOAM_CASE'];print 'Time data:',timeDir";
         endCode "print 'Never been here'";
 //        tolerateExceptions true;
         parallelMasterOnly false;

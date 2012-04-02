@@ -842,6 +842,13 @@ S_{expl} + S_{impl} T
 
      Not all operators are supported because the are not instantiated
      in 1.6-ext
+**** New convenience-variables for the Python-Integration
+     These variables are added in the namespace to ease the writing of
+     Python-code whose output is consistent with OF
+     - timeName :: Name of the current time as a string. Allows the
+                   construction of directory names
+     - outputTime :: Boolean that indicates whether this is a timestep
+                     where OpenFOAM will write output 
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
@@ -857,6 +864,10 @@ S_{expl} + S_{impl} T
      - constantDir :: points to the global =constant=-directory
      - procDir :: in parallel runs points to the
                   processor-subdirectory of the current CPU
+     - meshDir :: The mesh data (of the current processor in parallel
+                  runs)
+     - timeDir :: Directory where data would be written to at the
+                  current time (processor dependent)
 **** User must acknowledge parallelization in Python-integration
      In parallel runs the user must set the =isParallelized= to =true=
      if the =parallelMasterOnly= is set to =false=. 

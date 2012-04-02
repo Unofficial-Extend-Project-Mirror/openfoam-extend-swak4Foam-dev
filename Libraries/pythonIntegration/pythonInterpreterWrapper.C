@@ -140,6 +140,7 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
     PyObject_SetAttrString(m,"caseDir",PyString_FromString(getEnv("FOAM_CASE").c_str()));
     PyObject_SetAttrString(m,"systemDir",PyString_FromString((t.path()/t.caseSystem()).c_str()));
     PyObject_SetAttrString(m,"constantDir",PyString_FromString((t.path()/t.caseConstant()).c_str()));
+    PyObject_SetAttrString(m,"meshDir",PyString_FromString((t.path()/t.constant()/"polyMesh").c_str()));
     if(Pstream::parRun()) {
         PyObject_SetAttrString(m,"procDir",PyString_FromString(t.path().c_str()));
     }
@@ -209,6 +210,9 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
+    PyObject_SetAttrString(m,"timeName",PyString_FromString(time.timeName().c_str()));
+    PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));
+    PyObject_SetAttrString(m,"timeDir",PyString_FromString((time.path()/time.timeName()).c_str()));
 }
 
 void pythonInterpreterWrapper::setInterpreter()
