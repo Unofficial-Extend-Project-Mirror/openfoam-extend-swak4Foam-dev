@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    for (runTime++; !runTime.end(); runTime++)
+    while(runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 

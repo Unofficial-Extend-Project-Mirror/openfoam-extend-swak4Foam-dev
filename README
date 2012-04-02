@@ -847,6 +847,10 @@ S_{expl} + S_{impl} T
      To avoid =#ifdef= in the solver sources there is now a separate
      set of sources (labeled =pre2.1=) for older versions. The regular
      sources work with 2.1 (and hopefully the following)
+**** =-allowFunctionObjects=-option not working for =replayTransientBC=
+     Function-objects only work with the
+     =while(runTime.loop())=-construct in 2.1. The utility now uses
+     this.
 *** New features
 **** Region name in =simpleFunctionObject=.outputs
      To distinguish the output of various instances of
