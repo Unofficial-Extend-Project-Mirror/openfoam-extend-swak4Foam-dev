@@ -847,6 +847,23 @@ S_{expl} + S_{impl} T
      Thanks to patches supplied by Bruno Santos (see
      [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
      compilation of the libraries is now possible in parallel
+*** Changes in the behavior
+**** Directory variables in Python-integration
+     For parallel runs the content of the =caseDir=-variable changed
+     and a few variables have been added
+     - caseDir :: in parallel runs now points to the =FOAM_CASE=
+                  instead of the processor subdirectory
+     - systemDir :: points to the global =system=-directory
+     - constantDir :: points to the global =constant=-directory
+     - procDir :: in parallel runs points to the
+                  processor-subdirectory of the current CPU
+**** User must acknowledge parallelization in Python-integration
+     In parallel runs the user must set the =isParallelized= to =true=
+     if the =parallelMasterOnly= is set to =false=. 
+
+     With that he indicates that in his opinion the Python-code has no
+     bad side-effects in parallel runs and that he doesn't blame
+     swak4Foam if anyting bad happens
 *** Bug fixes
 **** Field itself can not be used in =funkySetBoundaryField=
      Bug reported:
@@ -882,3 +899,4 @@ S_{expl} + S_{impl} T
 **** Missing tensor components for point-Fields in some parsers
      All parsers except the field-parser were missing the access to
      tensor components in the grammar
+     
