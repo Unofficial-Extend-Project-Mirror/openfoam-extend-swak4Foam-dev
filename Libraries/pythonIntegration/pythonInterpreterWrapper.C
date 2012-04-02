@@ -54,6 +54,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 ):
     tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
     warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
+    isParallelized_(dict.lookupOrDefault<bool>("isParallelized",false)),
     parallelMasterOnly_(false),
     swakToPythonNamespaces_(
         dict.lookupOrDefault<wordList>(
@@ -94,7 +95,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         parallelMasterOnly_=readBool(dict.lookup("parallelMasterOnly"));
     }
 
-    if(parallelNoRun()) {
+    if(parallelNoRun(true)) {
         return;
     }
 
@@ -138,17 +139,37 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
 {
     PyObject *m = PyImport_AddModule("__main__");
 
-    PyObject_SetAttrString(m,"caseDir",PyString_FromString(t.path().c_str()));
+    PyObject_SetAttrString(m,"caseDir",PyString_FromString(getEnv("FOAM_CASE").c_str()));
+    PyObject_SetAttrString(m,"systemDir",PyString_FromString((t.path()/t.caseSystem()).c_str()));
+    PyObject_SetAttrString(m,"constantDir",PyString_FromString((t.path()/t.caseConstant()).c_str()));
+    PyObject_SetAttrString(m,"meshDir",PyString_FromString((t.path()/t.constant()/"polyMesh").c_str()));
+    if(Pstream::parRun()) {
+        PyObject_SetAttrString(m,"procDir",PyString_FromString(t.path().c_str()));
+    }
     PyObject_SetAttrString(m,"parRun",PyBool_FromLong(Pstream::parRun()));
     PyObject_SetAttrString(m,"myProcNo",PyInt_FromLong(Pstream::myProcNo()));
 }
 
-bool pythonInterpreterWrapper::parallelNoRun()
+bool pythonInterpreterWrapper::parallelNoRun(bool doWarning)
 {
     if(Pstream::parRun()) {
+        if(isParallelized_ && doWarning) {
+            WarningIn("bool pythonInterpreterWrapper::parallelNoRun()")
+                << "The parameter 'isParallelized' was set. This means that the "
+                    << "Python code has no adverse side effects in parallel"
+                    << endl;
+        }
         if(parallelMasterOnly_) {
             return !Pstream::master();
         } else {
+            if(!isParallelized_) {
+                FatalErrorIn("pythonInterpreterWrapper::parallelNoRun(bool doWarning)")
+                    << "This is a parallel run and the Python-snipplets may have"
+                        << " adverse side effects. If you do not think so set"
+                        << " the 'isParallelized'-flag to true"
+                        << endl
+                        << exit(FatalError);
+            }
             return false;
         }
     } else {
@@ -191,6 +212,9 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
+    PyObject_SetAttrString(m,"timeName",PyString_FromString(time.timeName().c_str()));
+    PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));
+    PyObject_SetAttrString(m,"timeDir",PyString_FromString((time.path()/time.timeName()).c_str()));
 }
 
 void pythonInterpreterWrapper::setInterpreter()
