@@ -117,6 +117,27 @@ functions (
             }
         }
     }
+    onlyWithMpi4Py {
+        type executeIfPython;
+        readDuringConstruction false;
+        parallelMasterOnly false;
+        isParallelized true;
+
+        conditionFile "$FOAM_CASE/checkMpi4Py.py";
+
+        functions {
+            GatherDataWithPython
+            {
+                type pythonIntegration;
+                startFile "$FOAM_CASE/startMpi4Py.py";
+                executeFile "$FOAM_CASE/executeMpi4Py.py";
+                endFile $executeFile;
+                //        tolerateExceptions true;
+                parallelMasterOnly false;
+                isParallelized true;
+            }
+        }
+    }
     addScalar
     {
         type addGlobalVariable;
