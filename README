@@ -910,4 +910,8 @@ S_{expl} + S_{impl} T
 **** Missing tensor components for point-Fields in some parsers
      All parsers except the field-parser were missing the access to
      tensor components in the grammar
-     
+**** Incomprehensible error message in =funkySetFields= if the field is missing
+     The error message in =funkySetFields= that was issued when a
+     field is supposed to be created was not very helpful (something
+     about the field currently being an =IOobject=)
+
