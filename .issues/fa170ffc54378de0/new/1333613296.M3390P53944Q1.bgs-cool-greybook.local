@@ -1,0 +1,17 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 05 Apr 2012 10:06:00 +0200
+State: new
+Subject: Point-interpolation for subsets
+Message-Id: <fa170ffc54378de0-0-artemis@bgs-cool-greybook.local>
+
+The various subset-classes have an incomplete support of
+point-interpolation
+
+Would make sense for
+- zones
+- sets
+- sampledSurfaces
+
+If this is fixed the change for construction of vectors
+https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130
+will also be added

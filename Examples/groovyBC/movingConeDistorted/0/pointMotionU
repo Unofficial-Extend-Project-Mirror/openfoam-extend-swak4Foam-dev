@@ -9,8 +9,8 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    object      U;
+    class       pointVectorField;
+    object      pointMotionU;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -20,49 +20,39 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
-    movingWall      
+    movingWall
     {
         type            groovyBC;
         value           uniform (1 0 0);
-        //        valueExpression "vector(toFace(pointMotionUx),0,0)";
-        valueExpression "toFace(pointMotionU)";
+        valueExpression "vector(toPoint(sin(pi*time()/0.006))*(toPoint(0.2)+pts().y*toPoint(1.2e2)),toPoint(0),toPoint(0))";
     }
-
-    farFieldMoving  
+    farFieldMoving
+    {
+        type            slip;
+    }
+    fixedWall
     {
         type            fixedValue;
         value           uniform (0 0 0);
     }
-
-    fixedWall       
-    {
-        type            fixedValue;
-        value           uniform (0 0 0);
-    }
-
-    axis            
+    axis
     {
         type            symmetryPlane;
     }
-
-    left            
-    {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
-    }
-
-    farField        
+    left
     {
         type            fixedValue;
         value           uniform (0 0 0);
     }
-
-    back            
+    farField
+    {
+        type            slip;
+    }
+    back
     {
         type            wedge;
     }
-
-    front           
+    front
     {
         type            wedge;
     }
