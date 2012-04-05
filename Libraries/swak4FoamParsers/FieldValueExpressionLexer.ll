@@ -73,6 +73,7 @@ pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
 log                   return token::TOKEN_log;
 mag                   return token::TOKEN_mag;
+magSqr                return token::TOKEN_magSqr;
 sin                   return token::TOKEN_sin;
 cos                   return token::TOKEN_cos;
 tan                   return token::TOKEN_tan;

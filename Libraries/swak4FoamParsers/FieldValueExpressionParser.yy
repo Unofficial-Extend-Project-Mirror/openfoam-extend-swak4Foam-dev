@@ -223,6 +223,7 @@
 %token TOKEN_log
 %token TOKEN_exp
 %token TOKEN_mag
+%token TOKEN_magSqr
 %token TOKEN_sin
 %token TOKEN_cos
 %token TOKEN_tan
@@ -446,6 +447,11 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_mag '(' ftexp ')'           { $$ = new Foam::surfaceScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' fyexp ')'           { $$ = new Foam::surfaceScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' fhexp ')'           { $$ = new Foam::surfaceScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fsexp ')'           { $$ = new Foam::surfaceScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fvexp ')'           { $$ = new Foam::surfaceScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' ftexp ')'           { $$ = new Foam::surfaceScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fyexp ')'           { $$ = new Foam::surfaceScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fhexp ')'           { $$ = new Foam::surfaceScalarField(Foam::magSqr(*$3)); delete $3; }
         | TOKEN_tr '(' ftexp ')'            { $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }
         | TOKEN_tr '(' fyexp ')'            { $$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }
 // doesn't work directly        | TOKEN_tr '(' fhexp ')'            {$$ = new Foam::surfaceScalarField(Foam::tr(*$3)); delete $3; }  
@@ -573,9 +579,15 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_sum '(' exp ')'                    { $$ = driver.makeConstantField<Foam::volScalarField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' exp ')'                { $$ = driver.makeConstantField<Foam::volScalarField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_mag '(' exp ')'                    { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_mag '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_mag '(' texp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_mag '(' yexp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_mag '(' hexp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_magSqr '(' exp ')'                    { $$ = new Foam::volScalarField(Foam::magSqr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_magSqr '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::magSqr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_magSqr '(' texp ')'                   { $$ = new Foam::volScalarField(Foam::magSqr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_magSqr '(' yexp ')'                   { $$ = new Foam::volScalarField(Foam::magSqr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_magSqr '(' hexp ')'                   { $$ = new Foam::volScalarField(Foam::magSqr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_tr '(' texp ')'                    { $$ = new Foam::volScalarField(Foam::tr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_tr '(' yexp ')'                    { $$ = new Foam::volScalarField(Foam::tr(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_tr '(' hexp ')'                    { 
@@ -587,7 +599,6 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
             $$ = driver.makeField<Foam::volScalarField>(Foam::det($3->internalField())); 
             delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_magSqrGradGrad '(' exp ')'         { $$ = new Foam::volScalarField(Foam::fvc::magSqrGradGrad(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_mag '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::mag(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_div '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::fvc::div(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_div '(' fsexp ')'                  { $$ = new Foam::volScalarField(Foam::fvc::div(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_div '(' fsexp ',' exp ')'          { $$ = new Foam::volScalarField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5;  driver.setCalculatedPatches(*$$); }
@@ -961,6 +972,11 @@ psexp:  TOKEN_point '(' scalar ')'           { $$ = driver.makePointConstantFiel
         | TOKEN_mag '(' ptexp ')'           { $$ = new Foam::pointScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' pyexp ')'           { $$ = new Foam::pointScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' phexp ')'           { $$ = new Foam::pointScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_magSqr '(' psexp ')'           { $$ = new Foam::pointScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' pvexp ')'           { $$ = new Foam::pointScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' ptexp ')'           { $$ = new Foam::pointScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' pyexp ')'           { $$ = new Foam::pointScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' phexp ')'           { $$ = new Foam::pointScalarField(Foam::magSqr(*$3)); delete $3; }
         | TOKEN_tr '(' ptexp ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::tr($3->internalField())()); delete $3; }
         | TOKEN_tr '(' pyexp ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::tr($3->internalField())()); delete $3; }
         | TOKEN_tr '(' phexp ')'           { $$ = driver.makePointField<Foam::pointScalarField>(Foam::tr($3->internalField())()); delete $3; }

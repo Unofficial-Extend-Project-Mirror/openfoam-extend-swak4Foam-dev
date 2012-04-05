@@ -924,3 +924,5 @@ S_{expl} + S_{impl} T
      The error message in =funkySetFields= that was issued when a
      field is supposed to be created was not very helpful (something
      about the field currently being an =IOobject=)
+**** Missing =magSqr= in parsers
+     This function was reported missing on the message board
