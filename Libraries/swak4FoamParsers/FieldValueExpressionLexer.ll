@@ -165,6 +165,9 @@ div                   return token::TOKEN_div;
 laplacian             return token::TOKEN_laplacian;
 ddt                   return token::TOKEN_ddt;
 oldTime               return token::TOKEN_oldTime;
+d2dt2                 return token::TOKEN_d2dt2;
+meshPhi               return token::TOKEN_meshPhi;
+flux                  return token::TOKEN_flux;
 
 integrate             return token::TOKEN_integrate;
 surfSum               return token::TOKEN_surfSum;

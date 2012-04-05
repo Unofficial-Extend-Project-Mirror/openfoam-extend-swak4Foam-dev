@@ -854,6 +854,19 @@ S_{expl} + S_{impl} T
                    construction of directory names
      - outputTime :: Boolean that indicates whether this is a timestep
                      where OpenFOAM will write output 
+**** Additional operators from the =fvc=-namespace
+     The missing operators from the =fvc=-namespace have been added to
+     the Field-parser. These are
+     - =d2dt2= :: for all volumeFields
+     - =flux= :: for all volumFields. Needs a surfaceField as a first
+                 argument
+     - =meshPhi= :: for volume-vector-fields. Optional with a
+                    scalar-field that acts as the density as the first
+                    argument. Only works in the context of a solver
+                    with a dynamic mesh and hasn't been tested yet
+     The only missing operators from the =fvc=-namespace are
+     =volumeIntegrate=/=domainIntegrate=. These have been omitted as
+     they are trivial to implement using other functions
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
