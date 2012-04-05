@@ -73,6 +73,9 @@ class pythonInterpreterWrapper
     //- Should a non-uniform variable result in a warning?
     bool warnOnNonUniform_;
 
+    //- Is this correctly parallelized?
+    bool isParallelized_;
+
     //- Should parallel runs only run on the master
     bool parallelMasterOnly_;
 
@@ -128,7 +131,7 @@ protected:
     void setRunTime(const Time &time);
 
     //- Check whether we want to continue (parallel)
-    bool parallelNoRun();
+    bool parallelNoRun(bool doWarning=false);
 
     //- set up the environment with the basic variables
     void initEnvironment(const Time &t);

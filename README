@@ -471,6 +471,11 @@ S_{expl} + S_{impl} T
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
+** No point-vector construction for Subsets
+   The same problem that was mentioned in
+   [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
+   is also true for subsets. But as the interpolation is not
+   implemented for most subsets this will be postponed
 * History
 ** 2010-09-13
    First Release
@@ -842,11 +847,52 @@ S_{expl} + S_{impl} T
 
      Not all operators are supported because the are not instantiated
      in 1.6-ext
+**** New convenience-variables for the Python-Integration
+     These variables are added in the namespace to ease the writing of
+     Python-code whose output is consistent with OF
+     - timeName :: Name of the current time as a string. Allows the
+                   construction of directory names
+     - outputTime :: Boolean that indicates whether this is a timestep
+                     where OpenFOAM will write output 
+**** Additional operators from the =fvc=-namespace
+     The missing operators from the =fvc=-namespace have been added to
+     the Field-parser. These are
+     - =d2dt2= :: for all volumeFields
+     - =flux= :: for all volumFields. Needs a surfaceField as a first
+                 argument
+     - =meshPhi= :: for volume-vector-fields. Optional with a
+                    scalar-field that acts as the density as the first
+                    argument. Only works in the context of a solver
+                    with a dynamic mesh and hasn't been tested yet
+     The only missing operators from the =fvc=-namespace are
+     =volumeIntegrate=/=domainIntegrate=. These have been omitted as
+     they are trivial to implement using other functions
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
      [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
      compilation of the libraries is now possible in parallel
+*** Changes in the behavior
+**** Directory variables in Python-integration
+     For parallel runs the content of the =caseDir=-variable changed
+     and a few variables have been added
+     - caseDir :: in parallel runs now points to the =FOAM_CASE=
+                  instead of the processor subdirectory
+     - systemDir :: points to the global =system=-directory
+     - constantDir :: points to the global =constant=-directory
+     - procDir :: in parallel runs points to the
+                  processor-subdirectory of the current CPU
+     - meshDir :: The mesh data (of the current processor in parallel
+                  runs)
+     - timeDir :: Directory where data would be written to at the
+                  current time (processor dependent)
+**** User must acknowledge parallelization in Python-integration
+     In parallel runs the user must set the =isParallelized= to =true=
+     if the =parallelMasterOnly= is set to =false=. 
+
+     With that he indicates that in his opinion the Python-code has no
+     bad side-effects in parallel runs and that he doesn't blame
+     swak4Foam if anyting bad happens
 *** Bug fixes
 **** Field itself can not be used in =funkySetBoundaryField=
      Bug reported:
@@ -882,3 +928,14 @@ S_{expl} + S_{impl} T
 **** Missing tensor components for point-Fields in some parsers
      All parsers except the field-parser were missing the access to
      tensor components in the grammar
+**** No vector construction possible for point-vectors (and tensors) in PatchField     
+     As mentioned in
+     [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
+     it was not possible to construct a point-vector field using
+     =vector(toPoint(1),toPoint(1),toPoint(1))=. Same for tensors
+**** Incomprehensible error message in =funkySetFields= if the field is missing
+     The error message in =funkySetFields= that was issued when a
+     field is supposed to be created was not very helpful (something
+     about the field currently being an =IOobject=)
+**** Missing =magSqr= in parsers
+     This function was reported missing on the message board

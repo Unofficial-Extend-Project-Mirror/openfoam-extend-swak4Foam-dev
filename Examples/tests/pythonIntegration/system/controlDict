@@ -53,6 +53,28 @@ functions (
         executeCode "a+=1; print 'a:',a";
         endCode "print 'Never been here'";
         //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+    }
+    pythonOutput
+    {
+        type pythonIntegration;
+
+        startCode "";
+        executeCode "print 'timeName :',timeName,'outputTime:',outputTime";
+        endCode "print 'Never been here'";
+        //        tolerateExceptions true;
+        parallelMasterOnly true;
+    }
+    pythonPaths
+    {
+        type pythonIntegration;
+        startFile "$FOAM_CASE/printPaths.py";
+        executeCode "from os import environ;print 'FOAM_CASE=',environ['FOAM_CASE'];print 'Time data:',timeDir";
+        endCode "print 'Never been here'";
+//        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
     }
     pythonPyFoam
     {
@@ -62,6 +84,7 @@ functions (
         executeFile "$FOAM_CASE/executePyFoam.py";
         endCode "print 'Never been here'";
         //        tolerateExceptions true;
+        parallelMasterOnly true;
     }
     pythonPythonFlu
     {
@@ -70,15 +93,51 @@ functions (
         endCode "print ";
         executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
         tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
     }
-    pythonPythonFluFull
-    {
-        type pythonFluIntegration;
-        startCode "print type(time)";
-        endCode "print ";
-        executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs();print type(time);print dir();print time.timePath()";
-        //        tolerateExceptions true;
+    onlyWithFlu {
+        type executeIfPython;
+        readDuringConstruction false;
+        parallelMasterOnly false;
+        isParallelized true;
+
+        conditionFile "$FOAM_CASE/checkPythonFlu.py";
+
+        functions {
+            pythonPythonFluFull
+            {
+                type pythonFluIntegration;
+                startCode "print type(time)";
+                endCode "print ";
+                executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs();print type(time);print dir();print time.timePath()";
+                //        tolerateExceptions true;
+                parallelMasterOnly false;
+                isParallelized true;
+            }
         }
+    }
+    onlyWithMpi4Py {
+        type executeIfPython;
+        readDuringConstruction false;
+        parallelMasterOnly false;
+        isParallelized true;
+
+        conditionFile "$FOAM_CASE/checkMpi4Py.py";
+
+        functions {
+            GatherDataWithPython
+            {
+                type pythonIntegration;
+                startFile "$FOAM_CASE/startMpi4Py.py";
+                executeFile "$FOAM_CASE/executeMpi4Py.py";
+                endFile $executeFile;
+                //        tolerateExceptions true;
+                parallelMasterOnly false;
+                isParallelized true;
+            }
+        }
+    }
     addScalar
     {
         type addGlobalVariable;
@@ -110,6 +169,8 @@ functions (
         //        tolerateExceptions true;
         pythonToSwakNamespace testPython;
         pythonToSwakVariables (  newTime newVector );
+        parallelMasterOnly false;
+        isParallelized true;
     }
     pythonGetPyFoamGlobals
     {
@@ -121,6 +182,8 @@ functions (
         //        tolerateExceptions true;
         pythonToSwakNamespace testPyFoam;
         pythonToSwakVariables ( foamVector );
+        parallelMasterOnly false;
+        isParallelized true;
     }
 );
 
