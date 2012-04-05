@@ -503,6 +503,11 @@ S_{expl} + S_{impl} T
    general treatment in the grammar would be confusing currently the
    this product was removed from the grammar and therefor will not be
    correctly parsed
+** No point-vector construction for Subsets
+   The same problem that was mentioned in
+   [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
+   is also true for subsets. But as the interpolation is not
+   implemented for most subsets this will be postponed
 * History
 ** 2010-09-13
    First Release
@@ -977,4 +982,8 @@ S_{expl} + S_{impl} T
 **** Missing tensor components for point-Fields in some parsers
      All parsers except the field-parser were missing the access to
      tensor components in the grammar
-     
+**** No vector construction possible for point-vectors (and tensors) in PatchField     
+     As mentioned in
+     [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
+     it was not possible to construct a point-vector field using
+     =vector(toPoint(1),toPoint(1),toPoint(1))=. Same for tensors
