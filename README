@@ -921,6 +921,19 @@ S_{expl} + S_{impl} T
                    construction of directory names
      - outputTime :: Boolean that indicates whether this is a timestep
                      where OpenFOAM will write output 
+**** Additional operators from the =fvc=-namespace
+     The missing operators from the =fvc=-namespace have been added to
+     the Field-parser. These are
+     - =d2dt2= :: for all volumeFields
+     - =flux= :: for all volumFields. Needs a surfaceField as a first
+                 argument
+     - =meshPhi= :: for volume-vector-fields. Optional with a
+                    scalar-field that acts as the density as the first
+                    argument. Only works in the context of a solver
+                    with a dynamic mesh and hasn't been tested yet
+     The only missing operators from the =fvc=-namespace are
+     =volumeIntegrate=/=domainIntegrate=. These have been omitted as
+     they are trivial to implement using other functions
 *** Infrastructure
 **** Full parallel compilation
      Thanks to patches supplied by Bruno Santos (see
@@ -987,3 +1000,13 @@ S_{expl} + S_{impl} T
      [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
      it was not possible to construct a point-vector field using
      =vector(toPoint(1),toPoint(1),toPoint(1))=. Same for tensors
+**** Incomprehensible error message in =funkySetFields= if the field is missing
+     The error message in =funkySetFields= that was issued when a
+     field is supposed to be created was not very helpful (something
+     about the field currently being an =IOobject=)
+**** Missing =magSqr= in parsers
+     This function was reported missing on the message board
+**** Wrong size when composing vectors and tensors for point-fields
+     The composed objects got their size from the current parser, not
+     the components. This resulted in a segmentation-fault for
+     pointFields

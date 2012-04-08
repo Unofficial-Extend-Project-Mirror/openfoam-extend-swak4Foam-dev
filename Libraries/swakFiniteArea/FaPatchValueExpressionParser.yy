@@ -139,6 +139,7 @@
 %token TOKEN_log
 %token TOKEN_exp
 %token TOKEN_mag
+%token TOKEN_magSqr
 %token TOKEN_sin
 %token TOKEN_cos
 %token TOKEN_tan
@@ -411,6 +412,11 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_mag '(' texp ')'      { $$ = new Foam::scalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' yexp ')'      { $$ = new Foam::scalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' hexp ')'      { $$ = new Foam::scalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_magSqr '(' exp ')'       { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' vexp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' texp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' yexp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' hexp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
         | TOKEN_tr '(' texp ')'       { $$ = new Foam::scalarField( Foam::tr(*$3) ); delete $3; }
         | TOKEN_tr '(' yexp ')'       { $$ = new Foam::scalarField( Foam::tr(*$3) ); delete $3; }
         | TOKEN_tr '(' hexp ')'       { $$ = new Foam::scalarField( Foam::tr(*$3) ); delete $3; }
@@ -689,6 +695,11 @@ pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3)
         | TOKEN_mag '(' ptexp ')'      { $$ = new Foam::scalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' pyexp ')'      { $$ = new Foam::scalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' phexp ')'      { $$ = new Foam::scalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_magSqr '(' pexp ')'       { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' pvexp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' ptexp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' pyexp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' phexp ')'      { $$ = new Foam::scalarField(Foam::magSqr(*$3)); delete $3; }
         | pvexp '.' vectorComponentSwitch TOKEN_x            { $$ = new Foam::scalarField($1->component(0)); delete $1; }
         | pvexp '.' vectorComponentSwitch TOKEN_y            { $$ = new Foam::scalarField($1->component(1)); delete $1; }
         | pvexp '.' vectorComponentSwitch TOKEN_z            { $$ = new Foam::scalarField($1->component(2)); delete $1; }

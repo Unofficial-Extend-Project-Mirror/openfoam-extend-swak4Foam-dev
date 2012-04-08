@@ -184,6 +184,18 @@ functions
         );
         interpolationScheme nix;
     } 
+    meshMovement
+    {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        expression "(meshPhi(U)-phi)/area()";
+        accumulations (
+            min
+            max
+            sum
+        );
+    }
 );
 
 // ************************************************************************* //

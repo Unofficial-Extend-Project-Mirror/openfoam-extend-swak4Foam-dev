@@ -174,6 +174,7 @@
 %token TOKEN_log
 %token TOKEN_exp
 %token TOKEN_mag
+%token TOKEN_magSqr
 %token TOKEN_sin
 %token TOKEN_cos
 %token TOKEN_tan
@@ -384,6 +385,14 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | flexp '?' fsexp ':' fsexp         { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeScalarField>(0.)); delete $1; delete $3; delete $5; }
         | TOKEN_mag '(' fsexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' fvexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_mag '(' ftexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_mag '(' fyexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_mag '(' fhexp ')'           { $$ = new Foam::edgeScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fsexp ')'           { $$ = new Foam::edgeScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fvexp ')'           { $$ = new Foam::edgeScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' ftexp ')'           { $$ = new Foam::edgeScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fyexp ')'           { $$ = new Foam::edgeScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' fhexp ')'           { $$ = new Foam::edgeScalarField(Foam::magSqr(*$3)); delete $3; }
         | TOKEN_length '(' ')'                { $$ = driver.makeLengthField(); }
         | TOKEN_lnGrad '(' exp ')'          { $$ = new Foam::edgeScalarField(Foam::fac::lnGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::edgeScalarField(Foam::fac::interpolate(*$3)); delete $3; }
@@ -498,6 +507,14 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_average '(' exp ')'                { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_mag '(' exp ')'                    { $$ = new Foam::areaScalarField(Foam::mag(*$3)); delete $3; }
         | TOKEN_mag '(' vexp ')'                   { $$ = new Foam::areaScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_mag '(' texp ')'                   { $$ = new Foam::areaScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_mag '(' yexp ')'                   { $$ = new Foam::areaScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_mag '(' hexp ')'                   { $$ = new Foam::areaScalarField(Foam::mag(*$3)); delete $3; }
+        | TOKEN_magSqr '(' exp ')'                    { $$ = new Foam::areaScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' vexp ')'                   { $$ = new Foam::areaScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' texp ')'                   { $$ = new Foam::areaScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' yexp ')'                   { $$ = new Foam::areaScalarField(Foam::magSqr(*$3)); delete $3; }
+        | TOKEN_magSqr '(' hexp ')'                   { $$ = new Foam::areaScalarField(Foam::magSqr(*$3)); delete $3; }
         | TOKEN_div '(' vexp ')'                   { $$ = new Foam::areaScalarField(Foam::fac::div(*$3)); delete $3; }
         | TOKEN_div '(' fsexp ')'                  { $$ = new Foam::areaScalarField(Foam::fac::div(*$3)); delete $3; }
         | TOKEN_div '(' fsexp ',' exp ')'          { $$ = new Foam::areaScalarField(Foam::fac::div(*$3,*$5)); delete $3; delete $5; }

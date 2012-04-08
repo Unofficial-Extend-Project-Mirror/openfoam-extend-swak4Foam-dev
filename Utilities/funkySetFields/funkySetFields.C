@@ -310,6 +310,20 @@ void doAnExpression
                 << exit(FatalError);
     }
 
+    if(
+        oldFieldType=="IOobject"
+        &&
+        !create
+    ) {
+        FatalErrorIn("doAnExpression()")
+            //            << args.executable()
+                << " The type of the " << field << " is  " 
+                    << oldFieldType
+                    << ". Seems that it doesn't exist. Use 'create'" 
+                    << endl
+            << exit(FatalError);
+    }
+
     if(driver.typ()!=oldFieldType) {
         FatalErrorIn("doAnExpression()")
             //            << args.executable()
