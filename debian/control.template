@@ -2,8 +2,7 @@ Source: swak4foam-%(ofpkg)s
 Priority: extra
 Maintainer: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Build-Depends: debhelper (>= 7.0.50~), devscripts, cdbs,
-	 bison, flex, binutils-dev,
-	 %(ofpkg)s      
+	 bison, flex, %(ofpkgdevComma)s binutils-dev,
 Standards-Version: 3.9.1
 Section: libs
 Homepage: http://openfoamwiki.net/index.php/Contrib/swak4Foam
@@ -13,7 +12,7 @@ Homepage: http://openfoamwiki.net/index.php/Contrib/swak4Foam
 Package: swak4foam-%(ofpkg)s-dev
 Section: libdevel
 Architecture: any
-Depends: swak4foam-%(ofpkg)s (= ${binary:Version}), bison, flex
+Depends: %(ofpkgdevComma)s swak4foam-%(ofpkg)s (= ${binary:Version}), bison, flex
 Description: swak4Foam - The "Swiss Army Knife For OpenFOAM"
    A number of libraries that allows
    to use general expressions in OpenFOAM-cases. Successor of
@@ -22,8 +21,7 @@ Description: swak4Foam - The "Swiss Army Knife For OpenFOAM"
 Package: swak4foam-%(ofpkg)s
 Section: libs
 Architecture: any
-Depends: %(ofpkg)s, ${shlibs:Depends}, ${misc:Depends}
-Provides: funkysetfields, groovybc, simplefunctionobjects
+Depends: %(ofpkgComma)s ${shlibs:Depends}, ${misc:Depends}
 Conflicts: funkysetfields, groovybc, simplefunctionobjects
 Replaces: funkysetfields, groovybc, simplefunctionobjects
 Description: swak4Foam - A number of libraries that allows

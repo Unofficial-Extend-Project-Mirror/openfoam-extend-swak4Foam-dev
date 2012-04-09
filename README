@@ -872,6 +872,10 @@ S_{expl} + S_{impl} T
      Thanks to patches supplied by Bruno Santos (see
      [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
      compilation of the libraries is now possible in parallel
+*** Packaging
+**** Update of the Debian-Packaging
+     =make dpkg= now genrates also a valid package if the current
+     OpenFOAM-installation is *not* installed using the =dpkg=.
 *** Changes in the behavior
 **** Directory variables in Python-integration
      For parallel runs the content of the =caseDir=-variable changed
