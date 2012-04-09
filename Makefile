@@ -1,10 +1,6 @@
 default:
 	echo "Use ./Allwmake"
 
-getSimple:
-	./downloadSimpleFunctionObjects.sh
-	wcleanLnIncludeAll
-
 cleanStuff:
 	./Allwclean
 	wcleanLnIncludeAll
@@ -21,7 +17,7 @@ dpkg-only: cleanStuff prepareDebian
 source-dpkg: cleanStuff prepareDebian
 	export DH_ALWAYS_EXCLUDE=.svn:.dep:.o; dpkg-buildpackage -S -sa
 
-dpkg: getSimple dpkg-only
+dpkg: dpkg-only
 
 install:
 	./downloadSimpleFunctionObjects.sh
