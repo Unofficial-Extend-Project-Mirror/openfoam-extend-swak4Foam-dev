@@ -58,6 +58,8 @@ template<class Type>
 class groovyBCCommon
 {
 
+    bool evaluateDuringConstruction_;
+
 protected:
 
     // Protected data
@@ -71,6 +73,10 @@ protected:
     string fractionExpression_;
 
     string nullValue();
+
+    bool evaluateDuringConstruction() const 
+        { return evaluateDuringConstruction_; }
+
 public:
 
     // Constructors
@@ -79,7 +85,8 @@ public:
     groovyBCCommon
     (
         bool hasGradient,
-        bool isPoint=false
+        bool isPoint=false,
+        string fractionExpression="1"
     );
 
     //- Construct from dictionary
@@ -87,7 +94,8 @@ public:
     (
         const dictionary&,
         bool hasGradient,
-        bool isPoint=false
+        bool isPoint=false,
+        string fractionExpression="1"
     );
 
     //- Copy constructor

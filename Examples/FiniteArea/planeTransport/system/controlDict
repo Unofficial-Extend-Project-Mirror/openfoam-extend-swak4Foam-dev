@@ -23,7 +23,7 @@ startTime           0;
 
 stopAt              endTime;
 
-endTime             6;
+endTime             10;
 
 deltaT              0.1;
 
@@ -45,10 +45,47 @@ runTimeModifiable   yes;
 
 libs (
     "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
     "libswakFiniteArea.so"
 );
 
-functions (
+functions {
+    defineConstant {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName const;
+        globalScope planeInlet;
+        valueType scalar;
+        value 1;
+    };
+    defineAmp {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName amplitude;
+        globalScope planeInlet;
+        valueType scalar;
+        value 1;
+    };
+    defineAmp2 {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName amplitude2;
+        globalScope planeInlet;
+        valueType scalar;
+        value 4;
+    };
+    defineFreq {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName freq;
+        globalScope planeInlet;
+        valueType scalar;
+        value 2;
+    };
     faOut {
         type swakExpression;
         valueType faPatch;
@@ -118,7 +155,105 @@ functions (
         fieldName Cs;
         autowrite true;
     }
-);
+    solveTransientT {
+        type solveAreaLaplacianPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName TTransient;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        lambda "4e-2" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 1 0 0 0];
+    }
+    writeTTransient {
+        type volFromFaField;
+        outputControl outputTime;
+        fieldName TTransient;
+        autowrite true;
+    }
+    solveSteadyT {
+        $solveTransientT;
+
+        fieldName TSteady;
+        steady true;
+        solveAt startup;
+    }
+    writeTSteady {
+        $writeTTransient;
+
+        fieldName TSteady;
+    }
+    compareTSteadyTransient {
+        type swakExpression;
+        verbose true;
+        expression "TSteady-TTransient";
+        accumulations (
+            min
+            max
+            average
+        );
+        valueType internalFaField;
+    }
+    solveYTransient {
+        type solveAreaTransportPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName YTransient;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "0.01" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 0 0 0 0];
+        phi "phis" [0 2 -1 0 0];
+    }    
+    writeYTransient {
+        $writeTTransient;
+
+        fieldName YTransient;
+    }
+    solveYSteady {
+        $solveYTransient;
+        
+        fieldName YSteady;
+        steady true;
+        solveAt startup;
+    }
+    writeYSteady {
+        $writeYTransient;
+
+        fieldName YSteady;
+    }
+    compareYSteadyTransient {
+        $compareTSteadyTransient;
+        expression "YSteady-YTransient";
+    }
+    changeScalar {
+        type swakExpression;
+        valueType internalFaField;
+        verbose true;
+        expression "mag(ddt(Cs))";
+        accumulations (
+            max
+        );
+    }
+    changeScalar2 {
+        $changeScalar;
+        expression "mag(Cs-oldTime(Cs))/deltaT()";
+    }
+    outletChange {
+        type swakExpression;
+        valueType faPatch;
+        faPatchName outlet;
+        verbose true;
+        expression "mag(Cs-oldTime(Cs))/deltaT()";
+        accumulations (
+            max
+        );
+    }
+ }
 
 // ************************************************************************* //
 

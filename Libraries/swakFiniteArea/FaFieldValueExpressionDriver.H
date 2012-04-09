@@ -17,7 +17,7 @@ using Foam::FaFieldValueExpressionDriver;
 
 #include "FaFieldValueExpressionParser.tab.hh"
 
-namespace parserField {
+namespace parserFaField {
     class location;
     class FaFieldValueExpressionParser;
 }
@@ -35,21 +35,28 @@ class FaFieldValueExpressionDriver
     FaFieldValueExpressionDriver(const FaFieldValueExpressionDriver &);
     void operator=(const FaFieldValueExpressionDriver&);
 
-public:
-    enum ExpressionType{
-        NO_TYPE,
-        SCALAR_TYPE,
-        VECTOR_TYPE,
-        LOGICAL_TYPE
-    };
+// public:
+//     enum ExpressionType{
+//         NO_TYPE,
+//         SCALAR_TYPE,
+//         VECTOR_TYPE,
+//         LOGICAL_TYPE
+//     };
 
 private:
     const faMesh &mesh_;
 
-    autoPtr<areaScalarField> sresult_;
-    autoPtr<areaVectorField> vresult_;
+//     autoPtr<areaScalarField> sresult_;
+//     autoPtr<areaVectorField> vresult_;
 
-    ExpressionType typ_;
+    autoPtr<regIOobject> resultField_;
+
+    //    ExpressionType typ_;
+    word typ_;
+
+    bool isLogical_;
+
+    bool isSurfaceField_;
 
     dimensionSet resultDimension_;
 
@@ -78,19 +85,31 @@ public:
     inline const fvMesh &mesh() const;
     inline const faMesh &aMesh() const;
 
-    // Check the result type
-    bool resultIsVector() { return typ_==VECTOR_TYPE; }
-    bool resultIsScalar() { return typ_==SCALAR_TYPE; }
-    bool resultIsLogical() { return typ_==LOGICAL_TYPE; }
+    //- check if field is of requested type
+    template<class T>
+    bool resultIsTyp(bool isLogical=false);
 
-    // Setting the result
-    void setScalarResult(areaScalarField *);
-    void setLogicalResult(areaScalarField *);
-    void setVectorResult(areaVectorField *);
+protected:
 
-    // Getting the results
-    const areaScalarField &getScalar() { return sresult_; }
-    const areaVectorField &getVector() { return vresult_; }
+    //- set the result field
+
+    //. Not everyone should be allowed to use this
+    template<class T>
+    void setResult(T *,bool isSurfaceField);
+
+    template<class T>
+    void setLogicalResult(T *,bool isSurfaceField);
+
+    //- set the state of the lexer to scanning vector components
+    void startVectorComponent();
+
+    //- set the state of the lexer to scanning tensor components
+    void startTensorComponent();
+
+public:
+    //- get the result field (if it is of the right type)
+    template<class T>
+    const T &getResult();
 
     // Handling the scanner.
     void scan_begin ();
@@ -101,7 +120,10 @@ public:
 
     // returning fields
     template<class T>
-    T *getField(const string &name);
+    autoPtr<T> getField(
+        const string &name,
+        bool getOldTime=false
+    );
 
     template<class FType>
     inline FType *makeConstantField(const typename FType::value_type &val);
@@ -110,12 +132,42 @@ public:
     inline FType *makeField(const Field<typename FType::value_type> &val);
 
     // make constant fields
-    areaVectorField *makeVectorField(areaScalarField *x,areaScalarField *y,areaScalarField *z);
-    edgeVectorField *makeEdgeVectorField(edgeScalarField *x,edgeScalarField *y,edgeScalarField *z);
-    // areaScalarField *makeCellSetField(const string &name);
-    // areaScalarField *makeCellZoneField(const string &name);
-    // edgeScalarField *makeFaceSetField(const string &name);
-    // edgeScalarField *makeFaceZoneField(const string &name);
+    areaVectorField *makeVectorField(
+        areaScalarField *x,
+        areaScalarField *y,
+        areaScalarField *z
+    );
+
+    edgeVectorField *makeEdgeVectorField(
+        edgeScalarField *x,
+        edgeScalarField *y,
+        edgeScalarField *z
+    );
+
+    areaTensorField *makeTensorField(
+        areaScalarField *,areaScalarField *,areaScalarField *,
+        areaScalarField *,areaScalarField *,areaScalarField *,
+        areaScalarField *,areaScalarField *,areaScalarField *
+    );
+    edgeTensorField *makeEdgeTensorField(
+        edgeScalarField *,edgeScalarField *,edgeScalarField *,
+        edgeScalarField *,edgeScalarField *,edgeScalarField *,
+        edgeScalarField *,edgeScalarField *,edgeScalarField *
+    );
+
+    areaSymmTensorField *makeSymmTensorField(
+        areaScalarField *,areaScalarField *,areaScalarField *,
+        areaScalarField *,areaScalarField *,areaScalarField *
+    );
+
+    edgeSymmTensorField *makeEdgeSymmTensorField(
+        edgeScalarField *,edgeScalarField *,edgeScalarField *,
+        edgeScalarField *,edgeScalarField *,edgeScalarField *
+    );
+
+    areaSphericalTensorField *makeSphericalTensorField(areaScalarField *);
+
+    edgeSphericalTensorField *makeEdgeSphericalTensorField(edgeScalarField *);
 
     // modulo operator
     areaScalarField *makeModuloField(const areaScalarField &a,const areaScalarField &b);
@@ -128,10 +180,19 @@ public:
     areaVectorField *makePositionField();
     areaScalarField *makeRDistanceField(const areaVectorField &r);
     areaScalarField *makeAreaField();
-    areaScalarField *makeRandomField();
-    areaScalarField *makeGaussRandomField();
+    areaScalarField *makeRandomField(label seed=0);
+    areaScalarField *makeGaussRandomField(label seed=0);
     areaScalarField *makeCellIdField();
     
+    //- what type
+    const word &typ() const { return typ_; }
+
+    //- is this a logical field
+    bool isLogical() const { return isLogical_; }
+
+    //- is this a surface field
+    bool isSurfaceField() const { return isSurfaceField_; }
+
     // Logical expressions
     template <class Field>
     Field *makeLogicalField(scalar v);
@@ -149,11 +210,47 @@ public:
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
     template<class T>
-    static void makePatches(GeometricField<T,faPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void makePatches(
+        GeometricField<T,faPatchField,areaMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
     template<class T>
-    static void setValuePatches(GeometricField<T,faPatchField,areaMesh> &field,bool keepPatches,const wordList &fixedPatches);
+    static void setValuePatches(
+        GeometricField<T,faPatchField,areaMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
 
+    template<class T>
+    static void makePatches(
+        GeometricField<T,faePatchField,edgeMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void setValuePatches(
+        GeometricField<T,faePatchField,edgeMesh> &field,
+        bool keepPatches,
+        const wordList &fixedPatches
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,faPatchField,areaMesh> &field,
+        const GeometricField<T,faPatchField,areaMesh> &orig
+    );
+
+    template<class T>
+    static void copyCalculatedPatches(
+        GeometricField<T,faePatchField,edgeMesh> &field,
+        const GeometricField<T,faePatchField,edgeMesh> &orig
+    );
+
+    // allow acces to the setResult-method
+    friend class parserFaField::FaFieldValueExpressionParser;
 };
 
 } // end namespace

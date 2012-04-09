@@ -89,7 +89,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 :
     mixedFvPatchField<Type>(p, iF),
     groovyBCCommon<Type>(dict,true),
-    driver_(this->patch())
+    driver_(dict,this->patch())
 {
     if(debug) {
         Info << "groovyBCFvPatchField<Type>::groovyBCFvPatchField 3" << endl;
@@ -124,6 +124,11 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 
     this->refGrad() = pTraits<Type>::zero;
     this->valueFraction() = 1;
+
+    if(this->evaluateDuringConstruction()) {
+        // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
+        this->evaluate();
+    }
 }
 
 

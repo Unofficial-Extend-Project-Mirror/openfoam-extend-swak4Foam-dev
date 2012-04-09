@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 06 Feb 2012 12:04:00 +0100
+State: fixed
+Subject: Implement ddt/oldTime for finiteArea
+Message-Id: <fa26f82be9828759-0-artemis@bgs-Greybook.local>
+
+Has been done for all other fields. See issue 8eeb65d41a6998de

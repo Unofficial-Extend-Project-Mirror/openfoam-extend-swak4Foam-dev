@@ -53,51 +53,58 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpress
 
     CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set,const CellSetValueExpressionDriver& orig)
 :
-        SubsetValueExpressionDriver(orig),
+        SetSubsetValueExpressionDriver(orig),
         cellSet_(
-            dynamic_cast<const fvMesh&>(set.db()),
-            //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with f++ 4.2
-            //            set.name()+"_copy",
-            set.name(),
-            set
+            new cellSet(
+                dynamic_cast<const fvMesh&>(set.db()),
+                //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with f++ 4.2
+                //            set.name()+"_copy",
+                set.name(),
+                set
+            )
         )
 {}
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const cellSet &set)
 :
-    SubsetValueExpressionDriver(),
+    SetSubsetValueExpressionDriver(set.name(),NEW),
     cellSet_(
+        new cellSet
+        (
             dynamic_cast<const fvMesh&>(set.db()),
             //            dynamicCast<const fvMesh&>(set.db()), // doesn't work with gcc 4.2
             //            set.name()+"_copy",
             set.name(),
             set
+        )
     )
 {}
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(),
+    SetSubsetValueExpressionDriver(id,INVALID),
     cellSet_(
-        mesh,
-        id,
         getSet<cellSet>(
             mesh,
-            id
-        )()
+            id,
+            origin_
+        )
     )
 {
 }
 
 CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
  :
-    SubsetValueExpressionDriver(dict),
+    SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),NEW),
     cellSet_(
-        regionMesh(dict,mesh),
-        dict.lookup("setName"),
         getSet<cellSet>(
-            regionMesh(dict,mesh),
-            dict.lookup("setName")
+            regionMesh(
+                dict,
+                mesh,
+                searchOnDisc()
+            ),
+            dict.lookup("setName"),
+            origin_
         )
     )
 {
@@ -116,39 +123,39 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellSet::co
     return it.key();
 }
 
-Field<scalar> *CellSetValueExpressionDriver::getScalarField(const string &name)
+    Field<scalar> *CellSetValueExpressionDriver::getScalarField(const string &name,bool oldTime)
 {
-    return getFieldInternal<volScalarField,cellSet,scalar>(name,cellSet_);
+    return getFieldInternal<volScalarField,cellSet,scalar>(name,cellSet_,oldTime);
 }
 
-Field<vector> *CellSetValueExpressionDriver::getVectorField(const string &name)
+Field<vector> *CellSetValueExpressionDriver::getVectorField(const string &name,bool oldTime)
 {
-    return getFieldInternal<volVectorField,cellSet,vector>(name,cellSet_);
+    return getFieldInternal<volVectorField,cellSet,vector>(name,cellSet_,oldTime);
 }
 
-Field<tensor> *CellSetValueExpressionDriver::getTensorField(const string &name)
+Field<tensor> *CellSetValueExpressionDriver::getTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternal<volTensorField,cellSet,tensor>(name,cellSet_);
+    return getFieldInternal<volTensorField,cellSet,tensor>(name,cellSet_,oldTime);
 }
 
-Field<symmTensor> *CellSetValueExpressionDriver::getSymmTensorField(const string &name)
+Field<symmTensor> *CellSetValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternal<volSymmTensorField,cellSet,symmTensor>(name,cellSet_);
+    return getFieldInternal<volSymmTensorField,cellSet,symmTensor>(name,cellSet_,oldTime);
 }
 
-Field<sphericalTensor> *CellSetValueExpressionDriver::getSphericalTensorField(const string &name)
+Field<sphericalTensor> *CellSetValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
 {
-    return getFieldInternal<volSphericalTensorField,cellSet,sphericalTensor>(name,cellSet_);
+    return getFieldInternal<volSphericalTensorField,cellSet,sphericalTensor>(name,cellSet_,oldTime);
 }
 
 vectorField *CellSetValueExpressionDriver::makePositionField()
 {
-    return getFromFieldInternal(this->mesh().C(),cellSet_);
+    return getFromFieldInternal(this->mesh().C(),cellSet_());
 }
 
 scalarField *CellSetValueExpressionDriver::makeCellVolumeField()
 {
-    return getFromFieldInternal(this->mesh().V(),cellSet_);
+    return getFromFieldInternal(this->mesh().V(),cellSet_());
 }
 
 
@@ -162,7 +169,7 @@ scalarField *CellSetValueExpressionDriver::makeFaceAreaMagField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceAreaField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -171,7 +178,7 @@ scalarField *CellSetValueExpressionDriver::makeFaceFlipField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceFlipField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new scalarField(0);
 }
 
@@ -180,7 +187,7 @@ vectorField *CellSetValueExpressionDriver::makeFaceNormalField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceNormalField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new vectorField(0);
 }
 
@@ -189,8 +196,18 @@ vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceAreaField()")
         << "cellSet knows nothing about faces"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     return new vectorField(0);
+}
+
+bool CellSetValueExpressionDriver::update()
+{
+    if(debug) {
+        Pout << "CellSet: update " << cellSet_->name() 
+            << endl;
+    }
+
+    return updateSet(cellSet_,id_,origin_);
 }
 
 // ************************************************************************* //

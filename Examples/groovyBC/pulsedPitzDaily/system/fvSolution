@@ -58,12 +58,59 @@ solvers
         tolerance        1e-05;
         relTol           0;
     };
+    distance
+    {
+        solver PCG;
+        preconditioner   DIC;
+        tolerance        1e-06;
+        relTol           0;
+    };
+    heat
+    {
+        solver PCG;
+        preconditioner   DIC;
+        tolerance        1e-06;
+        relTol           0;
+    };
+    residualTime 
+    {
+        solver PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0;
+    };
+    scalar 
+    {
+        solver PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0;
+    };
 }
 
 PISO
 {
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
+}
+distanceLaplacianPDE
+{
+    $PISO;
+}
+heatLaplacianPDE
+{
+    $PISO;
+}
+
+scalarTransportPDE
+{
+    $PISO;
+}
+
+residualTimeTransportPDE
+{
+    $PISO;
+    nNonOrthogonalCorrectors 3;
 }
 
 // ************************************************************************* //

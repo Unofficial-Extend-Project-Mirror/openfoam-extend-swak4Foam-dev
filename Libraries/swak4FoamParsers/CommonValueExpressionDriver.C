@@ -32,6 +32,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "CommonValueExpressionDriver.H"
+#include "GlobalVariablesRepository.H"
+
+#include "ExpressionDriverWriter.H"
 
 #include "Random.H"
 
@@ -62,11 +65,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     variables_(orig.variables_),
     storedVariables_(orig.storedVariables_),
     storedVariablesIndex_(orig.storedVariablesIndex_),
+    globalVariableScopes_(orig.globalVariableScopes_),
     lines_(orig.lines_),
     lookup_(orig.lookup_),
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
-    trace_parsing_ (orig.trace_parsing_)
+    trace_parsing_ (orig.trace_parsing_),
+    prevIterIsOldTime_(orig.prevIterIsOldTime_)
 {
     setSearchBehaviour(
         orig.cacheReadFields_,
@@ -79,16 +84,20 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
 :
     variableStrings_(readVariableStrings(dict)),
     storedVariablesIndex_(-1),
+    globalVariableScopes_(dict.lookupOrDefault("globalScopes",wordList())),
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
-    trace_parsing_ (dict.lookupOrDefault("traceParsing",false))
+    trace_parsing_ (dict.lookupOrDefault("traceParsing",false)),
+    prevIterIsOldTime_(dict.lookupOrDefault("prevIterIsOldTime",false))
 {
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
     }
 
     if(debug) {
-        Info << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
+        Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
     setSearchBehaviour(
@@ -108,9 +117,11 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 :
     variableStrings_(),
     storedVariablesIndex_(-1),
+    globalVariableScopes_(),
     content_(""),
     trace_scanning_ (false),
-    trace_parsing_ (false)
+    trace_parsing_ (false),
+    prevIterIsOldTime_(false)
 {
     setSearchBehaviour(
         cacheReadFields,
@@ -121,8 +132,23 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+    if(dict.found("globalScopes")) {
+        setGlobalScopes(wordList(dict.lookup("globalScopes")));
+    }
+
     if(dict.found("storedVariables")) {
-        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+        if(
+            writer_.valid()
+            &&
+            storedVariables_.size()>0
+        ) {
+            WarningIn("CommonValueExpressionDriver::readVariablesAndTables")
+                << "Seems like 'storedVariables' was already read. No update from "
+                    << dict.lookup("storedVariables")
+                    << endl;
+        } else {
+            storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+        }
     }
 
     setVariableStrings(dict);
@@ -179,7 +205,7 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     }
 
     if(debug) {
-        Info << "Creating driver of type " << driverType << endl;
+        Pout << "Creating driver of type " << driverType << endl;
     }
 
     return autoPtr<CommonValueExpressionDriver>
@@ -212,7 +238,7 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     }
 
     if(debug) {
-        Info << "Creating driver of type " << driverType << endl;
+        Pout << "Creating driver of type " << driverType << endl;
     }
 
     return autoPtr<CommonValueExpressionDriver>
@@ -263,7 +289,7 @@ stringList CommonValueExpressionDriver::readVariableStrings(const dictionary &di
     FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
         << " Entry 'variables' must either be a string or a list of strings"
             << endl
-            << abort(FatalError);
+            << exit(FatalError);
     
     return stringList();
 }
@@ -313,6 +339,12 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
         os << token::END_STATEMENT << nl;
     }
 
+    if(globalVariableScopes_.size()>0) {
+        os.writeKeyword("globalScopes");
+        os << globalVariableScopes_ << endl;
+        os << token::END_STATEMENT << nl;
+    }
+
     return os;
 }
 
@@ -328,7 +360,19 @@ void CommonValueExpressionDriver::clearResult()
 
 vectorField *CommonValueExpressionDriver::composeVectorField(scalarField *x,scalarField *y,scalarField *z)
 {
-    vectorField *result=new vectorField(this->size());
+    if(
+        x->size() != y->size()
+        ||
+        x->size() != z->size()
+    ) {
+        FatalErrorIn("vectorField *CommonValueExpressionDriver::composeVectorField")
+            << "Sizes " << x->size() << " " << y->size() << " "
+                << z-size() << " of the components do not agree"
+                << endl
+                << abort(FatalError);
+    }
+
+    vectorField *result=new vectorField(x->size());
 
     forAll(*result,faceI) {
         (*result)[faceI]=Foam::vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
@@ -343,7 +387,30 @@ tensorField *CommonValueExpressionDriver::composeTensorField(
     scalarField *zx,scalarField *zy,scalarField *zz
 )
 {
-    tensorField *result=new tensorField(this->size());
+    if(
+        xx->size() != xy->size()
+        ||
+        xx->size() != xz->size()
+        ||
+        xx->size() != yx->size()
+        ||
+        xx->size() != yy->size()
+        ||
+        xx->size() != yz->size()
+        ||
+        xx->size() != zx->size()
+        ||
+        xx->size() != zy->size()
+        ||
+        xx->size() != zz->size()
+    ) {
+        FatalErrorIn("vectorField *CommonValueExpressionDriver::composeVectorField")
+            << "Sizes of the components do not agree"
+                << endl
+                << abort(FatalError);
+    }
+
+    tensorField *result=new tensorField(xx->size());
 
     forAll(*result,faceI) {
         (*result)[faceI]=Foam::tensor(
@@ -363,7 +430,24 @@ symmTensorField *CommonValueExpressionDriver::composeSymmTensorField(
     scalarField *zz
 )
 {
-    symmTensorField *result=new symmTensorField(this->size());
+    if(
+        xx->size() != xy->size()
+        ||
+        xx->size() != xz->size()
+        ||
+        xx->size() != yy->size()
+        ||
+        xx->size() != yz->size()
+        ||
+        xx->size() != zz->size()
+    ) {
+        FatalErrorIn("vectorField *CommonValueExpressionDriver::composeVectorField")
+            << "Sizes of the components do not agree"
+                << endl
+                << abort(FatalError);
+    }
+
+    symmTensorField *result=new symmTensorField(xx->size());
 
     forAll(*result,faceI) {
         (*result)[faceI]=Foam::symmTensor(
@@ -381,7 +465,7 @@ sphericalTensorField *CommonValueExpressionDriver::composeSphericalTensorField(
     scalarField *ii
 )
 {
-    sphericalTensorField *result=new sphericalTensorField(this->size());
+    sphericalTensorField *result=new sphericalTensorField(ii->size());
 
     forAll(*result,faceI) {
         (*result)[faceI]=Foam::sphericalTensor(
@@ -447,7 +531,7 @@ scalarField *CommonValueExpressionDriver::makeRandomField(label seed)
     scalarField *result=new scalarField(this->size());
 
     if(seed<=0) {
-        seed=runTime().timeIndex();
+        seed=runTime().timeIndex()-seed;
     }
 
     Foam::Random rand(seed);
@@ -485,7 +569,7 @@ scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
     scalarField *result=new scalarField(this->size());
 
     if(seed<=0) {
-        seed=runTime().timeIndex();
+        seed=runTime().timeIndex()-seed;
     }
 
     Foam::Random rand(seed);
@@ -505,14 +589,14 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
 {
     if(storedVariablesIndex_<0) {
         if(debug) {
-            Info << "First update: " << mesh().time().timeIndex() << endl;
+            Pout << "First update: " << mesh().time().timeIndex() << endl;
         }
         storedVariablesIndex_=mesh().time().timeIndex();
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(!v.hasValue()) {
                 if(debug) {
-                    Info << "First valuate: " << v.initialValueExpression() 
+                    Pout << "First valuate: " << v.initialValueExpression() 
                         << " -> " << v.name() << endl;
                 }
                 parse(v.initialValueExpression());
@@ -527,14 +611,14 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
         storedVariablesIndex_!=mesh().time().timeIndex()
     ) {
         if(debug) {
-            Info << "Store variables: " << force << " " 
+            Pout << "Store variables: " << force << " " 
                 << storedVariablesIndex_ << " " << mesh().time().timeIndex() << endl;
         }
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(variables_.found(v.name())) {
                 if(debug) {
-                    Info << "Storing variable: " << v.name() << " " 
+                    Pout << "Storing variable: " << v.name() << " " 
                         << variables_[v.name()] << endl;
                 }
                 v=variables_[v.name()];
@@ -547,7 +631,7 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
 void CommonValueExpressionDriver::clearVariables()
 {
     if(debug) {
-        Info << "Clearing variables" << endl;
+        Pout << "Clearing variables" << endl;
     }
 
     this->update();
@@ -567,11 +651,14 @@ void CommonValueExpressionDriver::evaluateVariable(const word &name,const string
     parse(expr);
 
     if(debug) {
-        Info << "Evaluating: " << expr << " -> " << name << endl;
-        Info << result_;
+        Pout << "Evaluating: " << expr << " -> " << name << endl;
+        Pout << result_;
     }
 
     variables_.set(name,ExpressionResult(result_));
+    if(debug>1) {
+        Pout << "Value stored: " << variables_[name] << endl;
+    }
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
@@ -626,6 +713,9 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
         this->searchInMemory(),
         this->searchOnDisc()
     );
+    otherDriver->setGlobalScopes(
+        this->globalVariableScopes_
+    );
 
     otherDriver->parse(expr);
     variables_.insert(name,otherDriver->getUniform(this->size(),false));
@@ -657,7 +747,7 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
                 << "No terminating ';' found in expression '"
                     << exprList.substr(start) << "'\n"
                     << endl
-                    << abort(FatalError);            
+                    << exit(FatalError);            
         }
         std::string::size_type  eqPos=exprList.find('=',start);
         if(eqPos==std::string::npos || eqPos > end) {
@@ -665,7 +755,7 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
                 << "No '=' found in expression '"
                     << exprList.substr(start,end-start) << "'\n"
                     << endl
-                    << abort(FatalError);            
+                    << exit(FatalError);            
         }
         string expr(exprList.substr(eqPos+1,end-eqPos-1));
 
@@ -677,7 +767,7 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
                     << "No closing '}' found in " 
                         << exprList.substr(start,eqPos-start)
                         << endl
-                        << abort(FatalError);
+                        << exit(FatalError);
             }
             word name(exprList.substr(start,startPos-start));
             string remoteExpr(exprList.substr(startPos+1,endPos-startPos-1));
@@ -718,21 +808,49 @@ void CommonValueExpressionDriver::writeTables(Ostream &os,const HashTable<interp
 const fvMesh &CommonValueExpressionDriver::regionMesh
 (
     const dictionary &dict,
-    const fvMesh &mesh
+    const fvMesh &mesh,
+    bool readIfNecessary
 )
 {
     if(!dict.found("region")) {
         if(debug) {
-            Info << "Using original mesh " << endl;
+            Pout << "Using original mesh " << endl;
         }
 
         return mesh;
     }
 
     if(debug) {
-        Info << "Using mesh " << dict.lookup("region")  << endl;
+        Pout << "Using mesh " << dict.lookup("region")  << endl;
     }
     
+    if(
+        !mesh.time().foundObject<objectRegistry>(
+            dict.lookup("region")
+        )
+        &&
+        readIfNecessary
+    ) {
+        WarningIn("CommonValueExpressionDriver::regionMesh")
+            << "Region " << dict.lookup("region")
+                << " not in memory. Trying to register it"
+                << endl;
+
+        autoPtr<polyMesh> temporary(
+            new fvMesh
+            (
+                IOobject(
+                    word(dict.lookup("region")),
+                    mesh.time().constant(),
+                    mesh.time(),
+                    IOobject::MUST_READ
+                )
+            )
+        );
+        //        Info << "Hepp: "<< temporary->polyMesh::ownedByRegistry() << endl;
+        temporary->polyMesh::store(temporary.ptr());
+    }
+
     //     return dynamicCast<const fvMesh&>( // soesn't work with gcc 3.2
     return dynamic_cast<const fvMesh&>(
         mesh.time().lookupObject<objectRegistry>(
@@ -754,7 +872,7 @@ string CommonValueExpressionDriver::getTypeOfField(const string &name) const
     f.headerOk();
 
     if(debug) {
-        Info << "Name: " << name << " Time: " << mesh().time().timeName() 
+        Pout << "Name: " << name << " Time: " << mesh().time().timeName() 
             << " Path: " << f.filePath() << " Class: " << f.headerClassName() << endl;
     }
 
@@ -764,7 +882,7 @@ string CommonValueExpressionDriver::getTypeOfField(const string &name) const
 string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
 {
     if(debug) {
-        Info << "Lookinh for set named " << name << endl;
+        Pout << "Looking for set named " << name << endl;
     }
     IOobject f 
         (
@@ -779,7 +897,7 @@ string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
     if(f.headerOk()) {;
         return f.headerClassName();
     } else {
-        Info << "No set " << name << " at t=" << mesh().time().timeName() 
+        Pout << "No set " << name << " at t=" << mesh().time().timeName() 
             << " falling back to 'constant'" << endl;
         f=IOobject 
         (
@@ -848,6 +966,153 @@ string CommonValueExpressionDriver::outputEntry()
 const word CommonValueExpressionDriver::time() const
 {
     return this->mesh().time().timeName();
+}
+
+const ExpressionResult &CommonValueExpressionDriver::lookupGlobal(
+    const word &name
+) const
+{
+    return GlobalVariablesRepository::getGlobalVariables().get(
+        name,
+        globalVariableScopes_
+    );
+}
+
+void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
+{
+    globalVariableScopes_=other;
+}
+
+void CommonValueExpressionDriver::createWriterAndRead(const word &name)
+{
+    if(
+        hasDataToWrite()
+        &&
+        !writer_.valid()
+    ) {
+        writer_.set(
+            new ExpressionDriverWriter(
+                name+"_"+this->type(),
+                *this
+            )
+        );
+    }
+}
+
+void CommonValueExpressionDriver::tryWrite() const
+{
+    if(
+        writer_.valid()
+        &&
+        mesh().time().outputTime()
+    ) {
+        writer_->write();
+    }
+}
+
+bool CommonValueExpressionDriver::hasDataToWrite() const
+{
+    if(storedVariables_.size()>0) {
+        return true;
+    }
+
+    return false;
+}
+
+void CommonValueExpressionDriver::getData(const dictionary &dict)
+{
+    if(dict.found("storedVariables")) {
+        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+    }
+}
+
+void CommonValueExpressionDriver::prepareData(dictionary &dict) const
+{
+    if(storedVariables_.size()>0) {
+        const_cast<CommonValueExpressionDriver&>(*this).updateStoredVariables(true);
+        
+        dict.add(
+            "storedVariables",
+            storedVariables_
+        );
+    }
+}
+
+class lessOp {
+public:
+    bool operator()(scalar a,scalar b) {
+        return a<b;
+    }
+};
+
+class biggerOp {
+public:
+    bool operator()(scalar a,scalar b) {
+        return a>b;
+    }
+};
+
+ 
+template<class Op>
+class  extremeOp {
+    Op &op;
+public:
+    extremeOp(Op &op) 
+        : op(op)
+        {}
+    Tuple2<scalar,vector> operator()(
+        const Tuple2<scalar,vector> &a,
+        const Tuple2<scalar,vector> &b
+    ) const {
+        if(op(a.first(),b.first())) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+};
+
+template<class Op>
+vector getExtremePosition(
+    Op op,
+    const scalarField &vals,
+    const vectorField &locs
+) {
+    assert(vals.size()==locs.size());
+
+    vector pos(HUGE,HUGE,HUGE);
+    scalar val=op(1,-1) ? -HUGE : HUGE;
+    forAll(vals,i) {
+        if(op(vals[i],val)) {
+            val=vals[i];
+            pos=locs[i];
+        }
+    }
+    if(Pstream::parRun()) {
+        Tuple2<scalar,vector> info(val,pos);
+
+        reduce(info,extremeOp<Op>(op));
+
+        pos=info.second();
+    }
+    return pos;
+}
+
+vector CommonValueExpressionDriver::getPositionOfMinimum(
+    const scalarField &vals,
+    const vectorField &locs
+) const
+{
+    return getExtremePosition(lessOp(),vals,locs);
+}
+
+vector CommonValueExpressionDriver::getPositionOfMaximum(
+    const scalarField &vals,
+    const vectorField &locs
+) const
+{
+    return getExtremePosition(biggerOp(),vals,locs);
+
 }
 
 // ************************************************************************* //

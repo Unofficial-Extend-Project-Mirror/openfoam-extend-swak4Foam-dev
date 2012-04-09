@@ -49,7 +49,7 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "SubsetValueExpressionDriver.H"
+#include "SetSubsetValueExpressionDriver.H"
 
 namespace Foam
 {
@@ -60,12 +60,17 @@ namespace Foam
 
 class FaceSetValueExpressionDriver
 :
-    public SubsetValueExpressionDriver
+    public SetSubsetValueExpressionDriver
 {
     // Private data
-    faceSet faceSet_;
+    autoPtr<faceSet> faceSet_;
 
     // Private Member Functions
+
+protected:
+
+    //- update stuff that needs updating
+    virtual bool update();
 
 public:
 
@@ -116,15 +121,15 @@ public:
 
     virtual bool isCell() { return false; }
 
-    virtual Field<scalar> *getScalarField(const string &name);
+    virtual Field<scalar> *getScalarField(const string &name,bool oldTime=false);
 
-    virtual Field<vector> *getVectorField(const string &name);
+    virtual Field<vector> *getVectorField(const string &name,bool oldTime=false);
 
-    virtual Field<tensor> *getTensorField(const string &name);
+    virtual Field<tensor> *getTensorField(const string &name,bool oldTime=false);
 
-    virtual Field<symmTensor> *getSymmTensorField(const string &name);
+    virtual Field<symmTensor> *getSymmTensorField(const string &name,bool oldTime=false);
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name);
+    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name,bool oldTime=false);
 
     // Handling the parser
     //    void parse(const std::string& f);

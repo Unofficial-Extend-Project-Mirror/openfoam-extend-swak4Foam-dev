@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 22 Oct 2011 14:22:18 +0200
+State: fixed
+Subject: Generalize simpleFunctionObjects data-writing to allow CSV-files
+Message-Id: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
+
+Introduce a writeLine-method to write data-files with different
+separators. 
+
+Would need some additions in the infrastructure.
+
+Alternative is still to convert files to CSV by scripts

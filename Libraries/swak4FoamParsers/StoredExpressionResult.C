@@ -84,7 +84,7 @@ void StoredExpressionResult::operator=(const StoredExpressionResult& rhs)
     {
         FatalErrorIn("StoredExpressionResult::operator=(const StoredExpressionResult&)")
             << "Attempted assignment to self"
-            << abort(FatalError);
+            << exit(FatalError);
     }
 
     static_cast<ExpressionResult&>(*this)=rhs;

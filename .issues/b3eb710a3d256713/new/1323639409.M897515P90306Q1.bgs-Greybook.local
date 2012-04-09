@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 11 Dec 2011 22:34:19 +0100
+Subject: Re: funkySetAreaField does not support edge fields
+Message-Id: <b3eb710a3d256713-b8d9b01442e6bb89-artemis@bgs-Greybook.local>
+References: <b3eb710a3d256713-0-artemis@bgs-Greybook.local>
+In-Reply-To: <b3eb710a3d256713-0-artemis@bgs-Greybook.local>
+
+edgeFields now get written. No equivalent volumeField written

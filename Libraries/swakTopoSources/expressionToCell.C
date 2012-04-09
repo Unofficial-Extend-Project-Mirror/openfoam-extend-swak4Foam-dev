@@ -75,13 +75,13 @@ void Foam::expressionToCell::combine(topoSet& set, const bool add) const
             true  // search on disc
         );
     driver.parse(expression_);
-    if(!driver.resultIsLogical()) {
+    if(!driver.resultIsTyp<volScalarField>(true)) {
         FatalErrorIn("Foam::expressionToCell::combine(topoSet& set, const bool add) const")
             << "Expression " << expression_ << " does not evaluate to a logical expression"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
-    const volScalarField &condition=driver.getScalar();
+    const volScalarField &condition=driver.getResult<volScalarField>();
 
     forAll(condition, cellI)
     {

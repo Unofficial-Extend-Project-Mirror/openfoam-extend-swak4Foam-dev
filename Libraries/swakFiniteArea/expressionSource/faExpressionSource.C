@@ -54,7 +54,9 @@ faExpressionSource<T>::faExpressionSource
 :
     FaFieldValueExpressionDriver(dict,mesh),
     expression_(dict.lookup("expression"))
-{}
+{
+    createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -66,51 +68,21 @@ faExpressionSource<T>::~faExpressionSource()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<>
-tmp<faExpressionSource<scalar>::resultField> faExpressionSource<scalar>::operator()()
-{
-    clearVariables();
-    parse(expression_);
-    if(!resultIsScalar()) {
-        FatalErrorIn("faExpressionSource<scalar>::operator()()")
-            << "Result of " << expression_ << " is not a scalar"
-                << endl
-                << abort(FatalError);
-    }
-
-    tmp<resultField> result(new resultField(getScalar()));
-    
-    return result;
-}
-
-template<>
-tmp<faExpressionSource<vector>::resultField> faExpressionSource<vector>::operator()()
-{
-    clearVariables();
-    parse(expression_);
-    if(!resultIsVector()) {
-        FatalErrorIn("faExpressionSource<vector>::operator()()")
-            << "Result of " << expression_ << " is not a vector"
-                << endl
-                << abort(FatalError);
-    }
-
-    tmp<resultField> result(new resultField(getVector()));
-
-    return result;
-}
-
-// Catch all for those not implemented
 template<class T>
 tmp<typename faExpressionSource<T>::resultField> faExpressionSource<T>::operator()()
 {
-    FatalErrorIn(
-        "faExpressionSource<T>operator()()"
-    )
-        <<  "not implemented for for T="
-            << pTraits<T>::typeName
-            << endl
-            << abort(FatalError);
+    clearVariables();
+    parse(expression_);
+    if(!resultIsTyp<resultField>()) {
+        FatalErrorIn("faExpressionSource<"+word(pTraits<T>::typeName)+">::operator()()")
+            << "Result of " << expression_ << " is not a " << pTraits<T>::typeName
+                << endl
+                << exit(FatalError);
+    }
+
+    tmp<resultField> result(new resultField(getResult<resultField>()));
+    
+    return result;
 }
 
 template

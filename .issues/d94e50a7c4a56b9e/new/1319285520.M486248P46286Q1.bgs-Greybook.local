@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 22 Oct 2011 14:11:10 +0200
+Subject: Re: Let the faceTopoSource handle real expressions on faces
+Message-Id: <d94e50a7c4a56b9e-93c3f1b6e5f90801-artemis@bgs-Greybook.local>
+References: <d94e50a7c4a56b9e-0-artemis@bgs-Greybook.local>
+In-Reply-To: <d94e50a7c4a56b9e-0-artemis@bgs-Greybook.local>
+
+Already implemented. If the expression evaluates to a
+sufaceScalarField then the value is directly used. 
+
+Untested as far as I remember, though

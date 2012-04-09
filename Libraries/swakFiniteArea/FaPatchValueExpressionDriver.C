@@ -71,7 +71,7 @@ label getPatchID(const faMesh &mesh,const word &name)
             << "The patch " << name << " was not found in "
                 << mesh.boundary().names()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
 
     }
     return result;
@@ -81,9 +81,19 @@ FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const dictionary& dic
  :
     FaCommonValueExpressionDriver(dict),
     patch_(
-        faRegionMesh(regionMesh(dict,mesh)).boundary()[
+        faRegionMesh(
+            regionMesh(
+                dict,
+                mesh,
+                searchOnDisc()
+            )).boundary()[
             getPatchID(
-                faRegionMesh(regionMesh(dict,mesh)),
+                faRegionMesh(
+                    regionMesh(
+                        dict,
+                        mesh,
+                        searchOnDisc()
+                    )),
                 dict.lookup(
                     "faPatchName"
                 )
@@ -140,6 +150,7 @@ vectorField *FaPatchValueExpressionDriver::makePositionField()
 
 vectorField *FaPatchValueExpressionDriver::makePointField()
 {
+    // if implemented go to the call in the grammar and reuse there
     notImplemented("FaPatchValueExpressionDriver::makePointField()");
 
     return new vectorField(0);

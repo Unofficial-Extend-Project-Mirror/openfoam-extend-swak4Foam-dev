@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 20 Feb 2012 14:05:34 +0100
+Subject: Re: Extend FieldValueParser to pointFields
+Message-Id: <b61412f2dcecac52-e4c1a4cda4a2374e-artemis@bgs-Greybook.local>
+References: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+In-Reply-To: <b61412f2dcecac52-0-artemis@bgs-Greybook.local>
+
+Reading of the pointfields is done

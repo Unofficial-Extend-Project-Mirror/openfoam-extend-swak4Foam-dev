@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 06 Nov 2011 09:01:03 +0100
+Subject: Re: Generalize simpleFunctionObjects data-writing to allow CSV-files
+Message-Id: <fd8dce5be1f425af-f9a338538636d974-artemis@bgs-Greybook.local>
+References: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
+In-Reply-To: <fd8dce5be1f425af-0-artemis@bgs-Greybook.local>
+
+Now the old behaviour is the default

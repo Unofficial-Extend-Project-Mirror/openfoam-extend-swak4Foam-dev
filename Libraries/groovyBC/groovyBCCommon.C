@@ -62,12 +62,14 @@ template<class Type>
 groovyBCCommon<Type>::groovyBCCommon
 (
     bool hasGradient,
-    bool isPoint
+    bool isPoint,
+    string fractionExpression
 )
 :
+    evaluateDuringConstruction_(false),  
     debug_(false),
     hasGradient_(hasGradient),
-    fractionExpression_(isPoint ? "toPoint" : "1")
+    fractionExpression_(isPoint ? "toPoint("+fractionExpression+")" : fractionExpression)
 {
     valueExpression_ = nullValue();
     if(hasGradient_) {
@@ -82,6 +84,7 @@ groovyBCCommon<Type>::groovyBCCommon
     const groovyBCCommon<Type>& ptf
 )
 :
+    evaluateDuringConstruction_(ptf.evaluateDuringConstruction_),  
     debug_(ptf.debug_),
     hasGradient_(ptf.hasGradient_),
     valueExpression_(ptf.valueExpression_),
@@ -96,14 +99,18 @@ groovyBCCommon<Type>::groovyBCCommon
 (
     const dictionary& dict,
     bool hasGradient,
-    bool isPoint
+    bool isPoint,
+    string fractionExpression
 )
 :
+    evaluateDuringConstruction_(
+        dict.lookupOrDefault<bool>("evaluateDuringConstruction",false)
+    ),  
     debug_(dict.lookupOrDefault<bool>("debug",false)),
     hasGradient_(hasGradient),
     fractionExpression_(dict.lookupOrDefault(
                             "fractionExpression",
-                            isPoint ? string("toPoint(1)") : string("1"))
+                            isPoint ? string("toPoint("+fractionExpression+")") : string(fractionExpression))
     )
 {
     if (dict.found("valueExpression"))
@@ -132,9 +139,11 @@ void groovyBCCommon<Type>::write(Ostream& os) const
     if(hasGradient_) {
         os.writeKeyword("gradientExpression")
             << gradientExpression_ << token::END_STATEMENT << nl;
+        os.writeKeyword("fractionExpression")
+            << fractionExpression_ << token::END_STATEMENT << nl;
     }
-    os.writeKeyword("fractionExpression")
-        << fractionExpression_ << token::END_STATEMENT << nl;
+    os.writeKeyword("evaluateDuringConstruction")
+        << evaluateDuringConstruction_ << token::END_STATEMENT << nl;
 
     // debug_ not written on purpose
 }

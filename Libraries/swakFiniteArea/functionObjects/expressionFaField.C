@@ -61,12 +61,11 @@ Foam::expressionFaField::~expressionFaField()
 
 template<class T>
 void Foam::expressionFaField::storeField(
-    const T &data,
-    autoPtr<T> &store
+    const T &data
 )
 {
-    if(store.empty()) {
-        store.reset(
+    if(field_.empty()) {
+        field_.reset(
             new T(
                 IOobject(
                     name_,
@@ -79,7 +78,8 @@ void Foam::expressionFaField::storeField(
             )
         );
     } else {
-        store()==data;
+        //        dynamicCast<T &>(field_())==data; // doesn't work with gcc 4.2
+        dynamic_cast<T &>(field_())==data;
     }
 }
 
@@ -102,6 +102,8 @@ void Foam::expressionFaField::read(const dictionary& dict)
         );
         
         driver_->readVariablesAndTables(dict_);
+
+        driver_->createWriterAndRead(name_+"_"+type());
     }
 }
 
@@ -114,24 +116,56 @@ void Foam::expressionFaField::execute()
 
         driver.parse(expression_);
 
-        if(driver.resultIsVector()) {
+        if(driver.resultIsTyp<areaVectorField>()) {
             storeField(
-                driver.getVector(),
-                vectorField_
+                driver.getResult<areaVectorField>()
             );
-            
-        } else if(driver.resultIsScalar()) {
+        } else if(driver.resultIsTyp<areaScalarField>()) {
             storeField(
-                driver.getScalar(),
-                scalarField_
+                driver.getResult<areaScalarField>()
+            );
+        } else if(driver.resultIsTyp<areaTensorField>()) {
+            storeField(
+                driver.getResult<areaTensorField>()
+            );
+        } else if(driver.resultIsTyp<areaSymmTensorField>()) {
+            storeField(
+                driver.getResult<areaSymmTensorField>()
+            );
+        } else if(driver.resultIsTyp<areaSphericalTensorField>()) {
+            storeField(
+                driver.getResult<areaSphericalTensorField>()
+            );
+        } else if(driver.resultIsTyp<edgeVectorField>()) {
+            storeField(
+                driver.getResult<edgeVectorField>()
+            );
+        } else if(driver.resultIsTyp<edgeScalarField>()) {
+            storeField(
+                driver.getResult<edgeScalarField>()
+            );
+        } else if(driver.resultIsTyp<edgeTensorField>()) {
+            storeField(
+                driver.getResult<edgeTensorField>()
+            );
+        } else if(driver.resultIsTyp<edgeSymmTensorField>()) {
+            storeField(
+                driver.getResult<edgeSymmTensorField>()
+            );
+        } else if(driver.resultIsTyp<edgeSphericalTensorField>()) {
+            storeField(
+                driver.getResult<edgeSphericalTensorField>()
             );
         } else {
             WarningIn("Foam::expressionFaField::execute()")
                 << "Expression '" << expression_ 
                     << "' evaluated to an unsupported type"
+                    << driver.typ()
                     << endl;
         }
     }
+
+    driver_->tryWrite();
 }
 
 
@@ -145,8 +179,7 @@ void Foam::expressionFaField::write()
 
 void Foam::expressionFaField::clearData()
 {
-    scalarField_.clear();
-    vectorField_.clear();
+    field_.clear();
 }
 
 // ************************************************************************* //

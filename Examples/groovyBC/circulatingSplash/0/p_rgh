@@ -28,6 +28,7 @@ boundaryField
 
     sides       
     {
+        //        type            totalPressure;
         type            buoyantPressure;
         value           uniform 0;
 //         type            inletOutlet;
@@ -40,15 +41,16 @@ boundaryField
 //         rho             none;
 //         psi             none;
         gamma           1;
-        value           uniform 0;
     }
 
     spill       
     {
-        type            buoyantPressure;
+        //        type            buoyantPressure;
+        type            zeroGradient;
         value           uniform 0;
-//         type            inletOutlet;
-//         inletValue      uniform 0;
+        //        type            inletOutlet;
+        //        type fixedValue;
+        inletValue      uniform 0;
 //         value           uniform 0;
         //        type            totalPressure;
         p0              uniform 0;
@@ -57,12 +59,13 @@ boundaryField
 //         rho             none;
 //         psi             none;
         gamma           1;
-        value           uniform 0;
     }
 
     atmosphere
     {
-        type            totalPressure;
+        //        type            buoyantPressure;
+        // type            totalPressure;
+        type fixedValue;
         p0              uniform 0;
         U               U;
         phi             phi;

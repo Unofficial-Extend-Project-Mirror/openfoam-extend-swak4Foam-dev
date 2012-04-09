@@ -24,7 +24,8 @@ boundaryField
     {
         type            groovyBC;
         value           uniform (1 0 0);
-        valueExpression "vector(toFace(pointMotionUx),0,0)";
+        //        valueExpression "vector(toFace(pointMotionUx),0,0)";
+        valueExpression "toFace(pointMotionU)";
     }
 
     farFieldMoving  

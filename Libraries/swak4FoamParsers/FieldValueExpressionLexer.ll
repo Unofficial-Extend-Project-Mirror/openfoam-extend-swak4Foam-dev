@@ -8,6 +8,11 @@
 %s zonename
 %s fsetname
 %s fzonename
+%s psetname
+%s pzonename
+%s vectorcomponent
+%s tensorcomponent
+%x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
 %option stack
@@ -30,10 +35,13 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname,zonename,fsetname,fzonename>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname,zonename,fsetname,fzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
+
+<needsIntegerParameter>[(] return yytext[0];
+<needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
 
 %{
     typedef parserField::FieldValueExpressionParser::token token;
@@ -46,15 +54,33 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
+<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+
+<tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
+<tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
+<tensorcomponent>xz    { BEGIN(INITIAL); return token::TOKEN_xz; }
+<tensorcomponent>yx    { BEGIN(INITIAL); return token::TOKEN_yx; }
+<tensorcomponent>yy    { BEGIN(INITIAL); return token::TOKEN_yy; }
+<tensorcomponent>yz    { BEGIN(INITIAL); return token::TOKEN_yz; }
+<tensorcomponent>zx    { BEGIN(INITIAL); return token::TOKEN_zx; }
+<tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
+<tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
+<tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
+
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
 log                   return token::TOKEN_log;
 mag                   return token::TOKEN_mag;
+magSqr                return token::TOKEN_magSqr;
 sin                   return token::TOKEN_sin;
 cos                   return token::TOKEN_cos;
 tan                   return token::TOKEN_tan;
 min                   return token::TOKEN_min;
 max                   return token::TOKEN_max;
+minPosition           return token::TOKEN_minPosition;
+maxPosition           return token::TOKEN_maxPosition;
 sum                   return token::TOKEN_sum;
 average               return token::TOKEN_average;
 sqr                   return token::TOKEN_sqr;
@@ -84,6 +110,7 @@ negative              return token::TOKEN_neg;
 
 pi                    return token::TOKEN_pi;
 pos                   return token::TOKEN_position;
+pts                   return token::TOKEN_pposition;
 fpos                  return token::TOKEN_fposition;
 fproj                 return token::TOKEN_fprojection;
 face                  return token::TOKEN_face;
@@ -92,9 +119,11 @@ vol                   return token::TOKEN_volume;
 dist                  return token::TOKEN_dist;
 nearDist              return token::TOKEN_nearDist;
 rdist                 return token::TOKEN_rdist;
-rand                  return token::TOKEN_rand;
+rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
+randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 id                    return token::TOKEN_id;
-randNormal            return token::TOKEN_randNormal;
+randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
+randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 cpu                   return token::TOKEN_cpu;
 
@@ -118,16 +147,33 @@ fzone                  {
     return token::TOKEN_fzone;
                       }
 
+pset                   {
+    BEGIN(psetname);
+    return token::TOKEN_pset;
+                      }
+
+pzone                  {
+    BEGIN(pzonename);
+    return token::TOKEN_pzone;
+                      }
+
 grad                  return token::TOKEN_grad;
 curl                  return token::TOKEN_curl;
 magSqrGradGrad        return token::TOKEN_magSqrGradGrad;
 snGrad                return token::TOKEN_snGrad;
 div                   return token::TOKEN_div;
 laplacian             return token::TOKEN_laplacian;
+ddt                   return token::TOKEN_ddt;
+oldTime               return token::TOKEN_oldTime;
+d2dt2                 return token::TOKEN_d2dt2;
+meshPhi               return token::TOKEN_meshPhi;
+flux                  return token::TOKEN_flux;
 
 integrate             return token::TOKEN_integrate;
 surfSum               return token::TOKEN_surfSum;
 interpolate           return token::TOKEN_interpolate;
+interpolateToPoint    return token::TOKEN_interpolateToPoint;
+interpolateToCell     return token::TOKEN_interpolateToCell;
 faceAverage           return token::TOKEN_faceAverage;
 reconstruct           return token::TOKEN_reconstruct;
 
@@ -135,8 +181,22 @@ deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
 
 vector                 return token::TOKEN_VECTOR;
+tensor                 return token::TOKEN_TENSOR;
+symmTensor             return token::TOKEN_SYMM_TENSOR;
+sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
+point                  return token::TOKEN_point;
+
+transpose              return token::TOKEN_transpose;
+diag                   return token::TOKEN_diag;
+tr                     return token::TOKEN_tr;
+dev                    return token::TOKEN_dev;
+symm                   return token::TOKEN_symm;
+skew                   return token::TOKEN_skew;
+det                    return token::TOKEN_det;
+cof                    return token::TOKEN_cof;
+inv                    return token::TOKEN_inv;
 
 true                   return token::TOKEN_TRUE;
 false                  return token::TOKEN_FALSE;
@@ -147,7 +207,11 @@ false                  return token::TOKEN_FALSE;
                        return token::TOKEN_NUM;
                      }
 
-[xyz]                return yytext[0];
+<needsIntegerParameter>{int}                {
+                       errno = 0;
+                       yylval->integer = atoi(yytext);
+                       return token::TOKEN_INT;
+                     }
 
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
@@ -155,22 +219,56 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isLookup(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LOOKUP;
-    } else if(       
-        driver.isVariable<Foam::volVectorField::value_type>(*ptr)
-        ||
-        driver.isThere<Foam::volVectorField>(*ptr)
-    ) {
-        yylval->vname = ptr; return token::TOKEN_VID;
     } else if(
         driver.isVariable<Foam::volScalarField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volScalarField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_SID;
-    } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
-        yylval->name = ptr; return token::TOKEN_FSID;
+    } else if(       
+        driver.isVariable<Foam::volVectorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volVectorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_VID;
+    } else if(       
+        driver.isVariable<Foam::volTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_TID;
+    } else if(       
+        driver.isVariable<Foam::volSymmTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volSymmTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_YID;
+    } else if(       
+        driver.isVariable<Foam::volSphericalTensorField::value_type>(*ptr)
+        ||
+        driver.isThere<Foam::volSphericalTensorField>(*ptr)
+    ) {
+        yylval->name = ptr; return token::TOKEN_HID;
     } else if(driver.isThere<Foam::surfaceVectorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_FVID;
+    } else if(driver.isThere<Foam::surfaceScalarField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FSID;
+    } else if(driver.isThere<Foam::surfaceTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FTID;
+    } else if(driver.isThere<Foam::surfaceSymmTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FYID;
+    } else if(driver.isThere<Foam::surfaceSphericalTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_FHID;
+    } else if(driver.isThere<Foam::pointVectorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PVID;
+    } else if(driver.isThere<Foam::pointScalarField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PSID;
+    } else if(driver.isThere<Foam::pointTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PTID;
+    } else if(driver.isThere<Foam::pointSymmTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PYID;
+    } else if(driver.isThere<Foam::pointSphericalTensorField>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PHID;
     } else {
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
@@ -213,7 +311,27 @@ false                  return token::TOKEN_FALSE;
     }
                      }
 
+<psetname>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isPointSet(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PSETID;
+    } else {
+        driver.error (*yylloc, "pointSet id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+<pzonename>{setid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    if(driver.isPointZone(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_PZONEID;
+    } else {
+        driver.error (*yylloc, "pointZone id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+
 .                    driver.error (*yylloc, "invalid character");
+<needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
 
 
 %%
@@ -229,4 +347,14 @@ void FieldValueExpressionDriver::scan_begin ()
 void FieldValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
+}
+
+void FieldValueExpressionDriver::startVectorComponent()
+{
+    BEGIN(vectorcomponent);
+}
+
+void FieldValueExpressionDriver::startTensorComponent()
+{
+    BEGIN(tensorcomponent);
 }

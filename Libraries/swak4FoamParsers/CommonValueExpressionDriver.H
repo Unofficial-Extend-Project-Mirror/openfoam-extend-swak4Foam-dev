@@ -60,6 +60,8 @@ namespace Foam
                            Class CommonValueExpressionDriver Declaration
 \*---------------------------------------------------------------------------*/
 
+class ExpressionDriverWriter;
+
 class CommonValueExpressionDriver
 {
     // Private data
@@ -72,6 +74,15 @@ class CommonValueExpressionDriver
     //- variables from a dictionary
     stringList variableStrings_;
 
+    //- this one is in charge for writing and restoring 
+
+    //- by using it this class doesn't have to inherit from regIOobject 
+    //- (which would be an overkill and inconvenient)
+    autoPtr<ExpressionDriverWriter> writer_;
+
+    //- getting our own pointMesh
+    autoPtr<pointMesh> pMesh_;
+
 protected:
 
     ExpressionResult result_;
@@ -81,6 +92,15 @@ protected:
     List<StoredExpressionResult> storedVariables_;
 
     label storedVariablesIndex_;
+
+    wordList globalVariableScopes_;
+
+    const ExpressionResult &lookupGlobal(const word &name) const;
+
+    template<class T>
+    bool isGlobal(const word &name,bool isPoint) const;
+
+    void setGlobalScopes(const wordList &);
 
     HashTable<interpolationTable<scalar>,word> lines_;
 
@@ -108,6 +128,9 @@ protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
 
+    //- get a point mesh (if needed)
+    inline const pointMesh & pMesh();
+
     //- get the current time
     virtual const word time() const;
 
@@ -115,11 +138,21 @@ protected:
     static const fvMesh &regionMesh
     (
         const dictionary &dict,
-        const fvMesh &mesh
+        const fvMesh &mesh,
+        bool readIfNecessary
     );
 
     //- look through the current variable values and update the stored variables
     void updateStoredVariables(bool force=false);
+
+    //- read data from the writer
+    virtual void getData(const dictionary &);
+
+    //- write data
+    virtual void prepareData(dictionary &) const;
+
+    //- do we need a datafile written
+    virtual bool hasDataToWrite() const;
 
 private:
     //- keep fields read from disc in memory
@@ -134,6 +167,9 @@ private:
     //- should cellSets and faceSets be cached instead of read from disc every time
     static bool cacheSets_;
 
+    //- use the value of the previous iteration if the old time ist asked for
+    bool prevIterIsOldTime_;
+
 protected:
    
     inline bool cacheReadFields() const { return cacheReadFields_; }
@@ -144,18 +180,55 @@ protected:
 
     inline bool cacheSets() const { return cacheSets_; }
 
+    inline bool prevIterIsOldTime() const { return prevIterIsOldTime_; }
+
     string getTypeOfField(const string &name) const;
     string getTypeOfSet(const string &name) const;
 
-    template<class T>
-    inline tmp<T> readAndRegister(const word &name);
+    template<class T,class Mesh>
+    inline tmp<T> readAndRegister(
+        const word &name,
+        const Mesh &actualMesh
+    );
+
+    enum SetOrigin {
+        NEW,
+        FILE,
+        MEMORY,
+        CACHE,
+        INVALID
+    };
 
     template<class T>
-    inline autoPtr<T> getSet(const fvMesh &,const word &);
+    inline autoPtr<T> getSet(const fvMesh &,const word &,SetOrigin &origin);
 
     template<class T>
-    autoPtr<T> getOrReadField(const string &name,bool failIfNoneFound=true);
+    inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
 
+    template<class T>
+    autoPtr<T> getOrReadField(
+        const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
+
+    template<class T>
+    autoPtr<T> getOrReadPointField(
+        const string &name,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
+
+    template<class T,class Mesh>
+    autoPtr<T> getOrReadFieldInternal(
+        const string &name,
+        const Mesh &mesh,
+        bool failIfNoneFound=true,
+        bool getOldTime=false
+    );
+
+    template<class T>
+    inline void correctField(T &f) const;
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -271,6 +344,9 @@ public:
 
     ExpressionResult getUniform(label size,bool noWarning);
 
+    template<template<class> class BinOp,class Type>
+    inline Type getReduced(BinOp<Type> op,Type initial=pTraits<Type>::zero);
+
     void clearResult();
 
     template <class Op,class Type>
@@ -334,6 +410,10 @@ public:
     scalarField *makeRandomField(label seed=0);
     scalarField *makeGaussRandomField(label seed=0);
 
+    vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
+
+    vector getPositionOfMaximum(const scalarField &,const vectorField &) const;
+
     const Time& runTime() const;
 
     vectorField *composeVectorField(scalarField *,scalarField *,scalarField *);
@@ -364,6 +444,15 @@ public:
         bool scanning,
         bool parsing
     );
+
+    //- create a writer for this object
+    void createWriterAndRead(const word &name);
+
+    //- Write data if apropriate
+    //- Should enable exact restarts
+    void tryWrite() const;
+
+    friend class ExpressionDriverWriter;
 };
 
 

@@ -18,8 +18,8 @@ dynamicFvMesh dynamicMotionSolverFvMesh;
 
 motionSolverLibs ("libfvMotionSolvers.so");
 
-//solver laplacian;
-solver velocityComponentLaplacian x;
+solver velocityLaplacian;
+// solver velocityComponentLaplacian x;
 
 diffusivity  uniform;
 // diffusivity  directional (1 200 0);

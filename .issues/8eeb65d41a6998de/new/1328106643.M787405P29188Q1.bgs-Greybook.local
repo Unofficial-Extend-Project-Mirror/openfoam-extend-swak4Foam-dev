@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 01 Feb 2012 15:28:03 +0100
+Subject: Re: Temporal expressions in FieldExpressions
+Message-Id: <8eeb65d41a6998de-8f39a6e11e80a255-artemis@bgs-Greybook.local>
+References: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+In-Reply-To: <8eeb65d41a6998de-0-artemis@bgs-Greybook.local>
+
+oldTime and ddt now work for scalars.
+
+Reading from disk is also supported (if a corresponding _0-file is found)

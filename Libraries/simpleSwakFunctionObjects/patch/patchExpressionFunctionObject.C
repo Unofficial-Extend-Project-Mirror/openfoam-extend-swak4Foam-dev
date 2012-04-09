@@ -92,12 +92,12 @@ wordList patchExpressionFunctionObject::fileNames()
     return patchNames_;
 }
 
-string patchExpressionFunctionObject::firstLine()
+stringList patchExpressionFunctionObject::columnNames()
 {
-    string result="";
+    stringList result(accumulations_.size());
 
     forAll(accumulations_,i) {
-        result+=" "+accumulations_[i];
+        result[i]=accumulations_[i];
     }
 
     return result;
@@ -120,20 +120,23 @@ void patchExpressionFunctionObject::write()
         word rType=driver.getResultType();
 
         if(rType==pTraits<scalar>::typeName) {
-            writeData<scalar>(patchNames_[i],driver);
+            writeTheData<scalar>(patchNames_[i],driver);
         } else if(rType==pTraits<vector>::typeName) {
-            writeData<vector>(patchNames_[i],driver);
+            writeTheData<vector>(patchNames_[i],driver);
         } else if(rType==pTraits<tensor>::typeName) {
-            writeData<tensor>(patchNames_[i],driver);
+            writeTheData<tensor>(patchNames_[i],driver);
         } else if(rType==pTraits<symmTensor>::typeName) {
-            writeData<symmTensor>(patchNames_[i],driver);
+            writeTheData<symmTensor>(patchNames_[i],driver);
         } else if(rType==pTraits<sphericalTensor>::typeName) {
-            writeData<sphericalTensor>(patchNames_[i],driver);
+            writeTheData<sphericalTensor>(patchNames_[i],driver);
         }  
 
         if(verbose()) {
             Info << endl;
         }
+
+        // make sure that the stored Variables are consistently written
+        driver.tryWrite();
     }
 }
 
@@ -154,6 +157,7 @@ bool patchExpressionFunctionObject::start()
                 mesh.boundary()[patchIndizes_[i]]
             )
         );
+        drivers_[i].createWriterAndRead(name()+"_"+mesh.boundary()[patchIndizes_[i]].name()+"_"+type());
     }
     return result;
 }

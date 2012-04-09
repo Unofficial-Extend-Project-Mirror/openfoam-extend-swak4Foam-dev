@@ -5,6 +5,9 @@
 %}
 
 %s setname
+%s vectorcomponent
+%s tensorcomponent
+%x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
 %option stack
@@ -27,10 +30,13 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname>[ \t]+             yylloc->step ();
+<INITIAL,setname,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
+
+<needsIntegerParameter>[(] return yytext[0];
+<needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
 
 %{
     typedef parserSubset::SubsetValueExpressionParser::token token;
@@ -43,15 +49,33 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
+<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+
+<tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
+<tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
+<tensorcomponent>xz    { BEGIN(INITIAL); return token::TOKEN_xz; }
+<tensorcomponent>yx    { BEGIN(INITIAL); return token::TOKEN_yx; }
+<tensorcomponent>yy    { BEGIN(INITIAL); return token::TOKEN_yy; }
+<tensorcomponent>yz    { BEGIN(INITIAL); return token::TOKEN_yz; }
+<tensorcomponent>zx    { BEGIN(INITIAL); return token::TOKEN_zx; }
+<tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
+<tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
+<tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
+
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
 log                   return token::TOKEN_log;
 mag                   return token::TOKEN_mag;
+magSqr                return token::TOKEN_magSqr;
 sin                   return token::TOKEN_sin;
 cos                   return token::TOKEN_cos;
 tan                   return token::TOKEN_tan;
 min                   return token::TOKEN_min;
 max                   return token::TOKEN_max;
+minPosition           return token::TOKEN_minPosition;
+maxPosition           return token::TOKEN_maxPosition;
 average               return token::TOKEN_average;
 sum                   return token::TOKEN_sum;
 sqr                   return token::TOKEN_sqr;
@@ -86,14 +110,18 @@ vol                   return token::TOKEN_volume;
 pts                   return token::TOKEN_points;
 Sf                    return token::TOKEN_Sf;
 normal                return token::TOKEN_normal;
-rand                  return token::TOKEN_rand;
+rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
+randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
 flip                  return token::TOKEN_flip;
-randNormal            return token::TOKEN_randNormal;
+randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
+randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
+
+oldTime               return token::TOKEN_oldTime;
 
 vector                 return token::TOKEN_VECTOR;
 tensor                 return token::TOKEN_TENSOR;
@@ -123,7 +151,11 @@ inv                    return token::TOKEN_inv;
                        return token::TOKEN_NUM;
                      }
 
-[xyz]                return yytext[0];
+<needsIntegerParameter>{int}                {
+                       errno = 0;
+                       yylval->integer = atoi(yytext);
+                       return token::TOKEN_INT;
+                     }
 
 <INITIAL>{id}                 {
     Foam::string *ptr=new Foam::string (yytext);
@@ -161,6 +193,7 @@ inv                    return token::TOKEN_inv;
                      }
 
 .                    driver.error (*yylloc, "invalid character");
+<needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
 
 
 %%
@@ -181,4 +214,14 @@ void SubsetValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
     yy_delete_buffer(bufferSubset);
+}
+
+void SubsetValueExpressionDriver::startVectorComponent()
+{
+    BEGIN(vectorcomponent);
+}
+
+void SubsetValueExpressionDriver::startTensorComponent()
+{
+    BEGIN(tensorcomponent);
 }

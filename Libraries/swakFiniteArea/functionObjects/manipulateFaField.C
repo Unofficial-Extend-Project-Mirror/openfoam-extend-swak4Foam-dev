@@ -45,6 +45,8 @@ Foam::manipulateFaField::manipulateFaField
     obr_(obr),
     dict_(dict)
 {
+    driver_->createWriterAndRead(name+"_"+type());
+
     if (!isA<fvMesh>(obr_))
     {
         active_=false;
@@ -59,10 +61,10 @@ Foam::manipulateFaField::manipulateFaField
 Foam::manipulateFaField::~manipulateFaField()
 {}
 
-template<class T>
+template<class T,class TMask>
 void Foam::manipulateFaField::manipulate(
     const T &data,
-    const areaScalarField &mask
+    const TMask &mask
 )
 {
     T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
@@ -73,6 +75,22 @@ void Foam::manipulateFaField::manipulate(
         }
     }
     original.correctBoundaryConditions();
+}
+
+template<class T,class TMask>
+void Foam::manipulateFaField::manipulateEdge(
+    const T &data,
+    const TMask &mask
+)
+{
+    T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
+
+    forAll(original,cellI) {
+        if(mask[cellI]>SMALL) {
+            original[cellI]=data[cellI];
+        }
+    }
+    //    original.correctBoundaryConditions();
 }
 
 void Foam::manipulateFaField::read(const dictionary& dict)
@@ -94,6 +112,8 @@ void Foam::manipulateFaField::read(const dictionary& dict)
         );
 
         driver_->readVariablesAndTables(dict_);
+
+        driver_->createWriterAndRead(name_+"_"+type());
     }
 }
 
@@ -106,35 +126,91 @@ void Foam::manipulateFaField::execute()
 
         driver.parse(maskExpression_);
 
-        if(!driver.resultIsLogical()) {
+        if(!driver.isLogical()) {
             FatalErrorIn("manipulateFaField::execute()")
                 << maskExpression_ << " does not evaluate to a logical expression"
                     << endl
-                    << abort(FatalError);
+                    << exit(FatalError);
         }
         
-        areaScalarField conditionField(driver.getScalar());
+        if(driver.resultIsTyp<areaScalarField>(true)) {
+            areaScalarField conditionField(driver.getResult<areaScalarField>());
 
-        driver.parse(expression_);
+            driver.parse(expression_);
 
-        if(driver.resultIsVector()) {
-            manipulate(
-                driver.getVector(),
-                conditionField
-            );
-            
-        } else if(driver.resultIsScalar()) {
-            manipulate(
-                driver.getScalar(),
-                conditionField
-            );
-        } else {
-            WarningIn("Foam::manipulateFaField::execute()")
-                << "Expression '" << expression_ 
-                    << "' evaluated to an unsupported type"
-                    << endl;
+            if(driver.resultIsTyp<areaVectorField>()) {
+                manipulate(
+                    driver.getResult<areaVectorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<areaScalarField>()) {
+                manipulate(
+                    driver.getResult<areaScalarField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<areaTensorField>()) {
+                manipulate(
+                    driver.getResult<areaTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<areaSymmTensorField>()) {
+                manipulate(
+                    driver.getResult<areaSymmTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<areaSphericalTensorField>()) {
+                manipulate(
+                    driver.getResult<areaSphericalTensorField>(),
+                    conditionField
+                );
+            } else {
+                WarningIn("Foam::manipulateFaField::execute()")
+                    << "Expression '" << expression_ 
+                        << "' evaluated to an unsupported type"
+                        << driver.typ() << " that is incompatible with a mask defined on areas"
+                        << endl;
+            }
+        } else if(driver.resultIsTyp<edgeScalarField>(true)) {
+            edgeScalarField conditionField(driver.getResult<edgeScalarField>());
+
+            driver.parse(expression_);
+
+            if(driver.resultIsTyp<edgeVectorField>()) {
+                manipulateEdge(
+                    driver.getResult<edgeVectorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<edgeScalarField>()) {
+                manipulateEdge(
+                    driver.getResult<edgeScalarField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<edgeTensorField>()) {
+                manipulateEdge(
+                    driver.getResult<edgeTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<edgeSymmTensorField>()) {
+                manipulateEdge(
+                    driver.getResult<edgeSymmTensorField>(),
+                    conditionField
+                );
+            } else if(driver.resultIsTyp<edgeSphericalTensorField>()) {
+                manipulateEdge(
+                    driver.getResult<edgeSphericalTensorField>(),
+                    conditionField
+                );
+            } else {
+                WarningIn("Foam::manipulateFaField::execute()")
+                    << "Expression '" << expression_ 
+                        << "' evaluated to an unsupported type"
+                        << driver.typ() << " that is incompatible with a mask defined on edges"
+                        << endl;
+            }
         }
     }
+
+    driver_->tryWrite();
 }
 
 

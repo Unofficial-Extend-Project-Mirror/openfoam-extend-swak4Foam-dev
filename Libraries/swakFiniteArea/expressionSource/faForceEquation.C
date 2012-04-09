@@ -57,6 +57,8 @@ faForceEquation<T>::faForceEquation
     maskExpression_(dict.lookup("maskExpression")),
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
+    createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
+
     if(verbose_) {
         WarningIn(string("faForceEquation<") + pTraits<T>::typeName + ">::faForceEquation") 
             << "Fixing to the values " << valueExpression_ 
@@ -80,14 +82,14 @@ template<class T>
 bool faForceEquation<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
 {
     parse(maskExpression_);
-    if(!resultIsLogical()) {
+    if(!resultIsTyp<areaScalarField>(true)) {
         FatalErrorIn("faForceEquation<scalar>::operator()(faMatrix<T> &)")
             << "Result of " << maskExpression_ << " is not a logical expression"
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
     }
 
-    const areaScalarField &cond=getScalar();
+    const areaScalarField &cond=getResult<areaScalarField>();
 
     forAll(cond,cellI) {
         if(cond[cellI]!=0) {
@@ -122,68 +124,34 @@ tmp<areaScalarField> faForceEquation<T>::getMask()
         (
             new areaScalarField
             (
-                getScalar()
+                getResult<areaScalarField>()
             )
         );
 }
 
-template<>
-void faForceEquation<scalar>::operator()(faMatrix<scalar> &eq)
-{
-    clearVariables();
-
-    DynamicList<label> cellIDs;
-
-    if(!getMask(cellIDs,eq.psi().name())) {
-        return;
-    }
-
-    Field<scalar> values(cellIDs.size());
-
-    parse(valueExpression_);
-    const areaScalarField &calculated=getScalar();
-
-    forAll(cellIDs,i) {
-        values[i]=calculated[cellIDs[i]];
-    }
-
-    eq.setValues(cellIDs,values);
-}
-
-template<>
-void faForceEquation<vector>::operator()(faMatrix<vector> &eq)
-{
-    clearVariables();
-
-    DynamicList<label> cellIDs;
-
-    if(!getMask(cellIDs,eq.psi().name())) {
-        return;
-    }
-
-    Field<vector> values(cellIDs.size());
-
-    parse(valueExpression_);
-    const areaVectorField &calculated=getVector();
-
-    forAll(cellIDs,i) {
-        values[i]=calculated[cellIDs[i]];
-    }
-
-    eq.setValues(cellIDs,values);
-}
-
-// Catch all for those not implemented
 template<class T>
-void faForceEquation<T>::operator()(faMatrix<T> &)
+void faForceEquation<T>::operator()(faMatrix<T> &eq)
 {
-    FatalErrorIn(
-        "faForceEquation<T>operator()(faMatrix<T> &)"
-    )
-        <<  "not implemented for for T="
-            << pTraits<T>::typeName
-            << endl
-            << abort(FatalError);
+    typedef GeometricField<T,faPatchField,areaMesh> resultField;
+
+    clearVariables();
+
+    DynamicList<label> cellIDs;
+
+    if(!getMask(cellIDs,eq.psi().name())) {
+        return;
+    }
+
+    Field<T> values(cellIDs.size());
+
+    parse(valueExpression_);
+    const resultField &calculated=getResult<resultField>();
+
+    forAll(cellIDs,i) {
+        values[i]=calculated[cellIDs[i]];
+    }
+
+    eq.setValues(cellIDs,values);
 }
 
 template

@@ -25,7 +25,9 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
         false        
     ),
       mesh_(faRegionMesh(mesh)),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -42,7 +44,9 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
         searchOnDisc        
     ),
       mesh_(faRegionMesh(mesh)),
-      typ_(NO_TYPE),
+      typ_("nothing"),
+      isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
@@ -52,8 +56,16 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
     const fvMesh &mesh
 )
     : FaCommonValueExpressionDriver(dict),
-      mesh_(faRegionMesh(regionMesh(dict,mesh))),
-      typ_(NO_TYPE),
+      mesh_(
+          faRegionMesh(
+              regionMesh(
+                  dict,
+                  mesh,
+                  searchOnDisc()
+              ))),
+      typ_("nothing"),
+      isLogical_(false),
+      isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
 {
     if(dict.found("dimensions")) {
@@ -63,45 +75,6 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
 
 FaFieldValueExpressionDriver::~FaFieldValueExpressionDriver ()
 {
-}
-
-void FaFieldValueExpressionDriver::setScalarResult(areaScalarField *r) {
-    if(debug) {
-        Info << "FaFieldValueExpressionDriver::setScalarResult(areaScalarField *r)" << endl;
-    }
-
-    sresult_.reset(r);
-
-    if(!resultDimension_.dimensionless()) {
-        sresult_->dimensions().reset(resultDimension_);
-    }
-    typ_=SCALAR_TYPE;
-    result_.setResult(sresult_->internalField());
-}
-
-void FaFieldValueExpressionDriver::setLogicalResult(areaScalarField *r) {
-    if(debug) {
-        Info << "FaFieldValueExpressionDriver::setLogicalResult(areaScalarField *r)" << endl;
-    }
-
-    sresult_.reset(r);
-
-    typ_=LOGICAL_TYPE;
-    result_.setResult(sresult_->internalField());
-}
-
-void FaFieldValueExpressionDriver::setVectorResult(areaVectorField *r) {
-    if(debug) {
-        Info << "FaFieldValueExpressionDriver::setVectorResult(areaVectorField *r)" << endl;
-    }
-
-    vresult_.reset(r);
-
-    if(!resultDimension_.dimensionless()) {
-        vresult_->dimensions().reset(resultDimension_);
-    }
-    typ_=VECTOR_TYPE;
-    result_.setResult(vresult_->internalField());
 }
 
 void FaFieldValueExpressionDriver::parse (const std::string &f)
@@ -144,14 +117,12 @@ areaScalarField *FaFieldValueExpressionDriver::makeModuloField(
     return result_;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeRandomField()
+areaScalarField *FaFieldValueExpressionDriver::makeRandomField(label seed)
 {
     areaScalarField *f=makeConstantField<areaScalarField>(0.);
-    Random rand(65);
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=rand.scalar01();
-    }
+    autoPtr<scalarField> rField(CommonValueExpressionDriver::makeRandomField(seed));
+    f->internalField()=rField();
 
     return f;
 }
@@ -167,14 +138,12 @@ areaScalarField *FaFieldValueExpressionDriver::makeCellIdField()
     return f;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeGaussRandomField()
+areaScalarField *FaFieldValueExpressionDriver::makeGaussRandomField(label seed)
 {
     areaScalarField *f=makeConstantField<areaScalarField>(0.);
-    Random rand(65);
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=rand.GaussNormal();
-    }
+    autoPtr<scalarField> rField(CommonValueExpressionDriver::makeGaussRandomField(seed));
+    f->internalField()=rField();
 
     return f;
 }
@@ -433,6 +402,118 @@ edgeVectorField *FaFieldValueExpressionDriver::makeEdgeVectorField
 
     forAll(*f,faceI) {
         (*f)[faceI]=vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
+    }
+
+    return f;
+}
+
+areaTensorField *FaFieldValueExpressionDriver::makeTensorField
+(
+    areaScalarField *xx,areaScalarField *xy,areaScalarField *xz,
+    areaScalarField *yx,areaScalarField *yy,areaScalarField *yz,
+    areaScalarField *zx,areaScalarField *zy,areaScalarField *zz
+) {
+    areaTensorField *f=makeConstantField<areaTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+
+    forAll(*f,cellI) {
+        (*f)[cellI]=tensor(
+            (*xx)[cellI],(*xy)[cellI],(*xz)[cellI],
+            (*yx)[cellI],(*yy)[cellI],(*yz)[cellI],
+            (*zx)[cellI],(*zy)[cellI],(*zz)[cellI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+areaSymmTensorField *FaFieldValueExpressionDriver::makeSymmTensorField
+(
+    areaScalarField *xx,areaScalarField *xy,areaScalarField *xz,
+    areaScalarField *yy,areaScalarField *yz,
+    areaScalarField *zz
+) {
+    areaSymmTensorField *f=makeConstantField<areaSymmTensorField>(symmTensor(0,0,0,0,0,0));
+
+    forAll(*f,cellI) {
+        (*f)[cellI]=symmTensor(
+            (*xx)[cellI],(*xy)[cellI],(*xz)[cellI],
+            (*yy)[cellI],(*yz)[cellI],
+            (*zz)[cellI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+areaSphericalTensorField *FaFieldValueExpressionDriver::makeSphericalTensorField
+(
+    areaScalarField *xx
+) {
+    areaSphericalTensorField *f=makeConstantField<areaSphericalTensorField>(sphericalTensor(0));
+
+    forAll(*f,cellI) {
+        (*f)[cellI]=sphericalTensor(
+            (*xx)[cellI]
+        );
+    }
+
+    f->correctBoundaryConditions();
+
+    return f;
+}
+
+edgeTensorField *FaFieldValueExpressionDriver::makeEdgeTensorField
+(
+    edgeScalarField *xx,edgeScalarField *xy,edgeScalarField *xz,
+    edgeScalarField *yx,edgeScalarField *yy,edgeScalarField *yz,
+    edgeScalarField *zx,edgeScalarField *zy,edgeScalarField *zz
+) {
+    edgeTensorField *f=makeConstantField<edgeTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=tensor(
+            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
+            (*yx)[faceI],(*yy)[faceI],(*yz)[faceI],
+            (*zx)[faceI],(*zy)[faceI],(*zz)[faceI]
+        );
+    }
+
+    return f;
+}
+
+edgeSymmTensorField *FaFieldValueExpressionDriver::makeEdgeSymmTensorField
+(
+    edgeScalarField *xx,edgeScalarField *xy,edgeScalarField *xz,
+    edgeScalarField *yy,edgeScalarField *yz,
+    edgeScalarField *zz
+) {
+    edgeSymmTensorField *f=makeConstantField<edgeSymmTensorField>(symmTensor(0,0,0,0,0,0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=symmTensor(
+            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
+            (*yy)[faceI],(*yz)[faceI],
+            (*zz)[faceI]
+        );
+    }
+
+    return f;
+}
+
+edgeSphericalTensorField *FaFieldValueExpressionDriver::makeEdgeSphericalTensorField
+(
+    edgeScalarField *xx
+) {
+    edgeSphericalTensorField *f=makeConstantField<edgeSphericalTensorField>(sphericalTensor(0));
+
+    forAll(*f,faceI) {
+        (*f)[faceI]=sphericalTensor(
+            (*xx)[faceI]
+        );
     }
 
     return f;

@@ -7,6 +7,7 @@ export SWAKLIBS=(groovyBC \
     simpleSwakFunctionObjects \
     swakTopoSources \
     swak4FoamParsers \
+    pythonIntegration \
     swakFunctionObjects)
 
 if [ "$FOAM_DEV" != "" ]

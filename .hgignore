@@ -29,4 +29,6 @@ doc
 debian/rules
 debian/control
 
-Libraries/simpleFunctionObjects
+swakConfiguration
+
+Libraries/swak4FoamParsers/foamVersion4swak.H

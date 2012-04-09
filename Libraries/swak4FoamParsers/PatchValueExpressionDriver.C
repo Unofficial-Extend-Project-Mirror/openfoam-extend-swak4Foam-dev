@@ -83,7 +83,7 @@ label getPatchID(const fvMesh &mesh,const word &name)
             << "The patch " << name << " was not found in "
                 << mesh.boundaryMesh().names()
                 << endl
-                << abort(FatalError);
+                << exit(FatalError);
 
     }
     return result;
@@ -93,9 +93,17 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
  :
     CommonValueExpressionDriver(dict),
     patch_(
-        regionMesh(dict,mesh).boundary()[
+        regionMesh(
+            dict,
+            mesh,
+            searchOnDisc()
+        ).boundary()[
             getPatchID(
-                regionMesh(dict,mesh),
+                regionMesh(
+                    dict,
+                    mesh,
+                    searchOnDisc()
+                ),
                 dict.lookup(
                     "patchName"
                 )

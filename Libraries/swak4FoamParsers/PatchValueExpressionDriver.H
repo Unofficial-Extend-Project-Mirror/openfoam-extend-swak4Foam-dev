@@ -99,6 +99,12 @@ protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const;
 
+    //- set the state of the lexer to scanning vector components
+    void startVectorComponent();
+
+    //- set the state of the lexer to scanning tensor components
+    void startTensorComponent();
+
 public:
 
     //- Runtime type information
@@ -128,6 +134,7 @@ public:
 
     ~PatchValueExpressionDriver();
 
+    const fvPatch &patch() const { return patch_; }
 
     // Member Functions
 
@@ -153,6 +160,9 @@ public:
     Field<Type> *getField(const string &name);
 
     template<class Type>
+    Field<Type> *getOldTimeField(const string &name);
+
+    template<class Type>
     Field<Type> *getSurfaceNormalField(const string &name);
 
     template<class Type>
@@ -169,6 +179,9 @@ public:
 
     template<class Type>
     Field<Type> *toPoint(const Field<Type> &);
+
+    // allow access of protected methods
+    friend class parserPatch::PatchValueExpressionParser;
 };
 
 

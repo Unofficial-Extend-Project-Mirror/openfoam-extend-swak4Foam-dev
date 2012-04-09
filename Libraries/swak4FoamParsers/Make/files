@@ -1,5 +1,8 @@
 SurfacesRepository.C
 SetsRepository.C
+GlobalVariablesRepository.C
+
+ExpressionDriverWriter.C
 
 ExpressionResult.C
 StoredExpressionResult.C
@@ -21,6 +24,7 @@ PatchValueExpressionDriver.C
 
 SubsetValueExpressionLexer.ll
 SubsetValueExpressionDriver.C
+SetSubsetValueExpressionDriver.C
 
 CellSetValueExpressionDriver.C
 FaceSetValueExpressionDriver.C
