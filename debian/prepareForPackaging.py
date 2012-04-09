@@ -9,7 +9,25 @@ vals={}
 vals["libbin"]=environ["FOAM_LIBBIN"][1:]
 vals["appbin"]=environ["FOAM_APPBIN"][1:]
 interFoam = Popen(["which", "interFoam"], stdout=PIPE).communicate()[0].strip()
-vals["ofpkg"] = Popen(["dpkg", "--search",interFoam], stdout=PIPE).communicate()[0].split(":")[0]
+vals["ofpkg"] = Popen(   ["dpkg", 
+                          "--search",
+                          interFoam], 
+                       stdout=PIPE).communicate()[0].split(":")[0]
+handInstalledOF=False
+vals["ofpkgdev"] = Popen(   ["dpkg", 
+                             "--search",
+                             path.join(environ["FOAM_SRC"],"OpenFOAM")], 
+                         stdout=PIPE).communicate()[0].split(":")[0]
+vals["ofpkgComma"]=vals["ofpkg"]+","
+vals["ofpkgdevComma"]=vals["ofpkgdev"]+","
+if vals["ofpkg"]=="":
+    # OpenFOAM was not installed as a package
+    handInstalledOF=True
+    vals["ofpkg"]="of-"+environ["WM_PROJECT_VERSION"]+"-handinstalled"
+    vals["ofpkgdev"]="ofdev-"+environ["WM_PROJECT_VERSION"]+"-handinstalled"
+    vals["ofpkgComma"]=""
+    vals["ofpkgdevComma"]=""
+
 vals["ofproject"]=environ["WM_PROJECT_DIR"][1:]
 
 print "Preparing with vals",vals
@@ -37,5 +55,5 @@ tarname=path.join(path.pardir,
 
 print "Generating source tar",tarname
 
-ret=call("hg archive "+tarname,shell=True)
+ret=call("hg archive -t tgz "+tarname,shell=True)
 
