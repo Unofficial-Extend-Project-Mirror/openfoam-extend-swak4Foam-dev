@@ -947,3 +947,5 @@ S_{expl} + S_{impl} T
      The composed objects got their size from the current parser, not
      the components. This resulted in a segmentation-fault for
      pointFields
+**** =icc= does not compile =executeIfExecutableFitsFunctionObject= on Linux
+     Preprocessor symbol =linux= unknown. Replaced with =__linux__=
