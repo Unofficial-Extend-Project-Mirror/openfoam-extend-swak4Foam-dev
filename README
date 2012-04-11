@@ -947,3 +947,8 @@ S_{expl} + S_{impl} T
      The composed objects got their size from the current parser, not
      the components. This resulted in a segmentation-fault for
      pointFields
+**** Enhancement to the =trackDictionary=-functionObject
+     Now handles bad or non-existent filenames for dictionaries to
+     track 
+
+     Fix provided by Martin Beaudoin
