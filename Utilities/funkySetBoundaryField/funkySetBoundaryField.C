@@ -44,6 +44,8 @@ Description
 
 #include "OFstream.H"
 
+#include "printSwakVersion.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -58,6 +60,8 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("cacheFields","");
 
 #   include "setRootCase.H"
+
+    printSwakVersion();
 
     word dictName="funkySetBoundaryDict";
     if(args.options().found("dict")) {

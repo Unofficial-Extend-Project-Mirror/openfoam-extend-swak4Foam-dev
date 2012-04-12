@@ -44,6 +44,8 @@ Description
 
 #include "IFstream.H"
 
+#include "printSwakVersion.H"
+
 template <class T>
 void writeData(
     CommonValueExpressionDriver &driver,
@@ -86,6 +88,8 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
 
 #   include "setRootCase.H"
+
+    printSwakVersion();
 
    IFstream theFile(args.args()[1]);
    dictionary theExpressions(theFile);

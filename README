@@ -872,6 +872,13 @@ S_{expl} + S_{impl} T
      Thanks to patches supplied by Bruno Santos (see
      [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
      compilation of the libraries is now possible in parallel
+**** Version numbers and version number reporting
+     Releases up to now got a version number. Utilities now report the
+     version number. This should make it easier to find out whether
+     problems are due to an old version
+
+     Still looking for a way to do that for the libraries (so that
+     they will report it if dynamically loaded)
 *** Packaging
 **** Update of the Debian-Packaging
      =make dpkg= now genrates also a valid package if the current

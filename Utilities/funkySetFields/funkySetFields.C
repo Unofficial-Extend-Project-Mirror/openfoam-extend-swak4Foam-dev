@@ -42,6 +42,8 @@ Description
 
 #include "timeSelector.H"
 
+#include "printSwakVersion.H"
+
 template<class T,class Mesh>
 void setField
 (
@@ -533,7 +535,6 @@ void doAnExpression
 
 int main(int argc, char *argv[])
 {
-
     Foam::timeSelector::addOptions(false);
 
 #   include "addRegionOption.H"
@@ -552,6 +553,8 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("addDummyPhi","");
 
 #   include "setRootCase.H"
+
+    printSwakVersion();
 
     // make sure the program never fails due to dimension "problems"
     dimensionSet::debug=false;
