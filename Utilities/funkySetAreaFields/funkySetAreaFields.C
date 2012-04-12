@@ -45,6 +45,8 @@ Description
 
 #include "areaFields.H"
 
+#include "printSwakVersion.H"
+
 template<class T,template<class> class PField,class Mesh>
 void writeVolumeField(
     const string &name,
@@ -495,6 +497,8 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("dictExt","<extension to the default funkySetAreaFieldsDict-dictionary>");
 
 #   include "setRootCase.H"
+
+    printSwakVersion();
 
     // make sure the program never fails due to dimension "problems"
     dimensionSet::debug=false;
