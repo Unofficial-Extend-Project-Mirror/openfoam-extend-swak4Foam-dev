@@ -939,3 +939,7 @@ S_{expl} + S_{impl} T
      about the field currently being an =IOobject=)
 **** Missing =magSqr= in parsers
      This function was reported missing on the message board
+**** Wrong size when composing vectors and tensors for point-fields
+     The composed objects got their size from the current parser, not
+     the components. This resulted in a segmentation-fault for
+     pointFields
