@@ -26,6 +26,9 @@ do
     fi
 done
 
+echo "Checking swak4Foam-version and generating file"
+./maintainanceScripts/makeSwakVersionFile.py
+
 (cd Libraries; wmake all )
 
 if [ $? != 0 ]; then
