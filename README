@@ -773,7 +773,7 @@ S_{expl} + S_{impl} T
      problem with =calculated= patches causes =funkySetFields= to fail
      with stock boundary conditions if not all fields are present in
      memory 
-** Next release - version number : 0.2.0 development
+** 2012-04-13 - version number : 0.2.0 Friday the 13th
 *** New features
 **** Region name in =simpleFunctionObject=.outputs
      To distinguish the output of various instances of
