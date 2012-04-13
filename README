@@ -509,9 +509,9 @@ S_{expl} + S_{impl} T
    is also true for subsets. But as the interpolation is not
    implemented for most subsets this will be postponed
 * History
-** 2010-09-13
+** 2010-09-13 - version number : 0.1
    First Release
-** 2010-12-18
+** 2010-12-18 - version number : 0.1.1
    New release
    Most important changes
 *** Parser for =sampledSurfaces=
@@ -537,7 +537,7 @@ S_{expl} + S_{impl} T
     your own parser in a separate library without having to change
     anything about the overall =swak4Foam=, but it behaves as if it
     was part of it)
-** 2011-01-30
+** 2011-01-30 - version number : 0.1.2
 *** Support for /Finite Area/-stuff
     Now there is support for the =finiteArea=-library found in
     1.6-dev. The support is found in a separate library
@@ -553,7 +553,7 @@ S_{expl} + S_{impl} T
     See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=49
 *** New function =nearDist=
     See https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=44
-** 2011-04-20
+** 2011-04-20 - version number : 0.1.3
    New features and changes are (this list is not complete):
 *** New utility =funkySetAreaField=
     Like =funkySetFields= for /finiteArea/. Also writes out a volume
@@ -585,7 +585,7 @@ S_{expl} + S_{impl} T
 *** Sampled sets
     Sampled sets can now also be used as en entity on which
     calculation is possible.
-** 2011-07-26
+** 2011-07-26 - version number : 0.1.4
 *** Port to OpenFOAM 2.0
     This is the first release that officially supports OpenFOAM 2.0
     
@@ -620,7 +620,7 @@ S_{expl} + S_{impl} T
      - Submission to launchpad added
 **** Deployment scripts
      Now install to =FOAM_SITE_APPBIN/LIBBIN=
-** 2011-10-03
+** 2011-10-03 - version number : 0.1.5
 *** New features
 **** =replayTransientBC= now supports multiple regions
      Uses the usual =-region=-option. Looks for a separate dictionary
@@ -672,7 +672,7 @@ S_{expl} + S_{impl} T
      If a variable is defined and the patch which it is defined on
      doesn't have any faces the variable is reported on that processor
      as /not existing/ and the whole run fails
-** 2012-01-04
+** 2012-01-04 - version number : 0.1.6
 *** Cases changed
 **** =circulatingSplash=
      Fixed according to a suggestion by Andreas Otto. Now runs again
@@ -840,7 +840,7 @@ S_{expl} + S_{impl} T
      This boundary condition will be removed in future releases
      because the base class now supports the more general
      =DataEntry=-class for which a =swak=-subclass exists
-** Next release
+** Next release - version number : 0.2.0 development
 *** Bugfixes
 **** =interFoam=-based example solvers do not compile on 2.1
      As reported in
@@ -939,6 +939,13 @@ S_{expl} + S_{impl} T
      Thanks to patches supplied by Bruno Santos (see
      [[http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105]])
      compilation of the libraries is now possible in parallel
+**** Version numbers and version number reporting
+     Releases up to now got a version number. Utilities now report the
+     version number. This should make it easier to find out whether
+     problems are due to an old version
+
+     Still looking for a way to do that for the libraries (so that
+     they will report it if dynamically loaded)
 *** Packaging
 **** Update of the Debian-Packaging
      =make dpkg= now genrates also a valid package if the current
@@ -1014,3 +1021,11 @@ S_{expl} + S_{impl} T
      The composed objects got their size from the current parser, not
      the components. This resulted in a segmentation-fault for
      pointFields
+**** =icc= does not compile =executeIfExecutableFitsFunctionObject= on Linux
+     Preprocessor symbol =linux= unknown. Replaced with =__linux__=
+**** Enhancement to the =trackDictionary=-functionObject
+     Now handles bad or non-existent filenames for dictionaries to
+     track 
+
+     Fix provided by Martin Beaudoin
+

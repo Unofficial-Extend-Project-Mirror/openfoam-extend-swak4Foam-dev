@@ -31,6 +31,7 @@ Author
 #include "addToRunTimeSelectionTable.H"
 #include "dimensionedConstants.H"
 #include "stringListOps.H"
+#include "fileStat.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -170,7 +171,10 @@ bool Foam::trackDictionaryFunctionObject::execute(const bool forceWrite)
         // The file is only considered modified after a "fileModificationSkew" delay
         // from the last time the file was read.
         // NB: readIfModified is calling reduce, so all parallel jobs need to run this
-        if(dictionaries_[dictI].readIfModified())
+        if(
+            dictionaries_.set(dictI) &&
+            dictionaries_[dictI].readIfModified()
+        )
         {
             echoDictionaryValues(dictI);
         }
@@ -183,20 +187,37 @@ void Foam::trackDictionaryFunctionObject::echoDictionaryValues(const label direc
 {
     if(Pstream::master())
     {
-        // Get the access time for this file, so we know how old it is.
-        time_t tmStamp = lastModified(dictionaries_[directoryIndex].filePath());
-        char   c_tmStamp[64];
-        string s_tmStamp(ctime_r(&tmStamp, c_tmStamp));
+        if(dictionaries_.set(directoryIndex))
+        {
+            // Get the access time for this file, so we know how old it is.
+            time_t tmStamp = lastModified(dictionaries_[directoryIndex].filePath());
+            char   c_tmStamp[64];
+            string s_tmStamp(ctime_r(&tmStamp, c_tmStamp));
 
-        // Clean up the string
-        s_tmStamp.removeTrailing('\n');
+            // Clean up the string
+            s_tmStamp.removeTrailing('\n');
 
-        string sectionId = dictionaryNames_[directoryIndex] + " (" + s_tmStamp + ")";
+            string sectionId = dictionaryNames_[directoryIndex] + " (" + s_tmStamp + ")";
 
-        Pout << echoStartSectionSeparator(sectionId) << endl;
-        Pout << dictionaryNames_[directoryIndex] << " : " << dictionaries_[directoryIndex];
-        Pout << echoEndSectionSeparator(sectionId) << endl;
-        Pout << "#" << endl << endl;
+            Pout << echoStartSectionSeparator(sectionId) << endl;
+            Pout << dictionaryNames_[directoryIndex] << " : " << dictionaries_[directoryIndex];
+            Pout << echoEndSectionSeparator(sectionId) << endl;
+            Pout << "#" << endl << endl;
+        }
+        else
+        {
+            string sectionId = dictionaryNames_[directoryIndex] ;
+
+            Pout << echoStartSectionSeparator(sectionId) << endl;
+            WarningIn
+                (
+                    "Foam::trackDictionaryFunctionObject::echoDictionaryValues()"
+                )   << "--> This dictionary is not accessible: "
+                    << dictionaryNames_[directoryIndex]
+                    << endl;
+            Pout << echoEndSectionSeparator(sectionId) << endl;
+            Pout << "#" << endl << endl;
+        }
     }
 }
 
@@ -281,22 +302,25 @@ void Foam::trackDictionaryFunctionObject::initializeDictionaryList()
             Pout << "trackDictionaryFunctionObject::initializeDictionaryList: dictionaryName: " << dictionaryName << endl;
         }
 
-        dictionaries_.set
-            (
-                dictI,
-                new IOdictionary
+        if(Foam::fileStat(dictionaryName).isValid())
+        {
+            dictionaries_.set
                 (
-                    IOobject
+                    dictI,
+                    new IOdictionary
                     (
-                        dictionaryName.name(),
-                        "",
-                        dictionaryName.path(),
-                        obr_,
-                        IOobject::MUST_READ,
-                        IOobject::NO_WRITE
+                        IOobject
+                        (
+                            dictionaryName.name(),
+                            "",
+                            dictionaryName.path(),
+                            obr_,
+                            IOobject::MUST_READ,
+                            IOobject::NO_WRITE
+                        )
                     )
-                )
-            );
+                );
+        }
     }
 }
 
