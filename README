@@ -71,11 +71,13 @@
    self-compiled version /shadows/ the global version (which would
    lead to strange results)
 
-   There is a =Makefile= attached. =make install= compiles =swak4Foam=
+   There is a =Makefile= attached. =make globalinstall= compiles =swak4Foam=
    and installs it into the global directories
 
    *Note:* Due to the order in which library direcories are searched
-   for with =-L= a global installation might break the compilation
+   for with =-L= a global installation might break the
+   compilation. *If you don't know what this means: don't attempt a
+   global installation*
 ** Packaging
 *** Debian
     The command =build dpkg= builds a Debian/Ubuntu package for 
@@ -961,3 +963,8 @@ S_{expl} + S_{impl} T
      track 
 
      Fix provided by Martin Beaudoin
+** Next release - version number : 0.2.1
+*** Bug fixes
+**** =downloadSimpleFunctionObjects.sh= still in Makefile
+     This script (which was removed long ago) was still referenced in
+     the =Makefile=.

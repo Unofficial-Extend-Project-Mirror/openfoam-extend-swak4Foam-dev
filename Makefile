@@ -19,8 +19,7 @@ source-dpkg: cleanStuff prepareDebian
 
 dpkg: dpkg-only
 
-install:
-	./downloadSimpleFunctionObjects.sh
+globalinstall:
 	./Allwmake
 	./copySwakFilesToSite.sh
 	./removeSwakFilesFromLocal.sh
