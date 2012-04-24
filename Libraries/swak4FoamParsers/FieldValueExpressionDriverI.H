@@ -10,6 +10,8 @@
 #include "zeroGradientFvPatchFields.H"
 #include "calculatedFvPatchFields.H"
 #include "calculatedFvsPatchFields.H"
+#include "mappedWallFvPatch.H"
+#include "mappedFvPatch.H"
 
 #include "volPointInterpolation.H"
 #include "interpolatePointToCell.H"
@@ -91,6 +93,10 @@ void FieldValueExpressionDriver::makePatches
         (
             typeid(patch)==typeid(wallFvPatch)
             || 
+            typeid(patch)==typeid(mappedWallFvPatch)
+            || 
+            typeid(patch)==typeid(mappedFvPatch)
+            || 
             typeid(patch)==typeid(fvPatch)
         )
     ) {
@@ -141,6 +147,10 @@ void FieldValueExpressionDriver::makePatches
         && 
         (
             typeid(patch)==typeid(wallFvPatch)
+            || 
+            typeid(patch)==typeid(mappedWallFvPatch)
+            || 
+            typeid(patch)==typeid(mappedFvPatch)
             || 
             typeid(patch)==typeid(fvPatch)
         )
@@ -386,10 +396,13 @@ void FieldValueExpressionDriver::setValuePatches
         (
             typeid(patch)==typeid(wallFvPatch)
             ||
-            typeid(patch)==typeid(fvPatch
-            )
-        )
-    ) {
+            typeid(patch)==typeid(mappedWallFvPatch)
+            || 
+            typeid(patch)==typeid(mappedFvPatch)
+            || 
+            typeid(patch)==typeid(fvPatch)
+        ) 
+    ){
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFvPatchField<T>)) {
             fvPatchField<T> &pf=field.boundaryField()[patchI];
             
@@ -430,8 +443,11 @@ void FieldValueExpressionDriver::setValuePatches
         (
             typeid(patch)==typeid(wallFvPatch)
             ||
-            typeid(patch)==typeid(fvPatch
-            )
+            typeid(patch)==typeid(mappedWallFvPatch)
+            || 
+            typeid(patch)==typeid(mappedFvPatch)
+            || 
+            typeid(patch)==typeid(fvPatch)
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFvsPatchField<T>)) {

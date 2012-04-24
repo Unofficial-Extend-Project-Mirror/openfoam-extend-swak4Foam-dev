@@ -1034,3 +1034,6 @@ S_{expl} + S_{impl} T
 **** =downloadSimpleFunctionObjects.sh= still in Makefile
      This script (which was removed long ago) was still referenced in
      the =Makefile=.
+**** =mappedFvPatch= not treated like regular patches
+     The field-driver created patch fields there as =calcuated= when
+     =zeroGradient= would have been more appropriate
