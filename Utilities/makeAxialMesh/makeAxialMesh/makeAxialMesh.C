@@ -373,10 +373,10 @@ void changeTypes(polyMesh &mesh,word wedge,word axis,bool hasOffset) {
       const polyPatch& pp = patches[patchI];
 
       if(pp.name()==axis && !hasOffset) {
-          Info << " Changing " << axis << " to empty" << endl;
+          Info << " Changing " << axis << " to symmetryPlane" << endl;
           newPatches[patchI] =
               polyPatch::New(
-                  "empty",
+                  "symmetryPlane",
                   pp.name(),
                   pp.size(),
                   pp.start(),
@@ -439,6 +439,8 @@ int main(int argc, char *argv[])
             runTime
         )
     );
+
+    const word oldInstance = mesh.pointsInstance();
 
     word axisName;
     word wedgeName;
@@ -594,6 +596,10 @@ int main(int argc, char *argv[])
     if (!overwrite)
     {
         runTime++;
+    }
+    else
+    {
+        mesh.setInstance(oldInstance);
     }
 
     Info << "Writing mesh to time " << runTime.value() << endl;
