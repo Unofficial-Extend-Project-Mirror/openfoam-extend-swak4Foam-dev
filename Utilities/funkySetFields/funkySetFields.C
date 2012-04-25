@@ -257,11 +257,11 @@ void doAnExpression
         conditionIsPoint=driver.isPointField();
 
         if(conditionIsSurface) {
-            conditionField=scalarField(mesh.cells().size(),1);
+            conditionField=scalarField(mesh.nInternalFaces(),1);
         } else if(conditionIsPoint) {
             conditionField=scalarField(mesh.nPoints(),1);
         } else {
-            conditionField=scalarField(mesh.nInternalFaces(),1);
+            conditionField=scalarField(mesh.cells().size(),1);
         }
     }
 
