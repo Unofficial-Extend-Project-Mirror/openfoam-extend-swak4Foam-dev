@@ -974,3 +974,9 @@ S_{expl} + S_{impl} T
 **** Default =condition= for surface fields wrong size in =funkySetFields=
      Due to a typo the constructed condition field was too short for
      surface-fields (too long for volume-fields, but that didn't matter)
+*** Enhancements
+**** Topology-operators now support =variables= etc
+     The topology operators =expressionToCell=, =expressionToFace= and
+     =expressionToPoint= now support =variables= and the other
+     supporting keywords if being constructed with a dictionary (for
+     instance from the =topoSet=-utility)
