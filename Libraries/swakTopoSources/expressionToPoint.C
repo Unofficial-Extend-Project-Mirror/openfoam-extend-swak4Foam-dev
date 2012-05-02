@@ -74,6 +74,11 @@ void Foam::expressionToPoint::combine(topoSet& set, const bool add) const
             true, // search in memory
             true  // search on disc
         );
+
+    if(dict_.valid()) {
+        driver.readVariablesAndTables(dict_());
+        driver.clearVariables();
+    }
     driver.parse(expression_);
     if(!driver.resultIsTyp<pointScalarField>(true)) {
         FatalErrorIn("Foam::expressionToPoint::combine(topoSet& set, const bool add) const")
@@ -114,7 +119,8 @@ Foam::expressionToPoint::expressionToPoint
 )
 :
     topoSetSource(mesh),
-    expression_(dict.lookup("expression"))
+    expression_(dict.lookup("expression")),
+    dict_(new dictionary(dict))
 {}
 
 

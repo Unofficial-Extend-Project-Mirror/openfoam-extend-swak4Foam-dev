@@ -81,6 +81,11 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
             true, // search in memory
             true  // search on disc
         );
+
+    if(dict_.valid()) {
+        driver.readVariablesAndTables(dict_());
+        driver.clearVariables();
+    }
     driver.parse(expression_);
     if(!driver.isLogical()) {
         FatalErrorIn("Foam::expressionToFace::combine(topoSet& set, const bool add) const")
@@ -144,7 +149,8 @@ Foam::expressionToFace::expressionToFace
 )
 :
     topoSetSource(mesh),
-    expression_(dict.lookup("expression"))
+    expression_(dict.lookup("expression")),
+    dict_(new dictionary(dict))
 {}
 
 

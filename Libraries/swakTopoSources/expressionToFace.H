@@ -66,6 +66,9 @@ class expressionToFace
     //- The logical expression to use
     string expression_;
     
+    //- dictionary with additional data
+    autoPtr<dictionary> dict_;
+
     // Private Member Functions
 
     //- Depending on face to cell option add to or delete from cellSet.
