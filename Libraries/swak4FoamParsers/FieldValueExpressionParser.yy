@@ -339,10 +339,10 @@ vexp:   vector                                    { $$ = $1; }
         | '(' vexp ')'		                  { $$ = $2; }  
         | lexp '?' vexp ':' vexp                  { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volVectorField>(Foam::vector())); delete $1; delete $3; delete $5; }
         | TOKEN_position '(' ')'                  { $$ = driver.makePositionField(); }
-        | TOKEN_laplacian '(' fsexp ',' vexp ')'  { $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; }
-        | TOKEN_faceAverage '(' fvexp ')'         { $$ = new Foam::volVectorField(Foam::fvc::average(*$3)); delete $3; }
-        | TOKEN_integrate '(' fvexp ')'           { $$ = new Foam::volVectorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; }
-        | TOKEN_surfSum '(' fvexp ')'             { $$ = new Foam::volVectorField(Foam::fvc::surfaceSum(*$3)); delete $3; }
+        | TOKEN_laplacian '(' fsexp ',' vexp ')'  { $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_faceAverage '(' fvexp ')'         { $$ = new Foam::volVectorField(Foam::fvc::average(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_integrate '(' fvexp ')'           { $$ = new Foam::volVectorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_surfSum '(' fvexp ')'             { $$ = new Foam::volVectorField(Foam::fvc::surfaceSum(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolateToCell '(' pvexp ')'              { $$ = driver.pointToCellInterpolate(*$3).ptr(); delete $3; }
         | TOKEN_min '(' vexp ',' vexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' vexp ',' vexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -368,13 +368,13 @@ vexp:   vector                                    { $$ = $1; }
         }
         | TOKEN_sum '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::volVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' vexp ')'             { $$ = driver.makeConstantField<Foam::volVectorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_grad '(' exp ')'                  { $$ = new Foam::volVectorField(Foam::fvc::grad(*$3)); delete $3; }
-        | TOKEN_reconstruct '(' fsexp ')'         { $$ = new Foam::volVectorField(Foam::fvc::reconstruct(*$3)); delete $3; }
-        | TOKEN_curl '(' vexp ')'                 { $$ = new Foam::volVectorField(Foam::fvc::curl(*$3)); delete $3; }
-        | TOKEN_div '(' fsexp ',' vexp ')'        { $$ = new Foam::volVectorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
+        | TOKEN_grad '(' exp ')'                  { $$ = new Foam::volVectorField(Foam::fvc::grad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_reconstruct '(' fsexp ')'         { $$ = new Foam::volVectorField(Foam::fvc::reconstruct(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_curl '(' vexp ')'                 { $$ = new Foam::volVectorField(Foam::fvc::curl(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_div '(' fsexp ',' vexp ')'        { $$ = new Foam::volVectorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_VID                               { $$=driver.getField<Foam::volVectorField>(*$1); }
-        | TOKEN_ddt '(' TOKEN_VID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volVectorField>(*$3,true,true)() ).ptr(); }
-        | TOKEN_d2dt2 '(' TOKEN_VID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volVectorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_ddt '(' TOKEN_VID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volVectorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_d2dt2 '(' TOKEN_VID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volVectorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_oldTime '(' TOKEN_VID ')'		   { $$ = new Foam::volVectorField( driver.getOrReadField<Foam::volVectorField>(*$3,true,true)->oldTime()); }
 ;
 
@@ -471,14 +471,14 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
             $$ = driver.makeField<Foam::surfaceScalarField>(Foam::det($3->internalField())); 
             delete $3; }
         | TOKEN_area '(' ')'                { $$ = driver.makeAreaField(); }
-        | TOKEN_snGrad '(' exp ')'          { $$ = new Foam::surfaceScalarField(Foam::fvc::snGrad(*$3)); delete $3; }
+        | TOKEN_snGrad '(' exp ')'          { $$ = new Foam::surfaceScalarField(Foam::fvc::snGrad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::surfaceScalarField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_FSID                        { $$ = driver.getField<Foam::surfaceScalarField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FSID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceScalarField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
         | TOKEN_oldTime '(' TOKEN_FSID ')'		   { $$ = new Foam::surfaceScalarField( driver.getOrReadField<Foam::surfaceScalarField>(*$3,true,true)->oldTime()); }
         | TOKEN_meshPhi '(' vexp ')'      { $$ = Foam::fvc::meshPhi(*$3).ptr(); delete $3; $$->dimensions().reset(Foam::dimless); }
-        | TOKEN_meshPhi '(' exp ',' vexp ')'      { $$ = Foam::fvc::meshPhi(*$3,*$5).ptr(); delete $3; delete $5; }
-        | TOKEN_flux '(' fsexp ',' exp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_meshPhi '(' exp ',' vexp ')'      { $$ = Foam::fvc::meshPhi(*$3,*$5).ptr(); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_flux '(' fsexp ',' exp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_LOOKUP '(' fsexp ')'	    { $$ = driver.makeField<Foam::surfaceScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete $3; }
 ;
 
@@ -501,7 +501,7 @@ fvexp:  fvector                            { $$ = $1; }
         | TOKEN_fposition '(' ')'          { $$ = driver.makeFacePositionField(); }
         | TOKEN_fprojection '(' ')'        { $$ = driver.makeFaceProjectionField(); }
         | TOKEN_face '(' ')'               { $$ = driver.makeFaceField(); }
-        | TOKEN_snGrad '(' vexp ')'        { $$ = new Foam::surfaceVectorField(Foam::fvc::snGrad(*$3)); delete $3; }
+        | TOKEN_snGrad '(' vexp ')'        { $$ = new Foam::surfaceVectorField(Foam::fvc::snGrad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolate '(' vexp ')'   { $$ = new Foam::surfaceVectorField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_min '(' fvexp ',' fvexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' fvexp ',' fvexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -530,7 +530,7 @@ fvexp:  fvector                            { $$ = $1; }
         | TOKEN_FVID                       { $$ = driver.getField<Foam::surfaceVectorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FVID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceVectorField>(*$3,true,true)() ).ptr(); }// no fvc::ddt for surface Fields
         | TOKEN_oldTime '(' TOKEN_FVID ')'		   { $$ = new Foam::surfaceVectorField( driver.getOrReadField<Foam::surfaceVectorField>(*$3,true,true)->oldTime()); }
-        | TOKEN_flux '(' fsexp ',' vexp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_flux '(' fsexp ',' vexp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
 ;
  
 scalar:	TOKEN_NUM		        { $$ = $1; }
@@ -609,15 +609,15 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_det '(' hexp ')'                   { 
             $$ = driver.makeField<Foam::volScalarField>(Foam::det($3->internalField())); 
             delete $3;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_magSqrGradGrad '(' exp ')'         { $$ = new Foam::volScalarField(Foam::fvc::magSqrGradGrad(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_div '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::fvc::div(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_div '(' fsexp ')'                  { $$ = new Foam::volScalarField(Foam::fvc::div(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_div '(' fsexp ',' exp ')'          { $$ = new Foam::volScalarField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_laplacian '(' exp ')'              { $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_laplacian '(' exp ',' exp ')'      { $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_laplacian '(' fsexp ',' exp ')'    { $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_faceAverage '(' fsexp ')'          { $$ = new Foam::volScalarField(Foam::fvc::average(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
-        | TOKEN_integrate '(' fsexp ')'            { $$ = new Foam::volScalarField(Foam::fvc::surfaceIntegrate(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
+        | TOKEN_magSqrGradGrad '(' exp ')'         { $$ = new Foam::volScalarField(Foam::fvc::magSqrGradGrad(*$3)); delete $3;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_div '(' vexp ')'                   { $$ = new Foam::volScalarField(Foam::fvc::div(*$3)); delete $3;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_div '(' fsexp ')'                  { $$ = new Foam::volScalarField(Foam::fvc::div(*$3)); delete $3;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_div '(' fsexp ',' exp ')'          { $$ = new Foam::volScalarField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_laplacian '(' exp ')'              { $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3)); delete $3;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_laplacian '(' exp ',' exp ')'      { $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_laplacian '(' fsexp ',' exp ')'    { $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_faceAverage '(' fsexp ')'          { $$ = new Foam::volScalarField(Foam::fvc::average(*$3)); delete $3;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_integrate '(' fsexp ')'            { $$ = new Foam::volScalarField(Foam::fvc::surfaceIntegrate(*$3)); delete $3;  driver.setCalculatedPatches(*$$); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_surfSum '(' fsexp ')'              { $$ = new Foam::volScalarField(Foam::fvc::surfaceSum(*$3)); delete $3;  driver.setCalculatedPatches(*$$); }
         | TOKEN_interpolateToCell '(' psexp ')'              { $$ = driver.pointToCellInterpolate(*$3).ptr(); delete $3; }
         | vexp '.' vectorComponentSwitch  TOKEN_x                             { $$ = new Foam::volScalarField($1->component(0)); delete $1;  driver.setCalculatedPatches(*$$); }
@@ -658,8 +658,8 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }
-        | TOKEN_ddt '(' TOKEN_SID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)() ).ptr(); }
-        | TOKEN_d2dt2 '(' TOKEN_SID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_ddt '(' TOKEN_SID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_d2dt2 '(' TOKEN_SID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_oldTime '(' TOKEN_SID ')'	   { $$ = new Foam::volScalarField( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)->oldTime()); }
         | TOKEN_LINE            		   { $$ = driver.makeConstantField<Foam::volScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
         | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::volScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete$3; }
@@ -723,10 +723,10 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_inv '(' texp ')' 	           { $$ = new Foam::volTensorField( Foam::inv(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | TOKEN_dev '(' texp ')' 	           { $$ = new Foam::volTensorField( Foam::dev(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | lexp '?' texp ':' texp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volTensorField>(Foam::tensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_laplacian '(' fsexp ',' texp ')'  { $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; }
-        | TOKEN_faceAverage '(' ftexp ')'         { $$ = new Foam::volTensorField(Foam::fvc::average(*$3)); delete $3; }
-        | TOKEN_integrate '(' ftexp ')'           { $$ = new Foam::volTensorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; }
-        | TOKEN_surfSum '(' ftexp ')'             { $$ = new Foam::volTensorField(Foam::fvc::surfaceSum(*$3)); delete $3; }
+        | TOKEN_laplacian '(' fsexp ',' texp ')'  { $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_faceAverage '(' ftexp ')'         { $$ = new Foam::volTensorField(Foam::fvc::average(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_integrate '(' ftexp ')'           { $$ = new Foam::volTensorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_surfSum '(' ftexp ')'             { $$ = new Foam::volTensorField(Foam::fvc::surfaceSum(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolateToCell '(' ptexp ')'              { $$ = driver.pointToCellInterpolate(*$3).ptr(); delete $3; }
         | TOKEN_min '(' texp ',' texp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' texp ',' texp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -734,11 +734,11 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_max '(' texp ')'                 { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' texp ')'                 { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' texp ')'             { $$ = driver.makeConstantField<Foam::volTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_grad '(' vexp ')'                 { $$ = new Foam::volTensorField(Foam::fvc::grad(*$3)); delete $3; }
-        | TOKEN_div '(' fsexp ',' texp ')'        { $$ = new Foam::volTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
+        | TOKEN_grad '(' vexp ')'                 { $$ = new Foam::volTensorField(Foam::fvc::grad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_div '(' fsexp ',' texp ')'        { $$ = new Foam::volTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_TID                               { $$=driver.getField<Foam::volTensorField>(*$1); }
-        | TOKEN_ddt '(' TOKEN_TID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)() ).ptr(); }
-        | TOKEN_d2dt2 '(' TOKEN_TID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_ddt '(' TOKEN_TID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_d2dt2 '(' TOKEN_TID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_oldTime '(' TOKEN_TID ')'		   { $$ = new Foam::volTensorField( driver.getOrReadField<Foam::volTensorField>(*$3,true,true)->oldTime()); }
 ;
 
@@ -762,10 +762,10 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_inv '(' yexp ')' 	           { $$ = new Foam::volSymmTensorField( Foam::inv(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | TOKEN_dev '(' yexp ')' 	           { $$ = new Foam::volSymmTensorField( Foam::dev(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | lexp '?' yexp ':' yexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_laplacian '(' fsexp ',' yexp ')'  { $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; }
-        | TOKEN_faceAverage '(' fyexp ')'         { $$ = new Foam::volSymmTensorField(Foam::fvc::average(*$3)); delete $3; }
-        | TOKEN_integrate '(' fyexp ')'           { $$ = new Foam::volSymmTensorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; }
-        | TOKEN_surfSum '(' fyexp ')'             { $$ = new Foam::volSymmTensorField(Foam::fvc::surfaceSum(*$3)); delete $3; }
+        | TOKEN_laplacian '(' fsexp ',' yexp ')'  { $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_faceAverage '(' fyexp ')'         { $$ = new Foam::volSymmTensorField(Foam::fvc::average(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_integrate '(' fyexp ')'           { $$ = new Foam::volSymmTensorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_surfSum '(' fyexp ')'             { $$ = new Foam::volSymmTensorField(Foam::fvc::surfaceSum(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolateToCell '(' pyexp ')'              { $$ = driver.pointToCellInterpolate(*$3).ptr(); delete $3; }
         | TOKEN_min '(' yexp ',' yexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' yexp ',' yexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -773,10 +773,10 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_max '(' yexp ')'                 { $$ = driver.makeConstantField<Foam::volSymmTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' yexp ')'                 { $$ = driver.makeConstantField<Foam::volSymmTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' yexp ')'             { $$ = driver.makeConstantField<Foam::volSymmTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_div '(' fsexp ',' yexp ')'        { $$ = new Foam::volSymmTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
+        | TOKEN_div '(' fsexp ',' yexp ')'        { $$ = new Foam::volSymmTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_YID                               { $$=driver.getField<Foam::volSymmTensorField>(*$1); }
-        | TOKEN_ddt '(' TOKEN_YID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volSymmTensorField>(*$3,true,true)() ).ptr(); }
-        | TOKEN_d2dt2 '(' TOKEN_YID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volSymmTensorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_ddt '(' TOKEN_YID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volSymmTensorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_d2dt2 '(' TOKEN_YID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volSymmTensorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_oldTime '(' TOKEN_YID ')'	   { $$ = new Foam::volSymmTensorField( driver.getOrReadField<Foam::volSymmTensorField>(*$3,true,true)->oldTime()); }
 ;
 
@@ -793,10 +793,10 @@ hexp:   sphericalTensor                  { $$ = $1; }
             $$ = driver.makeField<Foam::volSphericalTensorField>( Foam::inv($3->internalField()) ); 
             delete $3;  driver.setCalculatedPatches(*$$); } 
         | lexp '?' hexp ':' hexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_laplacian '(' fsexp ',' hexp ')'  { $$ = new Foam::volSphericalTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; }
-        | TOKEN_faceAverage '(' fhexp ')'         { $$ = new Foam::volSphericalTensorField(Foam::fvc::average(*$3)); delete $3; }
-        | TOKEN_integrate '(' fhexp ')'           { $$ = new Foam::volSphericalTensorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; }
-        | TOKEN_surfSum '(' fhexp ')'             { $$ = new Foam::volSphericalTensorField(Foam::fvc::surfaceSum(*$3)); delete $3; }
+        | TOKEN_laplacian '(' fsexp ',' hexp ')'  { $$ = new Foam::volSphericalTensorField(Foam::fvc::laplacian(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_faceAverage '(' fhexp ')'         { $$ = new Foam::volSphericalTensorField(Foam::fvc::average(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_integrate '(' fhexp ')'           { $$ = new Foam::volSphericalTensorField(Foam::fvc::surfaceIntegrate(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_surfSum '(' fhexp ')'             { $$ = new Foam::volSphericalTensorField(Foam::fvc::surfaceSum(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolateToCell '(' phexp ')'              { $$ = driver.pointToCellInterpolate(*$3).ptr(); delete $3; }
         | TOKEN_min '(' hexp ',' hexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' hexp ',' hexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -804,10 +804,10 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_max '(' hexp ')'                 { $$ = driver.makeConstantField<Foam::volSphericalTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' hexp ')'                 { $$ = driver.makeConstantField<Foam::volSphericalTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' hexp ')'             { $$ = driver.makeConstantField<Foam::volSphericalTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_div '(' fsexp ',' hexp ')'        { $$ = new Foam::volSphericalTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; }
+        | TOKEN_div '(' fsexp ',' hexp ')'        { $$ = new Foam::volSphericalTensorField(Foam::fvc::div(*$3,*$5)); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_HID                               { $$=driver.getField<Foam::volSphericalTensorField>(*$1); }
-        | TOKEN_ddt '(' TOKEN_HID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volSphericalTensorField>(*$3,true,true)() ).ptr(); }
-        | TOKEN_d2dt2 '(' TOKEN_HID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volSphericalTensorField>(*$3,true,true)() ).ptr(); }
+        | TOKEN_ddt '(' TOKEN_HID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volSphericalTensorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
+        | TOKEN_d2dt2 '(' TOKEN_HID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volSphericalTensorField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_oldTime '(' TOKEN_HID ')'	   { $$ = new Foam::volSphericalTensorField( driver.getOrReadField<Foam::volSphericalTensorField>(*$3,true,true)->oldTime()); }
 ;
 
@@ -837,7 +837,7 @@ ftexp:   ftensor                  { $$ = $1; }
         | TOKEN_inv '(' ftexp ')' 	           { $$ = new Foam::surfaceTensorField( Foam::inv(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | TOKEN_dev '(' ftexp ')' 	           { $$ = new Foam::surfaceTensorField( Foam::dev(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | flexp '?' ftexp ':' ftexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::surfaceTensorField>(Foam::tensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_snGrad '(' texp ')'           { $$ = new Foam::surfaceTensorField(Foam::fvc::snGrad(*$3)); delete $3; }
+        | TOKEN_snGrad '(' texp ')'           { $$ = new Foam::surfaceTensorField(Foam::fvc::snGrad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolate '(' texp ')'           { $$ = new Foam::surfaceTensorField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_min '(' ftexp ',' ftexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' ftexp ',' ftexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -848,7 +848,7 @@ ftexp:   ftensor                  { $$ = $1; }
         | TOKEN_FTID                               { $$=driver.getField<Foam::surfaceTensorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FTID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceTensorField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
         | TOKEN_oldTime '(' TOKEN_FTID ')'	   { $$ = new Foam::surfaceTensorField( driver.getOrReadField<Foam::surfaceTensorField>(*$3,true,true)->oldTime()); }
-        | TOKEN_flux '(' fsexp ',' texp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_flux '(' fsexp ',' texp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
 ;
 
 fyexp:   fsymmTensor                  { $$ = $1; }
@@ -871,7 +871,7 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | TOKEN_inv '(' fyexp ')' 	           { $$ = new Foam::surfaceSymmTensorField( Foam::inv(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | TOKEN_dev '(' fyexp ')' 	           { $$ = new Foam::surfaceSymmTensorField( Foam::dev(*$3) ); delete $3;  driver.setCalculatedPatches(*$$); } 
         | flexp '?' fyexp ':' fyexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::surfaceSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5; }
-        | TOKEN_snGrad '(' yexp ')'           { $$ = new Foam::surfaceSymmTensorField(Foam::fvc::snGrad(*$3)); delete $3; }
+        | TOKEN_snGrad '(' yexp ')'           { $$ = new Foam::surfaceSymmTensorField(Foam::fvc::snGrad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolate '(' yexp ')'           { $$ = new Foam::surfaceSymmTensorField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_min '(' fyexp ',' fyexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' fyexp ',' fyexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -882,7 +882,7 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | TOKEN_FYID                               { $$=driver.getField<Foam::surfaceSymmTensorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FYID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceSymmTensorField>(*$3,true,true)() ).ptr(); }// no fvc::ddt for surface Fields
         | TOKEN_oldTime '(' TOKEN_FYID ')'	   { $$ = new Foam::surfaceSymmTensorField( driver.getOrReadField<Foam::surfaceSymmTensorField>(*$3,true,true)->oldTime()); }
-        | TOKEN_flux '(' fsexp ',' yexp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_flux '(' fsexp ',' yexp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
 ;
 
 fhexp:   fsphericalTensor                  { $$ = $1; }
@@ -898,7 +898,7 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
             $$ = driver.makeField<Foam::surfaceSphericalTensorField>( Foam::inv($3->internalField()) ); 
             delete $3;  driver.setCalculatedPatches(*$$); } 
         | flexp '?' fhexp ':' fhexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::surfaceSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
-         | TOKEN_snGrad '(' hexp ')'           { $$ = new Foam::surfaceSphericalTensorField(Foam::fvc::snGrad(*$3)); delete $3; }
+         | TOKEN_snGrad '(' hexp ')'           { $$ = new Foam::surfaceSphericalTensorField(Foam::fvc::snGrad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolate '(' hexp ')'           { $$ = new Foam::surfaceSphericalTensorField(Foam::fvc::interpolate(*$3)); delete $3; }
        | TOKEN_min '(' fhexp ',' fhexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' fhexp ',' fhexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
@@ -909,7 +909,7 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
         | TOKEN_FHID                               { $$=driver.getField<Foam::surfaceSphericalTensorField>(*$1); }
 //        | TOKEN_ddt '(' TOKEN_FHID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceSphericalTensorField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
         | TOKEN_oldTime '(' TOKEN_FHID ')'	   { $$ = new Foam::surfaceSphericalTensorField( driver.getOrReadField<Foam::surfaceSphericalTensorField>(*$3,true,true)->oldTime()); }
-        | TOKEN_flux '(' fsexp ',' hexp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; }
+        | TOKEN_flux '(' fsexp ',' hexp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
 ;
 
 // point fields
