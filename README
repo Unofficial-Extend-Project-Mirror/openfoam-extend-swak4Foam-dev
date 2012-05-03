@@ -965,6 +965,9 @@ S_{expl} + S_{impl} T
      Fix provided by Martin Beaudoin
 ** Next release - version number : 0.2.1
 *** Bug fixes
+**** Make sure that =Allwmake= always uses the =bash=
+     On Ubuntu =/bin/sh= is something else and the scripts fail. 
+     Hardcode to =/bin/bash=
 **** =downloadSimpleFunctionObjects.sh= still in Makefile
      This script (which was removed long ago) was still referenced in
      the =Makefile=.
