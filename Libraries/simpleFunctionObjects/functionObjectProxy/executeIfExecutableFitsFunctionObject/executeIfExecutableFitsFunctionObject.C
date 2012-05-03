@@ -36,7 +36,7 @@ License
 #ifdef darwin
 #include "mach-o/dyld.h"
 #endif
-#ifdef linux
+#ifdef __linux__
 #include <unistd.h>
 #endif
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -80,7 +80,7 @@ executeIfExecutableFitsFunctionObject::executeIfExecutableFitsFunctionObject
             exePath=string(path);
         }
     }
-#elif defined(linux)
+#elif defined(__linux__)
     {
         const int bufSize=1024;
         char path[bufSize];
