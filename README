@@ -86,7 +86,11 @@
       installed by the package manager
     - the =dev= package is built but poorly maintained
     Changes in the packaging should be done in the branch
-      =debianPackaging= of the Mercurial-repository
+    =debianPackaging= of the Mercurial-repository and later be
+    merged to the =default=-branch.
+
+    Packaging for OpenFOAM 2.x should be done in the branch
+    =debianPackaging_2.x= 
 
     *Note:* Due to the problem described with the global installation
     it might be necessary to deinstall a previously installed package
