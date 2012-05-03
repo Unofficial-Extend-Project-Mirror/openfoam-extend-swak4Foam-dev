@@ -1,3 +1,9 @@
+swak4foam-%(ofpkg)s (0.2.0-2~ppa1~lucid1) lucid; urgency=low
+
+  * Packaging for the Workshop
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Th, 3 May 2012 20:25:29 +0200
+
 swak4foam-%(ofpkg)s (0.2.0-1~ppa1~lucid1) lucid; urgency=low
 
   * New packaging

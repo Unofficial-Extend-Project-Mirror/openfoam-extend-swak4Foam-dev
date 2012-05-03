@@ -3,6 +3,11 @@
 import sys
 from os import path
 import re
+
+from subprocess import Popen,PIPE
+output = Popen(["hg", "branch"], stdout=PIPE).communicate()[0]
+isPackage = (output.find("debian")==0)
+
 readme=open(path.join(path.dirname(sys.argv[0]),"..","README"))
 
 reldate="no date"
@@ -14,6 +19,9 @@ verline=re.compile("\*\* (.+) - version number : (.+)")
 for l in readme.readlines():
     m=verline.match(l)
     if m:
+        if m.group(1).find("Next")==0:
+            print "Keeping the last real version number",verstring
+            continue
         reldate=m.group(1)
         grp=m.group(2).split()
         verstring=grp[0]
