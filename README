@@ -86,7 +86,11 @@
       installed by the package manager
     - the =dev= package is built but poorly maintained
     Changes in the packaging should be done in the branch
-      =debianPackaging= of the Mercurial-repository
+    =debianPackaging= of the Mercurial-repository and later be
+    merged to the =default=-branch.
+
+    Packaging for OpenFOAM 2.x should be done in the branch
+    =debianPackaging_2.x= 
 
     *Note:* Due to the problem described with the global installation
     it might be necessary to deinstall a previously installed package
@@ -965,6 +969,9 @@ S_{expl} + S_{impl} T
      Fix provided by Martin Beaudoin
 ** Next release - version number : 0.2.1
 *** Bug fixes
+**** Make sure that =Allwmake= always uses the =bash=
+     On Ubuntu =/bin/sh= is something else and the scripts fail. 
+     Hardcode to =/bin/bash=
 **** =downloadSimpleFunctionObjects.sh= still in Makefile
      This script (which was removed long ago) was still referenced in
      the =Makefile=.
