@@ -25,7 +25,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "functionObjectListProxy.H"
+#include "dynamicFunctionObjectListProxy.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
@@ -36,62 +36,78 @@ License
 
 namespace Foam
 {
-    defineTypeNameAndDebug(functionObjectListProxy, 0);
-
+    defineTypeNameAndDebug(dynamicFunctionObjectListProxy, 0);
     addToRunTimeSelectionTable
     (
         functionObject,
-        functionObjectListProxy,
+        dynamicFunctionObjectListProxy,
         dictionary
     );
 
+    defineTypeNameAndDebug(dynamicFunctionObjectListProxy::dynamicDictionaryProvider, 0);
+    defineRunTimeSelectionTable(dynamicFunctionObjectListProxy::dynamicDictionaryProvider,dictionary);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-functionObjectListProxy::functionObjectListProxy
+dynamicFunctionObjectListProxy::dynamicFunctionObjectListProxy
 (
     const word& name,
     const Time& t,
     const dictionary& dict,
-    bool allowReadingDuringConstruction
+    const char *providerNameStr
 )
 :
-    simpleFunctionObject(
+    functionObjectListProxy(
         name,
         t,
-        dict
+        dict,
+        false
     )
 {
-    if(
-        allowReadingDuringConstruction
-        &&
-        !dict.found("functions")
-    ) {
-        FatalErrorIn("functionObjectListProxy::functionObjectListProxy")
-            << "No entry 'functions' in dictionary of " << name << endl
-                << exit(FatalError);
+    word providerName(providerNameStr);
+    if(providerName.size()==0) {
+        providerName=word(dict.lookup("dictionaryProvider"));
     }
+    provider_=dynamicDictionaryProvider::New(
+        providerName,
+        dict,
+        (*this)
+    );
+
     if(
-        allowReadingDuringConstruction
-        &&
         readBool(dict.lookup("readDuringConstruction"))
     ) {
         if(writeDebug()) {
             Info << this->name() << " list initialized during construction" << endl;
         }
-        //        initFunctions();
         read(dict);
     }
 }
 
+
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void functionObjectListProxy::initFunctions()
+void dynamicFunctionObjectListProxy::initFunctions()
 {
+    string text(provider_->getDictionaryText());
+    {
+        fileName fName=obr_.path()/word(this->name()+".dictionaryText");
+        OFstream o(fName);
+        o << text.c_str();
+    }
+
+    IStringStream inStream(
+        text
+    );
+
+    dynamicDict_.set(
+        new dictionary(inStream)
+    );
+
     functions_.set(
         new functionObjectList(
             time(),
-            dict_
+            dynamicDict_()
         )
     );
 
@@ -101,57 +117,43 @@ void functionObjectListProxy::initFunctions()
     }
 }
 
-functionObjectList &functionObjectListProxy::functions()
+dynamicFunctionObjectListProxy::dynamicDictionaryProvider::dynamicDictionaryProvider(
+    const dictionary& dict,
+    const dynamicFunctionObjectListProxy &owner
+) :
+    owner_(owner)
 {
-    if(!functions_.valid()) {
-        if(writeDebug()) {
-            Info << this->name() << " list initialized on demand" << endl;
-        }
-        initFunctions();
-    }
-
-    return functions_();
 }
 
-bool functionObjectListProxy::execute()
-{
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::execute()" << endl;
+autoPtr<dynamicFunctionObjectListProxy::dynamicDictionaryProvider>
+dynamicFunctionObjectListProxy::dynamicDictionaryProvider::New(
+    const word& type,
+    const dictionary& dict,
+    const dynamicFunctionObjectListProxy &owner
+){
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(type);
+
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "autoPtr<dynamicFunctionObjectListProxy::dynamicDictionaryProvider> dynamicFunctionObjectListProxy::dynamicDictionaryProvider::New"
+        )   << "Unknown dynamicFunctionObjectListProxy::dynamicDictionaryProvider type " << type
+            << endl << endl
+            << "Valid types are :" << endl
+            << dictionaryConstructorTablePtr_->sortedToc()
+            << exit(FatalError);
     }
 
-    return functions().execute();
-}
-
-bool functionObjectListProxy::start()
-{
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::start()" << endl;
+    if(debug) {
+        Pout << "Creating dictionary provider of type " << type << endl;
     }
 
-    return functions().start();
-}
-
-bool functionObjectListProxy::end()
-{
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::end()" << endl;
-    }
-
-    return functions().end();
-}
-
-bool functionObjectListProxy::read(const dictionary& dict)
-{
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::read()" << endl;
-    }
-
-    return functions().read();
-}
-
-void functionObjectListProxy::write()
-{
-    // Don't want to be abstract
+    return autoPtr<dynamicFunctionObjectListProxy::dynamicDictionaryProvider>
+    (
+        cstrIter()(dict,owner)
+    );
 }
 
 } // namespace Foam

@@ -24,21 +24,20 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    functionObjectListProxy
+    dynamicFunctionObjectListProxy
 
 Description
     Basis for the other function objects here. Evaluates the most common options
 
 SourceFiles
-    functionObjectListProxy.C
+    dynamicFunctionObjectListProxy.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef functionObjectListProxy_H
-#define functionObjectListProxy_H
+#ifndef dynamicFunctionObjectListProxy_H
+#define dynamicFunctionObjectListProxy_H
 
-#include "functionObjectList.H"
-#include "simpleFunctionObject.H"
+#include "functionObjectListProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,28 +45,68 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class functionObjectListProxy Declaration
+                           Class dynamicFunctionObjectListProxy Declaration
 \*---------------------------------------------------------------------------*/
 
-class functionObjectListProxy
+class dynamicFunctionObjectListProxy
 :
-    public simpleFunctionObject
+    public functionObjectListProxy
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    functionObjectListProxy(const functionObjectListProxy&);
+    dynamicFunctionObjectListProxy(const dynamicFunctionObjectListProxy&);
     
     //- Disallow default bitwise assignment
-    void operator=(const functionObjectListProxy&);
+    void operator=(const dynamicFunctionObjectListProxy&);
 
 protected:
 
-    //- the actual function Objects that this encapsulates
-    autoPtr<functionObjectList> functions_;
+    class dynamicDictionaryProvider {
+        //- Disallow default bitwise copy construct
+        dynamicDictionaryProvider(const dynamicDictionaryProvider&);
+        
+        //- Disallow default bitwise assignment
+        void operator=(const dynamicDictionaryProvider&);
 
-    //- get the functionObject list (read if not yet done so)
-    functionObjectList &functions();
+        //- the owning functionObject
+        const dynamicFunctionObjectListProxy &owner_;
+
+    public:
+        TypeName("dynamicDictionaryProvider");
+        
+        declareRunTimeSelectionTable
+        (
+            autoPtr,
+            dynamicDictionaryProvider,
+            dictionary,
+            (
+                const dictionary& dict,
+                const dynamicFunctionObjectListProxy &owner
+            ),
+            (dict,owner)
+        );
+        
+        dynamicDictionaryProvider(
+            const dictionary&,
+            const dynamicFunctionObjectListProxy &
+        );
+
+        static autoPtr<dynamicDictionaryProvider> New
+        (
+            const word& type,
+            const dictionary& dict,
+            const dynamicFunctionObjectListProxy &owner
+        );
+
+        virtual string getDictionaryText() = 0;
+    };
+
+    //- the generated dictionary
+    autoPtr<dictionary> dynamicDict_;
+
+    //- the actual provider of the dictionary text
+    autoPtr<dynamicDictionaryProvider> provider_;
 
     //- initialize the function-objects
     virtual void initFunctions();
@@ -75,38 +114,20 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("functionObjectListProxy");
+    TypeName("dynamicFunctionObjectListProxy");
 
 
     // Constructors
 
     //- Construct from components
-    functionObjectListProxy
+    dynamicFunctionObjectListProxy
     (
         const word&,
         const Time&,
         const dictionary&,
-        // to switch off for FO that would require a virtual method
-        bool allowReadingDuringConstruction=true
+        const char *providerName=""
     );
 
-    // Member Functions
-
-    //- start is called at the start of the time-loop
-    virtual bool start();
-
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
-
-    //- Called when Time::run() determines that the time-loop exits.
-    //  By default it simply calls execute().
-    virtual bool end();
-    
-    //- Read and set the function object if its data have changed
-    virtual bool read(const dictionary&);
-
-    //- write from the simpleFunctionObjects
-    virtual void write();
 };
 
 
