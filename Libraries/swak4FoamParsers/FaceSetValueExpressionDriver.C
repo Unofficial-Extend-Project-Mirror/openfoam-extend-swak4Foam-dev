@@ -36,7 +36,6 @@ License
 #include "addToRunTimeSelectionTable.H"
 
 #include "cellSet.H"
-#include "SortableList.H"
 
 namespace Foam {
 
@@ -226,7 +225,7 @@ scalarField *FaceSetValueExpressionDriver::makeFaceFlipField()
     );
     assert(origin!=INVALID);
 
-    SortableList<label> faceLabels(faceSet_->toc());
+    List<label> faceLabels(faceSet_->toc());
 
     forAll(faceLabels, i)
     {
