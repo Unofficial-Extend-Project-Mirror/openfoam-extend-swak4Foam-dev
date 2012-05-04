@@ -67,8 +67,10 @@ class functionObjectListProxy
     //- get the functionObject list (read if not yet done so)
     functionObjectList &functions();
 
+protected:
+
     //- initialize the function-objects
-    void initFunctions();
+    virtual void initFunctions();
 
 public:
 
@@ -83,7 +85,9 @@ public:
     (
         const word&,
         const Time&,
-        const dictionary&
+        const dictionary&,
+        // to switch off for FO that would require a virtual method
+        bool allowReadingDuringConstruction=true
     );
 
     // Member Functions
