@@ -1050,6 +1050,9 @@ S_{expl} + S_{impl} T
 **** =mappedFvPatch= not treated like regular patches
      The field-driver created patch fields there as =calcuated= when
      =zeroGradient= would have been more appropriate
+**** =flip()= for =faceSet= not correctly calculated
+     A =SortableList= was used which meant that the vector with the
+     flip values was not in the correct order
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
