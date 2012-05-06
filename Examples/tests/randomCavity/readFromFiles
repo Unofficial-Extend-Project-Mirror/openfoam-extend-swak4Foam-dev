@@ -1,0 +1,24 @@
+// -*- mode:c++ -*-
+functions {
+    setInternal {
+        type manipulateField;
+        expression "randNormal()";
+        mask "true";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName randField;
+    }
+    randStatistics {
+        type swakExpression;
+        expression "randField";
+        outputControl timeStep;
+        outputInterval 1;
+        verbose true;
+        accumulations (
+            min
+            max
+            average
+        );
+        valueType internalField;
+    }
+}

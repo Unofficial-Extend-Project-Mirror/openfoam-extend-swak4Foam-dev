@@ -27,7 +27,7 @@ Class
     dynamicFunctionObjectListProxy
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    Dynamically generates a functionObjectList and executes it
 
 SourceFiles
     dynamicFunctionObjectListProxy.C
@@ -60,7 +60,7 @@ class dynamicFunctionObjectListProxy
     //- Disallow default bitwise assignment
     void operator=(const dynamicFunctionObjectListProxy&);
 
-protected:
+public:
 
     class dynamicDictionaryProvider {
         //- Disallow default bitwise copy construct
@@ -99,8 +99,13 @@ protected:
             const dynamicFunctionObjectListProxy &owner
         );
 
+        virtual ~dynamicDictionaryProvider()
+            {}
+
         virtual string getDictionaryText() = 0;
     };
+
+protected:
 
     //- the generated dictionary
     autoPtr<dictionary> dynamicDict_;

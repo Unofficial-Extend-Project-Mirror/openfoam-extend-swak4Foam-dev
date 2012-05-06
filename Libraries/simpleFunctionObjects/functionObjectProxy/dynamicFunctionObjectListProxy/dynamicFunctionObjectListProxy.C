@@ -91,7 +91,7 @@ void dynamicFunctionObjectListProxy::initFunctions()
 {
     string text(provider_->getDictionaryText());
     {
-        fileName fName=obr_.path()/word(this->name()+".dictionaryText");
+        fileName fName=obr_.time().path()/word(this->name()+".dictionaryText");
         OFstream o(fName);
         o << text.c_str();
     }
@@ -103,6 +103,20 @@ void dynamicFunctionObjectListProxy::initFunctions()
     dynamicDict_.set(
         new dictionary(inStream)
     );
+
+    {
+        fileName fName=obr_.time().path()/word(this->name()+".dictionaryDump");
+        OFstream o(fName);
+        o << dynamicDict_();
+    }
+
+    if(!dynamicDict_->found("functions")) {
+        WarningIn("dynamicFunctionObjectListProxy::initFunctions()")
+            << "Dictionary for" << this->name()
+                << " does not have an entry 'functions'"
+                << endl;
+
+    }
 
     functions_.set(
         new functionObjectList(
