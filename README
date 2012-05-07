@@ -342,6 +342,10 @@ S_{expl} + S_{impl} T
                        gravity and feeding it into a =goovyBC= via
                        global variables
      - Case preparation :: Just call =funkySetFields -time 0=
+**** =multiRegionHeaterBuildFunctionObjects=
+     - Solver :: chtMultiRegionFoam
+     - Demonstrates :: Building the specification of function objects
+                       at run-time via a Python-script
 *** solvePDE
     Examples for the =functionObjects= that can solve /Partial
     Differential equations/
