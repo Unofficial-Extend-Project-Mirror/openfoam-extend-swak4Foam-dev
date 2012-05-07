@@ -1003,6 +1003,8 @@ S_{expl} + S_{impl} T
           file
      - stdoutFromCommandProvider :: executes a program and takes the
           standard output as the dictionary text
+     - stdoutFromPythonScriptProvider :: executes a python-script and
+          takes the stdout as the dictionary text
      The string must be in the format o a regular OpenFOAM-dictionary
      with an entry =functions= from which the functionObjects are
      generated

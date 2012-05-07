@@ -50,6 +50,7 @@ libs (
     "libsimpleFunctionObjects.so"
     "libswakFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
+    "libpythonIntegration.so"
 );
 
 functions {
@@ -63,6 +64,13 @@ functions {
         type dynamicFunctionObjectListProxy;
         dictionaryProvider stdoutFromCommandProvider;
         theCommand "cat $FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
+    dynamicFO3 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromPythonScriptProvider;
+        scriptCode "print 'functions {}'";
+        interactiveAfterException true;
         readDuringConstruction true;
     }
 }
