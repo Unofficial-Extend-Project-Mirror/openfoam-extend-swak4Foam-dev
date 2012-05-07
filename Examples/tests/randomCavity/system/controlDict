@@ -59,6 +59,12 @@ functions {
         dictionaryFile "$FOAM_CASE/readFromFiles";
         readDuringConstruction true;
     }
+    dynamicFO2 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromCommandProvider;
+        theCommand "cat $FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
 }
 
 // ************************************************************************* //

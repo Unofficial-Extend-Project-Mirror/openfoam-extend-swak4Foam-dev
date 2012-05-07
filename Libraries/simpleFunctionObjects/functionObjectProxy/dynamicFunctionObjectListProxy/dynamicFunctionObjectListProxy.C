@@ -111,10 +111,11 @@ void dynamicFunctionObjectListProxy::initFunctions()
     }
 
     if(!dynamicDict_->found("functions")) {
-        WarningIn("dynamicFunctionObjectListProxy::initFunctions()")
+        FatalErrorIn("dynamicFunctionObjectListProxy::initFunctions()")
             << "Dictionary for" << this->name()
                 << " does not have an entry 'functions'"
-                << endl;
+                << endl
+                << exit(FatalError);
 
     }
 

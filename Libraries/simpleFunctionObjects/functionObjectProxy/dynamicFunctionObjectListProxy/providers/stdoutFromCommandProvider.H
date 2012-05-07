@@ -24,18 +24,18 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    fromFileDictionaryProvider
+    stdoutFromCommandProvider
 
 Description
-    Reads text from a file and uses it as the dictionary text
+    Excutes a command and uses the stdout as the basis for the dicitionary
 
 SourceFiles
-    fromFileDictionaryProvider.C
+    stdoutFromCommandProvider.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fromFileDictionaryProvider_H
-#define fromFileDictionaryProvider_H
+#ifndef stdoutFromCommandProvider_H
+#define stdoutFromCommandProvider_H
 
 #include "dynamicFunctionObjectListProxy.H"
 
@@ -45,21 +45,21 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class fromFileDictionaryProvider Declaration
+                           Class stdoutFromCommandProvider Declaration
 \*---------------------------------------------------------------------------*/
 
-class fromFileDictionaryProvider
+class stdoutFromCommandProvider
 :
     public dynamicFunctionObjectListProxy::dynamicDictionaryProvider
 {
     
-    fileName fileName_;
+    string theCommand_;
 
 public:
     
-    TypeName("fromFileDictionaryProvider");
+    TypeName("stdoutFromCommandProvider");
 
-    fromFileDictionaryProvider(
+    stdoutFromCommandProvider(
         const dictionary&,
         const dynamicFunctionObjectListProxy &
     );

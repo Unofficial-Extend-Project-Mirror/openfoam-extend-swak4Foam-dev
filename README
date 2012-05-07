@@ -1000,7 +1000,9 @@ S_{expl} + S_{impl} T
      The string is provided by a special class (the so called
      =dictionaryProvider=). Current implementations for the provider are:
      - fromFileDictionaryProvider :: reads the text from a dictionary
-          file 
+          file
+     - stdoutFromCommandProvider :: executes a program and takes the
+          standard output as the dictionary text
      The string must be in the format o a regular OpenFOAM-dictionary
      with an entry =functions= from which the functionObjects are
      generated
