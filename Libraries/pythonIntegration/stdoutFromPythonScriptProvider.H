@@ -24,21 +24,21 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    functionObjectListProxy
+    stdoutFromPythonScriptProvider
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    Excutes a python script and uses the stdout as the basis for the dicitionary
 
 SourceFiles
-    functionObjectListProxy.C
+    stdoutFromPythonScriptProvider.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef functionObjectListProxy_H
-#define functionObjectListProxy_H
+#ifndef stdoutFromPythonScriptProvider_H
+#define stdoutFromPythonScriptProvider_H
 
-#include "functionObjectList.H"
-#include "simpleFunctionObject.H"
+#include "dynamicFunctionObjectListProxy.H"
+#include "pythonInterpreterWrapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,67 +46,27 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class functionObjectListProxy Declaration
+                           Class stdoutFromPythonScriptProvider Declaration
 \*---------------------------------------------------------------------------*/
 
-class functionObjectListProxy
+class stdoutFromPythonScriptProvider
 :
-    public simpleFunctionObject
+    public dynamicFunctionObjectListProxy::dynamicDictionaryProvider,
+    public pythonInterpreterWrapper
 {
-    // Private Member Functions
-
-    //- Disallow default bitwise copy construct
-    functionObjectListProxy(const functionObjectListProxy&);
     
-    //- Disallow default bitwise assignment
-    void operator=(const functionObjectListProxy&);
-
-protected:
-
-    //- the actual function Objects that this encapsulates
-    autoPtr<functionObjectList> functions_;
-
-    //- get the functionObject list (read if not yet done so)
-    functionObjectList &functions();
-
-    //- initialize the function-objects
-    virtual void initFunctions();
+    string thePythonScript_;
 
 public:
+    
+    TypeName("stdoutFromPythonScriptProvider");
 
-    //- Runtime type information
-    TypeName("functionObjectListProxy");
-
-
-    // Constructors
-
-    //- Construct from components
-    functionObjectListProxy
-    (
-        const word&,
-        const Time&,
+    stdoutFromPythonScriptProvider(
         const dictionary&,
-        // to switch off for FO that would require a virtual method
-        bool allowReadingDuringConstruction=true
+        const dynamicFunctionObjectListProxy &
     );
 
-    // Member Functions
-
-    //- start is called at the start of the time-loop
-    virtual bool start();
-
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute(const bool forceWrite);
-
-    //- Called when Time::run() determines that the time-loop exits.
-    //  By default it simply calls execute().
-    virtual bool end();
-    
-    //- Read and set the function object if its data have changed
-    virtual bool read(const dictionary&);
-
-    //- write from the simpleFunctionObjects
-    virtual void write();
+    string getDictionaryText();
 };
 
 

@@ -235,6 +235,49 @@ bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,
     return fail==0;
 }
 
+bool pythonInterpreterWrapper::executeCodeCaptureOutput(
+    const string &code,
+    string &stdout,
+    bool putVariables,
+    bool failOnException
+) {
+    setInterpreter();
+
+    getGlobals();
+
+    PyObject *m = PyImport_AddModule("__main__");
+
+    char const* catcherCode = 
+"# catcher code\n"
+"import sys\n"
+"class __StdoutCatcher:\n"
+"   def __init__(self):\n"
+"      self.data = ''\n"
+"   def write(self, stuff):\n"
+"      self.data = self.data + stuff\n"
+"__catcher = __StdoutCatcher()\n"
+"__precatcherStdout = sys.stdout\n"
+"sys.stdout = __catcher\n";
+
+    PyRun_SimpleString(catcherCode);
+
+    int fail=PyRun_SimpleString(code.c_str());
+
+    char const* postCatchCode = 
+"sys.stdout = __precatcherStdout\n";
+
+    PyRun_SimpleString(postCatchCode);
+
+    doAfterExecution(fail,code,putVariables,failOnException);
+
+    PyObject* catcher = PyObject_GetAttrString(m, "__catcher");
+    PyObject* output = PyObject_GetAttrString(catcher, "data");
+
+    stdout=string(PyString_AsString(output));
+
+    return fail==0;
+}
+
 bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool failOnException)
 {
     setInterpreter();
