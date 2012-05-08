@@ -56,6 +56,10 @@ namespace Foam
         ),
         pythonInterpreterWrapper(dict)
     {
+        if(parallelNoRun()) {
+            return;
+        }
+
         initEnvironment(owner.time());
         
         setRunTime(owner.time());
@@ -66,6 +70,10 @@ namespace Foam
 
     string stdoutFromPythonScriptProvider::getDictionaryText() {
         string buffer;
+
+        if(parallelNoRun()) {
+            return buffer;
+        }
 
         executeCodeCaptureOutput(
             thePythonScript_,

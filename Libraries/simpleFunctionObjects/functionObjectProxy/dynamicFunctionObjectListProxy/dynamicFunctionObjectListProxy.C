@@ -90,6 +90,17 @@ dynamicFunctionObjectListProxy::dynamicFunctionObjectListProxy
 void dynamicFunctionObjectListProxy::initFunctions()
 {
     string text(provider_->getDictionaryText());
+    if(Pstream::parRun()) {
+        string localText=text;
+        Pstream::scatter(text);
+        if(text!=localText) {
+            Pout << "WARNING: In dynamicFunctionObjectListProxy::initFunctions() "
+                << "for " << name() 
+                << " the text of the dictionary is different from the master"
+                << endl
+                << " Overwritten local version with master";
+        }
+    }
     {
         fileName fName=obr_.time().path()/word(this->name()+".dictionaryText");
         OFstream o(fName);

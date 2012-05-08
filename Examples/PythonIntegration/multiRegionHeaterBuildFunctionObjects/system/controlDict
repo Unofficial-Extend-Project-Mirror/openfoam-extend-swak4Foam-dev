@@ -69,6 +69,8 @@ functions {
         interactiveAfterException true;
         readDuringConstruction true;
         region heater;
+        parallelMasterOnly true;
+        //        isParallelized true;
     }
 }
 
