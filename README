@@ -342,6 +342,10 @@ S_{expl} + S_{impl} T
                        gravity and feeding it into a =goovyBC= via
                        global variables
      - Case preparation :: Just call =funkySetFields -time 0=
+**** =multiRegionHeaterBuildFunctionObjects=
+     - Solver :: chtMultiRegionFoam
+     - Demonstrates :: Building the specification of function objects
+                       at run-time via a Python-script
 *** solvePDE
     Examples for the =functionObjects= that can solve /Partial
     Differential equations/
@@ -990,3 +994,21 @@ S_{expl} + S_{impl} T
      =expressionToPoint= now support =variables= and the other
      supporting keywords if being constructed with a dictionary (for
      instance from the =topoSet=-utility)
+*** New features
+**** Dynamically generated lists of =functionObjects=
+     The new =dynamicFunctionObjectListProxy= in the
+     =simpleFunctionObjects= can generate a =functionObjectList= from
+     a string and execute them during the run like regular
+     function-objects. 
+
+     The string is provided by a special class (the so called
+     =dictionaryProvider=). Current implementations for the provider are:
+     - fromFileDictionaryProvider :: reads the text from a dictionary
+          file
+     - stdoutFromCommandProvider :: executes a program and takes the
+          standard output as the dictionary text
+     - stdoutFromPythonScriptProvider :: executes a python-script and
+          takes the stdout as the dictionary text
+     The string must be in the format o a regular OpenFOAM-dictionary
+     with an entry =functions= from which the functionObjects are
+     generated
