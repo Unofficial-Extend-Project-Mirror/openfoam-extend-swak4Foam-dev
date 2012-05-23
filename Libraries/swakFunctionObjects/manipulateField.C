@@ -42,6 +42,7 @@ Foam::manipulateField::manipulateField
 )
 :
     active_(true),
+    writeManipulated_(false),
     obr_(obr),
     dict_(dict)
 {
@@ -79,6 +80,21 @@ void Foam::manipulateField::manipulate(
     Info << "Manipulated field " << name_ << " in " << cnt
         << " " << entity << " with the expression " << expression_ << endl;
     original.correctBoundaryConditions();
+
+    if(
+        obr_.time().outputTime()
+        &&
+        original.writeOpt()==IOobject::AUTO_WRITE
+    ) {
+        if(this->writeManipulated_) {
+            Info << "Rewriting manipulated field " << original.name() << endl;
+            
+            original.write();
+        } else {
+            Info << "Manipulated field " << original.name() 
+                << " not rewritten. Set 'writeManipulated'" << endl;
+        }
+    }
 }
 
 template<class TData,class TMask>
@@ -102,6 +118,21 @@ void Foam::manipulateField::manipulateSurface(
 
     // this does not work for surface fields
     //    original.correctBoundaryConditions();
+
+    if(
+        obr_.time().outputTime()
+        &&
+        original.writeOpt()==IOobject::AUTO_WRITE
+    ) {
+        if(this->writeManipulated_) {
+            Info << "Rewriting manipulated field " << original.name() << endl;
+            
+            original.write();
+        } else {
+            Info << "Manipulated field " << original.name() 
+                << " not rewritten. Set 'writeManipulated'" << endl;
+        }
+    }
 }
 
 void Foam::manipulateField::read(const dictionary& dict)
@@ -110,6 +141,7 @@ void Foam::manipulateField::read(const dictionary& dict)
         name_=word(dict.lookup("fieldName"));
         expression_=string(dict.lookup("expression"));
         maskExpression_=string(dict.lookup("mask"));
+        writeManipulated_=dict.lookupOrDefault<bool>("writeManipulated",false);
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
         
@@ -280,6 +312,7 @@ void Foam::manipulateField::execute()
 
 void Foam::manipulateField::end()
 {
+    execute();
 }
 
 void Foam::manipulateField::write()

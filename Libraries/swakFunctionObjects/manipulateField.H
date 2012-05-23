@@ -68,6 +68,9 @@ protected:
     //- are we working?
     bool active_;
 
+    //- re-write manipulated field
+    bool writeManipulated_;
+
     //- Name of the field
     word name_;
 

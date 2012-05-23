@@ -994,6 +994,12 @@ S_{expl} + S_{impl} T
      =expressionToPoint= now support =variables= and the other
      supporting keywords if being constructed with a dictionary (for
      instance from the =topoSet=-utility)
+**** Fields touched by =manipulateField= being written
+     Usually the manipulated version of the fields is not written as
+     the manipulation happens *after* writing. The option
+     =writeManipulated= enforces writing.
+
+     Writing is not the default behavior to avoid side-effects 
 *** New features
 **** Dynamically generated lists of =functionObjects=
      The new =dynamicFunctionObjectListProxy= in the
