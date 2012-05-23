@@ -99,7 +99,7 @@ protected:
         void operator=(const readAndUpdateFields&);
 
         template<class Type>
-        void loadField
+        bool loadField
         (
             const word&,
             PtrList<GeometricField<Type, fvPatchField, volMesh> >&,

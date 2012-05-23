@@ -102,12 +102,20 @@ void Foam::readAndUpdateFields::read(const dictionary& dict)
         
         forAll(fieldSet_, fieldI)
         {
-            // If necessary load field
-            loadField<scalar>(fieldSet_[fieldI], vsf_, psf_);
-            loadField<vector>(fieldSet_[fieldI], vvf_, pvf_);
-            loadField<sphericalTensor>(fieldSet_[fieldI], vSpheretf_, pSpheretf_);
-            loadField<symmTensor>(fieldSet_[fieldI], vSymmtf_, pSymmtf_);
-            loadField<tensor>(fieldSet_[fieldI], vtf_, ptf_);
+            bool found = loadField<scalar>(fieldSet_[fieldI], vsf_, psf_);
+            found = found || loadField<vector>(fieldSet_[fieldI], vvf_, pvf_);
+            found = found || loadField<sphericalTensor>(fieldSet_[fieldI], vSpheretf_, pSpheretf_);
+            found = found || loadField<symmTensor>(fieldSet_[fieldI], vSymmtf_, pSymmtf_);
+            found = found || loadField<tensor>(fieldSet_[fieldI], vtf_, ptf_);
+        
+            if(!found)
+            { 
+                FatalErrorIn("Foam::readAndUpdateFields::read(const dictionary& dict)")
+                    << "Field " << fieldSet_[fieldI] << " does not exist"
+                        << endl
+                        << exit(FatalError);
+                
+            }
         }
     }
 }

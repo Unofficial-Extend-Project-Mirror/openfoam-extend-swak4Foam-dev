@@ -43,7 +43,7 @@ void Foam::readAndUpdateFields::correctBoundaryConditions(
 }
 
 template<class Type>
-void Foam::readAndUpdateFields::loadField
+bool Foam::readAndUpdateFields::loadField
 (
     const word& fieldName,
     PtrList<GeometricField<Type, fvPatchField, volMesh> >& vflds,
@@ -103,6 +103,8 @@ void Foam::readAndUpdateFields::loadField
             vflds.setSize(sz+1);
             vflds.set(sz, new vfType(fieldHeader, mesh));
             //            vflds[sz].writeOpt()=IOobject::AUTO_WRITE;
+
+            return true;
         }
         else if
         (
@@ -116,6 +118,8 @@ void Foam::readAndUpdateFields::loadField
             pflds.setSize(sz+1);
             pflds.set(sz, new pfType(fieldHeader, this->pMesh(mesh)));
             //            pflds[sz].writeOpt()=IOobject::AUTO_WRITE;
+
+            return true;
         }
         else if
         (
@@ -130,8 +134,10 @@ void Foam::readAndUpdateFields::loadField
                     << endl << "-> Not read"
                     << endl;
 
+            return true;
         }
     }
+    return false;
 }
 
 
