@@ -1018,3 +1018,16 @@ S_{expl} + S_{impl} T
      The string must be in the format o a regular OpenFOAM-dictionary
      with an entry =functions= from which the functionObjects are
      generated
+**** Function object =readAndUpdateFields=
+     This FO in the =simpleFunctionObjects= reads a number of fields
+     and updates their boundary conditions at every timestep. 
+
+     Main purpose is to let =groovyBC= do calculations and use the
+     results for post-processing purposes
+
+     Does not support surface-fields as these don't have a
+     =correctBoundaryConditions=-method.
+
+     Example of the usage in the =angledDuctImplicit=-case (the
+     results are of limited value because of the temperature boundary
+     condition) 
