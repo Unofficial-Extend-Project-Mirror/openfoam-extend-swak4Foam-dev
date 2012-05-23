@@ -19,6 +19,8 @@ volume/volumeMinMaxFunctionObject/volumeMinMaxFunctionObject.C
 
 misc/panicDump/panicDumpFunctionObject.C
 misc/readGravitation/readGravitationFunctionObject.C
+misc/readAndUpdateFields/readAndUpdateFields.C
+misc/readAndUpdateFields/readAndUpdateFieldsFunctionObject.C
 
 writeFields/writeAdditionalFields/writeAdditionalFieldsFunctionObject.C
 writeFields/writeFieldsOften/writeFieldsOftenFunctionObject.C
