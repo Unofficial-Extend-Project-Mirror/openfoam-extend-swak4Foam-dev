@@ -22,6 +22,7 @@ startTime       0;
 
 stopAt          endTime;
 
+// endTime         0.001;
 endTime         0.1;
 
 deltaT          1e-05;
@@ -274,6 +275,7 @@ functions
         fieldName k;
         outputControl timeStep;
         outputInterval 1;
+        writeManipulated true;
     }
     clearKinetic
     {
