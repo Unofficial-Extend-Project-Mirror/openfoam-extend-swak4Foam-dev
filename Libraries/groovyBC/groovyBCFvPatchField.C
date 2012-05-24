@@ -141,6 +141,25 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     if(this->evaluateDuringConstruction()) {
         // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
         this->evaluate();
+    } else {
+        // emulate mixedFvPatchField<Type>::evaluate, but avoid calling "our" updateCoeffs
+        if (!this->updated())
+        {
+            this->mixedFvPatchField<Type>::updateCoeffs();
+        }
+
+        Field<Type>::operator=
+            (
+                this->valueFraction()*this->refValue()
+                +
+                (1.0 - this->valueFraction())*
+                (
+                    this->patchInternalField()
+                    + this->refGrad()/this->patch().deltaCoeffs()
+                )
+            );
+
+        fvPatchField<Type>::evaluate();
     }
 }
 
