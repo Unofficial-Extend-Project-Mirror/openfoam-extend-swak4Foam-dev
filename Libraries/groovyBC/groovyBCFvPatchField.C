@@ -97,7 +97,11 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 
     driver_.readVariablesAndTables(dict);
 
-    this->refValue() = pTraits<Type>::zero;
+    if (dict.found("refValue")) {
+        this->refValue() = Field<Type>("refValue", dict, p.size());
+    } else {
+        this->refValue() = pTraits<Type>::zero;
+    }
 
     if (dict.found("value"))
     {
@@ -122,8 +126,17 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
             << endl;
     }
 
-    this->refGrad() = pTraits<Type>::zero;
-    this->valueFraction() = 1;
+    if (dict.found("refGradient")) {
+        this->refGrad() = Field<Type>("refGradient", dict, p.size());
+    } else {
+        this->refGrad() = pTraits<Type>::zero;
+    }
+
+    if (dict.found("valueFraction")) {
+        this->valueFraction() = Field<scalar>("valueFraction", dict, p.size());
+    } else {
+        this->valueFraction() = 1;
+    }
 
     if(this->evaluateDuringConstruction()) {
         // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
