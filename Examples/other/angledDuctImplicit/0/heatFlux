@@ -10,49 +10,34 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      T;
+    location    "0";
+    object      heatFlux;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+// this is not the correct dimension. I know
 
-internalField   uniform 293;
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
 
 boundaryField
 {
-
-    front
+    "(front|back|wall|porosityWall)"
     {
-        type            zeroGradient;
-        // type            fixedValue;
-        // value uniform 200;
+        type            groovyBCFixedValue;
+        value           uniform 0;
+        valueExpression "snGrad(h)*alphat";
     }
-    back
-    {
-        type            zeroGradient;
-        // type            fixedValue;
-        // value uniform 400;
-    }
-    wall
-    {
-        type            zeroGradient;
-    }
-    porosityWall
-    {
-        type            zeroGradient;
-    }
-
     inlet
     {
-        type            fixedValue;
-        value           $internalField;
+        type            zeroGradient;
     }
     outlet
     {
-        type            inletOutlet;
-        value           $internalField;
-        inletValue      $internalField;
+        type            zeroGradient;
     }
 }
+
 
 // ************************************************************************* //
