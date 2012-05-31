@@ -936,6 +936,33 @@ functions
         verbose true;
         prevIterIsOldTime true;
     }
+    heatFluxField
+    {
+        type readAndUpdateFields;
+        outputControl timeStep;
+        outputInterval 1;
+        fields (
+            heatFlux
+            heatFluxPoint // just to test point fields
+            heatFluxFace // just to test face fields
+        );
+    }
+    totalHeatFlux
+    {
+        // zero because of the boundary conditions
+
+        type patchIntegrate;
+        fields (
+            heatFlux
+        );
+        patches (
+            front
+            back
+            wall
+            porosityWall
+        );
+        verbose true;
+    }
 };
 
 libs ( 

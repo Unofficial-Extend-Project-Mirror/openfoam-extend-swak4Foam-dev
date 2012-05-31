@@ -71,11 +71,13 @@
    self-compiled version /shadows/ the global version (which would
    lead to strange results)
 
-   There is a =Makefile= attached. =make install= compiles =swak4Foam=
+   There is a =Makefile= attached. =make globalinstall= compiles =swak4Foam=
    and installs it into the global directories
 
    *Note:* Due to the order in which library direcories are searched
-   for with =-L= a global installation might break the compilation
+   for with =-L= a global installation might break the
+   compilation. *If you don't know what this means: don't attempt a
+   global installation*
 ** Packaging
 *** Debian
     The command =build dpkg= builds a Debian/Ubuntu package for 
@@ -84,7 +86,11 @@
       installed by the package manager
     - the =dev= package is built but poorly maintained
     Changes in the packaging should be done in the branch
-      =debianPackaging= of the Mercurial-repository
+    =debianPackaging= of the Mercurial-repository and later be
+    merged to the =default=-branch.
+
+    Packaging for OpenFOAM 2.x should be done in the branch
+    =debianPackaging_2.x= 
 
     *Note:* Due to the problem described with the global installation
     it might be necessary to deinstall a previously installed package
@@ -336,6 +342,10 @@ S_{expl} + S_{impl} T
                        gravity and feeding it into a =goovyBC= via
                        global variables
      - Case preparation :: Just call =funkySetFields -time 0=
+**** =multiRegionHeaterBuildFunctionObjects=
+     - Solver :: chtMultiRegionFoam
+     - Demonstrates :: Building the specification of function objects
+                       at run-time via a Python-script
 *** solvePDE
     Examples for the =functionObjects= that can solve /Partial
     Differential equations/
@@ -773,7 +783,7 @@ S_{expl} + S_{impl} T
      problem with =calculated= patches causes =funkySetFields= to fail
      with stock boundary conditions if not all fields are present in
      memory 
-** Next release - version number : 0.2.0 development
+** 2012-04-13 - version number : 0.2.0 Friday the 13th
 *** New features
 **** Region name in =simpleFunctionObject=.outputs
      To distinguish the output of various instances of
@@ -961,3 +971,69 @@ S_{expl} + S_{impl} T
      track 
 
      Fix provided by Martin Beaudoin
+** Next release - version number : 0.2.1
+*** Bug fixes
+**** Make sure that =Allwmake= always uses the =bash=
+     On Ubuntu =/bin/sh= is something else and the scripts fail. 
+     Hardcode to =/bin/bash=
+**** =downloadSimpleFunctionObjects.sh= still in Makefile
+     This script (which was removed long ago) was still referenced in
+     the =Makefile=.
+**** =grad= in fields added dimensions
+     =grad= and other operators from =fvc= added dimensions to values
+     that were supposed to be dimensionless. This has been fixed
+**** Default =condition= for surface fields wrong size in =funkySetFields=
+     Due to a typo the constructed condition field was too short for
+     surface-fields (too long for volume-fields, but that didn't matter)
+**** =flip()= for =faceSet= not correctly calculated
+     A =SortableList= was used which meant that the vector with the
+     flip values was not in the correct order
+**** =groovyBC= produced incorrect results with =wallHeatFlux= etc
+     The reason was that during construction =refGradient=, =refValue=
+     etc were not read correctly (if present).
+
+     This is now fixed in =groovyBC= and the other BCs (=groovyBC= for
+     pointFields and =groovyBCDirection=)
+*** Enhancements
+**** Topology-operators now support =variables= etc
+     The topology operators =expressionToCell=, =expressionToFace= and
+     =expressionToPoint= now support =variables= and the other
+     supporting keywords if being constructed with a dictionary (for
+     instance from the =topoSet=-utility)
+**** Fields touched by =manipulateField= being written
+     Usually the manipulated version of the fields is not written as
+     the manipulation happens *after* writing. The option
+     =writeManipulated= enforces writing.
+
+     Writing is not the default behavior to avoid side-effects 
+*** New features
+**** Dynamically generated lists of =functionObjects=
+     The new =dynamicFunctionObjectListProxy= in the
+     =simpleFunctionObjects= can generate a =functionObjectList= from
+     a string and execute them during the run like regular
+     function-objects. 
+
+     The string is provided by a special class (the so called
+     =dictionaryProvider=). Current implementations for the provider are:
+     - fromFileDictionaryProvider :: reads the text from a dictionary
+          file
+     - stdoutFromCommandProvider :: executes a program and takes the
+          standard output as the dictionary text
+     - stdoutFromPythonScriptProvider :: executes a python-script and
+          takes the stdout as the dictionary text
+     The string must be in the format o a regular OpenFOAM-dictionary
+     with an entry =functions= from which the functionObjects are
+     generated
+**** Function object =readAndUpdateFields=
+     This FO in the =simpleFunctionObjects= reads a number of fields
+     and updates their boundary conditions at every timestep. 
+
+     Main purpose is to let =groovyBC= do calculations and use the
+     results for post-processing purposes
+
+     Does not support surface-fields as these don't have a
+     =correctBoundaryConditions=-method.
+
+     Example of the usage in the =angledDuctImplicit=-case (the
+     results are of limited value because of the temperature boundary
+     condition) 

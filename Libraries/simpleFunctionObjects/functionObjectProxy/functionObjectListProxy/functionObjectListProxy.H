@@ -61,6 +61,8 @@ class functionObjectListProxy
     //- Disallow default bitwise assignment
     void operator=(const functionObjectListProxy&);
 
+protected:
+
     //- the actual function Objects that this encapsulates
     autoPtr<functionObjectList> functions_;
 
@@ -68,7 +70,7 @@ class functionObjectListProxy
     functionObjectList &functions();
 
     //- initialize the function-objects
-    void initFunctions();
+    virtual void initFunctions();
 
 public:
 
@@ -83,7 +85,9 @@ public:
     (
         const word&,
         const Time&,
-        const dictionary&
+        const dictionary&,
+        // to switch off for FO that would require a virtual method
+        bool allowReadingDuringConstruction=true
     );
 
     // Member Functions

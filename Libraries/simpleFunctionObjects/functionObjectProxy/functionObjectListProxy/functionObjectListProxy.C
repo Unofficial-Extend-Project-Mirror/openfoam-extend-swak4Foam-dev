@@ -52,7 +52,8 @@ functionObjectListProxy::functionObjectListProxy
 (
     const word& name,
     const Time& t,
-    const dictionary& dict
+    const dictionary& dict,
+    bool allowReadingDuringConstruction
 )
 :
     simpleFunctionObject(
@@ -61,12 +62,20 @@ functionObjectListProxy::functionObjectListProxy
         dict
     )
 {
-    if(!dict.found("functions")) {
+    if(
+        allowReadingDuringConstruction
+        &&
+        !dict.found("functions")
+    ) {
         FatalErrorIn("functionObjectListProxy::functionObjectListProxy")
             << "No entry 'functions' in dictionary of " << name << endl
                 << exit(FatalError);
     }
-    if(readBool(dict.lookup("readDuringConstruction"))) {
+    if(
+        allowReadingDuringConstruction
+        &&
+        readBool(dict.lookup("readDuringConstruction"))
+    ) {
         if(writeDebug()) {
             Info << this->name() << " list initialized during construction" << endl;
         }

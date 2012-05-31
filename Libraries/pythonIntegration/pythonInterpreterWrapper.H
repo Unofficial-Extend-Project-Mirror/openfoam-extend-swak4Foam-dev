@@ -115,6 +115,9 @@ protected:
     //- Execute code. Return true if there was no problem
     bool executeCode(const string &code,bool putVariables,bool failOnException=false);
 
+    //- Execute code and capture the stdout. Return true if there was no problem
+    bool executeCodeCaptureOutput(const string &code,string &stdout,bool putVariables,bool failOnException=false);
+
     //- Execute code and see if it returns to true or false
     bool evaluateCodeTrueOrFalse(const string &code,bool failOnException=false);
 

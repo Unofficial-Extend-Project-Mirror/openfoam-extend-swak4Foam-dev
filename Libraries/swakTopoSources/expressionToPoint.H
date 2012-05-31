@@ -65,6 +65,9 @@ class expressionToPoint
         //- The logical expression to use
         string expression_;
 
+        //- dictionary with additional data
+        autoPtr<dictionary> dict_;
+
         void combine(topoSet& set, const bool add) const;
 
 public:

@@ -277,7 +277,8 @@ namespace Foam {
                     << " of type " << pTraits<T>::typeName
                     << " (neither " << FieldType::typeName 
                     << " nor " << IFieldType::typeName << ")"
-                    << " Autointerpolate: " << this->autoInterpolate_
+                    << " autoInterpolate: " << this->autoInterpolate_
+                    << (this->autoInterpolate_ ? "" : " (try setting 'autoInterpolate' to 'true')")
                     << endl
                     << exit(FatalError);
         }

@@ -24,10 +24,14 @@ boundaryField
     front
     {
         type            zeroGradient;
+        // type            fixedValue;
+        // value uniform 200;
     }
     back
     {
         type            zeroGradient;
+        // type            fixedValue;
+        // value uniform 400;
     }
     wall
     {

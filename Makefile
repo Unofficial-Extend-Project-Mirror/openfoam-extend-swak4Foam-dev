@@ -6,6 +6,7 @@ cleanStuff:
 	wcleanLnIncludeAll
 
 prepareDebian:
+	cp swakConfiguration.debian swakConfiguration
 	cd debian; ./prepareForPackaging.py
 
 dpkg-only: cleanStuff prepareDebian
@@ -19,8 +20,7 @@ source-dpkg: cleanStuff prepareDebian
 
 dpkg: dpkg-only
 
-install:
-	./downloadSimpleFunctionObjects.sh
+globalinstall:
 	./Allwmake
 	./copySwakFilesToSite.sh
 	./removeSwakFilesFromLocal.sh

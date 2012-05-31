@@ -12,6 +12,7 @@ EXE_LIBS = -lfiniteVolume \
 	-lmeshTools \
 	-L$(FOAM_USER_LIBBIN) \
 	-lswakFiniteArea \
-	-lswak4FoamParsers
+	-lswak4FoamParsers\
+	-lswakFunctionObjects 
 
 

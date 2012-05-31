@@ -47,6 +47,32 @@ runTimeModifiable yes;
 
 libs (
     "libgroovyBC.so"
+    "libsimpleFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libpythonIntegration.so"
 );
+
+functions {
+    dynamicFO1 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider fromFileDictionaryProvider;
+        dictionaryFile "$FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
+    dynamicFO2 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromCommandProvider;
+        theCommand "cat $FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
+    dynamicFO3 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromPythonScriptProvider;
+        scriptCode "print 'functions {}'";
+        interactiveAfterException true;
+        readDuringConstruction true;
+    }
+}
 
 // ************************************************************************* //

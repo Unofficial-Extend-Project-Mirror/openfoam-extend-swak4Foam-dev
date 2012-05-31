@@ -2,5 +2,6 @@ pythonInterpreterWrapper.C
 pythonIntegrationFunctionObject.C
 pythonFluIntegrationFunctionObject.C
 executeIfPythonFunctionObject.C
+stdoutFromPythonScriptProvider.C
 
 LIB = $(FOAM_USER_LIBBIN)/libpythonIntegration
