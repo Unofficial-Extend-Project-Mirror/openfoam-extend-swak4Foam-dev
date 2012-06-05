@@ -575,24 +575,35 @@ inline FType *FieldValueExpressionDriver::makeFieldInternal(
 
 template<class FType>
 inline FType *FieldValueExpressionDriver::makeConstantField(
-    const typename FType::value_type &val
+    const typename FType::value_type &val,
+    bool makeValuePatches
 )
 {
-    return makeConstantFieldInternal<FType>(val,mesh_);
+    return makeConstantFieldInternal<FType>(
+        val,
+        mesh_,
+        makeValuePatches
+    );
 }
 
 template<class FType>
 inline FType *FieldValueExpressionDriver::makePointConstantField(
-    const typename FType::value_type &val
+    const typename FType::value_type &val,
+    bool makeValuePatches
 )
 {
-    return makeConstantFieldInternal<FType>(val,this->pMesh());
+    return makeConstantFieldInternal<FType>(
+        val,
+        this->pMesh(),
+        makeValuePatches
+    );
 }
 
 template<class FType,class Mesh>
 inline FType *FieldValueExpressionDriver::makeConstantFieldInternal(
     const typename FType::value_type &val,
-    const Mesh &mesh
+    const Mesh &mesh,
+    bool makeValuePatches
 )
 {
     std::ostringstream buff;
@@ -601,6 +612,9 @@ inline FType *FieldValueExpressionDriver::makeConstantFieldInternal(
     word defaultBC="calculated";
     if(pTraits<typename FType::PatchFieldType>::typeName=="fvPatchField") {
         defaultBC="zeroGradient";
+    }
+    if(makeValuePatches) {
+        defaultBC="fixedValue";
     }
 
     FType *f=new FType(

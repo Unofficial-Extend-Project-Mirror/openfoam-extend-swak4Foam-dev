@@ -113,6 +113,7 @@
 %token <name> TOKEN_FZONEID "faceZoneID" 
 %token <name> TOKEN_PSETID "pointSetID" 
 %token <name> TOKEN_PZONEID "pointZoneID" 
+%token <name> TOKEN_PATCHID "patchID" 
 %token <val>    TOKEN_NUM   "number"
 %token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
@@ -198,6 +199,9 @@
 %token TOKEN_fzone
 %token TOKEN_pset
 %token TOKEN_pzone
+
+%token TOKEN_onPatch
+%token TOKEN_internalFace
 
 %token TOKEN_div
 %token TOKEN_grad
@@ -285,9 +289,9 @@
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
+%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID" "patchID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector" "tensor" "symmTensor" "sphericalTensor"
-%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "tensor" "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID"
+%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "tensor" "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID" "patchID"
 %printer             { debug_stream () << $$; } "number" "integer" "sexpression"
 %printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "plexpression" "psexpression" "pvexpression" "ptexpression" "pyexpression" "phexpression"
 
@@ -685,6 +689,8 @@ flexp: TOKEN_surf '(' TOKEN_TRUE ')'  { $$ = driver.makeConstantField<Foam::surf
     | TOKEN_surf '(' TOKEN_FALSE ')'  { $$ = driver.makeConstantField<Foam::surfaceScalarField>(0); }
     | TOKEN_fset '(' TOKEN_FSETID ')'    { $$ = driver.makeFaceSetField(*$3); }
     | TOKEN_fzone '(' TOKEN_FZONEID ')'  { $$ = driver.makeFaceZoneField(*$3); }
+    | TOKEN_onPatch '(' TOKEN_PATCHID ')'  { $$ = driver.makeOnPatchField(*$3); }
+    | TOKEN_internalFace '(' ')'      { $$ = driver.makeInternalFaceField(); }
     | fsexp '<' fsexp                 { sameSize($1,$3); $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);  delete $1; delete $3; }
     | fsexp '>' fsexp                 { sameSize($1,$3); $$ = driver.doCompare($1,std::greater<Foam::scalar>(),$3);  delete $1; delete $3; }
     | fsexp TOKEN_LEQ fsexp           { sameSize($1,$3); $$ = driver.doCompare($1,std::less_equal<Foam::scalar>(),$3);  delete $1; delete $3; }

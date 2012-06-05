@@ -1057,6 +1057,13 @@ S_{expl} + S_{impl} T
 **** =flip()= for =faceSet= not correctly calculated
      A =SortableList= was used which meant that the vector with the
      flip values was not in the correct order
+**** =fset()= crashes when =faceSet= has boundary faces
+     This problem was due to a non-special treatment of faces on the
+     boundary. Fixed (for =faceZone= as well). 
+
+     Also boundary faces are now honored in =expressionToFace= if the
+     expression is a surface-field (for the volume-field logic
+     boundary faces will never work)
 **** =groovyBC= produced incorrect results with =wallHeatFlux= etc
      The reason was that during construction =refGradient=, =refValue=
      etc were not read correctly (if present).
@@ -1075,6 +1082,12 @@ S_{expl} + S_{impl} T
      =writeManipulated= enforces writing.
 
      Writing is not the default behavior to avoid side-effects 
+**** Indicator functions =onPatch= and =internalFace= added to field-expressions
+     The function =onPatch(name)= returns a surface-field that is $1$
+     on all faces that belong to patch =name=. 
+
+     The function =internalFace()= is $1$ on all internal faces and
+     $0$ on all patches
 *** New features
 **** Dynamically generated lists of =functionObjects=
      The new =dynamicFunctionObjectListProxy= in the

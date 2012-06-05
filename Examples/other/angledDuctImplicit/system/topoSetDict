@@ -43,6 +43,32 @@ actions (
         }
     }
     {
+        type faceSet;
+
+        name inletPatch;
+
+        action new;
+        
+        source expressionToFace;
+        
+        sourceInfo {
+            expression "onPatch(inlet)";
+        }
+    }
+    {
+        type faceSet;
+
+        name halfInlet;
+
+        action new;
+        
+        source expressionToFace;
+        
+        sourceInfo {
+            expression "fset(inletPatch) && fpos().z>interpolate(0)";
+        }
+    }
+    {
         type cellSet;
 
         name afterFilterSlaveCells;

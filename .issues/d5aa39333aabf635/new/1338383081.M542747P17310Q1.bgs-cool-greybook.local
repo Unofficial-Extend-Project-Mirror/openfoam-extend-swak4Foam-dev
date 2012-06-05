@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 30 May 2012 15:00:54 +0200
+State: new
+Subject: Indicator fields for lagrangian particles
+Message-Id: <d5aa39333aabf635-0-artemis@bgs-cool-greybook.local>
+
+General properties for the lagrangian particle fields may be
+possible. Special properties might require a special library for every
+particle class. Ideal candidate for the plugin-feature
+eb604cf6242ae559
