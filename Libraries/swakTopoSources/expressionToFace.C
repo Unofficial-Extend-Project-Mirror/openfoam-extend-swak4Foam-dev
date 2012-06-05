@@ -117,6 +117,17 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
                 addOrDelete(set, faceI, add);
             }
         }
+        forAll(condition.boundaryField(),patchI) {
+            const surfaceScalarField::PatchFieldType &patch=
+                condition.boundaryField()[patchI];
+            label start=condition.mesh().boundaryMesh()[patchI].start();
+
+            forAll(patch,i) {
+                if(patch[i]>0) {
+                    addOrDelete(set, i+start, add);
+                }
+            }
+        }
     } else {
         FatalErrorIn("Foam::expressionToFace::combine(topoSet& set, const bool add)")
             << "Don't know how to handle a logical field of type "

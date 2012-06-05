@@ -10,6 +10,7 @@
 %s fzonename
 %s psetname
 %s pzonename
+%s patchname
 %s vectorcomponent
 %s tensorcomponent
 %x needsIntegerParameter
@@ -20,6 +21,7 @@
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
+patchid [[:alpha:]_][[:alnum:]_-]*
 int     [[:digit:]]+
 
 exponent_part              [eE][-+]?[[:digit:]]+
@@ -35,10 +37,10 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     yylloc->step ();
 %}
 
-<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 <needsIntegerParameter>[(] return yytext[0];
 <needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
@@ -156,6 +158,13 @@ pzone                  {
     BEGIN(pzonename);
     return token::TOKEN_pzone;
                       }
+
+onPatch                  {
+    BEGIN(patchname);
+    return token::TOKEN_onPatch;
+                      }
+
+internalFace          return token::TOKEN_internalFace;
 
 grad                  return token::TOKEN_grad;
 curl                  return token::TOKEN_curl;
@@ -327,6 +336,17 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_PZONEID;
     } else {
         driver.error (*yylloc, "pointZone id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+
+<patchname>{patchid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    Foam::label patchI=driver.mesh().boundaryMesh().findPatchID(*ptr);
+    if(patchI>=0) {
+        yylval->name = ptr; return token::TOKEN_PATCHID;
+    } else {
+        driver.error (*yylloc, "patch id "+*ptr+" does not exist in the mesh");
     }
                      }
 

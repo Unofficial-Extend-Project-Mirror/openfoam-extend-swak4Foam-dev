@@ -15,5 +15,9 @@ cp system/faceSetDict.3 system/faceSetDict
 pyFoamRunner.py --proc=$1 faceSet
 cp system/faceSetDict.4 system/faceSetDict
 pyFoamRunner.py --proc=$1 faceSet
+cp system/faceSetDict.5 system/faceSetDict
+pyFoamRunner.py --proc=$1 faceSet
+cp system/faceSetDict.6 system/faceSetDict
+pyFoamRunner.py --proc=$1 faceSet
 
 
