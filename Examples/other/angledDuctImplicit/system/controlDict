@@ -145,6 +145,18 @@ functions
         expression "p-pTotal";
         verbose true;
     }
+    pressureToInlet
+    {
+        $pressureToVol;
+        type swakExpression;
+        valueType faceSet;
+        setName inletPatch;
+        autoInterpolate true;
+    }
+    pressureToInletHalf {
+        $pressureToInlet;
+        setName halfInlet;
+    }
     pressureToFilter
     {
         type patchExpression;
