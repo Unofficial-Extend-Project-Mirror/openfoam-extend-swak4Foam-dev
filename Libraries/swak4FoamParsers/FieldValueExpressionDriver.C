@@ -610,7 +610,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
       } else {
           label patchI=mesh().boundaryMesh().whichPatch(faces[faceI]);
           if(patchI<0) {
-              FatalErrorIn("FieldValueExpressionDriver::makeCellSetField(const string &name")
+              FatalErrorIn("FieldValueExpressionDriver::makeFaceSetField(const string &name")
                   << "Face " << faces[faceI] << " of faceSet "
                       << name << " is not in the mesh"
                       << endl
@@ -690,7 +690,24 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &
 
   forAll(zone,ind) {
       label faceI=zone[ind];
-      (*f)[faceI]=1.;
+
+      if(faceI < mesh().nInternalFaces()) {
+          (*f)[faceI]=1.;
+      } else {
+          label patchI=mesh().boundaryMesh().whichPatch(faceI);
+          if(patchI<0) {
+              FatalErrorIn("FieldValueExpressionDriver::makeFaceZoneField(const string &name")
+                  << "Face " << faceI << " of faceZone "
+                      << name << " is not in the mesh"
+                      << endl
+                      << exit(FatalError);
+          } else {
+              (*f).boundaryField()[patchI][
+                  faceI
+                  -
+                  mesh().boundaryMesh()[patchI].start()] = 1.;
+          }
+      }
   }
 
   return f;
