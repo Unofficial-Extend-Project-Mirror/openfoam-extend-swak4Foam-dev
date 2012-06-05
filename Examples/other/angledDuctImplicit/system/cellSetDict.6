@@ -10,29 +10,28 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      faceSetDict;
+    object      cellSetDict;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // Name of set to operate on
-name inletPatch;
+name afterFilterSlaveCells;
 
 // One of clear/new/invert/add/delete|subset/list
 action new;
 
-// Actions to apply to pointSet. These are all the topoSetSource's ending
-// in ..ToFace (see the meshTools library).
+// Actions to apply to cellSet. These are all the topoSetSource's ending
+// in ..ToCell (see the meshTools library).
+
 topoSetSources
 (
-    expressionToFace
+    expressionToCell
     {
-        expression "onPatch(inlet)";
+        expression "false";
     }
+
 );
 
+
 // ************************************************************************* //
-
-
-
-

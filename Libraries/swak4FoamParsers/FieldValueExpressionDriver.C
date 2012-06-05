@@ -574,6 +574,39 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
   return f;
 }
 
+surfaceScalarField *FieldValueExpressionDriver::makeInternalFaceField()
+{
+    surfaceScalarField *f=makeConstantField<surfaceScalarField>(1,true);
+
+    forAll(f->boundaryField(),patchI) {
+        forAll((*f).boundaryField()[patchI],faceI) {
+            f->boundaryField()[patchI][faceI]=0;
+        }
+    }
+
+    return f;
+}
+
+surfaceScalarField *FieldValueExpressionDriver::makeOnPatchField(const string &name)
+{
+    surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
+    
+    label patchI=mesh().boundaryMesh().findPatchID(name);
+    if(patchI<0) {
+        FatalErrorIn("makeFaceSetField(const string &name)")
+            << "Patch name " << name << " not in valid names"
+                << mesh().boundaryMesh().names()
+                << endl
+                << exit(FatalError);
+    } else {
+        forAll((*f).boundaryField()[patchI],faceI) {
+            (*f).boundaryField()[patchI][faceI]=1;
+        }
+    }
+
+    return f;
+}
+
 surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &name)
 {
     surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);

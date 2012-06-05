@@ -247,6 +247,9 @@ public:
     pointScalarField *makePointSetField(const string &name);
     pointScalarField *makePointZoneField(const string &name);
 
+    surfaceScalarField *makeOnPatchField(const string &name);
+    surfaceScalarField *makeInternalFaceField();
+
     // modulo operator
     volScalarField *makeModuloField(const volScalarField &a,const volScalarField &b);
 
