@@ -1013,6 +1013,12 @@ S_{expl} + S_{impl} T
      =writeManipulated= enforces writing.
 
      Writing is not the default behavior to avoid side-effects 
+**** Indicator functions =onPatch= and =internalFace= added to field-expressions
+     The function =onPatch(name)= returns a surface-field that is $1$
+     on all faces that belong to patch =name=. 
+
+     The function =internalFace()= is $1$ on all internal faces and
+     $0$ on all patches
 *** New features
 **** Dynamically generated lists of =functionObjects=
      The new =dynamicFunctionObjectListProxy= in the
