@@ -27,7 +27,7 @@ topoSetSources
 (
     expressionToFace
     {
-        expression "fset(inletPatch) && fpos().z>0";
+        expression "fset(inletPatch) && fpos().z>interpolate(0)";
     }
 );
 

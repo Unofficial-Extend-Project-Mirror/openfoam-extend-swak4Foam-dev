@@ -576,7 +576,7 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
 
 surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &name)
 {
-  surfaceScalarField *f=makeConstantField<surfaceScalarField>(0);
+    surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
 
   IOobject head 
       (
@@ -605,7 +605,23 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
   labelList faces(cs.toc());
 
   forAll(faces,faceI) {
-    (*f)[faces[faceI]]=1.;
+      if(faces[faceI] < mesh().nInternalFaces()) {
+          (*f)[faces[faceI]]=1.;
+      } else {
+          label patchI=mesh().boundaryMesh().whichPatch(faces[faceI]);
+          if(patchI<0) {
+              FatalErrorIn("FieldValueExpressionDriver::makeCellSetField(const string &name")
+                  << "Face " << faces[faceI] << " of faceSet "
+                      << name << " is not in the mesh"
+                      << endl
+                      << exit(FatalError);
+          } else {
+              (*f).boundaryField()[patchI][
+                  faces[faceI]
+                  -
+                  mesh().boundaryMesh()[patchI].start()] = 1.;
+          }
+      }
   }
 
   return f;

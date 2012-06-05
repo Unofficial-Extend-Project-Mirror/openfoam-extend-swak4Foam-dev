@@ -200,14 +200,21 @@ public:
     template<class FType,class Mesh>
     inline FType *makeConstantFieldInternal(
         const typename FType::value_type &val,
-        const Mesh &mesh
+        const Mesh &mesh,
+        bool makeValuePatches=false
     );
 
     template<class FType>
-    inline FType *makeConstantField(const typename FType::value_type &val);
+    inline FType *makeConstantField(
+        const typename FType::value_type &val,
+        bool makeValuePatches=false
+    );
 
     template<class FType>
-    inline FType *makePointConstantField(const typename FType::value_type &val);
+    inline FType *makePointConstantField(
+        const typename FType::value_type &val,
+        bool makeValuePatches=false
+    );
 
     template<class FType,class Mesh>
     inline FType *makeFieldInternal(
