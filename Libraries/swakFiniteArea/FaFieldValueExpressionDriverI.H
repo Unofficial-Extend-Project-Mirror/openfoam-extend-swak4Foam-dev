@@ -24,12 +24,16 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
 
     autoPtr<T> f;
 
-    if(variables_.found(name)) {
+    typedef typename T::value_type Type;
+
+    if(
+        variables_.found(name)
+        ||
+        isGlobal<Type>(name,false)
+    ) {
         if(debug) {
             Info << "Getting " << name << " from variables" << endl;
         }
-
-        typedef typename T::value_type Type;
 
         f.set(
             new T(
@@ -46,7 +50,14 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
             )
         );
 
-        Field<Type> vals=variables_[name].getResult<Type>(true);
+        Field<Type> vals;
+        if(variables_.found(name)) {
+            vals=variables_[name].getResult<Type>(true);
+        } else {
+            vals=const_cast<ExpressionResult &>(
+                lookupGlobal(name)
+            ).getResult<Type>(true);
+        }
 
         if(debug) {
             Pout << "sizes: " << vals.size() << " " << f->size() << endl;

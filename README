@@ -994,6 +994,11 @@ S_{expl} + S_{impl} T
 
      This is now fixed in =groovyBC= and the other BCs (=groovyBC= for
      pointFields and =groovyBCDirection=)
+**** Global variables not found in =faField=
+     The Lexer correctly identified the variable but the =getField=
+     method did not know how to get it.
+
+     Fixed
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
