@@ -999,6 +999,9 @@ S_{expl} + S_{impl} T
      method did not know how to get it.
 
      Fixed
+**** Wrong type of condition field in =funkySetAreaFields=
+     If no condition was evaluated the utility generated a
+     pseudo-field of the wrong length
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
