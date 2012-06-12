@@ -274,6 +274,47 @@ void FaFieldValueExpressionDriver::makePatches
 
 
 template<class T>
+void FaFieldValueExpressionDriver::setCalculatedPatches
+(
+    GeometricField<T,faPatchField,areaMesh> &field,
+    T unusedValue
+) {
+    typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    
+    forAll(bf,patchI) {
+        faPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFaPatchField<T>)
+        ) {
+            pf==pf.patchInternalField();
+        }
+    }
+    field.correctBoundaryConditions();
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::setCalculatedPatches
+(
+    GeometricField<T,faePatchField,edgeMesh> &field,
+    T value
+) {
+    typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    
+    forAll(bf,patchI) {
+        faePatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFaePatchField<T>)
+        ) {
+            //            pf==pf.patchInternalField();
+            pf==value;
+        }
+    }
+    //     field.correctBoundaryConditions();
+}
+
+template<class T>
 void FaFieldValueExpressionDriver::copyCalculatedPatches
 (
     GeometricField<T,faPatchField,areaMesh> &field,

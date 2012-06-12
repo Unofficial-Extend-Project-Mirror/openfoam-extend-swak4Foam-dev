@@ -1002,6 +1002,16 @@ S_{expl} + S_{impl} T
 **** Wrong type of condition field in =funkySetAreaFields=
      If no condition was evaluated the utility generated a
      pseudo-field of the wrong length
+**** =calculated=-patches $0$ for some operations
+     For some operations in the =Field=-driver the
+     =calculated=-patches had the value $0$ instead of the number of
+     the next cell. This caused certain calculations to fail (give
+     $0$)
+
+     The =FaField=-driver did no fixing of the =calculated=-patches at
+     all. 
+
+     This is fixed
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
