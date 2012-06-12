@@ -24,12 +24,16 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
 
     autoPtr<T> f;
 
-    if(variables_.found(name)) {
+    typedef typename T::value_type Type;
+
+    if(
+        variables_.found(name)
+        ||
+        isGlobal<Type>(name,false)
+    ) {
         if(debug) {
             Info << "Getting " << name << " from variables" << endl;
         }
-
-        typedef typename T::value_type Type;
 
         f.set(
             new T(
@@ -46,7 +50,14 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
             )
         );
 
-        Field<Type> vals=variables_[name].getResult<Type>(true);
+        Field<Type> vals;
+        if(variables_.found(name)) {
+            vals=variables_[name].getResult<Type>(true);
+        } else {
+            vals=const_cast<ExpressionResult &>(
+                lookupGlobal(name)
+            ).getResult<Type>(true);
+        }
 
         if(debug) {
             Pout << "sizes: " << vals.size() << " " << f->size() << endl;
@@ -261,6 +272,47 @@ void FaFieldValueExpressionDriver::makePatches
   }
 }
 
+
+template<class T>
+void FaFieldValueExpressionDriver::setCalculatedPatches
+(
+    GeometricField<T,faPatchField,areaMesh> &field,
+    T unusedValue
+) {
+    typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    
+    forAll(bf,patchI) {
+        faPatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFaPatchField<T>)
+        ) {
+            pf==pf.patchInternalField();
+        }
+    }
+    field.correctBoundaryConditions();
+}
+
+template<class T>
+void FaFieldValueExpressionDriver::setCalculatedPatches
+(
+    GeometricField<T,faePatchField,edgeMesh> &field,
+    T value
+) {
+    typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    
+    forAll(bf,patchI) {
+        faePatchField<T> &pf=bf[patchI];
+        
+        if(
+            typeid(pf)==typeid(calculatedFaePatchField<T>)
+        ) {
+            //            pf==pf.patchInternalField();
+            pf==value;
+        }
+    }
+    //     field.correctBoundaryConditions();
+}
 
 template<class T>
 void FaFieldValueExpressionDriver::copyCalculatedPatches

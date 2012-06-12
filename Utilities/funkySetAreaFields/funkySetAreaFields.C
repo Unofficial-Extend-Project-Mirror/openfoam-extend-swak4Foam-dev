@@ -293,9 +293,9 @@ void doAnExpression
         conditionIsSurface=driver.isSurfaceField();
 
         if(conditionIsSurface) {
-            conditionField=scalarField(driver.aMesh().faces().size(),1);
-        } else {
             conditionField=scalarField(driver.aMesh().edges().size(),1);
+        } else {
+            conditionField=scalarField(driver.aMesh().faces().size(),1);
         }
     }
 
