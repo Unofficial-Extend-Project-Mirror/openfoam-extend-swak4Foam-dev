@@ -238,6 +238,18 @@ public:
     );
 
     template<class T>
+    static void setCalculatedPatches(
+        GeometricField<T,faPatchField,areaMesh> &field,
+        T unusedValue=pTraits<T>::zero
+    );
+
+    template<class T>
+    static void setCalculatedPatches(
+        GeometricField<T,faePatchField,edgeMesh> &field,
+        T value=pTraits<T>::zero
+    );
+
+    template<class T>
     static void copyCalculatedPatches(
         GeometricField<T,faPatchField,areaMesh> &field,
         const GeometricField<T,faPatchField,areaMesh> &orig

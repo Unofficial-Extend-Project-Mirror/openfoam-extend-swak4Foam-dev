@@ -168,7 +168,11 @@ dynamicFunctionObjectListProxy::dynamicDictionaryProvider::New(
         )   << "Unknown dynamicFunctionObjectListProxy::dynamicDictionaryProvider type " << type
             << endl << endl
             << "Valid types are :" << endl
+#ifdef FOAM_DEV
+            << dictionaryConstructorTablePtr_->toc()
+#else
             << dictionaryConstructorTablePtr_->sortedToc()
+#endif
             << exit(FatalError);
     }
 
