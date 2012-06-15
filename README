@@ -1106,6 +1106,13 @@ S_{expl} + S_{impl} T
 
      The function =internalFace()= is $1$ on all internal faces and
      $0$ on all patches
+*** Infrastructure
+**** Compilation script checks =SWAK4FOAM_SRC=
+     The environment variable =SWAK4FOAM_SRC= is needed for the
+     =swakCoded=-functionObject. The =Allwmake=-script now checks
+     whether this variable exists and prints a message with the
+     correct value if it doesn't. It also checks whether the value is
+     correct and warns if it isn't
 *** New features
 **** Dynamically generated lists of =functionObjects=
      The new =dynamicFunctionObjectListProxy= in the
