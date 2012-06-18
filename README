@@ -1055,3 +1055,8 @@ S_{expl} + S_{impl} T
      Example of the usage in the =angledDuctImplicit=-case (the
      results are of limited value because of the temperature boundary
      condition) 
+*** Infrastructure
+**** =Allwmake= creates symbolic links in =swakFiniteArea=
+     The links to =mybison= and =myflex= are missing when the sources
+     are downloaded as a tarball. The =Allwmake=-script now creates
+     these links if they are missing

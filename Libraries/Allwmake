@@ -98,6 +98,16 @@ wmake libso swakSourceFields
 
 if [ "$FOAM_DEV" != "" ]
 then
+    for my in mybison myflex
+    do
+	mysource="../../swak4FoamParsers/Make/$my"
+	mytarget="swakFiniteArea/Make/$my"
+	if [ ! -e $mytarget ]
+	then
+	    echo "Creating symbolic link from $mysource to $mytarget"
+	    ln -s $mysource $mytarget
+	fi
+    done
     wmake libso swakFiniteArea
 fi
 
