@@ -109,9 +109,11 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 
 void FieldValueExpressionDriver::parse (const std::string &f)
 {
+    int start_token=parserField::FieldValueExpressionParser::token::START_DEFAULT;
+
     content_ = f;
     scan_begin ();
-    parserField::FieldValueExpressionParser parser (*this);
+    parserField::FieldValueExpressionParser parser (*this,start_token);
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
     scan_end ();

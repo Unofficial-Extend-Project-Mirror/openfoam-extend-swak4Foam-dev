@@ -5,6 +5,9 @@
 %defines
 %define "parser_class_name" "FieldValueExpressionParser"
 
+// make reentrant to allow sub-parsers
+// %define api.pure // not possible with C++?
+
 %{
 #include <volFields.H>
 #include <surfaceFields.H>
@@ -45,7 +48,9 @@
 %name-prefix="parserField"
 
 %parse-param { FieldValueExpressionDriver& driver }
+%parse-param { int start_token }
 %lex-param { FieldValueExpressionDriver& driver }
+%lex-param { int &start_token }
 
 %locations
 %initial-action
@@ -151,6 +156,8 @@
 %type  <ptfield>    ptensor     
 %type  <pyfield>    psymmTensor     
 %type  <phfield>    psphericalTensor     
+
+%token START_DEFAULT
 
 %token TOKEN_VECTOR
 %token TOKEN_TENSOR
@@ -297,7 +304,10 @@
 
 
 %%
-%start unit;
+%start switch_start;
+
+switch_start:   START_DEFAULT unit
+;
 
 unit:   exp                     { driver.setResult($1,false,false);  }
         | vexp                  { driver.setResult($1,false,false);  }

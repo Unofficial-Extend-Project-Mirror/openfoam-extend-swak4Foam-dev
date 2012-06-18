@@ -18,6 +18,7 @@
 %option noyywrap nounput batch debug 
 %option stack
 %option prefix="fvexpr"
+     // %option reentrant
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -34,7 +35,20 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 %%
 
 %{
+    typedef parserField::FieldValueExpressionParser::token token;
+
     yylloc->step ();
+
+    // recipie from http://www.gnu.org/software/bison/manual/html_node/Multiple-start_002dsymbols.html#Multiple-start_002dsymbols
+    // allows multiple start symbols
+    if (start_token)
+    {
+        //        Foam::Info << "Start token: " << start_token << Foam::endl;
+
+        int t = start_token;
+        start_token = 0;
+        return t;
+    }
 %}
 
 <INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname,needsIntegerParameter>[ \t]+             yylloc->step ();
@@ -44,10 +58,6 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 
 <needsIntegerParameter>[(] return yytext[0];
 <needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
-
-%{
-    typedef parserField::FieldValueExpressionParser::token token;
-%}
 
 &&                   return token::TOKEN_AND;
 \|\|                 return token::TOKEN_OR;

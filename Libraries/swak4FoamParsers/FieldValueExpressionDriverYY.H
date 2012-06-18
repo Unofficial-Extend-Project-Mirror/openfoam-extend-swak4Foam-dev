@@ -5,7 +5,7 @@
 
 #include "FieldValueExpressionDriver.H"
 
-#define YY_DECL int parserFieldlex(parserField::FieldValueExpressionParser::semantic_type* yylval,parserField::location* yylloc,Foam::FieldValueExpressionDriver &driver)
+    #define YY_DECL int parserFieldlex(parserField::FieldValueExpressionParser::semantic_type* yylval,parserField::location* yylloc,Foam::FieldValueExpressionDriver &driver,int& start_token)
 
 YY_DECL;
 
