@@ -55,6 +55,10 @@ class FieldValueExpressionDriver
 
     dimensionSet resultDimension_;
 
+    static const SymbolTable<FieldValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
+
 public:
 
     TypeName("FieldValueExpressionDriver");
@@ -122,7 +126,7 @@ public:
     void scan_end ();
 
     // Handling the parser.
-    void parse (const std::string& f);
+    void parse (const std::string& f,const word &start="");
 
     bool isCellSet(const string &name);
     bool isCellZone(const string &name);

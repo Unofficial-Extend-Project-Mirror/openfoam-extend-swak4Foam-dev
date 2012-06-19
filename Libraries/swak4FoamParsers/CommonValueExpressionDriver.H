@@ -229,6 +229,20 @@ protected:
 
     template<class T>
     inline void correctField(T &f) const;
+
+    typedef HashTable<int> StartupSymbols;
+
+    template<class T>
+    class SymbolTable
+    : 
+    public StartupSymbols
+    {
+    public:
+        SymbolTable();
+    };
+
+    virtual int startupSymbol(const word &name) = 0;
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -434,7 +448,7 @@ public:
     void error (const std::string& m);
 
     // Handling the parser
-    virtual void parse(const std::string& f)=0;
+    virtual void parse(const std::string& f,const word &start="")=0;
 
     // Handling temporary variables
     void clearVariables();

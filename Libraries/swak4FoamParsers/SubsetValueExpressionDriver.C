@@ -79,7 +79,7 @@ SubsetValueExpressionDriver::~SubsetValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void SubsetValueExpressionDriver::parse (const std::string& f)
+void SubsetValueExpressionDriver::parse (const std::string& f,const word &start)
 {
     content_ = f;
     scan_begin ();

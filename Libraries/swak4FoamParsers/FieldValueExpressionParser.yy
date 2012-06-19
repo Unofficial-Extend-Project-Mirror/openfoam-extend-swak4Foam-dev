@@ -158,6 +158,42 @@
 %type  <phfield>    psphericalTensor     
 
 %token START_DEFAULT
+%token START_VOL_SCALAR_COMMA
+%token START_VOL_SCALAR_CLOSE
+%token START_VOL_VECTOR_COMMA
+%token START_VOL_VECTOR_CLOSE
+%token START_VOL_TENSOR_COMMA
+%token START_VOL_TENSOR_CLOSE
+%token START_VOL_YTENSOR_COMMA
+%token START_VOL_YTENSOR_CLOSE
+%token START_VOL_HTENSOR_COMMA
+%token START_VOL_HTENSOR_CLOSE
+%token START_VOL_LOGICAL_COMMA
+%token START_VOL_LOGICAL_CLOSE
+%token START_SURFACE_SCALAR_COMMA
+%token START_SURFACE_SCALAR_CLOSE
+%token START_SURFACE_VECTOR_COMMA
+%token START_SURFACE_VECTOR_CLOSE
+%token START_SURFACE_TENSOR_COMMA
+%token START_SURFACE_TENSOR_CLOSE
+%token START_SURFACE_YTENSOR_COMMA
+%token START_SURFACE_YTENSOR_CLOSE
+%token START_SURFACE_HTENSOR_COMMA
+%token START_SURFACE_HTENSOR_CLOSE
+%token START_SURFACE_LOGICAL_COMMA
+%token START_SURFACE_LOGICAL_CLOSE
+%token START_POINT_SCALAR_COMMA
+%token START_POINT_SCALAR_CLOSE
+%token START_POINT_VECTOR_COMMA
+%token START_POINT_VECTOR_CLOSE
+%token START_POINT_TENSOR_COMMA
+%token START_POINT_TENSOR_CLOSE
+%token START_POINT_YTENSOR_COMMA
+%token START_POINT_YTENSOR_CLOSE
+%token START_POINT_HTENSOR_COMMA
+%token START_POINT_HTENSOR_CLOSE
+%token START_POINT_LOGICAL_COMMA
+%token START_POINT_LOGICAL_CLOSE
 
 %token TOKEN_VECTOR
 %token TOKEN_TENSOR
@@ -307,6 +343,78 @@
 %start switch_start;
 
 switch_start:   START_DEFAULT unit
+                | START_VOL_SCALAR_COMMA exp ','
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_SCALAR_CLOSE exp ')'
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_VECTOR_COMMA exp ','
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_VECTOR_CLOSE exp ')'
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_TENSOR_COMMA exp ','
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_TENSOR_CLOSE exp ')'
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_YTENSOR_COMMA exp ','
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_YTENSOR_CLOSE exp ')'
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_HTENSOR_COMMA exp ','
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_HTENSOR_CLOSE exp ')'
+                  { driver.setResult($2,false,false);  }
+                | START_VOL_LOGICAL_COMMA exp ','
+                  { driver.setLogicalResult($2,false,false);  }
+                | START_VOL_LOGICAL_CLOSE exp ')'
+                  { driver.setLogicalResult($2,false,false);  }
+                | START_SURFACE_SCALAR_COMMA exp ','
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_SCALAR_CLOSE exp ')'
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_VECTOR_COMMA exp ','
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_VECTOR_CLOSE exp ')'
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_TENSOR_COMMA exp ','
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_TENSOR_CLOSE exp ')'
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_YTENSOR_COMMA exp ','
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_YTENSOR_CLOSE exp ')'
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_HTENSOR_COMMA exp ','
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_HTENSOR_CLOSE exp ')'
+                  { driver.setResult($2,true,false);  }
+                | START_SURFACE_LOGICAL_COMMA exp ','
+                  { driver.setLogicalResult($2,true,false);  }
+                | START_SURFACE_LOGICAL_CLOSE exp ')'
+                  { driver.setLogicalResult($2,true,false);  }
+                | START_POINT_SCALAR_COMMA exp ','
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_SCALAR_CLOSE exp ')'
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_VECTOR_COMMA exp ','
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_VECTOR_CLOSE exp ')'
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_TENSOR_COMMA exp ','
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_TENSOR_CLOSE exp ')'
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_YTENSOR_COMMA exp ','
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_YTENSOR_CLOSE exp ')'
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_HTENSOR_COMMA exp ','
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_HTENSOR_CLOSE exp ')'
+                  { driver.setResult($2,false,true);  }
+                | START_POINT_LOGICAL_COMMA exp ','
+                  { driver.setLogicalResult($2,false,true);  }
+                | START_POINT_LOGICAL_CLOSE exp ')'
+                  { driver.setLogicalResult($2,false,true);  }
 ;
 
 unit:   exp                     { driver.setResult($1,false,false);  }

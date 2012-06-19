@@ -84,6 +84,8 @@ class SubsetValueExpressionDriver
 
     // Private Member Functions
 
+    int startupSymbol(const word &name) { return -1; } // dummy implementation
+
 protected:
 
     // Handling the scanner 
@@ -178,7 +180,7 @@ public:
     virtual Field<sphericalTensor> *getSphericalTensorField(const string &name,bool oldTime=false)=0;
 
     // Handling the parser
-    void parse(const std::string& f);
+    void parse(const std::string& f,const word &start="");
 
 //     template<class Type>
 //     virtual Field<Type> *toFace(const Field<Type> &)=0;

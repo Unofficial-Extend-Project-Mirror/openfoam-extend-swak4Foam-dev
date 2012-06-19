@@ -107,9 +107,9 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 {
 }
 
-void FieldValueExpressionDriver::parse (const std::string &f)
+void FieldValueExpressionDriver::parse (const std::string &f,const word &start)
 {
-    int start_token=parserField::FieldValueExpressionParser::token::START_DEFAULT;
+    int start_token=startupSymbol(start);
 
     content_ = f;
     scan_begin ();
@@ -992,6 +992,75 @@ const word FieldValueExpressionDriver::time() const
     } else {
         return CommonValueExpressionDriver::time();
     }
+}
+
+template<>
+FieldValueExpressionDriver::SymbolTable<FieldValueExpressionDriver>::SymbolTable()
+:
+StartupSymbols()
+{
+    // default value
+    insert("",parserField::FieldValueExpressionParser::token::START_DEFAULT);
+
+    insert(
+        "volScalarField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_SCALAR_COMMA
+    );
+    insert(
+        "volScalarField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_SCALAR_CLOSE
+    );
+    insert(
+        "volVectorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_VECTOR_COMMA
+    );
+    insert(
+        "volVectorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_VECTOR_CLOSE
+    );
+    insert(
+        "volTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_TENSOR_COMMA
+    );
+    insert(
+        "volTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_TENSOR_CLOSE
+    );
+    insert(
+        "volSymmTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_YTENSOR_COMMA
+    );
+    insert(
+        "volSymmTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_YTENSOR_CLOSE
+    );
+    insert(
+        "volSphericalTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_HTENSOR_COMMA
+    );
+    insert(
+        "volSphericalTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_HTENSOR_CLOSE
+    );
+    insert(
+        "volLogicalField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_LOGICAL_COMMA
+    );
+    insert(
+        "volLogicalField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_LOGICAL_CLOSE
+    );
+}
+
+const FieldValueExpressionDriver::SymbolTable<FieldValueExpressionDriver> &FieldValueExpressionDriver::symbolTable()
+{
+    static SymbolTable<FieldValueExpressionDriver> actualTable;
+
+    return actualTable;
+}
+
+int FieldValueExpressionDriver::startupSymbol(const word &name) {
+    return symbolTable()[name];
 }
 
 } // end namespace

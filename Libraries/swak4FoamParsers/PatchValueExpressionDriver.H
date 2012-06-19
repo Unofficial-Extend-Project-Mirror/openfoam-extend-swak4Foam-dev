@@ -84,6 +84,8 @@ class PatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const PatchValueExpressionDriver&);
 
+    int startupSymbol(const word &name) { return -1; } // dummy implementation
+
 protected:
 
     // Handling the scanner 
@@ -172,7 +174,7 @@ public:
     Field<Type> *getPatchNeighbourField(const string &name);
 
     // Handling the parser
-    void parse(const std::string& f);
+    void parse(const std::string& f,const word &start="");
 
     template<class Type>
     Field<Type> *toFace(const Field<Type> &);

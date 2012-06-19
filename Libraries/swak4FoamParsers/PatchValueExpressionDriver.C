@@ -143,7 +143,7 @@ PatchValueExpressionDriver::~PatchValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void PatchValueExpressionDriver::parse (const std::string& f)
+void PatchValueExpressionDriver::parse (const std::string& f,const word &start)
 {
     content_ = f;
     scan_begin ();
