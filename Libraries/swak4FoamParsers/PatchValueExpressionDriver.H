@@ -107,6 +107,9 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    // Handling the parser
+    void parseInternal(int startToken);
+
 public:
 
     //- Runtime type information
@@ -172,9 +175,6 @@ public:
 
     template<class Type>
     Field<Type> *getPatchNeighbourField(const string &name);
-
-    // Handling the parser
-    void parse(const std::string& f,const word &start="");
 
     template<class Type>
     Field<Type> *toFace(const Field<Type> &);

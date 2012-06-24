@@ -9,6 +9,8 @@ ExpressionDriverWriter.C
 ExpressionResult.C
 StoredExpressionResult.C
 
+plugins/CommonPluginFunction.C
+
 swakRegistryProxySurface.C
 swakRegistryProxySet.C
 

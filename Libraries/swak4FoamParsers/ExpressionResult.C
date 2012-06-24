@@ -134,6 +134,8 @@ bool ExpressionResult::hasValue() const
 void ExpressionResult::clearResult()
 {
     uglyDelete();
+
+    generalContent_.reset();
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

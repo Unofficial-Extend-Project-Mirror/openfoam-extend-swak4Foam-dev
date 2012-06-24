@@ -83,7 +83,16 @@ class CommonValueExpressionDriver
     //- getting our own pointMesh
     autoPtr<pointMesh> pMesh_;
 
+    //- the position to which the parser progressed
+    label parserLastPos_;
+
 protected:
+
+    //- access last position
+    const label &parserLastPos() const { return parserLastPos_; }
+
+    //- access last position
+    label &parserLastPos() { return parserLastPos_; }
 
     ExpressionResult result_;
 
@@ -242,6 +251,8 @@ protected:
     };
 
     virtual int startupSymbol(const word &name) = 0;
+
+    virtual void parseInternal(int startSymbol) = 0;
 
 public:
     //- Runtime type information
@@ -448,7 +459,7 @@ public:
     void error (const std::string& m);
 
     // Handling the parser
-    virtual void parse(const std::string& f,const word &start="")=0;
+    void parse(const std::string& f,const word &start="");
 
     // Handling temporary variables
     void clearVariables();

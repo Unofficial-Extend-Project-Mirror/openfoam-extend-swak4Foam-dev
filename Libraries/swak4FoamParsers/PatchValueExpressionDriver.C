@@ -143,14 +143,11 @@ PatchValueExpressionDriver::~PatchValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void PatchValueExpressionDriver::parse (const std::string& f,const word &start)
+void PatchValueExpressionDriver::parseInternal (int startToken)
 {
-    content_ = f;
-    scan_begin ();
     parserPatch::PatchValueExpressionParser parser (*this);
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
-    scan_end ();
 }
 
 vectorField *PatchValueExpressionDriver::makePositionField()

@@ -342,7 +342,11 @@
 %%
 %start switch_start;
 
-switch_start:   START_DEFAULT unit
+switch_start: switch_expr
+              { driver.parserLastPos()=@1.end.column; }
+;
+
+switch_expr:      START_DEFAULT unit
                 | START_VOL_SCALAR_COMMA exp ','
                   { driver.setResult($2,false,false);  }
                 | START_VOL_SCALAR_CLOSE exp ')'

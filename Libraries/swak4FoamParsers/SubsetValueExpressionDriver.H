@@ -180,7 +180,7 @@ public:
     virtual Field<sphericalTensor> *getSphericalTensorField(const string &name,bool oldTime=false)=0;
 
     // Handling the parser
-    void parse(const std::string& f,const word &start="");
+    void parseInternal(int startToken);
 
 //     template<class Type>
 //     virtual Field<Type> *toFace(const Field<Type> &)=0;

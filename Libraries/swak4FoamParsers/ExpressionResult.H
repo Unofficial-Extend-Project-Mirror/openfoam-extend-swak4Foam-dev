@@ -51,6 +51,7 @@ SourceFiles
 
 #include "Field.H"
 #include "dimensionedType.H"
+#include "IOobject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,6 +74,9 @@ class ExpressionResult
 
     bool isSingleValue_;
 
+    //- alternative if anything different than a plain field should be stored
+    autoPtr<IOobject> generalContent_;
+
     void uglyDelete();
 
     template<class Type>
@@ -94,6 +98,10 @@ public:
     //- Construct from a field
     template<class Type>
     ExpressionResult(const Field<Type>  &f);
+
+    //- construct for an IOobject
+    template<class Type>
+    ExpressionResult(autoPtr<Type> o);
 
     //- Construct from a dimensioned value
     template<class Type>
@@ -127,8 +135,15 @@ public:
     template<class Type>
     inline void setSingleValue(Type val);
 
+    template <typename T>
+    inline void setObjectResult(autoPtr<T> o);
+
     template<class Type>
     inline tmp<Field<Type> > getResult(bool keep=false);
+
+    // couldn't get specialisation with Field<Type> to work. Maybe later. Maybe forbidden
+    template<class Type>
+    inline autoPtr<Type> getObjectResult(bool keep=false);
 
     // Construct a uniform field from the current results
     ExpressionResult getUniform(const label size,bool noWarn) const;

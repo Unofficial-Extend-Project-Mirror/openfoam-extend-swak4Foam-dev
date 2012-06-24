@@ -116,6 +116,9 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    // Handling the parser.
+    void parseInternal(int startToken);
+
 public:
     //- get the result field (if it is of the right type)
     template<class T>
@@ -124,9 +127,6 @@ public:
     // Handling the scanner.
     void scan_begin ();
     void scan_end ();
-
-    // Handling the parser.
-    void parse (const std::string& f,const word &start="");
 
     bool isCellSet(const string &name);
     bool isCellZone(const string &name);

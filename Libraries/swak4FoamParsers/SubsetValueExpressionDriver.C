@@ -79,14 +79,11 @@ SubsetValueExpressionDriver::~SubsetValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void SubsetValueExpressionDriver::parse (const std::string& f,const word &start)
+void SubsetValueExpressionDriver::parseInternal (int startToken)
 {
-    content_ = f;
-    scan_begin ();
     parserSubset::SubsetValueExpressionParser parser (*this);
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
-    scan_end ();
 }
 
 scalarField *SubsetValueExpressionDriver::makeIdField()

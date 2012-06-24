@@ -107,16 +107,11 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 {
 }
 
-void FieldValueExpressionDriver::parse (const std::string &f,const word &start)
+void FieldValueExpressionDriver::parseInternal(int startToken)
 {
-    int start_token=startupSymbol(start);
-
-    content_ = f;
-    scan_begin ();
-    parserField::FieldValueExpressionParser parser (*this,start_token);
+    parserField::FieldValueExpressionParser parser (*this,startToken);
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
-    scan_end ();
 }
 
 
