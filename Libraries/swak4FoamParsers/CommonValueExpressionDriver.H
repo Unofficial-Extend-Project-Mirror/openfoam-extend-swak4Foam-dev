@@ -62,6 +62,8 @@ namespace Foam
 
 class ExpressionDriverWriter;
 
+class CommonPluginFunction;
+
 class CommonValueExpressionDriver
 {
     // Private data
@@ -458,8 +460,8 @@ public:
     void error (const Location& l, const std::string& m);
     void error (const std::string& m);
 
-    // Handling the parser
-    void parse(const std::string& f,const word &start="");
+    //- Handling the parser
+    label parse(const std::string& f,const word &start="");
 
     // Handling temporary variables
     void clearVariables();
@@ -478,6 +480,7 @@ public:
     void tryWrite() const;
 
     friend class ExpressionDriverWriter;
+    friend class CommonPluginFunction;
 };
 
 

@@ -43,20 +43,24 @@
 #define INCOMPLETE_OPERATORS
 #endif
 
+#include "FieldValuePluginFunction.H"
 %}
 
 %name-prefix="parserField"
 
 %parse-param { FieldValueExpressionDriver& driver }
 %parse-param { int start_token }
+%parse-param { int numberOfFunctionChars }
 %lex-param { FieldValueExpressionDriver& driver }
 %lex-param { int &start_token }
+%lex-param { int &numberOfFunctionChars }
 
 %locations
 %initial-action
 {
 	     // Initialize the initial location.
 	     //     @$.begin.filename = @$.end.filename = &driver.file;
+    numberOfFunctionChars=0;
 };
 
 %debug
@@ -112,6 +116,7 @@
 %token <name>  TOKEN_PTID   "pointTensorID"
 %token <name>  TOKEN_PYID   "pointSymmTensorID"
 %token <name>  TOKEN_PHID   "pointSphericalTensorID"
+%token <name>   TOKEN_FUNCTION_SID   "F_scalarID"
 %token <name> TOKEN_SETID "cellSetID" 
 %token <name> TOKEN_ZONEID "cellZoneID" 
 %token <name> TOKEN_FSETID "faceSetID" 
@@ -157,6 +162,8 @@
 %type  <pyfield>    psymmTensor     
 %type  <phfield>    psphericalTensor     
 
+%type <sfield> evaluateScalarFunction;
+
 %token START_DEFAULT
 %token START_VOL_SCALAR_COMMA
 %token START_VOL_SCALAR_CLOSE
@@ -194,6 +201,11 @@
 %token START_POINT_HTENSOR_CLOSE
 %token START_POINT_LOGICAL_COMMA
 %token START_POINT_LOGICAL_CLOSE
+
+%token START_CLOSE_ONLY
+
+%token TOKEN_LAST_FUNCTION_CHAR
+%token TOKEN_IN_FUNCTION_CHAR
 
 %token TOKEN_VECTOR
 %token TOKEN_TENSOR
@@ -419,6 +431,8 @@ switch_expr:      START_DEFAULT unit
                   { driver.setLogicalResult($2,false,true);  }
                 | START_POINT_LOGICAL_CLOSE exp ')'
                   { driver.setLogicalResult($2,false,true);  }
+                | START_CLOSE_ONLY ')'
+                  { /* do nothing */ }
 ;
 
 unit:   exp                     { driver.setResult($1,false,false);  }
@@ -784,6 +798,8 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::volScalarField>(driver.runTime().time().value()); }
         | TOKEN_SID		                   { $$ = driver.getField<Foam::volScalarField>(*$1); }
+        | evaluateScalarFunction restOfFunction
+          { $$=$1; }
         | TOKEN_ddt '(' TOKEN_SID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_d2dt2 '(' TOKEN_SID ')'		   { $$ = Foam::fvc::d2dt2( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)() ).ptr(); $$->dimensions().reset(Foam::dimless); }
         | TOKEN_oldTime '(' TOKEN_SID ')'	   { $$ = new Foam::volScalarField( driver.getOrReadField<Foam::volScalarField>(*$3,true,true)->oldTime()); }
@@ -791,6 +807,29 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::volScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete$3; }
 ;
 
+restOfFunction:    TOKEN_LAST_FUNCTION_CHAR
+                   | TOKEN_IN_FUNCTION_CHAR restOfFunction;
+
+evaluateScalarFunction: TOKEN_FUNCTION_SID '(' 
+  {
+      Foam::autoPtr<Foam::FieldValuePluginFunction> theFunction(
+          Foam::FieldValuePluginFunction::New(
+              driver,
+              *$1
+          )
+      );
+
+      Foam::label scanned=-1;
+      $$=theFunction->evaluate<Foam::volScalarField>(
+          driver.content_.substr(
+              @2.end.column+1,
+              driver.content_.size()-(@2.end.column+1)
+          ),
+          scanned
+      ).ptr();
+      numberOfFunctionChars=scanned;
+  }
+; 
 lexp: TOKEN_TRUE                       { $$ = driver.makeConstantField<Foam::volScalarField>(1); }
     | TOKEN_FALSE                      { $$ = driver.makeConstantField<Foam::volScalarField>(0); }
     | TOKEN_set '(' TOKEN_SETID ')'    { $$ = driver.makeCellSetField(*$3); }

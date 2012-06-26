@@ -922,7 +922,7 @@ void CommonValueExpressionDriver::setTrace(
     trace_scanning_=scanning;
 }
 
-void CommonValueExpressionDriver::parse (const std::string &f,const word &start)
+label CommonValueExpressionDriver::parse (const std::string &f,const word &start)
 {
     int start_token=startupSymbol(start);
 
@@ -933,6 +933,8 @@ void CommonValueExpressionDriver::parse (const std::string &f,const word &start)
     parseInternal(start_token);
     //     Info << "Prsed to " << parserLastPos() << " of " << label(f.size()) << endl;
     scan_end ();
+
+    return parserLastPos();
 }
 
 

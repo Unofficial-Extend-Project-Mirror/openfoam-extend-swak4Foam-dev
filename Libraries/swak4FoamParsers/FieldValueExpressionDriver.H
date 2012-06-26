@@ -1,7 +1,7 @@
 //  ICE Revision: $Id$ 
 
-#ifndef VALUE_EXPRESSION_DRIVER_H
-#define VALUE_EXPRESSION_DRIVER_H
+#ifndef FieldValueExpressionDriver_H
+#define FieldValueExpressionDriver_H
 
 #include <string.H>
 #include <scalar.H>

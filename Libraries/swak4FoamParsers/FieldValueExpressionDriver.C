@@ -109,11 +109,10 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 
 void FieldValueExpressionDriver::parseInternal(int startToken)
 {
-    parserField::FieldValueExpressionParser parser (*this,startToken);
+    parserField::FieldValueExpressionParser parser (*this,startToken,0);
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
 }
-
 
 bool FieldValueExpressionDriver::isCellSet(const string &name)
 {
@@ -1044,6 +1043,10 @@ StartupSymbols()
     insert(
         "volLogicalField_CL",
         parserField::FieldValueExpressionParser::token::START_VOL_LOGICAL_CLOSE
+    );
+    insert(
+        "CL",
+        parserField::FieldValueExpressionParser::token::START_CLOSE_ONLY
     );
 }
 

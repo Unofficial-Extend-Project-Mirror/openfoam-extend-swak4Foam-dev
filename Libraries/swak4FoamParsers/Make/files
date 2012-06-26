@@ -23,6 +23,8 @@ CommonValueExpressionDriver.C
 FieldValueExpressionLexer.ll
 FieldValueExpressionDriver.C
 
+plugins/FieldValuePluginFunction.C
+
 PatchValueExpressionLexer.ll
 PatchValueExpressionDriver.C
 

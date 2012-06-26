@@ -178,12 +178,22 @@ namespace Foam {
                     << exit(FatalError);
         }
 
-        autoPtr<Field<Type> > result;
+        autoPtr<Type> result;
         
         if(keep) {
-            result.set(new Type(generalContent_()));
+            result.set(
+                new Type(
+                    dynamicCast<const Type &>(
+                        generalContent_()
+                    )
+                )
+            );
         } else {
-            result.set(generalContent_.ptr());
+            result.set(
+                dynamic_cast<Type *>(
+                    generalContent_.ptr()
+                )
+            );
             clearResult();
         }
 

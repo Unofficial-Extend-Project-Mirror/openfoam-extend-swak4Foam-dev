@@ -84,7 +84,14 @@ tmp<T> CommonPluginFunction::evaluate(
         }
         consumed+=used;
     }
-    
+    if(argumentTypes_.size()==0) {
+        if(debug) {
+            Info << "No parameters. Looking for closing ')'" << endl;
+        }
+
+        consumed+=scanEmpty(content);
+    }
+
     if(debug) {
         Info << "Starting the actual evaluation" << endl;
     }
@@ -96,6 +103,11 @@ tmp<T> CommonPluginFunction::evaluate(
     }
     
     return tmp<T>(result_.getObjectResult<T>(false));
+}
+
+inline CommonValueExpressionDriver &CommonPluginFunction::parentDriver()
+{
+    return const_cast<CommonValueExpressionDriver &>(parentDriver_);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

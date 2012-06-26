@@ -64,8 +64,8 @@ namespace Foam
                            Class CommonPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 class CommonPluginFunction {
-    //- the driver that calls this plugin
-    CommonValueExpressionDriver &parentDriver_;
+    // //- the driver that calls this plugin
+    const CommonValueExpressionDriver &parentDriver_;
 
     //- name of the function
     word name_;
@@ -84,6 +84,11 @@ class CommonPluginFunction {
 
     //- the actual expression result. To be set by doEvaluation
     ExpressionResult result_;
+
+    //- Disallow default bitwise assignment
+    void operator=(const CommonPluginFunction &);
+
+    CommonPluginFunction(const CommonPluginFunction &);
 
 protected:
     //- read a primitive argument
@@ -110,9 +115,14 @@ protected:
 
     //- do the actual evaluation
     virtual void doEvaluation() = 0;
+
+    //- scan if no values are bein read
+    virtual label scanEmpty(const string &content) =0;
+
+    inline CommonValueExpressionDriver &parentDriver();
 public:
     CommonPluginFunction(
-        CommonValueExpressionDriver &parentDriver,
+        const CommonValueExpressionDriver &parentDriver,
         const word &name,
         const word &returnType,
         const stringList &argumentSpecification

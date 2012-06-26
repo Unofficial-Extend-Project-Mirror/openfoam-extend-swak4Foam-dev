@@ -2,6 +2,7 @@
 %{                                          /* -*- C++ -*- */
 #include "FieldValueExpressionDriverYY.H"
 #include <errno.h>
+#include "FieldValuePluginFunction.H"
 %}
 
 %s setname
@@ -13,6 +14,7 @@
 %s patchname
 %s vectorcomponent
 %s tensorcomponent
+%s parsedByOtherParser
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
@@ -288,6 +290,31 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_PYID;
     } else if(driver.isThere<Foam::pointSphericalTensorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_PHID;
+    } else if(Foam::FieldValuePluginFunction::exists(*ptr)) {
+        // OK. We'll create the function two times. But this is less messy
+        // than passing it two times
+        Foam::autoPtr<Foam::FieldValuePluginFunction> fInfo(
+            Foam::FieldValuePluginFunction::New(
+                driver,
+                *ptr
+            )
+        );
+        
+        int tokenTyp=-1;
+        if(fInfo->returnType()=="volScalarField") {
+             tokenTyp=token::TOKEN_FUNCTION_SID;            
+        } else {
+            driver.error (
+                *yylloc, 
+                "Function "+*ptr+" returns unsupported type "
+                + fInfo->returnType()
+            );
+        }
+        
+        BEGIN(parsedByOtherParser);
+
+        yylval->name = ptr;
+        return tokenTyp;
     } else {
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
@@ -360,9 +387,18 @@ false                  return token::TOKEN_FALSE;
     }
                      }
 
+<parsedByOtherParser>. {
+    numberOfFunctionChars--;
+    if(numberOfFunctionChars>0) {
+        return token::TOKEN_IN_FUNCTION_CHAR;
+    } else {
+        BEGIN(INITIAL);
+        return token::TOKEN_LAST_FUNCTION_CHAR;
+    }
+                       }
+
 .                    driver.error (*yylloc, "invalid character");
 <needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
-
 
 %%
 

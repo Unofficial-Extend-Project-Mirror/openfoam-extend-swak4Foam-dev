@@ -31,48 +31,29 @@ License
  ICE Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
-#include "CommonPluginFunction.H"
+#include "FieldValuePluginFunction.H"
+#include "FieldValueExpressionDriver.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(CommonPluginFunction,1);
+defineTypeNameAndDebug(FieldValuePluginFunction,1);
+defineRunTimeSelectionTable(FieldValuePluginFunction, name);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-CommonPluginFunction::CommonPluginFunction(
-    const CommonValueExpressionDriver &parentDriver,
+FieldValuePluginFunction::FieldValuePluginFunction(
+    const FieldValueExpressionDriver &parentDriver,
     const word &name,
     const word &returnType,
     const stringList &argumentSpecification
 ):
-    parentDriver_(parentDriver),
-    name_(name),
-    returnType_(returnType),
-    argumentNames_(argumentSpecification.size()),
-    argumentParsers_(argumentSpecification.size()),
-    argumentTypes_(argumentSpecification.size())
+    CommonPluginFunction(
+        parentDriver,
+        name,
+        returnType,
+        argumentSpecification
+    )
 {
-    forAll(argumentSpecification,i)
-    {
-	const string &spec=argumentSpecification[i];
-        label space1=spec.find(' ');
-        label space2=spec.find(' ',space1+1);
-        label space3=spec.find(' ',space2+1);
-
-        if(
-            space1 < 0 || space2 < 0 || space3 > 0
-        ) {
-            FatalErrorIn("CommonValueExpressionDriver::CommonPluginFunction::CommonPluginFunction")
-                << "The argument specification " << spec
-                    << " does not fit template '<name> <parser> <type>'"
-                    << endl
-                    << exit(FatalError);
-        }
-        argumentNames_[i]=spec(space1);
-        argumentParsers_[i]=spec(space1+1,space2-space1-1);
-        argumentTypes_[i]=spec(space2+1,spec.size()-space2-1);
-    }
-
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -80,20 +61,39 @@ CommonPluginFunction::CommonPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-string CommonPluginFunction::helpText() const
+autoPtr<FieldValuePluginFunction> FieldValuePluginFunction::New (
+    const FieldValueExpressionDriver& driver,
+    const word &name
+)
 {
-    string result=returnType_+" "+name_+"(";
-    forAll(argumentNames_,i)
-    {
-        if(i>0) {
-            result+=",";
-        }
-        result+=argumentParsers_[i] + "/" + argumentNames_[i]
-            + " " + argumentNames_[i];
+    nameConstructorTable::iterator cstrIter =
+        nameConstructorTablePtr_->find(name);
+    if(cstrIter==nameConstructorTablePtr_->end()) {
+        FatalErrorIn("autoPtr<FieldValuePluginFunction> FieldValuePluginFunction::New")
+            << "Unknow plugin function " << name << endl
+                << " Available functions are " << nameConstructorTablePtr_->sortedToc()
+                << endl
+                << exit(FatalError);        
     }
-    result+=")";
+    return autoPtr<FieldValuePluginFunction>
+        (
+            cstrIter()(driver,name)
+        );
+}
 
-    return result;
+bool FieldValuePluginFunction::exists (
+    const word &name
+)
+{
+    nameConstructorTable::iterator cstrIter =
+        nameConstructorTablePtr_->find(name);
+ 
+    return cstrIter!=nameConstructorTablePtr_->end(); 
+}
+
+label FieldValuePluginFunction::scanEmpty(const string &content)
+{
+    return parentDriver().parse(content,"CL");
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
