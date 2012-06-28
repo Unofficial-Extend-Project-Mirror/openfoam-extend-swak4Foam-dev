@@ -52,8 +52,7 @@ tmp<T> CommonPluginFunction::evaluate(
     forAll(argumentTypes_,i)
     {
         string currentContent=content.substr(
-            consumed,
-            content.size()-consumed
+            consumed
         );
 
 	if(debug) {
@@ -108,6 +107,16 @@ tmp<T> CommonPluginFunction::evaluate(
 inline CommonValueExpressionDriver &CommonPluginFunction::parentDriver()
 {
     return const_cast<CommonValueExpressionDriver &>(parentDriver_);
+}
+
+inline const fvMesh &CommonPluginFunction::mesh() const
+{
+    return parentDriver_.mesh();
+}
+
+inline ExpressionResult &CommonPluginFunction::result()
+{
+    return result_;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

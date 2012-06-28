@@ -117,6 +117,7 @@
 %token <name>  TOKEN_PYID   "pointSymmTensorID"
 %token <name>  TOKEN_PHID   "pointSphericalTensorID"
 %token <name>   TOKEN_FUNCTION_SID   "F_scalarID"
+%token <name>   TOKEN_FUNCTION_FSID   "F_faceScalarID"
 %token <name> TOKEN_SETID "cellSetID" 
 %token <name> TOKEN_ZONEID "cellZoneID" 
 %token <name> TOKEN_FSETID "faceSetID" 
@@ -163,6 +164,7 @@
 %type  <phfield>    psphericalTensor     
 
 %type <sfield> evaluateScalarFunction;
+%type <fsfield> evaluateFaceScalarFunction;
 
 %token START_DEFAULT
 %token START_VOL_SCALAR_COMMA
@@ -461,6 +463,9 @@ vectorComponentSwitch: /* empty rule */{ driver.startVectorComponent(); }
 tensorComponentSwitch: /* empty rule */{ driver.startTensorComponent(); } 
 ;
 
+eatCharactersSwitch: /* empty rule */{ driver.startEatCharacters(); } 
+;
+
 
 vexp:   vector                                    { $$ = $1; }
         | vexp '+' vexp 		          { sameSize($1,$3); $$ = new Foam::volVectorField(*$1 + *$3); delete $1; delete $3;   driver.setCalculatedPatches(*$$); }
@@ -614,6 +619,7 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_snGrad '(' exp ')'          { $$ = new Foam::surfaceScalarField(Foam::fvc::snGrad(*$3)); delete $3; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::surfaceScalarField(Foam::fvc::interpolate(*$3)); delete $3; }
         | TOKEN_FSID                        { $$ = driver.getField<Foam::surfaceScalarField>(*$1); }
+        | evaluateFaceScalarFunction restOfFunction
 //        | TOKEN_ddt '(' TOKEN_FSID ')'		   { $$ = Foam::fvc::ddt( driver.getOrReadField<Foam::surfaceScalarField>(*$3,true,true)() ).ptr(); } // no fvc::ddt for surface Fields
         | TOKEN_oldTime '(' TOKEN_FSID ')'		   { $$ = new Foam::surfaceScalarField( driver.getOrReadField<Foam::surfaceScalarField>(*$3,true,true)->oldTime()); }
         | TOKEN_meshPhi '(' vexp ')'      { $$ = Foam::fvc::meshPhi(*$3).ptr(); delete $3; $$->dimensions().reset(Foam::dimless); }
@@ -621,6 +627,35 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_flux '(' fsexp ',' exp ')'       { $$ = Foam::fvc::flux(*$3,*$5).ptr(); delete $3; delete $5; $$->dimensions().reset(Foam::dimless); }
         | TOKEN_LOOKUP '(' fsexp ')'	    { $$ = driver.makeField<Foam::surfaceScalarField>(driver.getLookup(*$1,*$3)); delete $1; delete $3; }
 ;
+
+evaluateFaceScalarFunction: TOKEN_FUNCTION_FSID '(' eatCharactersSwitch
+  {
+      Foam::autoPtr<Foam::FieldValuePluginFunction> theFunction(
+          Foam::FieldValuePluginFunction::New(
+              driver,
+              *$1
+          )
+      );
+
+      Foam::label scanned=-1;
+      Foam::Info << Foam::label(@2.end.column+1) << Foam::string(driver.content_) 
+          << Foam::label(driver.content_.size()-(@2.end.column+2))  << " "
+          << Foam::label(driver.content_.size()) << " "
+          << Foam::label(@2.end.column) << " "
+          << Foam::label(@2.begin.column) << " "
+          << Foam::endl;
+
+      $$=theFunction->evaluate<Foam::surfaceScalarField>(
+          driver.content_.substr(
+              @2.end.column-1
+          ),
+          scanned
+      ).ptr();
+      Foam::Info << "Scanned: " << scanned << Foam::endl;
+
+      numberOfFunctionChars=scanned;
+  }
+; 
 
 fvexp:  fvector                            { $$ = $1; }
         | fvexp '+' fvexp 		   { sameSize($1,$3); $$ = new Foam::surfaceVectorField(*$1 + *$3); delete $1; delete $3; }
@@ -810,7 +845,7 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
 restOfFunction:    TOKEN_LAST_FUNCTION_CHAR
                    | TOKEN_IN_FUNCTION_CHAR restOfFunction;
 
-evaluateScalarFunction: TOKEN_FUNCTION_SID '(' 
+evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
   {
       Foam::autoPtr<Foam::FieldValuePluginFunction> theFunction(
           Foam::FieldValuePluginFunction::New(
@@ -822,14 +857,14 @@ evaluateScalarFunction: TOKEN_FUNCTION_SID '('
       Foam::label scanned=-1;
       $$=theFunction->evaluate<Foam::volScalarField>(
           driver.content_.substr(
-              @2.end.column+1,
-              driver.content_.size()-(@2.end.column+1)
+              @2.end.column+1
           ),
           scanned
       ).ptr();
       numberOfFunctionChars=scanned;
   }
 ; 
+
 lexp: TOKEN_TRUE                       { $$ = driver.makeConstantField<Foam::volScalarField>(1); }
     | TOKEN_FALSE                      { $$ = driver.makeConstantField<Foam::volScalarField>(0); }
     | TOKEN_set '(' TOKEN_SETID ')'    { $$ = driver.makeCellSetField(*$3); }

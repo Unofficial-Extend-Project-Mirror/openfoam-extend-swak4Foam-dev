@@ -109,3 +109,5 @@ then
 else
     echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration"
 fi
+
+(cd functionPlugins; wmake all)

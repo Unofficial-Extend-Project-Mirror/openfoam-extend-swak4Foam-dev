@@ -96,7 +96,7 @@ namespace Foam {
     void ExpressionResult::setObjectResult(autoPtr<T> o)
     {
         //        valType_=pTraits<T>::typeName;
-        valType_=o.typeName();
+        valType_=o().typeName;
 
         generalContent_.set(o.ptr());
 

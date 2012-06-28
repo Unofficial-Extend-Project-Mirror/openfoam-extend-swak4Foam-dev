@@ -116,6 +116,9 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    //- set the state to "eat characters"
+    void startEatCharacters();
+
     // Handling the parser.
     void parseInternal(int startToken);
 

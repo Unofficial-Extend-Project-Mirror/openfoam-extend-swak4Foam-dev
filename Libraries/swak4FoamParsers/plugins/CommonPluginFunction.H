@@ -56,9 +56,9 @@ SourceFiles
 namespace Foam
 {
 
-    class ExpressionResult;
-
     class CommonValueExpressionDriver;
+
+    class fvMesh;
 
 /*---------------------------------------------------------------------------*\
                            Class CommonPluginFunction Declaration
@@ -120,6 +120,10 @@ protected:
     virtual label scanEmpty(const string &content) =0;
 
     inline CommonValueExpressionDriver &parentDriver();
+
+    inline const fvMesh &mesh() const;
+
+    inline ExpressionResult &result();
 public:
     CommonPluginFunction(
         const CommonValueExpressionDriver &parentDriver,

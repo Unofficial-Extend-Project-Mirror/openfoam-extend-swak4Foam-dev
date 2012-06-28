@@ -303,6 +303,8 @@ false                  return token::TOKEN_FALSE;
         int tokenTyp=-1;
         if(fInfo->returnType()=="volScalarField") {
              tokenTyp=token::TOKEN_FUNCTION_SID;            
+        } else if(fInfo->returnType()=="surfaceScalarField") {
+             tokenTyp=token::TOKEN_FUNCTION_FSID;            
         } else {
             driver.error (
                 *yylloc, 
@@ -311,7 +313,7 @@ false                  return token::TOKEN_FALSE;
             );
         }
         
-        BEGIN(parsedByOtherParser);
+        //        BEGIN(parsedByOtherParser);
 
         yylval->name = ptr;
         return tokenTyp;
@@ -413,6 +415,11 @@ void FieldValueExpressionDriver::scan_begin ()
 void FieldValueExpressionDriver::scan_end ()
 {
 //	    fclose (yyin);
+}
+
+void FieldValueExpressionDriver::startEatCharacters()
+{
+    BEGIN(parsedByOtherParser);
 }
 
 void FieldValueExpressionDriver::startVectorComponent()

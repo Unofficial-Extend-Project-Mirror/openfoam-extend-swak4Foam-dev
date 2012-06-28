@@ -27,5 +27,7 @@ wclean groovyStandardBCs
 
 wclean pythonIntegration
 
+(cd functionPlugins; ./Allwclean)
+
 # remove residual from bison
 rm -f */*.output
