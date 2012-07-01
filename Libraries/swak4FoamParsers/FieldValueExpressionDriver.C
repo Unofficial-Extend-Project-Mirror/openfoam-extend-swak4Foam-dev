@@ -109,7 +109,7 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 
 void FieldValueExpressionDriver::parseInternal(int startToken)
 {
-    parserField::FieldValueExpressionParser parser (*this,startToken,0);
+    parserField::FieldValueExpressionParser parser (scanner_,*this,startToken,0);
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
 }

@@ -123,6 +123,9 @@ protected:
 
     bool trace_parsing_;
 
+    //- scanner state for reentrant lexer
+    void *scanner_;
+
     // Handling the scanner 
     virtual void scan_begin()=0;
     virtual void scan_end()=0;

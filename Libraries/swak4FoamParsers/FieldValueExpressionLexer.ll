@@ -3,6 +3,8 @@
 #include "FieldValueExpressionDriverYY.H"
 #include <errno.h>
 #include "FieldValuePluginFunction.H"
+#include "FieldValueExpressionParser.tab.hh"
+typedef parserField::FieldValueExpressionParser::semantic_type YYSTYPE;
 %}
 
 %s setname
@@ -20,7 +22,8 @@
 %option noyywrap nounput batch debug 
 %option stack
 %option prefix="fvexpr"
-     // %option reentrant
+%option reentrant
+%option bison-bridge
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -406,28 +409,34 @@ false                  return token::TOKEN_FALSE;
 
 void FieldValueExpressionDriver::scan_begin ()
 {
+    yylex_init(&scanner_);
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     yy_flex_debug = trace_scanning_;
-    yy_scan_string(content_.c_str());
+    yy_scan_string(content_.c_str(),scanner_);
 //    if (!(yyin = fopen (file.c_str (), "r")))
 //        error (std::string ("cannot open ") + file);
 }
 
 void FieldValueExpressionDriver::scan_end ()
 {
+    yylex_destroy(scanner_);
 //	    fclose (yyin);
 }
 
 void FieldValueExpressionDriver::startEatCharacters()
 {
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(parsedByOtherParser);
 }
 
 void FieldValueExpressionDriver::startVectorComponent()
 {
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(vectorcomponent);
 }
 
 void FieldValueExpressionDriver::startTensorComponent()
 {
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(tensorcomponent);
 }

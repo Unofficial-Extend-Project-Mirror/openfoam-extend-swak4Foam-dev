@@ -7,6 +7,7 @@
 
 // make reentrant to allow sub-parsers
 // %define api.pure // not possible with C++?
+%pure-parser
 
 %{
 #include <volFields.H>
@@ -48,9 +49,11 @@
 
 %name-prefix="parserField"
 
+%parse-param {void * scanner}
 %parse-param { FieldValueExpressionDriver& driver }
 %parse-param { int start_token }
 %parse-param { int numberOfFunctionChars }
+%lex-param {void * scanner}
 %lex-param { FieldValueExpressionDriver& driver }
 %lex-param { int &start_token }
 %lex-param { int &numberOfFunctionChars }
