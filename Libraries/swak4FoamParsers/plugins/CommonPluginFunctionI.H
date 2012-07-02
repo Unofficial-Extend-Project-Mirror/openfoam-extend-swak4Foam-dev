@@ -70,7 +70,7 @@ tmp<T> CommonPluginFunction::evaluate(
                     argumentNames_[i],
                     parentDriver_.mesh()
                 );
-            used=readArgument(i,currentContent,driver);
+            used=readArgument(i,currentContent,driver());
         }
 
         if(used<=0) {

@@ -35,7 +35,7 @@ License
 
 namespace Foam {
 
-defineTypeNameAndDebug(CommonPluginFunction,0);
+defineTypeNameAndDebug(CommonPluginFunction,1);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -88,13 +88,84 @@ string CommonPluginFunction::helpText() const
         if(i>0) {
             result+=",";
         }
-        result+=argumentParsers_[i] + "/" + argumentNames_[i]
+        result+=argumentParsers_[i] + "/" + argumentTypes_[i]
             + " " + argumentNames_[i];
     }
     result+=")";
 
     return result;
 }
+
+label CommonPluginFunction::readArgument(
+    label index,
+    const string &content,
+    CommonValueExpressionDriver &driver
+)
+{
+    if(index>=argumentNames_.size()) {
+        FatalErrorIn("CommonPluginFunction::readArgument")
+            << "Index " << index << " too big. Only values from 0 to"
+                << argumentNames_.size()-1 << " possible"
+                << endl
+                << exit(FatalError);
+    }
+    word startSymbol=argumentTypes_[index];
+    if(index+1 < argumentTypes_.size()) {
+        startSymbol+="_SC";
+    } else {
+        startSymbol+="_CL";
+    }
+    if(debug) {
+        Info << "Using start symbol " << startSymbol << endl;
+    }
+    driver.parse(content,startSymbol);
+    if(driver.getResultType()!=argumentTypes_[index]) {
+        FatalErrorIn("CommonPluginFunction::readArgument")
+            << "Result type " << driver.getResultType() 
+                << "differs from expected type " << argumentTypes_[index]
+                << endl
+                << exit(FatalError);
+    }
+
+    setArgument(index,content,driver);
+
+    return driver.parserLastPos();
+}
+
+label CommonPluginFunction::readArgument(
+    label index,
+    const string &content,
+    const word &type
+) {
+    if(index>=argumentNames_.size()) {
+        FatalErrorIn("CommonPluginFunction::readArgument")
+            << "Index " << index << " too big. Only values from 0 to"
+                << argumentNames_.size()-1 << " possible"
+                << endl
+                << exit(FatalError);
+    }
+
+    label consumed=0;
+
+    if(type=="word") {
+        word value="dummy";
+        setArgument(index,value);
+    } else if(type=="scalar") {
+        scalar value=42;
+        setArgument(index,value);
+    } else if(type=="label") {
+        label value=42;
+        setArgument(index,value);
+    } else {
+        FatalErrorIn("CommonPluginFunction::readArgument")
+            << "Unsupported type " << type
+                << endl
+                << exit(FatalError);
+    }
+
+    return consumed;
+}
+
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 

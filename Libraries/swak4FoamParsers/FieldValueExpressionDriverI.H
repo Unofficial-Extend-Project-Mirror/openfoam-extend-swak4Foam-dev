@@ -671,7 +671,7 @@ void FieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField,bool 
 }
 
 template<class T>
-const T &FieldValueExpressionDriver::getResult() 
+const T &FieldValueExpressionDriver::getResult() const
 {
     if(!resultField_.valid()) {
         FatalErrorIn("FieldValueExpressionDriver::getResult()")

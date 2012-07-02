@@ -1,0 +1,4 @@
+localCellCalculationFunction.C
+lcFaceMinimumPluginFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakLocalCalculationsFunctionPlugin

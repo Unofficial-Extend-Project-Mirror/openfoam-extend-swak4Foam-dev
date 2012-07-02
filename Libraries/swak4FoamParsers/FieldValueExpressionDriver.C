@@ -1044,6 +1044,105 @@ StartupSymbols()
         "volLogicalField_CL",
         parserField::FieldValueExpressionParser::token::START_VOL_LOGICAL_CLOSE
     );
+
+    insert(
+        "surfaceScalarField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_SCALAR_COMMA
+    );
+    insert(
+        "surfaceScalarField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_SCALAR_CLOSE
+    );
+    insert(
+        "surfaceVectorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_VECTOR_COMMA
+    );
+    insert(
+        "surfaceVectorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_VECTOR_CLOSE
+    );
+    insert(
+        "surfaceTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_TENSOR_COMMA
+    );
+    insert(
+        "surfaceTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_TENSOR_CLOSE
+    );
+    insert(
+        "surfaceSymmTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_YTENSOR_COMMA
+    );
+    insert(
+        "surfaceSymmTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_YTENSOR_CLOSE
+    );
+    insert(
+        "surfaceSphericalTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_HTENSOR_COMMA
+    );
+    insert(
+        "surfaceSphericalTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_HTENSOR_CLOSE
+    );
+    insert(
+        "surfaceLogicalField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_LOGICAL_COMMA
+    );
+    insert(
+        "surfaceLogicalField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_LOGICAL_CLOSE
+    );
+
+    insert(
+        "pointScalarField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_SCALAR_COMMA
+    );
+    insert(
+        "pointScalarField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+    );
+    insert(
+        "pointVectorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_VECTOR_COMMA
+    );
+    insert(
+        "pointVectorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+    );
+    insert(
+        "pointTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_TENSOR_COMMA
+    );
+    insert(
+        "pointTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+    );
+    insert(
+        "pointSymmTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_YTENSOR_COMMA
+    );
+    insert(
+        "pointSymmTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+    );
+    insert(
+        "pointSphericalTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_HTENSOR_COMMA
+    );
+    insert(
+        "pointSphericalTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+    );
+    insert(
+        "pointLogicalField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_LOGICAL_COMMA
+    );
+    insert(
+        "pointLogicalField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+    );
+
     insert(
         "CL",
         parserField::FieldValueExpressionParser::token::START_CLOSE_ONLY

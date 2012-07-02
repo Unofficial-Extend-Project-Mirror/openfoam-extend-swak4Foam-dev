@@ -370,7 +370,7 @@ public:
 
     string outputEntry();
 
-    word getResultType();
+    virtual word getResultType();
 
     ExpressionResult getUniform(label size,bool noWarning);
 

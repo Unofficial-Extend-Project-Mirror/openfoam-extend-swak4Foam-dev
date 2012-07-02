@@ -429,7 +429,7 @@ void FieldValueExpressionDriver::scan_end ()
     if(trace_scanning_) {
         Info << "FieldValueExpressionDriver::scan_end" << endl;
     }
-    yylex_destroy(scanner_); // segmentation fault for the second call
+    //    yylex_destroy(scanner_); // segmentation fault for the second call
 //	    fclose (yyin);
 }
 

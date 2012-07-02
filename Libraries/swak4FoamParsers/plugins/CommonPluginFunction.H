@@ -91,26 +91,55 @@ class CommonPluginFunction {
     CommonPluginFunction(const CommonPluginFunction &);
 
 protected:
-    //- read a primitive argument
-    virtual label readArgument(
+    //- wrapper for argument reading
+    label readArgument(
         label index,
         const string &content,
         const word &type
+    );
+
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const word &value
     ) {
         // should be overwritten by the function itself
-        notImplemented("readArgument(label index,const &string content,const word&)");
-        return -1;
+        notImplemented("setArgument(label index,const &word)");
     }
 
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const scalar &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &scalar)");
+    }
+
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const label &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &label)");
+    }
+
+    //- wrapper for argument reading
+    label readArgument(
+        label index,
+        const string &content,
+        CommonValueExpressionDriver &driver
+    );
+
     //- read an argument that is to be parsed
-    virtual label readArgument(
+    virtual void setArgument(
         label index,
         const string &content,
         const CommonValueExpressionDriver &driver
     ) {
         // should be overwritten by the function itself
-        notImplemented("readArgument(label index,const string &content,const CommonValueExpressionDriver&)");
-        return -1;
+        notImplemented("setArgument(label index,const string &content,const CommonValueExpressionDriver&)");
     }
 
     //- do the actual evaluation

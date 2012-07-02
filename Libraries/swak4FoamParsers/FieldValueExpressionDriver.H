@@ -133,7 +133,7 @@ protected:
 public:
     //- get the result field (if it is of the right type)
     template<class T>
-    const T &getResult();
+    const T &getResult() const;
 
     // Handling the scanner.
     void scan_begin ();
@@ -289,6 +289,9 @@ public:
 
     //- what type
     const word &typ() const { return typ_; }
+
+    //- override type reporting from common class
+    word getResultType() { return typ(); }
 
     //- is this a logical field
     bool isLogical() const { return isLogical_; }
