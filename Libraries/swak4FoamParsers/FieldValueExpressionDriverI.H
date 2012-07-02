@@ -731,7 +731,6 @@ FieldValueExpressionDriver::pointToCellInterpolate(
     return result;
 }
 
-
 } // end namespace
 
 #endif

@@ -12,6 +12,7 @@
 
 namespace Foam {
     class FieldValueExpressionDriver;
+    class FieldValuePluginFunction;
 }
 
 using Foam::FieldValueExpressionDriver;
@@ -119,9 +120,16 @@ protected:
     //- set the state to "eat characters"
     void startEatCharacters();
 
-    // Handling the parser.
+    //- Handling the parser.
     void parseInternal(int startToken);
 
+    //- execute a plugin-function
+    template<class T>
+    autoPtr<T> evaluatePluginFunction(
+        const string &name,
+        const parserField::location &loc,
+        int &scanned
+    );
 public:
     //- get the result field (if it is of the right type)
     template<class T>

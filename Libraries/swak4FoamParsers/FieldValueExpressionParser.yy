@@ -45,6 +45,7 @@
 #endif
 
 #include "FieldValuePluginFunction.H"
+
 %}
 
 %name-prefix="parserField"
@@ -100,6 +101,43 @@
 #include "FieldValueExpressionDriverLogicalTemplates.H"
 
 #include "swakChecks.H"
+namespace Foam {
+template<class T>
+autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
+    const string &name,
+    const parserField::location &loc,
+    int &scanned
+) {
+    if(debug) {
+        Info << "Excuting plugin-function " << name << " ( returning type "
+            << pTraits<T>::typeName << ") on " << this->content_ << " position "
+            << loc.end.column-1 << endl;
+    }
+
+    autoPtr<FieldValuePluginFunction> theFunction(
+        FieldValuePluginFunction::New(
+            *this,
+            name
+        )
+    );
+
+    autoPtr<T> result(
+        theFunction->evaluate<T>(
+            this->content_.substr(
+                loc.end.column-1
+            ),
+            scanned
+        ).ptr()
+    );
+
+    if(debug) {  
+        Info << "Scanned: " << scanned << endl;
+    }
+
+    return result;
+}
+}
+
 %}
 
 %token <name>   TOKEN_LINE  "timeline"
@@ -438,11 +476,11 @@ switch_expr:      START_DEFAULT unit
                   { driver.setLogicalResult($2,false,true);  }
                 | START_CLOSE_ONLY ')'
                   { 
-                      Foam::Info << " " 
-                          << Foam::label(@1.begin.column) << " "
-                          << Foam::label(@1.end.column) << " "
-                          << Foam::label(@2.begin.column) << " "
-                          << Foam::label(@2.end.column) << Foam::endl;
+                      // Foam::Info << " " 
+                      //     << Foam::label(@1.begin.column) << " "
+                      //     << Foam::label(@1.end.column) << " "
+                      //     << Foam::label(@2.begin.column) << " "
+                      //     << Foam::label(@2.end.column) << Foam::endl;
 
                       driver.parserLastPos()=@2.end.column-1;
                       YYACCEPT; 
@@ -642,31 +680,11 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
 
 evaluateFaceScalarFunction: TOKEN_FUNCTION_FSID '(' eatCharactersSwitch
   {
-      Foam::autoPtr<Foam::FieldValuePluginFunction> theFunction(
-          Foam::FieldValuePluginFunction::New(
-              driver,
-              *$1
-          )
-      );
-
-      Foam::label scanned=-1;
-      Foam::Info << Foam::label(@2.end.column+1) << Foam::string(driver.content_) 
-          << Foam::label(driver.content_.size()-(@2.end.column+2))  << " "
-          << Foam::label(driver.content_.size()) << " "
-          << Foam::label(@2.end.column) << " "
-          << Foam::label(@2.begin.column) << " "
-          << Foam::endl;
-
-      $$=theFunction->evaluate<Foam::surfaceScalarField>(
-          driver.content_.substr(
-              @2.end.column-1
-          ),
-          scanned
+      $$=driver.evaluatePluginFunction<Foam::surfaceScalarField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
       ).ptr();
-      Foam::Info << "Scanned: " << scanned << Foam::endl;
-      //      Foam::Info << *$$ << Foam::endl;
-
-      numberOfFunctionChars=scanned;
   }
 ; 
 
@@ -860,21 +878,11 @@ restOfFunction:    TOKEN_LAST_FUNCTION_CHAR
 
 evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
   {
-      Foam::autoPtr<Foam::FieldValuePluginFunction> theFunction(
-          Foam::FieldValuePluginFunction::New(
-              driver,
-              *$1
-          )
-      );
-
-      Foam::label scanned=-1;
-      $$=theFunction->evaluate<Foam::volScalarField>(
-          driver.content_.substr(
-              @2.end.column
-          ),
-          scanned
+      $$=driver.evaluatePluginFunction<Foam::volScalarField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
       ).ptr();
-      numberOfFunctionChars=scanned;
   }
 ; 
 

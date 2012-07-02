@@ -35,7 +35,7 @@ License
 
 namespace Foam {
 
-defineTypeNameAndDebug(CommonPluginFunction,1);
+defineTypeNameAndDebug(CommonPluginFunction,0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
