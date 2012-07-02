@@ -224,7 +224,15 @@ void doAnExpression
     if(condition!="true") {
         evaluatedCondition=true;
 
+        if (doDebug) {
+            Info << "funkySetFields : Parsing condition:" 
+                << condition << endl;
+        }
         driver.parse(condition);
+        if (doDebug) {
+            Info << "funkySetFields : Parsed condition" << endl;
+        }
+
         if(
             !driver.resultIsTyp<volScalarField>(true)
             &&
@@ -250,7 +258,14 @@ void doAnExpression
         }
     }
 
+    if (doDebug) {
+        Info << "funkySetFields : Parsing expression:" 
+            << expression << endl;
+    }
     driver.parse(expression);
+    if (doDebug) {
+        Info << "funkySetFields : Parsed expression" << endl;
+    }
 
     if(!evaluatedCondition) {
         conditionIsSurface=driver.isSurfaceField();

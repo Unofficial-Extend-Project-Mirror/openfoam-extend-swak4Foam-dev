@@ -437,7 +437,16 @@ switch_expr:      START_DEFAULT unit
                 | START_POINT_LOGICAL_CLOSE exp ')'
                   { driver.setLogicalResult($2,false,true);  }
                 | START_CLOSE_ONLY ')'
-                  { /* do nothing */ }
+                  { 
+                      Foam::Info << " " 
+                          << Foam::label(@1.begin.column) << " "
+                          << Foam::label(@1.end.column) << " "
+                          << Foam::label(@2.begin.column) << " "
+                          << Foam::label(@2.end.column) << Foam::endl;
+
+                      driver.parserLastPos()=@2.end.column-1;
+                      YYACCEPT; 
+                  }
 ;
 
 unit:   exp                     { driver.setResult($1,false,false);  }
@@ -650,11 +659,12 @@ evaluateFaceScalarFunction: TOKEN_FUNCTION_FSID '(' eatCharactersSwitch
 
       $$=theFunction->evaluate<Foam::surfaceScalarField>(
           driver.content_.substr(
-              @2.end.column
+              @2.end.column-1
           ),
           scanned
       ).ptr();
       Foam::Info << "Scanned: " << scanned << Foam::endl;
+      //      Foam::Info << *$$ << Foam::endl;
 
       numberOfFunctionChars=scanned;
   }

@@ -394,6 +394,9 @@ false                  return token::TOKEN_FALSE;
 
 <parsedByOtherParser>. {
     numberOfFunctionChars--;
+    // Foam::Info << " Remaining characters to be eaten: " << numberOfFunctionChars 
+    //     << Foam::endl;
+
     if(numberOfFunctionChars>0) {
         return token::TOKEN_IN_FUNCTION_CHAR;
     } else {
@@ -409,6 +412,10 @@ false                  return token::TOKEN_FALSE;
 
 void FieldValueExpressionDriver::scan_begin ()
 {
+    if(trace_scanning_) {
+        Info << "FieldValueExpressionDriver::scan_begin" << endl;
+    }
+
     yylex_init(&scanner_);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     yy_flex_debug = trace_scanning_;
@@ -419,7 +426,10 @@ void FieldValueExpressionDriver::scan_begin ()
 
 void FieldValueExpressionDriver::scan_end ()
 {
-    yylex_destroy(scanner_);
+    if(trace_scanning_) {
+        Info << "FieldValueExpressionDriver::scan_end" << endl;
+    }
+    yylex_destroy(scanner_); // segmentation fault for the second call
 //	    fclose (yyin);
 }
 

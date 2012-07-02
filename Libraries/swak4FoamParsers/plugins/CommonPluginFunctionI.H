@@ -89,6 +89,9 @@ tmp<T> CommonPluginFunction::evaluate(
         }
 
         consumed+=scanEmpty(content);
+        if(debug) {
+            Info << consumed << " characters consumed" << endl;
+        }
     }
 
     if(debug) {
