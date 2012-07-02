@@ -2,4 +2,4 @@
 
 wmake libso swakMeshQualityFunctionPlugin
 
-wmake libso localCalculationsFunctionPlugin
+wmake libso swakLocalCalculationsFunctionPlugin
