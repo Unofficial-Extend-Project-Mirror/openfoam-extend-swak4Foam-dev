@@ -92,8 +92,17 @@ void mqFaceNonOrthoPluginFunction::doEvaluation()
         vector d = centres[nei[faceI]] - centres[own[faceI]];
         const vector& s = areas[faceI];
 
-        scalar dDotS = (d & s)/(mag(d)*mag(s) + VSMALL);
-	
+        scalar dDotS = max(
+            -1,
+            min(
+                1,
+                (d & s)/(mag(d)*mag(s) + VSMALL)
+            )
+        );
+
+        // Info << d << s << dDotS << endl;
+        // Info << ::acos(dDotS) << endl;
+
         nonOrto[faceI]=::acos(dDotS)/mathematicalConstant::pi*180.0;
     }
 
