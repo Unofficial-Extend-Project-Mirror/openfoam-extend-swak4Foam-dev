@@ -350,7 +350,7 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
 
 word CommonValueExpressionDriver::getResultType()
 {
-    return result_.type();
+    return result_.valueType();
 }
 
 void CommonValueExpressionDriver::clearResult()

@@ -83,6 +83,8 @@ class ExpressionResult
     ExpressionResult getUniformInternal(const label size,bool noWarn) const;
 
 public:
+    //- Runtime type information
+    TypeName("ExpressionResult");
 
     // Constructors
 
@@ -143,7 +145,7 @@ public:
 
     // couldn't get specialisation with Field<Type> to work. Maybe later. Maybe forbidden
     template<class Type>
-    inline autoPtr<Type> getObjectResult(bool keep=false);
+    inline tmp<Type> getObjectResult(bool keep=false);
 
     // Construct a uniform field from the current results
     ExpressionResult getUniform(const label size,bool noWarn) const;
@@ -153,7 +155,7 @@ public:
 
     void clearResult();
 
-    inline const string &type() const;
+    inline const string &valueType() const;
 
     inline bool isPoint() const;
 

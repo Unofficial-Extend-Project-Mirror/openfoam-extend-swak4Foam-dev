@@ -39,6 +39,8 @@ License
 
 namespace Foam {
 
+defineTypeNameAndDebug(ExpressionResult,0);
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 ExpressionResult::ExpressionResult()
@@ -48,6 +50,9 @@ ExpressionResult::ExpressionResult()
     isPoint_(false),
     isSingleValue_(true)
 {
+    if(debug) {
+        Info << "ExpressionResult::ExpressionResult()" << endl;
+    }
     clearResult();
 }
 
@@ -58,6 +63,10 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     isPoint_(false),
     isSingleValue_(true)
 {
+    if(debug) {
+        Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
+    }
+
     (*this)=rhs;
 }
 
@@ -73,6 +82,10 @@ ExpressionResult::ExpressionResult(
         dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
     )
 {
+    if(debug) {
+        Info << "ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)" << endl;
+    }
+
     if(
         dict.found("value")
     ) {
@@ -120,6 +133,10 @@ ExpressionResult::ExpressionResult(
 
 ExpressionResult::~ExpressionResult()
 {
+    if(debug) {
+        Info << "ExpressionResult::~ExpressionResult()" << endl;
+    }
+
     uglyDelete();
 }
 
@@ -133,16 +150,34 @@ bool ExpressionResult::hasValue() const
 
 void ExpressionResult::clearResult()
 {
+    if(debug) {
+        Info << "ExpressionResult: Clearing result" << endl;
+    }
+
     uglyDelete();
 
+    if(debug) {
+        Info << "ExpressionResult: Clearing object" << endl;
+    }
     generalContent_.reset();
+    if(debug) {
+        Info << "ExpressionResult: Clearing result - done" << endl;
+    }
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 void ExpressionResult::uglyDelete()
 {
+    if(debug) {
+        Info << "ExpressionResult: uglyDelete" << endl;
+    }
+
     if( valPtr_ ) {
+        if(debug) {
+            Info << "ExpressionResult: uglyDelete - clearing pointer" << endl;
+        }
+
         if(valType_==pTraits<scalar>::typeName) {
             delete static_cast<scalarField*>(valPtr_);
         } else if(valType_==vector::typeName) {
@@ -163,6 +198,10 @@ void ExpressionResult::uglyDelete()
     }
     valType_="Void";
     valPtr_=NULL;
+
+    if(debug) {
+        Info << "ExpressionResult: uglyDelete - done" << endl;
+    }
 }
 
 ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn) const

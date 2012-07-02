@@ -121,7 +121,7 @@ namespace Foam {
                 Pout << " - name found";
             }
             if(
-                variables_[name].type()==pTraits<Type>::typeName 
+                variables_[name].valueType()==pTraits<Type>::typeName 
                 && 
                 variables_[name].isPoint()==isPoint
             ) {
@@ -154,12 +154,12 @@ namespace Foam {
         const ExpressionResult &aGlobal=lookupGlobal(name);
 
         if (debug) {
-            Pout << " - found type " << aGlobal.type()  
+            Pout << " - found type " << aGlobal.valueType()  
                 << " isPoint " << isPoint;
         }
 
         if(
-            aGlobal.type()==pTraits<Type>::typeName 
+            aGlobal.valueType()==pTraits<Type>::typeName 
             && 
             aGlobal.isPoint()==isPoint
         ) {

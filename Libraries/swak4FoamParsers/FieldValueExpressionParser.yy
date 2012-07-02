@@ -650,7 +650,7 @@ evaluateFaceScalarFunction: TOKEN_FUNCTION_FSID '(' eatCharactersSwitch
 
       $$=theFunction->evaluate<Foam::surfaceScalarField>(
           driver.content_.substr(
-              @2.end.column-1
+              @2.end.column
           ),
           scanned
       ).ptr();
@@ -860,7 +860,7 @@ evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
       Foam::label scanned=-1;
       $$=theFunction->evaluate<Foam::volScalarField>(
           driver.content_.substr(
-              @2.end.column+1
+              @2.end.column
           ),
           scanned
       ).ptr();

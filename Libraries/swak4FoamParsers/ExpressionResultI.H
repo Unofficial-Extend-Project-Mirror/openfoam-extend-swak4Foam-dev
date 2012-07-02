@@ -168,8 +168,12 @@ namespace Foam {
     }
 
     template<class Type>
-    inline autoPtr<Type> ExpressionResult::getObjectResult(bool keep)
+    inline tmp<Type> ExpressionResult::getObjectResult(bool keep)
     {
+        if(debug) {
+            Info << "ExpressionResult: getObjectResult: " << keep << endl;
+        }
+
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Type> ExpressionResult::getObjectResult()")
                 << "The expected return type " << pTraits<Type>::typeName 
@@ -178,25 +182,33 @@ namespace Foam {
                     << exit(FatalError);
         }
 
-        autoPtr<Type> result;
-        
+        tmp<Type> result(
+            dynamic_cast<Type *>(
+                generalContent_.ptr()
+            )
+        );
+
         if(keep) {
-            result.set(
+            if(debug) {
+                Info << "ExpressionResult: getObjectResult: make copy" << endl;
+            }
+            generalContent_.set(
                 new Type(
                     dynamicCast<const Type &>(
-                        generalContent_()
+                        result()
                     )
                 )
             );
+            if(debug) {
+                Info << "ExpressionResult: getObjectResult: make copy - done" << endl;
+            }
         } else {
-            result.set(
-                dynamic_cast<Type *>(
-                    generalContent_.ptr()
-                )
-            );
             clearResult();
         }
 
+        if(debug) {
+            Info << "ExpressionResult: getObjectResult - done" << endl;
+        }
         return result;
     }
 
@@ -243,7 +255,7 @@ namespace Foam {
         return result;
     }
 
-    inline const string &ExpressionResult::type() const
+    inline const string &ExpressionResult::valueType() const
     {
         return valType_;
     }
