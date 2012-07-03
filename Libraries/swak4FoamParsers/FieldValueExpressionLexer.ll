@@ -48,7 +48,9 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     // allows multiple start symbols
     if (start_token)
     {
-        //        Foam::Info << "Start token: " << start_token << Foam::endl;
+        if(driver.traceScanning()) {
+            Foam::Info << "Start token: " << start_token << Foam::endl;
+        }
 
         int t = start_token;
         start_token = 0;
@@ -413,7 +415,9 @@ false                  return token::TOKEN_FALSE;
 void FieldValueExpressionDriver::scan_begin ()
 {
     if(trace_scanning_) {
-        Info << "FieldValueExpressionDriver::scan_begin" << endl;
+        Info << "FieldValueExpressionDriver::scan_begin " 
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
     yylex_init(&scanner_);
@@ -422,14 +426,35 @@ void FieldValueExpressionDriver::scan_begin ()
     yy_scan_string(content_.c_str(),scanner_);
 //    if (!(yyin = fopen (file.c_str (), "r")))
 //        error (std::string ("cannot open ") + file);
+
+    if(trace_scanning_) {
+        Info << "FieldValueExpressionDriver::scan_begin - finished " 
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 }
 
 void FieldValueExpressionDriver::scan_end ()
 {
     if(trace_scanning_) {
-        Info << "FieldValueExpressionDriver::scan_end" << endl;
+        Info << "FieldValueExpressionDriver::scan_end " 
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
     }
-    yylex_destroy(scanner_); // segmentation fault for the second call
+
+    if(scanner_==NULL) {
+        FatalErrorIn("FieldValueExpressionDriver::scan_end")
+            << "Uninitialized Scanner. Can't delete it"
+                << endl
+                << exit(FatalError);
+
+    }
+
+    //    yylex_destroy(scanner_); // segmentation fault for the second call
+    WarningIn("FieldValueExpressionDriver::scan_end")
+        << "Scanner " <<  scanner_ << " is not deleted"
+            << endl;
+
     scanner_=NULL;
 //	    fclose (yyin);
 }
@@ -437,7 +462,9 @@ void FieldValueExpressionDriver::scan_end ()
 void FieldValueExpressionDriver::startEatCharacters()
 {
     if(traceScanning()) {
-        Info << "FieldValueExpressionDriver::startEatCharacters()" << endl;
+        Info << "FieldValueExpressionDriver::startEatCharacters() " 
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
@@ -447,7 +474,9 @@ void FieldValueExpressionDriver::startEatCharacters()
 void FieldValueExpressionDriver::startVectorComponent()
 {
     if(traceScanning()) {
-        Info << "FieldValueExpressionDriver::startVectorComponent()" << endl;
+        Info << "FieldValueExpressionDriver::startVectorComponent() " 
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
@@ -457,7 +486,9 @@ void FieldValueExpressionDriver::startVectorComponent()
 void FieldValueExpressionDriver::startTensorComponent()
 {
     if(traceScanning()) {
-        Info << "FieldValueExpressionDriver::startTensorComponent()" << endl;
+        Info << "FieldValueExpressionDriver::startTensorComponent() " 
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;

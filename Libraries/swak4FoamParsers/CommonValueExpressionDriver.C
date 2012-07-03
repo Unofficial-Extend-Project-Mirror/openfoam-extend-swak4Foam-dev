@@ -71,6 +71,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_),
+    scanner_(NULL),
     prevIterIsOldTime_(orig.prevIterIsOldTime_)
 {
     setSearchBehaviour(
@@ -88,6 +89,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false)),
+    scanner_(NULL),
     prevIterIsOldTime_(dict.lookupOrDefault("prevIterIsOldTime",false))
 {
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
@@ -121,6 +123,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false),
+    scanner_(NULL),
     prevIterIsOldTime_(false)
 {
     setSearchBehaviour(
@@ -1129,6 +1132,13 @@ vector CommonValueExpressionDriver::getPositionOfMaximum(
 {
     return getExtremePosition(biggerOp(),vals,locs);
 
+}
+
+word CommonValueExpressionDriver::getHex(const void *ptr) const
+{
+    std::ostringstream makeHex;
+    makeHex << std::hex << (void*)ptr;
+    return word(makeHex.str());
 }
 
 // ************************************************************************* //
