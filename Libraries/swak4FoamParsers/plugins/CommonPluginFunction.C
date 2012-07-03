@@ -166,6 +166,17 @@ label CommonPluginFunction::readArgument(
     return consumed;
 }
 
+label CommonPluginFunction::scanEmpty(const string &content)
+{
+    autoPtr<CommonValueExpressionDriver> driver=
+        CommonValueExpressionDriver::New(
+            "internalField",
+            "scanEmpty",
+            parentDriver_.mesh()
+        );
+
+    return driver().parse(content,"CL");
+}
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 

@@ -91,11 +91,6 @@ bool FieldValuePluginFunction::exists (
     return cstrIter!=nameConstructorTablePtr_->end(); 
 }
 
-label FieldValuePluginFunction::scanEmpty(const string &content)
-{
-    return parentDriver().parse(content,"CL");
-}
-
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 } // namespace

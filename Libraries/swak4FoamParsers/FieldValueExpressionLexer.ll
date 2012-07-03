@@ -420,6 +420,14 @@ void FieldValueExpressionDriver::scan_begin ()
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
 
+    if(scanner_!=NULL) {
+        FatalErrorIn("FieldValueExpressionDriver::scan_begin")
+            << "Already existing scanner " << getHex(scanner_)
+                << endl
+                << exit(FatalError);
+
+    }
+
     yylex_init(&scanner_);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     yy_flex_debug = trace_scanning_;
@@ -450,10 +458,10 @@ void FieldValueExpressionDriver::scan_end ()
 
     }
 
-    //    yylex_destroy(scanner_); // segmentation fault for the second call
-    WarningIn("FieldValueExpressionDriver::scan_end")
-        << "Scanner " <<  scanner_ << " is not deleted"
-            << endl;
+    yylex_destroy(scanner_); // segmentation fault for the second call
+    // WarningIn("FieldValueExpressionDriver::scan_end")
+    //     << "Scanner " <<  getHex(scanner_) << " is not deleted"
+    //         << endl;
 
     scanner_=NULL;
 //	    fclose (yyin);

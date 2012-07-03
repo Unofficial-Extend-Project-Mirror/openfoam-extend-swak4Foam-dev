@@ -146,7 +146,7 @@ protected:
     virtual void doEvaluation() = 0;
 
     //- scan if no values are bein read
-    virtual label scanEmpty(const string &content) =0;
+    label scanEmpty(const string &content);
 
     inline CommonValueExpressionDriver &parentDriver();
 

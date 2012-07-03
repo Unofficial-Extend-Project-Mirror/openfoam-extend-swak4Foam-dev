@@ -65,10 +65,6 @@ class FieldValuePluginFunction
 
     FieldValuePluginFunction(const FieldValuePluginFunction &);
 
-protected:
-
-    label scanEmpty(const string &content);
-
 public:
     FieldValuePluginFunction(
         const FieldValueExpressionDriver &parentDriver,
