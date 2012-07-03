@@ -986,6 +986,9 @@ libs (
     // Needed to decompose on 1.7
     "libcompressibleRASModels.so"
     "libpythonIntegration.so"
+    // to test plugins
+    "libswakMeshQualityFunctionPlugin.so"
+    "libswakLocalCalculationsFunctionPlugin.so"
 ) ;
 
 // ************************************************************************* //
