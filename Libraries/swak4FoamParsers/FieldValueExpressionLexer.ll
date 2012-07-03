@@ -16,7 +16,7 @@ typedef parserField::FieldValueExpressionParser::semantic_type YYSTYPE;
 %s patchname
 %s vectorcomponent
 %s tensorcomponent
-%s parsedByOtherParser
+%x parsedByOtherParser
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug 
