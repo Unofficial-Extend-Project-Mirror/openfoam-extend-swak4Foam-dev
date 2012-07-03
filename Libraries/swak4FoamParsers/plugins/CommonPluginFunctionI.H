@@ -70,6 +70,10 @@ tmp<T> CommonPluginFunction::evaluate(
                     argumentNames_[i],
                     parentDriver_.mesh()
                 );
+            driver->setTrace(
+                parentDriver_.traceScanning(),
+                parentDriver_.traceParsing()
+            );
             used=readArgument(i,currentContent,driver());
         }
 

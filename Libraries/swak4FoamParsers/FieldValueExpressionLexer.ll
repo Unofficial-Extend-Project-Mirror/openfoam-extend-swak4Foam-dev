@@ -436,18 +436,30 @@ void FieldValueExpressionDriver::scan_end ()
 
 void FieldValueExpressionDriver::startEatCharacters()
 {
+    if(traceScanning()) {
+        Info << "FieldValueExpressionDriver::startEatCharacters()" << endl;
+    }
+
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(parsedByOtherParser);
 }
 
 void FieldValueExpressionDriver::startVectorComponent()
 {
+    if(traceScanning()) {
+        Info << "FieldValueExpressionDriver::startVectorComponent()" << endl;
+    }
+
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(vectorcomponent);
 }
 
 void FieldValueExpressionDriver::startTensorComponent()
 {
+    if(traceScanning()) {
+        Info << "FieldValueExpressionDriver::startTensorComponent()" << endl;
+    }
+
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(tensorcomponent);
 }

@@ -475,6 +475,10 @@ public:
         bool parsing
     );
 
+    bool traceScanning() const { return trace_scanning_; }
+
+    bool traceParsing() const { return trace_parsing_; }
+
     //- create a writer for this object
     void createWriterAndRead(const word &name);
 
