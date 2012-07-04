@@ -295,7 +295,7 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_PYID;
     } else if(driver.isThere<Foam::pointSphericalTensorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_PHID;
-    } else if(Foam::FieldValuePluginFunction::exists(*ptr)) {
+    } else if(Foam::FieldValuePluginFunction::exists(driver,*ptr)) {
         // OK. We'll create the function two times. But this is less messy
         // than passing it two times
         Foam::autoPtr<Foam::FieldValuePluginFunction> fInfo(

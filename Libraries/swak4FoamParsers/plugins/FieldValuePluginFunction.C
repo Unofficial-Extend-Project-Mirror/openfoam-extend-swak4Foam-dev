@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "FieldValuePluginFunction.H"
@@ -69,11 +69,13 @@ autoPtr<FieldValuePluginFunction> FieldValuePluginFunction::New (
     nameConstructorTable::iterator cstrIter =
         nameConstructorTablePtr_->find(name);
     if(cstrIter==nameConstructorTablePtr_->end()) {
-        FatalErrorIn("autoPtr<FieldValuePluginFunction> FieldValuePluginFunction::New")
-            << "Unknow plugin function " << name << endl
-                << " Available functions are " << nameConstructorTablePtr_->sortedToc()
+        FatalErrorIn(
+            "autoPtr<FieldValuePluginFunction> FieldValuePluginFunction::New"
+        ) << "Unknow plugin function " << name << endl
+            << " Available functions are "
+            << nameConstructorTablePtr_->sortedToc()
                 << endl
-                << exit(FatalError);        
+                << exit(FatalError);
     }
     return autoPtr<FieldValuePluginFunction>
         (
@@ -82,13 +84,34 @@ autoPtr<FieldValuePluginFunction> FieldValuePluginFunction::New (
 }
 
 bool FieldValuePluginFunction::exists (
+    const FieldValueExpressionDriver& driver,
     const word &name
 )
 {
+    static bool firstCall=true;
+    if(firstCall) {
+        firstCall=false;
+        if(nameConstructorTablePtr_->size()>0) {
+            Info<< endl << "Loaded plugin functions for 'internalField':"
+                << endl;
+            wordList names(nameConstructorTablePtr_->sortedToc());
+            forAll(names,nameI)
+            {
+                const word &theName=names[nameI];
+                nameConstructorTable::iterator iter =
+                    nameConstructorTablePtr_->find(name);
+                Info << "  " << theName << ":" << endl
+                    << "    " << iter()(driver,theName)->helpText() << endl;
+            }
+
+            Info << endl;
+        }
+    }
+
     nameConstructorTable::iterator cstrIter =
         nameConstructorTablePtr_->find(name);
- 
-    return cstrIter!=nameConstructorTablePtr_->end(); 
+
+    return cstrIter!=nameConstructorTablePtr_->end();
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

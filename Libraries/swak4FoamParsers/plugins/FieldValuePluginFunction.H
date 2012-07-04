@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -36,7 +36,7 @@ Description
 SourceFiles
     FieldValuePluginFunction.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef FieldValuePluginFunction_H
@@ -56,7 +56,7 @@ namespace Foam
 /*---------------------------------------------------------------------------*\
                            Class FieldValuePluginFunction Declaration
 \*---------------------------------------------------------------------------*/
-class FieldValuePluginFunction 
+class FieldValuePluginFunction
 :
     public CommonPluginFunction
 {
@@ -89,7 +89,10 @@ public:
         (driver,name)
     );
 
-    static bool exists(const word &name);
+    static bool exists(
+        const FieldValueExpressionDriver& driver,
+        const word &name
+    );
 
     static autoPtr<FieldValuePluginFunction> New
     (
