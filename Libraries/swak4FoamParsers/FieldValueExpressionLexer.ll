@@ -1,4 +1,4 @@
- 
+
 %{                                          /* -*- C++ -*- */
 #include "FieldValueExpressionDriverYY.H"
 #include <errno.h>
@@ -19,7 +19,7 @@ typedef parserField::FieldValueExpressionParser::semantic_type YYSTYPE;
 %x parsedByOtherParser
 %x needsIntegerParameter
 
-%option noyywrap nounput batch debug 
+%option noyywrap nounput batch debug
 %option stack
 %option prefix="fvexpr"
 %option reentrant
@@ -251,25 +251,25 @@ false                  return token::TOKEN_FALSE;
         driver.isThere<Foam::volScalarField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_SID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volVectorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volVectorField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_VID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volTensorField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_TID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volSymmTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSymmTensorField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_YID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volSphericalTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSphericalTensorField>(*ptr)
@@ -304,20 +304,52 @@ false                  return token::TOKEN_FALSE;
                 *ptr
             )
         );
-        
+
         int tokenTyp=-1;
         if(fInfo->returnType()=="volScalarField") {
-             tokenTyp=token::TOKEN_FUNCTION_SID;            
+             tokenTyp=token::TOKEN_FUNCTION_SID;
         } else if(fInfo->returnType()=="surfaceScalarField") {
-             tokenTyp=token::TOKEN_FUNCTION_FSID;            
+             tokenTyp=token::TOKEN_FUNCTION_FSID;
+        } else if(fInfo->returnType()=="pointScalarField") {
+             tokenTyp=token::TOKEN_FUNCTION_PSID;
+        } else if(fInfo->returnType()=="volVectorField") {
+             tokenTyp=token::TOKEN_FUNCTION_VID;
+        } else if(fInfo->returnType()=="surfaceVectorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FVID;
+        } else if(fInfo->returnType()=="pointVectorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PVID;
+        } else if(fInfo->returnType()=="volTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_TID;
+        } else if(fInfo->returnType()=="surfaceTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FTID;
+        } else if(fInfo->returnType()=="pointTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PTID;
+        } else if(fInfo->returnType()=="volSymmTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_YID;
+        } else if(fInfo->returnType()=="surfaceSymmTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FYID;
+        } else if(fInfo->returnType()=="pointSymmTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PYID;
+        } else if(fInfo->returnType()=="volSphericalTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_HID;
+        } else if(fInfo->returnType()=="surfaceSphericalTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FHID;
+        } else if(fInfo->returnType()=="pointSphericalTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PHID;
+        } else if(fInfo->returnType()=="volLogicalField") {
+             tokenTyp=token::TOKEN_FUNCTION_LID;
+        } else if(fInfo->returnType()=="surfaceLogicalField") {
+             tokenTyp=token::TOKEN_FUNCTION_FLID;
+        } else if(fInfo->returnType()=="pointLogicalField") {
+             tokenTyp=token::TOKEN_FUNCTION_PLID;
         } else {
             driver.error (
-                *yylloc, 
+                *yylloc,
                 "Function "+*ptr+" returns unsupported type "
                 + fInfo->returnType()
             );
         }
-        
+
         //        BEGIN(parsedByOtherParser);
 
         yylval->name = ptr;
@@ -396,9 +428,10 @@ false                  return token::TOKEN_FALSE;
 
 <parsedByOtherParser>. {
     numberOfFunctionChars--;
-    // Foam::Info << " Remaining characters to be eaten: " << numberOfFunctionChars 
-    //     << Foam::endl;
-
+    if(driver.traceScanning()) {
+        Foam::Info << " Remaining characters to be eaten: " << numberOfFunctionChars
+            << Foam::endl;
+    }
     if(numberOfFunctionChars>0) {
         return token::TOKEN_IN_FUNCTION_CHAR;
     } else {
@@ -415,7 +448,7 @@ false                  return token::TOKEN_FALSE;
 void FieldValueExpressionDriver::scan_begin ()
 {
     if(trace_scanning_) {
-        Info << "FieldValueExpressionDriver::scan_begin " 
+        Info << "FieldValueExpressionDriver::scan_begin "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
@@ -436,7 +469,7 @@ void FieldValueExpressionDriver::scan_begin ()
 //        error (std::string ("cannot open ") + file);
 
     if(trace_scanning_) {
-        Info << "FieldValueExpressionDriver::scan_begin - finished " 
+        Info << "FieldValueExpressionDriver::scan_begin - finished "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
@@ -445,7 +478,7 @@ void FieldValueExpressionDriver::scan_begin ()
 void FieldValueExpressionDriver::scan_end ()
 {
     if(trace_scanning_) {
-        Info << "FieldValueExpressionDriver::scan_end " 
+        Info << "FieldValueExpressionDriver::scan_end "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
@@ -470,7 +503,7 @@ void FieldValueExpressionDriver::scan_end ()
 void FieldValueExpressionDriver::startEatCharacters()
 {
     if(traceScanning()) {
-        Info << "FieldValueExpressionDriver::startEatCharacters() " 
+        Info << "FieldValueExpressionDriver::startEatCharacters() "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
@@ -482,7 +515,7 @@ void FieldValueExpressionDriver::startEatCharacters()
 void FieldValueExpressionDriver::startVectorComponent()
 {
     if(traceScanning()) {
-        Info << "FieldValueExpressionDriver::startVectorComponent() " 
+        Info << "FieldValueExpressionDriver::startVectorComponent() "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
@@ -494,7 +527,7 @@ void FieldValueExpressionDriver::startVectorComponent()
 void FieldValueExpressionDriver::startTensorComponent()
 {
     if(traceScanning()) {
-        Info << "FieldValueExpressionDriver::startTensorComponent() " 
+        Info << "FieldValueExpressionDriver::startTensorComponent() "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
     }
