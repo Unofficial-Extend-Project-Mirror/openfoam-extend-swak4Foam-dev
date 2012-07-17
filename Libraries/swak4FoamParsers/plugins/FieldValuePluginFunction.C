@@ -36,7 +36,7 @@ License
 
 namespace Foam {
 
-defineTypeNameAndDebug(FieldValuePluginFunction,1);
+defineTypeNameAndDebug(FieldValuePluginFunction,0);
 defineRunTimeSelectionTable(FieldValuePluginFunction, name);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -66,6 +66,10 @@ autoPtr<FieldValuePluginFunction> FieldValuePluginFunction::New (
     const word &name
 )
 {
+    if(debug) {
+        Info << "FieldValuePluginFunction::New looking for "
+            << name << " in " << nameConstructorTablePtr_->sortedToc() << endl;
+    }
     nameConstructorTable::iterator cstrIter =
         nameConstructorTablePtr_->find(name);
     if(cstrIter==nameConstructorTablePtr_->end()) {
@@ -99,7 +103,7 @@ bool FieldValuePluginFunction::exists (
             {
                 const word &theName=names[nameI];
                 nameConstructorTable::iterator iter =
-                    nameConstructorTablePtr_->find(name);
+                    nameConstructorTablePtr_->find(theName);
                 Info << "  " << theName << ":" << endl
                     << "    " << iter()(driver,theName)->helpText() << endl;
             }

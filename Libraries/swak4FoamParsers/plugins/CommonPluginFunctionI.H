@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,13 +28,13 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "CommonValueExpressionDriver.H"
 
 namespace Foam {
- 
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -79,7 +79,8 @@ tmp<T> CommonPluginFunction::evaluate(
 
         if(used<=0) {
             FatalErrorIn("CommonPluginFunction::evaluate")
-                << "Evaluation of argument " << i
+                << "Evaluation of argument " << i+1
+                    << " of " << this->helpText()
                     << " consumed no characters"
                     << endl
                     << exit(FatalError);
@@ -101,13 +102,13 @@ tmp<T> CommonPluginFunction::evaluate(
     if(debug) {
         Info << "Starting the actual evaluation" << endl;
     }
-    
+
     doEvaluation();
 
     if(debug) {
         Info << "Getting result and returning it" << endl;
     }
-    
+
     return tmp<T>(result_.getObjectResult<T>(false));
 }
 

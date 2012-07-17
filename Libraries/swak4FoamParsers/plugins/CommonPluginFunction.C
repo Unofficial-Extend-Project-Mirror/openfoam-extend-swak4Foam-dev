@@ -51,6 +51,9 @@ CommonPluginFunction::CommonPluginFunction(
 {
     DynamicList<word> argumentSpecification;
     {
+        if(debug) {
+            Info << "Parsing arguments: " << argumentSpecificationString << endl;
+        }
         word next;
         forAll(argumentSpecificationString,i) {
             char c=argumentSpecificationString[i];
@@ -69,6 +72,10 @@ CommonPluginFunction::CommonPluginFunction(
         }
 
         argumentSpecification.shrink();
+
+        if(debug) {
+            Info << "Split arguments: " << argumentSpecification << endl;
+        }
     }
     argumentNames_.resize(argumentSpecification.size());
     argumentParsers_.resize(argumentSpecification.size());
@@ -93,8 +100,15 @@ CommonPluginFunction::CommonPluginFunction(
         argumentNames_[i]=spec(space1);
         argumentParsers_[i]=spec(space1+1,space2-space1-1);
         argumentTypes_[i]=spec(space2+1,spec.size()-space2-1);
+        if(debug) {
+            Info << "Argument " << i << ": "
+                << argumentNames_[i] << " " << argumentParsers_[i]
+                << " " << argumentTypes_[i] << endl;
+        }
     }
-
+    if(debug) {
+        Info << "Help text: " << this->helpText() << endl;
+    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
