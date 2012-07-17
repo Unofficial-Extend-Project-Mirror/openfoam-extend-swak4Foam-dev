@@ -31,36 +31,31 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "randomExponentialPluginFunction.H"
+#include "fvcInterpolationFunctionPlugin.H"
 #include "FieldValueExpressionDriver.H"
-#include "FieldValuePluginFunction.H"
-#include <Random.H>
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "surfaceInterpolationScheme.H"
+
 namespace Foam {
 
-typedef randomExponentialPluginFunction<FieldValuePluginFunction,FieldValueExpressionDriver> randomExponentialPluginFunctionField;
-defineTemplateTypeNameAndDebug(randomExponentialPluginFunctionField,0);
-
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, randomExponentialPluginFunctionField , name, randomExponential);
+defineTypeNameAndDebug(fvcInterpolationFunctionPlugin,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin , name, fvcInterpolation);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template <typename FType,typename DType>
-randomExponentialPluginFunction<FType,DType>::randomExponentialPluginFunction(
-    const DType &parentDriver,
+fvcInterpolationFunctionPlugin::fvcInterpolationFunctionPlugin(
+    const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    FType(
+    FieldValuePluginFunction(
         parentDriver,
         name,
-        word("volScalarField"),
-        string("seed primitive label;halfLife primitive scalar")
-    ),
-    halfLife_(1),
-    seed_(666)
+        word("surfaceScalarField"),
+        string("original internalField volScalarField;specString primitive string")
+    )
 {
 }
 
@@ -69,64 +64,57 @@ randomExponentialPluginFunction<FType,DType>::randomExponentialPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template <typename FType,typename DType>
-void randomExponentialPluginFunction<FType,DType>::doEvaluationInternal(
-    scalarField &f
-) {
-    label seed=seed_;
-
-    if(seed<=0) {
-        seed=this->mesh().time().timeIndex()-seed;
-    }
-
-    Random rand(seed);
-
-    forAll(f,i) {
-        f[i]=-log(1-rand.scalar01())*halfLife_;
-    }
-}
-
-template <typename FType,typename DType>
-void randomExponentialPluginFunction<FType,DType>::doEvaluation()
+void fvcInterpolationFunctionPlugin::doEvaluation()
 {
-    autoPtr<volScalarField> pRandom(
-        new volScalarField(
-            IOobject(
-                "exponentialRandom",
-                this->mesh().time().timeName(),
-                this->mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            this->mesh(),
-            dimensionedScalar("randomExp",dimless,0),
-            "zeroGradient"
+    IStringStream spec(specString_);
+
+    tmp<surfaceInterpolationScheme<scalar> > scheme(
+        surfaceInterpolationScheme<scalar>::New(
+            mesh(),
+            spec
         )
     );
 
-    doEvaluationInternal(pRandom->internalField());
+    autoPtr<surfaceScalarField> pInterpol(
+        new surfaceScalarField(
+            IOobject(
+                "fvcInterpolated",
+                mesh().time().timeName(),
+                mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            scheme().interpolate(original_())
+        )
+    );
 
-    this->result().setObjectResult(pRandom);
+    result().setObjectResult(pInterpol);
 }
 
-template <typename FType,typename DType>
-void randomExponentialPluginFunction<FType,DType>::setArgument(
+void fvcInterpolationFunctionPlugin::setArgument(
     label index,
-    const label &val
+    const string &content,
+    const CommonValueExpressionDriver &driver
 )
 {
     assert(index==0);
-    seed_=val;
+    original_.set(
+        new volScalarField(
+            dynamicCast<const FieldValueExpressionDriver &>(
+                driver
+            ).getResult<volScalarField>()
+        )
+    );
 }
 
-template <typename FType,typename DType>
-void randomExponentialPluginFunction<FType,DType>::setArgument(
+void fvcInterpolationFunctionPlugin::setArgument(
     label index,
-    const scalar &val
+    const string &value
 )
 {
     assert(index==1);
-    halfLife_=val;
+
+    specString_=value;
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

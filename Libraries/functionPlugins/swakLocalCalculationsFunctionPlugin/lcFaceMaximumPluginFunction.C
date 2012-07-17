@@ -66,9 +66,13 @@ void lcFaceMaximumPluginFunction::setArgument(
     const string &content,
     const CommonValueExpressionDriver &driver
 ) {
+    assert(index==0);
+
     original_.set(
         new surfaceScalarField(
-            dynamicCast<const FieldValueExpressionDriver &>(driver).getResult<surfaceScalarField>()
+            dynamicCast<const FieldValueExpressionDriver &>(
+                driver
+            ).getResult<surfaceScalarField>()
         )
     );
 }

@@ -57,7 +57,7 @@ CommonPluginFunction::CommonPluginFunction(
         word next;
         forAll(argumentSpecificationString,i) {
             char c=argumentSpecificationString[i];
-            if(c!=',') {
+            if(c!=';') {
                 next+=c;
             } else {
                 if(next!="") {

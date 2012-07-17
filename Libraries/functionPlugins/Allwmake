@@ -5,3 +5,5 @@ wmake libso swakMeshQualityFunctionPlugin
 wmake libso swakLocalCalculationsFunctionPlugin
 
 wmake libso swakRandomFunctionPlugin
+
+wmake libso swakFvcSchemesFunctionPlugin

@@ -990,6 +990,7 @@ libs (
     "libswakMeshQualityFunctionPlugin.so"
     "libswakLocalCalculationsFunctionPlugin.so"
     "libswakRandomFunctionPlugin.so"
+    "libswakFvcSchemesFunctionPlugin.so"
 ) ;
 
 // ************************************************************************* //
