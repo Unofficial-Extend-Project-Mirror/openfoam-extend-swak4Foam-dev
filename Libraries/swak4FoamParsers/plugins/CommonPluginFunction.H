@@ -51,6 +51,8 @@ SourceFiles
 
 #include "ExpressionResult.H"
 
+#include "vector.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -101,6 +103,15 @@ protected:
     //- set a primitive argument
     virtual void setArgument(
         label index,
+        const string &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &string)");
+    }
+
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
         const word &value
     ) {
         // should be overwritten by the function itself
@@ -123,6 +134,15 @@ protected:
     ) {
         // should be overwritten by the function itself
         notImplemented("setArgument(label index,const &label)");
+    }
+
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const vector &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &vector)");
     }
 
     //- wrapper for argument reading

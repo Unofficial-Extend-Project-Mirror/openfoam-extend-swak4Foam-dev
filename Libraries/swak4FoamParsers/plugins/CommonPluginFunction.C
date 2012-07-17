@@ -213,6 +213,14 @@ label CommonPluginFunction::readArgument(
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
         setArgument(index,value);
+    } else if(type=="string") {
+        string  value;
+        is.read(value);
+        if(debug) {
+            Info << "Read string: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
     } else if(type=="scalar") {
         scalar value;
         is.read(value);
@@ -229,10 +237,19 @@ label CommonPluginFunction::readArgument(
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
         setArgument(index,value);
+    } else if(type=="vector") {
+        vector value;
+        is >> value;
+        if(debug) {
+            Info << "Read vector: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
     } else {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Unsupported type " << type
                 << endl
+                << "Currently supported: scalar, label, word, string, vector"
                 << exit(FatalError);
     }
 
