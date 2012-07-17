@@ -31,35 +31,35 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "fvcInterpolationFunctionPlugin.H"
+#include "fvcLaplacianFunctionPlugin.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "surfaceInterpolationScheme.H"
+#include "laplacianScheme.H"
 
 namespace Foam {
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<scalar>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,scalar , name, fvcInterpolationScalar);
+defineTemplateTypeNameAndDebug(fvcLaplacianFunctionPlugin<scalar>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcLaplacianFunctionPlugin,scalar , name, fvcLaplacianScalar);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<vector>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,vector , name, fvcInterpolationVector);
+defineTemplateTypeNameAndDebug(fvcLaplacianFunctionPlugin<vector>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcLaplacianFunctionPlugin,vector , name, fvcLaplacianVector);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<tensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,tensor , name, fvcInterpolationTensor);
+defineTemplateTypeNameAndDebug(fvcLaplacianFunctionPlugin<tensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcLaplacianFunctionPlugin,tensor , name, fvcLaplacianTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<symmTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,symmTensor , name, fvcInterpolationSymmTensor);
+defineTemplateTypeNameAndDebug(fvcLaplacianFunctionPlugin<symmTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcLaplacianFunctionPlugin,symmTensor , name, fvcLaplacianSymmTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<sphericalTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,sphericalTensor , name, fvcInterpolationSphericalTensor);
+defineTemplateTypeNameAndDebug(fvcLaplacianFunctionPlugin<sphericalTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcLaplacianFunctionPlugin,sphericalTensor , name, fvcLaplacianSphericalTensor);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class T>
-fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
+fvcLaplacianFunctionPlugin<T>::fvcLaplacianFunctionPlugin(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -82,12 +82,12 @@ fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::doEvaluation()
+void fvcLaplacianFunctionPlugin<T>::doEvaluation()
 {
     IStringStream spec(specString_);
 
-    tmp<surfaceInterpolationScheme<T> > scheme(
-        surfaceInterpolationScheme<T>::New(
+    tmp<fv::laplacianScheme<T,scalar> > scheme(
+        fv::laplacianScheme<T,scalar>::New(
             mesh(),
             spec
         )
@@ -102,7 +102,7 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().interpolate(original_())
+            scheme().fvcLaplacian(original_())
         )
     );
 
@@ -110,7 +110,7 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
 }
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcLaplacianFunctionPlugin<T>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
@@ -127,7 +127,7 @@ void fvcInterpolationFunctionPlugin<T>::setArgument(
 }
 
 template <class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcLaplacianFunctionPlugin<T>::setArgument(
     label index,
     const string &value
 )

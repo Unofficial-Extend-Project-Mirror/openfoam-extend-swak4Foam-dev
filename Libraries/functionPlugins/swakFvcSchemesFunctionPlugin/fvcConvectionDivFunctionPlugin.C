@@ -31,35 +31,35 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "fvcInterpolationFunctionPlugin.H"
+#include "fvcConvectionDivFunctionPlugin.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "surfaceInterpolationScheme.H"
+#include "convectionScheme.H"
 
 namespace Foam {
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<scalar>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,scalar , name, fvcInterpolationScalar);
+defineTemplateTypeNameAndDebug(fvcConvectionDivFunctionPlugin<scalar>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcConvectionDivFunctionPlugin,scalar , name, fvcConvectionDivScalar);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<vector>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,vector , name, fvcInterpolationVector);
+defineTemplateTypeNameAndDebug(fvcConvectionDivFunctionPlugin<vector>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcConvectionDivFunctionPlugin,vector , name, fvcConvectionDivVector);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<tensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,tensor , name, fvcInterpolationTensor);
+defineTemplateTypeNameAndDebug(fvcConvectionDivFunctionPlugin<tensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcConvectionDivFunctionPlugin,tensor , name, fvcConvectionDivTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<symmTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,symmTensor , name, fvcInterpolationSymmTensor);
+defineTemplateTypeNameAndDebug(fvcConvectionDivFunctionPlugin<symmTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcConvectionDivFunctionPlugin,symmTensor , name, fvcConvectionDivSymmTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<sphericalTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,sphericalTensor , name, fvcInterpolationSphericalTensor);
+defineTemplateTypeNameAndDebug(fvcConvectionDivFunctionPlugin<sphericalTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcConvectionDivFunctionPlugin,sphericalTensor , name, fvcConvectionDivSphericalTensor);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class T>
-fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
+fvcConvectionDivFunctionPlugin<T>::fvcConvectionDivFunctionPlugin(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -68,7 +68,7 @@ fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
         name,
         word(pTraits<resultType>::typeName),
         string(
-            "original internalField "
+            "flow internalField surfaceScalarField;original internalField "
             +pTraits<originalType>::typeName
             +";specString primitive string"
         )
@@ -82,13 +82,14 @@ fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::doEvaluation()
+void fvcConvectionDivFunctionPlugin<T>::doEvaluation()
 {
     IStringStream spec(specString_);
 
-    tmp<surfaceInterpolationScheme<T> > scheme(
-        surfaceInterpolationScheme<T>::New(
+    tmp<fv::convectionScheme<T> > scheme(
+        fv::convectionScheme<T>::New(
             mesh(),
+            flow_(),
             spec
         )
     );
@@ -102,7 +103,7 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().interpolate(original_())
+            scheme().fvcDiv(flow_(),original_())
         )
     );
 
@@ -110,29 +111,39 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
 }
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcConvectionDivFunctionPlugin<T>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
 )
 {
-    assert(index==0);
-    this->original_.set(
-        new originalType(
-            dynamicCast<const FieldValueExpressionDriver &>(
-                driver
-            ).getResult<originalType>()
-        )
-    );
+    assert(index==0 || index==1);
+    if(index==1) {
+        this->original_.set(
+            new originalType(
+                dynamicCast<const FieldValueExpressionDriver &>(
+                    driver
+                ).getResult<originalType>()
+            )
+        );
+    } else {
+        this->flow_.set(
+            new surfaceScalarField(
+                dynamicCast<const FieldValueExpressionDriver &>(
+                    driver
+                ).getResult<surfaceScalarField>()
+            )
+        );
+    }
 }
 
 template <class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcConvectionDivFunctionPlugin<T>::setArgument(
     label index,
     const string &value
 )
 {
-    assert(index==1);
+    assert(index==2);
 
     specString_=value;
 }

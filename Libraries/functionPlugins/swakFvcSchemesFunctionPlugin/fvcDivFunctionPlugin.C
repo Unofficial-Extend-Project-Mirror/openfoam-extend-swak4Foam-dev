@@ -31,35 +31,32 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "fvcInterpolationFunctionPlugin.H"
+#include "fvcDivFunctionPlugin.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "surfaceInterpolationScheme.H"
+#include "divScheme.H"
 
 namespace Foam {
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<scalar>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,scalar , name, fvcInterpolationScalar);
+defineTemplateTypeNameAndDebug(fvcDivFunctionPlugin<vector>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcDivFunctionPlugin,vector , name, fvcDivVector);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<vector>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,vector , name, fvcInterpolationVector);
+defineTemplateTypeNameAndDebug(fvcDivFunctionPlugin<tensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcDivFunctionPlugin,tensor , name, fvcDivTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<tensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,tensor , name, fvcInterpolationTensor);
+defineTemplateTypeNameAndDebug(fvcDivFunctionPlugin<symmTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcDivFunctionPlugin,symmTensor , name, fvcDivSymmTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<symmTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,symmTensor , name, fvcInterpolationSymmTensor);
-
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<sphericalTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,sphericalTensor , name, fvcInterpolationSphericalTensor);
+defineTemplateTypeNameAndDebug(fvcDivFunctionPlugin<sphericalTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcDivFunctionPlugin,sphericalTensor , name, fvcDivSphericalTensor);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class T>
-fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
+fvcDivFunctionPlugin<T>::fvcDivFunctionPlugin(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -82,12 +79,12 @@ fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::doEvaluation()
+void fvcDivFunctionPlugin<T>::doEvaluation()
 {
     IStringStream spec(specString_);
 
-    tmp<surfaceInterpolationScheme<T> > scheme(
-        surfaceInterpolationScheme<T>::New(
+    tmp<fv::divScheme<T> > scheme(
+        fv::divScheme<T>::New(
             mesh(),
             spec
         )
@@ -96,13 +93,13 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
     autoPtr<resultType> pInterpol(
         new resultType(
             IOobject(
-                "fvcInterpolated"+this->original_->name(),
+                "fvcDiv"+this->original_->name(),
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().interpolate(original_())
+            scheme().fvcDiv(original_())
         )
     );
 
@@ -110,7 +107,7 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
 }
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcDivFunctionPlugin<T>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
@@ -127,7 +124,7 @@ void fvcInterpolationFunctionPlugin<T>::setArgument(
 }
 
 template <class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcDivFunctionPlugin<T>::setArgument(
     label index,
     const string &value
 )

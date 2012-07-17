@@ -31,35 +31,35 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "fvcInterpolationFunctionPlugin.H"
+#include "fvcSnGradFunctionPlugin.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "surfaceInterpolationScheme.H"
+#include "snGradScheme.H"
 
 namespace Foam {
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<scalar>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,scalar , name, fvcInterpolationScalar);
+defineTemplateTypeNameAndDebug(fvcSnGradFunctionPlugin<scalar>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcSnGradFunctionPlugin,scalar , name, fvcSnGradScalar);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<vector>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,vector , name, fvcInterpolationVector);
+defineTemplateTypeNameAndDebug(fvcSnGradFunctionPlugin<vector>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcSnGradFunctionPlugin,vector , name, fvcSnGradVector);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<tensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,tensor , name, fvcInterpolationTensor);
+defineTemplateTypeNameAndDebug(fvcSnGradFunctionPlugin<tensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcSnGradFunctionPlugin,tensor , name, fvcSnGradTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<symmTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,symmTensor , name, fvcInterpolationSymmTensor);
+defineTemplateTypeNameAndDebug(fvcSnGradFunctionPlugin<symmTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcSnGradFunctionPlugin,symmTensor , name, fvcSnGradSymmTensor);
 
-defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<sphericalTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,sphericalTensor , name, fvcInterpolationSphericalTensor);
+defineTemplateTypeNameAndDebug(fvcSnGradFunctionPlugin<sphericalTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcSnGradFunctionPlugin,sphericalTensor , name, fvcSnGradSphericalTensor);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class T>
-fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
+fvcSnGradFunctionPlugin<T>::fvcSnGradFunctionPlugin(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -82,12 +82,12 @@ fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::doEvaluation()
+void fvcSnGradFunctionPlugin<T>::doEvaluation()
 {
     IStringStream spec(specString_);
 
-    tmp<surfaceInterpolationScheme<T> > scheme(
-        surfaceInterpolationScheme<T>::New(
+    tmp<fv::snGradScheme<T> > scheme(
+        fv::snGradScheme<T>::New(
             mesh(),
             spec
         )
@@ -96,13 +96,13 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
     autoPtr<resultType> pInterpol(
         new resultType(
             IOobject(
-                "fvcInterpolated"+this->original_->name(),
+                "fvcSnGrad"+this->original_->name(),
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().interpolate(original_())
+            scheme().snGrad(original_())
         )
     );
 
@@ -110,7 +110,7 @@ void fvcInterpolationFunctionPlugin<T>::doEvaluation()
 }
 
 template<class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcSnGradFunctionPlugin<T>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
@@ -127,7 +127,7 @@ void fvcInterpolationFunctionPlugin<T>::setArgument(
 }
 
 template <class T>
-void fvcInterpolationFunctionPlugin<T>::setArgument(
+void fvcSnGradFunctionPlugin<T>::setArgument(
     label index,
     const string &value
 )
