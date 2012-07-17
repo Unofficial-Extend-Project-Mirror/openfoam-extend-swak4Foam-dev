@@ -85,6 +85,8 @@ public:
     void doEvaluation();
 
     void setArgument(label index,const scalar &);
+
+    void setArgument(label index,const label &);
 };
 
 

@@ -168,11 +168,32 @@ label CommonPluginFunction::readArgument(
     return driver.parserLastPos();
 }
 
+    // Workaround because steam() is protected
+class IStringStreamWithPos
+:
+    public IStringStream
+{
+public:
+    IStringStreamWithPos(const string &content)
+        :
+        IStringStream(content)
+        {}
+
+    label pos()
+        {
+            return label(stream().tellg());
+        }
+};
+
 label CommonPluginFunction::readArgument(
     label index,
     const string &content,
     const word &type
 ) {
+    if(debug) {
+        Info << "CommonPluginFunction::readArgument "
+            << index << " " << type << ":" << content << endl;
+    }
     if(index>=argumentNames_.size()) {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Index " << index << " too big. Only values from 0 to"
@@ -181,16 +202,32 @@ label CommonPluginFunction::readArgument(
                 << exit(FatalError);
     }
 
-    label consumed=0;
+    IStringStreamWithPos is(content);
 
     if(type=="word") {
-        word value="dummy";
+        word value;
+        is.read(value);
+        is.read(value);
+        if(debug) {
+            Info << "Read word: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
         setArgument(index,value);
     } else if(type=="scalar") {
-        scalar value=42;
+        scalar value;
+        is.read(value);
+        if(debug) {
+            Info << "Read scalar: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
         setArgument(index,value);
     } else if(type=="label") {
-        label value=42;
+        label value;
+        is.read(value);
+        if(debug) {
+            Info << "Read label: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
         setArgument(index,value);
     } else {
         FatalErrorIn("CommonPluginFunction::readArgument")
@@ -199,11 +236,20 @@ label CommonPluginFunction::readArgument(
                 << exit(FatalError);
     }
 
+    label consumed=is.pos();
+
     return consumed;
 }
 
-label CommonPluginFunction::scanEmpty(const string &content)
+label CommonPluginFunction::scanEmpty(
+    const string &content,
+    word sym
+)
 {
+    if(debug) {
+        Info << "Searching symbol " << sym << " in " << content << endl;
+    }
+
     autoPtr<CommonValueExpressionDriver> driver=
         CommonValueExpressionDriver::New(
             "internalField",
@@ -211,7 +257,12 @@ label CommonPluginFunction::scanEmpty(const string &content)
             parentDriver_.mesh()
         );
 
-    return driver().parse(content,"CL");
+    driver->setTrace(
+        parentDriver_.traceScanning(),
+        parentDriver_.traceParsing()
+    );
+
+    return driver().parse(content,sym);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

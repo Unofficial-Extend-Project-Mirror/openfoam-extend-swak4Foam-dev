@@ -278,6 +278,7 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token START_POINT_LOGICAL_CLOSE
 
 %token START_CLOSE_ONLY
+%token START_COMMA_ONLY
 
 %token TOKEN_LAST_FUNCTION_CHAR
 %token TOKEN_IN_FUNCTION_CHAR
@@ -441,7 +442,7 @@ switch_start: switch_expr
 ;
 
 switch_expr:      START_DEFAULT unit
-                | START_VOL_SCALAR_COMMA exp ','
+                | START_VOL_SCALAR_COMMA exp ';'
                   {
                       driver.setResult($2,false,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -453,7 +454,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_VOL_VECTOR_COMMA vexp ','
+                | START_VOL_VECTOR_COMMA vexp ';'
                   {
                       driver.setResult($2,false,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -465,7 +466,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_VOL_TENSOR_COMMA texp ','
+                | START_VOL_TENSOR_COMMA texp ';'
                   {
                       driver.setResult($2,false,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -477,7 +478,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_VOL_YTENSOR_COMMA yexp ','
+                | START_VOL_YTENSOR_COMMA yexp ';'
                   {
                       driver.setResult($2,false,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -489,7 +490,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_VOL_HTENSOR_COMMA hexp ','
+                | START_VOL_HTENSOR_COMMA hexp ';'
                   {
                       driver.setResult($2,false,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -501,7 +502,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_VOL_LOGICAL_COMMA lexp ','
+                | START_VOL_LOGICAL_COMMA lexp ';'
                   {
                       driver.setLogicalResult($2,false,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -513,7 +514,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_SURFACE_SCALAR_COMMA fsexp ','
+                | START_SURFACE_SCALAR_COMMA fsexp ';'
                   {
                       driver.setResult($2,true,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -525,7 +526,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_SURFACE_VECTOR_COMMA fvexp ','
+                | START_SURFACE_VECTOR_COMMA fvexp ';'
                   {
                       driver.setResult($2,true,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -537,7 +538,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_SURFACE_TENSOR_COMMA ftexp ','
+                | START_SURFACE_TENSOR_COMMA ftexp ';'
                   {
                       driver.setResult($2,true,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -549,7 +550,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_SURFACE_YTENSOR_COMMA fyexp ','
+                | START_SURFACE_YTENSOR_COMMA fyexp ';'
                   {
                       driver.setResult($2,true,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -561,7 +562,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_SURFACE_HTENSOR_COMMA fhexp ','
+                | START_SURFACE_HTENSOR_COMMA fhexp ';'
                   {
                       driver.setResult($2,true,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -573,7 +574,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_SURFACE_LOGICAL_COMMA flexp ','
+                | START_SURFACE_LOGICAL_COMMA flexp ';'
                   {
                       driver.setLogicalResult($2,true,false);
                       driver.parserLastPos()=@3.end.column-1;
@@ -585,7 +586,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_POINT_SCALAR_COMMA psexp ','
+                | START_POINT_SCALAR_COMMA psexp ';'
                   {
                       driver.setResult($2,false,true);
                       driver.parserLastPos()=@3.end.column-1;
@@ -597,7 +598,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_POINT_VECTOR_COMMA pvexp ','
+                | START_POINT_VECTOR_COMMA pvexp ';'
                   {
                       driver.setResult($2,false,true);
                       driver.parserLastPos()=@3.end.column-1;
@@ -609,7 +610,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_POINT_TENSOR_COMMA ptexp ','
+                | START_POINT_TENSOR_COMMA ptexp ';'
                   {
                       driver.setResult($2,false,true);
                       driver.parserLastPos()=@3.end.column-1;
@@ -621,7 +622,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_POINT_YTENSOR_COMMA pyexp ','
+                | START_POINT_YTENSOR_COMMA pyexp ';'
                   {
                       driver.setResult($2,false,true);
                       driver.parserLastPos()=@3.end.column-1;
@@ -633,7 +634,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_POINT_HTENSOR_COMMA phexp ','
+                | START_POINT_HTENSOR_COMMA phexp ';'
                   {
                       driver.setResult($2,false,true);
                       driver.parserLastPos()=@3.end.column-1;
@@ -645,7 +646,7 @@ switch_expr:      START_DEFAULT unit
                       driver.parserLastPos()=@3.end.column-1;
                       YYACCEPT;
                   }
-                | START_POINT_LOGICAL_COMMA plexp ','
+                | START_POINT_LOGICAL_COMMA plexp ';'
                   {
                       driver.setLogicalResult($2,false,true);
                       driver.parserLastPos()=@3.end.column-1;
@@ -658,6 +659,11 @@ switch_expr:      START_DEFAULT unit
                       YYACCEPT;
                   }
                 | START_CLOSE_ONLY ')'
+                  {
+                      driver.parserLastPos()=@2.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_COMMA_ONLY ';'
                   {
                       driver.parserLastPos()=@2.end.column-1;
                       YYACCEPT;

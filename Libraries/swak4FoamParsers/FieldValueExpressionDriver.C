@@ -1,4 +1,4 @@
-//  ICE Revision: $Id$ 
+//  ICE Revision: $Id$
 
 #include "FieldValueExpressionDriver.H"
 #include <Random.H>
@@ -29,7 +29,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     : CommonValueExpressionDriver(
         cacheReadFields,
         searchInMemory,
-        searchOnDisc        
+        searchOnDisc
     ),
       time_(time),
       mesh_(mesh),
@@ -49,7 +49,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     : CommonValueExpressionDriver(
         false,
         true,
-        false        
+        false
     ),
       time_(""),
       mesh_(mesh),
@@ -71,7 +71,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     : CommonValueExpressionDriver(
         cacheReadFields,
         searchInMemory,
-        searchOnDisc        
+        searchOnDisc
     ),
       time_(""),
       mesh_(mesh),
@@ -312,7 +312,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
 
     vector fmin(0,0,0);
     vector fmax(0,0,0);
-    
+
     forAll(*f,faceI)
     {
         const face &fProp = mesh_.faces()[faceI];
@@ -323,15 +323,15 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
             forAll(mesh_.points()[0],compI)
             {
                 if(
-                    mesh_.points()[fProp[pointI]].component(compI) 
-                    < 
+                    mesh_.points()[fProp[pointI]].component(compI)
+                    <
                     fmin.component(compI)
                 ) {
                     fmin.component(compI) = mesh_.points()[fProp[pointI]].component(compI);
                 }
                 if(
-                    mesh_.points()[fProp[pointI]].component(compI) 
-                    > 
+                    mesh_.points()[fProp[pointI]].component(compI)
+                    >
                     fmax.component(compI)
                 ) {
                     fmax.component(compI) = mesh_.points()[fProp[pointI]].component(compI);
@@ -344,7 +344,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
     {
         labelList cNumbers = mesh_.boundaryMesh()[patchI].faceCells();
         fvsPatchVectorField & fFace = f->boundaryField()[patchI];
-        
+
         forAll(fFace,faceI)
         {
             const cell & cProp(mesh_.cells()[cNumbers[faceI]]);
@@ -365,14 +365,14 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
                         forAll(mesh_.points()[0],compI)
                         {
                             if(
-                                mesh_.points()[fProp[pointI]].component(compI) 
-                                < 
+                                mesh_.points()[fProp[pointI]].component(compI)
+                                <
                                 fmin.component(compI)
                             ) {
                                 fmin.component(compI) = mesh_.points()[fProp[pointI]].component(compI);
                             }
                             if(
-                                mesh_.points()[fProp[pointI]].component(compI) 
+                                mesh_.points()[fProp[pointI]].component(compI)
                                 >
                                 fmax.component(compI)
                             ) {
@@ -535,7 +535,7 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
 {
   volScalarField *f=makeConstantField<volScalarField>(0);
 
-  IOobject head 
+  IOobject head
       (
           name,
           time(),
@@ -544,9 +544,9 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
           IOobject::MUST_READ,
           IOobject::NO_WRITE
       );
-  
+
   if(!head.headerOk()) {;
-      head=IOobject 
+      head=IOobject
           (
               name,
               "constant",
@@ -586,7 +586,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeInternalFaceField()
 surfaceScalarField *FieldValueExpressionDriver::makeOnPatchField(const string &name)
 {
     surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
-    
+
     label patchI=mesh().boundaryMesh().findPatchID(name);
     if(patchI<0) {
         FatalErrorIn("makeFaceSetField(const string &name)")
@@ -607,7 +607,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
 {
     surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
 
-  IOobject head 
+  IOobject head
       (
           name,
           time(),
@@ -616,9 +616,9 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
           IOobject::MUST_READ,
           IOobject::NO_WRITE
       );
-  
+
   if(!head.headerOk()) {;
-      head=IOobject 
+      head=IOobject
           (
               name,
               "constant",
@@ -660,7 +660,7 @@ pointScalarField *FieldValueExpressionDriver::makePointSetField(const string &na
 {
   pointScalarField *f=makePointConstantField<pointScalarField>(0);
 
-  IOobject head 
+  IOobject head
       (
           name,
           time(),
@@ -669,9 +669,9 @@ pointScalarField *FieldValueExpressionDriver::makePointSetField(const string &na
           IOobject::MUST_READ,
           IOobject::NO_WRITE
       );
-  
+
   if(!head.headerOk()) {;
-      head=IOobject 
+      head=IOobject
           (
               name,
               "constant",
@@ -1146,6 +1146,10 @@ StartupSymbols()
     insert(
         "CL",
         parserField::FieldValueExpressionParser::token::START_CLOSE_ONLY
+    );
+    insert(
+        "SC",
+        parserField::FieldValueExpressionParser::token::START_COMMA_ONLY
     );
 }
 

@@ -57,7 +57,7 @@ randomExponentialPluginFunction<FType,DType>::randomExponentialPluginFunction(
         parentDriver,
         name,
         word("volScalarField"),
-        string("halfLife primitive scalar,seed primitiv label")
+        string("halfLife primitive scalar,seed primitive label")
     ),
     halfLife_(1),
     seed_(666)
@@ -107,6 +107,16 @@ void randomExponentialPluginFunction<FType,DType>::doEvaluation()
     doEvaluationInternal(pRandom->internalField());
 
     this->result().setObjectResult(pRandom);
+}
+
+template <typename FType,typename DType>
+void randomExponentialPluginFunction<FType,DType>::setArgument(
+    label index,
+    const label &val
+)
+{
+    assert(index==1);
+    seed_=val;
 }
 
 template <typename FType,typename DType>

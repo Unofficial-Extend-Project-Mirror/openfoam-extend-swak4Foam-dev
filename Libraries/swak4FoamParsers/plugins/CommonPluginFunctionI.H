@@ -63,6 +63,15 @@ tmp<T> CommonPluginFunction::evaluate(
 
         if(argumentParsers_[i]=="primitive") {
             used=readArgument(i,currentContent,argumentTypes_[i]);
+            word lookFor="SC";
+            if(i==(argumentParsers_.size()-1)) {
+                lookFor="CL";
+            }
+            used+=scanEmpty(currentContent.substr(used),lookFor);
+            if(debug) {
+                Info << "Used " << used << " characters after looking for "
+                    << lookFor << endl;
+            }
         } else {
             autoPtr<CommonValueExpressionDriver> driver=
                 CommonValueExpressionDriver::New(
@@ -93,7 +102,7 @@ tmp<T> CommonPluginFunction::evaluate(
             Info << "No parameters. Looking for closing ')'" << endl;
         }
 
-        consumed+=scanEmpty(content);
+        consumed+=scanEmpty(content,"CL");
         if(debug) {
             Info << consumed << " characters consumed" << endl;
         }
