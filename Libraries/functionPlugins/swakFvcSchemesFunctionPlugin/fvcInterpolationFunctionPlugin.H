@@ -54,6 +54,8 @@ namespace Foam
 /*---------------------------------------------------------------------------*\
                            Class fvcInterpolationFunctionPlugin Declaration
 \*---------------------------------------------------------------------------*/
+
+template<class T>
 class fvcInterpolationFunctionPlugin
 :
     public FieldValuePluginFunction
@@ -63,7 +65,10 @@ class fvcInterpolationFunctionPlugin
 
     fvcInterpolationFunctionPlugin(const fvcInterpolationFunctionPlugin &);
 
-    autoPtr<volScalarField> original_;
+    typedef GeometricField<T,fvPatchField,volMesh> originalType;
+    typedef GeometricField<T,fvsPatchField,surfaceMesh> resultType;
+
+    autoPtr<originalType> original_;
 
     string specString_;
 

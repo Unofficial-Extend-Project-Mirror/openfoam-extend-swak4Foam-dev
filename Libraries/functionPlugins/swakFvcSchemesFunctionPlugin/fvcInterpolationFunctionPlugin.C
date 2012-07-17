@@ -40,21 +40,38 @@ License
 
 namespace Foam {
 
-defineTypeNameAndDebug(fvcInterpolationFunctionPlugin,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin , name, fvcInterpolation);
+defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<scalar>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,scalar , name, fvcInterpolationScalar);
+
+defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<vector>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,vector , name, fvcInterpolationVector);
+
+defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<tensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,tensor , name, fvcInterpolationTensor);
+
+defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<symmTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,symmTensor , name, fvcInterpolationSymmTensor);
+
+defineTemplateTypeNameAndDebug(fvcInterpolationFunctionPlugin<sphericalTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, fvcInterpolationFunctionPlugin,sphericalTensor , name, fvcInterpolationSphericalTensor);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-fvcInterpolationFunctionPlugin::fvcInterpolationFunctionPlugin(
+template<class T>
+fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
     FieldValuePluginFunction(
         parentDriver,
         name,
-        word("surfaceScalarField"),
-        string("original internalField volScalarField;specString primitive string")
+        word(pTraits<resultType>::typeName),
+        string(
+            "original internalField "
+            +pTraits<originalType>::typeName
+            +";specString primitive string"
+        )
     )
 {
 }
@@ -64,19 +81,20 @@ fvcInterpolationFunctionPlugin::fvcInterpolationFunctionPlugin(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void fvcInterpolationFunctionPlugin::doEvaluation()
+template<class T>
+void fvcInterpolationFunctionPlugin<T>::doEvaluation()
 {
     IStringStream spec(specString_);
 
-    tmp<surfaceInterpolationScheme<scalar> > scheme(
-        surfaceInterpolationScheme<scalar>::New(
+    tmp<surfaceInterpolationScheme<T> > scheme(
+        surfaceInterpolationScheme<T>::New(
             mesh(),
             spec
         )
     );
 
-    autoPtr<surfaceScalarField> pInterpol(
-        new surfaceScalarField(
+    autoPtr<resultType> pInterpol(
+        new resultType(
             IOobject(
                 "fvcInterpolated",
                 mesh().time().timeName(),
@@ -91,23 +109,25 @@ void fvcInterpolationFunctionPlugin::doEvaluation()
     result().setObjectResult(pInterpol);
 }
 
-void fvcInterpolationFunctionPlugin::setArgument(
+template<class T>
+void fvcInterpolationFunctionPlugin<T>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
 )
 {
     assert(index==0);
-    original_.set(
-        new volScalarField(
+    this->original_.set(
+        new originalType(
             dynamicCast<const FieldValueExpressionDriver &>(
                 driver
-            ).getResult<volScalarField>()
+            ).getResult<originalType>()
         )
     );
 }
 
-void fvcInterpolationFunctionPlugin::setArgument(
+template <class T>
+void fvcInterpolationFunctionPlugin<T>::setArgument(
     label index,
     const string &value
 )
