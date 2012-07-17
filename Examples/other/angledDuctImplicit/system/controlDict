@@ -57,7 +57,7 @@ functions
             average
         );
         patches (
-            inlet 
+            inlet
         );
         expression "p-pOut";
         verbose true;
@@ -65,7 +65,7 @@ functions
     ifUser {
         type executeIfEnvironmentVariable;
         readDuringConstruction false;
-        
+
         //        fitVariableMode exists;
         //        fitVariableMode doesNotExist;
         fitVariableMode fitsRegexp;
@@ -79,7 +79,7 @@ functions
             pressureDropCSV
             {
                 $pressureDrop;
-                
+
                 outputFileMode csv;
             }
         }
@@ -102,15 +102,15 @@ functions
                 patches (
                     outlet
                 );
-                outputFileMode csv; 
+                outputFileMode csv;
                 //             verbose true;
             }
-            velocityRaw 
+            velocityRaw
             {
                 $velocityCSV;
                 outputFileMode raw;
             }
-            velocityFoam 
+            velocityFoam
             {
                 $velocityCSV;
                 outputFileMode foam;
@@ -125,7 +125,7 @@ functions
             average
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "p-pFilter";
@@ -139,7 +139,7 @@ functions
             average
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "p-pTotal";
@@ -165,7 +165,7 @@ functions
             average
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "p-pFilter";
@@ -179,7 +179,7 @@ functions
             average
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "mag(pos()-pFilter)";
@@ -350,7 +350,7 @@ functions
     {
         type swakExpression;
         valueType internalField;
-        variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";        
+        variables "pFilter{cellZone'porosity}=sum(p*vol())/sum(vol());";
         expression "p-pFilter";
         accumulations (
             min
@@ -415,7 +415,7 @@ functions
             }
         );
         expression "maxU";
-        accumulations (            
+        accumulations (
             average
             max
             min
@@ -472,7 +472,7 @@ functions
         surface {
             type patch;
             patchName outlet;
-            //            triangulate      false;      
+            //            triangulate      false;
         }
         verbose true;
         expression "mag(U)";
@@ -644,8 +644,8 @@ functions
         outputInterval 1;
         fieldName distanceFromZero;
         expression "mag(pos())";
-        autowrite true;        
-    } 
+        autowrite true;
+    }
     onlyForSolver {
         type executeIfExecutableFits;
         executableNameRegexp "rho.+Foam";
@@ -660,7 +660,7 @@ functions
                 outputInterval 1;
                 fieldName myPhi;
                 expression "interpolate(rho*U)&face()";
-                autowrite true;        
+                autowrite true;
             }
             phiError
             {
@@ -681,7 +681,7 @@ functions
                 outputInterval 1;
                 fieldName myPhi2;
                 expression "myPhi";
-                autowrite true;        
+                autowrite true;
             }
             changeMyPhi2
             {
@@ -708,7 +708,7 @@ functions
             }
         );
         expression "velClass(mag(U))";
-        autowrite true;   
+        autowrite true;
         verbose true;
     }
     turbulence {
@@ -833,7 +833,7 @@ functions
             isoField distanceFromZero;
             isoValue 0.1;
             interpolate false;
-            //            regularise      false;      
+            //            regularise      false;
         }
         verbose true;
         expression "mag(U)";
@@ -850,7 +850,7 @@ functions
         fieldName magU;
         expression "mag(U)";
         //        expression "mag(U)*sin(time())";
-        autowrite true;        
+        autowrite true;
     }
     surfaceU45
     {
@@ -977,18 +977,19 @@ functions
     }
 };
 
-libs ( 
-    "libOpenFOAM.so" 
-    "libgroovyBC.so" 
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
-    "libswakTopoSources.so" 
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakTopoSources.so"
     // Needed to decompose on 1.7
     "libcompressibleRASModels.so"
     "libpythonIntegration.so"
     // to test plugins
     "libswakMeshQualityFunctionPlugin.so"
     "libswakLocalCalculationsFunctionPlugin.so"
+    "libswakRandomFunctionPlugin.so"
 ) ;
 
 // ************************************************************************* //

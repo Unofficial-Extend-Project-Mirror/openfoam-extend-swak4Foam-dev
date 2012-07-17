@@ -3,3 +3,5 @@
 wclean swakMeshQualityFunctionPlugin
 
 wclean swakLocalCalculationsFunctionPlugin
+
+wclean swakRandomFunctionPlugin

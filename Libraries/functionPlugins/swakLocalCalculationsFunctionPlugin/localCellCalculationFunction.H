@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -36,7 +36,7 @@ Description
 SourceFiles
     localCellCalculationFunction.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef localCellCalculationFunction_H
@@ -54,7 +54,7 @@ namespace Foam
 /*---------------------------------------------------------------------------*\
                            Class localCellCalculationFunction Declaration
 \*---------------------------------------------------------------------------*/
-class localCellCalculationFunction 
+class localCellCalculationFunction
 :
     public FieldValuePluginFunction
 {
@@ -71,7 +71,7 @@ public:
     localCellCalculationFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name,
-        const stringList &arguments
+        const string &arguments
     );
 
     virtual ~localCellCalculationFunction() {}

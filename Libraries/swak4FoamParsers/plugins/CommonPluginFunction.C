@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "CommonPluginFunction.H"
@@ -43,15 +43,37 @@ CommonPluginFunction::CommonPluginFunction(
     const CommonValueExpressionDriver &parentDriver,
     const word &name,
     const word &returnType,
-    const stringList &argumentSpecification
+    const string &argumentSpecificationString
 ):
     parentDriver_(parentDriver),
     name_(name),
-    returnType_(returnType),
-    argumentNames_(argumentSpecification.size()),
-    argumentParsers_(argumentSpecification.size()),
-    argumentTypes_(argumentSpecification.size())
+    returnType_(returnType)
 {
+    DynamicList<word> argumentSpecification;
+    {
+        word next;
+        forAll(argumentSpecificationString,i) {
+            char c=argumentSpecificationString[i];
+            if(c!=',') {
+                next+=c;
+            } else {
+                if(next!="") {
+                    argumentSpecification.append(next);
+                    next="";
+                }
+            }
+        }
+        if(next!="") {
+            argumentSpecification.append(next);
+            next="";
+        }
+
+        argumentSpecification.shrink();
+    }
+    argumentNames_.resize(argumentSpecification.size());
+    argumentParsers_.resize(argumentSpecification.size());
+    argumentTypes_.resize(argumentSpecification.size());
+
     forAll(argumentSpecification,i)
     {
 	const string &spec=argumentSpecification[i];
@@ -121,7 +143,7 @@ label CommonPluginFunction::readArgument(
     driver.parse(content,startSymbol);
     if(driver.getResultType()!=argumentTypes_[index]) {
         FatalErrorIn("CommonPluginFunction::readArgument")
-            << "Result type " << driver.getResultType() 
+            << "Result type " << driver.getResultType()
                 << "differs from expected type " << argumentTypes_[index]
                 << endl
                 << exit(FatalError);

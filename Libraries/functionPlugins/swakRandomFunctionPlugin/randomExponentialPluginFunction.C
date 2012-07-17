@@ -31,28 +31,36 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "localCellCalculationFunction.H"
+#include "randomExponentialPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
+#include "FieldValuePluginFunction.H"
+#include <Random.H>
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(localCellCalculationFunction,0);
+typedef randomExponentialPluginFunction<FieldValuePluginFunction,FieldValueExpressionDriver> randomExponentialPluginFunctionField;
+defineTemplateTypeNameAndDebug(randomExponentialPluginFunctionField,0);
+
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, randomExponentialPluginFunctionField , name, randomExponential);
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-localCellCalculationFunction::localCellCalculationFunction(
-    const FieldValueExpressionDriver &parentDriver,
-    const word &name,
-    const string &arguments
+template <typename FType,typename DType>
+randomExponentialPluginFunction<FType,DType>::randomExponentialPluginFunction(
+    const DType &parentDriver,
+    const word &name
 ):
-    FieldValuePluginFunction(
+    FType(
         parentDriver,
         name,
         word("volScalarField"),
-        arguments
-    )
+        string("halfLife primitive scalar,seed primitiv label")
+    ),
+    halfLife_(1),
+    seed_(666)
 {
 }
 
@@ -61,27 +69,54 @@ localCellCalculationFunction::localCellCalculationFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void localCellCalculationFunction::doEvaluation()
+template <typename FType,typename DType>
+void randomExponentialPluginFunction<FType,DType>::doEvaluationInternal(
+    scalarField &f
+) {
+    label seed=seed_;
+
+    if(seed<=0) {
+        seed=this->mesh().time().timeIndex()-seed;
+    }
+
+    Random rand(seed);
+
+    forAll(f,i) {
+        f[i]=-log(1-rand.scalar01())*halfLife_;
+    }
+}
+
+template <typename FType,typename DType>
+void randomExponentialPluginFunction<FType,DType>::doEvaluation()
 {
-    autoPtr<volScalarField> pField(
+    autoPtr<volScalarField> pRandom(
         new volScalarField(
             IOobject(
-                "cellCalculationResultField",
-                mesh().time().timeName(),
-                mesh(),
+                "exponentialRandom",
+                this->mesh().time().timeName(),
+                this->mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            mesh(),
-            dimensionedScalar("nonOr",dimless,0),
+            this->mesh(),
+            dimensionedScalar("randomExp",dimless,0),
             "zeroGradient"
         )
     );
 
-    volScalarField &field=pField();
-    doCellCalculation(field);
+    doEvaluationInternal(pRandom->internalField());
 
-    result().setObjectResult(pField);
+    this->result().setObjectResult(pRandom);
+}
+
+template <typename FType,typename DType>
+void randomExponentialPluginFunction<FType,DType>::setArgument(
+    label index,
+    const scalar &val
+)
+{
+    assert(index==0);
+    halfLife_=val;
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

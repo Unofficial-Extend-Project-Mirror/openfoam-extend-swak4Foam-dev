@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -38,7 +38,7 @@ SourceFiles
     CommonPluginFunction.C
     CommonPluginFunctionIO.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef CommonPluginFunction_H
@@ -69,16 +69,16 @@ class CommonPluginFunction {
 
     //- name of the function
     word name_;
-    
+
     //- type of data it returns (textual representation)
     word returnType_;
-    
+
     //- names of the arguments
     wordList argumentNames_;
-    
+
     //- which parser can read the arguments
     wordList argumentParsers_;
-    
+
     //- expected types of the arguments
     wordList argumentTypes_;
 
@@ -158,17 +158,17 @@ public:
         const CommonValueExpressionDriver &parentDriver,
         const word &name,
         const word &returnType,
-        const stringList &argumentSpecification
+        const string &argumentSpecificationString
     );
-    
+
     virtual ~CommonPluginFunction() {}
 
     TypeName("CommonPluginFunction");
 
     const word &name() const { return name_; }
-    
+
     const word &returnType() const { return returnType_; }
-    
+
     //- return a help text constructed from parameters
     string helpText() const;
 

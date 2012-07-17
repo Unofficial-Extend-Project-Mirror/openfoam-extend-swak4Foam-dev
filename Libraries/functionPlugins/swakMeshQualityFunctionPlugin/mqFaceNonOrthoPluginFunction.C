@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "mqFaceNonOrthoPluginFunction.H"
@@ -52,7 +52,7 @@ mqFaceNonOrthoPluginFunction::mqFaceNonOrthoPluginFunction(
         parentDriver,
         name,
         word("surfaceScalarField"),
-        stringList(0)
+        string("")
     )
 {
 }
@@ -80,7 +80,7 @@ void mqFaceNonOrthoPluginFunction::doEvaluation()
     );
 
     surfaceScalarField &nonOrto=pNonOrto();
-    
+
     const vectorField& centres = mesh().cellCentres();
     const vectorField& areas = mesh().faceAreas();
 

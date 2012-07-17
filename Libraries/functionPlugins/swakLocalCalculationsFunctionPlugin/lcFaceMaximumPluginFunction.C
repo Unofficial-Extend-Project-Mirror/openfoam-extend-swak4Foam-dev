@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "lcFaceMaximumPluginFunction.H"
@@ -51,7 +51,7 @@ lcFaceMaximumPluginFunction::lcFaceMaximumPluginFunction(
     localCellCalculationFunction(
         parentDriver,
         name,
-        stringList(1,"faceField internalField surfaceScalarField")
+        string("faceField internalField surfaceScalarField")
     )
 {
 }

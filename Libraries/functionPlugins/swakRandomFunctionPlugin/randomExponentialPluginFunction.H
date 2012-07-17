@@ -29,76 +29,62 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FieldValuePluginFunction
+    Foam::randomExponentialPluginFunction
 
 Description
 
 SourceFiles
-    FieldValuePluginFunction.C
+    randomExponentialPluginFunction.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FieldValuePluginFunction_H
-#define FieldValuePluginFunction_H
+#ifndef randomExponentialPluginFunction_H
+#define randomExponentialPluginFunction_H
 
 #include "CommonPluginFunction.H"
-
-#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-    class FieldValueExpressionDriver;
-
 /*---------------------------------------------------------------------------*\
-                           Class FieldValuePluginFunction Declaration
+                           Class randomExponentialPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
-class FieldValuePluginFunction
+
+template <typename FType,typename DType>
+class randomExponentialPluginFunction
 :
-    public CommonPluginFunction
+    public FType
 {
     //- Disallow default bitwise assignment
-    void operator=(const FieldValuePluginFunction &);
+    void operator=(const randomExponentialPluginFunction &);
 
-    FieldValuePluginFunction(const FieldValuePluginFunction &);
+    randomExponentialPluginFunction(const randomExponentialPluginFunction &);
+
+    //- the halfLife of the exponential distribution
+    scalar halfLife_;
+
+    //- the seed for the random number generator
+    label seed_;
+
+    //- do the actual compuation
+    void doEvaluationInternal(scalarField &f);
 
 public:
-    FieldValuePluginFunction(
-        const FieldValueExpressionDriver &parentDriver,
-        const word &name,
-        const word &returnType,
-        const string &argumentSpecification
-    );
-
-    virtual ~FieldValuePluginFunction() {}
-
-    TypeName("FieldValuePluginFunction");
-
-    declareRunTimeSelectionTable
-    (
-        autoPtr,
-        FieldValuePluginFunction,
-        name,
-        (
-            const FieldValueExpressionDriver& driver,
-            const word &name
-        ),
-        (driver,name)
-    );
-
-    static bool exists(
-        const FieldValueExpressionDriver& driver,
+    randomExponentialPluginFunction(
+        const DType &parentDriver,
         const word &name
     );
 
-    static autoPtr<FieldValuePluginFunction> New
-    (
-        const FieldValueExpressionDriver& driver,
-        const word &name
-    );
+    virtual ~randomExponentialPluginFunction() {}
+
+    TypeName("randomExponentialPluginFunction");
+
+    void doEvaluation();
+
+    void setArgument(label index,const scalar &);
 };
 
 

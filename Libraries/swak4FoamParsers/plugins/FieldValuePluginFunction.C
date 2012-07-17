@@ -45,7 +45,7 @@ FieldValuePluginFunction::FieldValuePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name,
     const word &returnType,
-    const stringList &argumentSpecification
+    const string &argumentSpecification
 ):
     CommonPluginFunction(
         parentDriver,
