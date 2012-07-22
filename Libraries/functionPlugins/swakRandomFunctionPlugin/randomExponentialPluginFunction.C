@@ -57,7 +57,7 @@ randomExponentialPluginFunction<FType,DType>::randomExponentialPluginFunction(
         parentDriver,
         name,
         word("volScalarField"),
-        string("seed primitive label;halfLife primitive scalar")
+        string("seed primitive label,halfLife primitive scalar")
     ),
     halfLife_(1),
     seed_(666)

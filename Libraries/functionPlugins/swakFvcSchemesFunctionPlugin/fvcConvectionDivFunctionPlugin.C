@@ -68,9 +68,9 @@ fvcConvectionDivFunctionPlugin<T>::fvcConvectionDivFunctionPlugin(
         name,
         word(pTraits<resultType>::typeName),
         string(
-            "flow internalField surfaceScalarField;original internalField "
+            "flow internalField surfaceScalarField,original internalField "
             +pTraits<originalType>::typeName
-            +";specString primitive string"
+            +",specString primitive string"
         )
     )
 {

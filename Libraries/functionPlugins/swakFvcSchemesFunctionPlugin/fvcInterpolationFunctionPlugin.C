@@ -70,7 +70,7 @@ fvcInterpolationFunctionPlugin<T>::fvcInterpolationFunctionPlugin(
         string(
             "original internalField "
             +pTraits<originalType>::typeName
-            +";specString primitive string"
+            +",specString primitive string"
         )
     )
 {

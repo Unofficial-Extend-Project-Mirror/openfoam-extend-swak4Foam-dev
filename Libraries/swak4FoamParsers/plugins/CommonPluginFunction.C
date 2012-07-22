@@ -57,7 +57,7 @@ CommonPluginFunction::CommonPluginFunction(
         word next;
         forAll(argumentSpecificationString,i) {
             char c=argumentSpecificationString[i];
-            if(c!=';') {
+            if(c!=',') {
                 next+=c;
             } else {
                 if(next!="") {
@@ -93,6 +93,7 @@ CommonPluginFunction::CommonPluginFunction(
         ) {
             FatalErrorIn("CommonValueExpressionDriver::CommonPluginFunction::CommonPluginFunction")
                 << "The argument specification " << spec
+                    << " of function " << name_
                     << " does not fit template '<name> <parser> <type>'"
                     << endl
                     << exit(FatalError);

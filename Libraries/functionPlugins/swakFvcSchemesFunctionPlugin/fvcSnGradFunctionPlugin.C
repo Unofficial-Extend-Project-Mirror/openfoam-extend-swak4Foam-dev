@@ -70,7 +70,7 @@ fvcSnGradFunctionPlugin<T>::fvcSnGradFunctionPlugin(
         string(
             "original internalField "
             +pTraits<originalType>::typeName
-            +";specString primitive string"
+            +",specString primitive string"
         )
     )
 {

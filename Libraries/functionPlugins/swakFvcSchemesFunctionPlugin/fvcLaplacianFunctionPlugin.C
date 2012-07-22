@@ -70,7 +70,7 @@ fvcLaplacianFunctionPlugin<T>::fvcLaplacianFunctionPlugin(
         string(
             "original internalField "
             +pTraits<originalType>::typeName
-            +";specString primitive string"
+            +",specString primitive string"
         )
     )
 {

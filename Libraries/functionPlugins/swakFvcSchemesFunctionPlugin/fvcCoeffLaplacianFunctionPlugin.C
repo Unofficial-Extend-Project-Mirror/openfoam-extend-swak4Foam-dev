@@ -90,9 +90,9 @@ fvcCoeffLaplacianFunctionPlugin<T,GT>::fvcCoeffLaplacianFunctionPlugin(
         string(
             "coeff internalField "
             +pTraits<coeffType>::typeName
-            +";original internalField "
+            +",original internalField "
             +pTraits<originalType>::typeName
-            +";specString primitive string"
+            +",specString primitive string"
         )
     )
 {
