@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 22 Jul 2012 17:35:02 +0200
+State: new
+Subject: Modify only specific cellSet
+Message-Id: <9f454a34ccf25e63-0-artemis@bgs-cool-greybook.local>
+
+Use the values evaluated on that cellSet. Restrictions for evaluations
+on cellSets apply (no differential operations for instance))
