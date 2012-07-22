@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     SubsetValueExpressionDriverI.H
     SubsetValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SubsetValueExpressionDriver_H
@@ -84,11 +84,9 @@ class SubsetValueExpressionDriver
 
     // Private Member Functions
 
-    int startupSymbol(const word &name) { return -1; } // dummy implementation
-
 protected:
 
-    // Handling the scanner 
+    // Handling the scanner
     void scan_begin();
     void scan_end();
 
@@ -134,7 +132,7 @@ public:
         bool autoInterpolate=false,
         bool warnAutoInterpolate=true
     );
-    
+
     //- Copy construct
     SubsetValueExpressionDriver(const SubsetValueExpressionDriver&);
 
@@ -181,6 +179,10 @@ public:
 
     // Handling the parser
     void parseInternal(int startToken);
+
+    static const SymbolTable<SubsetValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
 
 //     template<class Type>
 //     virtual Field<Type> *toFace(const Field<Type> &)=0;

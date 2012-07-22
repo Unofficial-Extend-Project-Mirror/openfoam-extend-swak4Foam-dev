@@ -126,6 +126,132 @@ vectorField *SubsetValueExpressionDriver::makeFaceAreaField()
     return new vectorField(0);
 }
 
+template<>
+SubsetValueExpressionDriver::SymbolTable<SubsetValueExpressionDriver>::SymbolTable()
+:
+StartupSymbols()
+{
+    // default value
+    insert("",parserSubset::SubsetValueExpressionParser::token::START_DEFAULT);
+
+    insert(
+        "scalar_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_SCALAR_COMMA
+    );
+    insert(
+        "scalar_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_SCALAR_CLOSE
+    );
+    insert(
+        "point_scalar_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_SCALAR_COMMA
+    );
+    insert(
+        "point_scalar_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+    );
+    insert(
+        "vector_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_VECTOR_COMMA
+    );
+    insert(
+        "vector_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_VECTOR_CLOSE
+    );
+    insert(
+        "point_vector_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_VECTOR_COMMA
+    );
+    insert(
+        "point_vector_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+    );
+    insert(
+        "tensor_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_TENSOR_COMMA
+    );
+    insert(
+        "tensor_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_TENSOR_CLOSE
+    );
+    insert(
+        "point_tensor_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_TENSOR_COMMA
+    );
+    insert(
+        "point_tensor_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+    );
+    insert(
+        "symmTensor_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_YTENSOR_COMMA
+    );
+    insert(
+        "symmTensor_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_YTENSOR_CLOSE
+    );
+    insert(
+        "point_symmTensor_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_YTENSOR_COMMA
+    );
+    insert(
+        "point_symmTensor_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+    );
+    insert(
+        "sphericalTensor_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_HTENSOR_COMMA
+    );
+    insert(
+        "sphericalTensor_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_HTENSOR_CLOSE
+    );
+    insert(
+        "point_sphericalTensor_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_HTENSOR_COMMA
+    );
+    insert(
+        "point_sphericalTensor_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+    );
+    insert(
+        "logical_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_LOGICAL_COMMA
+    );
+    insert(
+        "logical_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_FACE_LOGICAL_CLOSE
+    );
+    insert(
+        "point_logical_SC",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_LOGICAL_COMMA
+    );
+    insert(
+        "point_logical_CL",
+        parserSubset::SubsetValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+    );
+
+    insert(
+        "CL",
+        parserSubset::SubsetValueExpressionParser::token::START_CLOSE_ONLY
+    );
+    insert(
+        "SC",
+        parserSubset::SubsetValueExpressionParser::token::START_COMMA_ONLY
+    );
+}
+
+const SubsetValueExpressionDriver::SymbolTable<SubsetValueExpressionDriver> &SubsetValueExpressionDriver::symbolTable()
+{
+    static SymbolTable<SubsetValueExpressionDriver> actualTable;
+
+    return actualTable;
+}
+
+int SubsetValueExpressionDriver::startupSymbol(const word &name) {
+    return symbolTable()[name];
+}
+
 // ************************************************************************* //
 
 } // namespace
