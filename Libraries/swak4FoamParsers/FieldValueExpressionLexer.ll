@@ -491,7 +491,7 @@ void FieldValueExpressionDriver::scan_end ()
 
     }
 
-    yylex_destroy(scanner_); // segmentation fault for the second call
+    yylex_destroy(scanner_);
     // WarningIn("FieldValueExpressionDriver::scan_end")
     //     << "Scanner " <<  getHex(scanner_) << " is not deleted"
     //         << endl;

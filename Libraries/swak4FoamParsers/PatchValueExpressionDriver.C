@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "PatchValueExpressionDriver.H"
@@ -145,7 +145,12 @@ PatchValueExpressionDriver::~PatchValueExpressionDriver()
 
 void PatchValueExpressionDriver::parseInternal (int startToken)
 {
-    parserPatch::PatchValueExpressionParser parser (*this);
+    parserPatch::PatchValueExpressionParser parser (
+        scanner_,
+        *this,
+        startToken,
+        0
+    );
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
 }

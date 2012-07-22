@@ -1,7 +1,9 @@
- 
+
 %{                                          /* -*- C++ -*- */
 #include "PatchValueExpressionDriverYY.H"
 #include <errno.h>
+#include "PatchValueExpressionParser.tab.hh"
+typedef parserPatch::PatchValueExpressionParser::semantic_type YYSTYPE;
 %}
 
 %s setname
@@ -9,9 +11,11 @@
 %s tensorcomponent
 %x needsIntegerParameter
 
-%option noyywrap nounput batch debug 
+%option noyywrap nounput batch debug
 %option stack
 %option prefix="parserPatch"
+%option reentrant
+%option bison-bridge
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -202,31 +206,79 @@ inv                    return token::TOKEN_inv;
 
 %%
 
-YY_BUFFER_STATE bufferPatch;
+// YY_BUFFER_STATE bufferPatch;
 
 void PatchValueExpressionDriver::scan_begin ()
 {
-    yy_flex_debug = trace_scanning_;
-    bufferPatch=yy_scan_string(content_.c_str());
-    
+    if(trace_scanning_) {
+        Info << "PatchValueExpressionDriver::scan_begin "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 
-//    if (!(yyin = fopen (file.c_str (), "r")))
-//        error (std::string ("cannot open ") + file);
+    if(scanner_!=NULL) {
+        FatalErrorIn("PatchValueExpressionDriver::scan_begin")
+            << "Already existing scanner " << getHex(scanner_)
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_init(&scanner_);
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    yy_flex_debug = trace_scanning_;
+    /* bufferPatch= */ yy_scan_string(content_.c_str(),scanner_);
+
+    if(trace_scanning_) {
+        Info << "PatchValueExpressionDriver::scan_begin - finished "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 }
 
 void PatchValueExpressionDriver::scan_end ()
 {
+    if(trace_scanning_) {
+        Info << "PatchValueExpressionDriver::scan_end "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    if(scanner_==NULL) {
+        FatalErrorIn("PatchValueExpressionDriver::scan_end")
+            << "Uninitialized Scanner. Can't delete it"
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_destroy(scanner_);
+
+    scanner_=NULL;
 //	    fclose (yyin);
-    yy_delete_buffer(bufferPatch);
+    //    yy_delete_buffer(bufferPatch,scanner_);
 }
 
 void PatchValueExpressionDriver::startVectorComponent()
 {
+    if(traceScanning()) {
+        Info << "PatchValueExpressionDriver::startVectorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(vectorcomponent);
 }
 
 void PatchValueExpressionDriver::startTensorComponent()
 {
+    if(traceScanning()) {
+        Info << "PatchValueExpressionDriver::startTensorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(tensorcomponent);
 }
-
