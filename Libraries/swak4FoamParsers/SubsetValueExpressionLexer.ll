@@ -1,7 +1,9 @@
- 
+
 %{                                          /* -*- C++ -*- */
 #include "SubsetValueExpressionDriverYY.H"
 #include <errno.h>
+#include "SubsetValueExpressionParser.tab.hh"
+typedef parserSubset::SubsetValueExpressionParser::semantic_type YYSTYPE;
 %}
 
 %s setname
@@ -9,9 +11,11 @@
 %s tensorcomponent
 %x needsIntegerParameter
 
-%option noyywrap nounput batch debug 
+%option noyywrap nounput batch debug
 %option stack
 %option prefix="parserSubset"
+%option reentrant
+%option bison-bridge
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -198,30 +202,79 @@ inv                    return token::TOKEN_inv;
 
 %%
 
-YY_BUFFER_STATE bufferSubset;
+// YY_BUFFER_STATE bufferSubset;
 
 void SubsetValueExpressionDriver::scan_begin ()
 {
-    yy_flex_debug = trace_scanning_;
-    bufferSubset=yy_scan_string(content_.c_str());
-    
+    if(trace_scanning_) {
+        Info << "SubsetValueExpressionDriver::scan_begin "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 
-//    if (!(yyin = fopen (file.c_str (), "r")))
-//        error (std::string ("cannot open ") + file);
+    if(scanner_!=NULL) {
+        FatalErrorIn("SubsetValueExpressionDriver::scan_begin")
+            << "Already existing scanner " << getHex(scanner_)
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_init(&scanner_);
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    yy_flex_debug = trace_scanning_;
+    /* bufferSubset= */ yy_scan_string(content_.c_str(),scanner_);
+
+    if(trace_scanning_) {
+        Info << "SubsetValueExpressionDriver::scan_begin - finished "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 }
 
 void SubsetValueExpressionDriver::scan_end ()
 {
+    if(trace_scanning_) {
+        Info << "SubsetValueExpressionDriver::scan_end "
+            << getHex(this) << endl;
+       Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    if(scanner_==NULL) {
+        FatalErrorIn("SubsetValueExpressionDriver::scan_end")
+            << "Uninitialized Scanner. Can't delete it"
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_destroy(scanner_);
+
+    scanner_=NULL;
 //	    fclose (yyin);
-    yy_delete_buffer(bufferSubset);
+//    yy_delete_buffer(bufferSubset);
 }
 
 void SubsetValueExpressionDriver::startVectorComponent()
 {
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::startVectorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(vectorcomponent);
 }
 
 void SubsetValueExpressionDriver::startTensorComponent()
 {
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::startTensorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(tensorcomponent);
 }

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SubsetValueExpressionDriver.H"
@@ -81,7 +81,12 @@ SubsetValueExpressionDriver::~SubsetValueExpressionDriver()
 
 void SubsetValueExpressionDriver::parseInternal (int startToken)
 {
-    parserSubset::SubsetValueExpressionParser parser (*this);
+    parserSubset::SubsetValueExpressionParser parser (
+        scanner_,
+        *this,
+        startToken,
+        0
+    );
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
 }
