@@ -104,6 +104,36 @@
 %type  <hfield>    hexp       "hexpression"
 %type  <hfield>    phexp       "phexpression"
 
+%token START_DEFAULT
+
+%token START_FACE_SCALAR_COMMA
+%token START_FACE_SCALAR_CLOSE
+%token START_FACE_VECTOR_COMMA
+%token START_FACE_VECTOR_CLOSE
+%token START_FACE_TENSOR_COMMA
+%token START_FACE_TENSOR_CLOSE
+%token START_FACE_YTENSOR_COMMA
+%token START_FACE_YTENSOR_CLOSE
+%token START_FACE_HTENSOR_COMMA
+%token START_FACE_HTENSOR_CLOSE
+%token START_FACE_LOGICAL_COMMA
+%token START_FACE_LOGICAL_CLOSE
+%token START_POINT_SCALAR_COMMA
+%token START_POINT_SCALAR_CLOSE
+%token START_POINT_VECTOR_COMMA
+%token START_POINT_VECTOR_CLOSE
+%token START_POINT_TENSOR_COMMA
+%token START_POINT_TENSOR_CLOSE
+%token START_POINT_YTENSOR_COMMA
+%token START_POINT_YTENSOR_CLOSE
+%token START_POINT_HTENSOR_COMMA
+%token START_POINT_HTENSOR_CLOSE
+%token START_POINT_LOGICAL_COMMA
+%token START_POINT_LOGICAL_CLOSE
+
+%token START_CLOSE_ONLY
+%token START_COMMA_ONLY
+
 %token TOKEN_VECTOR
 %token TOKEN_TENSOR
 %token TOKEN_SYMM_TENSOR
@@ -224,7 +254,168 @@
 
 
 %%
-%start unit;
+%start switch_start;
+
+switch_start: switch_expr
+              { driver.parserLastPos()=@1.end.column; }
+;
+
+switch_expr:      START_DEFAULT unit
+                | START_FACE_SCALAR_COMMA exp ','
+                  {
+                      driver.setResult<Foam::scalar>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_SCALAR_CLOSE exp ')'
+                  {
+                      driver.setResult<Foam::scalar>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_SCALAR_COMMA pexp ','
+                  {
+                      driver.setResult<Foam::scalar>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_SCALAR_CLOSE pexp ')'
+                  {
+                      driver.setResult<Foam::scalar>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_VECTOR_COMMA vexp ','
+                  {
+                      driver.setResult<Foam::vector>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_VECTOR_CLOSE vexp ')'
+                  {
+                      driver.setResult<Foam::vector>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_VECTOR_COMMA pvexp ','
+                  {
+                      driver.setResult<Foam::vector>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_VECTOR_CLOSE pvexp ')'
+                  {
+                      driver.setResult<Foam::vector>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_TENSOR_COMMA texp ','
+                  {
+                      driver.setResult<Foam::tensor>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_TENSOR_CLOSE texp ')'
+                  {
+                      driver.setResult<Foam::tensor>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_TENSOR_COMMA ptexp ','
+                  {
+                      driver.setResult<Foam::tensor>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_TENSOR_CLOSE ptexp ')'
+                  {
+                      driver.setResult<Foam::tensor>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_YTENSOR_COMMA yexp ','
+                  {
+                      driver.setResult<Foam::symmTensor>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_YTENSOR_CLOSE yexp ')'
+                  {
+                      driver.setResult<Foam::symmTensor>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_YTENSOR_COMMA pyexp ','
+                  {
+                      driver.setResult<Foam::symmTensor>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_YTENSOR_CLOSE pyexp ')'
+                  {
+                      driver.setResult<Foam::symmTensor>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_HTENSOR_COMMA hexp ','
+                  {
+                      driver.setResult<Foam::sphericalTensor>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_HTENSOR_CLOSE hexp ')'
+                  {
+                      driver.setResult<Foam::sphericalTensor>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_HTENSOR_COMMA phexp ','
+                  {
+                      driver.setResult<Foam::sphericalTensor>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_HTENSOR_CLOSE phexp ')'
+                  {
+                      driver.setResult<Foam::sphericalTensor>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_LOGICAL_COMMA lexp ','
+                  {
+                      driver.setResult<bool>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_FACE_LOGICAL_CLOSE lexp ')'
+                  {
+                      driver.setResult<bool>($2);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_LOGICAL_COMMA plexp ','
+                  {
+                      driver.setResult<bool>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_POINT_LOGICAL_CLOSE plexp ')'
+                  {
+                      driver.setResult<bool>($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_CLOSE_ONLY ')'
+                  {
+                      driver.parserLastPos()=@2.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_COMMA_ONLY ','
+                  {
+                      driver.parserLastPos()=@2.end.column-1;
+                      YYACCEPT;
+                  }
+;
 
 unit:   exp                     { driver.setResult<Foam::scalar>($1);  }
         | vexp                  { driver.setResult<Foam::vector>($1);  }

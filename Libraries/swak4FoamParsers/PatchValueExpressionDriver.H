@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     PatchValueExpressionDriverI.H
     PatchValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef PatchValueExpressionDriver_H
@@ -84,11 +84,9 @@ class PatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const PatchValueExpressionDriver&);
 
-    int startupSymbol(const word &name) { return -1; } // dummy implementation
-
 protected:
 
-    // Handling the scanner 
+    // Handling the scanner
     void scan_begin();
     void scan_end();
 
@@ -110,6 +108,10 @@ protected:
     // Handling the parser
     void parseInternal(int startToken);
 
+    static const SymbolTable<PatchValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
+
 public:
 
     //- Runtime type information
@@ -119,19 +121,19 @@ public:
 
     //- Construct from components
     PatchValueExpressionDriver(const fvPatch& patch_);
-    
+
     //- Construct from components
     PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch_);
-    
+
     //- Construct from a dictionary
     PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
+
     //- Construct from and an old Version
     PatchValueExpressionDriver(const fvPatch& patch_,const PatchValueExpressionDriver& old);
 
     //- Construct from an id
     PatchValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     //- Copy construct
     PatchValueExpressionDriver(const PatchValueExpressionDriver&);
 

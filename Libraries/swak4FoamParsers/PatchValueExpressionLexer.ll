@@ -31,7 +31,20 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 %%
 
 %{
+    typedef parserPatch::PatchValueExpressionParser::token token;
+
     yylloc->step ();
+
+    if (start_token)
+    {
+        if(driver.traceScanning()) {
+            Foam::Info << "Start token: " << start_token << Foam::endl;
+        }
+
+        int t = start_token;
+        start_token = 0;
+        return t;
+    }
 %}
 
 <INITIAL,setname,needsIntegerParameter>[ \t]+             yylloc->step ();
