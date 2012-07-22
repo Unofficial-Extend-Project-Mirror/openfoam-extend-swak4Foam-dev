@@ -1,6 +1,6 @@
 #! /bin/sh
 
-rm -rf constant/polyMesh/sets/ 
+rm -rf constant/polyMesh/sets/
 
 blockMesh
 
@@ -18,6 +18,8 @@ cellSet
 cp system/cellSetDict.2 system/cellSetDict
 cellSet
 cp system/cellSetDict.6 system/cellSetDict
+cellSet
+cp system/cellSetDict.7 system/cellSetDict
 cellSet
 
 setsToZones
