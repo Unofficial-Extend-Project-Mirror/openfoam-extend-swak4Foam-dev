@@ -9,8 +9,6 @@ ExpressionDriverWriter.C
 ExpressionResult.C
 StoredExpressionResult.C
 
-plugins/CommonPluginFunction.C
-
 swakRegistryProxySurface.C
 swakRegistryProxySet.C
 
@@ -22,8 +20,6 @@ CommonValueExpressionDriver.C
 
 FieldValueExpressionLexer.ll
 FieldValueExpressionDriver.C
-
-plugins/FieldValuePluginFunction.C
 
 PatchValueExpressionLexer.ll
 PatchValueExpressionDriver.C
@@ -40,5 +36,8 @@ FaceZoneValueExpressionDriver.C
 
 SampledSurfaceValueExpressionDriver.C
 SampledSetValueExpressionDriver.C
+
+plugins/CommonPluginFunction.C
+plugins/FieldValuePluginFunction.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers
