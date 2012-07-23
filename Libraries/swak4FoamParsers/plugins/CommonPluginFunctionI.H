@@ -83,6 +83,12 @@ tmp<T> CommonPluginFunction::evaluate(
                 parentDriver_.traceScanning(),
                 parentDriver_.traceParsing()
             );
+            driver->setSearchBehaviour(
+                parentDriver_.cacheReadFields(),
+                parentDriver_.searchInMemory(),
+                parentDriver_.searchOnDisc()
+            );
+
             used=readArgument(i,currentContent,driver());
         }
 
