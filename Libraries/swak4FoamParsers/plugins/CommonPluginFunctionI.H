@@ -44,7 +44,7 @@ tmp<T> CommonPluginFunction::evaluate(
     label &consumed
 )
 {
-    if(debug) {
+    if(debug || parentDriver_.traceParsing()) {
         Info << "Evaluating " << helpText() << " with " << content << endl;
     }
     consumed=0;
@@ -55,20 +55,27 @@ tmp<T> CommonPluginFunction::evaluate(
             consumed
         );
 
-	if(debug) {
+	if(debug || parentDriver_.traceParsing()) {
             Info << "Argument" << i << " with " << currentContent << endl;
         }
 
         label used=0;
 
         if(argumentParsers_[i]=="primitive") {
+            if(debug || parentDriver_.traceParsing()) {
+                Info << "Reading primitive argument" << i << endl;
+            }
             used=readArgument(i,currentContent,argumentTypes_[i]);
             word lookFor="SC";
             if(i==(argumentParsers_.size()-1)) {
                 lookFor="CL";
             }
+            if(debug || parentDriver_.traceParsing()) {
+                Info << "Used " << used << " characters "
+                    << ". Now looking for " << lookFor << endl;
+            }
             used+=scanEmpty(currentContent.substr(used),lookFor);
-            if(debug) {
+            if(debug || parentDriver_.traceParsing()) {
                 Info << "Used " << used << " characters after looking for "
                     << lookFor << endl;
             }
@@ -101,26 +108,33 @@ tmp<T> CommonPluginFunction::evaluate(
                     << exit(FatalError);
 
         }
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Argument" << i << " used "
+                <<  used  << " charcters: ";
+        }
         consumed+=used;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << consumed << " charcters used till now" << endl;
+        }
     }
     if(argumentTypes_.size()==0) {
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "No parameters. Looking for closing ')'" << endl;
         }
 
         consumed+=scanEmpty(content,"CL");
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << consumed << " characters consumed" << endl;
         }
     }
 
-    if(debug) {
+    if(debug || parentDriver_.traceParsing()) {
         Info << "Starting the actual evaluation" << endl;
     }
 
     doEvaluation();
 
-    if(debug) {
+    if(debug || parentDriver_.traceParsing()) {
         Info << "Getting result and returning it" << endl;
     }
 

@@ -108,10 +108,10 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
     const parserField::location &loc,
     int &scanned
 ) {
-    if(debug) {
+    if(debug || traceParsing()) {
         Info << "Excuting plugin-function " << name << " ( returning type "
             << pTraits<T>::typeName << ") on " << this->content_ << " position "
-            << loc.end.column-1 << endl;
+            << loc.end.column << endl;
     }
 
     autoPtr<FieldValuePluginFunction> theFunction(
@@ -121,16 +121,18 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
         )
     );
 
+    scanned+=1;
+
     autoPtr<T> result(
         theFunction->evaluate<T>(
             this->content_.substr(
-                loc.end.column-1
+                loc.end.column
             ),
             scanned
         ).ptr()
     );
 
-    if(debug) {
+    if(debug || traceParsing()) {
         Info << "Scanned: " << scanned << endl;
     }
 
@@ -445,227 +447,227 @@ switch_expr:      START_DEFAULT unit
                 | START_VOL_SCALAR_COMMA exp ','
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_SCALAR_CLOSE exp ')'
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_VECTOR_COMMA vexp ','
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_VECTOR_CLOSE vexp ')'
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_TENSOR_COMMA texp ','
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_TENSOR_CLOSE texp ')'
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_YTENSOR_COMMA yexp ','
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_YTENSOR_CLOSE yexp ')'
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_HTENSOR_COMMA hexp ','
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_HTENSOR_CLOSE hexp ')'
                   {
                       driver.setResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_LOGICAL_COMMA lexp ','
                   {
                       driver.setLogicalResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_VOL_LOGICAL_CLOSE lexp ')'
                   {
                       driver.setLogicalResult($2,false,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_SCALAR_COMMA fsexp ','
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_SCALAR_CLOSE fsexp ')'
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_VECTOR_COMMA fvexp ','
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_VECTOR_CLOSE fvexp ')'
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_TENSOR_COMMA ftexp ','
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_TENSOR_CLOSE ftexp ')'
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_YTENSOR_COMMA fyexp ','
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_YTENSOR_CLOSE fyexp ')'
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_HTENSOR_COMMA fhexp ','
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_HTENSOR_CLOSE fhexp ')'
                   {
                       driver.setResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_LOGICAL_COMMA flexp ','
                   {
                       driver.setLogicalResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_SURFACE_LOGICAL_CLOSE flexp ')'
                   {
                       driver.setLogicalResult($2,true,false);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_SCALAR_COMMA psexp ','
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_SCALAR_CLOSE psexp ')'
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_VECTOR_COMMA pvexp ','
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_VECTOR_CLOSE pvexp ')'
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_TENSOR_COMMA ptexp ','
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_TENSOR_CLOSE ptexp ')'
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_YTENSOR_COMMA pyexp ','
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_YTENSOR_CLOSE pyexp ')'
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_HTENSOR_COMMA phexp ','
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_HTENSOR_CLOSE phexp ')'
                   {
                       driver.setResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_LOGICAL_COMMA plexp ','
                   {
                       driver.setLogicalResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_POINT_LOGICAL_CLOSE plexp ')'
                   {
                       driver.setLogicalResult($2,false,true);
-                      driver.parserLastPos()=@3.end.column-1;
+                      driver.parserLastPos()=@3.end.column;
                       YYACCEPT;
                   }
                 | START_CLOSE_ONLY ')'
                   {
-                      driver.parserLastPos()=@2.end.column-1;
+                      driver.parserLastPos()=@2.end.column;
                       YYACCEPT;
                   }
                 | START_COMMA_ONLY ','
                   {
-                      driver.parserLastPos()=@2.end.column-1;
+                      driver.parserLastPos()=@2.end.column;
                       YYACCEPT;
                   }
 ;
