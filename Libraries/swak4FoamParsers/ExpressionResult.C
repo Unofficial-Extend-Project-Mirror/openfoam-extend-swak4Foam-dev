@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "ExpressionResult.H"
@@ -102,7 +102,7 @@ ExpressionResult::ExpressionResult(
                 valPtr_=new Field<sphericalTensor>(1,pTraits<sphericalTensor>(dict.lookup("value")));
             } else {
                 FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
-                    << "Don't know how to read data type " << valType_ 
+                    << "Don't know how to read data type " << valType_
                         << " as a single value" << endl
                         << exit(FatalError);
             }
@@ -285,30 +285,30 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
-// I have NO idea why this is necessary, but since the introduction of the 
+// I have NO idea why this is necessary, but since the introduction of the
 // enable_if_rank0-stuff the function below does not compile without it
 
 template<>
-class pTraits<token::punctuationToken> 
+class pTraits<token::punctuationToken>
 {};
 
 template<int N>
-class pTraits<char [N]> 
+class pTraits<char [N]>
 {};
 
 template<>
-class pTraits<Ostream&(Ostream&)> 
+class pTraits<Ostream&(Ostream&)>
 {};
 
 template<>
-class pTraits<char> 
+class pTraits<char>
 {};
 
 template<>
-class pTraits<const char *> 
+class pTraits<const char *>
 {};
 
-Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
+Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 {
     out << token::BEGIN_BLOCK << endl;
 
