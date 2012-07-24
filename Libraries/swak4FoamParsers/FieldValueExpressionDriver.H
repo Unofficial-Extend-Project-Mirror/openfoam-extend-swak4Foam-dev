@@ -1,4 +1,4 @@
-//  ICE Revision: $Id$ 
+//  ICE Revision: $Id$
 
 #ifndef FieldValueExpressionDriver_H
 #define FieldValueExpressionDriver_H
@@ -43,7 +43,7 @@ class FieldValueExpressionDriver
 
 //     autoPtr<volScalarField> sresult_;
 //     autoPtr<volVectorField> vresult_;
-    
+
     autoPtr<regIOobject> resultField_;
 
     word typ_;
@@ -87,7 +87,7 @@ public:
 
     //- Construct from an id
     FieldValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     virtual ~FieldValueExpressionDriver();
 
     // necessary to override Common
@@ -130,7 +130,12 @@ protected:
         const parserField::location &loc,
         int &scanned
     );
+
+    template<class T>
+    struct correctBC;
+
 public:
+
     //- get the result field (if it is of the right type)
     template<class T>
     const T &getResult() const;
@@ -283,7 +288,7 @@ public:
     volScalarField *makeRandomField(label seed=0);
     volScalarField *makeGaussRandomField(label seed=0);
     volScalarField *makeCellIdField();
-    
+
     //- return Time object
     const Time& runTime() const { return runTime_; }
 
@@ -320,10 +325,10 @@ public:
 
     template <class Field>
     Field *doLogicalNot(Field *a);
-    
+
     template <class Field>
     Field *doPointLogicalNot(Field *a);
-    
+
     template <class T,class Field>
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
