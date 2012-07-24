@@ -1027,6 +1027,11 @@ S_{expl} + S_{impl} T
      all.
 
      This is fixed
+**** =funkySetFields= produced wrong values on processor patches
+     Patch fields were not copied any no =correctBoundaryField= was
+     called for technical reasons.
+
+     Fix: values copied by hand
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
