@@ -60,9 +60,9 @@ void setField
 ) {
     dimensioned<typename T::value_type> init("nix",dim,typename T::value_type());
 
-    T *tmp;
+    T *pTemp;
     if(create) {
-      tmp=new T
+      pTemp=new T
         (
             IOobject
             (
@@ -76,7 +76,7 @@ void setField
             init
         );
     } else {
-      tmp=new T
+      pTemp=new T
         (
             IOobject
             (
@@ -90,26 +90,26 @@ void setField
         );
     }
 
-    FieldValueExpressionDriver::makePatches(*tmp,keepPatches,valuePatches);
-    FieldValueExpressionDriver::copyCalculatedPatches(*tmp,result);
+    FieldValueExpressionDriver::makePatches(*pTemp,keepPatches,valuePatches);
+    FieldValueExpressionDriver::copyCalculatedPatches(*pTemp,result);
 
     label setCells=0;
 
-    forAll(*tmp,cellI) {
+    forAll(*pTemp,cellI) {
         if(cond[cellI]!=0) {
-	  (*tmp)[cellI]=result[cellI];
+	  (*pTemp)[cellI]=result[cellI];
             setCells++;
         }
     }
 
-    label totalCells=tmp->size();
+    label totalCells=pTemp->size();
     reduce(totalCells,plusOp<label>());
     reduce(setCells,plusOp<label>());
 
-    FieldValueExpressionDriver::setValuePatches(*tmp,keepPatches,valuePatches);
+    FieldValueExpressionDriver::setValuePatches(*pTemp,keepPatches,valuePatches);
 
     forAll(result.boundaryField(),patchI) {
-        typename T::PatchFieldType &pf=tmp->boundaryField()[patchI];
+        typename T::PatchFieldType &pf=pTemp->boundaryField()[patchI];
         const typename T::PatchFieldType &pfOrig=result.boundaryField()[patchI];
 
         if(pf.patch().coupled()) {
@@ -121,9 +121,9 @@ void setField
 
     Info << " Writing to " << name << endl;
 
-    tmp->write();
+    pTemp->write();
 
-    delete tmp;
+    delete pTemp;
 }
 
 template<class T>
