@@ -71,6 +71,16 @@ void patchContributionScalarPluginFunction::setArgument(
     patchName_=value;
 }
 
+word patchContributionScalarPluginFunction::getID(
+    label index
+) {
+    if(index==1) {
+        return patchName_;
+    } else {
+        return CommonPluginFunction::getID(index);
+    }
+}
+
 void patchContributionScalarPluginFunction::setArgument(
     label index,
     const string &content,

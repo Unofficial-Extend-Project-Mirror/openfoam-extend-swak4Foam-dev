@@ -162,6 +162,13 @@ protected:
         notImplemented("setArgument(label index,const string &content,const CommonValueExpressionDriver&)");
     }
 
+    //- get an addtional ID for the parser of argument i
+    virtual word getID(
+        label index
+    ) {
+        return "method_getID_notImplemented";
+    }
+
     //- do the actual evaluation
     virtual void doEvaluation() = 0;
 

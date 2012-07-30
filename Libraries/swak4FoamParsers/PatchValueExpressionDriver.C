@@ -57,7 +57,9 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressio
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const PatchValueExpressionDriver& orig)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const PatchValueExpressionDriver& orig
+)
 :
     CommonValueExpressionDriver(orig),
     patch_(orig.patch_)
@@ -69,7 +71,10 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
     patch_(patch)
 {}
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvPatch& patch
+)
 :
     CommonValueExpressionDriver(dict),
     patch_(patch)
@@ -89,7 +94,10 @@ label getPatchID(const fvMesh &mesh,const word &name)
     return result;
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvMesh& mesh
+)
  :
     CommonValueExpressionDriver(dict),
     patch_(
@@ -113,7 +121,10 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
 {
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMesh&mesh)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const word& id,
+    const fvMesh&mesh
+)
  :
     CommonValueExpressionDriver(),
     patch_(
@@ -127,7 +138,10 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMe
 {
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch,const PatchValueExpressionDriver& old)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const fvPatch& patch,
+    const PatchValueExpressionDriver& old
+)
 :
     CommonValueExpressionDriver(old),
     patch_(patch)

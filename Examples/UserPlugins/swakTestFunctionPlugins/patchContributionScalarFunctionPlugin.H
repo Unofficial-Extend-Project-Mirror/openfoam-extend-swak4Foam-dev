@@ -80,6 +80,10 @@ protected:
         const word &value
     );
 
+    word getID(
+        label index
+    );
+
 public:
     patchContributionScalarPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
