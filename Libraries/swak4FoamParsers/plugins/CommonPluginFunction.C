@@ -51,7 +51,7 @@ CommonPluginFunction::CommonPluginFunction(
 {
     DynamicList<word> argumentSpecification;
     {
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Parsing arguments: " << argumentSpecificationString << endl;
         }
         word next;
@@ -73,7 +73,7 @@ CommonPluginFunction::CommonPluginFunction(
 
         argumentSpecification.shrink();
 
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Split arguments: " << argumentSpecification << endl;
         }
     }
@@ -101,13 +101,13 @@ CommonPluginFunction::CommonPluginFunction(
         argumentNames_[i]=spec(space1);
         argumentParsers_[i]=spec(space1+1,space2-space1-1);
         argumentTypes_[i]=spec(space2+1,spec.size()-space2-1);
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Argument " << i << ": "
                 << argumentNames_[i] << " " << argumentParsers_[i]
                 << " " << argumentTypes_[i] << endl;
         }
     }
-    if(debug) {
+    if(debug || parentDriver_.traceParsing()) {
         Info << "Help text: " << this->helpText() << endl;
     }
 }
@@ -152,7 +152,7 @@ label CommonPluginFunction::readArgument(
     } else {
         startSymbol+="_CL";
     }
-    if(debug) {
+    if(debug || parentDriver_.traceParsing()) {
         Info << "Using start symbol " << startSymbol << endl;
     }
     driver.parse(content,startSymbol);
@@ -191,9 +191,9 @@ label CommonPluginFunction::readArgument(
     const string &content,
     const word &type
 ) {
-    if(debug) {
+    if(debug || parentDriver_.traceParsing()) {
         Info << "CommonPluginFunction::readArgument "
-            << index << " " << type << ":" << content << endl;
+            << index << " " << type << " : " << content << endl;
     }
     if(index>=argumentNames_.size()) {
         FatalErrorIn("CommonPluginFunction::readArgument")
@@ -203,13 +203,37 @@ label CommonPluginFunction::readArgument(
                 << exit(FatalError);
     }
 
-    IStringStreamWithPos is(content);
+    label consumed=0;
+
+    string tc="";
+    {
+        bool atStart=true;
+        forAll(content,i){
+            if(isspace(content[i]) && atStart) {
+                consumed++;
+            } else {
+                atStart=false;
+                tc+=content[i];
+            }
+        }
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Removed leading spaces: " << tc << endl;
+        }
+    }
+
+    if(type=="word") {
+        tc.replace(",",";");
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Replacing , with ; :" << tc << endl;
+        }
+    }
+
+    IStringStreamWithPos is(tc);
 
     if(type=="word") {
         word value;
         is.read(value);
-        is.read(value);
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Read word: " << value
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
@@ -217,7 +241,7 @@ label CommonPluginFunction::readArgument(
     } else if(type=="string") {
         string  value;
         is.read(value);
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Read string: " << value
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
@@ -225,7 +249,7 @@ label CommonPluginFunction::readArgument(
     } else if(type=="scalar") {
         scalar value;
         is.read(value);
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Read scalar: " << value
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
@@ -233,7 +257,7 @@ label CommonPluginFunction::readArgument(
     } else if(type=="label") {
         label value;
         is.read(value);
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Read label: " << value
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
@@ -241,7 +265,7 @@ label CommonPluginFunction::readArgument(
     } else if(type=="vector") {
         vector value;
         is >> value;
-        if(debug) {
+        if(debug || parentDriver_.traceParsing()) {
             Info << "Read vector: " << value
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
@@ -254,7 +278,7 @@ label CommonPluginFunction::readArgument(
                 << exit(FatalError);
     }
 
-    label consumed=is.pos();
+    consumed+=is.pos();
 
     return consumed;
 }
@@ -264,7 +288,7 @@ label CommonPluginFunction::scanEmpty(
     word sym
 )
 {
-    if(debug) {
+    if(debug || parentDriver_.traceParsing()) {
         Info << "Searching symbol " << sym << " in " << content << endl;
     }
 

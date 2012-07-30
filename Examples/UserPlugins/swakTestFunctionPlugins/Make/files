@@ -1,1 +1,3 @@
+patchContributionScalarFunctionPlugin.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakTestFunctionPlugin
