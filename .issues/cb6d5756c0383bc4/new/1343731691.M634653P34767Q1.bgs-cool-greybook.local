@@ -1,0 +1,15 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 31 Jul 2012 12:44:46 +0200
+State: new
+Subject: Add =weight=-function to all Drivers
+Message-Id: <cb6d5756c0383bc4-0-artemis@bgs-cool-greybook.local>
+
+This function describes the contribution of one value to the total
+(over all processors)
+
+- cells: cell-volume related to the total volume
+- faces and sampledSurface: area related to total area
+- sets: 1/nr
+
+Make available in the grammars. But most importantly as a method to
+allow definition of template classes

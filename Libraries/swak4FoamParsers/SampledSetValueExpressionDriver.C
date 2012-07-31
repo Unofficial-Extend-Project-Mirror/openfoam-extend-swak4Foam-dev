@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SampledSetValueExpressionDriver.H"
@@ -42,13 +42,15 @@ namespace Foam {
 
 defineTypeNameAndDebug(SampledSetValueExpressionDriver, 0);
 
+word SampledSetValueExpressionDriver::driverName_="set";
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSetValueExpressionDriver, dictionary, set);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSetValueExpressionDriver, idName, set);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void SampledSetValueExpressionDriver::setDebug() 
+void SampledSetValueExpressionDriver::setDebug()
 {
     if(debug>1) {
         if(sampledSet::debug<1) {
@@ -113,7 +115,7 @@ SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(const dictionar
     ),
     interpolate_(dict.lookupOrDefault<bool>("interpolate",false)),
     interpolationType_(
-        interpolate_ 
+        interpolate_
         ?
         word(dict.lookup("interpolationType"))
         :
@@ -192,7 +194,7 @@ Field<symmTensor> *SampledSetValueExpressionDriver::getSymmTensorField(const str
 
 vectorField *SampledSetValueExpressionDriver::makePositionField()
 {
-    return new vectorField(theSet_); 
+    return new vectorField(theSet_);
 }
 
 scalarField *SampledSetValueExpressionDriver::makeCellVolumeField()

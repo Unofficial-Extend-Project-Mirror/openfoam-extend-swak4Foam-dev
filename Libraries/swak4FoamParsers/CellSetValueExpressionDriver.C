@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "CellSetValueExpressionDriver.H"
@@ -40,6 +40,8 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(CellSetValueExpressionDriver, 0);
+
+word CellSetValueExpressionDriver::driverName_="cellSet";
 
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpressionDriver, dictionary, cellSet);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellSetValueExpressionDriver, idName, cellSet);
@@ -118,7 +120,7 @@ CellSetValueExpressionDriver::~CellSetValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<>
-inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellSet::const_iterator &it) 
+inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellSet::const_iterator &it)
 {
     return it.key();
 }
@@ -203,7 +205,7 @@ vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
 bool CellSetValueExpressionDriver::update()
 {
     if(debug) {
-        Pout << "CellSet: update " << cellSet_->name() 
+        Pout << "CellSet: update " << cellSet_->name()
             << endl;
     }
 

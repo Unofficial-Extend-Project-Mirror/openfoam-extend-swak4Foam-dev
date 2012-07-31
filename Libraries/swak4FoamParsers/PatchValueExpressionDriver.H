@@ -84,6 +84,8 @@ class PatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const PatchValueExpressionDriver&);
 
+    static word driverName_;
+
 protected:
 
     // Handling the scanner
@@ -116,6 +118,8 @@ public:
 
     //- Runtime type information
     TypeName("PatchValueExpressionDriver");
+
+    static const word &driverName() { return driverName_; }
 
     // Constructors
 
