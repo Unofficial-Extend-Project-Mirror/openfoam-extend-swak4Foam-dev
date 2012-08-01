@@ -28,41 +28,17 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    Foam::FieldValuePluginFunction
-
-Description
-
-SourceFiles
-    FieldValuePluginFunction.C
-
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FieldValuePluginFunction_H
-#define FieldValuePluginFunction_H
+#include "SampledSurfaceValuePluginFunction.H"
+#include "SampledSurfaceValueExpressionDriver.H"
 
-#include "ConcretePluginFunction.H"
+namespace Foam {
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+defineTemplateTypeNameAndDebug(SampledSurfaceValuePluginFunction,0);
+defineTemplateRunTimeSelectionTable(SampledSurfaceValuePluginFunction, name);
 
-namespace Foam
-{
-
-    class FieldValueExpressionDriver;
-
-    typedef ConcretePluginFunction<FieldValueExpressionDriver>
-        FieldValuePluginFunction;
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
+} // namespace
 
 // ************************************************************************* //

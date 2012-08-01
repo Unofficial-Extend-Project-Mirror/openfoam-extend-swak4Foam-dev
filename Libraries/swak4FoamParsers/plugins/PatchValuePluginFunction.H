@@ -29,18 +29,18 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FieldValuePluginFunction
+    Foam::PatchValuePluginFunction
 
 Description
 
 SourceFiles
-    FieldValuePluginFunction.C
+    PatchValuePluginFunction.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FieldValuePluginFunction_H
-#define FieldValuePluginFunction_H
+#ifndef PatchValuePluginFunction_H
+#define PatchValuePluginFunction_H
 
 #include "ConcretePluginFunction.H"
 
@@ -49,10 +49,10 @@ SourceFiles
 namespace Foam
 {
 
-    class FieldValueExpressionDriver;
+    class PatchValueExpressionDriver;
 
-    typedef ConcretePluginFunction<FieldValueExpressionDriver>
-        FieldValuePluginFunction;
+    typedef ConcretePluginFunction<PatchValueExpressionDriver>
+        PatchValuePluginFunction;
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
