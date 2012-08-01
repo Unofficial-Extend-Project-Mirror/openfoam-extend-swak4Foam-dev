@@ -12,7 +12,7 @@
 
 namespace Foam {
     class FieldValueExpressionDriver;
-    class FieldValuePluginFunction;
+    //    class FieldValuePluginFunction;
 }
 
 using Foam::FieldValueExpressionDriver;

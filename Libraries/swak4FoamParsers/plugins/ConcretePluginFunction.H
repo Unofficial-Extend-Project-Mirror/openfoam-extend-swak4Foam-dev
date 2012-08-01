@@ -29,32 +29,77 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FieldValuePluginFunction
+    Foam::ConcretePluginFunction
 
 Description
 
 SourceFiles
-    FieldValuePluginFunction.C
+    ConcretePluginFunction.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FieldValuePluginFunction_H
-#define FieldValuePluginFunction_H
+#ifndef ConcretePluginFunction_H
+#define ConcretePluginFunction_H
 
-#include "ConcretePluginFunction.H"
+#include "CommonPluginFunction.H"
 
-// #include "FieldValueExpressionDriver.H"
+#include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-    class FieldValueExpressionDriver;
+/*---------------------------------------------------------------------------*\
+                           Class ConcretePluginFunction Declaration
+\*---------------------------------------------------------------------------*/
+template<class DriverType>
+class ConcretePluginFunction
+:
+    public CommonPluginFunction
+{
+    //- Disallow default bitwise assignment
+    void operator=(const ConcretePluginFunction &);
 
-    typedef ConcretePluginFunction<FieldValueExpressionDriver>
-        FieldValuePluginFunction;
+    ConcretePluginFunction(const ConcretePluginFunction &);
+
+public:
+    ConcretePluginFunction(
+        const DriverType &parentDriver,
+        const word &name,
+        const word &returnType,
+        const string &argumentSpecification
+    );
+
+    virtual ~ConcretePluginFunction() {}
+
+    TypeName("ConcretePluginFunction");
+
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        ConcretePluginFunction,
+        name,
+        (
+            const DriverType& driver,
+            const word &name
+        ),
+        (driver,name)
+    );
+
+    static bool exists(
+        const DriverType& driver,
+        const word &name
+    );
+
+    static autoPtr<ConcretePluginFunction> New
+    (
+        const DriverType& driver,
+        const word &name
+    );
+};
+
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -62,6 +107,10 @@ namespace Foam
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "ConcretePluginFunction.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
