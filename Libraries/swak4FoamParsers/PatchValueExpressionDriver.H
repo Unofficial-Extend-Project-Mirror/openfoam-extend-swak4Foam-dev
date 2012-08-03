@@ -107,8 +107,20 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    //- set the state to "eat characters"
+    void startEatCharacters();
+
     // Handling the parser
     void parseInternal(int startToken);
+
+    //- execute a plugin-function
+    template<class T>
+    autoPtr<Field<T> > evaluatePluginFunction(
+        const string &name,
+        const parserPatch::location &loc,
+        int &scanned,
+        bool isPoint=false
+    );
 
     static const SymbolTable<PatchValueExpressionDriver> &symbolTable();
 

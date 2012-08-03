@@ -92,6 +92,11 @@ class CommonPluginFunction {
 
     CommonPluginFunction(const CommonPluginFunction &);
 
+    void evaluateInternal(
+        const string &content,
+        label &consumed
+    );
+
 protected:
     //- wrapper for argument reading
     label readArgument(
@@ -204,6 +209,13 @@ public:
     tmp<T> evaluate(
         const string &content,
         label &consumed
+    );
+
+    template <typename T>
+    tmp<Field<T> > evaluate(
+        const string &content,
+        label &consumed,
+        bool isPoint
     );
 };
 

@@ -307,6 +307,106 @@ label CommonPluginFunction::scanEmpty(
     return driver().parse(content,sym);
 }
 
+void CommonPluginFunction::evaluateInternal(
+    const string &content,
+    label &consumed
+)
+{
+    if(debug || parentDriver_.traceParsing()) {
+        Info << "Evaluating " << helpText() << " with " << content << endl;
+    }
+    consumed=0;
+
+    forAll(argumentTypes_,i)
+    {
+        string currentContent=content.substr(
+            consumed
+        );
+
+	if(debug || parentDriver_.traceParsing()) {
+            Info << "Argument" << i << " with " << currentContent << endl;
+        }
+
+        label used=0;
+
+        if(argumentParsers_[i]=="primitive") {
+            if(debug || parentDriver_.traceParsing()) {
+                Info << "Reading primitive argument" << i << endl;
+            }
+            used=readArgument(i,currentContent,argumentTypes_[i]);
+            word lookFor="SC";
+            if(i==(argumentParsers_.size()-1)) {
+                lookFor="CL";
+            }
+            if(debug || parentDriver_.traceParsing()) {
+                Info << "Used " << used << " characters "
+                    << ". Now looking for " << lookFor << endl;
+            }
+            used+=scanEmpty(currentContent.substr(used),lookFor);
+            if(debug || parentDriver_.traceParsing()) {
+                Info << "Used " << used << " characters after looking for "
+                    << lookFor << endl;
+            }
+        } else {
+            autoPtr<CommonValueExpressionDriver> driver=
+                CommonValueExpressionDriver::New(
+                    argumentParsers_[i],
+                    getID(i),
+                    parentDriver_.mesh()
+                );
+            driver->setTrace(
+                parentDriver_.traceScanning(),
+                parentDriver_.traceParsing()
+            );
+            driver->setSearchBehaviour(
+                parentDriver_.cacheReadFields(),
+                parentDriver_.searchInMemory(),
+                parentDriver_.searchOnDisc()
+            );
+
+            used=readArgument(i,currentContent,driver());
+        }
+
+        if(used<=0) {
+            FatalErrorIn("CommonPluginFunction::evaluate")
+                << "Evaluation of argument " << i+1
+                    << " of " << this->helpText()
+                    << " consumed no characters"
+                    << endl
+                    << exit(FatalError);
+
+        }
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Argument" << i << " used "
+                <<  used  << " charcters: ";
+        }
+        consumed+=used;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << consumed << " charcters used till now" << endl;
+        }
+    }
+    if(argumentTypes_.size()==0) {
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "No parameters. Looking for closing ')'" << endl;
+        }
+
+        consumed+=scanEmpty(content,"CL");
+        if(debug || parentDriver_.traceParsing()) {
+            Info << consumed << " characters consumed" << endl;
+        }
+    }
+
+    if(debug || parentDriver_.traceParsing()) {
+        Info << "Starting the actual evaluation" << endl;
+    }
+
+    doEvaluation();
+
+    if(debug || parentDriver_.traceParsing()) {
+        Info << "Getting result and returning it" << endl;
+    }
+}
+
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 } // namespace

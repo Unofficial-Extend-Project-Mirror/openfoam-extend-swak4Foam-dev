@@ -20,6 +20,9 @@
     const Foam::scalar HugeVal=1e40;
 
     using Foam::PatchValueExpressionDriver;
+
+#include "PatchValuePluginFunction.H"
+
 %}
 
 %name-prefix="parserPatch"
@@ -61,6 +64,48 @@
 %{
 #include "PatchValueExpressionDriverYY.H"
 #include "swakChecks.H"
+namespace Foam {
+    template<class T>
+    autoPtr<Field<T> > PatchValueExpressionDriver::evaluatePluginFunction(
+        const string &name,
+        const parserPatch::location &loc,
+        int &scanned,
+        bool isPoint
+    ) {
+        if(debug || traceParsing()) {
+            Info << "Excuting plugin-function " << name << " ( returning type "
+                << pTraits<T>::typeName << ") on " << this->content_
+                << " position "
+                << loc.end.column-1 << endl;
+        }
+
+        autoPtr<PatchValuePluginFunction> theFunction(
+            PatchValuePluginFunction::New(
+                *this,
+                name
+            )
+        );
+
+        //    scanned+=1;
+
+        autoPtr<Field<T> > result(
+            theFunction->evaluate<T>(
+                this->content_.substr(
+                    loc.end.column-1
+                ),
+                scanned,
+                isPoint
+            ).ptr()
+        );
+
+        if(debug || traceParsing()) {
+            Info << "Scanned: " << scanned << endl;
+        }
+
+        return result;
+    }
+}
+
 %}
 
 %token <name>   TOKEN_LINE  "timeline"
@@ -77,6 +122,18 @@
 %token <name>   TOKEN_PTID   "pointTensorID"
 %token <name>   TOKEN_PYID   "pointSymmTensorID"
 %token <name>   TOKEN_PHID   "pointSphericalTensorID"
+%token <name>   TOKEN_FUNCTION_SID   "F_scalarID"
+%token <name>   TOKEN_FUNCTION_PSID   "F_pointScalarID"
+%token <name>   TOKEN_FUNCTION_VID   "F_vectorID"
+%token <name>   TOKEN_FUNCTION_PVID   "F_pointVectorID"
+%token <name>   TOKEN_FUNCTION_TID   "F_tensorID"
+%token <name>   TOKEN_FUNCTION_PTID   "F_pointTensorID"
+%token <name>   TOKEN_FUNCTION_YID   "F_symmTensorID"
+%token <name>   TOKEN_FUNCTION_PYID   "F_pointSymmTensorID"
+%token <name>   TOKEN_FUNCTION_HID   "F_sphericalTensorID"
+%token <name>   TOKEN_FUNCTION_PHID   "F_pointSphericalTensorID"
+%token <name>   TOKEN_FUNCTION_LID   "F_logicalID"
+%token <name>   TOKEN_FUNCTION_PLID   "F_pointLogicalID"
 %token <val>    TOKEN_NUM   "value"
 %token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
@@ -103,6 +160,19 @@
 %type  <hfield>    psphericalTensor
 %type  <hfield>    hexp       "hexpression"
 %type  <hfield>    phexp       "phexpression"
+
+%type  <sfield> evaluateScalarFunction;
+%type  <sfield> evaluatePointScalarFunction;
+%type  <vfield> evaluateVectorFunction;
+%type  <vfield> evaluatePointVectorFunction;
+%type  <tfield> evaluateTensorFunction;
+%type  <tfield> evaluatePointTensorFunction;
+%type  <yfield> evaluateSymmTensorFunction;
+%type  <yfield> evaluatePointSymmTensorFunction;
+%type  <hfield> evaluateSphericalTensorFunction;
+%type  <hfield> evaluatePointSphericalTensorFunction;
+%type  <lfield> evaluateLogicalFunction;
+%type  <lfield> evaluatePointLogicalFunction;
 
 %token START_DEFAULT
 
@@ -133,6 +203,9 @@
 
 %token START_CLOSE_ONLY
 %token START_COMMA_ONLY
+
+%token TOKEN_LAST_FUNCTION_CHAR
+%token TOKEN_IN_FUNCTION_CHAR
 
 %token TOKEN_VECTOR
 %token TOKEN_TENSOR
@@ -248,7 +321,10 @@
 
 %printer             { debug_stream () << *$$; } "scalarID" "vectorID" "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "tensorID" "pointTensorID" "symmTensorID" "pointSymmTensorID" "sphericalTensorID" "pointSphericalTensorID"
 %printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
+
 %destructor          { delete $$; } "timeline" "lookup" "scalarID"  "vectorID"  "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "vector" "expression" "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
+%destructor          {} "value" "integer" "sexpression"
+
 %printer             { debug_stream () << $$; } "value" "integer" "sexpression"
 %printer             { debug_stream () << $$ /* ->name().c_str() */ ; } "expression"  "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
 
@@ -417,6 +493,9 @@ switch_expr:      START_DEFAULT unit
                   }
 ;
 
+restOfFunction:    TOKEN_LAST_FUNCTION_CHAR
+                   | TOKEN_IN_FUNCTION_CHAR restOfFunction;
+
 unit:   exp                     { driver.setResult<Foam::scalar>($1);  }
         | vexp                  { driver.setResult<Foam::vector>($1);  }
         | lexp                  { driver.setResult<bool>($1); }
@@ -435,6 +514,9 @@ vectorComponentSwitch: /* empty rule */{ driver.startVectorComponent(); }
 ;
 
 tensorComponentSwitch: /* empty rule */{ driver.startTensorComponent(); }
+;
+
+eatCharactersSwitch: /* empty rule */{ driver.startEatCharacters(); }
 ;
 
 vexp:   vector                  { $$ = $1; }
@@ -461,6 +543,7 @@ vexp:   vector                  { $$ = $1; }
         | TOKEN_Cn '(' ')'              { $$ = driver.makeCellNeighbourField(); }
         | TOKEN_delta '(' ')'              { $$ = driver.makeDeltaField(); }
         | TOKEN_toFace '(' pvexp ')'        { $$ = driver.toFace(*$3); delete $3; }
+        | evaluateVectorFunction restOfFunction
         | TOKEN_VID {
             $$=driver.getField<Foam::vector>(*$1); delete $1;
                     }
@@ -480,6 +563,16 @@ vexp:   vector                  { $$ = $1; }
         | TOKEN_max '(' vexp ',' vexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
+evaluateVectorFunction: TOKEN_FUNCTION_VID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::vector>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          false
+      ).ptr();
+  }
+;
 
 scalar:	TOKEN_NUM		        { $$ = $1; }
         | '-' TOKEN_NUM         	{ $$ = -$2; }
@@ -672,6 +765,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
             Foam::vectorField *Sf=driver.makeFaceAreaField();
             $$ = new Foam::scalarField(Foam::mag(*Sf));
             delete Sf;}
+        | evaluateScalarFunction restOfFunction
 	| TOKEN_SID		{
             $$=driver.getField<Foam::scalar>(*$1);delete $1;
 				}
@@ -696,6 +790,18 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         | TOKEN_min '(' exp ',' exp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' exp ',' exp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
+
+evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::scalar>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          false
+      ).ptr();
+  }
+;
+
 
 texp:   tensor                  { $$ = $1; }
         | texp '+' texp 		{ sameSize($1,$3); $$ = new Foam::tensorField(*$1 + *$3); delete $1; delete $3; }
@@ -724,6 +830,7 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_dev '(' texp ')'       { $$ = new Foam::tensorField( Foam::dev(*$3) ); delete $3; }
         | lexp '?' texp ':' texp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toFace '(' ptexp ')'        { $$ = driver.toFace(*$3); delete $3; }
+        | evaluateTensorFunction restOfFunction
         | TOKEN_TID {
             $$=driver.getField<Foam::tensor>(*$1); delete $1;
                     }
@@ -741,6 +848,17 @@ texp:   tensor                  { $$ = $1; }
                     }
         | TOKEN_min '(' texp ',' texp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' texp ',' texp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+;
+
+evaluateTensorFunction: TOKEN_FUNCTION_TID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::tensor>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          false
+      ).ptr();
+  }
 ;
 
 yexp:   symmTensor                  { $$ = $1; }
@@ -763,6 +881,7 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_inv '(' yexp ')'       { $$ = new Foam::symmTensorField( Foam::inv(*$3) ); delete $3; }
         | lexp '?' yexp ':' yexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toFace '(' pyexp ')'        { $$ = driver.toFace(*$3); delete $3; }
+        | evaluateSymmTensorFunction restOfFunction
         | TOKEN_YID {
             $$=driver.getField<Foam::symmTensor>(*$1); delete $1;
                     }
@@ -782,6 +901,17 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_max '(' yexp ',' yexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
+evaluateSymmTensorFunction: TOKEN_FUNCTION_YID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::symmTensor>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          false
+      ).ptr();
+  }
+;
+
 hexp:   sphericalTensor                  { $$ = $1; }
         | hexp '+' hexp 		{ sameSize($1,$3); $$ = new Foam::sphericalTensorField(*$1 + *$3); delete $1; delete $3; }
         | exp '*' hexp 		        { sameSize($1,$3); $$ = new Foam::sphericalTensorField(*$1 * *$3); delete $1; delete $3; }
@@ -794,6 +924,7 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_inv '(' hexp ')'       { $$ = new Foam::sphericalTensorField( Foam::inv(*$3) ); delete $3; }
         | lexp '?' hexp ':' hexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toFace '(' phexp ')'        { $$ = driver.toFace(*$3); delete $3; }
+        | evaluateSphericalTensorFunction restOfFunction
         | TOKEN_HID {
             $$=driver.getField<Foam::sphericalTensor>(*$1); delete $1;
                     }
@@ -813,6 +944,16 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_max '(' hexp ',' hexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
 ;
 
+evaluateSphericalTensorFunction: TOKEN_FUNCTION_HID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::sphericalTensor>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          false
+      ).ptr();
+  }
+;
 
 lexp: TOKEN_TRUE   { $$ = driver.makeField(true); }
     | TOKEN_FALSE  { $$ = driver.makeField(false); }
@@ -826,9 +967,21 @@ lexp: TOKEN_TRUE   { $$ = driver.makeField(true); }
     | lexp TOKEN_AND lexp  { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_and<Foam::scalar>(),$3);  delete $1; delete $3; }
     | lexp TOKEN_OR lexp   { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_or<Foam::scalar>(),$3);  delete $1; delete $3; }
     | '!' lexp %prec TOKEN_NOT { $$ = driver.doLogicalNot($2); delete $2; }
+        | evaluateLogicalFunction restOfFunction
 //    | TOKEN_LID		{
 //            $$=driver.getField<Foam::bool>(*$1);delete $1;
 //    }
+;
+
+evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<bool>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          false
+      ).ptr();
+  }
 ;
 
 vector: TOKEN_VECTOR '(' exp ',' exp ',' exp ')' {     $$ = driver.composeVectorField($3,$5,$7);  delete $3; delete $5; delete $7;}
@@ -861,6 +1014,7 @@ pvexp:  pvector     { $$ = $1; }
         | plexp '?' pvexp ':' pvexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_points '(' ')'        { $$ = driver.makePointField(); }
         | TOKEN_toPoint '(' vexp ')'        { $$ = driver.toPoint(*$3); delete $3;}
+        | evaluatePointVectorFunction restOfFunction
         | TOKEN_PVID {
             $$=driver.getField<Foam::vector>(*$1); delete $1;
                     }
@@ -869,6 +1023,17 @@ pvexp:  pvector     { $$ = $1; }
 				}
         | TOKEN_min '(' pvexp ',' pvexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' pvexp ',' pvexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+;
+
+evaluatePointVectorFunction: TOKEN_FUNCTION_PVID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::vector>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          true
+      ).ptr();
+  }
 ;
 
 pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3); delete $1; delete $3; }
@@ -947,6 +1112,7 @@ pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3)
         | phexp '.' tensorComponentSwitch TOKEN_ii       { $$ = new Foam::scalarField($1->component(0)); delete $1; }
         | plexp '?' pexp ':' pexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toPoint '(' exp ')'        { $$ = driver.toPoint(*$3); delete $3;}
+        | evaluatePointScalarFunction restOfFunction
 	| TOKEN_PSID		{
             $$=driver.getField<Foam::scalar>(*$1); delete $1;
 				}
@@ -958,6 +1124,17 @@ pexp:   pexp '+' pexp 		{ sameSize($1,$3); $$ = new Foam::scalarField(*$1 + *$3)
 				}
         | TOKEN_min '(' pexp ',' pexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' pexp ',' pexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+;
+
+evaluatePointScalarFunction: TOKEN_FUNCTION_PSID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::scalar>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          true
+      ).ptr();
+  }
 ;
 
 ptexp:  ptensor    { $$ = $1; }
@@ -976,6 +1153,7 @@ ptexp:  ptensor    { $$ = $1; }
         | '(' ptexp ')'		        { $$ = $2; }
         | plexp '?' ptexp ':' ptexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toPoint '(' texp ')'        { $$ = driver.toPoint(*$3); delete $3;}
+        | evaluatePointTensorFunction restOfFunction
         | TOKEN_PTID {
             $$=driver.getField<Foam::tensor>(*$1); delete $1;
                     }
@@ -984,6 +1162,17 @@ ptexp:  ptensor    { $$ = $1; }
 				}
         | TOKEN_min '(' ptexp ',' ptexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' ptexp ',' ptexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+;
+
+evaluatePointTensorFunction: TOKEN_FUNCTION_PTID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::tensor>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          true
+      ).ptr();
+  }
 ;
 
 pyexp:  psymmTensor     { $$ = $1; }
@@ -999,6 +1188,7 @@ pyexp:  psymmTensor     { $$ = $1; }
         | '(' pyexp ')'		        { $$ = $2; }
         | plexp '?' pyexp ':' pyexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toPoint '(' yexp ')'        { $$ = driver.toPoint(*$3); delete $3;}
+        | evaluatePointSymmTensorFunction restOfFunction
         | TOKEN_PYID {
             $$=driver.getField<Foam::symmTensor>(*$1); delete $1;
                     }
@@ -1007,6 +1197,17 @@ pyexp:  psymmTensor     { $$ = $1; }
 				}
         | TOKEN_min '(' pyexp ',' pyexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' pyexp ',' pyexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+;
+
+evaluatePointSymmTensorFunction: TOKEN_FUNCTION_PYID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::symmTensor>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          true
+      ).ptr();
+  }
 ;
 
 phexp:  psphericalTensor    { $$ = $1; }
@@ -1020,6 +1221,7 @@ phexp:  psphericalTensor    { $$ = $1; }
         | '(' phexp ')'		        { $$ = $2; }
         | plexp '?' phexp ':' phexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
         | TOKEN_toPoint '(' hexp ')'        { $$ = driver.toPoint(*$3); delete $3;}
+        | evaluatePointSphericalTensorFunction restOfFunction
         | TOKEN_PHID {
             $$=driver.getField<Foam::sphericalTensor>(*$1); delete $1;
                     }
@@ -1028,6 +1230,17 @@ phexp:  psphericalTensor    { $$ = $1; }
 				}
         | TOKEN_min '(' phexp ',' phexp  ')'           { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' phexp ',' phexp  ')'           { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
+;
+
+evaluatePointSphericalTensorFunction: TOKEN_FUNCTION_PHID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::sphericalTensor>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          true
+      ).ptr();
+  }
 ;
 
 pvector: TOKEN_VECTOR '(' pexp ',' pexp ',' pexp ')' {     $$ = driver.composeVectorField($3,$5,$7);  delete $3; delete $5; delete $7;}
@@ -1050,10 +1263,23 @@ plexp: pexp '<' pexp  { sameSize($1,$3); $$ = driver.doCompare($1,std::less<Foam
     | plexp TOKEN_AND plexp  { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_and<Foam::scalar>(),$3);  delete $1; delete $3; }
     | plexp TOKEN_OR plexp   { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_or<Foam::scalar>(),$3);  delete $1; delete $3; }
     | '!' plexp %prec TOKEN_NOT { $$ = driver.doLogicalNot($2); delete $2; }
+    | evaluatePointLogicalFunction restOfFunction
 //    | TOKEN_PLID		{
 //            $$=driver.getField<Foam::bool>(*$1);delete $1;
 //    }
 ;
+
+evaluatePointLogicalFunction: TOKEN_FUNCTION_PLID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<bool>(
+          *$1,
+          @2,
+          numberOfFunctionChars,
+          true
+      ).ptr();
+  }
+;
+
 
 %%
 
