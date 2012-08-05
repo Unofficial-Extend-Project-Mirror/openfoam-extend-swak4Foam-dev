@@ -32,6 +32,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "PatchValueExpressionDriver.H"
+#include "PatchValuePluginFunction.H"
 
 #include "FieldValueExpressionDriver.H"
 

@@ -1,6 +1,8 @@
 //  ICE Revision: $Id$
 
 #include "FieldValueExpressionDriver.H"
+#include "FieldValuePluginFunction.H"
+
 #include <Random.H>
 #include <wallDist.H>
 #include <nearWallDist.H>
