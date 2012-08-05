@@ -32,6 +32,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "FaceSetValueExpressionDriver.H"
+#include "FaceSetValuePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -312,6 +313,26 @@ bool FaceSetValueExpressionDriver::update()
     }
 
     return true;
+}
+
+autoPtr<CommonPluginFunction> FaceSetValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        FaceSetValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool FaceSetValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return FaceSetValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

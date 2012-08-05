@@ -32,6 +32,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "FaceZoneValueExpressionDriver.H"
+#include "FaceZoneValuePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -227,6 +228,26 @@ vectorField *FaceZoneValueExpressionDriver::makeFaceNormalField()
 vectorField *FaceZoneValueExpressionDriver::makeFaceAreaField()
 {
     return getFromFieldInternal(this->mesh().Sf(),faceZone_);
+}
+
+autoPtr<CommonPluginFunction> FaceZoneValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        FaceZoneValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool FaceZoneValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return FaceZoneValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

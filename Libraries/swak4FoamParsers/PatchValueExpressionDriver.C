@@ -364,6 +364,27 @@ int PatchValueExpressionDriver::startupSymbol(const word &name) {
     return symbolTable()[name];
 }
 
+
+autoPtr<CommonPluginFunction> PatchValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        PatchValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool PatchValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return PatchValuePluginFunction::exists(
+        *this,
+        name
+    );
+}
+
 // ************************************************************************* //
 
 } // namespace

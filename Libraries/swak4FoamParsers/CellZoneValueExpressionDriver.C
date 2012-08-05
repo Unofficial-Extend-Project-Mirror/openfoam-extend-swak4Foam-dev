@@ -32,6 +32,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "CellZoneValueExpressionDriver.H"
+#include "CellZoneValuePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -206,6 +207,26 @@ vectorField *CellZoneValueExpressionDriver::makeFaceAreaField()
             << endl
             << exit(FatalError);
     return new vectorField(0);
+}
+
+autoPtr<CommonPluginFunction> CellZoneValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        CellZoneValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool CellZoneValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return CellZoneValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

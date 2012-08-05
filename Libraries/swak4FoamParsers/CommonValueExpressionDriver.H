@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     CommonValueExpressionDriverI.H
     CommonValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef CommonValueExpressionDriver_H
@@ -76,9 +76,9 @@ class CommonValueExpressionDriver
     //- variables from a dictionary
     stringList variableStrings_;
 
-    //- this one is in charge for writing and restoring 
+    //- this one is in charge for writing and restoring
 
-    //- by using it this class doesn't have to inherit from regIOobject 
+    //- by using it this class doesn't have to inherit from regIOobject
     //- (which would be an overkill and inconvenient)
     autoPtr<ExpressionDriverWriter> writer_;
 
@@ -128,7 +128,7 @@ protected:
     //- scanner state for reentrant lexer
     void *scanner_;
 
-    // Handling the scanner 
+    // Handling the scanner
     virtual void scan_begin()=0;
     virtual void scan_end()=0;
 
@@ -187,7 +187,7 @@ private:
     bool prevIterIsOldTime_;
 
 protected:
-   
+
     inline bool cacheReadFields() const { return cacheReadFields_; }
 
     inline bool searchInMemory() const { return searchInMemory_; }
@@ -250,7 +250,7 @@ protected:
 
     template<class T>
     class SymbolTable
-    : 
+    :
     public StartupSymbols
     {
     public:
@@ -299,7 +299,7 @@ public:
         bool searchInMemory=true,
         bool searchOnDisc=false
     );
-    
+
     //- Copy construct
     CommonValueExpressionDriver(
         const CommonValueExpressionDriver&
@@ -350,7 +350,7 @@ public:
 
     //- read the list of variable strings (or initialize with a single string)
     static stringList readVariableStrings(const dictionary &dict);
- 
+
     //- read the list of variable strings (or initialize with a single string)
     void setVariableStrings(const dictionary &dict);
 
@@ -388,7 +388,7 @@ public:
     Field<bool> *doLogicalOp(Field<bool> *a,Op op,Field<bool> *b);
 
     inline Field<bool> *doLogicalNot(Field<bool> *a);
-    
+
     template<class Type>
     Field<Type> *doConditional(Field<bool> *d,Field<Type> *yes,Field<Type> *no);
 
@@ -487,6 +487,16 @@ public:
     //- Write data if apropriate
     //- Should enable exact restarts
     void tryWrite() const;
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    ) = 0;
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    ) = 0;
 
     friend class ExpressionDriverWriter;
     friend class CommonPluginFunction;

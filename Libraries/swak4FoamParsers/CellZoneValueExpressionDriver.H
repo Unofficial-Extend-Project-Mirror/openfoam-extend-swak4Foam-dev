@@ -140,6 +140,17 @@ public:
 
 //     template<class Type>
 //     virtual Field<Type> *toPoint(const Field<Type> &)=0;
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
+
 };
 
 

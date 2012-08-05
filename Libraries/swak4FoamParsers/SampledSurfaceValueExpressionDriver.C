@@ -32,6 +32,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "SampledSurfaceValueExpressionDriver.H"
+#include "SampledSurfaceValuePluginFunction.H"
+
 #include "SurfacesRepository.H"
 
 #include "addToRunTimeSelectionTable.H"
@@ -243,6 +245,26 @@ vectorField *SampledSurfaceValueExpressionDriver::makeFaceNormalField()
 vectorField *SampledSurfaceValueExpressionDriver::makeFaceAreaField()
 {
     return new vectorField(theSurface_.Sf());
+}
+
+autoPtr<CommonPluginFunction> SampledSurfaceValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        SampledSurfaceValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool SampledSurfaceValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return SampledSurfaceValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

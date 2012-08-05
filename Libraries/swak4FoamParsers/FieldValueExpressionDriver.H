@@ -412,6 +412,16 @@ public:
         const GeometricField<T,pointPatchField,pointMesh> &orig
     );
 
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
+
     // allow access to the setResult-method
     friend class parserField::FieldValueExpressionParser;
 };

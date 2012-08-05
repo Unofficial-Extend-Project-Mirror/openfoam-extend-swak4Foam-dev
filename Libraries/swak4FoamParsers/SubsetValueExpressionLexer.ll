@@ -4,11 +4,13 @@
 #include <errno.h>
 #include "SubsetValueExpressionParser.tab.hh"
 typedef parserSubset::SubsetValueExpressionParser::semantic_type YYSTYPE;
+#include "CommonPluginFunction.H"
 %}
 
 %s setname
 %s vectorcomponent
 %s tensorcomponent
+%x parsedByOtherParser
 %x needsIntegerParameter
 
 %option noyywrap nounput batch debug
@@ -204,10 +206,65 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr; return token::TOKEN_PSID;
         //    } else if(driver.is<Foam::bool>(*ptr,true)) {
         //        yylval->name = ptr; return token::TOKEN_PLID;
+    } else if(driver.existsPluginFunction(*ptr)) {
+        // OK. We'll create the function two times. But this is less messy
+        // than passing it two times
+        Foam::autoPtr<Foam::CommonPluginFunction> fInfo(
+            driver.newPluginFunction(
+                *ptr
+            )
+        );
+
+        int tokenTyp=-1;
+        if(fInfo->returnType()=="scalar") {
+             tokenTyp=token::TOKEN_FUNCTION_SID;
+        } else if(fInfo->returnType()=="vector") {
+             tokenTyp=token::TOKEN_FUNCTION_VID;
+        } else if(fInfo->returnType()=="tensor") {
+             tokenTyp=token::TOKEN_FUNCTION_TID;
+        } else if(fInfo->returnType()=="symmTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_YID;
+        } else if(fInfo->returnType()=="sphericalTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_HID;
+        } else if(fInfo->returnType()=="pointScalar") {
+             tokenTyp=token::TOKEN_FUNCTION_PSID;
+        } else if(fInfo->returnType()=="pointVector") {
+             tokenTyp=token::TOKEN_FUNCTION_PVID;
+        } else if(fInfo->returnType()=="pointTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_PTID;
+        } else if(fInfo->returnType()=="pointSymmTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_PYID;
+        } else if(fInfo->returnType()=="pointSphericalTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_PHID;
+        } else {
+            driver.error (
+                *yylloc,
+                "Function "+*ptr+" returns unsupported type "
+                + fInfo->returnType()
+            );
+        }
+
+        yylval->name = ptr;
+        return tokenTyp;
     } else {
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
                      }
+
+<parsedByOtherParser>. {
+    numberOfFunctionChars--;
+    if(driver.traceScanning()) {
+        Foam::Info << " Remaining characters to be eaten: "
+            << numberOfFunctionChars
+            << Foam::endl;
+    }
+    if(numberOfFunctionChars>0) {
+        return token::TOKEN_IN_FUNCTION_CHAR;
+    } else {
+        BEGIN(INITIAL);
+        return token::TOKEN_LAST_FUNCTION_CHAR;
+    }
+                       }
 
 .                    driver.error (*yylloc, "invalid character");
 <needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
@@ -266,6 +323,18 @@ void SubsetValueExpressionDriver::scan_end ()
     scanner_=NULL;
 //	    fclose (yyin);
 //    yy_delete_buffer(bufferSubset);
+}
+
+void SubsetValueExpressionDriver::startEatCharacters()
+{
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::startEatCharacters() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    BEGIN(parsedByOtherParser);
 }
 
 void SubsetValueExpressionDriver::startVectorComponent()

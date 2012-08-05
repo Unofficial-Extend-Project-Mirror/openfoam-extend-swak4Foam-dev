@@ -32,6 +32,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "SampledSetValueExpressionDriver.H"
+#include "SampledSetValuePluginFunction.H"
+
 #include "SetsRepository.H"
 
 #include "addToRunTimeSelectionTable.H"
@@ -245,6 +247,26 @@ vectorField *SampledSetValueExpressionDriver::makeFaceAreaField()
             << exit(FatalError);
 
     return new vectorField(0);
+}
+
+autoPtr<CommonPluginFunction> SampledSetValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        SampledSetValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool SampledSetValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return SampledSetValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

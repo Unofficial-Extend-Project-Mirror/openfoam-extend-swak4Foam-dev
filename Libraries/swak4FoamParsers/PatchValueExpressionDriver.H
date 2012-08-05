@@ -200,6 +200,16 @@ public:
     template<class Type>
     Field<Type> *toPoint(const Field<Type> &);
 
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
+
     // allow access of protected methods
     friend class parserPatch::PatchValueExpressionParser;
 };

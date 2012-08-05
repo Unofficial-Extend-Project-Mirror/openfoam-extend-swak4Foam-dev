@@ -1164,4 +1164,25 @@ int FieldValueExpressionDriver::startupSymbol(const word &name) {
     return symbolTable()[name];
 }
 
+
+autoPtr<CommonPluginFunction> FieldValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        FieldValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool FieldValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return FieldValuePluginFunction::exists(
+        *this,
+        name
+    );
+}
+
 } // end namespace

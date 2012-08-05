@@ -32,6 +32,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "CellSetValueExpressionDriver.H"
+#include "CellSetValuePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -210,6 +211,26 @@ bool CellSetValueExpressionDriver::update()
     }
 
     return updateSet(cellSet_,id_,origin_);
+}
+
+autoPtr<CommonPluginFunction> CellSetValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        CellSetValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool CellSetValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return CellSetValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //
