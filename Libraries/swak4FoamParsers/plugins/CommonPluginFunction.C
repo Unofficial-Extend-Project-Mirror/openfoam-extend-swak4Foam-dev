@@ -364,6 +364,13 @@ void CommonPluginFunction::evaluateInternal(
                 parentDriver_.searchOnDisc()
             );
 
+            driver->appendToContext(
+                parentDriver_.contextString()+"\n"+
+                "  Evaluating expression \""+parentDriver_.content()+"\"\n"+
+                "  Plugin Function \""+this->name()+"\" Substring \""+
+                content+"\""
+            );
+
             used=readArgument(i,currentContent,driver());
         }
 

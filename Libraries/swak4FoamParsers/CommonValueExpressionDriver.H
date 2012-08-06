@@ -88,7 +88,15 @@ class CommonValueExpressionDriver
     //- the position to which the parser progressed
     label parserLastPos_;
 
+    //- string that allows more detailed allocation of the context
+    string contextString_;
+
 protected:
+    //- get the string of the context in a form that is usable for an error message
+    std::string getContextString();
+
+    const string contextString() const { return contextString_; }
+
     //- little helper method to print hex adresses
     word getHex(const void *) const;
 
@@ -136,6 +144,8 @@ protected:
     virtual bool update();
 
 public:
+    const string &content() const { return content_; }
+
     //- actual size of the field
     virtual label size() const = 0;
 
@@ -499,6 +509,9 @@ public:
     virtual bool existsPluginFunction(
         const word &name
     ) = 0;
+
+    //- append a string to the conext for error messages
+    void appendToContext(const string &value);
 
     friend class ExpressionDriverWriter;
     friend class CommonPluginFunction;
