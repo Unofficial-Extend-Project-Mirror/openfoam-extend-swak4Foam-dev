@@ -32,7 +32,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "ConcretePluginFunction.H"
-#include "FieldValueExpressionDriver.H"
 
 namespace Foam {
 

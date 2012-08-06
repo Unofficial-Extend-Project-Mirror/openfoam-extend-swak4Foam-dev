@@ -33,6 +33,7 @@ License
 
 #include "ContributionScalarFunctionPlugin.H"
 
+#include "FieldValueExpressionDriver.H"
 #include "PatchValueExpressionDriver.H"
 #include "CellSetValueExpressionDriver.H"
 #include "FaceSetValueExpressionDriver.H"
@@ -108,9 +109,9 @@ ContributionScalarPluginFunction<Driver,PluginType>::ContributionScalarPluginFun
         )
     )
 {
-    typedef typename PluginType::driverType pdt;
+    typedef typename PluginType::driverType PluginTypeDriverType;
 
-    if(pdt::driverName()!="internalField") {
+    if(PluginTypeDriverType::driverName()!="internalField") {
         this->returnType()="scalar";
     }
 }
