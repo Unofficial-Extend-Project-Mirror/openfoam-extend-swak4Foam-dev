@@ -135,12 +135,14 @@ protected:
     //- update stuff that needs updating
     virtual bool update();
 
+public:
     //- actual size of the field
     virtual label size() const = 0;
 
     //- actual size of the supporting point-field
     virtual label pointSize() const = 0;
 
+protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
 

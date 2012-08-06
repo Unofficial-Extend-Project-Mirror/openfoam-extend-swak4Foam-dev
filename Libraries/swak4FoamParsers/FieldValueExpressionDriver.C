@@ -15,6 +15,8 @@
 
 namespace Foam {
 
+word FieldValueExpressionDriver::driverName_="internalField";
+
 defineTypeNameAndDebug(FieldValueExpressionDriver, 0);
 
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FieldValueExpressionDriver, dictionary, internalField);

@@ -97,8 +97,8 @@ bool ConcretePluginFunction<DriverType>::exists (
     if(firstCall) {
         firstCall=false;
         if(nameConstructorTablePtr_->size()>0) {
-            Info<< endl << "Loaded plugin functions for 'internalField':"
-                << endl;
+            Info<< endl << "Loaded plugin functions for '"+
+                DriverType::typeName+"':" << endl;
             wordList names(nameConstructorTablePtr_->sortedToc());
             forAll(names,nameI)
             {

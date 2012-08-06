@@ -53,10 +53,10 @@ namespace Foam
                            Class ContributionScalarPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-template <class Driver>
+template <class Driver,class PluginType>
 class ContributionScalarPluginFunction
 :
-    public FieldValuePluginFunction
+    public PluginType
 {
     //- Disallow default bitwise assignment
     void operator=(const ContributionScalarPluginFunction &);
@@ -88,7 +88,7 @@ protected:
 
 public:
     ContributionScalarPluginFunction(
-        const FieldValueExpressionDriver &parentDriver,
+        const typename PluginType::driverType &parentDriver,
         const word &name
     );
 

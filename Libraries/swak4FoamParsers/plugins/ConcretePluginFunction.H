@@ -76,6 +76,8 @@ public:
 
     TypeName("ConcretePluginFunction");
 
+    typedef DriverType driverType;
+
     declareRunTimeSelectionTable
     (
         autoPtr,

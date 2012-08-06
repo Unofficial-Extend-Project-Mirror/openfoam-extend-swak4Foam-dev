@@ -185,6 +185,7 @@ protected:
     inline const fvMesh &mesh() const;
 
     inline ExpressionResult &result();
+
 public:
     CommonPluginFunction(
         const CommonValueExpressionDriver &parentDriver,
@@ -200,6 +201,8 @@ public:
     const word &name() const { return name_; }
 
     const word &returnType() const { return returnType_; }
+
+    word &returnType() { return returnType_; }
 
     //- return a help text constructed from parameters
     string helpText() const;

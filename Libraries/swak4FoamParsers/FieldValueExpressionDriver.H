@@ -59,9 +59,13 @@ class FieldValueExpressionDriver
 
     int startupSymbol(const word &name);
 
+    static word driverName_;
+
 public:
 
     TypeName("FieldValueExpressionDriver");
+
+    static const word &driverName() { return driverName_; }
 
     //- old style constructor
     FieldValueExpressionDriver(

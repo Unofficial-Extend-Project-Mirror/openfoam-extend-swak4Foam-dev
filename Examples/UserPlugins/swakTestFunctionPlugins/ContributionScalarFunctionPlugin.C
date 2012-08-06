@@ -44,37 +44,59 @@ License
 #include "Pstream.H"
 #include "addToRunTimeSelectionTable.H"
 
+#include "FieldValuePluginFunction.H"
+#include "PatchValuePluginFunction.H"
+#include "CellSetValuePluginFunction.H"
+
 namespace Foam {
 
-defineTemplateTypeNameAndDebug(ContributionScalarPluginFunction<PatchValueExpressionDriver>,0);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, ContributionScalarPluginFunction,PatchValueExpressionDriver , name, patchContributionScalar);
+    // for fields
+typedef ContributionScalarPluginFunction<PatchValueExpressionDriver,FieldValuePluginFunction> patchToFieldContribute;
+defineTemplateTypeNameAndDebug(patchToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, patchToFieldContribute , name, patchContributionScalar);
 
-defineTemplateTypeNameAndDebug(ContributionScalarPluginFunction<CellSetValueExpressionDriver>,0);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, ContributionScalarPluginFunction,CellSetValueExpressionDriver , name, cellSetContributionScalar);
+typedef ContributionScalarPluginFunction<CellSetValueExpressionDriver,FieldValuePluginFunction> cellSetToFieldContribute;
+defineTemplateTypeNameAndDebug(cellSetToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, cellSetToFieldContribute , name, cellSetContributionScalar);
 
-defineTemplateTypeNameAndDebug(ContributionScalarPluginFunction<CellZoneValueExpressionDriver>,0);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, ContributionScalarPluginFunction,CellZoneValueExpressionDriver , name, cellZoneContributionScalar);
+typedef ContributionScalarPluginFunction<CellZoneValueExpressionDriver,FieldValuePluginFunction> cellZoneToFieldContribute;
+defineTemplateTypeNameAndDebug(cellZoneToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, cellZoneToFieldContribute , name, cellZoneContributionScalar);
 
-defineTemplateTypeNameAndDebug(ContributionScalarPluginFunction<FaceSetValueExpressionDriver>,0);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, ContributionScalarPluginFunction,FaceSetValueExpressionDriver , name, faceSetContributionScalar);
+typedef ContributionScalarPluginFunction<FaceSetValueExpressionDriver,FieldValuePluginFunction> faceSetToFieldContribute;
+defineTemplateTypeNameAndDebug(faceSetToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, faceSetToFieldContribute , name, faceSetContributionScalar);
 
-defineTemplateTypeNameAndDebug(ContributionScalarPluginFunction<FaceZoneValueExpressionDriver>,0);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, ContributionScalarPluginFunction,FaceZoneValueExpressionDriver , name, faceZoneContributionScalar);
+typedef ContributionScalarPluginFunction<FaceZoneValueExpressionDriver,FieldValuePluginFunction> faceZoneToFieldContribute;
+defineTemplateTypeNameAndDebug(faceZoneToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, faceZoneToFieldContribute , name, faceZoneContributionScalar);
 
-defineTemplateTypeNameAndDebug(ContributionScalarPluginFunction<SampledSetValueExpressionDriver>,0);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, ContributionScalarPluginFunction,SampledSetValueExpressionDriver , name, sampledSetContributionScalar);
+typedef ContributionScalarPluginFunction<SampledSetValueExpressionDriver,FieldValuePluginFunction> sampledSetToFieldContribute;
+defineTemplateTypeNameAndDebug(sampledSetToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, sampledSetToFieldContribute , name, sampledSetContributionScalar);
 
-defineTemplateTypeNameAndDebug(ContributionScalarPluginFunction<SampledSurfaceValueExpressionDriver>,0);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, ContributionScalarPluginFunction,SampledSurfaceValueExpressionDriver , name, sampledSurfaceContributionScalar);
+typedef ContributionScalarPluginFunction<SampledSurfaceValueExpressionDriver,FieldValuePluginFunction> sampledSurfaceToFieldContribute;
+defineTemplateTypeNameAndDebug(sampledSurfaceToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, sampledSurfaceToFieldContribute , name, sampledSurfaceContributionScalar);
+
+    // for patches
+typedef ContributionScalarPluginFunction<PatchValueExpressionDriver,PatchValuePluginFunction> patchToPatchContribute;
+defineTemplateTypeNameAndDebug(patchToPatchContribute,0);
+addNamedToRunTimeSelectionTable(PatchValuePluginFunction, patchToPatchContribute , name, patchContributionScalar);
+
+    // for cellSets
+typedef ContributionScalarPluginFunction<PatchValueExpressionDriver,CellSetValuePluginFunction> patchToCellSetContribute;
+defineTemplateTypeNameAndDebug(patchToCellSetContribute,0);
+addNamedToRunTimeSelectionTable(CellSetValuePluginFunction, patchToCellSetContribute , name, patchContributionScalar);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template <class Driver>
-ContributionScalarPluginFunction<Driver>::ContributionScalarPluginFunction(
-    const FieldValueExpressionDriver &parentDriver,
+template <class Driver,class PluginType>
+ContributionScalarPluginFunction<Driver,PluginType>::ContributionScalarPluginFunction(
+    const typename PluginType::driverType &parentDriver,
     const word &name
 ):
-    FieldValuePluginFunction(
+    PluginType(
         parentDriver,
         name,
         "volScalarField",
@@ -86,6 +108,11 @@ ContributionScalarPluginFunction<Driver>::ContributionScalarPluginFunction(
         )
     )
 {
+    typedef typename PluginType::driverType pdt;
+
+    if(pdt::driverName()!="internalField") {
+        this->returnType()="scalar";
+    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -93,8 +120,8 @@ ContributionScalarPluginFunction<Driver>::ContributionScalarPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template <class Driver>
-void ContributionScalarPluginFunction<Driver>::setArgument(
+template <class Driver,class PluginType>
+void ContributionScalarPluginFunction<Driver,PluginType>::setArgument(
     label index,
     const word &value
 ) {
@@ -103,8 +130,8 @@ void ContributionScalarPluginFunction<Driver>::setArgument(
     unitName_=value;
 }
 
-template <class Driver>
-word ContributionScalarPluginFunction<Driver>::getID(
+template <class Driver,class PluginType>
+word ContributionScalarPluginFunction<Driver,PluginType>::getID(
     label index
 ) {
     if(index==1) {
@@ -114,8 +141,8 @@ word ContributionScalarPluginFunction<Driver>::getID(
     }
 }
 
-template <class Driver>
-void ContributionScalarPluginFunction<Driver>::setArgument(
+template <class Driver,class PluginType>
+void ContributionScalarPluginFunction<Driver,PluginType>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
@@ -140,8 +167,43 @@ void ContributionScalarPluginFunction<Driver>::setArgument(
     );
 }
 
-template <class Driver>
-void ContributionScalarPluginFunction<Driver>::doEvaluation()
+template <class PluginType >
+void setResultForContribution(
+    const fvMesh &mesh,
+    ExpressionResult &result,
+    const scalarField &values
+) {
+    result.setResult(values);
+}
+
+template <>
+void setResultForContribution<FieldValuePluginFunction>(
+    const fvMesh &mesh,
+    ExpressionResult &result,
+    const scalarField &values
+) {
+    autoPtr<volScalarField> pResult(
+        new volScalarField(
+            IOobject(
+                "contributionFrom_", // +Driver::driverName(),
+                mesh.time().timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh,
+            dimensionedScalar("contribution",dimless,0)
+        )
+    );
+
+    pResult->internalField()=values;
+    pResult->correctBoundaryConditions();
+
+    result.setObjectResult(pResult);
+}
+
+template <class Driver,class PluginType>
+void ContributionScalarPluginFunction<Driver,PluginType>::doEvaluation()
 {
     List<scalarField> values(Pstream::nProcs());
     values[Pstream::myProcNo()]=values_();
@@ -151,27 +213,15 @@ void ContributionScalarPluginFunction<Driver>::doEvaluation()
     Pstream::scatterList(values);
     Pstream::scatterList(positions);
 
-    autoPtr<volScalarField> pResult(
-        new volScalarField(
-            IOobject(
-                "contributionFrom_"+Driver::driverName(),
-                mesh().time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh(),
-            dimensionedScalar("contribution",dimless,0)
-        )
+    scalarField result(
+        this->parentDriver().size()
     );
-
-    volScalarField &result=pResult();
 
     forAll(result,cellI)
     {
         scalar sum=0;
         scalar distSum=0;
-        const vector &here=mesh().C()[cellI];
+        const vector &here=this->mesh().C()[cellI];
         bool found=false;
 
         forAll(values,valI)
@@ -204,7 +254,7 @@ void ContributionScalarPluginFunction<Driver>::doEvaluation()
         }
     }
 
-    this->result().setObjectResult(pResult);
+    setResultForContribution<PluginType>(this->mesh(),this->result(),result);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
