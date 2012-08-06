@@ -804,7 +804,8 @@ namespace Foam {
 
         Foam::FatalErrorIn("parsingValue")
             //        << Foam::args.executable()
-            << " Parser Error at " << buff.str() << " :"  << m << Foam::endl
+            << " Parser Error for driver " << type() << " at "
+                << buff.str() << " :"  << m << Foam::endl
                 << content_ << Foam::endl
                 << place.c_str() << Foam::endl
                 << place2.c_str() << Foam::endl
