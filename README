@@ -43,9 +43,9 @@
    - Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
      - The =finiteArea=-stuff will only work with version 1.6-ext
    - the compiler generators =bison= and =flex=
-     - bison :: =swak4Foam= is known to work with =bison= version 2.3 and
-       higher. Lower versions *may* work. If it works with a lower
-       version please report it
+     - bison :: =swak4Foam= is known to work with =bison= version 2.4 and
+       higher. Version 2.3 compiles but the plugin-functionality does
+                not work correctly
      - flex :: since the introduction of the plugin functions at least
                a flex version of =2.5.33= is required (=2.5.35= is the
                lowest *confirmed* version)
