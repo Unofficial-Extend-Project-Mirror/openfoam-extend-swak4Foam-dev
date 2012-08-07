@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,10 +28,11 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "PatchValueExpressionDriver.H"
+#include "PatchValuePluginFunction.H"
 
 #include "FieldValueExpressionDriver.H"
 
@@ -47,6 +48,8 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+word PatchValueExpressionDriver::driverName_="patch";
+
 defineTypeNameAndDebug(PatchValueExpressionDriver, 0);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, dictionary, patch);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, idName, patch);
@@ -57,7 +60,9 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressio
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const PatchValueExpressionDriver& orig)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const PatchValueExpressionDriver& orig
+)
 :
     CommonValueExpressionDriver(orig),
     patch_(orig.patch_)
@@ -69,7 +74,10 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
     patch_(patch)
 {}
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvPatch& patch
+)
 :
     CommonValueExpressionDriver(dict),
     patch_(patch)
@@ -89,7 +97,10 @@ label getPatchID(const fvMesh &mesh,const word &name)
     return result;
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvMesh& mesh
+)
  :
     CommonValueExpressionDriver(dict),
     patch_(
@@ -113,7 +124,10 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
 {
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMesh&mesh)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const word& id,
+    const fvMesh&mesh
+)
  :
     CommonValueExpressionDriver(),
     patch_(
@@ -127,7 +141,10 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMe
 {
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch,const PatchValueExpressionDriver& old)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const fvPatch& patch,
+    const PatchValueExpressionDriver& old
+)
 :
     CommonValueExpressionDriver(old),
     patch_(patch)
@@ -143,14 +160,16 @@ PatchValueExpressionDriver::~PatchValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void PatchValueExpressionDriver::parse (const std::string& f)
+void PatchValueExpressionDriver::parseInternal (int startToken)
 {
-    content_ = f;
-    scan_begin ();
-    parserPatch::PatchValueExpressionParser parser (*this);
+    parserPatch::PatchValueExpressionParser parser (
+        scanner_,
+        *this,
+        startToken,
+        0
+    );
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
-    scan_end ();
 }
 
 vectorField *PatchValueExpressionDriver::makePositionField()
@@ -218,6 +237,153 @@ scalarField *PatchValueExpressionDriver::makeNearDistField()
     nearWallDist dist(this->mesh());
     (*result)=dist[patch_.index()];
     return result;
+}
+
+template<>
+PatchValueExpressionDriver::SymbolTable<PatchValueExpressionDriver>::SymbolTable()
+:
+StartupSymbols()
+{
+    // default value
+    insert("",parserPatch::PatchValueExpressionParser::token::START_DEFAULT);
+
+    insert(
+        "scalar_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_SCALAR_COMMA
+    );
+    insert(
+        "scalar_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_SCALAR_CLOSE
+    );
+    insert(
+        "point_scalar_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_SCALAR_COMMA
+    );
+    insert(
+        "point_scalar_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+    );
+    insert(
+        "vector_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_VECTOR_COMMA
+    );
+    insert(
+        "vector_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_VECTOR_CLOSE
+    );
+    insert(
+        "point_vector_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_VECTOR_COMMA
+    );
+    insert(
+        "point_vector_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+    );
+    insert(
+        "tensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_TENSOR_COMMA
+    );
+    insert(
+        "tensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_TENSOR_CLOSE
+    );
+    insert(
+        "point_tensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_TENSOR_COMMA
+    );
+    insert(
+        "point_tensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+    );
+    insert(
+        "symmTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_YTENSOR_COMMA
+    );
+    insert(
+        "symmTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_YTENSOR_CLOSE
+    );
+    insert(
+        "point_symmTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_YTENSOR_COMMA
+    );
+    insert(
+        "point_symmTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+    );
+    insert(
+        "sphericalTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_HTENSOR_COMMA
+    );
+    insert(
+        "sphericalTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_HTENSOR_CLOSE
+    );
+    insert(
+        "point_sphericalTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_HTENSOR_COMMA
+    );
+    insert(
+        "point_sphericalTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+    );
+    insert(
+        "logical_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_LOGICAL_COMMA
+    );
+    insert(
+        "logical_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_LOGICAL_CLOSE
+    );
+    insert(
+        "point_logical_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_LOGICAL_COMMA
+    );
+    insert(
+        "point_logical_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+    );
+
+    insert(
+        "CL",
+        parserPatch::PatchValueExpressionParser::token::START_CLOSE_ONLY
+    );
+    insert(
+        "SC",
+        parserPatch::PatchValueExpressionParser::token::START_COMMA_ONLY
+    );
+}
+
+const PatchValueExpressionDriver::SymbolTable<PatchValueExpressionDriver> &PatchValueExpressionDriver::symbolTable()
+{
+    static SymbolTable<PatchValueExpressionDriver> actualTable;
+
+    return actualTable;
+}
+
+int PatchValueExpressionDriver::startupSymbol(const word &name) {
+    return symbolTable()[name];
+}
+
+
+autoPtr<CommonPluginFunction> PatchValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        PatchValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool PatchValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return PatchValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

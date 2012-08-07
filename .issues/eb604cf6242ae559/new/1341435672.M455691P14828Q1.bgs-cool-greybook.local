@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 04 Jul 2012 22:59:53 +0200
+Subject: Re: Plugin-system for creating pseudo-fields
+Message-Id: <eb604cf6242ae559-b54d7e9b2ef07a69-artemis@bgs-cool-greybook.local>
+References: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+
+Things start to work. Field-parser almost complete

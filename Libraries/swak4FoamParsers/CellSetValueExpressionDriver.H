@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     CellSetValueExpressionDriverI.H
     CellSetValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef CellSetValueExpressionDriver_H
@@ -62,6 +62,9 @@ class CellSetValueExpressionDriver
 :
     public SetSubsetValueExpressionDriver
 {
+
+    static word driverName_;
+
     // Private data
 
     autoPtr<cellSet> cellSet_;
@@ -78,17 +81,20 @@ public:
      //- Runtime type information
     TypeName("CellSetValueExpressionDriver");
 
+    static const word &driverName() { return driverName_; }
+
+
    // Constructors
 
     //- Construct from components
     CellSetValueExpressionDriver(const cellSet &);
-    
+
     //- Construct from a dictionary
     CellSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
+
     //- Construct from an id
     CellSetValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     //- Copy construct
     CellSetValueExpressionDriver(const cellSet &,const CellSetValueExpressionDriver&);
 
@@ -149,6 +155,17 @@ public:
 
 //     template<class Type>
 //     virtual Field<Type> *toPoint(const Field<Type> &)=0;
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
+
 };
 
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     FaceZoneValueExpressionDriverI.H
     FaceZoneValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef FaceZoneValueExpressionDriver_H
@@ -62,6 +62,8 @@ class FaceZoneValueExpressionDriver
 :
     public SubsetValueExpressionDriver
 {
+    static word driverName_;
+
     // Private data
     const faceZone &faceZone_;
 
@@ -72,6 +74,8 @@ public:
      //- Runtime type information
     TypeName("FaceZoneValueExpressionDriver");
 
+    static const word &driverName() { return driverName_; }
+
    // Constructors
 
     //- Construct from components
@@ -80,13 +84,13 @@ public:
         bool autoInterpolate=false,
         bool warnAutoInterpolate=true
     );
-    
+
     //- Construct from a dictionary
     FaceZoneValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
+
     //- Construct from an id
     FaceZoneValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     //- Copy construct
     FaceZoneValueExpressionDriver(const faceZone &,const FaceZoneValueExpressionDriver&);
 
@@ -147,6 +151,16 @@ public:
 
 //     template<class Type>
 //     virtual Field<Type> *toPoint(const Field<Type> &)=0;
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
 };
 
 

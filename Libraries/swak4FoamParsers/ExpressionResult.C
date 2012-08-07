@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "ExpressionResult.H"
@@ -39,6 +39,8 @@ License
 
 namespace Foam {
 
+defineTypeNameAndDebug(ExpressionResult,0);
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 ExpressionResult::ExpressionResult()
@@ -48,6 +50,9 @@ ExpressionResult::ExpressionResult()
     isPoint_(false),
     isSingleValue_(true)
 {
+    if(debug) {
+        Info << "ExpressionResult::ExpressionResult()" << endl;
+    }
     clearResult();
 }
 
@@ -58,6 +63,10 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     isPoint_(false),
     isSingleValue_(true)
 {
+    if(debug) {
+        Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
+    }
+
     (*this)=rhs;
 }
 
@@ -73,6 +82,10 @@ ExpressionResult::ExpressionResult(
         dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
     )
 {
+    if(debug) {
+        Info << "ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)" << endl;
+    }
+
     if(
         dict.found("value")
     ) {
@@ -89,7 +102,7 @@ ExpressionResult::ExpressionResult(
                 valPtr_=new Field<sphericalTensor>(1,pTraits<sphericalTensor>(dict.lookup("value")));
             } else {
                 FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
-                    << "Don't know how to read data type " << valType_ 
+                    << "Don't know how to read data type " << valType_
                         << " as a single value" << endl
                         << exit(FatalError);
             }
@@ -120,6 +133,10 @@ ExpressionResult::ExpressionResult(
 
 ExpressionResult::~ExpressionResult()
 {
+    if(debug) {
+        Info << "ExpressionResult::~ExpressionResult()" << endl;
+    }
+
     uglyDelete();
 }
 
@@ -133,14 +150,34 @@ bool ExpressionResult::hasValue() const
 
 void ExpressionResult::clearResult()
 {
+    if(debug) {
+        Info << "ExpressionResult: Clearing result" << endl;
+    }
+
     uglyDelete();
+
+    if(debug) {
+        Info << "ExpressionResult: Clearing object" << endl;
+    }
+    generalContent_.reset();
+    if(debug) {
+        Info << "ExpressionResult: Clearing result - done" << endl;
+    }
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 void ExpressionResult::uglyDelete()
 {
+    if(debug) {
+        Info << "ExpressionResult: uglyDelete" << endl;
+    }
+
     if( valPtr_ ) {
+        if(debug) {
+            Info << "ExpressionResult: uglyDelete - clearing pointer" << endl;
+        }
+
         if(valType_==pTraits<scalar>::typeName) {
             delete static_cast<scalarField*>(valPtr_);
         } else if(valType_==vector::typeName) {
@@ -161,6 +198,10 @@ void ExpressionResult::uglyDelete()
     }
     valType_="Void";
     valPtr_=NULL;
+
+    if(debug) {
+        Info << "ExpressionResult: uglyDelete - done" << endl;
+    }
 }
 
 ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn) const
@@ -244,30 +285,30 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
-// I have NO idea why this is necessary, but since the introduction of the 
+// I have NO idea why this is necessary, but since the introduction of the
 // enable_if_rank0-stuff the function below does not compile without it
 
 template<>
-class pTraits<token::punctuationToken> 
+class pTraits<token::punctuationToken>
 {};
 
 template<int N>
-class pTraits<char [N]> 
+class pTraits<char [N]>
 {};
 
 template<>
-class pTraits<Ostream&(Ostream&)> 
+class pTraits<Ostream&(Ostream&)>
 {};
 
 template<>
-class pTraits<char> 
+class pTraits<char>
 {};
 
 template<>
-class pTraits<const char *> 
+class pTraits<const char *>
 {};
 
-Ostream & operator<<(Ostream &out,const ExpressionResult &data) 
+Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 {
     out << token::BEGIN_BLOCK << endl;
 

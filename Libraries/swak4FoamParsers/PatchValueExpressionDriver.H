@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     PatchValueExpressionDriverI.H
     PatchValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef PatchValueExpressionDriver_H
@@ -84,9 +84,11 @@ class PatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const PatchValueExpressionDriver&);
 
+    static word driverName_;
+
 protected:
 
-    // Handling the scanner 
+    // Handling the scanner
     void scan_begin();
     void scan_end();
 
@@ -105,28 +107,49 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    //- set the state to "eat characters"
+    void startEatCharacters();
+
+    // Handling the parser
+    void parseInternal(int startToken);
+
+    //- execute a plugin-function
+    template<class T>
+    autoPtr<Field<T> > evaluatePluginFunction(
+        const string &name,
+        const parserPatch::location &loc,
+        int &scanned,
+        bool isPoint=false
+    );
+
+    static const SymbolTable<PatchValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
+
 public:
 
     //- Runtime type information
     TypeName("PatchValueExpressionDriver");
 
+    static const word &driverName() { return driverName_; }
+
     // Constructors
 
     //- Construct from components
     PatchValueExpressionDriver(const fvPatch& patch_);
-    
+
     //- Construct from components
     PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch_);
-    
+
     //- Construct from a dictionary
     PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
+
     //- Construct from and an old Version
     PatchValueExpressionDriver(const fvPatch& patch_,const PatchValueExpressionDriver& old);
 
     //- Construct from an id
     PatchValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     //- Copy construct
     PatchValueExpressionDriver(const PatchValueExpressionDriver&);
 
@@ -178,14 +201,21 @@ public:
     template<class Type>
     Field<Type> *getPatchNeighbourField(const string &name);
 
-    // Handling the parser
-    void parse(const std::string& f);
-
     template<class Type>
     Field<Type> *toFace(const Field<Type> &);
 
     template<class Type>
     Field<Type> *toPoint(const Field<Type> &);
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
 
     // allow access of protected methods
     friend class parserPatch::PatchValueExpressionParser;
