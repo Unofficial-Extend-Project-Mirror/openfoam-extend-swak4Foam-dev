@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -38,13 +38,18 @@ SourceFiles
     ExpressionResult.C
     ExpressionResultIO.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef ExpressionResult_H
 #define ExpressionResult_H
 
 #include "foamVersion4swak.H"
+
+#if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
+#define FOAM_HAS_SORTED_TOC
+#endif
+
 #if (FOAM_VERSION4SWAK_MAJOR > 1)
 #error "This swak4Foam-version is only used for the 1.x-versions of OpenFOAM. For higher versions there is a special branch"
 #endif
@@ -69,7 +74,7 @@ class ExpressionResult
     string valType_;
 
     void *valPtr_;
-    
+
     bool isPoint_;
 
     bool isSingleValue_;

@@ -207,8 +207,11 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
         )   << "Unknown  CommonValueExpressionDriver type " << driverType
             << endl << endl
             << "Valid valueTypes are :" << endl
-	  //            << dictionaryConstructorTablePtr_->sortedToc() // does not work in 1.6
+#ifdef FOAM_HAS_SORTED_TOC
+            << dictionaryConstructorTablePtr_->sortedToc() // does not work in 1.6
+#else
             << dictionaryConstructorTablePtr_->toc()
+#endif
             << exit(FatalError);
     }
 
@@ -240,8 +243,11 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
         )   << "Unknown  CommonValueExpressionDriver type " << driverType
             << endl << endl
             << "Valid valueTypes are :" << endl
-	  //            << idNameConstructorTablePtr_->sortedToc() // does not work in 1.6
+#ifdef FOAM_HAS_SORTED_TOC
+            << idNameConstructorTablePtr_->sortedToc() // does not work in 1.6
+#else
             << idNameConstructorTablePtr_->toc()
+#endif
             << exit(FatalError);
     }
 

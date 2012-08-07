@@ -1038,6 +1038,9 @@ S_{expl} + S_{impl} T
      called for technical reasons.
 
      Fix: values copied by hand
+**** =sortedToc= does not exist for =1.6-ext=
+     Introduced a preprocessor symbol that allows using sortedToc on
+     newer versions
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
@@ -1087,3 +1090,8 @@ S_{expl} + S_{impl} T
      Example of the usage in the =angledDuctImplicit=-case (the
      results are of limited value because of the temperature boundary
      condition)
+*** Infrastructure
+**** =Allwmake= creates symbolic links in =swakFiniteArea=
+     The links to =mybison= and =myflex= are missing when the sources
+     are downloaded as a tarball. The =Allwmake=-script now creates
+     these links if they are missing
