@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,10 +28,11 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "CellZoneValueExpressionDriver.H"
+#include "CellZoneValuePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -40,6 +41,8 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(CellZoneValueExpressionDriver, 0);
+
+word CellZoneValueExpressionDriver::driverName_="cellZone";
 
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellZoneValueExpressionDriver, dictionary, cellZone);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CellZoneValueExpressionDriver, idName, cellZone);
@@ -94,7 +97,7 @@ CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const dictionary& d
                 ),
                 dict.lookup(
                     "zoneName"
-                )                
+                )
             )
         ]
     )
@@ -124,7 +127,7 @@ CellZoneValueExpressionDriver::~CellZoneValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 template<>
-inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellZone::const_iterator &it) 
+inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellZone::const_iterator &it)
 {
     return *it;
 }
@@ -204,6 +207,26 @@ vectorField *CellZoneValueExpressionDriver::makeFaceAreaField()
             << endl
             << exit(FatalError);
     return new vectorField(0);
+}
+
+autoPtr<CommonPluginFunction> CellZoneValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        CellZoneValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool CellZoneValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return CellZoneValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     PatchValueExpressionDriverI.H
     PatchValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef PatchValueExpressionDriverYY_H
@@ -47,7 +47,7 @@ SourceFiles
 
 #include "PatchValueExpressionDriver.H"
 
-#define YY_DECL int parserPatchlex(parserPatch::PatchValueExpressionParser::semantic_type* yylval,parserPatch::location* yylloc,Foam::PatchValueExpressionDriver &driver)
+#define YY_DECL int parserPatchlex(parserPatch::PatchValueExpressionParser::semantic_type* yylval_param,parserPatch::location* yylloc,void *yyscanner,Foam::PatchValueExpressionDriver &driver,int& start_token,int& numberOfFunctionChars)
 
 YY_DECL;
 

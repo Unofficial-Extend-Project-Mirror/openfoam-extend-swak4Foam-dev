@@ -1,7 +1,10 @@
- 
+
 %{                                          /* -*- C++ -*- */
 #include "FieldValueExpressionDriverYY.H"
 #include <errno.h>
+#include "FieldValuePluginFunction.H"
+#include "FieldValueExpressionParser.tab.hh"
+typedef parserField::FieldValueExpressionParser::semantic_type YYSTYPE;
 %}
 
 %s setname
@@ -10,16 +13,21 @@
 %s fzonename
 %s psetname
 %s pzonename
+%s patchname
 %s vectorcomponent
 %s tensorcomponent
+%x parsedByOtherParser
 %x needsIntegerParameter
 
-%option noyywrap nounput batch debug 
+%option noyywrap nounput batch debug
 %option stack
 %option prefix="fvexpr"
+%option reentrant
+%option bison-bridge
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
+patchid [[:alpha:]_][[:alnum:]_-]*
 int     [[:digit:]]+
 
 exponent_part              [eE][-+]?[[:digit:]]+
@@ -32,20 +40,31 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 %%
 
 %{
+    typedef parserField::FieldValueExpressionParser::token token;
+
     yylloc->step ();
+
+    // recipie from http://www.gnu.org/software/bison/manual/html_node/Multiple-start_002dsymbols.html#Multiple-start_002dsymbols
+    // allows multiple start symbols
+    if (start_token)
+    {
+        if(driver.traceScanning()) {
+            Foam::Info << "Start token: " << start_token << Foam::endl;
+        }
+
+        int t = start_token;
+        start_token = 0;
+        return t;
+    }
 %}
 
-<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,needsIntegerParameter>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename>[-+*/%(),&^<>!?:.]               return yytext[0];
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname>[-+*/%(),&^<>!?:.;]               return yytext[0];
 
 <needsIntegerParameter>[(] return yytext[0];
 <needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
-
-%{
-    typedef parserField::FieldValueExpressionParser::token token;
-%}
 
 &&                   return token::TOKEN_AND;
 \|\|                 return token::TOKEN_OR;
@@ -157,6 +176,13 @@ pzone                  {
     return token::TOKEN_pzone;
                       }
 
+onPatch                  {
+    BEGIN(patchname);
+    return token::TOKEN_onPatch;
+                      }
+
+internalFace          return token::TOKEN_internalFace;
+
 grad                  return token::TOKEN_grad;
 curl                  return token::TOKEN_curl;
 magSqrGradGrad        return token::TOKEN_magSqrGradGrad;
@@ -225,25 +251,25 @@ false                  return token::TOKEN_FALSE;
         driver.isThere<Foam::volScalarField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_SID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volVectorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volVectorField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_VID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volTensorField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_TID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volSymmTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSymmTensorField>(*ptr)
     ) {
         yylval->name = ptr; return token::TOKEN_YID;
-    } else if(       
+    } else if(
         driver.isVariable<Foam::volSphericalTensorField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volSphericalTensorField>(*ptr)
@@ -269,6 +295,65 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_PYID;
     } else if(driver.isThere<Foam::pointSphericalTensorField>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_PHID;
+    } else if(Foam::FieldValuePluginFunction::exists(driver,*ptr)) {
+        // OK. We'll create the function two times. But this is less messy
+        // than passing it two times
+        Foam::autoPtr<Foam::FieldValuePluginFunction> fInfo(
+            Foam::FieldValuePluginFunction::New(
+                driver,
+                *ptr
+            )
+        );
+
+        int tokenTyp=-1;
+        if(fInfo->returnType()=="volScalarField") {
+             tokenTyp=token::TOKEN_FUNCTION_SID;
+        } else if(fInfo->returnType()=="surfaceScalarField") {
+             tokenTyp=token::TOKEN_FUNCTION_FSID;
+        } else if(fInfo->returnType()=="pointScalarField") {
+             tokenTyp=token::TOKEN_FUNCTION_PSID;
+        } else if(fInfo->returnType()=="volVectorField") {
+             tokenTyp=token::TOKEN_FUNCTION_VID;
+        } else if(fInfo->returnType()=="surfaceVectorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FVID;
+        } else if(fInfo->returnType()=="pointVectorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PVID;
+        } else if(fInfo->returnType()=="volTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_TID;
+        } else if(fInfo->returnType()=="surfaceTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FTID;
+        } else if(fInfo->returnType()=="pointTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PTID;
+        } else if(fInfo->returnType()=="volSymmTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_YID;
+        } else if(fInfo->returnType()=="surfaceSymmTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FYID;
+        } else if(fInfo->returnType()=="pointSymmTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PYID;
+        } else if(fInfo->returnType()=="volSphericalTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_HID;
+        } else if(fInfo->returnType()=="surfaceSphericalTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_FHID;
+        } else if(fInfo->returnType()=="pointSphericalTensorField") {
+             tokenTyp=token::TOKEN_FUNCTION_PHID;
+        } else if(fInfo->returnType()=="volLogicalField") {
+             tokenTyp=token::TOKEN_FUNCTION_LID;
+        } else if(fInfo->returnType()=="surfaceLogicalField") {
+             tokenTyp=token::TOKEN_FUNCTION_FLID;
+        } else if(fInfo->returnType()=="pointLogicalField") {
+             tokenTyp=token::TOKEN_FUNCTION_PLID;
+        } else {
+            driver.error (
+                *yylloc,
+                "Function "+*ptr+" returns unsupported type "
+                + fInfo->returnType()
+            );
+        }
+
+        //        BEGIN(parsedByOtherParser);
+
+        yylval->name = ptr;
+        return tokenTyp;
     } else {
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
@@ -330,31 +415,123 @@ false                  return token::TOKEN_FALSE;
     }
                      }
 
+<patchname>{patchid}              {
+    Foam::string *ptr=new Foam::string (yytext);
+    BEGIN(INITIAL);
+    Foam::label patchI=driver.mesh().boundaryMesh().findPatchID(*ptr);
+    if(patchI>=0) {
+        yylval->name = ptr; return token::TOKEN_PATCHID;
+    } else {
+        driver.error (*yylloc, "patch id "+*ptr+" does not exist in the mesh");
+    }
+                     }
+
+<parsedByOtherParser>. {
+    numberOfFunctionChars--;
+    if(driver.traceScanning()) {
+        Foam::Info << " Remaining characters to be eaten: " << numberOfFunctionChars
+            << Foam::endl;
+    }
+    if(numberOfFunctionChars>0) {
+        return token::TOKEN_IN_FUNCTION_CHAR;
+    } else {
+        BEGIN(INITIAL);
+        return token::TOKEN_LAST_FUNCTION_CHAR;
+    }
+                       }
+
 .                    driver.error (*yylloc, "invalid character");
 <needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
-
 
 %%
 
 void FieldValueExpressionDriver::scan_begin ()
 {
+    if(trace_scanning_) {
+        Info << "FieldValueExpressionDriver::scan_begin "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    if(scanner_!=NULL) {
+        FatalErrorIn("FieldValueExpressionDriver::scan_begin")
+            << "Already existing scanner " << getHex(scanner_)
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_init(&scanner_);
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     yy_flex_debug = trace_scanning_;
-    yy_scan_string(content_.c_str());
+    yy_scan_string(content_.c_str(),scanner_);
 //    if (!(yyin = fopen (file.c_str (), "r")))
 //        error (std::string ("cannot open ") + file);
+
+    if(trace_scanning_) {
+        Info << "FieldValueExpressionDriver::scan_begin - finished "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 }
 
 void FieldValueExpressionDriver::scan_end ()
 {
+    if(trace_scanning_) {
+        Info << "FieldValueExpressionDriver::scan_end "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    if(scanner_==NULL) {
+        FatalErrorIn("FieldValueExpressionDriver::scan_end")
+            << "Uninitialized Scanner. Can't delete it"
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_destroy(scanner_);
+    // WarningIn("FieldValueExpressionDriver::scan_end")
+    //     << "Scanner " <<  getHex(scanner_) << " is not deleted"
+    //         << endl;
+
+    scanner_=NULL;
 //	    fclose (yyin);
+}
+
+void FieldValueExpressionDriver::startEatCharacters()
+{
+    if(traceScanning()) {
+        Info << "FieldValueExpressionDriver::startEatCharacters() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    BEGIN(parsedByOtherParser);
 }
 
 void FieldValueExpressionDriver::startVectorComponent()
 {
+    if(traceScanning()) {
+        Info << "FieldValueExpressionDriver::startVectorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(vectorcomponent);
 }
 
 void FieldValueExpressionDriver::startTensorComponent()
 {
+    if(traceScanning()) {
+        Info << "FieldValueExpressionDriver::startTensorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(tensorcomponent);
 }

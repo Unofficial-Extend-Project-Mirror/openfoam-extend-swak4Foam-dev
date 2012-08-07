@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 05 Jun 2012 11:09:43 +0200
+State: fixed
+Subject: Indicator function whether faces are on patches
+Message-Id: <a0bfcb659b617b38-0-artemis@bgs-cool-greybook.local>
+
+A function "onPatch(inlet)" that returns a boolean for all faces which
+are on the names patch
+
+This should be fixed together with bab71cb82a64af3b (otherwise it
+makes no sense anyway)

@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -82,10 +82,10 @@ bool executeIfSwakExpressionFunctionObject::condition()
     driver_->clearVariables();
     driver_->parse(logicalExpression_);
 
-    if(driver_->getResultType()!=pTraits<bool>::typeName) {
+    if(driver_->CommonValueExpressionDriver::getResultType()!=pTraits<bool>::typeName) {
         FatalErrorIn("executeIfSwakExpressionFunctionObject::condition()")
-            << "Logical Expression " << logicalExpression_ 
-                << " evaluates to type " << driver_->getResultType() 
+            << "Logical Expression " << logicalExpression_
+                << " evaluates to type " << driver_->CommonValueExpressionDriver::getResultType()
                 << " when it should be " << pTraits<bool>::typeName
                 << endl
                 << exit(FatalError);
@@ -108,7 +108,7 @@ bool executeIfSwakExpressionFunctionObject::condition()
                     << exit(FatalError);
     }
     if(writeDebug()) {
-        Info << "Expression " << logicalExpression_ 
+        Info << "Expression " << logicalExpression_
             << " evaluates to " << driver_->getResult<bool>() << endl;
         Info << " -> " << logicalAccumulationsNames_[logicalAccumulation_]
             << " gives " << result << endl;
@@ -123,13 +123,13 @@ bool executeIfSwakExpressionFunctionObject::read(const dictionary& dict)
     return conditionalFunctionObjectListProxy::read(dict);
 }
 
-void executeIfSwakExpressionFunctionObject::readParameters(const dictionary &dict) 
+void executeIfSwakExpressionFunctionObject::readParameters(const dictionary &dict)
 {
     driver_=CommonValueExpressionDriver::New(
         dict,
         refCast<const fvMesh>(obr_)
-    ); 
-    
+    );
+
     logicalExpression_=dict.lookup("logicalExpression");
 
     logicalAccumulation_=logicalAccumulationsNames_[dict.lookup("logicalAccumulation")];

@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 06 Jun 2012 23:21:43 +0200
+State: new
+Subject: Get rid of raw pointers in the Parser/Driver-code
+Message-Id: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+
+Replace with autoPtr and tmp. Not sure whether this is possible in the
+yy-files but at least the interface of the driver-classes should only
+return autoPtr

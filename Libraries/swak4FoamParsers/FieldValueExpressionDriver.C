@@ -1,6 +1,8 @@
-//  ICE Revision: $Id$ 
+//  ICE Revision: $Id$
 
 #include "FieldValueExpressionDriver.H"
+#include "FieldValuePluginFunction.H"
+
 #include <Random.H>
 #include <wallDist.H>
 #include <nearWallDist.H>
@@ -12,6 +14,8 @@
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
+
+word FieldValueExpressionDriver::driverName_="internalField";
 
 defineTypeNameAndDebug(FieldValueExpressionDriver, 0);
 
@@ -29,7 +33,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     : CommonValueExpressionDriver(
         cacheReadFields,
         searchInMemory,
-        searchOnDisc        
+        searchOnDisc
     ),
       time_(time),
       mesh_(mesh),
@@ -49,7 +53,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     : CommonValueExpressionDriver(
         false,
         true,
-        false        
+        false
     ),
       time_(""),
       mesh_(mesh),
@@ -71,7 +75,7 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     : CommonValueExpressionDriver(
         cacheReadFields,
         searchInMemory,
-        searchOnDisc        
+        searchOnDisc
     ),
       time_(""),
       mesh_(mesh),
@@ -107,16 +111,12 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 {
 }
 
-void FieldValueExpressionDriver::parse (const std::string &f)
+void FieldValueExpressionDriver::parseInternal(int startToken)
 {
-    content_ = f;
-    scan_begin ();
-    parserField::FieldValueExpressionParser parser (*this);
+    parserField::FieldValueExpressionParser parser (scanner_,*this,startToken,0);
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
-    scan_end ();
 }
-
 
 bool FieldValueExpressionDriver::isCellSet(const string &name)
 {
@@ -316,7 +316,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
 
     vector fmin(0,0,0);
     vector fmax(0,0,0);
-    
+
     forAll(*f,faceI)
     {
         const face &fProp = mesh_.faces()[faceI];
@@ -327,15 +327,15 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
             forAll(mesh_.points()[0],compI)
             {
                 if(
-                    mesh_.points()[fProp[pointI]].component(compI) 
-                    < 
+                    mesh_.points()[fProp[pointI]].component(compI)
+                    <
                     fmin.component(compI)
                 ) {
                     fmin.component(compI) = mesh_.points()[fProp[pointI]].component(compI);
                 }
                 if(
-                    mesh_.points()[fProp[pointI]].component(compI) 
-                    > 
+                    mesh_.points()[fProp[pointI]].component(compI)
+                    >
                     fmax.component(compI)
                 ) {
                     fmax.component(compI) = mesh_.points()[fProp[pointI]].component(compI);
@@ -348,7 +348,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
     {
         labelList cNumbers = mesh_.boundaryMesh()[patchI].faceCells();
         fvsPatchVectorField & fFace = f->boundaryField()[patchI];
-        
+
         forAll(fFace,faceI)
         {
             const cell & cProp(mesh_.cells()[cNumbers[faceI]]);
@@ -369,14 +369,14 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
                         forAll(mesh_.points()[0],compI)
                         {
                             if(
-                                mesh_.points()[fProp[pointI]].component(compI) 
-                                < 
+                                mesh_.points()[fProp[pointI]].component(compI)
+                                <
                                 fmin.component(compI)
                             ) {
                                 fmin.component(compI) = mesh_.points()[fProp[pointI]].component(compI);
                             }
                             if(
-                                mesh_.points()[fProp[pointI]].component(compI) 
+                                mesh_.points()[fProp[pointI]].component(compI)
                                 >
                                 fmax.component(compI)
                             ) {
@@ -539,7 +539,7 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
 {
   volScalarField *f=makeConstantField<volScalarField>(0);
 
-  IOobject head 
+  IOobject head
       (
           name,
           time(),
@@ -548,9 +548,9 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
           IOobject::MUST_READ,
           IOobject::NO_WRITE
       );
-  
+
   if(!head.headerOk()) {;
-      head=IOobject 
+      head=IOobject
           (
               name,
               "constant",
@@ -574,11 +574,44 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
   return f;
 }
 
+surfaceScalarField *FieldValueExpressionDriver::makeInternalFaceField()
+{
+    surfaceScalarField *f=makeConstantField<surfaceScalarField>(1,true);
+
+    forAll(f->boundaryField(),patchI) {
+        forAll((*f).boundaryField()[patchI],faceI) {
+            f->boundaryField()[patchI][faceI]=0;
+        }
+    }
+
+    return f;
+}
+
+surfaceScalarField *FieldValueExpressionDriver::makeOnPatchField(const string &name)
+{
+    surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
+
+    label patchI=mesh().boundaryMesh().findPatchID(name);
+    if(patchI<0) {
+        FatalErrorIn("makeFaceSetField(const string &name)")
+            << "Patch name " << name << " not in valid names"
+                << mesh().boundaryMesh().names()
+                << endl
+                << exit(FatalError);
+    } else {
+        forAll((*f).boundaryField()[patchI],faceI) {
+            (*f).boundaryField()[patchI][faceI]=1;
+        }
+    }
+
+    return f;
+}
+
 surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &name)
 {
-  surfaceScalarField *f=makeConstantField<surfaceScalarField>(0);
+    surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
 
-  IOobject head 
+  IOobject head
       (
           name,
           time(),
@@ -587,9 +620,9 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
           IOobject::MUST_READ,
           IOobject::NO_WRITE
       );
-  
+
   if(!head.headerOk()) {;
-      head=IOobject 
+      head=IOobject
           (
               name,
               "constant",
@@ -605,7 +638,23 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
   labelList faces(cs.toc());
 
   forAll(faces,faceI) {
-    (*f)[faces[faceI]]=1.;
+      if(faces[faceI] < mesh().nInternalFaces()) {
+          (*f)[faces[faceI]]=1.;
+      } else {
+          label patchI=mesh().boundaryMesh().whichPatch(faces[faceI]);
+          if(patchI<0) {
+              FatalErrorIn("FieldValueExpressionDriver::makeFaceSetField(const string &name")
+                  << "Face " << faces[faceI] << " of faceSet "
+                      << name << " is not in the mesh"
+                      << endl
+                      << exit(FatalError);
+          } else {
+              (*f).boundaryField()[patchI][
+                  faces[faceI]
+                  -
+                  mesh().boundaryMesh()[patchI].start()] = 1.;
+          }
+      }
   }
 
   return f;
@@ -615,7 +664,7 @@ pointScalarField *FieldValueExpressionDriver::makePointSetField(const string &na
 {
   pointScalarField *f=makePointConstantField<pointScalarField>(0);
 
-  IOobject head 
+  IOobject head
       (
           name,
           time(),
@@ -624,9 +673,9 @@ pointScalarField *FieldValueExpressionDriver::makePointSetField(const string &na
           IOobject::MUST_READ,
           IOobject::NO_WRITE
       );
-  
+
   if(!head.headerOk()) {;
-      head=IOobject 
+      head=IOobject
           (
               name,
               "constant",
@@ -674,7 +723,24 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &
 
   forAll(zone,ind) {
       label faceI=zone[ind];
-      (*f)[faceI]=1.;
+
+      if(faceI < mesh().nInternalFaces()) {
+          (*f)[faceI]=1.;
+      } else {
+          label patchI=mesh().boundaryMesh().whichPatch(faceI);
+          if(patchI<0) {
+              FatalErrorIn("FieldValueExpressionDriver::makeFaceZoneField(const string &name")
+                  << "Face " << faceI << " of faceZone "
+                      << name << " is not in the mesh"
+                      << endl
+                      << exit(FatalError);
+          } else {
+              (*f).boundaryField()[patchI][
+                  faceI
+                  -
+                  mesh().boundaryMesh()[patchI].start()] = 1.;
+          }
+      }
   }
 
   return f;
@@ -924,6 +990,203 @@ const word FieldValueExpressionDriver::time() const
     } else {
         return CommonValueExpressionDriver::time();
     }
+}
+
+template<>
+FieldValueExpressionDriver::SymbolTable<FieldValueExpressionDriver>::SymbolTable()
+:
+StartupSymbols()
+{
+    // default value
+    insert("",parserField::FieldValueExpressionParser::token::START_DEFAULT);
+
+    insert(
+        "volScalarField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_SCALAR_COMMA
+    );
+    insert(
+        "volScalarField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_SCALAR_CLOSE
+    );
+    insert(
+        "volVectorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_VECTOR_COMMA
+    );
+    insert(
+        "volVectorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_VECTOR_CLOSE
+    );
+    insert(
+        "volTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_TENSOR_COMMA
+    );
+    insert(
+        "volTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_TENSOR_CLOSE
+    );
+    insert(
+        "volSymmTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_YTENSOR_COMMA
+    );
+    insert(
+        "volSymmTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_YTENSOR_CLOSE
+    );
+    insert(
+        "volSphericalTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_HTENSOR_COMMA
+    );
+    insert(
+        "volSphericalTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_HTENSOR_CLOSE
+    );
+    insert(
+        "volLogicalField_SC",
+        parserField::FieldValueExpressionParser::token::START_VOL_LOGICAL_COMMA
+    );
+    insert(
+        "volLogicalField_CL",
+        parserField::FieldValueExpressionParser::token::START_VOL_LOGICAL_CLOSE
+    );
+
+    insert(
+        "surfaceScalarField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_SCALAR_COMMA
+    );
+    insert(
+        "surfaceScalarField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_SCALAR_CLOSE
+    );
+    insert(
+        "surfaceVectorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_VECTOR_COMMA
+    );
+    insert(
+        "surfaceVectorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_VECTOR_CLOSE
+    );
+    insert(
+        "surfaceTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_TENSOR_COMMA
+    );
+    insert(
+        "surfaceTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_TENSOR_CLOSE
+    );
+    insert(
+        "surfaceSymmTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_YTENSOR_COMMA
+    );
+    insert(
+        "surfaceSymmTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_YTENSOR_CLOSE
+    );
+    insert(
+        "surfaceSphericalTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_HTENSOR_COMMA
+    );
+    insert(
+        "surfaceSphericalTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_HTENSOR_CLOSE
+    );
+    insert(
+        "surfaceLogicalField_SC",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_LOGICAL_COMMA
+    );
+    insert(
+        "surfaceLogicalField_CL",
+        parserField::FieldValueExpressionParser::token::START_SURFACE_LOGICAL_CLOSE
+    );
+
+    insert(
+        "pointScalarField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_SCALAR_COMMA
+    );
+    insert(
+        "pointScalarField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+    );
+    insert(
+        "pointVectorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_VECTOR_COMMA
+    );
+    insert(
+        "pointVectorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+    );
+    insert(
+        "pointTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_TENSOR_COMMA
+    );
+    insert(
+        "pointTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+    );
+    insert(
+        "pointSymmTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_YTENSOR_COMMA
+    );
+    insert(
+        "pointSymmTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+    );
+    insert(
+        "pointSphericalTensorField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_HTENSOR_COMMA
+    );
+    insert(
+        "pointSphericalTensorField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+    );
+    insert(
+        "pointLogicalField_SC",
+        parserField::FieldValueExpressionParser::token::START_POINT_LOGICAL_COMMA
+    );
+    insert(
+        "pointLogicalField_CL",
+        parserField::FieldValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+    );
+
+    insert(
+        "CL",
+        parserField::FieldValueExpressionParser::token::START_CLOSE_ONLY
+    );
+    insert(
+        "SC",
+        parserField::FieldValueExpressionParser::token::START_COMMA_ONLY
+    );
+}
+
+const FieldValueExpressionDriver::SymbolTable<FieldValueExpressionDriver> &FieldValueExpressionDriver::symbolTable()
+{
+    static SymbolTable<FieldValueExpressionDriver> actualTable;
+
+    return actualTable;
+}
+
+int FieldValueExpressionDriver::startupSymbol(const word &name) {
+    return symbolTable()[name];
+}
+
+
+autoPtr<CommonPluginFunction> FieldValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        FieldValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool FieldValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return FieldValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 } // end namespace

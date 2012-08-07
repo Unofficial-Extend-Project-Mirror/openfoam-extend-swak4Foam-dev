@@ -37,4 +37,14 @@ FaceZoneValueExpressionDriver.C
 SampledSurfaceValueExpressionDriver.C
 SampledSetValueExpressionDriver.C
 
+plugins/CommonPluginFunction.C
+plugins/FieldValuePluginFunction.C
+plugins/PatchValuePluginFunction.C
+plugins/CellSetValuePluginFunction.C
+plugins/CellZoneValuePluginFunction.C
+plugins/FaceSetValuePluginFunction.C
+plugins/FaceZoneValuePluginFunction.C
+plugins/SampledSetValuePluginFunction.C
+plugins/SampledSurfaceValuePluginFunction.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswak4FoamParsers
