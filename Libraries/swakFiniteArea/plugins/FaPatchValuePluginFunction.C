@@ -28,31 +28,17 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    Foam::FaPatchValueExpressionDriver
-
-Description
-
-SourceFiles
-    FaPatchValueExpressionDriverI.H
-    FaPatchValueExpressionDriver.C
-
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FaPatchValueExpressionDriverYY_H
-#define FaPatchValueExpressionDriverYY_H
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+#include "FaPatchValuePluginFunction.H"
 #include "FaPatchValueExpressionDriver.H"
 
-#define YY_DECL int parserFaPatchlex(parserFaPatch::FaPatchValueExpressionParser::semantic_type* yylval_param,parserFaPatch::location* yylloc,void *yyscanner,Foam::FaPatchValueExpressionDriver &driver,int &start_token,int &numberOfFunctionChars)
+namespace Foam {
 
-YY_DECL;
+defineTemplateTypeNameAndDebug(FaPatchValuePluginFunction,0);
+defineTemplateRunTimeSelectionTable(FaPatchValuePluginFunction, name);
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
+} // namespace
 
 // ************************************************************************* //

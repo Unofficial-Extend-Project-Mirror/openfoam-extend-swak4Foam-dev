@@ -61,7 +61,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname,needsIntegerParameter>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname>[-+*/%(),&^<>!?:.;]               return yytext[0];
+<INITIAL,setname,zonename,fsetname,fzonename,psetname,pzonename,patchname>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 <needsIntegerParameter>[(] return yytext[0];
 <needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }

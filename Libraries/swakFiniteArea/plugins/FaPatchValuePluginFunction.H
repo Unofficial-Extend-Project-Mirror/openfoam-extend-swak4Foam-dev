@@ -29,27 +29,37 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FaPatchValueExpressionDriver
+    Foam::FaPatchValuePluginFunction
 
 Description
 
 SourceFiles
-    FaPatchValueExpressionDriverI.H
-    FaPatchValueExpressionDriver.C
+    FaPatchValuePluginFunction.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FaPatchValueExpressionDriverYY_H
-#define FaPatchValueExpressionDriverYY_H
+#ifndef FaPatchValuePluginFunction_H
+#define FaPatchValuePluginFunction_H
+
+#include "ConcretePluginFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "FaPatchValueExpressionDriver.H"
+namespace Foam
+{
 
-#define YY_DECL int parserFaPatchlex(parserFaPatch::FaPatchValueExpressionParser::semantic_type* yylval_param,parserFaPatch::location* yylloc,void *yyscanner,Foam::FaPatchValueExpressionDriver &driver,int &start_token,int &numberOfFunctionChars)
+    class FaPatchValueExpressionDriver;
 
-YY_DECL;
+    typedef ConcretePluginFunction<FaPatchValueExpressionDriver>
+        FaPatchValuePluginFunction;
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
