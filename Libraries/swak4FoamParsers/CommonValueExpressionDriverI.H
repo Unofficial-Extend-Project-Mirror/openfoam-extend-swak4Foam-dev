@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -41,7 +41,7 @@ License
 #include <cassert>
 
 namespace Foam {
- 
+
     inline const pointMesh &CommonValueExpressionDriver::pMesh()
     {
         if(!pMesh_.valid()) {
@@ -49,7 +49,7 @@ namespace Foam {
                 new pointMesh(mesh())
             );
         }
-        
+
         return pMesh_();
     }
 
@@ -94,7 +94,7 @@ namespace Foam {
         if(qPoint!=result_.isPoint()) {
             FatalErrorIn("CommonValueExpressionDriver::getResult(bool qPoint)")
                 << "A " << (qPoint ? "point" : "face" ) << "-field was wanted"
-                    << " but we got a " << (!qPoint ? "point" : "face" ) 
+                    << " but we got a " << (!qPoint ? "point" : "face" )
                     << endl
                     << exit(FatalError);
         }
@@ -112,7 +112,7 @@ namespace Foam {
     bool CommonValueExpressionDriver::isVariable(const string &name,bool isPoint) const
     {
         if(debug) {
-            Pout << "CommonValueExpressionDriver::isVariable " 
+            Pout << "CommonValueExpressionDriver::isVariable "
                 << " looking for " << name << " isPoint: " << isPoint;
         }
 
@@ -121,8 +121,8 @@ namespace Foam {
                 Pout << " - name found";
             }
             if(
-                variables_[name].valueType()==pTraits<Type>::typeName 
-                && 
+                variables_[name].valueType()==pTraits<Type>::typeName
+                &&
                 variables_[name].isPoint()==isPoint
             ) {
                 if(debug) {
@@ -130,7 +130,7 @@ namespace Foam {
                 }
 
                 return true;
-            } 
+            }
         }
 
         if(debug) {
@@ -154,13 +154,13 @@ namespace Foam {
         const ExpressionResult &aGlobal=lookupGlobal(name);
 
         if (debug) {
-            Pout << " - found type " << aGlobal.valueType()  
+            Pout << " - found type " << aGlobal.valueType()
                 << " isPoint " << isPoint;
         }
 
         if(
-            aGlobal.valueType()==pTraits<Type>::typeName 
-            && 
+            aGlobal.valueType()==pTraits<Type>::typeName
+            &&
             aGlobal.isPoint()==isPoint
         ) {
             if(debug) {
@@ -227,7 +227,7 @@ namespace Foam {
         const polyMesh &mesh=dynamic_cast<const polyMesh &>(theSet->db());
 
         if(debug) {
-            Pout << "UpdateSet: " << theSet->name() 
+            Pout << "UpdateSet: " << theSet->name()
                 << " Id: " << name << " Origin: " << int(origin) << endl;
         }
 
@@ -285,7 +285,7 @@ namespace Foam {
                                 << "In db: " << mesh.thisDb().names() << endl
                                 << exit(FatalError);
                     }
-                    
+
                     updated=true;
                 }
                 break;
@@ -315,9 +315,9 @@ namespace Foam {
         const word regName=name+"RegisteredNameFor"+T::typeName;
 
         if(debug) {
-            Pout << "Looking for " << T::typeName << " named " << name 
+            Pout << "Looking for " << T::typeName << " named " << name
                 << " or  registered as " << regName << " with mesh ";
-            Pout << "Caching: " << cacheSets() 
+            Pout << "Caching: " << cacheSets()
                 << " Found: " << mesh.foundObject<T>(name)
                 << " Found registered: " << mesh.foundObject<T>(regName) << endl;
         }
@@ -345,7 +345,7 @@ namespace Foam {
                     IOobject::MUST_READ
                 )
             );
-        
+
             if(cacheSets()) {
                 if(debug) {
                     Pout << "Registering a copy of " << name << " with mesh" << endl;
@@ -461,16 +461,16 @@ namespace Foam {
     )
     {
         if(debug) {
-            Pout << "CommonValueExpressionDriver::getOrReadField. Name: " << name 
+            Pout << "CommonValueExpressionDriver::getOrReadField. Name: " << name
                 << " Type: " << T::typeName << endl;
         }
-        
+
         dimensionSet nullDim(0,0,0,0,0);
-        
+
         autoPtr<T> f;
-        
+
         typedef typename T::value_type Type;
-            
+
         if(
             variables_.found(name)
             ||
@@ -479,7 +479,7 @@ namespace Foam {
             if(debug) {
                 Pout << "Getting " << name << " from variables" << endl;
             }
-            
+
             f.set(
                 new T(
                     IOobject
@@ -520,14 +520,14 @@ namespace Foam {
                     Type maxVal=gMax(vals);
                     if(mag(minVal-maxVal)>SMALL) {
                         WarningIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
-                            << "The minimum value " << minVal << " and the maximum " 
+                            << "The minimum value " << minVal << " and the maximum "
                                 << maxVal << " differ. I will use the average " << avg
                                 << endl;
                     }
                 }
- 
+
                 f->internalField()=avg;
-            }   
+            }
 
             correctField(f());
 
@@ -550,7 +550,7 @@ namespace Foam {
             );
             if(getOldTime) {
                 if(debug) {
-                    Info << "Getting oldTime of " << name 
+                    Info << "Getting oldTime of " << name
                         << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
                         << endl;
                 }
@@ -573,7 +573,7 @@ namespace Foam {
             if(debug) {
                 Pout << "Reading " << name << " from disc" << endl;
             }
-        
+
             f.set(
                 this->readAndRegister<T>(name,actualMesh).ptr()
             );
@@ -582,24 +582,24 @@ namespace Foam {
 
         if(
             !f.valid()
-            && 
+            &&
             failIfNoneFound
         ) {
             FatalErrorIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
-                << "Could not find the field " << name 
+                << "Could not find the field " << name
                     << " in memory or on disc" << endl
                     << exit(FatalError);
         }
-    
+
         if(f.valid()) {
             f->dimensions().reset(nullDim);
             if(f->nOldTimes()>0) {
                 if(debug) {
-                    Info << "Removing dimensions of oldTime of " << name 
+                    Info << "Removing dimensions of oldTime of " << name
                         << " has " << f->nOldTimes()
                         << endl;
                 }
-                
+
                 // go through ALL old times
                 T *fp=f.operator->();
                 while(fp->nOldTimes()>0) {
@@ -646,7 +646,7 @@ namespace Foam {
     bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(const string &name) const
     {
         if(debug) {
-            Pout << "CommonValueExpressionDriver::isThere. Name: " << name 
+            Pout << "CommonValueExpressionDriver::isThere. Name: " << name
                 << " Type: " << T::typeName << " searchInMemory: " << searchInMemory()
                 << " searchOnDisc_: " << searchOnDisc() << endl;
         }
@@ -658,7 +658,7 @@ namespace Foam {
                 return true;
             }
         }
-        
+
         if(
             searchOnDisc()
             &&
@@ -676,12 +676,12 @@ namespace Foam {
         }
     }
 
-    inline bool CommonValueExpressionDriver::isLine(const string &name) const 
+    inline bool CommonValueExpressionDriver::isLine(const string &name) const
     {
         return lines_.found(name);
     }
 
-    inline bool CommonValueExpressionDriver::isLookup(const string &name) const 
+    inline bool CommonValueExpressionDriver::isLookup(const string &name) const
     {
         return lookup_.found(name);
     }
@@ -740,7 +740,7 @@ namespace Foam {
         forAll(*res,i) {
             (*res)[i]=op((*a)[i],(*b)[i]);
         }
-        
+
         return res;
     }
 
@@ -754,7 +754,7 @@ namespace Foam {
         forAll(*res,i) {
             (*res)[i]=op((*a)[i],(*b)[i]);
         }
-        
+
         return res;
     }
 
@@ -782,27 +782,34 @@ namespace Foam {
 
         return res;
     }
-    
+
     template<class Location>
     void CommonValueExpressionDriver::error (const Location& l, const std::string& m)
     {
         std::ostringstream buff;
         buff << l;
-        std::string place="";
+        std::string place=" ";
+        std::string place2="-";
         for(unsigned int i=0;i<l.begin.column;i++) {
             place+=" ";
+            place2+="-";
         }
         for(unsigned int i=l.begin.column;i<l.end.column;i++) {
             place+="^";
+            place2+="|";
         }
         for(unsigned int i=l.end.column;i<content_.size();i++) {
-            place+=" ";
+            //            place+=" ";
         }
-        
+
         Foam::FatalErrorIn("parsingValue")
             //        << Foam::args.executable()
-            << " Parser Error at " << buff.str() << " :"  << m << Foam::endl
-                << content_ << Foam::endl << place
+            << " Parser Error for driver " << type() << " at "
+                << buff.str() << " :"  << m << Foam::endl
+                << content_ << Foam::endl
+                << place.c_str() << Foam::endl
+                << place2.c_str() << Foam::endl
+                << getContextString().c_str()
                 << Foam::exit(Foam::FatalError);
         //    Foam::Pout << buff.str() << ": " << m << Foam::endl;
     }

@@ -1877,7 +1877,10 @@ psphericalTensor: TOKEN_SPHERICAL_TENSOR '(' psexp ')' {     $$ = driver.makePoi
 
 %%
 
-void parserField::FieldValueExpressionParser::error (const parserField::FieldValueExpressionParser::location_type& l,const std::string& m)
+void parserField::FieldValueExpressionParser::error (
+    const parserField::FieldValueExpressionParser::location_type& l,
+    const std::string& m
+)
 {
-     driver.error (l, m);
+    driver.error (l, m);
 }
