@@ -20,8 +20,9 @@ BISONVER=`bison -V | head -n 1| tr ' ' '\n' | tail -n 1`
 
 echo "Bison is version $BISONVER"
 
-if [[ $BISONVER < 2.3 ]]; then
-    echo "swak4Foam only confirmed to work with Bison >= 2.3"
+if [[ $BISONVER < 2.4 ]]; then
+    echo "swak4Foam only confirmed to work with Bison >= 2.4"
+    echo "Compiles with 2.3 but has offset-problems with locations which break the Plugin-functionality"
     if [ -z $USE_OLD_BISON ]; then
 	echo "Set the environment variable USE_OLD_BISON if you want to continue anyway"
 	exit 42

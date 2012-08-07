@@ -980,6 +980,12 @@ S_{expl} + S_{impl} T
      This version is needed for the reentrant parsers. =2.5.33= *may*
      work but is untested. Version =2.5.4= which is on some old
      systems definitely does not work
+**** =bison 2.4=
+     Version 2.3 compiles but there is an offset-problem with the
+     locations that breaks the Plugin-functionality
+
+     Mac-users will have to install =bison= from another source (for
+     instance =MacPorts=)
 *** Bug fixes
 **** Make sure that =Allwmake= always uses the =bash=
      On Ubuntu =/bin/sh= is something else and the scripts fail.
