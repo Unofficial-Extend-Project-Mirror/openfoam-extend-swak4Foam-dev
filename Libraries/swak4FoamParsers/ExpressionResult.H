@@ -126,7 +126,7 @@ public:
 
     // Destructor
 
-    ~ExpressionResult();
+    virtual ~ExpressionResult();
 
     void operator=(const ExpressionResult&);
 
