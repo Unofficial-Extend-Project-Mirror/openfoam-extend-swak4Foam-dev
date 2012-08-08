@@ -42,12 +42,22 @@ License
 #include "SampledSetValueExpressionDriver.H"
 #include "SampledSurfaceValueExpressionDriver.H"
 
+#ifdef FOAM_DEV
+#include "FaFieldValueExpressionDriver.H"
+#include "FaPatchValueExpressionDriver.H"
+#endif
+
 #include "Pstream.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "FieldValuePluginFunction.H"
 #include "PatchValuePluginFunction.H"
 #include "CellSetValuePluginFunction.H"
+
+#ifdef FOAM_DEV
+#include "FaFieldValuePluginFunction.H"
+#include "FaPatchValuePluginFunction.H"
+#endif
 
 namespace Foam {
 
@@ -90,6 +100,36 @@ typedef ContributionScalarPluginFunction<PatchValueExpressionDriver,CellSetValue
 defineTemplateTypeNameAndDebug(patchToCellSetContribute,0);
 addNamedToRunTimeSelectionTable(CellSetValuePluginFunction, patchToCellSetContribute , name, patchContributionScalar);
 
+#ifdef FOAM_DEV
+
+    // for faField
+typedef ContributionScalarPluginFunction<FaPatchValueExpressionDriver,FaFieldValuePluginFunction> faPatchToFaFieldContribute;
+defineTemplateTypeNameAndDebug(faPatchToFaFieldContribute,0);
+addNamedToRunTimeSelectionTable(FaFieldValuePluginFunction, faPatchToFaFieldContribute , name, faPatchContributionScalar);
+
+typedef ContributionScalarPluginFunction<PatchValueExpressionDriver,FaFieldValuePluginFunction> patchToFaFieldContribute;
+defineTemplateTypeNameAndDebug(patchToFaFieldContribute,0);
+addNamedToRunTimeSelectionTable(FaFieldValuePluginFunction, patchToFaFieldContribute , name, patchContributionScalar);
+
+    // for volField
+typedef ContributionScalarPluginFunction<FaPatchValueExpressionDriver,FieldValuePluginFunction> faPatchToFieldContribute;
+defineTemplateTypeNameAndDebug(faPatchToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, faPatchToFieldContribute , name, faPatchContributionScalar);
+
+typedef ContributionScalarPluginFunction<FaFieldValueExpressionDriver,FieldValuePluginFunction> faFieldToFieldContribute;
+defineTemplateTypeNameAndDebug(faFieldToFieldContribute,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, faFieldToFieldContribute , name, faFieldContributionScalar);
+
+    // for faPatch
+typedef ContributionScalarPluginFunction<FaPatchValueExpressionDriver,FaPatchValuePluginFunction> faPatchToFaPatchContribute;
+defineTemplateTypeNameAndDebug(faPatchToFaPatchContribute,0);
+addNamedToRunTimeSelectionTable(FaPatchValuePluginFunction, faPatchToFaPatchContribute , name, faPatchContributionScalar);
+typedef ContributionScalarPluginFunction<PatchValueExpressionDriver,FaPatchValuePluginFunction> patchToFaPatchContribute;
+defineTemplateTypeNameAndDebug(patchToFaPatchContribute,0);
+addNamedToRunTimeSelectionTable(FaPatchValuePluginFunction, patchToFaPatchContribute , name, patchContributionScalar);
+
+#endif
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template <class Driver,class PluginType>
@@ -114,6 +154,11 @@ ContributionScalarPluginFunction<Driver,PluginType>::ContributionScalarPluginFun
     if(PluginTypeDriverType::driverName()!="internalField") {
         this->returnType()="scalar";
     }
+#ifdef FOAM_DEV
+    if(PluginTypeDriverType::driverName()=="internalFaField") {
+        this->returnType()="areaScalarField";
+    }
+#endif
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -202,6 +247,34 @@ void setResultForContribution<FieldValuePluginFunction>(
 
     result.setObjectResult(pResult);
 }
+
+#ifdef FOAM_DEV
+template <>
+void setResultForContribution<FaFieldValuePluginFunction>(
+    const fvMesh &mesh,
+    ExpressionResult &result,
+    const scalarField &values
+) {
+    autoPtr<areaScalarField> pResult(
+        new areaScalarField(
+            IOobject(
+                "contributionFrom_", // +Driver::driverName(),
+                mesh.time().timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            FaCommonValueExpressionDriver::faRegionMesh(mesh),
+            dimensionedScalar("contribution",dimless,0)
+        )
+    );
+
+    pResult->internalField()=values;
+    pResult->correctBoundaryConditions();
+
+    result.setObjectResult(pResult);
+}
+#endif
 
 template <class Driver,class PluginType>
 void ContributionScalarPluginFunction<Driver,PluginType>::doEvaluation()

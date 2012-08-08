@@ -26,7 +26,7 @@ fractional_constant        (([[:digit:]]*"."[[:digit:]]+)|([[:digit:]]+".")|([[:
 float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]]+{exponent_part}))|0)
 
 %{
-     // # define YY_USER_ACTION yylloc->columns (yyleng);
+# define YY_USER_ACTION yylloc->columns (yyleng);
 %}
 %%
 
