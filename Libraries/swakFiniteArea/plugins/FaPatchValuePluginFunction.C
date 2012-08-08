@@ -31,69 +31,14 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "FaCommonValueExpressionDriver.H"
-
-#include "Random.H"
-
-#include "addToRunTimeSelectionTable.H"
+#include "FaPatchValuePluginFunction.H"
+#include "FaPatchValueExpressionDriver.H"
 
 namespace Foam {
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-defineTypeNameAndDebug(FaCommonValueExpressionDriver, 0);
-
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-
-FaCommonValueExpressionDriver::FaCommonValueExpressionDriver(const FaCommonValueExpressionDriver& orig)
-:
-    CommonValueExpressionDriver(orig)
-{}
-
-const faMesh &FaCommonValueExpressionDriver::faRegionMesh
-(
-    const fvMesh &mesh
-)
-{
-    //     return dynamicCast<const fvMesh&>( // doesn't work with gcc 4.2
-    return dynamic_cast<const faMesh&>(
-        //        mesh.subRegistry(
-        mesh.lookupObject<edgeVectorField>(
-            // this field must exist and is our only hint to the faMesh (as it doesn't seem to be registered)
-            "edgeCentres"
-        ).mesh()
-    );
-}
-
-
-FaCommonValueExpressionDriver::FaCommonValueExpressionDriver(
-    bool cacheReadFields,
-    bool searchInMemory,
-    bool searchOnDisc
-)
- :
-    CommonValueExpressionDriver(cacheReadFields,searchInMemory,searchOnDisc)
-{
-}
-
-FaCommonValueExpressionDriver::FaCommonValueExpressionDriver(const dictionary& dict)
- :
-    CommonValueExpressionDriver(dict)
-{
-}
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-FaCommonValueExpressionDriver::~FaCommonValueExpressionDriver()
-{}
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-// ************************************************************************* //
+defineTemplateTypeNameAndDebug(FaPatchValuePluginFunction,0);
+defineTemplateRunTimeSelectionTable(FaPatchValuePluginFunction, name);
 
 } // namespace
+
+// ************************************************************************* //

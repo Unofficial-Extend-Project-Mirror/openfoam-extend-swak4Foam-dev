@@ -7,3 +7,5 @@ wclean swakLocalCalculationsFunctionPlugin
 wclean swakRandomFunctionPlugin
 
 wclean swakFvcSchemesFunctionPlugin
+
+wclean swakFacSchemesFunctionPlugin

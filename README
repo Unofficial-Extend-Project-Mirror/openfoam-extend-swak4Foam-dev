@@ -1041,6 +1041,8 @@ S_{expl} + S_{impl} T
 **** =sortedToc= does not exist for =1.6-ext=
      Introduced a preprocessor symbol that allows using sortedToc on
      newer versions
+**** Wrong =size()= and =pointSize()= reported for =FaField=-driver
+     This was due to a strange () (still don't know what happened there)
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and

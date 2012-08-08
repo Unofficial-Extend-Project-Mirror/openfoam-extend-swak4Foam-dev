@@ -29,91 +29,75 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FaCommonValueExpressionDriver
+    Foam::facConvectionDivFunctionPlugin
 
 Description
 
 SourceFiles
-    FaCommonValueExpressionDriverI.H
-    FaCommonValueExpressionDriver.C
+    facConvectionDivFunctionPlugin.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FaCommonValueExpressionDriver_H
-#define FaCommonValueExpressionDriver_H
+#ifndef facConvectionDivFunctionPlugin_H
+#define facConvectionDivFunctionPlugin_H
 
-#include "areaFields.H"
+#include "FaFieldValuePluginFunction.H"
+
+#include "runTimeSelectionTables.H"
+
+#include "fac.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "ExpressionResult.H"
-
-#include "CommonValueExpressionDriver.H"
-
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class FaCommonValueExpressionDriver Declaration
+                           Class facConvectionDivFunctionPlugin Declaration
 \*---------------------------------------------------------------------------*/
 
-class FaCommonValueExpressionDriver
+template<class T>
+class facConvectionDivFunctionPlugin
 :
-    public CommonValueExpressionDriver
+    public FaFieldValuePluginFunction
 {
-    // Private data
-
-    // Private Member Functions
-
     //- Disallow default bitwise assignment
-    void operator=(const FaCommonValueExpressionDriver&);
+    void operator=(const facConvectionDivFunctionPlugin &);
 
-protected:
+    facConvectionDivFunctionPlugin(const facConvectionDivFunctionPlugin &);
 
-    template<class T>
-    inline tmp<T> readAndRegister(const word &name);
+    typedef GeometricField<T,faPatchField,areaMesh> originalType;
+    typedef GeometricField<T,faPatchField,areaMesh> resultType;
+
+    autoPtr<edgeScalarField> flow_;
+
+    autoPtr<originalType> original_;
+
+    string specString_;
 
 public:
-
-    static const faMesh &faRegionMesh(
-        const fvMesh &mesh
+    facConvectionDivFunctionPlugin(
+        const FaFieldValueExpressionDriver &parentDriver,
+        const word &name
     );
 
-    //- Runtime type information
-    TypeName("FaCommonValueExpressionDriver");
+    virtual ~facConvectionDivFunctionPlugin() {}
 
-    // Constructors
+    TypeName("facConvectionDivFunctionPlugin");
 
-    //- Construct and determine behaviour
-    FaCommonValueExpressionDriver(
-        bool cacheReadFields=false,
-        bool searchInMemory=true,
-        bool searchOnDisc=false
+    void doEvaluation();
+
+    void setArgument(
+        label index,
+        const string &content,
+        const CommonValueExpressionDriver &driver
     );
 
-    //- Construct from a dictionary
-    FaCommonValueExpressionDriver(const dictionary& dict);
+    void setArgument(label index,const string &);
 
-    //- Copy construct
-    FaCommonValueExpressionDriver(const FaCommonValueExpressionDriver&);
-
-    // Destructor
-
-    ~FaCommonValueExpressionDriver();
-
-
-    // Member Functions
-
-    template<class Type>
-    bool is(const string &name,bool isPoint=false) const;
-
-    template<class Type>
-    bool isField(const string &name,bool isPoint=false) const;
-
-    virtual const faMesh &aMesh() const =0;
 };
+
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -121,8 +105,6 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "FaCommonValueExpressionDriverI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

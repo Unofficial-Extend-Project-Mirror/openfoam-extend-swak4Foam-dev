@@ -1,4 +1,4 @@
-//  ICE Revision: $Id$ 
+//  ICE Revision: $Id$
 
 #ifndef VALUE_EXPRESSION_DRIVER_I_H
 #define VALUE_EXPRESSION_DRIVER_I_H
@@ -16,7 +16,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
 )
 {
     if(debug) {
-        Info << "FaFieldValueExpressionDriver::getField. Name: " << name 
+        Info << "FaFieldValueExpressionDriver::getField. Name: " << name
             << " Type: " << T::typeName << endl;
     }
 
@@ -74,14 +74,14 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
                 Type maxVal=gMax(vals);
                 if(mag(minVal-maxVal)>SMALL) {
                     WarningIn("FaFieldValueExpressionDriver::getField(const string &name)")
-                        << "The minimum value " << minVal << " and the maximum " 
+                        << "The minimum value " << minVal << " and the maximum "
                             << maxVal << " differ. I will use the average " << avg
                             << endl;
                 }
             }
- 
+
             f->internalField()=avg;
-        }        
+        }
         return f;
     }
 
@@ -102,7 +102,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
 
         if(getOldTime) {
             if(debug) {
-                Info << "Getting oldTime of " << name 
+                Info << "Getting oldTime of " << name
                     << " has " << this->mesh().lookupObject<T>(name).nOldTimes()
                     << endl;
             }
@@ -123,7 +123,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
         if(debug) {
             Info << "Reading " << name << " from disc" << endl;
         }
-        
+
         f.set(
             this->readAndRegister<T>(name).ptr()
         );
@@ -131,19 +131,19 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
 
     if(!f.valid()) {
         FatalErrorIn("FaFieldValueExpressionDriver::getField(const string &name)")
-            << "Could not find the field " << name 
+            << "Could not find the field " << name
                 << " in memory or on disc" << endl
                 << exit(FatalError);
     }
-    
+
     f->dimensions().reset(nullDim);
     if(f->nOldTimes()>0) {
         if(debug) {
-            Info << "Removing dimensions of oldTime of " << name 
+            Info << "Removing dimensions of oldTime of " << name
                 << " has " << f->nOldTimes()
                 << endl;
         }
-        
+
         // go through ALL old times
         T *fp=f.operator->();
         while(fp->nOldTimes()>0) {
@@ -151,28 +151,8 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
             fp->dimensions().reset(nullDim);
         }
     }
-    
+
     return f;
-}
-
-inline label FaFieldValueExpressionDriver::size() const
-{
-    return mesh_().nFaces();
-}
-
-inline label FaFieldValueExpressionDriver::pointSize() const
-{
-    return mesh_().nPoints();
-}
-
-inline const faMesh &FaFieldValueExpressionDriver::aMesh() const
-{
-    return mesh_;
-}
-
-inline const fvMesh &FaFieldValueExpressionDriver::mesh() const
-{
-    return dynamic_cast<const fvMesh&>(mesh_.thisDb());
 }
 
 template<class T>
@@ -197,19 +177,19 @@ void FaFieldValueExpressionDriver::makePatches
 
     if(
         (
-            !keepPatches 
-            || 
+            !keepPatches
+            ||
             isValuePatch
-        ) 
-        && 
+        )
+        &&
         (
             typeid(patch)==typeid(faPatch)
         )
     ) {
         if(isValuePatch){
-            bfNew[patchI]=new fixedValueFaPatchField<T>(patch,field);  
+            bfNew[patchI]=new fixedValueFaPatchField<T>(patch,field);
         } else {
-            bfNew[patchI]=new zeroGradientFaPatchField<T>(patch,field);      
+            bfNew[patchI]=new zeroGradientFaPatchField<T>(patch,field);
         }
     } else {
         bfNew[patchI]=bf[patchI].clone().ptr();
@@ -245,20 +225,20 @@ void FaFieldValueExpressionDriver::makePatches
 
     if(
         (
-            !keepPatches 
-            || 
+            !keepPatches
+            ||
             isValuePatch
-        ) 
-        && 
+        )
+        &&
         (
             typeid(patch)==typeid(faPatch)
         )
     ) {
         if(isValuePatch){
-            bfNew[patchI]=new fixedValueFaePatchField<T>(patch,field);  
+            bfNew[patchI]=new fixedValueFaePatchField<T>(patch,field);
         } else {
             // this is different because there is no zeroGradient for edge fields
-            bfNew[patchI]=new calculatedFaePatchField<T>(patch,field);      
+            bfNew[patchI]=new calculatedFaePatchField<T>(patch,field);
         }
     } else {
         bfNew[patchI]=bf[patchI].clone().ptr();
@@ -280,10 +260,10 @@ void FaFieldValueExpressionDriver::setCalculatedPatches
     T unusedValue
 ) {
     typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
-    
+
     forAll(bf,patchI) {
         faPatchField<T> &pf=bf[patchI];
-        
+
         if(
             typeid(pf)==typeid(calculatedFaPatchField<T>)
         ) {
@@ -300,10 +280,10 @@ void FaFieldValueExpressionDriver::setCalculatedPatches
     T value
 ) {
     typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
-    
+
     forAll(bf,patchI) {
         faePatchField<T> &pf=bf[patchI];
-        
+
         if(
             typeid(pf)==typeid(calculatedFaePatchField<T>)
         ) {
@@ -322,10 +302,10 @@ void FaFieldValueExpressionDriver::copyCalculatedPatches
 ) {
     typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
     List<faPatchField<T> *>bfNew(bf.size());
-    
+
     forAll(bf,patchI) {
         faPatchField<T> &pf=bf[patchI];
-        
+
         if(
             typeid(pf)==typeid(calculatedFaPatchField<T>)
         ) {
@@ -347,7 +327,7 @@ void FaFieldValueExpressionDriver::copyCalculatedPatches
     forAll(bf,patchI) {
         faePatchField<T> &pf=bf[patchI];
         const faePatchField<T> &pfOrig=bfOrig[patchI];
-        
+
         if(
             typeid(pf)==typeid(calculatedFaePatchField<T>)
             &&
@@ -380,18 +360,18 @@ void FaFieldValueExpressionDriver::setValuePatches
 
     if(
         (
-            !keepPatches 
+            !keepPatches
             ||
             isValuePatch
-        ) 
-        && 
+        )
+        &&
         (
             typeid(patch)==typeid(faPatch)
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFaPatchField<T>)) {
             faPatchField<T> &pf=field.boundaryField()[patchI];
-            
+
             pf==pf.patchInternalField();
         }
     }
@@ -420,11 +400,11 @@ void FaFieldValueExpressionDriver::setValuePatches
 
     if(
         (
-            !keepPatches 
+            !keepPatches
             ||
             isValuePatch
-        ) 
-        && 
+        )
+        &&
         (
             typeid(patch)==typeid(faPatch)
         )
@@ -438,10 +418,10 @@ void FaFieldValueExpressionDriver::setValuePatches
                 "GeometricField<T,faePatchField,edgeMesh> &field,"
                 "bool keepPatches,"
                 "const wordList &fixedPatches"
-                ")" 
-            ) << "There is no patchInternalField() for faePatchField. " 
-                << "Nothing done for patch " << patch.name() 
-                << " but setting it to " << pTraits<T>::zero << endl;            
+                ")"
+            ) << "There is no patchInternalField() for faePatchField. "
+                << "Nothing done for patch " << patch.name()
+                << " but setting it to " << pTraits<T>::zero << endl;
             pf==pTraits<T>::zero;
         }
     }
@@ -505,7 +485,7 @@ inline FType *FaFieldValueExpressionDriver::makeConstantField(const typename FTy
 }
 
 template<class T>
-void FaFieldValueExpressionDriver::setResult(T *r,bool isSurfaceField) 
+void FaFieldValueExpressionDriver::setResult(T *r,bool isSurfaceField)
 {
     resultField_.reset(r);
 
@@ -526,7 +506,7 @@ void FaFieldValueExpressionDriver::setResult(T *r,bool isSurfaceField)
 }
 
 template<class T>
-void FaFieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField) 
+void FaFieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField)
 {
     resultField_.reset(r);
 
@@ -551,8 +531,36 @@ void FaFieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField)
     isSurfaceField_=isSurfaceField;
 }
 
+template<class T> struct FaFieldValueExpressionDriver::correctBC {
+    inline void operator()(const T &val)
+        {
+            if(debug) {
+                Info << "No way to correct BC for type "
+                    << pTraits<T>:: typeName << endl;
+            }
+            // Doing nothing
+        }
+};
+
+template<class T> struct FaFieldValueExpressionDriver::correctBC<GeometricField<T,faPatchField,areaMesh> > {
+
+    typedef GeometricField<T,faPatchField,areaMesh> theType;
+
+    inline void operator()(const theType &val)
+        {
+            if(debug) {
+                Info << "Correcting BC for " << val.name() << " of type "
+                    << pTraits<theType>::typeName
+                    << endl;
+            }
+            const_cast<theType&>(
+                val
+            ).correctBoundaryConditions();
+        }
+};
+
 template<class T>
-const T &FaFieldValueExpressionDriver::getResult() 
+const T &FaFieldValueExpressionDriver::getResult() const
 {
     if(!resultField_.valid()) {
         FatalErrorIn("FaFieldValueExpressionDriver::getResult()")
@@ -563,11 +571,14 @@ const T &FaFieldValueExpressionDriver::getResult()
     }
 
     //    return dynamicCast<const T &>(resultField_()); // doesn't work with gcc 4.2
-    return dynamic_cast<const T &>(resultField_());
+    const T &result=dynamic_cast<const T &>(resultField_());
+    correctBC<T>()(result);
+
+    return result;
 }
 
 template<class T>
-bool FaFieldValueExpressionDriver::resultIsTyp(bool isLogical) 
+bool FaFieldValueExpressionDriver::resultIsTyp(bool isLogical)
 {
     if(!resultField_.valid()) {
         FatalErrorIn("FaFieldValueExpressionDriver::isTyp(bool isLogical)")

@@ -168,7 +168,11 @@ void setField
     reduce(totalCells,plusOp<label>());
     reduce(setCells,plusOp<label>());
 
-    FaFieldValueExpressionDriver::setValuePatches(*pTemp,keepPatches,valuePatches);
+    FaFieldValueExpressionDriver::setValuePatches(
+        *pTemp,
+        keepPatches,
+        valuePatches
+    );
 
     forAll(result.boundaryField(),patchI) {
         typename T::PatchFieldType &pf=pTemp->boundaryField()[patchI];
@@ -296,7 +300,14 @@ void doAnExpression
         }
     }
 
+    if (doDebug) {
+        Info << "funkySetAreaFields : Parsing expression:"
+            << expression << endl;
+    }
     driver.parse(expression);
+    if (doDebug) {
+        Info << "funkySetAreaFields : Parsed expression" << endl;
+    }
 
     if(!evaluatedCondition) {
         conditionIsSurface=driver.isSurfaceField();

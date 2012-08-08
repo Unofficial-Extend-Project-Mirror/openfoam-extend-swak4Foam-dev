@@ -29,91 +29,30 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::FaCommonValueExpressionDriver
+    Foam::FaPatchValuePluginFunction
 
 Description
 
 SourceFiles
-    FaCommonValueExpressionDriverI.H
-    FaCommonValueExpressionDriver.C
+    FaPatchValuePluginFunction.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef FaCommonValueExpressionDriver_H
-#define FaCommonValueExpressionDriver_H
+#ifndef FaPatchValuePluginFunction_H
+#define FaPatchValuePluginFunction_H
 
-#include "areaFields.H"
+#include "ConcretePluginFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "ExpressionResult.H"
-
-#include "CommonValueExpressionDriver.H"
-
 
 namespace Foam
 {
 
-/*---------------------------------------------------------------------------*\
-                           Class FaCommonValueExpressionDriver Declaration
-\*---------------------------------------------------------------------------*/
+    class FaPatchValueExpressionDriver;
 
-class FaCommonValueExpressionDriver
-:
-    public CommonValueExpressionDriver
-{
-    // Private data
-
-    // Private Member Functions
-
-    //- Disallow default bitwise assignment
-    void operator=(const FaCommonValueExpressionDriver&);
-
-protected:
-
-    template<class T>
-    inline tmp<T> readAndRegister(const word &name);
-
-public:
-
-    static const faMesh &faRegionMesh(
-        const fvMesh &mesh
-    );
-
-    //- Runtime type information
-    TypeName("FaCommonValueExpressionDriver");
-
-    // Constructors
-
-    //- Construct and determine behaviour
-    FaCommonValueExpressionDriver(
-        bool cacheReadFields=false,
-        bool searchInMemory=true,
-        bool searchOnDisc=false
-    );
-
-    //- Construct from a dictionary
-    FaCommonValueExpressionDriver(const dictionary& dict);
-
-    //- Copy construct
-    FaCommonValueExpressionDriver(const FaCommonValueExpressionDriver&);
-
-    // Destructor
-
-    ~FaCommonValueExpressionDriver();
-
-
-    // Member Functions
-
-    template<class Type>
-    bool is(const string &name,bool isPoint=false) const;
-
-    template<class Type>
-    bool isField(const string &name,bool isPoint=false) const;
-
-    virtual const faMesh &aMesh() const =0;
-};
+    typedef ConcretePluginFunction<FaPatchValueExpressionDriver>
+        FaPatchValuePluginFunction;
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -121,8 +60,6 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "FaCommonValueExpressionDriverI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
