@@ -49,6 +49,7 @@ libs (
     "libswakFiniteArea.so"
     // just for testing the plugins
     "libswakTestFunctionPlugin.so"
+    "libswakFacSchemesFunctionPlugin.so"
 );
 
 functions {
