@@ -276,6 +276,36 @@ void setResultForContribution<FaFieldValuePluginFunction>(
 }
 #endif
 
+    // Workaround because Field has (and can not have) a virtual destructor
+template<class Driver>
+autoPtr<vectorField> makeParentPositions(Driver &driver) {
+    return autoPtr<vectorField>(driver.makePositionField());
+}
+
+template<>
+autoPtr<vectorField> makeParentPositions(FieldValueExpressionDriver &driver) {
+    return autoPtr<vectorField>(
+        new vectorField(
+            autoPtr<volVectorField>(
+                driver.makePositionField()
+            )().internalField()
+        )
+    );
+}
+
+#ifdef FOAM_DEV
+template<>
+autoPtr<vectorField> makeParentPositions(FaFieldValueExpressionDriver &driver) {
+    return autoPtr<vectorField>(
+        new vectorField(
+            autoPtr<areaVectorField>(
+                driver.makePositionField()
+            )().internalField()
+        )
+    );
+}
+#endif
+
 template <class Driver,class PluginType>
 void ContributionScalarPluginFunction<Driver,PluginType>::doEvaluation()
 {
@@ -287,16 +317,26 @@ void ContributionScalarPluginFunction<Driver,PluginType>::doEvaluation()
     Pstream::scatterList(values);
     Pstream::scatterList(positions);
 
+    typedef typename PluginType::driverType PluginTypeDriverType;
+
     scalarField result(
         this->parentDriver().size()
+    );
+
+    autoPtr<vectorField> myPositions(
+        makeParentPositions(
+            dynamicCast<PluginTypeDriverType &>(
+                this->parentDriver()
+            )
+        )
     );
 
     forAll(result,cellI)
     {
         scalar sum=0;
         scalar distSum=0;
-        const vector &here=this->mesh().C()[cellI];
         bool found=false;
+        const vector &here=myPositions()[cellI];
 
         forAll(values,valI)
         {

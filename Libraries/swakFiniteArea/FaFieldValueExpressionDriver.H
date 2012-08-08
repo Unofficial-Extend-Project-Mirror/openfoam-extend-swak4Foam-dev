@@ -88,10 +88,10 @@ public:
     virtual ~FaFieldValueExpressionDriver();
 
     // necessary to override Common
-    inline label size() const;
-    inline label pointSize() const;
-    inline const fvMesh &mesh() const;
-    inline const faMesh &aMesh() const;
+    label size() const;
+    label pointSize() const;
+    const fvMesh &mesh() const;
+    const faMesh &aMesh() const;
 
     //- check if field is of requested type
     template<class T>

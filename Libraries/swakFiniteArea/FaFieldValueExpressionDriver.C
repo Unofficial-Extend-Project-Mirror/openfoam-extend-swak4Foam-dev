@@ -666,5 +666,24 @@ bool FaFieldValueExpressionDriver::existsPluginFunction(
     );
 }
 
+label FaFieldValueExpressionDriver::size() const
+{
+    return mesh_.nFaces();
+}
+
+label FaFieldValueExpressionDriver::pointSize() const
+{
+    return mesh_.nPoints();
+}
+
+const faMesh &FaFieldValueExpressionDriver::aMesh() const
+{
+    return mesh_;
+}
+
+const fvMesh &FaFieldValueExpressionDriver::mesh() const
+{
+    return dynamic_cast<const fvMesh&>(mesh_.thisDb());
+}
 
 } // end namespace

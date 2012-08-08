@@ -155,26 +155,6 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
     return f;
 }
 
-inline label FaFieldValueExpressionDriver::size() const
-{
-    return mesh_().nFaces();
-}
-
-inline label FaFieldValueExpressionDriver::pointSize() const
-{
-    return mesh_().nPoints();
-}
-
-inline const faMesh &FaFieldValueExpressionDriver::aMesh() const
-{
-    return mesh_;
-}
-
-inline const fvMesh &FaFieldValueExpressionDriver::mesh() const
-{
-    return dynamic_cast<const fvMesh&>(mesh_.thisDb());
-}
-
 template<class T>
 void FaFieldValueExpressionDriver::makePatches
 (

@@ -1038,6 +1038,8 @@ S_{expl} + S_{impl} T
      called for technical reasons.
 
      Fix: values copied by hand
+**** Wrong =size()= and =pointSize()= reported for =FaField=-driver
+     This was due to a strange () (still don't know what happened there)
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
@@ -1086,7 +1088,7 @@ S_{expl} + S_{impl} T
 
      Example of the usage in the =angledDuctImplicit=-case (the
      results are of limited value because of the temperature boundary
-     condition) 
+     condition)
 *** Infrastructure
 **** =Allwmake= creates symbolic links in =swakFiniteArea=
      The links to =mybison= and =myflex= are missing when the sources
