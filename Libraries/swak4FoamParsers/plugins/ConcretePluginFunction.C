@@ -35,6 +35,7 @@ License
 
 namespace Foam {
 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class DriverType>
@@ -72,6 +73,13 @@ autoPtr<ConcretePluginFunction<DriverType> > ConcretePluginFunction<DriverType>:
             << name << " in " << nameConstructorTablePtr_->toc() << endl;
 #endif
     }
+    if(nameConstructorTablePtr_==NULL) {
+        FatalErrorIn("ConcretePluginFunction<DriverType>::New")
+            << "Constructor table of plugin functions for "
+                << DriverType::typeName << " is not initialized"
+                << endl
+                << exit(FatalError);
+        }
     typename nameConstructorTable::iterator cstrIter =
         nameConstructorTablePtr_->find(name);
     if(cstrIter==nameConstructorTablePtr_->end()) {
@@ -103,6 +111,14 @@ bool ConcretePluginFunction<DriverType>::exists (
     static bool firstCall=true;
     if(firstCall) {
         firstCall=false;
+
+        if(nameConstructorTablePtr_==NULL) {
+            WarningIn("ConcretePluginFunction<DriverType>::exists")
+                << "Constructor table of plugin functions for "
+                    << DriverType::typeName << " is not initialized"
+                    << endl;
+            return false;
+        }
         if(nameConstructorTablePtr_->size()>0) {
             Info<< endl << "Loaded plugin functions for '"+
                 DriverType::typeName+"':" << endl;
