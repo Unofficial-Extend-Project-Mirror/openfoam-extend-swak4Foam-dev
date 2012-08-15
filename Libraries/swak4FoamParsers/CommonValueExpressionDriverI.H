@@ -794,9 +794,15 @@ namespace Foam {
             place+=" ";
             place2+="-";
         }
+        bool firstArrow=true;
         for(unsigned int i=l.begin.column;i<l.end.column;i++) {
             place+="^";
-            place2+="|";
+            if(firstArrow) {
+                place2+="|";
+                firstArrow=false;
+            } else {
+                place2+=" ";
+            }
         }
         for(unsigned int i=l.end.column;i<content_.size();i++) {
             //            place+=" ";
