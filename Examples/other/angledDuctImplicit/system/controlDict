@@ -991,6 +991,7 @@ libs (
     "libswakLocalCalculationsFunctionPlugin.so"
     "libswakRandomFunctionPlugin.so"
     "libswakFvcSchemesFunctionPlugin.so"
+    "libswakThermophysicalFunctionPlugin.so"
     // test plugin
     "libswakTestFunctionPlugin.so"
 ) ;

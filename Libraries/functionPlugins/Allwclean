@@ -9,3 +9,5 @@ wclean swakRandomFunctionPlugin
 wclean swakFvcSchemesFunctionPlugin
 
 wclean swakFacSchemesFunctionPlugin
+
+wclean swakThermophysicalFunctionPlugin
