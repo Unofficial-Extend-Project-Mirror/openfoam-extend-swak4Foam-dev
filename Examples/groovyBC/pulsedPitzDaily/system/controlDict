@@ -173,7 +173,7 @@ functions
         outputInterval 1;
         fieldName kineticEnergy;
         expression "U&U+k";
-        autowrite true;        
+        autowrite true;
     }
     kineticOut
     {
@@ -182,7 +182,7 @@ functions
             min max sum average
         );
         patches (
-            inlet 
+            inlet
             outlet
             upperWall
             lowerWall
@@ -197,7 +197,7 @@ functions
             sum
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "mag(Sf())*(U&U+k*phi)";
@@ -210,7 +210,7 @@ functions
             min max average
         );
         patches (
-            inlet 
+            inlet
         );
         variables "pOut{outlet}=average(p);";
         //        variables "pOut{}=average(p);";
@@ -225,7 +225,7 @@ functions
             min max average
         );
         patches (
-            outlet 
+            outlet
         );
         variables "pAverage{}=sum(p*vol())/sum(vol());";
         expression "pAverage-p";
@@ -236,7 +236,7 @@ functions
         // Just for checking whether tha othr massflow is correct
         type patchMassFlow;
         patches (
-            inlet 
+            inlet
             outlet
         );
         verbose true;
@@ -249,7 +249,7 @@ functions
             sum
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "phi";
@@ -262,7 +262,7 @@ functions
             sum
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "U&Sf()";
@@ -333,8 +333,8 @@ functions
     {
         type patchExpression;
         valueType patch;
-        patches ( 
-            lowerWall 
+        patches (
+            lowerWall
             upperWall
         );
         expression "mag((p-oldTime(p))/deltaT())";
@@ -344,14 +344,32 @@ functions
         );
         verbose true;
     }
+    RField
+    {
+        type expressionField;
+        autowrite true;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName turbulenceR;
+        expression "turb_R()";
+    }
+    RMax
+    {
+        type volumeMinMax;
+        verbose true;
+        fields (
+            turbulenceR
+        );
+    }
 );
 
-libs ( 
-    "libOpenFOAM.so" 
-    "libgroovyBC.so" 
-    "libgroovyStandardBCs.so" 
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libgroovyStandardBCs.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakTransportTurbFunctionPlugin.so"
 ) ;
 
 // ************************************************************************* //

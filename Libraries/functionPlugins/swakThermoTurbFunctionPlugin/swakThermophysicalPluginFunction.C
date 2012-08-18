@@ -77,7 +77,7 @@ const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
                 << "already in memory" << endl;
         }
         // Somebody else already registered this
-        return reg.lookupObject<basicPsiThermo>("thermophysicalProperties");
+        return reg.lookupObject<basicThermo>("thermophysicalProperties");
     }
     if(!thermo_.found(reg.name())) {
         if(debug) {
