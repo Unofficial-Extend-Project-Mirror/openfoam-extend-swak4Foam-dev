@@ -84,11 +84,70 @@ const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
             Info << "swakThermophysicalPluginFunction::thermoInternal: "
                 << "not yet in memory for " << reg.name() << endl;
         }
+
+        bool usePsi=true;
+
+        {
+            // make sure it is gone before we create the object
+            IOdictionary dict
+                (
+                    IOobject
+                    (
+                        "thermophysicalProperties",
+                        reg.time().constant(),
+                        reg,
+                        IOobject::MUST_READ,
+                        IOobject::NO_WRITE
+                    )
+                );
+
+            word thermoTypeName=dict["thermoType"];
+
+            basicRhoThermo::fvMeshConstructorTable::iterator cstrIter =
+                basicRhoThermo::fvMeshConstructorTablePtr_->find(
+                    thermoTypeName
+                );
+            if (cstrIter != basicRhoThermo::fvMeshConstructorTablePtr_->end())
+            {
+                if(debug) {
+                    Info << thermoTypeName << " is a basicRhoThermo-type";
+                }
+                usePsi=false;
+            } else if(debug) {
+                Info << "No " << thermoTypeName << " in basicRhoThermo-types "
+                    << basicRhoThermo::fvMeshConstructorTablePtr_->sortedToc()
+                    << endl;
+            }
+            if(usePsi) {
+                basicPsiThermo::fvMeshConstructorTable::iterator cstrIter =
+                    basicPsiThermo::fvMeshConstructorTablePtr_->find(
+                        thermoTypeName
+                    );
+                if(cstrIter != basicPsiThermo::fvMeshConstructorTablePtr_->end())
+                {
+                    if(debug) {
+                        Info << thermoTypeName << " is a basicPsiThermo-type";
+                    }
+                } else if(debug) {
+                    Info << "No " << thermoTypeName << " in basicPsiThermo-types "
+                    << basicPsiThermo::fvMeshConstructorTablePtr_->sortedToc()
+                        << endl;
+                }
+            }
+        }
+
         // Create it ourself because nobody registered it
-        thermo_.set(
-            reg.name(),
-            basicPsiThermo::New(reg).ptr()
-        );
+        if(usePsi) {
+            thermo_.set(
+                reg.name(),
+                basicPsiThermo::New(reg).ptr()
+            );
+        } else {
+            thermo_.set(
+                reg.name(),
+                basicRhoThermo::New(reg).ptr()
+            );
+        }
     }
 
     return *(thermo_[reg.name()]);
