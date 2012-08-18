@@ -8,7 +8,7 @@ wmake libso swakRandomFunctionPlugin
 
 wmake libso swakFvcSchemesFunctionPlugin
 
-wmake libso swakThermophysicalFunctionPlugin
+wmake libso swakThermoTurbFunctionPlugin
 
 if [ "$FOAM_DEV" != "" ]
 then
