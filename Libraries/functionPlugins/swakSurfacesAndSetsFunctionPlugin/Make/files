@@ -1,0 +1,4 @@
+GeneralSurfacesPluginFunction.C
+surfaceAreaPluginFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakSurfacesAndSetsFunctionPlugin

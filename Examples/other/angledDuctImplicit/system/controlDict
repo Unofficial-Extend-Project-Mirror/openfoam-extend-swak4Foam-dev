@@ -376,7 +376,7 @@ functions
         surfaceName testPlane;
         surface {
             type plane;
-            basePoint       (0 0 0);
+            basePoint       (0.0001 0.0001 0.0001);
             normalVector    (0 0 1);
             interpolate false;
         }
@@ -420,6 +420,15 @@ functions
             max
             min
         );
+    }
+    testPlaneArea
+    {
+        type expressionField;
+        outputControl outputTime;
+        //        outputInterval 1;
+        fieldName testPlaneArea;
+        expression "surfaceArea(testPlane)";
+        autowrite true;
     }
     createsurfacePlane2
     {
@@ -892,6 +901,11 @@ functions
             max
         );
     }
+    testSurfaceU45 {
+        $testPlaneArea;
+        fieldName testU45Iso;
+        expression "surfaceArea(testIsoU45b)";
+    }
     ifPythonExpressionFO {
         type executeIfFunctionObjectPresent;
         readDuringConstruction false;
@@ -992,6 +1006,7 @@ libs (
     "libswakRandomFunctionPlugin.so"
     "libswakFvcSchemesFunctionPlugin.so"
     "libswakThermoTurbFunctionPlugin.so"
+    "libswakSurfacesAndSetsFunctionPlugin.so"
     // test plugin
     "libswakTestFunctionPlugin.so"
 ) ;

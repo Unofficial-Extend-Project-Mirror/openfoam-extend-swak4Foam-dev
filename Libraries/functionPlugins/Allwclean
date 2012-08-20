@@ -13,3 +13,5 @@ wclean swakFacSchemesFunctionPlugin
 wclean swakThermoTurbFunctionPlugin
 
 wclean swakTransportTurbFunctionPlugin
+
+wclean swakSurfacesAndSetsFunctionPlugin
