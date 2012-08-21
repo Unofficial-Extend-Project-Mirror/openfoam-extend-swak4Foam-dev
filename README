@@ -1088,6 +1088,12 @@ S_{expl} + S_{impl} T
      all. 
 
      This is fixed
+**** =sqr= of a =vector= should produce a =symmTensor=
+     Reported in
+     http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=150 
+
+     Added the =sqr= at the right place to the grammars. Also some
+     other missing tensor operations (=dev= and =symm=).
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and

@@ -510,6 +510,8 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_symm '(' yexp ')'       { $$ = new Foam::symmTensorField( Foam::symm(*$3) ); delete $3; }
         | TOKEN_symm '(' texp ')'       { $$ = new Foam::symmTensorField( Foam::symm(*$3) ); delete $3; }
         | TOKEN_inv '(' yexp ')'       { $$ = new Foam::symmTensorField( Foam::inv(*$3) ); delete $3; }
+        | TOKEN_dev '(' yexp ')'       { $$ = new Foam::symmTensorField( Foam::dev(*$3) ); delete $3; }
+        | TOKEN_sqr '(' vexp ')'       { $$ = new Foam::symmTensorField( Foam::sqr(*$3) ); delete $3; }
         | lexp '?' yexp ':' yexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
 //        | TOKEN_toFace '(' pyexp ')'        { $$ = driver.toFace(*$3); delete $3; }
         | TOKEN_YID {
@@ -711,6 +713,11 @@ pyexp:  pyexp '+' pyexp 		{ sameSize($1,$3); $$ = new Foam::symmTensorField(*$1 
         | pyexp '-' pyexp 		{ sameSize($1,$3); $$ = new Foam::symmTensorField(*$1 - *$3); delete $1; delete $3;}
         | '-' pyexp %prec TOKEN_NEG 	        { $$ = new Foam::symmTensorField(-*$2); delete $2; }
         | '(' pyexp ')'		        { $$ = $2; }  
+        | TOKEN_symm '(' pyexp ')'       { $$ = new Foam::symmTensorField( Foam::symm(*$3) ); delete $3; }
+        | TOKEN_symm '(' ptexp ')'       { $$ = new Foam::symmTensorField( Foam::symm(*$3) ); delete $3; }
+        | TOKEN_inv '(' pyexp ')'       { $$ = new Foam::symmTensorField( Foam::inv(*$3) ); delete $3; }
+        | TOKEN_dev '(' pyexp ')'       { $$ = new Foam::symmTensorField( Foam::dev(*$3) ); delete $3; }
+        | TOKEN_sqr '(' pvexp ')'       { $$ = new Foam::symmTensorField( Foam::sqr(*$3) ); delete $3; }
         | plexp '?' pyexp ':' pyexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5); delete $1; delete $3; delete $5; }
 //        | TOKEN_toPoint '(' yexp ')'        { $$ = driver.toPoint(*$3); delete $3;}
         | TOKEN_PYID {
