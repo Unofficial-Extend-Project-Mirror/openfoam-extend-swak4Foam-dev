@@ -422,18 +422,22 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "cellSetID" "cellZoneID" "faceSetID" "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID" "patchID"
-%printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector" "tensor" "symmTensor" "sphericalTensor"
+%destructor          {} <val> <integer>
+%destructor          { delete $$; } <name> <vec> <ten> <yten> <hten>
+       <vfield> <sfield> <tfield> <yfield> <hfield>
+       <fvfield> <fsfield> <ftfield> <fyfield> <fhfield>
+       <pvfield> <psfield> <ptfield> <pyfield> <phfield>
 
-// this should catch all not specified below
-// %destructor          { delete $$; } <*> // TODO
-
-%destructor          {} "number" "integer" "sexpression"
-
-%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "tensor" "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "cellSetID"  "cellZoneID"  "faceSetID"  "faceZoneID" "pointSetID" "pointZoneID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" "pointScalarID" "pointVectorID" "pointTensorID" "pointSymmTensorID" "pointSphericalTensorID" "patchID"
-
-%printer             { debug_stream () << $$; } "number" "integer" "sexpression"
-%printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "plexpression" "psexpression" "pvexpression" "ptexpression" "pyexpression" "phexpression"
+%printer             { debug_stream () << $$; } <val> <integer>
+%printer             { debug_stream () << *$$; } <name>
+%printer             {
+    Foam::OStringStream buff;
+    buff << *$$; debug_stream () << buff.str().c_str();
+} <vec> <ten> <yten> <hten>
+%printer             { debug_stream () << $$->name().c_str(); }
+       <vfield> <sfield> <tfield> <yfield> <hfield>
+       <fvfield> <fsfield> <ftfield> <fyfield> <fhfield>
+       <pvfield> <psfield> <ptfield> <pyfield> <phfield>
 
 
 %%

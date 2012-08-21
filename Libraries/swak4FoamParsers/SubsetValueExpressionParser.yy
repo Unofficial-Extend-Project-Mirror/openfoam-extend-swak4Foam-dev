@@ -311,14 +311,21 @@ namespace Foam {
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "tensorID" "pointTensorID" "symmTensorID" "pointSymmTensorID" "sphericalTensorID" "pointSphericalTensorID"
-%printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
+%destructor          { delete $$; } <vec> <name>
+    <vfield> <sfield> <lfield> <tfield> <yfield> <hfield>
+%destructor          {} <val> <integer>
 
-%destructor          { delete $$; } "timeline" "lookup" "scalarID"  "vectorID"  "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "vector" "expression" "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
-%destructor          {} "value" "integer" "sexpression"
-
-%printer             { debug_stream () << $$; } "value" "integer" "sexpression"
-%printer             { debug_stream () << $$ /* ->name().c_str() */ ; } "expression"  "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
+%printer             { debug_stream () << *$$; } <name>
+%printer             {
+    Foam::OStringStream buff;
+    buff << *$$;
+    debug_stream () << buff.str().c_str();
+} <vec>
+%printer             { debug_stream () << $$; } <val> <integer>
+%printer             {
+    debug_stream () << "<No name field>" << $$;
+        //        << Foam::pTraits<(*$$)::cmptType>::typeName << ">";
+} <vfield> <sfield> <lfield> <tfield> <yfield> <hfield>
 
 
 %%

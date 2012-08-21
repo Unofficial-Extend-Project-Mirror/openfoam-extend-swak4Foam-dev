@@ -339,16 +339,20 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID"
-%printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector" "tensor" "symmTensor" "sphericalTensor"
+%destructor          {} <val> <integer>
+%destructor          { delete $$; } <name> <vec> <ten> <yten> <hten>
+       <vfield> <sfield> <tfield> <yfield> <hfield>
+       <fvfield> <fsfield> <ftfield> <fyfield> <fhfield>
 
-%destructor          {} "number" "integer" "sexpression"
-
-%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID"
-
-%printer             { debug_stream () << $$; } "number"  "sexpression" "integer"
-%printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression"
-
+%printer             { debug_stream () << $$; } <val> <integer>
+%printer             { debug_stream () << *$$; } <name>
+%printer             {
+    Foam::OStringStream buff;
+    buff << *$$; debug_stream () << buff.str().c_str();
+} <vec> <ten> <yten> <hten>
+%printer             { debug_stream () << $$->name().c_str(); }
+       <vfield> <sfield> <tfield> <yfield> <hfield>
+       <fvfield> <fsfield> <ftfield> <fyfield> <fhfield>
 
 %%
 %start switch_start;
