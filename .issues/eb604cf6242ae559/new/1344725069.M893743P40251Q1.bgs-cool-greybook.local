@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 12 Aug 2012 00:43:23 +0200
+Subject: Re: Plugin-system for creating pseudo-fields
+Message-Id: <eb604cf6242ae559-f69c5699f4758d15-artemis@bgs-cool-greybook.local>
+References: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+
+TOCHECK: There is no runtime-selection table when the swakTopoSources
+are used from setSet

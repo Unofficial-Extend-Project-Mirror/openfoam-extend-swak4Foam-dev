@@ -127,14 +127,30 @@ functions
         $tBottom;
         region topAir;
     }
+    RBottom {
+        type swakExpression;
+        valueType internalField;
+        region bottomAir;
+        verbose true;
+        expression "rhoTurb_R()";
+        accumulations (
+            min
+            max
+        );
+    }
+    RTop {
+        $RBottom;
+        region topAir;
+    }
 };
 
 libs (
-    "libgroovyBC.so"  
-    "libsimpleFunctionObjects.so" 
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+    "libgroovyBC.so"
+    "libsimpleFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
     "libgroovyStandardBCs.so"
+    "libswakThermoTurbFunctionPlugin.so"
 );
 
 // ************************************************************************* //

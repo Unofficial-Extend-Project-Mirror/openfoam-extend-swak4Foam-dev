@@ -35,6 +35,7 @@ License
 
 namespace Foam {
 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class DriverType>
@@ -66,8 +67,19 @@ autoPtr<ConcretePluginFunction<DriverType> > ConcretePluginFunction<DriverType>:
 {
     if(debug) {
         Info << "ConcretePluginFunction::New looking for "
+#ifdef FOAM_HAS_SORTED_TOC
             << name << " in " << nameConstructorTablePtr_->sortedToc() << endl;
+#else
+            << name << " in " << nameConstructorTablePtr_->toc() << endl;
+#endif
     }
+    if(nameConstructorTablePtr_==NULL) {
+        FatalErrorIn("ConcretePluginFunction<DriverType>::New")
+            << "Constructor table of plugin functions for "
+                << DriverType::typeName << " is not initialized"
+                << endl
+                << exit(FatalError);
+        }
     typename nameConstructorTable::iterator cstrIter =
         nameConstructorTablePtr_->find(name);
     if(cstrIter==nameConstructorTablePtr_->end()) {
@@ -76,7 +88,11 @@ autoPtr<ConcretePluginFunction<DriverType> > ConcretePluginFunction<DriverType>:
             DriverType::typeName+">::New"
         ) << "Unknow plugin function " << name << endl
             << " Available functions are "
+#ifdef FOAM_HAS_SORTED_TOC
             << nameConstructorTablePtr_->sortedToc()
+#else
+            << nameConstructorTablePtr_->toc()
+#endif
                 << endl
                 << exit(FatalError);
     }
@@ -95,10 +111,22 @@ bool ConcretePluginFunction<DriverType>::exists (
     static bool firstCall=true;
     if(firstCall) {
         firstCall=false;
+
+        if(nameConstructorTablePtr_==NULL) {
+            WarningIn("ConcretePluginFunction<DriverType>::exists")
+                << "Constructor table of plugin functions for "
+                    << DriverType::typeName << " is not initialized"
+                    << endl;
+            return false;
+        }
         if(nameConstructorTablePtr_->size()>0) {
             Info<< endl << "Loaded plugin functions for '"+
                 DriverType::typeName+"':" << endl;
+#ifdef FOAM_HAS_SORTED_TOC
             wordList names(nameConstructorTablePtr_->sortedToc());
+#else
+            wordList names(nameConstructorTablePtr_->toc());
+#endif
             forAll(names,nameI)
             {
                 const word &theName=names[nameI];

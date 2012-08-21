@@ -1,0 +1,26 @@
+
+ifdef FOAM_DEV
+FOAM_DEV_OPTION = -DFOAM_DEV
+endif
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION) 	\
+    -I../../swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/turbulenceModels/ \
+    -I$(LIB_SRC)/turbulenceModels/LES/LESdeltas/lnInclude \
+    -I$(LIB_SRC)/turbulenceModels/compressible/turbulenceModel/lnInclude/ \
+    -I$(LIB_SRC)/turbulenceModels/compressible/LES/lnInclude/ \
+    -I$(LIB_SRC)/turbulenceModels/compressible/RAS/lnInclude/ \
+    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lswak4FoamParsers \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lcompressibleTurbulenceModel \
+    -lcompressibleLESModels \
+    -lcompressibleRASModels \
+    -lbasicThermophysicalModels

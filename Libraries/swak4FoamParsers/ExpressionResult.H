@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -38,7 +38,7 @@ SourceFiles
     ExpressionResult.C
     ExpressionResultIO.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef ExpressionResult_H
@@ -69,7 +69,7 @@ class ExpressionResult
     string valType_;
 
     void *valPtr_;
-    
+
     bool isPoint_;
 
     bool isSingleValue_;
@@ -121,7 +121,7 @@ public:
 
     // Destructor
 
-    ~ExpressionResult();
+    virtual ~ExpressionResult();
 
     void operator=(const ExpressionResult&);
 

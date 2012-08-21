@@ -376,7 +376,7 @@ functions
         surfaceName testPlane;
         surface {
             type plane;
-            basePoint       (0 0 0);
+            basePoint       (0.0001 0.0001 0.0001);
             normalVector    (0 0 1);
             interpolate false;
         }
@@ -420,6 +420,15 @@ functions
             max
             min
         );
+    }
+    testPlaneArea
+    {
+        type expressionField;
+        outputControl outputTime;
+        //        outputInterval 1;
+        fieldName testPlaneArea;
+        expression "surfaceArea(testPlane)";
+        autowrite true;
     }
     createsurfacePlane2
     {
@@ -892,6 +901,56 @@ functions
             max
         );
     }
+    testSurfaceU45 {
+        $testPlaneArea;
+        fieldName testU45Iso;
+        expression "surfaceArea(testIsoU45b)";
+    }
+    testSurfaceU45Relative {
+        $testPlaneArea;
+        fieldName testU45IsoRelative;
+        expression "surfaceRelativeSurface(testIsoU45b)";
+    }
+    testSurfaceU45Dist {
+        $testPlaneArea;
+        fieldName testU45IsoDist;
+        expression "surfaceDistance(testIsoU45b)";
+    }
+    testSurfaceU45Nr {
+        $testPlaneArea;
+        fieldName testU45IsoNr;
+        expression "surfaceNrOfFacesInCell(testIsoU45b)";
+    }
+    testSurfaceU45Vel {
+        $testPlaneArea;
+        fieldName testU45IsoVel;
+        expression "surfaceHasSurface(testIsoU45b) ? U : vector(0,0,0)";
+    }
+    testSurfaceU45pAverage {
+        $testPlaneArea;
+        fieldName testU45IsopAverage;
+        expression "surfaceValueAverageScalar(testIsoU45b,p)";
+    }
+    testSurfaceU45pMinimum {
+        $testPlaneArea;
+        fieldName testU45IsopMinimum;
+        expression "surfaceValueMinimumScalar(testIsoU45b,p)";
+    }
+    testSurfaceU45posAverage {
+        $testPlaneArea;
+        fieldName testU45IsoPosAverage;
+        expression "surfaceValueAverageVector(testIsoU45b,pos())";
+    }
+    testSurfaceU45posMinimum {
+        $testPlaneArea;
+        fieldName testU45IsoPosMinimum;
+        expression "surfaceValueMinimumVector(testIsoU45b,pos())";
+    }
+    testSurfaceU45posMaximum {
+        $testPlaneArea;
+        fieldName testU45IsoPosMaximum;
+        expression "surfaceValueMaximumVector(testIsoU45b,pos())";
+    }
     ifPythonExpressionFO {
         type executeIfFunctionObjectPresent;
         readDuringConstruction false;
@@ -975,6 +1034,84 @@ functions
         );
         verbose true;
     }
+    createMinMaxLineSet
+    {
+        type createSampledSet;
+        outputControl timeStep;
+        outputInterval 1;
+        setName fromMinToMax;
+        set {
+            type uniform;
+            axis distance;
+            start (-0.01 0 -0.025);
+            end (0.141421 0.176777 0.025);
+            nPoints 1000;
+        }
+    }
+    createMinMaxLineSet2
+    {
+        $createMinMaxLineSet;
+        setName fromMinToMax2;
+        set {
+            type midPoint;
+            axis distance;
+            start (-0.01 0 -0.025);
+            end (0.141421 0.176777 0.025);
+            nPoints 1000;
+        }
+    }
+    createMinMaxLineSet3
+    {
+        $createMinMaxLineSet;
+        setName fromMinToMax3;
+        set {
+            type midPointAndFace;
+            axis distance;
+            start (-0.01 0 -0.025);
+            end (0.141421 0.176777 0.025);
+            nPoints 1000;
+        }
+    }
+    testLineSetNr{
+        $testPlaneArea;
+        fieldName testLineNr;
+        expression "setNrOfPointsInCell(fromMinToMax)";
+    }
+    testLineSetNr2{
+        $testPlaneArea;
+        fieldName testLineNr2;
+        expression "setNrOfPointsInCell(fromMinToMax2)";
+    }
+    testLineSetNr3{
+        $testPlaneArea;
+        fieldName testLineNr3;
+        expression "setNrOfPointsInCell(fromMinToMax3)";
+    }
+    testLineSetVel{
+        $testPlaneArea;
+        fieldName testLineVel;
+        expression "setHasSet(fromMinToMax) ? U : vector(0,0,0)";
+    }
+    testLineSetDist{
+        $testPlaneArea;
+        fieldName testLineDist;
+        expression "setDistance(fromMinToMax)";
+    }
+    testLineSetAverage{
+        $testPlaneArea;
+        fieldName testLineAverage;
+        expression "setValueAverageVector(fromMinToMax,pos())";
+    }
+    testLineSetMinimum{
+        $testPlaneArea;
+        fieldName testLineMinimum;
+        expression "setValueMinimumVector(fromMinToMax,pos())";
+    }
+    testLineSetMaximum{
+        $testPlaneArea;
+        fieldName testLineMaximum;
+        expression "setValueMaximumVector(fromMinToMax,pos())";
+    }
 };
 
 libs (
@@ -991,6 +1128,8 @@ libs (
     "libswakLocalCalculationsFunctionPlugin.so"
     "libswakRandomFunctionPlugin.so"
     "libswakFvcSchemesFunctionPlugin.so"
+    "libswakThermoTurbFunctionPlugin.so"
+    "libswakSurfacesAndSetsFunctionPlugin.so"
     // test plugin
     "libswakTestFunctionPlugin.so"
 ) ;

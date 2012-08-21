@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,10 +28,11 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "FaPatchValueExpressionDriver.H"
+#include "FaPatchValuePluginFunction.H"
 
 #include "Random.H"
 
@@ -40,6 +41,8 @@ License
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+word FaPatchValueExpressionDriver::driverName_="faPatch";
 
 defineTypeNameAndDebug(FaPatchValueExpressionDriver, 0);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaPatchValueExpressionDriver, dictionary, faPatch);
@@ -51,13 +54,17 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaPatchValueExpress
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const FaPatchValueExpressionDriver& orig)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const FaPatchValueExpressionDriver& orig
+)
 :
     FaCommonValueExpressionDriver(orig),
     patch_(orig.patch_)
 {}
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const faPatch& patch)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const faPatch& patch
+)
 :
     FaCommonValueExpressionDriver(),
     patch_(patch)
@@ -77,7 +84,10 @@ label getPatchID(const faMesh &mesh,const word &name)
     return result;
 }
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvMesh&mesh
+)
  :
     FaCommonValueExpressionDriver(dict),
     patch_(
@@ -103,7 +113,10 @@ FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const dictionary& dic
 {
 }
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const word& id,const fvMesh&mesh)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const word& id,
+    const fvMesh&mesh
+)
  :
     FaCommonValueExpressionDriver(),
     patch_(
@@ -133,14 +146,16 @@ FaPatchValueExpressionDriver::~FaPatchValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void FaPatchValueExpressionDriver::parse (const std::string& f)
+void FaPatchValueExpressionDriver::parseInternal (int startToken)
 {
-    content_ = f;
-    scan_begin ();
-    parserFaPatch::FaPatchValueExpressionParser parser (*this);
+    parserFaPatch::FaPatchValueExpressionParser parser (
+        scanner_,
+        *this,
+        startToken,
+        0
+    );
     parser.set_debug_level (trace_parsing_);
     parser.parse ();
-    scan_end ();
 }
 
 vectorField *FaPatchValueExpressionDriver::makePositionField()
@@ -209,6 +224,155 @@ scalarField *FaPatchValueExpressionDriver::makeEdgeIdField()
     }
     return result;
 }
+
+template<>
+FaPatchValueExpressionDriver::SymbolTable<FaPatchValueExpressionDriver>::SymbolTable()
+:
+StartupSymbols()
+{
+    // default value
+    insert("",parserFaPatch::FaPatchValueExpressionParser::token::START_DEFAULT);
+
+    insert(
+        "scalar_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_SCALAR_COMMA
+    );
+    insert(
+        "scalar_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_SCALAR_CLOSE
+    );
+    insert(
+        "point_scalar_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_SCALAR_COMMA
+    );
+    insert(
+        "point_scalar_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+    );
+    insert(
+        "vector_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_VECTOR_COMMA
+    );
+    insert(
+        "vector_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_VECTOR_CLOSE
+    );
+    insert(
+        "point_vector_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_VECTOR_COMMA
+    );
+    insert(
+        "point_vector_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+    );
+    insert(
+        "tensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_TENSOR_COMMA
+    );
+    insert(
+        "tensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_TENSOR_CLOSE
+    );
+    insert(
+        "point_tensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_TENSOR_COMMA
+    );
+    insert(
+        "point_tensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+    );
+    insert(
+        "symmTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_YTENSOR_COMMA
+    );
+    insert(
+        "symmTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_YTENSOR_CLOSE
+    );
+    insert(
+        "point_symmTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_YTENSOR_COMMA
+    );
+    insert(
+        "point_symmTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+    );
+    insert(
+        "sphericalTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_HTENSOR_COMMA
+    );
+    insert(
+        "sphericalTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_HTENSOR_CLOSE
+    );
+    insert(
+        "point_sphericalTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_HTENSOR_COMMA
+    );
+    insert(
+        "point_sphericalTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+    );
+    insert(
+        "logical_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_LOGICAL_COMMA
+    );
+    insert(
+        "logical_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_LOGICAL_CLOSE
+    );
+    insert(
+        "point_logical_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_LOGICAL_COMMA
+    );
+    insert(
+        "point_logical_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+    );
+
+    insert(
+        "CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_CLOSE_ONLY
+    );
+    insert(
+        "SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_COMMA_ONLY
+    );
+}
+
+
+const FaPatchValueExpressionDriver::SymbolTable<FaPatchValueExpressionDriver> &FaPatchValueExpressionDriver::symbolTable()
+{
+    static SymbolTable<FaPatchValueExpressionDriver> actualTable;
+
+    return actualTable;
+}
+
+int FaPatchValueExpressionDriver::startupSymbol(const word &name) {
+    return symbolTable()[name];
+}
+
+
+autoPtr<CommonPluginFunction> FaPatchValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        FaPatchValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool FaPatchValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return FaPatchValuePluginFunction::exists(
+        *this,
+        name
+    );
+}
+
 
 // ************************************************************************* //
 

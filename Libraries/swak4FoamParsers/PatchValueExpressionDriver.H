@@ -92,15 +92,6 @@ protected:
     void scan_begin();
     void scan_end();
 
-    //- actual size of the field
-    virtual label size() const;
-
-    //- actual size of the supporting point-field
-    virtual label pointSize() const;
-
-    //- get the mesh we're living on
-    virtual const fvMesh &mesh() const;
-
     //- set the state of the lexer to scanning vector components
     void startVectorComponent();
 
@@ -165,6 +156,15 @@ public:
     ~PatchValueExpressionDriver();
 
     const fvPatch &patch() const { return patch_; }
+
+    //- actual size of the field
+    virtual label size() const;
+
+    //- actual size of the supporting point-field
+    virtual label pointSize() const;
+
+    //- get the mesh we're living on
+    virtual const fvMesh &mesh() const;
 
     // Member Functions
 

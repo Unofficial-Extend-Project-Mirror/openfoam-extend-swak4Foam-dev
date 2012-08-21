@@ -45,9 +45,9 @@
      - The =finiteArea=-stuff will probably work with version 2.0-ext
        (once that is available)
    - the compiler generators =bison= and =flex=
-     - bison :: =swak4Foam= is known to work with =bison= version 2.3 and
-       higher. Lower versions *may* work. If it works with a lower
-       version please report it
+     - bison :: =swak4Foam= is known to work with =bison= version 2.4 and
+       higher. Version 2.3 compiles but the plugin-functionality does
+                not work correctly
      - flex :: since the introduction of the plugin functions at least
                a flex version of =2.5.33= is required (=2.5.35= is the
                lowest *confirmed* version)
@@ -1122,6 +1122,11 @@ S_{expl} + S_{impl} T
      called for technical reasons.
 
      Fix: values copied by hand
+**** =sortedToc= does not exist for =1.6-ext=
+     Introduced a preprocessor symbol that allows using sortedToc on
+     newer versions
+**** Wrong =size()= and =pointSize()= reported for =FaField=-driver
+     This was due to a strange () (still don't know what happened there)
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
@@ -1178,3 +1183,8 @@ S_{expl} + S_{impl} T
      Example of the usage in the =angledDuctImplicit=-case (the
      results are of limited value because of the temperature boundary
      condition)
+*** Infrastructure
+**** =Allwmake= creates symbolic links in =swakFiniteArea=
+     The links to =mybison= and =myflex= are missing when the sources
+     are downloaded as a tarball. The =Allwmake=-script now creates
+     these links if they are missing

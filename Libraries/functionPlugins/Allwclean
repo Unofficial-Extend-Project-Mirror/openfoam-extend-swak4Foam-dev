@@ -7,3 +7,11 @@ wclean swakLocalCalculationsFunctionPlugin
 wclean swakRandomFunctionPlugin
 
 wclean swakFvcSchemesFunctionPlugin
+
+wclean swakFacSchemesFunctionPlugin
+
+wclean swakThermoTurbFunctionPlugin
+
+wclean swakTransportTurbFunctionPlugin
+
+wclean swakSurfacesAndSetsFunctionPlugin
