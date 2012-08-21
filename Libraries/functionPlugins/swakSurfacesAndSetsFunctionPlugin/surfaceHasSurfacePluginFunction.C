@@ -31,27 +31,27 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceAreaPluginFunction.H"
+#include "surfaceHasSurfacePluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(surfaceAreaPluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAreaPluginFunction , name, surfaceArea);
+defineTypeNameAndDebug(surfaceHasSurfacePluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceHasSurfacePluginFunction , name, surfaceHasSurface);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-surfaceAreaPluginFunction::surfaceAreaPluginFunction(
+surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
     GeneralSurfacesPluginFunction(
         parentDriver,
         name,
-        "volScalarField",
+        "volLogicalField",
         string("surfaceName primitive word")
     )
 {
@@ -62,12 +62,12 @@ surfaceAreaPluginFunction::surfaceAreaPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void surfaceAreaPluginFunction::doEvaluation()
+void surfaceHasSurfacePluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pArea(
+    autoPtr<volScalarField> pHasSurface(
         new volScalarField(
             IOobject(
-                "surfaceAreaInCell",
+                "surfaceHasSurfaceInCell",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
@@ -79,17 +79,17 @@ void surfaceAreaPluginFunction::doEvaluation()
     );
 
     const labelList &cells=meshCells();
-    const scalarField &area=theSurface().magSf();
+    const scalarField &hasSurface=theSurface().magSf();
 
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pArea()[cellI]+=area[i];
+        pHasSurface()[cellI]=1;
     }
 
-    pArea->correctBoundaryConditions();
+    pHasSurface->correctBoundaryConditions();
 
-    result().setObjectResult(pArea);
+    result().setObjectResult(pHasSurface);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

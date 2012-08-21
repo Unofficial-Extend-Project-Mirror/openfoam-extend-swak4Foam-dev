@@ -1,4 +1,7 @@
 GeneralSurfacesPluginFunction.C
 surfaceAreaPluginFunction.C
+surfaceRelativeSurfacePluginFunction.C
+surfaceNrOfFacesInCellPluginFunction.C
+surfaceHasSurfacePluginFunction.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakSurfacesAndSetsFunctionPlugin

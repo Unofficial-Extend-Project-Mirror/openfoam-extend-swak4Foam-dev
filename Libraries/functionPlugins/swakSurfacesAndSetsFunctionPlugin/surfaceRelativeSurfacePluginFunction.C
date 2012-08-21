@@ -31,20 +31,20 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceAreaPluginFunction.H"
+#include "surfaceRelativeSurfacePluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(surfaceAreaPluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAreaPluginFunction , name, surfaceArea);
+defineTypeNameAndDebug(surfaceRelativeSurfacePluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceRelativeSurfacePluginFunction , name, surfaceRelativeSurface);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-surfaceAreaPluginFunction::surfaceAreaPluginFunction(
+surfaceRelativeSurfacePluginFunction::surfaceRelativeSurfacePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -62,12 +62,12 @@ surfaceAreaPluginFunction::surfaceAreaPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void surfaceAreaPluginFunction::doEvaluation()
+void surfaceRelativeSurfacePluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pArea(
+    autoPtr<volScalarField> pRelativeSurface(
         new volScalarField(
             IOobject(
-                "surfaceAreaInCell",
+                "surfaceRelativeSurfaceInCell",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
@@ -80,16 +80,18 @@ void surfaceAreaPluginFunction::doEvaluation()
 
     const labelList &cells=meshCells();
     const scalarField &area=theSurface().magSf();
+    const scalarField &vol=mesh().V();
 
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pArea()[cellI]+=area[i];
+        pRelativeSurface()[cellI]+=area[i]/vol[cellI];
     }
 
-    pArea->correctBoundaryConditions();
+    pRelativeSurface->correctBoundaryConditions();
 
-    result().setObjectResult(pArea);
+    result().setObjectResult(pRelativeSurface);
+
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

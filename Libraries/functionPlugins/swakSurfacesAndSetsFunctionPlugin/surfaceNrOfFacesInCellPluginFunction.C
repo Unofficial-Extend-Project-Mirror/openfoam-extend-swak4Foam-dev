@@ -31,20 +31,20 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceAreaPluginFunction.H"
+#include "surfaceNrOfFacesInCellPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(surfaceAreaPluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAreaPluginFunction , name, surfaceArea);
+defineTypeNameAndDebug(surfaceNrOfFacesInCellPluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceNrOfFacesInCellPluginFunction , name, surfaceNrOfFacesInCell);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-surfaceAreaPluginFunction::surfaceAreaPluginFunction(
+surfaceNrOfFacesInCellPluginFunction::surfaceNrOfFacesInCellPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -62,12 +62,12 @@ surfaceAreaPluginFunction::surfaceAreaPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void surfaceAreaPluginFunction::doEvaluation()
+void surfaceNrOfFacesInCellPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pArea(
+    autoPtr<volScalarField> pNrOfFacesInCell(
         new volScalarField(
             IOobject(
-                "surfaceAreaInCell",
+                "surfaceNrOfFacesInCellInCell",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
@@ -79,17 +79,17 @@ void surfaceAreaPluginFunction::doEvaluation()
     );
 
     const labelList &cells=meshCells();
-    const scalarField &area=theSurface().magSf();
 
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pArea()[cellI]+=area[i];
+        pNrOfFacesInCell()[cellI]+=1;
     }
 
-    pArea->correctBoundaryConditions();
+    pNrOfFacesInCell->correctBoundaryConditions();
 
-    result().setObjectResult(pArea);
+    result().setObjectResult(pNrOfFacesInCell);
+
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

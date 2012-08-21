@@ -906,6 +906,21 @@ functions
         fieldName testU45Iso;
         expression "surfaceArea(testIsoU45b)";
     }
+    testSurfaceU45Relative {
+        $testPlaneArea;
+        fieldName testU45IsoRelative;
+        expression "surfaceRelativeSurface(testIsoU45b)";
+    }
+    testSurfaceU45Nr {
+        $testPlaneArea;
+        fieldName testU45IsoNr;
+        expression "surfaceNrOfFacesInCell(testIsoU45b)";
+    }
+    testSurfaceU45Vel {
+        $testPlaneArea;
+        fieldName testU45IsoVel;
+        expression "surfaceHasSurface(testIsoU45b) ? U : vector(0,0,0)";
+    }
     ifPythonExpressionFO {
         type executeIfFunctionObjectPresent;
         readDuringConstruction false;
