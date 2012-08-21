@@ -15,4 +15,9 @@ setHasSetPluginFunction.C
 setNrOfPointsInCellPluginFunction.C
 setDistancePluginFunction.C
 
+GeneralSetEvaluationPluginFunction.C
+setValueAveragePluginFunction.C
+setValueMinimumPluginFunction.C
+setValueMaximumPluginFunction.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakSurfacesAndSetsFunctionPlugin

@@ -1097,6 +1097,21 @@ functions
         fieldName testLineDist;
         expression "setDistance(fromMinToMax)";
     }
+    testLineSetAverage{
+        $testPlaneArea;
+        fieldName testLineAverage;
+        expression "setValueAverageVector(fromMinToMax,pos())";
+    }
+    testLineSetMinimum{
+        $testPlaneArea;
+        fieldName testLineMinimum;
+        expression "setValueMinimumVector(fromMinToMax,pos())";
+    }
+    testLineSetMaximum{
+        $testPlaneArea;
+        fieldName testLineMaximum;
+        expression "setValueMaximumVector(fromMinToMax,pos())";
+    }
 };
 
 libs (
