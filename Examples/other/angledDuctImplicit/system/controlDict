@@ -911,6 +911,11 @@ functions
         fieldName testU45IsoRelative;
         expression "surfaceRelativeSurface(testIsoU45b)";
     }
+    testSurfaceU45Dist {
+        $testPlaneArea;
+        fieldName testU45IsoDist;
+        expression "surfaceDistance(testIsoU45b)";
+    }
     testSurfaceU45Nr {
         $testPlaneArea;
         fieldName testU45IsoNr;

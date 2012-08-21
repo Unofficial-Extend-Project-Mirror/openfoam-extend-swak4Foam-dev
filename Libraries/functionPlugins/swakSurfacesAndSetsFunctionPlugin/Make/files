@@ -3,6 +3,7 @@ surfaceAreaPluginFunction.C
 surfaceRelativeSurfacePluginFunction.C
 surfaceNrOfFacesInCellPluginFunction.C
 surfaceHasSurfacePluginFunction.C
+surfaceDistancePluginFunction.C
 
 GeneralSurfaceEvaluationPluginFunction.C
 surfaceValueAveragePluginFunction.C
