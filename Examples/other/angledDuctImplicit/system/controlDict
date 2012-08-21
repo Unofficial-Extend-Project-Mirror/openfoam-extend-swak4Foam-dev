@@ -926,6 +926,26 @@ functions
         fieldName testU45IsopAverage;
         expression "surfaceValueAverageScalar(testIsoU45b,p)";
     }
+    testSurfaceU45pMinimum {
+        $testPlaneArea;
+        fieldName testU45IsopMinimum;
+        expression "surfaceValueMinimumScalar(testIsoU45b,p)";
+    }
+    testSurfaceU45posAverage {
+        $testPlaneArea;
+        fieldName testU45IsoPosAverage;
+        expression "surfaceValueAverageVector(testIsoU45b,pos())";
+    }
+    testSurfaceU45posMinimum {
+        $testPlaneArea;
+        fieldName testU45IsoPosMinimum;
+        expression "surfaceValueMinimumVector(testIsoU45b,pos())";
+    }
+    testSurfaceU45posMaximum {
+        $testPlaneArea;
+        fieldName testU45IsoPosMaximum;
+        expression "surfaceValueMaximumVector(testIsoU45b,pos())";
+    }
     ifPythonExpressionFO {
         type executeIfFunctionObjectPresent;
         readDuringConstruction false;

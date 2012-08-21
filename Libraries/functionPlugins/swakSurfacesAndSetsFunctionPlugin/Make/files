@@ -6,5 +6,7 @@ surfaceHasSurfacePluginFunction.C
 
 GeneralSurfaceEvaluationPluginFunction.C
 surfaceValueAveragePluginFunction.C
+surfaceValueMinimumPluginFunction.C
+surfaceValueMaximumPluginFunction.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakSurfacesAndSetsFunctionPlugin

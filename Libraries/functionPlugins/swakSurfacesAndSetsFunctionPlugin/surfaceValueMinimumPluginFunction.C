@@ -31,38 +31,38 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceValueAveragePluginFunction.H"
+#include "surfaceValueMinimumPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-typedef surfaceValueAveragePluginFunction<scalar> surfaceAverageScalar;
-defineTemplateTypeNameAndDebug(surfaceAverageScalar,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAverageScalar , name, surfaceValueAverageScalar);
+typedef surfaceValueMinimumPluginFunction<scalar> surfaceMinimumScalar;
+defineTemplateTypeNameAndDebug(surfaceMinimumScalar,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceMinimumScalar , name, surfaceValueMinimumScalar);
 
-typedef surfaceValueAveragePluginFunction<vector> surfaceAverageVector;
-defineTemplateTypeNameAndDebug(surfaceAverageVector,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAverageVector , name, surfaceValueAverageVector);
+typedef surfaceValueMinimumPluginFunction<vector> surfaceMinimumVector;
+defineTemplateTypeNameAndDebug(surfaceMinimumVector,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceMinimumVector , name, surfaceValueMinimumVector);
 
-typedef surfaceValueAveragePluginFunction<tensor> surfaceAverageTensor;
-defineTemplateTypeNameAndDebug(surfaceAverageTensor,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAverageTensor , name, surfaceValueAverageTensor);
+typedef surfaceValueMinimumPluginFunction<tensor> surfaceMinimumTensor;
+defineTemplateTypeNameAndDebug(surfaceMinimumTensor,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceMinimumTensor , name, surfaceValueMinimumTensor);
 
-typedef surfaceValueAveragePluginFunction<symmTensor> surfaceAverageSymmTensor;
-defineTemplateTypeNameAndDebug(surfaceAverageSymmTensor,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAverageSymmTensor , name, surfaceValueAverageSymmTensor);
+typedef surfaceValueMinimumPluginFunction<symmTensor> surfaceMinimumSymmTensor;
+defineTemplateTypeNameAndDebug(surfaceMinimumSymmTensor,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceMinimumSymmTensor , name, surfaceValueMinimumSymmTensor);
 
-typedef surfaceValueAveragePluginFunction<sphericalTensor> surfaceAverageSphericalTensor;
-defineTemplateTypeNameAndDebug(surfaceAverageSphericalTensor,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceAverageSphericalTensor , name, surfaceValueAverageSphericalTensor);
+typedef surfaceValueMinimumPluginFunction<sphericalTensor> surfaceMinimumSphericalTensor;
+defineTemplateTypeNameAndDebug(surfaceMinimumSphericalTensor,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceMinimumSphericalTensor , name, surfaceValueMinimumSphericalTensor);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-surfaceValueAveragePluginFunction<Type>::surfaceValueAveragePluginFunction(
+surfaceValueMinimumPluginFunction<Type>::surfaceValueMinimumPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -79,13 +79,13 @@ surfaceValueAveragePluginFunction<Type>::surfaceValueAveragePluginFunction(
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-void surfaceValueAveragePluginFunction<Type>::doEvaluation()
+void surfaceValueMinimumPluginFunction<Type>::doEvaluation()
 {
     typedef typename GeneralSurfaceEvaluationPluginFunction<Type>::resultType rType;
-    autoPtr<rType> pValueAverage(
+    autoPtr<rType> pValueMinimum(
         new rType(
             IOobject(
-                "surfaceValueAverageInCell",
+                "surfaceValueMinimumInCell",
                 this->mesh().time().timeName(),
                 this->mesh(),
                 IOobject::NO_READ,
@@ -97,26 +97,26 @@ void surfaceValueAveragePluginFunction<Type>::doEvaluation()
     );
 
     const labelList &cells=this->meshCells();
-    const scalarField &area=this->theSurface().magSf();
-    scalarField areaSum(pValueAverage->size(),0);
+    List<bool> here(pValueMinimum->size(),false);
     const Field<Type> vals=this->values();
 
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pValueAverage()[cellI]+=area[i]*vals[i];
-        areaSum[cellI]+=area[i];
-    }
-
-    forAll(areaSum,cellI) {
-        if(areaSum[cellI]>SMALL) {
-            pValueAverage->internalField()[cellI]/=areaSum[cellI];
+        if(here[cellI]) {
+            pValueMinimum()[cellI]=min(
+                vals[i],
+                pValueMinimum()[cellI]
+            );
+        } else {
+            here[cellI]=true;
+            pValueMinimum()[cellI]=vals[i];
         }
     }
 
-    pValueAverage->correctBoundaryConditions();
+    pValueMinimum->correctBoundaryConditions();
 
-    this->result().setObjectResult(pValueAverage);
+    this->result().setObjectResult(pValueMinimum);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
