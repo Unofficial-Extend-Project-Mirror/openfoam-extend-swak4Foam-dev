@@ -921,6 +921,11 @@ functions
         fieldName testU45IsoVel;
         expression "surfaceHasSurface(testIsoU45b) ? U : vector(0,0,0)";
     }
+    testSurfaceU45pAverage {
+        $testPlaneArea;
+        fieldName testU45IsopAverage;
+        expression "surfaceValueAverageScalar(testIsoU45b,p)";
+    }
     ifPythonExpressionFO {
         type executeIfFunctionObjectPresent;
         readDuringConstruction false;
