@@ -31,28 +31,28 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceHasSurfacePluginFunction.H"
+#include "setDistancePluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(surfaceHasSurfacePluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceHasSurfacePluginFunction , name, surfaceHasSurface);
+defineTypeNameAndDebug(setDistancePluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, setDistancePluginFunction , name, setDistance);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
+setDistancePluginFunction::setDistancePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    GeneralSurfacesPluginFunction(
+    GeneralSetsPluginFunction(
         parentDriver,
         name,
-        "volLogicalField",
-        string("surfaceName primitive word")
+        "volScalarField",
+        string("setName primitive word")
     )
 {
 }
@@ -62,33 +62,46 @@ surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void surfaceHasSurfacePluginFunction::doEvaluation()
+void setDistancePluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pHasSurface(
+    autoPtr<volScalarField> pDistance(
         new volScalarField(
             IOobject(
-                "surfaceHasSurfaceInCell",
+                "setDistanceInCell",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
             mesh(),
-            dimensionedScalar("no",dimless,0)
+            dimensionedScalar("no",dimless,HUGE)
         )
     );
 
-    const labelList &cells=meshCells();
+    const vectorField &cc=mesh().C();
 
-    forAll(cells,i) {
-        const label cellI=cells[i];
+    List<vectorField> faceCenters(Pstream::nProcs());
+    faceCenters[Pstream::myProcNo()]=theSet();
+    Pstream::scatterList(faceCenters);
 
-        pHasSurface()[cellI]=1;
+    forAll(cc,cellI) {
+        const vector &here=cc[cellI];
+        scalar &minDist=(pDistance)()[cellI];
+
+        forAll(faceCenters,i){
+            const vectorField &fc=faceCenters[i];
+            forAll(fc,faceI){
+                const scalar dist=mag(here-fc[faceI]);
+                if(dist<minDist) {
+                    minDist=dist;
+                }
+            }
+        }
     }
 
-    pHasSurface->correctBoundaryConditions();
+    pDistance->correctBoundaryConditions();
 
-    result().setObjectResult(pHasSurface);
+    result().setObjectResult(pDistance);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

@@ -1034,6 +1034,69 @@ functions
         );
         verbose true;
     }
+    createMinMaxLineSet
+    {
+        type createSampledSet;
+        outputControl timeStep;
+        outputInterval 1;
+        setName fromMinToMax;
+        set {
+            type uniform;
+            axis distance;
+            start (-0.01 0 -0.025);
+            end (0.141421 0.176777 0.025);
+            nPoints 1000;
+        }
+    }
+    createMinMaxLineSet2
+    {
+        $createMinMaxLineSet;
+        setName fromMinToMax2;
+        set {
+            type midPoint;
+            axis distance;
+            start (-0.01 0 -0.025);
+            end (0.141421 0.176777 0.025);
+            nPoints 1000;
+        }
+    }
+    createMinMaxLineSet3
+    {
+        $createMinMaxLineSet;
+        setName fromMinToMax3;
+        set {
+            type midPointAndFace;
+            axis distance;
+            start (-0.01 0 -0.025);
+            end (0.141421 0.176777 0.025);
+            nPoints 1000;
+        }
+    }
+    testLineSetNr{
+        $testPlaneArea;
+        fieldName testLineNr;
+        expression "setNrOfPointsInCell(fromMinToMax)";
+    }
+    testLineSetNr2{
+        $testPlaneArea;
+        fieldName testLineNr2;
+        expression "setNrOfPointsInCell(fromMinToMax2)";
+    }
+    testLineSetNr3{
+        $testPlaneArea;
+        fieldName testLineNr3;
+        expression "setNrOfPointsInCell(fromMinToMax3)";
+    }
+    testLineSetVel{
+        $testPlaneArea;
+        fieldName testLineVel;
+        expression "setHasSet(fromMinToMax) ? U : vector(0,0,0)";
+    }
+    testLineSetDist{
+        $testPlaneArea;
+        fieldName testLineDist;
+        expression "setDistance(fromMinToMax)";
+    }
 };
 
 libs (

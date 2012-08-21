@@ -31,28 +31,28 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceHasSurfacePluginFunction.H"
+#include "setHasSetPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(surfaceHasSurfacePluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceHasSurfacePluginFunction , name, surfaceHasSurface);
+defineTypeNameAndDebug(setHasSetPluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, setHasSetPluginFunction , name, setHasSet);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
+setHasSetPluginFunction::setHasSetPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    GeneralSurfacesPluginFunction(
+    GeneralSetsPluginFunction(
         parentDriver,
         name,
         "volLogicalField",
-        string("surfaceName primitive word")
+        string("setName primitive word")
     )
 {
 }
@@ -62,12 +62,12 @@ surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void surfaceHasSurfacePluginFunction::doEvaluation()
+void setHasSetPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pHasSurface(
+    autoPtr<volScalarField> pHasSet(
         new volScalarField(
             IOobject(
-                "surfaceHasSurfaceInCell",
+                "setHasSetInCell",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
@@ -78,17 +78,17 @@ void surfaceHasSurfacePluginFunction::doEvaluation()
         )
     );
 
-    const labelList &cells=meshCells();
+    const labelList &cells=theSet().cells();
 
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pHasSurface()[cellI]=1;
+        pHasSet()[cellI]=1;
     }
 
-    pHasSurface->correctBoundaryConditions();
+    pHasSet->correctBoundaryConditions();
 
-    result().setObjectResult(pHasSurface);
+    result().setObjectResult(pHasSet);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

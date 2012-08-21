@@ -31,28 +31,32 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceHasSurfacePluginFunction.H"
+#include "GeneralSetsPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "SetsRepository.H"
+
+#include "meshSearch.H"
+
 namespace Foam {
 
-defineTypeNameAndDebug(surfaceHasSurfacePluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceHasSurfacePluginFunction , name, surfaceHasSurface);
-
+defineTypeNameAndDebug(GeneralSetsPluginFunction,0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
+GeneralSetsPluginFunction::GeneralSetsPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
-    const word &name
+    const word &name,
+    const word &resultType,
+    const string &arguments
 ):
-    GeneralSurfacesPluginFunction(
+    FieldValuePluginFunction(
         parentDriver,
         name,
-        "volLogicalField",
-        string("surfaceName primitive word")
+        resultType,
+        arguments
     )
 {
 }
@@ -62,33 +66,21 @@ surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void surfaceHasSurfacePluginFunction::doEvaluation()
+void GeneralSetsPluginFunction::setArgument(
+    label index,
+    const word &value
+) {
+    assert(index==0);
+
+    name_=value;
+}
+
+const sampledSet &GeneralSetsPluginFunction::theSet() const
 {
-    autoPtr<volScalarField> pHasSurface(
-        new volScalarField(
-            IOobject(
-                "surfaceHasSurfaceInCell",
-                mesh().time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh(),
-            dimensionedScalar("no",dimless,0)
-        )
+    return SetsRepository::getRepository().getSet(
+        name_,
+        mesh()
     );
-
-    const labelList &cells=meshCells();
-
-    forAll(cells,i) {
-        const label cellI=cells[i];
-
-        pHasSurface()[cellI]=1;
-    }
-
-    pHasSurface->correctBoundaryConditions();
-
-    result().setObjectResult(pHasSurface);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

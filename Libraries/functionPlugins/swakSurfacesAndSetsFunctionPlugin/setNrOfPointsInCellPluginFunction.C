@@ -31,28 +31,28 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "surfaceHasSurfacePluginFunction.H"
+#include "setNrOfPointsInCellPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(surfaceHasSurfacePluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, surfaceHasSurfacePluginFunction , name, surfaceHasSurface);
+defineTypeNameAndDebug(setNrOfPointsInCellPluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, setNrOfPointsInCellPluginFunction , name, setNrOfPointsInCell);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
+setNrOfPointsInCellPluginFunction::setNrOfPointsInCellPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    GeneralSurfacesPluginFunction(
+    GeneralSetsPluginFunction(
         parentDriver,
         name,
-        "volLogicalField",
-        string("surfaceName primitive word")
+        "volScalarField",
+        string("setName primitive word")
     )
 {
 }
@@ -62,12 +62,12 @@ surfaceHasSurfacePluginFunction::surfaceHasSurfacePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void surfaceHasSurfacePluginFunction::doEvaluation()
+void setNrOfPointsInCellPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pHasSurface(
+    autoPtr<volScalarField> pNrOfPointsInCell(
         new volScalarField(
             IOobject(
-                "surfaceHasSurfaceInCell",
+                "setNrOfPointsInCellInCell",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
@@ -78,17 +78,18 @@ void surfaceHasSurfacePluginFunction::doEvaluation()
         )
     );
 
-    const labelList &cells=meshCells();
+    const labelList &cells=theSet().cells();
 
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pHasSurface()[cellI]=1;
+        pNrOfPointsInCell()[cellI]+=1;
     }
 
-    pHasSurface->correctBoundaryConditions();
+    pNrOfPointsInCell->correctBoundaryConditions();
 
-    result().setObjectResult(pHasSurface);
+    result().setObjectResult(pNrOfPointsInCell);
+
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
