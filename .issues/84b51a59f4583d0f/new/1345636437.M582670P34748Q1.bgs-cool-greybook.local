@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 22 Aug 2012 13:53:00 +0200
+State: new
+Subject: valgrind finds problem in pythonIntegration
+Message-Id: <84b51a59f4583d0f-0-artemis@bgs-cool-greybook.local>
+
+Check. Maybe this is a problem of Python. Or not all memory is
+properly returned

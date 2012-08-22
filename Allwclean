@@ -1,5 +1,10 @@
 #! /bin/sh
 
+if [ -e swakConfiguration ]; then
+    echo "Reading variables from 'swakConfiguration'"
+    source swakConfiguration
+fi
+
 (cd Libraries; ./Allwclean )
 
 (cd Utilities; ./Allwclean )

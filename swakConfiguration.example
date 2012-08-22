@@ -1,2 +1,5 @@
 export SWAK_PYTHON_INCLUDE="-I/opt/local/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7"
 export SWAK_PYTHON_LINK="-L/opt/local/lib -lpython2.7"
+
+# List separated by : with directories to user plugins
+export SWAK_USER_PLUGINS=../Examples/UserPlugins/swakTestFunctionPlugins

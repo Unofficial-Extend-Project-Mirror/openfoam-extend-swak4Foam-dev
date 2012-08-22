@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -61,7 +61,7 @@ dumpSwakExpressionFunctionObject::dumpSwakExpressionFunctionObject
             dict,
             refCast<const fvMesh>(obr_)
         )
-    ) 
+    )
 {
     const string warnSwitch="IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData";
     if(!dict.lookupOrDefault<bool>(warnSwitch,false)) {
@@ -98,10 +98,10 @@ void dumpSwakExpressionFunctionObject::write()
     if(verbose()) {
         Info << "Expression " << name() << " : ";
     }
-    
+
     driver_->clearVariables();
     driver_->parse(expression_);
-    word rType=driver_->getResultType();
+    word rType=driver_->CommonValueExpressionDriver::getResultType();
 
     if(rType==pTraits<scalar>::typeName) {
         writeTheData<scalar>(driver_());
@@ -115,10 +115,10 @@ void dumpSwakExpressionFunctionObject::write()
         writeTheData<sphericalTensor>(driver_());
     } else {
         WarningIn("dumpSwakExpressionFunctionObject::write()")
-            << "Don't know how to handle type " << rType 
+            << "Don't know how to handle type " << rType
                 << endl;
     }
-    
+
     if(verbose()) {
         Info << endl;
     }

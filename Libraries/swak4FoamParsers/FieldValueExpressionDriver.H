@@ -1,7 +1,7 @@
-//  ICE Revision: $Id$ 
+//  ICE Revision: $Id$
 
-#ifndef VALUE_EXPRESSION_DRIVER_H
-#define VALUE_EXPRESSION_DRIVER_H
+#ifndef FieldValueExpressionDriver_H
+#define FieldValueExpressionDriver_H
 
 #include <string.H>
 #include <scalar.H>
@@ -42,7 +42,7 @@ class FieldValueExpressionDriver
 
 //     autoPtr<volScalarField> sresult_;
 //     autoPtr<volVectorField> vresult_;
-    
+
     autoPtr<regIOobject> resultField_;
 
     word typ_;
@@ -55,9 +55,17 @@ class FieldValueExpressionDriver
 
     dimensionSet resultDimension_;
 
+    static const SymbolTable<FieldValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
+
+    static word driverName_;
+
 public:
 
     TypeName("FieldValueExpressionDriver");
+
+    static const word &driverName() { return driverName_; }
 
     //- old style constructor
     FieldValueExpressionDriver(
@@ -82,7 +90,7 @@ public:
 
     //- Construct from an id
     FieldValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     virtual ~FieldValueExpressionDriver();
 
     // necessary to override Common
@@ -112,17 +120,32 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    //- set the state to "eat characters"
+    void startEatCharacters();
+
+    //- Handling the parser.
+    void parseInternal(int startToken);
+
+    //- execute a plugin-function
+    template<class T>
+    autoPtr<T> evaluatePluginFunction(
+        const string &name,
+        const parserField::location &loc,
+        int &scanned
+    );
+
+    template<class T>
+    struct correctBC;
+
 public:
+
     //- get the result field (if it is of the right type)
     template<class T>
-    const T &getResult();
+    const T &getResult() const;
 
     // Handling the scanner.
     void scan_begin ();
     void scan_end ();
-
-    // Handling the parser.
-    void parse (const std::string& f);
 
     bool isCellSet(const string &name);
     bool isCellZone(const string &name);
@@ -268,12 +291,15 @@ public:
     volScalarField *makeRandomField(label seed=0);
     volScalarField *makeGaussRandomField(label seed=0);
     volScalarField *makeCellIdField();
-    
+
     //- return Time object
     const Time& runTime() const { return runTime_; }
 
     //- what type
     const word &typ() const { return typ_; }
+
+    //- override type reporting from common class
+    word getResultType() { return typ(); }
 
     //- is this a logical field
     bool isLogical() const { return isLogical_; }
@@ -302,10 +328,10 @@ public:
 
     template <class Field>
     Field *doLogicalNot(Field *a);
-    
+
     template <class Field>
     Field *doPointLogicalNot(Field *a);
-    
+
     template <class T,class Field>
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
@@ -388,6 +414,16 @@ public:
     static void copyCalculatedPatches(
         GeometricField<T,pointPatchField,pointMesh> &field,
         const GeometricField<T,pointPatchField,pointMesh> &orig
+    );
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
     );
 
     // allow access to the setResult-method

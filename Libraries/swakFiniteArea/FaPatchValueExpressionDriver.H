@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     FaPatchValueExpressionDriverI.H
     FaPatchValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef FaPatchValueExpressionDriver_H
@@ -84,22 +84,13 @@ class FaPatchValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const FaPatchValueExpressionDriver&);
 
+    static word driverName_;
+
 protected:
 
-    // Handling the scanner 
+    // Handling the scanner
     void scan_begin();
     void scan_end();
-
-    //- actual size of the field
-    virtual label size() const;
-
-    //- actual size of the supporting point-field
-    virtual label pointSize() const;
-
-    //- get the mesh we're living on
-    virtual const fvMesh &mesh() const;
-
-    virtual const faMesh &aMesh() const;
 
     //- set the state of the lexer to scanning vector components
     void startVectorComponent();
@@ -107,25 +98,47 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    //- set the state to "eat characters"
+    void startEatCharacters();
+
+    // Handling the parser
+    void parseInternal(int startToken);
+
+    //- execute a plugin-function
+    template<class T>
+    autoPtr<Field<T> > evaluatePluginFunction(
+        const string &name,
+        const parserFaPatch::location &loc,
+        int &scanned,
+        bool isPoint=false
+    );
+
+    static const SymbolTable<FaPatchValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
+
+
 public:
 
     //- Runtime type information
     TypeName("FaPatchValueExpressionDriver");
 
+    static const word &driverName() { return driverName_; }
+
     // Constructors
 
     //- Construct from components
     FaPatchValueExpressionDriver(const faPatch& patch_);
-    
+
     //- Construct from a dictionary
     FaPatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
+
     //- Construct from and an old Version
     FaPatchValueExpressionDriver(const faPatch& patch_,const FaPatchValueExpressionDriver& old);
 
     //- Construct from an id
     FaPatchValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     //- Copy construct
     FaPatchValueExpressionDriver(const FaPatchValueExpressionDriver&);
 
@@ -137,6 +150,17 @@ public:
     // Member Functions
 
     const faPatch & patch() const { return patch_; }
+
+    //- actual size of the field
+    virtual label size() const;
+
+    //- actual size of the supporting point-field
+    virtual label pointSize() const;
+
+    //- get the mesh we're living on
+    virtual const fvMesh &mesh() const;
+
+    virtual const faMesh &aMesh() const;
 
     vectorField *makePositionField();
 
@@ -169,15 +193,22 @@ public:
     template<class Type>
     Field<Type> *getPatchNeighbourField(const string &name);
 
-    // Handling the parser
-    void parse(const std::string& f);
-
     template<class Type>
     Field<Type> *toFace(const Field<Type> &);
 
     template<class Type>
     Field<Type> *toPoint(const Field<Type> &);
- 
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
+
     // allow access of protected methods
     friend class parserFaPatch::FaPatchValueExpressionParser;
 };
