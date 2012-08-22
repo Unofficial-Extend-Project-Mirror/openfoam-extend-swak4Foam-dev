@@ -314,14 +314,20 @@ namespace Foam {
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "tensorID" "pointTensorID" "symmTensorID" "pointSymmTensorID" "sphericalTensorID" "pointSphericalTensorID"
-%printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector"
+%destructor          { delete $$; } <vec> <name>
+    <vfield> <sfield> <lfield> <tfield> <yfield> <hfield>
+%destructor          {} <val> <integer>
 
-%destructor          { delete $$; } "timeline" "lookup" "scalarID"  "vectorID"  "logicalID" "pointScalarID" "pointVectorID" "pointLogicalID" "vector" "expression" "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
-%destructor          {} "value" "integer" "sexpression"
-
-%printer             { debug_stream () << $$; } "value"  "sexpression" "integer"
-%printer             { debug_stream () << $$ /* ->name().c_str() */ ; } "expression"  "vexpression" "lexpression" "pexpression" "pvexpression" "plexpression" "texpression" "ptexpression" "yexpression" "pyexpression" "hexpression" "phexpression"
+%printer             { debug_stream () << *$$; } <name>
+%printer             {
+    Foam::OStringStream buff;
+    buff << *$$;
+    debug_stream () << buff.str().c_str();
+} <vec>
+%printer             { debug_stream () << $$; } <val> <integer>
+%printer             {
+    debug_stream () << "<No name field>" << $$ /* ->name().c_str() */ ;
+} <vfield> <sfield> <lfield> <tfield> <yfield> <hfield>
 
 
 %%
@@ -565,6 +571,7 @@ evaluateVectorFunction: TOKEN_FUNCTION_VID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -789,6 +796,7 @@ evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -847,6 +855,7 @@ evaluateTensorFunction: TOKEN_FUNCTION_TID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -898,6 +907,7 @@ evaluateSymmTensorFunction: TOKEN_FUNCTION_YID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -941,6 +951,7 @@ evaluateSphericalTensorFunction: TOKEN_FUNCTION_HID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -970,6 +981,7 @@ evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1015,6 +1027,7 @@ evaluatePointVectorFunction: TOKEN_FUNCTION_PVID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1102,6 +1115,7 @@ evaluatePointScalarFunction: TOKEN_FUNCTION_PSID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1136,6 +1150,7 @@ evaluatePointTensorFunction: TOKEN_FUNCTION_PTID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1167,6 +1182,7 @@ evaluatePointSymmTensorFunction: TOKEN_FUNCTION_PYID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1196,6 +1212,7 @@ evaluatePointSphericalTensorFunction: TOKEN_FUNCTION_PHID '(' eatCharactersSwitc
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1223,6 +1240,7 @@ evaluatePointLogicalFunction: TOKEN_FUNCTION_PLID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
