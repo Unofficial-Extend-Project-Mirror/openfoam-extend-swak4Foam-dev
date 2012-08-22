@@ -62,6 +62,17 @@
     in a file =swakConfiguration= (an example file
     =swakConfiguration.example= is provided). If that file is not
     present these unconfigured features will not be compiled.
+
+    Environment variables that can be set in this file are:
+    - SWAK_PYTHON_INCLUDE :: Path to the =Python.h= file of the used
+         =python=-installation
+    - SWAK_PYTHON_LINK :: Options to link the =python=-library to the
+         library for the =python=-integration
+    - SWAK_USER_PLUGINS :: A list of paths separated by
+         semicolons. These are the directories of libraries with
+         function-plugins. They are compiled in the course of the
+         normal =swak=-compilation. This makes sure that they are
+         consistent with the =swak=-release in the case of an update
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
@@ -183,6 +194,26 @@ S_{expl} + S_{impl} T
 *** =fluFunctionObjectDriver=
     Driver for =functionObjects= that implemented entirely in =Python=
     using the =pythonFlu=-library
+*** =functionPlugins=
+    Directory with a number of libraries with function-plugins:
+    - swakFacSchemesFunctionPlugin :: functions with selectable
+         discretization schemes for FAM (only used in 1.6-ext)
+    - swakFvcSchemesFunctionPlugin :: functions with selectable
+         schemes for FVM
+    - swakLocalCalculationsFunctionPlugin :: calculations that are
+         local to a cell (Minimum of the face values or so)
+    - swakMeshQualityFunctionPlugin :: calculate mesh quality criteria
+         like orthogonality, skewness and ascpect ratio
+    - swakRandomFunctionPlugin :: different random number
+         distributions. Currently only exponential
+    - swakSurfacesAndSetsFunctionPlugin :: calculates distances from
+         =sampledSurfaces= and =sampledSets= and projects calculated
+         values from these onto a volume field
+    - swakThermoTurbFunctionPlugin :: Access functions from the
+         thermophysical model and the turbulence model in the current
+         region. Loads the model only if necessary
+    - swakTransportTurbFunctionPlugin :: Same as above but for
+         incompressible models
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -1062,6 +1093,47 @@ S_{expl} + S_{impl} T
      The function =internalFace()= is $1$ on all internal faces and
      $0$ on all patches
 *** New features
+**** Allow dynamically loaded plugins that add new functions to parsers
+     This allows easy extension of the functionality of =swak4Foam=
+     without modifying the grammar files.
+
+     The way it works is that new functions are added to a
+     runtime-selection table. If the grammar can not resolve a symbol
+     as a built-in function or a field (but only then) it looks up the
+     name in this table and evaluates the function. Parameters are
+     parsed separately and can be:
+     - primitive data types :: integer, float, string and word
+     - swak-expression :: an expression parsed by one of the
+          swak-parsers. The type of this expression does not
+          necessarily have to be the same as the one of the 'main'
+          expression.
+     The first time a plugin function is searched =swak4Foam= prints a
+     list of all the available functions of this type. Information
+     included is the return type and the types of the parameters
+     (these include the parser used, the expected type and a parameter
+     name).
+
+     Libraries with plugin-functions are added via the =libs=-entry in
+     the =system/controlDict=
+
+     A number of plugin-libraries are already included covering these
+     topics:
+     - Evaluation of functions of the turbulence, transport or thermo
+       model
+     - Different random number distributions
+     - Functions to "project" =sampledSets= and =sampledSurfaces= onto
+       a volume-field
+     - Execute explicit discretization functions (like =grad=) but
+       select the used scheme in the function instead of using the
+       value from =fvSchemes=
+     - Calculations of the mesh quality (same way =checkMesh= does)
+       and return as fields
+     - Do calculations locally on a cell (like the maximum on its
+       faces)
+
+     It has been tried to make the names unique instead of
+     short. Usually function names from one library are prefixed with
+     the same short string.
 **** Dynamically generated lists of =functionObjects=
      The new =dynamicFunctionObjectListProxy= in the
      =simpleFunctionObjects= can generate a =functionObjectList= from
