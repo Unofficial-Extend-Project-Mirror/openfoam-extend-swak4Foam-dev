@@ -47,6 +47,9 @@ libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
     "libswakFiniteArea.so"
+    // just for testing the plugins
+    "libswakTestFunctionPlugin.so"
+    "libswakFacSchemesFunctionPlugin.so"
 );
 
 functions {
@@ -208,7 +211,7 @@ functions {
         diffusion "0.01" [0 2 -1 0 0 0 0];
         source "0" [0 0 -1 0 0 0 0];
         phi "phis" [0 2 -1 0 0];
-    }    
+    }
     writeYTransient {
         $writeTTransient;
 
@@ -216,7 +219,7 @@ functions {
     }
     solveYSteady {
         $solveYTransient;
-        
+
         fieldName YSteady;
         steady true;
         solveAt startup;
@@ -256,5 +259,3 @@ functions {
  }
 
 // ************************************************************************* //
-
-

@@ -1,0 +1,20 @@
+#! /bin/bash
+
+wmake libso swakMeshQualityFunctionPlugin
+
+wmake libso swakLocalCalculationsFunctionPlugin
+
+wmake libso swakRandomFunctionPlugin
+
+wmake libso swakFvcSchemesFunctionPlugin
+
+wmake libso swakThermoTurbFunctionPlugin
+
+wmake libso swakTransportTurbFunctionPlugin
+
+wmake libso swakSurfacesAndSetsFunctionPlugin
+
+if [ "$FOAM_DEV" != "" ]
+then
+    wmake libso swakFacSchemesFunctionPlugin
+fi

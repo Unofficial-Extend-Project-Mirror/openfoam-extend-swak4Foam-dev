@@ -5,6 +5,9 @@
 %defines
 %define "parser_class_name" "FaFieldValueExpressionParser"
 
+// make reentrant to allow sub-parsers
+%pure-parser
+
 %{
 #include <areaFields.H>
 #include <edgeFields.H>
@@ -30,18 +33,27 @@
     }
 
     using Foam::FaFieldValueExpressionDriver;
+
+#include "FaFieldValuePluginFunction.H"
 %}
 
 %name-prefix="parserFaField"
 
+%parse-param {void * scanner}
 %parse-param { FaFieldValueExpressionDriver& driver }
+%parse-param { int start_token }
+%parse-param { int numberOfFunctionChars }
+%lex-param {void * scanner}
 %lex-param { FaFieldValueExpressionDriver& driver }
+%lex-param { int &start_token }
+%lex-param { int &numberOfFunctionChars }
 
 %locations
 %initial-action
 {
 	     // Initialize the initial location.
 	     //     @$.begin.filename = @$.end.filename = &driver.file;
+    numberOfFunctionChars=0;
 };
 
 %debug
@@ -73,6 +85,46 @@
 #include "FaFieldValueExpressionDriverLogicalTemplates.H"
 
 #include "swakChecks.H"
+
+namespace Foam {
+template<class T>
+autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
+    const string &name,
+    const parserFaField::location &loc,
+    int &scanned
+) {
+    if(debug || traceParsing()) {
+        Info << "Excuting plugin-function " << name << " ( returning type "
+            << pTraits<T>::typeName << ") on " << this->content_ << " position "
+            << loc.end.column-1 << endl;
+    }
+
+    autoPtr<FaFieldValuePluginFunction> theFunction(
+        FaFieldValuePluginFunction::New(
+            *this,
+            name
+        )
+    );
+
+    //    scanned+=1;
+
+    autoPtr<T> result(
+        theFunction->evaluate<T>(
+            this->content_.substr(
+                loc.end.column-1
+            ),
+            scanned
+        ).ptr()
+    );
+
+    if(debug || traceParsing()) {
+        Info << "Scanned: " << scanned << endl;
+    }
+
+    return result;
+}
+}
+
 %}
 
 %token <name>   TOKEN_LINE  "timeline"
@@ -87,13 +139,25 @@
 %token <name>  TOKEN_FTID   "faceTensorID"
 %token <name>  TOKEN_FYID   "faceSymmTensorID"
 %token <name>  TOKEN_FHID   "faceSphericalTensorID"
+%token <name>   TOKEN_FUNCTION_SID   "F_scalarID"
+%token <name>   TOKEN_FUNCTION_FSID   "F_faceScalarID"
+%token <name>   TOKEN_FUNCTION_VID   "F_vectorID"
+%token <name>   TOKEN_FUNCTION_FVID   "F_faceVectorID"
+%token <name>   TOKEN_FUNCTION_TID   "F_tensorID"
+%token <name>   TOKEN_FUNCTION_FTID   "F_faceTensorID"
+%token <name>   TOKEN_FUNCTION_YID   "F_symmTensorID"
+%token <name>   TOKEN_FUNCTION_FYID   "F_faceSymmTensorID"
+%token <name>   TOKEN_FUNCTION_HID   "F_sphericalTensorID"
+%token <name>   TOKEN_FUNCTION_FHID   "F_faceSphericalTensorID"
+%token <name>   TOKEN_FUNCTION_LID   "F_logicalID"
+%token <name>   TOKEN_FUNCTION_FLID   "F_faceLogicalID"
 %token <val>    TOKEN_NUM   "number"
 %token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
 %token <ten>    TOKEN_TEN   "tensor"
 %token <yten>    TOKEN_YTEN   "symmTensor"
 %token <hten>    TOKEN_HTEN   "sphericalTensor"
-%type  <val>    scalar      "sexpression"  
+%type  <val>    scalar      "sexpression"
 %type  <sfield>    exp        "expression"
 %type  <sfield>    lexp       "lexpression"
 %type  <fsfield>   flexp       "flexpression"
@@ -106,14 +170,59 @@
 %type  <ftfield>   ftexp      "ftexpression"
 %type  <fyfield>   fyexp      "fyexpression"
 %type  <fhfield>   fhexp      "fhexpression"
-%type  <vfield>    vector     
-%type  <fvfield>    fvector     
-%type  <tfield>    tensor     
-%type  <yfield>    symmTensor     
-%type  <hfield>    sphericalTensor     
-%type  <ftfield>    ftensor     
-%type  <fyfield>    fsymmTensor     
-%type  <fhfield>    fsphericalTensor     
+%type  <vfield>    vector
+%type  <fvfield>    fvector
+%type  <tfield>    tensor
+%type  <yfield>    symmTensor
+%type  <hfield>    sphericalTensor
+%type  <ftfield>    ftensor
+%type  <fyfield>    fsymmTensor
+%type  <fhfield>    fsphericalTensor
+
+%type  <sfield> evaluateScalarFunction;
+%type <fsfield> evaluateEdgeScalarFunction;
+%type  <vfield> evaluateVectorFunction;
+%type <fvfield> evaluateEdgeVectorFunction;
+%type  <tfield> evaluateTensorFunction;
+%type <ftfield> evaluateEdgeTensorFunction;
+%type  <yfield> evaluateSymmTensorFunction;
+%type <fyfield> evaluateEdgeSymmTensorFunction;
+%type  <hfield> evaluateSphericalTensorFunction;
+%type <fhfield> evaluateEdgeSphericalTensorFunction;
+%type  <sfield> evaluateLogicalFunction;
+%type <fsfield> evaluateEdgeLogicalFunction;
+
+%token START_DEFAULT
+%token START_AREA_SCALAR_COMMA
+%token START_AREA_SCALAR_CLOSE
+%token START_AREA_VECTOR_COMMA
+%token START_AREA_VECTOR_CLOSE
+%token START_AREA_TENSOR_COMMA
+%token START_AREA_TENSOR_CLOSE
+%token START_AREA_YTENSOR_COMMA
+%token START_AREA_YTENSOR_CLOSE
+%token START_AREA_HTENSOR_COMMA
+%token START_AREA_HTENSOR_CLOSE
+%token START_AREA_LOGICAL_COMMA
+%token START_AREA_LOGICAL_CLOSE
+%token START_EDGE_SCALAR_COMMA
+%token START_EDGE_SCALAR_CLOSE
+%token START_EDGE_VECTOR_COMMA
+%token START_EDGE_VECTOR_CLOSE
+%token START_EDGE_TENSOR_COMMA
+%token START_EDGE_TENSOR_CLOSE
+%token START_EDGE_YTENSOR_COMMA
+%token START_EDGE_YTENSOR_CLOSE
+%token START_EDGE_HTENSOR_COMMA
+%token START_EDGE_HTENSOR_CLOSE
+%token START_EDGE_LOGICAL_COMMA
+%token START_EDGE_LOGICAL_CLOSE
+
+%token START_CLOSE_ONLY
+%token START_COMMA_ONLY
+
+%token TOKEN_LAST_FUNCTION_CHAR
+%token TOKEN_IN_FUNCTION_CHAR
 
 %token TOKEN_VECTOR
 %token TOKEN_TENSOR
@@ -123,9 +232,9 @@
 %token TOKEN_TRUE
 %token TOKEN_FALSE
 
-%token TOKEN_x 
-%token TOKEN_y 
-%token TOKEN_z 
+%token TOKEN_x
+%token TOKEN_y
+%token TOKEN_z
 
 %token TOKEN_xx
 %token TOKEN_xy
@@ -230,15 +339,175 @@
 // %right '^'
 %left '.'
 
-%printer             { debug_stream () << *$$; } "scalarID" "vectorID" "faceScalarID" "faceVectorID" "tensorID" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID" 
-%printer             { Foam::OStringStream buff; buff << *$$; debug_stream () << buff.str().c_str(); } "vector" "tensor" "symmTensor" "sphericalTensor"
-%destructor          { delete $$; } "timeline" "lookup" "scalarID" "faceScalarID" "faceVectorID" "vectorID" "vector" "symmTensor" "sphericalTensor" "expression" "vexpression" "fsexpression" "fvexpression" "lexpression" "flexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression" "symmTensorID" "sphericalTensorID" "faceTensorID" "faceSymmTensorID" "faceSphericalTensorID"
-%printer             { debug_stream () << $$; } "number"  "sexpression" "integer"
-%printer             { debug_stream () << $$->name().c_str(); } "expression"  "vexpression" "lexpression" "flexpression" "fsexpression" "fvexpression" "texpression" "yexpression" "hexpression" "ftexpression" "fyexpression" "fhexpression"
+%destructor          {} <val> <integer>
+%destructor          { delete $$; } <name> <vec> <ten> <yten> <hten>
+       <vfield> <sfield> <tfield> <yfield> <hfield>
+       <fvfield> <fsfield> <ftfield> <fyfield> <fhfield>
 
+%printer             { debug_stream () << $$; } <val> <integer>
+%printer             { debug_stream () << *$$; } <name>
+%printer             {
+    Foam::OStringStream buff;
+    buff << *$$; debug_stream () << buff.str().c_str();
+} <vec> <ten> <yten> <hten>
+%printer             { debug_stream () << $$->name().c_str(); }
+       <vfield> <sfield> <tfield> <yfield> <hfield>
+       <fvfield> <fsfield> <ftfield> <fyfield> <fhfield>
 
 %%
-%start unit;
+%start switch_start;
+
+
+switch_start: switch_expr
+              { driver.parserLastPos()=@1.end.column; }
+;
+
+switch_expr:      START_DEFAULT unit
+                | START_AREA_SCALAR_COMMA exp ','
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_SCALAR_CLOSE exp ')'
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_VECTOR_COMMA vexp ','
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_VECTOR_CLOSE vexp ')'
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_TENSOR_COMMA texp ','
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_TENSOR_CLOSE texp ')'
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_YTENSOR_COMMA yexp ','
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_YTENSOR_CLOSE yexp ')'
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_HTENSOR_COMMA hexp ','
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_HTENSOR_CLOSE hexp ')'
+                  {
+                      driver.setResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_LOGICAL_COMMA lexp ','
+                  {
+                      driver.setLogicalResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_AREA_LOGICAL_CLOSE lexp ')'
+                  {
+                      driver.setLogicalResult($2,false);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_SCALAR_COMMA fsexp ','
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_SCALAR_CLOSE fsexp ')'
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_VECTOR_COMMA fvexp ','
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_VECTOR_CLOSE fvexp ')'
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_TENSOR_COMMA ftexp ','
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_TENSOR_CLOSE ftexp ')'
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_YTENSOR_COMMA fyexp ','
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_YTENSOR_CLOSE fyexp ')'
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_HTENSOR_COMMA fhexp ','
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_HTENSOR_CLOSE fhexp ')'
+                  {
+                      driver.setResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_LOGICAL_COMMA flexp ','
+                  {
+                      driver.setLogicalResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+                | START_EDGE_LOGICAL_CLOSE flexp ')'
+                  {
+                      driver.setLogicalResult($2,true);
+                      driver.parserLastPos()=@3.end.column-1;
+                      YYACCEPT;
+                  }
+;
 
 unit:   exp                     { driver.setResult($1,false);  }
         | vexp                  { driver.setResult($1,false);  }
@@ -254,11 +523,17 @@ unit:   exp                     { driver.setResult($1,false);  }
         | flexp                 { driver.setLogicalResult($1,true); }
 ;
 
-vectorComponentSwitch: /* empty rule */{ driver.startVectorComponent(); } 
+vectorComponentSwitch: /* empty rule */{ driver.startVectorComponent(); }
 ;
 
-tensorComponentSwitch: /* empty rule */{ driver.startTensorComponent(); } 
+tensorComponentSwitch: /* empty rule */{ driver.startTensorComponent(); }
 ;
+
+eatCharactersSwitch: /* empty rule */{ driver.startEatCharacters(); }
+;
+
+restOfFunction:    TOKEN_LAST_FUNCTION_CHAR
+                   | TOKEN_IN_FUNCTION_CHAR restOfFunction;
 
 vexp:   vector                                    { $$ = $1; }
         | vexp '+' vexp 		          { sameSize($1,$3); $$ = new Foam::areaVectorField(*$1 + *$3); delete $1; delete $3;   driver.setCalculatedPatches(*$$); }
@@ -274,7 +549,7 @@ vexp:   vector                                    { $$ = $1; }
         | vexp '^' vexp 		          { sameSize($1,$3); $$ = new Foam::areaVectorField(*$1 ^ *$3); delete $1; delete $3;   driver.setCalculatedPatches(*$$); }
         | vexp '-' vexp 		          { sameSize($1,$3); $$ = new Foam::areaVectorField(*$1 - *$3); delete $1; delete $3;   driver.setCalculatedPatches(*$$); }
         | '-' vexp %prec TOKEN_NEG                { $$ = new Foam::areaVectorField(-*$2); delete $2;   driver.setCalculatedPatches(*$$); }
-        | '(' vexp ')'		                  { $$ = $2; }  
+        | '(' vexp ')'		                  { $$ = $2; }
         | lexp '?' vexp ':' vexp                  { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaVectorField>(Foam::vector())); delete $1; delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
         | TOKEN_position '(' ')'                  { $$ = driver.makePositionField(); }
         | TOKEN_laplacian '(' fsexp ',' vexp ')'  { $$ = new Foam::areaVectorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
@@ -284,32 +559,44 @@ vexp:   vector                                    { $$ = $1; }
         | TOKEN_min '(' vexp ',' vexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
         | TOKEN_max '(' vexp ',' vexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
         | TOKEN_min '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::min(*$3).value()); delete $3; }
-        | TOKEN_minPosition '(' exp ')'           { 
+        | TOKEN_minPosition '(' exp ')'           {
             $$ = driver.makeConstantField<Foam::areaVectorField>(
                 driver.getPositionOfMinimum(
                     *$3,
                     driver.aMesh().areaCentres()
                 )
-            ); 
-            delete $3; 
+            );
+            delete $3;
         }
         | TOKEN_max '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::max(*$3).value()); delete $3; }
-        | TOKEN_maxPosition '(' exp ')'           { 
+        | TOKEN_maxPosition '(' exp ')'           {
             $$ = driver.makeConstantField<Foam::areaVectorField>(
                 driver.getPositionOfMaximum(
                     *$3,
                     driver.aMesh().areaCentres()
                 )
-            ); 
-            delete $3; 
+            );
+            delete $3;
         }
         | TOKEN_sum '(' vexp ')'                 { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' vexp ')'             { $$ = driver.makeConstantField<Foam::areaVectorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_grad '(' exp ')'                  { $$ = new Foam::areaVectorField(Foam::fac::grad(*$3)); delete $3;   driver.setCalculatedPatches(*$$); }
         | TOKEN_div '(' fsexp ',' vexp ')'        { $$ = new Foam::areaVectorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
-        | TOKEN_VID                               { $$=driver.getField<Foam::areaVectorField>(*$1).ptr(); }
-        | TOKEN_ddt '(' TOKEN_VID ')'             { $$ = Foam::fac::ddt( driver.getField<Foam::areaVectorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); }
-        | TOKEN_oldTime '(' TOKEN_VID ')'         { $$=new Foam::areaVectorField(driver.getField<Foam::areaVectorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); }
+        | evaluateVectorFunction restOfFunction
+        | TOKEN_VID                               { $$=driver.getField<Foam::areaVectorField>(*$1).ptr(); delete $1; }
+        | TOKEN_ddt '(' TOKEN_VID ')'             { $$ = Foam::fac::ddt( driver.getField<Foam::areaVectorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); delete $3; }
+        | TOKEN_oldTime '(' TOKEN_VID ')'         { $$=new Foam::areaVectorField(driver.getField<Foam::areaVectorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); delete $3; }
+;
+
+evaluateVectorFunction: TOKEN_FUNCTION_VID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::areaVectorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam::edgeScalarField>($3); }
@@ -362,7 +649,7 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_sum '(' fsexp ')'           { $$ = driver.makeConstantField<Foam::edgeScalarField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fsexp ')'       { $$ = driver.makeConstantField<Foam::edgeScalarField>(Foam::average(*$3).value()); delete $3; }
         | '-' fsexp %prec TOKEN_NEG         { $$ = new Foam::edgeScalarField(-*$2); delete $2; }
-        | '(' fsexp ')'		            { $$ = $2; }  
+        | '(' fsexp ')'		            { $$ = $2; }
         | fvexp '.' vectorComponentSwitch TOKEN_x                     { $$ = new Foam::edgeScalarField($1->component(0)); delete $1; }
         | fvexp '.' vectorComponentSwitch TOKEN_y                     { $$ = new Foam::edgeScalarField($1->component(1)); delete $1; }
         | fvexp '.' vectorComponentSwitch TOKEN_z                     { $$ = new Foam::edgeScalarField($1->component(2)); delete $1; }
@@ -396,10 +683,22 @@ fsexp:  TOKEN_surf '(' scalar ')'           { $$ = driver.makeConstantField<Foam
         | TOKEN_length '(' ')'                { $$ = driver.makeLengthField(); }
         | TOKEN_lnGrad '(' exp ')'          { $$ = new Foam::edgeScalarField(Foam::fac::lnGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' exp ')'     { $$ = new Foam::edgeScalarField(Foam::fac::interpolate(*$3)); delete $3; }
-        | TOKEN_FSID                        { $$ = driver.getField<Foam::edgeScalarField>(*$1).ptr(); }
-        | TOKEN_oldTime '(' TOKEN_FSID ')'  { $$=new Foam::edgeScalarField(driver.getField<Foam::edgeScalarField>(*$3,true)->oldTime()); }
+        | evaluateEdgeScalarFunction restOfFunction
+        | TOKEN_FSID                        { $$ = driver.getField<Foam::edgeScalarField>(*$1).ptr(); delete $1; }
+        | TOKEN_oldTime '(' TOKEN_FSID ')'  { $$=new Foam::edgeScalarField(driver.getField<Foam::edgeScalarField>(*$3,true)->oldTime()); delete $3; }
 ;
- 
+
+evaluateEdgeScalarFunction: TOKEN_FUNCTION_FSID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::edgeScalarField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
+;
+
 fvexp:  fvector                            { $$ = $1; }
         | fvexp '+' fvexp 		   { sameSize($1,$3); $$ = new Foam::edgeVectorField(*$1 + *$3); delete $1; delete $3; }
         | fsexp '*' fvexp 		   { sameSize($1,$3); $$ = new Foam::edgeVectorField(*$1 * *$3); delete $1; delete $3; }
@@ -414,7 +713,7 @@ fvexp:  fvector                            { $$ = $1; }
         | fvexp '/' fsexp 		   { sameSize($1,$3); $$ = new Foam::edgeVectorField(*$1 / *$3); delete $1; delete $3; }
         | fvexp '-' fvexp 		   { sameSize($1,$3); $$ = new Foam::edgeVectorField(*$1 - *$3); delete $1; delete $3;}
         | '-' fvexp %prec TOKEN_NEG 	   { $$ = new Foam::edgeVectorField(-*$2); delete $2; }
-        | '(' fvexp ')'		           { $$ = $2; }  
+        | '(' fvexp ')'		           { $$ = $2; }
         | flexp '?' fvexp ':' fvexp        { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeVectorField>(Foam::vector::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_fposition '(' ')'          { $$ = driver.makeEdgePositionField(); }
         | TOKEN_fprojection '(' ')'        { $$ = driver.makeEdgeProjectionField(); }
@@ -424,33 +723,45 @@ fvexp:  fvector                            { $$ = $1; }
         | TOKEN_min '(' fvexp ',' fvexp  ')'        { $$ = Foam::min(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_max '(' fvexp ',' fvexp  ')'        { $$ = Foam::max(*$3,*$5).ptr(); delete $3; delete $5; }
         | TOKEN_min '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::min(*$3).value()); delete $3; }
-        | TOKEN_minPosition '(' fsexp ')'           { 
+        | TOKEN_minPosition '(' fsexp ')'           {
             $$ = driver.makeConstantField<Foam::edgeVectorField>(
                 driver.getPositionOfMinimum(
                     *$3,
                     driver.aMesh().edgeCentres()
                 )
-            ); 
-            delete $3; 
+            );
+            delete $3;
         }
         | TOKEN_max '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::max(*$3).value()); delete $3; }
-        | TOKEN_maxPosition '(' fsexp ')'           { 
+        | TOKEN_maxPosition '(' fsexp ')'           {
             $$ = driver.makeConstantField<Foam::edgeVectorField>(
                 driver.getPositionOfMaximum(
                     *$3,
                     driver.aMesh().edgeCentres()
                 )
-            ); 
-            delete $3; 
+            );
+            delete $3;
         }
         | TOKEN_sum '(' fvexp ')'          { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fvexp ')'      { $$ = driver.makeConstantField<Foam::edgeVectorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_FVID                       { $$ = driver.getField<Foam::edgeVectorField>(*$1).ptr(); }
-        | TOKEN_oldTime '(' TOKEN_FVID ')' { $$=new Foam::edgeVectorField(driver.getField<Foam::edgeVectorField>(*$3,true)->oldTime()); }
+        | evaluateEdgeVectorFunction restOfFunction
+        | TOKEN_FVID                       { $$ = driver.getField<Foam::edgeVectorField>(*$1).ptr(); delete $1; }
+        | TOKEN_oldTime '(' TOKEN_FVID ')' { $$=new Foam::edgeVectorField(driver.getField<Foam::edgeVectorField>(*$3,true)->oldTime()); delete $3; }
 ;
- 
+
+evaluateEdgeVectorFunction: TOKEN_FUNCTION_FVID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::edgeVectorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
+;
+
 scalar:	TOKEN_NUM		        { $$ = $1; }
-        | '-' TOKEN_NUM         	{ $$ = -$2; } 
+        | '-' TOKEN_NUM         	{ $$ = -$2; }
 ;
 
 exp:    TOKEN_NUM                                  { $$ = driver.makeConstantField<Foam::areaScalarField>($1); }
@@ -559,11 +870,23 @@ exp:    TOKEN_NUM                                  { $$ = driver.makeConstantFie
         | TOKEN_cpu'(' ')'                         { $$ = driver.makeConstantField<Foam::areaScalarField>(Foam::Pstream::myProcNo()); }
         | TOKEN_deltaT '(' ')'                     { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.runTime().deltaT().value()); }
         | TOKEN_time '(' ')'                       { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.runTime().time().value()); }
-        | TOKEN_SID		                   { $$ = driver.getField<Foam::areaScalarField>(*$1).ptr(); }
-        | TOKEN_ddt '(' TOKEN_SID ')'              { $$ = Foam::fac::ddt( driver.getField<Foam::areaScalarField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); }
-        | TOKEN_oldTime '(' TOKEN_SID ')'         { $$=new Foam::areaScalarField(driver.getField<Foam::areaScalarField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); }
+        | evaluateScalarFunction restOfFunction
+        | TOKEN_SID		                   { $$ = driver.getField<Foam::areaScalarField>(*$1).ptr(); delete $1; }
+        | TOKEN_ddt '(' TOKEN_SID ')'              { $$ = Foam::fac::ddt( driver.getField<Foam::areaScalarField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); delete $3; }
+        | TOKEN_oldTime '(' TOKEN_SID ')'         { $$=new Foam::areaScalarField(driver.getField<Foam::areaScalarField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); delete $3; }
         | TOKEN_LINE		                   { $$ = driver.makeConstantField<Foam::areaScalarField>(driver.getLineValue(*$1,driver.runTime().time().value())); delete $1; }
         | TOKEN_LOOKUP '(' exp ')'		   { $$ = driver.makeField<Foam::areaScalarField>(driver.getLookup(*$1,*$3)); delete $1;  delete$3;}
+;
+
+evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::areaScalarField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 lexp: TOKEN_TRUE                       { $$ = driver.makeConstantField<Foam::areaScalarField>(1); }
@@ -578,6 +901,18 @@ lexp: TOKEN_TRUE                       { $$ = driver.makeConstantField<Foam::are
     | lexp TOKEN_AND lexp              { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_and<Foam::scalar>(),$3);  delete $1; delete $3; }
     | lexp TOKEN_OR lexp               { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_or<Foam::scalar>(),$3);  delete $1; delete $3; }
     | '!' lexp %prec TOKEN_NOT         { $$ = driver.doLogicalNot($2); delete $2; }
+    | evaluateLogicalFunction restOfFunction
+;
+
+evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::areaScalarField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 flexp: TOKEN_surf '(' TOKEN_TRUE ')'  { $$ = driver.makeConstantField<Foam::edgeScalarField>(1); }
@@ -592,33 +927,45 @@ flexp: TOKEN_surf '(' TOKEN_TRUE ')'  { $$ = driver.makeConstantField<Foam::edge
     | flexp TOKEN_AND flexp           { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_and<Foam::scalar>(),$3);  delete $1; delete $3; }
     | flexp TOKEN_OR flexp            { sameSize($1,$3); $$ = driver.doLogicalOp($1,std::logical_or<Foam::scalar>(),$3);  delete $1; delete $3; }
     | '!' flexp %prec TOKEN_NOT       { $$ = driver.doLogicalNot($2); delete $2; }
+    | evaluateEdgeLogicalFunction restOfFunction
+;
+
+evaluateEdgeLogicalFunction: TOKEN_FUNCTION_FLID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::edgeScalarField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 texp:   tensor                  { $$ = $1; }
-        | texp '+' texp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '+' yexp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '+' hexp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | yexp '+' texp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | hexp '+' texp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | exp '*' texp 	   	                  { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '*' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | vexp '*' vexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '&' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | yexp '&' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '&' yexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | hexp '&' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '&' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '/' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 / *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '-' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '-' yexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | texp '-' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | yexp '-' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | hexp '-' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | '-' texp %prec TOKEN_NEG 	           { $$ = new Foam::areaTensorField(-*$2); delete $2;    driver.setCalculatedPatches(*$$); } 
-        | '(' texp ')'		        { $$ = $2; }  
-        | TOKEN_skew '(' texp ')' 	           { $$ = new Foam::areaTensorField( Foam::skew(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); } 
-        | TOKEN_inv '(' texp ')' 	           { $$ = new Foam::areaTensorField( Foam::inv(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); } 
-        | TOKEN_dev '(' texp ')' 	           { $$ = new Foam::areaTensorField( Foam::dev(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); } 
+        | texp '+' texp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '+' yexp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '+' hexp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | yexp '+' texp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | hexp '+' texp 		          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | exp '*' texp 	   	                  { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '*' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | vexp '*' vexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '&' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | yexp '&' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '&' yexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | hexp '&' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '&' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '/' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 / *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '-' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '-' yexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | texp '-' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | yexp '-' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | hexp '-' texp 	   	          { sameSize($1,$3); $$ = new Foam::areaTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | '-' texp %prec TOKEN_NEG 	           { $$ = new Foam::areaTensorField(-*$2); delete $2;    driver.setCalculatedPatches(*$$); }
+        | '(' texp ')'		        { $$ = $2; }
+        | TOKEN_skew '(' texp ')' 	           { $$ = new Foam::areaTensorField( Foam::skew(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); }
+        | TOKEN_inv '(' texp ')' 	           { $$ = new Foam::areaTensorField( Foam::inv(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); }
+        | TOKEN_dev '(' texp ')' 	           { $$ = new Foam::areaTensorField( Foam::dev(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); }
         | lexp '?' texp ':' texp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaTensorField>(Foam::tensor::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_laplacian '(' fsexp ',' texp ')'  { $$ = new Foam::areaTensorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
         | TOKEN_faceAverage '(' ftexp ')'         { $$ = new Foam::areaTensorField(Foam::fac::average(*$3)); delete $3;   driver.setCalculatedPatches(*$$); }
@@ -632,9 +979,21 @@ texp:   tensor                  { $$ = $1; }
         | TOKEN_average '(' texp ')'             { $$ = driver.makeConstantField<Foam::areaTensorField>(Foam::average(*$3).value()); delete $3; }
         | TOKEN_grad '(' vexp ')'                 { $$ = new Foam::areaTensorField(Foam::fac::grad(*$3)); delete $3;   driver.setCalculatedPatches(*$$); }
         | TOKEN_div '(' fsexp ',' texp ')'        { $$ = new Foam::areaTensorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
-        | TOKEN_TID                               { $$=driver.getField<Foam::areaTensorField>(*$1).ptr();   }
-        | TOKEN_ddt '(' TOKEN_TID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaTensorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); }
-        | TOKEN_oldTime '(' TOKEN_TID ')'		   { $$ = new Foam::areaTensorField( driver.getField<Foam::areaTensorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); }
+        | evaluateTensorFunction restOfFunction
+        | TOKEN_TID                               { $$=driver.getField<Foam::areaTensorField>(*$1).ptr(); delete $1;  }
+        | TOKEN_ddt '(' TOKEN_TID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaTensorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); delete $3; }
+        | TOKEN_oldTime '(' TOKEN_TID ')'		   { $$ = new Foam::areaTensorField( driver.getField<Foam::areaTensorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); delete $3; }
+;
+
+evaluateTensorFunction: TOKEN_FUNCTION_TID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::areaTensorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 yexp:   symmTensor                  { $$ = $1; }
@@ -656,6 +1015,7 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_symm '(' yexp ')' 	           { $$ = new Foam::areaSymmTensorField( Foam::symm(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); } 
         | TOKEN_inv '(' yexp ')' 	           { $$ = new Foam::areaSymmTensorField( Foam::inv(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); } 
         | TOKEN_dev '(' yexp ')' 	           { $$ = new Foam::areaSymmTensorField( Foam::dev(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); } 
+        | TOKEN_sqr '(' vexp ')' 	           { $$ = new Foam::areaSymmTensorField( Foam::sqr(*$3) ); delete $3;    driver.setCalculatedPatches(*$$); } 
         | lexp '?' yexp ':' yexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
 // Not instantiated in 1.6-ext        | TOKEN_laplacian '(' fsexp ',' yexp ')'  { $$ = new Foam::areaSymmTensorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
         | TOKEN_faceAverage '(' fyexp ')'         { $$ = new Foam::areaSymmTensorField(Foam::fac::average(*$3)); delete $3;   driver.setCalculatedPatches(*$$); }
@@ -668,23 +1028,35 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_sum '(' yexp ')'                 { $$ = driver.makeConstantField<Foam::areaSymmTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' yexp ')'             { $$ = driver.makeConstantField<Foam::areaSymmTensorField>(Foam::average(*$3).value()); delete $3; }
 // Not instantiated in 1.6-ext         | TOKEN_div '(' fsexp ',' yexp ')'        { $$ = new Foam::areaSymmTensorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
-        | TOKEN_YID                               { $$=driver.getField<Foam::areaSymmTensorField>(*$1).ptr(); }
-// Not instantiated in 1.6-ext?        | TOKEN_ddt '(' TOKEN_YID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSymmTensorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); }
-        | TOKEN_oldTime '(' TOKEN_YID ')'	   { $$ = new Foam::areaSymmTensorField( driver.getField<Foam::areaSymmTensorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); }
+        | evaluateSymmTensorFunction restOfFunction
+        | TOKEN_YID                               { $$=driver.getField<Foam::areaSymmTensorField>(*$1).ptr(); delete $1; }
+// Not instantiated in 1.6-ext?        | TOKEN_ddt '(' TOKEN_YID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSymmTensorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); delete $3; }
+        | TOKEN_oldTime '(' TOKEN_YID ')'	   { $$ = new Foam::areaSymmTensorField( driver.getField<Foam::areaSymmTensorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); delete $3; }
+;
+
+evaluateSymmTensorFunction: TOKEN_FUNCTION_YID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::areaSymmTensorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 hexp:   sphericalTensor                  { $$ = $1; }
-        | hexp '+' hexp 		          { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | exp '*' hexp 	   	                  { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | hexp '*' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | hexp '&' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | hexp '/' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 / *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | hexp '-' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }  
-        | '-' hexp %prec TOKEN_NEG 	           { $$ = new Foam::areaSphericalTensorField(-*$2); delete $2;    driver.setCalculatedPatches(*$$); } 
-        | '(' hexp ')'		        { $$ = $2; }  
-        | TOKEN_inv '(' hexp ')' 	           { 
-            $$ = driver.makeField<Foam::areaSphericalTensorField>( Foam::inv($3->internalField()) ); 
-            delete $3;    driver.setCalculatedPatches(*$$); } 
+        | hexp '+' hexp 		          { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 + *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | exp '*' hexp 	   	                  { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | hexp '*' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 * *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | hexp '&' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 & *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | hexp '/' exp 	   	                  { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 / *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | hexp '-' hexp 	   	          { sameSize($1,$3); $$ = new Foam::areaSphericalTensorField(*$1 - *$3); delete $1; delete $3;    driver.setCalculatedPatches(*$$); }
+        | '-' hexp %prec TOKEN_NEG 	           { $$ = new Foam::areaSphericalTensorField(-*$2); delete $2;    driver.setCalculatedPatches(*$$); }
+        | '(' hexp ')'		        { $$ = $2; }
+        | TOKEN_inv '(' hexp ')' 	           {
+            $$ = driver.makeField<Foam::areaSphericalTensorField>( Foam::inv($3->internalField()) );
+            delete $3;    driver.setCalculatedPatches(*$$); }
         | lexp '?' hexp ':' hexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::areaSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
 // Not instantiated in 1.6-ext         | TOKEN_laplacian '(' fsexp ',' hexp ')'  { $$ = new Foam::areaSphericalTensorField(Foam::fac::laplacian(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
         | TOKEN_faceAverage '(' fhexp ')'         { $$ = new Foam::areaSphericalTensorField(Foam::fac::average(*$3)); delete $3;   driver.setCalculatedPatches(*$$); }
@@ -697,36 +1069,48 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_sum '(' hexp ')'                 { $$ = driver.makeConstantField<Foam::areaSphericalTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' hexp ')'             { $$ = driver.makeConstantField<Foam::areaSphericalTensorField>(Foam::average(*$3).value()); delete $3; }
 // Not instantiated in 1.6-ext         | TOKEN_div '(' fsexp ',' hexp ')'        { $$ = new Foam::areaSphericalTensorField(Foam::fac::div(*$3,*$5)); delete $3; delete $5;   driver.setCalculatedPatches(*$$); }
-        | TOKEN_HID                               { $$=driver.getField<Foam::areaSphericalTensorField>(*$1).ptr(); }
-// Not instantiated in 1.6-ext?        | TOKEN_ddt '(' TOKEN_HID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSphericalTensorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); }
-        | TOKEN_oldTime '(' TOKEN_HID ')'	   { $$ = new Foam::areaSphericalTensorField( driver.getField<Foam::areaSphericalTensorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); }
+        | evaluateSphericalTensorFunction restOfFunction
+        | TOKEN_HID                               { $$=driver.getField<Foam::areaSphericalTensorField>(*$1).ptr(); delete $1; }
+// Not instantiated in 1.6-ext?        | TOKEN_ddt '(' TOKEN_HID ')'		   { $$ = Foam::fac::ddt( driver.getField<Foam::areaSphericalTensorField>(*$3,true)() ).ptr();   driver.setCalculatedPatches(*$$); delete $3; }
+        | TOKEN_oldTime '(' TOKEN_HID ')'	   { $$ = new Foam::areaSphericalTensorField( driver.getField<Foam::areaSphericalTensorField>(*$3,true)->oldTime());   driver.setCalculatedPatches(*$$); delete $3; }
+;
+
+evaluateSphericalTensorFunction: TOKEN_FUNCTION_HID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::areaSphericalTensorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 ftexp:   ftensor                  { $$ = $1; }
-        | ftexp '+' ftexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | ftexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | ftexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | fyexp '+' ftexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | fhexp '+' ftexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | fsexp '*' ftexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 * *$3); delete $1; delete $3;  }  
-        | ftexp '*' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 * *$3); delete $1; delete $3;  }  
-        | fvexp '*' fvexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 * *$3); delete $1; delete $3;  }  
-        | ftexp '&' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | fyexp '&' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | ftexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | fhexp '&' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | ftexp '&' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | ftexp '/' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 / *$3); delete $1; delete $3;  }  
-        | ftexp '-' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | ftexp '-' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | ftexp '-' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | fyexp '-' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | fhexp '-' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | '-' ftexp %prec TOKEN_NEG 	           { $$ = new Foam::edgeTensorField(-*$2); delete $2;  } 
-        | '(' ftexp ')'		        { $$ = $2; }  
-        | TOKEN_skew '(' ftexp ')' 	           { $$ = new Foam::edgeTensorField( Foam::skew(*$3) ); delete $3;  } 
-        | TOKEN_inv '(' ftexp ')' 	           { $$ = new Foam::edgeTensorField( Foam::inv(*$3) ); delete $3;  } 
-        | TOKEN_dev '(' ftexp ')' 	           { $$ = new Foam::edgeTensorField( Foam::dev(*$3) ); delete $3;  } 
+        | ftexp '+' ftexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }
+        | ftexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }
+        | ftexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }
+        | fyexp '+' ftexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }
+        | fhexp '+' ftexp 		          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 + *$3); delete $1; delete $3;  }
+        | fsexp '*' ftexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 * *$3); delete $1; delete $3;  }
+        | ftexp '*' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 * *$3); delete $1; delete $3;  }
+        | fvexp '*' fvexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 * *$3); delete $1; delete $3;  }
+        | ftexp '&' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }
+        | fyexp '&' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }
+        | ftexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }
+        | fhexp '&' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }
+        | ftexp '&' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 & *$3); delete $1; delete $3;  }
+        | ftexp '/' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 / *$3); delete $1; delete $3;  }
+        | ftexp '-' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }
+        | ftexp '-' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }
+        | ftexp '-' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }
+        | fyexp '-' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }
+        | fhexp '-' ftexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeTensorField(*$1 - *$3); delete $1; delete $3;  }
+        | '-' ftexp %prec TOKEN_NEG 	           { $$ = new Foam::edgeTensorField(-*$2); delete $2;  }
+        | '(' ftexp ')'		        { $$ = $2; }
+        | TOKEN_skew '(' ftexp ')' 	           { $$ = new Foam::edgeTensorField( Foam::skew(*$3) ); delete $3;  }
+        | TOKEN_inv '(' ftexp ')' 	           { $$ = new Foam::edgeTensorField( Foam::inv(*$3) ); delete $3;  }
+        | TOKEN_dev '(' ftexp ')' 	           { $$ = new Foam::edgeTensorField( Foam::dev(*$3) ); delete $3;  }
         | flexp '?' ftexp ':' ftexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeTensorField>(Foam::tensor::zero)); delete $1; delete $3; delete $5; }
         | TOKEN_lnGrad '(' texp ')'           { $$ = new Foam::edgeTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
         | TOKEN_interpolate '(' texp ')'           { $$ = new Foam::edgeTensorField(Foam::fac::interpolate(*$3)); delete $3; }
@@ -736,9 +1120,21 @@ ftexp:   ftensor                  { $$ = $1; }
         | TOKEN_max '(' ftexp ')'                 { $$ = driver.makeConstantField<Foam::edgeTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' ftexp ')'                 { $$ = driver.makeConstantField<Foam::edgeTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' ftexp ')'             { $$ = driver.makeConstantField<Foam::edgeTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_FTID                               { $$=driver.getField<Foam::edgeTensorField>(*$1).ptr(); }
-//        | TOKEN_ddt '(' TOKEN_FTID ')'		   { $$ = Foam::fac::ddt( driver.getOrReadField<Foam::edgeTensorField>(*$3,true,true)() ).ptr(); } // no fac::ddt for edge Fields
-        | TOKEN_oldTime '(' TOKEN_FTID ')'	   { $$ = new Foam::edgeTensorField( driver.getField<Foam::edgeTensorField>(*$3,true)->oldTime()); }
+        | evaluateEdgeTensorFunction restOfFunction
+        | TOKEN_FTID                               { $$=driver.getField<Foam::edgeTensorField>(*$1).ptr(); delete $1; }
+//        | TOKEN_ddt '(' TOKEN_FTID ')'		   { $$ = Foam::fac::ddt( driver.getOrReadField<Foam::edgeTensorField>(*$3,true,true)() ).ptr(); delete $3; } // no fac::ddt for edge Fields
+        | TOKEN_oldTime '(' TOKEN_FTID ')'	   { $$ = new Foam::edgeTensorField( driver.getField<Foam::edgeTensorField>(*$3,true)->oldTime()); delete $3; }
+;
+
+evaluateEdgeTensorFunction: TOKEN_FUNCTION_FTID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::edgeTensorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 fyexp:   fsymmTensor                  { $$ = $1; }
@@ -760,6 +1156,7 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | TOKEN_symm '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::symm(*$3) ); delete $3;  } 
         | TOKEN_inv '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::inv(*$3) ); delete $3;  } 
         | TOKEN_dev '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::dev(*$3) ); delete $3;  } 
+        | TOKEN_sqr '(' fvexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::sqr(*$3) ); delete $3;  } 
         | flexp '?' fyexp ':' fyexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5; }
 //  Not instantiated in 1.6-ext?        | TOKEN_lnGrad '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
 //  Not instantiated in 1.6-ext?       | TOKEN_interpolate '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::interpolate(*$3)); delete $3; }
@@ -769,23 +1166,35 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | TOKEN_max '(' fyexp ')'                 { $$ = driver.makeConstantField<Foam::edgeSymmTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' fyexp ')'                 { $$ = driver.makeConstantField<Foam::edgeSymmTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fyexp ')'             { $$ = driver.makeConstantField<Foam::edgeSymmTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_FYID                               { $$=driver.getField<Foam::edgeSymmTensorField>(*$1).ptr(); }
-//        | TOKEN_ddt '(' TOKEN_FYID ')'		   { $$ = Foam::fac::ddt( driver.getOrReadField<Foam::edgeSymmTensorField>(*$3,true,true)() ).ptr(); }// no fac::ddt for edge Fields
-        | TOKEN_oldTime '(' TOKEN_FYID ')'	   { $$ = new Foam::edgeSymmTensorField( driver.getField<Foam::edgeSymmTensorField>(*$3,true)->oldTime()); }
+        | evaluateEdgeSymmTensorFunction restOfFunction
+        | TOKEN_FYID                               { $$=driver.getField<Foam::edgeSymmTensorField>(*$1).ptr(); delete $1; }
+//        | TOKEN_ddt '(' TOKEN_FYID ')'		   { $$ = Foam::fac::ddt( driver.getOrReadField<Foam::edgeSymmTensorField>(*$3,true,true)() ).ptr(); delete $3; }// no fac::ddt for edge Fields
+        | TOKEN_oldTime '(' TOKEN_FYID ')'	   { $$ = new Foam::edgeSymmTensorField( driver.getField<Foam::edgeSymmTensorField>(*$3,true)->oldTime()); delete $3; }
+;
+
+evaluateEdgeSymmTensorFunction: TOKEN_FUNCTION_FYID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::edgeSymmTensorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 fhexp:   fsphericalTensor                  { $$ = $1; }
-        | fhexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | fsexp '*' fhexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 * *$3); delete $1; delete $3;  }  
-        | fhexp '*' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 * *$3); delete $1; delete $3;  }  
-        | fhexp '&' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | fhexp '/' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 / *$3); delete $1; delete $3;  }  
-        | fhexp '-' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | '-' fhexp %prec TOKEN_NEG 	           { $$ = new Foam::edgeSphericalTensorField(-*$2); delete $2;  } 
-        | '(' fhexp ')'		        { $$ = $2; }  
-        | TOKEN_inv '(' fhexp ')' 	           { 
-            $$ = driver.makeField<Foam::edgeSphericalTensorField>( Foam::inv($3->internalField()) ); 
-            delete $3;  } 
+        | fhexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 + *$3); delete $1; delete $3;  }
+        | fsexp '*' fhexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 * *$3); delete $1; delete $3;  }
+        | fhexp '*' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 * *$3); delete $1; delete $3;  }
+        | fhexp '&' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 & *$3); delete $1; delete $3;  }
+        | fhexp '/' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 / *$3); delete $1; delete $3;  }
+        | fhexp '-' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSphericalTensorField(*$1 - *$3); delete $1; delete $3;  }
+        | '-' fhexp %prec TOKEN_NEG 	           { $$ = new Foam::edgeSphericalTensorField(-*$2); delete $2;  }
+        | '(' fhexp ')'		        { $$ = $2; }
+        | TOKEN_inv '(' fhexp ')' 	           {
+            $$ = driver.makeField<Foam::edgeSphericalTensorField>( Foam::inv($3->internalField()) );
+            delete $3;  }
         | flexp '?' fhexp ':' fhexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeSphericalTensorField>(Foam::sphericalTensor::zero)); delete $1; delete $3; delete $5; }
 //  Not instantiated in 1.6-ext?         | TOKEN_lnGrad '(' hexp ')'           { $$ = new Foam::edgeSphericalTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
 // Not instantiated in 1.6-ext?       | TOKEN_interpolate '(' hexp ')'           { $$ = new Foam::edgeSphericalTensorField(Foam::fac::interpolate(*$3)); delete $3; }
@@ -795,9 +1204,21 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
         | TOKEN_max '(' fhexp ')'                 { $$ = driver.makeConstantField<Foam::edgeSphericalTensorField>(Foam::max(*$3).value()); delete $3; }
         | TOKEN_sum '(' fhexp ')'                 { $$ = driver.makeConstantField<Foam::edgeSphericalTensorField>(Foam::sum(*$3).value()); delete $3; }
         | TOKEN_average '(' fhexp ')'             { $$ = driver.makeConstantField<Foam::edgeSphericalTensorField>(Foam::average(*$3).value()); delete $3; }
-        | TOKEN_FHID                               { $$=driver.getField<Foam::edgeSphericalTensorField>(*$1).ptr(); }
-//        | TOKEN_ddt '(' TOKEN_FHID ')'		   { $$ = Foam::fac::ddt( driver.getOrReadField<Foam::edgeSphericalTensorField>(*$3,true,true)() ).ptr(); } // no fac::ddt for edge Fields
-        | TOKEN_oldTime '(' TOKEN_FHID ')'	   { $$ = new Foam::edgeSphericalTensorField( driver.getField<Foam::edgeSphericalTensorField>(*$3,true)->oldTime()); }
+        | evaluateEdgeSphericalTensorFunction restOfFunction
+        | TOKEN_FHID                               { $$=driver.getField<Foam::edgeSphericalTensorField>(*$1).ptr(); delete $1; }
+//        | TOKEN_ddt '(' TOKEN_FHID ')'		   { $$ = Foam::fac::ddt( driver.getOrReadField<Foam::edgeSphericalTensorField>(*$3,true,true)() ).ptr(); delete $3; } // no fac::ddt for edge Fields
+        | TOKEN_oldTime '(' TOKEN_FHID ')'	   { $$ = new Foam::edgeSphericalTensorField( driver.getField<Foam::edgeSphericalTensorField>(*$3,true)->oldTime()); delete $3; }
+;
+
+evaluateEdgeSphericalTensorFunction: TOKEN_FUNCTION_FHID '(' eatCharactersSwitch
+  {
+      $$=driver.evaluatePluginFunction<Foam::edgeSphericalTensorField>(
+          *$1,
+          @2,
+          numberOfFunctionChars
+      ).ptr();
+      delete $1;
+  }
 ;
 
 vector: TOKEN_VECTOR '(' exp ',' exp ',' exp ')' {     $$ = driver.makeVectorField($3,$5,$7);  delete $3; delete $5; delete $7;}

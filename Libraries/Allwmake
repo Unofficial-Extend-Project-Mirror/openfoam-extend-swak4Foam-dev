@@ -20,13 +20,31 @@ BISONVER=`bison -V | head -n 1| tr ' ' '\n' | tail -n 1`
 
 echo "Bison is version $BISONVER"
 
-if [[ $BISONVER < 2.3 ]]; then 
-    echo "swak4Foam only confirmed to work with Bison >= 2.3"
-    if [ -z $USE_OLD_BISON ]; then 
+if [[ $BISONVER < 2.4 ]]; then
+    echo "swak4Foam only confirmed to work with Bison >= 2.4"
+    echo "Compiles with 2.3 but has offset-problems with locations which break the Plugin-functionality"
+    if [ -z $USE_OLD_BISON ]; then
 	echo "Set the environment variable USE_OLD_BISON if you want to continue anyway"
 	exit 42
     else
 	echo "I continue under protest. Should swak4Foam work with your bison-version, then please report it"
+	echo
+	echo
+    fi
+fi
+
+FLEXVER=`flex -V | head -n 1| tr ' ' '\n' | tail -n 1`
+MINORVER=`echo $FLEXVER | tr '.' '\n' | tail -n 1`
+
+echo "Flex is version $FLEXVER (Minor version: $MINORVER)"
+
+if [[ $FLEXVER < 2.6 && $MINORVER -lt 35 ]]; then
+    echo "swak4Foam only confirmed to work with Flex >= 2.5.35 (2.5.33 may work, but 2.5.4 definitely not)"
+    if [ -z $USE_OLD_FLEX ]; then
+	echo "Set the environment variable USE_OLD_FLEX if you want to continue anyway"
+	exit 42
+    else
+	echo "I continue under protest. Should swak4Foam work with your flex-version, then please report it"
 	echo
 	echo
     fi
@@ -74,12 +92,12 @@ wmake libso swakFunctionObjects
 
 unset WE_HAVE_SIMPLE_FUNCTION_OBJECTS
 
-if [ -d simpleFunctionObjects ]; then 
+if [ -d simpleFunctionObjects ]; then
     WE_HAVE_SIMPLE_FUNCTION_OBJECTS=1
-    
+
     wmake libso simpleFunctionObjects
 else
-    if [ -d "$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects/lnInclude" ]; then 
+    if [ -d "$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects/lnInclude" ]; then
 	WE_HAVE_SIMPLE_FUNCTION_OBJECTS=1
     fi
 fi
@@ -118,4 +136,17 @@ then
     wmake libso pythonIntegration
 else
     echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration"
+fi
+
+(cd functionPlugins; wmake all)
+
+if [ "$SWAK_USER_PLUGINS" != "" ]
+then
+    plugins=$(echo $SWAK_USER_PLUGINS | tr ";" "\n")
+
+    for plug in $plugins
+    do
+	echo "Compiling user function-plugin $plug"
+	wmake libso $plugins
+    done
 fi

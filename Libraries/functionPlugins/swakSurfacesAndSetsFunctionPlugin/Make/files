@@ -1,0 +1,23 @@
+GeneralSurfacesPluginFunction.C
+surfaceAreaPluginFunction.C
+surfaceRelativeSurfacePluginFunction.C
+surfaceNrOfFacesInCellPluginFunction.C
+surfaceHasSurfacePluginFunction.C
+surfaceDistancePluginFunction.C
+
+GeneralSurfaceEvaluationPluginFunction.C
+surfaceValueAveragePluginFunction.C
+surfaceValueMinimumPluginFunction.C
+surfaceValueMaximumPluginFunction.C
+
+GeneralSetsPluginFunction.C
+setHasSetPluginFunction.C
+setNrOfPointsInCellPluginFunction.C
+setDistancePluginFunction.C
+
+GeneralSetEvaluationPluginFunction.C
+setValueAveragePluginFunction.C
+setValueMinimumPluginFunction.C
+setValueMaximumPluginFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakSurfacesAndSetsFunctionPlugin

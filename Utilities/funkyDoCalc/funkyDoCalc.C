@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -33,7 +33,7 @@ Application
 
 Description
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
    IFstream theFile(args.args()[1]);
    dictionary theExpressions(theFile);
-   
+
     if (!args.options().found("time") && !args.options().found("latestTime")) {
         FatalErrorIn("main()")
             << args.executable()
@@ -113,15 +113,15 @@ int main(int argc, char *argv[])
         Foam::Info << "\nTime = " << runTime.timeName() << Foam::endl;
 
         mesh.readUpdate();
-       
-        forAllConstIter(IDLList<entry>, theExpressions, iter) 
+
+        forAllConstIter(IDLList<entry>, theExpressions, iter)
         {
             Info << iter().keyword() << " : " << flush;
 
             const dictionary &dict=iter().dict();
 
             autoPtr<CommonValueExpressionDriver> driver=
-                CommonValueExpressionDriver::New(dict,mesh); 
+                CommonValueExpressionDriver::New(dict,mesh);
             wordList accumulations(dict.lookup("accumulations"));
 
             driver->setSearchBehaviour(
@@ -132,8 +132,8 @@ int main(int argc, char *argv[])
 
             driver->clearVariables();
             driver->parse(string(dict.lookup("expression")));
-            word rType=driver->getResultType();
-            
+            word rType=driver->CommonValueExpressionDriver::getResultType();
+
             if(rType==pTraits<scalar>::typeName) {
                 writeData<scalar>(driver(),accumulations);
             } else if(rType==pTraits<vector>::typeName) {
@@ -146,14 +146,14 @@ int main(int argc, char *argv[])
                 writeData<sphericalTensor>(driver(),accumulations);
             } else {
                 WarningIn(args.executable())
-                    << "Don't know how to handle type " << rType 
+                    << "Don't know how to handle type " << rType
                         << endl;
             }
 
             Info << endl;
         }
     }
-    
+
     Info << "End\n" << endl;
 
     return 0;

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -38,7 +38,7 @@ SourceFiles
     StoredExpressionResult.C
     StoredExpressionResultIO.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef StoredExpressionResult_H
@@ -80,7 +80,7 @@ public:
 
     // Destructor
 
-    ~StoredExpressionResult();
+    virtual ~StoredExpressionResult();
 
     void operator=(const StoredExpressionResult&);
 
@@ -93,7 +93,7 @@ public:
     friend Ostream & operator<<(Ostream &,const StoredExpressionResult &);
 
     friend Istream & operator>>(Istream &,StoredExpressionResult &);
-    
+
     friend bool operator!=(const StoredExpressionResult &,const StoredExpressionResult &);
 };
 
