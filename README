@@ -1073,7 +1073,15 @@ S_{expl} + S_{impl} T
      Introduced a preprocessor symbol that allows using sortedToc on
      newer versions
 **** Wrong =size()= and =pointSize()= reported for =FaField=-driver
-     This was due to a strange () (still don't know what happened there)
+     This was due to a strange () (still don't know what happened
+     there)
+**** Memory leak in the field drivers
+     The strings of parsed IDs were not properly deleted. Funnily this
+     was done correctly in the Patch and the Subset-driver. Also for
+     timelines-
+
+     Also fixed a leak with the labels of plugin-functions that was
+     present with all drivers
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and

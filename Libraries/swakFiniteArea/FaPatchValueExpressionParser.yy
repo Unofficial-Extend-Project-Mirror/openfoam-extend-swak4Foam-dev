@@ -571,6 +571,7 @@ evaluateVectorFunction: TOKEN_FUNCTION_VID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -795,6 +796,7 @@ evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -853,6 +855,7 @@ evaluateTensorFunction: TOKEN_FUNCTION_TID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -904,6 +907,7 @@ evaluateSymmTensorFunction: TOKEN_FUNCTION_YID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -947,6 +951,7 @@ evaluateSphericalTensorFunction: TOKEN_FUNCTION_HID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -976,6 +981,7 @@ evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1021,6 +1027,7 @@ evaluatePointVectorFunction: TOKEN_FUNCTION_PVID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1108,6 +1115,7 @@ evaluatePointScalarFunction: TOKEN_FUNCTION_PSID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1142,6 +1150,7 @@ evaluatePointTensorFunction: TOKEN_FUNCTION_PTID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1173,6 +1182,7 @@ evaluatePointSymmTensorFunction: TOKEN_FUNCTION_PYID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1202,6 +1212,7 @@ evaluatePointSphericalTensorFunction: TOKEN_FUNCTION_PHID '(' eatCharactersSwitc
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
@@ -1229,6 +1240,7 @@ evaluatePointLogicalFunction: TOKEN_FUNCTION_PLID '(' eatCharactersSwitch
           numberOfFunctionChars,
           false
       ).ptr();
+      delete $1;
   }
 ;
 
