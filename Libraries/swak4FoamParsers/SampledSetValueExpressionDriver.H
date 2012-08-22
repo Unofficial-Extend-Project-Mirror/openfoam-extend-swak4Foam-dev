@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,7 @@ SourceFiles
     SampledSetValueExpressionDriverI.H
     SampledSetValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SampledSetValueExpressionDriver_H
@@ -62,6 +62,8 @@ class SampledSetValueExpressionDriver
 :
     public SubsetValueExpressionDriver
 {
+    static word driverName_;
+
     // Private data
     const sampledSet &theSet_;
 
@@ -86,7 +88,9 @@ public:
      //- Runtime type information
     TypeName("SampledSetValueExpressionDriver");
 
-   // Constructors
+    static const word &driverName() { return driverName_; }
+
+    // Constructors
 
     //- Construct from components
     SampledSetValueExpressionDriver(
@@ -94,13 +98,13 @@ public:
         bool autoInterpolate=false,
         bool warnAutoInterpolate=true
     );
-    
+
     //- Construct from an id
     SampledSetValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     //- Construct from a dictionary
     SampledSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
+
 //     //- Copy construct
     SampledSetValueExpressionDriver(const sampledSet &,const SampledSetValueExpressionDriver&);
 
@@ -161,6 +165,16 @@ public:
 
 //     template<class Type>
 //     virtual Field<Type> *toPoint(const Field<Type> &)=0;
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
 };
 
 

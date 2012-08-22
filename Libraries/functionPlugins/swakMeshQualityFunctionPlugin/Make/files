@@ -1,0 +1,5 @@
+mqFaceNonOrthoPluginFunction.C
+mqFaceSkewnessPluginFunction.C
+mqCellAspectRatioPluginFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakMeshQualityFunctionPlugin

@@ -1,4 +1,4 @@
-//  ICE Revision: $Id$ 
+//  ICE Revision: $Id$
 
 #ifndef FAFIELD_VALUE_EXPRESSION_DRIVER_H
 #define FAFIELD_VALUE_EXPRESSION_DRIVER_H
@@ -60,8 +60,16 @@ private:
 
     dimensionSet resultDimension_;
 
+    static const SymbolTable<FaFieldValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
+
+    static word driverName_;
+
 public:
     TypeName("FaFieldValueExpressionDriver");
+
+    static const word &driverName() { return driverName_; }
 
     //- simpler Constructor
     FaFieldValueExpressionDriver(
@@ -76,14 +84,14 @@ public:
 
     //- Construct from an id
     FaFieldValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     virtual ~FaFieldValueExpressionDriver();
 
     // necessary to override Common
-    inline label size() const;
-    inline label pointSize() const;
-    inline const fvMesh &mesh() const;
-    inline const faMesh &aMesh() const;
+    label size() const;
+    label pointSize() const;
+    const fvMesh &mesh() const;
+    const faMesh &aMesh() const;
 
     //- check if field is of requested type
     template<class T>
@@ -106,17 +114,31 @@ protected:
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
 
+    //- set the state to "eat characters"
+    void startEatCharacters();
+
+    //- Handling the parser.
+    void parseInternal(int startToken);
+
+    //- execute a plugin-function
+    template<class T>
+    autoPtr<T> evaluatePluginFunction(
+        const string &name,
+        const parserFaField::location &loc,
+        int &scanned
+    );
+
+    template<class T>
+    struct correctBC;
+
 public:
     //- get the result field (if it is of the right type)
     template<class T>
-    const T &getResult();
+    const T &getResult() const;
 
     // Handling the scanner.
     void scan_begin ();
     void scan_end ();
-
-    // Handling the parser.
-    void parse (const std::string& f);
 
     // returning fields
     template<class T>
@@ -183,9 +205,12 @@ public:
     areaScalarField *makeRandomField(label seed=0);
     areaScalarField *makeGaussRandomField(label seed=0);
     areaScalarField *makeCellIdField();
-    
+
     //- what type
     const word &typ() const { return typ_; }
+
+    //- override type reporting from common class
+    word getResultType() { return typ(); }
 
     //- is this a logical field
     bool isLogical() const { return isLogical_; }
@@ -205,7 +230,7 @@ public:
 
     template <class Field>
     Field *doLogicalNot(Field *a);
-    
+
     template <class T,class Field>
     T * doConditional(Field *l,T* yes,T* no,T* result);
 
@@ -259,6 +284,16 @@ public:
     static void copyCalculatedPatches(
         GeometricField<T,faePatchField,edgeMesh> &field,
         const GeometricField<T,faePatchField,edgeMesh> &orig
+    );
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
     );
 
     // allow acces to the setResult-method

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,10 +28,12 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SampledSurfaceValueExpressionDriver.H"
+#include "SampledSurfaceValuePluginFunction.H"
+
 #include "SurfacesRepository.H"
 
 #include "addToRunTimeSelectionTable.H"
@@ -44,13 +46,15 @@ namespace Foam {
 
 defineTypeNameAndDebug(SampledSurfaceValueExpressionDriver, 0);
 
+word SampledSurfaceValueExpressionDriver::driverName_="surface";
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, dictionary, surface);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, SampledSurfaceValueExpressionDriver, idName, surface);
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void SampledSurfaceValueExpressionDriver::setDebug() 
+void SampledSurfaceValueExpressionDriver::setDebug()
 {
     if(debug>1) {
         if(sampledSurface::debug<1) {
@@ -125,7 +129,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const d
     ),
     interpolate_(dict.lookupOrDefault<bool>("interpolate",false)),
     interpolationType_(
-        interpolate_ 
+        interpolate_
         ?
         word(dict.lookup("interpolationType"))
         :
@@ -221,7 +225,7 @@ scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
 {
     if(debug) {
         Pout << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
-            << " size: " << this->size() << " magSf: " << theSurface_.magSf().size() 
+            << " size: " << this->size() << " magSf: " << theSurface_.magSf().size()
             << endl;
     }
     return new scalarField(theSurface_.magSf());
@@ -245,6 +249,26 @@ vectorField *SampledSurfaceValueExpressionDriver::makeFaceNormalField()
 vectorField *SampledSurfaceValueExpressionDriver::makeFaceAreaField()
 {
     return new vectorField(theSurface_.Sf());
+}
+
+autoPtr<CommonPluginFunction> SampledSurfaceValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        SampledSurfaceValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool SampledSurfaceValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return SampledSurfaceValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

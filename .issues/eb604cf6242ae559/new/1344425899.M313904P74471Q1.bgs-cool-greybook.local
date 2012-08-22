@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 08 Aug 2012 13:36:29 +0200
+Subject: Re: Plugin-system for creating pseudo-fields
+Message-Id: <eb604cf6242ae559-e88d8accc081b4f5-artemis@bgs-cool-greybook.local>
+References: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+
+Now 1.6-ext compiles and the parsers work. Sort of

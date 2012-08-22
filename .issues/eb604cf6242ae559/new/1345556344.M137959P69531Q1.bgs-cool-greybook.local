@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 21 Aug 2012 15:37:19 +0200
+Subject: Re: Plugin-system for creating pseudo-fields
+Message-Id: <eb604cf6242ae559-a7de26f0106ff857-artemis@bgs-cool-greybook.local>
+References: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+
+Now all the functionality is there.
+
+Run valgrind to find possible memory leaks and update the README. Then
+we can wrap this up

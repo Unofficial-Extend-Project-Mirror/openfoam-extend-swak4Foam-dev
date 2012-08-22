@@ -48,6 +48,17 @@ namespace Foam {
     }
 
     template<class Type>
+    ExpressionResult::ExpressionResult(autoPtr<Type> o)
+        :
+        valType_("None"),
+        valPtr_(NULL),
+        isPoint_(false),
+        isSingleValue_(true)
+    {
+        setObjectResult(o);
+    }
+
+    template<class Type>
     ExpressionResult::ExpressionResult(const dimensioned<Type>  &f)
         :
         valType_("None"),
@@ -78,6 +89,18 @@ namespace Foam {
         valPtr_=static_cast<void *>(new Field<Type>(val));
 
         isPoint_=isPoint;
+        isSingleValue_=false;
+    }
+
+    template <class T>
+    void ExpressionResult::setObjectResult(autoPtr<T> o)
+    {
+        //        valType_=pTraits<T>::typeName;
+        valType_=o().typeName;
+
+        generalContent_.set(o.ptr());
+
+        isPoint_=false;
         isSingleValue_=false;
     }
 
@@ -145,6 +168,51 @@ namespace Foam {
     }
 
     template<class Type>
+    inline tmp<Type> ExpressionResult::getObjectResult(bool keep)
+    {
+        if(debug) {
+            Info << "ExpressionResult: getObjectResult: " << keep << endl;
+        }
+
+        if(valType_!=pTraits<Type>::typeName) {
+            FatalErrorIn("tmp<Type> ExpressionResult::getObjectResult()")
+                << "The expected return type " << pTraits<Type>::typeName 
+                    << " is different from the stored result type "
+                    << valType_ << "\n" << endl
+                    << exit(FatalError);
+        }
+
+        tmp<Type> result(
+            dynamic_cast<Type *>(
+                generalContent_.ptr()
+            )
+        );
+
+        if(keep) {
+            if(debug) {
+                Info << "ExpressionResult: getObjectResult: make copy" << endl;
+            }
+            generalContent_.set(
+                new Type(
+                    dynamicCast<const Type &>(
+                        result()
+                    )
+                )
+            );
+            if(debug) {
+                Info << "ExpressionResult: getObjectResult: make copy - done" << endl;
+            }
+        } else {
+            clearResult();
+        }
+
+        if(debug) {
+            Info << "ExpressionResult: getObjectResult - done" << endl;
+        }
+        return result;
+    }
+
+    template<class Type>
     ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn) const
     {
         ExpressionResult result;
@@ -187,7 +255,7 @@ namespace Foam {
         return result;
     }
 
-    inline const string &ExpressionResult::type() const
+    inline const string &ExpressionResult::valueType() const
     {
         return valType_;
     }

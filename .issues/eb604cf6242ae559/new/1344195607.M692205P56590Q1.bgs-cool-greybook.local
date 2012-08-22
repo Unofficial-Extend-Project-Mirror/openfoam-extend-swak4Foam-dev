@@ -1,0 +1,15 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 05 Aug 2012 21:37:15 +0200
+Subject: Re: Plugin-system for creating pseudo-fields
+Message-Id: <eb604cf6242ae559-d37349df7e03acb5-artemis@bgs-cool-greybook.local>
+References: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+
+Now the Patch-Parser and the Subset-Parser work too and accept plugins
+
+Strange thing: Sometimes the counting of the start of the
+function-subbexpression seems to be off by 1. Cleaning and recompiling
+fixes this. Problem with the order of compilation of Lexer and
+Parser???
+
+CHECK BEFORE RELEASE

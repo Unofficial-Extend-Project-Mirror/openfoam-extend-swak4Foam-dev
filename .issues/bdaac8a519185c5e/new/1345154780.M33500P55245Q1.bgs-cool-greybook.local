@@ -1,0 +1,21 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 17 Aug 2012 00:03:48 +0200
+State: new
+Subject: Fields loose their boundary values
+Message-Id: <bdaac8a519185c5e-0-artemis@bgs-cool-greybook.local>
+
+Boundary fields of fields that are passed become
+    back
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    wall
+    {
+        type            fixedValue;
+        value           uniform 0;
+    }
+even if there were values
+
+To reproduce:
+funkySetFields -time 0 -create -field test -expression 'mqFaceSkewness()'  -valuePatches "wall"
