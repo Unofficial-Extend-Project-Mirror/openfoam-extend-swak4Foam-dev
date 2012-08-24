@@ -76,10 +76,12 @@
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
-   script =copySwakFilesToSite.sh= can be used to copy them to the
+   script =copySwakFilesToSite.sh= in the directory
+   =maintainanceScripts= can be used to copy them to the
    global site-specific directories.
 
-   The script =removeSwakFilesFromSite.sh= removes all these files
+   The script =removeSwakFilesFromSite.sh= in the directory
+   =maintainanceScripts= removes all these files
    from the global directories. The =removeSwakFilesFromLocal.sh= does
    the same for the user directories (this makes sure that no
    self-compiled version /shadows/ the global version (which would
@@ -1066,7 +1068,7 @@ S_{expl} + S_{impl} T
      This is fixed
 **** =sqr= of a =vector= should produce a =symmTensor=
      Reported in
-     http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=150 
+     http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=150
 
      Added the =sqr= at the right place to the grammars. Also some
      other missing tensor operations (=dev= and =symm=).
@@ -1088,6 +1090,12 @@ S_{expl} + S_{impl} T
 
      Also fixed a leak with the labels of plugin-functions that was
      present with all drivers
+**** Maintenance scripts not working with non-=bash= =/bin/sh=
+     Reported by Oliver Krueger that on systems where =/bin/sh= is not
+     a =bash= anymore (newer Ubuntu and SuSE) the sourcing of
+     =theFiles.sh= doesn't work anymore.
+
+     Fixed and moved all the files to the =maintainanceScripts=-folder
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
