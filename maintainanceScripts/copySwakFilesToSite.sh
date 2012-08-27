@@ -1,6 +1,6 @@
 #! /bin/sh
 
-. theFiles.sh
+. ./theFiles.sh
 
 if [ -d $FOAM_SITE_LIBBIN ]
 then
