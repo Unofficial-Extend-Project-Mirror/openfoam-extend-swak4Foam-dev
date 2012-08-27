@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 22 Jul 2012 17:37:02 +0200
+State: new
+Subject: Dynamic cell/face/point-sets
+Message-Id: <f45f3abefa0198a8-0-artemis@bgs-cool-greybook.local>
+
+Sets are calculated by a function object at every time-step anew.
+
+Potential problems with code that doesn't reread the sets. Possibly a
+private registry necessary?

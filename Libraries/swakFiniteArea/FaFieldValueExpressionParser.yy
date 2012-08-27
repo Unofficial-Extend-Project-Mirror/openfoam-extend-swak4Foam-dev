@@ -1138,7 +1138,6 @@ evaluateEdgeTensorFunction: TOKEN_FUNCTION_FTID '(' eatCharactersSwitch
 ;
 
 fyexp:   fsymmTensor                  { $$ = $1; }
-<<<<<<< variant A
         | fyexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }  
         | fhexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }  
         | fyexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }  
@@ -1158,45 +1157,6 @@ fyexp:   fsymmTensor                  { $$ = $1; }
         | TOKEN_inv '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::inv(*$3) ); delete $3;  } 
         | TOKEN_dev '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::dev(*$3) ); delete $3;  } 
         | TOKEN_sqr '(' fvexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::sqr(*$3) ); delete $3;  } 
->>>>>>> variant B
-        | fyexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }
-        | fhexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }
-        | fyexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }
-        | fsexp '*' fyexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 * *$3); delete $1; delete $3;  }
-        | fyexp '*' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 * *$3); delete $1; delete $3;  }
-        | fyexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 & *$3); delete $1; delete $3;  }
-        | fhexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 & *$3); delete $1; delete $3;  }
-        | fyexp '&' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 & *$3); delete $1; delete $3;  }
-        | fyexp '/' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 / *$3); delete $1; delete $3;  }
-        | fyexp '-' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 - *$3); delete $1; delete $3;  }
-        | fhexp '-' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 - *$3); delete $1; delete $3;  }
-        | fyexp '-' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 - *$3); delete $1; delete $3;  }
-        | '-' fyexp %prec TOKEN_NEG 	           { $$ = new Foam::edgeSymmTensorField(-*$2); delete $2;  }
-        | '(' fyexp ')'		        { $$ = $2; }
-        | TOKEN_symm '(' ftexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::symm(*$3) ); delete $3;  }
-        | TOKEN_symm '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::symm(*$3) ); delete $3;  }
-        | TOKEN_inv '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::inv(*$3) ); delete $3;  }
-        | TOKEN_dev '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::dev(*$3) ); delete $3;  }
-####### Ancestor
-        | fyexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | fhexp '+' fyexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | fyexp '+' fhexp 		          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 + *$3); delete $1; delete $3;  }  
-        | fsexp '*' fyexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 * *$3); delete $1; delete $3;  }  
-        | fyexp '*' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 * *$3); delete $1; delete $3;  }  
-        | fyexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | fhexp '&' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | fyexp '&' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 & *$3); delete $1; delete $3;  }  
-        | fyexp '/' fsexp 	   	                  { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 / *$3); delete $1; delete $3;  }  
-        | fyexp '-' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | fhexp '-' fyexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | fyexp '-' fhexp 	   	          { sameSize($1,$3); $$ = new Foam::edgeSymmTensorField(*$1 - *$3); delete $1; delete $3;  }  
-        | '-' fyexp %prec TOKEN_NEG 	           { $$ = new Foam::edgeSymmTensorField(-*$2); delete $2;  } 
-        | '(' fyexp ')'		        { $$ = $2; }  
-        | TOKEN_symm '(' ftexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::symm(*$3) ); delete $3;  } 
-        | TOKEN_symm '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::symm(*$3) ); delete $3;  } 
-        | TOKEN_inv '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::inv(*$3) ); delete $3;  } 
-        | TOKEN_dev '(' fyexp ')' 	           { $$ = new Foam::edgeSymmTensorField( Foam::dev(*$3) ); delete $3;  } 
-======= end
         | flexp '?' fyexp ':' fyexp                   { sameSize($1,$3); sameSize($1,$5); $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::edgeSymmTensorField>(Foam::symmTensor::zero)); delete $1; delete $3; delete $5; }
 //  Not instantiated in 1.6-ext?        | TOKEN_lnGrad '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::lnGrad(*$3)); delete $3; }
 //  Not instantiated in 1.6-ext?       | TOKEN_interpolate '(' yexp ')'           { $$ = new Foam::edgeSymmTensorField(Foam::fac::interpolate(*$3)); delete $3; }
