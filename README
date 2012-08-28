@@ -1114,6 +1114,8 @@ S_{expl} + S_{impl} T
 
      The function =internalFace()= is $1$ on all internal faces and
      $0$ on all patches
+**** Non-uniform second argument for =pow=
+     Now the second argument to the =pow=-function can be a non-constant
 *** New features
 **** Allow dynamically loaded plugins that add new functions to parsers
      This allows easy extension of the functionality of =swak4Foam=
