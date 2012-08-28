@@ -308,6 +308,7 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_zz
 %token TOKEN_ii
 
+%token TOKEN_unitTensor
 %token TOKEN_pi
 %token TOKEN_rand
 %token TOKEN_randFixed
@@ -2838,6 +2839,11 @@ evaluateSymmTensorFunction: TOKEN_FUNCTION_YID '(' eatCharactersSwitch
 
 
 hexp:   sphericalTensor                  { $$ = $1; }
+        | TOKEN_unitTensor                        {
+            $$ = driver.makeConstantField<Foam::volSphericalTensorField>(
+                Foam::sphericalTensor(1)
+            );
+          }
         | hexp '+' hexp 		          {
             sameSize($1,$3);
             $$ = new Foam::volSphericalTensorField(*$1 + *$3);

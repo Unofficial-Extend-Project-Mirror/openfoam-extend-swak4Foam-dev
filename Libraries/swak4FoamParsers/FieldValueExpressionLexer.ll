@@ -355,6 +355,10 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr;
         return tokenTyp;
     } else {
+        if((*ptr)=="I") {
+            delete ptr;
+            return token::TOKEN_unitTensor;
+        }
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
                      }

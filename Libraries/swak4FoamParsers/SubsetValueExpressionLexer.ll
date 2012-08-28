@@ -247,6 +247,10 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr;
         return tokenTyp;
     } else {
+        if((*ptr)=="I") {
+            delete ptr;
+            return token::TOKEN_unitTensor;
+        }
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
                      }

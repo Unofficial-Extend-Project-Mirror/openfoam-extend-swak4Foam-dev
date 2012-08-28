@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 28 Aug 2012 19:45:51 +0200
+Subject: Re: Add unit-tensor to parser
+Message-Id: <8c50c5a7e77c0f35-9f2472289162679a-artemis@bgs-cool-greybook.local>
+References: <8c50c5a7e77c0f35-0-artemis@bgs-Greybook.local>
+In-Reply-To: <8c50c5a7e77c0f35-0-artemis@bgs-Greybook.local>
+
+Use the symbol I. Put it in the lexers after the symbol lookup so that
+a field I shadows it
