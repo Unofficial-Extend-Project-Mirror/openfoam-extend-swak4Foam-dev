@@ -1122,6 +1122,9 @@ S_{expl} + S_{impl} T
      and spherical tensors it leaves them untouched)
 **** Added unit tensor =I= to parsers
      If no field =I= is defined then this is used as the unit-tensor
+**** Added the /Hodge dual/ operator
+     The unary operator =*= calculates for tensors and symetrical
+     tensors the hodge dual
 *** New features
 **** Allow dynamically loaded plugins that add new functions to parsers
      This allows easy extension of the functionality of =swak4Foam=

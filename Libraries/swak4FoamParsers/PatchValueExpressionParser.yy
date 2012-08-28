@@ -316,7 +316,7 @@ namespace Foam {
 %left TOKEN_LEQ TOKEN_GEQ '<' '>'
 %left '-' '+'
 %left '%' '*' '/' '&' '^'
-%left TOKEN_NEG TOKEN_NOT
+%left TOKEN_NEG TOKEN_NOT TOKEN_HODGE
 // %right '^'
 %left '.'
 
@@ -599,6 +599,14 @@ vexp:   vector                  { $$ = $1; }
           }
         | '-' vexp %prec TOKEN_NEG 	        {
             $$ = new Foam::vectorField(-*$2);
+            delete $2;
+          }
+        | '*' texp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
+            delete $2;
+          }
+        | '*' yexp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
             delete $2;
           }
         | '(' vexp ')'		        { $$ = $2; }
@@ -1795,6 +1803,14 @@ pvexp:  pvector     { $$ = $1; }
           }
         | '-' pvexp %prec TOKEN_NEG 	        {
             $$ = new Foam::vectorField(-*$2);
+            delete $2;
+          }
+        | '*' ptexp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
+            delete $2;
+          }
+        | '*' pyexp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
             delete $2;
           }
         | '(' pvexp ')'		        { $$ = $2; }
