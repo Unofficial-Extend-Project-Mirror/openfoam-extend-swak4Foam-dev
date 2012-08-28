@@ -1096,6 +1096,11 @@ S_{expl} + S_{impl} T
      =theFiles.sh= doesn't work anymore.
 
      Fixed and moved all the files to the =maintainanceScripts=-folder
+**** =cof= and =diag= undefined
+     Added. Diag had to be reprogrammed as it is not implemented for
+     fields (probably for performance reasons).
+
+     Also some tensor operators were missing (probably lost during copy/paste)
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
@@ -1114,6 +1119,17 @@ S_{expl} + S_{impl} T
 
      The function =internalFace()= is $1$ on all internal faces and
      $0$ on all patches
+**** Non-uniform second argument for =pow=
+     Now the second argument to the =pow=-function can be a
+     non-constant
+**** Added transpose to the tensors
+     The expression =A.T()= transposes the tensor =A= (for symmetrical
+     and spherical tensors it leaves them untouched)
+**** Added unit tensor =I= to parsers
+     If no field =I= is defined then this is used as the unit-tensor
+**** Added the /Hodge dual/ operator
+     The unary operator =*= calculates for tensors and symmetrical
+     tensors the hodge dual
 *** New features
 **** Allow dynamically loaded plugins that add new functions to parsers
      This allows easy extension of the functionality of =swak4Foam=
