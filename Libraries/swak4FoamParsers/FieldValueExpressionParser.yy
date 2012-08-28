@@ -2487,6 +2487,11 @@ texp:   tensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | texp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = new Foam::volTensorField( $1->T() );
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
         | lexp '?' texp ':' texp                   {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional(
@@ -2712,9 +2717,17 @@ yexp:   symmTensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | yexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
+          }
         | lexp '?' yexp ':' yexp                   {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5,driver.makeConstantField<Foam::volSymmTensorField>(Foam::symmTensor::zero));
+            $$ = driver.doConditional(
+                $1,$3,$5,
+                driver.makeConstantField<Foam::volSymmTensorField>(
+                    Foam::symmTensor::zero
+                )
+            );
             delete $1; delete $3; delete $5;
             driver.setCalculatedPatches(*$$);
           }
@@ -2873,6 +2886,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
             );
             delete $3;
             driver.setCalculatedPatches(*$$);
+          }
+        | hexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
           }
         | lexp '?' hexp ':' hexp                   {
             sameSize($1,$3); sameSize($1,$5);
@@ -3131,6 +3147,11 @@ ftexp:   ftensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | ftexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = new Foam::surfaceTensorField( $1->T() );
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
         | flexp '?' ftexp ':' ftexp                   {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional(
@@ -3320,6 +3341,9 @@ fyexp:   fsymmTensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | fyexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
+          }
         | flexp '?' fyexp ':' fyexp                   {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional(
@@ -3458,6 +3482,9 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
             );
             delete $3;
             driver.setCalculatedPatches(*$$);
+          }
+        | fhexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
           }
         | flexp '?' fhexp ':' fhexp                   {
             sameSize($1,$3); sameSize($1,$5);
@@ -4398,6 +4425,11 @@ ptexp:   ptensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | ptexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = new Foam::pointTensorField( $1->T() );
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
         | plexp '?' ptexp ':' ptexp                   {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional(
@@ -4613,6 +4645,9 @@ pyexp:   psymmTensor                  { $$ = $1; }
             );
             delete $3;
           }
+        | pyexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
+          }
         | plexp '?' pyexp ':' pyexp                   {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional(
@@ -4746,6 +4781,9 @@ phexp:   psphericalTensor                  { $$ = $1; }
                 Foam::inv($3->internalField())()
             );
             delete $3;
+          }
+        | phexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
           }
         | plexp '?' phexp ':' phexp                   {
             sameSize($1,$3); sameSize($1,$5);

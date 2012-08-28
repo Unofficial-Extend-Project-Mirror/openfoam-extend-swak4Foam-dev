@@ -1349,6 +1349,10 @@ texp:   tensor                  { $$ = $1; }
             $$ = new Foam::tensorField( Foam::dev(*$3) );
             delete $3;
           }
+        | texp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = new Foam::tensorField( $1->T() );
+            delete $1;
+          }
         | lexp '?' texp ':' texp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
@@ -1486,6 +1490,9 @@ yexp:   symmTensor                  { $$ = $1; }
             $$ = new Foam::symmTensorField( Foam::sqr(*$3) );
             delete $3;
           }
+        | yexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
+          }
         | lexp '?' yexp ':' yexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
@@ -1576,6 +1583,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_inv '(' hexp ')'       {
             $$ = new Foam::sphericalTensorField( Foam::inv(*$3) );
             delete $3;
+          }
+        | hexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
           }
         | lexp '?' hexp ':' hexp        {
             sameSize($1,$3); sameSize($1,$5);
@@ -2232,6 +2242,10 @@ ptexp:  ptensor    { $$ = $1; }
             delete $2;
           }
         | '(' ptexp ')'		        { $$ = $2; }
+        | ptexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = new Foam::tensorField( $1->T() );
+            delete $1;
+          }
         | plexp '?' ptexp ':' ptexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
@@ -2337,6 +2351,9 @@ pyexp:  psymmTensor     { $$ = $1; }
             $$ = new Foam::symmTensorField( Foam::sqr(*$3) );
             delete $3;
           }
+        | pyexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
+          }
         | plexp '?' pyexp ':' pyexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
@@ -2412,6 +2429,9 @@ phexp:  psphericalTensor    { $$ = $1; }
             delete $2;
           }
         | '(' phexp ')'		        { $$ = $2; }
+        | phexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
+          }
         | plexp '?' phexp ':' phexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
