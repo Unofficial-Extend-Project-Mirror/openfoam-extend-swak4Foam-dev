@@ -603,10 +603,24 @@ vexp:   vector                  { $$ = $1; }
             delete $2;
           }
         | '(' vexp ')'		        { $$ = $2; }
-//        | TOKEN_diag '(' texp ')'       {
-          //   $$ = new Foam::vectorField( Foam::diag(*$3) );
-          //   delete $3;
-          // }
+        | TOKEN_diag '(' texp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::tensor::XX)()),
+                &($3->component(Foam::tensor::YY)()),
+                &($3->component(Foam::tensor::ZZ)())
+            );
+            delete $3;
+          }
+        | TOKEN_diag '(' yexp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::symmTensor::XX)()),
+                &($3->component(Foam::symmTensor::YY)()),
+                &($3->component(Foam::symmTensor::ZZ)())
+            );
+            delete $3;
+          }
         | lexp '?' vexp ':' vexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
@@ -1304,6 +1318,10 @@ texp:   tensor                  { $$ = $1; }
             $$ = new Foam::tensorField( Foam::inv(*$3) );
             delete $3;
           }
+        | TOKEN_cof '(' texp ')'       {
+            $$ = new Foam::tensorField( Foam::cof(*$3) );
+            delete $3;
+          }
         | TOKEN_dev '(' texp ')'       {
             $$ = new Foam::tensorField( Foam::dev(*$3) );
             delete $3;
@@ -1429,6 +1447,10 @@ yexp:   symmTensor                  { $$ = $1; }
           }
         | TOKEN_inv '(' yexp ')'       {
             $$ = new Foam::symmTensorField( Foam::inv(*$3) );
+            delete $3;
+          }
+        | TOKEN_cof '(' yexp ')'       {
+            $$ = new Foam::symmTensorField( Foam::cof(*$3) );
             delete $3;
           }
         | TOKEN_dev '(' yexp ')'       {
@@ -1729,6 +1751,24 @@ pvexp:  pvexp '+' pvexp 		{
         | '*' pyexp %prec TOKEN_HODGE 	        {
             $$ = new Foam::vectorField(*(*$2));
             delete $2;
+          }
+        | TOKEN_diag '(' ptexp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::tensor::XX)()),
+                &($3->component(Foam::tensor::YY)()),
+                &($3->component(Foam::tensor::ZZ)())
+            );
+            delete $3;
+          }
+        | TOKEN_diag '(' pyexp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::symmTensor::XX)()),
+                &($3->component(Foam::symmTensor::YY)()),
+                &($3->component(Foam::symmTensor::ZZ)())
+            );
+            delete $3;
           }
         | '(' pvexp ')'		        { $$ = $2; }
         | plexp '?' pvexp ':' pvexp        {
@@ -2177,6 +2217,22 @@ ptexp:  ptexp '+' ptexp 		{
             delete $2;
           }
         | '(' ptexp ')'		        { $$ = $2; }
+        | TOKEN_skew '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::skew(*$3) );
+            delete $3;
+          }
+        | TOKEN_inv '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::inv(*$3) );
+            delete $3;
+          }
+        | TOKEN_cof '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::cof(*$3) );
+            delete $3;
+          }
+        | TOKEN_dev '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::dev(*$3) );
+            delete $3;
+          }
         | ptexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
             $$ = new Foam::tensorField( $1->T() );
             delete $1;
@@ -2273,6 +2329,10 @@ pyexp:  pyexp '+' pyexp 		{
           }
         | TOKEN_inv '(' pyexp ')'       {
             $$ = new Foam::symmTensorField( Foam::inv(*$3) );
+            delete $3;
+          }
+        | TOKEN_cof '(' pyexp ')'       {
+            $$ = new Foam::symmTensorField( Foam::cof(*$3) );
             delete $3;
           }
         | TOKEN_dev '(' pyexp ')'       {
