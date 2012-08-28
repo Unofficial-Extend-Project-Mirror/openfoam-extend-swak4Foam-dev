@@ -846,6 +846,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
         //     delete $3;
         //   }
         | TOKEN_pow '(' exp ',' exp ')'		{
+            sameSize($3,$5);
             $$ = new Foam::scalarField(Foam::pow(*$3, *$5));
             delete $3; delete $5;
           }
@@ -1926,6 +1927,7 @@ pexp:   pexp '+' pexp 		{
             delete $3;
           }
         | TOKEN_pow '(' pexp ',' pexp ')'		{
+            sameSize($3,$5);
             $$ = new Foam::scalarField(Foam::pow(*$3, *$5));
             delete $3; delete$5;
           }

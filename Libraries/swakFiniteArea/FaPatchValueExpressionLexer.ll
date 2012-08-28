@@ -1,4 +1,3 @@
-
 %{                                          /* -*- C++ -*- */
 #include "FaPatchValueExpressionDriverYY.H"
 #include <errno.h>
@@ -78,6 +77,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
 <tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
 <tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
+<tensorcomponent>T     { BEGIN(INITIAL); return token::TOKEN_transpose; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -152,7 +152,6 @@ false                  return token::TOKEN_FALSE;
 toPoint                 return token::TOKEN_toPoint;
 toFace                  return token::TOKEN_toFace;
 
-transpose              return token::TOKEN_transpose;
 diag                   return token::TOKEN_diag;
 tr                     return token::TOKEN_tr;
 dev                    return token::TOKEN_dev;
@@ -247,6 +246,10 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr;
         return tokenTyp;
     } else {
+        if((*ptr)=="I") {
+            delete ptr;
+            return token::TOKEN_unitTensor;
+        }
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
                      }
