@@ -1011,6 +1011,10 @@ fsexp:  TOKEN_surf '(' scalar ')'           {
             $$ = new Foam::surfaceScalarField(Foam::pow(*$3, $5));
             delete $3;
           }
+        | TOKEN_pow '(' fsexp ',' fsexp ')'{
+            $$ = new Foam::surfaceScalarField(Foam::pow(*$3, *$5));
+            delete $3; delete $5;
+          }
         | TOKEN_log '(' fsexp ')'           {
             $$ = new Foam::surfaceScalarField(Foam::log(*$3));
             delete $3;
@@ -1589,9 +1593,15 @@ exp:    TOKEN_NUM                                   {
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
-        | TOKEN_pow '(' exp ',' scalar ')'	    {
-            $$ = new Foam::volScalarField(Foam::pow(*$3, $5));
-            delete $3;
+// produces a reduce/reduc-conflict with the rule below
+        // | TOKEN_pow '(' exp ',' scalar ')'	    {
+        //     $$ = new Foam::volScalarField(Foam::pow(*$3, $5));
+        //     delete $3;
+        //     driver.setCalculatedPatches(*$$);
+        //   }
+        | TOKEN_pow '(' exp ',' exp ')'	    {
+            $$ = new Foam::volScalarField(Foam::pow(*$3, *$5));
+            delete $3; delete $5;
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_log '(' exp ')'                     {
@@ -3616,6 +3626,12 @@ psexp:  TOKEN_point '(' scalar ')'            {
                 Foam::pow($3->internalField(),$5)()
             );
             delete $3;
+          }
+        | TOKEN_pow '(' psexp ',' psexp ')' {
+            $$ = driver.makePointField<Foam::pointScalarField>(
+                Foam::pow($3->internalField(),$5->internalField())()
+            );
+            delete $3; delete $5;
           }
         | TOKEN_log '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(

@@ -817,9 +817,14 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
             $$ = new Foam::scalarField(*$1 / *$3);
             delete $1; delete $3;
           }
-        | TOKEN_pow '(' exp ',' scalar ')'		{
-            $$ = new Foam::scalarField(Foam::pow(*$3, $5));
-            delete $3;
+// produces a reduce/reduce-conflict with the rule below
+        // | TOKEN_pow '(' exp ',' scalar ')'		{
+        //     $$ = new Foam::scalarField(Foam::pow(*$3, $5));
+        //     delete $3;
+        //   }
+        | TOKEN_pow '(' exp ',' exp ')'		{
+            $$ = new Foam::scalarField(Foam::pow(*$3, *$5));
+            delete $3; delete $5;
           }
         | TOKEN_log '(' exp ')'       {
             $$ = new Foam::scalarField(Foam::log(*$3));
@@ -1849,6 +1854,10 @@ pexp:   pexp '+' pexp 		{
         | TOKEN_pow '(' pexp ',' scalar ')'		{
             $$ = new Foam::scalarField(Foam::pow(*$3, $5));
             delete $3;
+          }
+        | TOKEN_pow '(' pexp ',' pexp ')'		{
+            $$ = new Foam::scalarField(Foam::pow(*$3, *$5));
+            delete $3; delete$5;
           }
         | TOKEN_log '(' pexp ')'       {
             $$ = new Foam::scalarField(Foam::log(*$3));
