@@ -1180,6 +1180,11 @@ S_{expl} + S_{impl} T
      =theFiles.sh= doesn't work anymore.
 
      Fixed and moved all the files to the =maintainanceScripts=-folder
+**** =cof= and =diag= undefined
+     Added. Diag had to be reprogrammed as it is not implemented for
+     fields (probably for performance reasons).
+
+     Also some tensor operators were missing (probably lost during copy/paste)
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
@@ -1198,13 +1203,17 @@ S_{expl} + S_{impl} T
 
      The function =internalFace()= is $1$ on all internal faces and
      $0$ on all patches
-*** Infrastructure
-**** Compilation script checks =SWAK4FOAM_SRC=
-     The environment variable =SWAK4FOAM_SRC= is needed for the
-     =swakCoded=-functionObject. The =Allwmake=-script now checks
-     whether this variable exists and prints a message with the
-     correct value if it doesn't. It also checks whether the value is
-     correct and warns if it isn't
+**** Non-uniform second argument for =pow=
+     Now the second argument to the =pow=-function can be a
+     non-constant
+**** Added transpose to the tensors
+     The expression =A.T()= transposes the tensor =A= (for symmetrical
+     and spherical tensors it leaves them untouched)
+**** Added unit tensor =I= to parsers
+     If no field =I= is defined then this is used as the unit-tensor
+**** Added the /Hodge dual/ operator
+     The unary operator =*= calculates for tensors and symmetrical
+     tensors the hodge dual
 *** New features
 **** Allow dynamically loaded plugins that add new functions to parsers
      This allows easy extension of the functionality of =swak4Foam=
@@ -1278,7 +1287,16 @@ S_{expl} + S_{impl} T
      results are of limited value because of the temperature boundary
      condition)
 *** Infrastructure
+**** Compilation script checks =SWAK4FOAM_SRC=
+     The environment variable =SWAK4FOAM_SRC= is needed for the
+     =swakCoded=-functionObject. The =Allwmake=-script now checks
+     whether this variable exists and prints a message with the
+     correct value if it doesn't. It also checks whether the value is
+     correct and warns if it isn't
 **** =Allwmake= creates symbolic links in =swakFiniteArea=
      The links to =mybison= and =myflex= are missing when the sources
      are downloaded as a tarball. The =Allwmake=-script now creates
      these links if they are missing
+**** Reformatting of the parser sources
+     Sources of the parsers have been completely reformatted to make
+     them more readable and maintainable
