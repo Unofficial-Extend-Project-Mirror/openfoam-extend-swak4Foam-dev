@@ -1,4 +1,6 @@
 expressionSource.C
 forceEquation.C
 
+swakSetValues.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakSourceFields
