@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 31 Aug 2012 18:08:22 +0200
+Subject: Re: Incorporate in the usual sources present in 2.1
+Message-Id: <f15bdd4841579880-83534922559ca095-artemis@bgs-cool-greybook.local>
+References: <f15bdd4841579880-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <f15bdd4841579880-0-artemis@bgs-cool-greybook.local>
+
+Added 3 Subclasses of basicSource:
+- setting values
+- explicit source term
+- implicit source term
