@@ -1125,6 +1125,11 @@ S_{expl} + S_{impl} T
      fields (probably for performance reasons).
 
      Also some tensor operators were missing (probably lost during copy/paste)
+****  No new file created if number of patches for patchAverage changes
+      Reported in
+      https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=153
+
+      Fixed by removing all file pointers if the number of patches changes
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and

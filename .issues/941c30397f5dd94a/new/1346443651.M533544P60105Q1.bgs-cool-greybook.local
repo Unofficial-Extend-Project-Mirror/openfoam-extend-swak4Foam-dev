@@ -1,6 +1,6 @@
 From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Date: Fri, 31 Aug 2012 22:05:41 +0200
-State: in-progress
+State: fixed
 Subject: No new file created if number of patches for patchAverage changes
 Message-Id: <941c30397f5dd94a-0-artemis@bgs-cool-greybook.local>
 
