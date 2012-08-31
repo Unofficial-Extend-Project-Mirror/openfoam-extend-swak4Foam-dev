@@ -30,7 +30,7 @@ plug
         variables (
             "xMin=0.05;"
             "xMax=0.075;"
-            "resist=1e2;"
+            "resist=1e3;"
         );
 
         expressions {
