@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 31 Aug 2012 23:00:20 +0200
+Subject: Re: No new file created if number of patches for patchAverage changes
+Message-Id: <941c30397f5dd94a-cba11b82c3d638f8-artemis@bgs-cool-greybook.local>
+References: <941c30397f5dd94a-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <941c30397f5dd94a-0-artemis@bgs-cool-greybook.local>
+
+Fixed by checking whether the number of patches changes and removing
+all file pointers
