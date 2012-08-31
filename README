@@ -170,6 +170,16 @@ S_{expl} + S_{impl} T
     - forceEquation :: force an equation to fixed values in selected
                        locations. Has to be used after constructing
                        the equation and before solving
+    These sources are based on =basicSource= and can be used
+    *without* a modification of the solver (they are only available in
+    the 2.x version):
+    - SwakSetValue :: sets values according to a mask or the
+                      mechanism provided by =basicSource=
+    - SwakExplicitSource :: Uses the calculated source term on the
+         right hand side of the equation
+    - SwakImplicitSource :: Uses a calculated scalar-field to add an
+         implicit source term (source is *without* the actual field)
+
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities
@@ -395,6 +405,20 @@ S_{expl} + S_{impl} T
 **** pitzDailyWithPDE
      - Solver :: scalarTransportFoam
      - Demonstrates :: Solving additional transport equations
+*** BasicSourceSubclasses
+    These examples test the source terms based on =basicSource=. They
+    only work with OpenFOAM 2.x and all use the =simpleFoam=-solver
+**** pitzDailyWithSwirl
+     - Demonstrates :: Fixing the values of the velocity in a region
+                       with =SwakSetValues=
+**** pitzDailyWithExplicitPoroPlug
+     - Demonstrates :: Implementing a simple porous plug by adding the
+                       Darcy-term as a source term with
+                       =SwakExplicitSource=
+**** pitzDailyWithImplicitPoroPlug
+     - Demonstrates :: Same as =pitzDailyWithExplicitPoroPlug= but
+                       with an implicit source term with
+                       =SwakImplicitSource=
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
@@ -1202,6 +1226,19 @@ S_{expl} + S_{impl} T
      Example of the usage in the =angledDuctImplicit=-case (the
      results are of limited value because of the temperature boundary
      condition)
+**** Source terms based on =basicSource=
+     Three source terms were added. These source terms are in the
+     =swakSourceFields=-library and can be used with solvers that use
+     the =sourcesProperties=-dictionary. The sources are
+     - SwakSetValue :: sets values according to a mask or the
+                       mechanism provided by =basicSource=
+     - SwakExplicitSource :: Uses the calculated source term on the
+          right hand side of the equation
+     - SwakImplicitSource :: Uses a calculated scalar-field to add an
+          implicit source term (source is *without* the actual field)
+     These fields are only implemented in the 2.x-version of =swak=
+     because the interface of =basicSource= is very different in 1.7
+     and a backport was unnecessary
 *** Infrastructure
 **** =Allwmake= creates symbolic links in =swakFiniteArea=
      The links to =mybison= and =myflex= are missing when the sources
