@@ -30,10 +30,11 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "SwakExplicitSource.H"
+#include "SwakImplicitSource.H"
 #include "polyMesh.H"
 #include "cellSet.H"
 #include "fvMatrix.H"
+#include "fvm.H"
 
 #include "FieldValueExpressionDriver.H"
 
@@ -48,7 +49,7 @@ namespace Foam {
 
 // Construct from dictionary
 template<class T>
-SwakExplicitSource<T>::SwakExplicitSource
+SwakImplicitSource<T>::SwakImplicitSource
 (
     const word& name,
     const word& modelType,
@@ -67,8 +68,8 @@ SwakExplicitSource<T>::SwakExplicitSource
 
     if(this->verbose_) {
         WarningIn(
-            string("SwakExplicitSource<") + pTraits<T>::typeName +
-            ">::SwakExplicitSource"
+            string("SwakImplicitSource<") + pTraits<T>::typeName +
+            ">::SwakImplicitSource"
         )    << "Adding source term to the fields " << this->fieldNames_
             << " to the values " << this->expressions_
             << " will be verbose. To switch this off set the "
@@ -81,17 +82,17 @@ SwakExplicitSource<T>::SwakExplicitSource
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class T>
-SwakExplicitSource<T>::~SwakExplicitSource()
+SwakImplicitSource<T>::~SwakImplicitSource()
 {}
 
 
-//- Add explicit contribution to equation
+//- Add implicit contribution to equation
 template<class T>
-void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
+void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 {
     if (debug)
     {
-        Info<< "SwakExplicitSource<"<< pTraits<T>::typeName
+        Info<< "SwakImplicitSource<"<< pTraits<T>::typeName
             << ">::addSup for source " << this->name_ << endl;
     }
 
@@ -100,21 +101,21 @@ void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<typename SwakExplicitSource<T>::resultField>()
+        FieldValueExpressionDriver::resultIsTyp<volScalarField>()
     ) {
-        FatalErrorIn("SwakExplicitSource<"+word(pTraits<T>::typeName)+">::addSup()")
+        FatalErrorIn("SwakImplicitSource<"+word(pTraits<T>::typeName)+">::addSup()")
             << "Result of " << this->expressions_[fieldI] << " is not a "
-                << pTraits<T>::typeName
+                << "volScalarField"
                 << endl
                 << exit(FatalError);
     }
 
-    typename SwakExplicitSource<T>::resultField result(
+    volScalarField result(
         this->driver().
-        FieldValueExpressionDriver::getResult<typename SwakExplicitSource<T>::resultField>()
+        FieldValueExpressionDriver::getResult<volScalarField>()
     );
 
-    eqn+=result;
+    eqn+=fvm::Sp(result,eqn.psi());
 }
 
 } // end namespace
