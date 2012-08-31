@@ -30,7 +30,7 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "SwakSetValue.H"
+#include "SwakExplicitSource.H"
 #include "polyMesh.H"
 #include "cellSet.H"
 #include "fvMatrix.H"
@@ -48,7 +48,7 @@ namespace Foam {
 
 // Construct from dictionary
 template<class T>
-SwakSetValue<T>::SwakSetValue
+SwakExplicitSource<T>::SwakExplicitSource
 (
     const word& name,
     const word& modelType,
@@ -56,15 +56,7 @@ SwakSetValue<T>::SwakSetValue
     const fvMesh& mesh
 )
 :
-    SwakBasicSourceCommon<T>(name, modelType, dict, mesh),
-    useMaskExpression_(readBool(this->coeffs().lookup("useMaskExpression"))),
-    maskExpression_(
-        useMaskExpression_
-        ?
-        string(this->coeffs().lookup("maskExpression"))
-        :
-        string("")
-    )
+    SwakBasicSourceCommon<T>(name, modelType, dict, mesh)
 {
     this->read(dict);
 
@@ -75,11 +67,10 @@ SwakSetValue<T>::SwakSetValue
 
     if(this->verbose_) {
         WarningIn(
-            string("SwakSetValue<") + pTraits<T>::typeName +
-            ">::SwakSetValue"
+            string("SwakExplicitSource<") + pTraits<T>::typeName +
+            ">::SwakExplicitSource"
         )    << "Fixing to the fields " << this->fieldNames_
             << " to the values " << this->expressions_
-            << " with the mask " << maskExpression_
             << " will be verbose. To switch this off set the "
             << "parameter 'verbose' to false" << endl;
     }
@@ -90,98 +81,40 @@ SwakSetValue<T>::SwakSetValue
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class T>
-SwakSetValue<T>::~SwakSetValue()
+SwakExplicitSource<T>::~SwakExplicitSource()
 {}
 
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+//- Add explicit contribution to equation
 template<class T>
-bool SwakSetValue<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
+void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 {
-    this->driver().parse(maskExpression_);
-    if(
-        !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<volScalarField>(true)
-    ) {
-        FatalErrorIn("SwakSetValue<scalar>::getMask")
-            << "Result of " << maskExpression_ << " is not a logical expression"
-                << endl
-                << exit(FatalError);
+    if (debug)
+    {
+        Info<< "SwakExplicitSource<"<< pTraits<T>::typeName
+            << ">::addSup for source " << this->name_ << endl;
     }
 
-    const volScalarField &cond=this->driver().
-        FieldValueExpressionDriver::getResult<volScalarField>();
-
-    forAll(cond,cellI) {
-        if(cond[cellI]!=0) {
-            cellIDs.append(cellI);
-        }
-    }
-
-    cellIDs.shrink();
-    label size=cellIDs.size();
-    reduce(size,plusOp<label>());
-
-    if(size==0) {
-        if(this->verbose_) {
-            Info << "No cells fixed for field " << psi << endl;
-        }
-        return false;
-    }
-    if(this->verbose_) {
-        Info << size << " cells fixed for field " << psi << endl;
-    }
-
-    return true;
-}
-
-
-template<class T>
-void SwakSetValue<T>::setValue
-(
-    fvMatrix<T>& eqn,
-    const label fieldI
-)
-{
     this->driver().clearVariables();
     this->driver().parse(this->expressions_[fieldI]);
+
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<typename SwakSetValue<T>::resultField>()
+        FieldValueExpressionDriver::resultIsTyp<typename SwakExplicitSource<T>::resultField>()
     ) {
-        FatalErrorIn("SwakSetValue<"+word(pTraits<T>::typeName)+">::setValue()")
+        FatalErrorIn("SwakExplicitSource<"+word(pTraits<T>::typeName)+">::addSup()")
             << "Result of " << this->expressions_[fieldI] << " is not a "
                 << pTraits<T>::typeName
                 << endl
                 << exit(FatalError);
     }
 
-    typename SwakSetValue<T>::resultField result(
+    typename SwakExplicitSource<T>::resultField result(
         this->driver().
-        FieldValueExpressionDriver::getResult<typename SwakSetValue<T>::resultField>()
+        FieldValueExpressionDriver::getResult<typename SwakExplicitSource<T>::resultField>()
     );
 
-    DynamicList<label> cellIDs;
-
-    if(useMaskExpression_) {
-        if(!getMask(cellIDs,eqn.psi().name())) {
-            return;
-        }
-    } else {
-        cellIDs=this->cells_;
-    }
-
-    List<T> values(cellIDs.size());
-
-    //    UIndirectList<Type>(values, cells_) = injectionRate_[fieldI];
-    forAll(cellIDs,i)
-    {
-	label cellI=cellIDs[i];
-
-        values[i]=result[cellI];
-    }
-
-    eqn.setValues(cellIDs, values);
+    eqn+=result;
 }
 
 } // end namespace

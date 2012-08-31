@@ -28,19 +28,19 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::SwakSetValue
+    Foam::SwakExplicitSource
 
 Description
-    Fixes field values according to an expression
+    Sets an explicit source term according to an expression
 
 SourceFiles
-    SwakSetValue.C
+    SwakExplicitSource.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakSetValue_H
-#define SwakSetValue_H
+#ifndef SwakExplicitSource_H
+#define SwakExplicitSource_H
 
 #include "SwakBasicSourceCommon.H"
 
@@ -50,33 +50,27 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SwakSetValue Declaration
+                           Class SwakExplicitSource Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class T>
-class SwakSetValue
+class SwakExplicitSource
 :
     public SwakBasicSourceCommon<T>
 {
     // Private data
 
-    SwakSetValue(const SwakSetValue&);
-
-     bool useMaskExpression_;
-
-    string maskExpression_;
-
-    bool getMask(DynamicList<label> &,const word &psi);
+    SwakExplicitSource(const SwakExplicitSource&);
 
 public:
 
     //- Runtime type information
-    TypeName("SwakSetValue");
+    TypeName("SwakExplicitSource");
 
     // Constructors
 
         //- Construct from a dictionary
-        SwakSetValue
+        SwakExplicitSource
         (
             const word& name,
             const word& modelType,
@@ -86,12 +80,12 @@ public:
 
     // Destructor
 
-        virtual ~SwakSetValue();
+        virtual ~SwakExplicitSource();
 
         // Evaluation
 
-            //- Set value on vector field
-            virtual void setValue(fvMatrix<T>& eqn, const label fieldI);
+            //- Add explicit contribution to equation
+            virtual void addSup(fvMatrix<T>& eqn, const label fieldI);
 
 
 };
@@ -102,7 +96,7 @@ public:
 } // End namespace Foam
 
 #ifdef NoRepository
-#   include "SwakSetValue.C"
+#   include "SwakExplicitSource.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
