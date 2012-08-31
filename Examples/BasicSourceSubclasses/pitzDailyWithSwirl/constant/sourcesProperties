@@ -25,16 +25,14 @@ swirl
     selectionMode all;
 
     vectorSwakSetValueCoeffs {
+        useMaskExpression true;
+        maskExpression "mag(pos()-center)<radius";
+
         variables (
             "speed=1000;"
             "center=vector(0.05,0,0);"
             "radius=0.015;"
         );
-    }
-
-    basicSourceCoeffs {
-        useMaskExpression true;
-        maskExpression "mag(pos()-center)<radius";
 
         expressions {
             U "vector(0,0,speed)^(pos()-center)";

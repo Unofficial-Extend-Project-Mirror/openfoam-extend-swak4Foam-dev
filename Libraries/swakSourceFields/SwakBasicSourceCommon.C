@@ -56,8 +56,6 @@ SwakBasicSourceCommon<T>::SwakBasicSourceCommon
     driver_(coeffs(),mesh),
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
-
-    read(dict);
 }
 
 

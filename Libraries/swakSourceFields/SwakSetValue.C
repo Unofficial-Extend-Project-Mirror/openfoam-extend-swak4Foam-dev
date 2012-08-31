@@ -66,6 +66,8 @@ SwakSetValue<T>::SwakSetValue
         string("")
     )
 {
+    this->read(dict);
+
     this->driver().createWriterAndRead(
         dict.name().name()+"_"+this->type()+"<"+
         pTraits<T>::typeName+">"
