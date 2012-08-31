@@ -62,6 +62,18 @@ functions
         expression "p-pOut";
         verbose true;
     }
+    pressureAverage
+    {
+        type patchAverage;
+        fields (
+            p
+        );
+        patches (
+            inlet
+            //            outlet
+        );
+        verbose true;
+    }
     ifUser {
         type executeIfEnvironmentVariable;
         readDuringConstruction false;
