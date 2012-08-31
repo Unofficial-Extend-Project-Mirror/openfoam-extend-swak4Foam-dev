@@ -62,6 +62,8 @@ class SwakImplicitSource
 
     SwakImplicitSource(const SwakImplicitSource&);
 
+    bool switchExplicitImplicit_;
+
 public:
 
     //- Runtime type information

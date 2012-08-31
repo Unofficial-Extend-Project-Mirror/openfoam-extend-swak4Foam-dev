@@ -57,7 +57,12 @@ SwakImplicitSource<T>::SwakImplicitSource
     const fvMesh& mesh
 )
 :
-    SwakBasicSourceCommon<T>(name, modelType, dict, mesh)
+    SwakBasicSourceCommon<T>(name, modelType, dict, mesh),
+    switchExplicitImplicit_(
+        readBool(
+            this->coeffs().lookup("switchExplicitImplicit")
+        )
+    )
 {
     this->read(dict);
 
@@ -115,7 +120,11 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
         FieldValueExpressionDriver::getResult<volScalarField>()
     );
 
-    eqn+=fvm::Sp(result,eqn.psi());
+    if(switchExplicitImplicit_) {
+        eqn+=fvm::SuSp(result,eqn.psi());
+    } else {
+        eqn+=fvm::Sp(result,eqn.psi());
+    }
 }
 
 } // end namespace

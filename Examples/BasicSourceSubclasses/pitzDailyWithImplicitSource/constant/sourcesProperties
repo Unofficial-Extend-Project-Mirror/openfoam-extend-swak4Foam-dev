@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-swirl
+plug
 {
     type vectorSwakImplicitSource;
 
@@ -25,6 +25,8 @@ swirl
     selectionMode all;
 
     vectorSwakImplicitSourceCoeffs {
+        switchExplicitImplicit true;
+
         variables (
             "xMin=0.05;"
             "xMax=0.075;"
