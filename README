@@ -1130,6 +1130,16 @@ S_{expl} + S_{impl} T
       https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=153
 
       Fixed by removing all file pointers if the number of patches changes
+**** =variables= intolerant on spaces
+     Spaces in the list of variables made the reading
+     fail because words can't contain spaces. For instance
+: "var =T*2;"
+     Now all the spaces are removed before assigning to
+     variables. This will also remove spaces on the "inside" thus
+     making
+: "v ar =T*2;"
+     the same as the above expression. But it is unlikely that the
+     call will be used in this way
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
