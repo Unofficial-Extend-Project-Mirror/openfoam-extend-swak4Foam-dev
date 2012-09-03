@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -57,7 +57,7 @@ class timelineFunctionObject
 
     //- Disallow default bitwise copy construct
     timelineFunctionObject(const timelineFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const timelineFunctionObject&);
 
@@ -110,6 +110,10 @@ protected:
 
     //- ends a dataset (usually by writing an endline)
     void endData(const word &name);
+
+    //- close all files to enable a new slate
+    void closeAllFiles();
+
 public:
 
     //- Runtime type information

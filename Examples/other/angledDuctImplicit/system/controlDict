@@ -52,7 +52,7 @@ functions
     pressureDrop
     {
         type patchExpression;
-        variables ( "pOut{patch'outlet}=sum(p*area())/sum(area());");
+        variables ( " pO ut { patch ' outlet } = sum ( p*area())/ sum(area()) ; ");
         accumulations (
             average
         );
@@ -60,6 +60,18 @@ functions
             inlet
         );
         expression "p-pOut";
+        verbose true;
+    }
+    pressureAverage
+    {
+        type patchAverage;
+        fields (
+            p
+        );
+        patches (
+            inlet
+            //            outlet
+        );
         verbose true;
     }
     ifUser {

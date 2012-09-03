@@ -735,16 +735,24 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
     std::string::size_type slashPos=remote.find('/');
 
     if(slashPos!=std::string::npos) {
-        regionName=remote.substr(slashPos+1);
+        regionName=string::validate<word>(
+            remote.substr(slashPos+1)
+        );
         remote=remote.substr(0,slashPos);
     }
 
     std::string::size_type quotePos=remote.find('\'');
     if(quotePos!=std::string::npos) {
-        id=remote.substr(quotePos+1);
-        type=remote.substr(0,quotePos);
+        id=string::validate<word>(
+            remote.substr(quotePos+1)
+        );
+        type=string::validate<word>(
+            remote.substr(0,quotePos)
+        );
     } else {
-        id=remote;
+        id=string::validate<word>(
+            remote
+        );
     }
 
     if(
@@ -795,8 +803,11 @@ void CommonValueExpressionDriver::addVariables(const stringList &exprList,bool c
     }
 }
 
-void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear)
+void CommonValueExpressionDriver::addVariables(const string &exprListIn,bool clear)
 {
+    string exprList(exprListIn);
+    exprList.removeTrailing(' ');
+
     if(clear) {
         clearVariables();
     }
@@ -826,14 +837,18 @@ void CommonValueExpressionDriver::addVariables(const string &exprList,bool clear
         std::string::size_type  startPos=exprList.find('{',start);
         if(startPos!=std::string::npos && startPos<eqPos) {
             std::string::size_type  endPos=exprList.find('}',start);
-            if(endPos!=(eqPos-1)) {
+            if(endPos>=eqPos) {
                 FatalErrorIn("CommonValueExpressionDriver::addVariables")
                     << "No closing '}' found in "
                         << exprList.substr(start,eqPos-start)
                         << endl
                         << exit(FatalError);
             }
-            word name(exprList.substr(start,startPos-start));
+            word name(
+                string::validate<word>(
+                    exprList.substr(start,startPos-start)
+                )
+            );
             string remoteExpr(exprList.substr(startPos+1,endPos-startPos-1));
             evaluateVariableRemote(remoteExpr,name,expr);
         } else {
