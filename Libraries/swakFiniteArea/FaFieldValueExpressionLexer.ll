@@ -78,6 +78,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
 <tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
 <tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
+<tensorcomponent>T     { BEGIN(INITIAL); return token::TOKEN_transpose; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -156,7 +157,6 @@ sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 surf                   return token::TOKEN_surf;
 
-transpose              return token::TOKEN_transpose;
 diag                   return token::TOKEN_diag;
 tr                     return token::TOKEN_tr;
 dev                    return token::TOKEN_dev;
@@ -273,6 +273,10 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr;
         return tokenTyp;
     } else {
+        if((*ptr)=="I") {
+            delete ptr;
+            return token::TOKEN_unitTensor;
+        }
         driver.error (*yylloc, "faField "+*ptr+" not existing or of wrong type");
     }
                      }

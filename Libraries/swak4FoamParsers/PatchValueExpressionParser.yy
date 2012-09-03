@@ -230,6 +230,7 @@ namespace Foam {
 %token TOKEN_zz
 %token TOKEN_ii
 
+%token TOKEN_unitTensor
 %token TOKEN_pi
 %token TOKEN_rand
 %token TOKEN_randFixed
@@ -315,7 +316,7 @@ namespace Foam {
 %left TOKEN_LEQ TOKEN_GEQ '<' '>'
 %left '-' '+'
 %left '%' '*' '/' '&' '^'
-%left TOKEN_NEG TOKEN_NOT
+%left TOKEN_NEG TOKEN_NOT TOKEN_HODGE
 // %right '^'
 %left '.'
 
@@ -600,11 +601,33 @@ vexp:   vector                  { $$ = $1; }
             $$ = new Foam::vectorField(-*$2);
             delete $2;
           }
+        | '*' texp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
+            delete $2;
+          }
+        | '*' yexp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
+            delete $2;
+          }
         | '(' vexp ')'		        { $$ = $2; }
-//        | TOKEN_diag '(' texp ')'       {
-          //   $$ = new Foam::vectorField( Foam::diag(*$3) );
-          //   delete $3;
-          // }
+        | TOKEN_diag '(' texp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::tensor::XX)()),
+                &($3->component(Foam::tensor::YY)()),
+                &($3->component(Foam::tensor::ZZ)())
+            );
+            delete $3;
+          }
+        | TOKEN_diag '(' yexp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::symmTensor::XX)()),
+                &($3->component(Foam::symmTensor::YY)()),
+                &($3->component(Foam::symmTensor::ZZ)())
+            );
+            delete $3;
+          }
         | lexp '?' vexp ':' vexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
@@ -817,9 +840,15 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
             $$ = new Foam::scalarField(*$1 / *$3);
             delete $1; delete $3;
           }
-        | TOKEN_pow '(' exp ',' scalar ')'		{
-            $$ = new Foam::scalarField(Foam::pow(*$3, $5));
-            delete $3;
+// produces a reduce/reduce-conflict with the rule below
+        // | TOKEN_pow '(' exp ',' scalar ')'		{
+        //     $$ = new Foam::scalarField(Foam::pow(*$3, $5));
+        //     delete $3;
+        //   }
+        | TOKEN_pow '(' exp ',' exp ')'		{
+            sameSize($3,$5);
+            $$ = new Foam::scalarField(Foam::pow(*$3, *$5));
+            delete $3; delete $5;
           }
         | TOKEN_log '(' exp ')'       {
             $$ = new Foam::scalarField(Foam::log(*$3));
@@ -1340,9 +1369,17 @@ texp:   tensor                  { $$ = $1; }
             $$ = new Foam::tensorField( Foam::inv(*$3) );
             delete $3;
           }
+        | TOKEN_cof '(' texp ')'       {
+            $$ = new Foam::tensorField( Foam::cof(*$3) );
+            delete $3;
+          }
         | TOKEN_dev '(' texp ')'       {
             $$ = new Foam::tensorField( Foam::dev(*$3) );
             delete $3;
+          }
+        | texp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = new Foam::tensorField( $1->T() );
+            delete $1;
           }
         | lexp '?' texp ':' texp        {
             sameSize($1,$3); sameSize($1,$5);
@@ -1474,6 +1511,10 @@ yexp:   symmTensor                  { $$ = $1; }
             $$ = new Foam::symmTensorField( Foam::inv(*$3) );
             delete $3;
           }
+        | TOKEN_cof '(' yexp ')'       {
+            $$ = new Foam::symmTensorField( Foam::cof(*$3) );
+            delete $3;
+          }
         | TOKEN_dev '(' yexp ')'       {
             $$ = new Foam::symmTensorField( Foam::dev(*$3) );
             delete $3;
@@ -1481,6 +1522,9 @@ yexp:   symmTensor                  { $$ = $1; }
         | TOKEN_sqr '(' vexp ')'       {
             $$ = new Foam::symmTensorField( Foam::sqr(*$3) );
             delete $3;
+          }
+        | yexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
           }
         | lexp '?' yexp ':' yexp        {
             sameSize($1,$3); sameSize($1,$5);
@@ -1534,6 +1578,9 @@ evaluateSymmTensorFunction: TOKEN_FUNCTION_YID '(' eatCharactersSwitch
 ;
 
 hexp:   sphericalTensor                  { $$ = $1; }
+        | TOKEN_unitTensor                        {
+            $$ = driver.makeField(Foam::sphericalTensor(1));
+          }
         | hexp '+' hexp 		{
             sameSize($1,$3);
             $$ = new Foam::sphericalTensorField(*$1 + *$3);
@@ -1572,6 +1619,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_inv '(' hexp ')'       {
             $$ = new Foam::sphericalTensorField( Foam::inv(*$3) );
             delete $3;
+          }
+        | hexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
           }
         | lexp '?' hexp ':' hexp        {
             sameSize($1,$3); sameSize($1,$5);
@@ -1779,6 +1829,32 @@ pvexp:  pvector     { $$ = $1; }
             $$ = new Foam::vectorField(-*$2);
             delete $2;
           }
+        | '*' ptexp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
+            delete $2;
+          }
+        | '*' pyexp %prec TOKEN_HODGE 	        {
+            $$ = new Foam::vectorField(*(*$2));
+            delete $2;
+          }
+        | TOKEN_diag '(' ptexp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::tensor::XX)()),
+                &($3->component(Foam::tensor::YY)()),
+                &($3->component(Foam::tensor::ZZ)())
+            );
+            delete $3;
+          }
+        | TOKEN_diag '(' pyexp ')'       {
+            //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
+            $$ = driver.composeVectorField(
+                &($3->component(Foam::symmTensor::XX)()),
+                &($3->component(Foam::symmTensor::YY)()),
+                &($3->component(Foam::symmTensor::ZZ)())
+            );
+            delete $3;
+          }
         | '(' pvexp ')'		        { $$ = $2; }
         | plexp '?' pvexp ':' pvexp        {
             sameSize($1,$3); sameSize($1,$5);
@@ -1850,6 +1926,11 @@ pexp:   pexp '+' pexp 		{
         | TOKEN_pow '(' pexp ',' scalar ')'		{
             $$ = new Foam::scalarField(Foam::pow(*$3, $5));
             delete $3;
+          }
+        | TOKEN_pow '(' pexp ',' pexp ')'		{
+            sameSize($3,$5);
+            $$ = new Foam::scalarField(Foam::pow(*$3, *$5));
+            delete $3; delete$5;
           }
         | TOKEN_log '(' pexp ')'       {
             $$ = new Foam::scalarField(Foam::log(*$3));
@@ -2224,6 +2305,26 @@ ptexp:  ptensor    { $$ = $1; }
             delete $2;
           }
         | '(' ptexp ')'		        { $$ = $2; }
+        | TOKEN_skew '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::skew(*$3) );
+            delete $3;
+          }
+        | TOKEN_inv '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::inv(*$3) );
+            delete $3;
+          }
+        | TOKEN_cof '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::cof(*$3) );
+            delete $3;
+          }
+        | TOKEN_dev '(' ptexp ')'       {
+            $$ = new Foam::tensorField( Foam::dev(*$3) );
+            delete $3;
+          }
+        | ptexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = new Foam::tensorField( $1->T() );
+            delete $1;
+          }
         | plexp '?' ptexp ':' ptexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
@@ -2322,6 +2423,10 @@ pyexp:  psymmTensor     { $$ = $1; }
             $$ = new Foam::symmTensorField( Foam::inv(*$3) );
             delete $3;
           }
+        | TOKEN_cof '(' pyexp ')'       {
+            $$ = new Foam::symmTensorField( Foam::cof(*$3) );
+            delete $3;
+          }
         | TOKEN_dev '(' pyexp ')'       {
             $$ = new Foam::symmTensorField( Foam::dev(*$3) );
             delete $3;
@@ -2329,6 +2434,9 @@ pyexp:  psymmTensor     { $$ = $1; }
         | TOKEN_sqr '(' pvexp ')'       {
             $$ = new Foam::symmTensorField( Foam::sqr(*$3) );
             delete $3;
+          }
+        | pyexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
           }
         | plexp '?' pyexp ':' pyexp        {
             sameSize($1,$3); sameSize($1,$5);
@@ -2405,6 +2513,9 @@ phexp:  psphericalTensor    { $$ = $1; }
             delete $2;
           }
         | '(' phexp ')'		        { $$ = $2; }
+        | phexp '.' tensorComponentSwitch TOKEN_transpose '(' ')'  {
+            $$ = $1;
+          }
         | plexp '?' phexp ':' phexp        {
             sameSize($1,$3); sameSize($1,$5);
             $$ = driver.doConditional($1,$3,$5);
