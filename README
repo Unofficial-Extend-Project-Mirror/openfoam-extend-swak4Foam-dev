@@ -1140,6 +1140,12 @@ S_{expl} + S_{impl} T
 : "v ar =T*2;"
      the same as the above expression. But it is unlikely that the
      call will be used in this way
+**** Missing =div=-operations
+     These valid =div=-operations were missing from the grammar:
+     - Divergence of a volume-tensor (all three kinds) producing a
+       vector
+     - Divergence of a surface-tensor (all three kinds) producing a
+       volume-tensor
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
