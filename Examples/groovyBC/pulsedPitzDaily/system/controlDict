@@ -361,12 +361,19 @@ functions
             turbulenceR
         );
     }
+    stopHighU {
+        type writeAndEndFieldRange;
+        fieldName U;
+        minimum -10;
+        maximum 40;
+    }
 );
 
 libs (
     "libOpenFOAM.so"
     "libgroovyBC.so"
     "libgroovyStandardBCs.so"
+    "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
     "libswakTransportTurbFunctionPlugin.so"

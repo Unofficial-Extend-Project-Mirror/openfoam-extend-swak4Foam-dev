@@ -39,4 +39,7 @@ functionObjectProxy/dynamicFunctionObjectListProxy/dynamicFunctionObjectListProx
 functionObjectProxy/dynamicFunctionObjectListProxy/providers/fromFileDictionaryProvider.C
 functionObjectProxy/dynamicFunctionObjectListProxy/providers/stdoutFromCommandProvider.C
 
+misc/writeAndEndFunctionObject/writeAndEndFunctionObject.C
+misc/writeAndEndFieldRangeFunctionObject/writeAndEndFieldRangeFunctionObject.C
+
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects
