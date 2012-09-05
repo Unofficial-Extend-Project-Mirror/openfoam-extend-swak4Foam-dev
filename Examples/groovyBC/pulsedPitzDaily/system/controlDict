@@ -367,6 +367,23 @@ functions
         minimum -10;
         maximum 40;
     }
+    stopIfNoChange {
+        type writeAndEndSwakExpression;
+        valueType internalField;
+        logicalExpression "mag(diffU)<threshold";
+        logicalAccumulation and;
+        variables (
+            "diffU=U-oldU;"
+            "threshold=0.1;"
+            "oldU=U;"
+        );
+        storedVariables (
+            {
+                name oldU;
+                initialValue "vector(1e5,1e5,1e5)";
+            }
+        );
+    }
 );
 
 libs (

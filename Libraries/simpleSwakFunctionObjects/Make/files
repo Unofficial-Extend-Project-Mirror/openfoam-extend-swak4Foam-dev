@@ -1,6 +1,8 @@
 general/swakExpressionFunctionObject.C
 general/dumpSwakExpressionFunctionObject.C
 
+general/writeAndEndSwakExpressionFunctionObject.C
+
 patch/patchExpressionFunctionObject.C
 
 functionObjectProxy/executeIfSwakExpression/executeIfSwakExpressionFunctionObject.C
