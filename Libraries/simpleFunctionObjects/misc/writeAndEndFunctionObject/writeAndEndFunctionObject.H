@@ -59,10 +59,15 @@ class writeAndEndFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const writeAndEndFunctionObject&);
 
+    //- flag if the run is already stopped
+    bool isStopped_;
+
 protected:
 
     //- do the actual checking
     virtual bool endRunNow() = 0;
+
+    bool isStopped() const { return isStopped_; }
 
 public:
 

@@ -47,22 +47,50 @@ writeAndEndFunctionObject::writeAndEndFunctionObject
     const dictionary& dict
 )
 :
-    simpleFunctionObject(name,t,dict)
+    simpleFunctionObject(name,t,dict),
+    isStopped_(false)
 {
 }
 
 bool writeAndEndFunctionObject::start()
 {
+    if(debug) {
+        Info << name() << "::start() - Entering" << endl;
+    }
+
     simpleFunctionObject::start();
+
+    if(debug) {
+        Info << name() << "::start() - Leaving" << endl;
+    }
 
     return true;
 }
 
 void writeAndEndFunctionObject::write()
 {
-    if(this->endRunNow()) {
+    if(debug) {
+        Info << name() << "::write() - Entering" << endl;
+    }
+    if(isStopped()) {
+        if(debug) {
+            Info << name() << "::write() - isStopped" << endl;
+        }
+        return;
+    }
+    if(
+        this->endRunNow()
+    ) {
+        if(debug) {
+            Info << name() << "::write() - stopping" << endl;
+        }
+        isStopped_=true;
+
         Info << "Ending run because of functionObject " << this->name() << endl;
         const_cast<Time &>(time()).writeAndEnd();
+    }
+    if(debug) {
+        Info << name() << "::write() - Leaving" << endl;
     }
 }
 
