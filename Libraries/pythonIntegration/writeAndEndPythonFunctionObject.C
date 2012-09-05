@@ -25,66 +25,81 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "initSwakFunctionObject.H"
+#include "writeAndEndPythonFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
 
-#include "CommonValueExpressionDriver.H"
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(initSwakFunctionObject, 0);
+    defineTypeNameAndDebug(writeAndEndPythonFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        initSwakFunctionObject,
+        writeAndEndPythonFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-initSwakFunctionObject::initSwakFunctionObject
+writeAndEndPythonFunctionObject::writeAndEndPythonFunctionObject
 (
-    const word& name,
+    const word &name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name)
+    writeAndEndFunctionObject(name,t,dict),
+    pythonInterpreterWrapper(dict)
 {
-    word regionName=
-        dict.lookupOrDefault<word>("region",polyMesh::defaultRegion);
+    if(parallelNoRun()) {
+        return;
+    }
 
-    const fvMesh &mesh=dynamic_cast<const fvMesh &>(
-        t.lookupObject<objectRegistry>(regionName)
-    );
+    initEnvironment(t);
 
-    CommonValueExpressionDriver::resetDefaultMesh(mesh);
+    setRunTime(t);
+
+    readParameters(dict);
 }
 
+bool writeAndEndPythonFunctionObject::read(const dictionary& dict)
+{
+    readParameters(dict);
+    return writeAndEndFunctionObject::read(dict);
+}
+
+void writeAndEndPythonFunctionObject::readParameters(const dictionary &dict)
+{
+    readCode(dict,"condition",conditionCode_);
+}
+
+bool writeAndEndPythonFunctionObject::endRunNow()
+{
+    setRunTime(time());
+
+    if(writeDebug()) {
+        Info << "Evaluating " << conditionCode_ << endl;
+    }
+    bool result=evaluateCodeTrueOrFalse(conditionCode_,true);
+    if(writeDebug()) {
+        Info << "Evaluated to " << result << endl;
+    }
+
+    if(result) {
+        Info << "Stopping because python code  " << conditionCode_
+            << " evaluated to 'true' in " << name() << endl;
+    }
+
+    return result;
+}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool initSwakFunctionObject::start()
-{
-    return true;
-}
-
-bool initSwakFunctionObject::execute(const bool forceWrite)
-{
-    return true;
-}
-
-bool initSwakFunctionObject::read(const dictionary& dict)
-{
-    return true;
-}
 
 } // namespace Foam
 

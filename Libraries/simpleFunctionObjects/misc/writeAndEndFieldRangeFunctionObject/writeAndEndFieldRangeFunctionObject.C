@@ -25,66 +25,76 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "initSwakFunctionObject.H"
+#include "writeAndEndFieldRangeFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
 
-#include "CommonValueExpressionDriver.H"
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(initSwakFunctionObject, 0);
+    defineTypeNameAndDebug(writeAndEndFieldRangeFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        initSwakFunctionObject,
+        writeAndEndFieldRangeFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-initSwakFunctionObject::initSwakFunctionObject
+writeAndEndFieldRangeFunctionObject::writeAndEndFieldRangeFunctionObject
 (
-    const word& name,
+    const word &name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name)
+    writeAndEndFunctionObject(name,t,dict),
+    fieldName_(""),
+    maximum_(HUGE),
+    minimum_(-HUGE)
 {
-    word regionName=
-        dict.lookupOrDefault<word>("region",polyMesh::defaultRegion);
-
-    const fvMesh &mesh=dynamic_cast<const fvMesh &>(
-        t.lookupObject<objectRegistry>(regionName)
-    );
-
-    CommonValueExpressionDriver::resetDefaultMesh(mesh);
 }
 
+bool writeAndEndFieldRangeFunctionObject::start()
+{
+    writeAndEndFunctionObject::start();
+
+    fieldName_=word(dict_.lookup("fieldName"));
+    minimum_=readScalar(dict_.lookup("minimum"));
+    maximum_=readScalar(dict_.lookup("maximum"));
+
+    Info << "Checking for field " << fieldName_ << " in range [ " << minimum_
+        << " , " << maximum_ << " ] " << endl;
+
+    return true;
+}
+
+bool writeAndEndFieldRangeFunctionObject::endRunNow()
+{
+    if(
+        check<volScalarField>()
+        ||
+        check<volVectorField>()
+        ||
+        check<volSphericalTensorField>()
+        ||
+        check<volSymmTensorField>()
+        ||
+        check<volTensorField>()
+    ) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool initSwakFunctionObject::start()
-{
-    return true;
-}
-
-bool initSwakFunctionObject::execute(const bool forceWrite)
-{
-    return true;
-}
-
-bool initSwakFunctionObject::read(const dictionary& dict)
-{
-    return true;
-}
 
 } // namespace Foam
 

@@ -25,66 +25,76 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "initSwakFunctionObject.H"
+#include "writeAndEndFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
 
-#include "CommonValueExpressionDriver.H"
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(initSwakFunctionObject, 0);
-
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        initSwakFunctionObject,
-        dictionary
-    );
+    defineTypeNameAndDebug(writeAndEndFunctionObject, 0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-initSwakFunctionObject::initSwakFunctionObject
+writeAndEndFunctionObject::writeAndEndFunctionObject
 (
-    const word& name,
+    const word &name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(name)
+    simpleFunctionObject(name,t,dict),
+    isStopped_(false)
 {
-    word regionName=
-        dict.lookupOrDefault<word>("region",polyMesh::defaultRegion);
-
-    const fvMesh &mesh=dynamic_cast<const fvMesh &>(
-        t.lookupObject<objectRegistry>(regionName)
-    );
-
-    CommonValueExpressionDriver::resetDefaultMesh(mesh);
 }
 
+bool writeAndEndFunctionObject::start()
+{
+    if(debug) {
+        Info << name() << "::start() - Entering" << endl;
+    }
+
+    simpleFunctionObject::start();
+
+    if(debug) {
+        Info << name() << "::start() - Leaving" << endl;
+    }
+
+    return true;
+}
+
+void writeAndEndFunctionObject::write()
+{
+    if(debug) {
+        Info << name() << "::write() - Entering" << endl;
+    }
+    if(isStopped()) {
+        if(debug) {
+            Info << name() << "::write() - isStopped" << endl;
+        }
+        return;
+    }
+    if(
+        this->endRunNow()
+    ) {
+        if(debug) {
+            Info << name() << "::write() - stopping" << endl;
+        }
+        isStopped_=true;
+
+        Info << "Ending run because of functionObject " << this->name() << endl;
+        const_cast<Time &>(time()).writeAndEnd();
+    }
+    if(debug) {
+        Info << name() << "::write() - Leaving" << endl;
+    }
+}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool initSwakFunctionObject::start()
-{
-    return true;
-}
-
-bool initSwakFunctionObject::execute(const bool forceWrite)
-{
-    return true;
-}
-
-bool initSwakFunctionObject::read(const dictionary& dict)
-{
-    return true;
-}
 
 } // namespace Foam
 

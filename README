@@ -56,8 +56,9 @@
    at the base directory should build all the libraries and
    tools.
 
-  The main library =swak4FoamParsers= can't be built in parallel (no
-  values of =WM_NCOMPPROCS= bigger than 1)
+   Rerun the command to make sure that there was no problem with the
+   compilation (this should be quite fast and only report libraries
+   being created and some administrative stuff)
 *** Additional configuration
     Some features (currently only the =Python=-integration may need
     third party software. The paths to these packages can be configured
@@ -459,6 +460,14 @@ S_{expl} + S_{impl} T
    http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90
 
    A sourceforge-account is required for reporting
+*** Things to do before reporting bug
+    If you're reporting a bug about the compilation please run
+    =Allwmake= *twice* and only report the messages from the second
+    run. This makes analyzing the log easier as only the unsuccessful
+    commands will be reported.
+
+    If the problem seems to be a missing library rerun the compilation
+    to make sure that there wasn't a problem with that.
 ** Development
    Contributions to to =swak4Foam= are most welcome. If you want to
    contribute clone the Mercurial archive of the sources
@@ -1344,6 +1353,20 @@ S_{expl} + S_{impl} T
      These fields are only implemented in the 2.x-version of =swak=
      because the interface of =basicSource= is very different in 1.7
      and a backport was unnecessary
+**** Function objects that stop a run gracefully
+     =simpleFunctionObjects= now has a function object
+     =writeAndEndFieldRange= that stops a run (and writes the last
+     time) if a field is outside a specified range.
+
+     A similar function object =writeAndEndSwakExpression= is in the
+     =simpleSwakFunctionObjects= that stops if a swak-expression
+     evaluates to true. =writeAndEndPython= does the same in
+     =pythonIntegration=.
+
+     Note: after the run is written one more timestep is calculated
+     (this seems to be due to the fact that FOs are calculated at the
+     start of a timestep). Also there are issues if the next timestep
+     is a scheduled write-time
 *** Infrastructure
 **** Compilation script checks =SWAK4FOAM_SRC=
      The environment variable =SWAK4FOAM_SRC= is needed for the

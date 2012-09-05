@@ -1,0 +1,8 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 05 Sep 2012 14:17:17 +0200
+Subject: Re: Function objects to terminate a run
+Message-Id: <b581b5662cb023ae-e7d8b911afa22534-artemis@workstation008.office.ice-sf.at>
+References: <b581b5662cb023ae-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <b581b5662cb023ae-0-artemis@bgs-cool-greybook.local>
+
+This is more than trivial with the =writeAndEnd=-Method of Time
