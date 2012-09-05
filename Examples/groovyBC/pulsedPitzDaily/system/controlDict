@@ -384,6 +384,10 @@ functions
             }
         );
     }
+    // stopIfPython {
+    //     type writeAndEndPython;
+    //     conditionCode "return runTime>4e-5";
+    // }
 );
 
 libs (
@@ -393,6 +397,7 @@ libs (
     "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
+    //    "libpythonIntegration.so"
     "libswakTransportTurbFunctionPlugin.so"
 ) ;
 
