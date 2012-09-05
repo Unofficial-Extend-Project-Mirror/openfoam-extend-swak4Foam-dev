@@ -361,14 +361,43 @@ functions
             turbulenceR
         );
     }
+    stopHighU {
+        type writeAndEndFieldRange;
+        fieldName U;
+        minimum -10;
+        maximum 40;
+    }
+    stopIfNoChange {
+        type writeAndEndSwakExpression;
+        valueType internalField;
+        logicalExpression "mag(diffU)<threshold";
+        logicalAccumulation and;
+        variables (
+            "diffU=U-oldU;"
+            "threshold=0.1;"
+            "oldU=U;"
+        );
+        storedVariables (
+            {
+                name oldU;
+                initialValue "vector(1e5,1e5,1e5)";
+            }
+        );
+    }
+    // stopIfPython {
+    //     type writeAndEndPython;
+    //     conditionCode "return runTime>4e-5";
+    // }
 );
 
 libs (
     "libOpenFOAM.so"
     "libgroovyBC.so"
     "libgroovyStandardBCs.so"
+    "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
+    //    "libpythonIntegration.so"
     "libswakTransportTurbFunctionPlugin.so"
 ) ;
 
