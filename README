@@ -1366,7 +1366,8 @@ S_{expl} + S_{impl} T
      Note: after the run is written one more timestep is calculated
      (this seems to be due to the fact that FOs are calculated at the
      start of a timestep). Also there are issues if the next timestep
-     is a scheduled write-time
+     is a scheduled write-time (this only seem to be an issue with
+     1.7.x. It all works fine on 2.1.x)
 *** Infrastructure
 **** Compilation script checks =SWAK4FOAM_SRC=
      The environment variable =SWAK4FOAM_SRC= is needed for the
