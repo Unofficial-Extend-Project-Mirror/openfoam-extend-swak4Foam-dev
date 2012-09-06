@@ -254,6 +254,13 @@ label CommonPluginFunction::readArgument(
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
         setArgument(index,value);
+    } else if(type=="bool") {
+        bool value(readBool(is));
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Read bool: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
     } else if(type=="label") {
         label value;
         is.read(value);

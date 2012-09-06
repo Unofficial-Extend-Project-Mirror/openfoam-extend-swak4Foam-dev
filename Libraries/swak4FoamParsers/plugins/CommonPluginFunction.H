@@ -150,6 +150,15 @@ protected:
         notImplemented("setArgument(label index,const &vector)");
     }
 
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const bool &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &bool)");
+    }
+
     //- wrapper for argument reading
     label readArgument(
         label index,
