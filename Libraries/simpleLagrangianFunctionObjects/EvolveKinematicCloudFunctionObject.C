@@ -38,6 +38,14 @@ namespace Foam
 {
     defineTypeNameAndDebug(EvolveKinematicCloudFunctionObject, 0);
 
+    addNamedToRunTimeSelectionTable
+    (
+        functionObject,
+        EvolveKinematicCloudFunctionObject,
+        dictionary,
+        evolveKinematicCloud
+    );
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 EvolveKinematicCloudFunctionObject::EvolveKinematicCloudFunctionObject

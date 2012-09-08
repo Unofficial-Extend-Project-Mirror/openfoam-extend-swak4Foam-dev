@@ -15,4 +15,6 @@ LIB_LIBS = \
     -ltriSurface \
     -llagrangian \
     -llagrangianIntermediate \
+    -lthermophysicalFunctions \
+    -lradiation \
     -lsolidParticle

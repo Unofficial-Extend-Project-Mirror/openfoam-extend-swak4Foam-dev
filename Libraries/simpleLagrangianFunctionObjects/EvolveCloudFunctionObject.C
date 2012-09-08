@@ -65,7 +65,9 @@ EvolveCloudFunctionObject<CloudType>::EvolveCloudFunctionObject
     g_("dummy",dimless,vector::zero)
 {
     if(dict_.found("g")) {
-        g_=dimensionedVector(dict_.lookup("g"));
+        dimensionedVector newG(dict_.lookup("g"));
+        g_.dimensions().reset(newG.dimensions());
+        g_=newG;
     } else {
         const Time &runTime=t;
         const fvMesh &mesh=dynamicCast<const fvMesh &>(obr_);
