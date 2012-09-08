@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -33,7 +33,7 @@ Application
 
 Description
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
@@ -60,10 +60,6 @@ int main(int argc, char *argv[])
 #   include "setRootCase.H"
 #   include "createTime.H"
 
-    if(!args.options().found("allowFunctionObjects")) {
-        runTime.functionObjects().off();
-    }
-
 #   include "createNamedMesh.H"
 
     IOdictionary replayDict
@@ -77,6 +73,14 @@ int main(int argc, char *argv[])
             IOobject::NO_WRITE
         )
     );
+
+    if(
+        !args.options().found("allowFunctionObjects")
+        &&
+        !replayDict.lookupOrDefault<bool>("useFunctionObjects",false)
+    ) {
+        runTime.functionObjects().off();
+    }
 
     autoPtr<surfaceScalarField> dummyPhi;
 
