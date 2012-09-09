@@ -24,22 +24,21 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    EvolveKinematicCloudFunctionObject
+    EvolveThermoCloudFunctionObject
 
 Description
-    Function object that creates and evolves a KinematicCloud at every timestep
-
+    Function object that creates and evolves a ThermoCloud at every timestep
 
 SourceFiles
-    EvolveKinematicCloudFunctionObject.C
+    EvolveThermoCloudFunctionObject.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef EvolveKinematicCloudFunctionObject_H
-#define EvolveKinematicCloudFunctionObject_H
+#ifndef EvolveThermoCloudFunctionObject_H
+#define EvolveThermoCloudFunctionObject_H
 
 #include "EvolveCloudFunctionObject.H"
-#include "basicKinematicCloud.H"
+#include "basicThermoCloud.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,31 +46,31 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class EvolveKinematicCloudFunctionObject Declaration
+                           Class EvolveThermoCloudFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class EvolveKinematicCloudFunctionObject
+class EvolveThermoCloudFunctionObject
 :
-    public EvolveCloudFunctionObject<basicKinematicCloud>
+    public EvolveCloudFunctionObject<basicThermoCloud>
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    EvolveKinematicCloudFunctionObject(const EvolveKinematicCloudFunctionObject&);
+    EvolveThermoCloudFunctionObject(const EvolveThermoCloudFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const EvolveKinematicCloudFunctionObject&);
+    void operator=(const EvolveThermoCloudFunctionObject&);
 
 public:
 
     //- Runtime type information
-    TypeName("EvolveKinematicCloudFunctionObject");
+    TypeName("EvolveThermoCloudFunctionObject");
 
 
     // Constructors
 
     //- Construct from components
-    EvolveKinematicCloudFunctionObject
+    EvolveThermoCloudFunctionObject
     (
         const word&,
         const Time&,

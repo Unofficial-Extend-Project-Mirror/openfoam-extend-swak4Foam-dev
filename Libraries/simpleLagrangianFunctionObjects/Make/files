@@ -1,3 +1,4 @@
 EvolveKinematicCloudFunctionObject.C
+EvolveThermoCloudFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleLagrangianFunctionObjects

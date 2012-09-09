@@ -96,6 +96,8 @@ protected:
 
     const dimensionedVector g() const { return g_; }
 
+    const objectRegistry &obr() const { return obr_; }
+
 public:
 
     // Constructors

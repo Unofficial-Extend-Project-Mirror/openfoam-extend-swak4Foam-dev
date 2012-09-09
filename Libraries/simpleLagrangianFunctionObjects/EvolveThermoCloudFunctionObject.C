@@ -25,105 +25,64 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "EvolveCloudFunctionObject.H"
+#include "EvolveThermoCloudFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
 
-#include "uniformDimensionedFields.H"
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+    defineTypeNameAndDebug(EvolveThermoCloudFunctionObject, 0);
+
+    addNamedToRunTimeSelectionTable
+    (
+        functionObject,
+        EvolveThermoCloudFunctionObject,
+        dictionary,
+        evolveThermoCloud
+    );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class CloudType>
-EvolveCloudFunctionObject<CloudType>::EvolveCloudFunctionObject
+EvolveThermoCloudFunctionObject::EvolveThermoCloudFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(
-        name
-    ),
-    dict_(dict),
-    regionName_(
-        dict_.found("region")
-        ? dict_.lookup("region")
-        : polyMesh::defaultRegion
-    ),
-    obr_(t.lookupObject<objectRegistry>(regionName_)),
-    cloudName_(
-        dict.lookup("cloudName")
-    ),
-    g_("dummy",dimless,vector::zero)
+    EvolveCloudFunctionObject<basicThermoCloud>(
+        name,
+        t,
+        dict
+    )
 {
-    if(dict_.found("g")) {
-        dimensionedVector newG(dict_.lookup("g"));
-        g_.dimensions().reset(newG.dimensions());
-        g_=newG;
-    } else {
-        const Time &runTime=t;
-        const fvMesh &mesh=dynamicCast<const fvMesh &>(obr_);
-
-        #include "readGravitationalAcceleration.H"
-        g_=g;
-    }
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// template<class CloudType>
-// bool EvolveCloudFunctionObject<CloudType>::start()
-// {
-//     return true;
-// }
-
-template<class CloudType>
-template <class FieldType >
-const FieldType &EvolveCloudFunctionObject<CloudType>::getField(const word &fieldName)
+bool EvolveThermoCloudFunctionObject::start()
 {
-    return obr_.lookupObject<FieldType>(
-        word(
-            dict_.lookup(fieldName)
+    cloud().set(
+        new basicThermoCloud(
+            cloudName(),
+            getField<volScalarField>("rhoName"),
+            getField<volVectorField>("UName"),
+            g(),
+            const_cast<basicThermo &>(
+                getField<basicThermo>("thermoPhysicsName")
+            )
         )
     );
-}
-
-template<class CloudType>
-bool EvolveCloudFunctionObject<CloudType>::execute()
-{
-    cloud_->evolve();
-    cloud_->info();
-
-    if(obr().time().outputTime()) {
-        Info << "Writing cloud " << cloud_->name() << endl;
-        cloud_->write();
-    }
 
     return true;
 }
 
-template<class CloudType>
-bool EvolveCloudFunctionObject<CloudType>::read(const dictionary& dict)
-{
-    if(dict_!=dict) {
-        WarningIn("EvolveCloudFunctionObject<CloudType>::read(const dictionary& dict)")
-            << "Can't change the cloud of " << this->name()
-                << " during the run"
-                << endl;
-
-    }
-
-    return true;
-}
 
 } // namespace Foam
 
