@@ -49,6 +49,21 @@
      - flex :: since the introduction of the plugin functions at least
                a flex version of =2.5.33= is required (=2.5.35= is the
                lowest *confirmed* version)
+
+   Both of these are mainstream packages (they are for instance needed
+   to compile =gcc=) and should exist on every Linux distribution. Use
+   the package manager of your distribution to install them and *only*
+   if the compilation process of =swak4Foam= complains about too low
+   versions try to install them from other sources.
+
+   =swak4Foam= tries to keep the requirements on these as low as
+   possible and sometimes lower versions than the ones reported *may*
+   work. If they do please report so.
+
+   The version of bison can be checked with
+: bison -V
+   The version of flex with
+: flex -V
 ** Building
 : wmake all
    at the base directory should build all the libraries and
