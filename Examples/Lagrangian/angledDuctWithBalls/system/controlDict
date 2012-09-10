@@ -58,6 +58,7 @@ libs (
 functions {
     hotParticle {
         type evolveThermoCloud;
+        //        type evolveConstReactingCloud;
         cloudName hotParticleCloud;
         g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
         rhoName rho;
