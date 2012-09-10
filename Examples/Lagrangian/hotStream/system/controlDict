@@ -47,16 +47,26 @@ runTimeModifiable yes;
 
 libs (
     "libsimpleLagrangianFunctionObjects.so"
+    "libswakLagrangianCloudSourcesFunctionPlugin.so"
+    "libswakFunctionObjects.so"
 );
 
 functions {
-    kinemativParticle {
+    kinematicParticle {
         type evolveKinematicCloud;
         cloudName injectFromTop;
         g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
         rhoName rho;
         UName U;
         muName mu;
+    }
+    momentumSourceKinematic {
+        type expressionField;
+        autowrite true;
+        expression "lcsMomentumSource(injectFromTop)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromTopMomentumSource;
     }
 }
 

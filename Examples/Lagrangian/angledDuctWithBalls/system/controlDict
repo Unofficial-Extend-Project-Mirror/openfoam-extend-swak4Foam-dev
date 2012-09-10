@@ -29,7 +29,7 @@ deltaT          1;
 
 writeControl    adjustableRunTime;
 
-writeInterval   2;
+writeInterval   1;
 
 purgeWrite      0;
 
@@ -53,6 +53,8 @@ maxDeltaT       1;
 
 libs (
     "libsimpleLagrangianFunctionObjects.so"
+    "libswakLagrangianCloudSourcesFunctionPlugin.so"
+    "libswakFunctionObjects.so"
 );
 
 functions {
@@ -64,6 +66,16 @@ functions {
         rhoName rho;
         UName U;
         thermoPhysicsName thermophysicalProperties;
+    }
+    momentumSourceKinematic {
+        enabled false;
+
+        type expressionField;
+        autowrite true;
+        expression "lcsMomentumSource(hotPaticleCloud)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromTopMomentumSource;
     }
 }
 
