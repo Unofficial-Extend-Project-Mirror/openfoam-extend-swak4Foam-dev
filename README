@@ -1170,6 +1170,12 @@ S_{expl} + S_{impl} T
        vector
      - Divergence of a surface-tensor (all three kinds) producing a
        volume-tensor
+**** Fields created by =expressionField= written too late
+     Fields created by that function object were written with the
+     value from the timestep before because the regular write occurs
+     before the execution of the function objects.
+
+     Fixed
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
