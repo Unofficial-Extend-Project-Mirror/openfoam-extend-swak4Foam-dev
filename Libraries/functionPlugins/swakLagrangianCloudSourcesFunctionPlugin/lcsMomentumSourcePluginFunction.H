@@ -44,8 +44,6 @@ SourceFiles
 
 #include "LagrangianCloudSourcePluginFunction.H"
 
-#include "basicKinematicCloud.H"
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -57,7 +55,7 @@ namespace Foam
 
 class lcsMomentumSourcePluginFunction
 :
-    public LagrangianCloudSourcePluginFunction<basicKinematicCloud>
+    public LagrangianCloudSourcePluginFunction
 {
     //- Disallow default bitwise assignment
     void operator=(const lcsMomentumSourcePluginFunction &);

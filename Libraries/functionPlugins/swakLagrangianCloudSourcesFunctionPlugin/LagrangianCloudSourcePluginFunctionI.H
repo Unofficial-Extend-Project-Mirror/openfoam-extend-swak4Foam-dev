@@ -31,47 +31,35 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "LagrangianCloudSourcePluginFunction.H"
-#include "FieldValueExpressionDriver.H"
+#ifndef LagrangianCloudSourcePluginFunctionI_H
+#define LagrangianCloudSourcePluginFunctionI_H
 
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-LagrangianCloudSourcePluginFunction::LagrangianCloudSourcePluginFunction(
-    const FieldValueExpressionDriver &parentDriver,
-    const word &name,
-    const word &returnValueType,
-    const string &additionalArgs
-):
-    FieldValuePluginFunction(
-        parentDriver,
-        name,
-        returnValueType,
-        string("cloudName primitive word")+ (
-            additionalArgs==""
-            ?
-            additionalArgs
-            :
-            string(string(",")+additionalArgs)
-        )
-    )
+
+template<class LookupCloudType>
+bool LagrangianCloudSourcePluginFunction::hasCloudAs()
 {
+    return mesh().template foundObject<LookupCloudType>
+        (
+            cloudName()
+        );
 }
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-void LagrangianCloudSourcePluginFunction::setArgument(
-    label index,
-    const word &name
-)
+template<class OtherCloudType,class LookupCloudType>
+const OtherCloudType &LagrangianCloudSourcePluginFunction::getCloudAs()
 {
-    assert(index==0);
-    cloudName_=name;
+    return
+        dynamicCast<const OtherCloudType &>(
+            mesh().template lookupObject<LookupCloudType>
+            (
+                cloudName()
+            )
+        );
 }
+
 
 
 // * * * * * * * * * * * * * * * Concrete implementations * * * * * * * * * //
@@ -80,3 +68,5 @@ void LagrangianCloudSourcePluginFunction::setArgument(
 } // namespace
 
 // ************************************************************************* //
+
+#endif

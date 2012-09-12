@@ -35,6 +35,7 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "basicKinematicCloud.H"
 #include "basicThermoCloud.H"
 #include "BasicReactingCloud.H"
 #include "BasicReactingMultiphaseCloud.H"
@@ -50,7 +51,7 @@ lcsMomentumSourcePluginFunction::lcsMomentumSourcePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    LagrangianCloudSourcePluginFunction<basicKinematicCloud>(
+    LagrangianCloudSourcePluginFunction(
         parentDriver,
         name,
         "volVectorField"

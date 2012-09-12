@@ -56,7 +56,7 @@ namespace Foam
                            Class LagrangianCloudSourcePluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class CloudType>
+    // template<class CloudType>
 class LagrangianCloudSourcePluginFunction
 :
     public FieldValuePluginFunction
@@ -69,8 +69,7 @@ class LagrangianCloudSourcePluginFunction
     word cloudName_;
 
 protected:
-
-    //    const CloudType &cloud();
+    //    typedef CloudType cloudType;
 
     template<class LookupCloudType>
     bool hasCloudAs();
@@ -105,7 +104,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "LagrangianCloudSourcePluginFunction.C"
+#   include "LagrangianCloudSourcePluginFunctionI.H"
 #endif
 
 // set a autoPtr to the needed cloud. This is required because
