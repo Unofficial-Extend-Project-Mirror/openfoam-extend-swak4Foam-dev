@@ -56,7 +56,7 @@ namespace Foam
                            Class LagrangianCloudSourcePluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class CloudType,class LookupCloudType>
+template<class CloudType>
 class LagrangianCloudSourcePluginFunction
 :
     public FieldValuePluginFunction
@@ -70,7 +70,13 @@ class LagrangianCloudSourcePluginFunction
 
 protected:
 
-    const CloudType &cloud();
+    //    const CloudType &cloud();
+
+    template<class LookupCloudType>
+    bool hasCloudAs();
+
+    template<class OtherCloudType,class LookupCloudType>
+    const OtherCloudType &getCloudAs();
 
     const word &cloudName() const { return cloudName_; }
 
@@ -101,6 +107,27 @@ public:
 #ifdef NoRepository
 #   include "LagrangianCloudSourcePluginFunction.C"
 #endif
+
+// set a autoPtr to the needed cloud. This is required because
+// "similar" clouds don't really inherit (because of the template paramter)
+#define castAndCall(rVar,rType,neededType,usedType,theCall)    \
+    if(!rVar.valid() && hasCloudAs<neededType>()) { \
+        rVar.set( \
+            new rType( \
+                getCloudAs<neededType,usedType>().theCall \
+            ) \
+        );\
+    }\
+
+// Fail if no cloud data was found
+#define noCloudFound(pVar) \
+    if(!pVar.valid()) { \
+    FatalErrorIn("Plugin function "+this->name()) \
+    << "No matching cloud " << this->cloudName() << "found" \
+        << endl \
+    << exit(FatalError); \
+    }
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

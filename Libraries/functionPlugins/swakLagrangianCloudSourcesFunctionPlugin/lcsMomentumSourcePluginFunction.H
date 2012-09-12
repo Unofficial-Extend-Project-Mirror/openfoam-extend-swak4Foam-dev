@@ -57,7 +57,7 @@ namespace Foam
 
 class lcsMomentumSourcePluginFunction
 :
-    public LagrangianCloudSourcePluginFunction<basicKinematicCloud,kinematicCloud>
+    public LagrangianCloudSourcePluginFunction<basicKinematicCloud>
 {
     //- Disallow default bitwise assignment
     void operator=(const lcsMomentumSourcePluginFunction &);

@@ -35,6 +35,10 @@ License
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "basicThermoCloud.H"
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(lcsMomentumSourcePluginFunction,0);
@@ -46,7 +50,7 @@ lcsMomentumSourcePluginFunction::lcsMomentumSourcePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    LagrangianCloudSourcePluginFunction<basicKinematicCloud,kinematicCloud>(
+    LagrangianCloudSourcePluginFunction<basicKinematicCloud>(
         parentDriver,
         name,
         "volVectorField"
@@ -61,7 +65,21 @@ lcsMomentumSourcePluginFunction::lcsMomentumSourcePluginFunction(
 
 void lcsMomentumSourcePluginFunction::doEvaluation()
 {
-    DimensionedField< vector, volMesh > SU(cloud().SU());
+    typedef DimensionedField<vector,volMesh> dimVectorField;
+    autoPtr<dimVectorField> pSU;
+
+    castAndCall(pSU,dimVectorField,basicKinematicCloud,kinematicCloud,SU());
+    castAndCall(pSU,dimVectorField,basicThermoCloud,thermoCloud,SU());
+    castAndCall(pSU,dimVectorField,constThermoReactingCloud,reactingCloud,SU());
+    castAndCall(pSU,dimVectorField,thermoReactingCloud,reactingCloud,SU());
+    castAndCall(pSU,dimVectorField,icoPoly8ThermoReactingCloud,reactingCloud,SU());
+    castAndCall(pSU,dimVectorField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+    castAndCall(pSU,dimVectorField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+    castAndCall(pSU,dimVectorField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+
+    noCloudFound(pSU);
+
+    const dimVectorField &SU=pSU();
 
     autoPtr<volVectorField> pSource(
         new volVectorField(

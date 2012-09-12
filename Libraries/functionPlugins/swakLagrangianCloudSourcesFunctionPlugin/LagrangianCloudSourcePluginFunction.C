@@ -38,8 +38,8 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template <class CloudType,class LookupCloudType>
-LagrangianCloudSourcePluginFunction<CloudType,LookupCloudType>::LagrangianCloudSourcePluginFunction(
+template <class CloudType>
+LagrangianCloudSourcePluginFunction<CloudType>::LagrangianCloudSourcePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name,
     const word &returnValueType,
@@ -65,8 +65,8 @@ LagrangianCloudSourcePluginFunction<CloudType,LookupCloudType>::LagrangianCloudS
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template <class CloudType,class LookupCloudType>
-void LagrangianCloudSourcePluginFunction<CloudType,LookupCloudType>::setArgument(
+template <class CloudType>
+void LagrangianCloudSourcePluginFunction<CloudType>::setArgument(
     label index,
     const word &name
 )
@@ -76,18 +76,30 @@ void LagrangianCloudSourcePluginFunction<CloudType,LookupCloudType>::setArgument
 }
 
 
-template <class CloudType,class LookupCloudType>
-const CloudType &LagrangianCloudSourcePluginFunction<CloudType,LookupCloudType>::cloud()
+template <class CloudType>
+template<class LookupCloudType>
+bool LagrangianCloudSourcePluginFunction<CloudType>::hasCloudAs()
 {
-    // Got to do it this way because of the ambiguity of typeName in the
-    // basicXXXXCloud-classes
+    return mesh().template foundObject<LookupCloudType>
+        (
+            cloudName()
+        );
+}
+
+template <class CloudType>
+template<class OtherCloudType,class LookupCloudType>
+const OtherCloudType &LagrangianCloudSourcePluginFunction<CloudType>::getCloudAs()
+{
     return
-        dynamic_cast<const CloudType &>(
-            mesh().template lookupObject<LookupCloudType>(
+        dynamicCast<const OtherCloudType &>(
+            mesh().template lookupObject<LookupCloudType>
+            (
                 cloudName()
             )
         );
 }
+
+
 
 // * * * * * * * * * * * * * * * Concrete implementations * * * * * * * * * //
 
