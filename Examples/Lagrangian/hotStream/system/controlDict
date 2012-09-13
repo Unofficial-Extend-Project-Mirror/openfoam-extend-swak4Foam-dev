@@ -68,6 +68,14 @@ functions {
         outputInterval 1;
         fieldName injectFromTopMomentumSource;
     }
+    massFractionKinematic {
+        type expressionField;
+        autowrite true;
+        expression "lcsMassFraction(injectFromTop)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromTopMassFraction;
+    }
 }
 
 // ************************************************************************* //
