@@ -77,7 +77,17 @@ functions {
         expression "lcsMomentumSource(hotParticleCloud)";
         outputControl timeStep;
         outputInterval 1;
-        fieldName injectFromTopMomentumSource;
+        fieldName hotParticleCloudMomentumSource;
+    }
+    enthalpySourceKinematic {
+        //        enabled false;
+
+        type expressionField;
+        autowrite true;
+        expression "lcsEnthalpySource(hotParticleCloud)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName hotParticleCloudEnthalpySource;
     }
 }
 

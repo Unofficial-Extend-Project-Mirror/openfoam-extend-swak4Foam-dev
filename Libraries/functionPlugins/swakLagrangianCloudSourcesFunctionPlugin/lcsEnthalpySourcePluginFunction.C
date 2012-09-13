@@ -31,30 +31,29 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "lcsMomentumSourcePluginFunction.H"
+#include "lcsEnthalpySourcePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "basicKinematicCloud.H"
 #include "basicThermoCloud.H"
 #include "BasicReactingCloud.H"
 #include "BasicReactingMultiphaseCloud.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(lcsMomentumSourcePluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction,lcsMomentumSourcePluginFunction , name, lcsMomentumSource);
+defineTypeNameAndDebug(lcsEnthalpySourcePluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,lcsEnthalpySourcePluginFunction , name, lcsEnthalpySource);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-lcsMomentumSourcePluginFunction::lcsMomentumSourcePluginFunction(
+lcsEnthalpySourcePluginFunction::lcsEnthalpySourcePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
     LagrangianCloudSourcePluginFunction(
         parentDriver,
         name,
-        "volVectorField"
+        "volScalarField"
     )
 {
 }
@@ -64,41 +63,40 @@ lcsMomentumSourcePluginFunction::lcsMomentumSourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void lcsMomentumSourcePluginFunction::doEvaluation()
+void lcsEnthalpySourcePluginFunction::doEvaluation()
 {
-    typedef DimensionedField<vector,volMesh> dimVectorField;
-    autoPtr<dimVectorField> pSU;
+    typedef DimensionedField<scalar,volMesh> dimScalarField;
+    autoPtr<dimScalarField> pSh;
 
     // pick up the first fitting class
-    castAndCall(pSU,dimVectorField,basicKinematicCloud,kinematicCloud,SU());
-    castAndCall(pSU,dimVectorField,basicThermoCloud,thermoCloud,SU());
-    castAndCall(pSU,dimVectorField,constThermoReactingCloud,reactingCloud,SU());
-    castAndCall(pSU,dimVectorField,thermoReactingCloud,reactingCloud,SU());
-    castAndCall(pSU,dimVectorField,icoPoly8ThermoReactingCloud,reactingCloud,SU());
-    castAndCall(pSU,dimVectorField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
-    castAndCall(pSU,dimVectorField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
-    castAndCall(pSU,dimVectorField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+    castAndCall(pSh,dimScalarField,basicThermoCloud,thermoCloud,Sh());
+    castAndCall(pSh,dimScalarField,constThermoReactingCloud,reactingCloud,Sh());
+    castAndCall(pSh,dimScalarField,thermoReactingCloud,reactingCloud,Sh());
+    castAndCall(pSh,dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Sh());
+    castAndCall(pSh,dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+    castAndCall(pSh,dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+    castAndCall(pSh,dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
 
-    noCloudFound(pSU);
+    noCloudFound(pSh);
 
-    const dimVectorField &SU=pSU();
+    const dimScalarField &Sh=pSh();
 
-    autoPtr<volVectorField> pSource(
-        new volVectorField(
+    autoPtr<volScalarField> pSource(
+        new volScalarField(
             IOobject(
-                cloudName()+"MomentumSource",
+                cloudName()+"EnthalpySource",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
             mesh(),
-            SU.dimensions(),
+            Sh.dimensions(),
             "zeroGradient"
         )
     );
 
-    pSource->internalField()=SU.field();
+    pSource->internalField()=Sh.field();
 
     result().setObjectResult(pSource);
 }
