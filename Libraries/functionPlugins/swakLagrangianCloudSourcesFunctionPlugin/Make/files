@@ -1,7 +1,9 @@
 LagrangianCloudSourcePluginFunction.C
 
 lcsMomentumSourcePluginFunction.C
-lcsMassFractionSourcePluginFunction.C
+lcsMassFractionPluginFunction.C
+lcsRhoEffPluginFunction.C
+lcsVolumeFractionPluginFunction.C
 lcsEnthalpySourcePluginFunction.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakLagrangianCloudSourcesFunctionPlugin

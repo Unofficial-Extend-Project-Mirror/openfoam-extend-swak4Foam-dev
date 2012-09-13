@@ -31,7 +31,7 @@ License
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "lcsMassFractionSourcePluginFunction.H"
+#include "lcsVolumeFractionPluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -42,12 +42,12 @@ License
 
 namespace Foam {
 
-defineTypeNameAndDebug(lcsMassFractionSourcePluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction,lcsMassFractionSourcePluginFunction , name, lcsMassFraction);
+defineTypeNameAndDebug(lcsVolumeFractionPluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,lcsVolumeFractionPluginFunction , name, lcsVolumeFraction);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-lcsMassFractionSourcePluginFunction::lcsMassFractionSourcePluginFunction(
+lcsVolumeFractionPluginFunction::lcsVolumeFractionPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -64,23 +64,23 @@ lcsMassFractionSourcePluginFunction::lcsMassFractionSourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void lcsMassFractionSourcePluginFunction::doEvaluation()
+void lcsVolumeFractionPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> palpha;
+    autoPtr<volScalarField> ptheta;
 
     // pick up the first fitting class
-    castAndCall(palpha,volScalarField,basicKinematicCloud,kinematicCloud,alpha());
-    castAndCall(palpha,volScalarField,basicThermoCloud,thermoCloud,alpha());
-    castAndCall(palpha,volScalarField,constThermoReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,thermoReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
-    castAndCall(palpha,volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
-    castAndCall(palpha,volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    castAndCall(ptheta,volScalarField,basicKinematicCloud,kinematicCloud,theta());
+    castAndCall(ptheta,volScalarField,basicThermoCloud,thermoCloud,theta());
+    castAndCall(ptheta,volScalarField,constThermoReactingCloud,reactingCloud,theta());
+    castAndCall(ptheta,volScalarField,thermoReactingCloud,reactingCloud,theta());
+    castAndCall(ptheta,volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,theta());
+    castAndCall(ptheta,volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+    castAndCall(ptheta,volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+    castAndCall(ptheta,volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
 
-    noCloudFound(palpha);
+    noCloudFound(ptheta);
 
-    result().setObjectResult(palpha);
+    result().setObjectResult(ptheta);
 }
 
 // * * * * * * * * * * * * * * * Concrete implementations * * * * * * * * * //

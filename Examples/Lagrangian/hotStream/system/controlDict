@@ -76,6 +76,22 @@ functions {
         outputInterval 1;
         fieldName injectFromTopMassFraction;
     }
+    volumeFractionKinematic {
+        type expressionField;
+        autowrite true;
+        expression "lcsVolumeFraction(injectFromTop)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromTopVolumeFraction;
+    }
+    rhoEffKinematic {
+        type expressionField;
+        autowrite true;
+        expression "lcsRhoEff(injectFromTop)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromTopRhoEff;
+    }
 }
 
 // ************************************************************************* //

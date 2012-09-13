@@ -29,18 +29,18 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::lcsMassFractionSourcePluginFunction
+    Foam::lcsVolumeFractionPluginFunction
 
 Description
 
 SourceFiles
-    lcsMassFractionSourcePluginFunction.C
+    lcsVolumeFractionPluginFunction.C
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef lcsMassFractionSourcePluginFunction_H
-#define lcsMassFractionSourcePluginFunction_H
+#ifndef lcsVolumeFractionPluginFunction_H
+#define lcsVolumeFractionPluginFunction_H
 
 #include "LagrangianCloudSourcePluginFunction.H"
 
@@ -50,28 +50,28 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class lcsMassFractionSourcePluginFunction Declaration
+                           Class lcsVolumeFractionPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-class lcsMassFractionSourcePluginFunction
+class lcsVolumeFractionPluginFunction
 :
     public LagrangianCloudSourcePluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const lcsMassFractionSourcePluginFunction &);
+    void operator=(const lcsVolumeFractionPluginFunction &);
 
-    lcsMassFractionSourcePluginFunction(const lcsMassFractionSourcePluginFunction &);
+    lcsVolumeFractionPluginFunction(const lcsVolumeFractionPluginFunction &);
 
 public:
 
-    lcsMassFractionSourcePluginFunction(
+    lcsVolumeFractionPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name
     );
 
-    virtual ~lcsMassFractionSourcePluginFunction() {}
+    virtual ~lcsVolumeFractionPluginFunction() {}
 
-    TypeName("lcsMassFractionSourcePluginFunction");
+    TypeName("lcsVolumeFractionPluginFunction");
 
     void doEvaluation();
 
