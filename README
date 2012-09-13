@@ -242,6 +242,10 @@ S_{expl} + S_{impl} T
          region. Loads the model only if necessary
     - swakTransportTurbFunctionPlugin :: Same as above but for
          incompressible models
+    - swakLagrangianCloudSourcesFunctionPlugin :: Functions that get
+         informations like source terms from clouds of particles (due
+         to technical reasons this works only for the regular
+         /intermediate/ clouds)
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
