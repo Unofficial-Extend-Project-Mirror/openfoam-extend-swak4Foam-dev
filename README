@@ -1183,6 +1183,12 @@ S_{expl} + S_{impl} T
 **** =storedVariables= did not require a =initialValue=
      Now an initial value is required (instead of the default empty
      string which caused parser failure)
+**** Dimension checking makes =expressionField= fail
+     Reason is that during the calculation of the variables dimensions
+     are checked.
+
+     Now the functionObject switches the checking off. But a more
+     general solution is desirable
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
