@@ -84,7 +84,11 @@ int main(int argc, char *argv[])
 
     autoPtr<surfaceScalarField> dummyPhi;
 
-    if(args.options().found("addDummyPhi")) {
+    if(
+        args.options().found("addDummyPhi")
+        ||
+        replayDict.lookupOrDefault<bool>("addDummyPhi",false)
+    ) {
         Info << "Adding a dummy phi to make inletOutlet happy" << endl;
         dummyPhi.set(
             new surfaceScalarField(

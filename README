@@ -1221,6 +1221,8 @@ S_{expl} + S_{impl} T
 **** =replayTransientBC= can now switch on function-objects via dictionary
      The optional entry =useFunctionObjects= switches on the execution
      of function objects during the calculation
+**** =replayTransientBC= can now create a =phi=-field via dictionary
+     The optional entry =addDummyPhi= creates a =phi=-field
 *** New features
 **** Allow dynamically loaded plugins that add new functions to parsers
      This allows easy extension of the functionality of =swak4Foam=
