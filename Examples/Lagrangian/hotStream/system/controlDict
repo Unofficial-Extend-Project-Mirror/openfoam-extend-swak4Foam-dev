@@ -58,6 +58,16 @@ functions {
         correctModel false;
         allowReload false;
     }
+    // loadTurbulenceForParcels {
+    //     type loadTurbulenceModel;
+    //     correctModel false;
+    //     allowReload false;
+
+    //     rhoName rhoPseudo;
+    //     UName U;
+    //     phiName phi;
+    //     thermoName thermophysicalProperties;
+    // }
     kinematicParticle {
         type evolveKinematicCloud;
         cloudName injectFromTop;

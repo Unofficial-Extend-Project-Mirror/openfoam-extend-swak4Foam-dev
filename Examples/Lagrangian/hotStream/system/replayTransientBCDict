@@ -22,4 +22,6 @@ fields (
 
 useFunctionObjects true;
 
+addDummyPhi true;
+
 // ************************************************************************* //

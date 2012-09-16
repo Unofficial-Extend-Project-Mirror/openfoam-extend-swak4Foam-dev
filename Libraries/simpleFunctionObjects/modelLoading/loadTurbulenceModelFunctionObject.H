@@ -24,20 +24,21 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    loadThermoModelFunctionObject
+    loadTurbulenceModelFunctionObject
 
 Description
-    Loads a thermodynamic model into memory
+    Loads a turbulence model into memory
 
 SourceFiles
-    loadThermoModelFunctionObject.C
+    loadTurbulenceModelFunctionObject.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef loadThermoModelFunctionObject_H
-#define loadThermoModelFunctionObject_H
+#ifndef loadTurbulenceModelFunctionObject_H
+#define loadTurbulenceModelFunctionObject_H
 
 #include "modelLoadingFunctionObject.H"
+#include "compressible/turbulenceModel/turbulenceModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -45,35 +46,34 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class loadThermoModelFunctionObject Declaration
+                           Class loadTurbulenceModelFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-template <class ModelType>
-class loadThermoModelFunctionObject
+class loadTurbulenceModelFunctionObject
 :
-    public modelLoadingFunctionObject<ModelType>
+    public modelLoadingFunctionObject<compressible::turbulenceModel>
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    loadThermoModelFunctionObject(const loadThermoModelFunctionObject&);
+    loadTurbulenceModelFunctionObject(const loadTurbulenceModelFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const loadThermoModelFunctionObject&);
+    void operator=(const loadTurbulenceModelFunctionObject&);
 
 protected:
-    virtual autoPtr<ModelType> initModel();
+    virtual autoPtr<compressible::turbulenceModel> initModel();
 
 public:
 
     //- Runtime type information
-    TypeName("loadThermoModelFunctionObject");
+    TypeName("loadTurbulenceModelFunctionObject");
 
 
     // Constructors
 
     //- Construct from components
-    loadThermoModelFunctionObject
+    loadTurbulenceModelFunctionObject
     (
         const word&,
         const Time&,
@@ -86,10 +86,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-#ifdef NoRepository
-#include "loadThermoModelFunctionObject.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
