@@ -46,12 +46,18 @@ timePrecision   6;
 runTimeModifiable yes;
 
 libs (
+    "libsimpleFunctionObjects.so"
     "libsimpleLagrangianFunctionObjects.so"
     "libswakLagrangianCloudSourcesFunctionPlugin.so"
     "libswakFunctionObjects.so"
 );
 
 functions {
+    loadThermoForParcels {
+        type loadPsiThermoModel;
+        correctModel false;
+        allowReload false;
+    }
     kinematicParticle {
         type evolveKinematicCloud;
         cloudName injectFromTop;
@@ -91,6 +97,38 @@ functions {
         outputControl timeStep;
         outputInterval 1;
         fieldName injectFromTopRhoEff;
+    }
+    reactingParticle {
+        type evolveThermoReactingCloud;
+        cloudName injectFromLeft;
+        g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
+        rhoName rho;
+        UName U;
+        thermoPhysicsName thermophysicalProperties;
+    }
+    massSource {
+        type expressionField;
+        autowrite true;
+        expression "lcsMassSource(injectFromLeft)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromLeftMassSource;
+    }
+    enthalpySource {
+        type expressionField;
+        autowrite true;
+        expression "lcsEnthalpySource(injectFromLeft)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromLeftEnthalpySource;
+    }
+    H2OSource {
+        type expressionField;
+        autowrite true;
+        expression "lcsSpeciesSource(injectFromLeft,H2O)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName injectFromLeftH2OSource;
     }
 }
 

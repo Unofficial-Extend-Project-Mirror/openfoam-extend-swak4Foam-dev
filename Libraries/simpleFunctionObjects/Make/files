@@ -39,4 +39,6 @@ functionObjectProxy/dynamicFunctionObjectListProxy/dynamicFunctionObjectListProx
 functionObjectProxy/dynamicFunctionObjectListProxy/providers/fromFileDictionaryProvider.C
 functionObjectProxy/dynamicFunctionObjectListProxy/providers/stdoutFromCommandProvider.C
 
+modelLoading/loadThermoModelFunctionObjects.C
+
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects
