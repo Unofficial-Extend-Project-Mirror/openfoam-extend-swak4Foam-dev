@@ -24,21 +24,21 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    loadTurbulenceModelFunctionObject
+    loadIncompressibleTurbulenceModelFunctionObject
 
 Description
     Loads a turbulence model into memory
 
 SourceFiles
-    loadTurbulenceModelFunctionObject.C
+    loadIncompressibleTurbulenceModelFunctionObject.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef loadTurbulenceModelFunctionObject_H
-#define loadTurbulenceModelFunctionObject_H
+#ifndef loadIncompressibleTurbulenceModelFunctionObject_H
+#define loadIncompressibleTurbulenceModelFunctionObject_H
 
 #include "modelLoadingFunctionObject.H"
-#include "compressible/turbulenceModel/turbulenceModel.H"
+#include "incompressible/turbulenceModel/turbulenceModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,34 +46,34 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class loadTurbulenceModelFunctionObject Declaration
+                           Class loadIncompressibleTurbulenceModelFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class loadTurbulenceModelFunctionObject
+class loadIncompressibleTurbulenceModelFunctionObject
 :
-    public modelLoadingFunctionObject<compressible::turbulenceModel>
+    public modelLoadingFunctionObject<incompressible::turbulenceModel>
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    loadTurbulenceModelFunctionObject(const loadTurbulenceModelFunctionObject&);
+    loadIncompressibleTurbulenceModelFunctionObject(const loadIncompressibleTurbulenceModelFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const loadTurbulenceModelFunctionObject&);
+    void operator=(const loadIncompressibleTurbulenceModelFunctionObject&);
 
 protected:
-    virtual autoPtr<compressible::turbulenceModel> initModel();
+    virtual autoPtr<incompressible::turbulenceModel> initModel();
 
 public:
 
     //- Runtime type information
-    TypeName("loadTurbulenceModelFunctionObject");
+    TypeName("loadIncompressibleTurbulenceModelFunctionObject");
 
 
     // Constructors
 
     //- Construct from components
-    loadTurbulenceModelFunctionObject
+    loadIncompressibleTurbulenceModelFunctionObject
     (
         const word&,
         const Time&,

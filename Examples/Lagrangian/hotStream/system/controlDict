@@ -59,7 +59,8 @@ functions {
         allowReload false;
     }
     // loadTurbulenceForParcels {
-    //     type loadTurbulenceModel;
+    //     //        type loadCompressibleTurbulenceModel;
+    //     type loadIncompressibleTurbulenceModel;
     //     correctModel false;
     //     allowReload false;
 
@@ -67,6 +68,7 @@ functions {
     //     UName U;
     //     phiName phi;
     //     thermoName thermophysicalProperties;
+    //     transportModel transportProperties;
     // }
     kinematicParticle {
         type evolveKinematicCloud;

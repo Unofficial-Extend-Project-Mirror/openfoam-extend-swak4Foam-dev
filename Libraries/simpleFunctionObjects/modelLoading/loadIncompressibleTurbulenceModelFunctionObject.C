@@ -25,7 +25,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "loadTurbulenceModelFunctionObject.H"
+#include "loadIncompressibleTurbulenceModelFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "fvMesh.H"
@@ -37,47 +37,46 @@ License
 namespace Foam
 {
 
-    defineTypeNameAndDebug(loadTurbulenceModelFunctionObject, 0);
+    defineTypeNameAndDebug(loadIncompressibleTurbulenceModelFunctionObject, 0);
 
     addNamedToRunTimeSelectionTable
     (
         functionObject,
-        loadTurbulenceModelFunctionObject,
+        loadIncompressibleTurbulenceModelFunctionObject,
         dictionary,
-        loadTurbulenceModel
+        loadIncompressibleTurbulenceModel
     );
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-loadTurbulenceModelFunctionObject::loadTurbulenceModelFunctionObject
+loadIncompressibleTurbulenceModelFunctionObject::loadIncompressibleTurbulenceModelFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    modelLoadingFunctionObject<compressible::turbulenceModel>(name,t,dict)
+    modelLoadingFunctionObject<incompressible::turbulenceModel>(name,t,dict)
 {
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-    autoPtr<compressible::turbulenceModel> loadTurbulenceModelFunctionObject::initModel()
+    autoPtr<incompressible::turbulenceModel> loadIncompressibleTurbulenceModelFunctionObject::initModel()
 {
-    return compressible::turbulenceModel::New(
-        obr().lookupObject<volScalarField>(
-            dict_.lookup("rhoName")
-        ),
+    return incompressible::turbulenceModel::New(
         obr().lookupObject<volVectorField>(
             dict_.lookup("UName")
         ),
         obr().lookupObject<surfaceScalarField>(
             dict_.lookup("phiName")
         ),
-        obr().lookupObject<basicThermo>(
-            dict_.lookup("thermoName")
+        const_cast<transportModel &>(
+            obr().lookupObject<transportModel>(
+                dict_.lookup("transportModel")
+            )
         )
     );
 }
