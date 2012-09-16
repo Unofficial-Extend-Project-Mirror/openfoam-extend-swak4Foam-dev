@@ -32,6 +32,7 @@ PostProcessingModel PatchPostProcessing;
 
 CompositionModel SinglePhaseMixture;
 
+// PhaseChangeModel none;
 PhaseChangeModel LiquidEvaporation;
 
 coupled         true;
@@ -62,7 +63,7 @@ constantProperties
 
 interpolationSchemes
 {
-    rho             cell;
+    rhoPseudo             cell;
     U               cellPoint;
     mu              cell;
     T               cell;

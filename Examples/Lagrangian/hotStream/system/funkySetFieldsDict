@@ -28,9 +28,9 @@ expressions
 		keepPatches true;
                 variables $theVariables;
 	}
-	lowerRho
+	lowerRhoPseudo
 	{
-		field rho;
+		field rhoPseudo;
 		create false;
 		expression "10";
 		keepPatches true;

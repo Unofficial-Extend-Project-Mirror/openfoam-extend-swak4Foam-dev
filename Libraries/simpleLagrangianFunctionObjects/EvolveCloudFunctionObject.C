@@ -101,7 +101,6 @@ template<class CloudType>
 bool EvolveCloudFunctionObject<CloudType>::execute()
 {
     cloud_->evolve();
-    cloud_->info();
 
     if(obr().time().outputTime()) {
         Info << "Writing cloud " << cloud_->name() << endl;

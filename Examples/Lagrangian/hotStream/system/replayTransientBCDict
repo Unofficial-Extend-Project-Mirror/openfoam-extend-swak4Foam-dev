@@ -16,7 +16,7 @@ FoamFile
 
 fields (
     U
-    rho
+    rhoPseudo
     mu
 );
 

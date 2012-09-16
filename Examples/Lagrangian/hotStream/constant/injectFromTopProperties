@@ -32,7 +32,7 @@ coupled         true;
 
 cellValueSourceCorrection on;
 
-parcelTypeId    2;
+parcelTypeId    1;
 
 constantProperties
 {
@@ -43,7 +43,7 @@ constantProperties
 
 interpolationSchemes
 {
-    rho             cell;
+    rhoPseudo             cell;
     U               cellPoint;
     mu              cell;
 }
