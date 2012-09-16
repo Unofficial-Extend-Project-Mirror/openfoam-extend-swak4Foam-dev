@@ -123,9 +123,14 @@ void Foam::expressionField::execute()
     if(active_) {
         FieldValueExpressionDriver &driver=driver_();
 
+        bool oldDimsetDebug=dimensionSet::debug;
+        dimensionSet::debug=false;
+
         driver.clearVariables();
 
         driver.parse(expression_);
+
+        dimensionSet::debug=oldDimsetDebug;
 
         if(driver.resultIsTyp<volVectorField>()) {
             storeField(
