@@ -62,9 +62,27 @@ bool modelLoadingFunctionObject<ModelType>::start()
 
     correctModel_=readBool(dict_.lookup("correctModel"));
     allowReload_=readBool(dict_.lookup("allowReload"));
+    failIfModelTypeExists_=dict_.lookupOrDefault<bool>(
+        "failIfModelTypeExists",true
+    );
 
     if(!model_.valid()) {
-        model_.set(initModel().ptr());
+        if(
+            this->obr().template lookupClass<ModelType>().size()>0
+            &&
+            failIfModelTypeExists_
+        ) {
+            FatalErrorIn("modelLoadingFunctionObject<ModelType>::start()")
+                << "Model of type " << ModelType::typeName
+                    << " in " << this->name()
+                    << " already existing. If this is OK overrule this "
+                    << "message by setting 'failIfModelTypeExists' to 'false'"
+                    << endl
+                    << exit(FatalError);
+
+        } else {
+            model_.set(initModel().ptr());
+        }
     } else {
         if(allowReload_) {
             model_.set(initModel().ptr());
@@ -83,6 +101,8 @@ void modelLoadingFunctionObject<ModelType>::write()
 {
     if(correctModel_) {
         if(model_.valid()) {
+            Info << "Correcting model for " << this->name() << endl;
+
             model_->correct();
         } else {
             FatalErrorIn("modelLoadingFunctionObject::start()")

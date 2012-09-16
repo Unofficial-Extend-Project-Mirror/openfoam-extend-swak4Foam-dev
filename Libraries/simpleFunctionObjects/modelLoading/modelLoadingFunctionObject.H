@@ -70,6 +70,8 @@ class modelLoadingFunctionObject
     //- whether the model can be reloaded later
     bool allowReload_;
 
+    //- fail if a model of this type already exists
+    bool failIfModelTypeExists_;
 protected:
     virtual autoPtr<ModelType> initModel() = 0;
 

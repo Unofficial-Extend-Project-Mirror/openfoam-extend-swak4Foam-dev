@@ -56,8 +56,15 @@ functions {
     loadThermoForParcels {
         type loadPsiThermoModel;
         correctModel false;
+        //        correctModel true;
         allowReload false;
     }
+    // loadThermoForParcels2 {
+    //     type loadPsiThermoModel;
+    //     correctModel false;
+    //     allowReload false;
+    //     failIfModelTypeExists false;
+    // }
     // loadTurbulenceForParcels {
     //     //        type loadCompressibleTurbulenceModel;
     //     type loadIncompressibleTurbulenceModel;

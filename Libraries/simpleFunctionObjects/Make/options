@@ -21,5 +21,7 @@ LIB_LIBS = \
     -ltriSurface \
     -lbasicThermophysicalModels \
     -lincompressibleTransportModels \
+    -lcompressibleTurbulenceModel \
+    -lincompressibleTurbulenceModel \
     -lspecie \
     -llagrangian
