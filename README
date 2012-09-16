@@ -1180,6 +1180,9 @@ S_{expl} + S_{impl} T
      before the execution of the function objects.
 
      Fixed
+**** =storedVariables= did not require a =initialValue=
+     Now an initial value is required (instead of the default empty
+     string which caused parser failure)
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
