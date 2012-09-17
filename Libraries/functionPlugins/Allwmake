@@ -14,6 +14,8 @@ wmake libso swakTransportTurbFunctionPlugin
 
 wmake libso swakSurfacesAndSetsFunctionPlugin
 
+wmake libso swakLagrangianCloudSourcesFunctionPlugin
+
 if [ "$FOAM_DEV" != "" ]
 then
     wmake libso swakFacSchemesFunctionPlugin
