@@ -89,12 +89,12 @@ void lcsMomentumSourcePluginFunction::doEvaluation()
                 IOobject::NO_WRITE
             ),
             mesh(),
-            SU.dimensions()/dimTime,
+            SU.dimensions()/(dimTime*dimVolume),
             "zeroGradient"
         )
     );
 
-    pSource->internalField()=SU.field()/mesh().time().deltaT().value();
+    pSource->internalField()=SU.field()/(mesh().time().deltaT().value()*mesh().V());
 
     result().setObjectResult(pSource);
 }

@@ -87,12 +87,12 @@ void lcsEnthalpySourcePluginFunction::doEvaluation()
                 IOobject::NO_WRITE
             ),
             mesh(),
-            Sh.dimensions()/dimTime,
+            Sh.dimensions()/(dimTime*dimVolume),
             "zeroGradient"
         )
     );
 
-    pSource->internalField()=Sh.field()/mesh().time().deltaT().value();
+    pSource->internalField()=Sh.field()/(mesh().V()*mesh().time().deltaT().value());
 
     result().setObjectResult(pSource);
 }
