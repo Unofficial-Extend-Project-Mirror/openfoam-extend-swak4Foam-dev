@@ -1202,6 +1202,11 @@ S_{expl} + S_{impl} T
 
      Now the functionObject switches the checking off. But a more
      general solution is desirable
+**** =expressionField= at last timestep not written
+     The functionObject does not write (and calculate) the field at
+     the last timestep.
+
+     Fixed with an one-liner
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and

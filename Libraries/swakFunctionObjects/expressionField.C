@@ -207,6 +207,7 @@ void Foam::expressionField::execute()
 
 void Foam::expressionField::end()
 {
+    execute();
 }
 
 void Foam::expressionField::write()
