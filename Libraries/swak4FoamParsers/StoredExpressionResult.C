@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "StoredExpressionResult.H"
@@ -50,7 +50,7 @@ StoredExpressionResult::StoredExpressionResult()
 }
 
 StoredExpressionResult::StoredExpressionResult(const StoredExpressionResult &rhs)
-:   
+:
     ExpressionResult(rhs),
     name_(rhs.name_),
     initialValueExpression_(rhs.initialValueExpression_)
@@ -58,10 +58,10 @@ StoredExpressionResult::StoredExpressionResult(const StoredExpressionResult &rhs
 }
 
 StoredExpressionResult::StoredExpressionResult(const dictionary &dict)
-:   
+:
     ExpressionResult(dict.subOrEmptyDict("value")),
     name_(dict.lookup("name")),
-    initialValueExpression_(dict.lookupOrDefault<string>("initialValue",""))
+    initialValueExpression_(dict.lookup("initialValue"))
 {
 }
 
@@ -100,7 +100,7 @@ void StoredExpressionResult::operator=(const ExpressionResult& rhs)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
-Ostream & operator<<(Ostream &out,const StoredExpressionResult &data) 
+Ostream & operator<<(Ostream &out,const StoredExpressionResult &data)
 {
     out << token::BEGIN_BLOCK << endl;
 
@@ -118,7 +118,7 @@ Ostream & operator<<(Ostream &out,const StoredExpressionResult &data)
     return out;
 }
 
-Istream & operator>>(Istream &in,StoredExpressionResult &data) 
+Istream & operator>>(Istream &in,StoredExpressionResult &data)
 {
     dictionary dict(in);
 

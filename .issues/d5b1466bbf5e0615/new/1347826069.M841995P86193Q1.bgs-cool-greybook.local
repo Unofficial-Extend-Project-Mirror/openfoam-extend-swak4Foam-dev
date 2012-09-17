@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 16 Sep 2012 22:05:40 +0200
+State: new
+Subject: Allow ExpressionResult to have dimensions
+Message-Id: <d5b1466bbf5e0615-0-artemis@bgs-cool-greybook.local>
+
+For variables in the Field-parser. This would allow Fields from
+variables to have dimensions

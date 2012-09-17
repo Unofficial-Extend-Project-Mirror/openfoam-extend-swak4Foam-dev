@@ -42,4 +42,8 @@ functionObjectProxy/dynamicFunctionObjectListProxy/providers/stdoutFromCommandPr
 misc/writeAndEndFunctionObject/writeAndEndFunctionObject.C
 misc/writeAndEndFieldRangeFunctionObject/writeAndEndFieldRangeFunctionObject.C
 
+modelLoading/loadThermoModelFunctionObjects.C
+modelLoading/loadIncompressibleTurbulenceModelFunctionObject.C
+modelLoading/loadCompressibleTurbulenceModelFunctionObject.C
+
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects
