@@ -1,3 +1,5 @@
+EvolveSolidParticleCloudFunctionObject.C
+
 EvolveKinematicCloudFunctionObject.C
 EvolveThermoCloudFunctionObject.C
 EvolveReactingCloudFunctionObjects.C

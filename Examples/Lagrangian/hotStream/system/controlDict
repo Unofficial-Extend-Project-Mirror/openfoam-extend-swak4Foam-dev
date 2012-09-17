@@ -50,6 +50,7 @@ libs (
     "libsimpleLagrangianFunctionObjects.so"
     "libswakLagrangianCloudSourcesFunctionPlugin.so"
     "libswakFunctionObjects.so"
+    "libswakThermoTurbFunctionPlugin.so"
 );
 
 functions {
@@ -77,6 +78,24 @@ functions {
     //     thermoName thermophysicalProperties;
     //     transportModel transportProperties;
     // }
+    rhoFieldForSolid {
+        type expressionField;
+        autowrite false;
+        outputControl timeStep;
+        outputInterval 1;
+        expression "thermo_rho()";
+        fieldName rho;
+    }
+    nuFieldForSolid {
+        $rhoFieldForSolid;
+        fieldName nu;
+        expression "thermo_mu()/rho";
+    }
+    solidParticle {
+        type evolveSolidParticleCloud;
+        cloudName injectSolidParticle;
+        g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
+    }
     kinematicParticle {
         type evolveKinematicCloud;
         cloudName injectFromTop;
