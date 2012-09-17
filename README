@@ -450,7 +450,7 @@ S_{expl} + S_{impl} T
                        model with a functionObject. Plugin functions
                        for information about the clouds
 **** angledDuctWithBalls
-     - Solver :: rhoPisoFoam
+     - Solver :: rhoPimpleFoam
      - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
 *** tests
     Simple test cases for specific features
