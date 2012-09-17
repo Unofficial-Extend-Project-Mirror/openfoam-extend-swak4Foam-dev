@@ -45,5 +45,6 @@ misc/writeAndEndFieldRangeFunctionObject/writeAndEndFieldRangeFunctionObject.C
 modelLoading/loadThermoModelFunctionObjects.C
 modelLoading/loadIncompressibleTurbulenceModelFunctionObject.C
 modelLoading/loadCompressibleTurbulenceModelFunctionObject.C
+modelLoading/loadSLGThermoModelFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects

@@ -52,12 +52,19 @@ maxCo           10;
 maxDeltaT       1;
 
 libs (
+    "libsimpleFunctionObjects.so"
     "libsimpleLagrangianFunctionObjects.so"
     "libswakLagrangianCloudSourcesFunctionPlugin.so"
     "libswakFunctionObjects.so"
 );
 
 functions {
+    getSLGThermoForParcels {
+        type loadSLGThermoModel;
+        correctModel false;
+        allowReload false;
+        thermoName thermophysicalProperties;
+    }
     hotParticle {
         //        type evolveKinematicCloud;
         type evolveThermoCloud;
@@ -67,7 +74,7 @@ functions {
         rhoName rho;
         //        muName mu;
         UName U;
-        SLGThermoName thermophyscalProperties;
+        SLGThermoName SLGThermo;
     }
     momentumSourceKinematic {
         //        enabled false;

@@ -25,17 +25,30 @@ foamChemistryFile "$FOAM_CASE/constant/reactions";
 
 foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas";
 
-solidComponents
-(
-);
+solids
+{
+    solidComponents
+        (
+        );
+}
 
-liquidComponents
-(
+
+liquids
+{
+    liquidComponents
+        (
+            H2O
+            N2
+        );
     H2O
+    {
+        defaultCoeffs   yes;
+    }
     N2
-);
+    {
+        defaultCoeffs   yes;
+    }
+}
 
-H2O             H2O defaultCoeffs;
-N2             N2 defaultCoeffs;
 
 // ************************************************************************* //

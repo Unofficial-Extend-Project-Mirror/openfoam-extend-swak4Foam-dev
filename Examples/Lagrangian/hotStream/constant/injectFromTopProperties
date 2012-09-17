@@ -35,7 +35,7 @@ solution
 
     interpolationSchemes
     {
-        rho             cell;
+        rhoPseudo             cell;
         U               cellPoint;
         mu              cell;
         T               cell;
@@ -49,10 +49,6 @@ solution
         T               analytical;
     }
 }
-
-// active          yes;
-
-//coupled         true;
 
 cellValueSourceCorrection on;
 
@@ -72,8 +68,6 @@ subModels
 {
     injectionModel  coneInjection;
 
-    dragModel       sphereDrag;
-
     dispersionModel none;
 
     // patchInteractionModel rebound;
@@ -86,6 +80,7 @@ subModels
     particleForces
     {
         gravity         on;
+        sphereDrag on;
         //        virtualMass     off;
         //        pressureGradient off;
     }
