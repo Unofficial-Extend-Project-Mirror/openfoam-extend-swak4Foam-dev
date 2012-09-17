@@ -439,6 +439,19 @@ S_{expl} + S_{impl} T
      - Demonstrates :: Same as =pitzDailyWithExplicitPoroPlug= but
                        with an implicit source term with
                        =SwakImplicitSource=
+*** Lagrangian
+    Tests for the functionObjects that create and evolve a cloud of
+    particles
+**** hotStream
+     - Solver :: replayTransientBC
+     - Mesh preparation :: =prepareCase.sh=-script
+     - Demonstrates :: 3 clouds (kinematic, reacting,
+                       solidParticle). Loading of a thermophysical
+                       model with a functionObject. Plugin functions
+                       for information about the clouds
+**** angledDuctWithBalls
+     - Solver :: rhoPisoFoam
+     - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
@@ -1261,6 +1274,9 @@ S_{expl} + S_{impl} T
        and return as fields
      - Do calculations locally on a cell (like the maximum on its
        faces)
+     - Get the source fields and other properties from lagrangian
+       clouds based on the basic intermediate cloud classes
+       (Kinematic, Thermo, Reacting, ReactingMultiphase)
 
      It has been tried to make the names unique instead of
      short. Usually function names from one library are prefixed with
@@ -1313,6 +1329,13 @@ S_{expl} + S_{impl} T
      loading of such models for solvers/utilities that don't have such
      models but where some functionObject (for instance) needs such a
      model to be in memory
+**** Function-objects that create and evolve clouds of lagrangian particles
+     Added as part of the =simpleFunctionObjects= some functionObjects
+     that create a cloud of particles and evolve them at every
+     timestep.
+
+     The appropriate fields needed by every cloud have to be present
+     (either supplied by the solver or via a =functionObject=)
 *** Infrastructure
 **** =Allwmake= creates symbolic links in =swakFiniteArea=
      The links to =mybison= and =myflex= are missing when the sources
