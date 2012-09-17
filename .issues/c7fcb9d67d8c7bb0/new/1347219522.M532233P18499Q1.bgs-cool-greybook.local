@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 09 Sep 2012 21:36:47 +0200
+State: fixed
+Subject: Function objects that load thermo and turbulence-Model
+Message-Id: <c7fcb9d67d8c7bb0-0-artemis@bgs-cool-greybook.local>
+
+Loads these models for solvers that don't have them where some
+functionObject needs them. Optionally updates the model at the end of
+a time-step

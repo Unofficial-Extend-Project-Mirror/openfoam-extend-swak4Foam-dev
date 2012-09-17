@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 16 Sep 2012 22:04:01 +0200
+State: new
+Subject: Parsers in functionObject should always read dictionary
+Message-Id: <e499789d89b62460-0-artemis@bgs-cool-greybook.local>
+
+For instance the expressionField should be able to read
+debugCommonParser and dimensions
