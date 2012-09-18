@@ -265,6 +265,8 @@ S_{expl} + S_{impl} T
          informations like source terms from clouds of particles (due
          to technical reasons this works only for the regular
          /intermediate/ clouds)
+    - swakVelocityFunctionPlugin :: Functions that work on the flow
+         field (currently only the local Courant-number)
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with

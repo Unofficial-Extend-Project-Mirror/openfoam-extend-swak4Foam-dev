@@ -17,3 +17,5 @@ wclean swakTransportTurbFunctionPlugin
 wclean swakSurfacesAndSetsFunctionPlugin
 
 wclean swakLagrangianCloudSourcesFunctionPlugin
+
+wclean swakVelocityFunctionPlugin
