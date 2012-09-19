@@ -908,9 +908,33 @@ vexp:   vector                                    { $$ = $1; }
             delete $3; $$->dimensions().reset(Foam::dimless);
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_div '(' texp ')'                    {
+            $$ = new Foam::volVectorField(Foam::fvc::div(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_div '(' yexp ')'                    {
+            $$ = new Foam::volVectorField(Foam::fvc::div(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_div '(' hexp ')'                    {
+            $$ = new Foam::volVectorField(Foam::fvc::div(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
         | TOKEN_div '(' fsexp ',' vexp ')'        {
             $$ = new Foam::volVectorField(Foam::fvc::div(*$3,*$5));
             delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_div '(' fvexp ')'        {
+            $$ = new Foam::volVectorField(Foam::fvc::div(*$3));
+            delete $3;
             $$->dimensions().reset(Foam::dimless);
             driver.setCalculatedPatches(*$$);
           }
@@ -2622,6 +2646,11 @@ texp:   tensor                  { $$ = $1; }
             delete $3;
             $$->dimensions().reset(Foam::dimless);
           }
+        | TOKEN_div '(' ftexp ')'         {
+            $$ = new Foam::volTensorField(Foam::fvc::div(*$3));
+            delete $3;
+            $$->dimensions().reset(Foam::dimless);
+          }
         | TOKEN_div '(' fsexp ',' texp ')'         {
             $$ = new Foam::volTensorField(Foam::fvc::div(*$3,*$5));
             delete $3; delete $5;
@@ -2852,6 +2881,11 @@ yexp:   symmTensor                  { $$ = $1; }
             );
             delete $3;
           }
+        | TOKEN_div '(' fyexp ')'         {
+            $$ = new Foam::volSymmTensorField(Foam::fvc::div(*$3));
+            delete $3;
+            $$->dimensions().reset(Foam::dimless);
+          }
         | TOKEN_div '(' fsexp ',' yexp ')'         {
             $$ = new Foam::volSymmTensorField(Foam::fvc::div(*$3,*$5));
             delete $3; delete $5;
@@ -3031,6 +3065,11 @@ hexp:   sphericalTensor                  { $$ = $1; }
                 Foam::average(*$3).value()
             );
             delete $3;
+          }
+        | TOKEN_div '(' fhexp ')'         {
+            $$ = new Foam::volSphericalTensorField(Foam::fvc::div(*$3));
+            delete $3;
+            $$->dimensions().reset(Foam::dimless);
           }
         | TOKEN_div '(' fsexp ',' hexp ')'         {
             $$ = new Foam::volSphericalTensorField(Foam::fvc::div(*$3,*$5));

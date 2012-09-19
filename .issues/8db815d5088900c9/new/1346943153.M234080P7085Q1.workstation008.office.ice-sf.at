@@ -1,0 +1,7 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 06 Sep 2012 16:52:02 +0200
+State: new
+Subject: Parallelize lcLocalAverage
+Message-Id: <8db815d5088900c9-0-artemis@workstation008.office.ice-sf.at>
+
+Currently only works in serial

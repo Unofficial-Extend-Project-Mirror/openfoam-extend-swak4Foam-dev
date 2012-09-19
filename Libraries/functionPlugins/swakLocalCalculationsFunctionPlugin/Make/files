@@ -2,4 +2,6 @@ localCellCalculationFunction.C
 lcFaceMinimumPluginFunction.C
 lcFaceMaximumPluginFunction.C
 
+lcLocalAveragePluginFunction.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakLocalCalculationsFunctionPlugin

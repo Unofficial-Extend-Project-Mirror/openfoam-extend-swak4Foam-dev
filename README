@@ -49,13 +49,29 @@
      - flex :: since the introduction of the plugin functions at least
                a flex version of =2.5.33= is required (=2.5.35= is the
                lowest *confirmed* version)
+
+   Both of these are mainstream packages (they are for instance needed
+   to compile =gcc=) and should exist on every Linux distribution. Use
+   the package manager of your distribution to install them and *only*
+   if the compilation process of =swak4Foam= complains about too low
+   versions try to install them from other sources.
+
+   =swak4Foam= tries to keep the requirements on these as low as
+   possible and sometimes lower versions than the ones reported *may*
+   work. If they do please report so.
+
+   The version of bison can be checked with
+: bison -V
+   The version of flex with
+: flex -V
 ** Building
 : wmake all
    at the base directory should build all the libraries and
    tools.
 
-  The main library =swak4FoamParsers= can't be built in parallel (no
-  values of =WM_NCOMPPROCS= bigger than 1)
+   Rerun the command to make sure that there was no problem with the
+   compilation (this should be quite fast and only report libraries
+   being created and some administrative stuff)
 *** Additional configuration
     Some features (currently only the =Python=-integration may need
     third party software. The paths to these packages can be configured
@@ -170,6 +186,16 @@ S_{expl} + S_{impl} T
     - forceEquation :: force an equation to fixed values in selected
                        locations. Has to be used after constructing
                        the equation and before solving
+    These sources are based on =basicSource= and can be used
+    *without* a modification of the solver (they are only available in
+    the 2.x version):
+    - SwakSetValue :: sets values according to a mask or the
+                      mechanism provided by =basicSource=
+    - SwakExplicitSource :: Uses the calculated source term on the
+         right hand side of the equation
+    - SwakImplicitSource :: Uses a calculated scalar-field to add an
+         implicit source term (source is *without* the actual field)
+
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities
@@ -216,6 +242,12 @@ S_{expl} + S_{impl} T
          region. Loads the model only if necessary
     - swakTransportTurbFunctionPlugin :: Same as above but for
          incompressible models
+    - swakLagrangianCloudSourcesFunctionPlugin :: Functions that get
+         informations like source terms from clouds of particles (due
+         to technical reasons this works only for the regular
+         /intermediate/ clouds)
+    - swakVelocityFunctionPlugin :: Functions that work on the flow
+         field (currently only the local Courant-number)
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -395,6 +427,33 @@ S_{expl} + S_{impl} T
 **** pitzDailyWithPDE
      - Solver :: scalarTransportFoam
      - Demonstrates :: Solving additional transport equations
+*** BasicSourceSubclasses
+    These examples test the source terms based on =basicSource=. They
+    only work with OpenFOAM 2.x and all use the =simpleFoam=-solver
+**** pitzDailyWithSwirl
+     - Demonstrates :: Fixing the values of the velocity in a region
+                       with =SwakSetValues=
+**** pitzDailyWithExplicitPoroPlug
+     - Demonstrates :: Implementing a simple porous plug by adding the
+                       Darcy-term as a source term with
+                       =SwakExplicitSource=
+**** pitzDailyWithImplicitPoroPlug
+     - Demonstrates :: Same as =pitzDailyWithExplicitPoroPlug= but
+                       with an implicit source term with
+                       =SwakImplicitSource=
+*** Lagrangian
+    Tests for the functionObjects that create and evolve a cloud of
+    particles
+**** hotStream
+     - Solver :: replayTransientBC
+     - Mesh preparation :: =prepareCase.sh=-script
+     - Demonstrates :: 3 clouds (kinematic, reacting,
+                       solidParticle). Loading of a thermophysical
+                       model with a functionObject. Plugin functions
+                       for information about the clouds
+**** angledDuctWithBalls
+     - Solver :: rhoPimpleFoam
+     - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
 *** tests
     Simple test cases for specific features
 **** =randomCavity=
@@ -409,6 +468,14 @@ S_{expl} + S_{impl} T
    http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90
 
    A sourceforge-account is required for reporting
+*** Things to do before reporting bug
+    If you're reporting a bug about the compilation please run
+    =Allwmake= *twice* and only report the messages from the second
+    run. This makes analyzing the log easier as only the unsuccessful
+    commands will be reported.
+
+    If the problem seems to be a missing library rerun the compilation
+    to make sure that there wasn't a problem with that.
 ** Development
    Contributions to to =swak4Foam= are most welcome. If you want to
    contribute clone the Mercurial archive of the sources
@@ -1101,6 +1168,47 @@ S_{expl} + S_{impl} T
      fields (probably for performance reasons).
 
      Also some tensor operators were missing (probably lost during copy/paste)
+****  No new file created if number of patches for patchAverage changes
+      Reported in
+      https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=153
+
+      Fixed by removing all file pointers if the number of patches changes
+**** =variables= intolerant on spaces
+     Spaces in the list of variables made the reading
+     fail because words can't contain spaces. For instance
+: "var =T*2;"
+     Now all the spaces are removed before assigning to
+     variables. This will also remove spaces on the "inside" thus
+     making
+: "v ar =T*2;"
+     the same as the above expression. But it is unlikely that the
+     call will be used in this way
+**** Missing =div=-operations
+     These valid =div=-operations were missing from the grammar:
+     - Divergence of a volume-tensor (all three kinds) producing a
+       vector
+     - Divergence of a surface-tensor (all three kinds) producing a
+       volume-tensor
+**** Fields created by =expressionField= written too late
+     Fields created by that function object were written with the
+     value from the timestep before because the regular write occurs
+     before the execution of the function objects.
+
+     Fixed
+**** =storedVariables= did not require a =initialValue=
+     Now an initial value is required (instead of the default empty
+     string which caused parser failure)
+**** Dimension checking makes =expressionField= fail
+     Reason is that during the calculation of the variables dimensions
+     are checked.
+
+     Now the functionObject switches the checking off. But a more
+     general solution is desirable
+**** =expressionField= at last timestep not written
+     The functionObject does not write (and calculate) the field at
+     the last timestep.
+
+     Fixed with an one-liner
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
@@ -1130,6 +1238,16 @@ S_{expl} + S_{impl} T
 **** Added the /Hodge dual/ operator
      The unary operator =*= calculates for tensors and symmetrical
      tensors the hodge dual
+**** =replayTransientBC= can now switch on function-objects via dictionary
+     The optional entry =useFunctionObjects= switches on the execution
+     of function objects during the calculation
+**** =replayTransientBC= can now create a =phi=-field via dictionary
+     The optional entry =addDummyPhi= creates a =phi=-field
+**** =expressionField= now allows the specification of a dimension
+     The =dimensions=-entry is now read at the same time the variables
+     are read (this should work for all programs/functionObjects where
+     the parser is not constructed using a dictionary but the
+     dictionary is later searched for the =variables=-entry)
 *** New features
 **** Allow dynamically loaded plugins that add new functions to parsers
      This allows easy extension of the functionality of =swak4Foam=
@@ -1168,6 +1286,9 @@ S_{expl} + S_{impl} T
        and return as fields
      - Do calculations locally on a cell (like the maximum on its
        faces)
+     - Get the source fields and other properties from lagrangian
+       clouds based on the basic intermediate cloud classes
+       (Kinematic, Thermo, Reacting, ReactingMultiphase)
 
      It has been tried to make the names unique instead of
      short. Usually function names from one library are prefixed with
@@ -1202,6 +1323,45 @@ S_{expl} + S_{impl} T
      Example of the usage in the =angledDuctImplicit=-case (the
      results are of limited value because of the temperature boundary
      condition)
+**** Source terms based on =basicSource=
+     Three source terms were added. These source terms are in the
+     =swakSourceFields=-library and can be used with solvers that use
+     the =sourcesProperties=-dictionary. The sources are
+     - SwakSetValue :: sets values according to a mask or the
+                       mechanism provided by =basicSource=
+     - SwakExplicitSource :: Uses the calculated source term on the
+          right hand side of the equation
+     - SwakImplicitSource :: Uses a calculated scalar-field to add an
+          implicit source term (source is *without* the actual field)
+     These fields are only implemented in the 2.x-version of =swak=
+     because the interface of =basicSource= is very different in 1.7
+     and a backport was unnecessary
+**** Function objects that stop a run gracefully
+     =simpleFunctionObjects= now has a function object
+     =writeAndEndFieldRange= that stops a run (and writes the last
+     time) if a field is outside a specified range.
+
+     A similar function object =writeAndEndSwakExpression= is in the
+     =simpleSwakFunctionObjects= that stops if a swak-expression
+     evaluates to true. =writeAndEndPython= does the same in
+     =pythonIntegration=.
+
+     Note: after the run is written one more timestep is calculated
+     (this seems to be due to the fact that FOs are calculated at the
+     start of a timestep). Also there are issues if the next timestep
+     is a scheduled write-time
+**** Function-objects to load thermophysical and turbulence models
+     New function objects in the =simpleFunctionObjects= allow the
+     loading of such models for solvers/utilities that don't have such
+     models but where some functionObject (for instance) needs such a
+     model to be in memory
+**** Function-objects that create and evolve clouds of lagrangian particles
+     Added as part of the =simpleFunctionObjects= some functionObjects
+     that create a cloud of particles and evolve them at every
+     timestep.
+
+     The appropriate fields needed by every cloud have to be present
+     (either supplied by the solver or via a =functionObject=)
 *** Infrastructure
 **** =Allwmake= creates symbolic links in =swakFiniteArea=
      The links to =mybison= and =myflex= are missing when the sources

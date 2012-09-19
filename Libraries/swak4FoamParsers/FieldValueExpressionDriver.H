@@ -93,6 +93,9 @@ public:
 
     virtual ~FieldValueExpressionDriver();
 
+    //- read variables and tables (for objects that were not constructed by a dictionary)
+    void readVariablesAndTables(const dictionary &);
+
     // necessary to override Common
     inline label size() const;
     inline label pointSize() const;

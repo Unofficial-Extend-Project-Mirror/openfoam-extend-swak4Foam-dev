@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -88,10 +88,10 @@ void Foam::manipulateField::manipulate(
     ) {
         if(this->writeManipulated_) {
             Info << "Rewriting manipulated field " << original.name() << endl;
-            
+
             original.write();
         } else {
-            Info << "Manipulated field " << original.name() 
+            Info << "Manipulated field " << original.name()
                 << " not rewritten. Set 'writeManipulated'" << endl;
         }
     }
@@ -126,10 +126,10 @@ void Foam::manipulateField::manipulateSurface(
     ) {
         if(this->writeManipulated_) {
             Info << "Rewriting manipulated field " << original.name() << endl;
-            
+
             original.write();
         } else {
-            Info << "Manipulated field " << original.name() 
+            Info << "Manipulated field " << original.name()
                 << " not rewritten. Set 'writeManipulated'" << endl;
         }
     }
@@ -144,7 +144,7 @@ void Foam::manipulateField::read(const dictionary& dict)
         writeManipulated_=dict.lookupOrDefault<bool>("writeManipulated",false);
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
+
         driver_.set(
             new FieldValueExpressionDriver(
                 mesh.time().timeName(),
@@ -181,15 +181,15 @@ void Foam::manipulateField::execute()
 
         if(driver.resultIsTyp<volScalarField>(true)) {
             volScalarField conditionField(driver.getResult<volScalarField>());
-            
+
             driver.parse(expression_);
-            
+
             if(driver.resultIsTyp<volVectorField>()) {
                 manipulate(
                     driver.getResult<volVectorField>(),
                     conditionField
                 );
-                
+
             } else if(driver.resultIsTyp<volScalarField>()) {
                 manipulate(
                     driver.getResult<volScalarField>(),
@@ -212,22 +212,22 @@ void Foam::manipulateField::execute()
                 );
             } else {
                 WarningIn("Foam::manipulateField::execute()")
-                    << "Expression '" << expression_ 
+                    << "Expression '" << expression_
                         << "' evaluated to an unsupported type "
                         << driver.typ() << " that is incompatible with a mask defined on cells"
                         << endl;
             }
         } else if(driver.resultIsTyp<surfaceScalarField>(true)) {
             surfaceScalarField conditionField(driver.getResult<surfaceScalarField>());
-            
+
             driver.parse(expression_);
-            
+
             if(driver.resultIsTyp<surfaceVectorField>()) {
                 manipulateSurface(
                     driver.getResult<surfaceVectorField>(),
                     conditionField
                 );
-                
+
             } else if(driver.resultIsTyp<surfaceScalarField>()) {
                 manipulateSurface(
                     driver.getResult<surfaceScalarField>(),
@@ -250,23 +250,23 @@ void Foam::manipulateField::execute()
                 );
             } else {
                 WarningIn("Foam::manipulateField::execute()")
-                    << "Expression '" << expression_ 
+                    << "Expression '" << expression_
                         << "' evaluated to an unsupported type "
                         << driver.typ() << " that is incompatible with a mask defined on faces"
                         << endl;
             }
         } else if(driver.resultIsTyp<pointScalarField>(true)) {
             pointScalarField conditionField(driver.getResult<pointScalarField>());
-            
+
             driver.parse(expression_);
-            
+
             if(driver.resultIsTyp<pointVectorField>()) {
                 manipulate(
                     driver.getResult<pointVectorField>(),
                     conditionField,
                     "points"
                 );
-                
+
             } else if(driver.resultIsTyp<pointScalarField>()) {
                 manipulate(
                     driver.getResult<pointScalarField>(),
@@ -293,7 +293,7 @@ void Foam::manipulateField::execute()
                 );
             } else {
                 WarningIn("Foam::manipulateField::execute()")
-                    << "Expression '" << expression_ 
+                    << "Expression '" << expression_
                         << "' evaluated to an unsupported type "
                         << driver.typ() << " that is incompatible with a mask defined on faces"
                         << endl;
