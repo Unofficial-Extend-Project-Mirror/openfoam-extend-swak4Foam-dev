@@ -170,7 +170,7 @@ protected:
     //- set the default Mesh (if it is unset)
     static bool setUnsetDefaultMesh(const fvMesh &);
 
-    //- set the default Mesh 
+    //- set the default Mesh
     static bool resetDefaultMesh(const fvMesh &);
 
     //- get the default Mesh (if one is defined)
@@ -461,7 +461,7 @@ public:
     void readTables(const dictionary &);
 
     //- read variables and tables (for objects that were not constructed by a dictionary)
-    void readVariablesAndTables(const dictionary &);
+    virtual void readVariablesAndTables(const dictionary &);
 
     //- write some interpolation tables
     void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
