@@ -111,6 +111,15 @@ FieldValueExpressionDriver::~FieldValueExpressionDriver ()
 {
 }
 
+void FieldValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
+{
+    CommonValueExpressionDriver::readVariablesAndTables(dict);
+
+    if(dict.found("dimensions")) {
+        resultDimension_.reset(dimensionSet(dict.lookup("dimensions")));
+    }
+}
+
 void FieldValueExpressionDriver::parseInternal(int startToken)
 {
     parserField::FieldValueExpressionParser parser (scanner_,*this,startToken,0);

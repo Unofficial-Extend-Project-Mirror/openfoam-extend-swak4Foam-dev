@@ -1243,6 +1243,11 @@ S_{expl} + S_{impl} T
      of function objects during the calculation
 **** =replayTransientBC= can now create a =phi=-field via dictionary
      The optional entry =addDummyPhi= creates a =phi=-field
+**** =expressionField= now allows the specification of a dimension
+     The =dimensions=-entry is now read at the same time the variables
+     are read (this should work for all programs/functionObjects where
+     the parser is not constructed using a dictionary but the
+     dictionary is later searched for the =variables=-entry)
 *** New features
 **** Allow dynamically loaded plugins that add new functions to parsers
      This allows easy extension of the functionality of =swak4Foam=
