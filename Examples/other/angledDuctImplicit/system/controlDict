@@ -713,6 +713,17 @@ functions
                 expression "interpolate(0)";
                 mask "fpos().x<interpolate(0)";
             }
+            clearPorosityWall
+            {
+                type manipulatePatchField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName myPhi;
+                patchName porosityWall;
+                expression "0";
+                mask "mag(myPhi)>1e-8";
+                writeManipulated true;
+            }
         }
     }
     velocityClass

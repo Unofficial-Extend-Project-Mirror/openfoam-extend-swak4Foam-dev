@@ -1362,6 +1362,10 @@ S_{expl} + S_{impl} T
 
      The appropriate fields needed by every cloud have to be present
      (either supplied by the solver or via a =functionObject=)
+**** Function-object =manipulatePatchField= to manipulate the field on patches
+     This function objects allows the manipulation of patch fields
+     like =manipulateField= allows the manipulation of the internal
+     field. Only use if desparate
 *** Infrastructure
 **** =Allwmake= creates symbolic links in =swakFiniteArea=
      The links to =mybison= and =myflex= are missing when the sources
