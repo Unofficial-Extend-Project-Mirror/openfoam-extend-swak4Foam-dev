@@ -1450,7 +1450,7 @@ S_{expl} + S_{impl} T
 **** Function-object =manipulatePatchField= to manipulate the field on patches
      This function objects allows the manipulation of patch fields
      like =manipulateField= allows the manipulation of the internal
-     field. Only use if desparate
+     field. Only use if desperate
 *** Infrastructure
 **** Compilation script checks =SWAK4FOAM_SRC=
      The environment variable =SWAK4FOAM_SRC= is needed for the
