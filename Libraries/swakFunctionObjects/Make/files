@@ -1,5 +1,7 @@
 manipulateField.C
 manipulateFieldFunctionObject.C
+manipulatePatchField.C
+manipulatePatchFieldFunctionObject.C
 expressionField.C
 expressionFieldFunctionObject.C
 clearExpressionField.C

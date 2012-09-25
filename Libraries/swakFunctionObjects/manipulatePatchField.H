@@ -24,18 +24,18 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    manipulateField
+    manipulatePatchField
 
 Description
-    Function object that manipulates a field
+    Function object that manipulates a patch field
 
 SourceFiles
-    manipulateField.C
+    manipulatePatchField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef manipulateField_H
-#define manipulateField_H
+#ifndef manipulatePatchField_H
+#define manipulatePatchField_H
 
 #include "primitiveFieldsFwd.H"
 #include "volFieldsFwd.H"
@@ -51,15 +51,15 @@ class objectRegistry;
 class dictionary;
 class mapPolyMesh;
 
-class FieldValueExpressionDriver;
+class PatchValueExpressionDriver;
 
-class manipulateField
+class manipulatePatchField
 {
     //- Disallow default bitwise copy construct
-    manipulateField(const manipulateField&);
+    manipulatePatchField(const manipulatePatchField&);
 
     //- Disallow default bitwise assignment
-    void operator=(const manipulateField&);
+    void operator=(const manipulatePatchField&);
 
 protected:
 
@@ -74,6 +74,9 @@ protected:
     //- Name of the field
     word name_;
 
+    //- Name of the patch
+    word patchName_;
+
     //- Expression
     string expression_;
 
@@ -84,32 +87,37 @@ protected:
 
     dictionary dict_;
 
-    template<class TData,class TMask>
+    template<class TField>
     void manipulate(
-        const TData &data,
-        const TMask &mask,
-        const word entity="cells"
+        const TField &data,
+        const Field<bool> &mask
     );
 
-    template<class TData,class TMask>
-    void manipulateSurface(
-        const TData &data,
-        const TMask &mask
+    template<class TField>
+    void manipulatePoint(
+        const TField &data,
+        const Field<bool> &mask
     );
 
-    autoPtr<FieldValueExpressionDriver> driver_;
+    // template<class TData,class TMask>
+    // void manipulateSurface(
+    //     const TData &data,
+    //     const TMask &mask
+    // );
+
+    autoPtr<PatchValueExpressionDriver> driver_;
 
 public:
 
     //- Runtime type information
-    TypeName("manipulateField");
+    TypeName("manipulatePatchField");
 
 
     // Constructors
 
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
-    manipulateField
+    manipulatePatchField
     (
         const word& name,
         const objectRegistry&,
@@ -119,12 +127,12 @@ public:
 
 
     //- Destructor
-    virtual ~manipulateField();
+    virtual ~manipulatePatchField();
 
 
     // Member Functions
 
-    //- Return name of the set of forces
+    //- Return name of the field
     virtual const word& name() const
         {
             return name_;
