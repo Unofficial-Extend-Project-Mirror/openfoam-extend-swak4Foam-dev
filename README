@@ -1374,3 +1374,5 @@ S_{expl} + S_{impl} T
 **** Reformatting of the parser sources
      Sources of the parsers have been completely reformatted to make
      them more readable and maintainable
+**** Move non-parser sources in =swak4FoamParsers= into sub-directories
+     Make the directory a little bit cleaner

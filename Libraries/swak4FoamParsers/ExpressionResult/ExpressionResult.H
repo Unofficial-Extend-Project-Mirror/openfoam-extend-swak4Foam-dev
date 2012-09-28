@@ -169,6 +169,10 @@ public:
     bool hasValue() const;
 
     friend Ostream & operator<<(Ostream &,const ExpressionResult &);
+
+    friend ExpressionResult operator*(const scalar &,const ExpressionResult &);
+
+    friend ExpressionResult operator*(const ExpressionResult &,const ExpressionResult &);
 };
 
 
