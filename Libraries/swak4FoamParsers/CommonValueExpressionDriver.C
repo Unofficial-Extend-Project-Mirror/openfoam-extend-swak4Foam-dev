@@ -716,6 +716,8 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
             if(debug) {
                 Pout << "Value " << iter() << endl;
             }
+        } else {
+            Pout << iter().name() << " updated without problem" << endl;
         }
     }
 }
@@ -756,7 +758,14 @@ void CommonValueExpressionDriver::evaluateVariable(
         Pout << result_;
     }
 
-    variables_.set(name,ExpressionResult(result_));
+    if(delayedVariables_.found(name)) {
+        if(debug) {
+            Pout << name << " is delayed" << endl;
+        }
+        delayedVariables_[name]=result_;
+    } else {
+        variables_.set(name,ExpressionResult(result_));
+    }
     if(debug>1) {
         Pout << "Value stored: " << variables_[name] << endl;
     }

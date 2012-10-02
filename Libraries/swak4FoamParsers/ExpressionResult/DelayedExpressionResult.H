@@ -86,7 +86,10 @@ protected:
 
 public:
 
-    // Constructors
+     //- Runtime type information
+    TypeName("DelayedExpressionResult");
+
+   // Constructors
 
     //- Construct null
     DelayedExpressionResult();

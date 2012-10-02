@@ -67,6 +67,9 @@ class StoredExpressionResult
 
 public:
 
+     //- Runtime type information
+    TypeName("StoredExpressionResult");
+
     // Constructors
 
     //- Construct null
