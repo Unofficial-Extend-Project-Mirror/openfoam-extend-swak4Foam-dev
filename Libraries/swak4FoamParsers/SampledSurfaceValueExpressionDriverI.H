@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -63,28 +63,28 @@ namespace Foam {
         bool oldTime
     )
     {
-        if(this->variables_.found(name)) {
-            return this->variables_[name].getResult<Type>(true).ptr();
+        if(this->hasVariable(name)) {
+            return this->variable(name).getResult<Type>(true).ptr();
         }
         Field<Type> *result=NULL;
 
         if(
-            this->searchInMemory() 
-            && 
+            this->searchInMemory()
+            &&
             this->mesh().foundObject<volField>(name)
         ) {
             if(interpolate_) {
                 autoPtr<interpolation<Type> > inter(
                     interpolation<Type>::New(
                         interpolationType_,
-                        ( 
+                        (
                             !oldTime ?
                             this->mesh().lookupObject<volField>(name) :
                             this->mesh().lookupObject<volField>(name).oldTime()
-                        ) 
+                        )
                     )
                 );
-                
+
                 result=new Field<Type>(
                     this->theSurface_.interpolate(
                         inter()
@@ -119,7 +119,7 @@ namespace Foam {
                         )
                     )
                 );
-                
+
                 result=new Field<Type>(
                     this->theSurface_.interpolate(
                         inter()
@@ -140,7 +140,7 @@ namespace Foam {
 
         if(result==NULL) {
             FatalErrorIn("SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(const word &name)")
-                << "No valid result" 
+                << "No valid result"
                     << endl
                     << exit(FatalError);
         }

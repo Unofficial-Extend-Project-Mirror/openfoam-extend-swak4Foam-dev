@@ -348,6 +348,15 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
     return out;
 }
 
+Istream & operator>>(Istream &in,ExpressionResult &data)
+{
+    dictionary dict(in);
+
+    data=ExpressionResult(dict);
+
+    return in;
+}
+
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 } // namespace

@@ -43,7 +43,7 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CommonValueExpressionDriver,0);
+defineTypeNameAndDebug(CommonValueExpressionDriver,1);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
@@ -60,12 +60,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const CommonValueExpressionDriver& orig
 )
 :
-    contextString_(orig.contextString_),
     variableStrings_(orig.variableStrings_),
+    contextString_(orig.contextString_),
     result_(orig.result_),
     variables_(orig.variables_),
     storedVariables_(orig.storedVariables_),
-    storedVariablesIndex_(orig.storedVariablesIndex_),
+    delayedVariables_(orig.delayedVariables_),
+    specialVariablesIndex_(orig.specialVariablesIndex_),
     globalVariableScopes_(orig.globalVariableScopes_),
     lines_(orig.lines_),
     lookup_(orig.lookup_),
@@ -86,9 +87,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const dictionary& dict
 )
 :
-    contextString_("- From dictionary: "+dict.name()),
     variableStrings_(readVariableStrings(dict)),
-    storedVariablesIndex_(-1),
+    contextString_("- From dictionary: "+dict.name()),
+    specialVariablesIndex_(-1),
     globalVariableScopes_(dict.lookupOrDefault("globalScopes",wordList())),
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
@@ -99,7 +100,19 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
 
     if(dict.found("storedVariables")) {
-        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+        storedVariables_=List<StoredExpressionResult>(
+            dict.lookup("storedVariables")
+        );
+    }
+
+    if(dict.found("delayedVariables")) {
+        List<DelayedExpressionResult> readDelays(
+            dict.lookup("delayedVariables")
+        );
+        forAll(readDelays,i)
+        {
+            delayedVariables_.insert(readDelays[i].name(),readDelays[i]);
+        }
     }
 
     if(debug) {
@@ -121,9 +134,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool searchOnDisc
 )
 :
-    contextString_("- Driver constructed from scratch"),
     variableStrings_(),
-    storedVariablesIndex_(-1),
+    contextString_("- Driver constructed from scratch"),
+    specialVariablesIndex_(-1),
     globalVariableScopes_(),
     content_(""),
     trace_scanning_ (false),
@@ -156,6 +169,27 @@ void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
                     << endl;
         } else {
             storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+        }
+    }
+
+    if(dict.found("delayedVariables")) {
+        if(
+            writer_.valid()
+            &&
+            delayedVariables_.size()>0
+        ) {
+            WarningIn("CommonValueExpressionDriver::readVariablesAndTables")
+                << "Seems like 'delayedVariables' was already read. No update from "
+                    << dict.lookup("delayedVariables")
+                    << endl;
+        } else {
+            List<DelayedExpressionResult> readDelays(
+                dict.lookup("delayedVariables")
+            );
+            forAll(readDelays,i)
+            {
+                delayedVariables_[readDelays[i].name()]=readDelays[i];
+            }
         }
     }
 
@@ -341,15 +375,39 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
 
     if(debug) {
         os.writeKeyword("variableValues");
-        os << variables() << endl;
+        os << variables_ << endl;
         os << token::END_STATEMENT << nl;
     }
 
-    if(storedVariables_.size()>0) {
-        const_cast<CommonValueExpressionDriver&>(*this).updateStoredVariables(true);
+    if(
+        storedVariables_.size()>0
+        ||
+        delayedVariables_.size()>0
+    ) {
+        const_cast<CommonValueExpressionDriver&>(
+            *this
+        ).updateSpecialVariables(true);
+    }
 
+    if(storedVariables_.size()>0) {
         os.writeKeyword("storedVariables");
         os << storedVariables_ << endl;
+        os << token::END_STATEMENT << nl;
+    }
+
+    if(delayedVariables_.size()>0) {
+        List<DelayedExpressionResult> writeDelays(delayedVariables_.size());
+
+        label cnt=0;
+        typedef HashTable<DelayedExpressionResult,word> tableType;
+        forAllConstIter(tableType,delayedVariables_,iter)
+        {
+            writeDelays[cnt]=iter();
+            cnt++;
+        }
+
+        os.writeKeyword("delayedVariables");
+        os << writeDelays << endl;
         os << token::END_STATEMENT << nl;
     }
 
@@ -599,13 +657,13 @@ bool CommonValueExpressionDriver::update()
     return true;
 }
 
-void CommonValueExpressionDriver::updateStoredVariables(bool force)
+void CommonValueExpressionDriver::updateSpecialVariables(bool force)
 {
-    if(storedVariablesIndex_<0) {
+    if(specialVariablesIndex_<0) {
         if(debug) {
             Pout << "First update: " << mesh().time().timeIndex() << endl;
         }
-        storedVariablesIndex_=mesh().time().timeIndex();
+        specialVariablesIndex_=mesh().time().timeIndex();
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(!v.hasValue()) {
@@ -622,11 +680,12 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
     if(
         force
         ||
-        storedVariablesIndex_!=mesh().time().timeIndex()
+        specialVariablesIndex_!=mesh().time().timeIndex()
     ) {
         if(debug) {
             Pout << "Store variables: " << force << " "
-                << storedVariablesIndex_ << " " << mesh().time().timeIndex() << endl;
+                << specialVariablesIndex_ << " "
+                << mesh().time().timeIndex() << endl;
         }
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
@@ -638,7 +697,26 @@ void CommonValueExpressionDriver::updateStoredVariables(bool force)
                 v=variables_[v.name()];
             }
         }
-        storedVariablesIndex_=mesh().time().timeIndex();
+        specialVariablesIndex_=mesh().time().timeIndex();
+    }
+
+    typedef HashTable<DelayedExpressionResult,word> tableType;
+    forAllIter(tableType,delayedVariables_,iter)
+    {
+        if(debug) {
+            Pout << "Updating delayed variable " << iter().name() << endl;
+        }
+        if(!iter().updateReadValue(mesh().time().value())) {
+            const string &expr=iter().startupValueExpression();
+            if(debug) {
+                Pout << "Evaluate: " << expr << endl;
+            }
+            parse(expr);
+            iter().setReadValue(result_);
+            if(debug) {
+                Pout << "Value " << iter() << endl;
+            }
+        }
     }
 }
 
@@ -650,7 +728,7 @@ void CommonValueExpressionDriver::clearVariables()
 
     this->update();
 
-    updateStoredVariables();
+    updateSpecialVariables();
     variables_.clear();
     forAll(storedVariables_,i) {
         StoredExpressionResult &v=storedVariables_[i];
@@ -658,9 +736,18 @@ void CommonValueExpressionDriver::clearVariables()
     }
 
     addVariables(variableStrings_,false);
+
+    typedef HashTable<DelayedExpressionResult,word> tableType;
+    forAllIter(tableType,delayedVariables_,iter)
+    {
+        iter().storeValue(mesh().time().value());
+    }
 }
 
-void CommonValueExpressionDriver::evaluateVariable(const word &name,const string &expr)
+void CommonValueExpressionDriver::evaluateVariable(
+    const word &name,
+    const string &expr
+)
 {
     parse(expr);
 
@@ -675,7 +762,11 @@ void CommonValueExpressionDriver::evaluateVariable(const word &name,const string
     }
 }
 
-void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr)
+void CommonValueExpressionDriver::evaluateVariableRemote(
+    const string &remoteExpr,
+    const word &name,
+    const string &expr
+)
 {
     string remote=remoteExpr;
     word regionName="";
@@ -724,11 +815,12 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
 
     const fvMesh &region=*pRegion;
 
-    autoPtr<CommonValueExpressionDriver> otherDriver=CommonValueExpressionDriver::New(
-        type,
-        id,
-        region
-    );
+    autoPtr<CommonValueExpressionDriver> otherDriver=
+        CommonValueExpressionDriver::New(
+            type,
+            id,
+            region
+        );
 
     otherDriver->setSearchBehaviour(
         this->cacheReadFields(),
@@ -743,7 +835,10 @@ void CommonValueExpressionDriver::evaluateVariableRemote(const string &remoteExp
     variables_.insert(name,otherDriver->getUniform(this->size(),false));
 }
 
-void CommonValueExpressionDriver::addVariables(const stringList &exprList,bool clear)
+void CommonValueExpressionDriver::addVariables(
+    const stringList &exprList,
+    bool clear
+)
 {
     if(clear) {
         clearVariables();
@@ -753,7 +848,10 @@ void CommonValueExpressionDriver::addVariables(const stringList &exprList,bool c
     }
 }
 
-void CommonValueExpressionDriver::addVariables(const string &exprListIn,bool clear)
+void CommonValueExpressionDriver::addVariables(
+    const string &exprListIn,
+    bool clear
+)
 {
     string exprList(exprListIn);
     exprList.removeTrailing(' ');
@@ -809,7 +907,11 @@ void CommonValueExpressionDriver::addVariables(const string &exprListIn,bool cle
     }
 }
 
-void CommonValueExpressionDriver::readTables(Istream &is,HashTable<interpolationTable<scalar> > &tables,bool clear)
+void CommonValueExpressionDriver::readTables(
+    Istream &is,
+    HashTable<interpolationTable<scalar> > &tables,
+    bool clear
+)
 {
     if(clear) {
         tables.clear();
@@ -822,7 +924,10 @@ void CommonValueExpressionDriver::readTables(Istream &is,HashTable<interpolation
     }
 }
 
-void CommonValueExpressionDriver::writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &tables) const
+void CommonValueExpressionDriver::writeTables(
+    Ostream &os,
+    const HashTable<interpolationTable<scalar> > &tables
+) const
 {
     os << token::BEGIN_LIST << nl;
     forAllConstIter(HashTable<interpolationTable<scalar> >,tables,it) {
@@ -951,7 +1056,10 @@ void CommonValueExpressionDriver::setTrace(
     trace_scanning_=scanning;
 }
 
-label CommonValueExpressionDriver::parse (const std::string &f,const word &start)
+label CommonValueExpressionDriver::parse(
+    const std::string &f,
+    const word &start
+)
 {
     int start_token=startupSymbol(start);
 
@@ -1057,7 +1165,11 @@ void CommonValueExpressionDriver::tryWrite() const
 
 bool CommonValueExpressionDriver::hasDataToWrite() const
 {
-    if(storedVariables_.size()>0) {
+    if(
+        storedVariables_.size()>0
+        ||
+        delayedVariables_.size()>0
+    ) {
         return true;
     }
 
@@ -1067,14 +1179,18 @@ bool CommonValueExpressionDriver::hasDataToWrite() const
 void CommonValueExpressionDriver::getData(const dictionary &dict)
 {
     if(dict.found("storedVariables")) {
-        storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+        storedVariables_=List<StoredExpressionResult>(
+            dict.lookup("storedVariables")
+        );
     }
 }
 
 void CommonValueExpressionDriver::prepareData(dictionary &dict) const
 {
     if(storedVariables_.size()>0) {
-        const_cast<CommonValueExpressionDriver&>(*this).updateStoredVariables(true);
+        const_cast<CommonValueExpressionDriver&>(
+            *this
+        ).updateSpecialVariables(true);
 
         dict.add(
             "storedVariables",
@@ -1186,5 +1302,42 @@ void CommonValueExpressionDriver::appendToContext(const string &value)
 }
 
 // ************************************************************************* //
+
+const ExpressionResult &CommonValueExpressionDriver::variable(
+    const word &name
+) const
+{
+    if(delayedVariables_.found(name)) {
+        return delayedVariables_[name];
+    } else {
+        return variables_[name];
+    }
+}
+
+ExpressionResult &CommonValueExpressionDriver::variable(
+    const word &name
+)
+{
+    if(delayedVariables_.found(name)) {
+        return delayedVariables_[name];
+    } else {
+        return variables_[name];
+    }
+}
+
+bool CommonValueExpressionDriver::hasVariable(
+    const word &name
+) const
+{
+    if(debug) {
+        Pout << "(var:" << delayedVariables_.found(name)
+            << " " << variables_.found(name) << ")";
+    }
+    if(delayedVariables_.found(name)) {
+        return true;
+    } else {
+        return variables_.found(name);
+    }
+}
 
 } // namespace

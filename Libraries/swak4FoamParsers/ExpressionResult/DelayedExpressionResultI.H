@@ -28,91 +28,21 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    Foam::StoredExpressionResult
-
-Description
-
-SourceFiles
-    StoredExpressionResultI.H
-    StoredExpressionResult.C
-    StoredExpressionResultIO.C
-
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef StoredExpressionResult_H
-#define StoredExpressionResult_H
-
-#include "ExpressionResult.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
-/*---------------------------------------------------------------------------*\
-                           Class StoredExpressionResult Declaration
-\*---------------------------------------------------------------------------*/
-
-class StoredExpressionResult
-:
-    public ExpressionResult
-{
-    // Private data
-
-    word name_;
-
-    string initialValueExpression_;
-
-public:
-
-    // Constructors
-
-    //- Construct null
-    StoredExpressionResult();
-
-    //- Construct as copy
-    StoredExpressionResult(const StoredExpressionResult&);
-
-    //- Construct from a dictionary
-    StoredExpressionResult(const dictionary&);
-
-    // Destructor
-
-    virtual ~StoredExpressionResult();
-
-    void operator=(const StoredExpressionResult&);
-
-    void operator=(const ExpressionResult&);
-
-    const word name() const { return name_; }
-
-    const string initialValueExpression() const
-        {
-            return initialValueExpression_;
-        }
-
-    friend Ostream & operator<<(Ostream &,const StoredExpressionResult &);
-
-    friend Istream & operator>>(Istream &,StoredExpressionResult &);
-
-    friend bool operator!=(
-        const StoredExpressionResult &,const StoredExpressionResult &
-    );
-};
+namespace Foam {
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Foam
+    ExpressionResult &DelayedExpressionResult::toBeSet()
+    {
+        return settingResult_;
+    }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "StoredExpressionResultI.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
+}
 
 // ************************************************************************* //

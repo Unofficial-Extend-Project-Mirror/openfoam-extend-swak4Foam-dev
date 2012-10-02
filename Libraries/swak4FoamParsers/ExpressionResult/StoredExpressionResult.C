@@ -49,7 +49,9 @@ StoredExpressionResult::StoredExpressionResult()
 {
 }
 
-StoredExpressionResult::StoredExpressionResult(const StoredExpressionResult &rhs)
+StoredExpressionResult::StoredExpressionResult(
+    const StoredExpressionResult &rhs
+)
 :
     ExpressionResult(rhs),
     name_(rhs.name_),

@@ -281,7 +281,7 @@ inv                    return token::TOKEN_inv;
 
 void PatchValueExpressionDriver::scan_begin ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "PatchValueExpressionDriver::scan_begin "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -297,10 +297,10 @@ void PatchValueExpressionDriver::scan_begin ()
 
     yylex_init(&scanner_);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
-    yy_flex_debug = trace_scanning_;
-    /* bufferPatch= */ yy_scan_string(content_.c_str(),scanner_);
+    yy_flex_debug = traceScanning();
+    /* bufferPatch= */ yy_scan_string(content().c_str(),scanner_);
 
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "PatchValueExpressionDriver::scan_begin - finished "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -309,7 +309,7 @@ void PatchValueExpressionDriver::scan_begin ()
 
 void PatchValueExpressionDriver::scan_end ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "PatchValueExpressionDriver::scan_end "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
