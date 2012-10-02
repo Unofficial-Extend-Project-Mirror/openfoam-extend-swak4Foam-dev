@@ -798,6 +798,11 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     const string &expr
 )
 {
+    if(debug) {
+        Pout << "Evaluating remote " << remoteExpr
+            << " : " << expr << " -> " << name << endl;
+    }
+
     string remote=remoteExpr;
     word regionName="";
     word id="";
@@ -862,7 +867,19 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     );
 
     otherDriver->parse(expr);
-    variables_.insert(name,otherDriver->getUniform(this->size(),false));
+
+    if(debug) {
+        Pout << "Remote result: "
+            << otherDriver->getUniform(this->size(),false) << endl;
+    }
+    if(delayedVariables_.found(name)) {
+        if(debug) {
+            Pout << name << " is delayed" << endl;
+        }
+        delayedVariables_[name]=otherDriver->getUniform(this->size(),false);
+    } else {
+        variables_.insert(name,otherDriver->getUniform(this->size(),false));
+    }
 }
 
 void CommonValueExpressionDriver::addVariables(

@@ -24,15 +24,15 @@ boundaryField
 {
     outlet
     {
-        //        type            groovyBC;
-        type            zeroGradient;
-        valueExpression "oldVar1";
+        type            groovyBC;
+        //        type            zeroGradient;
+        valueExpression "uniformOldVar1";
         variables (
-            "oldVar1{inlet}=average(var1);"
+            "uniformOldVar1{inlet}=average(var1);"
         );
         delayedVariables (
             {
-                name oldVar1;
+                name uniformOldVar1;
                 startupValue "0";
                 storeIntervall 0.1;
                 delay 2;
