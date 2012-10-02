@@ -27,6 +27,7 @@ boundaryField
         type            groovyBC;
         //        type            zeroGradient;
         valueExpression "uniformOldVar1";
+        value           uniform 0;
         variables (
             "uniformOldVar1{inlet}=average(var1);"
         );
@@ -43,6 +44,7 @@ boundaryField
     {
         type            groovyBC;
         valueExpression "oldVar1";
+        value           uniform 0;
         variables (
             "oldVar1=var1;"
         );

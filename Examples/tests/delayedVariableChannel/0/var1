@@ -24,13 +24,25 @@ boundaryField
 {
     outlet
     {
-        type            fixedValue;
+        type            groovyBC;;
         value           uniform 0;
+        valueExpression "maxInlet";
+        variables (
+            "inValue{inlet}=average(var1);"
+            "maxInlet=max(inValue,maxInlet);"
+        );
+        storedVariables (
+            {
+                name maxInlet;
+                initialValue "0";
+            }
+        );
     }
     inlet
     {
         type            groovyBC;
         valueExpression "sin(time())*sin(pos().x*pi)";
+        value           uniform 0;
     }
     walls
     {

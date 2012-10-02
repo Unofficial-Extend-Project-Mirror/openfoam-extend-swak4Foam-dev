@@ -15,3 +15,9 @@ val2Out {
        titles ("val2 on outlet");
        expr "Expression var2Val on outlet:  min=.+ max=.+ average=(%f%)";
 }
+val1Out {
+       type slave;
+       master val1In;
+       titles ("val1 on inlet");
+       expr "Expression var1Val on outlet:  min=.+ max=.+ average=(%f%)";
+}
