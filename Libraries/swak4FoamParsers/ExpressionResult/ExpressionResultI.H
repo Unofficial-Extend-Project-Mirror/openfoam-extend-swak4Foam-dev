@@ -252,7 +252,10 @@ namespace Foam {
     }
 
     template<class Type>
-    ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn) const
+    ExpressionResult ExpressionResult::getUniformInternal(
+        const label size,
+        bool noWarn
+    ) const
     {
         ExpressionResult result;
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
@@ -307,6 +310,11 @@ namespace Foam {
     inline bool ExpressionResult::isSingleValue() const
     {
         return isSingleValue_;
+    }
+
+    inline bool ExpressionResult::isObject() const
+    {
+        return generalContent_.valid();
     }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

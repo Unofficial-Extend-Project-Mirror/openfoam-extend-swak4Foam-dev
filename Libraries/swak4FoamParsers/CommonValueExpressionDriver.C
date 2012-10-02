@@ -43,7 +43,7 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CommonValueExpressionDriver,1);
+defineTypeNameAndDebug(CommonValueExpressionDriver,0);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
@@ -164,11 +164,16 @@ void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
             storedVariables_.size()>0
         ) {
             WarningIn("CommonValueExpressionDriver::readVariablesAndTables")
-                << "Seems like 'storedVariables' was already read. No update from "
+                << "Seems like 'storedVariables' was already read."
+                    << " No update from "
                     << dict.lookup("storedVariables")
                     << endl;
         } else {
-            storedVariables_=List<StoredExpressionResult>(dict.lookup("storedVariables"));
+            storedVariables_=List<StoredExpressionResult>(
+                dict.lookup(
+                    "storedVariables"
+                )
+            );
         }
     }
 
@@ -179,7 +184,8 @@ void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
             delayedVariables_.size()>0
         ) {
             WarningIn("CommonValueExpressionDriver::readVariablesAndTables")
-                << "Seems like 'delayedVariables' was already read. No update from "
+                << "Seems like 'delayedVariables' was already read."
+                    << " No update from "
                     << dict.lookup("delayedVariables")
                     << endl;
         } else {
@@ -303,7 +309,9 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-stringList CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)
+stringList CommonValueExpressionDriver::readVariableStrings(
+    const dictionary &dict
+)
 {
     if(!dict.found("variables")) {
         return stringList();
@@ -430,7 +438,11 @@ void CommonValueExpressionDriver::clearResult()
     result_.clearResult();
 }
 
-vectorField *CommonValueExpressionDriver::composeVectorField(scalarField *x,scalarField *y,scalarField *z)
+vectorField *CommonValueExpressionDriver::composeVectorField(
+    scalarField *x,
+    scalarField *y,
+    scalarField *z
+)
 {
     if(
         x->size() != y->size()
@@ -560,7 +572,10 @@ sphericalTensorField *CommonValueExpressionDriver::composeSphericalTensorField(
 }
         */
 
-ExpressionResult CommonValueExpressionDriver::getUniform(label size,bool noWarning)
+ExpressionResult CommonValueExpressionDriver::getUniform(
+    label size,
+    bool noWarning
+)
 {
     return result_.getUniform(size,noWarning);
 }
@@ -578,7 +593,10 @@ const Time &CommonValueExpressionDriver::runTime() const
     return this->mesh().time();
 }
 
-scalarField *CommonValueExpressionDriver::makeModuloField(const scalarField &a,const scalarField &b)
+scalarField *CommonValueExpressionDriver::makeModuloField(
+    const scalarField &a,
+    const scalarField &b
+)
 {
     assert(a.size()==b.size());
 
@@ -619,7 +637,10 @@ scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
     return new scalarField(this->size(),lines_[name](t));
 }
 
-tmp<scalarField> CommonValueExpressionDriver::getLookup(const string &name,const scalarField &val)
+tmp<scalarField> CommonValueExpressionDriver::getLookup(
+    const string &name,
+    const scalarField &val
+)
 {
     scalarField *result=new scalarField(val.size());
     const interpolationTable<scalar> &table=lookup_[name];
@@ -1016,7 +1037,8 @@ string CommonValueExpressionDriver::getTypeOfField(const string &name) const
 
     if(debug) {
         Pout << "Name: " << name << " Time: " << mesh().time().timeName()
-            << " Path: " << f.filePath() << " Class: " << f.headerClassName() << endl;
+            << " Path: " << f.filePath() << " Class: "
+            << f.headerClassName() << endl;
     }
 
     return f.headerClassName();

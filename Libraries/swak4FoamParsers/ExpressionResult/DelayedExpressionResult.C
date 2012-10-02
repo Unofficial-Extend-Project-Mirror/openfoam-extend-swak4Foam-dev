@@ -41,7 +41,7 @@ License
 
 namespace Foam {
 
-defineTypeNameAndDebug(DelayedExpressionResult,1);
+defineTypeNameAndDebug(DelayedExpressionResult,0);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -193,7 +193,7 @@ bool DelayedExpressionResult::updateReadValue(const scalar &time)
     assert((time-delay_)>=current().first() && (time-delay_)<=next().first());
 
     const scalar step=next().first()-current().first();
-    const scalar f=((time-delay_)-next().first())/step;
+    const scalar f=((time-delay_)-current().first())/step;
 
     if(debug) {
         Pout << "Using f=" << f << " (step " << step << ")" << endl;
@@ -204,7 +204,7 @@ bool DelayedExpressionResult::updateReadValue(const scalar &time)
         Pout << "New value " << val << endl;
     }
 
-    (*this)=val;
+    setReadValue(val);
 
     return true;
 }
@@ -253,21 +253,30 @@ void DelayedExpressionResult::storeValue(const scalar &time)
     }
 
     if(append) {
-        const scalar oldLastTime=storedValues_.last().first();
+        scalar oldLastTime=-1;
+        bool notEmpty=false;
+
+        if(storedValues_.size()>0) {
+            oldLastTime=storedValues_.last().first();
+            notEmpty=true;
+        }
+
         if(debug) {
             Pout << "Appending " << settingResult_ << endl;
         }
         storedValues_.append(ValueAtTime(time,settingResult_));
-        while(
-            oldLastTime-storedValues_.first().first()
-            >=
-            delay_
-        ) {
-            if(debug) {
-                Pout << "Removing t=" << storedValues_.first().first()
-                    << " because it is older than " << delay_ << endl;
+        if(notEmpty) {
+            while(
+                oldLastTime-storedValues_.first().first()
+                >=
+                delay_
+            ) {
+                if(debug) {
+                    Pout << "Removing t=" << storedValues_.first().first()
+                        << " because it is older than " << delay_ << endl;
+                }
+                storedValues_.removeHead();
             }
-            storedValues_.removeHead();
         }
     } else {
         if(debug) {

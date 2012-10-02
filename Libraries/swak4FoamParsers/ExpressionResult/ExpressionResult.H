@@ -191,6 +191,10 @@ public:
 
     bool hasValue() const;
 
+    inline bool isObject() const;
+
+    label size() const;
+
     friend Ostream & operator<<(Ostream &,const ExpressionResult &);
 
     friend Istream & operator>>(Istream &,ExpressionResult &);

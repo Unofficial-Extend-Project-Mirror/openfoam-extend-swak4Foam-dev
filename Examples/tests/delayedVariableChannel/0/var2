@@ -24,8 +24,20 @@ boundaryField
 {
     outlet
     {
-        type            fixedValue;
-        value           uniform 0;
+        //        type            groovyBC;
+        type            zeroGradient;
+        valueExpression "oldVar1";
+        variables (
+            "oldVar1{inlet}=average(var1);"
+        );
+        delayedVariables (
+            {
+                name oldVar1;
+                startupValue "0";
+                storeIntervall 0.1;
+                delay 2;
+            }
+        );
     }
     inlet
     {
