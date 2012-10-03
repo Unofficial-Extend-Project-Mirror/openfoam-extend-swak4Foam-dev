@@ -298,8 +298,10 @@ Ostream & operator<<(Ostream &out,const DelayedExpressionResult &data)
     out.writeKeyword("startupValue");
     out << data.startupValueExpression_ << token::END_STATEMENT << nl;
 
-    out.writeKeyword("settingResult");
-    out << data.settingResult_ << token::END_STATEMENT << nl;
+    if(data.settingResult_.valueType()!="Void") {
+        out.writeKeyword("settingResult");
+        out << data.settingResult_ << token::END_STATEMENT << nl;
+    }
 
     out.writeKeyword("storedValues");
     out << data.storedValues_ << token::END_STATEMENT << nl;
