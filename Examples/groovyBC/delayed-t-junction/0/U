@@ -35,7 +35,7 @@ boundaryField
             {
                 name outFlow;
                 startupValue "0";
-                storeIntervall 0.001;
+                storeInterval 0.001;
                 delay 0.1;
             }
         );
