@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 03 Oct 2012 10:25:40 +0200
+Subject: Re: Delayed Variables
+Message-Id: <bf128f98cbde11d8-95d04781688bf0d3-artemis@bgs-cool-greybook.local>
+References: <bf128f98cbde11d8-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <bf128f98cbde11d8-0-artemis@bgs-cool-greybook.local>
+
+Ran valgrind on the delayedVariableChannel-case
+(replayTransientBC). No relevant memory losses seen
