@@ -317,6 +317,10 @@ S_{expl} + S_{impl} T
     - Mesh preparation :: Execute the script =prepare.sh= in that
          directory (requires PyFoam: if not installed change in the
          =boundary=-file the type of the =defaultFaces= to =wall=)
+**** delayed-t-junction
+    - Solver :: pimpleFoam
+    - Demonstrates :: Delayed variables to simulate an inflow that
+                      depends on the value of the outflow
 **** multiRegionHeaterFeedback
     - Solver :: chtMultiRegionFoam
     - Mesh preparation :: Execute the script =prepare.sh= in that
@@ -1451,6 +1455,16 @@ S_{expl} + S_{impl} T
      This function objects allows the manipulation of patch fields
      like =manipulateField= allows the manipulation of the internal
      field. Only use if desperate
+**** Delayed variables to simulate responses
+     If a variable is declared in the =delayedVariables=-list then its
+     behavior changes: when a value is assigned to that variable then
+     the value is not immediately used but after the time specified in
+     =delay=. Values are stored at intervals =storeInterval= and
+     interpolated linearly. If no stored data is available then the
+     value of the expression =startupValue= is used.
+
+     This feature allows the modeling of boundary conditions that
+     react with a delay to flow conditions
 *** Infrastructure
 **** Compilation script checks =SWAK4FOAM_SRC=
      The environment variable =SWAK4FOAM_SRC= is needed for the
@@ -1465,3 +1479,5 @@ S_{expl} + S_{impl} T
 **** Reformatting of the parser sources
      Sources of the parsers have been completely reformatted to make
      them more readable and maintainable
+**** Move non-parser sources in =swak4FoamParsers= into sub-directories
+     Make the directory a little bit cleaner

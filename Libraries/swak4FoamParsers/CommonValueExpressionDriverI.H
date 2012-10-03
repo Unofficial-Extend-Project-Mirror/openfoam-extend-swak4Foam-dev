@@ -113,23 +113,29 @@ namespace Foam {
     {
         if(debug) {
             Pout << "CommonValueExpressionDriver::isVariable "
-                << " looking for " << name << " isPoint: " << isPoint;
+                << " looking for " << name << " isPoint: " << isPoint
+                << " of type " << pTraits<Type>::typeName;
         }
 
-        if(variables_.found(name)) {
+        if(hasVariable(name)) {
             if(debug) {
                 Pout << " - name found";
             }
+            const ExpressionResult &var=variable(name);
             if(
-                variables_[name].valueType()==pTraits<Type>::typeName
+                var.valueType()==pTraits<Type>::typeName
                 &&
-                variables_[name].isPoint()==isPoint
+                var.isPoint()==isPoint
             ) {
                 if(debug) {
                     Pout << " - OK" << endl;
                 }
 
                 return true;
+            }
+            if(debug) {
+                Pout << "(" << var.valueType() << " "
+                    << var.isPoint() << ")";
             }
         }
 
@@ -472,7 +478,7 @@ namespace Foam {
         typedef typename T::value_type Type;
 
         if(
-            variables_.found(name)
+            hasVariable(name)
             ||
             isGlobal<Type>(name,false)
         ) {
@@ -497,8 +503,8 @@ namespace Foam {
             );
 
             Field<Type> vals;
-            if(variables_.found(name)) {
-                vals=variables_[name].getResult<Type>(true);
+            if(hasVariable(name)) {
+                vals=variable(name).getResult<Type>(true);
             } else {
                 vals=const_cast<ExpressionResult &>(
                     lookupGlobal(name)
@@ -820,10 +826,16 @@ namespace Foam {
         //    Foam::Pout << buff.str() << ": " << m << Foam::endl;
     }
 
-    inline const HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables() const
-    {
-        return variables_;
-    }
+    // inline HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables()
+    // {
+    //     return variables_;
+    // }
+
+    // inline const HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables() const
+    // {
+    //     return variables_;
+    // }
+
 }
 
 

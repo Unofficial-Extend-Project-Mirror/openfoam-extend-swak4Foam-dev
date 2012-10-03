@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -55,16 +55,16 @@ namespace Foam {
                 << endl;
         }
 
-        if(this->variables_.found(name)) {
+        if(this->hasVariable(name)) {
             if(debug) {
                 Pout << name << " is a variable" << endl;
             }
-            return this->variables_[name].getResult<T>(true).ptr();
+            return this->variable(name).getResult<T>(true).ptr();
         }
 
         Field<T> *result=new Field<T>(this->size());
         label cnt=0;
-        
+
         if(debug) {
             Pout << "searchInMemory: " << this->searchInMemory()
                 << " found: " << this->mesh().foundObject<FieldType>(name)
@@ -78,14 +78,14 @@ namespace Foam {
             // Keep this separate to avoid copying if found in memory
             if(!oldTime) {
                 const FieldType &f=this->mesh().lookupObject<FieldType>(name);
-                
+
                 forAllConstIter(typename Subset,sub,iter) {
                     (*result)[cnt]=f[getIndexFromIterator(iter)];
                     cnt++;
                 }
             } else {
                 const FieldType &f=this->mesh().lookupObject<FieldType>(name).oldTime();
-                
+
                 forAllConstIter(typename Subset,sub,iter) {
                     (*result)[cnt]=f[getIndexFromIterator(iter)];
                     cnt++;
@@ -101,17 +101,17 @@ namespace Foam {
                 true, // fail if not found
                 oldTime
             );
-                
+
             if(!oldTime) {
                 forAllConstIter(typename Subset,sub,iter) {
                     (*result)[cnt]=f()[getIndexFromIterator(iter)];
                     cnt++;
-                }            
+                }
             } else {
                 forAllConstIter(typename Subset,sub,iter) {
                     (*result)[cnt]=f->oldTime()[getIndexFromIterator(iter)];
                     cnt++;
-                }            
+                }
             }
         }
         assert(cnt==this->size());
@@ -128,8 +128,8 @@ namespace Foam {
     {
         // Yeah. I know. Code duplication without end
 
-        if(this->variables_.found(name)) {
-            return this->variables_[name].getResult<T>(true).ptr();
+        if(this->hasVariable(name)) {
+            return this->variable(name).getResult<T>(true).ptr();
         }
 
         Field<T> *result=new Field<T>(this->size());
@@ -143,7 +143,7 @@ namespace Foam {
         ) {
             const FieldType &f=this->mesh().lookupObject<FieldType>(name);
             label cnt=0;
-            
+
             forAllConstIter(typename Subset,sub,iter) {
                 if(!oldTime) {
                     (*result)[cnt]=f[getIndexFromIterator(iter)];
@@ -152,7 +152,7 @@ namespace Foam {
                 }
                 cnt++;
             }
-            
+
             assert(cnt==this->size());
 
             done=true;
@@ -171,10 +171,10 @@ namespace Foam {
                         (*result)[cnt]=f->oldTime()[getIndexFromIterator(iter)];
                     }
                     cnt++;
-                }            
+                }
                 done=true;
             }
-        } 
+        }
 
         if(
             !done
@@ -192,7 +192,7 @@ namespace Foam {
             const labelList &own=this->mesh().faceOwner();
             const labelList &nei=this->mesh().faceNeighbour();
             const surfaceScalarField &weights=this->mesh().weights();
-                
+
             if(
                 this->searchInMemory()
                 &&
@@ -200,7 +200,7 @@ namespace Foam {
             ) {
                 const IFieldType &f=this->mesh().lookupObject<IFieldType>(name);
                 label cnt=0;
-                
+
                 forAllConstIter(typename Subset,sub,iter) {
                     label faceI=getIndexFromIterator(iter);
                     if(faceI<this->mesh().nInternalFaces()) {
@@ -225,7 +225,7 @@ namespace Foam {
                     }
                     cnt++;
                 }
-                
+
                 assert(cnt==this->size());
 
                 done=true;
@@ -238,7 +238,7 @@ namespace Foam {
 
                 if(f.valid()) {
                     label cnt=0;
-                    
+
                     forAllConstIter(typename Subset,sub,iter) {
                         label faceI=getIndexFromIterator(iter);
                         if(faceI<this->mesh().nInternalFaces()) {
@@ -263,9 +263,9 @@ namespace Foam {
                         }
                         cnt++;
                     }
-                    
+
                     assert(cnt==this->size());
-                    
+
                     done=true;
                 }
             }
@@ -273,9 +273,9 @@ namespace Foam {
 
         if(!done) {
             FatalErrorIn("SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)")
-                << "Could not find a field name " << name 
+                << "Could not find a field name " << name
                     << " of type " << pTraits<T>::typeName
-                    << " (neither " << FieldType::typeName 
+                    << " (neither " << FieldType::typeName
                     << " nor " << IFieldType::typeName << ")"
                     << " autoInterpolate: " << this->autoInterpolate_
                     << (this->autoInterpolate_ ? "" : " (try setting 'autoInterpolate' to 'true')")

@@ -280,7 +280,7 @@ inv                    return token::TOKEN_inv;
 
 void SubsetValueExpressionDriver::scan_begin ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "SubsetValueExpressionDriver::scan_begin "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -296,10 +296,10 @@ void SubsetValueExpressionDriver::scan_begin ()
 
     yylex_init(&scanner_);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
-    yy_flex_debug = trace_scanning_;
-    /* bufferSubset= */ yy_scan_string(content_.c_str(),scanner_);
+    yy_flex_debug = traceScanning();
+    /* bufferSubset= */ yy_scan_string(content().c_str(),scanner_);
 
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "SubsetValueExpressionDriver::scan_begin - finished "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -308,7 +308,7 @@ void SubsetValueExpressionDriver::scan_begin ()
 
 void SubsetValueExpressionDriver::scan_end ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "SubsetValueExpressionDriver::scan_end "
             << getHex(this) << endl;
        Info << "Scanner: " << getHex(scanner_) << endl;

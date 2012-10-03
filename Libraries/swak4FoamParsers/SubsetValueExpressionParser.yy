@@ -75,7 +75,7 @@ namespace Foam {
     ) {
         if(debug || traceParsing()) {
             Info << "Excuting plugin-function " << name << " ( returning type "
-                << pTraits<T>::typeName << ") on " << this->content_
+                << pTraits<T>::typeName << ") on " << this->content()
                 << " position "
                 << loc.end.column-1 << endl;
         }
@@ -90,7 +90,7 @@ namespace Foam {
 
         autoPtr<Field<T> > result(
             theFunction->evaluate<T>(
-                this->content_.substr(
+                this->content().substr(
                     loc.end.column-1
                 ),
                 scanned,

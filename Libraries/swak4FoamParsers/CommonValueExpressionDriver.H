@@ -52,6 +52,7 @@ SourceFiles
 
 #include "ExpressionResult.H"
 #include "StoredExpressionResult.H"
+#include "DelayedExpressionResult.H"
 
 namespace Foam
 {
@@ -111,22 +112,18 @@ protected:
     //- access last position
     label &parserLastPos() { return parserLastPos_; }
 
+private:
     ExpressionResult result_;
 
     HashTable<ExpressionResult,word> variables_;
 
     List<StoredExpressionResult> storedVariables_;
 
-    label storedVariablesIndex_;
+    HashTable<DelayedExpressionResult,word> delayedVariables_;
+
+    label specialVariablesIndex_;
 
     wordList globalVariableScopes_;
-
-    const ExpressionResult &lookupGlobal(const word &name) const;
-
-    template<class T>
-    bool isGlobal(const word &name,bool isPoint) const;
-
-    void setGlobalScopes(const wordList &);
 
     HashTable<interpolationTable<scalar>,word> lines_;
 
@@ -137,6 +134,16 @@ protected:
     bool trace_scanning_;
 
     bool trace_parsing_;
+
+protected:
+    const ExpressionResult &lookupGlobal(const word &name) const;
+
+    template<class T>
+    bool isGlobal(const word &name,bool isPoint) const;
+
+    void setGlobalScopes(const wordList &);
+
+    ExpressionResult &result() { return result_; }
 
     //- scanner state for reentrant lexer
     void *scanner_;
@@ -185,7 +192,7 @@ protected:
     );
 
     //- look through the current variable values and update the stored variables
-    void updateStoredVariables(bool force=false);
+    void updateSpecialVariables(bool force=false);
 
     //- read data from the writer
     virtual void getData(const dictionary &);
@@ -287,6 +294,10 @@ protected:
 
     virtual void parseInternal(int startSymbol) = 0;
 
+    //- only subclasses have write-access
+    //    inline  HashTable<ExpressionResult,word> &variables();
+    ExpressionResult &variable(const word &name);
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -364,7 +375,10 @@ public:
 
     // Member Functions
 
-    inline const HashTable<ExpressionResult,word> &variables() const;
+    //    inline const HashTable<ExpressionResult,word> &variables() const;
+    const ExpressionResult &variable(const word &name) const;
+
+    bool hasVariable(const word &name) const;
 
     void setSearchBehaviour(
         bool cacheReadFields,
@@ -380,7 +394,11 @@ public:
 
     void evaluateVariable(const word &name,const string &expr);
 
-    void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);
+    void evaluateVariableRemote(
+        const string &remoteExpr,
+        const word &name,
+        const string &expr
+    );
 
     //- read the list of variable strings (or initialize with a single string)
     static stringList readVariableStrings(const dictionary &dict);

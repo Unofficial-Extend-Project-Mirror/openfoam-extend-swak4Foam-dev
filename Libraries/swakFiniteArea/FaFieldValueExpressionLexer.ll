@@ -304,7 +304,7 @@ false                  return token::TOKEN_FALSE;
 
 void FaFieldValueExpressionDriver::scan_begin ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "FaFieldValueExpressionDriver::scan_begin "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -320,13 +320,13 @@ void FaFieldValueExpressionDriver::scan_begin ()
 
     yylex_init(&scanner_);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
-    yy_flex_debug = trace_scanning_;
-    yy_scan_string(content_.c_str(),scanner_);
+    yy_flex_debug = traceScanning();
+    yy_scan_string(content().c_str(),scanner_);
 
 //    if (!(yyin = fopen (file.c_str (), "r")))
 //        error (std::string ("cannot open ") + file);
 
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "FaFieldValueExpressionDriver::scan_begin - finished "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -335,7 +335,7 @@ void FaFieldValueExpressionDriver::scan_begin ()
 
 void FaFieldValueExpressionDriver::scan_end ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "FaFieldValueExpressionDriver::scan_end "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;

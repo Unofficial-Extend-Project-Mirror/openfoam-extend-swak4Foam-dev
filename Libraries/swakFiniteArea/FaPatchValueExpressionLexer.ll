@@ -278,7 +278,7 @@ inv                    return token::TOKEN_inv;
 
 void FaPatchValueExpressionDriver::scan_begin ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "FaPatchValueExpressionDriver::scan_begin "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -294,10 +294,10 @@ void FaPatchValueExpressionDriver::scan_begin ()
 
     yylex_init(&scanner_);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
-     yy_flex_debug = trace_scanning_;
-    /* bufferPatch= */ yy_scan_string(content_.c_str(),scanner_);
+     yy_flex_debug = traceScanning();
+    /* bufferPatch= */ yy_scan_string(content().c_str(),scanner_);
 
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "FaPatchValueExpressionDriver::scan_begin - finished "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;
@@ -306,7 +306,7 @@ void FaPatchValueExpressionDriver::scan_begin ()
 
 void FaPatchValueExpressionDriver::scan_end ()
 {
-    if(trace_scanning_) {
+    if(traceScanning()) {
         Info << "FaPatchValueExpressionDriver::scan_end "
             << getHex(this) << endl;
         Info << "Scanner: " << getHex(scanner_) << endl;

@@ -192,7 +192,8 @@ void ExpressionResult::uglyDelete()
             delete static_cast<Field<bool>*>(valPtr_);
         } else {
             WarningIn("ExpressionResult::uglyDelete()")
-                << "Unknown type " << valType_ << " propable memory loss" << endl;
+                << "Unknown type " << valType_
+                    << " propable memory loss" << endl;
             delete valPtr_;
         }
     }
@@ -204,7 +205,10 @@ void ExpressionResult::uglyDelete()
     }
 }
 
-ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn) const
+ExpressionResult ExpressionResult::getUniform(
+    const label size,
+    bool noWarn
+) const
 {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {
@@ -239,6 +243,31 @@ ExpressionResult ExpressionResult::getUniform(const label size,bool noWarn) cons
     }
 }
 
+label ExpressionResult::size() const {
+    if(valPtr_) {
+        if(valType_==pTraits<scalar>::typeName) {
+            return static_cast<scalarField*>(valPtr_)->size();
+        } else if(valType_==vector::typeName) {
+            return static_cast<Field<vector>*>(valPtr_)->size();
+        } else if(valType_==tensor::typeName) {
+            return static_cast<Field<tensor>*>(valPtr_)->size();
+        } else if(valType_==symmTensor::typeName) {
+            return static_cast<Field<symmTensor>*>(valPtr_)->size();
+        } else if(valType_==sphericalTensor::typeName) {
+            return static_cast<Field<sphericalTensor>*>(valPtr_)->size();
+        } else if(valType_==pTraits<bool>::typeName) {
+            return static_cast<Field<bool>*>(valPtr_)->size();
+        } else {
+            WarningIn("ExpressionResult::size()")
+                << "Unknown type " << valType_ << endl;
+            return -1;
+        }
+    } else {
+        // this is an object
+        return -1;
+    }
+}
+
 void ExpressionResult::operator=(const ExpressionResult& rhs)
 {
     // Check for assignment to self
@@ -259,15 +288,35 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
         if(valType_==pTraits<scalar>::typeName) {
             valPtr_=new scalarField(*static_cast<scalarField*>(rhs.valPtr_));
         } else if(valType_==pTraits<vector>::typeName) {
-            valPtr_=new Field<vector>(*static_cast<Field<vector>*>(rhs.valPtr_));
+            valPtr_=new Field<vector>(
+                *static_cast<Field<vector>*>(
+                    rhs.valPtr_
+                )
+            );
         } else if(valType_==pTraits<tensor>::typeName) {
-            valPtr_=new Field<tensor>(*static_cast<Field<tensor>*>(rhs.valPtr_));
+            valPtr_=new Field<tensor>(
+                *static_cast<Field<tensor>*>(
+                    rhs.valPtr_
+                )
+            );
         } else if(valType_==pTraits<symmTensor>::typeName) {
-            valPtr_=new Field<symmTensor>(*static_cast<Field<symmTensor>*>(rhs.valPtr_));
+            valPtr_=new Field<symmTensor>(
+                *static_cast<Field<symmTensor>*>(
+                    rhs.valPtr_
+                )
+            );
         } else if(valType_==pTraits<sphericalTensor>::typeName) {
-            valPtr_=new Field<sphericalTensor>(*static_cast<Field<sphericalTensor>*>(rhs.valPtr_));
+            valPtr_=new Field<sphericalTensor>(
+                *static_cast<Field<sphericalTensor>*>(
+                    rhs.valPtr_
+                )
+            );
         } else if(valType_==pTraits<bool>::typeName) {
-            valPtr_=new Field<bool>(*static_cast<Field<bool>*>(rhs.valPtr_));
+            valPtr_=new Field<bool>(
+                *static_cast<Field<bool>*>(
+                    rhs.valPtr_
+                )
+            );
         } else {
             FatalErrorIn("ExpressionResult::operator=(const ExpressionResult& rhs)")
                 << " Type " << valType_ << " can not be copied"
@@ -346,6 +395,100 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
     out << token::END_BLOCK << endl;
 
     return out;
+}
+
+Istream & operator>>(Istream &in,ExpressionResult &data)
+{
+    dictionary dict(in);
+
+    data=ExpressionResult(dict);
+
+    return in;
+}
+
+ExpressionResult operator*(const scalar &f,const ExpressionResult &orig)
+{
+    if(orig.isObject()) {
+        FatalErrorIn("operator*(const scalar &f,const ExpressionResult &orig)")
+            << "Can only multiply Field-type ExpressionResult. Not if they're"
+                << orig.valType_
+                << endl
+                << exit(FatalError);
+    }
+    ExpressionResult result(orig);
+
+    if(result.valType_==pTraits<scalar>::typeName) {
+        (*static_cast<scalarField*>(result.valPtr_))*=f;
+    } else if(result.valType_==vector::typeName) {
+        (*static_cast<Field<vector>*>(result.valPtr_))*=f;
+    } else if(result.valType_==tensor::typeName) {
+        (*static_cast<Field<tensor>*>(result.valPtr_))*=f;
+    } else if(result.valType_==symmTensor::typeName) {
+        (*static_cast<Field<symmTensor>*>(result.valPtr_))*=f;
+    } else if(result.valType_==sphericalTensor::typeName) {
+        (*static_cast<Field<sphericalTensor>*>(result.valPtr_))*=f;
+        //    } else if(result.valType_==pTraits<bool>::typeName) {
+    } else {
+        FatalErrorIn("operator*(const scalar &f,const ExpressionResult &orig)")
+            << "Can not multiply Field-type ExpressionResult of type"
+                << result.valType_
+                << endl
+                << exit(FatalError);
+    }
+    return result;
+}
+
+ExpressionResult operator+(
+    const ExpressionResult &a,const ExpressionResult &b
+) {
+    if(a.valType_!=b.valType_) {
+        FatalErrorIn("operator+(const ExpressionResult &a,const ExpressionResult &b)")
+            << "Different types "
+                << a.valType_ << " and " << b.valType_
+                << endl
+                << exit(FatalError);
+    }
+    if(a.isObject()) {
+        FatalErrorIn("operator+(const ExpressionResult &a,const ExpressionResult &b)")
+            << "Can only multiply Field-type ExpressionResult. Not if they're"
+                << a.valType_
+                << endl
+                << exit(FatalError);
+    }
+    if(a.size()!=b.size()) {
+        FatalErrorIn("operator+(const ExpressionResult &a,const ExpressionResult &b)")
+            << "Different sizes "
+                << a.size() << " and " << b.size()
+                << endl
+                << exit(FatalError);
+    }
+
+    ExpressionResult result(a);
+
+    if(result.valType_==pTraits<scalar>::typeName) {
+        (*static_cast<scalarField*>(result.valPtr_))+=
+            (*static_cast<scalarField*>(b.valPtr_));
+    } else if(result.valType_==vector::typeName) {
+        (*static_cast<Field<vector>*>(result.valPtr_))+=
+            (*static_cast<Field<vector>*>(b.valPtr_));
+    } else if(result.valType_==tensor::typeName) {
+        (*static_cast<Field<tensor>*>(result.valPtr_))+=
+            (*static_cast<Field<tensor>*>(b.valPtr_));
+    } else if(result.valType_==symmTensor::typeName) {
+        (*static_cast<Field<symmTensor>*>(result.valPtr_))+=
+            (*static_cast<Field<symmTensor>*>(b.valPtr_));
+    } else if(result.valType_==sphericalTensor::typeName) {
+        (*static_cast<Field<sphericalTensor>*>(result.valPtr_))+=
+            (*static_cast<Field<sphericalTensor>*>(b.valPtr_));
+        //    } else if(result.valType_==pTraits<bool>::typeName) {
+    } else {
+        FatalErrorIn("operator+(const ExpressionResult &a,const ExpressionResult &b)")
+            << "Can not add Field-type ExpressionResult of type"
+                << result.valType_
+                << endl
+                << exit(FatalError);
+    }
+    return result;
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

@@ -136,7 +136,7 @@ void FieldValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 void FieldValueExpressionDriver::parseInternal(int startToken)
 {
     parserField::FieldValueExpressionParser parser (scanner_,*this,startToken,0);
-    parser.set_debug_level (trace_parsing_);
+    parser.set_debug_level (traceParsing());
     parser.parse ();
 }
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -41,7 +41,7 @@ License
 #include <cassert>
 
 namespace Foam {
- 
+
     template<class Type>
     Field<Type> *PatchValueExpressionDriver::getField(const string &name)
     {
@@ -53,9 +53,9 @@ namespace Foam {
             Field<Type> *vals=NULL;
             bool isPoint=false;
 
-            if(variables_.found(name)) {
-                isPoint=variables_[name].isPoint();
-                vals=variables_[name].getResult<Type>(true).ptr();
+            if(hasVariable(name)) {
+                isPoint=variable(name).isPoint();
+                vals=variable(name).getResult<Type>(true).ptr();
             } else if(isGlobal<Type>(name,false)) {
                 vals=const_cast<ExpressionResult &>(
                     lookupGlobal(name)
@@ -102,7 +102,7 @@ namespace Foam {
                 tmpVol.set(this->readAndRegister<localVolField>(name,mesh()).ptr());
             } else if(fType==localSurfaceField::typeName) {
                 tmpSurf.set(this->readAndRegister<localSurfaceField>(name,mesh()).ptr());
-            } 
+            }
             // TODO: this constructor doesn't work
             // else if(fType==localPointField::typeName) {
             //     tmpPoint.set(this->readAndRegister<localPointField>(name,mesh()).ptr());
@@ -178,7 +178,7 @@ namespace Foam {
                 tmpVol.set(this->readAndRegister<localVolField>(name,mesh()).ptr());
             } else if(fType==localSurfaceField::typeName) {
                 tmpSurf.set(this->readAndRegister<localSurfaceField>(name,mesh()).ptr());
-            } 
+            }
             // TODO: this constructor doesn't work
             // else if(fType==localPointField::typeName) {
             //     tmpPoint.set(this->readAndRegister<localPointField>(name,mesh()).ptr());
@@ -226,8 +226,8 @@ namespace Foam {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
         typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
 
-        if(variables_.found(name)) {
-            return variables_[name].getResult<Type>(true).ptr();
+        if(hasVariable(name)) {
+            return variable(name).getResult<Type>(true).ptr();
         }
 
         autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
@@ -270,8 +270,8 @@ namespace Foam {
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
 
-        if(variables_.found(name)) {
-            return variables_[name].getResult<Type>(true).ptr();
+        if(hasVariable(name)) {
+            return variable(name).getResult<Type>(true).ptr();
         }
 
         autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
@@ -329,7 +329,7 @@ namespace Foam {
                 << "No field of type " << pTraits<Type>::typeName
                     << "( " << pTraits<localVolField>::typeName << ")"
                     << " with the name " << name << " found or unsupported type for snGrad\n"
-                    << "Fields of type: " 
+                    << "Fields of type: "
                     << patch_.boundaryMesh().mesh().objectRegistry::names<localVolField>()
                     << "\nAll registered objects:"
                     << patch_.boundaryMesh().mesh().objectRegistry::names()
@@ -345,7 +345,7 @@ namespace Foam {
     Field<Type> *PatchValueExpressionDriver::toFace(const Field<Type> &pField)
     {
         primitivePatchInterpolation inter(patch_.patch());
-        
+
         tmp<Field<Type> > result=inter.pointToFaceInterpolate(pField);
 
         return result.ptr();
@@ -355,7 +355,7 @@ namespace Foam {
     Field<Type> *PatchValueExpressionDriver::toPoint(const Field<Type> &fField)
     {
         primitivePatchInterpolation inter(patch_.patch());
-        
+
         tmp<Field<Type> > result=inter.faceToPointInterpolate(fField);
 
         return result.ptr();
