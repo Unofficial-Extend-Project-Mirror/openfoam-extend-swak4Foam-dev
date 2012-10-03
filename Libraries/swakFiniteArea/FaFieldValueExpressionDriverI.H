@@ -27,7 +27,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
     typedef typename T::value_type Type;
 
     if(
-        variables_.found(name)
+        hasVariable(name)
         ||
         isGlobal<Type>(name,false)
     ) {
@@ -51,8 +51,8 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
         );
 
         Field<Type> vals;
-        if(variables_.found(name)) {
-            vals=variables_[name].getResult<Type>(true);
+        if(hasVariable(name)) {
+            vals=variable(name).getResult<Type>(true);
         } else {
             vals=const_cast<ExpressionResult &>(
                 lookupGlobal(name)
@@ -499,7 +499,7 @@ void FaFieldValueExpressionDriver::setResult(T *r,bool isSurfaceField)
 
     typ_=pTraits<T>::typeName;
 
-    result_.setResult(result.internalField());
+    this->result().setResult(result.internalField());
 
     isLogical_=false;
     isSurfaceField_=isSurfaceField;
@@ -525,7 +525,7 @@ void FaFieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField)
         yesOrNo[i]=mag(result.internalField()[i])>SMALL;
     }
 
-    result_.setResult(yesOrNo);
+    this->result().setResult(yesOrNo);
 
     isLogical_=true;
     isSurfaceField_=isSurfaceField;

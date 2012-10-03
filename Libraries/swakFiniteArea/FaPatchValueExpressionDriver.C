@@ -154,7 +154,7 @@ void FaPatchValueExpressionDriver::parseInternal (int startToken)
         startToken,
         0
     );
-    parser.set_debug_level (trace_parsing_);
+    parser.set_debug_level (traceParsing());
     parser.parse ();
 }
 
