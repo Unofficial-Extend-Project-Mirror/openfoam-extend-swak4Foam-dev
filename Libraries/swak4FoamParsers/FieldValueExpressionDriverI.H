@@ -636,7 +636,7 @@ void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField,bool isPoint
 
     typ_=pTraits<T>::typeName;
 
-    result_.setResult(result.internalField());
+    this->result().setResult(result.internalField());
 
     isLogical_=false;
     isSurfaceField_=isSurfaceField;
@@ -663,7 +663,7 @@ void FieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField,bool 
         yesOrNo[i]=mag(result.internalField()[i])>SMALL;
     }
 
-    result_.setResult(yesOrNo);
+    this->result().setResult(yesOrNo);
 
     isLogical_=true;
     isSurfaceField_=isSurfaceField;

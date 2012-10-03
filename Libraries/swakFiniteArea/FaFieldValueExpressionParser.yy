@@ -95,7 +95,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 ) {
     if(debug || traceParsing()) {
         Info << "Excuting plugin-function " << name << " ( returning type "
-            << pTraits<T>::typeName << ") on " << this->content_ << " position "
+            << pTraits<T>::typeName << ") on " << this->content() << " position "
             << loc.end.column-1 << endl;
     }
 
@@ -110,7 +110,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 
     autoPtr<T> result(
         theFunction->evaluate<T>(
-            this->content_.substr(
+            this->content().substr(
                 loc.end.column-1
             ),
             scanned

@@ -87,6 +87,26 @@ class ExpressionResult
     template<class Type>
     ExpressionResult getUniformInternal(const label size,bool noWarn) const;
 
+    template<class Type>
+    inline void setResultInternal(Field<Type> *,bool isPoint=false);
+
+    template<class Type>
+    inline void setResultInternal(const Field<Type> &,bool isPoint=false);
+
+    template<class Type>
+    inline void setResultInternal(Type val,label size);
+
+    template<class Type>
+    inline void setSingleValueInternal(Type val);
+
+    template <typename T>
+    inline void setObjectResultInternal(autoPtr<T> o);
+
+protected:
+
+    //- ugly workaround for templated methods not being virtual
+    inline virtual ExpressionResult &toBeSet();
+
 public:
     //- Runtime type information
     TypeName("ExpressionResult");
@@ -122,7 +142,10 @@ public:
     //- the enable_if_rank0-business avoids that the template is used for (for instance)
     //- GeometricField
     template<class Type>
-    ExpressionResult(const Type  &f,typename enable_if_rank0<pTraits<Type>::rank>::type* dummy=0);
+    ExpressionResult(
+        const Type  &f,
+        typename enable_if_rank0<pTraits<Type>::rank>::type* dummy=0
+    );
 
     // Destructor
 
@@ -168,7 +191,19 @@ public:
 
     bool hasValue() const;
 
+    inline bool isObject() const;
+
+    label size() const;
+
     friend Ostream & operator<<(Ostream &,const ExpressionResult &);
+
+    friend Istream & operator>>(Istream &,ExpressionResult &);
+
+    friend ExpressionResult operator*(const scalar &,const ExpressionResult &);
+
+    friend ExpressionResult operator+(
+        const ExpressionResult &,const ExpressionResult &
+    );
 };
 
 

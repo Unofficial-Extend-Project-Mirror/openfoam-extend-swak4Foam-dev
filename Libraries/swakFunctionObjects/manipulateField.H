@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -27,7 +27,7 @@ Class
     manipulateField
 
 Description
-    Function object that generates a field
+    Function object that manipulates a field
 
 SourceFiles
     manipulateField.C
@@ -57,7 +57,7 @@ class manipulateField
 {
     //- Disallow default bitwise copy construct
     manipulateField(const manipulateField&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const manipulateField&);
 
@@ -106,7 +106,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     manipulateField
@@ -132,20 +132,20 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
     virtual void movePoints(const pointField&)
         {}

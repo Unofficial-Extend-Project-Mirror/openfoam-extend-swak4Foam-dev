@@ -1,0 +1,7 @@
+flows {
+      type dynamic;
+      expr "Expression flows on (.+):  sum=(%f%)";
+      theTitle "Flows";
+      idNr 1;
+      titles (flow);
+}
