@@ -1,16 +1,17 @@
-printSwakVersion.C
+helpers/printSwakVersion.C
 
-SurfacesRepository.C
-SetsRepository.C
-GlobalVariablesRepository.C
+repositories/SurfacesRepository.C
+repositories/SetsRepository.C
+repositories/GlobalVariablesRepository.C
 
 ExpressionDriverWriter.C
 
-ExpressionResult.C
-StoredExpressionResult.C
+ExpressionResult/ExpressionResult.C
+ExpressionResult/StoredExpressionResult.C
+ExpressionResult/DelayedExpressionResult.C
 
-swakRegistryProxySurface.C
-swakRegistryProxySet.C
+setsAndSurfaces/swakRegistryProxySurface.C
+setsAndSurfaces/swakRegistryProxySet.C
 
 FieldValueExpressionParser.yy
 PatchValueExpressionParser.yy

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,11 +28,11 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 namespace Foam {
- 
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,7 +70,10 @@ namespace Foam {
     }
 
     template<class Type>
-    ExpressionResult::ExpressionResult(const Type  &f,typename enable_if_rank0<pTraits<Type>::rank>::type* dummy)
+    ExpressionResult::ExpressionResult(
+        const Type  &f,
+        typename enable_if_rank0<pTraits<Type>::rank>::type* dummy
+    )
         :
         valType_("None"),
         valPtr_(NULL),
@@ -80,9 +83,21 @@ namespace Foam {
         setSingleValue(f);
     }
 
+    ExpressionResult &ExpressionResult::toBeSet()
+    {
+        return *this;
+    }
+
     template<class Type>
     void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)
     {
+        toBeSet().setResultInternal(val,isPoint);
+    }
+
+    template<class Type>
+    void ExpressionResult::setResultInternal(
+        const Field<Type> &val,bool isPoint
+    ) {
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -94,6 +109,12 @@ namespace Foam {
 
     template <class T>
     void ExpressionResult::setObjectResult(autoPtr<T> o)
+    {
+        toBeSet().setObjectResultInternal(o);
+    }
+
+    template <class T>
+    void ExpressionResult::setObjectResultInternal(autoPtr<T> o)
     {
         //        valType_=pTraits<T>::typeName;
         valType_=o().typeName;
@@ -107,6 +128,12 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResult(Field<Type> *val,bool isPoint)
     {
+        toBeSet().setResultInternal(val,isPoint);
+    }
+
+    template<class Type>
+    void ExpressionResult::setResultInternal(Field<Type> *val,bool isPoint)
+    {
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -119,6 +146,12 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResult(Type val,label size)
     {
+        toBeSet().setResultInternal(val,size);
+    }
+
+    template<class Type>
+    void ExpressionResult::setResultInternal(Type val,label size)
+    {
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -130,6 +163,12 @@ namespace Foam {
 
     template<class Type>
     void ExpressionResult::setSingleValue(Type val)
+    {
+        toBeSet().setSingleValueInternal(val);
+    }
+
+    template<class Type>
+    void ExpressionResult::setSingleValueInternal(Type val)
     {
         clearResult();
 
@@ -145,14 +184,14 @@ namespace Foam {
     {
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Field<Type> > ExpressionResult::getResult()")
-                << "The expected return type " << pTraits<Type>::typeName 
+                << "The expected return type " << pTraits<Type>::typeName
                     << " is different from the stored result type "
                     << valType_ << "\n" << endl
                     << exit(FatalError);
         }
 
         tmp<Field<Type> > result;
-        
+
         result=tmp<Field<Type> > (
             static_cast<Field<Type>*>(valPtr_)
         );
@@ -176,7 +215,7 @@ namespace Foam {
 
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Type> ExpressionResult::getObjectResult()")
-                << "The expected return type " << pTraits<Type>::typeName 
+                << "The expected return type " << pTraits<Type>::typeName
                     << " is different from the stored result type "
                     << valType_ << "\n" << endl
                     << exit(FatalError);
@@ -213,7 +252,10 @@ namespace Foam {
     }
 
     template<class Type>
-    ExpressionResult ExpressionResult::getUniformInternal(const label size,bool noWarn) const
+    ExpressionResult ExpressionResult::getUniformInternal(
+        const label size,
+        bool noWarn
+    ) const
     {
         ExpressionResult result;
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
@@ -224,7 +266,7 @@ namespace Foam {
             Type maxVal=gMax(vals);
             if(mag(minVal-maxVal)>SMALL) {
                 WarningIn("ExpressionResult::getUniformInternal(const label size,bool noWarn)")
-                    << "The minimum value " << minVal << " and the maximum " 
+                    << "The minimum value " << minVal << " and the maximum "
                         << maxVal << " differ. I will use the average " << avg
                         << endl;
             }
@@ -238,7 +280,7 @@ namespace Foam {
     {
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("ExpressionResult::getReduced(BinOp<Type> op,Type initial)")
-                << "The expected return type " << pTraits<Type>::typeName 
+                << "The expected return type " << pTraits<Type>::typeName
                     << " is different from the stored result type "
                     << valType_ << "\n" << endl
                     << exit(FatalError);
@@ -268,6 +310,11 @@ namespace Foam {
     inline bool ExpressionResult::isSingleValue() const
     {
         return isSingleValue_;
+    }
+
+    inline bool ExpressionResult::isObject() const
+    {
+        return generalContent_.valid();
     }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

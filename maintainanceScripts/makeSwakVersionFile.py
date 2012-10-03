@@ -33,6 +33,7 @@ versionH=path.join(path.dirname(sys.argv[0]),
                    "..",
                    "Libraries",
                    "swak4FoamParsers",
+                   "include",
                    "swakVersion.H")
 
 oldContent=open(versionH).read()

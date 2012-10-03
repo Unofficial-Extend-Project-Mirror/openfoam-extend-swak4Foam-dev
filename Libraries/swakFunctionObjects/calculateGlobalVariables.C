@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -76,11 +76,16 @@ void Foam::calculateGlobalVariables::executeAndWriteToGlobal()
         GlobalVariablesRepository::getGlobalVariables().addValue(
             name,
             toGlobalNamespace_,
-            driver_->variables()[name]
+            const_cast<const CommonValueExpressionDriver&>(
+                driver_()
+            ).variable(name)
         );
 
         if(debug) {
-            Info << "Has value " << driver_->variables()[name] << endl;
+            Info << "Has value "
+                << const_cast<const CommonValueExpressionDriver&>(
+                    driver_()
+                ).variable(name) << endl;
         }
     }
 }

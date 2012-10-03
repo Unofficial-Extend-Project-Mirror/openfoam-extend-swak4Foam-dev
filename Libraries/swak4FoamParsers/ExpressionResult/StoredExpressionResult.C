@@ -39,6 +39,9 @@ License
 
 namespace Foam {
 
+defineTypeNameAndDebug(StoredExpressionResult,0);
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 StoredExpressionResult::StoredExpressionResult()
@@ -49,7 +52,9 @@ StoredExpressionResult::StoredExpressionResult()
 {
 }
 
-StoredExpressionResult::StoredExpressionResult(const StoredExpressionResult &rhs)
+StoredExpressionResult::StoredExpressionResult(
+    const StoredExpressionResult &rhs
+)
 :
     ExpressionResult(rhs),
     name_(rhs.name_),
