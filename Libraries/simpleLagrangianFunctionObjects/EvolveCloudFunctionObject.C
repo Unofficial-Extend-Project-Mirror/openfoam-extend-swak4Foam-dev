@@ -73,6 +73,7 @@ EvolveCloudFunctionObject<CloudType>::EvolveCloudFunctionObject
         const fvMesh &mesh=dynamicCast<const fvMesh &>(obr_);
 
         #include "readGravitationalAcceleration.H"
+        g_.dimensions().reset(g.dimensions());
         g_=g;
     }
 }
