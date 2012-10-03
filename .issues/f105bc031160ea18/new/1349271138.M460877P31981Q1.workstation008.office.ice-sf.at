@@ -1,0 +1,13 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 03 Oct 2012 15:26:31 +0200
+State: new
+Subject: Native paraview reader has problems with some constructs
+Message-Id: <f105bc031160ea18-0-artemis@workstation008.office.ice-sf.at>
+
+Reader currently can't read field files written with DelayedVariables. The problem seem to be the (time value)-tuples in the stored variables.
+
+Not sure but it is possible that this problem only occurs for vectorFields (it can be reproduce with U in the delayed-t-junction)
+
+Possible solutions:
+- change the format of the tuples to dictionaries. Don't want to because it would break the elegance of the code
+- Submit a bug-report to Paraview/VTK
