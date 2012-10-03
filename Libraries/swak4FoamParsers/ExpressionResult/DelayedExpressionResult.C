@@ -52,7 +52,7 @@ DelayedExpressionResult::DelayedExpressionResult()
     name_("None"),
     startupValueExpression_(""),
     settingResult_(),
-    storeIntervall_(1),
+    storeInterval_(1),
     delay_(10)
 {
 }
@@ -66,7 +66,7 @@ DelayedExpressionResult::DelayedExpressionResult(
     startupValueExpression_(rhs.startupValueExpression_),
     settingResult_(rhs.settingResult_),
     storedValues_(rhs.storedValues_),
-    storeIntervall_(rhs.storeIntervall_),
+    storeInterval_(rhs.storeInterval_),
     delay_(rhs.delay_)
 {
 }
@@ -76,7 +76,7 @@ DelayedExpressionResult::DelayedExpressionResult(const dictionary &dict)
     ExpressionResult(dict.subOrEmptyDict("value")),
     name_(dict.lookup("name")),
     startupValueExpression_(dict.lookup("startupValue")),
-    storeIntervall_(readScalar(dict.lookup("storeIntervall"))),
+    storeInterval_(readScalar(dict.lookup("storeInterval"))),
     delay_(readScalar(dict.lookup("delay")))
 {
     if(dict.found("storedValues")) {
@@ -114,7 +114,7 @@ void DelayedExpressionResult::operator=(const DelayedExpressionResult& rhs)
     startupValueExpression_=rhs.startupValueExpression_;
     settingResult_=rhs.settingResult_;
     storedValues_=rhs.storedValues_;
-    storeIntervall_=rhs.storeIntervall_;
+    storeInterval_=rhs.storeInterval_;
     delay_=rhs.delay_;
 }
 
@@ -157,9 +157,9 @@ bool DelayedExpressionResult::updateReadValue(const scalar &time)
         FatalErrorIn("DelayedExpressionResult::updateReadValue(const scalar &time)")
             << "Only one stored value yet at time " << time
                 << " for delayedVariable " << name() << endl
-                << "Check the values for the intervall " << storeIntervall_
+                << "Check the values for the interval " << storeInterval_
                 << " and delay " << delay_ << endl
-                << "Probably the intervall is to big"
+                << "Probably the interval is to big"
                 << endl
                 << exit(FatalError);
 
@@ -237,9 +237,9 @@ void DelayedExpressionResult::storeValue(const scalar &time)
             if(debug) {
                 Pout << " Almost same - replacing" << endl;
             }
-        } else if((time-lastTime)>=0.999*storeIntervall_) {
+        } else if((time-lastTime)>=0.999*storeInterval_) {
             if(debug) {
-                Pout << " Intervall " << storeIntervall_
+                Pout << " Interval " << storeInterval_
                     << "passed - appending"<< endl;
             }
             append=true;
@@ -304,8 +304,8 @@ Ostream & operator<<(Ostream &out,const DelayedExpressionResult &data)
     out.writeKeyword("storedValues");
     out << data.storedValues_ << token::END_STATEMENT << nl;
 
-    out.writeKeyword("storeIntervall");
-    out << data.storeIntervall_ << token::END_STATEMENT << nl;
+    out.writeKeyword("storeInterval");
+    out << data.storeInterval_ << token::END_STATEMENT << nl;
 
     out.writeKeyword("delay");
     out << data.delay_ << token::END_STATEMENT << nl;

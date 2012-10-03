@@ -35,7 +35,7 @@ boundaryField
             {
                 name uniformOldVar1;
                 startupValue "0";
-                storeIntervall 0.1;
+                storeInterval 0.1;
                 delay 2;
             }
         );
@@ -52,7 +52,7 @@ boundaryField
             {
                 name oldVar1;
                 startupValue "0";
-                storeIntervall 0.1;
+                storeInterval 0.1;
                 delay 1.5;
             }
         );

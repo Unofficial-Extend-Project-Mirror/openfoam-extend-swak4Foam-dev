@@ -75,7 +75,7 @@ class DelayedExpressionResult
     DLList<ValueAtTime> storedValues_;
 
     //- how often should the values be stored
-    scalar storeIntervall_;
+    scalar storeInterval_;
 
     //- how big is the delay
     scalar delay_;
