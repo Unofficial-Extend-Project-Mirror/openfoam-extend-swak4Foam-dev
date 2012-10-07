@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCFvPatchField.H"
@@ -57,6 +57,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 
     this->refValue() = pTraits<Type>::zero;
     this->refGrad() = pTraits<Type>::zero;
+    this->valueFraction() = 1;
 }
 
 
@@ -224,7 +225,7 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
     this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
     this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_);
-    
+
     mixedFvPatchField<Type>::updateCoeffs();
 }
 
