@@ -289,9 +289,11 @@ functions
 
         fieldName tracer;
 
-        expression "tracer*alpha1";
+        // expression "tracer*alpha1";
+        // mask "true";
 
-        mask "true";
+        expression "0";
+        mask "alpha1<0.01";
     }
 );
 
