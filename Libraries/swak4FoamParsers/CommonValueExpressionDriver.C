@@ -1173,10 +1173,17 @@ const ExpressionResult &CommonValueExpressionDriver::lookupGlobal(
     const word &name
 ) const
 {
-    return GlobalVariablesRepository::getGlobalVariables().get(
-        name,
-        globalVariableScopes_
+    const ExpressionResult &result(
+        GlobalVariablesRepository::getGlobalVariables().get(
+            name,
+            globalVariableScopes_
+        )
     );
+
+    // Pout << name << " Size: " << result.size()
+    //     << " Single: " << result.isSingleValue() << endl;
+
+    return result;
 }
 
 void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)

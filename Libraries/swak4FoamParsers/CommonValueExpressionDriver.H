@@ -451,7 +451,11 @@ public:
     scalar getLineValue(const string &name,scalar t);
 
     //- read some interpolation tables
-    void readTables(Istream &is,HashTable<interpolationTable<scalar> > &,bool clear=true);
+    void readTables(
+        Istream &is,
+        HashTable<interpolationTable<scalar> > &,
+        bool clear=true
+    );
 
     //- read all the interpolation tables known to man
     void readTables(const dictionary &);
@@ -460,7 +464,10 @@ public:
     virtual void readVariablesAndTables(const dictionary &);
 
     //- write some interpolation tables
-    void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
+    void writeTables(
+        Ostream &os,
+        const HashTable<interpolationTable<scalar> > &
+    ) const;
 
     //- is this a lookup table
     inline bool isLookup(const string &name) const;
@@ -484,8 +491,10 @@ public:
                                     scalarField *,scalarField *,scalarField *,
                                     scalarField *,scalarField *,scalarField *);
 
-    symmTensorField *composeSymmTensorField(scalarField *,scalarField *,scalarField *,
-                                            scalarField *,scalarField *,scalarField *);
+    symmTensorField *composeSymmTensorField(
+        scalarField *,scalarField *,scalarField *,
+        scalarField *,scalarField *,scalarField *
+    );
 
     sphericalTensorField *composeSphericalTensorField(scalarField *);
 

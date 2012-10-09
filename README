@@ -1216,6 +1216,10 @@ S_{expl} + S_{impl} T
 **** =groovyBC= makes =interFoam=-runs fail unpredictably
      Reason was an uninitialized =falueFraction= which sometimes has
      values that cause a floating point exception. Fixed
+**** Global variables of different sizes break parallel runs
+     Because =size()= was equal to the expected size on some
+     processors. Not on all. Now the branch is taken if the size is
+     equal on *all* processors
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and

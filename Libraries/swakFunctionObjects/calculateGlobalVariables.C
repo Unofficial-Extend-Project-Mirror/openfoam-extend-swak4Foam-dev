@@ -82,7 +82,7 @@ void Foam::calculateGlobalVariables::executeAndWriteToGlobal()
         );
 
         if(debug) {
-            Info << "Has value "
+            Pout << "Has value "
                 << const_cast<const CommonValueExpressionDriver&>(
                     driver_()
                 ).variable(name) << endl;
