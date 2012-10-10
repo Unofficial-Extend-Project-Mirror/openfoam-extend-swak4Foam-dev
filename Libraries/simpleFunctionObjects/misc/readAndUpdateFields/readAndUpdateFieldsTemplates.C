@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -39,6 +39,13 @@ void Foam::readAndUpdateFields::correctBoundaryConditions(
     forAll(flst,i)
     {
 	flst[i].correctBoundaryConditions();
+        if(
+            this->obr_.time().outputTime()
+            &&
+            flst[i].writeOpt()==IOobject::AUTO_WRITE
+        ) {
+            flst[i].write();
+        }
     }
 }
 
@@ -128,9 +135,9 @@ bool Foam::readAndUpdateFields::loadField
         )
         {
             WarningIn("Foam::readAndUpdateFields::loadField")
-                << "Field " << fieldName << " is a " 
-                    << sfType::typeName 
-                    << " and surface-fields don't support correctBoundaryConditions" 
+                << "Field " << fieldName << " is a "
+                    << sfType::typeName
+                    << " and surface-fields don't support correctBoundaryConditions"
                     << endl << "-> Not read"
                     << endl;
 
