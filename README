@@ -1220,6 +1220,9 @@ S_{expl} + S_{impl} T
      Because =size()= was equal to the expected size on some
      processors. Not on all. Now the branch is taken if the size is
      equal on *all* processors
+**** Fields treated with =readAndUpdateFields= were written one timestep too late
+     Fields were not written after the boundary condition was
+     updated. Now they are
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
