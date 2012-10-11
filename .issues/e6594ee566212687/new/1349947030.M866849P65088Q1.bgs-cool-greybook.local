@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 11 Oct 2012 10:48:58 +0200
+State: new
+Subject: Function object to transform sets into Clouds for postprocessing
+Message-Id: <e6594ee566212687-0-artemis@bgs-cool-greybook.local>
+
+In =simpleFunctionObjets=. Takes a set and writes the location and
+values as a cloud at write times to make postprocessing in paraview easier
