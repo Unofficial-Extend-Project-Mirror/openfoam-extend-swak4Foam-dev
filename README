@@ -1475,6 +1475,11 @@ S_{expl} + S_{impl} T
 
      This feature allows the modeling of boundary conditions that
      react with a delay to flow conditions
+**** Allow preloading of fields in =funkySetFields=
+     To satisfy the requirements of certain boundary conditions
+     =funkySetFields= now allows the preloading of fields. This is
+     only available in dictionary mode with the =preloadFields=-entry
+     (for each entry in the =expressions=-list separately)
 *** Infrastructure
 **** Compilation script checks =SWAK4FOAM_SRC=
      The environment variable =SWAK4FOAM_SRC= is needed for the
