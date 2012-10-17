@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,13 +28,13 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "GlobalVariablesRepository.H"
 
 namespace Foam {
- 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(GlobalVariablesRepository, 0);
@@ -59,7 +59,7 @@ GlobalVariablesRepository::~GlobalVariablesRepository()
 GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
 {
     GlobalVariablesRepository*  ptr=repositoryInstance;
-    
+
     if(debug) {
         Pout << "GlobalVariablesRepository: asking for Singleton" << endl;
     }
@@ -69,14 +69,14 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
 
         ptr=new GlobalVariablesRepository();
     }
-    
+
     repositoryInstance=ptr;
 
     return *repositoryInstance;
 }
 
 
-GlobalVariablesRepository::ResultTable &GlobalVariablesRepository::getNamespace(const word &name) 
+GlobalVariablesRepository::ResultTable &GlobalVariablesRepository::getNamespace(const word &name)
 {
     return globalVariables_[name];
 }
@@ -91,7 +91,7 @@ const ExpressionResult &GlobalVariablesRepository::get(
 
         if(!globalVariables_.found(scopeName)) {
             WarningIn("GlobalVariablesRepository::get")
-                << "There is no scope " << scopeName 
+                << "There is no scope " << scopeName
                     << " in the list of global scopes "
                     << globalVariables_.toc()
                     << " when looking for " << name << endl;
@@ -136,6 +136,10 @@ void GlobalVariablesRepository::addValue(
     const ExpressionResult &value
 )
 {
+    if(debug) {
+        Pout << "Adding " << name << " to global scope "
+            << scope << " Size: " << value.size() << endl;
+    }
     if(!globalVariables_.found(scope)) {
         if(debug) {
             Pout << "Creating global scope " << scope << endl;

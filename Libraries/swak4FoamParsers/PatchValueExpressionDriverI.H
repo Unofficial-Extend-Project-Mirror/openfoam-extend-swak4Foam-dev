@@ -60,24 +60,32 @@ namespace Foam {
                 vals=const_cast<ExpressionResult &>(
                     lookupGlobal(name)
                 ).getResult<Type>(true).ptr();
+                //                Pout << name << " " << vals->size() << endl;
             }
             if(vals) {
+                bool qSize=vals->size()==this->size();
+                bool qPSize=vals->size()==this->pointSize();
+                reduce(qSize,andOp<bool>());
+                reduce(qPSize,andOp<bool>());
+
                 if(
                     (
                         ! isPoint
                         &&
-                        vals->size()==this->size()
+                        qSize
                     )
                     ||
                     (
                         isPoint
                         &&
-                        vals->size()==this->pointSize()
+                        qPSize
                     )
                 ) {
                     return vals;
                 } else {
-                    Field<Type> *result=new Field<Type>(this->size(),gAverage(*vals));
+                    Field<Type> *result=new Field<Type>(
+                        this->size(),gAverage(*vals)
+                    );
                     delete vals;
                     return result;
                 }

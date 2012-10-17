@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 04 Oct 2012 11:08:14 +0200
+State: new
+Subject: Allow =bool= as a global variable
+Message-Id: <c4bc239c31f7872e-0-artemis@bgs-cool-greybook.local>
+
+Currently switches have to be implemented by scalars

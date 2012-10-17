@@ -1213,6 +1213,16 @@ S_{expl} + S_{impl} T
      the last timestep.
 
      Fixed with an one-liner
+**** =groovyBC= makes =interFoam=-runs fail unpredictably
+     Reason was an uninitialized =falueFraction= which sometimes has
+     values that cause a floating point exception. Fixed
+**** Global variables of different sizes break parallel runs
+     Because =size()= was equal to the expected size on some
+     processors. Not on all. Now the branch is taken if the size is
+     equal on *all* processors
+**** Fields treated with =readAndUpdateFields= were written one timestep too late
+     Fields were not written after the boundary condition was
+     updated. Now they are
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
@@ -1380,6 +1390,11 @@ S_{expl} + S_{impl} T
 
      This feature allows the modeling of boundary conditions that
      react with a delay to flow conditions
+**** Allow preloading of fields in =funkySetFields=
+     To satisfy the requirements of certain boundary conditions
+     =funkySetFields= now allows the preloading of fields. This is
+     only available in dictionary mode with the =preloadFields=-entry
+     (for each entry in the =expressions=-list separately)
 *** Infrastructure
 **** =Allwmake= creates symbolic links in =swakFiniteArea=
      The links to =mybison= and =myflex= are missing when the sources

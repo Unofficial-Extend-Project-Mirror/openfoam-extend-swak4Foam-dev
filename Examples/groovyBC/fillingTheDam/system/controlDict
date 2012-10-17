@@ -52,7 +52,7 @@ maxAlphaCo      0.5;
 
 maxDeltaT       1;
 
-functions 
+functions
 (
     defineFillDam {
         type addGlobalVariable;
@@ -249,7 +249,7 @@ functions
         expression "pos()";
         //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
     }
-    rightDump 
+    rightDump
     {
         type  dumpSwakExpression;
         valueType patch;
@@ -257,6 +257,44 @@ functions
         expression "alpha1";
     }
         */
+    tracer {
+        // result doubtful
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName tracer;
+        steady false;
+
+        rho "1" [0 0 0 0 0 0 0];
+
+        diffusion "1e-6" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 0 0 0 0];
+
+        phi "phi" [0 3 -1 0 0];
+        // rho "rho" [1 -3 0 0 0 0 0];
+
+        // diffusion "1e-4" [1 -1 -1 0 0 0 0];
+        // source "0" [1 -3 -1 0 0 0 0];
+
+        // phi "phi*interpolate(rho)" [1 0 -1 0 0];
+    }
+    fixTracer {
+        type manipulateField;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        fieldName tracer;
+
+        // expression "tracer*alpha1";
+        // mask "true";
+
+        expression "0";
+        mask "alpha1<0.01";
+    }
 );
 
 libs (

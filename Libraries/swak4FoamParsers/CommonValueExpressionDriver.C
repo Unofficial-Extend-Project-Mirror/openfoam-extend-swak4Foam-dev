@@ -738,7 +738,9 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
                 Pout << "Value " << iter() << endl;
             }
         } else {
-            Pout << iter().name() << " updated without problem" << endl;
+            if(debug) {
+                Pout << iter().name() << " updated without problem" << endl;
+            }
         }
     }
 }
@@ -1173,10 +1175,17 @@ const ExpressionResult &CommonValueExpressionDriver::lookupGlobal(
     const word &name
 ) const
 {
-    return GlobalVariablesRepository::getGlobalVariables().get(
-        name,
-        globalVariableScopes_
+    const ExpressionResult &result(
+        GlobalVariablesRepository::getGlobalVariables().get(
+            name,
+            globalVariableScopes_
+        )
     );
+
+    // Pout << name << " Size: " << result.size()
+    //     << " Single: " << result.isSingleValue() << endl;
+
+    return result;
 }
 
 void CommonValueExpressionDriver::setGlobalScopes(const wordList &other)
