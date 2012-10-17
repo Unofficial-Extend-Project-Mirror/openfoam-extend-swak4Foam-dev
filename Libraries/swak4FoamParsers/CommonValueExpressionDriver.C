@@ -788,7 +788,9 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
                 Pout << "Value " << iter() << endl;
             }
         } else {
-            Pout << iter().name() << " updated without problem" << endl;
+            if(debug) {
+                Pout << iter().name() << " updated without problem" << endl;
+            }
         }
     }
 }

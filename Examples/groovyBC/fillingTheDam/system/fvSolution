@@ -57,6 +57,14 @@ solvers
         tolerance       1e-06;
         relTol          0;
     }
+
+    tracer
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-06;
+        relTol          0;
+    }
 }
 
 PIMPLE
@@ -69,5 +77,8 @@ PIMPLE
     cAlpha          1;
 }
 
+tracerTransportPDE
+{
+}
 
 // ************************************************************************* //
