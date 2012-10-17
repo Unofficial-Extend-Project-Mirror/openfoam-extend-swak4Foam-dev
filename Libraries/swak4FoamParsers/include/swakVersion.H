@@ -3,4 +3,4 @@
 #define SWAK_VERSION_MAJOR 0
 #define SWAK_VERSION_MINOR 2
 #define SWAK_VERSION_PATCH 1
-#define SWAK_RELEASE_DATE "Next release"
+#define SWAK_RELEASE_DATE "2012-10-18"

@@ -1078,7 +1078,7 @@ S_{expl} + S_{impl} T
      track
 
      Fix provided by Martin Beaudoin
-** Next release - version number : 0.2.1
+** 2012-10-18 - version number : 0.2.1
 *** Requirements
 **** =flex 2.5.35=
      This version is needed for the reentrant parsers. =2.5.33= *may*
