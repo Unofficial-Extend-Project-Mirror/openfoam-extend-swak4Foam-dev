@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-#+TITLE: =README= for =swak4Foam=
+#+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 1.x
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
@@ -1214,7 +1214,7 @@ S_{expl} + S_{impl} T
 
      Fixed with an one-liner
 **** =groovyBC= makes =interFoam=-runs fail unpredictably
-     Reason was an uninitialized =falueFraction= which sometimes has
+     Reason was an uninitialized =valueFraction= which sometimes has
      values that cause a floating point exception. Fixed
 **** Global variables of different sizes break parallel runs
      Because =size()= was equal to the expected size on some
@@ -1405,3 +1405,4 @@ S_{expl} + S_{impl} T
      them more readable and maintainable
 **** Move non-parser sources in =swak4FoamParsers= into sub-directories
      Make the directory a little bit cleaner
+** Next release - version number : 0.2.2
