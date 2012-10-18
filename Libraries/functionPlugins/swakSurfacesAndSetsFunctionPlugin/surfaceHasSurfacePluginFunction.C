@@ -83,7 +83,9 @@ void surfaceHasSurfacePluginFunction::doEvaluation()
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pHasSurface()[cellI]=1;
+        if(cellI>=0) {
+            pHasSurface()[cellI]=1;
+        }
     }
 
     pHasSurface->correctBoundaryConditions();

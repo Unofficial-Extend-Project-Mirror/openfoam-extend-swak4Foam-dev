@@ -104,8 +104,10 @@ void surfaceValueAveragePluginFunction<Type>::doEvaluation()
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pValueAverage()[cellI]+=area[i]*vals[i];
-        areaSum[cellI]+=area[i];
+        if(cellI>=0) {
+            pValueAverage()[cellI]+=area[i]*vals[i];
+            areaSum[cellI]+=area[i];
+        }
     }
 
     forAll(areaSum,cellI) {
