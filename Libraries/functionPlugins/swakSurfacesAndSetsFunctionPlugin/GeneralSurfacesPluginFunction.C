@@ -97,6 +97,8 @@ const labelList &GeneralSurfacesPluginFunction::meshCells()
 
     label seedCell=-1;
 
+    label wrongCellNr=0;
+
     forAll(fc, triI)
     {
         seedCell=meshSearcher.findCell(
@@ -105,8 +107,18 @@ const labelList &GeneralSurfacesPluginFunction::meshCells()
             true
         );
         meshCells_()[triI]=seedCell;
+        if(meshCells_()[triI]<0) {
+            wrongCellNr++;
+        }
     }
 
+    reduce(wrongCellNr,plusOp<label>());
+    if(wrongCellNr>0) {
+        WarningIn("GeneralSurfacesPluginFunction::meshCells()")
+            << "No cell found for " << wrongCellNr << " faces"
+                << endl;
+
+    }
     return meshCells_();
 }
 

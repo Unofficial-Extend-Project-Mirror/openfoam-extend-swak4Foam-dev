@@ -103,14 +103,16 @@ void surfaceValueMinimumPluginFunction<Type>::doEvaluation()
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        if(here[cellI]) {
-            pValueMinimum()[cellI]=min(
-                vals[i],
-                pValueMinimum()[cellI]
-            );
-        } else {
-            here[cellI]=true;
-            pValueMinimum()[cellI]=vals[i];
+        if(cellI>=0) {
+            if(here[cellI]) {
+                pValueMinimum()[cellI]=min(
+                    vals[i],
+                    pValueMinimum()[cellI]
+                );
+            } else {
+                here[cellI]=true;
+                pValueMinimum()[cellI]=vals[i];
+            }
         }
     }
 

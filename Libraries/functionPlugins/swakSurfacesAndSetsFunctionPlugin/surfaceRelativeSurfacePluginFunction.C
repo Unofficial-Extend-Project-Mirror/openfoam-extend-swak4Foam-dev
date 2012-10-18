@@ -85,7 +85,9 @@ void surfaceRelativeSurfacePluginFunction::doEvaluation()
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pRelativeSurface()[cellI]+=area[i]/vol[cellI];
+        if(cellI>=0) {
+            pRelativeSurface()[cellI]+=area[i]/vol[cellI];
+        }
     }
 
     pRelativeSurface->correctBoundaryConditions();
