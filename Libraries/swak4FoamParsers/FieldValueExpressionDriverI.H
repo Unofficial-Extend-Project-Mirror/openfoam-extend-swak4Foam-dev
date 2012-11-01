@@ -10,8 +10,17 @@
 #include "zeroGradientFvPatchFields.H"
 #include "calculatedFvPatchFields.H"
 #include "calculatedFvsPatchFields.H"
-#include "mappedWallFvPatch.H"
+
+#include "foamVersion4swak.H"
+#if (FOAM_VERSION4SWAK_MAJOR>=2) && (FOAM_VERSION4SWAK_MINOR>0)
 #include "mappedFvPatch.H"
+#include "mappedWallFvPatch.H"
+#else
+#include "directMappedFvPatch.H"
+#include "directMappedWallFvPatch.H"
+#define mappedFvPatch directMappedFvPatch
+#define mappedWallFvPatch directMappedWallFvPatch
+#endif
 
 #include "volPointInterpolation.H"
 #include "interpolatePointToCell.H"
