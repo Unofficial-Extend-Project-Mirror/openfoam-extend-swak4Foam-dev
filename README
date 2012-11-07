@@ -1497,3 +1497,9 @@ S_{expl} + S_{impl} T
 **** Move non-parser sources in =swak4FoamParsers= into sub-directories
      Make the directory a little bit cleaner
 ** Next release - version number : 0.2.2
+*** Bug fixes
+**** 2.x-branch did not compile on 2.0
+     Branch only compiled on 2.1, but not on 2.0 due to changes in the
+     OpenFOAM-API
+
+     Fix provided by Bruno Santos
