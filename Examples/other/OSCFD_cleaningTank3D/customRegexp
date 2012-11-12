@@ -1,0 +1,56 @@
+alphaFrac{
+   expr "Phase-1 volume fraction = (%f%)";
+   theTitle "Volume fraction";
+   titles (average);
+}
+surfaceHeight {
+   theTitle "Surface height";
+   expr "Expression height :  min=(%f%) max=(%f%)";
+   titles ( min max );
+}
+nrParticles {
+   theTitle "Number of particles";
+   expr "Current number of parcels       = (%f%)";
+   titles ( nr );
+}
+printStates {
+   theTitle "States";
+   expr "Expression printState(.+) :  average=(%f%)";
+   type dynamic;
+   idNr 1;
+   titles ( value );
+}
+alphaFlows {
+   theTitle "Flow of alpha";
+   expr "Expression patchFlows on (.+):  average=(%f%)";
+   type dynamic;
+   idNr 1;
+   titles ( flow );
+}
+outVelocity {
+   theTitle "y-velocity on outlet";
+   expr "Expression outVelocity on outlet:  min=(%f%) max=(%f%) average=(%f%)";
+   titles (min max average);
+}
+inVelocity {
+   theTitle "Normal on inlet";
+   expr "Expression inVelocity on inlet:  min=(%f%) max=(%f%) average=(%f%)";
+   titles (min max average);
+}
+tracer {
+       theTitle "Amount of tracer";
+       expr "Expression tracerFraction :  min=(%f%) max=(%f%) average=(%f%)";
+       titles (
+       	      min
+	      max
+	      average
+       );
+}
+tracerAmount {
+       expr "Expression tracerAmount :  sum=(%f%)";
+       type slave;
+       master tracer;
+       titles (
+           "in alpha1"
+       );
+};

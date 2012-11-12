@@ -410,12 +410,22 @@ S_{expl} + S_{impl} T
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
-**** =mixingGam=
+**** =mixingDam=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
+**** OSCFD_cleaningTank3D
+     - Solver :: interFoam
+     - Case preparation :: run the =prepareCase.sh=-script
+     - Description :: The case described on the slides of the
+                      talk about =swak4Foam= at the  OSCFD-conference
+                      2012 in London
+     - Demonstrates :: Boundary conditions, function objects, global
+                       variables and delayed variables
+**** OSCFD_cleaningTank2D
+     A 2D-variant of the above case
 *** PythonIntegration
     Demonstrate the integration of =Python=. Mostly using =PyFoam= but
     also with =pythonFlu=
@@ -1503,3 +1513,6 @@ S_{expl} + S_{impl} T
      OpenFOAM-API
 
      Fix provided by Bruno Santos
+*** New Examples
+**** Cases from the /OSCFD12/ Conference in London
+     On the slides the case files were promised
