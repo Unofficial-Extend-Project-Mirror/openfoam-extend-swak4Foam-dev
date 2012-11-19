@@ -110,6 +110,10 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
         (
             Field<Type>("value", dict, p.size())
         );
+	if (!dict.found("refValue")) {
+ 	    // make sure that refValue has a sensible value for the "update" below
+	    this->refValue() = Field<Type>("value", dict, p.size());
+	}
     }
     else
     {
