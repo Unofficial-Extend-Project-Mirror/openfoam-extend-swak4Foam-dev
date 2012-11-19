@@ -1406,3 +1406,11 @@ S_{expl} + S_{impl} T
 **** Move non-parser sources in =swak4FoamParsers= into sub-directories
      Make the directory a little bit cleaner
 ** Next release - version number : 0.2.2
+*** Bug fixes
+**** =groovyBC=: =value= reset to $0$ during construction
+     If no =refValue= is given during construction then a value of $0$
+     is assumed for this and during a preliminary update the value is
+     reset to this value.
+
+     Fixed by using the =value= as the =refValue= if no =refValue= is
+     specified
