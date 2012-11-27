@@ -120,7 +120,7 @@ public:
     ExpressionResult(const ExpressionResult&);
 
     //- Construct from a dictionary
-    ExpressionResult(const dictionary&,bool isSingleValue=false);
+    ExpressionResult(const dictionary&,bool isSingleValue=false,bool needsValue=false);
 
     //- Construct from a field
     template<class Type>

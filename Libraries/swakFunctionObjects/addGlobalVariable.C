@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -53,7 +53,7 @@ void Foam::addGlobalVariable::read(const dictionary& dict)
     if(dict.found("globalVariables")) {
         const dictionary variables(dict.subDict("globalVariables"));
         const word scope(dict.lookup("globalScope"));
-        
+
         wordList names(variables.toc());
         forAll(names,i) {
             const word &name=names[i];
@@ -62,7 +62,7 @@ void Foam::addGlobalVariable::read(const dictionary& dict)
             GlobalVariablesRepository::getGlobalVariables().addValue(
                 name,
                 scope,
-                ExpressionResult(dict,true)
+                ExpressionResult(dict,true,true)
             );
         }
     } else {

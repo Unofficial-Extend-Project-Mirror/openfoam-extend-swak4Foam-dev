@@ -1414,6 +1414,9 @@ S_{expl} + S_{impl} T
 
      Fixed by using the =value= as the =refValue= if no =refValue= is
      specified
+**** Unspecified =value= in =addGlobalVariables= produces obscure error message
+     The error message occured much later when a =tmp= tried to copy a
+     =NULL=-pointer and was not obvious at all for the general user. Fixed
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
