@@ -63,7 +63,7 @@ functions
         globalVariables {
             aThres {
                 valueType scalar;
-                value 0.5;
+                vaue 0.5;
             }
             gridThick {
                 valueType scalar;
