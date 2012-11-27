@@ -1,0 +1,19 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 27 Nov 2012 01:36:37 +0100
+Subject: Re: Allow non-uniform external variables
+Message-Id: <cd71f59c9cb24881-abfc25e6db3adbb1-artemis@bgs-cool-greybook.local>
+References: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+In-Reply-To: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+
+Plan: only implement this for mapped-patches (this would be the main
+application anyway).
+
+Due to the change in the interface only in 2.x (backport possible
+
+Possible syntax extensions:
+
+- "mapped(p)" in a patchExpression gets p from the other patch
+- "val{patch'name}=  " calculates on another patch and copies with
+ mapping to local (no uniformization)
+- function-Plugin "calcMapped(expr)" to do the actual computation on
+the other patch (before mapping) if the patch is mapped
