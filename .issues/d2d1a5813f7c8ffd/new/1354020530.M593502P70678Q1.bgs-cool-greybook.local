@@ -1,0 +1,39 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 27 Nov 2012 13:45:19 +0100
+State: fixed
+Subject: Unset value in ExpressionResult makes weird error messages
+Message-Id: <d2d1a5813f7c8ffd-0-artemis@bgs-cool-greybook.local>
+
+Setting this function object with wrong spelling makes the following
+error message.
+
+This should be fixed in two places:
+- in ExpressionResult::getResult prohibit the construction of the tmp
+if the pointer is NULL
+- in the function object check that the value is being set
+
+
+globalVariables{
+
+beta{
+    valueType scalar;
+    vaue 0.5; --> Tu etwas gegen das kärntnerische Unvermögen der richtigen englischen Artikulation
+}
+}
+
+und die erzeugte Fehlermeldung:
+
+--> FOAM FATAL ERROR:
+attempted copy of a deallocated temporary
+
+    From function tmp<T>::operator=(const tmp<T>& t)
+    in file /home/greiss/OpenFOAM/OpenFOAM-1.6-ext/src/OpenFOAM/lnInclude/tmpI.H at line 264.
+
+FOAM aborting (FOAM_ABORT set)
+
+
+#0  Foam::error::printStack(Foam::Ostream&) in "/home/greiss/OpenFOAM/OpenFOAM-1.6-ext/lib/linux64Gcc44DPOpt/libOpenFOAM.so"
+#1  Foam::error::abort() in "/home/greiss/OpenFOAM/OpenFOAM-1.6-ext/lib/linux64Gcc44DPOpt/libOpenFOAM.so"
+#2  Foam::Ostream& Foam::operator<< <Foam::error>(Foam::Ostream&, Foam::errorManip<Foam::error>) in "/home/greiss/OpenFOAM/OpenFOAM-1.6-ext/lib/linux64Gcc44DPOpt/libfiniteVolume.so"
+#3  Foam::tmp<Foam::Field<double> > Foam::ExpressionResult::getResult<double>(bool) in "/home/greiss/OpenFOAM/greiss-1.6-ext/lib/linux64Gcc44DPOpt/libswak4FoamParsers.so"
+#4  Foam::Field<double>* Foam::PatchValueExpressionDriver::getField<double>(Foam::string const&) in "/home/greiss/OpenFOAM/greiss-1.6-ext/lib/linux64Gcc44DPOpt/libswak4FoamParsers.so"

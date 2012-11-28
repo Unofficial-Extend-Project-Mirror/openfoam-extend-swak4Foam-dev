@@ -17,9 +17,9 @@ fi
 
 for lib in ${SWAKLIBS[@]}
 do
-    if [ -e $FOAM_LIBBIN/lib$lib.$SOEXT ]; then 
+    if [ -e $FOAM_LIBBIN/lib$lib.$SOEXT ]; then
 	echo "$FOAM_LIBBIN/lib$lib.$SOEXT shadows library that will be compiled. This might break the compilation of the utilities"
-	if [ -z $I_KNOW_THE_RISCS ]; then 
+	if [ -z $I_KNOW_THE_RISCS ]; then
 	    echo "Set the environment variable I_KNOW_THE_RISCS if you want to continue nevertheless"
 	    exit 42
 	fi

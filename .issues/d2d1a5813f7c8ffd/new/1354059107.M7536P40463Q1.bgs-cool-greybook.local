@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 28 Nov 2012 00:28:56 +0100
+Subject: Re: Unset value in ExpressionResult makes weird error messages
+Message-Id: <d2d1a5813f7c8ffd-8be6c808c8bc42e4-artemis@bgs-cool-greybook.local>
+References: <d2d1a5813f7c8ffd-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <d2d1a5813f7c8ffd-0-artemis@bgs-cool-greybook.local>
+
+Modified the dictionary-constructor of ExpressionResult to demand a
+value entry.
+
+addGlobalVariable demands this and the error message is now clearer

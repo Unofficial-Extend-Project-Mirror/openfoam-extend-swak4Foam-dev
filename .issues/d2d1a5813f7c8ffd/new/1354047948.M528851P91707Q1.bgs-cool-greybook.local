@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 27 Nov 2012 21:25:05 +0100
+Subject: Re: Unset value in ExpressionResult makes weird error messages
+Message-Id: <d2d1a5813f7c8ffd-b05eb6ee7a311316-artemis@bgs-cool-greybook.local>
+References: <d2d1a5813f7c8ffd-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <d2d1a5813f7c8ffd-0-artemis@bgs-cool-greybook.local>
+
+First insert a check into ExpressionResult
