@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 29 Nov 2012 21:21:13 +0100
+State: new
+Subject: Add more readable error messages to the grammar
+Message-Id: <94e6e664af26e806-0-artemis@bgs-cool-greybook.local>
+
+Currently the error message when for instance doing "scalar +vector"
+are not very enlightening for the user.
+
+Investigate the possiblity to add error states to the grammar

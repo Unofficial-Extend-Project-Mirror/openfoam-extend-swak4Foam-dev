@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 29 Nov 2012 21:19:38 +0100
+State: new
+Subject: Add patchProbes as a new entity
+Message-Id: <9616b38c34991d1c-0-artemis@bgs-cool-greybook.local>
+
+Add the patchProbes as an entitiy like the already existing probes
