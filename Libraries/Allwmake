@@ -86,6 +86,13 @@ fi
 
 wmake libso swak4FoamParsers
 
+PARSERSOK=$?
+
+if [[ $PARSERSOK != 0 ]]; then
+    echo "Parser library did not compile OK. No sense continuing as everything else depends on it"
+    exit 42
+fi
+
 wmake libso groovyBC
 
 wmake libso swakFunctionObjects

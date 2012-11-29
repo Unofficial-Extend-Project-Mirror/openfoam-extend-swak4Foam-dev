@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 18 Oct 2012 00:17:21 +0200
+State: new
+Subject: Function object to write sampledSurfaces as VTK
+Message-Id: <f9a62466ecdfab01-0-artemis@bgs-cool-greybook.local>
+
+Mainly for debugging sampledSurfaces.
+
+Either a function object or a flag in the registry

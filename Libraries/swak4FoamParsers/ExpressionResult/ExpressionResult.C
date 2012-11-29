@@ -72,7 +72,8 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 
 ExpressionResult::ExpressionResult(
     const dictionary &dict,
-    bool isSingleValue
+    bool isSingleValue,
+    bool needsValue
 )
 :
     valType_(dict.lookupOrDefault<word>("valueType","None")),
@@ -125,6 +126,13 @@ ExpressionResult::ExpressionResult(
                         << exit(FatalError);
             }
         }
+    } else if(needsValue) {
+        FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)")
+            << "No entry 'value' defined in " << dict.name() << endl
+                << dict
+                << endl
+                << exit(FatalError);
+
     }
 }
 

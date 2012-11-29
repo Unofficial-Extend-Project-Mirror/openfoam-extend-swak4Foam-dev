@@ -1,0 +1,15 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 27 Nov 2012 01:31:04 +0100
+Subject: Re: Non-uniform fields into python-integration
+Message-Id: <e986578b540877e6-e8739d230ba85757-artemis@bgs-cool-greybook.local>
+References: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+
+It seems like the array-interface
+http://docs.scipy.org/doc/numpy/reference/arrays.interface.html#arrays-interface
+makes it possible to add numpy-arrays at run-time without introducing
+any dependencies at compile-time.
+
+Possible semantics:
+- variables that go in are "by reference": they can be changed
+- variables that go out are copied

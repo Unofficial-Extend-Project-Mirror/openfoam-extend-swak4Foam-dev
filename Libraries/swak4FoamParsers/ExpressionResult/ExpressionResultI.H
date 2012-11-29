@@ -192,6 +192,16 @@ namespace Foam {
 
         tmp<Field<Type> > result;
 
+        if(valPtr_==NULL) {
+            FatalErrorIn("ExpressionResult::getResult(bool keep)")
+                << "Trying to build a tmp from a NULL-pointer. "
+                    << "This will not work (in reality this "
+                    << "error message should never appear)"
+                    << endl
+                    << exit(FatalError);
+
+        }
+
         result=tmp<Field<Type> > (
             static_cast<Field<Type>*>(valPtr_)
         );

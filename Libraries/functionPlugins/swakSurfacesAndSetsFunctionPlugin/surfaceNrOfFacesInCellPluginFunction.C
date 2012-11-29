@@ -83,7 +83,9 @@ void surfaceNrOfFacesInCellPluginFunction::doEvaluation()
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pNrOfFacesInCell()[cellI]+=1;
+        if(cellI>=0) {
+            pNrOfFacesInCell()[cellI]+=1;
+        }
     }
 
     pNrOfFacesInCell->correctBoundaryConditions();

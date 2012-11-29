@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-#+TITLE: =README= for =swak4Foam=
+#+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 1.x
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
@@ -1078,7 +1078,7 @@ S_{expl} + S_{impl} T
      track
 
      Fix provided by Martin Beaudoin
-** Next release - version number : 0.2.1
+** 2012-10-18 - version number : 0.2.1
 *** Requirements
 **** =flex 2.5.35=
      This version is needed for the reentrant parsers. =2.5.33= *may*
@@ -1214,7 +1214,7 @@ S_{expl} + S_{impl} T
 
      Fixed with an one-liner
 **** =groovyBC= makes =interFoam=-runs fail unpredictably
-     Reason was an uninitialized =falueFraction= which sometimes has
+     Reason was an uninitialized =valueFraction= which sometimes has
      values that cause a floating point exception. Fixed
 **** Global variables of different sizes break parallel runs
      Because =size()= was equal to the expected size on some
@@ -1405,3 +1405,21 @@ S_{expl} + S_{impl} T
      them more readable and maintainable
 **** Move non-parser sources in =swak4FoamParsers= into sub-directories
      Make the directory a little bit cleaner
+** Next release - version number : 0.2.2
+*** Bug fixes
+**** =groovyBC=: =value= reset to $0$ during construction
+     If no =refValue= is given during construction then a value of $0$
+     is assumed for this and during a preliminary update the value is
+     reset to this value.
+
+     Fixed by using the =value= as the =refValue= if no =refValue= is
+     specified
+**** Unspecified =value= in =addGlobalVariables= produces obscure error message
+     The error message occured much later when a =tmp= tried to copy a
+     =NULL=-pointer and was not obvious at all for the general user. Fixed
+*** Infrastructure
+**** =Allwmake= stops if building of =swak4FoamParsers= fails
+     As the majority of installation problems were actually problems
+     with the compilation of the library =swak4FoamParsers= and as
+     this library is central for all other things in =swak4Foam= the
+     compilation terminates if this library is not built

@@ -64,6 +64,10 @@ surfaceAreaPluginFunction::surfaceAreaPluginFunction(
 
 void surfaceAreaPluginFunction::doEvaluation()
 {
+    if(debug) {
+        Info << "surfaceArea for " << name() << endl;
+    }
+
     autoPtr<volScalarField> pArea(
         new volScalarField(
             IOobject(
@@ -81,15 +85,26 @@ void surfaceAreaPluginFunction::doEvaluation()
     const labelList &cells=meshCells();
     const scalarField &area=theSurface().magSf();
 
+    if(debug) {
+        Pout << "Size " << area.size() << endl;
+        //        Pout << gMin(area) << " " << gMax(area) << endl;
+    }
+
     forAll(cells,i) {
         const label cellI=cells[i];
 
-        pArea()[cellI]+=area[i];
+        if(cellI>=0) {
+            pArea()[cellI]+=area[i];
+        }
     }
 
     pArea->correctBoundaryConditions();
 
     result().setObjectResult(pArea);
+
+    if(debug) {
+        Info << "Done: surfaceArea for " << name() << endl;
+    }
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
