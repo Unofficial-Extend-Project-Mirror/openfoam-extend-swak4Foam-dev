@@ -1416,10 +1416,18 @@ S_{expl} + S_{impl} T
      specified
 **** Unspecified =value= in =addGlobalVariables= produces obscure error message
      The error message occured much later when a =tmp= tried to copy a
-     =NULL=-pointer and was not obvious at all for the general user. Fixed
+     =NULL=-pointer and was not obvious at all for the general
+     user. Fixed
+**** Did not compile on =1.6-ext=
+     1.6-ext does not consider the product of two symmetrical tensors
+     to be symmetrical. Fixed
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
      with the compilation of the library =swak4FoamParsers= and as
      this library is central for all other things in =swak4Foam= the
      compilation terminates if this library is not built
+**** Header =swak.H= with version information and macros
+     This new header includes information about the
+     =swak4Foam=-version, the =OpenFOAM=-version and macros for
+     workarounds that depend on the OpenFOAM-version
