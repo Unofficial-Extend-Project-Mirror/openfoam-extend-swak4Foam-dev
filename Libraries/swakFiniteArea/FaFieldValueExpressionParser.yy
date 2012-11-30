@@ -35,6 +35,8 @@
     using Foam::FaFieldValueExpressionDriver;
 
 #include "FaFieldValuePluginFunction.H"
+
+#include "swak.H"
 %}
 
 %name-prefix="parserFaField"
@@ -2296,7 +2298,13 @@ yexp:   symmTensor                  { $$ = $1; }
           }
         | yexp '&' yexp 	   	          {
             sameSize($1,$3);
+#ifndef FOAM_SYMMTENSOR_WORKAROUND
             $$ = new Foam::areaSymmTensorField(*$1 & *$3);
+#else
+            $$ = new Foam::areaSymmTensorField(
+                symm(*$1 & *$3)
+            );
+#endif
             delete $1; delete $3;    driver.setCalculatedPatches(*$$);
           }
         | hexp '&' yexp 	   	          {
@@ -2869,7 +2877,13 @@ fyexp:   fsymmTensor                  { $$ = $1; }
           }
         | fyexp '&' fyexp 	   	          {
             sameSize($1,$3);
+#ifndef FOAM_SYMMTENSOR_WORKAROUND
             $$ = new Foam::edgeSymmTensorField(*$1 & *$3);
+#else
+            $$ = new Foam::edgeSymmTensorField(
+                symm(*$1 & *$3)
+            );
+#endif
             delete $1; delete $3;
           }
         | fhexp '&' fyexp 	   	          {
