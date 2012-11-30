@@ -29,26 +29,42 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::SubsetValueExpressionDriver
+
 
 Description
-    print a little banner with the swak-version to ease support
+    Define versions and flags for swak to distinguish different features
+    via #ifdef
+
+SourceFiles
 
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "printSwakVersion.H"
-#include "swak.H"
+#ifndef SwakMacroHeader_H
+#define SwakMacroHeader_H
 
-namespace Foam {
-    void printSwakVersion() {
-        Info << "swakVersion: " SWAK_VERSION_STRING;
-#ifdef SWAK_VERSION_EXTENSION
-        Info << " - " SWAK_VERSION_EXTENSION;
+#include "foamVersion4swak.H"
+
+#if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
+#define FOAM_HAS_SORTED_TOC
 #endif
-        Info << " (Release date: " SWAK_RELEASE_DATE ")";
-        Info << endl;
-        Info << "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //";
-        Info << endl;
-    }
-}
+
+#if (FOAM_VERSION4SWAK_MAJOR > 1)
+#error "This swak4Foam-version is only used for the 1.x-versions of OpenFOAM. For higher versions there is a special branch"
+#endif
+
+// in 1.6-ext the operation s1 & s2 of two symmetrical tensor fields does not yield a symmetric tensor
+#ifdef FOAM_DEV
+#define FOAM_SYMMTENSOR_WORKAROUND
+#endif
+
+// Certain OpenFOAM-versions don't have all tensor operations defined
+#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
+#define FOAM_INCOMPLETE_OPERATORS
+#endif
+
+#include "swakVersion.H"
+
+#endif
+
+// ************************************************************************* //
