@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -83,13 +83,13 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         if(debug) {
             Info << "Initializing Python" << endl;
         }
-        Py_Initialize();        
+        Py_Initialize();
     }
 
     if(Pstream::parRun()) {
         if(debug) {
             Info << "This is a parallel run" << endl;
-        } 
+        }
         parallelMasterOnly_=readBool(dict.lookup("parallelMasterOnly"));
     }
 
@@ -115,7 +115,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     pythonState_=Py_NewInterpreter();
 
     if(debug) {
-        Info << "Currently " << interpreterCount 
+        Info << "Currently " << interpreterCount
             << " Python interpreters (created one)" << endl;
     }
 
@@ -129,7 +129,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         }
         PyRun_SimpleString("import rlcompleter, readline");
         // this currently has no effect in the embedded shell
-        PyRun_SimpleString("readline.parse_and_bind('tab: complete')"); 
+        PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
     }
 }
 
@@ -186,7 +186,7 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
     pythonState_=NULL;
 
     if(debug) {
-        Info << "Currently " << interpreterCount 
+        Info << "Currently " << interpreterCount
             << " Python interpreters (deleting one)" << endl;
     }
 
@@ -198,7 +198,7 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
         PyThreadState_Swap(NULL);
 
         // This causes a segfault
-        //        Py_Finalize();        
+        //        Py_Finalize();
     }
 }
 
@@ -245,7 +245,7 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
 
     PyObject *m = PyImport_AddModule("__main__");
 
-    char const* catcherCode = 
+    char const* catcherCode =
 "# catcher code\n"
 "import sys\n"
 "class __StdoutCatcher:\n"
@@ -261,7 +261,7 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
 
     int fail=PyRun_SimpleString(code.c_str());
 
-    char const* postCatchCode = 
+    char const* postCatchCode =
 "sys.stdout = __precatcherStdout\n";
 
     PyRun_SimpleString(postCatchCode);
@@ -324,7 +324,7 @@ bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool f
     if(pResult!=NULL) {
         if(debug) {
             PyObject *str=PyObject_Str(pResult);
-            
+
             Info << "Result is " << PyString_AsString(str) << endl;
 
             Py_DECREF(str);
@@ -395,7 +395,7 @@ void pythonInterpreterWrapper::getGlobals()
     }
 
     if(debug) {
-        Info << "Getting global variables from namespaces " 
+        Info << "Getting global variables from namespaces "
             << swakToPythonNamespaces_ << endl;
     }
 
@@ -416,7 +416,7 @@ void pythonInterpreterWrapper::getGlobals()
                 !warnOnNonUniform_
             );
             const word &var=iter.key();
-            if(val.type()==pTraits<scalar>::typeName) {
+            if(val.valueType()==pTraits<scalar>::typeName) {
                 PyObject_SetAttrString
                     (
                         m,
@@ -424,8 +424,8 @@ void pythonInterpreterWrapper::getGlobals()
                         PyFloat_FromDouble(
                             val.getResult<scalar>()()[0]
                         )
-                    );                
-            } else if(val.type()==pTraits<vector>::typeName) {
+                    );
+            } else if(val.valueType()==pTraits<vector>::typeName) {
                 const vector v=val.getResult<vector>()()[0];
                 PyObject_SetAttrString
                     (
@@ -440,12 +440,12 @@ void pythonInterpreterWrapper::getGlobals()
                     );
             } else {
                 FatalErrorIn("pythonInterpreterWrapper::getGlobals()")
-                    << "The variable " << var << " has the unsupported type " 
-                        << val.type() << endl
+                    << "The variable " << var << " has the unsupported type "
+                        << val.valueType() << endl
                         << exit(FatalError);
             }
-        }        
-    } 
+        }
+    }
 }
 
 void pythonInterpreterWrapper::setGlobals()
@@ -455,7 +455,7 @@ void pythonInterpreterWrapper::setGlobals()
     }
 
     if(debug) {
-        Info << "Writing variables " << pythonToSwakVariables_ 
+        Info << "Writing variables " << pythonToSwakVariables_
             << " to namespace " << pythonToSwakNamespace_ << endl;
     }
 
@@ -483,7 +483,7 @@ void pythonInterpreterWrapper::setGlobals()
         );
 
         ExpressionResult eResult;
-        
+
         if(PyNumber_Check(pVar)) {
             if(debug) {
                 Info << name << " is a scalar" << endl;
@@ -494,9 +494,9 @@ void pythonInterpreterWrapper::setGlobals()
             if(debug) {
                 Info << name << " is " << result << endl;
             }
-        
+
             eResult.setResult(result,1);
-                
+
         } else if(PySequence_Check(pVar)) {
             if(debug) {
                 Info << name << " is a sequence" << endl;
@@ -553,7 +553,7 @@ void pythonInterpreterWrapper::readCode(
         dict.found(prefix+"File")
     ) {
         FatalErrorIn("pythonInterpreterWrapper::readCode")
-            << "Either specify " << prefix+"Code" << " or " 
+            << "Either specify " << prefix+"Code" << " or "
                 << prefix+"File" << " but not both" << endl
                 << exit(FatalError);
     }
@@ -563,7 +563,7 @@ void pythonInterpreterWrapper::readCode(
         !dict.found(prefix+"File")
     ) {
         FatalErrorIn("pythonInterpreterWrapper::readCode")
-            << "Neither " << prefix+"Code" << " nor " 
+            << "Neither " << prefix+"Code" << " nor "
                 << prefix+"File" << " specified" << endl
                 << exit(FatalError);
     }
@@ -574,7 +574,7 @@ void pythonInterpreterWrapper::readCode(
         fName.expand();
         if(!exists(fName)) {
             FatalErrorIn("pythonInterpreterWrapper::readCode")
-                << "Can't find source file " << fName 
+                << "Can't find source file " << fName
                     << endl << exit(FatalError);
         }
 

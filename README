@@ -1421,6 +1421,10 @@ S_{expl} + S_{impl} T
 **** Did not compile on =1.6-ext=
      1.6-ext does not consider the product of two symmetrical tensors
      to be symmetrical. Fixed
+**** Python integration did not get global variables
+     Change in the interface of the =ExpressionResult=-class
+     broke the access of global variables from a
+     Python-functionObject. Fixed
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
