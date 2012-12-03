@@ -33,6 +33,9 @@ License
 #include "GlobalVariablesRepository.H"
 
 #include "vector.H"
+#include "tensor.H"
+#include "symmTensor.H"
+#include "sphericalTensor.H"
 
 // #include <fcntl.h>
 
@@ -153,8 +156,18 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
                     << "Switch if off with 'useNumpy false;' if it is not needed"
                     << endl
                     << exit(FatalError);
-
         }
+        fail=PyRun_SimpleString(
+            "def _swak_wrapOpenFOAMField_intoNumpy(address,typestr,size,nr):\n"
+            "   class iWrap(object):\n"
+            "      def __init__(self):\n"
+            "         self.__array_interface__={}\n"
+            "         self.__array_interface__['data']=(int(address,16),False)\n"
+            "         self.__array_interface__['shape']=(size,nr)\n"
+            "         self.__array_interface__['version']=3\n"
+            "         self.__array_interface__['typestr']=typestr\n"
+            "   return numpy.asarray(iWrap())\n"
+        );
     }
 }
 
@@ -436,38 +449,75 @@ void pythonInterpreterWrapper::getGlobals()
             vars,
             iter
         ) {
-            ExpressionResult val=(*iter).getUniform(
-                1,
-                !warnOnNonUniform_
-            );
             const word &var=iter.key();
-            if(val.valueType()==pTraits<scalar>::typeName) {
-                PyObject_SetAttrString
-                    (
-                        m,
-                        const_cast<char*>(var.c_str()),
-                        PyFloat_FromDouble(
-                            val.getResult<scalar>()()[0]
-                        )
-                    );
-            } else if(val.valueType()==pTraits<vector>::typeName) {
-                const vector v=val.getResult<vector>()()[0];
-                PyObject_SetAttrString
-                    (
-                        m,
-                        const_cast<char*>(var.c_str()),
-                        Py_BuildValue(
-                            "ddd",
-                            double(v.x()),
-                            double(v.y()),
-                            double(v.z())
-                        )
-                    );
+            if(
+                !useNumpy_
+                ||
+                (*iter).isSingleValue()
+            ) {
+                ExpressionResult val=(*iter).getUniform(
+                    1,
+                    !warnOnNonUniform_
+                );
+                if(val.valueType()==pTraits<scalar>::typeName) {
+                    PyObject_SetAttrString
+                        (
+                            m,
+                            const_cast<char*>(var.c_str()),
+                            PyFloat_FromDouble(
+                                val.getResult<scalar>()()[0]
+                            )
+                        );
+                } else if(val.valueType()==pTraits<vector>::typeName) {
+                    const vector v=val.getResult<vector>()()[0];
+                    PyObject_SetAttrString
+                        (
+                            m,
+                            const_cast<char*>(var.c_str()),
+                            Py_BuildValue(
+                                "ddd",
+                                double(v.x()),
+                                double(v.y()),
+                                double(v.z())
+                            )
+                        );
+                } else {
+                    FatalErrorIn("pythonInterpreterWrapper::getGlobals()")
+                        << "The variable " << var << " has the unsupported type "
+                            << val.valueType() << endl
+                            << exit(FatalError);
+                }
             } else {
-                FatalErrorIn("pythonInterpreterWrapper::getGlobals()")
-                    << "The variable " << var << " has the unsupported type "
-                        << val.valueType() << endl
-                        << exit(FatalError);
+                const ExpressionResult &val=(*iter);
+                if(debug) {
+                    Info << "Building a numpy-Array for global " << var
+                        << " at address " << val.getAddressAsDecimal()
+                        << " with size " << val.size()
+                        << " and type " << val.valueType()
+                        << endl;
+                }
+                OStringStream cmd;
+                cmd << var << "=_swak_wrapOpenFOAMField_intoNumpy(";
+                cmd << "address='" << val.getAddressAsDecimal() << "',";
+                cmd << "typestr='<f" << label(sizeof(scalar)) << "',";
+                cmd << "size=" << val.size() << ",";
+                label nr=-1;
+                if(val.valueType()==pTraits<scalar>::typeName) {
+                    nr=1;
+                } else if(val.valueType()==pTraits<vector>::typeName) {
+                    nr=3;
+                } else if(val.valueType()==pTraits<tensor>::typeName) {
+                    nr=9;
+                } else if(val.valueType()==pTraits<symmTensor>::typeName) {
+                    nr=6;
+                } else if(val.valueType()==pTraits<sphericalTensor>::typeName) {
+                    nr=1;
+                }
+                cmd << "nr=" << nr << ")";
+                if(debug) {
+                    Info << "Python: " << cmd.str() << endl;
+                }
+                PyRun_SimpleString(cmd.str().c_str());
             }
         }
     }

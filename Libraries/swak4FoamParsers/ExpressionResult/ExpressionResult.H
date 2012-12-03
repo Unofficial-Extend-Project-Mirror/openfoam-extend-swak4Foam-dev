@@ -196,6 +196,11 @@ public:
     friend ExpressionResult operator+(
         const ExpressionResult &,const ExpressionResult &
     );
+
+    //- get the address of the field as a decimal string
+
+    //- Currently only needed for the python integrtation
+    word getAddressAsDecimal() const;
 };
 
 

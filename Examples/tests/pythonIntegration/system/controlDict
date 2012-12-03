@@ -45,7 +45,7 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-functions (
+functions {
     pythonSimple
     {
         type pythonIntegration;
@@ -196,7 +196,42 @@ functions (
         isParallelized true;
         useNumpy false;
     }
-);
+    startupFacePositions {
+        $addVector;
+        name facePos;
+        value (0 0 0);
+    }
+    calcNonUniformValues {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+        valueType patch;
+        patchName fixedWalls;
+        toGlobalNamespace testPythonFields;
+        toGlobalVariables (
+            facePos
+            faceArea
+        );
+        variables (
+            "facePos=pos();"
+            "faceArea=area();"
+        );
+    }
+    pythonGetNonUniformGlobals
+    {
+        type pythonIntegration;
+        isParallelized false;
+        useNumpy true;
+        swakToPythonNamespaces (
+            testPython
+            testPythonFields
+        );
+        startCode "print facePos;total=numpy.zeros(facePos.shape)";
+        executeCode "total=total+facePos;print 'Ratio:',total.max()/facePos.max()";
+        endCode "";
+        //        interactiveAfterExecute true;
+    }
+}
 
 libs (
     "libgroovyBC.so"
