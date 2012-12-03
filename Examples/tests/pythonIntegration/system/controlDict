@@ -55,6 +55,7 @@ functions (
         //        tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
     }
     pythonOutput
     {
@@ -65,6 +66,7 @@ functions (
         endCode "print 'Never been here'";
         //        tolerateExceptions true;
         parallelMasterOnly true;
+        useNumpy false;
     }
     pythonPaths
     {
@@ -75,6 +77,7 @@ functions (
 //        tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
     }
     pythonPyFoam
     {
@@ -85,6 +88,7 @@ functions (
         endCode "print 'Never been here'";
         //        tolerateExceptions true;
         parallelMasterOnly true;
+        useNumpy false;
     }
     pythonPythonFlu
     {
@@ -95,12 +99,14 @@ functions (
         tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
     }
     onlyWithFlu {
         type executeIfPython;
         readDuringConstruction false;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
 
         conditionFile "$FOAM_CASE/checkPythonFlu.py";
 
@@ -114,6 +120,7 @@ functions (
                 //        tolerateExceptions true;
                 parallelMasterOnly false;
                 isParallelized true;
+                useNumpy false;
             }
         }
     }
@@ -122,6 +129,7 @@ functions (
         readDuringConstruction false;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
 
         conditionFile "$FOAM_CASE/checkMpi4Py.py";
 
@@ -135,6 +143,7 @@ functions (
                 //        tolerateExceptions true;
                 parallelMasterOnly false;
                 isParallelized true;
+                useNumpy false;
             }
         }
     }
@@ -171,6 +180,7 @@ functions (
         pythonToSwakVariables (  newTime newVector );
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
     }
     pythonGetPyFoamGlobals
     {
@@ -184,6 +194,7 @@ functions (
         pythonToSwakVariables ( foamVector );
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
     }
 );
 

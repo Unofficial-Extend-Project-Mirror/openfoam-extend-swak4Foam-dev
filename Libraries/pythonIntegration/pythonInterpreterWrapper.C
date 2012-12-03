@@ -50,6 +50,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 (
     const dictionary& dict
 ):
+    useNumpy_(dict.lookupOrDefault<bool>("useNumpy",true)),
     tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
     warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
     isParallelized_(dict.lookupOrDefault<bool>("isParallelized",false)),
@@ -79,6 +80,15 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         dict.lookupOrDefault<bool>("interactiveAfterException",false)
     )
 {
+    if(!dict.found("useNumpy")) {
+        WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+            << "Switch 'useNumpy' not found in " << dict.name() << nl
+                << "Assuming it to be 'true' (if that is not what you want "
+                << "set it. Also set it to make this warning go away)"
+                << endl;
+
+    }
+
     if(interpreterCount==0) {
         if(debug) {
             Info << "Initializing Python" << endl;
@@ -130,6 +140,21 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         PyRun_SimpleString("import rlcompleter, readline");
         // this currently has no effect in the embedded shell
         PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
+    }
+
+    if(useNumpy_) {
+        if(debug) {
+            Info << "Attempting to import numpy" << endl;
+        }
+        int fail=PyRun_SimpleString("import numpy");
+        if(fail) {
+            FatalErrorIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+                << "Problem during import of numpy." << nl
+                    << "Switch if off with 'useNumpy false;' if it is not needed"
+                    << endl
+                    << exit(FatalError);
+
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -58,7 +58,7 @@ class pythonInterpreterWrapper
 
     //- Disallow default bitwise copy construct
     pythonInterpreterWrapper(const pythonInterpreterWrapper&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const pythonInterpreterWrapper&);
 
@@ -66,6 +66,9 @@ class pythonInterpreterWrapper
 
     //- state of 'my' Python subinterpreter
     PyThreadState *pythonState_;
+
+    //- whether or not to use the numpy library
+    bool useNumpy_;
 
     //- should exceptions be tolerated or lead to a fatal error?
     bool tolerateExceptions_;
@@ -81,7 +84,7 @@ class pythonInterpreterWrapper
 
     //- List of global swak namespaces to get values
 
-    //- variables in those namespaces should be inserted into the 
+    //- variables in those namespaces should be inserted into the
     //- Python namespace before running the snipplet
     wordList swakToPythonNamespaces_;
 
