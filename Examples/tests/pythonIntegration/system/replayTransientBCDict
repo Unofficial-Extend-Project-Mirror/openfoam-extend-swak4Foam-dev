@@ -18,6 +18,7 @@ fields (
     rand
     randFixed
     randNumpy
+    randNumpyByRef
 );
 
 // ************************************************************************* //

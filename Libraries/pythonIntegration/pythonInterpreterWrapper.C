@@ -158,12 +158,15 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
                     << exit(FatalError);
         }
         fail=PyRun_SimpleString(
-            "def _swak_wrapOpenFOAMField_intoNumpy(address,typestr,size,nr):\n"
+            "def _swak_wrapOpenFOAMField_intoNumpy(address,typestr,size,nr=None):\n"
             "   class iWrap(object):\n"
             "      def __init__(self):\n"
             "         self.__array_interface__={}\n"
             "         self.__array_interface__['data']=(int(address,16),False)\n"
-            "         self.__array_interface__['shape']=(size,nr)\n"
+            "         if nr:\n"
+            "             self.__array_interface__['shape']=(size,nr)\n"
+            "         else:\n"
+            "             self.__array_interface__['shape']=(size,)\n"
             "         self.__array_interface__['version']=3\n"
             "         self.__array_interface__['typestr']=typestr\n"
             "   return numpy.asarray(iWrap())\n"
@@ -500,7 +503,7 @@ void pythonInterpreterWrapper::getGlobals()
                 cmd << var << "=_swak_wrapOpenFOAMField_intoNumpy(";
                 cmd << "address='" << val.getAddressAsDecimal() << "',";
                 cmd << "typestr='<f" << label(sizeof(scalar)) << "',";
-                cmd << "size=" << val.size() << ",";
+                cmd << "size=" << val.size();
                 label nr=-1;
                 if(val.valueType()==pTraits<scalar>::typeName) {
                     nr=1;
@@ -513,7 +516,10 @@ void pythonInterpreterWrapper::getGlobals()
                 } else if(val.valueType()==pTraits<sphericalTensor>::typeName) {
                     nr=1;
                 }
-                cmd << "nr=" << nr << ")";
+                if(nr>1) {
+                    cmd << ",nr=" << nr;
+                }
+                cmd << ")";
                 if(debug) {
                     Info << "Python: " << cmd.str() << endl;
                 }

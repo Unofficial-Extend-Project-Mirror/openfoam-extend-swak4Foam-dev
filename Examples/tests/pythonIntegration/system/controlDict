@@ -226,7 +226,7 @@ functions {
             testPythonFields
         );
         startCode "print facePos;total=numpy.zeros(facePos.shape)";
-        executeCode "total=total+facePos;print 'Ratio:',total.max()/facePos.max()";
+        executeCode "total=total+facePos;print 'Ratio:',total.max()/facePos.max();faceArea[::2]=-faceArea[::2];print faceArea.shape";
         endCode "";
         //        interactiveAfterExecute true;
         pythonToSwakNamespace variablesFromNumpy;
