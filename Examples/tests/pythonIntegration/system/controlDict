@@ -167,7 +167,6 @@ functions {
         valueType vector;
         value (1 2 3);
     }
-
     pythonGetGlobals
     {
         type pythonIntegration;
@@ -217,7 +216,7 @@ functions {
             "faceArea=area();"
         );
     }
-    pythonGetNonUniformGlobals
+    pythonGetNonUniformGetGlobals
     {
         type pythonIntegration;
         isParallelized false;
@@ -229,6 +228,32 @@ functions {
         startCode "print facePos;total=numpy.zeros(facePos.shape)";
         executeCode "total=total+facePos;print 'Ratio:',total.max()/facePos.max()";
         endCode "";
+        //        interactiveAfterExecute true;
+        pythonToSwakNamespace variablesFromNumpy;
+        pythonToSwakVariables (
+            total
+        );
+    }
+    pythonGetNonUniformSetGlobals
+    {
+        type pythonIntegration;
+        isParallelized false;
+        useNumpy true;
+        swakToPythonNamespaces (
+            testPython
+            testPythonFields
+        );
+        executeCode "randomVector=apply(numpy.random.randn,facePos.shape);randomField=numpy.random.randn(facePos.shape[0]);normalVector=(1,2,3);normalScalar=42";
+        startCode $executeCode;
+        endCode "";
+
+        pythonToSwakNamespace variablesFromNumpy;
+        pythonToSwakVariables (
+            randomField
+            randomVector
+            normalVector
+            normalScalar
+        );
         //        interactiveAfterExecute true;
     }
 }

@@ -559,7 +559,11 @@ void pythonInterpreterWrapper::setGlobals()
 
         ExpressionResult eResult;
 
-        if(PyNumber_Check(pVar)) {
+       if(
+            PyNumber_Check(pVar)
+            &&
+            PySequence_Check(pVar)==0 // this rules out numpy-arrays
+        ) {
             if(debug) {
                 Info << name << " is a scalar" << endl;
             }
@@ -576,32 +580,163 @@ void pythonInterpreterWrapper::setGlobals()
             if(debug) {
                 Info << name << " is a sequence" << endl;
             }
-            PyObject *tuple=PySequence_Tuple(pVar);
-            if(PyTuple_GET_SIZE(tuple)==3) {
+            if(
+                useNumpy_
+                &&
+                PyObject_HasAttrString(pVar,"__array_interface__")
+            ) {
                 if(debug) {
-                    Info << name << " is a vector" << endl;
+                    Info << name << " is a numpy-array" << endl;
                 }
-                vector val;
-                bool success=PyArg_ParseTuple(tuple,"ddd",&(val.x()),&(val.y()),&(val.z()));
-                if(!success) {
+                PyObject *interface=PyObject_GetAttrString(
+                    pVar,
+                    "__array_interface__"
+                );
+                if(debug) {
+                    PyObject *repr=PyObject_Str(interface);
+                    Info << "__array__interface__"
+                        << string(PyString_AsString(repr)) << endl;
+                    Py_DECREF(repr);
+                }
+                OStringStream cmd;
+                cmd << "<f" << label(sizeof(scalar));
+                PyObject *typestrExpected=PyString_FromString(cmd.str().c_str());
+                PyObject *typestrIs=PyObject_Str(
+                    PyMapping_GetItemString(
+                        interface,
+                        "typestr"
+                    )
+                );
+                if(debug) {
+                    Info << "Expected typestring "
+                        << string(PyString_AsString(typestrExpected))
+                        << " present typestring "
+                        << string(PyString_AsString(typestrIs))
+                        << endl;
+                }
+                if(
+                    string(PyString_AsString(typestrExpected))
+                    !=
+                    string(PyString_AsString(typestrIs))
+                ) {
                     FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
-                        << "Variable " << name << " is not a valid vector"
+                        << "Expected typestring "
+                            << string(PyString_AsString(typestrExpected))
+                            << " and typestring "
+                            << string(PyString_AsString(typestrIs))
+                            << " of " << name << " are not the same"
+                            << endl
+                            << exit(FatalError);
+
+                }
+                PyObject *data=PyMapping_GetItemString(
+                    interface,
+                    "data"
+                );
+                void *dataPtr=(void*)(PyInt_AsLong(PySequence_GetItem(data,0)));
+
+                PyObject *shape=PyMapping_GetItemString(
+                    interface,
+                    "shape"
+                );
+                label size=-1;
+                label nrOfFloats=1;
+                label rank=PyObject_Length(shape);
+                if(rank!=1 && rank!=2) {
+                    PyObject *repr=PyObject_Str(interface);
+                    FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                        << "Shape in " << "__array__interface__"
+                        << string(PyString_AsString(repr))
+                            << " of " << name << " has wrong size."
+                            << " Should have either 1 or 2 elements"
+                            << endl
+                            << exit(FatalError);
+                    Py_DECREF(repr);
+                }
+                size=PyInt_AsLong(PySequence_GetItem(shape,0));
+                if(rank==2) {
+                    nrOfFloats=PyInt_AsLong(PySequence_GetItem(shape,1));
+                }
+
+                size_t bytes=size*nrOfFloats*sizeof(scalar);
+
+                switch(nrOfFloats) {
+                    case 1:
+                        {
+                            scalarField *field=new scalarField(size);
+                            memcpy(field->data(),dataPtr,bytes);
+                            eResult.setResult(field);
+                        }
+                        break;
+                    case 3:
+                        {
+                            Field<vector> *field=new Field<vector>(size);
+                            memcpy(field->data(),dataPtr,bytes);
+                            eResult.setResult(field);
+                        }
+                        break;
+                    case 6:
+                        {
+                            Field<symmTensor> *field=new Field<symmTensor>(size);
+                            memcpy(field->data(),dataPtr,bytes);
+                            eResult.setResult(field);
+                        }
+                        break;
+                    case 9:
+                        {
+                            Field<tensor> *field=new Field<tensor>(size);
+                            memcpy(field->data(),dataPtr,bytes);
+                            eResult.setResult(field);
+                        }
+                        break;
+                    default:
+                        PyObject *repr=PyObject_Str(interface);
+                        FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                            << "Number of values " << nrOfFloats
+                                << " in " << "__array__interface__"
+                                << string(PyString_AsString(repr))
+                                << " of " << name << " unsupported."
+                                << " Should be either 1 (scalar), 3 (vector) "
+                                << " 6 (symmTensor) or 9 (tensor) elements"
+                                << endl
+                                << exit(FatalError);
+                        Py_DECREF(repr);
+                }
+
+               if(debug) {
+                    Info << "Created result" << eResult << endl;
+                }
+
+                Py_DECREF(typestrExpected);
+                Py_DECREF(typestrIs);
+            } else {
+                PyObject *tuple=PySequence_Tuple(pVar);
+                if(PyTuple_GET_SIZE(tuple)==3) {
+                    if(debug) {
+                        Info << name << " is a vector" << endl;
+                    }
+                    vector val;
+                    bool success=PyArg_ParseTuple(tuple,"ddd",&(val.x()),&(val.y()),&(val.z()));
+                    if(!success) {
+                        FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                            << "Variable " << name << " is not a valid vector"
+                                << exit(FatalError)
+                                << endl;
+                    }
+                    if(debug) {
+                        Info << name << " is " << val << endl;
+                    }
+
+                    eResult.setResult(val,1);
+                } else {
+                    FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
+                        << "Variable " << name << " is a tuple with the unknown size "
+                            << PyTuple_GET_SIZE(tuple)
                             << exit(FatalError)
                             << endl;
                 }
-                if(debug) {
-                    Info << name << " is " << val << endl;
-                }
-
-                eResult.setResult(val,1);
-            } else {
-                FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
-                    << "Variable " << name << " is a tuple with the unknown size "
-                        << PyTuple_GET_SIZE(tuple)
-                        << exit(FatalError)
-                        << endl;
+                Py_DECREF(tuple);
             }
-            Py_DECREF(tuple);
         } else {
             FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                 << "Variable " << name << " is of an unknown type"
