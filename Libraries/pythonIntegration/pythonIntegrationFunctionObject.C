@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -65,6 +65,15 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
 
     initEnvironment(t);
 
+    {
+        PyObject *m = PyImport_AddModule("__main__");
+        PyObject_SetAttrString(
+            m,
+            "functionObjectName",
+            PyString_FromString(this->name().c_str())
+        );
+    }
+
     setRunTime();
 
     read(dict);
@@ -104,6 +113,10 @@ bool pythonIntegrationFunctionObject::execute()
 
     executeCode(executeCode_,true);
 
+    if(this->time_.outputTime()) {
+        executeCode(writeCode_,true);
+    }
+
     return true;
 }
 
@@ -129,6 +142,7 @@ bool pythonIntegrationFunctionObject::read(const dictionary& dict)
     readCode(dict,"start",startCode_);
     readCode(dict,"end",endCode_);
     readCode(dict,"execute",executeCode_);
+    readCode(dict,"write",writeCode_,false);
 
     return true; // start();
 }

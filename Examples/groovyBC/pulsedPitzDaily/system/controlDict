@@ -388,6 +388,61 @@ functions
     //     type writeAndEndPython;
     //     conditionCode "return runTime>4e-5";
     // }
+    doWithPython {
+        type executeIfFunctionObjectPresent;
+        functions {
+            doWithNumpy {
+                type executeIfPython;
+                functions {
+                    getVelocity {
+                        type calculateGlobalVariables;
+                        outputControl timeStep;
+                        outputInterval 1;
+                        valueType internalField;
+                        toGlobalNamespace pythonStatistics;
+                        variables (
+                            "UField=U;"
+                            "RField=turbulenceR;"
+                            "volume=vol();"
+                        );
+                        toGlobalVariables (
+                            UField
+                            RField
+                            volume
+                        );
+                    }
+                    calculateDistribution {
+                        type pythonIntegration;
+                        startCode "componentSum=0";
+                        endCode "";
+                        executeFile "$FOAM_CASE/system/calcHistogram.py";
+                        writeFile "$FOAM_CASE/system/calcHistogram2D.py";
+                        swakToPythonNamespaces (
+                            pythonStatistics
+                        );
+                        pythonToSwakNamespace fromNumpy;
+                        pythonToSwakVariables (
+                            componentSum
+                        );
+                    }
+                    writeComonentField {
+                        type expressionField;
+                        autowrite true;
+                        outputControl outputTime;
+                        fieldName componentSumFromPython;
+                        expression "componentSum";
+                        globalScopes (
+                            fromNumpy
+                        );
+                    }
+                }
+                readDuringConstruction true;
+                conditionFile "$FOAM_CASE/system/checkForNumpy.py";
+            }
+        }
+        readDuringConstruction true;
+        functionObjectName executeIfPython;
+    }
 );
 
 libs (
@@ -397,7 +452,7 @@ libs (
     "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
-    //    "libpythonIntegration.so"
+    "libpythonIntegration.so"
     "libswakTransportTurbFunctionPlugin.so"
 ) ;
 

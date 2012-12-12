@@ -17,6 +17,8 @@ FoamFile
 fields (
     rand
     randFixed
+    randNumpy
+    randNumpyByRef
 );
 
 // ************************************************************************* //
