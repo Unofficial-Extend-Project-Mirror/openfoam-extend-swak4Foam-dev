@@ -128,7 +128,7 @@ protected:
     void doAfterExecution(bool fail,const string &code,bool putVariables,bool failOnException=false);
 
     //- Read code according to the dictionary
-    void readCode(const dictionary &dict,const word &prefix,string &code);
+    void readCode(const dictionary &dict,const word &prefix,string &code,bool mustRead=true);
 
     //- set the state to "my" interpreter
     void setInterpreter();

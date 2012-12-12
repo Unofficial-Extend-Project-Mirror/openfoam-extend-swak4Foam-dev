@@ -199,6 +199,7 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
 {
     PyObject *m = PyImport_AddModule("__main__");
 
+    PyObject_SetAttrString(m,"functionObjectName",PyString_FromString("notAFunctionObject"));
     PyObject_SetAttrString(m,"caseDir",PyString_FromString(getEnv("FOAM_CASE").c_str()));
     PyObject_SetAttrString(m,"systemDir",PyString_FromString((t.path()/t.caseSystem()).c_str()));
     PyObject_SetAttrString(m,"constantDir",PyString_FromString((t.path()/t.caseConstant()).c_str()));
@@ -208,6 +209,25 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
     }
     PyObject_SetAttrString(m,"parRun",PyBool_FromLong(Pstream::parRun()));
     PyObject_SetAttrString(m,"myProcNo",PyInt_FromLong(Pstream::myProcNo()));
+
+    int fail=PyRun_SimpleString(
+        "def makeDataDir(d):\n"
+        "    import os\n"
+        "    if not os.path.exists(d):\n"
+        "        os.makedirs(d)\n"
+
+        "def timeDataFile(name):\n"
+        "    import os\n"
+        "    d=os.path.join(timeDir,functionObjectName+'_data')\n"
+        "    makeDataDir(d)\n"
+        "    return os.path.join(d,name)\n"
+
+        "def dataFile(name):\n"
+        "    import os\n"
+        "    d=os.path.join(caseDir,functionObjectName+'_data',timeName)\n"
+        "    makeDataDir(d)\n"
+        "    return os.path.join(d,name)\n"
+    );
 }
 
 bool pythonInterpreterWrapper::parallelNoRun(bool doWarning)
@@ -785,7 +805,8 @@ void pythonInterpreterWrapper::setGlobals()
 void pythonInterpreterWrapper::readCode(
     const dictionary &dict,
     const word &prefix,
-    string &code
+    string &code,
+    bool mustRead
 ) {
     if(
         dict.found(prefix+"Code")
@@ -798,9 +819,13 @@ void pythonInterpreterWrapper::readCode(
                 << exit(FatalError);
     }
     if(
-        !dict.found(prefix+"Code")
+        mustRead
         &&
-        !dict.found(prefix+"File")
+        (
+            !dict.found(prefix+"Code")
+            &&
+            !dict.found(prefix+"File")
+        )
     ) {
         FatalErrorIn("pythonInterpreterWrapper::readCode")
             << "Neither " << prefix+"Code" << " nor "
@@ -810,20 +835,25 @@ void pythonInterpreterWrapper::readCode(
     if(dict.found(prefix+"Code")) {
         code=string(dict.lookup(prefix+"Code"));
     } else {
-        fileName fName(dict.lookup(prefix+"File"));
-        fName.expand();
-        if(!exists(fName)) {
-            FatalErrorIn("pythonInterpreterWrapper::readCode")
-                << "Can't find source file " << fName
-                    << endl << exit(FatalError);
-        }
+        if(dict.found(prefix+"File")) {
+            fileName fName(dict.lookup(prefix+"File"));
+            fName.expand();
+            if(!exists(fName)) {
+                FatalErrorIn("pythonInterpreterWrapper::readCode")
+                    << "Can't find source file " << fName
+                        << endl << exit(FatalError);
+            }
 
-        IFstream in(fName);
-        code="";
-        while(in.good()) {
-            char c;
-            in.get(c);
-            code+=c;
+            IFstream in(fName);
+            code="";
+            while(in.good()) {
+                char c;
+                in.get(c);
+                code+=c;
+            }
+        } else {
+            assert(mustRead==false);
+            code="";
         }
     }
 }

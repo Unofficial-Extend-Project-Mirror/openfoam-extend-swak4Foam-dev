@@ -1448,6 +1448,22 @@ S_{expl} + S_{impl} T
      vectors are transformed to =scalarField=. Arrays with 3 columns
      to =vectorField=, 9 columns to =tensorField= and 6 columns to
      =symmTensorField=. Different column-numbers produce errors
+**** Optional parameter =writeCode=/=writeFile= for =pythonIntegrationFunctionObject=
+     If this is set then this Python-code is executed every time a
+     time-step was written to disk
+**** Python-integration has convenience-functions to create data files
+     Python-integration now has two conventience-functions that return
+     a filename with the full path and create the directories if
+     necessary. The file is *not* created (that is the responsibility
+     of the Python-code).
+
+     The functions are (=name= is the name of the function object)
+     - dataFile(fname) :: creates a directory
+          =<case>/<name>_data/<time>=. To be used for data that is
+          written at times that differ from write-time
+     - timeDataFile(fname) :: creates a directory
+          =<case>/<time>/<name>_data=. Should only be used for data
+          that is written only at write-time
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
