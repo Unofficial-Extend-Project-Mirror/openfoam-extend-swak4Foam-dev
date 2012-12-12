@@ -499,6 +499,30 @@ ExpressionResult operator+(
     return result;
 }
 
+word ExpressionResult::getAddressAsDecimal() const
+{
+    std::ostringstream makeDec;
+     if(valType_==pTraits<scalar>::typeName) {
+         makeDec << (*static_cast<scalarField*>(valPtr_)).cdata();
+     } else if(valType_==pTraits<vector>::typeName) {
+         makeDec << (*static_cast<Field<vector>*>(valPtr_)).cdata();
+     } else if(valType_==pTraits<tensor>::typeName) {
+         makeDec << (*static_cast<Field<tensor>*>(valPtr_)).cdata();
+     } else if(valType_==pTraits<symmTensor>::typeName) {
+         makeDec << (*static_cast<Field<symmTensor>*>(valPtr_)).cdata();
+     } else if(valType_==pTraits<sphericalTensor>::typeName) {
+         makeDec << (*static_cast<Field<sphericalTensor>*>(valPtr_)).cdata();
+     } else {
+         FatalErrorIn("ExpressionResult::getAddressAsDecimal")
+             << "Unsupported type"
+                 << valType_
+                 << endl
+                 << exit(FatalError);
+     }
+
+    return word(makeDec.str());
+}
+
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 } // namespace

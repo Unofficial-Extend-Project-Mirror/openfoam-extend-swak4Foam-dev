@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -65,7 +65,7 @@ class pythonIntegrationFunctionObject
 
     //- Disallow default bitwise copy construct
     pythonIntegrationFunctionObject(const pythonIntegrationFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const pythonIntegrationFunctionObject&);
 
@@ -76,9 +76,12 @@ class pythonIntegrationFunctionObject
 
     //- Code to be executed at the end
     string endCode_;
-  
+
     //- Code to be executed at execute
     string executeCode_;
+
+    //- Code to be executed when data is written to disc
+    string writeCode_;
 
     //- reference to the time
     const Time& time_;

@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 06 Dec 2012 00:33:11 +0100
+Subject: Re: Non-uniform fields into python-integration
+Message-Id: <e986578b540877e6-cc87bfa2d4396424-artemis@bgs-cool-greybook.local>
+References: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+
+Fields are used by reference. If the whole field is assigned, then it
+is overwritten

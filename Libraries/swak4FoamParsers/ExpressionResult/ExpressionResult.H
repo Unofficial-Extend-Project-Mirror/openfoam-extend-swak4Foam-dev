@@ -44,7 +44,8 @@ SourceFiles
 #ifndef ExpressionResult_H
 #define ExpressionResult_H
 
-#include "foamVersion4swak.H"
+#include "swak.H"
+
 #if (FOAM_VERSION4SWAK_MAJOR < 2)
 #error "This swak4Foam-version is only used for the 2.x-versions of OpenFOAM. For lower versions there is a special branch"
 #endif
@@ -199,6 +200,11 @@ public:
     friend ExpressionResult operator+(
         const ExpressionResult &,const ExpressionResult &
     );
+
+    //- get the address of the field as a decimal string
+
+    //- Currently only needed for the python integrtation
+    word getAddressAsDecimal() const;
 };
 
 

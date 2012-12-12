@@ -22,6 +22,9 @@
     using Foam::SubsetValueExpressionDriver;
 
     void yyerror(char *);
+
+#include "swak.H"
+
 %}
 
 %name-prefix="parserSubset"
@@ -1398,12 +1401,17 @@ yexp:   symmTensor                  { $$ = $1; }
             $$ = new Foam::symmTensorField(*$1 * *$3);
             delete $1; delete $3;
           }
-// This worked before gcc4.6 (or the Problem is OF 2.1)
-        // | yexp '&' yexp 		{
-        //     sameSize($1,$3);
-        //     $$ = new Foam::symmTensorField(*$1 & *$3);
-        //     delete $1; delete $3;
-        //   }
+        | yexp '&' yexp 		{
+            sameSize($1,$3);
+#ifndef FOAM_SYMMTENSOR_WORKAROUND
+            $$ = new Foam::symmTensorField(*$1 & *$3);
+#else
+            $$ = new Foam::symmTensorField(
+                symm(*$1 & *$3)
+            );
+#endif
+            delete $1; delete $3;
+          }
         | hexp '&' yexp 		{
             sameSize($1,$3);
             $$ = new Foam::symmTensorField(*$1 & *$3);
@@ -2292,12 +2300,17 @@ pyexp:  pyexp '+' pyexp 		{
             $$ = new Foam::symmTensorField(*$1 * *$3);
             delete $1; delete $3;
           }
-// This worked before gcc4.6 (or the Problem is OF 2.1)
-        // | pyexp '&' pyexp 		{
-        //     sameSize($1,$3);
-        //     $$ = new Foam::symmTensorField(*$1 & *$3);
-        //     delete $1; delete $3;
-        //   }
+        | pyexp '&' pyexp 		{
+            sameSize($1,$3);
+#ifndef FOAM_SYMMTENSOR_WORKAROUND
+            $$ = new Foam::symmTensorField(*$1 & *$3);
+#else
+            $$ = new Foam::symmTensorField(
+                symm(*$1 & *$3)
+            );
+#endif
+            delete $1; delete $3;
+          }
         | phexp '&' pyexp 		{
             sameSize($1,$3);
             $$ = new Foam::symmTensorField(*$1 & *$3);

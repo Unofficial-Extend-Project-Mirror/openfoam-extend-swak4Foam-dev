@@ -1,3 +1,4 @@
+
 /*  -*- C++ -*- */
 
 %skeleton "lalr1.cc"
@@ -38,11 +39,7 @@
 
     using Foam::FieldValueExpressionDriver;
 
-#include "foamVersion4swak.H"
-
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
-#define INCOMPLETE_OPERATORS
-#endif
+#include "swak.H"
 
 #include "FieldValuePluginFunction.H"
 
@@ -2731,13 +2728,18 @@ yexp:   symmTensor                  { $$ = $1; }
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
-        // This worked before gcc4.6 (or the Problem is OF 2.1)
-        // | yexp '&' yexp 	   	          {
-        //     sameSize($1,$3);
-        //     $$ = new Foam::volSymmTensorField(*$1 & *$3);
-        //     delete $1; delete $3;
-        //     driver.setCalculatedPatches(*$$);
-        //   }
+        | yexp '&' yexp 	   	          {
+            sameSize($1,$3);
+#ifndef FOAM_SYMMTENSOR_WORKAROUND
+            $$ = new Foam::volSymmTensorField(*$1 & *$3);
+#else
+            $$ = new Foam::volSymmTensorField(
+                symm(*$1 & *$3)
+            );
+#endif
+            delete $1; delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | hexp '&' yexp 	   	          {
             sameSize($1,$3);
             $$ = new Foam::volSymmTensorField(*$1 & *$3);
@@ -3385,13 +3387,18 @@ fyexp:   fsymmTensor                  { $$ = $1; }
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
-// This worked before gcc4.6 (or the Problem is OF 2.1)
-        // | fyexp '&' fyexp 	   	          {
-        //     sameSize($1,$3);
-        //     $$ = new Foam::surfaceSymmTensorField(*$1 & *$3);
-        //     delete $1; delete $3;
-        //     driver.setCalculatedPatches(*$$);
-        //   }
+        | fyexp '&' fyexp 	   	          {
+            sameSize($1,$3);
+#ifndef FOAM_SYMMTENSOR_WORKAROUND
+            $$ = new Foam::surfaceSymmTensorField(*$1 & *$3);
+#else
+            $$ = new Foam::surfaceSymmTensorField(
+                symm(*$1 & *$3)
+            );
+#endif
+            delete $1; delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | fhexp '&' fyexp 	   	          {
             sameSize($1,$3);
             $$ = new Foam::surfaceSymmTensorField(*$1 & *$3);
@@ -4198,7 +4205,7 @@ pvexp:  pvector                            { $$ = $1; }
           }
         | pvexp '*' psexp 		   {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointVectorField>(
                 $1->internalField() * $3->internalField()
             );
@@ -4396,7 +4403,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | ptexp '+' pyexp 		          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() + $3->internalField()
             );
@@ -4408,7 +4415,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | ptexp '+' phexp 		          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() + $3->internalField()
             );
@@ -4420,7 +4427,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | pyexp '+' ptexp 		          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() + $3->internalField()
             );
@@ -4432,7 +4439,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | phexp '+' ptexp 		          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() + $3->internalField()
             );
@@ -4450,7 +4457,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | ptexp '*' psexp 	   	                  {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() * $3->internalField()
             );
@@ -4510,7 +4517,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | ptexp '-' pyexp 	   	          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() - $3->internalField()
             );
@@ -4522,7 +4529,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | ptexp '-' phexp 	   	          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() - $3->internalField()
             );
@@ -4534,7 +4541,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | pyexp '-' ptexp 	   	          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() - $3->internalField()
             );
@@ -4546,7 +4553,7 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | phexp '-' ptexp 	   	          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointTensorField>(
                 $1->internalField() - $3->internalField()
             );
@@ -4679,7 +4686,7 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | phexp '+' pyexp 		          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 $1->internalField() + $3->internalField()
             );
@@ -4703,7 +4710,7 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | pyexp '*' psexp 	   	                  {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 $1->internalField() * $3->internalField()
             );
@@ -4713,14 +4720,18 @@ pyexp:   psymmTensor                  { $$ = $1; }
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
-// not working in 2.0
-        // | pyexp '&' pyexp 	   	          {
-        //     sameSize($1,$3);
-        //     $$ = new Foam::pointSymmTensorField(*$1 & *$3);
-        //     delete $1; delete $3;
-        //     driver.setCalculatedPatches(*$$);
-        //   }
-// not working either | pyexp '&' pyexp 	   	          { sameSize($1,$3); $$ = driver.makePointField<Foam::pointSymmTensorField>(($1->internalField() & $3->internalField())()); delete $1; delete $3;  driver.setCalculatedPatches(*$$); }
+//         | pyexp '&' pyexp 	   	          {
+//             sameSize($1,$3);
+// #ifndef FOAM_SYMMTENSOR_WORKAROUND
+//             $$ = new Foam::pointSymmTensorField(*$1 & *$3);
+// #else
+//             $$ = new Foam::pointSymmTensorField(
+//                 symm(*$1 & *$3)
+//             );
+// #endif
+//             delete $1; delete $3;
+//             driver.setCalculatedPatches(*$$);
+//           }
         | phexp '&' pyexp 	   	          {
             sameSize($1,$3);
             $$ = new Foam::pointSymmTensorField(*$1 & *$3);
@@ -4747,7 +4758,7 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | phexp '-' pyexp 	   	          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 $1->internalField() - $3->internalField()
             );
@@ -4759,7 +4770,7 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | pyexp '-' phexp 	   	          {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 $1->internalField() - $3->internalField()
             );
@@ -4909,7 +4920,7 @@ phexp:   psphericalTensor                  { $$ = $1; }
           }
         | phexp '*' psexp 	   	                  {
             sameSize($1,$3);
-#ifdef INCOMPLETE_OPERATORS
+#ifdef FOAM_INCOMPLETE_OPERATORS
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
                 $1->internalField() * $3->internalField()
             );

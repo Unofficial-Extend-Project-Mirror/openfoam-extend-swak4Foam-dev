@@ -303,7 +303,8 @@ S_{expl} + S_{impl} T
          =clearField= from the
          =swakFunctionObjects=. =patchExpression= from
          =simpleSwakFunctionObjects=. =solveLaplacianPDE= and
-         =solveTransportPDE= for solving equations
+         =solveTransportPDE= for solving equations,
+         =pythonIntegration= with calculations using =numpy=
 **** wobbler
     - Solver :: solidDisplacementFoam
 **** circulatingSplash
@@ -1523,12 +1524,62 @@ S_{expl} + S_{impl} T
 **** Unspecified =value= in =addGlobalVariables= produces obscure error message
      The error message occured much later when a =tmp= tried to copy a
      =NULL=-pointer and was not obvious at all for the general user. Fixed
+**** Did not compile on =1.6-ext=
+     1.6-ext does not consider the product of two symmetrical tensors
+     to be symmetrical. Fixed
+**** Python integration did not get global variables
+     Change in the interface of the =ExpressionResult=-class
+     broke the access of global variables from a
+     Python-functionObject. Fixed
+**** =maintainanceScripts/makeSwakVersionFile.py= failed when no Mercurial is installed
+     This didn't influence the compilation (as there is already a
+     current version file there) but confused people.
 *** New Examples
 **** Cases from the /OSCFD12/ Conference in London
      On the slides the case files were promised
+*** Enhancements
+**** Python-Integration now supports numpy-arrays
+     If the =numpy=-library is found then global variables which are
+     fields are being transformed to =numpy=-arrays. These arrays can
+     be accessed with the usual =numpy=-array access like =a[i,j]= or
+     =a[i,:]=. Global variables are made accessible *by
+     reference*. This means that writing a value changes the global
+     variable. Setting the whole variable has to be done by slicing
+     =a[:]=3= (=a=3= removes it from the workspace). Vectors and
+     tensors are two-dimensional arrays. They have
+     convenience-attributes that return the whole vector of a
+     component (like =a.x= for vectors or =a.xx= for tensors). To
+     overwrite these they have to be sliced: =a.x[:]=0= (=a.x=0= only
+     changes the attribute)
+
+     If a variable that is going to a global namespace is a
+     =numpy=-array then it is translated by the following rules:
+     vectors are transformed to =scalarField=. Arrays with 3 columns
+     to =vectorField=, 9 columns to =tensorField= and 6 columns to
+     =symmTensorField=. Different column-numbers produce errors
+**** Optional parameter =writeCode=/=writeFile= for =pythonIntegrationFunctionObject=
+     If this is set then this Python-code is executed every time a
+     time-step was written to disk
+**** Python-integration has convenience-functions to create data files
+     Python-integration now has two conventience-functions that return
+     a filename with the full path and create the directories if
+     necessary. The file is *not* created (that is the responsibility
+     of the Python-code).
+
+     The functions are (=name= is the name of the function object)
+     - dataFile(fname) :: creates a directory
+          =<case>/<name>_data/<time>=. To be used for data that is
+          written at times that differ from write-time
+     - timeDataFile(fname) :: creates a directory
+          =<case>/<time>/<name>_data=. Should only be used for data
+          that is written only at write-time
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
      with the compilation of the library =swak4FoamParsers= and as
      this library is central for all other things in =swak4Foam= the
      compilation terminates if this library is not built
+**** Header =swak.H= with version information and macros
+     This new header includes information about the
+     =swak4Foam=-version, the =OpenFOAM=-version and macros for
+     workarounds that depend on the OpenFOAM-version

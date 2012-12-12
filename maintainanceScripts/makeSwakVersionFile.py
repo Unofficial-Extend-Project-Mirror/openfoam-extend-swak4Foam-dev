@@ -5,8 +5,12 @@ from os import path
 import re
 
 from subprocess import Popen,PIPE
-output = Popen(["hg", "branch"], stdout=PIPE).communicate()[0]
-isPackage = (output.find("debian")==0)
+try:
+    output = Popen(["hgg", "branch"], stdout=PIPE).communicate()[0]
+    isPackage = (output.find("debian")==0)
+except OSError:
+    # there is no mercurial
+    isPackage=False
 
 readme=open(path.join(path.dirname(sys.argv[0]),"..","README"))
 

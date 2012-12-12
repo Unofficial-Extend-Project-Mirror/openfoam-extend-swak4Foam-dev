@@ -1,0 +1,16 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 04 Dec 2012 00:54:48 +0100
+Subject: Re: Non-uniform fields into python-integration
+Message-Id: <e986578b540877e6-c448aa56cfbe1ab9-artemis@bgs-cool-greybook.local>
+References: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+
+Getting global variables into numpy-arrays now works.
+
+What doesn't work:
+- fields of length 1 also become arrays
+- new field variables can't get out
+
+To check:
+- are field variables "by reference"?
+- check whether access as a.x might be possible

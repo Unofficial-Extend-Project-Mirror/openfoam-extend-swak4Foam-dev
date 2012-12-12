@@ -1,0 +1,18 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 02 Dec 2012 20:46:51 +0100
+Subject: Re: Non-uniform fields into python-integration
+Message-Id: <e986578b540877e6-ca97290e424f1256-artemis@bgs-cool-greybook.local>
+References: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e986578b540877e6-0-artemis@bgs-cool-greybook.local>
+
+Starting work in serious on this. Basic idea (this lets the library
+compile without the numpy-headers):
+
+Define a pseudo-wrapper class like this
+
+class wrap(array):
+    def __init__(self,a):
+        self.__array_interface__=copy(a.__array_interface__)
+
+but set __array_interface__ to the actual data of the variable then
+promote it with numpy.asarray to a serious array
