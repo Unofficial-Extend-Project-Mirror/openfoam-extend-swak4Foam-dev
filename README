@@ -284,7 +284,8 @@ S_{expl} + S_{impl} T
          =clearField= from the
          =swakFunctionObjects=. =patchExpression= from
          =simpleSwakFunctionObjects=. =solveLaplacianPDE= and
-         =solveTransportPDE= for solving equations
+         =solveTransportPDE= for solving equations,
+         =pythonIntegration= with calculations using =numpy=
 **** wobbler
     - Solver :: solidDisplacementFoam
 **** circulatingSplash
