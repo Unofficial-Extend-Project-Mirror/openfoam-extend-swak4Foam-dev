@@ -1428,6 +1428,26 @@ S_{expl} + S_{impl} T
 **** =maintainanceScripts/makeSwakVersionFile.py= failed when no Mercurial is installed
      This didn't influence the compilation (as there is already a
      current version file there) but confused people.
+*** Enhancements
+**** Python-Integration now supports numpy-arrays
+     If the =numpy=-library is found then global variables which are
+     fields are being transformed to =numpy=-arrays. These arrays can
+     be accessed with the usual =numpy=-array access like =a[i,j]= or
+     =a[i,:]=. Global variables are made accessible *by
+     reference*. This means that writing a value changes the global
+     variable. Setting the whole variable has to be done by slicing
+     =a[:]=3= (=a=3= removes it from the workspace). Vectors and
+     tensors are two-dimensional arrays. They have
+     convenience-attributes that return the whole vector of a
+     component (like =a.x= for vectors or =a.xx= for tensors). To
+     overwrite these they have to be sliced: =a.x[:]=0= (=a.x=0= only
+     changes the attribute)
+
+     If a variable that is going to a global namespace is a
+     =numpy=-array then it is translated by the following rules:
+     vectors are transformed to =scalarField=. Arrays with 3 columns
+     to =vectorField=, 9 columns to =tensorField= and 6 columns to
+     =symmTensorField=. Different column-numbers produce errors
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

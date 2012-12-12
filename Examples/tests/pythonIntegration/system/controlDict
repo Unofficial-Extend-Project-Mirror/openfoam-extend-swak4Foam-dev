@@ -243,7 +243,7 @@ functions {
             testPython
             testPythonFields
         );
-        executeCode "randomVector=apply(numpy.random.randn,facePos.shape);randomField=numpy.random.randn(facePos.shape[0]);normalVector=(1,2,3);normalScalar=42";
+        executeCode "randomVector=apply(numpy.random.randn,facePos.shape);randomField=numpy.random.randn(facePos.shape[0]);normalVector=(1,2,3);normalScalar=42;print 'Mean facepos.x',facePos.x.mean()";
         startCode $executeCode;
         endCode "";
 

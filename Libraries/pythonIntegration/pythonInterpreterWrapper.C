@@ -158,18 +158,39 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
                     << exit(FatalError);
         }
         fail=PyRun_SimpleString(
-            "def _swak_wrapOpenFOAMField_intoNumpy(address,typestr,size,nr=None):\n"
-            "   class iWrap(object):\n"
-            "      def __init__(self):\n"
-            "         self.__array_interface__={}\n"
-            "         self.__array_interface__['data']=(int(address,16),False)\n"
-            "         if nr:\n"
-            "             self.__array_interface__['shape']=(size,nr)\n"
-            "         else:\n"
-            "             self.__array_interface__['shape']=(size,)\n"
-            "         self.__array_interface__['version']=3\n"
-            "         self.__array_interface__['typestr']=typestr\n"
-            "   return numpy.asarray(iWrap())\n"
+            // "def _swak_wrapOpenFOAMField_intoNumpy(address,typestr,size,nr=None):\n"
+            // "   class iWrap(object):\n"
+            // "      def __init__(self):\n"
+            // "         self.__array_interface__={}\n"
+            // "         self.__array_interface__['data']=(int(address,16),False)\n"
+            // "         if nr:\n"
+            // "             self.__array_interface__['shape']=(size,nr)\n"
+            // "         else:\n"
+            // "             self.__array_interface__['shape']=(size,)\n"
+            // "         self.__array_interface__['version']=3\n"
+            // "         self.__array_interface__['typestr']=typestr\n"
+            // "   return numpy.asarray(iWrap())\n"
+            "class OpenFOAMFieldArray(numpy.ndarray):\n"
+            "   def __new__(cls,address,typestr,size,nr=None,names=None):\n"
+            "      obj=type('Temporary',(object,),{})\n"
+            "      obj.__array_interface__={}\n"
+            "      obj.__array_interface__['data']=(address,False)\n"
+            "      if nr:\n"
+            "          obj.__array_interface__['shape']=(size,nr)\n"
+            "      else:\n"
+            "          obj.__array_interface__['shape']=(size,)\n"
+            //            "      obj.__array_interface__['descr']=[('x',typestr)]\n"
+            "      obj.__array_interface__['version']=3\n"
+            "      obj.__array_interface__['typestr']=typestr\n"
+            "      obj=numpy.asarray(obj).view(cls)\n"
+            "      if names:\n"
+            "         for i,n in enumerate(names):\n"
+            "            def f(ind):\n"
+            "               return obj[:,ind]\n"
+            "            setattr(obj,n,f(i))\n"
+            "      return obj\n"
+            "   def __array_finalize__(self,obj):\n"
+            "      if obj is None: return\n"
         );
     }
 }
@@ -500,7 +521,7 @@ void pythonInterpreterWrapper::getGlobals()
                         << endl;
                 }
                 OStringStream cmd;
-                cmd << var << "=_swak_wrapOpenFOAMField_intoNumpy(";
+                cmd << var << "=OpenFOAMFieldArray(";
                 cmd << "address='" << val.getAddressAsDecimal() << "',";
                 cmd << "typestr='<f" << label(sizeof(scalar)) << "',";
                 cmd << "size=" << val.size();
@@ -509,10 +530,13 @@ void pythonInterpreterWrapper::getGlobals()
                     nr=1;
                 } else if(val.valueType()==pTraits<vector>::typeName) {
                     nr=3;
+                    cmd << ",names=['x','y','z']";
                 } else if(val.valueType()==pTraits<tensor>::typeName) {
                     nr=9;
+                    cmd << ",names=['xx','xy','xz','yx','yy','yz','zx','zy','zz']";
                 } else if(val.valueType()==pTraits<symmTensor>::typeName) {
                     nr=6;
+                    cmd << ",names=['xx','xy','xz','yy','yz','zz']";
                 } else if(val.valueType()==pTraits<sphericalTensor>::typeName) {
                     nr=1;
                 }
