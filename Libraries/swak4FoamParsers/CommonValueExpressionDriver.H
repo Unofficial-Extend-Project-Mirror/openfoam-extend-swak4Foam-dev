@@ -94,6 +94,9 @@ class CommonValueExpressionDriver
     //- string that allows more detailed allocation of the context
     string contextString_;
 
+    //- string that stores the name of the other mesh (if that is going to be used)
+    word otherMeshName_;
+
 protected:
     //- get the string of the context in a form that is usable for an error message
     std::string getContextString();
@@ -160,6 +163,10 @@ public:
 
     //- actual size of the supporting point-field
     virtual label pointSize() const = 0;
+
+    //- access the other mesh name
+    const word &otherMeshName() const { return otherMeshName_; }
+    word &otherMeshName() { return otherMeshName_; }
 
 protected:
     //- get the mesh we're living on

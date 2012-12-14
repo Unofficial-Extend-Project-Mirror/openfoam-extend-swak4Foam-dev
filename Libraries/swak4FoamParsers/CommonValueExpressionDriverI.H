@@ -714,7 +714,7 @@ namespace Foam {
                     IOobject
                     (
                         fieldName,
-                        theMesh.time(),
+                        theMesh.time().timeName(),
                         theMesh,
                         IOobject::MUST_READ,
                         IOobject::NO_WRITE
