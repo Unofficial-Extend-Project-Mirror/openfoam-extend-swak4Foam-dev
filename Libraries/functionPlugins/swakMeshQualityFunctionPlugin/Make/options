@@ -6,6 +6,7 @@ endif
 EXE_INC = \
     $(FOAM_DEV_OPTION) 	\
     -I../../swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude
 
@@ -13,4 +14,4 @@ LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     -lswak4FoamParsers \
     -lfiniteVolume \
-    -lmeshTools 
+    -lmeshTools

@@ -1044,18 +1044,27 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
 
 string CommonValueExpressionDriver::getTypeOfField(const string &name) const
 {
+    return getTypeOfFieldInternal(mesh(),name);
+}
+
+string CommonValueExpressionDriver::getTypeOfFieldInternal(
+    const fvMesh &theMesh,
+    const string &name
+) const
+{
     IOobject f
         (
             name,
-            mesh().time().timeName(),
-            mesh(),
+            theMesh.time().timeName(),
+            theMesh,
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
     f.headerOk();
 
     if(debug) {
-        Pout << "Name: " << name << " Time: " << mesh().time().timeName()
+        Pout<< "Mesh: " << theMesh.polyMesh::path()
+            << " Name: " << name << " Time: " << mesh().time().timeName()
             << " Path: " << f.filePath() << " Class: "
             << f.headerClassName() << endl;
     }
@@ -1395,6 +1404,13 @@ bool CommonValueExpressionDriver::hasVariable(
     } else {
         return variables_.found(name);
     }
+}
+
+bool CommonValueExpressionDriver::isForeignMesh(
+    const word &name
+) const
+{
+    return MeshesRepository::getRepository().hasMesh(name);
 }
 
 } // namespace

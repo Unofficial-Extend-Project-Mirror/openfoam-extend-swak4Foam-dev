@@ -690,6 +690,91 @@ namespace Foam {
     }
 
     template<class T>
+    tmp<T> CommonValueExpressionDriver::interpolateForeignField(
+        const word &meshName,
+        const word &fieldName,
+        meshToMesh::order theOrder
+    ) const
+    {
+        const fvMesh &theMesh=MeshesRepository::getRepository().getMesh(
+            meshName
+        );
+        const meshToMesh &interpolation=MeshesRepository::getRepository().
+            getMeshToMesh(
+                meshName,
+                this->mesh()
+            );
+
+        if(!theMesh.foundObject<T>(fieldName)) {
+            if(debug) {
+                Pout << "Not Found " << fieldName << " in memory I have" << endl;
+            }
+            autoPtr<T>f(
+                new T(
+                    IOobject
+                    (
+                        fieldName,
+                        theMesh.time(),
+                        theMesh,
+                        IOobject::MUST_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    theMesh
+                )
+            );
+            T* toCache=new T(f());
+            toCache->store();
+        }
+
+        return interpolation.interpolate(
+            theMesh.lookupObject<T>(fieldName),
+            theOrder
+        );
+    }
+
+
+    template<class T>
+    bool CommonValueExpressionDriver::CommonValueExpressionDriver::isForeignField(
+        const word &meshName,
+        const word &name
+    ) const
+    {
+        if(!isForeignMesh(meshName)) {
+            return false;
+        }
+
+        const fvMesh &theMesh=MeshesRepository::getRepository().getMesh(
+            meshName
+        );
+
+        if(debug) {
+            Pout << "CommonValueExpressionDriver::ForeignField. Name: " << name
+                << " Type: " << T::typeName << endl;
+        }
+
+        if(theMesh.foundObject<T>(name)) {
+            if(debug) {
+                Pout << "Found " << name << " in memory" << endl;
+            }
+            return true;
+        }
+
+        if(
+            getTypeOfFieldInternal(theMesh,name)==T::typeName
+        ) {
+            if(debug) {
+                Pout << "Found " << name << " on disc" << endl;
+            }
+            return true;
+        } else {
+            if(debug) {
+                Pout << name << " not found" << endl;
+            }
+            return false;
+        }
+    }
+
+    template<class T>
     bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(
         const string &name
     ) const

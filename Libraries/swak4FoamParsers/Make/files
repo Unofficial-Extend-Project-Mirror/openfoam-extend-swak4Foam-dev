@@ -1,6 +1,7 @@
 helpers/printSwakVersion.C
 
 repositories/SurfacesRepository.C
+repositories/MeshesRepository.C
 repositories/SetsRepository.C
 repositories/GlobalVariablesRepository.C
 

@@ -54,6 +54,8 @@ SourceFiles
 #include "StoredExpressionResult.H"
 #include "DelayedExpressionResult.H"
 
+#include "MeshesRepository.H"
+
 namespace Foam
 {
 
@@ -217,7 +219,13 @@ protected:
 
     inline bool prevIterIsOldTime() const { return prevIterIsOldTime_; }
 
+    string getTypeOfFieldInternal(
+        const fvMesh &mesh,
+        const string &name
+    ) const;
+
     string getTypeOfField(const string &name) const;
+
     string getTypeOfSet(const string &name) const;
 
     template<class T,class Mesh>
@@ -456,6 +464,22 @@ public:
         HashTable<interpolationTable<scalar> > &,
         bool clear=true
     );
+
+    //- is this mesh in the repository
+    bool isForeignMesh(const word &name) const;
+
+    template<class T>
+    bool isForeignField(
+        const word &meshName,
+        const word &fieldName
+    ) const;
+
+    template<class T>
+    tmp<T> interpolateForeignField(
+        const word &meshName,
+        const word &fieldName,
+        meshToMesh::order theOrder=meshToMesh::INTERPOLATE
+    ) const;
 
     //- read all the interpolation tables known to man
     void readTables(const dictionary &);
