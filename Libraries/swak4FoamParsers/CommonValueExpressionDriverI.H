@@ -382,8 +382,8 @@ namespace Foam {
                     Pout << "Registering a copy of " << name
                         << " with mesh" << endl;
                 }
-                T* toCache=new T(mesh,regName,s());
-                toCache->store();
+                autoPtr<T> toCache(new T(mesh,regName,s()));
+                toCache->store(toCache);
             }
             return s;
         } else {
@@ -683,8 +683,8 @@ namespace Foam {
                 Pout << "Registering a copy of " << name
                     << " with mesh" << endl;
             }
-            T* toCache=new T(f());
-            toCache->store();
+            autoPtr<T> toCache(new T(f()));
+            toCache->store(toCache);
         }
         return f;
     }
@@ -705,13 +705,11 @@ namespace Foam {
                 this->mesh()
             );
 
-        tmp<T> f;
-
         if(!theMesh.foundObject<T>(fieldName)) {
             if(debug) {
                 Pout << "Not Found " << fieldName << " in memory I have" << endl;
             }
-            f=tmp<T>(
+            autoPtr<T> f(
                 new T(
                     IOobject
                     (
@@ -728,8 +726,8 @@ namespace Foam {
                 Pout << "Field " << fieldName << " in memory store I will"
                     << endl;
             }
-            T* toCache=new T(f());
-            toCache->store();
+
+            f->store(f);
         }
         if(debug) {
             Info << "Objects in mesh: " << theMesh.names() << endl;

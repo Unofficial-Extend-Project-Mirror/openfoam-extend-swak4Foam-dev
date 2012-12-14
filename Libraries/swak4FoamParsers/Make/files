@@ -5,6 +5,8 @@ repositories/MeshesRepository.C
 repositories/SetsRepository.C
 repositories/GlobalVariablesRepository.C
 
+namedEnums/MeshInterpolationType.C
+
 ExpressionDriverWriter.C
 
 ExpressionResult/ExpressionResult.C
