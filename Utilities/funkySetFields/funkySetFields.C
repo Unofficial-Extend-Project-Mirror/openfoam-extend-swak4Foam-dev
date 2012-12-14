@@ -610,6 +610,9 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("dictExt","<extension to the default funkySetFieldsDict-dictionary>");
     argList::validOptions.insert("allowFunctionObjects","");
     argList::validOptions.insert("addDummyPhi","");
+    argList::validOptions.insert("otherCase","<path to other case>");
+    argList::validOptions.insert("otherRegion","<region in other case>");
+    argList::validOptions.insert("otherTime","<time to use in other case>");
 
 #   include "setRootCase.H"
 
@@ -636,6 +639,41 @@ int main(int argc, char *argv[])
         runTime.functionObjects().off();
     }
 
+    if(args.options().found("otherCase")) {
+        word otherRegion(polyMesh::defaultRegion);
+        if(args.options().found("otherRegion")) {
+            otherRegion=word(args.options()["otherRegion"]);
+        }
+        string otherTime(args.options()["otherTime"]);
+        fileName otherCase(args.options()["otherCase"]);
+
+        Info << "Adding case " << otherCase << ", region "
+            << otherRegion << " at t=" << otherTime << ". "
+            << "Fields from that case can be accessed in expression with "
+            << "'other(<field>)'\n" << endl;
+
+        MeshesRepository::getRepository().addMesh(
+            "other",
+            otherCase,
+            otherRegion
+        );
+        scalar time=MeshesRepository::getRepository().setTime(
+            "other",
+            otherTime
+        );
+        Info << "Actually using time " << time << " in other case\n"
+            << endl;
+    } else if(
+        args.options().found("otherRegion")
+        ||
+        args.options().found("otherTime")
+    ) {
+        FatalErrorIn(args.executable())
+            << "'otherCase' not specified"
+                << endl
+                << exit(FatalError);
+
+    }
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);

@@ -109,6 +109,17 @@ public:
         const fvMesh &mesh
     );
 
+    //- set the time that is used for a mesh
+    scalar setTime(
+        const word &name,
+        const string &time
+    );
+
+    //- set the time that is used for a mesh
+    scalar setTime(
+        const word &name,
+        scalar time
+    );
 };
 
 

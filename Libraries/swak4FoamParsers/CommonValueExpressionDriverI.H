@@ -705,11 +705,13 @@ namespace Foam {
                 this->mesh()
             );
 
+        tmp<T> f;
+
         if(!theMesh.foundObject<T>(fieldName)) {
             if(debug) {
                 Pout << "Not Found " << fieldName << " in memory I have" << endl;
             }
-            autoPtr<T>f(
+            f=tmp<T>(
                 new T(
                     IOobject
                     (
@@ -722,10 +724,16 @@ namespace Foam {
                     theMesh
                 )
             );
+            if(debug) {
+                Pout << "Field " << fieldName << " in memory store I will"
+                    << endl;
+            }
             T* toCache=new T(f());
             toCache->store();
         }
-
+        if(debug) {
+            Info << "Objects in mesh: " << theMesh.names() << endl;
+        }
         return interpolation.interpolate(
             theMesh.lookupObject<T>(fieldName),
             theOrder

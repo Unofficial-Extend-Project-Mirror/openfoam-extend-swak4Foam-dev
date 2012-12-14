@@ -179,6 +179,34 @@ meshToMesh &MeshesRepository::getMeshToMesh(
     return *meshInterpolations_[name];
 }
 
+scalar MeshesRepository::setTime(
+    const word &name,
+    const string &time
+) {
+    IStringStream tStream(time);
+
+    return setTime(
+        name,
+        readScalar(tStream)
+    );
+}
+
+scalar MeshesRepository::setTime(
+    const word &name,
+    scalar time
+) {
+    fvMesh &mesh=getMesh(name);
+
+    instant iTime=mesh.time().findClosestTime(time);
+
+    const_cast<Time&>(mesh.time()).setTime(
+        iTime,
+        0 // whatever
+    );
+    return mesh.time().value();
+}
+
+
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 
