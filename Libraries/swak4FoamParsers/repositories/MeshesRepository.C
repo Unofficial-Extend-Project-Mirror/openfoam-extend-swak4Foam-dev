@@ -181,31 +181,90 @@ meshToMesh &MeshesRepository::getMeshToMesh(
 
 scalar MeshesRepository::setTime(
     const word &name,
-    const string &time
+    const string &time,
+    label timeIndex
 ) {
     IStringStream tStream(time);
 
     return setTime(
         name,
-        readScalar(tStream)
+        readScalar(tStream),
+        timeIndex
     );
 }
 
 scalar MeshesRepository::setTime(
     const word &name,
-    scalar time
+    scalar time,
+    label timeI
 ) {
+    if(debug) {
+        Info << "Setting mesh " << name << " to t=" << time << endl;
+    }
     fvMesh &mesh=getMesh(name);
 
     instant iTime=mesh.time().findClosestTime(time);
+    if(debug) {
+        Info << "Found time " << iTime << " as an approximation for t="
+            << time << endl;
+    }
 
-    const_cast<Time&>(mesh.time()).setTime(
+    // const_cast<Time&>(mesh.time()).setTime(
+    //     iTime,
+    //     timeI
+    // );
+
+    Time &theTime=*(times_[name]);
+    word oldTime=theTime.timeName();
+
+    theTime.setTime(
         iTime,
-        0 // whatever
+        timeI
     );
+
+    if(oldTime!=theTime.timeName()) {
+        mesh.readUpdate();
+        mesh.readModifiedObjects();
+
+        HashTable<const regIOobject*> content(mesh.lookupClass<regIOobject>());
+
+        forAllIter(HashTable<const regIOobject*>,content,iter) {
+            word newInstance=theTime.findInstance(
+                (*iter)->local(),
+                iter.key(),
+                IOobject::READ_IF_PRESENT
+            );
+            if(newInstance==theTime.timeName()) {
+                // Deregister the field. Don't know a better way to ensure it is properly reread
+                if(debug) {
+                    Info << "Deregistering " << iter.key() << endl;
+                }
+                regIOobject &obj=const_cast<regIOobject&>(*(*iter));
+                mesh.polyMesh::checkOut(obj);
+            }
+        }
+   }
     return mesh.time().value();
 }
 
+void MeshesRepository::setInterpolationOrder(
+    const word &name,
+    meshToMesh::order val
+)
+{
+    interpolationOrder_.set(name,val);
+}
+
+meshToMesh::order MeshesRepository::getInterpolationOrder(
+    const word &name
+)
+{
+    if(interpolationOrder_.found(name)) {
+        return interpolationOrder_[name];
+    } else {
+        return meshToMesh::INTERPOLATE;
+    }
+}
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 

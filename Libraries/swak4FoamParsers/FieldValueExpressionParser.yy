@@ -949,7 +949,9 @@ vexp:   vector                                    { $$ = $1; }
           }
         | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_VID ')' {
             $$ = driver.interpolateForeignField<Foam::volVectorField>(
-                *$1,*$3
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
             ).ptr();
             delete $1; delete $3;
           }
@@ -2230,7 +2232,9 @@ exp:    TOKEN_NUM                                   {
           }
         | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_SID ')' {
             $$ = driver.interpolateForeignField<Foam::volScalarField>(
-                *$1,*$3
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
             ).ptr();
             delete $1; delete $3;
           }
@@ -2679,7 +2683,9 @@ texp:   tensor                  { $$ = $1; }
           }
         | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_TID ')' {
             $$ = driver.interpolateForeignField<Foam::volTensorField>(
-                *$1,*$3
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
             ).ptr();
             delete $1; delete $3;
           }
@@ -2926,7 +2932,9 @@ yexp:   symmTensor                  { $$ = $1; }
           }
         | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_YID ')' {
             $$ = driver.interpolateForeignField<Foam::volSymmTensorField>(
-                *$1,*$3
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
             ).ptr();
             delete $1; delete $3;
           }
@@ -3117,7 +3125,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
           }
         | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_HID ')' {
             $$ = driver.interpolateForeignField<Foam::volSphericalTensorField>(
-                *$1,*$3
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
             ).ptr();
             delete $1; delete $3;
           }

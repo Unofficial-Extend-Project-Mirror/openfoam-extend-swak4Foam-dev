@@ -28,40 +28,55 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+    Foam::MeshInterpolationOrder
+
+Description
+
+SourceFiles
+    MeshInterpolationOrder.C
+
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "MeshInterpolationType.H"
+#ifndef MeshInterpolationOrder_H
+#define MeshInterpolationOrder_H
 
-namespace Foam {
+#include "meshToMesh.H"
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+#include "NamedEnum.H"
 
-template<>
-const char* NamedEnum
-<
-    MeshInterpolationType::order,
-    3
->::names[] =
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
 {
-    "map",
-    "interpolate",
-    "cell_point_interpolate"
+
+/*---------------------------------------------------------------------------*\
+                           Class MeshInterpolationOrder Declaration
+\*---------------------------------------------------------------------------*/
+
+class MeshInterpolationOrder
+{
+    // Private data
+
+public:
+
+    typedef meshToMesh::order value;
+
+    //- String representation of order enums
+    static const NamedEnum<value, 3> names;
+
 };
 
-const NamedEnum<MeshInterpolationType::order, 3>
-    MeshInterpolationType::orderNames_;
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace Foam
 
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
-
-} // namespace
+#endif
 
 // ************************************************************************* //

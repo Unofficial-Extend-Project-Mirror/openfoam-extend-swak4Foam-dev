@@ -48,6 +48,8 @@ SourceFiles
 #include "fvMesh.H"
 #include "meshToMesh.H"
 
+#include "MeshInterpolationOrder.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -66,6 +68,8 @@ class MeshesRepository
     HashPtrTable<fvMesh,word> meshes_;
 
     HashPtrTable<meshToMesh,word> meshInterpolations_;
+
+    HashTable<meshToMesh::order,word> interpolationOrder_;
 
     // Constructors
 
@@ -112,13 +116,26 @@ public:
     //- set the time that is used for a mesh
     scalar setTime(
         const word &name,
-        const string &time
+        const string &time,
+        label timeIndex=0
     );
 
     //- set the time that is used for a mesh
     scalar setTime(
         const word &name,
-        scalar time
+        scalar time,
+        label timeIndex=0
+    );
+
+    //- set interpolation order for a mesh
+    void setInterpolationOrder(
+        const word &name,
+        meshToMesh::order val
+    );
+
+    //- get interpolation order
+    meshToMesh::order getInterpolationOrder(
+        const word &name
     );
 };
 

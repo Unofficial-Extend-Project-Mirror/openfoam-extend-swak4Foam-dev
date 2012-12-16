@@ -28,57 +28,40 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    Foam::MeshInterpolationType
-
-Description
-
-SourceFiles
-    MeshInterpolationTypeI.H
-    MeshInterpolationType.C
-    MeshInterpolationTypeIO.C
-
  ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef MeshInterpolationType_H
-#define MeshInterpolationType_H
+#include "MeshInterpolationOrder.H"
 
-#include "meshToMesh.H"
+namespace Foam {
 
-#include "NamedEnum.H"
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
+template<>
+const char* NamedEnum
+<
+    MeshInterpolationOrder::value,
+    3
+>::names[] =
 {
-
-/*---------------------------------------------------------------------------*\
-                           Class MeshInterpolationType Declaration
-\*---------------------------------------------------------------------------*/
-
-class MeshInterpolationType
-{
-    // Private data
-
-public:
-
-    typedef meshToMesh::order order;
-
-    //- String representation of order enums
-    static const NamedEnum<order, 3> names;
-
+    "map",
+    "interpolate",
+    "cell_point_interpolate"
 };
 
+const NamedEnum<MeshInterpolationOrder::value, 3>
+    MeshInterpolationOrder::names;
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace Foam
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
+// * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
+
+
+// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+
+} // namespace
 
 // ************************************************************************* //
