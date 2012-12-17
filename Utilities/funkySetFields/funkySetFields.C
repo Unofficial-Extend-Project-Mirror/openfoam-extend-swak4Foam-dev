@@ -610,6 +610,11 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("dictExt","<extension to the default funkySetFieldsDict-dictionary>");
     argList::validOptions.insert("allowFunctionObjects","");
     argList::validOptions.insert("addDummyPhi","");
+    argList::validOptions.insert("otherCase","<path to other case>");
+    argList::validOptions.insert("otherRegion","<region in other case>");
+    argList::validOptions.insert("otherTime","<time to use in other case>");
+    argList::validOptions.insert("otherHasSameTime","");
+    argList::validOptions.insert("otherInterpolateOrder","<order>");
 
 #   include "setRootCase.H"
 
@@ -636,13 +641,81 @@ int main(int argc, char *argv[])
         runTime.functionObjects().off();
     }
 
+    bool otherHasSameTime=args.options().found("otherHasSameTime");
+
+    if(args.options().found("otherCase")) {
+        word otherRegion(polyMesh::defaultRegion);
+        if(args.options().found("otherRegion")) {
+            otherRegion=word(args.options()["otherRegion"]);
+        }
+        string otherTime;
+        if(!otherHasSameTime) {
+            otherTime=string(args.options()["otherTime"]);
+        }
+        fileName otherCase(args.options()["otherCase"]);
+
+        Info<< "Adding case " << otherCase << ", region "
+            << otherRegion;
+        if(otherHasSameTime) {
+            Info << " with same time as 'real' time.";
+        } else {
+            Info<< " at t=" << otherTime << ". ";
+        }
+        Info<< "Fields from that case can be accessed in expression with "
+            << "'other(<field>)'\n" << endl;
+
+        MeshesRepository::getRepository().addMesh(
+            "other",
+            otherCase,
+            otherRegion
+        );
+
+        if(args.options().found("otherInterpolateOrder")) {
+            MeshesRepository::getRepository().setInterpolationOrder(
+                "other",
+                MeshInterpolationOrder::names[
+                    args.options()["otherInterpolateOrder"]
+                ]
+            );
+        }
+
+        if(!otherHasSameTime) {
+            scalar time=MeshesRepository::getRepository().setTime(
+                "other",
+                otherTime
+            );
+            Info << "Actually using time " << time << " in other case\n"
+                << endl;
+        }
+    } else if(
+        args.options().found("otherRegion")
+        ||
+        args.options().found("otherTime")
+        ||
+        otherHasSameTime
+    ) {
+        FatalErrorIn(args.executable())
+            << "'otherCase' not specified"
+                << endl
+                << exit(FatalError);
+
+    }
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
 
-        Foam::Info<< "Time = " << runTime.timeName() << Foam::endl;
+        Foam::Info<< "\nTime = " << runTime.timeName() << Foam::endl;
 
         mesh.readUpdate();
+
+        if(otherHasSameTime) {
+            scalar time=MeshesRepository::getRepository().setTime(
+                "other",
+                runTime.timeName(),
+                timeI
+            );
+            Info << "Other mesh set to time " << time << endl;
+        }
 
         if(args.options().found("addDummyPhi")) {
             Info << "Adding a dummy phi to make inletOutlet happy" << endl;

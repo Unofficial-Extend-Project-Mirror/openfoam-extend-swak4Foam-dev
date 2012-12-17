@@ -17,6 +17,10 @@ swakCodedFunctionObject.C
 
 calculateGlobalVariables.C
 calculateGlobalVariablesFunctionObject.C
+addForeignMeshes.C
+addForeignMeshesFunctionObject.C
+foreignMeshesFollowTime.C
+foreignMeshesFollowTimeFunctionObject.C
 
 solvePDECommon.C
 solvePDECommonFiniteVolume.C

@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 17 Dec 2012 12:05:43 +0100
+Subject: Re: Interpolation from other case
+Message-Id: <fb6c24b14027bde2-f38aa076361dba1c-artemis@bgs-cool-greybook.local>
+References: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+
+Added the possibility to declare foreign meshes to the
+CommonExpressionDriver (via a static method)
+
+Works. Needs some adaptions

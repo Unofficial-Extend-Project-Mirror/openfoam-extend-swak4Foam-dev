@@ -54,6 +54,8 @@ SourceFiles
 #include "StoredExpressionResult.H"
 #include "DelayedExpressionResult.H"
 
+#include "MeshesRepository.H"
+
 namespace Foam
 {
 
@@ -96,6 +98,9 @@ class CommonValueExpressionDriver
 
     //- string that allows more detailed allocation of the context
     string contextString_;
+
+    //- string that stores the name of the other mesh (if that is going to be used)
+    word otherMeshName_;
 
 protected:
     //- get the string of the context in a form that is usable for an error message
@@ -164,6 +169,10 @@ public:
     //- actual size of the supporting point-field
     virtual label pointSize() const = 0;
 
+    //- access the other mesh name
+    const word &otherMeshName() const { return otherMeshName_; }
+    word &otherMeshName() { return otherMeshName_; }
+
 protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
@@ -231,7 +240,13 @@ protected:
 
     inline bool prevIterIsOldTime() const { return prevIterIsOldTime_; }
 
+    string getTypeOfFieldInternal(
+        const fvMesh &mesh,
+        const string &name
+    ) const;
+
     string getTypeOfField(const string &name) const;
+
     string getTypeOfSet(const string &name) const;
 
     template<class T,class Mesh>
@@ -400,7 +415,10 @@ public:
         const string &expr
     );
 
-    //- read the list of variable strings (or initialize with a single string)
+    //- read information about the foreign meshes and create them
+    static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
+
+   //- read the list of variable strings (or initialize with a single string)
     static stringList readVariableStrings(const dictionary &dict);
 
     //- read the list of variable strings (or initialize with a single string)
@@ -478,6 +496,22 @@ public:
         HashTable<interpolationTable<scalar> > &,
         bool clear=true
     );
+
+    //- is this mesh in the repository
+    bool isForeignMesh(const word &name) const;
+
+    template<class T>
+    bool isForeignField(
+        const word &meshName,
+        const word &fieldName
+    ) const;
+
+    template<class T>
+    tmp<T> interpolateForeignField(
+        const word &meshName,
+        const word &fieldName,
+        meshToMesh::order theOrder=meshToMesh::INTERPOLATE
+    ) const;
 
     //- read all the interpolation tables known to man
     void readTables(const dictionary &);
