@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 17 Dec 2012 15:03:09 +0100
+Subject: Re: Interpolation from other case
+Message-Id: <fb6c24b14027bde2-e036c55228e458da-artemis@bgs-cool-greybook.local>
+References: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+
+Added description of the feature to the README.
+
+Closing branch and waiting for bugs

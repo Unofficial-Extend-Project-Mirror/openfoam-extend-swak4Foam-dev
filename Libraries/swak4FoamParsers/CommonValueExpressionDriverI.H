@@ -727,6 +727,9 @@ namespace Foam {
                     << endl;
             }
 
+            dimensionSet nullDim(0,0,0,0,0);
+            f->dimensions().reset(nullDim);
+
             f->store(f);
         }
         if(debug) {

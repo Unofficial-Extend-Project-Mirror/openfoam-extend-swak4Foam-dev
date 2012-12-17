@@ -88,6 +88,7 @@ fvMesh &MeshesRepository::addMesh(
     if(debug) {
         Pout << "MeshesRepository: Adding" << name
             << " (assuming it does not exist)" << endl;
+        Pout << "Location: " << usedN << " Region " << region << endl;
     }
 
     typedef  HashPtrTable<Time,word> tableIterator;
@@ -99,12 +100,26 @@ fvMesh &MeshesRepository::addMesh(
     ) {
         const Time &time=(*iter());
         fileName meshPath=time.rootPath()/time.caseName();
-
+        word meshRegion=time.dbDir();
+        if(meshRegion=="") {
+            meshRegion=polyMesh::defaultRegion;
+        }
+        if(debug) {
+            Info << iter.key() << ": " << meshPath << " region: "
+                << time.dbDir() << endl;
+        }
         if(
             usedN==meshPath
             &&
-            region==time.dbDir()
+            region==meshRegion
         ) {
+            if(iter.key()==name) {
+                if(debug) {
+                    Info << "Mesh already present under the name"
+                        << name << endl;
+                }
+                return *meshes_[name];
+            }
             FatalErrorIn("MeshesRepository::addMesh")
                 << "Mesh of case " << usedN << " region " << region
                     << " is already in the repository under the name "

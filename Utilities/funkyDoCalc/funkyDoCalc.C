@@ -87,13 +87,16 @@ int main(int argc, char *argv[])
     Foam::argList::validArgs.append("expressionDict");
 #   include "addRegionOption.H"
     argList::validOptions.insert("noDimensionChecking","");
+    argList::validOptions.insert("foreignMeshesThatFollowTime",
+                                  "<list of mesh names>");
 
 #   include "setRootCase.H"
 
     printSwakVersion();
 
-   IFstream theFile(args.args()[1]);
-   dictionary theExpressions(theFile);
+    IFstream theFile(args.args()[1]);
+    dictionary theExpressions(theFile);
+    wordList foreignMeshesThatFollowTime(0);
 
     if (!args.options().found("time") && !args.options().found("latestTime")) {
         FatalErrorIn("main()")
@@ -105,11 +108,25 @@ int main(int argc, char *argv[])
     if(args.options().found("noDimensionChecking")) {
         dimensionSet::debug=0;
     }
+    if(args.options().found("foreignMeshesThatFollowTime")) {
+        string followMeshes(
+            args.options()["foreignMeshesThatFollowTime"]
+        );
+        IStringStream followStream("("+followMeshes+")");
+        foreignMeshesThatFollowTime=wordList(followStream);
+    }
 
 #   include "createTime.H"
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+    forAllConstIter(IDLList<entry>, theExpressions, iter)
+    {
+        const dictionary &dict=iter().dict();
+
+        CommonValueExpressionDriver::readForeignMeshInfo(dict);
+    }
 
     forAll(timeDirs, timeI)
     {
@@ -119,14 +136,31 @@ int main(int argc, char *argv[])
 
         mesh.readUpdate();
 
+        forAll(foreignMeshesThatFollowTime,i) {
+            const word &name=foreignMeshesThatFollowTime[i];
+            if(MeshesRepository::getRepository().hasMesh(name)) {
+                Info << "Setting mesh " << name << " to current Time"
+                    << endl;
+
+                MeshesRepository::getRepository().setTime(
+                    name,
+                    runTime.value()
+                );
+            } else {
+                FatalErrorIn(args.executable())
+                    << "No mesh with name " << name << " declared. " << nl
+                        << "Can't follow current time"
+                        << endl
+                        << exit(FatalError);
+
+            }
+        }
 
         forAllConstIter(IDLList<entry>, theExpressions, iter)
         {
             Info << iter().keyword() << " : " << flush;
 
             const dictionary &dict=iter().dict();
-
-            CommonValueExpressionDriver::readForeignMeshInfo(dict);
 
             autoPtr<CommonValueExpressionDriver> driver=
                 CommonValueExpressionDriver::New(dict,mesh);

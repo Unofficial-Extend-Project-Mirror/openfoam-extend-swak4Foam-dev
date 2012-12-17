@@ -32,4 +32,18 @@ compareSame {
         average
     );
 }
+compareGraded {
+    $compareSame;
+    foreignMeshes {
+        graded {
+            case "../cavityGrade";
+            region region0;
+            time 0;
+            interpolationOrder interpolate;
+        }
+    }
+    valueType internalField;
+    expression "U-graded(U)";
+}
+
 // ************************************************************************* //
