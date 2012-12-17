@@ -393,7 +393,10 @@ public:
         const string &expr
     );
 
-    //- read the list of variable strings (or initialize with a single string)
+    //- read information about the foreign meshes and create them
+    static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
+
+   //- read the list of variable strings (or initialize with a single string)
     static stringList readVariableStrings(const dictionary &dict);
 
     //- read the list of variable strings (or initialize with a single string)

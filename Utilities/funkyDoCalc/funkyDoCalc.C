@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
     Foam::timeSelector::addOptions(false);
     Foam::argList::validArgs.append("expressionDict");
 #   include "addRegionOption.H"
+    argList::validOptions.insert("noDimensionChecking","");
 
 #   include "setRootCase.H"
 
@@ -101,6 +102,10 @@ int main(int argc, char *argv[])
             << exit(FatalError);
     }
 
+    if(args.options().found("noDimensionChecking")) {
+        dimensionSet::debug=0;
+    }
+
 #   include "createTime.H"
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
@@ -114,11 +119,14 @@ int main(int argc, char *argv[])
 
         mesh.readUpdate();
 
+
         forAllConstIter(IDLList<entry>, theExpressions, iter)
         {
             Info << iter().keyword() << " : " << flush;
 
             const dictionary &dict=iter().dict();
+
+            CommonValueExpressionDriver::readForeignMeshInfo(dict);
 
             autoPtr<CommonValueExpressionDriver> driver=
                 CommonValueExpressionDriver::New(dict,mesh);

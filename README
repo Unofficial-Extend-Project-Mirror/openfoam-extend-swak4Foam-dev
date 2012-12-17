@@ -1465,6 +1465,10 @@ S_{expl} + S_{impl} T
      - timeDataFile(fname) :: creates a directory
           =<case>/<time>/<name>_data=. Should only be used for data
           that is written only at write-time
+**** Switch off dimension checking in =funkyDoCalc=
+     A command lione switch =-noDimensionChecking= is added that
+     allows switching off the checking of dimensions if this makes
+     expressions fail
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
