@@ -154,6 +154,9 @@ false                  return token::TOKEN_FALSE;
 toPoint                 return token::TOKEN_toPoint;
 toFace                  return token::TOKEN_toFace;
 
+mapped                  return token::TOKEN_mapped;
+mappedInternal          return token::TOKEN_mappedInternal;
+
 diag                   return token::TOKEN_diag;
 tr                     return token::TOKEN_tr;
 dev                    return token::TOKEN_dev;

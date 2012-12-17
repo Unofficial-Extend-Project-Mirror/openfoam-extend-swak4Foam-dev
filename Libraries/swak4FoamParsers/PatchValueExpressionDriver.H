@@ -210,6 +210,14 @@ public:
         const word &name
     );
 
+    //- for a mapped patch returns the mapped field from "the other side""
+    template<class T>
+    tmp<Field<T> > mapField(const word &name,bool internalField=false);
+
+    //- for a mapped point-patch returns the mapped field from "the other side""
+    template<class T>
+    tmp<Field<T> > mapPointField(const word &name);
+
     // allow access of protected methods
     friend class parserPatch::PatchValueExpressionParser;
 };

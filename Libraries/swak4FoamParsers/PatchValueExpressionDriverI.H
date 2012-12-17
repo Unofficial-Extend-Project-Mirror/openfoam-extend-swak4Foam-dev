@@ -369,6 +369,27 @@ namespace Foam {
         return result.ptr();
     }
 
+    template<class T>
+    tmp<Field<T> > PatchValueExpressionDriver::mapField(
+        const word &name,
+        bool internalField
+    ) {
+        // dummy implemntation
+        tmp<Field<T> > result(new Field<T>(this->size(),pTraits<T>::zero));
+
+        return result;
+    }
+
+    template<class T>
+    tmp<Field<T> > PatchValueExpressionDriver::mapPointField(
+        const word &name
+    ) {
+        // dummy implemntation
+        tmp<Field<T> > result(new Field<T>(this->pointSize(),pTraits<T>::zero));
+
+        return result;
+    }
+
 }
 
 
