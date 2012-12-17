@@ -204,6 +204,67 @@ void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
     readTables(dict);
 }
 
+label CommonValueExpressionDriver::readForeignMeshInfo(
+        const dictionary &dict,
+        bool verbose
+) {
+    if(!dict.found("foreignMeshes")) {
+        if(verbose) {
+            Info << "No information about foreign meshes in "
+                << dict.name() << nl << endl;
+        }
+        return 0;
+    }
+
+    label cnt=0;
+
+    const dictionary &foreignMeshInfo=dict.subDict("foreignMeshes");
+    const wordList names(foreignMeshInfo.toc());
+    forAll(names,i) {
+        const word &name=names[i];
+        if(verbose) {
+            Info << "Adding foreign mesh " << name << flush;
+        }
+        const dictionary &info=foreignMeshInfo.subDict(name);
+        const fileName cDir(info.lookup("case"));
+        word region=polyMesh::defaultRegion;
+        if(info.found("region")) {
+            region=word(info.lookup("region"));
+        }
+        const scalar time(readScalar(info.lookup("time")));
+        const MeshInterpolationOrder::value interpolationOrder
+            =MeshInterpolationOrder::names[
+                word(info.lookup("interpolationOrder"))
+            ];
+
+        if(verbose) {
+            Info << " case " << cDir << " region " << region
+                << " at t=" << time << " with interpolation order "
+                << " interpolation order "
+                << word(info.lookup("interpolationOrder")) << endl;
+        }
+
+        MeshesRepository::getRepository().addMesh(
+            name,
+            cDir,
+            region
+        );
+        MeshesRepository::getRepository().setInterpolationOrder(
+            name,
+            interpolationOrder
+        );
+        scalar t=MeshesRepository::getRepository().setTime(
+            name,
+            time
+        );
+        Info << "Actual mesh time t=" << t << nl << endl;
+
+        cnt++;
+    }
+
+    return cnt;
+}
+
 void CommonValueExpressionDriver::readTables(const dictionary &dict)
 {
     if(dict.found("timelines")) {
@@ -1044,18 +1105,27 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
 
 string CommonValueExpressionDriver::getTypeOfField(const string &name) const
 {
+    return getTypeOfFieldInternal(mesh(),name);
+}
+
+string CommonValueExpressionDriver::getTypeOfFieldInternal(
+    const fvMesh &theMesh,
+    const string &name
+) const
+{
     IOobject f
         (
             name,
-            mesh().time().timeName(),
-            mesh(),
+            theMesh.time().timeName(),
+            theMesh,
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
     f.headerOk();
 
     if(debug) {
-        Pout << "Name: " << name << " Time: " << mesh().time().timeName()
+        Pout<< "Mesh: " << theMesh.polyMesh::path()
+            << " Name: " << name << " Time: " << mesh().time().timeName()
             << " Path: " << f.filePath() << " Class: "
             << f.headerClassName() << endl;
     }
@@ -1395,6 +1465,13 @@ bool CommonValueExpressionDriver::hasVariable(
     } else {
         return variables_.found(name);
     }
+}
+
+bool CommonValueExpressionDriver::isForeignMesh(
+    const word &name
+) const
+{
+    return MeshesRepository::getRepository().hasMesh(name);
 }
 
 } // namespace

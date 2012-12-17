@@ -1,0 +1,16 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 14 Dec 2012 16:56:04 +0100
+Subject: Re: Interpolation from other case
+Message-Id: <fb6c24b14027bde2-dc5e11f9d57f63b8-artemis@bgs-cool-greybook.local>
+References: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+
+First implementation.
+
+Works with funkySetFields.
+
+TODO:
+
+- add to general parser
+- registering fields to the other mesh does not work
+- enable chosing of interpolation mode

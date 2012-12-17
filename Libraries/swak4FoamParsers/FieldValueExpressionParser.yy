@@ -74,7 +74,7 @@
     Foam::tensor *ten;
     Foam::symmTensor *yten;
     Foam::sphericalTensor *hten;
-    Foam::string *name;
+    Foam::word *name;
     Foam::volVectorField *vfield;
     Foam::volScalarField *sfield;
     Foam::volTensorField *tfield;
@@ -173,6 +173,14 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token <name>   TOKEN_FUNCTION_LID   "F_logicalID"
 %token <name>   TOKEN_FUNCTION_FLID   "F_faceLogicalID"
 %token <name>   TOKEN_FUNCTION_PLID   "F_pointLogicalID"
+
+%token <name>   TOKEN_OTHER_MESH_ID   "F_otherMeshID"
+%token <name>   TOKEN_OTHER_MESH_SID   "F_otherMeshScalarID"
+%token <name>   TOKEN_OTHER_MESH_VID   "F_otherMeshVectorID"
+%token <name>   TOKEN_OTHER_MESH_TID   "F_otherMeshTensorID"
+%token <name>   TOKEN_OTHER_MESH_HID   "F_otherMeshSymmTensorID"
+%token <name>   TOKEN_OTHER_MESH_YID   "F_otherMeshSphericalTensorID"
+
 %token <name> TOKEN_SETID "cellSetID"
 %token <name> TOKEN_ZONEID "cellZoneID"
 %token <name> TOKEN_FSETID "faceSetID"
@@ -938,6 +946,14 @@ vexp:   vector                                    { $$ = $1; }
         | TOKEN_VID                               {
             $$=driver.getField<Foam::volVectorField>(*$1);
             delete $1;
+          }
+        | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_VID ')' {
+            $$ = driver.interpolateForeignField<Foam::volVectorField>(
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
+            ).ptr();
+            delete $1; delete $3;
           }
         | TOKEN_ddt '(' TOKEN_VID ')'		  {
             $$ = Foam::fvc::ddt(
@@ -2214,6 +2230,14 @@ exp:    TOKEN_NUM                                   {
             $$ = driver.getField<Foam::volScalarField>(*$1);
             delete $1;
           }
+        | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_SID ')' {
+            $$ = driver.interpolateForeignField<Foam::volScalarField>(
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
+            ).ptr();
+            delete $1; delete $3;
+          }
         | evaluateScalarFunction restOfFunction
           { $$=$1; }
         | TOKEN_ddt '(' TOKEN_SID ')'		    {
@@ -2657,6 +2681,14 @@ texp:   tensor                  { $$ = $1; }
             $$=driver.getField<Foam::volTensorField>(*$1);
             delete $1;
           }
+        | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_TID ')' {
+            $$ = driver.interpolateForeignField<Foam::volTensorField>(
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
+            ).ptr();
+            delete $1; delete $3;
+          }
         | TOKEN_ddt '(' TOKEN_TID ')'		    {
             $$ = Foam::fvc::ddt(
                 driver.getOrReadField<Foam::volTensorField>(
@@ -2898,6 +2930,14 @@ yexp:   symmTensor                  { $$ = $1; }
             $$=driver.getField<Foam::volSymmTensorField>(*$1);
             delete $1;
           }
+        | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_YID ')' {
+            $$ = driver.interpolateForeignField<Foam::volSymmTensorField>(
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
+            ).ptr();
+            delete $1; delete $3;
+          }
         | TOKEN_ddt '(' TOKEN_YID ')'		    {
             $$ = Foam::fvc::ddt(
                 driver.getOrReadField<Foam::volSymmTensorField>(
@@ -3082,6 +3122,14 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_HID                                {
             $$=driver.getField<Foam::volSphericalTensorField>(*$1);
             delete $1;
+          }
+        | TOKEN_OTHER_MESH_ID '(' TOKEN_OTHER_MESH_HID ')' {
+            $$ = driver.interpolateForeignField<Foam::volSphericalTensorField>(
+                *$1,*$3,
+                Foam::MeshesRepository::getRepository().
+                getInterpolationOrder(*$1)
+            ).ptr();
+            delete $1; delete $3;
           }
         | TOKEN_ddt '(' TOKEN_HID ')'		    {
             $$ = Foam::fvc::ddt(

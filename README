@@ -172,6 +172,12 @@ S_{expl} + S_{impl} T
 \end{equation}
          for $T$ where $\rho$, $\lambda$ and $S$ can be
          specified. Plus the name of the field $\phi$
+    - addForeignMeshes :: this allows specifying new foreign
+         meshes. These can be used in subsequent function-objects or
+         other swak-expressions on =internalFields=
+    - foreignMeshesFollowTime :: this allows specifying a list of
+         meshes whose time is set to the current time of the running
+         case
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
@@ -321,6 +327,8 @@ S_{expl} + S_{impl} T
      - Description :: Demonstrates the use of =groovyB= with
                       =potentialFoam= (also a problem connected with
                       that). Provided by Martin Backer
+*** FunkyDoCalc
+    Example dictionaries for =funkyDoCalc=
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -373,7 +381,8 @@ S_{expl} + S_{impl} T
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
           =swakExpression=-functionObject. Also an example dictionary
-          that demonstrates the use of =funkyDoCalc=
+          that demonstrates the use of =funkyDoCalc=. Demonstrates
+          "live" comparing to another case using /foreign meshes/
 **** =angledDuctImplicitTransient=
      - Solver :: rhoPorousMRFPimpleFoam
      - Mesh preparation :: Execute the =makeMesh.sh=-script in that
@@ -1429,6 +1438,23 @@ S_{expl} + S_{impl} T
 **** =maintainanceScripts/makeSwakVersionFile.py= failed when no Mercurial is installed
      This didn't influence the compilation (as there is already a
      current version file there) but confused people.
+*** New features
+**** Access fields from different cases
+     It is now possible for expression on =internalFields= to access
+     fields from different cases. These fields are always read from
+     disk when being accessed for the first time and stay cached in
+     memory until the time is changed. The data is interpolated to the
+     current mesh with the =meshToMesh=-class (which is the workhorse
+     of the =mapFields=-utility)
+
+     The meshes are stored in a repository and are accessed via a
+     name. If for instance the mesh is known under the name
+     =otherMesh= then in an expression the term =otherMesh(T)= is the
+     field =T= from that other mesh at the specified time interpolated
+     to the current mesh.
+
+     Certain function objects and parser instances allow specifying
+     foreign meshes in a subdictionary =foreignMeshes=.
 *** Enhancements
 **** Python-Integration now supports numpy-arrays
      If the =numpy=-library is found then global variables which are
@@ -1465,6 +1491,31 @@ S_{expl} + S_{impl} T
      - timeDataFile(fname) :: creates a directory
           =<case>/<time>/<name>_data=. Should only be used for data
           that is written only at write-time
+**** Switch off dimension checking in =funkyDoCalc=
+     A command lione switch =-noDimensionChecking= is added that
+     allows switching off the checking of dimensions if this makes
+     expressions fail
+**** =funkySetFields= allows accessing fields from another mesh
+     If another case (with time and region) is specified via command
+     line options (no dictionary) then in the expressions the other
+     mesh can be accessed under the name =other=
+
+     Main application for this is comparing to other cases (but also
+     comparing different timesteps of the same case with each other).
+
+     Used time is either fixed or set to the currently used (this can
+     be selected via the command line)
+**** =funkyDoCalc= allows specifying foreign meshes
+     Each expression can specify foreign meshes with a
+     =foreignMeshes=-subdict
+**** Function objects to load and update foreign meshes
+     There are two new function objects:
+     - addForeignMeshes :: this allows specifying new foreign
+          meshes. These can be used in subsequent function-objects or
+          other swak-expressions on =internalFields=
+     - foreignMeshesFollowTime :: this allows specifying a list of
+          meshes whose time is set to the current time of the running
+          case
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
