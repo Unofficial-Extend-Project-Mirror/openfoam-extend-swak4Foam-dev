@@ -77,7 +77,11 @@ class PatchValueExpressionDriver
 {
     // Private data
 
+    //- the patch we're living on
     const fvPatch &patch_;
+
+    //- dictionary with the interpolation-schemes for mapping
+    const dictionary mappingInterpolationSchemes_;
 
     // Private Member Functions
 
@@ -85,6 +89,19 @@ class PatchValueExpressionDriver
     void operator=(const PatchValueExpressionDriver&);
 
     static word driverName_;
+
+    //- give back an interpolation-scheme specified by name and type
+    template<class Type>
+    const interpolation<Type> &getInterpolation(
+        const GeometricField< Type, fvPatchField, volMesh > &psi
+    );
+
+    //- get the specification of the interpolations by name
+    const word getInterpolationScheme(const word &name);
+
+    //- table with the interpolation scheme (depending on the type)
+    template <class Type>
+    HashPtrTable<interpolation<Type> > &interpolations();
 
 protected:
 
