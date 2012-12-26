@@ -477,7 +477,10 @@ const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)
                 << ". Using 'default'"
                 << endl;
 
-        return word(mappingInterpolationSchemes_.lookup("default"));
+        word scheme(word(mappingInterpolationSchemes_.lookup("default")));
+        mappingInterpolationSchemes_.add(name,scheme);
+
+        return scheme;
     } else {
         FatalErrorIn("PatchValueExpressionDriver::getInterpolationScheme(const word &name)")
             << "No entry for " << name << " or 'default' in "
