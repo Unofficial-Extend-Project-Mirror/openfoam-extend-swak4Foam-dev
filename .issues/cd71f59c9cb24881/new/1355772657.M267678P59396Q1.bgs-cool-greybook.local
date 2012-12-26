@@ -1,0 +1,17 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 17 Dec 2012 20:25:24 +0100
+Subject: Re: Allow non-uniform external variables
+Message-Id: <cd71f59c9cb24881-df026a8c96327be5-artemis@bgs-cool-greybook.local>
+References: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+In-Reply-To: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+
+Start with 1.7 (the differences are not that big)
+
+Use the names of the 2.x-classes and "map" them into 1.7 with a
+typedef
+
+The workhorse will be a Method mapValues in the
+PatchValueExpressionDriver.
+
+In the grammar two new function-tokens "mapped" and "mappedInternal"
+will be added that map a single field to the current patch

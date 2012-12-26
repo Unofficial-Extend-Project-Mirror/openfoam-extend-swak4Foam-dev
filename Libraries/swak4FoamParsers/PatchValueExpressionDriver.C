@@ -65,14 +65,24 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(orig),
-    patch_(orig.patch_)
-{}
+    patch_(orig.patch_),
+    mappingInterpolationSchemes_(orig.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - copy constructor" << endl;
+    }
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
 :
     CommonValueExpressionDriver(),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_()
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch constructor" << endl;
+    }
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
     const dictionary& dict,
@@ -80,8 +90,17 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(dict),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+dict constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
+}
 
 label getPatchID(const fvMesh &mesh,const word &name)
 {
@@ -120,8 +139,16 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
                 )
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - dict+mesh constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
 }
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
@@ -137,8 +164,12 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
                 id
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_()
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - id+mesh constructor" << endl;
+    }
 }
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
@@ -147,14 +178,23 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(old),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(old.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+driver constructor" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 PatchValueExpressionDriver::~PatchValueExpressionDriver()
-{}
+{
+    if(debug) {
+        Info << "~PatchValueExpressionDriver()" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -384,6 +424,72 @@ bool PatchValueExpressionDriver::existsPluginFunction(
         *this,
         name
     );
+}
+
+template<>
+HashPtrTable<interpolation<scalar> > &PatchValueExpressionDriver::interpolations<scalar>()
+{
+    static HashPtrTable<interpolation<scalar> > theTable;
+
+    return theTable;
+}
+
+template<>
+HashPtrTable<interpolation<vector> > &PatchValueExpressionDriver::interpolations<vector>()
+{
+    static HashPtrTable<interpolation<vector> > theTable;
+
+    return theTable;
+}
+
+template<>
+HashPtrTable<interpolation<tensor> > &PatchValueExpressionDriver::interpolations<tensor>()
+{
+    static HashPtrTable<interpolation<tensor> > theTable;
+
+    return theTable;
+}
+
+template<>
+HashPtrTable<interpolation<symmTensor> > &PatchValueExpressionDriver::interpolations<symmTensor>()
+{
+    static HashPtrTable<interpolation<symmTensor> > theTable;
+
+    return theTable;
+}
+
+template<>
+HashPtrTable<interpolation<sphericalTensor> > &PatchValueExpressionDriver::interpolations<sphericalTensor>()
+{
+    static HashPtrTable<interpolation<sphericalTensor> > theTable;
+
+    return theTable;
+}
+
+const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)
+{
+    if(mappingInterpolationSchemes_.found(name)) {
+        return word(mappingInterpolationSchemes_.lookup(name));
+    } else if(mappingInterpolationSchemes_.found("default")) {
+        WarningIn("PatchValueExpressionDriver::getInterpolationScheme(const word &name)")
+            << "No entry for " << name << " in "
+                << mappingInterpolationSchemes_.name()
+                << ". Using 'default'"
+                << endl;
+
+        word scheme(word(mappingInterpolationSchemes_.lookup("default")));
+        mappingInterpolationSchemes_.add(name,scheme);
+
+        return scheme;
+    } else {
+        FatalErrorIn("PatchValueExpressionDriver::getInterpolationScheme(const word &name)")
+            << "No entry for " << name << " or 'default' in "
+                << mappingInterpolationSchemes_.name()
+                << endl
+                << exit(FatalError);
+    }
+
+    return word("nixDaGefunden");
 }
 
 // ************************************************************************* //

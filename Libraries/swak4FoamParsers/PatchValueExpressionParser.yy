@@ -297,6 +297,9 @@ namespace Foam {
 %token TOKEN_toPoint
 %token TOKEN_toFace
 
+%token TOKEN_mapped
+%token TOKEN_mappedInternal
+
 %token TOKEN_points
 
 %token TOKEN_transpose
@@ -661,6 +664,12 @@ vexp:   vector                  { $$ = $1; }
           }
 	| TOKEN_oldTime '(' TOKEN_VID ')'		{
             $$=driver.getOldTimeField<Foam::vector>(*$3);delete $3;
+          }
+        | TOKEN_mapped '(' TOKEN_VID ')' {
+            $$=driver.mapField<Foam::vector>(*$3).ptr(); delete $3;
+          }
+        | TOKEN_mappedInternal '(' TOKEN_VID ')' {
+            $$=driver.mapField<Foam::vector>(*$3,true).ptr(); delete $3;
           }
         | TOKEN_snGrad '(' TOKEN_VID ')' {
             $$=driver.getSurfaceNormalField<Foam::vector>(*$3);
@@ -1220,6 +1229,12 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
 	| TOKEN_oldTime '(' TOKEN_SID ')'		{
             $$=driver.getOldTimeField<Foam::scalar>(*$3);delete $3;
           }
+        | TOKEN_mapped '(' TOKEN_SID ')' {
+            $$=driver.mapField<Foam::scalar>(*$3).ptr(); delete $3;
+          }
+        | TOKEN_mappedInternal '(' TOKEN_SID ')' {
+            $$=driver.mapField<Foam::scalar>(*$3,true).ptr(); delete $3;
+          }
 	| TOKEN_LINE		{
             $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
           }
@@ -1400,6 +1415,12 @@ texp:   tensor                  { $$ = $1; }
 	| TOKEN_oldTime '(' TOKEN_TID ')'		{
             $$=driver.getOldTimeField<Foam::tensor>(*$3);delete $3;
           }
+        | TOKEN_mapped '(' TOKEN_TID ')' {
+            $$=driver.mapField<Foam::tensor>(*$3).ptr(); delete $3;
+          }
+        | TOKEN_mappedInternal '(' TOKEN_TID ')' {
+            $$=driver.mapField<Foam::tensor>(*$3,true).ptr(); delete $3;
+          }
         | TOKEN_snGrad '(' TOKEN_TID ')' {
             $$=driver.getSurfaceNormalField<Foam::tensor>(*$3);
             delete $3;
@@ -1550,6 +1571,12 @@ yexp:   symmTensor                  { $$ = $1; }
 	| TOKEN_oldTime '(' TOKEN_YID ')'		{
             $$=driver.getOldTimeField<Foam::symmTensor>(*$3);delete $3;
           }
+        | TOKEN_mapped '(' TOKEN_YID ')' {
+            $$=driver.mapField<Foam::symmTensor>(*$3).ptr(); delete $3;
+          }
+        | TOKEN_mappedInternal '(' TOKEN_YID ')' {
+            $$=driver.mapField<Foam::symmTensor>(*$3,true).ptr(); delete $3;
+          }
         | TOKEN_snGrad '(' TOKEN_YID ')' {
             $$=driver.getSurfaceNormalField<Foam::symmTensor>(*$3);
             delete $3;
@@ -1646,6 +1673,12 @@ hexp:   sphericalTensor                  { $$ = $1; }
           }
 	| TOKEN_oldTime '(' TOKEN_HID ')'		{
             $$=driver.getOldTimeField<Foam::sphericalTensor>(*$3);delete $3;
+          }
+        | TOKEN_mapped '(' TOKEN_HID ')' {
+            $$=driver.mapField<Foam::sphericalTensor>(*$3).ptr(); delete $3;
+          }
+        | TOKEN_mappedInternal '(' TOKEN_HID ')' {
+            $$=driver.mapField<Foam::sphericalTensor>(*$3,true).ptr(); delete $3;
           }
         | TOKEN_snGrad '(' TOKEN_HID ')' {
             $$=driver.getSurfaceNormalField<Foam::sphericalTensor>(*$3);
@@ -1883,6 +1916,9 @@ pvexp:  pvector     { $$ = $1; }
 	| TOKEN_oldTime '(' TOKEN_PVID ')'		{
             $$=driver.getOldTimeField<Foam::vector>(*$3);delete $3;
 				}
+        | TOKEN_mapped '(' TOKEN_PVID ')' {
+            $$=driver.mapPointField<Foam::vector>(*$3).ptr(); delete $3;
+          }
         | TOKEN_min '(' pvexp ',' pvexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -2225,6 +2261,9 @@ pexp:   pexp '+' pexp 		{
 	| TOKEN_oldTime '(' TOKEN_PSID ')'		{
             $$=driver.getOldTimeField<Foam::scalar>(*$3);delete $3;
           }
+        | TOKEN_mapped '(' TOKEN_PSID ')' {
+            $$=driver.mapPointField<Foam::scalar>(*$3).ptr(); delete $3;
+          }
 	| TOKEN_LOOKUP '(' pexp ')' {
             $$=driver.getLookup(*$1,*$3).ptr();
             delete $1; delete$3;
@@ -2349,6 +2388,9 @@ ptexp:  ptensor    { $$ = $1; }
 	| TOKEN_oldTime '(' TOKEN_PTID ')'		{
             $$=driver.getOldTimeField<Foam::tensor>(*$3);delete $3;
           }
+        | TOKEN_mapped '(' TOKEN_PTID ')' {
+            $$=driver.mapPointField<Foam::tensor>(*$3).ptr(); delete $3;
+          }
         | TOKEN_min '(' ptexp ',' ptexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -2467,6 +2509,9 @@ pyexp:  psymmTensor     { $$ = $1; }
 	| TOKEN_oldTime '(' TOKEN_PYID ')'		{
             $$=driver.getOldTimeField<Foam::symmTensor>(*$3);delete $3;
           }
+        | TOKEN_mapped '(' TOKEN_PYID ')' {
+            $$=driver.mapPointField<Foam::symmTensor>(*$3).ptr(); delete $3;
+          }
         | TOKEN_min '(' pyexp ',' pyexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -2544,6 +2589,9 @@ phexp:  psphericalTensor    { $$ = $1; }
           }
 	| TOKEN_oldTime '(' TOKEN_PHID ')'		{
             $$=driver.getOldTimeField<Foam::sphericalTensor>(*$3);delete $3;
+          }
+        | TOKEN_mapped '(' TOKEN_PHID ')' {
+            $$=driver.mapPointField<Foam::sphericalTensor>(*$3).ptr(); delete $3;
           }
         | TOKEN_min '(' phexp ',' phexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();

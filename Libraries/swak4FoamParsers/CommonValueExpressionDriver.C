@@ -111,6 +111,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     scanner_(NULL),
     prevIterIsOldTime_(orig.prevIterIsOldTime_)
 {
+    if(debug) {
+        Info << "CommonValueExpressionDriver - copy constructor" << endl;
+    }
     setSearchBehaviour(
         orig.cacheReadFields_,
         orig.searchInMemory_,
@@ -134,6 +137,10 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 {
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
 
+    if(debug) {
+        Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
+    }
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
             dict.lookup("storedVariables")
@@ -148,10 +155,6 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         {
             delayedVariables_.insert(readDelays[i].name(),readDelays[i]);
         }
-    }
-
-    if(debug) {
-        Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
     setSearchBehaviour(
