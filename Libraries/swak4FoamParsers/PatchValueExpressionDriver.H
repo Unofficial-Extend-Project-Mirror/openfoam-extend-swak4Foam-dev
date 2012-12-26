@@ -81,7 +81,7 @@ class PatchValueExpressionDriver
     const fvPatch &patch_;
 
     //- dictionary with the interpolation-schemes for mapping
-    const dictionary mappingInterpolationSchemes_;
+    dictionary mappingInterpolationSchemes_;
 
     // Private Member Functions
 

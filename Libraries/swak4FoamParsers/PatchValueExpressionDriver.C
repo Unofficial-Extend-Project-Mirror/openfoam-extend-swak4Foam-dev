@@ -65,14 +65,24 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(orig),
-    patch_(orig.patch_)
-{}
+    patch_(orig.patch_),
+    mappingInterpolationSchemes_(orig.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - copy constructor" << endl;
+    }
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
 :
     CommonValueExpressionDriver(),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_()
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch constructor" << endl;
+    }
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
     const dictionary& dict,
@@ -80,8 +90,17 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(dict),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+dict constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
+}
 
 label getPatchID(const fvMesh &mesh,const word &name)
 {
@@ -120,8 +139,16 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
                 )
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - dict+mesh constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
 }
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
@@ -137,8 +164,12 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
                 id
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_()
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - id+mesh constructor" << endl;
+    }
 }
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
@@ -147,14 +178,23 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(old),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(old.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+driver constructor" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 PatchValueExpressionDriver::~PatchValueExpressionDriver()
-{}
+{
+    if(debug) {
+        Info << "~PatchValueExpressionDriver()" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
