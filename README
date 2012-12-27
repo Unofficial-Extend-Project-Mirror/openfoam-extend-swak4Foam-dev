@@ -1543,6 +1543,9 @@ S_{expl} + S_{impl} T
 **** =maintainanceScripts/makeSwakVersionFile.py= failed when no Mercurial is installed
      This didn't influence the compilation (as there is already a
      current version file there) but confused people.
+**** =valuePatches= did not work for mapped patches
+     This kind of patch was not identified as something that could
+     have the value fixed
 *** New Examples
 **** Cases from the /OSCFD12/ Conference in London
      On the slides the case files were promised

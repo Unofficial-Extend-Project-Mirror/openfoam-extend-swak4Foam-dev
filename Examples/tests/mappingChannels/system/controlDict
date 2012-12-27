@@ -25,6 +25,7 @@ stopAt          endTime;
 
 endTime         2.5;
 
+// deltaT          0.002;
 deltaT          0.01;
 
 writeControl    adjustableRunTime;
@@ -55,6 +56,7 @@ maxDeltaT       1;
 libs (
     "libgroovyBC.so"
     "libsimpleSwakFunctionObjects.so"
+    "libswakVelocityFunctionPlugin.so"
 );
 
 functions {
