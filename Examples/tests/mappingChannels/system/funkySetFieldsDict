@@ -19,14 +19,14 @@ expressions
 		field U;
 		create true;
 		expression "vector(0,0,0)";
-		valuePatches ( wall );
+		valuePatches ( walls );
 		dimension [0 1 -1 0 0];
 	}
 	velocityUp
 	{
 		field U;
 		expression "vector(0,1,0)";
-		valuePatches ( inlet1 inlet2 )
+		valuePatches ( inlet1 inlet2 );
 		keepPatches true;
 	}
 
@@ -34,7 +34,7 @@ expressions
 	{
 		field U;
 		expression "vector(1,0,0)";
-		valuePatches ( inlet3 )
+		valuePatches ( inlet3 );
 		keepPatches true;
 		condition "pos().x>0.35";
 	}
