@@ -33,7 +33,7 @@ boundaryField
         variables (
             "minX=min(pts().x);"
             "maxX=max(pts().x);"
-            "mappedT=mapped(T)-1;"
+            "mappedT=mappedInternal(T)-1;"
             "posVal=(pos().x-minX)/(maxX-minX);"
         );
         value           uniform 0;
@@ -42,7 +42,7 @@ boundaryField
     {
         type            groovyBC;
         value uniform 0;
-       valueExpression "mapped(T)-1";
+       valueExpression "mappedInternal(T)-1";
     }
     inlet3
     {

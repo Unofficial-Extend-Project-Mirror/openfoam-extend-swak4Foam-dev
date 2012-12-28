@@ -467,6 +467,22 @@ namespace Foam {
         tmp<Field<T> > result(new Field<T>(this->size(),pTraits<T>::zero));
         Field<T> &newValues=result();
 
+        if(
+            isSurfaceField
+            &&
+            internalField
+        ) {
+            FatalErrorIn(
+                "tmp<Field<T> > PatchValueExpressionDriver::mapField"
+            )
+                << "Field " << name << " is a surfaceField. "
+                    << "Function 'mappedInternal'"
+                    << " on patch " << patch_.name()
+                    << " does not work for that."
+                    << endl
+                    << exit(FatalError);
+        }
+
         switch (mpp.mode())
         {
             case mappedPatchBase::NEARESTCELL:
@@ -477,7 +493,19 @@ namespace Foam {
                     )
                         << "Field " << name << " is a surfaceField. "
                             << "Map mode " << mappedPatchBase::NEARESTCELL
+                            << " on patch " << patch_.name()
                             << " does not work for that."
+                            << endl
+                            << exit(FatalError);
+                }
+
+                if(internalField) {
+                    FatalErrorIn(
+                        "tmp<Field<T> > PatchValueExpressionDriver::mapField"
+                    )
+                        << "Function 'mappedInternal' does not work with "
+                            << "Map mode " << mappedPatchBase::NEARESTCELL
+                            << " on patch " << patch_.name()
                             << endl
                             << exit(FatalError);
                 }
@@ -568,6 +596,7 @@ namespace Foam {
                             << abort(FatalError);
                 }
 
+
                 if(isSurfaceField) {
                     const localSurfaceField& nbrField
                         = lookupMesh.lookupObject<localSurfaceField>(name);
@@ -577,7 +606,12 @@ namespace Foam {
                     const localVolField& nbrField
                         = lookupMesh.lookupObject<localVolField>(name);
 
-                    newValues = nbrField.boundaryField()[nbrPatchID];
+                    if(internalField) {
+                        newValues = nbrField.boundaryField()[nbrPatchID]
+                            .patchInternalField();
+                    } else {
+                        newValues = nbrField.boundaryField()[nbrPatchID];
+                    }
                 }
 
 #if FOAM_VERSION4SWAK_MAJOR<2
@@ -605,6 +639,7 @@ namespace Foam {
                     )
                         << "Field " << name << " is a surfaceField. "
                             << "Map mode " << mappedPatchBase::NEARESTFACE
+                            << " on patch " << patch_.name()
                             << " does not work for that."
                             << endl
                             << exit(FatalError);
@@ -618,13 +653,25 @@ namespace Foam {
 
                 forAll(nbrField.boundaryField(), patchI)
                 {
-                    const fvPatchField<T>& pf =
-                        nbrField.boundaryField()[patchI];
-                    label faceStart = pf.patch().patch().start();
+                    if(internalField) {
+                        const fvPatchField<T>& pf =
+                            nbrField.boundaryField()[patchI];
+                        const Field<T> pif(pf.patchInternalField());
+                        label faceStart = pf.patch().patch().start();
 
-                    forAll(pf, faceI)
-                    {
-                        allValues[faceStart++] = pf[faceI];
+                        forAll(pf, faceI)
+                        {
+                            allValues[faceStart++] = pif[faceI];
+                        }
+                    } else {
+                        const fvPatchField<T>& pf =
+                            nbrField.boundaryField()[patchI];
+                        label faceStart = pf.patch().patch().start();
+
+                        forAll(pf, faceI)
+                        {
+                            allValues[faceStart++] = pf[faceI];
+                        }
                     }
                 }
 
