@@ -492,7 +492,7 @@ namespace Foam {
                         "tmp<Field<T> > PatchValueExpressionDriver::mapField"
                     )
                         << "Field " << name << " is a surfaceField. "
-                            << "Map mode " << mappedPatchBase::NEARESTCELL
+                            << "Map mode 'nearestCell'"
                             << " on patch " << patch_.name()
                             << " does not work for that."
                             << endl
@@ -504,7 +504,7 @@ namespace Foam {
                         "tmp<Field<T> > PatchValueExpressionDriver::mapField"
                     )
                         << "Function 'mappedInternal' does not work with "
-                            << "Map mode " << mappedPatchBase::NEARESTCELL
+                            << "Map mode 'nearestCell'"
                             << " on patch " << patch_.name()
                             << endl
                             << exit(FatalError);
@@ -638,7 +638,7 @@ namespace Foam {
                         "tmp<Field<T> > PatchValueExpressionDriver::mapField"
                     )
                         << "Field " << name << " is a surfaceField. "
-                            << "Map mode " << mappedPatchBase::NEARESTFACE
+                            << "Map mode 'nearestFace'"
                             << " on patch " << patch_.name()
                             << " does not work for that."
                             << endl
