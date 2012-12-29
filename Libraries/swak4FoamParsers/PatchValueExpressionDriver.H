@@ -103,6 +103,10 @@ class PatchValueExpressionDriver
     template <class Type>
     HashPtrTable<interpolation<Type> > &interpolations();
 
+    //- map a field that is as long as the patch
+    template<class T>
+    tmp<Field<T> > mapField(tmp<Field<T> > orig);
+
 protected:
 
     // Handling the scanner
@@ -133,6 +137,11 @@ protected:
     static const SymbolTable<PatchValueExpressionDriver> &symbolTable();
 
     int startupSymbol(const word &name);
+
+    //- check whether the patch maps from another one
+    tmp<ExpressionResult> getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+    );
 
 public:
 

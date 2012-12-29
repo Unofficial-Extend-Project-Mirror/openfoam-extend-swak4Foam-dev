@@ -934,18 +934,29 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
 
     otherDriver->parse(expr);
 
+    ExpressionResult otherResult=this->getRemoteResult(otherDriver());
+
     if(debug) {
         Pout << "Remote result: "
-            << otherDriver->getUniform(this->size(),false) << endl;
+            << otherResult << endl;
     }
     if(delayedVariables_.found(name)) {
         if(debug) {
             Pout << name << " is delayed" << endl;
         }
-        delayedVariables_[name]=otherDriver->getUniform(this->size(),false);
+        delayedVariables_[name]=otherResult;
     } else {
-        variables_.insert(name,otherDriver->getUniform(this->size(),false));
+        variables_.insert(name,otherResult);
     }
+}
+
+tmp<ExpressionResult> CommonValueExpressionDriver::getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+)
+{
+    return tmp<ExpressionResult>(
+        otherDriver.getUniform(this->size(),false)
+    );
 }
 
 void CommonValueExpressionDriver::addVariables(

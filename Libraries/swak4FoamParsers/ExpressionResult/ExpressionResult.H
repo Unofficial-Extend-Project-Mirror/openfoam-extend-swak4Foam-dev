@@ -60,6 +60,8 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class ExpressionResult
+:
+    public refCount
 {
     // Private data
 
@@ -175,6 +177,7 @@ public:
 
     void clearResult();
 
+    //- basic type that the enclosed Field is a type of
     inline const string &valueType() const;
 
     inline bool isPoint() const;

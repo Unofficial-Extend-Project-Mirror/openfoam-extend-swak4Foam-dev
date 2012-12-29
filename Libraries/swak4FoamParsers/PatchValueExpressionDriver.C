@@ -44,6 +44,21 @@ License
 
 #include <nearWallDist.H>
 
+#if FOAM_VERSION4SWAK_MAJOR<2
+#include "directMappedFvPatch.H"
+
+#include "mapDistribute.H"
+
+namespace Foam {
+    // these typedefs should keep the difference between the 1.7 and the 2.1 code minimal
+    typedef directMappedFvPatch mappedFvPatch;
+    typedef directMappedPolyPatch mappedPolyPatch;
+}
+
+#else
+#include "mappedFvPatch.H"
+#endif
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -490,6 +505,81 @@ const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)
     }
 
     return word("nixDaGefunden");
+}
+
+tmp<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
+    CommonValueExpressionDriver &otherDriver
+)
+{
+    if(
+        !isA<PatchValueExpressionDriver>(otherDriver)
+        ||
+        !isA<mappedFvPatch>(patch_)
+    ) {
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    const mappedPolyPatch &patch=dynamicCast<const mappedPolyPatch&>(
+        patch_.patch()
+    );
+    PatchValueExpressionDriver &driver=
+        dynamicCast<PatchValueExpressionDriver&>(otherDriver);
+
+    if(
+        patch.mode()!=mappedPatchBase::NEARESTPATCHFACE
+        ||
+        driver.patch().name()!=patch.samplePatch()
+        ||
+        driver.patch().boundaryMesh().mesh().name()!=patch.sampleRegion()
+    ) {
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    if(driver.result().isPoint()) {
+        WarningIn("PatchValueExpressionDriver::getRemoteResult")
+            << "Can not map point fields (though everyting else "
+                << "is OK for mapping"
+                << endl;
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    if(driver.result().valueType()==pTraits<scalar>::typeName) {
+        return ExpressionResult(
+            mapField(
+                driver.result().getResult<scalar>()
+            )()
+        );
+    } else if(driver.result().valueType()==pTraits<vector>::typeName) {
+        return ExpressionResult(
+            mapField(
+                driver.result().getResult<vector>()
+            )()
+        );
+    } else if(driver.result().valueType()==pTraits<tensor>::typeName) {
+        return ExpressionResult(
+            mapField(
+                driver.result().getResult<tensor>()
+            )()
+        );
+    } else if(driver.result().valueType()==pTraits<symmTensor>::typeName) {
+        return ExpressionResult(
+            mapField(
+                driver.result().getResult<symmTensor>()
+            )()
+        );
+    } else if(driver.result().valueType()==pTraits<sphericalTensor>::typeName) {
+        return ExpressionResult(
+            mapField(
+                driver.result().getResult<sphericalTensor>()
+            )()
+        );
+    } else {
+        FatalErrorIn("")
+            << "Mapping for result type " << driver.result().valueType()
+                << " undefined"
+                << endl
+                << exit(FatalError);
+    }
 }
 
 // ************************************************************************* //

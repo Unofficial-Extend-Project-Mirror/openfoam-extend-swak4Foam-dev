@@ -706,6 +706,78 @@ namespace Foam {
     }
 
     template<class T>
+    tmp<Field<T> > PatchValueExpressionDriver::mapField(tmp<Field<T> > orig)
+    {
+        if(!isA<mappedPatchBase>(patch_.patch())) {
+            FatalErrorIn("tmp<Field<T> > PatchValueExpressionDriver::mapField")
+                << "Current patch " << patch_.name()
+                    << "is not a mapped patch"
+                    << endl
+                    << exit(FatalError);
+
+        }
+
+        const mappedPatchBase& mpp = dynamicCast<const mappedPatchBase>
+            (
+                patch_.patch()
+            );
+
+
+        if(
+            mpp.mode()!=mappedPatchBase::NEARESTPATCHFACE
+#if FOAM_VERSION4SWAK_MAJOR>=2 && FOAM_VERSION4SWAK_MINOR>=1
+            &&
+            mpp.mode()!=mappedPatchBase::NEARESTPATCHFACEAMI
+#endif
+        ) {
+            FatalErrorIn("PatchValueExpressionDriver::mapField(tmp<Field<T> > orig)")
+            << "This method only works for patch-to-patch mapping"
+            << endl
+            << exit(FatalError);
+
+        }
+        //        const fvMesh& thisMesh = patch_.boundaryMesh().mesh();
+        const fvMesh& nbrMesh = refCast<const fvMesh>(mpp.sampleMesh());
+
+        tmp<Field<T> > pResult(
+            new Field<T>(orig)
+        );
+
+        Field<T> &result=pResult();
+
+        const label nbrPatchID =
+            nbrMesh.boundaryMesh().findPatchID(mpp.samplePatch());
+
+        if (nbrPatchID < 0)
+        {
+            FatalErrorIn
+                (
+                    "tmp<Field<T> > PatchValueExpressionDriver::mapField"
+                )<< "Unable to find sample patch " << mpp.samplePatch()
+                    << " in region " << mpp.sampleRegion()
+                    << " for patch " << this->patch().name() << nl
+                    << abort(FatalError);
+        }
+
+#if FOAM_VERSION4SWAK_MAJOR<2
+        const mapDistribute& distMap = mpp.map();
+        mapDistribute::distribute
+        (
+            Pstream::defaultCommsType,
+            distMap.schedule(),
+            distMap.constructSize(),
+            distMap.subMap(),
+            distMap.constructMap(),
+            result
+        );
+#else
+        mpp.distribute(result);
+#endif
+
+        return pResult;
+    }
+
+    template<class T>
     tmp<Field<T> > PatchValueExpressionDriver::mapPointField(
         const word &name
     ) {
@@ -713,6 +785,8 @@ namespace Foam {
 
         // dummy implemntation
         tmp<Field<T> > result(new Field<T>(this->pointSize(),pTraits<T>::zero));
+
+        notImplemented("tmp<Field<T> > PatchValueExpressionDriver::mapPointField");
 
         return result;
     }
