@@ -72,26 +72,28 @@ inline const fvMesh &FieldValueExpressionDriver::mesh() const
 inline bool FieldValueExpressionDriver::canBeValuePatch(const fvPatch &patch)
 {
     return
-        typeid(patch)==typeid(wallFvPatch)
+        isA<wallFvPatch>(patch)
         ||
-        typeid(patch)==typeid(fvPatch)
+        isType<fvPatch>(patch)
         ||
 #if FOAM_VERSION4SWAK_MAJOR<2
-        typeid(patch)==typeid(directMappedFvPatch);
+        isA<directMappedFvPatch>(patch);
 #else
-        typeid(patch)==typeid(mappedFvPatch);
+        isA<mappedFvPatch>(patch);
 #endif
 }
 
 inline bool FieldValueExpressionDriver::canBeValuePatch(const pointPatch &patch)
 {
     return
-        typeid(patch)==typeid(wallPointPatch)
+        isA<wallPointPatch>(patch)
+        ||
+        isType<facePointPatch>(patch)
         ||
 #if FOAM_VERSION4SWAK_MAJOR<2
-        typeid(patch)==typeid(directMappedPointPatch);
+        isA<directMappedPointPatch>(patch);
 #else
-        typeid(patch)==typeid(mappedPointPatch);
+        isA<mappedPointPatch>(patch);
 #endif
 }
 
