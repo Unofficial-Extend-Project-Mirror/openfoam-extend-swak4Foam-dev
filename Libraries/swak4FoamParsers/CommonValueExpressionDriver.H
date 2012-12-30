@@ -113,7 +113,7 @@ protected:
     label &parserLastPos() { return parserLastPos_; }
 
     //- get the result from another driver. Overrideable to allow mapping
-    virtual tmp<ExpressionResult> getRemoteResult(
+    virtual autoPtr<ExpressionResult> getRemoteResult(
         CommonValueExpressionDriver &otherDriver
     );
 

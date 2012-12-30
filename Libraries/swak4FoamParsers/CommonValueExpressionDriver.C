@@ -44,6 +44,7 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(CommonValueExpressionDriver,0);
+
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
@@ -934,28 +935,31 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
 
     otherDriver->parse(expr);
 
-    ExpressionResult otherResult=this->getRemoteResult(otherDriver());
+    autoPtr<ExpressionResult> otherResult(this->getRemoteResult(otherDriver()));
 
     if(debug) {
         Pout << "Remote result: "
-            << otherResult << endl;
+            << otherResult() << endl;
     }
+
     if(delayedVariables_.found(name)) {
         if(debug) {
             Pout << name << " is delayed" << endl;
         }
-        delayedVariables_[name]=otherResult;
+        delayedVariables_[name]=otherResult();
     } else {
-        variables_.insert(name,otherResult);
+        variables_.insert(name,otherResult());
     }
 }
 
-tmp<ExpressionResult> CommonValueExpressionDriver::getRemoteResult(
+autoPtr<ExpressionResult> CommonValueExpressionDriver::getRemoteResult(
         CommonValueExpressionDriver &otherDriver
 )
 {
-    return tmp<ExpressionResult>(
-        otherDriver.getUniform(this->size(),false)
+    return autoPtr<ExpressionResult>(
+        new ExpressionResult(
+            otherDriver.getUniform(this->size(),false)
+        )
     );
 }
 

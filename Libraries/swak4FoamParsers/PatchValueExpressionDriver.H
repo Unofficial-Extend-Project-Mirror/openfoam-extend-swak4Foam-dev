@@ -139,7 +139,7 @@ protected:
     int startupSymbol(const word &name);
 
     //- check whether the patch maps from another one
-    tmp<ExpressionResult> getRemoteResult(
+    autoPtr<ExpressionResult> getRemoteResult(
         CommonValueExpressionDriver &otherDriver
     );
 

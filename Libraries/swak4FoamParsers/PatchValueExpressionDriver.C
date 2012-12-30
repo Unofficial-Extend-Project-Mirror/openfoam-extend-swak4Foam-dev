@@ -66,6 +66,7 @@ namespace Foam {
 word PatchValueExpressionDriver::driverName_="patch";
 
 defineTypeNameAndDebug(PatchValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, dictionary, patch);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, idName, patch);
 
@@ -507,15 +508,22 @@ const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)
     return word("nixDaGefunden");
 }
 
-tmp<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
+autoPtr<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
     CommonValueExpressionDriver &otherDriver
 )
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver::getRemoteResult" << endl;
+    }
+
     if(
         !isA<PatchValueExpressionDriver>(otherDriver)
         ||
         !isA<mappedFvPatch>(patch_)
     ) {
+        if(debug) {
+            Info << "Not mapped or not remote-patch -> uniform" << endl;
+        }
         return CommonValueExpressionDriver::getRemoteResult(otherDriver);
     }
 
@@ -532,6 +540,9 @@ tmp<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
         ||
         driver.patch().boundaryMesh().mesh().name()!=patch.sampleRegion()
     ) {
+        if(debug) {
+            Info << "Not correct circumstances for mapping -> uniform" << endl;
+        }
         return CommonValueExpressionDriver::getRemoteResult(otherDriver);
     }
 
@@ -543,35 +554,49 @@ tmp<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
         return CommonValueExpressionDriver::getRemoteResult(otherDriver);
     }
 
+    if(debug) {
+        Info << "Mapping a result:" << driver.result() << endl;
+    }
+
     if(driver.result().valueType()==pTraits<scalar>::typeName) {
-        return ExpressionResult(
-            mapField(
-                driver.result().getResult<scalar>()
-            )()
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<scalar>(false)
+                )()
+            )
         );
     } else if(driver.result().valueType()==pTraits<vector>::typeName) {
-        return ExpressionResult(
-            mapField(
-                driver.result().getResult<vector>()
-            )()
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<vector>(false)
+                )()
+            )
         );
     } else if(driver.result().valueType()==pTraits<tensor>::typeName) {
-        return ExpressionResult(
-            mapField(
-                driver.result().getResult<tensor>()
-            )()
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<tensor>(false)
+                )()
+            )
         );
     } else if(driver.result().valueType()==pTraits<symmTensor>::typeName) {
-        return ExpressionResult(
-            mapField(
-                driver.result().getResult<symmTensor>()
-            )()
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<symmTensor>(false)
+                )()
+            )
         );
     } else if(driver.result().valueType()==pTraits<sphericalTensor>::typeName) {
-        return ExpressionResult(
-            mapField(
-                driver.result().getResult<sphericalTensor>()
-            )()
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<sphericalTensor>(false)
+                )()
+            )
         );
     } else {
         FatalErrorIn("")
@@ -579,8 +604,10 @@ tmp<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
                 << " undefined"
                 << endl
                 << exit(FatalError);
+        return autoPtr<ExpressionResult>(); // this should never be reached
     }
 }
+
 
 // ************************************************************************* //
 

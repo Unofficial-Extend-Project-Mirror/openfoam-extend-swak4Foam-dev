@@ -708,6 +708,11 @@ namespace Foam {
     template<class T>
     tmp<Field<T> > PatchValueExpressionDriver::mapField(tmp<Field<T> > orig)
     {
+        if(debug) {
+            Info << "PatchValueExpressionDriver::mapField(tmp<Field<T> > orig)"
+                << endl << "orig: " << orig() << endl;
+        }
+
         if(!isA<mappedPatchBase>(patch_.patch())) {
             FatalErrorIn("tmp<Field<T> > PatchValueExpressionDriver::mapField")
                 << "Current patch " << patch_.name()
@@ -773,7 +778,9 @@ namespace Foam {
 #else
         mpp.distribute(result);
 #endif
-
+        if(debug) {
+            Info << "Mapped to " << result << endl;
+        }
         return pResult;
     }
 
