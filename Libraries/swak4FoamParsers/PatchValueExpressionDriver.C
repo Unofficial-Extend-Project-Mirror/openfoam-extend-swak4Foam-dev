@@ -445,41 +445,31 @@ bool PatchValueExpressionDriver::existsPluginFunction(
 template<>
 HashPtrTable<interpolation<scalar> > &PatchValueExpressionDriver::interpolations<scalar>()
 {
-    static HashPtrTable<interpolation<scalar> > theTable;
-
-    return theTable;
+    return interpolationScalar_;
 }
 
 template<>
 HashPtrTable<interpolation<vector> > &PatchValueExpressionDriver::interpolations<vector>()
 {
-    static HashPtrTable<interpolation<vector> > theTable;
-
-    return theTable;
+    return interpolationVector_;
 }
 
 template<>
 HashPtrTable<interpolation<tensor> > &PatchValueExpressionDriver::interpolations<tensor>()
 {
-    static HashPtrTable<interpolation<tensor> > theTable;
-
-    return theTable;
+    return interpolationTensor_;
 }
 
 template<>
 HashPtrTable<interpolation<symmTensor> > &PatchValueExpressionDriver::interpolations<symmTensor>()
 {
-    static HashPtrTable<interpolation<symmTensor> > theTable;
-
-    return theTable;
+    return interpolationSymmTensor_;
 }
 
 template<>
 HashPtrTable<interpolation<sphericalTensor> > &PatchValueExpressionDriver::interpolations<sphericalTensor>()
 {
-    static HashPtrTable<interpolation<sphericalTensor> > theTable;
-
-    return theTable;
+    return interpolationSphericalTensor_;
 }
 
 const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)

@@ -99,6 +99,13 @@ class PatchValueExpressionDriver
     //- get the specification of the interpolations by name
     const word getInterpolationScheme(const word &name);
 
+    //- HashPtrTable of interpolations
+    HashPtrTable<interpolation<scalar> > interpolationScalar_;
+    HashPtrTable<interpolation<vector> > interpolationVector_;
+    HashPtrTable<interpolation<tensor> > interpolationTensor_;
+    HashPtrTable<interpolation<symmTensor> > interpolationSymmTensor_;
+    HashPtrTable<interpolation<sphericalTensor> > interpolationSphericalTensor_;
+
     //- table with the interpolation scheme (depending on the type)
     template <class Type>
     HashPtrTable<interpolation<Type> > &interpolations();
