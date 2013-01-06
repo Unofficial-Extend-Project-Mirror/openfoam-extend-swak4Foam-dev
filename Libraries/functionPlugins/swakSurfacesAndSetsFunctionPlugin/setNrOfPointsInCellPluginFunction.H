@@ -36,7 +36,7 @@ Description
 SourceFiles
     setNrOfPointsInCellPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef setNrOfPointsInCellPluginFunction_H

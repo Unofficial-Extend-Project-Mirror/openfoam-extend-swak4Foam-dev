@@ -36,7 +36,7 @@ Description
 SourceFiles
     mqFaceSkewnessPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef mqFaceSkewnessPluginFunction_H

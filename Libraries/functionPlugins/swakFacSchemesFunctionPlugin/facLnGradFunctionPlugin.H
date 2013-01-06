@@ -36,7 +36,7 @@ Description
 SourceFiles
     facLnGradFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef facLnGradFunctionPlugin_H

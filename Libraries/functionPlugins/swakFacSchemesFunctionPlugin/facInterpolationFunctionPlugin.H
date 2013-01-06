@@ -36,7 +36,7 @@ Description
 SourceFiles
     facInterpolationFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef facInterpolationFunctionPlugin_H

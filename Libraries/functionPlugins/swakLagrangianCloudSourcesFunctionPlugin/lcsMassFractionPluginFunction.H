@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsMassFractionPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsMassFractionPluginFunction_H

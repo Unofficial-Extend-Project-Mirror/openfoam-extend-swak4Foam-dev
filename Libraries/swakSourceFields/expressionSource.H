@@ -36,7 +36,7 @@ Description
 SourceFiles
     expressionSource.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionSource_H

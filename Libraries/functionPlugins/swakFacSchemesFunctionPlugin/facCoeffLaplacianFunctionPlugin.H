@@ -36,7 +36,7 @@ Description
 SourceFiles
     facCoeffLaplacianFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef facCoeffLaplacianFunctionPlugin_H

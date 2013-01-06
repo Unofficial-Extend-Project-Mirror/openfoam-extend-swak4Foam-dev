@@ -36,7 +36,7 @@ Description
 SourceFiles
     surfaceValueMaximumPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceValueMaximumPluginFunction_H

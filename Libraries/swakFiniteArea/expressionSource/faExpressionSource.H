@@ -36,7 +36,7 @@ Description
 SourceFiles
     faExpressionSource.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef faExpressionSource_H

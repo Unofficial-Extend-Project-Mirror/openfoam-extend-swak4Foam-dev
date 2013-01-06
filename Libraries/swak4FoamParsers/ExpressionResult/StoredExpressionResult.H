@@ -38,7 +38,7 @@ SourceFiles
     StoredExpressionResult.C
     StoredExpressionResultIO.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef StoredExpressionResult_H

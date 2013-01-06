@@ -36,7 +36,7 @@ Description
 SourceFiles
     facEdgeCoeffLaplacianFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef facEdgeCoeffLaplacianFunctionPlugin_H

@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcFaceMinimumPluginFunction.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcFaceMinimumPluginFunction_H

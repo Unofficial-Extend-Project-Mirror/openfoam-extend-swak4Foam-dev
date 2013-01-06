@@ -36,7 +36,7 @@ Description
 SourceFiles
     SampledSurfaceValuePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SampledSurfaceValuePluginFunction_H

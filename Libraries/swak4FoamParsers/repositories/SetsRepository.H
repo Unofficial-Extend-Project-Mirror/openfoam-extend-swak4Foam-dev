@@ -38,7 +38,7 @@ SourceFiles
     SetsRepository.C
     SetsRepositoryIO.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef SetsRepository_H

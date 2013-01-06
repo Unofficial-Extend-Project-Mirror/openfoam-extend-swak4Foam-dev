@@ -36,7 +36,7 @@ Description
 SourceFiles
     surfaceNrOfFacesInCellPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceNrOfFacesInCellPluginFunction_H

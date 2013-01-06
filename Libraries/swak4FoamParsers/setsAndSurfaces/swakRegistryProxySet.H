@@ -37,7 +37,7 @@ Description
 SourceFiles
     swakRegistryProxySet.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakRegistryProxySet_H

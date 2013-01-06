@@ -32,7 +32,7 @@ License
 Description
     Checks for the swak-Grammars
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakChecks_H

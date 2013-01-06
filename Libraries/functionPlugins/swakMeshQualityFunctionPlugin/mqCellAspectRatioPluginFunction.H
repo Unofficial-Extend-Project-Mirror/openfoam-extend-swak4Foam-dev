@@ -36,7 +36,7 @@ Description
 SourceFiles
     mqCellAspectRatioPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef mqCellAspectRatioPluginFunction_H

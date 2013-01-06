@@ -35,7 +35,7 @@ Description
 SourceFiles
     groovyFlowRateInletVelocityFvPatchVectorField.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyFlowRateInletVelocityFvPatchVectorField_H

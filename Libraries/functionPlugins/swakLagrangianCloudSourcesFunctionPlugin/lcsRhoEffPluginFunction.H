@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsRhoEffPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsRhoEffPluginFunction_H

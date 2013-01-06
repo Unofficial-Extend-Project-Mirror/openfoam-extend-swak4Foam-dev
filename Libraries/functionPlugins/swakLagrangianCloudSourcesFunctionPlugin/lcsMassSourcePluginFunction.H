@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsMassSourcePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsMassSourcePluginFunction_H

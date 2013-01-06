@@ -36,7 +36,7 @@ Description
 SourceFiles
     fvcSnGradFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef fvcSnGradFunctionPlugin_H

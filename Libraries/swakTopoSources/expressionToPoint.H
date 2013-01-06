@@ -36,7 +36,7 @@ Description
 SourceFiles
     expressionToPoint.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionToPoint_H

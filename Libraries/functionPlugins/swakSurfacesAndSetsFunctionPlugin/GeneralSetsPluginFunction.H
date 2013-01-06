@@ -36,7 +36,7 @@ Description
 SourceFiles
     GeneralSetsPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef GeneralSetsPluginFunction_H

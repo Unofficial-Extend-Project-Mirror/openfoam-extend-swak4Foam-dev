@@ -36,7 +36,7 @@ Description
 SourceFiles
     setHasSetPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef setHasSetPluginFunction_H

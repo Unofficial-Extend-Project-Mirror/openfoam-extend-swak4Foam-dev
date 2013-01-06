@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsVolumeFractionPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsVolumeFractionPluginFunction_H

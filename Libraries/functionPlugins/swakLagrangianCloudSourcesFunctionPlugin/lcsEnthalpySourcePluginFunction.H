@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsEnthalpySourcePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsEnthalpySourcePluginFunction_H

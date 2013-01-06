@@ -36,7 +36,7 @@ Description
 SourceFiles
     surfaceHasSurfacePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceHasSurfacePluginFunction_H

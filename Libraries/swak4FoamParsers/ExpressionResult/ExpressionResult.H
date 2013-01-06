@@ -38,7 +38,7 @@ SourceFiles
     ExpressionResult.C
     ExpressionResultIO.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef ExpressionResult_H

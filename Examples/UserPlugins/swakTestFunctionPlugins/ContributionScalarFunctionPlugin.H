@@ -36,7 +36,7 @@ Description
 SourceFiles
     ContributionScalarPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef ContributionScalarPluginFunction_H

@@ -36,7 +36,7 @@ Description
 SourceFiles
     setValueAveragePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef setValueAveragePluginFunction_H

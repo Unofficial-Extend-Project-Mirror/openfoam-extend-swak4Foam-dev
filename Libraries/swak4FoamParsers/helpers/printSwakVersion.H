@@ -34,7 +34,7 @@ Class
 Description
     print a little banner with the swak-version to ease support
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "Pstream.H"

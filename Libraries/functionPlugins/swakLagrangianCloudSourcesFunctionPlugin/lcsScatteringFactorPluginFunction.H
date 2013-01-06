@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsScatteringFactorPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsScatteringFactorPluginFunction_H

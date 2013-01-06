@@ -38,7 +38,7 @@ SourceFiles
     CommonPluginFunction.C
     CommonPluginFunctionIO.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef CommonPluginFunction_H

@@ -36,7 +36,7 @@ Description
 SourceFiles
     groovyTotalPressureFvPatchScalarField.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyTotalPressureFvPatchScalarField_H

@@ -36,7 +36,7 @@ Description
 SourceFiles
     setValueMaximumPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef setValueMaximumPluginFunction_H

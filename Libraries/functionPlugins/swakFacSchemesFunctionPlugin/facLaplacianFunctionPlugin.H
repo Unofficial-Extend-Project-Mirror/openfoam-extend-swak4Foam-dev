@@ -36,7 +36,7 @@ Description
 SourceFiles
     facLaplacianFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef facLaplacianFunctionPlugin_H

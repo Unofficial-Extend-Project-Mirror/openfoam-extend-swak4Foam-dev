@@ -1,4 +1,4 @@
-//  ICE Revision: $Id$ 
+//  SWAK Revision: $Id$ 
 
 #ifndef VALUE_EXPRESSION_LOGICAL_TEMPLATES
 #define VALUE_EXPRESSION_LOGICAL_TEMPLATES

@@ -37,7 +37,7 @@ Description
 
 SourceFiles
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SwakMacroHeader_H

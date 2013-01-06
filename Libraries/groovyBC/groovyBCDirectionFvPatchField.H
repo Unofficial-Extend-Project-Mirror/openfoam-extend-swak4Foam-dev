@@ -37,7 +37,7 @@ Description
 SourceFiles
     groovyBCDirectionFvPatchField.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCDirectionFvPatchField_H

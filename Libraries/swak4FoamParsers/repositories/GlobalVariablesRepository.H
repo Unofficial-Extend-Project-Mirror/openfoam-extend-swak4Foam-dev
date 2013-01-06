@@ -36,7 +36,7 @@ Description
 SourceFiles
     GlobalVariablesRepository.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef GlobalVariablesRepository_H

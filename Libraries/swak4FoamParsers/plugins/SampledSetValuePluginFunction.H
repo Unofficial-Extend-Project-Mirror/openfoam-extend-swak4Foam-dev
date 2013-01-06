@@ -36,7 +36,7 @@ Description
 SourceFiles
     SampledSetValuePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SampledSetValuePluginFunction_H

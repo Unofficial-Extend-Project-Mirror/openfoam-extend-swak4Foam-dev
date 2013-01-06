@@ -36,7 +36,7 @@ Description
 SourceFiles
     swakCompressibleTurbulencePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakCompressibleTurbulencePluginFunction_H

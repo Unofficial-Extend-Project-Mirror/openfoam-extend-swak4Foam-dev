@@ -36,7 +36,7 @@ Description
 SourceFiles
     localCellCalculationFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef localCellCalculationFunction_H

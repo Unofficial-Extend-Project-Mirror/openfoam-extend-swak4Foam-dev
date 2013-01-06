@@ -36,7 +36,7 @@ Description
 SourceFiles
     ConcretePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef ConcretePluginFunction_H

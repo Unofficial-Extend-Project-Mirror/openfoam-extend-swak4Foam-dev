@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcFaceMaximumPluginFunction.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcFaceMaximumPluginFunction_H

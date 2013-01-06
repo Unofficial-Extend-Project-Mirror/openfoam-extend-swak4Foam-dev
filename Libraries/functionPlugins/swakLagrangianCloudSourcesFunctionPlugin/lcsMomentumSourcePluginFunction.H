@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsMomentumSourcePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsMomentumSourcePluginFunction_H

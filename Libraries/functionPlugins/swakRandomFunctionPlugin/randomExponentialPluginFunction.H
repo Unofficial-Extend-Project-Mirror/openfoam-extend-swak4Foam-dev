@@ -36,7 +36,7 @@ Description
 SourceFiles
     randomExponentialPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef randomExponentialPluginFunction_H

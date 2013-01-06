@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcsSpeciesSourcePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcsSpeciesSourcePluginFunction_H

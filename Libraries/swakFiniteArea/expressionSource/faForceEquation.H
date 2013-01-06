@@ -36,7 +36,7 @@ Description
 SourceFiles
     faForceEquation.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef faForceEquation_H

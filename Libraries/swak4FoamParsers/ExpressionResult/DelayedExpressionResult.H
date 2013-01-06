@@ -38,7 +38,7 @@ SourceFiles
     DelayedExpressionResult.C
     DelayedExpressionResultIO.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef DelayedExpressionResult_H

@@ -36,7 +36,7 @@ Description
 SourceFiles
     facConvectionDivFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef facConvectionDivFunctionPlugin_H

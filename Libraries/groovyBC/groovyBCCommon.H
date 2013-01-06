@@ -37,7 +37,7 @@ Description
 SourceFiles
     groovyBCCommon.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCCommon_H

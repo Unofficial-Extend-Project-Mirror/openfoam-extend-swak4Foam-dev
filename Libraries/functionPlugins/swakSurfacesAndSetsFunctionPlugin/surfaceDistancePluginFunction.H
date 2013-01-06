@@ -36,7 +36,7 @@ Description
 SourceFiles
     surfaceDistancePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceDistancePluginFunction_H

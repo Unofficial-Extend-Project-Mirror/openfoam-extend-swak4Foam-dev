@@ -36,7 +36,7 @@ Description
 SourceFiles
     facDivFunctionPlugin.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef facDivFunctionPlugin_H

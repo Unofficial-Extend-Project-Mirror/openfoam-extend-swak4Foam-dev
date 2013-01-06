@@ -36,7 +36,7 @@ Description
 SourceFiles
     surfaceAreaPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceAreaPluginFunction_H

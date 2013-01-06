@@ -36,7 +36,7 @@ Description
 SourceFiles
     swakThermophysicalPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakThermophysicalPluginFunction_H

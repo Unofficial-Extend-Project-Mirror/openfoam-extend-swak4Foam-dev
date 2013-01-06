@@ -36,7 +36,7 @@ Description
 SourceFiles
     surfaceValueAveragePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceValueAveragePluginFunction_H

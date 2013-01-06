@@ -36,7 +36,7 @@ Description
 SourceFiles
     surfaceValueMinimumPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef surfaceValueMinimumPluginFunction_H

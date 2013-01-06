@@ -36,7 +36,7 @@ Description
 SourceFiles
     courantIncompressiblePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef courantIncompressiblePluginFunction_H

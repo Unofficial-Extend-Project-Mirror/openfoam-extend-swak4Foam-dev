@@ -36,7 +36,7 @@ Description
 SourceFiles
     setValueMinimumPluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef setValueMinimumPluginFunction_H

@@ -36,7 +36,7 @@ Description
 SourceFiles
     setDistancePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef setDistancePluginFunction_H

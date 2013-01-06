@@ -36,7 +36,7 @@ Description
 SourceFiles
     mqFaceNonOrthoPluginFunction.C
 
- ICE Revision: $Id$ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef mqFaceNonOrthoPluginFunction_H

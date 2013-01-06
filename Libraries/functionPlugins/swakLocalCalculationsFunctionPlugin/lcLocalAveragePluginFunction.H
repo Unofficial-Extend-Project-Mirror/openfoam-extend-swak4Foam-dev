@@ -36,7 +36,7 @@ Description
 SourceFiles
     lcLocalAveragePluginFunction.C
 
- ICE Revision: $Id$
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef lcLocalAveragePluginFunction_H
