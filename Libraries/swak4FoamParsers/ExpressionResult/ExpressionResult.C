@@ -48,7 +48,8 @@ ExpressionResult::ExpressionResult()
     valType_("None"),
     valPtr_(NULL),
     isPoint_(false),
-    isSingleValue_(true)
+    isSingleValue_(true),
+    objectSize_(-1)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult()" << endl;
@@ -61,7 +62,8 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     valType_("None"),
     valPtr_(NULL),
     isPoint_(false),
-    isSingleValue_(true)
+    isSingleValue_(true),
+    objectSize_(-1)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
@@ -81,7 +83,8 @@ ExpressionResult::ExpressionResult(
     isPoint_(dict.lookupOrDefault<bool>("isPoint",false)),
     isSingleValue_(
         dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
-    )
+    ),
+    objectSize_(-1)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)" << endl;
@@ -168,6 +171,8 @@ void ExpressionResult::clearResult()
         Info << "ExpressionResult: Clearing object" << endl;
     }
     generalContent_.reset();
+    objectSize_=-1;
+
     if(debug) {
         Info << "ExpressionResult: Clearing result - done" << endl;
     }
@@ -272,7 +277,7 @@ label ExpressionResult::size() const {
         }
     } else {
         // this is an object
-        return -1;
+        return objectSize_;
     }
 }
 
@@ -291,6 +296,7 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
     valType_=rhs.valType_;
     isPoint_=rhs.isPoint_;
     isSingleValue_=rhs.isSingleValue_;
+    objectSize_=-1;
 
     if( rhs.valPtr_ ) {
         if(valType_==pTraits<scalar>::typeName) {
@@ -333,6 +339,13 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
         }
     } else {
         valPtr_=rhs.valPtr_;
+        if(generalContent_.valid()) {
+            FatalErrorIn("ExpressionResult::operator=(const ExpressionResult& rhs)")
+                << "Assignment with general content not possible"
+                    << endl
+                    << exit(FatalError);
+
+        }
     }
 
 //     const_cast<ExpressionResult &>(rhs).valPtr_=NULL;

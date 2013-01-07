@@ -120,7 +120,8 @@ namespace Foam {
     template<class Type>
     bool CommonValueExpressionDriver::isVariable(
         const string &name,
-        bool isPoint
+        bool isPoint,
+        label expectedSize
     ) const
     {
         if(debug) {
@@ -139,11 +140,19 @@ namespace Foam {
                 &&
                 var.isPoint()==isPoint
             ) {
-                if(debug) {
-                    Pout << " - OK" << endl;
+                bool sizeOK=true;
+                if(expectedSize>=0) {
+                    sizeOK=(var.size()==expectedSize);
+                    reduce(sizeOK,andOp<bool>());
                 }
 
-                return true;
+                if(sizeOK) {
+                    if(debug) {
+                        Pout << " - OK" << endl;
+                    }
+
+                    return true;
+                }
             }
             if(debug) {
                 Pout << "(" << var.valueType() << " "
@@ -155,13 +164,14 @@ namespace Foam {
             Pout << " - not OK -> trying global" << endl;
         }
 
-        return isGlobal<Type>(name,isPoint);
+        return isGlobal<Type>(name,isPoint,expectedSize);
     }
 
     template<class Type>
     bool CommonValueExpressionDriver::isGlobal(
         const word &name,
-        bool isPoint
+        bool isPoint,
+        label expectedSize
     ) const
     {
         if(debug) {
@@ -181,10 +191,23 @@ namespace Foam {
             &&
             aGlobal.isPoint()==isPoint
         ) {
-            if(debug) {
-                Pout << " - OK" << endl;
+            bool sizeOK=true;
+            if(expectedSize>=0) {
+                sizeOK=(aGlobal.size()==expectedSize);
+                reduce(sizeOK,andOp<bool>());
             }
-            return true;
+
+            if(sizeOK) {
+                if(debug) {
+                    Pout << " - OK" << endl;
+                }
+                return true;
+            } else {
+                if(debug) {
+                    Pout << " - Found but wrong size" << endl;
+                }
+                return false;
+            }
         } else {
             if(debug) {
                 Pout << " - not OK" << endl;
@@ -534,7 +557,8 @@ namespace Foam {
                     ),
                     actualMesh,
                     dimensioned<Type>(name,nullDim,pTraits<Type>::zero),
-                    "zeroGradient"
+                    //                  "zeroGradient"
+                    "calculated"
                 )
             );
 
@@ -564,7 +588,7 @@ namespace Foam {
                     Type minVal=gMin(vals);
                     Type maxVal=gMax(vals);
                     if(mag(minVal-maxVal)>SMALL) {
-                        WarningIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
+                        WarningIn("CommonValueExpressionDriver::getOrReadFieldInternal(const string &name)")
                             << "The minimum value " << minVal
                                 << " and the maximum " << maxVal
                                 << " differ. I will use the average " << avg
@@ -631,7 +655,7 @@ namespace Foam {
             &&
             failIfNoneFound
         ) {
-            FatalErrorIn("CommonValueExpressionDriver::getOrReadField(const string &name)")
+            FatalErrorIn("CommonValueExpressionDriver::getOrReadFieldInternal(const string &name)")
                 << "Could not find the field " << name
                     << " in memory or on disc" << endl
                     << exit(FatalError);
