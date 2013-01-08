@@ -298,6 +298,46 @@ false                  return token::TOKEN_FALSE;
     } else if(driver.isLookup(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LOOKUP;
     } else if(
+        driver.isVariable<Foam::surfaceScalarField::value_type>(*ptr,false,driver.mesh().nInternalFaces())
+    ) {
+        yylval->name = ptr; return token::TOKEN_FSID;
+    } else if(
+        driver.isVariable<Foam::pointScalarField::value_type>(*ptr,true)
+    ) {
+        yylval->name = ptr; return token::TOKEN_PSID;
+    } else if(
+        driver.isVariable<Foam::surfaceVectorField::value_type>(*ptr,false,driver.mesh().nInternalFaces())
+    ) {
+        yylval->name = ptr; return token::TOKEN_FVID;
+    } else if(
+        driver.isVariable<Foam::pointVectorField::value_type>(*ptr,true)
+    ) {
+        yylval->name = ptr; return token::TOKEN_PVID;
+    } else if(
+        driver.isVariable<Foam::surfaceTensorField::value_type>(*ptr,false,driver.mesh().nInternalFaces())
+    ) {
+        yylval->name = ptr; return token::TOKEN_FTID;
+    } else if(
+        driver.isVariable<Foam::pointTensorField::value_type>(*ptr,true)
+    ) {
+        yylval->name = ptr; return token::TOKEN_PTID;
+    } else if(
+        driver.isVariable<Foam::surfaceSymmTensorField::value_type>(*ptr,false,driver.mesh().nInternalFaces())
+    ) {
+        yylval->name = ptr; return token::TOKEN_FYID;
+    } else if(
+        driver.isVariable<Foam::pointSymmTensorField::value_type>(*ptr,true)
+    ) {
+        yylval->name = ptr; return token::TOKEN_PYID;
+    } else if(
+        driver.isVariable<Foam::surfaceSphericalTensorField::value_type>(*ptr,false,driver.mesh().nInternalFaces())
+    ) {
+        yylval->name = ptr; return token::TOKEN_FHID;
+    } else if(
+        driver.isVariable<Foam::pointSphericalTensorField::value_type>(*ptr,true)
+    ) {
+        yylval->name = ptr; return token::TOKEN_PHID;
+    } else if(
         driver.isVariable<Foam::volScalarField::value_type>(*ptr)
         ||
         driver.isThere<Foam::volScalarField>(*ptr)

@@ -1,0 +1,61 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// just for testing a problem with surfaceFields that become variables
+
+compareSame {
+    valueType internalField;
+    variables (
+        "phiSq=phi*phi;"
+        "phiAvg=average(phi);"
+    );
+    expression "phiAvg*phiAvg-average(phiSq)";
+    //    expression "phiSq";
+    accumulations (
+        min
+        max
+        average
+    );
+}
+
+getPtsAvg {
+    valueType internalField;
+    variables (
+        "avgPoint=average(pts());"
+    );
+    expression "pts()-avgPoint";
+    accumulations (
+        min
+        max
+        average
+    );
+}
+
+getPosAvg {
+    valueType internalField;
+    variables (
+        "avgPoint=average(pos());"
+    );
+    expression "pos()-avgPoint";
+    accumulations (
+        min
+        max
+        average
+    );
+}
+
+// ************************************************************************* //

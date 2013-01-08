@@ -139,11 +139,9 @@ protected:
     const ExpressionResult &lookupGlobal(const word &name) const;
 
     template<class T>
-    bool isGlobal(const word &name,bool isPoint) const;
+    bool isGlobal(const word &name,bool isPoint,label expectedSize=-1) const;
 
     void setGlobalScopes(const wordList &);
-
-    ExpressionResult &result() { return result_; }
 
     //- scanner state for reentrant lexer
     void *scanner_;
@@ -156,6 +154,11 @@ protected:
     virtual bool update();
 
 public:
+
+    ExpressionResult &result() { return result_; }
+
+    const ExpressionResult &result() const { return result_; }
+
     const string &content() const { return content_; }
 
     //- actual size of the field
@@ -450,7 +453,7 @@ public:
     bool is(const string &name,bool isPoint=false) const;
 
     template<class Type>
-    bool isVariable(const string &name,bool isPoint=false) const;
+    bool isVariable(const string &name,bool isPoint=false,label expectSize=-1) const;
 
     template<class Type>
     bool isField(const string &name,bool isPoint=false) const;
