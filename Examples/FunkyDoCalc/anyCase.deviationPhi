@@ -43,7 +43,19 @@ getPtsAvg {
         max
         average
     );
+}
 
+getPosAvg {
+    valueType internalField;
+    variables (
+        "avgPoint=average(pos());"
+    );
+    expression "pos()-avgPoint";
+    accumulations (
+        min
+        max
+        average
+    );
 }
 
 // ************************************************************************* //

@@ -143,8 +143,6 @@ protected:
 
     void setGlobalScopes(const wordList &);
 
-    ExpressionResult &result() { return result_; }
-
     //- scanner state for reentrant lexer
     void *scanner_;
 
@@ -156,6 +154,11 @@ protected:
     virtual bool update();
 
 public:
+
+    ExpressionResult &result() { return result_; }
+
+    const ExpressionResult &result() const { return result_; }
+
     const string &content() const { return content_; }
 
     //- actual size of the field

@@ -545,6 +545,15 @@ namespace Foam {
                 Pout << "Getting " << name << " from variables" << endl;
             }
 
+            word patchType("calculated");
+            if(T::PatchFieldType::typeName=="fvPatchField") {
+                patchType="zeroGradient";
+            }
+            if(debug) {
+                Info << "Creating field " << name << " of type "
+                    << T::typeName << " with patch type " << patchType
+                    << "(" << T::PatchFieldType::typeName << ")" << endl;
+            }
             f.set(
                 new T(
                     IOobject
@@ -557,8 +566,7 @@ namespace Foam {
                     ),
                     actualMesh,
                     dimensioned<Type>(name,nullDim,pTraits<Type>::zero),
-                    //                  "zeroGradient"
-                    "calculated"
+                    patchType
                 )
             );
 
