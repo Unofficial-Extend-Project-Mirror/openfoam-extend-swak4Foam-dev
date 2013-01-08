@@ -44,6 +44,18 @@ Description
 #include "IOPtrList.H"
 #include "IFstream.H"
 
+#if FOAM_VERSION4SWAK_MAJOR<2
+#include "directMappedPatchBase.H"
+
+namespace Foam {
+    // these typedefs should keep the difference between the 1.7 and the 2.1 code minimal
+    typedef directMappedPatchBase mappedPatchBase;
+}
+
+#else
+#include "mappedPatchBase.H"
+#endif
+
 using namespace Foam;
 
 namespace Foam {
@@ -116,14 +128,22 @@ int main(int argc, char *argv[])
             false
         )
     );
+    //    boundaryDict.checkOut();
     {
+        IOobject::debug=1;
+
         Info << "Reading boundary from " << boundaryDict.filePath() << endl;
 
         // this way it doesn't matter that the file is not of the right class
         IFstream inStream(boundaryDict.filePath());
         boundaryDict.readHeader(inStream);
-        boundaryDict.readData(inStream);
-    }
+
+        // Necessary because IOPtrList does not implement readHeader
+        PtrList<entry> data(
+            inStream
+        );
+        boundaryDict.PtrList<entry>::operator=(data);
+   }
 
     Info << endl;
 
@@ -133,6 +153,36 @@ int main(int argc, char *argv[])
         const word &name=boundaryDict[patchI].keyword();
         dictionary &dict=boundaryDict[patchI].dict();
 
+        Info << "Treating patch " << name << endl;
+        if(!spec.found(name)) {
+            Info << "Nothing specified. Continuing" << endl << endl;
+            continue;
+        }
+
+        label patchID=mesh.boundaryMesh().findPatchID(name);
+        if(patchID<0) {
+            FatalErrorIn(args.executable())
+                << "Patch " << name << " does not exist"
+                    << endl
+                    << exit(FatalError);
+        }
+        const polyPatch &thePatch=mesh.boundaryMesh()[patchID];
+        if(!isA<const mappedPatchBase>(thePatch)) {
+            WarningIn(args.executable())
+                << name << " is not a subclass of " << mappedPatchBase::typeName
+                    << endl << endl;
+            continue;
+        }
+        const mappedPatchBase &mb=dynamicCast<const mappedPatchBase&>(
+            thePatch
+        );
+
+        // vectorField dummy(7,vector(1,2,3));
+        // dict.set("nix",dummy);
+
+        changed=true;
+
+        Info << endl;
     }
 
     if(changed) {
@@ -143,7 +193,7 @@ int main(int argc, char *argv[])
 
         OStringStream headerStream;
         boundaryDict.writeHeader(headerStream);
-        string newHeader=headerStream.str().replace("dictionary",actualClass);
+        string newHeader=headerStream.str().replace("IOPtrList<entry>",actualClass);
 
         OFstream outStream(boundaryDict.filePath());
         outStream << newHeader.c_str();
