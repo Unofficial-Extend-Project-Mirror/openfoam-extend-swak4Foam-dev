@@ -45,6 +45,8 @@ Description
 #include "OFstream.H"
 #include "IOPtrList.H"
 #include "IFstream.H"
+#include "ListListOps.H"
+#include "meshTools.H"
 
 #if FOAM_VERSION4SWAK_MAJOR<2
 #include "directMappedPatchBase.H"
@@ -255,6 +257,41 @@ int main(int argc, char *argv[])
         dict.set("movedCentersForDebugging",moved);
 
         changed=true;
+
+        List<pointField> globalFaceCenters(Pstream::nProcs());
+        List<pointField> globalMoved(Pstream::nProcs());
+        globalFaceCenters[Pstream::myProcNo()]=faceCentres;
+        globalMoved[Pstream::myProcNo()]=moved;
+        pointField allFaceCentres=ListListOps::combine<pointField>(
+            globalFaceCenters,
+            accessOp<pointField>()
+        );
+        pointField allMoved=ListListOps::combine<pointField>(
+            globalMoved,
+            accessOp<pointField>()
+        );
+
+        if(Pstream::master()) {
+            OFstream str
+                (
+                    mesh.time().path()
+                    / name + "_" + mesh.name()
+                    + "_nonUniformMapping.obj"
+                );
+            Pout<< "Dumping mapping as lines from patch centres to"
+                << " calculated location to file " << str.name() << endl;
+
+            label vertI = 0;
+
+            forAll(allFaceCentres, i)
+            {
+                meshTools::writeOBJ(str, allFaceCentres[i]);
+                vertI++;
+                meshTools::writeOBJ(str, allMoved[i]);
+                vertI++;
+                str << "l " << vertI-1 << ' ' << vertI << nl;
+            }
+        }
 
         Info << endl;
     }
