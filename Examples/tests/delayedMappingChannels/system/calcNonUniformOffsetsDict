@@ -23,6 +23,7 @@ offsetSpecifications {
                          scaleBeforeRotation (1 1 1);
                          rotationFrom (1 0 0);
                          rotationTo (1 0 0);
+                         scaleAfterRotation (1 1 1);
                          transposeAfter ( 0 0 0);
 		     }
 		     outlet1 {

@@ -29,7 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Application
-    calculate the offsets-entry for (direct)Mapped patches
+    calculate the offsets-entry for (direct)Mapped patches. Does so by applying
+    a number of coordinate transformations to the face-centers of the patch and
+    calculating the difference of the coordinates
 
 Description
 
@@ -71,8 +73,9 @@ namespace Foam {
 tmp<vectorField> transformPoints(
     const vectorField &original,
     const vector &transposeFirst,
-    const vector &scaling,
+    const vector &scalingBefore,
     const tensor &rotation,
+    const vector &scalingAfter,
     const vector &transposeAfter
 ) {
     tmp<vectorField> result(
@@ -82,8 +85,9 @@ tmp<vectorField> transformPoints(
 
     tr+=transposeFirst;
     forAll(tr,i) {
-        tr[i]=cmptMultiply(tr[i],scaling);
+        tr[i]=cmptMultiply(tr[i],scalingBefore);
         tr[i]=transform(rotation,tr[i]);
+        tr[i]=cmptMultiply(tr[i],scalingAfter);
     };
 
     tr+=transposeAfter;
@@ -203,18 +207,21 @@ int main(int argc, char *argv[])
         );
 
         vector transposeFirst(0,0,0);
-        vector scale(1,1,1);
+        vector scaleBefore(1,1,1);
         tensor rotation(sphericalTensor(1));
+        vector scaleAfter(1,1,1);
         vector transposeAfter(0,0,0);
 
         const dictionary &para=spec.subDict(name);
 
         word mode(para.lookup("mode"));
+        Info << "Doing mode " << mode << endl;
 
-       if(mode=="specifyAll") {
-            transposeFirst=vector(para.lookup("transposeFirst"));
-            scale=vector(para.lookup("scaleBeforeRotation"));
+        if(mode=="specifyAll") {
+               transposeFirst=vector(para.lookup("transposeFirst"));
+            scaleBefore=vector(para.lookup("scaleBeforeRotation"));
             vector from(para.lookup("rotationFrom"));
+            scaleAfter=vector(para.lookup("scaleAfterRotation"));
             vector to(para.lookup("rotationTo"));
             rotation=rotationTensor(from,to);
             transposeAfter=vector(para.lookup("transposeAfter"));
@@ -227,17 +234,25 @@ int main(int argc, char *argv[])
 
         }
 
+        Info << "Transforming face centers" << endl;
+
         vectorField faceCentres(thePatch.faceCentres());
 
         vectorField moved(
             transformPoints(
                 faceCentres,
-                transposeFirst,scale,rotation,transposeAfter
+                transposeFirst,scaleBefore,rotation,scaleAfter,transposeAfter
             )
         );
 
+        if(dict.found("offset")) {
+            // otherwise certain implementations will still assume uniform
+            dict.remove("offset");
+        }
         dict.set("offsets",moved-faceCentres);
         dict.set("offsetMode","nonuniform");
+
+        dict.set("movedCentersForDebugging",moved);
 
         changed=true;
 
