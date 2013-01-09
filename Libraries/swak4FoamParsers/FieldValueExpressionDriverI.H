@@ -14,6 +14,14 @@
 #include "volPointInterpolation.H"
 #include "interpolatePointToCell.H"
 
+#if FOAM_VERSION4SWAK_MAJOR<2
+#include "directMappedFvPatch.H"
+#include "directMappedPointPatch.H"
+#else
+#include "mappedFvPatch.H"
+#include "mappedPointPatch.H"
+#endif
+
 #ifdef FOAM_DEV
 #include "FixedValuePointPatchField.H"
 #include "ZeroGradientPointPatchField.H"
@@ -61,6 +69,34 @@ inline const fvMesh &FieldValueExpressionDriver::mesh() const
     return mesh_;
 }
 
+inline bool FieldValueExpressionDriver::canBeValuePatch(const fvPatch &patch)
+{
+    return
+        isA<wallFvPatch>(patch)
+        ||
+        isType<fvPatch>(patch)
+        ||
+#if FOAM_VERSION4SWAK_MAJOR<2
+        isA<directMappedFvPatch>(patch);
+#else
+        isA<mappedFvPatch>(patch);
+#endif
+}
+
+inline bool FieldValueExpressionDriver::canBeValuePatch(const pointPatch &patch)
+{
+    return
+        isA<wallPointPatch>(patch)
+        ||
+        isType<facePointPatch>(patch)
+        ||
+#if FOAM_VERSION4SWAK_MAJOR<2
+        isA<directMappedPointPatch>(patch);
+#else
+        isA<mappedPointPatch>(patch);
+#endif
+}
+
 template<class T>
 void FieldValueExpressionDriver::makePatches
 (
@@ -89,9 +125,7 @@ void FieldValueExpressionDriver::makePatches
         )
         &&
         (
-            typeid(patch)==typeid(wallFvPatch)
-            ||
-            typeid(patch)==typeid(fvPatch)
+            canBeValuePatch(patch)
         )
     ) {
         if(isValuePatch){
@@ -140,9 +174,7 @@ void FieldValueExpressionDriver::makePatches
         )
         &&
         (
-            typeid(patch)==typeid(wallFvPatch)
-            ||
-            typeid(patch)==typeid(fvPatch)
+            canBeValuePatch(patch)
         )
     ) {
         if(isValuePatch){
@@ -193,9 +225,7 @@ void FieldValueExpressionDriver::makePatches
         )
         &&
         (
-            typeid(patch)==typeid(wallPointPatch)
-//             ||
-//             typeid(patch)==typeid(fvPatch)
+            canBeValuePatch(patch)
         )
     ) {
         if(isValuePatch){
@@ -384,10 +414,7 @@ void FieldValueExpressionDriver::setValuePatches
         )
         &&
         (
-            typeid(patch)==typeid(wallFvPatch)
-            ||
-            typeid(patch)==typeid(fvPatch
-            )
+            canBeValuePatch(patch)
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFvPatchField<T>)) {
@@ -428,10 +455,7 @@ void FieldValueExpressionDriver::setValuePatches
         )
         &&
         (
-            typeid(patch)==typeid(wallFvPatch)
-            ||
-            typeid(patch)==typeid(fvPatch
-            )
+            canBeValuePatch(patch)
         )
     ) {
         if(typeid(field.boundaryField()[patchI])==typeid(fixedValueFvsPatchField<T>)) {
@@ -481,9 +505,7 @@ void FieldValueExpressionDriver::setValuePatches
         )
         &&
         (
-            typeid(patch)==typeid(wallPointPatch)
-//             ||
-//             typeid(patch)==typeid(fvPatch
+            canBeValuePatch(patch)
         )
     ) {
         if(

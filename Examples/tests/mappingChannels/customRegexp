@@ -1,0 +1,7 @@
+val1In {
+       theTitle "Values";
+       expr "Expression var1Val on (.+):  min=(%f%) max=(%f%) average=(%f%)";
+       type dynamic;
+       idNr 1;
+       titles (min max avg);
+}

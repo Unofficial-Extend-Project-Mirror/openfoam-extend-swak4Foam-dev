@@ -77,7 +77,11 @@ class PatchValueExpressionDriver
 {
     // Private data
 
+    //- the patch we're living on
     const fvPatch &patch_;
+
+    //- dictionary with the interpolation-schemes for mapping
+    dictionary mappingInterpolationSchemes_;
 
     // Private Member Functions
 
@@ -85,6 +89,30 @@ class PatchValueExpressionDriver
     void operator=(const PatchValueExpressionDriver&);
 
     static word driverName_;
+
+    //- give back an interpolation-scheme specified by name and type
+    template<class Type>
+    const interpolation<Type> &getInterpolation(
+        const GeometricField< Type, fvPatchField, volMesh > &psi
+    );
+
+    //- get the specification of the interpolations by name
+    const word getInterpolationScheme(const word &name);
+
+    //- HashPtrTable of interpolations
+    HashPtrTable<interpolation<scalar> > interpolationScalar_;
+    HashPtrTable<interpolation<vector> > interpolationVector_;
+    HashPtrTable<interpolation<tensor> > interpolationTensor_;
+    HashPtrTable<interpolation<symmTensor> > interpolationSymmTensor_;
+    HashPtrTable<interpolation<sphericalTensor> > interpolationSphericalTensor_;
+
+    //- table with the interpolation scheme (depending on the type)
+    template <class Type>
+    HashPtrTable<interpolation<Type> > &interpolations();
+
+    //- map a field that is as long as the patch
+    template<class T>
+    tmp<Field<T> > mapField(tmp<Field<T> > orig);
 
 protected:
 
@@ -116,6 +144,11 @@ protected:
     static const SymbolTable<PatchValueExpressionDriver> &symbolTable();
 
     int startupSymbol(const word &name);
+
+    //- check whether the patch maps from another one
+    autoPtr<ExpressionResult> getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+    );
 
 public:
 
@@ -209,6 +242,14 @@ public:
     virtual bool existsPluginFunction(
         const word &name
     );
+
+    //- for a mapped patch returns the mapped field from "the other side""
+    template<class T>
+    tmp<Field<T> > mapField(const word &name,bool internalField=false);
+
+    //- for a mapped point-patch returns the mapped field from "the other side""
+    template<class T>
+    tmp<Field<T> > mapPointField(const word &name);
 
     // allow access of protected methods
     friend class parserPatch::PatchValueExpressionParser;
