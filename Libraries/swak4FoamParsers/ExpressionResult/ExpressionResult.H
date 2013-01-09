@@ -80,6 +80,9 @@ class ExpressionResult
     //- alternative if anything different than a plain field should be stored
     autoPtr<IOobject> generalContent_;
 
+    //- size if an object is stored
+    label objectSize_;
+
     void uglyDelete();
 
     template<class Type>

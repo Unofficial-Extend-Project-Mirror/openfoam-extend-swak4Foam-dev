@@ -52,7 +52,9 @@ void writeData(
     const wordList &accumulations
 )
 {
-    Field<T> result=driver.getResult<T>();
+    bool isPoint=driver.result().isPoint();
+
+    Field<T> result=driver.getResult<T>(isPoint);
 
     forAll(accumulations,i) {
         const word &aName=accumulations[i];

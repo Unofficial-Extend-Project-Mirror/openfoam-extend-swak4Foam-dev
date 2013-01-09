@@ -1,0 +1,8 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 07 Jan 2013 14:36:55 +0100
+State: fixed
+Subject: Variables on internalFields that give surfaceFields don't work
+Message-Id: <9ae11c8a65b53e23-0-artemis@workstation008.office.ice-sf.at>
+
+The problem seems to be that the "uniformity"-evaluation of the field
+checks whether the size is equal to the number of cells and this fails

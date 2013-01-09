@@ -1554,6 +1554,10 @@ S_{expl} + S_{impl} T
 **** =maintainanceScripts/makeSwakVersionFile.py= failed when no Mercurial is installed
      This didn't influence the compilation (as there is already a
      current version file there) but confused people.
+**** Non-uniform variables for =internalField= only worked correctly for volume fields
+     Face and point fields did not propagate the information correctly
+     and were treated as non-uniform volume fields of the wrong
+     size. This should now be fixed
 **** =valuePatches= did not work for mapped patches
      This kind of patch was not identified as something that could
      have the value fixed

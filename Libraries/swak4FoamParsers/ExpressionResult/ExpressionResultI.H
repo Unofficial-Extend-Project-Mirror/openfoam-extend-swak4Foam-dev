@@ -144,10 +144,12 @@ namespace Foam {
         //        valType_=pTraits<T>::typeName;
         valType_=o().typeName;
 
+        objectSize_=o->size();
         generalContent_.set(o.ptr());
 
         isPoint_=false;
         isSingleValue_=false;
+
     }
 
     template<class Type>
