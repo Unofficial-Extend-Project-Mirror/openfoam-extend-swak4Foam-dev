@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 28 Dec 2012 14:32:17 +0100
+Subject: Re: Allow non-uniform external variables
+Message-Id: <cd71f59c9cb24881-bc4f5cd8a1241075-artemis@bgs-cool-greybook.local>
+References: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+In-Reply-To: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+
+No mapping of point-fields implemented ... because there is none in
+the upstream

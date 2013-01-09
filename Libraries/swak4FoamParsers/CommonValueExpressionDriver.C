@@ -44,6 +44,7 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(CommonValueExpressionDriver,0);
+
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
@@ -111,6 +112,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     scanner_(NULL),
     prevIterIsOldTime_(orig.prevIterIsOldTime_)
 {
+    if(debug) {
+        Info << "CommonValueExpressionDriver - copy constructor" << endl;
+    }
     setSearchBehaviour(
         orig.cacheReadFields_,
         orig.searchInMemory_,
@@ -134,6 +138,10 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 {
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
 
+    if(debug) {
+        Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
+    }
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
             dict.lookup("storedVariables")
@@ -148,10 +156,6 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         {
             delayedVariables_.insert(readDelays[i].name(),readDelays[i]);
         }
-    }
-
-    if(debug) {
-        Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
     setSearchBehaviour(
@@ -981,18 +985,32 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
 
     otherDriver->parse(expr);
 
+    autoPtr<ExpressionResult> otherResult(this->getRemoteResult(otherDriver()));
+
     if(debug) {
         Pout << "Remote result: "
-            << otherDriver->getUniform(this->size(),false) << endl;
+            << otherResult() << endl;
     }
+
     if(delayedVariables_.found(name)) {
         if(debug) {
             Pout << name << " is delayed" << endl;
         }
-        delayedVariables_[name]=otherDriver->getUniform(this->size(),false);
+        delayedVariables_[name]=otherResult();
     } else {
-        variables_.insert(name,otherDriver->getUniform(this->size(),false));
+        variables_.insert(name,otherResult());
     }
+}
+
+autoPtr<ExpressionResult> CommonValueExpressionDriver::getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+)
+{
+    return autoPtr<ExpressionResult>(
+        new ExpressionResult(
+            otherDriver.getUniform(this->size(),false)
+        )
+    );
 }
 
 void CommonValueExpressionDriver::addVariables(
@@ -1376,7 +1394,7 @@ void CommonValueExpressionDriver::prepareData(dictionary &dict) const
     }
 }
 
-class lessOp {
+class smallerOp {
 public:
     bool operator()(scalar a,scalar b) {
         return a<b;
@@ -1441,7 +1459,7 @@ vector CommonValueExpressionDriver::getPositionOfMinimum(
     const vectorField &locs
 ) const
 {
-    return getExtremePosition(lessOp(),vals,locs);
+    return getExtremePosition(smallerOp(),vals,locs);
 }
 
 vector CommonValueExpressionDriver::getPositionOfMaximum(

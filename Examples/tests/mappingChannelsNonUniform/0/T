@@ -1,0 +1,72 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alpha1;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+
+boundaryField
+{
+    "outlet."
+    {
+        type zeroGradient;
+    }
+    inlet1
+    {
+        type            groovyBC;
+        //        valueExpression "1+(posVal-2*mappedT)+sin(time()*10)";
+        valueExpression "(1+posVal*0)*sin(time()*10)-0.7*mappedT";
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "mappedT=mapped(T)-1;"
+            "posVal=(pos().x-minX)/(maxX-minX);"
+        );
+        value           uniform 0;
+        mappingInterpolation {
+            default cell;
+        }
+    }
+    inlet2
+    {
+        type            groovyBC;
+        value uniform 0;
+       valueExpression "mappedInternal(T)-1";
+    }
+    inlet3
+    {
+        type            groovyBC;
+        value uniform 0;
+        valueExpression "mapped(T)";
+        mappingInterpolation {
+            //            default cell;
+            T cellPointFace;
+        }
+    }
+    walls
+    {
+        type            zeroGradient;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

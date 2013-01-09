@@ -44,6 +44,21 @@ License
 
 #include <nearWallDist.H>
 
+#if FOAM_VERSION4SWAK_MAJOR<2
+#include "directMappedFvPatch.H"
+
+#include "mapDistribute.H"
+
+namespace Foam {
+    // these typedefs should keep the difference between the 1.7 and the 2.1 code minimal
+    typedef directMappedFvPatch mappedFvPatch;
+    typedef directMappedPolyPatch mappedPolyPatch;
+}
+
+#else
+#include "mappedFvPatch.H"
+#endif
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -51,6 +66,7 @@ namespace Foam {
 word PatchValueExpressionDriver::driverName_="patch";
 
 defineTypeNameAndDebug(PatchValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, dictionary, patch);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, idName, patch);
 
@@ -65,14 +81,24 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(orig),
-    patch_(orig.patch_)
-{}
+    patch_(orig.patch_),
+    mappingInterpolationSchemes_(orig.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - copy constructor" << endl;
+    }
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
 :
     CommonValueExpressionDriver(),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_()
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch constructor" << endl;
+    }
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
     const dictionary& dict,
@@ -80,8 +106,17 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(dict),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+dict constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
+}
 
 label getPatchID(const fvMesh &mesh,const word &name)
 {
@@ -120,8 +155,16 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
                 )
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - dict+mesh constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
 }
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
@@ -137,8 +180,12 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
                 id
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_()
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - id+mesh constructor" << endl;
+    }
 }
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(
@@ -147,14 +194,23 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(
 )
 :
     CommonValueExpressionDriver(old),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(old.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+driver constructor" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 PatchValueExpressionDriver::~PatchValueExpressionDriver()
-{}
+{
+    if(debug) {
+        Info << "~PatchValueExpressionDriver()" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -385,6 +441,163 @@ bool PatchValueExpressionDriver::existsPluginFunction(
         name
     );
 }
+
+template<>
+HashPtrTable<interpolation<scalar> > &PatchValueExpressionDriver::interpolations<scalar>()
+{
+    return interpolationScalar_;
+}
+
+template<>
+HashPtrTable<interpolation<vector> > &PatchValueExpressionDriver::interpolations<vector>()
+{
+    return interpolationVector_;
+}
+
+template<>
+HashPtrTable<interpolation<tensor> > &PatchValueExpressionDriver::interpolations<tensor>()
+{
+    return interpolationTensor_;
+}
+
+template<>
+HashPtrTable<interpolation<symmTensor> > &PatchValueExpressionDriver::interpolations<symmTensor>()
+{
+    return interpolationSymmTensor_;
+}
+
+template<>
+HashPtrTable<interpolation<sphericalTensor> > &PatchValueExpressionDriver::interpolations<sphericalTensor>()
+{
+    return interpolationSphericalTensor_;
+}
+
+const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)
+{
+    if(mappingInterpolationSchemes_.found(name)) {
+        return word(mappingInterpolationSchemes_.lookup(name));
+    } else if(mappingInterpolationSchemes_.found("default")) {
+        WarningIn("PatchValueExpressionDriver::getInterpolationScheme(const word &name)")
+            << "No entry for " << name << " in "
+                << mappingInterpolationSchemes_.name()
+                << ". Using 'default'"
+                << endl;
+
+        word scheme(word(mappingInterpolationSchemes_.lookup("default")));
+        mappingInterpolationSchemes_.add(name,scheme);
+
+        return scheme;
+    } else {
+        FatalErrorIn("PatchValueExpressionDriver::getInterpolationScheme(const word &name)")
+            << "No entry for " << name << " or 'default' in "
+                << mappingInterpolationSchemes_.name()
+                << endl
+                << exit(FatalError);
+    }
+
+    return word("nixDaGefunden");
+}
+
+autoPtr<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
+    CommonValueExpressionDriver &otherDriver
+)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver::getRemoteResult" << endl;
+    }
+
+    if(
+        !isA<PatchValueExpressionDriver>(otherDriver)
+        ||
+        !isA<mappedFvPatch>(patch_)
+    ) {
+        if(debug) {
+            Info << "Not mapped or not remote-patch -> uniform" << endl;
+        }
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    const mappedPolyPatch &patch=dynamicCast<const mappedPolyPatch&>(
+        patch_.patch()
+    );
+    PatchValueExpressionDriver &driver=
+        dynamicCast<PatchValueExpressionDriver&>(otherDriver);
+
+    if(
+        patch.mode()!=mappedPatchBase::NEARESTPATCHFACE
+        ||
+        driver.patch().name()!=patch.samplePatch()
+        ||
+        driver.patch().boundaryMesh().mesh().name()!=patch.sampleRegion()
+    ) {
+        if(debug) {
+            Info << "Not correct circumstances for mapping -> uniform" << endl;
+        }
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    if(driver.result().isPoint()) {
+        WarningIn("PatchValueExpressionDriver::getRemoteResult")
+            << "Can not map point fields (though everyting else "
+                << "is OK for mapping"
+                << endl;
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    if(debug) {
+        Info << "Mapping a result:" << driver.result() << endl;
+    }
+
+    if(driver.result().valueType()==pTraits<scalar>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<scalar>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<vector>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<vector>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<tensor>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<tensor>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<symmTensor>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<symmTensor>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<sphericalTensor>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<sphericalTensor>(false)
+                )()
+            )
+        );
+    } else {
+        FatalErrorIn("")
+            << "Mapping for result type " << driver.result().valueType()
+                << " undefined"
+                << endl
+                << exit(FatalError);
+        return autoPtr<ExpressionResult>(); // this should never be reached
+    }
+}
+
 
 // ************************************************************************* //
 

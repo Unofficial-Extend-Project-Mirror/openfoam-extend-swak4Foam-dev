@@ -33,7 +33,6 @@ License
 
 namespace Foam {
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     template<class Type>
@@ -44,6 +43,9 @@ namespace Foam {
         isPoint_(false),
         isSingleValue_(true)
     {
+        if(debug) {
+            Info << "ExpressionResult::ExpressionResult(const Field<Type>  &f)" << endl;
+        }
         setResult(f);
     }
 
@@ -55,6 +57,9 @@ namespace Foam {
         isPoint_(false),
         isSingleValue_(true)
     {
+        if(debug) {
+            Info << "ExpressionResult::ExpressionResult(autoPtr<Type> o)" << endl;
+        }
         setObjectResult(o);
     }
 
@@ -66,6 +71,9 @@ namespace Foam {
         isPoint_(false),
         isSingleValue_(true)
     {
+        if(debug) {
+            Info << "ExpressionResult::ExpressionResult(const dimensioned<Type>  &f)" << endl;
+        }
         setSingleValue(f.value());
     }
 
@@ -80,6 +88,9 @@ namespace Foam {
         isPoint_(false),
         isSingleValue_(true)
     {
+        if(debug) {
+            Info << "ExpressionResult::ExpressionResult(const Type &f, ...)" << endl;
+        }
         setSingleValue(f);
     }
 
@@ -91,6 +102,9 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)
     {
+        if(debug) {
+            Info << "ExpressionResult::setResult(const Field<Type> &val,bool isPoint)" << endl;
+        }
         toBeSet().setResultInternal(val,isPoint);
     }
 
@@ -98,6 +112,10 @@ namespace Foam {
     void ExpressionResult::setResultInternal(
         const Field<Type> &val,bool isPoint
     ) {
+        if(debug) {
+            Info << "ExpressionResult::setResultInternal" << endl;
+        }
+
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -105,6 +123,10 @@ namespace Foam {
 
         isPoint_=isPoint;
         isSingleValue_=false;
+
+        if(debug) {
+            Info << "ExpressionResult::setResultInternal - done" << endl;
+        }
     }
 
     template <class T>
@@ -116,6 +138,9 @@ namespace Foam {
     template <class T>
     void ExpressionResult::setObjectResultInternal(autoPtr<T> o)
     {
+        if(debug) {
+            Info << "ExpressionResult::setObjectResultInternal(autoPtr<T> o)" << endl;
+        }
         //        valType_=pTraits<T>::typeName;
         valType_=o().typeName;
 
@@ -134,6 +159,9 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResultInternal(Field<Type> *val,bool isPoint)
     {
+        if(debug) {
+            Info << "ExpressionResult::setResultInternal(Field<Type> *val,bool isPoint)" << endl;
+        }
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -152,6 +180,9 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResultInternal(Type val,label size)
     {
+        if(debug) {
+            Info << "ExpressionResult::setResultInternal(Type val,label size)" << endl;
+        }
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -170,6 +201,9 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setSingleValueInternal(Type val)
     {
+        if(debug) {
+            Info << "ExpressionResult::setSingleValueInternal(Type val)" << endl;
+        }
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -182,6 +216,11 @@ namespace Foam {
     template<class Type>
     inline tmp<Field<Type> > ExpressionResult::getResult(bool keep)
     {
+        if(debug) {
+            Info << "ExpressionResult::getResult(bool keep "
+                << keep << ")" << endl;
+        }
+
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Field<Type> > ExpressionResult::getResult()")
                 << "The expected return type " << pTraits<Type>::typeName

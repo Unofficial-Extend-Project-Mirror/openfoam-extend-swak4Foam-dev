@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 17 Dec 2012 20:32:16 +0100
+State: new
+Subject: groovyBC-pushed BC that pushes the value to the internal field
+Message-Id: <c65efe38ffd995ab-0-artemis@bgs-cool-greybook.local>
+
+see the mappedFixedPushedInternalValue in 2.1
+
+Either write a separate BC or add an option to the regular groovyBC
