@@ -97,6 +97,18 @@ tmp<vectorField> transformPoints(
     return result;
 }
 
+enum specificationMode {
+    SPECIFYALL,
+    AUTOTRANSPOSE
+};
+const NamedEnum<specificationMode, 2> specificationModeNames;
+template<>
+const char* Foam::NamedEnum<specificationMode,2>::names[] =
+{
+    "specifyAll",
+    "autoTranspose"
+};
+
 int main(int argc, char *argv[])
 {
 #   include "addRegionOption.H"
@@ -207,6 +219,41 @@ int main(int argc, char *argv[])
         const mappedPatchBase &mb=dynamicCast<const mappedPatchBase&>(
             thePatch
         );
+        autoPtr<pointField> otherMeshPoints;
+        autoPtr<pointField> allOtherPoints;
+        if(
+            mb.mode()==mappedPatchBase::NEARESTPATCHFACE
+#if FOAM_VERSION4SWAK_MAJOR>=2
+            ||
+            mb.mode()==mappedPatchBase::NEARESTPATCHFACEAMI
+#endif
+        ) {
+            Info << "Getting points from other patch " << mb.samplePatch()
+                << " on mesh " << mb.sampleRegion() << endl;
+
+            const polyPatch &otherPatch=mb.samplePolyPatch();
+            otherMeshPoints.set(
+                new pointField(otherPatch.localPoints())
+            );
+            List<pointField> globalOtherPoints(Pstream::nProcs());
+            globalOtherPoints[Pstream::myProcNo()]=otherMeshPoints;
+            allOtherPoints.set(
+                new pointField(
+                    ListListOps::combine<pointField>(
+                        globalOtherPoints,
+                        accessOp<pointField>()
+                    )
+                )
+            );
+        }
+
+        vectorField facePoints(thePatch.localPoints());
+        List<pointField> globalFacePoints(Pstream::nProcs());
+        globalFacePoints[Pstream::myProcNo()]=facePoints;
+        pointField allFacePoints=ListListOps::combine<pointField>(
+            globalFacePoints,
+            accessOp<pointField>()
+        );
 
         vector transposeFirst(0,0,0);
         vector scaleBefore(1,1,1);
@@ -218,22 +265,40 @@ int main(int argc, char *argv[])
 
         word mode(para.lookup("mode"));
         Info << "Doing mode " << mode << endl;
+        specificationMode theMode=specificationModeNames[mode];
 
-        if(mode=="specifyAll") {
-               transposeFirst=vector(para.lookup("transposeFirst"));
-            scaleBefore=vector(para.lookup("scaleBeforeRotation"));
-            vector from(para.lookup("rotationFrom"));
-            scaleAfter=vector(para.lookup("scaleAfterRotation"));
-            vector to(para.lookup("rotationTo"));
-            rotation=rotationTensor(from,to);
-            transposeAfter=vector(para.lookup("transposeAfter"));
-        } else {
-            FatalErrorIn(args.executable())
-                << "Currently only mode 'specifyAll' implemented. Not "
-                    << mode
-                    << endl
-                    << exit(FatalError);
+        switch(theMode) {
+            case SPECIFYALL:
+                {
+                    transposeFirst=vector(para.lookup("transposeFirst"));
+                    scaleBefore=vector(para.lookup("scaleBeforeRotation"));
+                    vector from(para.lookup("rotationFrom"));
+                    scaleAfter=vector(para.lookup("scaleAfterRotation"));
+                    vector to(para.lookup("rotationTo"));
+                    rotation=rotationTensor(from/mag(from),to/mag(to));
+                    transposeAfter=vector(para.lookup("transposeAfter"));
+                }
+                break;
+            case AUTOTRANSPOSE:
+                {
+                    if(!allOtherPoints.valid()){
+                        FatalErrorIn(args.executable())
+                            << mode << " only working for modes that map from a patch"
+                                << endl
+                                << exit(FatalError);
 
+                    }
+                    boundBox from(allFacePoints);
+                    boundBox to(allOtherPoints());
+                    transposeFirst=to.midpoint()-from.midpoint();
+                    Info << "Transposing by " << transposeFirst << endl;
+                }
+                break;
+            default:
+                FatalErrorIn(args.executable())
+                    << "Currently mode " << mode << " is not implemented"
+                        << endl
+                        << exit(FatalError);
         }
 
         Info << "Transforming face centers" << endl;
@@ -243,6 +308,12 @@ int main(int argc, char *argv[])
         vectorField moved(
             transformPoints(
                 faceCentres,
+                transposeFirst,scaleBefore,rotation,scaleAfter,transposeAfter
+            )
+        );
+        vectorField movedPoints(
+            transformPoints(
+                facePoints,
                 transposeFirst,scaleBefore,rotation,scaleAfter,transposeAfter
             )
         );
@@ -260,8 +331,10 @@ int main(int argc, char *argv[])
 
         List<pointField> globalFaceCenters(Pstream::nProcs());
         List<pointField> globalMoved(Pstream::nProcs());
+        List<pointField> globalMovedPoints(Pstream::nProcs());
         globalFaceCenters[Pstream::myProcNo()]=faceCentres;
         globalMoved[Pstream::myProcNo()]=moved;
+        globalMovedPoints[Pstream::myProcNo()]=movedPoints;
         pointField allFaceCentres=ListListOps::combine<pointField>(
             globalFaceCenters,
             accessOp<pointField>()
@@ -270,6 +343,13 @@ int main(int argc, char *argv[])
             globalMoved,
             accessOp<pointField>()
         );
+        pointField allMovedPoints=ListListOps::combine<pointField>(
+            globalMovedPoints,
+            accessOp<pointField>()
+        );
+
+        Info << "Mapping box " << boundBox(allFacePoints) << " to "
+            << boundBox(allMovedPoints) << endl;
 
         if(Pstream::master()) {
             OFstream str
@@ -290,6 +370,58 @@ int main(int argc, char *argv[])
                 meshTools::writeOBJ(str, allMoved[i]);
                 vertI++;
                 str << "l " << vertI-1 << ' ' << vertI << nl;
+            }
+        }
+
+        if(
+            otherMeshPoints.valid()
+        ) {
+            Info << "Checking whether mapped patches line up  " << flush;
+            boundBox moved(allMovedPoints);
+            boundBox mappedTo(allOtherPoints());
+
+            const scalar thres=1e-5*mag(moved.span());
+            if(
+                mag(moved.min()-mappedTo.min())>thres
+                ||
+                mag(moved.max()-mappedTo.max())>thres
+            ) {
+                Info << "not OK" << endl;
+                WarningIn(args.executable())
+                    << "Boxes of moved points " << moved << " and mapped from "
+                        << mappedTo << " differ by more than threshold "
+                        << thres
+                        << endl;
+            } else {
+                Info << "OK" << endl;
+            }
+        } else if(
+            mb.mode()==mappedPatchBase::NEARESTCELL
+            ||
+            mb.mode()==mappedPatchBase::NEARESTFACE
+        ) {
+            Info << "Checking whether all transformed points are in region "
+                << mb.sampleRegion() << " " << flush;
+
+            const polyMesh &otherMesh=mb.sampleMesh();
+            label pointsOutside=0;
+
+            forAll(allMoved,i) {
+                label cellI=otherMesh.findCell(allMoved[i]);
+                reduce(cellI,maxOp<label>());
+                if(cellI<0) {
+                    pointsOutside++;
+                }
+            }
+
+            if(pointsOutside>0) {
+                Info << " not OK" << endl;
+                WarningIn(args.executable())
+                    << pointsOutside << " of " << allMoved.size()
+                        << " points outside of region " << otherMesh.name()
+                        << endl;
+            } else {
+                Info << " OK" << endl;
             }
         }
 
