@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 09 Jan 2013 18:20:27 +0100
+Subject: Re: Allow non-uniform external variables
+Message-Id: <cd71f59c9cb24881-e4424abd82cc5bd5-artemis@bgs-cool-greybook.local>
+References: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+In-Reply-To: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+
+Added a new utility to calculate the offset-points for non-uniform
+offsets
