@@ -56,6 +56,8 @@ namespace Foam {
 #include "mappedPatchBase.H"
 #endif
 
+#include "transform.H"
+
 using namespace Foam;
 
 namespace Foam {
@@ -65,6 +67,29 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
+
+tmp<vectorField> transformPoints(
+    const vectorField &original,
+    const vector &transposeFirst,
+    const vector &scaling,
+    const tensor &rotation,
+    const vector &transposeAfter
+) {
+    tmp<vectorField> result(
+        new vectorField(original)
+    );
+    vectorField &tr=result();
+
+    tr+=transposeFirst;
+    forAll(tr,i) {
+        tr[i]=cmptMultiply(tr[i],scaling);
+        tr[i]=transform(rotation,tr[i]);
+    };
+
+    tr+=transposeAfter;
+
+    return result;
+}
 
 int main(int argc, char *argv[])
 {
@@ -177,8 +202,42 @@ int main(int argc, char *argv[])
             thePatch
         );
 
-        // vectorField dummy(7,vector(1,2,3));
-        // dict.set("nix",dummy);
+        vector transposeFirst(0,0,0);
+        vector scale(1,1,1);
+        tensor rotation(sphericalTensor(1));
+        vector transposeAfter(0,0,0);
+
+        const dictionary &para=spec.subDict(name);
+
+        word mode(para.lookup("mode"));
+
+       if(mode=="specifyAll") {
+            transposeFirst=vector(para.lookup("transposeFirst"));
+            scale=vector(para.lookup("scaleBeforeRotation"));
+            vector from(para.lookup("rotationFrom"));
+            vector to(para.lookup("rotationTo"));
+            rotation=rotationTensor(from,to);
+            transposeAfter=vector(para.lookup("transposeAfter"));
+        } else {
+            FatalErrorIn(args.executable())
+                << "Currently only mode 'specifyAll' implemented. Not "
+                    << mode
+                    << endl
+                    << exit(FatalError);
+
+        }
+
+        vectorField faceCentres(thePatch.faceCentres());
+
+        vectorField moved(
+            transformPoints(
+                faceCentres,
+                transposeFirst,scale,rotation,transposeAfter
+            )
+        );
+
+        dict.set("offsets",moved-faceCentres);
+        dict.set("offsetMode","nonuniform");
 
         changed=true;
 
