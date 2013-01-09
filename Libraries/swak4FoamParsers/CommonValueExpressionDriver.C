@@ -44,6 +44,7 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(CommonValueExpressionDriver,0);
+
 defineRunTimeSelectionTable(CommonValueExpressionDriver, dictionary);
 defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
@@ -984,18 +985,32 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
 
     otherDriver->parse(expr);
 
+    autoPtr<ExpressionResult> otherResult(this->getRemoteResult(otherDriver()));
+
     if(debug) {
         Pout << "Remote result: "
-            << otherDriver->getUniform(this->size(),false) << endl;
+            << otherResult() << endl;
     }
+
     if(delayedVariables_.found(name)) {
         if(debug) {
             Pout << name << " is delayed" << endl;
         }
-        delayedVariables_[name]=otherDriver->getUniform(this->size(),false);
+        delayedVariables_[name]=otherResult();
     } else {
-        variables_.insert(name,otherDriver->getUniform(this->size(),false));
+        variables_.insert(name,otherResult());
     }
+}
+
+autoPtr<ExpressionResult> CommonValueExpressionDriver::getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+)
+{
+    return autoPtr<ExpressionResult>(
+        new ExpressionResult(
+            otherDriver.getUniform(this->size(),false)
+        )
+    );
 }
 
 void CommonValueExpressionDriver::addVariables(
@@ -1379,7 +1394,7 @@ void CommonValueExpressionDriver::prepareData(dictionary &dict) const
     }
 }
 
-class lessOp {
+class smallerOp {
 public:
     bool operator()(scalar a,scalar b) {
         return a<b;
@@ -1444,7 +1459,7 @@ vector CommonValueExpressionDriver::getPositionOfMinimum(
     const vectorField &locs
 ) const
 {
-    return getExtremePosition(lessOp(),vals,locs);
+    return getExtremePosition(smallerOp(),vals,locs);
 }
 
 vector CommonValueExpressionDriver::getPositionOfMaximum(

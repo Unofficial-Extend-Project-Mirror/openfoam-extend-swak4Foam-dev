@@ -99,9 +99,20 @@ class PatchValueExpressionDriver
     //- get the specification of the interpolations by name
     const word getInterpolationScheme(const word &name);
 
+    //- HashPtrTable of interpolations
+    HashPtrTable<interpolation<scalar> > interpolationScalar_;
+    HashPtrTable<interpolation<vector> > interpolationVector_;
+    HashPtrTable<interpolation<tensor> > interpolationTensor_;
+    HashPtrTable<interpolation<symmTensor> > interpolationSymmTensor_;
+    HashPtrTable<interpolation<sphericalTensor> > interpolationSphericalTensor_;
+
     //- table with the interpolation scheme (depending on the type)
     template <class Type>
     HashPtrTable<interpolation<Type> > &interpolations();
+
+    //- map a field that is as long as the patch
+    template<class T>
+    tmp<Field<T> > mapField(tmp<Field<T> > orig);
 
 protected:
 
@@ -133,6 +144,11 @@ protected:
     static const SymbolTable<PatchValueExpressionDriver> &symbolTable();
 
     int startupSymbol(const word &name);
+
+    //- check whether the patch maps from another one
+    autoPtr<ExpressionResult> getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+    );
 
 public:
 

@@ -1,0 +1,31 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+additionalMeshes (
+//		 region0
+);
+
+offsetSpecifications {
+		     inlet2 {
+		      	 mode specifyAll;
+		         transposeFirst  ( -0.2 0.5 0 );
+                         scaleBeforeRotation (1 1 1);
+                         rotationFrom (1 0 0);
+                         rotationTo (1 0 0);
+                         scaleAfterRotation (1 1 1);
+                         transposeAfter ( 0 0 0);
+		     }
+		     outlet1 {
+		     }
+}

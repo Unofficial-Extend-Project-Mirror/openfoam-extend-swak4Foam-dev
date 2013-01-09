@@ -468,6 +468,22 @@ namespace Foam {
         tmp<Field<T> > result(new Field<T>(this->size(),pTraits<T>::zero));
         Field<T> &newValues=result();
 
+        if(
+            isSurfaceField
+            &&
+            internalField
+        ) {
+            FatalErrorIn(
+                "tmp<Field<T> > PatchValueExpressionDriver::mapField"
+            )
+                << "Field " << name << " is a surfaceField. "
+                    << "Function 'mappedInternal'"
+                    << " on patch " << patch_.name()
+                    << " does not work for that."
+                    << endl
+                    << exit(FatalError);
+        }
+
         switch (mpp.mode())
         {
             case mappedPatchBase::NEARESTCELL:
@@ -477,8 +493,20 @@ namespace Foam {
                         "tmp<Field<T> > PatchValueExpressionDriver::mapField"
                     )
                         << "Field " << name << " is a surfaceField. "
-                            << "Map mode " << mappedPatchBase::NEARESTCELL
+                            << "Map mode 'nearestCell'"
+                            << " on patch " << patch_.name()
                             << " does not work for that."
+                            << endl
+                            << exit(FatalError);
+                }
+
+                if(internalField) {
+                    FatalErrorIn(
+                        "tmp<Field<T> > PatchValueExpressionDriver::mapField"
+                    )
+                        << "Function 'mappedInternal' does not work with "
+                            << "Map mode 'nearestCell'"
+                            << " on patch " << patch_.name()
                             << endl
                             << exit(FatalError);
                 }
@@ -569,6 +597,7 @@ namespace Foam {
                             << abort(FatalError);
                 }
 
+
                 if(isSurfaceField) {
                     const localSurfaceField& nbrField
                         = lookupMesh.lookupObject<localSurfaceField>(name);
@@ -578,7 +607,12 @@ namespace Foam {
                     const localVolField& nbrField
                         = lookupMesh.lookupObject<localVolField>(name);
 
-                    newValues = nbrField.boundaryField()[nbrPatchID];
+                    if(internalField) {
+                        newValues = nbrField.boundaryField()[nbrPatchID]
+                            .patchInternalField();
+                    } else {
+                        newValues = nbrField.boundaryField()[nbrPatchID];
+                    }
                 }
 
 #if FOAM_VERSION4SWAK_MAJOR<2
@@ -605,7 +639,8 @@ namespace Foam {
                         "tmp<Field<T> > PatchValueExpressionDriver::mapField"
                     )
                         << "Field " << name << " is a surfaceField. "
-                            << "Map mode " << mappedPatchBase::NEARESTFACE
+                            << "Map mode 'nearestFace'"
+                            << " on patch " << patch_.name()
                             << " does not work for that."
                             << endl
                             << exit(FatalError);
@@ -619,13 +654,25 @@ namespace Foam {
 
                 forAll(nbrField.boundaryField(), patchI)
                 {
-                    const fvPatchField<T>& pf =
-                        nbrField.boundaryField()[patchI];
-                    label faceStart = pf.patch().patch().start();
+                    if(internalField) {
+                        const fvPatchField<T>& pf =
+                            nbrField.boundaryField()[patchI];
+                        const Field<T> pif(pf.patchInternalField());
+                        label faceStart = pf.patch().patch().start();
 
-                    forAll(pf, faceI)
-                    {
-                        allValues[faceStart++] = pf[faceI];
+                        forAll(pf, faceI)
+                        {
+                            allValues[faceStart++] = pif[faceI];
+                        }
+                    } else {
+                        const fvPatchField<T>& pf =
+                            nbrField.boundaryField()[patchI];
+                        label faceStart = pf.patch().patch().start();
+
+                        forAll(pf, faceI)
+                        {
+                            allValues[faceStart++] = pf[faceI];
+                        }
                     }
                 }
 
@@ -660,6 +707,85 @@ namespace Foam {
     }
 
     template<class T>
+    tmp<Field<T> > PatchValueExpressionDriver::mapField(tmp<Field<T> > orig)
+    {
+        if(debug) {
+            Info << "PatchValueExpressionDriver::mapField(tmp<Field<T> > orig)"
+                << endl << "orig: " << orig() << endl;
+        }
+
+        if(!isA<mappedPatchBase>(patch_.patch())) {
+            FatalErrorIn("tmp<Field<T> > PatchValueExpressionDriver::mapField")
+                << "Current patch " << patch_.name()
+                    << "is not a mapped patch"
+                    << endl
+                    << exit(FatalError);
+
+        }
+
+        const mappedPatchBase& mpp = dynamicCast<const mappedPatchBase>
+            (
+                patch_.patch()
+            );
+
+
+        if(
+            mpp.mode()!=mappedPatchBase::NEARESTPATCHFACE
+#if FOAM_VERSION4SWAK_MAJOR>=2 && FOAM_VERSION4SWAK_MINOR>=1
+            &&
+            mpp.mode()!=mappedPatchBase::NEARESTPATCHFACEAMI
+#endif
+        ) {
+            FatalErrorIn("PatchValueExpressionDriver::mapField(tmp<Field<T> > orig)")
+            << "This method only works for patch-to-patch mapping"
+            << endl
+            << exit(FatalError);
+
+        }
+        //        const fvMesh& thisMesh = patch_.boundaryMesh().mesh();
+        const fvMesh& nbrMesh = refCast<const fvMesh>(mpp.sampleMesh());
+
+        tmp<Field<T> > pResult(
+            new Field<T>(orig)
+        );
+
+        Field<T> &result=pResult();
+
+        const label nbrPatchID =
+            nbrMesh.boundaryMesh().findPatchID(mpp.samplePatch());
+
+        if (nbrPatchID < 0)
+        {
+            FatalErrorIn
+                (
+                    "tmp<Field<T> > PatchValueExpressionDriver::mapField"
+                )<< "Unable to find sample patch " << mpp.samplePatch()
+                    << " in region " << mpp.sampleRegion()
+                    << " for patch " << this->patch().name() << nl
+                    << abort(FatalError);
+        }
+
+#if FOAM_VERSION4SWAK_MAJOR<2
+        const mapDistribute& distMap = mpp.map();
+        mapDistribute::distribute
+        (
+            Pstream::defaultCommsType,
+            distMap.schedule(),
+            distMap.constructSize(),
+            distMap.subMap(),
+            distMap.constructMap(),
+            result
+        );
+#else
+        mpp.distribute(result);
+#endif
+        if(debug) {
+            Info << "Mapped to " << result << endl;
+        }
+        return pResult;
+    }
+
+    template<class T>
     tmp<Field<T> > PatchValueExpressionDriver::mapPointField(
         const word &name
     ) {
@@ -667,6 +793,8 @@ namespace Foam {
 
         // dummy implemntation
         tmp<Field<T> > result(new Field<T>(this->pointSize(),pTraits<T>::zero));
+
+        notImplemented("tmp<Field<T> > PatchValueExpressionDriver::mapPointField");
 
         return result;
     }

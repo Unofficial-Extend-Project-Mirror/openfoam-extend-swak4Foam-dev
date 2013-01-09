@@ -29,14 +29,18 @@ boundaryField
     inlet1
     {
         type            groovyBC;
-        valueExpression "1+(posVal-2*mappedT)+sin(time()*10)";
+        //        valueExpression "1+(posVal-2*mappedT)+sin(time()*10)";
+        valueExpression "(1+posVal*0)*sin(time()*10)-0.7*mappedT";
         variables (
             "minX=min(pts().x);"
             "maxX=max(pts().x);"
-            "mappedT=mappedInternal(T)-1;"
+            "mappedT=mapped(T)-1;"
             "posVal=(pos().x-minX)/(maxX-minX);"
         );
         value           uniform 0;
+        mappingInterpolation {
+            default cell;
+        }
     }
     inlet2
     {

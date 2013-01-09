@@ -29,12 +29,11 @@ boundaryField
     inlet1
     {
         type            groovyBC;
-        valueExpression "1+(posVal-2*mappedT)+sin(time()*10)";
+        valueExpression "sin(normPos+time()*10)";
         variables (
             "minX=min(pts().x);"
             "maxX=max(pts().x);"
-            "mappedT=mappedInternal(T)-1;"
-            "posVal=(pos().x-minX)/(maxX-minX);"
+            "normPos=pi*(pos().x-minX)/(maxX-minX);"
         );
         value           uniform 0;
     }
@@ -42,17 +41,18 @@ boundaryField
     {
         type            groovyBC;
         value uniform 0;
-       valueExpression "mappedInternal(T)-1";
-    }
-    inlet3
-    {
-        type            groovyBC;
-        value uniform 0;
-        valueExpression "mapped(T)";
-        mappingInterpolation {
-            //            default cell;
-            T cellPointFace;
-        }
+        valueExpression "out";
+        variables (
+            "out{patch'outlet1}=1+T;"
+        );
+        delayedVariables (
+            {
+                name out;
+                startupValue "1";
+                storeInterval 0.05;
+                delay 1;
+            }
+        );
     }
     walls
     {
