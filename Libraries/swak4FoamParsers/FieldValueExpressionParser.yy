@@ -1062,7 +1062,8 @@ fsexp:  TOKEN_surf '(' scalar ')'           {
           }
         | fsexp '/' fsexp 		    {
             sameSize($1,$3);
-            $$ = new Foam::surfaceScalarField(*$1 / *$3);
+            $$ = new Foam::surfaceScalarField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
           }
         | fsexp '-' fsexp 		    {
@@ -1496,7 +1497,9 @@ fvexp:  fvector                            { $$ = $1; }
           }
         | fvexp '/' fsexp 		   {
             sameSize($1,$3);
-            $$ = new Foam::surfaceVectorField(*$1 / *$3);
+            //$$ = new Foam::surfaceVectorField(*$1 / *$3);
+	    $$ = new Foam::surfaceVectorField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
           }
         | fvexp '-' fvexp 		   {
@@ -3251,8 +3254,10 @@ ftexp:   ftensor                  { $$ = $1; }
           }
         | ftexp '/' fsexp 	   	                  {
             sameSize($1,$3);
-            $$ = new Foam::surfaceTensorField(*$1 / *$3);
-            delete $1; delete $3;
+            //$$ = new Foam::surfaceTensorField(*$1 / *$3);
+	    $$ = new Foam::surfaceTensorField(*$1);
+	    (*$1).internalField()/(*$3).internalField();
+	    delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
         | ftexp '-' ftexp 	   	          {
@@ -3460,7 +3465,9 @@ fyexp:   fsymmTensor                  { $$ = $1; }
           }
         | fyexp '/' fsexp 	   	                  {
             sameSize($1,$3);
-            $$ = new Foam::surfaceSymmTensorField(*$1 / *$3);
+            //$$ = new Foam::surfaceSymmTensorField(*$1 / *$3);
+	    $$ = new Foam::surfaceSymmTensorField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3639,7 +3646,9 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
           }
         | fhexp '/' fsexp 	   	                  {
             sameSize($1,$3);
-            $$ = new Foam::surfaceSphericalTensorField(*$1 / *$3);
+            //$$ = new Foam::surfaceSphericalTensorField(*$1 / *$3);
+	    $$ = new Foam::surfaceSphericalTensorField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3820,7 +3829,9 @@ psexp:  TOKEN_point '(' scalar ')'            {
           }
         | psexp '/' psexp 		    {
             sameSize($1,$3);
-            $$ = new Foam::pointScalarField(*$1 / *$3);
+            //$$ = new Foam::pointScalarField(*$1 / *$3);
+	    $$ = new Foam::pointScalarField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
           }
         | psexp '-' psexp 		    {
@@ -4298,7 +4309,9 @@ pvexp:  pvector                            { $$ = $1; }
           }
         | pvexp '/' psexp 		   {
             sameSize($1,$3);
-            $$ = new Foam::pointVectorField(*$1 / *$3);
+            //$$ = new Foam::pointVectorField(*$1 / *$3);
+	    $$ = new Foam::pointVectorField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
           }
         | pvexp '-' pvexp 		   {
@@ -4552,7 +4565,9 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | ptexp '/' psexp 	   	                  {
             sameSize($1,$3);
-            $$ = new Foam::pointTensorField(*$1 / *$3);
+	    // $$ = new Foam::pointTensorField(*$1 / *$3);
+	    $$ = new Foam::pointTensorField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -4793,7 +4808,9 @@ pyexp:   psymmTensor                  { $$ = $1; }
           }
         | pyexp '/' psexp 	   	                  {
             sameSize($1,$3);
-            $$ = new Foam::pointSymmTensorField(*$1 / *$3);
+            //$$ = new Foam::pointSymmTensorField(*$1 / *$3);
+	    $$ = new Foam::pointSymmTensorField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -4985,7 +5002,9 @@ phexp:   psphericalTensor                  { $$ = $1; }
           }
         | phexp '/' psexp 	   	                  {
             sameSize($1,$3);
-            $$ = new Foam::pointSphericalTensorField(*$1 / *$3);
+	    // $$ = new Foam::pointSphericalTensorField(*$1 / *$3);
+	    $$ = new Foam::pointSphericalTensorField(*$1);
+	    (*$1).internalField()/=(*$3).internalField();
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }

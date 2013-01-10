@@ -1442,6 +1442,10 @@ S_{expl} + S_{impl} T
      Face and point fields did not propagate the information correctly
      and were treated as non-uniform volume fields of the wrong
      size. This should now be fixed
+**** Division of =faceFields= causes division by zero
+     The reason was that the patches of the divisor had a value of
+     zero. This has been fixed by only dividing the
+     =internalFields()=. Same for =pointFields=.
 *** New features
 **** Access fields from different cases
      It is now possible for expression on =internalFields= to access
