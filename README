@@ -276,6 +276,11 @@ S_{expl} + S_{impl} T
     Evaluates expressions that are listed in a dictionary using data
     that is found on the disc and prints summarized data (min, max,
     average, sum) to the screen
+*** =calcNonUniformOffsetsForMapped=
+    Calculates the =offsets=-entry in the =polyMesh/boundary=-file
+    according to the specification in a dictionary. Only needed if you
+    have mapped patches and the regular uniform offset is not enough
+    for your purposes
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -469,7 +474,13 @@ S_{expl} + S_{impl} T
      - Solver :: rhoPimpleFoam
      - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
 *** tests
-    Simple test cases for specific features
+    Simple test cases for specific features. The names of the
+    directories should give you a hint what is tested there. Most of
+    them don't need a real solver but =replayTransientBC= or
+    =scalarTransportFoam=.
+
+    *Note*: for some features these cases are the only example there
+     is. Sorry
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
@@ -1446,6 +1457,9 @@ S_{expl} + S_{impl} T
      The reason was that the patches of the divisor had a value of
      zero. This has been fixed by only dividing the
      =internalFields()=. Same for =pointFields=.
+**** =valuePatches= did not work for mapped patches
+     This kind of patch was not identified as something that could
+     have the value fixed
 *** New features
 **** Access fields from different cases
      It is now possible for expression on =internalFields= to access
@@ -1463,6 +1477,28 @@ S_{expl} + S_{impl} T
 
      Certain function objects and parser instances allow specifying
      foreign meshes in a subdictionary =foreignMeshes=.
+**** Patch-expressions now support mapped-patches
+     This is the long asked for feature to "get non-uniform values
+     from other patches". It only works if the patches are specified
+     as =mapped= (or =directMapped= for 1.x). Therefor a patch can
+     only access one other patch with this.
+
+     On a mapped patch =mapped(T)= gets field =T= from whatever this
+     patch maps from (other patch, cells, faces). =mappedInternal(T)=
+     gets the values from the internal cells on the other patch (this
+     only works for patches).
+
+     On a mapped patch an external variable expression for patches now
+     changes its meaning: if =other= is the patch that the current
+     patch maps from (and only then) then =var{patch'other}=expr=
+     evaluates =expr= on the other patch and then maps the values to
+     the current patch (=var= may be non-uniform). In all other
+     circumstances =var= will get a uniform value which is derived
+     from whatever =expr= evaluates to.
+
+     To allow non-uniform =offsets= in the specification of mapped
+     patches in =polyMesh/boundary= a utility
+     =calcNonUniformOffsetsForMapped= was developed.
 *** Enhancements
 **** Python-Integration now supports numpy-arrays
      If the =numpy=-library is found then global variables which are

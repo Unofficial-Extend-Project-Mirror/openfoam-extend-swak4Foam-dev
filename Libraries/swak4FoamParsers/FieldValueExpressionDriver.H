@@ -341,6 +341,12 @@ public:
     template <class T>
     T * doConditional(pointScalarField *l,T* yes,T* no,T* result);
 
+private:
+    inline static bool canBeValuePatch(const fvPatch &);
+
+    inline static bool canBeValuePatch(const pointPatch &);
+
+public:
     template<class T>
     static void makePatches(
         GeometricField<T,fvPatchField,volMesh> &field,
