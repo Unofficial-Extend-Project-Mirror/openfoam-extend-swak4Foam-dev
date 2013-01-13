@@ -50,6 +50,8 @@ churnOut=re.compile("'(.+) ([0-9]+)'\s+([0-9]+).*")
 allContrib=set()
 
 contribStart="Contributors/Copyright:"
+swakRevision=" SWAK Revision:"
+
 contribLine=re.compile("\s*(?P<years>[0-9]{4}((-|, )[0-9]{4})*) (?P<name>.+)$")
 
 def getContributorsFromLine(line):
@@ -83,7 +85,7 @@ def getContributorsFromLine(line):
     else:
         return set()
 
-def buildContributorLine(name,data):
+def buildContributorLine(name,data,prefix="    "):
     years=list(set((y for u,y in data if u==name)))
     years.sort()
     result=""
@@ -105,7 +107,7 @@ def buildContributorLine(name,data):
         if len(years)>0:
             result+=", "
 
-    return result+" "+name
+    return prefix+result+" "+name
 
 def processFile(f,data):
     global allContrib
@@ -120,6 +122,41 @@ def processFile(f,data):
             allLines[user]+=int(lines)
             localContrib.add((user,int(year)))
     allContrib |= localContrib
+
+    contrStart=None
+    swakLine=None
+
+    lines=open(f).readlines()
+
+    for i,l in enumerate(lines):
+        if l.startswith(swakRevision):
+            swakLine=i
+            if contrStart==None:
+                contrStart=i
+                lines=lines[:i]+[contribStart+"\n","\n"]+lines[i:]
+                swakLine+=2
+            break
+        elif l.startswith(contribStart):
+            contrStart=i
+        elif contrStart!=None:
+            localContrib|=getContributorsFromLine(l)
+
+    if contrStart!=None:
+        if swakLine==None:
+            print "No finishing '"+swakRevision+"' found. No contributors added"
+            return
+        users=list(set([u for u,y in localContrib]))
+        cLines=[]
+        for u in users:
+            cLines.append(buildContributorLine(u,localContrib))
+        cLines.sort()
+        print "Adding",len(cLines),"contributor lines to",f
+        if not args.dryRun:
+            f=open(f,"w")
+            f.writelines(lines[:contrStart+1])
+            f.writelines([l+"\n" for l in cLines])
+            f.writelines(lines[swakLine-1:])
+            f.close()
 
 def handleFiles(files):
     for f in files:
