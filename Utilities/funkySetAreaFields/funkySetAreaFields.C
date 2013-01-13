@@ -33,6 +33,10 @@ Application
 
 Description
 
+Contributors/Copyright:
+    2011 Petr Vita <petr.vita@unileoben.ac.at>
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
