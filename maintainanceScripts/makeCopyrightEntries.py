@@ -49,6 +49,64 @@ churnOut=re.compile("'(.+) ([0-9]+)'\s+([0-9]+).*")
 
 allContrib=set()
 
+contribStart="Contributors/Copyright:"
+contribLine=re.compile("\s*(?P<years>[0-9]{4}((-|, )[0-9]{4})*) (?P<name>.+)$")
+
+def getContributorsFromLine(line):
+    m=contribLine.match(line)
+    if m:
+        user=m.groupdict()["name"]
+        if user in aliases:
+            user=aliases[user]
+        yearString=m.groupdict()["years"]
+        result=set()
+        while len(yearString)>0:
+            start=int(yearString[0:4])
+            yearString=yearString[4:]
+            if len(yearString)==0:
+                end=start
+            elif yearString[0:2]==", ":
+                end=start
+                yearString=yearString[2:]
+            elif yearString[0]=="-":
+                end=int(yearString[1:5])
+                yearString=yearString[5:]
+                if len(yearString)>0:
+                    assert yearString[0:2]==", "
+                    yearString=yearString[2:]
+            else:
+                print "Unparsable year-string",m.groupdict()["years"],"Chocking at",yearString
+            assert start<=end
+            for year in range(start,end+1):
+                result.add((user,year))
+        return result
+    else:
+        return set()
+
+def buildContributorLine(name,data):
+    years=list(set((y for u,y in data if u==name)))
+    years.sort()
+    result=""
+    while len(years)>0:
+        start=years[0]
+        end=start
+        years=years[1:]
+        for i,y in enumerate(years):
+            if y!=end+1:
+                years=years[i:]
+                break
+            else:
+                end=y
+                if i==len(years)-1:
+                    years=[]
+        result+=str(start)
+        if start!=end:
+            result+="-"+str(end)
+        if len(years)>0:
+            result+=", "
+
+    return result+" "+name
+
 def processFile(f,data):
     global allContrib
 
@@ -101,3 +159,12 @@ for y in years:
     contributors=set([u for u,yr in allContrib if y==yr])
     print ", ".join(contributors)
     print
+
+users=list(set([u for u,y in allContrib]))
+print "Contributor lines"
+print "-----------------"
+clines=[]
+for u in users:
+    clines.append(buildContributorLine(u,allContrib))
+clines.sort()
+print "\n".join(clines)
