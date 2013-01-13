@@ -34,6 +34,9 @@ Class
 Description
     print a little banner with the swak-version to ease support
 
+Contributors/Copyright:
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
  SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 

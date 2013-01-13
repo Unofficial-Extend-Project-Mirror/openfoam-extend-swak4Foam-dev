@@ -24,7 +24,10 @@ License
 Description
 
 
- SWAK Revision: $Id:  $ 
+Contributors/Copyright:
+    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 %{                                          /* -*- C++ -*- */
 #include "FieldValueExpressionDriverYY.H"

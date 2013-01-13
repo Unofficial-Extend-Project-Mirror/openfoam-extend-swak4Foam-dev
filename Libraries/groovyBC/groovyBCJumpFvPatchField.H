@@ -37,6 +37,9 @@ Description
 SourceFiles
     groovyBCJumpFvPatchField.C
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
  SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 

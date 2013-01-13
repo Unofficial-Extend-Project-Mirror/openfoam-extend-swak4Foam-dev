@@ -37,6 +37,9 @@ SourceFiles
     PatchValueExpressionDriverI.H
     PatchValueExpressionDriver.C
 
+Contributors/Copyright:
+    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 

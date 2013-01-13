@@ -24,7 +24,10 @@ License
 Description
 
 
- SWAK Revision: $Id:  $ 
+Contributors/Copyright:
+    2006-2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef VALUE_EXPRESSION_DRIVER_YY_H
