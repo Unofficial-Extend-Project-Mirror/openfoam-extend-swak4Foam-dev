@@ -37,7 +37,10 @@ Description
 
 SourceFiles
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SwakMacroHeader_H
