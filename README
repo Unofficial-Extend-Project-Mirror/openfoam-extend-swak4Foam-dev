@@ -23,19 +23,31 @@
    Bernhard Gschaider (bgschaid@ice-sf.at)
 ** Contributors
    In alphabetical order of the surname
+   - Martin Beaudoin :: =trackDictionary= in =simpleFunctionObjects=
+   - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
+                      problem with =groovyBC=)
+   - Oliver Borm :: =patchMassFlowAverage= in =simpleFunctionObjects=
    - Peter Keller :: =sprinklerInlet=-case
+   - Martin Kroeger :: =mtv= surface writer in =simpleFunctionObjects=
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
    - Bruno Santos ::
      - Compilation with Intel compiler and Mingw
      - Rewrite of =mybison= and =myflex= to allow parallel compilation
        with =WM_COMPPROCS=
-   - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
-                      problem with =groovyBC=)
    If anyone is forgotten: let me know
 
-   Contributors to =simpleFunctionObjects= are listed separately in
-   the =README= of that library
+   According to the commits in the =mercurial=-repository (and
+   the repositories of the projects from which swak emerged)
+   contributors are (ordered by the year of their first contribution):
+   - 2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+   - 2008 Hannes Kroeger (hannes@kroegeronline.net)
+   - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
+   - 2010 Marianne Mataln <mmataln@ice-sf>
+   - 2010 Oliver Borm (oli.borm@web.de)
+   - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
+   - 2011 Petr Vita <petr.vita@unileoben.ac.at>
+   - 2012 Bruno Santos <wyldckat@gmail.com>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
