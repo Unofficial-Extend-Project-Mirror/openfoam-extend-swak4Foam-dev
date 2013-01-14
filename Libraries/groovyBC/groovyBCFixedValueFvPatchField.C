@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCFixedValueFvPatchField.H"
@@ -185,7 +188,7 @@ void groovyBCFixedValueFvPatchField<Type>::updateCoeffs()
     driver_.clearVariables();
 
     (*this) == driver_.evaluate<Type>(this->valueExpression_);
-    
+
     fixedValueFvPatchField<Type>::updateCoeffs();
 }
 
