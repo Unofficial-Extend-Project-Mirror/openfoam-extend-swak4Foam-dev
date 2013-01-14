@@ -24,6 +24,9 @@ parser.add_argument('--special-file', dest='special', type=str, action='append',
 parser.add_argument('--all-files', dest='allFiles', action='store_true',
                     default=False,
                     help="Check all files even if they don't fit the extension list'")
+parser.add_argument('--add-contributor', dest='addContrib', type=str, action='append',
+                    default=[],
+                    help="Add a contributor entry of the form '<year>,<name>' to the file even if he is not yet in the source file")
 
 args = parser.parse_args()
 
@@ -116,6 +119,16 @@ def processFile(f,data):
     global allContrib
 
     localContrib=set()
+    for c in args.addContrib:
+        l=c.split(",")
+        if len(l)!=2:
+            print "Entry",c,"is not of the required form <year>,<name>"
+            sys.exit(-1)
+        user=l[1]
+        if user in aliases:
+            user=aliases[user]
+        localContrib.add((user,int(l[0])))
+
     for d in data:
         m=churnOut.match(d)
         if m:
