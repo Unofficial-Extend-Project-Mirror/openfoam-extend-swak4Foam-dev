@@ -1561,6 +1561,11 @@ S_{expl} + S_{impl} T
 **** =valuePatches= did not work for mapped patches
      This kind of patch was not identified as something that could
      have the value fixed
+**** Recent versions of 2.1.x break compilation of =CommonValueExpressionDriver.C=
+     The definition of the operator =lessOp= clashed with another
+     definition. Renamed.
+
+     Fix provided by Bruno Santos
 *** New Examples
 **** Cases from the /OSCFD12/ Conference in London
      On the slides the case files were promised
