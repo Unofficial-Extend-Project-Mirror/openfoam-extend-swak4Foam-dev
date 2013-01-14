@@ -69,7 +69,7 @@
     Foam::tensor *ten;
     Foam::symmTensor *yten;
     Foam::sphericalTensor *hten;
-    Foam::string *name;
+    Foam::word *name;
     Foam::areaVectorField *vfield;
     Foam::areaScalarField *sfield;
     Foam::areaTensorField *tfield;

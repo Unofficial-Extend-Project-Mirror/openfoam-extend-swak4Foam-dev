@@ -175,7 +175,7 @@ inv                    return token::TOKEN_inv;
                      }
 
 <INITIAL>{id}                 {
-    Foam::string *ptr=new Foam::string (yytext);
+    Foam::word *ptr=new Foam::word (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isLookup(*ptr)) {

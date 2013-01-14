@@ -54,7 +54,7 @@
     Foam::scalar val;
     Foam::label integer;
     Foam::vector *vec;
-    Foam::string *name;
+    Foam::word *name;
     Foam::vectorField *vfield;
     Foam::scalarField *sfield;
     Foam::Field<bool> *lfield;
