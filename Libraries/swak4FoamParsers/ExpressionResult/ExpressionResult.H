@@ -38,7 +38,10 @@ SourceFiles
     ExpressionResult.C
     ExpressionResultIO.C
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef ExpressionResult_H
@@ -60,6 +63,8 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class ExpressionResult
+:
+    public refCount
 {
     // Private data
 
@@ -178,6 +183,7 @@ public:
 
     void clearResult();
 
+    //- basic type that the enclosed Field is a type of
     inline const string &valueType() const;
 
     inline bool isPoint() const;

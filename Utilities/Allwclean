@@ -9,3 +9,5 @@ wclean replayTransientBC
 wclean funkySetAreaFields
 
 wclean funkyDoCalc
+
+wclean calcNonUniformOffsetsForMapped

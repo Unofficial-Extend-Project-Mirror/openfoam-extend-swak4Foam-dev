@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 11 Jan 2013 00:01:20 +0100
+State: new
+Subject: Function object to collect variable values in parallel runs
+Message-Id: <d75394912688344d-0-artemis@bgs-cool-greybook.local>
+
+This would take a global variable from all th processeors and generate
+one long array with all the values. This would allow algorithms that
+are not parallelized (for instance Python-snipplets) to evaluate all
+the data at once

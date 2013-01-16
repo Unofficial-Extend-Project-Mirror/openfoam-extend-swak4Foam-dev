@@ -22,6 +22,11 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2008 Hannes Kroeger (hannes@kroegeronline.net)
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "mtv.H"
@@ -116,7 +121,7 @@ void Foam::mtv<Type>::write
 
     // get normal vector
     vector n=average(tS.faceNormals());
-    
+
     if (mag(n)<SMALL)
     {
         FatalErrorIn("mtv::write()")
@@ -125,8 +130,8 @@ void Foam::mtv<Type>::write
                 << "Only flat surfaces are currently supported."
                 << abort(FatalError);
     }
-    
-    n/=mag(n);    
+
+    n/=mag(n);
 
     // transform face centres to local frame
     vector rotbase=average(tS.localPoints());
@@ -140,12 +145,12 @@ void Foam::mtv<Type>::write
 
         if (pTraits<Type>::nComponents==1)
         {
-                planeFName=surfaceDir/fieldName + '_' + 
+                planeFName=surfaceDir/fieldName + '_' +
                 surfaceName + ".mtv";
         }
-        else 
+        else
         {
-                planeFName=surfaceDir/fieldName + pTraits<Type>::componentNames[cmpt] 
+                planeFName=surfaceDir/fieldName + pTraits<Type>::componentNames[cmpt]
                 + '_' + surfaceName + ".mtv";
         }
 
@@ -163,9 +168,9 @@ void Foam::mtv<Type>::write
         f<<" ("<<string::validate<word>(surfaceName)<<")\""<<nl;
         f<<"% contfill"<<nl;
         f<<"% contstyle=2 nsteps=50 linetypes=3 interp=3"<<nl;
-        
+
         const List<labelledTri>& fc=tS.localFaces();
-        
+
         forAll(fc, fI)
         {
             forAll(fc[fI], pI)
@@ -182,7 +187,7 @@ void Foam::mtv<Type>::write
         }
 
     }
-     
+
 }
 
 

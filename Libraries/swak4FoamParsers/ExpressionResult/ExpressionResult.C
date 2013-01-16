@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "ExpressionResult.H"
@@ -45,6 +48,7 @@ defineTypeNameAndDebug(ExpressionResult,0);
 
 ExpressionResult::ExpressionResult()
 :
+    refCount(),
     valType_("None"),
     valPtr_(NULL),
     isPoint_(false),
@@ -59,6 +63,7 @@ ExpressionResult::ExpressionResult()
 
 ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 :
+    refCount(),
     valType_("None"),
     valPtr_(NULL),
     isPoint_(false),
@@ -78,6 +83,7 @@ ExpressionResult::ExpressionResult(
     bool needsValue
 )
 :
+    refCount(),
     valType_(dict.lookupOrDefault<word>("valueType","None")),
     valPtr_(NULL),
     isPoint_(dict.lookupOrDefault<bool>("isPoint",false)),
@@ -283,6 +289,11 @@ label ExpressionResult::size() const {
 
 void ExpressionResult::operator=(const ExpressionResult& rhs)
 {
+    if(debug) {
+        Info << "ExpressionResult::operator=(const ExpressionResult& rhs)"
+            << endl;
+        Info << "Rhs: " << rhs << endl;
+    }
     // Check for assignment to self
     if (this == &rhs)
     {

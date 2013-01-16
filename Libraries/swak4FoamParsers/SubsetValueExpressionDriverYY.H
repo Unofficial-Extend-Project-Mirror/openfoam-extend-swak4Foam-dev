@@ -37,7 +37,10 @@ SourceFiles
     SubsetValueExpressionDriverI.H
     SubsetValueExpressionDriver.C
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SubsetValueExpressionDriverYY_H

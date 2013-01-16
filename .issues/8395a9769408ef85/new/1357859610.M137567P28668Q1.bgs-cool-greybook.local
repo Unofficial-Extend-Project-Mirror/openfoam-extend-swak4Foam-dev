@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 11 Jan 2013 00:11:21 +0100
+State: new
+Subject: Make Python-code parallel-aware
+Message-Id: <8395a9769408ef85-0-artemis@bgs-cool-greybook.local>
+
+Possibly by automatically importing mpi4py

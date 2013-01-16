@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 14 Jan 2013 23:26:08 +0100
+Subject: Re: Change type of name in the parsers from string to word
+Message-Id: <bb95169daa4125f5-b46b0cb3003ce53b-artemis@bgs-cool-greybook.local>
+References: <bb95169daa4125f5-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <bb95169daa4125f5-0-artemis@bgs-cool-greybook.local>
+
+Now implemented in all parsers

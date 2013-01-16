@@ -1,4 +1,34 @@
+/*----------------------- -*- C++ -*- ---------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
+License
+    This file is part of swak4Foam.
 
+    swak4Foam is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    swak4Foam is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
+
+Description
+
+
+Contributors/Copyright:
+    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
+\*---------------------------------------------------------------------------*/
 %{                                          /* -*- C++ -*- */
 #include "PatchValueExpressionDriverYY.H"
 #include <errno.h>
@@ -154,6 +184,9 @@ false                  return token::TOKEN_FALSE;
 toPoint                 return token::TOKEN_toPoint;
 toFace                  return token::TOKEN_toFace;
 
+mapped                  return token::TOKEN_mapped;
+mappedInternal          return token::TOKEN_mappedInternal;
+
 diag                   return token::TOKEN_diag;
 tr                     return token::TOKEN_tr;
 dev                    return token::TOKEN_dev;
@@ -177,7 +210,7 @@ inv                    return token::TOKEN_inv;
                      }
 
 <INITIAL>{id}                 {
-    Foam::string *ptr=new Foam::string (yytext);
+    Foam::word *ptr=new Foam::word (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isLookup(*ptr)) {

@@ -38,7 +38,10 @@ SourceFiles
     SetsRepository.C
     SetsRepositoryIO.C
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef SetsRepository_H

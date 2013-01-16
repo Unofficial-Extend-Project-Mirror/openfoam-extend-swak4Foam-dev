@@ -219,7 +219,8 @@ functions {
     pythonGetNonUniformGetGlobals
     {
         type pythonIntegration;
-        isParallelized false;
+        isParallelized true;
+        parallelMasterOnly false;
         useNumpy true;
         swakToPythonNamespaces (
             testPython
@@ -237,8 +238,9 @@ functions {
     pythonGetNonUniformSetGlobals
     {
         type pythonIntegration;
-        isParallelized false;
+        isParallelized true;
         useNumpy true;
+        parallelMasterOnly false;
         swakToPythonNamespaces (
             testPython
             testPythonFields

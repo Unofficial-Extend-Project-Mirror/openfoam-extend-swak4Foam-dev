@@ -37,7 +37,10 @@ SourceFiles
     CommonValueExpressionDriverI.H
     CommonValueExpressionDriver.C
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef CommonValueExpressionDriver_H
@@ -111,6 +114,11 @@ protected:
 
     //- access last position
     label &parserLastPos() { return parserLastPos_; }
+
+    //- get the result from another driver. Overrideable to allow mapping
+    virtual autoPtr<ExpressionResult> getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+    );
 
 private:
     ExpressionResult result_;
