@@ -28,6 +28,7 @@ endTime         0.5;
 deltaT          0.005;
 
 writeControl    timeStep;
+// writeControl    adjustableRunTime;
 
 writeInterval   20;
 
@@ -54,6 +55,17 @@ libs (
 );
 
 functions {
+    changeDeltaT {
+        type setDeltaTByTimeline;
+        deltaTTable {
+            outOfBounds repeat;
+            readerType csv;
+            hasHeaderLine 1;
+            timeColumn 0;
+            valueColumns ( 1 );
+            fileName "$FOAM_CASE/deltaT.csv";
+        }
+    }
     dynamicFO1 {
         type dynamicFunctionObjectListProxy;
         dictionaryProvider fromFileDictionaryProvider;
