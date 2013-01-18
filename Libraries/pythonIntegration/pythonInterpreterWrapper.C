@@ -358,7 +358,44 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
     return fail==0;
 }
 
+class pyToBool {
+public:
+    bool operator()(PyObject *&pResult) {
+        return PyObject_IsTrue(pResult);
+    }
+};
+
 bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool failOnException)
+{
+    return evaluateCode<bool,pyToBool>(code,failOnException);
+}
+
+class pyToScalar {
+public:
+    scalar operator()(PyObject *&pResult) {
+        return PyFloat_AsDouble(pResult);
+    }
+};
+
+scalar pythonInterpreterWrapper::evaluateCodeScalar(const string &code,bool failOnException)
+{
+    return evaluateCode<scalar,pyToScalar>(code,failOnException);
+}
+
+class pyToLabel {
+public:
+    label operator()(PyObject *&pResult) {
+        return PyInt_AsLong(pResult);
+    }
+};
+
+label pythonInterpreterWrapper::evaluateCodeLabel(const string &code,bool failOnException)
+{
+    return evaluateCode<label,pyToLabel>(code,failOnException);
+}
+
+template <typename T,class Func>
+T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException)
 {
     setInterpreter();
 
@@ -401,7 +438,8 @@ bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool f
         Py_DECREF(pFunc);
         Py_DECREF(pCode);
     }
-    bool result=false;
+    //    bool result=false;
+    T result=pTraits<T>::zero;
 
     if(pResult!=NULL) {
         if(debug) {
@@ -411,7 +449,8 @@ bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool f
 
             Py_DECREF(str);
         }
-        result=PyObject_IsTrue(pResult);
+        //        result=PyObject_IsTrue(pResult);
+        result=Func()(pResult);
         if(debug) {
             Info << "Evaluated to " << result << endl;
         }

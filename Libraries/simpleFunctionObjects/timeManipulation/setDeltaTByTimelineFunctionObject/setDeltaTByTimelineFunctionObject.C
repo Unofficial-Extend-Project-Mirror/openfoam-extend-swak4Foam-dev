@@ -67,7 +67,6 @@ setDeltaTByTimelineFunctionObject::setDeltaTByTimelineFunctionObject
     timeManipulationFunctionObject(name,t,dict),
     deltaTTable_(dict_.subDict("deltaTTable"))
 {
-    Info << deltaTTable_;
 }
 
 scalar setDeltaTByTimelineFunctionObject::deltaT()
