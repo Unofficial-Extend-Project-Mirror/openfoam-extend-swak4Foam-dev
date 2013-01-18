@@ -27,10 +27,11 @@ endTime         0.5;
 
 deltaT          0.005;
 
-writeControl    timeStep;
-// writeControl    adjustableRunTime;
+// writeControl    timeStep;
+writeControl    adjustableRunTime;
 
-writeInterval   20;
+// writeInterval   20;
+writeInterval   0.05;
 
 purgeWrite      0;
 
