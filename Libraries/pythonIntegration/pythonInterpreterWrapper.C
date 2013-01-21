@@ -291,6 +291,7 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
     setInterpreter();
 
     PyObject *m = PyImport_AddModule("__main__");
+    PyObject_SetAttrString(m,"deltaT",PyFloat_FromDouble(time.deltaT().value()));
     PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
     PyObject_SetAttrString(m,"timeName",PyString_FromString(time.timeName().c_str()));
     PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));
@@ -358,7 +359,44 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
     return fail==0;
 }
 
+class pyToBool {
+public:
+    bool operator()(PyObject *&pResult) {
+        return PyObject_IsTrue(pResult);
+    }
+};
+
 bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool failOnException)
+{
+    return evaluateCode<bool,pyToBool>(code,failOnException);
+}
+
+class pyToScalar {
+public:
+    scalar operator()(PyObject *&pResult) {
+        return PyFloat_AsDouble(pResult);
+    }
+};
+
+scalar pythonInterpreterWrapper::evaluateCodeScalar(const string &code,bool failOnException)
+{
+    return evaluateCode<scalar,pyToScalar>(code,failOnException);
+}
+
+class pyToLabel {
+public:
+    label operator()(PyObject *&pResult) {
+        return PyInt_AsLong(pResult);
+    }
+};
+
+label pythonInterpreterWrapper::evaluateCodeLabel(const string &code,bool failOnException)
+{
+    return evaluateCode<label,pyToLabel>(code,failOnException);
+}
+
+template <typename T,class Func>
+T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException)
 {
     setInterpreter();
 
@@ -401,7 +439,8 @@ bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool f
         Py_DECREF(pFunc);
         Py_DECREF(pCode);
     }
-    bool result=false;
+    //    bool result=false;
+    T result=pTraits<T>::zero;
 
     if(pResult!=NULL) {
         if(debug) {
@@ -411,7 +450,8 @@ bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool f
 
             Py_DECREF(str);
         }
-        result=PyObject_IsTrue(pResult);
+        //        result=PyObject_IsTrue(pResult);
+        result=Func()(pResult);
         if(debug) {
             Info << "Evaluated to " << result << endl;
         }
