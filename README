@@ -1511,6 +1511,14 @@ S_{expl} + S_{impl} T
      To allow non-uniform =offsets= in the specification of mapped
      patches in =polyMesh/boundary= a utility
      =calcNonUniformOffsetsForMapped= was developed.
+**** Function objects that manipulate time
+     The framework for function objects that manipulate the =runTime=
+     were added. The concrete implementations are
+     - setDeltaTByTimeline :: set the timestep from a data file
+     - setDeltaTWithPython :: set the timestep by evaluating a
+          Python-snipplet that should return a floating point number
+     - setEndTimeWithPython :: set the end time from the evaluation of
+          a Python-snipplet
 *** Enhancements
 **** Python-Integration now supports numpy-arrays
      If the =numpy=-library is found then global variables which are
