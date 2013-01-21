@@ -27,7 +27,7 @@ wclean swakFiniteArea
 
 wclean groovyStandardBCs
 
-wclean pythonIntegration
+wclean swakPythonIntegration
 
 (cd functionPlugins; ./Allwclean)
 

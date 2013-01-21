@@ -52,7 +52,7 @@ libs (
     "libsimpleFunctionObjects.so"
     "libswakFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
 );
 
 functions {

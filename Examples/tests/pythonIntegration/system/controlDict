@@ -271,7 +271,7 @@ functions {
 
 libs (
     "libgroovyBC.so"
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
     "libswakFunctionObjects.so"
 );
 

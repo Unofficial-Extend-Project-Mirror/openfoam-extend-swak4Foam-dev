@@ -8,4 +8,4 @@ timeManipulationWithPythonFunctionObject.C
 setDeltaTWithPythonFunctionObject.C
 setEndTimeWithPythonFunctionObject.C
 
-LIB = $(FOAM_USER_LIBBIN)/libpythonIntegration
+LIB = $(FOAM_USER_LIBBIN)/libswakPythonIntegration
