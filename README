@@ -1572,6 +1572,8 @@ S_{expl} + S_{impl} T
      - foreignMeshesFollowTime :: this allows specifying a list of
           meshes whose time is set to the current time of the running
           case
+**** =replaxTransientBC= outputs timestep
+     This helps debugging timestepping-strategies
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

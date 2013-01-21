@@ -261,7 +261,7 @@ functions {
     }
     pythonDeltaT {
         type setDeltaTWithPython;
-        deltaTCode "import math;return 0.005*(1+0.5*math.sin(runTime))";
+        deltaTCode "import math;return 0.005*(1+0.5*math.sin(20*runTime))";
     }
 }
 
