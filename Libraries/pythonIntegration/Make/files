@@ -6,5 +6,6 @@ stdoutFromPythonScriptProvider.C
 writeAndEndPythonFunctionObject.C
 timeManipulationWithPythonFunctionObject.C
 setDeltaTWithPythonFunctionObject.C
+setEndTimeWithPythonFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libpythonIntegration

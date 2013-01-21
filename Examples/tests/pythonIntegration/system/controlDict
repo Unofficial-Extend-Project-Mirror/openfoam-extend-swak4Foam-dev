@@ -263,6 +263,10 @@ functions {
         type setDeltaTWithPython;
         deltaTCode "import math;return 0.005*(1+0.5*math.sin(20*runTime))";
     }
+    pythonEndTime {
+        type setEndTimeWithPython;
+        endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
+    }
 }
 
 libs (
