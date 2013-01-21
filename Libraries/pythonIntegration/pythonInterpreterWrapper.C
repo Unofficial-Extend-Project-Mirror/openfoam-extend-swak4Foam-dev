@@ -291,6 +291,7 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
     setInterpreter();
 
     PyObject *m = PyImport_AddModule("__main__");
+    PyObject_SetAttrString(m,"deltaT",PyFloat_FromDouble(time.deltaT().value()));
     PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
     PyObject_SetAttrString(m,"timeName",PyString_FromString(time.timeName().c_str()));
     PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));

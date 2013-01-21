@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    setDeltaTByTimelineFunctionObject
+    setDeltaTWithPythonFunctionObject
 
 Description
-    Set the time-step according to a linear piecewise function
+    Set the time-step according to a number returned by a python-snipplet
 
 SourceFiles
-    setDeltaTByTimelineFunctionObject.C
+    setDeltaTWithPythonFunctionObject.C
 
 Contributors/Copyright:
     2008-2011 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,12 +43,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef setDeltaTByTimelineFunctionObject_H
-#define setDeltaTByTimelineFunctionObject_H
+#ifndef setDeltaTWithPythonFunctionObject_H
+#define setDeltaTWithPythonFunctionObject_H
 
-#include "timeManipulationFunctionObject.H"
-
-#include "interpolationTable.H"
+#include "timeManipulationWithPythonFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,33 +54,36 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class setDeltaTByTimelineFunctionObject Declaration
+                           Class setDeltaTWithPythonFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class setDeltaTByTimelineFunctionObject
+class setDeltaTWithPythonFunctionObject
 :
-    public timeManipulationFunctionObject
+    public timeManipulationWithPythonFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    setDeltaTByTimelineFunctionObject(const setDeltaTByTimelineFunctionObject&);
+    setDeltaTWithPythonFunctionObject(const setDeltaTWithPythonFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const setDeltaTByTimelineFunctionObject&);
+    void operator=(const setDeltaTWithPythonFunctionObject&);
 
-    interpolationTable<scalar> deltaTTable_;
+    //- the code that should be evaluated
+    string deltaTCode_;
+
+    void readParameters(const dictionary &);
 
 public:
 
     //- Runtime type information
-    TypeName("setDeltaTByTimeline");
+    TypeName("setDeltaTWithPython");
 
 
     // Constructors
 
     //- Construct from components
-    setDeltaTByTimelineFunctionObject
+    setDeltaTWithPythonFunctionObject
     (
         const word&,
         const Time&,
@@ -91,6 +92,7 @@ public:
 
     virtual scalar deltaT();
 
+    bool read(const dictionary &dict);
 };
 
 

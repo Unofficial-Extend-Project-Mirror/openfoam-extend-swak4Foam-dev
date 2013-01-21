@@ -29,13 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    setDeltaTByTimelineFunctionObject
+    timeManipulationWithPythonFunctionObject
 
 Description
-    Set the time-step according to a linear piecewise function
-
+    Basis for function objects that manipulate the runTime via Python-snipplets
 SourceFiles
-    setDeltaTByTimelineFunctionObject.C
+    timeManipulationWithPythonFunctionObject.C
 
 Contributors/Copyright:
     2008-2011 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,12 +42,12 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef setDeltaTByTimelineFunctionObject_H
-#define setDeltaTByTimelineFunctionObject_H
+#ifndef timeManipulationWithPythonFunctionObject_H
+#define timeManipulationWithPythonFunctionObject_H
 
 #include "timeManipulationFunctionObject.H"
 
-#include "interpolationTable.H"
+#include "pythonInterpreterWrapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,40 +55,37 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class setDeltaTByTimelineFunctionObject Declaration
+                           Class timeManipulationWithPythonFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class setDeltaTByTimelineFunctionObject
+class timeManipulationWithPythonFunctionObject
 :
-    public timeManipulationFunctionObject
+    public timeManipulationFunctionObject,
+    public pythonInterpreterWrapper
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    setDeltaTByTimelineFunctionObject(const setDeltaTByTimelineFunctionObject&);
+    timeManipulationWithPythonFunctionObject(const timeManipulationWithPythonFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const setDeltaTByTimelineFunctionObject&);
-
-    interpolationTable<scalar> deltaTTable_;
+    void operator=(const timeManipulationWithPythonFunctionObject&);
 
 public:
 
     //- Runtime type information
-    TypeName("setDeltaTByTimeline");
+    TypeName("timeManipulationWithPython");
 
 
     // Constructors
 
     //- Construct from components
-    setDeltaTByTimelineFunctionObject
+    timeManipulationWithPythonFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
-
-    virtual scalar deltaT();
 
 };
 

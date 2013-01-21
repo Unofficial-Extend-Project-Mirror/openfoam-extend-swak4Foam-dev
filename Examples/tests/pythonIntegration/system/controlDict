@@ -27,9 +27,9 @@ endTime         0.5;
 
 deltaT          0.005;
 
-writeControl    timeStep;
+writeControl    adjustableRunTime;
 
-writeInterval   20;
+writeInterval   0.1;
 
 purgeWrite      0;
 
@@ -258,6 +258,10 @@ functions {
             normalScalar
         );
         //        interactiveAfterExecute true;
+    }
+    pythonDeltaT {
+        type setDeltaTWithPython;
+        deltaTCode "import math;return 0.005*(1+0.5*math.sin(runTime))";
     }
 }
 

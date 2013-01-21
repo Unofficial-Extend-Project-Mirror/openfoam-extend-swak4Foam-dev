@@ -28,78 +28,81 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    setDeltaTByTimelineFunctionObject
-
-Description
-    Set the time-step according to a linear piecewise function
-
-SourceFiles
-    setDeltaTByTimelineFunctionObject.C
-
 Contributors/Copyright:
     2008-2011 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef setDeltaTByTimelineFunctionObject_H
-#define setDeltaTByTimelineFunctionObject_H
+#include "setDeltaTWithPythonFunctionObject.H"
+#include "addToRunTimeSelectionTable.H"
 
-#include "timeManipulationFunctionObject.H"
+#include "polyMesh.H"
+#include "IOmanip.H"
+#include "Time.H"
 
-#include "interpolationTable.H"
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+    defineTypeNameAndDebug(setDeltaTWithPythonFunctionObject, 0);
 
-/*---------------------------------------------------------------------------*\
-                           Class setDeltaTByTimelineFunctionObject Declaration
-\*---------------------------------------------------------------------------*/
-
-class setDeltaTByTimelineFunctionObject
-:
-    public timeManipulationFunctionObject
-{
-    // Private Member Functions
-
-    //- Disallow default bitwise copy construct
-    setDeltaTByTimelineFunctionObject(const setDeltaTByTimelineFunctionObject&);
-
-    //- Disallow default bitwise assignment
-    void operator=(const setDeltaTByTimelineFunctionObject&);
-
-    interpolationTable<scalar> deltaTTable_;
-
-public:
-
-    //- Runtime type information
-    TypeName("setDeltaTByTimeline");
-
-
-    // Constructors
-
-    //- Construct from components
-    setDeltaTByTimelineFunctionObject
+    addToRunTimeSelectionTable
     (
-        const word&,
-        const Time&,
-        const dictionary&
+        functionObject,
+        setDeltaTWithPythonFunctionObject,
+        dictionary
     );
 
-    virtual scalar deltaT();
 
-};
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+setDeltaTWithPythonFunctionObject::setDeltaTWithPythonFunctionObject
+(
+    const word &name,
+    const Time& t,
+    const dictionary& dict
+)
+:
+    timeManipulationWithPythonFunctionObject(name,t,dict)
+{
+    readParameters(dict);
+}
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+bool setDeltaTWithPythonFunctionObject::read(const dictionary& dict)
+{
+    readParameters(dict);
+    return timeManipulationWithPythonFunctionObject::read(dict);
+}
 
-} // End namespace Foam
+void setDeltaTWithPythonFunctionObject::readParameters(const dictionary &dict)
+{
+    readCode(dict,"deltaT",deltaTCode_);
+}
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+scalar setDeltaTWithPythonFunctionObject::deltaT()
+{
+    setRunTime(time());
 
-#endif
+    if(writeDebug()) {
+        Info << "Evaluating " << deltaTCode_ << endl;
+    }
+    scalar result=evaluateCodeScalar(deltaTCode_,true);
+    if(writeDebug()) {
+        Info << "Evaluated to " << result << endl;
+    }
+
+    if(result!=time().deltaT().value()) {
+        Info << "Changing timestep because " << deltaTCode_
+            << " evaluated to " << result << "(current deltaT: "
+            << time().deltaT().value() << " in " << name() << endl;
+    }
+
+    return result;
+}
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+} // namespace Foam
 
 // ************************************************************************* //
