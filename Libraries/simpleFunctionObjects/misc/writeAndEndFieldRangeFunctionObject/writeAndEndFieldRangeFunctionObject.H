@@ -41,7 +41,7 @@ SourceFiles
 Contributors/Copyright:
     2012 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeAndEndFieldRangeFunctionObject_H

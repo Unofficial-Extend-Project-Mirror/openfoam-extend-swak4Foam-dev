@@ -295,6 +295,52 @@ functions
         expression "0";
         mask "alpha1<0.01";
     }
+   doWithPython {
+        type executeIfFunctionObjectPresent;
+        functions {
+            doWithNumpy {
+                type executeIfPython;
+                functions {
+                    getVelocity {
+                        type calculateGlobalVariables;
+                        outputControl timeStep;
+                        outputInterval 1;
+                        valueType internalField;
+                        toGlobalNamespace pythonStatistics;
+                        variables (
+                            "heightField=pos().y;"
+                            "alphaField=alpha1;"
+                            "volume=vol();"
+                            "minY=min(pts().y);"
+                            "maxY=max(pts().y);"
+                        );
+                        toGlobalVariables (
+                            heightField
+                            alphaField
+                            volume
+                            minY
+                            maxY
+                        );
+                    }
+                    calculateDistribution {
+                        type pythonIntegration;
+                        startCode "";
+                        executeCode "";
+                        writeFile "$FOAM_CASE/system/calcFillingAtHeight.py";
+                        endFile $writeFile;
+                        swakToPythonNamespaces (
+                            pythonStatistics
+                        );
+                        interactiveAfterException true;
+                    }
+                }
+                readDuringConstruction true;
+                conditionFile "$FOAM_CASE/system/checkForNumpy.py";
+            }
+        }
+        readDuringConstruction true;
+        functionObjectName executeIfPython;
+   }
 );
 
 libs (
@@ -302,6 +348,7 @@ libs (
     "libgroovyBC.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
+    "libswakPythonIntegration.so"
 );
 
 // ************************************************************************* //

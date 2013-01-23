@@ -1540,6 +1540,15 @@ S_{expl} + S_{impl} T
 **** Move non-parser sources in =swak4FoamParsers= into sub-directories
      Make the directory a little bit cleaner
 ** Next release - version number : 0.2.2
+*** Incompatibilities to previous versions
+**** Python-integration library renamed
+     To avoid clashes with other similar efforts (not that I know of
+     any) the library =libpythonIntegration.so= has been renamed to
+     =libswakPythonIntegration.so=.
+
+     Usually only the =libs=-entry in the controlDict has to be
+     changed (if the library is used at all). Names of the function
+     objects stay the same
 *** Bug fixes
 **** 2.x-branch did not compile on 2.0
      Branch only compiled on 2.1, but not on 2.0 due to changes in the
@@ -1624,6 +1633,14 @@ S_{expl} + S_{impl} T
      To allow non-uniform =offsets= in the specification of mapped
      patches in =polyMesh/boundary= a utility
      =calcNonUniformOffsetsForMapped= was developed.
+**** Function objects that manipulate time
+     The framework for function objects that manipulate the =runTime=
+     were added. The concrete implementations are
+     - setDeltaTByTimeline :: set the timestep from a data file
+     - setDeltaTWithPython :: set the timestep by evaluating a
+          Python-snipplet that should return a floating point number
+     - setEndTimeWithPython :: set the end time from the evaluation of
+          a Python-snipplet
 *** Enhancements
 **** Python-Integration now supports numpy-arrays
      If the =numpy=-library is found then global variables which are
@@ -1685,6 +1702,8 @@ S_{expl} + S_{impl} T
      - foreignMeshesFollowTime :: this allows specifying a list of
           meshes whose time is set to the current time of the running
           case
+**** =replaxTransientBC= outputs timestep
+     This helps debugging timestepping-strategies
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

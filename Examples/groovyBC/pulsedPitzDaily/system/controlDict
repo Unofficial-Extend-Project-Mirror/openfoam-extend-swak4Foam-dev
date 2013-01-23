@@ -452,7 +452,7 @@ libs (
     "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
     "libswakTransportTurbFunctionPlugin.so"
 ) ;
 

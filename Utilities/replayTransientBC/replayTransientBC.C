@@ -168,6 +168,7 @@ int main(int argc, char *argv[])
     while(runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
+        Info<< "deltaT = " <<  runTime.deltaT().value() << endl;
 
         // force the boundary conditions to be updated
         forAllIter(SLPtrList<volScalarField>,scalarFields,it) {

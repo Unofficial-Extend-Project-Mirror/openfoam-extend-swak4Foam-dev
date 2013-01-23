@@ -121,8 +121,18 @@ protected:
     //- Execute code and capture the stdout. Return true if there was no problem
     bool executeCodeCaptureOutput(const string &code,string &stdout,bool putVariables,bool failOnException=false);
 
+    //- Execute code and return a value
+    template <typename T,class Func>
+    T evaluateCode(const string &code,bool failOnException=false);
+
     //- Execute code and see if it returns to true or false
     bool evaluateCodeTrueOrFalse(const string &code,bool failOnException=false);
+
+     //- Execute code and use the return value as a float value
+    scalar evaluateCodeScalar(const string &code,bool failOnException=false);
+
+      //- Execute code and use the return value as a integer value
+    label evaluateCodeLabel(const string &code,bool failOnException=false);
 
     //- Execute after the python-code has been called
     void doAfterExecution(bool fail,const string &code,bool putVariables,bool failOnException=false);

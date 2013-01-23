@@ -27,9 +27,9 @@ Description
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
-%{                                          /* -*- C++ -*- */
+%{
 #include "FaFieldValueExpressionDriverYY.H"
 #include <errno.h>
 #include "FaFieldValuePluginFunction.H"

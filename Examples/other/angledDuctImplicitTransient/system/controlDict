@@ -1053,7 +1053,7 @@ libs (
     "libswakTopoSources.so"
     // Needed to decompose on 1.7
     "libcompressibleRASModels.so"
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
 ) ;
 
 // ************************************************************************* //

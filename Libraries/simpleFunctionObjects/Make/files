@@ -47,4 +47,6 @@ modelLoading/loadIncompressibleTurbulenceModelFunctionObject.C
 modelLoading/loadCompressibleTurbulenceModelFunctionObject.C
 modelLoading/loadSLGThermoModelFunctionObject.C
 
+timeManipulation/timeManipulationFunctionObject/timeManipulationFunctionObject.C
+timeManipulation/setDeltaTByTimelineFunctionObject/setDeltaTByTimelineFunctionObject.C
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects
