@@ -109,7 +109,9 @@ SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(
     setDebug();
 }
 
-SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(
+    const dictionary& dict,const fvMesh&mesh
+)
  :
     SubsetValueExpressionDriver(dict),
     theSet_(
@@ -152,7 +154,9 @@ bool SampledSetValueExpressionDriver::update()
     return updated;
 }
 
-Field<scalar> *SampledSetValueExpressionDriver::getScalarField(const string &name,bool oldTime)
+Field<scalar> *SampledSetValueExpressionDriver::getScalarField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<scalar,volScalarField,surfaceScalarField>
         (
@@ -161,7 +165,9 @@ Field<scalar> *SampledSetValueExpressionDriver::getScalarField(const string &nam
         );
 }
 
-Field<vector> *SampledSetValueExpressionDriver::getVectorField(const string &name,bool oldTime)
+Field<vector> *SampledSetValueExpressionDriver::getVectorField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<vector,volVectorField,surfaceVectorField>
         (
@@ -170,7 +176,9 @@ Field<vector> *SampledSetValueExpressionDriver::getVectorField(const string &nam
         );
 }
 
-Field<tensor> *SampledSetValueExpressionDriver::getTensorField(const string &name,bool oldTime)
+Field<tensor> *SampledSetValueExpressionDriver::getTensorField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<tensor,volTensorField,surfaceTensorField>
         (
@@ -179,7 +187,9 @@ Field<tensor> *SampledSetValueExpressionDriver::getTensorField(const string &nam
         );
 }
 
-Field<symmTensor> *SampledSetValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
+Field<symmTensor> *SampledSetValueExpressionDriver::getSymmTensorField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<symmTensor,volSymmTensorField,surfaceSymmTensorField>
         (
@@ -188,7 +198,9 @@ Field<symmTensor> *SampledSetValueExpressionDriver::getSymmTensorField(const str
         );
 }
 
-    Field<sphericalTensor> *SampledSetValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
+Field<sphericalTensor> *SampledSetValueExpressionDriver::getSphericalTensorField(
+        const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<sphericalTensor,volSphericalTensorField,surfaceSphericalTensorField>
         (
@@ -197,12 +209,12 @@ Field<symmTensor> *SampledSetValueExpressionDriver::getSymmTensorField(const str
         );
 }
 
-vectorField *SampledSetValueExpressionDriver::makePositionField()
+vectorField *SampledSetValueExpressionDriver::makePositionField() const
 {
     return new vectorField(theSet_);
 }
 
-scalarField *SampledSetValueExpressionDriver::makeCellVolumeField()
+scalarField *SampledSetValueExpressionDriver::makeCellVolumeField() const
 {
     FatalErrorIn("SampledSetValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
@@ -217,7 +229,7 @@ scalarField *SampledSetValueExpressionDriver::makeCellVolumeField()
 //     notImplemented("SampledSetValueExpressionDriver::makePointField");
 // }
 
-scalarField *SampledSetValueExpressionDriver::makeFaceAreaMagField()
+scalarField *SampledSetValueExpressionDriver::makeFaceAreaMagField() const
 {
     FatalErrorIn("SampledSetValueExpressionDriver::makeFaceAreaMagField()")
         << "sampledSets knows nothing about faces"
@@ -227,14 +239,14 @@ scalarField *SampledSetValueExpressionDriver::makeFaceAreaMagField()
     return new scalarField(0);
 }
 
-scalarField *SampledSetValueExpressionDriver::makeFaceFlipField()
+scalarField *SampledSetValueExpressionDriver::makeFaceFlipField() const
 {
     scalarField *result=new scalarField(this->size(),false);
 
     return result;
 }
 
-vectorField *SampledSetValueExpressionDriver::makeFaceNormalField()
+vectorField *SampledSetValueExpressionDriver::makeFaceNormalField() const
 {
     autoPtr<vectorField> sf(this->makeFaceAreaField());
     autoPtr<scalarField> magSf(this->makeFaceAreaMagField());
@@ -242,7 +254,7 @@ vectorField *SampledSetValueExpressionDriver::makeFaceNormalField()
     return new vectorField(sf()/magSf());
 }
 
-vectorField *SampledSetValueExpressionDriver::makeFaceAreaField()
+vectorField *SampledSetValueExpressionDriver::makeFaceAreaField() const
 {
     FatalErrorIn("SampledSetValueExpressionDriver::makeFaceAreaField()")
         << "sampledSets knows nothing about faces"
@@ -269,6 +281,33 @@ bool SampledSetValueExpressionDriver::existsPluginFunction(
     return SampledSetValuePluginFunction::exists(
         *this,
         name
+    );
+}
+
+tmp<scalarField> SampledSetValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!faceSize) {
+        Pout << "Expected size: " << size
+            << " The size: " << faceSize << endl;
+
+        FatalErrorIn("SampledSetValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(
+        new scalarField(
+            this->size(),
+            1.
+        )
     );
 }
 

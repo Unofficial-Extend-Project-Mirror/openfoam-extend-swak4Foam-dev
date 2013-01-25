@@ -103,26 +103,26 @@ scalarField *SubsetValueExpressionDriver::makeIdField()
     return ids;
 }
 
-vectorField *SubsetValueExpressionDriver::makePositionField()
+vectorField *SubsetValueExpressionDriver::makePositionField() const
 {
     notImplemented("SubsetValueExpressionDriver::makePositionField");
 
     return new vectorField(0);
 }
 
-// vectorField *SubsetValueExpressionDriver::makePointField()
+// vectorField *SubsetValueExpressionDriver::makePointField() const
 // {
 //     notImplemented("SubsetValueExpressionDriver::makePointField");
 // }
 
-vectorField *SubsetValueExpressionDriver::makeFaceNormalField()
+vectorField *SubsetValueExpressionDriver::makeFaceNormalField() const
 {
     notImplemented("SubsetValueExpressionDriver::makeFaceNormalField");
 
     return new vectorField(0);
 }
 
-vectorField *SubsetValueExpressionDriver::makeFaceAreaField()
+vectorField *SubsetValueExpressionDriver::makeFaceAreaField() const
 {
     notImplemented("SubsetValueExpressionDriver::makeFaceAreaField");
 

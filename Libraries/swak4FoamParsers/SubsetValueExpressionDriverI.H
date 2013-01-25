@@ -290,7 +290,10 @@ namespace Foam {
     }
 
     template<class Subset,class T>
-    Field<T> *SubsetValueExpressionDriver::getFromFieldInternal(const Field<T> &original,const Subset &sub)
+    Field<T> *SubsetValueExpressionDriver::getFromFieldInternal(
+        const Field<T> &original,
+        const Subset &sub
+    ) const
     {
         Field<T> *result=new Field<T>(this->size());
         label cnt=0;

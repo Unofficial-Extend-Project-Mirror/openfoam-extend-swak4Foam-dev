@@ -266,7 +266,8 @@ namespace Foam {
     inline bool CommonValueExpressionDriver::updateSet(
         autoPtr<T> &theSet,
         const word &name,
-        SetOrigin origin)
+        SetOrigin origin
+    ) const
     {
         label oldSize=theSet->size();
 
@@ -364,7 +365,7 @@ namespace Foam {
         const fvMesh &mesh,
         const word &name,
         SetOrigin &origin
-    )
+    ) const
     {
         // avoid the possibility of name-clashes
         const word regName=name+"RegisteredNameFor"+T::typeName;

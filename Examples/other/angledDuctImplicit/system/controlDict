@@ -129,6 +129,23 @@ functions
             }
         }
     }
+    averagePressure
+    {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        expression "p*vol()/sum(vol())";
+        accumulations (
+            sum
+        );
+    }
+    averagePressure2 {
+        $averagePressure;
+        expression "p";
+        accumulations (
+            weightedAverage
+        );
+    }
     pressureToFilterVolAvg
     {
         type patchExpression;

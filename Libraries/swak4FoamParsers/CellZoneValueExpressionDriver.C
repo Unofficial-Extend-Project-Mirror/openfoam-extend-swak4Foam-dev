@@ -71,19 +71,27 @@ label getCellZoneID(const fvMesh &mesh,const word &name)
 }
 
 
-    CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const cellZone &zone,const CellZoneValueExpressionDriver& orig)
+CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(
+    const cellZone &zone,
+    const CellZoneValueExpressionDriver& orig
+)
 :
         SubsetValueExpressionDriver(orig),
         cellZone_(zone)
 {}
 
-CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const cellZone &zone)
+CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(
+    const cellZone &zone
+)
 :
     SubsetValueExpressionDriver(),
     cellZone_(zone)
 {}
 
-CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(
+    const dictionary& dict,
+    const fvMesh&mesh
+)
  :
     SubsetValueExpressionDriver(dict),
     cellZone_(
@@ -107,7 +115,10 @@ CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const dictionary& d
 {
 }
 
-CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(const word& id,const fvMesh&mesh)
+CellZoneValueExpressionDriver::CellZoneValueExpressionDriver(
+    const word& id,
+    const fvMesh&mesh
+)
  :
     SubsetValueExpressionDriver(),
     cellZone_(
@@ -130,42 +141,64 @@ CellZoneValueExpressionDriver::~CellZoneValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 template<>
-inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellZone::const_iterator &it)
+inline label SubsetValueExpressionDriver::getIndexFromIterator(
+    const cellZone::const_iterator &it
+) const
 {
     return *it;
 }
 
-Field<scalar> *CellZoneValueExpressionDriver::getScalarField(const string &name,bool oldTime)
+Field<scalar> *CellZoneValueExpressionDriver::getScalarField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volScalarField,cellZone,scalar>(name,cellZone_,oldTime);
+    return getFieldInternal<volScalarField,cellZone,scalar>(
+        name,cellZone_,oldTime
+    );
 }
 
-Field<vector> *CellZoneValueExpressionDriver::getVectorField(const string &name,bool oldTime)
+Field<vector> *CellZoneValueExpressionDriver::getVectorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volVectorField,cellZone,vector>(name,cellZone_,oldTime);
+    return getFieldInternal<volVectorField,cellZone,vector>(
+        name,cellZone_,oldTime
+    );
 }
 
-Field<tensor> *CellZoneValueExpressionDriver::getTensorField(const string &name,bool oldTime)
+Field<tensor> *CellZoneValueExpressionDriver::getTensorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volTensorField,cellZone,tensor>(name,cellZone_,oldTime);
+    return getFieldInternal<volTensorField,cellZone,tensor>(
+        name,cellZone_,oldTime
+    );
 }
 
-Field<symmTensor> *CellZoneValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
+Field<symmTensor> *CellZoneValueExpressionDriver::getSymmTensorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volSymmTensorField,cellZone,symmTensor>(name,cellZone_,oldTime);
+    return getFieldInternal<volSymmTensorField,cellZone,symmTensor>(
+        name,cellZone_,oldTime
+    );
 }
 
-Field<sphericalTensor> *CellZoneValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
+Field<sphericalTensor> *CellZoneValueExpressionDriver::getSphericalTensorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volSphericalTensorField,cellZone,sphericalTensor>(name,cellZone_,oldTime);
+    return getFieldInternal<volSphericalTensorField,cellZone,sphericalTensor>(
+        name,cellZone_,oldTime
+    );
 }
 
-vectorField *CellZoneValueExpressionDriver::makePositionField()
+vectorField *CellZoneValueExpressionDriver::makePositionField() const
 {
     return getFromFieldInternal(this->mesh().C(),cellZone_);
 }
 
-scalarField *CellZoneValueExpressionDriver::makeCellVolumeField()
+scalarField *CellZoneValueExpressionDriver::makeCellVolumeField() const
 {
     return getFromFieldInternal(this->mesh().V(),cellZone_);
 }
@@ -176,7 +209,7 @@ scalarField *CellZoneValueExpressionDriver::makeCellVolumeField()
 //     notImplemented("CellZoneValueExpressionDriver::makePointField");
 // }
 
-scalarField *CellZoneValueExpressionDriver::makeFaceAreaMagField()
+scalarField *CellZoneValueExpressionDriver::makeFaceAreaMagField() const
 {
     FatalErrorIn("CellZoneValueExpressionDriver::makeFaceAreaField()")
         << "cellZone knows nothing about faces"
@@ -185,7 +218,7 @@ scalarField *CellZoneValueExpressionDriver::makeFaceAreaMagField()
     return new scalarField(0);
 }
 
-vectorField *CellZoneValueExpressionDriver::makeFaceNormalField()
+vectorField *CellZoneValueExpressionDriver::makeFaceNormalField() const
 {
     FatalErrorIn("CellZoneValueExpressionDriver::makeFaceNormalField()")
         << "cellZone knows nothing about faces"
@@ -194,7 +227,7 @@ vectorField *CellZoneValueExpressionDriver::makeFaceNormalField()
     return new vectorField(0);
 }
 
-scalarField *CellZoneValueExpressionDriver::makeFaceFlipField()
+scalarField *CellZoneValueExpressionDriver::makeFaceFlipField() const
 {
     FatalErrorIn("CellZoneValueExpressionDriver::makeFaceFlipField()")
         << "cellZone knows nothing about faces"
@@ -203,7 +236,7 @@ scalarField *CellZoneValueExpressionDriver::makeFaceFlipField()
     return new scalarField(0);
 }
 
-vectorField *CellZoneValueExpressionDriver::makeFaceAreaField()
+vectorField *CellZoneValueExpressionDriver::makeFaceAreaField() const
 {
     FatalErrorIn("CellZoneValueExpressionDriver::makeFaceAreaField()")
         << "cellZone knows nothing about faces"
@@ -230,6 +263,29 @@ bool CellZoneValueExpressionDriver::existsPluginFunction(
         *this,
         name
     );
+}
+
+
+tmp<scalarField> CellZoneValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label cellSize=this->size();
+    bool isCell=(size==cellSize);
+    reduce(isCell,andOp<bool>());
+
+    if(!cellSize) {
+        Pout << "Expected size: " << size
+            << " Cell size: " << cellSize << endl;
+
+        FatalErrorIn("CellZoneValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(makeCellVolumeField());
 }
 
 // ************************************************************************* //
