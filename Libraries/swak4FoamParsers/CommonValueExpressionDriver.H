@@ -550,9 +550,12 @@ public:
     //- get the value for a lookuptable for a set of values
     tmp<scalarField> getLookup(const string &name,const scalarField &val);
 
-    scalarField *makeModuloField(const scalarField &a,const scalarField &b);
-    scalarField *makeRandomField(label seed=0);
-    scalarField *makeGaussRandomField(label seed=0);
+    scalarField *makeModuloField(
+        const scalarField &a,
+        const scalarField &b
+    ) const;
+    scalarField *makeRandomField(label seed=0) const;
+    scalarField *makeGaussRandomField(label seed=0) const;
 
     vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
 

@@ -27,7 +27,7 @@ Description
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef FAFIELD_VALUE_EXPRESSION_DRIVER_H
@@ -161,6 +161,14 @@ protected:
     template<class T>
     struct correctBC;
 
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const;
+
 public:
     //- get the result field (if it is of the right type)
     template<class T>
@@ -178,7 +186,9 @@ public:
     );
 
     template<class FType>
-    inline FType *makeConstantField(const typename FType::value_type &val);
+    inline FType *makeConstantField(
+        const typename FType::value_type &val
+    ) const;
 
     template<class FType>
     inline FType *makeField(const Field<typename FType::value_type> &val);
@@ -222,19 +232,22 @@ public:
     edgeSphericalTensorField *makeEdgeSphericalTensorField(edgeScalarField *);
 
     // modulo operator
-    areaScalarField *makeModuloField(const areaScalarField &a,const areaScalarField &b);
+    areaScalarField *makeModuloField(
+        const areaScalarField &a,
+        const areaScalarField &b
+    ) const;
 
     // make special fields
-    edgeVectorField *makeEdgePositionField();
-    edgeVectorField *makeEdgeProjectionField();
-    edgeVectorField *makeEdgeField();
-    edgeScalarField *makeLengthField();
-    areaVectorField *makePositionField();
-    areaScalarField *makeRDistanceField(const areaVectorField &r);
-    areaScalarField *makeAreaField();
-    areaScalarField *makeRandomField(label seed=0);
-    areaScalarField *makeGaussRandomField(label seed=0);
-    areaScalarField *makeCellIdField();
+    edgeVectorField *makeEdgePositionField() const;
+    edgeVectorField *makeEdgeProjectionField() const;
+    edgeVectorField *makeEdgeField() const;
+    edgeScalarField *makeLengthField() const;
+    areaVectorField *makePositionField() const;
+    areaScalarField *makeRDistanceField(const areaVectorField &r) const;
+    areaScalarField *makeAreaField() const;
+    areaScalarField *makeRandomField(label seed=0) const;
+    areaScalarField *makeGaussRandomField(label seed=0) const;
+    areaScalarField *makeCellIdField() const;
 
     //- what type
     const word &typ() const { return typ_; }

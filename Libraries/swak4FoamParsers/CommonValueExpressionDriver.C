@@ -664,7 +664,7 @@ const Time &CommonValueExpressionDriver::runTime() const
 scalarField *CommonValueExpressionDriver::makeModuloField(
     const scalarField &a,
     const scalarField &b
-)
+) const
 {
     assert(a.size()==b.size());
 
@@ -684,7 +684,7 @@ scalarField *CommonValueExpressionDriver::makeModuloField(
     return result;
 }
 
-scalarField *CommonValueExpressionDriver::makeRandomField(label seed)
+scalarField *CommonValueExpressionDriver::makeRandomField(label seed) const
 {
     scalarField *result=new scalarField(this->size());
 
@@ -725,7 +725,7 @@ scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
     return lines_[name](t);
 }
 
-scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
+scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed) const
 {
     scalarField *result=new scalarField(this->size());
 
