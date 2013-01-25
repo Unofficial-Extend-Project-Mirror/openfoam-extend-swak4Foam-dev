@@ -75,11 +75,14 @@ void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExp
             // case NumericAccumulationNamedEnum::numSumMag:
             //     val=gSumMag(result);
             //     break;
+            case NumericAccumulationNamedEnum::numWeightedAverage:
+                val=driver.calcWeightedAverage(result);
+                break;
             default:
                 WarningIn("patchExpressionFunctionObject::writeData")
                     << "Unknown accumultation type "
                         << NumericAccumulationNamedEnum::names[accu]
-                        << ". Currently only 'min', 'max', 'sum' and 'average' are supported"
+                        << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
                         << endl;
         }
         results[i]=val;

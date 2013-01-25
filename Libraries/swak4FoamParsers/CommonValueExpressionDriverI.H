@@ -1015,6 +1015,22 @@ namespace Foam {
         //    Foam::Pout << buff.str() << ": " << m << Foam::endl;
     }
 
+    template<class Type>
+    Type CommonValueExpressionDriver::calcWeightedAverage(
+        const Field<Type> &result
+    ) const
+    {
+        const scalarField weights(
+            this->weights(
+                result.size(),
+                this->result().isPoint()
+            )
+        );
+        const scalar wSum=gSum(weights);
+        const Type tSum=gSum(weights*result);
+        return tSum/wSum;
+    }
+
     // inline HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables()
     // {
     //     return variables_;

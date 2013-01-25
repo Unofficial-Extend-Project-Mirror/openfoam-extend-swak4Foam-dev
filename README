@@ -1591,6 +1591,13 @@ S_{expl} + S_{impl} T
           case
 **** =replaxTransientBC= outputs timestep
      This helps debugging timestepping-strategies
+**** New accumulation =weightedAverage=
+     A new possible entry for the =accumulations= calculates an
+     average that is weighted by a facetor that depends on the entity:
+     - cell volume if applicable
+     - face area for surfaces etc
+     - $1$ if there is no appropriate weight (usually values defined
+       on points). The result is equivalent to =average=.
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

@@ -76,23 +76,13 @@ void swakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &dri
             //     val=gSumMag(result);
             //     break;
             case NumericAccumulationNamedEnum::numWeightedAverage:
-                {
-                    const scalarField weights(
-                        driver.weights(
-                            result.size(),
-                            driver.result().isPoint()
-                        )
-                    );
-                    const scalar wSum=gSum(weights);
-                    const T tSum=gSum(weights*result);
-                    val=tSum/wSum;
-                }
+                val=driver.calcWeightedAverage(result);
                 break;
             default:
                 WarningIn("swakExpressionFunctionObject::writeData")
                     << "Unimplemented accumultation type "
                         << NumericAccumulationNamedEnum::names[accu]
-                        << ". Currently only 'min', 'max', 'sum' and 'average' are supported"
+                        << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
                         << endl;
         }
         results[i]=val;

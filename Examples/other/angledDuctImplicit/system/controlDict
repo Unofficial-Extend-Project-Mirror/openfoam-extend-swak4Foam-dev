@@ -144,6 +144,27 @@ functions
         expression "p";
         accumulations (
             weightedAverage
+            average
+        );
+    }
+    patchAveragePressure
+    {
+        type patchExpression;
+        patches (
+            wall
+        );
+        verbose true;
+        expression "p*area()/sum(area())";
+        accumulations (
+            sum
+        );
+    }
+    patchAveragePressure2 {
+        $patchAveragePressure;
+        expression "p";
+        accumulations (
+            weightedAverage
+            average
         );
     }
     pressureToFilterVolAvg

@@ -430,6 +430,10 @@ public:
         const string &expr
     );
 
+    //- calculate the weighted average of a field
+    template<class Type>
+    Type calcWeightedAverage(const Field<Type> &f) const;
+
     //- read information about the foreign meshes and create them
     static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
 
