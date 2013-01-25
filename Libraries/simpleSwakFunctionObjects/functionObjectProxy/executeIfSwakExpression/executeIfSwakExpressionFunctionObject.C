@@ -48,14 +48,6 @@ namespace Foam
         dictionary
     );
 
-template<>
-const char* NamedEnum<Foam::executeIfSwakExpressionFunctionObject::logicalAccumulations,2>::names[]=
-{
-    "and",
-    "or"
-};
-const NamedEnum<executeIfSwakExpressionFunctionObject::logicalAccumulations,2> executeIfSwakExpressionFunctionObject::logicalAccumulationsNames_;
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 executeIfSwakExpressionFunctionObject::executeIfSwakExpressionFunctionObject
@@ -94,23 +86,23 @@ bool executeIfSwakExpressionFunctionObject::condition()
     bool result=false;
 
     switch(logicalAccumulation_) {
-        case logAnd:
+        case LogicalAccumulationNamedEnum::logAnd:
             result=driver_->getReduced(andOp<bool>(),true);
             break;
-        case logOr:
+        case LogicalAccumulationNamedEnum::logOr:
             result=driver_->getReduced(orOp<bool>(),false);
             break;
         default:
             FatalErrorIn("executeIfSwakExpressionFunctionObject::condition()")
                 << "Unimplemented logical accumulation "
-                    << logicalAccumulationsNames_[logicalAccumulation_]
+                    << LogicalAccumulationNamedEnum::names[logicalAccumulation_]
                     << endl
                     << exit(FatalError);
     }
     if(writeDebug()) {
         Info << "Expression " << logicalExpression_
             << " evaluates to " << driver_->getResult<bool>() << endl;
-        Info << " -> " << logicalAccumulationsNames_[logicalAccumulation_]
+        Info << " -> " <<  LogicalAccumulationNamedEnum::names[logicalAccumulation_]
             << " gives " << result << endl;
     }
 
@@ -132,7 +124,7 @@ void executeIfSwakExpressionFunctionObject::readParameters(const dictionary &dic
 
     logicalExpression_=dict.lookup("logicalExpression");
 
-    logicalAccumulation_=logicalAccumulationsNames_[dict.lookup("logicalAccumulation")];
+    logicalAccumulation_=LogicalAccumulationNamedEnum::names[dict.lookup("logicalAccumulation")];
 }
 
 } // namespace Foam

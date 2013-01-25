@@ -1228,4 +1228,38 @@ bool FieldValueExpressionDriver::existsPluginFunction(
     );
 }
 
+tmp<scalarField> FieldValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label cellSize=mesh().nCells();
+    const label faceSize=mesh().nInternalFaces();
+    bool isCell=(size==cellSize);
+    bool isFace=(size==faceSize);
+    reduce(isCell,andOp<bool>());
+    reduce(isFace,andOp<bool>());
+
+    if(isCell && isFace) {
+        WarningIn("FieldValueExpressionDriver::weightsNonPoint")
+            << "Can't determine whether this is a face or a cell field" << endl
+                << "Going for CELL"
+                << endl;
+    } else if(isCell==isFace) {
+        Pout << "Expected size: " << size
+            << " Cell size: " << cellSize
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("FieldValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+    if(isCell) {
+        return tmp<scalarField>(new scalarField(mesh().V()));
+    } else {
+        return tmp<scalarField>(new scalarField(mesh().magSf()));
+    }
+}
+
 } // end namespace

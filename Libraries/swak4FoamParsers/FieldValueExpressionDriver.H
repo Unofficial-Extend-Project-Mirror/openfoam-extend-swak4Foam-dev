@@ -170,6 +170,14 @@ protected:
     template<class T>
     struct correctBC;
 
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const;
+
 public:
 
     //- get the result field (if it is of the right type)

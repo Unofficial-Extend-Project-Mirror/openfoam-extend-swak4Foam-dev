@@ -124,53 +124,75 @@ CellSetValueExpressionDriver::~CellSetValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<>
-inline label SubsetValueExpressionDriver::getIndexFromIterator(const cellSet::const_iterator &it)
+inline label SubsetValueExpressionDriver::getIndexFromIterator(
+    const cellSet::const_iterator &it
+) const
 {
     return it.key();
 }
 
-    Field<scalar> *CellSetValueExpressionDriver::getScalarField(const string &name,bool oldTime)
+Field<scalar> *CellSetValueExpressionDriver::getScalarField(
+        const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volScalarField,cellSet,scalar>(name,cellSet_,oldTime);
+    return getFieldInternal<volScalarField,cellSet,scalar>(
+        name,cellSet_,oldTime
+    );
 }
 
-Field<vector> *CellSetValueExpressionDriver::getVectorField(const string &name,bool oldTime)
+Field<vector> *CellSetValueExpressionDriver::getVectorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volVectorField,cellSet,vector>(name,cellSet_,oldTime);
+    return getFieldInternal<volVectorField,cellSet,vector>(
+        name,cellSet_,oldTime
+    );
 }
 
-Field<tensor> *CellSetValueExpressionDriver::getTensorField(const string &name,bool oldTime)
+Field<tensor> *CellSetValueExpressionDriver::getTensorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volTensorField,cellSet,tensor>(name,cellSet_,oldTime);
+    return getFieldInternal<volTensorField,cellSet,tensor>(
+        name,cellSet_,oldTime
+    );
 }
 
-Field<symmTensor> *CellSetValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
+Field<symmTensor> *CellSetValueExpressionDriver::getSymmTensorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volSymmTensorField,cellSet,symmTensor>(name,cellSet_,oldTime);
+    return getFieldInternal<volSymmTensorField,cellSet,symmTensor>(
+        name,cellSet_,oldTime
+    );
 }
 
-Field<sphericalTensor> *CellSetValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
+Field<sphericalTensor> *CellSetValueExpressionDriver::getSphericalTensorField(
+    const string &name,bool oldTime
+)
 {
-    return getFieldInternal<volSphericalTensorField,cellSet,sphericalTensor>(name,cellSet_,oldTime);
+    return getFieldInternal<volSphericalTensorField,cellSet,sphericalTensor>(
+        name,cellSet_,oldTime
+);
 }
 
-vectorField *CellSetValueExpressionDriver::makePositionField()
+vectorField *CellSetValueExpressionDriver::makePositionField() const
 {
     return getFromFieldInternal(this->mesh().C(),cellSet_());
 }
 
-scalarField *CellSetValueExpressionDriver::makeCellVolumeField()
+scalarField *CellSetValueExpressionDriver::makeCellVolumeField() const
 {
     return getFromFieldInternal(this->mesh().V(),cellSet_());
 }
 
 
-// vectorField *CellSetValueExpressionDriver::makePointField()
+// vectorField *CellSetValueExpressionDriver::makePointField() const
 // {
 //     notImplemented("CellSetValueExpressionDriver::makePointField");
 // }
 
-scalarField *CellSetValueExpressionDriver::makeFaceAreaMagField()
+scalarField *CellSetValueExpressionDriver::makeFaceAreaMagField() const
 {
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceAreaField()")
         << "cellSet knows nothing about faces"
@@ -179,7 +201,7 @@ scalarField *CellSetValueExpressionDriver::makeFaceAreaMagField()
     return new scalarField(0);
 }
 
-scalarField *CellSetValueExpressionDriver::makeFaceFlipField()
+scalarField *CellSetValueExpressionDriver::makeFaceFlipField() const
 {
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceFlipField()")
         << "cellSet knows nothing about faces"
@@ -188,7 +210,7 @@ scalarField *CellSetValueExpressionDriver::makeFaceFlipField()
     return new scalarField(0);
 }
 
-vectorField *CellSetValueExpressionDriver::makeFaceNormalField()
+vectorField *CellSetValueExpressionDriver::makeFaceNormalField() const
 {
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceNormalField()")
         << "cellSet knows nothing about faces"
@@ -197,7 +219,7 @@ vectorField *CellSetValueExpressionDriver::makeFaceNormalField()
     return new vectorField(0);
 }
 
-vectorField *CellSetValueExpressionDriver::makeFaceAreaField()
+vectorField *CellSetValueExpressionDriver::makeFaceAreaField() const
 {
     FatalErrorIn("CellSetValueExpressionDriver::makeFaceAreaField()")
         << "cellSet knows nothing about faces"
@@ -234,6 +256,28 @@ bool CellSetValueExpressionDriver::existsPluginFunction(
         *this,
         name
     );
+}
+
+tmp<scalarField> CellSetValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label cellSize=this->size();
+    bool isCell=(size==cellSize);
+    reduce(isCell,andOp<bool>());
+
+    if(!cellSize) {
+        Pout << "Expected size: " << size
+            << " Cell size: " << cellSize << endl;
+
+        FatalErrorIn("CellSetValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(makeCellVolumeField());
 }
 
 // ************************************************************************* //

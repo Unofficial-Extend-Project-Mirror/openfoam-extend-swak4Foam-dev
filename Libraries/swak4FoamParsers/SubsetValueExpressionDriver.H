@@ -95,7 +95,7 @@ protected:
 
     //- get the index from the container iterator
     template<class Iter>
-    inline label getIndexFromIterator(const Iter &it);
+    inline label getIndexFromIterator(const Iter &it) const;
 
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
@@ -115,7 +115,9 @@ protected:
 
     //- General Method to get values from a field
     template<class Subset,class T>
-    Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
+    Field<T> *getFromFieldInternal(
+        const Field<T> &original,const Subset &sub
+    ) const;
 
     //- set the state of the lexer to scanning vector components
     void startVectorComponent();
@@ -152,19 +154,19 @@ public:
 
     // Member Functions
 
-    virtual vectorField *makePositionField()=0;
+    virtual vectorField *makePositionField() const = 0;
 
-    virtual scalarField *makeFaceAreaMagField()=0;
+    virtual scalarField *makeFaceAreaMagField() const = 0;
 
-    virtual scalarField *makeCellVolumeField()=0;
+    virtual scalarField *makeCellVolumeField() const = 0;
 
-    //     virtual vectorField *makePointField()=0;
+    //     virtual vectorField *makePointField() const = 0;
 
-    virtual vectorField *makeFaceNormalField()=0;
+    virtual vectorField *makeFaceNormalField() const = 0;
 
-    virtual vectorField *makeFaceAreaField()=0;
+    virtual vectorField *makeFaceAreaField() const = 0;
 
-    virtual scalarField *makeFaceFlipField()=0;
+    virtual scalarField *makeFaceFlipField() const = 0;
 
     virtual bool isCell()=0;
 

@@ -27,7 +27,7 @@ Description
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "FaFieldValueExpressionDriver.H"
@@ -125,7 +125,8 @@ void FaFieldValueExpressionDriver::parseInternal (int startToken)
 
 areaScalarField *FaFieldValueExpressionDriver::makeModuloField(
     const areaScalarField &a,
-    const areaScalarField &b)
+    const areaScalarField &b
+) const
 {
     areaScalarField *result_=makeConstantField<areaScalarField>(0.);
 
@@ -146,17 +147,19 @@ areaScalarField *FaFieldValueExpressionDriver::makeModuloField(
     return result_;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeRandomField(label seed)
+areaScalarField *FaFieldValueExpressionDriver::makeRandomField(label seed) const
 {
     areaScalarField *f=makeConstantField<areaScalarField>(0.);
 
-    autoPtr<scalarField> rField(CommonValueExpressionDriver::makeRandomField(seed));
+    autoPtr<scalarField> rField(
+        CommonValueExpressionDriver::makeRandomField(seed)
+    );
     f->internalField()=rField();
 
     return f;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeCellIdField()
+areaScalarField *FaFieldValueExpressionDriver::makeCellIdField() const
 {
     areaScalarField *f=makeConstantField<areaScalarField>(0.);
 
@@ -167,7 +170,9 @@ areaScalarField *FaFieldValueExpressionDriver::makeCellIdField()
     return f;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeGaussRandomField(label seed)
+areaScalarField *FaFieldValueExpressionDriver::makeGaussRandomField(
+    label seed
+) const
 {
     areaScalarField *f=makeConstantField<areaScalarField>(0.);
 
@@ -177,7 +182,7 @@ areaScalarField *FaFieldValueExpressionDriver::makeGaussRandomField(label seed)
     return f;
 }
 
-areaVectorField *FaFieldValueExpressionDriver::makePositionField()
+areaVectorField *FaFieldValueExpressionDriver::makePositionField() const
 {
     dimensionSet nullDim(0,0,0,0,0);
     areaVectorField *f=new areaVectorField(
@@ -198,7 +203,7 @@ areaVectorField *FaFieldValueExpressionDriver::makePositionField()
     return f;
 }
 
-edgeVectorField *FaFieldValueExpressionDriver::makeEdgePositionField()
+edgeVectorField *FaFieldValueExpressionDriver::makeEdgePositionField() const
 {
     dimensionSet nullDim(0,0,0,0,0);
     edgeVectorField *f=new edgeVectorField(
@@ -219,7 +224,7 @@ edgeVectorField *FaFieldValueExpressionDriver::makeEdgePositionField()
     return f;
 }
 
-edgeVectorField *FaFieldValueExpressionDriver::makeEdgeProjectionField()
+edgeVectorField *FaFieldValueExpressionDriver::makeEdgeProjectionField() const
 {
 
     dimensionSet nullDim(0,0,0,0,0);
@@ -317,7 +322,7 @@ edgeVectorField *FaFieldValueExpressionDriver::makeEdgeProjectionField()
     return f;
 }
 
-edgeVectorField *FaFieldValueExpressionDriver::makeEdgeField()
+edgeVectorField *FaFieldValueExpressionDriver::makeEdgeField() const
 {
     dimensionSet nullDim(0,0,0,0,0);
     edgeVectorField *f=new edgeVectorField(
@@ -338,7 +343,7 @@ edgeVectorField *FaFieldValueExpressionDriver::makeEdgeField()
     return f;
 }
 
-edgeScalarField *FaFieldValueExpressionDriver::makeLengthField()
+edgeScalarField *FaFieldValueExpressionDriver::makeLengthField() const
 {
     dimensionSet nullDim(0,0,0,0,0);
     edgeScalarField *f=new edgeScalarField(
@@ -359,7 +364,7 @@ edgeScalarField *FaFieldValueExpressionDriver::makeLengthField()
     return f;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeAreaField()
+areaScalarField *FaFieldValueExpressionDriver::makeAreaField() const
 {
     areaScalarField *f=new areaScalarField(
         IOobject
@@ -382,7 +387,9 @@ areaScalarField *FaFieldValueExpressionDriver::makeAreaField()
     return f;
 }
 
-areaScalarField *FaFieldValueExpressionDriver::makeRDistanceField(const areaVectorField& r)
+areaScalarField *FaFieldValueExpressionDriver::makeRDistanceField(
+    const areaVectorField& r
+) const
 {
     dimensionSet nullDim(0,0,0,0,0);
     areaScalarField *f=new areaScalarField(
@@ -714,6 +721,32 @@ const faMesh &FaFieldValueExpressionDriver::aMesh() const
 const fvMesh &FaFieldValueExpressionDriver::mesh() const
 {
     return dynamic_cast<const fvMesh&>(mesh_.thisDb());
+}
+
+tmp<scalarField> FaFieldValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!faceSize) {
+        Pout << "Expected size: " << size
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("FaFieldValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(
+        new scalarField(
+            mesh_.S()
+        )
+    );
 }
 
 } // end namespace

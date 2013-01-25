@@ -602,6 +602,27 @@ autoPtr<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
     }
 }
 
+tmp<scalarField> PatchValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!faceSize) {
+        Pout << "Expected size: " << size
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("PatchValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(new scalarField(patch().magSf()));
+}
 
 // ************************************************************************* //
 

@@ -129,6 +129,44 @@ functions
             }
         }
     }
+    averagePressure
+    {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        expression "p*vol()/sum(vol())";
+        accumulations (
+            sum
+        );
+    }
+    averagePressure2 {
+        $averagePressure;
+        expression "p";
+        accumulations (
+            weightedAverage
+            average
+        );
+    }
+    patchAveragePressure
+    {
+        type patchExpression;
+        patches (
+            wall
+        );
+        verbose true;
+        expression "p*area()/sum(area())";
+        accumulations (
+            sum
+        );
+    }
+    patchAveragePressure2 {
+        $patchAveragePressure;
+        expression "p";
+        accumulations (
+            weightedAverage
+            average
+        );
+    }
     pressureToFilterVolAvg
     {
         type patchExpression;
@@ -217,6 +255,7 @@ functions
         variables "pRaus{outlet}=average(p);";
         accumulations (
             average
+            //            weightedAverage
         );
         expression "pRaus-p";
         verbose true;

@@ -266,7 +266,8 @@ namespace Foam {
     inline bool CommonValueExpressionDriver::updateSet(
         autoPtr<T> &theSet,
         const word &name,
-        SetOrigin origin)
+        SetOrigin origin
+    ) const
     {
         label oldSize=theSet->size();
 
@@ -364,7 +365,7 @@ namespace Foam {
         const fvMesh &mesh,
         const word &name,
         SetOrigin &origin
-    )
+    ) const
     {
         // avoid the possibility of name-clashes
         const word regName=name+"RegisteredNameFor"+T::typeName;
@@ -1012,6 +1013,22 @@ namespace Foam {
                 << getContextString().c_str()
                 << Foam::exit(Foam::FatalError);
         //    Foam::Pout << buff.str() << ": " << m << Foam::endl;
+    }
+
+    template<class Type>
+    Type CommonValueExpressionDriver::calcWeightedAverage(
+        const Field<Type> &result
+    ) const
+    {
+        const scalarField weights(
+            this->weights(
+                result.size(),
+                this->result().isPoint()
+            )
+        );
+        const scalar wSum=gSum(weights);
+        const Type tSum=gSum(weights*result);
+        return tSum/wSum;
     }
 
     // inline HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables()

@@ -161,6 +161,14 @@ protected:
     //- update stuff that needs updating
     virtual bool update();
 
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const = 0;
+
 public:
 
     ExpressionResult &result() { return result_; }
@@ -175,7 +183,17 @@ public:
     //- actual size of the supporting point-field
     virtual label pointSize() const = 0;
 
-    //- access the other mesh name
+    //- weights of the entries
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    //- point determines whether this is a point field or not
+    tmp<scalarField> weights(
+        label size,
+        bool point=false
+    ) const;
+
+   //- access the other mesh name
     const word &otherMeshName() const { return otherMeshName_; }
     word &otherMeshName() { return otherMeshName_; }
 
@@ -261,10 +279,18 @@ protected:
     };
 
     template<class T>
-    inline autoPtr<T> getSet(const fvMesh &,const word &,SetOrigin &origin);
+    inline autoPtr<T> getSet(
+        const fvMesh &,
+        const word &,
+        SetOrigin &origin
+    ) const;
 
     template<class T>
-    inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
+    inline bool updateSet(
+        autoPtr<T> &theSet,
+        const word &,
+        SetOrigin origin
+    ) const;
 
     template<class T>
     autoPtr<T> getOrReadField(
@@ -404,6 +430,10 @@ public:
         const string &expr
     );
 
+    //- calculate the weighted average of a field
+    template<class Type>
+    Type calcWeightedAverage(const Field<Type> &f) const;
+
     //- read information about the foreign meshes and create them
     static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
 
@@ -520,9 +550,12 @@ public:
     //- get the value for a lookuptable for a set of values
     tmp<scalarField> getLookup(const string &name,const scalarField &val);
 
-    scalarField *makeModuloField(const scalarField &a,const scalarField &b);
-    scalarField *makeRandomField(label seed=0);
-    scalarField *makeGaussRandomField(label seed=0);
+    scalarField *makeModuloField(
+        const scalarField &a,
+        const scalarField &b
+    ) const;
+    scalarField *makeRandomField(label seed=0) const;
+    scalarField *makeGaussRandomField(label seed=0) const;
 
     vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
 

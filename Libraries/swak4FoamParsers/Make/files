@@ -6,6 +6,8 @@ repositories/SetsRepository.C
 repositories/GlobalVariablesRepository.C
 
 namedEnums/MeshInterpolationOrder.C
+namedEnums/LogicalAccumulationNamedEnum.H
+namedEnums/NumericAccumulationNamedEnum.H
 
 ExpressionDriverWriter.C
 

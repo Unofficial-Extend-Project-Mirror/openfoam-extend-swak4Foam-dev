@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -33,6 +38,10 @@ Description
 SourceFiles
     writeAndEndSwakExpressionFunctionObject.C
 
+Contributors/Copyright:
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeAndEndSwakExpressionFunctionObject_H
@@ -42,7 +51,7 @@ SourceFiles
 
 #include "CommonValueExpressionDriver.H"
 
-#include "NamedEnum.H"
+#include "LogicalAccumulationNamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,16 +82,9 @@ class writeAndEndSwakExpressionFunctionObject
 
     void readParameters(const dictionary &);
 
-public:
-    enum logicalAccumulations {
-        logAnd,
-        logOr
-    };
-
 private:
     //- possible logical accumulations
-    static const NamedEnum<logicalAccumulations,2> logicalAccumulationsNames_;
-    logicalAccumulations logicalAccumulation_;
+    LogicalAccumulationNamedEnum::value logicalAccumulation_;
 
 protected:
 
