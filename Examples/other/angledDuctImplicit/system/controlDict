@@ -217,6 +217,7 @@ functions
         variables "pRaus{outlet}=average(p);";
         accumulations (
             average
+            //            weightedAverage
         );
         expression "pRaus-p";
         verbose true;

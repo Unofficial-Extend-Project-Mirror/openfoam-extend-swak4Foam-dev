@@ -1601,6 +1601,9 @@ S_{expl} + S_{impl} T
      This new header includes information about the
      =swak4Foam=-version, the =OpenFOAM=-version and macros for
      workarounds that depend on the OpenFOAM-version
+**** =accumulations=-entries converted to =NamedEnums=
+     This forces the entries to be checked while being read. Allowing
+     more consistent treatment
 *** Cosmetics
     Changes without consequences for the user
 **** Change type of =name= in parsers to =word=
