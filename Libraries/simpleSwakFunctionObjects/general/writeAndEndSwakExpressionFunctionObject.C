@@ -45,14 +45,6 @@ namespace Foam
         dictionary
     );
 
-template<>
-const char* NamedEnum<Foam::writeAndEndSwakExpressionFunctionObject::logicalAccumulations,2>::names[]=
-{
-    "and",
-    "or"
-};
-const NamedEnum<writeAndEndSwakExpressionFunctionObject::logicalAccumulations,2> writeAndEndSwakExpressionFunctionObject::logicalAccumulationsNames_;
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 writeAndEndSwakExpressionFunctionObject::writeAndEndSwakExpressionFunctionObject
@@ -82,7 +74,9 @@ void writeAndEndSwakExpressionFunctionObject::readParameters(const dictionary &d
 
     logicalExpression_=dict.lookup("logicalExpression");
 
-    logicalAccumulation_=logicalAccumulationsNames_[dict.lookup("logicalAccumulation")];
+    logicalAccumulation_=LogicalAccumulationNamedEnum::names[
+        dict.lookup("logicalAccumulation")
+    ];
 }
 
 bool writeAndEndSwakExpressionFunctionObject::endRunNow()
@@ -90,10 +84,15 @@ bool writeAndEndSwakExpressionFunctionObject::endRunNow()
     driver_->clearVariables();
     driver_->parse(logicalExpression_);
 
-    if(driver_->CommonValueExpressionDriver::getResultType()!=pTraits<bool>::typeName) {
+    if(
+        driver_->CommonValueExpressionDriver::getResultType()
+        !=
+        pTraits<bool>::typeName
+    ) {
         FatalErrorIn("writeAndEndSwakExpressionFunctionObject::endRunNow()")
             << "Logical Expression " << logicalExpression_
-                << " evaluates to type " << driver_->CommonValueExpressionDriver::getResultType()
+                << " evaluates to type "
+                << driver_->CommonValueExpressionDriver::getResultType()
                 << " when it should be " << pTraits<bool>::typeName
                 << endl
                 << exit(FatalError);
@@ -102,23 +101,24 @@ bool writeAndEndSwakExpressionFunctionObject::endRunNow()
     bool result=false;
 
     switch(logicalAccumulation_) {
-        case logAnd:
+        case LogicalAccumulationNamedEnum::logAnd:
             result=driver_->getReduced(andOp<bool>(),true);
             break;
-        case logOr:
+        case LogicalAccumulationNamedEnum::logOr:
             result=driver_->getReduced(orOp<bool>(),false);
             break;
         default:
             FatalErrorIn("executeIfSwakExpressionFunctionObject::condition()")
                 << "Unimplemented logical accumulation "
-                    << logicalAccumulationsNames_[logicalAccumulation_]
+                    << LogicalAccumulationNamedEnum::names[logicalAccumulation_]
                     << endl
                     << exit(FatalError);
     }
     if(writeDebug()) {
         Info << "Expression " << logicalExpression_
             << " evaluates to " << driver_->getResult<bool>() << endl;
-        Info << " -> " << logicalAccumulationsNames_[logicalAccumulation_]
+        Info << " -> "
+            << LogicalAccumulationNamedEnum::names[logicalAccumulation_]
             << " gives " << result << endl;
     }
 

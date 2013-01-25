@@ -42,7 +42,7 @@ SourceFiles
 
 #include "CommonValueExpressionDriver.H"
 
-#include "NamedEnum.H"
+#include "LogicalAccumulationNamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,16 +73,9 @@ class writeAndEndSwakExpressionFunctionObject
 
     void readParameters(const dictionary &);
 
-public:
-    enum logicalAccumulations {
-        logAnd,
-        logOr
-    };
-
 private:
     //- possible logical accumulations
-    static const NamedEnum<logicalAccumulations,2> logicalAccumulationsNames_;
-    logicalAccumulations logicalAccumulation_;
+    LogicalAccumulationNamedEnum::value logicalAccumulation_;
 
 protected:
 
