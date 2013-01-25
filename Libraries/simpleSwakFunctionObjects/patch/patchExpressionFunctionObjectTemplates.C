@@ -72,6 +72,9 @@ void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExp
             case NumericAccumulationNamedEnum::numAverage:
                 val=gAverage(result);
                 break;
+            // case NumericAccumulationNamedEnum::numSumMag:
+            //     val=gSumMag(result);
+            //     break;
             default:
                 WarningIn("patchExpressionFunctionObject::writeData")
                     << "Unknown accumultation type "

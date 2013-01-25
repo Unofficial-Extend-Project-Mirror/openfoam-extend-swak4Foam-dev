@@ -68,11 +68,12 @@ public:
         numMax,
         numAverage,
         numWeightedAverage,
-        numSum
+        numSum,
+        numSumMag
     };
 
     //- String representation of order enums
-    static const NamedEnum<value, 5> names;
+    static const NamedEnum<value, 6> names;
 
     static List<value> readAccumulations(
         const dictionary &dict,

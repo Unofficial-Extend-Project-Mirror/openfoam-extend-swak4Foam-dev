@@ -44,17 +44,18 @@ template<>
 const char* NamedEnum
 <
     NumericAccumulationNamedEnum::value,
-    5
+    6
 >::names[] =
 {
     "min",
     "max",
     "average",
     "weightedAverage",
-    "sum"
+    "sum",
+    "sumMag"
 };
 
-const NamedEnum<NumericAccumulationNamedEnum::value, 5>
+const NamedEnum<NumericAccumulationNamedEnum::value, 6>
     NumericAccumulationNamedEnum::names;
 
 

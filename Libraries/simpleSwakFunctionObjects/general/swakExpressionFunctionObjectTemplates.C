@@ -72,6 +72,9 @@ void swakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &dri
             case NumericAccumulationNamedEnum::numAverage:
                 val=gAverage(result);
                 break;
+            // case NumericAccumulationNamedEnum::numSumMag:
+            //     val=gSumMag(result);
+            //     break;
             default:
                 WarningIn("swakExpressionFunctionObject::writeData")
                     << "Unimplemented accumultation type "
