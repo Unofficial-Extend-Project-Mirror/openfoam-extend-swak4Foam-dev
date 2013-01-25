@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,56 +29,41 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "dumpSwakExpressionFunctionObject.H"
-#include "volFields.H"
-#include "IOmanip.H"
-#include "fvMesh.H"
-#include "fvCFD.H"
+#include "LogicalAccumulationNamedEnum.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+namespace Foam {
 
-namespace Foam
-{
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<>
-void dumpSwakExpressionFunctionObject::writeValue(Ostream &o,const scalar &val,unsigned int &w)
+const char* NamedEnum
+<
+    LogicalAccumulationNamedEnum::value,
+    2
+>::names[] =
 {
-    o << setw(w) << val;    
-}
+    "and",
+    "or"
+};
 
-template<class Type>
-void dumpSwakExpressionFunctionObject::writeValue(Ostream &o,const Type &val,unsigned int &w)
-{
-    for(label j=0;j<Type::nComponents;j++) {
-        o << setw(w) << val[j];
-    }    
-}
+const NamedEnum<LogicalAccumulationNamedEnum::value, 2>
+    LogicalAccumulationNamedEnum::names;
 
-template <class T>
-void dumpSwakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &driver)
-{
-    Field<T> result=driver.getResult<T>();
 
-    if (Pstream::master()) {
-        writeTime(name(),time().value());
-        writeData(name(),result);
-        endData(name());
-    } else {
-        Pout << "My data is lost because for dumpSwakExpressionFunctionObject"
-            << " only the masters data gets written" << endl;
-    }
-}
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-} // End namespace Foam
+
+// * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
+
+
+// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+
+} // namespace
 
 // ************************************************************************* //

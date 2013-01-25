@@ -120,6 +120,13 @@ protected:
 
     int startupSymbol(const word &name);
 
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const;
 
 public:
 
@@ -165,21 +172,21 @@ public:
 
     virtual const faMesh &aMesh() const;
 
-    vectorField *makePositionField();
+    vectorField *makePositionField() const;
 
-    vectorField *makePointField();
+    vectorField *makePointField() const;
 
-    vectorField *makeEdgeNormalField();
+    vectorField *makeEdgeNormalField() const;
 
-    vectorField *makeEdgeLengthField();
+    vectorField *makeEdgeLengthField() const;
 
-    vectorField *makeFaceNeighbourField();
+    vectorField *makeFaceNeighbourField() const;
 
-    vectorField *makeDeltaField();
+    vectorField *makeDeltaField() const;
 
-    scalarField *makeWeightsField();
+    scalarField *makeWeightsField() const;
 
-    scalarField *makeEdgeIdField();
+    scalarField *makeEdgeIdField() const;
 
     template<class Type>
     Field<Type> *getField(const string &name);

@@ -121,7 +121,10 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
     setDebug();
 }
 
-SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
+    const dictionary& dict,
+    const fvMesh&mesh
+)
  :
     SubsetValueExpressionDriver(dict),
     theSurface_(
@@ -159,7 +162,9 @@ bool SampledSurfaceValueExpressionDriver::update()
     return updated;
 }
 
-Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(const string &name,bool oldTime)
+Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<scalar,volScalarField,surfaceScalarField>
         (
@@ -168,7 +173,9 @@ Field<scalar> *SampledSurfaceValueExpressionDriver::getScalarField(const string 
         );
 }
 
-Field<vector> *SampledSurfaceValueExpressionDriver::getVectorField(const string &name,bool oldTime)
+Field<vector> *SampledSurfaceValueExpressionDriver::getVectorField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<vector,volVectorField,surfaceVectorField>
         (
@@ -177,7 +184,9 @@ Field<vector> *SampledSurfaceValueExpressionDriver::getVectorField(const string 
         );
 }
 
-Field<tensor> *SampledSurfaceValueExpressionDriver::getTensorField(const string &name,bool oldTime)
+Field<tensor> *SampledSurfaceValueExpressionDriver::getTensorField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<tensor,volTensorField,surfaceTensorField>
         (
@@ -186,7 +195,9 @@ Field<tensor> *SampledSurfaceValueExpressionDriver::getTensorField(const string 
         );
 }
 
-Field<symmTensor> *SampledSurfaceValueExpressionDriver::getSymmTensorField(const string &name,bool oldTime)
+Field<symmTensor> *SampledSurfaceValueExpressionDriver::getSymmTensorField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<symmTensor,volSymmTensorField,surfaceSymmTensorField>
         (
@@ -195,7 +206,9 @@ Field<symmTensor> *SampledSurfaceValueExpressionDriver::getSymmTensorField(const
         );
 }
 
-Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorField(const string &name,bool oldTime)
+Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorField(
+    const string &name,bool oldTime
+)
 {
     return sampleOrInterpolateInternal<sphericalTensor,volSphericalTensorField,surfaceSphericalTensorField>
         (
@@ -204,12 +217,12 @@ Field<sphericalTensor> *SampledSurfaceValueExpressionDriver::getSphericalTensorF
         );
 }
 
-vectorField *SampledSurfaceValueExpressionDriver::makePositionField()
+vectorField *SampledSurfaceValueExpressionDriver::makePositionField() const
 {
     return new vectorField(theSurface_.Cf());  // valgrind reports huge memory losses here
 }
 
-scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
+scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField() const
 {
     FatalErrorIn("SampledSurfaceValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
@@ -224,24 +237,25 @@ scalarField *SampledSurfaceValueExpressionDriver::makeCellVolumeField()
 //     notImplemented("SampledSurfaceValueExpressionDriver::makePointField");
 // }
 
-scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()
+scalarField *SampledSurfaceValueExpressionDriver::makeFaceAreaMagField() const
 {
     if(debug) {
         Pout << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
-            << " size: " << this->size() << " magSf: " << theSurface_.magSf().size()
+            << " size: " << this->size() << " magSf: "
+            << theSurface_.magSf().size()
             << endl;
     }
     return new scalarField(theSurface_.magSf());
 }
 
-scalarField *SampledSurfaceValueExpressionDriver::makeFaceFlipField()
+scalarField *SampledSurfaceValueExpressionDriver::makeFaceFlipField() const
 {
     scalarField *result=new scalarField(this->size(),false);
 
     return result;
 }
 
-vectorField *SampledSurfaceValueExpressionDriver::makeFaceNormalField()
+vectorField *SampledSurfaceValueExpressionDriver::makeFaceNormalField() const
 {
     autoPtr<vectorField> sf(this->makeFaceAreaField());
     autoPtr<scalarField> magSf(this->makeFaceAreaMagField());
@@ -249,7 +263,7 @@ vectorField *SampledSurfaceValueExpressionDriver::makeFaceNormalField()
     return new vectorField(sf()/magSf());
 }
 
-vectorField *SampledSurfaceValueExpressionDriver::makeFaceAreaField()
+vectorField *SampledSurfaceValueExpressionDriver::makeFaceAreaField() const
 {
     return new vectorField(theSurface_.Sf());
 }
@@ -272,6 +286,28 @@ bool SampledSurfaceValueExpressionDriver::existsPluginFunction(
         *this,
         name
     );
+}
+
+tmp<scalarField> SampledSurfaceValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!faceSize) {
+        Pout << "Expected size: " << size
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("SampledSurfaceValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(makeFaceAreaMagField());
 }
 
 // ************************************************************************* //

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 25 Jan 2013 15:15:12 +0100
+Subject: Re: Generalie the logicalAccumulationEnum and create an accumulationEnum
+Message-Id: <ff6a74946ae8db25-cd75af29ee207d05-artemis@bgs-cool-greybook.local>
+References: <ff6a74946ae8db25-0-artemis@workstation008.office.ice-sf.at>
+In-Reply-To: <ff6a74946ae8db25-0-artemis@workstation008.office.ice-sf.at>
+
+While we're aqt it generalize this for accumulations. Also needed for cf0b98d9a30c7d81

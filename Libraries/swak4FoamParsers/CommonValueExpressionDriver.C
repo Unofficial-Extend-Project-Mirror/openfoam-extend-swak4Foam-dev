@@ -714,7 +714,7 @@ const Time &CommonValueExpressionDriver::runTime() const
 scalarField *CommonValueExpressionDriver::makeModuloField(
     const scalarField &a,
     const scalarField &b
-)
+) const
 {
     assert(a.size()==b.size());
 
@@ -734,7 +734,7 @@ scalarField *CommonValueExpressionDriver::makeModuloField(
     return result;
 }
 
-scalarField *CommonValueExpressionDriver::makeRandomField(label seed)
+scalarField *CommonValueExpressionDriver::makeRandomField(label seed) const
 {
     scalarField *result=new scalarField(this->size());
 
@@ -775,7 +775,7 @@ scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
     return lines_[name](t);
 }
 
-scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
+scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed) const
 {
     scalarField *result=new scalarField(this->size());
 
@@ -1543,6 +1543,36 @@ bool CommonValueExpressionDriver::isForeignMesh(
 ) const
 {
     return MeshesRepository::getRepository().hasMesh(name);
+}
+
+tmp<scalarField> CommonValueExpressionDriver::weights(
+        label size,
+        bool point
+    ) const
+{
+    if(point) {
+        const label pSize=this->pointSize();
+        bool isCorrect=(size==pSize);
+        reduce(isCorrect,andOp<bool>());
+        if(!isCorrect) {
+            Pout << "Expected Size: " << size << " PointSize:" << pSize << endl;
+            FatalErrorIn("CommonValueExpressionDriver::weights()")
+                << "At least one processor wants the wrong field size. "
+                    << "Check above"
+                    << endl
+                    << exit(FatalError);
+        }
+        // points have weight 1 per default
+        tmp<scalarField> result(
+            new scalarField(
+                size,
+                1.
+            )
+        );
+        return result;
+    } else {
+        return this->weightsNonPoint(size);
+    }
 }
 
 } // namespace

@@ -46,6 +46,10 @@ vertices
 
 blocks          
 (
+    // added by pyFoam, DisplayBlockMesh
+    hex ( 13 17 18 14 1 5 6 2  ) (1 1 1) simpleGrading (1 1 1)
+    // added by pyFoam, DisplayBlockMesh
+    hex ( 17 13 14 18 5 1 2 6  ) (10 20 20) simpleGrading (1 1 1)
     hex (0 1 5 4 12 13 17 16) (23 8 1) simpleGrading (1 1 1)
     hex (2 3 7 6 14 15 19 18) (19 8 1) simpleGrading (1 1 1)
     hex (4 5 9 8 16 17 21 20) (23 42 1) simpleGrading (1 1 1)

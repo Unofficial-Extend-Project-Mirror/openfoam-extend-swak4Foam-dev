@@ -27,7 +27,7 @@ Description
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef VALUE_EXPRESSION_DRIVER_I_H
@@ -492,7 +492,9 @@ inline FType *FaFieldValueExpressionDriver::makeField(const Field<typename FType
 }
 
 template<class FType>
-inline FType *FaFieldValueExpressionDriver::makeConstantField(const typename FType::value_type &val)
+inline FType *FaFieldValueExpressionDriver::makeConstantField(
+    const typename FType::value_type &val
+) const
 {
     std::ostringstream buff;
     buff << "constant" << pTraits<typename FType::value_type>::typeName;

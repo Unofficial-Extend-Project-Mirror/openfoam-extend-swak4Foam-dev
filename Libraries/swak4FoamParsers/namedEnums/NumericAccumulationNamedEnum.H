@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,28 +29,24 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    patchExpressionFunctionObject
+    Foam::NumericAccumulationNamedEnum
 
 Description
-    Evaluates an expression of the fields on the patches
 
 SourceFiles
-    patchExpressionFunctionObject.C
+    NumericAccumulationNamedEnum.C
 
 Contributors/Copyright:
-    2010-2011 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef patchExpressionFunctionObject_H
-#define patchExpressionFunctionObject_H
+#ifndef NumericAccumulationNamedEnum_H
+#define NumericAccumulationNamedEnum_H
 
-#include "patchFunctionObject.H"
-
-#include "PatchValueExpressionDriver.H"
-
-#include "NumericAccumulationNamedEnum.H"
+#include "NamedEnum.H"
+#include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,68 +54,31 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class patchExpressionFunctionObject Declaration
+                           Class NumericAccumulationNamedEnum Declaration
 \*---------------------------------------------------------------------------*/
 
-class patchExpressionFunctionObject
-:
-    public patchFunctionObject
+class NumericAccumulationNamedEnum
 {
+    // Private data
 
-    // Private Member Functions
-
-    //- Disallow default bitwise copy construct
-    patchExpressionFunctionObject(const patchExpressionFunctionObject&);
-
-    //- Disallow default bitwise assignment
-    void operator=(const patchExpressionFunctionObject&);
-
-    //- integrate single field on all patches
-    template <class T>
-    Field<T> evaluate(const word& fieldName,T preset) const;
-
-    //- the expression that is to be evaluated
-    string expression_;
-
-    //- the specification
-    dictionary data_;
-
-    //- list with the accumulations of evaluated expression
-    List<NumericAccumulationNamedEnum::value> accumulations_;
-
-    PtrList<PatchValueExpressionDriver> drivers_;
-
-protected:
-
-    word dirName();
-
-    stringList columnNames();
-
-    wordList fileNames();
-
-    template<class T>
-    void writeTheData(const word &pName,PatchValueExpressionDriver &driver);
 public:
 
-    //- Runtime type information
-    TypeName("patchExpression");
+    enum value {
+        numMin,
+        numMax,
+        numAverage,
+        numWeightedAverage,
+        numSum,
+        numSumMag
+    };
 
+    //- String representation of order enums
+    static const NamedEnum<value, 6> names;
 
-    // Constructors
-
-    //- Construct from components
-    patchExpressionFunctionObject
-    (
-        const word&,
-        const Time&,
-        const dictionary&
+    static List<value> readAccumulations(
+        const dictionary &dict,
+        const word &name
     );
-
-    //- Do the writing
-    virtual void write();
-
-    //- read the stuff
-    virtual bool start();
 };
 
 
@@ -127,9 +86,7 @@ public:
 
 } // End namespace Foam
 
-#ifdef NoRepository
-#   include "patchExpressionFunctionObjectTemplates.C"
-#endif
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
