@@ -82,13 +82,15 @@ namespace Foam {
     }
 
     template<class Type>
-    Field<Type> *CommonValueExpressionDriver::makeField(Type val,bool isPoint)
+    tmp<Field<Type> > CommonValueExpressionDriver::makeField(Type val,bool isPoint)
     {
         label size=this->size();
         if(isPoint) {
             size=this->pointSize();
         }
-        return new Field<Type>(size,val);
+        return tmp<Field<Type> >(
+            new Field<Type>(size,val)
+        );
     }
 
     template<class Type>
