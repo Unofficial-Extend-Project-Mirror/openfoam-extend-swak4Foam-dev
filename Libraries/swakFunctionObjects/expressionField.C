@@ -121,6 +121,8 @@ void Foam::expressionField::read(const dictionary& dict)
 void Foam::expressionField::execute()
 {
     if(active_) {
+        Info << "Creating expression field " << name_ << " ..." << flush;
+
         FieldValueExpressionDriver &driver=driver_();
 
         bool oldDimsetDebug=dimensionSet::debug;
@@ -131,6 +133,8 @@ void Foam::expressionField::execute()
         driver.parse(expression_);
 
         dimensionSet::debug=oldDimsetDebug;
+
+        Info << " type:" << driver.getResultType() << endl;
 
         if(driver.resultIsTyp<volVectorField>()) {
             storeField(
