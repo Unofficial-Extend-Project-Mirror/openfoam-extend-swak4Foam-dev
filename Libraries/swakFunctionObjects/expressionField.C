@@ -53,7 +53,7 @@ Foam::expressionField::expressionField
                 << endl;
     }
     read(dict);
-    execute();
+    write();
 }
 
 Foam::expressionField::~expressionField()
@@ -118,7 +118,7 @@ void Foam::expressionField::read(const dictionary& dict)
     }
 }
 
-void Foam::expressionField::execute()
+void Foam::expressionField::write()
 {
     if(active_) {
         Info << "Creating expression field " << name_ << " ..." << flush;
@@ -214,7 +214,7 @@ void Foam::expressionField::end()
     execute();
 }
 
-void Foam::expressionField::write()
+void Foam::expressionField::execute()
 {
 }
 

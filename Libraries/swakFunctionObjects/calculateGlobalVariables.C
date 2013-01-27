@@ -97,7 +97,7 @@ void Foam::calculateGlobalVariables::read(const dictionary& dict)
             << endl;
 }
 
-void Foam::calculateGlobalVariables::execute()
+void Foam::calculateGlobalVariables::write()
 {
     executeAndWriteToGlobal();
 
@@ -110,7 +110,7 @@ void Foam::calculateGlobalVariables::end()
 {
 }
 
-void Foam::calculateGlobalVariables::write()
+void Foam::calculateGlobalVariables::execute()
 {
 }
 

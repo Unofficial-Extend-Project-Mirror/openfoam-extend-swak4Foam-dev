@@ -54,7 +54,7 @@ Foam::manipulateField::manipulateField
                 << endl;
     }
     read(dict);
-    execute();
+    write();
 }
 
 Foam::manipulateField::~manipulateField()
@@ -163,7 +163,7 @@ void Foam::manipulateField::read(const dictionary& dict)
     }
 }
 
-void Foam::manipulateField::execute()
+void Foam::manipulateField::write()
 {
     if(active_) {
         FieldValueExpressionDriver &driver=driver_();
@@ -315,7 +315,7 @@ void Foam::manipulateField::end()
     execute();
 }
 
-void Foam::manipulateField::write()
+void Foam::manipulateField::execute()
 {
 }
 
