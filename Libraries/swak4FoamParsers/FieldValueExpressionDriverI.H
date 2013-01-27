@@ -73,7 +73,7 @@ tmp<T>  FieldValueExpressionDriver::getField(const string &name,bool getOldTime)
             name,
             true,  // fail if not found
             getOldTime
-        )
+        ).ptr()
     );
 }
 
@@ -88,7 +88,7 @@ tmp<T>  FieldValueExpressionDriver::getPointField(
             name,
             true,  // fail if not found
             getOldTime
-        )
+        ).ptr()
     );
 }
 

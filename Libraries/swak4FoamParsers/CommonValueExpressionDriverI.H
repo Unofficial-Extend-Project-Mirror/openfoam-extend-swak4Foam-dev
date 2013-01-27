@@ -664,6 +664,10 @@ namespace Foam {
             // oldTime automatically read
         }
 
+        if(debug) {
+            Info << "autoPtr: valid()=" << f.valid()
+                << " empty()=" << f.empty() << endl;
+        }
         if(
             !f.valid()
             &&
@@ -676,6 +680,10 @@ namespace Foam {
         }
 
         if(f.valid()) {
+            if(debug) {
+                Info << "Valid " << name << " found. Removing dimensions"
+                    << endl;
+            }
             f->dimensions().reset(nullDim);
             if(f->nOldTimes()>0) {
                 if(debug) {
