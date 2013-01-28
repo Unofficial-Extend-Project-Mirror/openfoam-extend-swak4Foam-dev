@@ -62,11 +62,23 @@
 #+begin_src plantuml :file parserDriverLexer.png
 Driver o-- Lexer
 Driver o-- GrammarParser
-Lexer ..> GrammarParser
+Lexer .> GrammarParser
 #+end_src
 
 #+RESULTS:
 [[file:parserDriverLexer.png]]
+
+  Which parser is used depends on the entity the calculation is done
+  on and determines the supported functionality (differential
+  operators are for instance not available on =patch=). Figure
+  \ref{fig:parserRelations} gives an overview of the available
+  parser/driver and their relations. Parsers with a =<< grammar >>= in
+  the name implement a parser/lexer pair which is used by the drivers
+  derived from it. Drivers whose names are in /italics/ are only
+  abstract classes.
+
+  As all drivers are derived from /Common/ there is a set of options
+  that is available in all drivers/parser.
 
   #+CAPTION: Inheritance relation of the Parsers
   #+LABEL: fig:parserRelations
@@ -105,6 +117,30 @@ hide circle
 
 #+RESULTS:
 [[file:parserRelationships.png]]
+
+  Usually the parser used is determined by the using entity (for
+  instance =patch= is used by =groovyBC=) but sometimes (for instance
+  the =swakExpression=-function object) the used parser can by
+  selected by name. These names and a description of the entity the
+  parser works on are given in table \ref{tab:selectionNames}.
+
+  #+CAPTION: Selection names for the parsers
+  #+LABEL: tab:selectionNames
+  | name              | Description                                     |
+  |-------------------+-------------------------------------------------|
+  | =internalField=   | Calculation on the internal values of a field   |
+  | =patch=           | Calculation on a boundary patch                 |
+  | =faceZone=        | On a =faceZone= of the mesh                     |
+  | =faceSet=         | On a =faceSet=                                  |
+  | =cellZone=        | Calculation on a =cellZone=                     |
+  | =cellSet=         | Set of cells                                    |
+  | =set=             | Calculation on a =sampledSet=                   |
+  | =surface=         | Calculation on a =sampledSurface=               |
+  | =internalFaField= | Internal values of a FAM-field (=1.6-ext= only) |
+  | =faPatch=         | Boundary patch of a FAM-field (=1.6-ext= only)  |
+
+  In principle new parsers for different entities can be implemented
+  and selected at run-time.
 
 ** Expressions
 ** Parameters
