@@ -1454,6 +1454,9 @@ S_{expl} + S_{impl} T
      Usually only the =libs=-entry in the controlDict has to be
      changed (if the library is used at all). Names of the function
      objects stay the same
+**** Change in write behaviour of =expressionField= and =manipulateField=
+     Now the =outputControl=-entry is honored. If set wrong the field
+     is *no longer* calculated/manipulated at every time-step
 *** Bug fixes
 **** =groovyBC=: =value= reset to $0$ during construction
      If no =refValue= is given during construction then a value of $0$
@@ -1487,6 +1490,11 @@ S_{expl} + S_{impl} T
 **** =valuePatches= did not work for mapped patches
      This kind of patch was not identified as something that could
      have the value fixed
+**** =expressionField= and =manipulateField= did not honor the =outputControl=-entry
+     =expressionFields= were calculated at every time-step, even if
+     the computational cost was high. Now if =outputControl= is
+     =outputTime= the field is only calculated if it is going to be
+     written
 *** New features
 **** Access fields from different cases
      It is now possible for expression on =internalFields= to access
@@ -1604,6 +1612,9 @@ S_{expl} + S_{impl} T
      - face area for surfaces etc
      - $1$ if there is no appropriate weight (usually values defined
        on points). The result is equivalent to =average=.
+**** =expressionField= reports name and type of the created field
+     The title says it all. Should give the user additional feedback
+     about what is happening
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

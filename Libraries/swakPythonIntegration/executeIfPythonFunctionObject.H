@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -33,6 +38,10 @@ Description
 SourceFiles
     executeIfPythonFunctionObject.C
 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef executeIfPythonFunctionObject_H
@@ -60,7 +69,7 @@ class executeIfPythonFunctionObject
 
     //- Disallow default bitwise copy construct
     executeIfPythonFunctionObject(const executeIfPythonFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const executeIfPythonFunctionObject&);
 
@@ -69,7 +78,7 @@ class executeIfPythonFunctionObject
 
     void readParameters(const dictionary &);
 protected:
-    
+
     //- the actual conition that determines whether the FO should be executed
     virtual bool condition();
 

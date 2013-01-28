@@ -692,12 +692,14 @@ namespace Foam {
                         << endl;
                 }
 
+#ifndef FOAM_OLDTIME_PROBLEM
                 // go through ALL old times
                 T *fp=f.operator->();
                 while(fp->nOldTimes()>0) {
-                    fp=&(fp->oldTime());
+                    fp=&(fp->oldTime());  // 1.6-ext seems to have a problem here
                     fp->dimensions().reset(nullDim);
                 }
+#endif
             }
         }
 

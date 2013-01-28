@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "stdoutFromPythonScriptProvider.H"
@@ -39,7 +48,7 @@ namespace Foam
     // to keep the macro happy
     typedef dynamicFunctionObjectListProxy::dynamicDictionaryProvider dynamicFunctionObjectListProxydynamicDictionaryProvider;
 
-    addToRunTimeSelectionTable 
+    addToRunTimeSelectionTable
     (
         dynamicFunctionObjectListProxydynamicDictionaryProvider,
         stdoutFromPythonScriptProvider,
@@ -61,12 +70,12 @@ namespace Foam
         }
 
         initEnvironment(owner.time());
-        
+
         setRunTime(owner.time());
 
         readCode(dict,"script",thePythonScript_);
     }
-        
+
 
     string stdoutFromPythonScriptProvider::getDictionaryText() {
         string buffer;

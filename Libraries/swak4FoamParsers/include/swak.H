@@ -50,6 +50,8 @@ Contributors/Copyright:
 
 #if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
 #define FOAM_HAS_SORTED_TOC
+#else
+#define FOAM_OLDTIME_PROBLEM
 #endif
 
 #if (FOAM_VERSION4SWAK_MAJOR > 1)
