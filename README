@@ -621,6 +621,12 @@ S_{expl} + S_{impl} T
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
+
+   Currenly problematice parts seem to be:
+   - update and =magSf=-calculation of =SampledSurface= (marked in
+     =SampledSurfaceExpressionDriver.C=)
+   - Python interpreter (but no calls in swak were found in the
+     stack-trace that could be responsible)
 ** No point-vector construction for Subsets
    The same problem that was mentioned in
    [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
