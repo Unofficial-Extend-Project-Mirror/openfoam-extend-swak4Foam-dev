@@ -172,42 +172,42 @@ public:
 
     virtual const faMesh &aMesh() const;
 
-    vectorField *makePositionField() const;
+    tmp<vectorField> makePositionField() const;
 
-    vectorField *makePointField() const;
+    tmp<vectorField> makePointField() const;
 
-    vectorField *makeEdgeNormalField() const;
+    tmp<vectorField> makeEdgeNormalField() const;
 
-    vectorField *makeEdgeLengthField() const;
+    tmp<vectorField> makeEdgeLengthField() const;
 
-    vectorField *makeFaceNeighbourField() const;
+    tmp<vectorField> makeFaceNeighbourField() const;
 
-    vectorField *makeDeltaField() const;
+    tmp<vectorField> makeDeltaField() const;
 
-    scalarField *makeWeightsField() const;
+    tmp<scalarField> makeWeightsField() const;
 
-    scalarField *makeEdgeIdField() const;
-
-    template<class Type>
-    Field<Type> *getField(const string &name);
+    tmp<scalarField> makeEdgeIdField() const;
 
     template<class Type>
-    Field<Type> *getOldTimeField(const string &name);
+    tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
-    Field<Type> *getSurfaceNormalField(const string &name);
+    tmp<Field<Type> > getOldTimeField(const string &name);
 
     template<class Type>
-    Field<Type> *getPatchInternalField(const string &name);
+    tmp<Field<Type> > getSurfaceNormalField(const string &name);
 
     template<class Type>
-    Field<Type> *getPatchNeighbourField(const string &name);
+    tmp<Field<Type> > getPatchInternalField(const string &name);
 
     template<class Type>
-    Field<Type> *toFace(const Field<Type> &);
+    tmp<Field<Type> > getPatchNeighbourField(const string &name);
 
     template<class Type>
-    Field<Type> *toPoint(const Field<Type> &);
+    tmp<Field<Type> > toFace(const Field<Type> &);
+
+    template<class Type>
+    tmp<Field<Type> > toPoint(const Field<Type> &);
 
     //- return a new plugin-function
     virtual autoPtr<CommonPluginFunction> newPluginFunction(
