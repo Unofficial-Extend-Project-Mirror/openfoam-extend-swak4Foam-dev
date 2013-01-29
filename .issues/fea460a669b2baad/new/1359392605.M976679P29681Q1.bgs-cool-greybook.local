@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 28 Jan 2013 18:01:34 +0100
+State: new
+Subject: =correctBC=-function object
+Message-Id: <fea460a669b2baad-0-artemis@bgs-cool-greybook.local>
+
+Function-object that calls correctBoundaryCondition for an existing
+field. The two existing function objects (manipulate with a
+"falseConditon") is not obvious and readAndUpdateField loads a new
+field. Which is not wanted

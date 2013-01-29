@@ -186,68 +186,68 @@ public:
     );
 
     template<class FType>
-    inline FType *makeConstantField(
+    inline tmp<FType> makeConstantField(
         const typename FType::value_type &val
     ) const;
 
     template<class FType>
-    inline FType *makeField(const Field<typename FType::value_type> &val);
+    inline tmp<FType> makeField(const Field<typename FType::value_type> &val);
 
     // make constant fields
-    areaVectorField *makeVectorField(
-        areaScalarField *x,
-        areaScalarField *y,
-        areaScalarField *z
+    tmp<areaVectorField> makeVectorField(
+        const areaScalarField &x,
+        const areaScalarField &y,
+        const areaScalarField &z
     );
 
-    edgeVectorField *makeEdgeVectorField(
-        edgeScalarField *x,
-        edgeScalarField *y,
-        edgeScalarField *z
+    tmp<edgeVectorField> makeEdgeVectorField(
+        const edgeScalarField &x,
+        const edgeScalarField &y,
+        const edgeScalarField &z
     );
 
-    areaTensorField *makeTensorField(
-        areaScalarField *,areaScalarField *,areaScalarField *,
-        areaScalarField *,areaScalarField *,areaScalarField *,
-        areaScalarField *,areaScalarField *,areaScalarField *
+    tmp<areaTensorField> makeTensorField(
+        const areaScalarField &,const areaScalarField &,const areaScalarField &,
+        const areaScalarField &,const areaScalarField &,const areaScalarField &,
+        const areaScalarField &,const areaScalarField &,const areaScalarField &
     );
-    edgeTensorField *makeEdgeTensorField(
-        edgeScalarField *,edgeScalarField *,edgeScalarField *,
-        edgeScalarField *,edgeScalarField *,edgeScalarField *,
-        edgeScalarField *,edgeScalarField *,edgeScalarField *
-    );
-
-    areaSymmTensorField *makeSymmTensorField(
-        areaScalarField *,areaScalarField *,areaScalarField *,
-        areaScalarField *,areaScalarField *,areaScalarField *
+    tmp<edgeTensorField> makeEdgeTensorField(
+        const edgeScalarField &,const edgeScalarField &,const edgeScalarField &,
+        const edgeScalarField &,const edgeScalarField &,const edgeScalarField &,
+        const edgeScalarField &,const edgeScalarField &,const edgeScalarField &
     );
 
-    edgeSymmTensorField *makeEdgeSymmTensorField(
-        edgeScalarField *,edgeScalarField *,edgeScalarField *,
-        edgeScalarField *,edgeScalarField *,edgeScalarField *
+    tmp<areaSymmTensorField> makeSymmTensorField(
+        const areaScalarField &,const areaScalarField &,const areaScalarField &,
+        const areaScalarField &,const areaScalarField &,const areaScalarField &
     );
 
-    areaSphericalTensorField *makeSphericalTensorField(areaScalarField *);
+    tmp<edgeSymmTensorField> makeEdgeSymmTensorField(
+        const edgeScalarField &,const edgeScalarField &,const edgeScalarField &,
+        const edgeScalarField &,const edgeScalarField &,const edgeScalarField &
+    );
 
-    edgeSphericalTensorField *makeEdgeSphericalTensorField(edgeScalarField *);
+    tmp<areaSphericalTensorField> makeSphericalTensorField(const areaScalarField &);
+
+    tmp<edgeSphericalTensorField> makeEdgeSphericalTensorField(const edgeScalarField &);
 
     // modulo operator
-    areaScalarField *makeModuloField(
+    tmp<areaScalarField> makeModuloField(
         const areaScalarField &a,
         const areaScalarField &b
     ) const;
 
     // make special fields
-    edgeVectorField *makeEdgePositionField() const;
-    edgeVectorField *makeEdgeProjectionField() const;
-    edgeVectorField *makeEdgeField() const;
-    edgeScalarField *makeLengthField() const;
-    areaVectorField *makePositionField() const;
-    areaScalarField *makeRDistanceField(const areaVectorField &r) const;
-    areaScalarField *makeAreaField() const;
-    areaScalarField *makeRandomField(label seed=0) const;
-    areaScalarField *makeGaussRandomField(label seed=0) const;
-    areaScalarField *makeCellIdField() const;
+    tmp<edgeVectorField> makeEdgePositionField() const;
+    tmp<edgeVectorField> makeEdgeProjectionField() const;
+    tmp<edgeVectorField> makeEdgeField() const;
+    tmp<edgeScalarField> makeLengthField() const;
+    tmp<areaVectorField> makePositionField() const;
+    tmp<areaScalarField> makeRDistanceField(const areaVectorField &r) const;
+    tmp<areaScalarField> makeAreaField() const;
+    tmp<areaScalarField> makeRandomField(label seed=0) const;
+    tmp<areaScalarField> makeGaussRandomField(label seed=0) const;
+    tmp<areaScalarField> makeCellIdField() const;
 
     //- what type
     const word &typ() const { return typ_; }
@@ -263,19 +263,19 @@ public:
 
     // Logical expressions
     template <class Field>
-    Field *makeLogicalField(scalar v);
+    tmp<Field> makeLogicalField(scalar v);
 
     template <class Op,class Field>
-    Field *doCompare(Field *a,Op op,Field *b);
+    tmp<Field> doCompare(const Field &a,Op op,const Field &b);
 
     template <class Op,class Field>
-    Field *doLogicalOp(Field *a,Op op,Field *b);
+    tmp<Field> doLogicalOp(const Field &a,Op op,const Field &b);
 
     template <class Field>
-    Field *doLogicalNot(Field *a);
+    tmp<Field> doLogicalNot(const Field &a);
 
     template <class T,class Field>
-    T * doConditional(Field *l,T* yes,T* no,T* result);
+    tmp<T>  doConditional(const Field &l,const T &yes,const T &no);
 
     template<class T>
     static void makePatches(
