@@ -923,65 +923,75 @@ namespace Foam {
         */
 
     template <class Op,class Type>
-    Field<bool> *CommonValueExpressionDriver::doCompare(
-        Field<Type> *a,
+    tmp<Field<bool> > CommonValueExpressionDriver::doCompare(
+        const Field<Type> &a,
         Op op,
-        Field<Type> *b
+        const Field<Type> &b
     )
     {
-        assert(a->size()==b->size());
+        assert(a.size()==b.size());
 
-        Field<bool> *res=new Field<bool>(a->size(),false);
+        tmp<Field<bool> > res(
+            new Field<bool>(a.size(),false)
+        );
 
-        forAll(*res,i) {
-            (*res)[i]=op((*a)[i],(*b)[i]);
+        forAll(res(),i) {
+            res()[i]=op(a[i],b[i]);
         }
 
         return res;
     }
 
     template <class Op>
-    Field<bool> *CommonValueExpressionDriver::doLogicalOp(
-        Field<bool> *a,
+    tmp<Field<bool> > CommonValueExpressionDriver::doLogicalOp(
+        const Field<bool> &a,
         Op op,
-        Field<bool> *b
+        const Field<bool> &b
     )
     {
-        assert(a->size()==b->size());
+        assert(a.size()==b.size());
 
-        Field<bool> *res=new Field<bool>(a->size(),false);
+        tmp<Field<bool> > res(
+            new Field<bool>(a.size(),false)
+        );
 
-        forAll(*res,i) {
-            (*res)[i]=op((*a)[i],(*b)[i]);
+        forAll(res(),i) {
+            res()[i]=op(a[i],b[i]);
         }
 
         return res;
     }
 
     template<class Type>
-    Field<Type> *CommonValueExpressionDriver::doConditional(
-        Field<bool> *d,
-        Field<Type> *yes,
-        Field<Type> *no
+    tmp<Field<Type> > CommonValueExpressionDriver::doConditional(
+        const Field<bool> &d,
+        const Field<Type> &yes,
+        const Field<Type> &no
     )
     {
-        assert(yes->size()==no->size() && d->size()==yes->size());
+        assert(yes.size()==no.size() && d.size()==yes.size());
 
-        Field<Type> *res=new Field<Type>(yes->size());
+        tmp<Field<Type> > res(
+            new Field<Type>(yes.size())
+        );
 
-        forAll(*res,i) {
-            (*res)[i] = (*d)[i] ? (*yes)[i] : (*no)[i];
+        forAll(res(),i) {
+            res()[i] = d[i] ? yes[i] : no[i];
         }
 
         return res;
     }
 
-    Field<bool> *CommonValueExpressionDriver::doLogicalNot(Field<bool> *a)
+    tmp<Field<bool> > CommonValueExpressionDriver::doLogicalNot(
+        const Field<bool> &a
+    )
     {
-        Field<bool> *res=new Field<bool>(a->size());
+        tmp<Field<bool> > res(
+            new Field<bool>(a.size())
+        );;
 
-        forAll(*res,i) {
-            (*res)[i] = (*a)[i];
+        forAll(res(),i) {
+            res()[i] = a[i];
         }
 
         return res;
