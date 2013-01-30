@@ -657,6 +657,12 @@ S_{expl} + S_{impl} T
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
+
+   Currenly problematice parts seem to be:
+   - update and =magSf=-calculation of =SampledSurface= (marked in
+     =SampledSurfaceExpressionDriver.C=)
+   - Python interpreter (but no calls in swak were found in the
+     stack-trace that could be responsible)
 ** Non-treatment of the inner product =&= of symmetric tensors
    Before OpenFOAM 2.1 the inner product of two symmetric tensors was
    a symmetric tensor. Since 2.1 it is a general tensor. As the
@@ -1549,6 +1555,9 @@ S_{expl} + S_{impl} T
      Usually only the =libs=-entry in the controlDict has to be
      changed (if the library is used at all). Names of the function
      objects stay the same
+**** Change in write behaviour of =expressionField= and =manipulateField=
+     Now the =outputControl=-entry is honored. If set wrong the field
+     is *no longer* calculated/manipulated at every time-step
 *** Bug fixes
 **** 2.x-branch did not compile on 2.0
      Branch only compiled on 2.1, but not on 2.0 due to changes in the
@@ -1586,6 +1595,7 @@ S_{expl} + S_{impl} T
 **** =valuePatches= did not work for mapped patches
      This kind of patch was not identified as something that could
      have the value fixed
+<<<<<<< variant A
 **** Recent versions of 2.1.x break compilation of =CommonValueExpressionDriver.C=
      The definition of the operator =lessOp= clashed with another
      definition. Renamed.
@@ -1594,6 +1604,14 @@ S_{expl} + S_{impl} T
 *** New Examples
 **** Cases from the /OSCFD12/ Conference in London
      On the slides the case files were promised
+>>>>>>> variant B
+**** =expressionField= and =manipulateField= did not honor the =outputControl=-entry
+     =expressionFields= were calculated at every time-step, even if
+     the computational cost was high. Now if =outputControl= is
+     =outputTime= the field is only calculated if it is going to be
+     written
+####### Ancestor
+======= end
 *** New features
 **** Access fields from different cases
      It is now possible for expression on =internalFields= to access
@@ -1711,6 +1729,9 @@ S_{expl} + S_{impl} T
      - face area for surfaces etc
      - $1$ if there is no appropriate weight (usually values defined
        on points). The result is equivalent to =average=.
+**** =expressionField= reports name and type of the created field
+     The title says it all. Should give the user additional feedback
+     about what is happening
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

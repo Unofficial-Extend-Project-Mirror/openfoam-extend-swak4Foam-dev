@@ -224,13 +224,13 @@ bool FieldValueExpressionDriver::isPointZone(const string &name)
     }
 }
 
-volScalarField *FieldValueExpressionDriver::makeModuloField(
+tmp<volScalarField> FieldValueExpressionDriver::makeModuloField(
     const volScalarField &a,
     const volScalarField &b)
 {
-    volScalarField *result_=makeConstantField<volScalarField>(0.);
+    tmp<volScalarField> result=makeConstantField<volScalarField>(0.);
 
-    forAll(*result_,cellI) {
+    forAll(result(),cellI) {
         scalar val=fmod(a[cellI],b[cellI]);
 
         if(fabs(val)>(b[cellI]/2)) {
@@ -241,32 +241,31 @@ volScalarField *FieldValueExpressionDriver::makeModuloField(
             }
         }
 
-        (*result_)[cellI]=val;
+        result()[cellI]=val;
     }
 
-    result_->correctBoundaryConditions();
+    result->correctBoundaryConditions();
 
-    return result_;
+    return result;
 }
 
-volScalarField *FieldValueExpressionDriver::makeRandomField(label seed)
+tmp<volScalarField> FieldValueExpressionDriver::makeRandomField(label seed)
 {
-    volScalarField *f=makeConstantField<volScalarField>(0.);
+    tmp<volScalarField> f=makeConstantField<volScalarField>(0.);
 
-    autoPtr<scalarField> rField(CommonValueExpressionDriver::makeRandomField(seed));
-    f->internalField()=rField();
+    f->internalField()=CommonValueExpressionDriver::makeRandomField(seed);
 
     f->correctBoundaryConditions();
 
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeCellIdField()
+tmp<volScalarField> FieldValueExpressionDriver::makeCellIdField()
 {
-    volScalarField *f=makeConstantField<volScalarField>(0.);
+    tmp<volScalarField> f=makeConstantField<volScalarField>(0.);
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=scalar(cellI);
+    forAll(f(),cellI) {
+        f()[cellI]=scalar(cellI);
     }
 
     f->correctBoundaryConditions();
@@ -274,34 +273,35 @@ volScalarField *FieldValueExpressionDriver::makeCellIdField()
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeGaussRandomField(label seed)
+tmp<volScalarField> FieldValueExpressionDriver::makeGaussRandomField(label seed)
 {
-    volScalarField *f=makeConstantField<volScalarField>(0.);
+    tmp<volScalarField> f=makeConstantField<volScalarField>(0.);
 
-    autoPtr<scalarField> rField(CommonValueExpressionDriver::makeGaussRandomField(seed));
-    f->internalField()=rField();
+    f->internalField()=CommonValueExpressionDriver::makeGaussRandomField(seed);
 
     f->correctBoundaryConditions();
 
     return f;
 }
 
-volVectorField *FieldValueExpressionDriver::makePositionField()
+tmp<volVectorField> FieldValueExpressionDriver::makePositionField()
 {
-    volVectorField *f=new volVectorField(
-        IOobject
-        (
-            "pos",
-            time(),
+    tmp<volVectorField> f(
+        new volVectorField(
+            IOobject
+            (
+                "pos",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        vector(0,0,0)
+            vector(0,0,0)
+        )
     );
     f->dimensions().reset(mesh_.C().dimensions());
-    *f=mesh_.C();
+    f()=mesh_.C();
     f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
@@ -309,67 +309,73 @@ volVectorField *FieldValueExpressionDriver::makePositionField()
     return f;
 }
 
-pointVectorField *FieldValueExpressionDriver::makePointPositionField()
+tmp<pointVectorField> FieldValueExpressionDriver::makePointPositionField()
 {
-    pointVectorField *f=new pointVectorField(
-        IOobject
-        (
-            "fpos",
-            time(),
-            mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        this->pMesh(),
-        vector::zero,
-        "zeroGradient"
+    tmp<pointVectorField> f(
+        new pointVectorField(
+            IOobject
+            (
+                "fpos",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            this->pMesh(),
+            vector::zero,
+            "zeroGradient"
+        )
     );
     f->internalField()=mesh_.points();
 
     return f;
 }
 
-surfaceVectorField *FieldValueExpressionDriver::makeFacePositionField()
+tmp<surfaceVectorField> FieldValueExpressionDriver::makeFacePositionField()
 {
-    surfaceVectorField *f=new surfaceVectorField(
-        IOobject
-        (
-            "fpos",
-            time(),
+    tmp<surfaceVectorField> f(
+        new surfaceVectorField(
+            IOobject
+            (
+                "fpos",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        vector::zero
+            vector::zero
+        )
     );
     f->dimensions().reset(mesh_.Cf().dimensions());
-    *f=mesh_.Cf();
+    f()=mesh_.Cf();
     f->dimensions().reset(dimless);
 
     return f;
 }
 
-surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
+tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceProjectionField()
 {
-    surfaceVectorField *f=new surfaceVectorField(
-        IOobject
-        (
-            "fproj",
-            time(),
+    tmp<surfaceVectorField> f(
+        new surfaceVectorField(
+            IOobject
+            (
+                "fproj",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        vector(0,0,0)
+            vector(0,0,0)
+        )
     );
     f->dimensions().reset(mesh_.Cf().dimensions());
 
     vector fmin(0,0,0);
     vector fmax(0,0,0);
 
-    forAll(*f,faceI)
+    forAll(f(),faceI)
     {
         const face &fProp = mesh_.faces()[faceI];
         fmin = mesh_.points()[fProp[0]];
@@ -394,7 +400,7 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
                 }
             }
         }
-        (*f)[faceI] = fmax - fmin;
+        f()[faceI] = fmax - fmin;
     }
     forAll(mesh_.boundaryMesh(),patchI)
     {
@@ -447,66 +453,72 @@ surfaceVectorField *FieldValueExpressionDriver::makeFaceProjectionField()
     return f;
 }
 
-surfaceVectorField *FieldValueExpressionDriver::makeFaceField()
+tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceField()
 {
-    surfaceVectorField *f=new surfaceVectorField(
-        IOobject
-        (
-            "face",
-            time(),
+    tmp<surfaceVectorField> f(
+        new surfaceVectorField(
+            IOobject
+            (
+                "face",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        vector(0,0,0)
+            vector(0,0,0)
+        )
     );
     f->dimensions().reset(mesh_.Sf().dimensions());
-    *f=mesh_.Sf();
+    f()=mesh_.Sf();
     f->dimensions().reset(dimless);
 
     return f;
 }
 
-surfaceScalarField *FieldValueExpressionDriver::makeAreaField()
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeAreaField()
 {
-    surfaceScalarField *f=new surfaceScalarField(
-        IOobject
-        (
-            "face",
-            time(),
+    tmp<surfaceScalarField> f(
+        new surfaceScalarField(
+            IOobject
+            (
+                "face",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        0.
+            0.
+        )
     );
     f->dimensions().reset(mesh_.magSf().dimensions());
-    *f=mesh_.magSf();
+    f()=mesh_.magSf();
     f->dimensions().reset(dimless);
 
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeVolumeField()
+tmp<volScalarField> FieldValueExpressionDriver::makeVolumeField()
 {
-    volScalarField *f=new volScalarField(
-        IOobject
-        (
-            "vol",
-            time(),
+    tmp<volScalarField> f(
+        new volScalarField(
+            IOobject
+            (
+                "vol",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        0.
+            0.
+        )
     );
     const scalarField &V=mesh_.V();
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=V[cellI];
+    forAll(f(),cellI) {
+        f()[cellI]=V[cellI];
     }
 
     f->correctBoundaryConditions();
@@ -514,23 +526,25 @@ volScalarField *FieldValueExpressionDriver::makeVolumeField()
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeDistanceField()
+tmp<volScalarField> FieldValueExpressionDriver::makeDistanceField()
 {
-    volScalarField *f=new volScalarField(
-        IOobject
-        (
-            "dist",
-            time(),
+    tmp<volScalarField> f(
+        new volScalarField(
+            IOobject
+            (
+                "dist",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        0.
+            0.
+        )
     );
     f->dimensions().reset(mesh_.C().dimensions());
     wallDist dist(mesh_);
-    *f=dist;
+    f()=dist;
     f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
@@ -538,21 +552,24 @@ volScalarField *FieldValueExpressionDriver::makeDistanceField()
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
+tmp<volScalarField> FieldValueExpressionDriver::makeNearDistanceField()
 {
-    volScalarField *f=new volScalarField(
-        IOobject
-        (
-            "dist",
-            time(),
+    tmp<volScalarField> f(
+        new volScalarField(
+            IOobject
+            (
+                "dist",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        0.,
-        "fixedValue"
+            0.,
+            "fixedValue"
+        )
     );
+
     f->dimensions().reset(mesh_.C().dimensions());
     nearWallDist dist(mesh_);
     f->boundaryField()==dist;
@@ -563,23 +580,25 @@ volScalarField *FieldValueExpressionDriver::makeNearDistanceField()
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorField& r)
+tmp<volScalarField> FieldValueExpressionDriver::makeRDistanceField(const volVectorField& r)
 {
-    volScalarField *f=new volScalarField(
-        IOobject
-        (
-            "rdist",
-            time(),
+    tmp<volScalarField> f(
+        new volScalarField(
+            IOobject
+            (
+                "rdist",
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
             mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        0.
+            0.
+        )
     );
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=mag(mesh_.C()[cellI] - r[cellI]);
+    forAll(f(),cellI) {
+        f()[cellI]=mag(mesh_.C()[cellI] - r[cellI]);
     }
 
     f->correctBoundaryConditions();
@@ -587,9 +606,9 @@ volScalarField *FieldValueExpressionDriver::makeRDistanceField(const volVectorFi
     return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
+tmp<volScalarField> FieldValueExpressionDriver::makeCellSetField(const string &name)
 {
-  volScalarField *f=makeConstantField<volScalarField>(0);
+  tmp<volScalarField> f=makeConstantField<volScalarField>(0);
 
   IOobject head
       (
@@ -618,7 +637,7 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
   labelList cells(cs.toc());
 
   forAll(cells,cellI) {
-    (*f)[cells[cellI]]=1.;
+    f()[cells[cellI]]=1.;
   }
 
   f->correctBoundaryConditions();
@@ -626,12 +645,12 @@ volScalarField *FieldValueExpressionDriver::makeCellSetField(const string &name)
   return f;
 }
 
-surfaceScalarField *FieldValueExpressionDriver::makeInternalFaceField()
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeInternalFaceField()
 {
-    surfaceScalarField *f=makeConstantField<surfaceScalarField>(1,true);
+    tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(1,true);
 
     forAll(f->boundaryField(),patchI) {
-        forAll((*f).boundaryField()[patchI],faceI) {
+        forAll(f().boundaryField()[patchI],faceI) {
             f->boundaryField()[patchI][faceI]=0;
         }
     }
@@ -639,9 +658,9 @@ surfaceScalarField *FieldValueExpressionDriver::makeInternalFaceField()
     return f;
 }
 
-surfaceScalarField *FieldValueExpressionDriver::makeOnPatchField(const string &name)
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeOnPatchField(const string &name)
 {
-    surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
+    tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(0,true);
 
     label patchI=mesh().boundaryMesh().findPatchID(name);
     if(patchI<0) {
@@ -651,17 +670,17 @@ surfaceScalarField *FieldValueExpressionDriver::makeOnPatchField(const string &n
                 << endl
                 << exit(FatalError);
     } else {
-        forAll((*f).boundaryField()[patchI],faceI) {
-            (*f).boundaryField()[patchI][faceI]=1;
+        forAll(f().boundaryField()[patchI],faceI) {
+            f().boundaryField()[patchI][faceI]=1;
         }
     }
 
     return f;
 }
 
-surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &name)
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceSetField(const string &name)
 {
-    surfaceScalarField *f=makeConstantField<surfaceScalarField>(0,true);
+    tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(0,true);
 
   IOobject head
       (
@@ -691,7 +710,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
 
   forAll(faces,faceI) {
       if(faces[faceI] < mesh().nInternalFaces()) {
-          (*f)[faces[faceI]]=1.;
+          f()[faces[faceI]]=1.;
       } else {
           label patchI=mesh().boundaryMesh().whichPatch(faces[faceI]);
           if(patchI<0) {
@@ -701,7 +720,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
                       << endl
                       << exit(FatalError);
           } else {
-              (*f).boundaryField()[patchI][
+              f().boundaryField()[patchI][
                   faces[faceI]
                   -
                   mesh().boundaryMesh()[patchI].start()] = 1.;
@@ -712,9 +731,9 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceSetField(const string &n
   return f;
 }
 
-pointScalarField *FieldValueExpressionDriver::makePointSetField(const string &name)
+tmp<pointScalarField> FieldValueExpressionDriver::makePointSetField(const string &name)
 {
-  pointScalarField *f=makePointConstantField<pointScalarField>(0);
+  tmp<pointScalarField> f=makePointConstantField<pointScalarField>(0);
 
   IOobject head
       (
@@ -743,22 +762,22 @@ pointScalarField *FieldValueExpressionDriver::makePointSetField(const string &na
   labelList points(cs.toc());
 
   forAll(points,pointI) {
-    (*f)[points[pointI]]=1.;
+    f()[points[pointI]]=1.;
   }
 
   return f;
 }
 
-volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name)
+tmp<volScalarField> FieldValueExpressionDriver::makeCellZoneField(const string &name)
 {
-  volScalarField *f=makeConstantField<volScalarField>(0);
+  tmp<volScalarField> f=makeConstantField<volScalarField>(0);
   label zoneID=mesh_.cellZones().findZoneID(name);
 
   const cellZone &zone=mesh_.cellZones()[zoneID];
 
   forAll(zone,ind) {
       label cellI=zone[ind];
-      (*f)[cellI]=1.;
+      f()[cellI]=1.;
   }
 
   f->correctBoundaryConditions();
@@ -766,9 +785,9 @@ volScalarField *FieldValueExpressionDriver::makeCellZoneField(const string &name
   return f;
 }
 
-surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &name)
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceZoneField(const string &name)
 {
-  surfaceScalarField *f=makeConstantField<surfaceScalarField>(0);
+  tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(0);
   label zoneID=mesh_.faceZones().findZoneID(name);
 
   const faceZone &zone=mesh_.faceZones()[zoneID];
@@ -777,7 +796,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &
       label faceI=zone[ind];
 
       if(faceI < mesh().nInternalFaces()) {
-          (*f)[faceI]=1.;
+          f()[faceI]=1.;
       } else {
           label patchI=mesh().boundaryMesh().whichPatch(faceI);
           if(patchI<0) {
@@ -787,7 +806,7 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &
                       << endl
                       << exit(FatalError);
           } else {
-              (*f).boundaryField()[patchI][
+              f().boundaryField()[patchI][
                   faceI
                   -
                   mesh().boundaryMesh()[patchI].start()] = 1.;
@@ -798,31 +817,31 @@ surfaceScalarField *FieldValueExpressionDriver::makeFaceZoneField(const string &
   return f;
 }
 
-pointScalarField *FieldValueExpressionDriver::makePointZoneField(const string &name)
+tmp<pointScalarField> FieldValueExpressionDriver::makePointZoneField(const string &name)
 {
-  pointScalarField *f=makePointConstantField<pointScalarField>(0);
+  tmp<pointScalarField> f=makePointConstantField<pointScalarField>(0);
   label zoneID=mesh_.pointZones().findZoneID(name);
 
   const pointZone &zone=mesh_.pointZones()[zoneID];
 
   forAll(zone,ind) {
       label pointI=zone[ind];
-      (*f)[pointI]=1.;
+      f()[pointI]=1.;
   }
 
   return f;
 }
 
-volVectorField *FieldValueExpressionDriver::makeVectorField
+tmp<volVectorField> FieldValueExpressionDriver::makeVectorField
 (
-    volScalarField *x,
-    volScalarField *y,
-    volScalarField *z
+    const volScalarField &x,
+    const volScalarField &y,
+    const volScalarField &z
 ) {
-    volVectorField *f=makeConstantField<volVectorField>(vector(0,0,0));
+    tmp<volVectorField> f=makeConstantField<volVectorField>(vector(0,0,0));
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=vector((*x)[cellI],(*y)[cellI],(*z)[cellI]);
+    forAll(f(),cellI) {
+        f()[cellI]=vector(x[cellI],y[cellI],z[cellI]);
     }
 
     f->correctBoundaryConditions();
@@ -830,19 +849,19 @@ volVectorField *FieldValueExpressionDriver::makeVectorField
     return f;
 }
 
-volTensorField *FieldValueExpressionDriver::makeTensorField
+tmp<volTensorField> FieldValueExpressionDriver::makeTensorField
 (
-    volScalarField *xx,volScalarField *xy,volScalarField *xz,
-    volScalarField *yx,volScalarField *yy,volScalarField *yz,
-    volScalarField *zx,volScalarField *zy,volScalarField *zz
+    const volScalarField &xx,const volScalarField &xy,const volScalarField &xz,
+    const volScalarField &yx,const volScalarField &yy,const volScalarField &yz,
+    const volScalarField &zx,const volScalarField &zy,const volScalarField &zz
 ) {
-    volTensorField *f=makeConstantField<volTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+    tmp<volTensorField> f=makeConstantField<volTensorField>(tensor(0,0,0,0,0,0,0,0,0));
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=tensor(
-            (*xx)[cellI],(*xy)[cellI],(*xz)[cellI],
-            (*yx)[cellI],(*yy)[cellI],(*yz)[cellI],
-            (*zx)[cellI],(*zy)[cellI],(*zz)[cellI]
+    forAll(f(),cellI) {
+        f()[cellI]=tensor(
+            xx[cellI],xy[cellI],xz[cellI],
+            yx[cellI],yy[cellI],yz[cellI],
+            zx[cellI],zy[cellI],zz[cellI]
         );
     }
 
@@ -851,19 +870,19 @@ volTensorField *FieldValueExpressionDriver::makeTensorField
     return f;
 }
 
-volSymmTensorField *FieldValueExpressionDriver::makeSymmTensorField
+tmp<volSymmTensorField> FieldValueExpressionDriver::makeSymmTensorField
 (
-    volScalarField *xx,volScalarField *xy,volScalarField *xz,
-    volScalarField *yy,volScalarField *yz,
-    volScalarField *zz
+    const volScalarField &xx,const volScalarField &xy,const volScalarField &xz,
+    const volScalarField &yy,const volScalarField &yz,
+    const volScalarField &zz
 ) {
-    volSymmTensorField *f=makeConstantField<volSymmTensorField>(symmTensor(0,0,0,0,0,0));
+    tmp<volSymmTensorField> f=makeConstantField<volSymmTensorField>(symmTensor(0,0,0,0,0,0));
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=symmTensor(
-            (*xx)[cellI],(*xy)[cellI],(*xz)[cellI],
-            (*yy)[cellI],(*yz)[cellI],
-            (*zz)[cellI]
+    forAll(f(),cellI) {
+        f()[cellI]=symmTensor(
+            xx[cellI],xy[cellI],xz[cellI],
+            yy[cellI],yz[cellI],
+            zz[cellI]
         );
     }
 
@@ -872,15 +891,15 @@ volSymmTensorField *FieldValueExpressionDriver::makeSymmTensorField
     return f;
 }
 
-volSphericalTensorField *FieldValueExpressionDriver::makeSphericalTensorField
+tmp<volSphericalTensorField> FieldValueExpressionDriver::makeSphericalTensorField
 (
-    volScalarField *xx
+    const volScalarField &xx
 ) {
-    volSphericalTensorField *f=makeConstantField<volSphericalTensorField>(sphericalTensor(0));
+    tmp<volSphericalTensorField> f=makeConstantField<volSphericalTensorField>(sphericalTensor(0));
 
-    forAll(*f,cellI) {
-        (*f)[cellI]=sphericalTensor(
-            (*xx)[cellI]
+    forAll(f(),cellI) {
+        f()[cellI]=sphericalTensor(
+            xx[cellI]
         );
     }
 
@@ -889,86 +908,86 @@ volSphericalTensorField *FieldValueExpressionDriver::makeSphericalTensorField
     return f;
 }
 
-surfaceVectorField *FieldValueExpressionDriver::makeSurfaceVectorField
+tmp<surfaceVectorField> FieldValueExpressionDriver::makeSurfaceVectorField
 (
-    surfaceScalarField *x,
-    surfaceScalarField *y,
-    surfaceScalarField *z
+    const surfaceScalarField &x,
+    const surfaceScalarField &y,
+    const surfaceScalarField &z
 )
 {
-    surfaceVectorField *f=makeConstantField<surfaceVectorField>(vector(0,0,0));
+    tmp<surfaceVectorField> f=makeConstantField<surfaceVectorField>(vector(0,0,0));
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
+    forAll(f(),faceI) {
+        f()[faceI]=vector(x[faceI],y[faceI],z[faceI]);
     }
 
     return f;
 }
 
-surfaceTensorField *FieldValueExpressionDriver::makeSurfaceTensorField
+tmp<surfaceTensorField> FieldValueExpressionDriver::makeSurfaceTensorField
 (
-    surfaceScalarField *xx,surfaceScalarField *xy,surfaceScalarField *xz,
-    surfaceScalarField *yx,surfaceScalarField *yy,surfaceScalarField *yz,
-    surfaceScalarField *zx,surfaceScalarField *zy,surfaceScalarField *zz
+    const surfaceScalarField &xx,const surfaceScalarField &xy,const surfaceScalarField &xz,
+    const surfaceScalarField &yx,const surfaceScalarField &yy,const surfaceScalarField &yz,
+    const surfaceScalarField &zx,const surfaceScalarField &zy,const surfaceScalarField &zz
 ) {
-    surfaceTensorField *f=makeConstantField<surfaceTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+    tmp<surfaceTensorField> f=makeConstantField<surfaceTensorField>(tensor(0,0,0,0,0,0,0,0,0));
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=tensor(
-            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
-            (*yx)[faceI],(*yy)[faceI],(*yz)[faceI],
-            (*zx)[faceI],(*zy)[faceI],(*zz)[faceI]
+    forAll(f(),faceI) {
+        f()[faceI]=tensor(
+            xx[faceI],xy[faceI],xz[faceI],
+            yx[faceI],yy[faceI],yz[faceI],
+            zx[faceI],zy[faceI],zz[faceI]
         );
     }
 
     return f;
 }
 
-surfaceSymmTensorField *FieldValueExpressionDriver::makeSurfaceSymmTensorField
+tmp<surfaceSymmTensorField> FieldValueExpressionDriver::makeSurfaceSymmTensorField
 (
-    surfaceScalarField *xx,surfaceScalarField *xy,surfaceScalarField *xz,
-    surfaceScalarField *yy,surfaceScalarField *yz,
-    surfaceScalarField *zz
+    const surfaceScalarField &xx,const surfaceScalarField &xy,const surfaceScalarField &xz,
+    const surfaceScalarField &yy,const surfaceScalarField &yz,
+    const surfaceScalarField &zz
 ) {
-    surfaceSymmTensorField *f=makeConstantField<surfaceSymmTensorField>(symmTensor(0,0,0,0,0,0));
+    tmp<surfaceSymmTensorField> f=makeConstantField<surfaceSymmTensorField>(symmTensor(0,0,0,0,0,0));
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=symmTensor(
-            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
-            (*yy)[faceI],(*yz)[faceI],
-            (*zz)[faceI]
+    forAll(f(),faceI) {
+        f()[faceI]=symmTensor(
+            xx[faceI],xy[faceI],xz[faceI],
+            yy[faceI],yz[faceI],
+            zz[faceI]
         );
     }
 
     return f;
 }
 
-surfaceSphericalTensorField *FieldValueExpressionDriver::makeSurfaceSphericalTensorField
+tmp<surfaceSphericalTensorField> FieldValueExpressionDriver::makeSurfaceSphericalTensorField
 (
-    surfaceScalarField *xx
+    const surfaceScalarField &xx
 ) {
-    surfaceSphericalTensorField *f=makeConstantField<surfaceSphericalTensorField>(sphericalTensor(0));
+    tmp<surfaceSphericalTensorField> f=makeConstantField<surfaceSphericalTensorField>(sphericalTensor(0));
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=sphericalTensor(
-            (*xx)[faceI]
+    forAll(f(),faceI) {
+        f()[faceI]=sphericalTensor(
+            xx[faceI]
         );
     }
 
     return f;
 }
 
-pointVectorField *FieldValueExpressionDriver::makePointVectorField
+tmp<pointVectorField> FieldValueExpressionDriver::makePointVectorField
 (
-    pointScalarField *x,
-    pointScalarField *y,
-    pointScalarField *z
+    const pointScalarField &x,
+    const pointScalarField &y,
+    const pointScalarField &z
 )
 {
-    pointVectorField *f=makePointConstantField<pointVectorField>(vector(0,0,0));
+    tmp<pointVectorField> f=makePointConstantField<pointVectorField>(vector(0,0,0));
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
+    forAll(f(),faceI) {
+        f()[faceI]=vector(x[faceI],y[faceI],z[faceI]);
     }
 
     f->correctBoundaryConditions();
@@ -976,19 +995,19 @@ pointVectorField *FieldValueExpressionDriver::makePointVectorField
     return f;
 }
 
-pointTensorField *FieldValueExpressionDriver::makePointTensorField
+tmp<pointTensorField> FieldValueExpressionDriver::makePointTensorField
 (
-    pointScalarField *xx,pointScalarField *xy,pointScalarField *xz,
-    pointScalarField *yx,pointScalarField *yy,pointScalarField *yz,
-    pointScalarField *zx,pointScalarField *zy,pointScalarField *zz
+    const pointScalarField &xx,const pointScalarField &xy,const pointScalarField &xz,
+    const pointScalarField &yx,const pointScalarField &yy,const pointScalarField &yz,
+    const pointScalarField &zx,const pointScalarField &zy,const pointScalarField &zz
 ) {
-    pointTensorField *f=makePointConstantField<pointTensorField>(tensor(0,0,0,0,0,0,0,0,0));
+    tmp<pointTensorField> f=makePointConstantField<pointTensorField>(tensor(0,0,0,0,0,0,0,0,0));
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=tensor(
-            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
-            (*yx)[faceI],(*yy)[faceI],(*yz)[faceI],
-            (*zx)[faceI],(*zy)[faceI],(*zz)[faceI]
+    forAll(f(),faceI) {
+        f()[faceI]=tensor(
+            xx[faceI],xy[faceI],xz[faceI],
+            yx[faceI],yy[faceI],yz[faceI],
+            zx[faceI],zy[faceI],zz[faceI]
         );
     }
 
@@ -997,19 +1016,19 @@ pointTensorField *FieldValueExpressionDriver::makePointTensorField
     return f;
 }
 
-pointSymmTensorField *FieldValueExpressionDriver::makePointSymmTensorField
+tmp<pointSymmTensorField> FieldValueExpressionDriver::makePointSymmTensorField
 (
-    pointScalarField *xx,pointScalarField *xy,pointScalarField *xz,
-    pointScalarField *yy,pointScalarField *yz,
-    pointScalarField *zz
+    const pointScalarField &xx,const pointScalarField &xy,const pointScalarField &xz,
+    const pointScalarField &yy,const pointScalarField &yz,
+    const pointScalarField &zz
 ) {
-    pointSymmTensorField *f=makePointConstantField<pointSymmTensorField>(symmTensor(0,0,0,0,0,0));
+    tmp<pointSymmTensorField> f=makePointConstantField<pointSymmTensorField>(symmTensor(0,0,0,0,0,0));
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=symmTensor(
-            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
-            (*yy)[faceI],(*yz)[faceI],
-            (*zz)[faceI]
+    forAll(f(),faceI) {
+        f()[faceI]=symmTensor(
+            xx[faceI],xy[faceI],xz[faceI],
+            yy[faceI],yz[faceI],
+            zz[faceI]
         );
     }
 
@@ -1018,15 +1037,19 @@ pointSymmTensorField *FieldValueExpressionDriver::makePointSymmTensorField
     return f;
 }
 
-pointSphericalTensorField *FieldValueExpressionDriver::makePointSphericalTensorField
+tmp<pointSphericalTensorField>
+FieldValueExpressionDriver::makePointSphericalTensorField
 (
-    pointScalarField *xx
+    const pointScalarField &xx
 ) {
-    pointSphericalTensorField *f=makePointConstantField<pointSphericalTensorField>(sphericalTensor(0));
+    tmp<pointSphericalTensorField> f=makePointConstantField
+        <pointSphericalTensorField>(
+            sphericalTensor(0)
+        );
 
-    forAll(*f,faceI) {
-        (*f)[faceI]=sphericalTensor(
-            (*xx)[faceI]
+    forAll(f(),faceI) {
+        f()[faceI]=sphericalTensor(
+            xx[faceI]
         );
     }
 

@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 26 Jan 2013 13:27:14 +0100
+Subject: Re: Get rid of raw pointers in the Parser/Driver-code
+Message-Id: <e5e6ced1fa55ef37-8da9cb73b8238c22-artemis@bgs-cool-greybook.local>
+References: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+
+According to
+http://www.gnu.org/software/bison/manual/html_node/Union-Decl.html#Union-Decl
+it seems that only pointers can be used in the union.
+
+Will clean up the make*-methods in the driver though

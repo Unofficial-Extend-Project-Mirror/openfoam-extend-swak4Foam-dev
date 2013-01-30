@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -35,6 +40,10 @@ Description
 SourceFiles
     pythonFluIntegrationFunctionObject.C
 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef pythonFluIntegrationFunctionObject_H
@@ -60,7 +69,7 @@ class pythonFluIntegrationFunctionObject
 
     //- Disallow default bitwise copy construct
     pythonFluIntegrationFunctionObject(const pythonFluIntegrationFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const pythonFluIntegrationFunctionObject&);
 

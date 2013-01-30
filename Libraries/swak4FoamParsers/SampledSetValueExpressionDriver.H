@@ -73,7 +73,8 @@ class SampledSetValueExpressionDriver
     // Private Member Functions
 
     template<class Type,class volField,class surfField>
-    Field<Type> *sampleOrInterpolateInternal(const word &name,bool oldTime=false);
+    tmp<Field<Type> >
+    sampleOrInterpolateInternal(const word &name,bool oldTime=false);
 
     static void setDebug();
 
@@ -133,42 +134,42 @@ public:
 
     // Member Functions
 
-    virtual vectorField *makePositionField() const;
+    virtual tmp<vectorField> makePositionField() const;
 
-    virtual scalarField *makeFaceAreaMagField() const;
+    virtual tmp<scalarField> makeFaceAreaMagField() const;
 
-    virtual scalarField *makeCellVolumeField() const;
+    virtual tmp<scalarField> makeCellVolumeField() const;
 
-    //     virtual vectorField *makePointField()=0;
+    //     virtual tmp<vectorField> makePointField()=0;
 
-    virtual scalarField *makeFaceFlipField() const;
+    virtual tmp<scalarField> makeFaceFlipField() const;
 
-    virtual vectorField *makeFaceNormalField() const;
+    virtual tmp<vectorField> makeFaceNormalField() const;
 
-    virtual vectorField *makeFaceAreaField() const;
+    virtual tmp<vectorField> makeFaceAreaField() const;
 
 //     template<class Type>
-//     Field<Type> *getField(const string &name);
+//     tmp<Field<Type> > getField(const string &name);
 
     virtual bool isCell() { return false; }
 
-    virtual Field<scalar> *getScalarField(
+    virtual tmp<Field<scalar> > getScalarField(
         const string &name,bool oldTime=false
     );
 
-    virtual Field<vector> *getVectorField(
+    virtual tmp<Field<vector> > getVectorField(
         const string &name,bool oldTime=false
     );
 
-    virtual Field<tensor> *getTensorField(
+    virtual tmp<Field<tensor> > getTensorField(
         const string &name,bool oldTime=false
     );
 
-    virtual Field<symmTensor> *getSymmTensorField(
+    virtual tmp<Field<symmTensor> > getSymmTensorField(
         const string &name,bool oldTime=false
     );
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(
+    virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
         const string &name,bool oldTime=false
     );
 
@@ -182,10 +183,10 @@ public:
     inline virtual const fvMesh &mesh() const;
 
 //     template<class Type>
-//     virtual Field<Type> *toFace(const Field<Type> &)=0;
+//     virtual tmp<Field<Type> > toFace(const Field<Type> &)=0;
 
 //     template<class Type>
-//     virtual Field<Type> *toPoint(const Field<Type> &)=0;
+//     virtual tmp<Field<Type> > toPoint(const Field<Type> &)=0;
 
     //- return a new plugin-function
     virtual autoPtr<CommonPluginFunction> newPluginFunction(

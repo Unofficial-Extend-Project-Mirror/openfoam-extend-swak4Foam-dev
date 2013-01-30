@@ -212,23 +212,23 @@ public:
 
     // Member Functions
 
-    vectorField *makePositionField();
+    tmp<vectorField> makePositionField();
 
-    vectorField *makePointField();
+    tmp<vectorField> makePointField();
 
-    vectorField *makeFaceNormalField();
+    tmp<vectorField> makeFaceNormalField();
 
-    vectorField *makeFaceAreaField();
+    tmp<vectorField> makeFaceAreaField();
 
-    vectorField *makeCellNeighbourField();
+    tmp<vectorField> makeCellNeighbourField();
 
-    vectorField *makeDeltaField();
+    tmp<vectorField> makeDeltaField();
 
-    scalarField *makeWeightsField();
+    tmp<scalarField> makeWeightsField();
 
-    scalarField *makeFaceIdField();
+    tmp<scalarField> makeFaceIdField();
 
-    scalarField *makeNearDistField();
+    tmp<scalarField> makeNearDistField();
 
     template<class Type>
     Field<Type> *getField(const string &name);

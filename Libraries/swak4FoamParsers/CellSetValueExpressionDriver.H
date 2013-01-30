@@ -107,7 +107,10 @@ public:
     CellSetValueExpressionDriver(const word& id,const fvMesh&mesh);
 
     //- Copy construct
-    CellSetValueExpressionDriver(const cellSet &,const CellSetValueExpressionDriver&);
+    CellSetValueExpressionDriver(
+        const cellSet &,
+        const CellSetValueExpressionDriver&
+    );
 
     autoPtr<CommonValueExpressionDriver> clone() const
         {
@@ -123,46 +126,46 @@ public:
 
     // Member Functions
 
-    virtual vectorField *makePositionField() const;
+    virtual tmp<vectorField> makePositionField() const;
 
-    virtual scalarField *makeFaceAreaMagField() const;
+    virtual tmp<scalarField> makeFaceAreaMagField() const;
 
-    virtual scalarField *makeCellVolumeField() const;
+    virtual tmp<scalarField> makeCellVolumeField() const;
 
-    //     virtual vectorField *makePointField()=0;
+    //     virtual tmp<vectorField> makePointField()=0;
 
-    virtual scalarField *makeFaceFlipField() const;
+    virtual tmp<scalarField> makeFaceFlipField() const;
 
-    virtual vectorField *makeFaceNormalField() const;
+    virtual tmp<vectorField> makeFaceNormalField() const;
 
-    virtual vectorField *makeFaceAreaField() const;
+    virtual tmp<vectorField> makeFaceAreaField() const;
 
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
     virtual bool isCell() { return true; }
 
-    virtual Field<scalar> *getScalarField(
+    virtual tmp<Field<scalar> > getScalarField(
         const string &name,
         bool oldTime=false
     );
 
-    virtual Field<vector> *getVectorField(
+    virtual tmp<Field<vector> > getVectorField(
         const string &name,
         bool oldTime=false
     );
 
-    virtual Field<tensor> *getTensorField(
+    virtual tmp<Field<tensor> > getTensorField(
         const string &name,
         bool oldTime=false
     );
 
-    virtual Field<symmTensor> *getSymmTensorField(
+    virtual tmp<Field<symmTensor> > getSymmTensorField(
         const string &name,
         bool oldTime=false
     );
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(
+    virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
         const string &name,
         bool oldTime=false
     );

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 28 Jan 2013 00:58:00 +0100
+Subject: Re: expressionField ignores "outputControl outputTime"
+Message-Id: <fd5c0d72230c40d9-f0a1e2439856a992-artemis@bgs-cool-greybook.local>
+References: <fd5c0d72230c40d9-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <fd5c0d72230c40d9-0-artemis@bgs-cool-greybook.local>
+
+Now fields are no longer calculated at every timestep

@@ -149,107 +149,113 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(
     return *it;
 }
 
-Field<scalar> *FaceZoneValueExpressionDriver::getScalarField(
+tmp<Field<scalar> > FaceZoneValueExpressionDriver::getScalarField(
     const string &name,bool oldTime
 )
 {
-    return getFieldInternalAndInterpolate<surfaceScalarField,volScalarField,faceZone,scalar>(
-        name,
-        faceZone_,
-        oldTime
-    );
+    return getFieldInternalAndInterpolate
+        <surfaceScalarField,volScalarField,faceZone,scalar>(
+            name,
+            faceZone_,
+            oldTime
+        );
 }
 
-Field<vector> *FaceZoneValueExpressionDriver::getVectorField(
+tmp<Field<vector> > FaceZoneValueExpressionDriver::getVectorField(
     const string &name,bool oldTime
 )
 {
-    return getFieldInternalAndInterpolate<surfaceVectorField,volVectorField,faceZone,vector>(
-        name,
-        faceZone_,
-        oldTime
-    );
+    return getFieldInternalAndInterpolate
+        <surfaceVectorField,volVectorField,faceZone,vector>(
+            name,
+            faceZone_,
+            oldTime
+        );
 }
 
-Field<tensor> *FaceZoneValueExpressionDriver::getTensorField(
+tmp<Field<tensor> > FaceZoneValueExpressionDriver::getTensorField(
     const string &name,bool oldTime
 )
 {
-    return getFieldInternalAndInterpolate<surfaceTensorField,volTensorField,faceZone,tensor>(
-        name,
-        faceZone_,
-        oldTime
-    );
+    return getFieldInternalAndInterpolate
+        <surfaceTensorField,volTensorField,faceZone,tensor>(
+            name,
+            faceZone_,
+            oldTime
+        );
 }
 
-Field<symmTensor> *FaceZoneValueExpressionDriver::getSymmTensorField(
+tmp<Field<symmTensor> > FaceZoneValueExpressionDriver::getSymmTensorField(
     const string &name,bool oldTime
 )
 {
-    return getFieldInternalAndInterpolate<surfaceSymmTensorField,volSymmTensorField,faceZone,symmTensor>(
-        name,
-        faceZone_,
-        oldTime
-    );
+    return getFieldInternalAndInterpolate
+        <surfaceSymmTensorField,volSymmTensorField,faceZone,symmTensor>(
+            name,
+            faceZone_,
+            oldTime
+        );
 }
 
-Field<sphericalTensor> *FaceZoneValueExpressionDriver::getSphericalTensorField(
+tmp<Field<sphericalTensor> >
+FaceZoneValueExpressionDriver::getSphericalTensorField(
     const string &name,bool oldTime
 )
 {
-    return getFieldInternalAndInterpolate<surfaceSphericalTensorField,volSphericalTensorField,faceZone,sphericalTensor>(
-        name,
-        faceZone_,
-        oldTime
-    );
+    return getFieldInternalAndInterpolate
+        <surfaceSphericalTensorField,volSphericalTensorField,
+         faceZone,sphericalTensor>(
+            name,
+            faceZone_,
+            oldTime
+        );
 }
 
-vectorField *FaceZoneValueExpressionDriver::makePositionField() const
+tmp<vectorField> FaceZoneValueExpressionDriver::makePositionField() const
 {
     return getFromFieldInternal(this->mesh().Cf(),faceZone_);
 }
 
-scalarField *FaceZoneValueExpressionDriver::makeCellVolumeField() const
+tmp<scalarField> FaceZoneValueExpressionDriver::makeCellVolumeField() const
 {
     FatalErrorIn("FaceZoneValueExpressionDriver::makeCellVolumeField()")
         << "faceZone knows nothing about cells"
             << endl
             << exit(FatalError);
-    return new scalarField(0);
+    return tmp<scalarField>(
+        new scalarField(0)
+    );
 }
 
 
-// vectorField *FaceZoneValueExpressionDriver::makePointField()
+// tmp<vectorField> FaceZoneValueExpressionDriver::makePointField()
 // {
 //     notImplemented("FaceZoneValueExpressionDriver::makePointField");
 // }
 
-scalarField *FaceZoneValueExpressionDriver::makeFaceAreaMagField() const
+tmp<scalarField> FaceZoneValueExpressionDriver::makeFaceAreaMagField() const
 {
     return getFromFieldInternal(this->mesh().magSf(),faceZone_);
 }
 
-scalarField *FaceZoneValueExpressionDriver::makeFaceFlipField() const
+tmp<scalarField> FaceZoneValueExpressionDriver::makeFaceFlipField() const
 {
-    scalarField *result=new scalarField(faceZone_.size());
+    tmp<scalarField> result(new scalarField(faceZone_.size()));
     const boolList &flip=faceZone_.flipMap();
     forAll(flip,i)
     {
-        (*result)[i]= (flip[i] ? -1 : 1);
+        result()[i]= (flip[i] ? -1 : 1);
     }
 
     return result;
 }
 
-vectorField *FaceZoneValueExpressionDriver::makeFaceNormalField() const
+tmp<vectorField> FaceZoneValueExpressionDriver::makeFaceNormalField() const
 {
-    autoPtr<vectorField> sf(this->makeFaceAreaField());
-    autoPtr<scalarField> magSf(this->makeFaceAreaMagField());
-
-    return new vectorField(sf()/magSf());
+    return this->makeFaceAreaField()/this->makeFaceAreaMagField();
 }
 
-vectorField *FaceZoneValueExpressionDriver::makeFaceAreaField() const
+tmp<vectorField> FaceZoneValueExpressionDriver::makeFaceAreaField() const
 {
     return getFromFieldInternal(this->mesh().Sf(),faceZone_);
 }

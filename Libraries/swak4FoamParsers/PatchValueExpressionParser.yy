@@ -569,7 +569,7 @@ eatCharactersSwitch: /* empty rule */{ driver.startEatCharacters(); }
 
 vexp:   vector                  { $$ = $1; }
         | vreduced              {
-            $$ = driver.makeField<Foam::vector>(*$1);
+            $$ = driver.makeField<Foam::vector>(*$1).ptr();
             delete $1;
           }
         | vexp '+' vexp 		{
@@ -648,19 +648,19 @@ vexp:   vector                  { $$ = $1; }
         | TOKEN_diag '(' texp ')'       {
             //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
             $$ = driver.composeVectorField(
-                &($3->component(Foam::tensor::XX)()),
-                &($3->component(Foam::tensor::YY)()),
-                &($3->component(Foam::tensor::ZZ)())
-            );
+                $3->component(Foam::tensor::XX)(),
+                $3->component(Foam::tensor::YY)(),
+                $3->component(Foam::tensor::ZZ)()
+            ).ptr();
             delete $3;
           }
         | TOKEN_diag '(' yexp ')'       {
             //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
             $$ = driver.composeVectorField(
-                &($3->component(Foam::symmTensor::XX)()),
-                &($3->component(Foam::symmTensor::YY)()),
-                &($3->component(Foam::symmTensor::ZZ)())
-            );
+                $3->component(Foam::symmTensor::XX)(),
+                $3->component(Foam::symmTensor::YY)(),
+                $3->component(Foam::symmTensor::ZZ)()
+            ).ptr();
             delete $3;
           }
         | lexp '?' vexp ':' vexp        {
@@ -669,19 +669,19 @@ vexp:   vector                  { $$ = $1; }
             delete $1; delete $3; delete $5;
           }
         | TOKEN_position '(' ')'        {
-            $$ = driver.makePositionField();
+            $$ = driver.makePositionField().ptr();
           }
         | TOKEN_normal '(' ')'          {
-            $$ = driver.makeFaceNormalField();
+            $$ = driver.makeFaceNormalField().ptr();
           }
         | TOKEN_Sf '(' ')'              {
-            $$ = driver.makeFaceAreaField();
+            $$ = driver.makeFaceAreaField().ptr();
           }
         | TOKEN_Cn '(' ')'              {
-            $$ = driver.makeCellNeighbourField();
+            $$ = driver.makeCellNeighbourField().ptr();
           }
         | TOKEN_delta '(' ')'              {
-            $$ = driver.makeDeltaField();
+            $$ = driver.makeDeltaField().ptr();
           }
         | TOKEN_toFace '(' pvexp ')'        {
             $$ = driver.toFace(*$3);
@@ -854,8 +854,8 @@ vreduced: TOKEN_min '(' vexp ')'       {
           }
 ;
 
-exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
-        | sreduced                 { $$ = driver.makeField($1); }
+exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
+        | sreduced                 { $$ = driver.makeField($1).ptr(); }
         | exp '+' exp 		{
             sameSize($1,$3);
             $$ = new Foam::scalarField(*$1 + *$3);
@@ -873,7 +873,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
           }
         | exp '%' exp 		{
             sameSize($1,$3);
-            $$ = driver.makeModuloField(*$1,*$3);
+            $$ = driver.makeModuloField(*$1,*$3).ptr();
             delete $1; delete $3;
           }
         | exp '/' exp 		{
@@ -1199,56 +1199,58 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
             delete $1; delete $3; delete $5;
           }
         | TOKEN_pi {
-            $$ = driver.makeField(Foam::constant::mathematical::pi);
+	  $$ = driver.makeField(Foam::constant::mathematical::pi).ptr();
           }
         | TOKEN_id '(' ')'                         {
-            $$ = driver.makeFaceIdField();
+            $$ = driver.makeFaceIdField().ptr();
           }
         | TOKEN_dist '(' ')'                       {
-            $$ = driver.makeNearDistField();
+            $$ = driver.makeNearDistField().ptr();
           }
         | TOKEN_cpu '(' ')'       {
-            $$ = driver.makeField(Foam::scalar(Foam::Pstream::myProcNo()));
+            $$ = driver.makeField(
+                Foam::scalar(Foam::Pstream::myProcNo())
+            ).ptr();
           }
         | TOKEN_rand '(' ')'        {
-            $$ = driver.makeRandomField();
+            $$ = driver.makeRandomField().ptr();
           }
         | TOKEN_rand '(' TOKEN_INT ')'        {
-            $$ = driver.makeRandomField(-$3);
+            $$ = driver.makeRandomField(-$3).ptr();
           }
         | TOKEN_randFixed '(' ')'        {
-            $$ = driver.makeRandomField(1);
+            $$ = driver.makeRandomField(1).ptr();
           }
         | TOKEN_randFixed '(' TOKEN_INT ')'        {
-            $$ = driver.makeRandomField($3+1);
+            $$ = driver.makeRandomField($3+1).ptr();
           }
         | TOKEN_weights '(' ')'              {
-            $$ = driver.makeWeightsField();
+            $$ = driver.makeWeightsField().ptr();
           }
         | TOKEN_randNormal '(' ')'        {
-            $$ = driver.makeGaussRandomField();
+            $$ = driver.makeGaussRandomField().ptr();
           }
         | TOKEN_randNormal '(' TOKEN_INT ')'        {
-            $$ = driver.makeGaussRandomField(-$3);
+            $$ = driver.makeGaussRandomField(-$3).ptr();
           }
         | TOKEN_randNormalFixed '(' ')'        {
-            $$ = driver.makeGaussRandomField(1);
+            $$ = driver.makeGaussRandomField(1).ptr();
           }
         | TOKEN_randNormalFixed '(' TOKEN_INT ')'        {
-            $$ = driver.makeGaussRandomField($3+1);
+            $$ = driver.makeGaussRandomField($3+1).ptr();
           }
         | TOKEN_deltaT '(' ')'   {
-            $$ = driver.makeField(driver.runTime().deltaT().value());
+            $$ = driver.makeField(driver.runTime().deltaT().value()).ptr();
           }
         | TOKEN_time '(' ')'   {
-            $$ = driver.makeField(driver.runTime().time().value());
+            $$ = driver.makeField(driver.runTime().time().value()).ptr();
           }
         | TOKEN_toFace '(' pexp ')'        {
             $$ = driver.toFace(*$3);
             delete $3;
           }
         | TOKEN_area '(' ')'              {
-            Foam::vectorField *Sf=driver.makeFaceAreaField();
+            Foam::vectorField *Sf=driver.makeFaceAreaField().ptr();
             $$ = new Foam::scalarField(Foam::mag(*Sf));
             delete Sf;
           }
@@ -1266,7 +1268,8 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1); }
             $$=driver.mapField<Foam::scalar>(*$3,true).ptr(); delete $3;
           }
 	| TOKEN_LINE		{
-            $$=driver.getLine(*$1,driver.runTime().time().value());delete $1;
+            $$=driver.getLine(*$1,driver.runTime().time().value()).ptr();
+            delete $1;
           }
 	| TOKEN_LOOKUP '(' exp ')' {
             $$=driver.getLookup(*$1,*$3).ptr();
@@ -1643,7 +1646,7 @@ evaluateSymmTensorFunction: TOKEN_FUNCTION_YID '(' eatCharactersSwitch
 
 hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_unitTensor                        {
-            $$ = driver.makeField(Foam::sphericalTensor(1));
+            $$ = driver.makeField(Foam::sphericalTensor(1)).ptr();
           }
         | hexp '+' hexp 		{
             sameSize($1,$3);
@@ -1744,8 +1747,8 @@ evaluateSphericalTensorFunction: TOKEN_FUNCTION_HID '(' eatCharactersSwitch
   }
 ;
 
-lexp: TOKEN_TRUE   { $$ = driver.makeField(true); }
-    | TOKEN_FALSE  { $$ = driver.makeField(false); }
+lexp: TOKEN_TRUE   { $$ = driver.makeField(true).ptr(); }
+    | TOKEN_FALSE  { $$ = driver.makeField(false).ptr(); }
     | exp '<' exp  {
             sameSize($1,$3);
             $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);
@@ -1810,26 +1813,34 @@ evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
 ;
 
 vector: TOKEN_VECTOR '(' exp ',' exp ',' exp ')' {
-            $$ = driver.composeVectorField($3,$5,$7);
+            $$ = driver.composeVectorField(*$3,*$5,*$7).ptr();
             delete $3; delete $5; delete $7;
           }
 ;
 
 tensor: TOKEN_TENSOR '(' exp ',' exp ',' exp ',' exp ',' exp ',' exp ',' exp ',' exp ',' exp ')' {
-            $$ = driver.composeTensorField($3,$5,$7,$9,$11,$13,$15,$17,$19);
+            $$ = driver.composeTensorField(
+                *$3,*$5,*$7,
+                *$9,*$11,*$13,
+                *$15,*$17,*$19
+            ).ptr();
             delete $3; delete $5; delete $7; delete $9; delete $11;
             delete $13; delete $15; delete $17; delete $19;
           }
 ;
 
 symmTensor: TOKEN_SYMM_TENSOR '(' exp ',' exp ',' exp ',' exp ',' exp ',' exp ')' {
-            $$ = driver.composeSymmTensorField($3,$5,$7,$9,$11,$13);
+            $$ = driver.composeSymmTensorField(
+                *$3,*$5,*$7,
+                *$9,*$11,
+                *$13
+            ).ptr();
             delete $3; delete $5; delete $7; delete $9; delete $11; delete $13;
           }
 ;
 
 sphericalTensor: TOKEN_SPHERICAL_TENSOR '(' exp ')' {
-            $$ = driver.composeSphericalTensorField($3);
+            $$ = driver.composeSphericalTensorField(*$3).ptr();
             delete $3;
           }
 ;
@@ -1910,19 +1921,19 @@ pvexp:  pvector     { $$ = $1; }
         | TOKEN_diag '(' ptexp ')'       {
             //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
             $$ = driver.composeVectorField(
-                &($3->component(Foam::tensor::XX)()),
-                &($3->component(Foam::tensor::YY)()),
-                &($3->component(Foam::tensor::ZZ)())
-            );
+                $3->component(Foam::tensor::XX)(),
+                $3->component(Foam::tensor::YY)(),
+                $3->component(Foam::tensor::ZZ)()
+            ).ptr();
             delete $3;
           }
         | TOKEN_diag '(' pyexp ')'       {
             //            $$ = new Foam::vectorField( Foam::diag(*$3) ); // not implemented?
             $$ = driver.composeVectorField(
-                &($3->component(Foam::symmTensor::XX)()),
-                &($3->component(Foam::symmTensor::YY)()),
-                &($3->component(Foam::symmTensor::ZZ)())
-            );
+                $3->component(Foam::symmTensor::XX)(),
+                $3->component(Foam::symmTensor::YY)(),
+                $3->component(Foam::symmTensor::ZZ)()
+            ).ptr();
             delete $3;
           }
         | '(' pvexp ')'		        { $$ = $2; }
@@ -1932,7 +1943,7 @@ pvexp:  pvector     { $$ = $1; }
             delete $1; delete $3; delete $5;
           }
         | TOKEN_points '(' ')'        {
-            $$ = driver.makePointField();
+            $$ = driver.makePointField().ptr();
           }
         | TOKEN_toPoint '(' vexp ')'        {
             $$ = driver.toPoint(*$3);
@@ -1988,7 +1999,7 @@ pexp:   pexp '+' pexp 		{
           }
         | pexp '%' pexp 		{
             sameSize($1,$3);
-            $$ = driver.makeModuloField(*$1,*$3);
+            $$ = driver.makeModuloField(*$1,*$3).ptr();
             delete $1; delete $3;
           }
         | pexp '/' pexp 		{
@@ -2646,24 +2657,32 @@ evaluatePointSphericalTensorFunction: TOKEN_FUNCTION_PHID '(' eatCharactersSwitc
 ;
 
 pvector: TOKEN_VECTOR '(' pexp ',' pexp ',' pexp ')' {
-            $$ = driver.composeVectorField($3,$5,$7);
+            $$ = driver.composeVectorField(*$3,*$5,*$7).ptr();
             delete $3; delete $5; delete $7;
           }
 ;
 
 ptensor: TOKEN_TENSOR '(' pexp ',' pexp ',' pexp ',' pexp ',' pexp ',' pexp ',' pexp ',' pexp ',' pexp ')' {
-            $$ = driver.composeTensorField($3,$5,$7,$9,$11,$13,$15,$17,$19);
+            $$ = driver.composeTensorField(
+                *$3,*$5,*$7,
+                *$9,*$11,*$13,
+                *$15,*$17,*$19
+            ).ptr();
             delete $3; delete $5; delete $7; delete $9; delete $11;
             delete $13; delete $15; delete $17; delete $19;
           }
 
 psymmTensor: TOKEN_SYMM_TENSOR '(' pexp ',' pexp ',' pexp ',' pexp ',' pexp ',' pexp ')' {
-            $$ = driver.composeSymmTensorField($3,$5,$7,$9,$11,$13);
+            $$ = driver.composeSymmTensorField(
+                *$3,*$5,*$7,
+                *$9,*$11,
+                *$13
+            ).ptr();
             delete $3; delete $5; delete $7; delete $9; delete $11; delete $13;
           }
 
 psphericalTensor: TOKEN_SPHERICAL_TENSOR '(' pexp ')' {
-            $$ = driver.composeSphericalTensorField($3);
+            $$ = driver.composeSphericalTensorField(*$3).ptr();
             delete $3;
           }
 

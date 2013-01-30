@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
 
 #include "expressionField.H"
@@ -53,7 +62,7 @@ Foam::expressionField::expressionField
                 << endl;
     }
     read(dict);
-    execute();
+    write();
 }
 
 Foam::expressionField::~expressionField()
@@ -118,9 +127,11 @@ void Foam::expressionField::read(const dictionary& dict)
     }
 }
 
-void Foam::expressionField::execute()
+void Foam::expressionField::write()
 {
     if(active_) {
+        Info << "Creating expression field " << name_ << " ..." << flush;
+
         FieldValueExpressionDriver &driver=driver_();
 
         bool oldDimsetDebug=dimensionSet::debug;
@@ -131,6 +142,8 @@ void Foam::expressionField::execute()
         driver.parse(expression_);
 
         dimensionSet::debug=oldDimsetDebug;
+
+        Info << " type:" << driver.getResultType() << endl;
 
         if(driver.resultIsTyp<volVectorField>()) {
             storeField(
@@ -210,7 +223,7 @@ void Foam::expressionField::end()
     execute();
 }
 
-void Foam::expressionField::write()
+void Foam::expressionField::execute()
 {
 }
 

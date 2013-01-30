@@ -77,23 +77,30 @@ Contributors/Copyright:
 namespace Foam {
 
 template<class T>
-T* FieldValueExpressionDriver::getField(const string &name,bool getOldTime)
+tmp<T>  FieldValueExpressionDriver::getField(const string &name,bool getOldTime)
 {
-    return this->getOrReadField<T>(
-        name,
-        true,  // fail if not found
-        getOldTime
-    ).ptr();
+    return tmp<T>(
+        this->getOrReadField<T>(
+            name,
+            true,  // fail if not found
+            getOldTime
+        ).ptr()
+    );
 }
 
 template<class T>
-T* FieldValueExpressionDriver::getPointField(const string &name,bool getOldTime)
+tmp<T>  FieldValueExpressionDriver::getPointField(
+    const string &name,
+    bool getOldTime
+)
 {
-    return this->getOrReadPointField<T>(
-        name,
-        true,  // fail if not found
-        getOldTime
-    ).ptr();
+    return tmp<T>(
+        this->getOrReadPointField<T>(
+            name,
+            true,  // fail if not found
+            getOldTime
+        ).ptr()
+    );
 }
 
 inline label FieldValueExpressionDriver::size() const
@@ -554,9 +561,13 @@ void FieldValueExpressionDriver::setValuePatches
     ) {
         if(
 #ifdef FOAM_DEV
-            typeid(field.boundaryField()[patchI])==typeid(FixedValuePointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
+            typeid(field.boundaryField()[patchI])
+            ==
+            typeid(FixedValuePointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
 #else
-            typeid(field.boundaryField()[patchI])==typeid(fixedValuePointPatchField<T>)
+            typeid(field.boundaryField()[patchI])
+            ==
+            typeid(fixedValuePointPatchField<T>)
 #endif
         ) {
             pointPatchField<T> &pf=field.boundaryField()[patchI];
@@ -568,7 +579,9 @@ void FieldValueExpressionDriver::setValuePatches
 }
 
 template<class FType>
-inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)
+inline tmp<FType> FieldValueExpressionDriver::makeField(
+    const Field<typename FType::value_type> &val
+)
 {
     return makeFieldInternal<FType>(
         val,
@@ -577,7 +590,9 @@ inline FType *FieldValueExpressionDriver::makeField(const Field<typename FType::
 }
 
 template<class FType>
-inline FType *FieldValueExpressionDriver::makePointField(const Field<typename FType::value_type> &val)
+inline tmp<FType> FieldValueExpressionDriver::makePointField(
+    const Field<typename FType::value_type> &val
+)
 {
     return makeFieldInternal<FType>(
         val,
@@ -586,7 +601,7 @@ inline FType *FieldValueExpressionDriver::makePointField(const Field<typename FT
 }
 
 template<class FType,class Mesh>
-inline FType *FieldValueExpressionDriver::makeFieldInternal(
+inline tmp<FType> FieldValueExpressionDriver::makeFieldInternal(
     const Field<typename FType::value_type> &val,
     const Mesh &actualMesh
 )
@@ -594,23 +609,26 @@ inline FType *FieldValueExpressionDriver::makeFieldInternal(
     std::ostringstream buff;
     buff << "field" << pTraits<typename FType::value_type>::typeName;
 
-    FType *f=new FType(
-        IOobject
-        (
-            buff.str(),
-            this->time(),
-            this->mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        actualMesh,
-        pTraits<typename FType::value_type>::zero,
-        "zeroGradient"
+    tmp<FType> f(
+        new FType(
+            IOobject
+            (
+                buff.str(),
+                this->time(),
+                this->mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            actualMesh,
+            pTraits<typename FType::value_type>::zero,
+            "zeroGradient"
+        )
     );
 
     if(val.size()!=f->internalField().size()) {
         FatalErrorIn("FieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)")
-            << "Size " << val.size() << " of the assigned field is not the required "
+            << "Size " << val.size()
+                << " of the assigned field is not the required "
                 << f->internalField().size()
                 << endl
                 << exit(FatalError);
@@ -618,13 +636,13 @@ inline FType *FieldValueExpressionDriver::makeFieldInternal(
 
     f->internalField()=val;
 
-    correctField(*f);
+    correctField(f);
 
     return f;
 }
 
 template<class FType>
-inline FType *FieldValueExpressionDriver::makeConstantField(
+inline tmp<FType> FieldValueExpressionDriver::makeConstantField(
     const typename FType::value_type &val,
     bool makeValuePatches
 )
@@ -637,7 +655,7 @@ inline FType *FieldValueExpressionDriver::makeConstantField(
 }
 
 template<class FType>
-inline FType *FieldValueExpressionDriver::makePointConstantField(
+inline tmp<FType> FieldValueExpressionDriver::makePointConstantField(
     const typename FType::value_type &val,
     bool makeValuePatches
 )
@@ -650,7 +668,7 @@ inline FType *FieldValueExpressionDriver::makePointConstantField(
 }
 
 template<class FType,class Mesh>
-inline FType *FieldValueExpressionDriver::makeConstantFieldInternal(
+inline tmp<FType> FieldValueExpressionDriver::makeConstantFieldInternal(
     const typename FType::value_type &val,
     const Mesh &mesh,
     bool makeValuePatches
@@ -667,28 +685,33 @@ inline FType *FieldValueExpressionDriver::makeConstantFieldInternal(
         defaultBC="fixedValue";
     }
 
-    FType *f=new FType(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh_,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        val,
-        defaultBC
+    tmp<FType> f(
+        new FType(
+            IOobject
+            (
+                buff.str(),
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh,
+            val,
+            defaultBC
+        )
     );
     if(pTraits<typename FType::PatchFieldType>::typeName=="fvsPatchField") {
-        setCalculatedPatches(*f,val);
+        setCalculatedPatches(f(),val);
     }
 
     return f;
 }
 
 template<class T>
-void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField,bool isPointField)
+void FieldValueExpressionDriver::setResult(
+    T *r,
+    bool isSurfaceField,bool isPointField
+)
 {
     resultField_.reset(r);
 
@@ -710,7 +733,11 @@ void FieldValueExpressionDriver::setResult(T *r,bool isSurfaceField,bool isPoint
 }
 
 template<class T>
-void FieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField,bool isPointField)
+void FieldValueExpressionDriver::setLogicalResult(
+    T *r,
+    bool isSurfaceField,
+    bool isPointField
+)
 {
     resultField_.reset(r);
 
@@ -833,7 +860,7 @@ FieldValueExpressionDriver::pointToCellInterpolate(
 ) {
     typedef GeometricField<Type,fvPatchField,volMesh> rType;
     autoPtr<rType> result(
-        this->makeConstantField<rType>(pTraits<Type>::zero)
+        this->makeConstantField<rType>(pTraits<Type>::zero).ptr()
     );
     forAll(result(),cellI) {
         result()[cellI]=interpolatePointToCell(field,cellI);

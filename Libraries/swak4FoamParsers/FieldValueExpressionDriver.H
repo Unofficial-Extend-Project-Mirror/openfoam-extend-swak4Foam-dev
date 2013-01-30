@@ -209,98 +209,104 @@ public:
 
     // returning fields
     template<class T>
-    T* getField(const string &name,bool getOldTime=false);
+    tmp<T> getField(const string &name,bool getOldTime=false);
 
     template<class T>
-    T* getPointField(const string &name,bool getOldTime=false);
+    tmp<T> getPointField(const string &name,bool getOldTime=false);
 
     // make constant fields
-    volVectorField *makeVectorField(
-        volScalarField *x,
-        volScalarField *y,
-        volScalarField *z
+    tmp<volVectorField> makeVectorField(
+        const volScalarField &x,
+        const volScalarField &y,
+        const volScalarField &z
     );
 
-    surfaceVectorField *makeSurfaceVectorField(
-        surfaceScalarField *x,
-        surfaceScalarField *y,
-        surfaceScalarField *z
+    tmp<surfaceVectorField> makeSurfaceVectorField(
+        const surfaceScalarField &x,
+        const surfaceScalarField &y,
+        const surfaceScalarField &z
     );
 
-    pointVectorField *makePointVectorField(
-        pointScalarField *x,
-        pointScalarField *y,
-        pointScalarField *z
+    tmp<pointVectorField> makePointVectorField(
+        const pointScalarField &x,
+        const pointScalarField &y,
+        const pointScalarField &z
     );
 
-    volTensorField *makeTensorField(
-        volScalarField *,volScalarField *,volScalarField *,
-        volScalarField *,volScalarField *,volScalarField *,
-        volScalarField *,volScalarField *,volScalarField *
+    tmp<volTensorField> makeTensorField(
+        const volScalarField &,const volScalarField &,const volScalarField &,
+        const volScalarField &,const volScalarField &,const volScalarField &,
+        const volScalarField &,const volScalarField &,const volScalarField &
     );
-    surfaceTensorField *makeSurfaceTensorField(
-        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *,
-        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *,
-        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *
-    );
-
-    pointTensorField *makePointTensorField(
-        pointScalarField *,pointScalarField *,pointScalarField *,
-        pointScalarField *,pointScalarField *,pointScalarField *,
-        pointScalarField *,pointScalarField *,pointScalarField *
+    tmp<surfaceTensorField> makeSurfaceTensorField(
+        const surfaceScalarField &,const surfaceScalarField &,const surfaceScalarField &,
+        const surfaceScalarField &,const surfaceScalarField &,const surfaceScalarField &,
+        const surfaceScalarField &,const surfaceScalarField &,const surfaceScalarField &
     );
 
-    volSymmTensorField *makeSymmTensorField(
-        volScalarField *,volScalarField *,volScalarField *,
-        volScalarField *,volScalarField *,volScalarField *
+    tmp<pointTensorField> makePointTensorField(
+        const pointScalarField &,const pointScalarField &,const pointScalarField &,
+        const pointScalarField &,const pointScalarField &,const pointScalarField &,
+        const pointScalarField &,const pointScalarField &,const pointScalarField &
     );
 
-    surfaceSymmTensorField *makeSurfaceSymmTensorField(
-        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *,
-        surfaceScalarField *,surfaceScalarField *,surfaceScalarField *
+    tmp<volSymmTensorField> makeSymmTensorField(
+        const volScalarField &,const volScalarField &,const volScalarField &,
+        const volScalarField &,const volScalarField &,const volScalarField &
     );
 
-    pointSymmTensorField *makePointSymmTensorField(
-        pointScalarField *,pointScalarField *,pointScalarField *,
-        pointScalarField *,pointScalarField *,pointScalarField *
+    tmp<surfaceSymmTensorField> makeSurfaceSymmTensorField(
+        const surfaceScalarField &,const surfaceScalarField &,const surfaceScalarField &,
+        const surfaceScalarField &,const surfaceScalarField &,const surfaceScalarField &
     );
 
-    volSphericalTensorField *makeSphericalTensorField(volScalarField *);
+    tmp<pointSymmTensorField> makePointSymmTensorField(
+        const pointScalarField &,const pointScalarField &,const pointScalarField &,
+        const pointScalarField &,const pointScalarField &,const pointScalarField &
+    );
 
-    surfaceSphericalTensorField *makeSurfaceSphericalTensorField(surfaceScalarField *);
+    tmp<volSphericalTensorField> makeSphericalTensorField(const volScalarField &);
 
-    pointSphericalTensorField *makePointSphericalTensorField(pointScalarField *);
+    tmp<surfaceSphericalTensorField> makeSurfaceSphericalTensorField(
+        const surfaceScalarField &
+    );
+
+    tmp<pointSphericalTensorField> makePointSphericalTensorField(
+        const pointScalarField &
+    );
 
     template<class FType,class Mesh>
-    inline FType *makeConstantFieldInternal(
+    inline tmp<FType> makeConstantFieldInternal(
         const typename FType::value_type &val,
         const Mesh &mesh,
         bool makeValuePatches=false
     );
 
     template<class FType>
-    inline FType *makeConstantField(
+    inline tmp<FType> makeConstantField(
         const typename FType::value_type &val,
         bool makeValuePatches=false
     );
 
     template<class FType>
-    inline FType *makePointConstantField(
+    inline tmp<FType> makePointConstantField(
         const typename FType::value_type &val,
         bool makeValuePatches=false
     );
 
     template<class FType,class Mesh>
-    inline FType *makeFieldInternal(
+    inline tmp<FType> makeFieldInternal(
         const Field<typename FType::value_type> &val,
         const Mesh &actualMesh
     );
 
     template<class FType>
-    inline FType *makeField(const Field<typename FType::value_type> &val);
+    inline tmp<FType> makeField(const Field<typename FType::value_type> &val);
 
     template<class FType>
-    inline FType *makePointField(const Field<typename FType::value_type> &val);
+    inline tmp<FType> makePointField(
+        const Field<typename FType::value_type> &val
+    );
 
     template<class Type>
     inline autoPtr<GeometricField<Type,pointPatchField,pointMesh> >
@@ -314,34 +320,36 @@ public:
         const GeometricField<Type,pointPatchField,pointMesh> &field
     );
 
-    volScalarField *makeCellSetField(const string &name);
-    volScalarField *makeCellZoneField(const string &name);
-    surfaceScalarField *makeFaceSetField(const string &name);
-    surfaceScalarField *makeFaceZoneField(const string &name);
-    pointScalarField *makePointSetField(const string &name);
-    pointScalarField *makePointZoneField(const string &name);
+    tmp<volScalarField> makeCellSetField(const string &name);
+    tmp<volScalarField> makeCellZoneField(const string &name);
+    tmp<surfaceScalarField> makeFaceSetField(const string &name);
+    tmp<surfaceScalarField> makeFaceZoneField(const string &name);
+    tmp<pointScalarField> makePointSetField(const string &name);
+    tmp<pointScalarField> makePointZoneField(const string &name);
 
-    surfaceScalarField *makeOnPatchField(const string &name);
-    surfaceScalarField *makeInternalFaceField();
+    tmp<surfaceScalarField> makeOnPatchField(const string &name);
+    tmp<surfaceScalarField> makeInternalFaceField();
 
     // modulo operator
-    volScalarField *makeModuloField(const volScalarField &a,const volScalarField &b);
+    tmp<volScalarField> makeModuloField(
+        const volScalarField &a,const volScalarField &b
+    );
 
     // make special fields
-    surfaceVectorField *makeFacePositionField();
-    surfaceVectorField *makeFaceProjectionField();
-    surfaceVectorField *makeFaceField();
-    surfaceScalarField *makeAreaField();
-    volVectorField *makePositionField();
-    pointVectorField *makePointPositionField();
+    tmp<surfaceVectorField> makeFacePositionField();
+    tmp<surfaceVectorField> makeFaceProjectionField();
+    tmp<surfaceVectorField> makeFaceField();
+    tmp<surfaceScalarField> makeAreaField();
+    tmp<volVectorField> makePositionField();
+    tmp<pointVectorField> makePointPositionField();
 
-    volScalarField *makeDistanceField();
-    volScalarField *makeNearDistanceField();
-    volScalarField *makeRDistanceField(const volVectorField &r);
-    volScalarField *makeVolumeField();
-    volScalarField *makeRandomField(label seed=0);
-    volScalarField *makeGaussRandomField(label seed=0);
-    volScalarField *makeCellIdField();
+    tmp<volScalarField> makeDistanceField();
+    tmp<volScalarField> makeNearDistanceField();
+    tmp<volScalarField> makeRDistanceField(const volVectorField &r);
+    tmp<volScalarField> makeVolumeField();
+    tmp<volScalarField> makeRandomField(label seed=0);
+    tmp<volScalarField> makeGaussRandomField(label seed=0);
+    tmp<volScalarField> makeCellIdField();
 
     //- return Time object
     const Time& runTime() const { return runTime_; }
@@ -363,31 +371,39 @@ public:
 
     // Logical expressions
     template <class Field>
-    Field *makeLogicalField(scalar v);
+    tmp<Field> makeLogicalField(scalar v);
 
     template <class Op,class Field>
-    Field *doCompare(Field *a,Op op,Field *b);
+    tmp<Field> doCompare(const Field &a,Op op,const Field &b);
 
     template <class Op,class Field>
-    Field *doPointCompare(Field *a,Op op,Field *b);
+    tmp<Field> doPointCompare(const Field &a,Op op,const Field &b);
 
     template <class Op,class Field>
-    Field *doLogicalOp(Field *a,Op op,Field *b);
+    tmp<Field> doLogicalOp(const Field &a,Op op,const Field &b);
 
     template <class Op,class Field>
-    Field *doPointLogicalOp(Field *a,Op op,Field *b);
+    tmp<Field> doPointLogicalOp(const Field &a,Op op,const Field &b);
 
     template <class Field>
-    Field *doLogicalNot(Field *a);
+    tmp<Field> doLogicalNot(const Field &a);
 
     template <class Field>
-    Field *doPointLogicalNot(Field *a);
+    tmp<Field> doPointLogicalNot(const Field &a);
 
     template <class T,class Field>
-    T * doConditional(Field *l,T* yes,T* no,T* result);
+    tmp<T>  doConditional(
+        const Field &l,
+        const T & yes,
+        const T & no
+    );
 
     template <class T>
-    T * doConditional(pointScalarField *l,T* yes,T* no,T* result);
+    tmp<T>  doConditional(
+        const pointScalarField &l,
+        const T & yes,
+        const T & no
+    );
 
 private:
     inline static bool canBeValuePatch(const fvPatch &);
