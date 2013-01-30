@@ -110,7 +110,9 @@ stringList patchExpressionFunctionObject::columnNames()
     stringList result(accumulations_.size());
 
     forAll(accumulations_,i) {
-        result[i]=accumulations_[i];
+        result[i]=NumericAccumulationNamedEnum::names[
+            accumulations_[i]
+        ];
     }
 
     return result;
