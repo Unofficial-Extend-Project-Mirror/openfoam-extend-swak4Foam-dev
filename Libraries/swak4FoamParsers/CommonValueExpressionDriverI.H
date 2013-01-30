@@ -82,13 +82,15 @@ namespace Foam {
     }
 
     template<class Type>
-    Field<Type> *CommonValueExpressionDriver::makeField(Type val,bool isPoint)
+    tmp<Field<Type> > CommonValueExpressionDriver::makeField(Type val,bool isPoint)
     {
         label size=this->size();
         if(isPoint) {
             size=this->pointSize();
         }
-        return new Field<Type>(size,val);
+        return tmp<Field<Type> >(
+            new Field<Type>(size,val)
+        );
     }
 
     template<class Type>
@@ -662,6 +664,10 @@ namespace Foam {
             // oldTime automatically read
         }
 
+        if(debug) {
+            Info << "autoPtr: valid()=" << f.valid()
+                << " empty()=" << f.empty() << endl;
+        }
         if(
             !f.valid()
             &&
@@ -674,6 +680,10 @@ namespace Foam {
         }
 
         if(f.valid()) {
+            if(debug) {
+                Info << "Valid " << name << " found. Removing dimensions"
+                    << endl;
+            }
             f->dimensions().reset(nullDim);
             if(f->nOldTimes()>0) {
                 if(debug) {
@@ -682,12 +692,14 @@ namespace Foam {
                         << endl;
                 }
 
+#ifndef FOAM_OLDTIME_PROBLEM
                 // go through ALL old times
                 T *fp=f.operator->();
                 while(fp->nOldTimes()>0) {
-                    fp=&(fp->oldTime());
+                    fp=&(fp->oldTime());  // 1.6-ext seems to have a problem here
                     fp->dimensions().reset(nullDim);
                 }
+#endif
             }
         }
 
@@ -911,65 +923,75 @@ namespace Foam {
         */
 
     template <class Op,class Type>
-    Field<bool> *CommonValueExpressionDriver::doCompare(
-        Field<Type> *a,
+    tmp<Field<bool> > CommonValueExpressionDriver::doCompare(
+        const Field<Type> &a,
         Op op,
-        Field<Type> *b
+        const Field<Type> &b
     )
     {
-        assert(a->size()==b->size());
+        assert(a.size()==b.size());
 
-        Field<bool> *res=new Field<bool>(a->size(),false);
+        tmp<Field<bool> > res(
+            new Field<bool>(a.size(),false)
+        );
 
-        forAll(*res,i) {
-            (*res)[i]=op((*a)[i],(*b)[i]);
+        forAll(res(),i) {
+            res()[i]=op(a[i],b[i]);
         }
 
         return res;
     }
 
     template <class Op>
-    Field<bool> *CommonValueExpressionDriver::doLogicalOp(
-        Field<bool> *a,
+    tmp<Field<bool> > CommonValueExpressionDriver::doLogicalOp(
+        const Field<bool> &a,
         Op op,
-        Field<bool> *b
+        const Field<bool> &b
     )
     {
-        assert(a->size()==b->size());
+        assert(a.size()==b.size());
 
-        Field<bool> *res=new Field<bool>(a->size(),false);
+        tmp<Field<bool> > res(
+            new Field<bool>(a.size(),false)
+        );
 
-        forAll(*res,i) {
-            (*res)[i]=op((*a)[i],(*b)[i]);
+        forAll(res(),i) {
+            res()[i]=op(a[i],b[i]);
         }
 
         return res;
     }
 
     template<class Type>
-    Field<Type> *CommonValueExpressionDriver::doConditional(
-        Field<bool> *d,
-        Field<Type> *yes,
-        Field<Type> *no
+    tmp<Field<Type> > CommonValueExpressionDriver::doConditional(
+        const Field<bool> &d,
+        const Field<Type> &yes,
+        const Field<Type> &no
     )
     {
-        assert(yes->size()==no->size() && d->size()==yes->size());
+        assert(yes.size()==no.size() && d.size()==yes.size());
 
-        Field<Type> *res=new Field<Type>(yes->size());
+        tmp<Field<Type> > res(
+            new Field<Type>(yes.size())
+        );
 
-        forAll(*res,i) {
-            (*res)[i] = (*d)[i] ? (*yes)[i] : (*no)[i];
+        forAll(res(),i) {
+            res()[i] = d[i] ? yes[i] : no[i];
         }
 
         return res;
     }
 
-    Field<bool> *CommonValueExpressionDriver::doLogicalNot(Field<bool> *a)
+    tmp<Field<bool> > CommonValueExpressionDriver::doLogicalNot(
+        const Field<bool> &a
+    )
     {
-        Field<bool> *res=new Field<bool>(a->size());
+        tmp<Field<bool> > res(
+            new Field<bool>(a.size())
+        );;
 
-        forAll(*res,i) {
-            (*res)[i] = (*a)[i];
+        forAll(res(),i) {
+            res()[i] = a[i];
         }
 
         return res;

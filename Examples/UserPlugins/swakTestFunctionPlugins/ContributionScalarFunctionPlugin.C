@@ -212,7 +212,7 @@ void ContributionScalarPluginFunction<Driver,PluginType>::setArgument(
     );
 
     positions_.set(
-        theDriver.makePositionField()
+        theDriver.makePositionField().ptr()
     );
 }
 
@@ -282,7 +282,7 @@ void setResultForContribution<FaFieldValuePluginFunction>(
     // Workaround because Field has (and can not have) a virtual destructor
 template<class Driver>
 autoPtr<vectorField> makeParentPositions(Driver &driver) {
-    return autoPtr<vectorField>(driver.makePositionField());
+    return autoPtr<vectorField>(driver.makePositionField().ptr());
 }
 
 template<>
@@ -290,7 +290,7 @@ autoPtr<vectorField> makeParentPositions(FieldValueExpressionDriver &driver) {
     return autoPtr<vectorField>(
         new vectorField(
             autoPtr<volVectorField>(
-                driver.makePositionField()
+                driver.makePositionField().ptr()
             )().internalField()
         )
     );
@@ -302,7 +302,7 @@ autoPtr<vectorField> makeParentPositions(FaFieldValueExpressionDriver &driver) {
     return autoPtr<vectorField>(
         new vectorField(
             autoPtr<areaVectorField>(
-                driver.makePositionField()
+                driver.makePositionField().ptr()
             )().internalField()
         )
     );
@@ -331,7 +331,7 @@ void ContributionScalarPluginFunction<Driver,PluginType>::doEvaluation()
             dynamicCast<PluginTypeDriverType &>(
                 this->parentDriver()
             )
-        )
+        ).ptr()
     );
 
     forAll(result,cellI)

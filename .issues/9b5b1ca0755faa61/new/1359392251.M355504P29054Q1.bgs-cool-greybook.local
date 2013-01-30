@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 28 Jan 2013 17:56:01 +0100
+State: new
+Subject: groovyBC for surfaceFields
+Message-Id: <9b5b1ca0755faa61-0-artemis@bgs-cool-greybook.local>
+
+The Reiss-man needs this
+
+Not sure whether it will work.
+
+Will be derived from fixedValue anyway

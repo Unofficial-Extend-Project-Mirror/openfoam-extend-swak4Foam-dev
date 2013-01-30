@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 30 Jan 2013 19:53:26 +0100
+Subject: Re: Get rid of raw pointers in the Parser/Driver-code
+Message-Id: <e5e6ced1fa55ef37-dca0012c39148ccd-artemis@bgs-cool-greybook.local>
+References: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+
+Now most functions are rewritten to =tmp=

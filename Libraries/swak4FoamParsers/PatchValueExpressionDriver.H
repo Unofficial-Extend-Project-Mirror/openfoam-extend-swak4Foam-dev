@@ -205,44 +205,44 @@ public:
 
     // Member Functions
 
-    vectorField *makePositionField();
+    tmp<vectorField> makePositionField();
 
-    vectorField *makePointField();
+    tmp<vectorField> makePointField();
 
-    vectorField *makeFaceNormalField();
+    tmp<vectorField> makeFaceNormalField();
 
-    vectorField *makeFaceAreaField();
+    tmp<vectorField> makeFaceAreaField();
 
-    vectorField *makeCellNeighbourField();
+    tmp<vectorField> makeCellNeighbourField();
 
-    vectorField *makeDeltaField();
+    tmp<vectorField> makeDeltaField();
 
-    scalarField *makeWeightsField();
+    tmp<scalarField> makeWeightsField();
 
-    scalarField *makeFaceIdField();
+    tmp<scalarField> makeFaceIdField();
 
-    scalarField *makeNearDistField();
-
-    template<class Type>
-    Field<Type> *getField(const string &name);
+    tmp<scalarField> makeNearDistField();
 
     template<class Type>
-    Field<Type> *getOldTimeField(const string &name);
+    tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
-    Field<Type> *getSurfaceNormalField(const string &name);
+    tmp<Field<Type> > getOldTimeField(const string &name);
 
     template<class Type>
-    Field<Type> *getPatchInternalField(const string &name);
+    tmp<Field<Type> > getSurfaceNormalField(const string &name);
 
     template<class Type>
-    Field<Type> *getPatchNeighbourField(const string &name);
+    tmp<Field<Type> > getPatchInternalField(const string &name);
 
     template<class Type>
-    Field<Type> *toFace(const Field<Type> &);
+    tmp<Field<Type> > getPatchNeighbourField(const string &name);
 
     template<class Type>
-    Field<Type> *toPoint(const Field<Type> &);
+    tmp<Field<Type> > toFace(const Field<Type> &);
+
+    template<class Type>
+    tmp<Field<Type> > toPoint(const Field<Type> &);
 
     //- return a new plugin-function
     virtual autoPtr<CommonPluginFunction> newPluginFunction(

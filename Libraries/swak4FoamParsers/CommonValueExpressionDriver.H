@@ -471,21 +471,33 @@ public:
     void clearResult();
 
     template <class Op,class Type>
-    Field<bool> *doCompare(Field<Type> *a,Op op,Field<Type> *b);
+    tmp<Field<bool> > doCompare(
+        const Field<Type> &a,
+        Op op,
+        const Field<Type> &b
+    );
 
     template <class Op>
-    Field<bool> *doLogicalOp(Field<bool> *a,Op op,Field<bool> *b);
+    tmp<Field<bool> > doLogicalOp(
+        const Field<bool> &a,
+        Op op,
+        const Field<bool> &b
+    );
 
-    inline Field<bool> *doLogicalNot(Field<bool> *a);
+    inline tmp<Field<bool> > doLogicalNot(const Field<bool> &a);
 
     template<class Type>
-    Field<Type> *doConditional(Field<bool> *d,Field<Type> *yes,Field<Type> *no);
+    tmp<Field<Type> > doConditional(
+        const Field<bool> &d,
+        const Field<Type> &yes,
+        const Field<Type> &no
+    );
 
     template<class Type>
-    Field<Type> *makeField(Type,bool isPoint=false);
+    tmp<Field<Type> > makeField(Type,bool isPoint=false);
 
 //     template<class Type>
-//     Field<Type> *getField(const string &name);
+//     tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
     bool is(const string &name,bool isPoint=false) const;
@@ -504,7 +516,7 @@ public:
     inline bool isLine(const string &name) const;
 
     //- get the value for a timeline for a specific time
-    scalarField *getLine(const string &name,scalar t);
+    tmp<scalarField> getLine(const string &name,scalar t);
 
     //- value of the timeline
     scalar getLineValue(const string &name,scalar t);
@@ -550,12 +562,12 @@ public:
     //- get the value for a lookuptable for a set of values
     tmp<scalarField> getLookup(const string &name,const scalarField &val);
 
-    scalarField *makeModuloField(
+    tmp<scalarField> makeModuloField(
         const scalarField &a,
         const scalarField &b
     ) const;
-    scalarField *makeRandomField(label seed=0) const;
-    scalarField *makeGaussRandomField(label seed=0) const;
+    tmp<scalarField> makeRandomField(label seed=0) const;
+    tmp<scalarField> makeGaussRandomField(label seed=0) const;
 
     vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
 
@@ -563,18 +575,24 @@ public:
 
     const Time& runTime() const;
 
-    vectorField *composeVectorField(scalarField *,scalarField *,scalarField *);
-
-    tensorField *composeTensorField(scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *);
-
-    symmTensorField *composeSymmTensorField(
-        scalarField *,scalarField *,scalarField *,
-        scalarField *,scalarField *,scalarField *
+    tmp<vectorField> composeVectorField(
+        const scalarField &,
+        const scalarField &,
+        const scalarField &
     );
 
-    sphericalTensorField *composeSphericalTensorField(scalarField *);
+    tmp<tensorField> composeTensorField(
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &
+    );
+
+    tmp<symmTensorField> composeSymmTensorField(
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &
+    );
+
+    tmp<sphericalTensorField> composeSphericalTensorField(const scalarField &);
 
     // Error handling.
 

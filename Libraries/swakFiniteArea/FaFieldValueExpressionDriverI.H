@@ -459,7 +459,9 @@ void FaFieldValueExpressionDriver::setValuePatches
 }
 
 template<class FType>
-inline FType *FaFieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)
+inline tmp<FType> FaFieldValueExpressionDriver::makeField(
+    const Field<typename FType::value_type> &val
+)
 {
     std::ostringstream buff;
     buff << "field" << pTraits<typename FType::value_type>::typeName;
@@ -480,7 +482,8 @@ inline FType *FaFieldValueExpressionDriver::makeField(const Field<typename FType
 
     if(val.size()!=f->internalField().size()) {
         FatalErrorIn("FaFieldValueExpressionDriver::makeField(const Field<typename FType::value_type> &val)")
-            << "Size " << val.size() << " of the assigned field is not the required "
+            << "Size " << val.size()
+                << " of the assigned field is not the required "
                 << f->internalField().size()
                 << endl
                 << exit(FatalError);
@@ -488,29 +491,31 @@ inline FType *FaFieldValueExpressionDriver::makeField(const Field<typename FType
 
     f->internalField()=val;
 
-    return f;
+    return tmp<FType>(f);
 }
 
 template<class FType>
-inline FType *FaFieldValueExpressionDriver::makeConstantField(
+inline tmp<FType> FaFieldValueExpressionDriver::makeConstantField(
     const typename FType::value_type &val
 ) const
 {
     std::ostringstream buff;
     buff << "constant" << pTraits<typename FType::value_type>::typeName;
 
-    FType *f=new FType(
-        IOobject
-        (
-            buff.str(),
-            time(),
-            mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        aMesh(),
-        val,
-        "zeroGradient"
+    tmp<FType> f(
+        new FType(
+            IOobject
+            (
+                buff.str(),
+                time(),
+                mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            aMesh(),
+            val,
+            "zeroGradient"
+        )
     );
 
     return f;

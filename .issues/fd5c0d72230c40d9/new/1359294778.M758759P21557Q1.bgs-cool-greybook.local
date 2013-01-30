@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 27 Jan 2013 14:51:08 +0100
+State: fixed
+Subject: expressionField ignores "outputControl outputTime"
+Message-Id: <fd5c0d72230c40d9-0-artemis@bgs-cool-greybook.local>
+
+in Examples/other/angledDuct very "expensive" calculations are done
+although the outputControl there is set to outputTime

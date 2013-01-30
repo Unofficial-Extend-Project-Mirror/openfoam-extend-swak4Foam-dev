@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 30 Jan 2013 09:24:23 +0100
+Subject: Re: Get rid of raw pointers in the Parser/Driver-code
+Message-Id: <e5e6ced1fa55ef37-fcf207b2a310231b-artemis@bgs-cool-greybook.local>
+References: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+
+Compiles on 1.6-ext
+
+Nothing suspicous found in valgrind

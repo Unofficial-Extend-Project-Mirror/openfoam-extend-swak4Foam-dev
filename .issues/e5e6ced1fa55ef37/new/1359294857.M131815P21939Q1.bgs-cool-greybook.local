@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 27 Jan 2013 14:53:44 +0100
+Subject: Re: Get rid of raw pointers in the Parser/Driver-code
+Message-Id: <e5e6ced1fa55ef37-d1dd73d7757cf788-artemis@bgs-cool-greybook.local>
+References: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
+
+Most valgrind-problems come from Python or DLL-loading it seems

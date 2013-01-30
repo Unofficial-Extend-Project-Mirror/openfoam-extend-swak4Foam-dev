@@ -99,7 +99,7 @@ protected:
 
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
-    Field<T> *getFieldInternal(
+    tmp<Field<T> > getFieldInternal(
         const string &name,
         const Subset &sub,
         bool oldTime=false
@@ -107,7 +107,7 @@ protected:
 
     //- General Method to get the values and interpolate
     template<class FieldType,class IFieldType,class Subset,class T>
-    Field<T> *getFieldInternalAndInterpolate(
+    tmp<Field<T> > getFieldInternalAndInterpolate(
         const string &name,
         const Subset &sub,
         bool oldTime=false
@@ -115,7 +115,7 @@ protected:
 
     //- General Method to get values from a field
     template<class Subset,class T>
-    Field<T> *getFromFieldInternal(
+    tmp<Field<T> > getFromFieldInternal(
         const Field<T> &original,const Subset &sub
     ) const;
 
@@ -154,48 +154,48 @@ public:
 
     // Member Functions
 
-    virtual vectorField *makePositionField() const = 0;
+    virtual tmp<vectorField> makePositionField() const = 0;
 
-    virtual scalarField *makeFaceAreaMagField() const = 0;
+    virtual tmp<scalarField> makeFaceAreaMagField() const = 0;
 
-    virtual scalarField *makeCellVolumeField() const = 0;
+    virtual tmp<scalarField> makeCellVolumeField() const = 0;
 
-    //     virtual vectorField *makePointField() const = 0;
+    //     virtual tmp<vectorField> makePointField() const = 0;
 
-    virtual vectorField *makeFaceNormalField() const = 0;
+    virtual tmp<vectorField> makeFaceNormalField() const = 0;
 
-    virtual vectorField *makeFaceAreaField() const = 0;
+    virtual tmp<vectorField> makeFaceAreaField() const = 0;
 
-    virtual scalarField *makeFaceFlipField() const = 0;
+    virtual tmp<scalarField> makeFaceFlipField() const = 0;
 
     virtual bool isCell()=0;
 
-    scalarField *makeIdField();
+    tmp<scalarField> makeIdField();
 
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
-    virtual Field<scalar> *getScalarField(
+    virtual tmp<Field<scalar> > getScalarField(
         const string &name,
         bool oldTime=false
     )=0;
 
-    virtual Field<vector> *getVectorField(
+    virtual tmp<Field<vector> > getVectorField(
         const string &name,
         bool oldTime=false
     )=0;
 
-    virtual Field<tensor> *getTensorField(
+    virtual tmp<Field<tensor> > getTensorField(
         const string &name,
         bool oldTime=false
     )=0;
 
-    virtual Field<symmTensor> *getSymmTensorField(
+    virtual tmp<Field<symmTensor> > getSymmTensorField(
         const string &name,
         bool oldTime=false
     )=0;
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(
+    virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
         const string &name,
         bool oldTime=false
     )=0;
