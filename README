@@ -1753,3 +1753,6 @@ S_{expl} + S_{impl} T
 **** Updated contributor lists in =README= and sources
      The list of contributors to each file have been added (mostly by
      script with the information from the repository)
+**** Rewritten methods that return pointers
+     This abomination from the early days of =funkySetFields= has been
+     cleaned

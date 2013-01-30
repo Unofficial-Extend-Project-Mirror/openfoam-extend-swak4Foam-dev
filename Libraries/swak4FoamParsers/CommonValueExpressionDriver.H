@@ -493,21 +493,33 @@ public:
     void clearResult();
 
     template <class Op,class Type>
-    Field<bool> *doCompare(Field<Type> *a,Op op,Field<Type> *b);
+    tmp<Field<bool> > doCompare(
+        const Field<Type> &a,
+        Op op,
+        const Field<Type> &b
+    );
 
     template <class Op>
-    Field<bool> *doLogicalOp(Field<bool> *a,Op op,Field<bool> *b);
+    tmp<Field<bool> > doLogicalOp(
+        const Field<bool> &a,
+        Op op,
+        const Field<bool> &b
+    );
 
-    inline Field<bool> *doLogicalNot(Field<bool> *a);
+    inline tmp<Field<bool> > doLogicalNot(const Field<bool> &a);
 
     template<class Type>
-    Field<Type> *doConditional(Field<bool> *d,Field<Type> *yes,Field<Type> *no);
+    tmp<Field<Type> > doConditional(
+        const Field<bool> &d,
+        const Field<Type> &yes,
+        const Field<Type> &no
+    );
 
     template<class Type>
     tmp<Field<Type> > makeField(Type,bool isPoint=false);
 
 //     template<class Type>
-//     Field<Type> *getField(const string &name);
+//     tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
     bool is(const string &name,bool isPoint=false) const;

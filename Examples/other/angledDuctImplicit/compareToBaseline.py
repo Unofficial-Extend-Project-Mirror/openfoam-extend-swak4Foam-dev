@@ -10,7 +10,7 @@ if len(sys.argv)>1:
     vectorMode=sys.argv[1]
 else:
     vectorMode="x"
-    
+
 from os import listdir,path
 from PyFoam.Applications.TimelinePlot import TimelinePlot
 
@@ -23,7 +23,7 @@ for f in listdir("baselineData"):
                        "--reference-dir="+path.join("baselineData",f),
                        "--basic-mode=lines",
                        "--vector-mode="+vectorMode,
-                       "--compare","--metrics"])
+                       "--compare","--metrics","--min-time=30"])
     tmp=sys.stdout
     sys.stdout=gpFile
     TimelinePlot(args=[".",
