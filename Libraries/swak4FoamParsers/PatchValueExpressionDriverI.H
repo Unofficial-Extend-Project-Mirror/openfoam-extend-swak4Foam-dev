@@ -102,7 +102,9 @@ namespace Foam {
                         qPSize
                     )
                 ) {
-                    return tmp<Field<Type> >(vals);
+                    return tmp<Field<Type> >(
+                        vals.ptr()
+                    );
                 } else {
                     return tmp<Field<Type> >(
                         new Field<Type>(
