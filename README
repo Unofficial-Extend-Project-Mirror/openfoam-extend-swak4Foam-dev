@@ -1732,6 +1732,9 @@ S_{expl} + S_{impl} T
 **** =expressionField= reports name and type of the created field
      The title says it all. Should give the user additional feedback
      about what is happening
+**** New boundary condition =groovyPartialSlip= in =groovyStandardBCs=
+     This boundary allows specifying the partial slip fraction of the
+     regular =partialSlip=-BC with an expression.
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

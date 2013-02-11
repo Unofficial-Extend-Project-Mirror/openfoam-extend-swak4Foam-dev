@@ -9,50 +9,45 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      alpha;
+    class       volVectorField;
+    object      U;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
+dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform (0 0 0);
 
 boundaryField
 {
-    leftWall
-    {
-        type            zeroGradient;
-    }
-
-    rightWall
+    inlet
     {
         type groovyBC;
-        globalScopes ( "fillDamBC" );
-        valueExpression "1";
-        fractionExpression "(pos().y < inHeight) ? 1 : 0";
-        variables (
-            "outerArea=(max(pts().y)-min(pts().y))*(max(pts().z)-min(pts().z));"
-            "totalArea=sum(area());"
-            "areaRatio=outerArea/totalArea;"
-        );
-
-        value uniform 0;
+        value uniform (1 0 0);
+        valueExpression "-normal()";
     }
-
-    lowerWall
+    outlet
     {
         type            zeroGradient;
     }
 
-    atmosphere
+    inner
     {
-        type            inletOutlet;
-        inletValue      uniform 0;
-        value           uniform 0;
+        type            fixedValue;
+        //        type groovyPartialSlip;
+        value           uniform (0 0 0);
+        // switch from slip to fixedValue
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+        );
+        fractionExpression "(pos().x-minX)/(maxX-minX)";
     }
-
-    defaultFaces
+    outer
+    {
+        type slip;
+    }
+    frontAndBack
     {
         type            empty;
     }
