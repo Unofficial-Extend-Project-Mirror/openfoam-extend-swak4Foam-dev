@@ -140,11 +140,87 @@ hide circle
   | =faPatch=         | Boundary patch of a FAM-field (=1.6-ext= only)  |
 
   In principle new parsers for different entities can be implemented
-  and selected at run-time.
-
+  and selected at run-time (as for instance are the /FAM/-parsers
+  which are located in a separate library that has to be loaded at
+  run-time)
 ** Expressions
+   The basic syntax of the expressions is modelled after the syntax of
+   expressions in OpenFOAM-programs. This means:
+   - the syntax is C++
+     - the usual precedence rules apply
+   - if possible the same operators and function names as in OpenFOAM
+     are used
+   The type of result of an exprerssion does not have to be
+   declared. swak4Foam determines it from the expression. In certain
+   cases the calling entity (BC, functionObject etc) expects a certain
+   type and will complain *after* the evaluation has finished.
+
+   If the type of subexpressions for a certain operator/function is
+   incompatible (for instance when trying to add a vector to a scalar)
+   the parser will issue an error message during the evaluation.
+
+   Most parsers have two kinds of structures where calculations are
+   performed:
+   1. the "native" structure of that parser. For instance for the
+      =internalField=-parser this would be the values in the cells
+   2. the "secondary" structure of the parser. For the =internalField=
+      this would be the value on the faces (=internalField= is special
+      as it also has another /secondary/ structure: the values on the
+      vertices)
+   swak4Foam does *not* automatically convert values between these
+   structures (as it usually involves an interpolation) but specific
+   functions has to be used. The parser will complain if
+   subexpressions of different structures are combined. This usually
+   leads to confusion with constants which are defined on the /native/
+   structure and have to be converted explicitly to the secondary
+   structure if necessary (for instance =toPoint(1)= to use the
+   constant =1= on the vertexes of a patch). Table
+   \ref{tab:structures} gives an overview of the structures.
+
+   #+CAPTION: Structures for the different parsers
+   #+LABEL: tab:structures
+   | Parser            | /native/ structure      | secondary structure            |
+   |-------------------+-------------------------+--------------------------------|
+   | =internalField=   | Cell values             | Face values and point values   |
+   | =patch=           | Face values             | Point values                   |
+   | =faceZone=        | Face values             | none                           |
+   | =cellZone=        | Cell values             | none                           |
+   | =faceSet=         | Face values             | none                           |
+   | =cellSet=         | Cell values             | none                           |
+   | =set=             | Values on sample points | none                           |
+   | =surface=         | Values on the facets    | vertices - not yet implemented |
+   | =internalFaField= | Area (=face) values     | Edge values                    |
+   | =faPatch=         | Edge values             | Point values                   |
+
+   The following sections describe the basic concepts of the
+   expressions.
+*** Constants and type building
+    This applies to all types of expressions.
+
+    Numeric constants can be written in any form they can be written
+    in C++/OpenFOAM. Just a few examples: =42=, =3.1415=, =6.66e2= etc
+
+    Vector values can be constructed using the keyword =vector= and
+    three scalar values (which can be constants or expressions that
+    yield a scalar): for instance =vector(1,2,3)= or
+    =vector(1,pos().x,0)=.
+
+    Tensors are constructed with the keyword =tensor= and 9 scalar
+    values for the components.
+
+    Symmetric tensors are constructed using the keyword =symmTensor=
+    and the 6 components $a_{xx}$, $a_{xy}$, $a_{xz}$, $a_{yy}$,
+    $a_{yz}$ and $a_{zz}$.
+
+    Spherical tensors are constructed using =sphericalTensor= and one
+    scalar value.
+*** Operators
+
+*** Mathematical functions
+*** OpenFOAM-specific functions
+*** Variables and fields
+*** Plugin functions
 ** Parameters
-** Variables
 * Usable parts
 ** Utilities
 ** Boundary conditions
