@@ -135,6 +135,8 @@ void Foam::groovyPartialSlipFvPatchField<Type>::write(Ostream& os) const
     os.writeKeyword("fractionExpression")
         << valueFractionExpression_ << token::END_STATEMENT << nl;
 
+    this->writeEntry("value", os);
+
     driver_.writeCommon(os,debug);
 }
 

@@ -41,7 +41,6 @@ boundaryField
             "minX=min(pts().x);"
             "maxX=max(pts().x);"
         );
-        debugCommonDriver 1;
         fractionExpression "(pos().x-minX)/(maxX-minX)";
     }
     outer
