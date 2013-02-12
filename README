@@ -101,6 +101,38 @@
          function-plugins. They are compiled in the course of the
          normal =swak=-compilation. This makes sure that they are
          consistent with the =swak=-release in the case of an update
+*** Special versions of the python integration
+    *Note*: This section is very special and won't be needed by most
+    people
+
+    The library =libswakPythonIntegration.so= links against a specific
+    version of the python library. In certain circumstances (for
+    instance the OS of the cluster is different from the one that swak
+    was compiled on) this python-version is not available on the
+    target machine. While all other parts of swak will work the
+    python-integration won't load on the target machine. To fix this
+    problem a workaround is provided:
+
+    The script =maintainanceScripts/makeSpecialPythonLibrary.sh=
+    compiles a special version of the =libswakPythonIntegration.so=
+    that is identified by an additional suffix (for instance the
+    suffix =Cluster= makes a file
+    =libswakPythonIntegrationCluster.so=). That script has to be run
+    *on the target system* and needs 3 parameters:
+    1. =SWAK_PYTHON_INCLUDE=
+    2. =SWAK_PYTHON_LINK=
+    3. The suffix
+    For instance
+: ./maintainanceScripts/makeSpecialPythonLibrary.sh -I/opt/local/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 "-L/opt/local/lib -lpython2.5" Version2.5
+    compiles a version for an old python.
+
+    To enable the python-integration in =libs= in =controlDict= *both*
+    python-integrations have to be specified. One of them will fail on
+    each machine (because the required python-library is not there),
+    the other one will provide the python-functionObjects.
+
+    Note: the special libraries won't be updated automatically on the
+    target system. Doing so is the responsibility of the user.
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
@@ -1631,6 +1663,11 @@ S_{expl} + S_{impl} T
 **** =accumulations=-entries converted to =NamedEnums=
      This forces the entries to be checked while being read. Allowing
      more consistent treatment
+**** Additional maintenance script for special python-versions
+     This script allows compiling additional versions of
+     =swakPythonIntegration= for cases where the version on the
+     development machine is different from the version on the
+     simulation machine (see installation chapter)
 *** Cosmetics
     Changes without consequences for the user
 **** Change type of =name= in parsers to =word=
