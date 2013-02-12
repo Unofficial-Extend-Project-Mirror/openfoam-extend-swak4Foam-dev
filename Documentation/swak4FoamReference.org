@@ -155,6 +155,15 @@ hide circle
    cases the calling entity (BC, functionObject etc) expects a certain
    type and will complain *after* the evaluation has finished.
 
+   Available types are
+   - scalar :: ordinary floating point expressions
+   - vector :: a three component vector (usually describing a position
+               in space)
+   - tensor :: a tensor with $3 \times 3$ components
+   - symmTensor :: a $3 \times 3$ symmetric tensor (for the components
+                   $a_{ij}=a_{ji}$)
+   - sphericalTensor :: Spherical tensor
+
    If the type of subexpressions for a certain operator/function is
    incompatible (for instance when trying to add a vector to a scalar)
    the parser will issue an error message during the evaluation.
@@ -166,7 +175,7 @@ hide circle
    2. the "secondary" structure of the parser. For the =internalField=
       this would be the value on the faces (=internalField= is special
       as it also has another /secondary/ structure: the values on the
-      vertices)
+      vertexes)
    swak4Foam does *not* automatically convert values between these
    structures (as it usually involves an interpolation) but specific
    functions has to be used. The parser will complain if
@@ -214,8 +223,27 @@ hide circle
 
     Spherical tensors are constructed using =sphericalTensor= and one
     scalar value.
-*** Operators
 
+    The logical constants =true= and =false= are available
+*** Operators
+    These operators are implemented for all the parsers (the usual
+    precedence-rules apply):
+    - =+ - * /= :: Arithmetic operations
+    - =&= :: Inner product for vectors and tensors
+    - =^= :: Cross product of two vectors
+    - =%= :: Modulo operator. The implementation of this operator
+             differs from the usual implementations: for an expression
+             =a%b= the function is defined in the range
+             $\frac{-b}{2}<x<\frac{b}{2}$ as $x$ (not as usual in the
+             range $0<x<b$)
+    - =&& ||= :: The logical /and/ and /or/ operators
+    - =!= :: Logical negation
+    - ~< > >= <=~ :: Comparisons
+    - ~== !=~ :: Equality and inequality-operators
+    - =? := :: /if-then-else/-operator. An expression =a ? b : c=
+               means "if the logical expression =a= is =true= the
+               value of expression =b= is used. Otherwise the value of
+               expression =c="
 *** Mathematical functions
 *** OpenFOAM-specific functions
 *** Variables and fields
