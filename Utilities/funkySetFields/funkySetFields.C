@@ -640,6 +640,34 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+    PtrList<fvMesh> additionalRegions;
+
+    if (args.options().found("additionalRegions")) {
+        string regionsString(args.options()["additionalRegions"]);
+        IStringStream regionsStream("("+regionsString+")");
+        wordList additionalRegionsNames(regionsStream);
+
+        additionalRegions.resize(additionalRegionsNames.size());
+        forAll(additionalRegionsNames,i)
+        {
+            const word &region=additionalRegionsNames[i];
+
+            Info << "Loading additional mesh region " << region << endl;
+
+            additionalRegions.set(
+                i,
+                new fvMesh(
+                    IOobject(
+                        region,
+                        runTime.timeName(),
+                        runTime,
+                        Foam::IOobject::MUST_READ
+                    )
+                )
+            );
+        }
+    }
+
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();
     }
@@ -672,6 +700,23 @@ int main(int argc, char *argv[])
             otherCase,
             otherRegion
         );
+
+        if (args.options().found("otherAdditionalRegions")) {
+            string regionsString(args.options()["otherAdditionalRegions"]);
+            IStringStream regionsStream("("+regionsString+")");
+            otherAdditionalRegions=wordList(regionsStream);
+        }
+
+        forAll(otherAdditionalRegions,regionI) {
+            const word &name=otherAdditionalRegions[regionI];
+            Info << "Adding region " << name << " from other case" << endl;
+
+            polyMesh &added=MeshesRepository::getRepository().addCoupledMesh(
+                "other_"+name,
+                "other",
+                name
+            );
+        }
 
         if(args.options().found("otherInterpolateOrder")) {
             MeshesRepository::getRepository().setInterpolationOrder(
