@@ -642,26 +642,33 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
-    wordList additionalRegions;
+    PtrList<fvMesh> additionalRegions;
 
     if (args.options().found("additionalRegions")) {
         string regionsString(args.options()["additionalRegions"]);
         IStringStream regionsStream("("+regionsString+")");
-        additionalRegions=wordList(regionsStream);
+        wordList additionalRegionsNames(regionsStream);
+
+        additionalRegions.resize(additionalRegionsNames.size());
+        forAll(additionalRegionsNames,i)
+        {
+            const word &region=additionalRegionsNames[i];
+
+            Info << "Loading additional mesh region " << region << endl;
+
+            additionalRegions.set(
+                i,
+                new fvMesh(
+                    IOobject(
+                        region,
+                        runTime.timeName(),
+                        runTime,
+                        Foam::IOobject::MUST_READ
+                    )
+                )
+            );
+        }
     }
-
-    forAll(additionalRegions,regionI) {
-        const word &name=additionalRegions[regionI];
-        Info << "Adding region " << name <<  endl;
-
-        polyMesh &added=MeshesRepository::getRepository().addMesh(
-            "mesh_"+name,
-            mesh.time().path(),
-            name
-        );
-        mesh.time().checkIn(added);
-    }
-
 
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();
@@ -707,13 +714,11 @@ int main(int argc, char *argv[])
             const word &name=otherAdditionalRegions[regionI];
             Info << "Adding region " << name << " from other case" << endl;
 
-            polyMesh &added=MeshesRepository::getRepository().addMesh(
+            polyMesh &added=MeshesRepository::getRepository().addCoupledMesh(
                 "other_"+name,
-                otherCase,
+                "other",
                 name
             );
-
-            other.time().checkIn(added);
         }
 
         if(args.options().found("otherInterpolateOrder")) {
@@ -732,16 +737,6 @@ int main(int argc, char *argv[])
             );
             Info << "Actually using time " << time << " in other case\n"
                 << endl;
-
-            forAll(otherAdditionalRegions,regionI) {
-                const word &name=otherAdditionalRegions[regionI];
-                Info << "Setting time for addtional region " << name << endl;
-
-                MeshesRepository::getRepository().setTime(
-                    "other_"+name,
-                    otherTime
-                );
-            }
         }
     } else if(
         args.options().found("otherRegion")
@@ -773,17 +768,6 @@ int main(int argc, char *argv[])
                 timeI
             );
             Info << "Other mesh set to time " << time << endl;
-
-            forAll(otherAdditionalRegions,regionI) {
-                const word &name=otherAdditionalRegions[regionI];
-
-                MeshesRepository::getRepository().setTime(
-                    "other_"+name,
-                    runTime.timeName(),
-                    timeI
-                );
-                Info << "Additional mesh " << name << " set to time" << endl;
-            }
         }
 
         if(args.options().found("addDummyPhi")) {
