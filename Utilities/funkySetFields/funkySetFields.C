@@ -601,23 +601,25 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
-    argList::validOptions.insert("field","<field to overwrite>");
-    argList::validOptions.insert("expression","<expression to write>");
-    argList::validOptions.insert("condition","<logical condition>");
-    argList::validOptions.insert("dimension","<dimension of created field>");
+    argList::validOptions.insert("field","field to overwrite");
+    argList::validOptions.insert("expression","expression to write");
+    argList::validOptions.insert("condition","logical condition");
+    argList::validOptions.insert("dimension","dimension of created field");
     argList::validOptions.insert("debugParser","");
     argList::validOptions.insert("noCacheVariables","");
     argList::validOptions.insert("create","");
     argList::validOptions.insert("keepPatches","");
-    argList::validOptions.insert("valuePatches","<list of patches that get a fixed value>");
-    argList::validOptions.insert("dictExt","<extension to the default funkySetFieldsDict-dictionary>");
+    argList::validOptions.insert("valuePatches","list of patches that get a fixed value");
+    argList::validOptions.insert("dictExt","extension to the default funkySetFieldsDict-dictionary");
     argList::validOptions.insert("allowFunctionObjects","");
     argList::validOptions.insert("addDummyPhi","");
-    argList::validOptions.insert("otherCase","<path to other case>");
-    argList::validOptions.insert("otherRegion","<region in other case>");
-    argList::validOptions.insert("otherTime","<time to use in other case>");
+    argList::validOptions.insert("otherCase","path to other case");
+    argList::validOptions.insert("otherRegion","region in other case");
+    argList::validOptions.insert("otherAdditionalRegions","region in other case that may be needed by coupled boundary conditions");
+    argList::validOptions.insert("additionalRegions","regions that may be needed by coupled boundary conditions");
+    argList::validOptions.insert("otherTime","time to use in other case");
     argList::validOptions.insert("otherHasSameTime","");
-    argList::validOptions.insert("otherInterpolateOrder","<order>");
+    argList::validOptions.insert("otherInterpolateOrder","order");
 
 #   include "setRootCase.H"
 
@@ -640,11 +642,33 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+    wordList additionalRegions;
+
+    if (args.options().found("additionalRegions")) {
+        string regionsString(args.options()["additionalRegions"]);
+        IStringStream regionsStream("("+regionsString+")");
+        additionalRegions=wordList(regionsStream);
+    }
+
+    forAll(additionalRegions,regionI) {
+        const word &name=additionalRegions[regionI];
+        Info << "Adding region " << name <<  endl;
+
+        polyMesh &added=MeshesRepository::getRepository().addMesh(
+            "mesh_"+name,
+            mesh.time().path(),
+            name
+        );
+        mesh.time().checkIn(added);
+    }
+
+
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();
     }
 
     bool otherHasSameTime=args.options().found("otherHasSameTime");
+    wordList otherAdditionalRegions;
 
     if(args.options().found("otherCase")) {
         word otherRegion(polyMesh::defaultRegion);
@@ -660,18 +684,37 @@ int main(int argc, char *argv[])
         Info<< "Adding case " << otherCase << ", region "
             << otherRegion;
         if(otherHasSameTime) {
-            Info << " with same time as 'real' time.";
+            Info << " with same time as 'real' time. ";
         } else {
             Info<< " at t=" << otherTime << ". ";
         }
         Info<< "Fields from that case can be accessed in expression with "
             << "'other(<field>)'\n" << endl;
 
-        MeshesRepository::getRepository().addMesh(
+        fvMesh &other=MeshesRepository::getRepository().addMesh(
             "other",
             otherCase,
             otherRegion
         );
+
+        if (args.options().found("otherAdditionalRegions")) {
+            string regionsString(args.options()["otherAdditionalRegions"]);
+            IStringStream regionsStream("("+regionsString+")");
+            otherAdditionalRegions=wordList(regionsStream);
+        }
+
+        forAll(otherAdditionalRegions,regionI) {
+            const word &name=otherAdditionalRegions[regionI];
+            Info << "Adding region " << name << " from other case" << endl;
+
+            polyMesh &added=MeshesRepository::getRepository().addMesh(
+                "other_"+name,
+                otherCase,
+                name
+            );
+
+            other.time().checkIn(added);
+        }
 
         if(args.options().found("otherInterpolateOrder")) {
             MeshesRepository::getRepository().setInterpolationOrder(
@@ -689,11 +732,23 @@ int main(int argc, char *argv[])
             );
             Info << "Actually using time " << time << " in other case\n"
                 << endl;
+
+            forAll(otherAdditionalRegions,regionI) {
+                const word &name=otherAdditionalRegions[regionI];
+                Info << "Setting time for addtional region " << name << endl;
+
+                MeshesRepository::getRepository().setTime(
+                    "other_"+name,
+                    otherTime
+                );
+            }
         }
     } else if(
         args.options().found("otherRegion")
         ||
         args.options().found("otherTime")
+        ||
+        args.options().found("otherAdditionalRegions")
         ||
         otherHasSameTime
     ) {
@@ -718,6 +773,17 @@ int main(int argc, char *argv[])
                 timeI
             );
             Info << "Other mesh set to time " << time << endl;
+
+            forAll(otherAdditionalRegions,regionI) {
+                const word &name=otherAdditionalRegions[regionI];
+
+                MeshesRepository::getRepository().setTime(
+                    "other_"+name,
+                    runTime.timeName(),
+                    timeI
+                );
+                Info << "Additional mesh " << name << " set to time" << endl;
+            }
         }
 
         if(args.options().found("addDummyPhi")) {
