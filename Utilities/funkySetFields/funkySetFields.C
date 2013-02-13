@@ -559,35 +559,40 @@ void doAnExpression
 
 template<class FieldType>
 void preLoadFieldsFunction(
-    const fvMesh &mesh,
+    const DynamicList<fvMesh*> &meshes,
     const wordList &fieldNames,
     PtrList<FieldType> &fieldList
 )
 {
-    forAll(fieldNames,i) {
-        const word &name=fieldNames[i];
+    forAll(meshes,m) {
+        const fvMesh &mesh=*(meshes[m]);
 
-        IOobject fieldHeader
-        (
-            name,
-            mesh.time().timeName(),
-            mesh,
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
-        );
+        forAll(fieldNames,i) {
+            const word &name=fieldNames[i];
 
-        if
-        (
-            fieldHeader.headerOk()
-         && fieldHeader.headerClassName() == pTraits<FieldType>::typeName
-        )
-        {
-            Info << " Preloading " << name << " of type "
-                << pTraits<FieldType>::typeName << endl;
+            IOobject fieldHeader
+                (
+                    name,
+                    mesh.time().timeName(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::AUTO_WRITE
+                );
 
-            label sz=fieldList.size();
-            fieldList.setSize(sz+1);
-            fieldList.set(sz, new FieldType(fieldHeader, mesh));
+            if
+            (
+                fieldHeader.headerOk()
+                && fieldHeader.headerClassName() == pTraits<FieldType>::typeName
+            )
+            {
+                Info << " Preloading " << name << " of type "
+                    << pTraits<FieldType>::typeName
+                    << " for mesh " << mesh.name() << endl;
+
+                label sz=fieldList.size();
+                fieldList.setSize(sz+1);
+                fieldList.set(sz, new FieldType(fieldHeader, mesh));
+            }
         }
     }
 }
@@ -617,7 +622,8 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("otherRegion","<region in other case>");
     argList::validOptions.insert("otherTime","<time to use in other case>");
     argList::validOptions.insert("otherHasSameTime","");
-    argList::validOptions.insert("otherInterpolateOrder","<order>");
+    argList::validOptions.insert("otherInterpolateOrder","order");
+    argList::validOptions.insert("preloadFields","List of fields to preload");
 
 #   include "setRootCase.H"
 
@@ -639,6 +645,9 @@ int main(int argc, char *argv[])
     autoPtr<surfaceScalarField> dummyPhi;
 
 #   include "createNamedMesh.H"
+
+    DynamicList<fvMesh*> allMeshes;
+    allMeshes.append(&mesh);
 
     PtrList<fvMesh> additionalRegions;
 
@@ -665,6 +674,8 @@ int main(int argc, char *argv[])
                     )
                 )
             );
+
+            allMeshes.append(&(additionalRegions[i]));
         }
     }
 
@@ -700,6 +711,7 @@ int main(int argc, char *argv[])
             otherCase,
             otherRegion
         );
+        allMeshes.append(&(other));
 
         if (args.options().found("otherAdditionalRegions")) {
             string regionsString(args.options()["otherAdditionalRegions"]);
@@ -711,11 +723,12 @@ int main(int argc, char *argv[])
             const word &name=otherAdditionalRegions[regionI];
             Info << "Adding region " << name << " from other case" << endl;
 
-            polyMesh &added=MeshesRepository::getRepository().addCoupledMesh(
+            fvMesh &added=MeshesRepository::getRepository().addCoupledMesh(
                 "other_"+name,
                 "other",
                 name
             );
+            allMeshes.append(&(added));
         }
 
         if(args.options().found("otherInterpolateOrder")) {
@@ -748,6 +761,9 @@ int main(int argc, char *argv[])
                 << exit(FatalError);
 
     }
+
+    allMeshes.shrink();
+
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
@@ -829,6 +845,38 @@ int main(int argc, char *argv[])
             }
             IStringStream valuePatchesStream("("+valuePatchesString+")");
             wordList valuePatches(valuePatchesStream);
+
+            PtrList<volScalarField> vsf;
+            PtrList<volVectorField> vvf;
+            PtrList<volTensorField> vtf;
+            PtrList<volSymmTensorField> vyf;
+            PtrList<volSphericalTensorField> vhf;
+
+            PtrList<surfaceScalarField> ssf;
+            PtrList<surfaceVectorField> svf;
+            PtrList<surfaceTensorField> stf;
+            PtrList<surfaceSymmTensorField> syf;
+            PtrList<surfaceSphericalTensorField> shf;
+
+            if(args.options().found("preloadFields")) {
+                IStringStream preloadStream(
+                    "("+args.options()["preloadFields"]+")"
+                );
+
+                wordList preLoadFields(preloadStream);
+
+                preLoadFieldsFunction(allMeshes,preLoadFields,vsf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,vvf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,vtf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,vyf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,vhf);
+
+                preLoadFieldsFunction(allMeshes,preLoadFields,ssf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,svf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,stf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,syf);
+                preLoadFieldsFunction(allMeshes,preLoadFields,shf);
+            }
 
             dictionary dummyDict;
 
@@ -912,17 +960,17 @@ int main(int argc, char *argv[])
                 if(part.found("preloadFields")) {
                     wordList preLoadFields(part.lookup("preloadFields"));
 
-                    preLoadFieldsFunction(mesh,preLoadFields,vsf);
-                    preLoadFieldsFunction(mesh,preLoadFields,vvf);
-                    preLoadFieldsFunction(mesh,preLoadFields,vtf);
-                    preLoadFieldsFunction(mesh,preLoadFields,vyf);
-                    preLoadFieldsFunction(mesh,preLoadFields,vhf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,vsf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,vvf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,vtf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,vyf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,vhf);
 
-                    preLoadFieldsFunction(mesh,preLoadFields,ssf);
-                    preLoadFieldsFunction(mesh,preLoadFields,svf);
-                    preLoadFieldsFunction(mesh,preLoadFields,stf);
-                    preLoadFieldsFunction(mesh,preLoadFields,syf);
-                    preLoadFieldsFunction(mesh,preLoadFields,shf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,ssf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,svf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,stf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,syf);
+                    preLoadFieldsFunction(allMeshes,preLoadFields,shf);
                 }
 
                 word field=part["field"];
