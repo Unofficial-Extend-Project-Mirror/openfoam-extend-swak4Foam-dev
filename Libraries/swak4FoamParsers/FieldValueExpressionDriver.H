@@ -182,7 +182,7 @@ public:
 
     //- get the result field (if it is of the right type)
     template<class T>
-    const T &getResult() const;
+    const T &getResult(bool correctBC=true) const;
 
     // Handling the scanner.
     void scan_begin ();

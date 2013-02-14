@@ -1650,6 +1650,10 @@ S_{expl} + S_{impl} T
 **** New boundary condition =groovyPartialSlip= in =groovyStandardBCs=
      This boundary allows specifying the partial slip fraction of the
      regular =partialSlip=-BC with an expression.
+**** =funkySetFields= allows switching off the correction of BCs
+     This is sometimes necessary to allow calculations with fields
+     where the boundary conditions have a lot of dependencies
+     (turbulence model, other mesh etc)
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

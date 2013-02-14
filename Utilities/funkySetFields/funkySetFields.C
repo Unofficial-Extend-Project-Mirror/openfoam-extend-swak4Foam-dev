@@ -155,6 +155,7 @@ void setField
         valuePatches
     );
 }
+
 void doAnExpression
 (
     const fvMesh &mesh,
@@ -168,7 +169,8 @@ void doAnExpression
     const dictionary &dict,
     const dimensionSet &dim,
     bool keepPatches,
-    const wordList &valuePatches
+    const wordList &valuePatches,
+    const bool correctPatches
 ) {
     const string &time = runTime.timeName();
     word oldFieldType="none";
@@ -259,13 +261,13 @@ void doAnExpression
         }
 
         if(driver.resultIsTyp<volScalarField>(true)) {
-            conditionField=driver.getResult<volScalarField>().internalField();
+            conditionField=driver.getResult<volScalarField>(correctPatches).internalField();
             conditionIsSurface=false;
         } else if(driver.resultIsTyp<surfaceScalarField>(true)){
-            conditionField=driver.getResult<surfaceScalarField>().internalField();
+            conditionField=driver.getResult<surfaceScalarField>(correctPatches).internalField();
             conditionIsSurface=true;
         } else {
-            conditionField=driver.getResult<pointScalarField>().internalField();
+            conditionField=driver.getResult<pointScalarField>(correctPatches).internalField();
             conditionIsPoint=true;
         }
     }
@@ -367,7 +369,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<volScalarField>(),
+                driver.getResult<volScalarField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -379,7 +381,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<volVectorField>(),
+                driver.getResult<volVectorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -391,7 +393,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<volTensorField>(),
+                driver.getResult<volTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -403,7 +405,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<volSymmTensorField>(),
+                driver.getResult<volSymmTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -415,7 +417,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<volSphericalTensorField>(),
+                driver.getResult<volSphericalTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -427,7 +429,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<surfaceScalarField>(),
+                driver.getResult<surfaceScalarField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -439,7 +441,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<surfaceVectorField>(),
+                driver.getResult<surfaceVectorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -451,7 +453,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<surfaceTensorField>(),
+                driver.getResult<surfaceTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -463,7 +465,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<surfaceSymmTensorField>(),
+                driver.getResult<surfaceSymmTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -475,7 +477,7 @@ void doAnExpression
                 field,
                 mesh,
                 time,
-                driver.getResult<surfaceSphericalTensorField>(),
+                driver.getResult<surfaceSphericalTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -488,7 +490,7 @@ void doAnExpression
                 mesh,
                 pMesh,
                 time,
-                driver.getResult<pointScalarField>(),
+                driver.getResult<pointScalarField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -501,7 +503,7 @@ void doAnExpression
                 mesh,
                 pMesh,
                 time,
-                driver.getResult<pointVectorField>(),
+                driver.getResult<pointVectorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -514,7 +516,7 @@ void doAnExpression
                 mesh,
                 pMesh,
                 time,
-                driver.getResult<pointTensorField>(),
+                driver.getResult<pointTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -527,7 +529,7 @@ void doAnExpression
                 mesh,
                 pMesh,
                 time,
-                driver.getResult<pointSymmTensorField>(),
+                driver.getResult<pointSymmTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -540,7 +542,7 @@ void doAnExpression
                 mesh,
                 pMesh,
                 time,
-                driver.getResult<pointSphericalTensorField>(),
+                driver.getResult<pointSphericalTensorField>(correctPatches),
                 conditionField,
                 create,
                 dim,
@@ -624,6 +626,7 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("otherHasSameTime","");
     argList::validOptions.insert("otherInterpolateOrder","order");
     argList::validOptions.insert("preloadFields","List of fields to preload");
+    argList::validOptions.insert("noCorrectPatches","");
 
 #   include "setRootCase.H"
 
@@ -650,6 +653,12 @@ int main(int argc, char *argv[])
     allMeshes.append(&mesh);
 
     PtrList<fvMesh> additionalRegions;
+
+    bool correctPatches=true;
+
+    if (args.options().found("noCorrectPatches")) {
+        correctPatches=false;
+    }
 
     if (args.options().found("additionalRegions")) {
         string regionsString(args.options()["additionalRegions"]);
@@ -892,7 +901,8 @@ int main(int argc, char *argv[])
                 dummyDict,
                 dim,
                 keepPatches,
-                valuePatches
+                valuePatches,
+                correctPatches
             );
         } else {
             Info << " Using funkySetFieldsDict \n" << endl;
@@ -1021,7 +1031,8 @@ int main(int argc, char *argv[])
                     part,
                     dim,
                     keepPatches,
-                    valuePatches
+                    valuePatches,
+                    correctPatches
                 );
             }
         }
