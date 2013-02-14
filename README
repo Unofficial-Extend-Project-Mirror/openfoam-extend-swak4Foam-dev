@@ -1601,17 +1601,14 @@ S_{expl} + S_{impl} T
      definition. Renamed.
 
      Fix provided by Bruno Santos
-*** New Examples
-**** Cases from the /OSCFD12/ Conference in London
-     On the slides the case files were promised
->>>>>>> variant B
 **** =expressionField= and =manipulateField= did not honor the =outputControl=-entry
      =expressionFields= were calculated at every time-step, even if
      the computational cost was high. Now if =outputControl= is
      =outputTime= the field is only calculated if it is going to be
      written
-####### Ancestor
-======= end
+*** New Examples
+**** Cases from the /OSCFD12/ Conference in London
+     On the slides the case files were promised
 *** New features
 **** Access fields from different cases
      It is now possible for expression on =internalFields= to access
@@ -1735,6 +1732,22 @@ S_{expl} + S_{impl} T
 **** New boundary condition =groovyPartialSlip= in =groovyStandardBCs=
      This boundary allows specifying the partial slip fraction of the
      regular =partialSlip=-BC with an expression.
+**** =funkySetFields= allows switching off the correction of BCs
+     This is sometimes necessary to allow calculations with fields
+     where the boundary conditions have a lot of dependencies
+     (turbulence model, other mesh etc)
+**** Allow selection of additional regions in =funkySetFields=
+     The option =-additionalRegions= allows selecting additional mesh
+     regions for boundary conditions that require it (usually used
+     together with =-preloadFields=).
+
+     For the other case there is an additional option
+     =-otherAdditionalRegions=.
+**** Adding a =-preloadFields=-option to =funkySetFields=
+     This option allows specifying additional field names to be
+     preloaded in command line mode. If multiple mesh regions are
+     specified (including another mesh)it will try to preload the
+     field there too
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

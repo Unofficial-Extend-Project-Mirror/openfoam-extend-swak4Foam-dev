@@ -129,7 +129,7 @@ inline bool FieldValueExpressionDriver::canBeValuePatch(const fvPatch &patch)
         isA<directMappedFvPatch>(patch);
 #else
         isA<mappedWallFvPatch>(patch)
- 	|| 
+ 	||
         isA<mappedFvPatch>(patch);
 #endif
 }
@@ -807,7 +807,7 @@ template<class T> struct FieldValueExpressionDriver::correctBC<GeometricField<T,
 };
 
 template<class T>
-const T &FieldValueExpressionDriver::getResult() const
+const T &FieldValueExpressionDriver::getResult(bool correct) const
 {
     if(!resultField_.valid()) {
         FatalErrorIn("FieldValueExpressionDriver::getResult()")
@@ -819,7 +819,9 @@ const T &FieldValueExpressionDriver::getResult() const
 
     //    return dynamicCast<const T &>(resultField_()); // doesn't work with gcc 4.2
     const T &result=dynamic_cast<const T &>(resultField_());
-    correctBC<T>()(result);
+    if(correct) {
+        correctBC<T>()(result);
+    }
 
     return result;
 }
