@@ -1654,6 +1654,18 @@ S_{expl} + S_{impl} T
      This is sometimes necessary to allow calculations with fields
      where the boundary conditions have a lot of dependencies
      (turbulence model, other mesh etc)
+**** Allow selection of additional regions in =funkySetFields=
+     The option =-additionalRegions= allows selecting additional mesh
+     regions for boundary conditions that require it (usually used
+     together with =-preloadFields=).
+
+     For the other case there is an additional option
+     =-otherAdditionalRegions=.
+**** Adding a =-preloadFields=-option to =funkySetFields=
+     This option allows specifying additional field names to be
+     preloaded in command line mode. If multiple mesh regions are
+     specified (including another mesh)it will try to preload the
+     field there too
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems

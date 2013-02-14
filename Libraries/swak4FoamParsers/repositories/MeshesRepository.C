@@ -187,7 +187,7 @@ fvMesh &MeshesRepository::addCoupledMesh(
                 << exit(FatalError);
     }
 
-    fvMesh &master=*meshes_[name];
+    fvMesh &master=*meshes_[masterName];
     Time &time=const_cast<Time&>(master.time());
 
     meshes_.insert(
