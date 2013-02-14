@@ -608,21 +608,23 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
-    argList::validOptions.insert("field","<field to overwrite>");
-    argList::validOptions.insert("expression","<expression to write>");
-    argList::validOptions.insert("condition","<logical condition>");
-    argList::validOptions.insert("dimension","<dimension of created field>");
+    argList::validOptions.insert("field","field to overwrite");
+    argList::validOptions.insert("expression","expression to write");
+    argList::validOptions.insert("condition","logical condition");
+    argList::validOptions.insert("dimension","dimension of created field");
     argList::validOptions.insert("debugParser","");
     argList::validOptions.insert("noCacheVariables","");
     argList::validOptions.insert("create","");
     argList::validOptions.insert("keepPatches","");
-    argList::validOptions.insert("valuePatches","<list of patches that get a fixed value>");
-    argList::validOptions.insert("dictExt","<extension to the default funkySetFieldsDict-dictionary>");
+    argList::validOptions.insert("valuePatches","list of patches that get a fixed value");
+    argList::validOptions.insert("dictExt","extension to the default funkySetFieldsDict-dictionary");
     argList::validOptions.insert("allowFunctionObjects","");
     argList::validOptions.insert("addDummyPhi","");
-    argList::validOptions.insert("otherCase","<path to other case>");
-    argList::validOptions.insert("otherRegion","<region in other case>");
-    argList::validOptions.insert("otherTime","<time to use in other case>");
+    argList::validOptions.insert("otherCase","path to other case");
+    argList::validOptions.insert("otherRegion","region in other case");
+    argList::validOptions.insert("otherAdditionalRegions","region in other case that may be needed by coupled boundary conditions");
+    argList::validOptions.insert("additionalRegions","regions that may be needed by coupled boundary conditions");
+    argList::validOptions.insert("otherTime","time to use in other case");
     argList::validOptions.insert("otherHasSameTime","");
     argList::validOptions.insert("otherInterpolateOrder","order");
     argList::validOptions.insert("preloadFields","List of fields to preload");
@@ -693,6 +695,7 @@ int main(int argc, char *argv[])
     }
 
     bool otherHasSameTime=args.options().found("otherHasSameTime");
+    wordList otherAdditionalRegions;
 
     if(args.options().found("otherCase")) {
         word otherRegion(polyMesh::defaultRegion);
@@ -708,14 +711,14 @@ int main(int argc, char *argv[])
         Info<< "Adding case " << otherCase << ", region "
             << otherRegion;
         if(otherHasSameTime) {
-            Info << " with same time as 'real' time.";
+            Info << " with same time as 'real' time. ";
         } else {
             Info<< " at t=" << otherTime << ". ";
         }
         Info<< "Fields from that case can be accessed in expression with "
             << "'other(<field>)'\n" << endl;
 
-        MeshesRepository::getRepository().addMesh(
+        fvMesh &other=MeshesRepository::getRepository().addMesh(
             "other",
             otherCase,
             otherRegion
@@ -761,6 +764,8 @@ int main(int argc, char *argv[])
         args.options().found("otherRegion")
         ||
         args.options().found("otherTime")
+        ||
+        args.options().found("otherAdditionalRegions")
         ||
         otherHasSameTime
     ) {
