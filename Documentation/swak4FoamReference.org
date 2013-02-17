@@ -163,6 +163,9 @@ hide circle
    - symmTensor :: a $3 \times 3$ symmetric tensor (for the components
                    $a_{ij}=a_{ji}$)
    - sphericalTensor :: Spherical tensor
+   - boolean :: results of logical operations (can only be =true= or
+                =false=). Certain parsers implement them with scalars
+                being $0$ or $1$
 
    If the type of subexpressions for a certain operator/function is
    incompatible (for instance when trying to add a vector to a scalar)
@@ -209,6 +212,8 @@ hide circle
     Numeric constants can be written in any form they can be written
     in C++/OpenFOAM. Just a few examples: =42=, =3.1415=, =6.66e2= etc
 
+    The symbol =pi= is $\pi$.
+
     Vector values can be constructed using the keyword =vector= and
     three scalar values (which can be constants or expressions that
     yield a scalar): for instance =vector(1,2,3)= or
@@ -223,6 +228,9 @@ hide circle
 
     Spherical tensors are constructed using =sphericalTensor= and one
     scalar value.
+
+    If no field or variable with the name =I= exists then this gives
+    the unit tensor.
 
     The logical constants =true= and =false= are available
 *** Operators
@@ -244,7 +252,59 @@ hide circle
                means "if the logical expression =a= is =true= the
                value of expression =b= is used. Otherwise the value of
                expression =c="
+    In addition there are two unary operators:
+    - =-= :: gives the negative of an expression
+    - - =*= :: :: the /Hodge dual/ of a tensor expression
+**** Component operator =.=
+     For the data types with multiple components the single components
+     can be accessed as scalar with the operator =.= and the number of
+     the component after the expression (for instance =U.x= gives the
+     x-component of the field =U=). Table \ref{tab:components} gives
+     an overview of the components of the various types
+     #+CAPTION: Component names for the data types
+     #+LABEL: tab:components
+     | Data type          | Components                 |
+     |--------------------+----------------------------|
+     | Vector             | x y z                      |
+     | Tensor             | xx xy xz yx yy yz zx zy zz |
+     | Symmetrical tensor | xx xy xz yy yz zz          |
+     | Spherical tensor   | ii                         |
+     For the tensor types there is also the "component" =T= that
+     transposes the tensor (=A.T= gives the transposed tensor for =A=)
 *** Mathematical functions
+    The mathematical functions described in the /Programmers Guide/
+    are implemented in all parsers:
+    - mag(x) :: Absolute value $|x|$. Implemented for all
+                types. Yields a scalar
+    The following functions only work for scalars:
+    - pow(x,y) :: Power $x^y$. Only implemented for scalars
+    - exp(x) :: Exponential function $e^x$
+    - log(x) :: Natural logarithm
+    - log10(x) :: Logarithm with the base 10
+    - sin, cos, tan :: Usual trigonometric functions
+    - asin, acos, atan :: Inverse trigonometric functions
+    - sinh, cosh, tanh :: Hyperbolic functions
+    - asinh, acosh, atanh :: Inverse hyperbolic functions
+    - sqr(x) :: Square $x^2$
+    - magSqr(x) :: Square of the magnitude $|x|^2$
+    - sqrt(x) :: Square root $\sqrt{x}$
+    - erf(x) :: Error function
+    - erfc(x) ::Complement error function
+    - besselJ0, besselJ1, besselY0, besselY1 :: Bessel-functions
+    - lgamma :: Logarithm gamma function
+    These functions depend on the sign of a scalar:
+    - pos(x) :: $1$ if $0\leq x$. $0$ otherwise
+    - neg(x) :: $1$ if $x < 0$. $0$ otherwise
+    - sign(x) :: $1$ if $x$ is positive. $-1$ if it is negative
+    These functions act on tensors:
+    - diag :: returns a vector with the diagonal elements
+    - tr :: Trace of the tensor
+    - dev :: Deviatoric component
+    - symm :: Symmetric component
+    - skew :: Skew-symmetric component
+    - det :: Determinant
+    - cof :: Cofactors
+    - inv :: Inverse
 *** OpenFOAM-specific functions
 *** Variables and fields
 *** Plugin functions
