@@ -271,7 +271,7 @@ hide circle
      | Spherical tensor   | ii                         |
      For the tensor types there is also the "component" =T= that
      transposes the tensor (=A.T= gives the transposed tensor for =A=)
-*** Mathematical functions
+*** Mathematical functions available in all parsers
     The mathematical functions described in the /Programmers Guide/
     are implemented in all parsers:
     - mag(x) :: Absolute value $|x|$. Implemented for all
@@ -293,8 +293,8 @@ hide circle
     - besselJ0, besselJ1, besselY0, besselY1 :: Bessel-functions
     - lgamma :: Logarithm gamma function
     These functions depend on the sign of a scalar:
-    - pos(x) :: $1$ if $0\leq x$. $0$ otherwise
-    - neg(x) :: $1$ if $x < 0$. $0$ otherwise
+    - positive(x) :: $1$ if $0\leq x$. $0$ otherwise
+    - negative(x) :: $1$ if $x < 0$. $0$ otherwise
     - sign(x) :: $1$ if $x$ is positive. $-1$ if it is negative
     These functions act on tensors:
     - diag :: returns a vector with the diagonal elements
@@ -305,7 +305,168 @@ hide circle
     - det :: Determinant
     - cof :: Cofactors
     - inv :: Inverse
+    These functions examine the whole fields (in parallel over all
+    processors) and return a field which has one value anywhere:
+    - max :: maximum of the field (for types with multiple components
+             it return the maximum of each component)
+    - min :: the minimum
+    - maxPosition :: Only defined for scalar expressions. A vector
+                     with the position where the maximum value is found
+    - minPosition :: Like =maxPosition= but with the minimum
+    - sum :: the sum of all the field values
+    - average :: the average of the field values
+    These functions build on the random numbers available in OpenFOAM:
+    - rand :: A random number that is uniformly distributed in the
+              range $[0,1)$. It *can* take an integer argument that
+              will act as a seed to the random function (if unset the
+              seed $0$ is used) but with the number of the current
+              timestep added (so that the random distribution is
+              different at each time-step but still reproducible)
+    - randFixed :: Similar to =rand= but the distribution of the
+                   random numbers will stay the same for all
+                   time-steps
+    - randNormal :: A Gauss-normal distributed random number (seed can
+                    be provided). Different at each time-step
+    - randNormalFixed :: Like =randNormal= but fixed in time
+    These functions are always available. They are not "mathematical"
+    but help identify certain entities:
+    - id :: the identification number of an element (for instance the
+            cell number for an =internalField=). This number is only
+            unique on each processor
+    - cpu :: The processor number an element on is for a parallel run
 *** OpenFOAM-specific functions
+    The following functions are not available in all parsers. In the
+    description in brackets there will be a shorthand description of
+    the parsers in which it will be available (mind: for the subset
+    parser this doesn't mean that all drivers actually support this
+    function: for instance does the volume function =vol()= not make
+    sense for face zones. Calling this function will result in an
+    error message). Table \ref{tab:parsershorthand} lists the short
+    descriptions.
+    #+CAPTION: Shorthand for the parsers
+    #+LABEL: tab:parsershorthand
+    | Parser            | Shorthand |
+    |-------------------+-----------|
+    | =internalField=   | F         |
+    | =patch=           | P         |
+    | =subset=          | S         |
+    | =faInternalField= | FF        |
+    | =faPatch=         | FP        |
+**** Information about the mesh
+     These functions give information about the mesh and are used
+     without arguments:
+     - pos() :: Position of the native structures of the parser (for
+                instance cell centers for =internalField=) (F, P, S,
+                FF, FP)
+     - vol() :: Cell volumes (F, S)
+     - area() :: Face area as a scalar (F, P, S, FF)
+     - pts() :: Positions of the vertices (F, P, S, FP)
+     - fpos() :: Positions of the faces/edges between cells (F, FF)
+     - fproj() :: surface field with the projection of the face onto
+                  the Cartesian coordinates (F, FF)
+     - face() :: Face vectors (F, FF)
+     - dist() :: Scalar field that gives the distance to the nearest
+                 wall (using =wallDist=) (F, P)
+     - nearDist() :: Scalar field that gives the distance to the
+                     nearest wall (using =nearWallDist=)(F)
+     - rdist() :: A field with the distances from a given vector
+                  (shorthand for =mag(pos()-v)=) (F, P, FF)
+     - length() :: Edge length (FF, FP)
+     - Sf() :: Surface vectors (P, S, FP)
+     - Cn() :: Neighbour cell center position (P)
+     - Fn() :: Neighbour face center position (FP)
+     - delta() :: Cell center to face center vector (P, FP)
+     - weights() :: Patch weighting factors (P, FP)
+     - normal() :: Normal vectors (P, S, FP)
+     These functions are only available in the =internalField=-parser
+     and identify cells, faces or points belonging to a certain
+     group. Most of them take a name as an argument. The result is a
+     boolean field:
+     - set(name) :: =True= for all cells in the cell-set =name=
+     - zone(name) :: =True= for all cells in the cell-zone =name=
+     - fset(name) :: =True= for all faces in the face-set =name=
+     - fzone(name) :: =True= for all faces in the face-zone =name=
+     - pset(name) :: =True= for all points in the point-set =name=
+     - pzone(name) :: =True= for all points in the point-zone =name=
+     - onPatch(name) :: =True= for all faces on the patch =name=
+     - internalFace() :: =True= for all faces which are *not* on a patch
+     This function is only implemented for the Subset-parser:
+     - flip() :: For face-zones and face-Sets this gives the
+                 orientation of the face. $1$ if the face is oriented
+                 in the "right" direction, $-1$ if not. Used to get
+                 consistent mass flows etc across these sets/zones
+**** Information about time
+     Some special functions implemented in all parsers:
+     - oldTime(fieldName) :: value of a field at the last time
+     - deltaT() :: Scalar field with the current time-step size
+     - time() :: Scalar field with the current time
+**** Differential operators
+     The differential operators are only available in the
+     =internalField=-parser. They are available in various forms. In
+     the following list an argument like =cellExpr= means "an
+     expression of any type defined in a cell", an argument
+     =faceScalar= means "only a scalar defined on a face is valid
+     here"
+     - div(cellExpr) :: Divergence of tensor and vector fields
+     - div(faceScalar,cellExpr) :: Divergence with a "face flux"
+     - div(faceExpr) :: Divergence of a value defined on faces
+     - grad(cellExpr) :: Gradient
+     - curl(cellVector) :: Curl of a vector field
+     - magSqrGradGrad(cellScalar) :: Whatever the name says
+     - snGrad(cellExpr) :: Surface normal defined on the faces
+     - laplacian(faceScalar,cellExpr) :: Laplacian with an
+          inhomogeneous constant defined on the faces
+     - laplacian(cellScalar,cellExpr) :: Laplacian with an
+          inhomogeneous constant defined in the cells
+     - laplacian(cellExpr) :: Laplacian without a constant
+     - ddt(cellFieldName) :: this only works for fields for which the last
+                         time-step is stored. Time derivative
+     - d2dt2(cellFieldName) :: Second time derivative
+     - meshPhi(cellVector) :: Additional flux by the mesh movement
+     - meshPhi(cellScalar,cellVector) :: Additional flux
+     - flux(faceScalar,cellExpr) :: Flux
+     These functions give the explicitly discretized form. For a more
+     detailed explanation see the /Programmers Guide/.
+
+     The above functions are also implemented (if appropriate) in the
+     =faInternalField=. Additionally these functions are implemented
+     there:
+     - lnGrad(areaExpr) :: Like =snGrad=
+**** Functions that interpolate
+     These functions interpolate fields between the native and the
+     secondary structure of a parser
+     - interpolate(cellExpr) :: Interpolates to the faces (F, FF)
+     - interpolateToPoint(cellExpr) :: Interpolates to points (F)
+     - interpolateToCell(faceExpr) :: Interpolates to the cells (F)
+     - toPoint(faceExpr) :: To the point values (P, S, FP)
+     - toFace(pointExpr) :: To the cell values (P, S, FP)
+     These functions are not strictly interpolations, but are used to
+     calculate a cell value from a face value. They are
+     described in detail in the /Programmers Guide/:
+     - integrate(faceExpr) :: Integrate over the faces(F, FF)
+     - surfSum(faceExpr) :: Sum the values on the faces(F, FF)
+     - faceAverage(faceExpr) :: Average of the face values(F, FF)
+     - reconstruct(faceScalar) :: Reconstruct a vector field from the
+          face fluxes (F)
+     These two functions are for quickly generating constant fields:
+     - surf(scalar) :: Generate a constant face-field (no
+                       interpolation necessary) (F, FF)
+     - point(scalar) :: Generate a constant point-field (F)
+**** Other fields
+     These functions take a field name and return a field from another
+     place:
+     - mapped(fieldName) :: For a mapped patch get the value of the
+          field "on the other side" (P)
+     - mappedInternal(fieldName) :: Similar but get the value of the
+          internal field "on the other side" (P)
+     - internalField(fieldName) :: Get the value of the field on the
+          neighbouring internal cells(P, FP)
+     - neighbourField(fieldName) :: For a coupled patch get the value
+          of the internal field of the coupled patch (P, FP)
+     This function is the only "differential operator"" defined on
+     patches:
+     - snGrad(fieldName) :: Gradient of the field =name= in the
+          surface normal direction (P, FP)
 *** Variables and fields
 *** Plugin functions
 ** Parameters
