@@ -1638,6 +1638,11 @@ S_{expl} + S_{impl} T
      the computational cost was high. Now if =outputControl= is
      =outputTime= the field is only calculated if it is going to be
      written
+**** Double =namespace Foam= makes compilation of =groovyJump= fail with =icc=
+     Seems like this one was overlooked because =gcc= is more
+     tolerant towards stupidity.
+
+     Reported by Edo Frederix
 *** New Examples
 **** Cases from the /OSCFD12/ Conference in London
      On the slides the case files were promised
