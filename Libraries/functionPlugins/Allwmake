@@ -18,6 +18,8 @@ wmake libso swakLagrangianCloudSourcesFunctionPlugin
 
 wmake libso swakVelocityFunctionPlugin
 
+wmake libso swakChemistryModelFunctionPlugin
+
 if [ "$FOAM_DEV" != "" ]
 then
     wmake libso swakFacSchemesFunctionPlugin
