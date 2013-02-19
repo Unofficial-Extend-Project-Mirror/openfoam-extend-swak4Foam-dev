@@ -183,6 +183,47 @@ public:
 defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_RR,0);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_RR,name,psiChem_RR);
 
+class swakPsiChemistryModelPluginFunction_deltaTChem
+: public swakPsiChemistryModelPluginFunction
+{
+public:
+    TypeName("swakPsiChemistryModelPluginFunction_deltaTChem");
+    swakPsiChemistryModelPluginFunction_deltaTChem (
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
+    ): swakPsiChemistryModelPluginFunction(
+        parentDriver,
+        name,
+        "volScalarField"
+    ) {}
+
+    void doEvaluation() {
+        const DimensionedField<scalar,volMesh> &dtChem=chemistry().deltaTChem();
+
+        autoPtr<volScalarField> val(
+            new volScalarField(
+                IOobject(
+                    "deltaTChem",
+                    mesh().time().timeName(),
+                    mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                mesh(),
+                dimensionedScalar("dtChem",dtChem.dimensions(),0),
+                "zeroGradient"
+            )
+        );
+        val->dimensionedInternalField()=dtChem;
+
+        result().setObjectResult(
+            val
+        );
+    }
+};
+defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_deltaTChem,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_deltaTChem,name,psiChem_deltaTChem);
+
 } // namespace
 
 // ************************************************************************* //
