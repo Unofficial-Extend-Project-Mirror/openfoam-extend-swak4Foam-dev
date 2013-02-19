@@ -20,7 +20,6 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lbasicThermophysicalModels \
-    -lbasicSolidThermo \
     -lspecie \
     -lreactionThermophysicalModels \
     -lchemistryModel \

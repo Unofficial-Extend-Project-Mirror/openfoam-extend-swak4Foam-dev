@@ -198,7 +198,7 @@ public:
     ) {}
 
     void doEvaluation() {
-        const DimensionedField<scalar,volMesh> &dtChem=chemistry().deltaTChem();
+        const scalarField &dtChem=chemistry().deltaTChem();
 
         autoPtr<volScalarField> val(
             new volScalarField(
@@ -210,11 +210,11 @@ public:
                     IOobject::NO_WRITE
                 ),
                 mesh(),
-                dimensionedScalar("dtChem",dtChem.dimensions(),0),
+                dimensionedScalar("dtChem",dimTime,0),
                 "zeroGradient"
             )
         );
-        val->dimensionedInternalField()=dtChem;
+        val->internalField()=dtChem;
 
         result().setObjectResult(
             val
