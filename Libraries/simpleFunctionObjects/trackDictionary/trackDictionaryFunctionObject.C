@@ -26,7 +26,7 @@ Contributors/Copyright:
     2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*----------------------------------------------------------------------------*/
 
 #include "trackDictionaryFunctionObject.H"

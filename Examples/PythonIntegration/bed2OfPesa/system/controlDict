@@ -52,7 +52,7 @@ maxCo           0.9;
 maxDeltaT       1e-05;
 
 libs (
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
     "libgroovyBC.so"
 );
 

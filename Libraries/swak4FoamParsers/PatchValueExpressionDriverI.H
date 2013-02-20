@@ -61,26 +61,29 @@ namespace Foam {
 namespace Foam {
 
    template<class Type>
-    Field<Type> *PatchValueExpressionDriver::getField(const string &name)
+    tmp<Field<Type> > PatchValueExpressionDriver::getField(const string &name)
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
         typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
         typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
 
         {
-            Field<Type> *vals=NULL;
+            autoPtr<Field<Type> >vals;
             bool isPoint=false;
 
             if(hasVariable(name)) {
                 isPoint=variable(name).isPoint();
-                vals=variable(name).getResult<Type>(true).ptr();
+                vals.set(
+                    variable(name).getResult<Type>(true).ptr()
+                );
             } else if(isGlobal<Type>(name,false)) {
-                vals=const_cast<ExpressionResult &>(
-                    lookupGlobal(name)
-                ).getResult<Type>(true).ptr();
-                //                Pout << name << " " << vals->size() << endl;
+                vals.set(
+                    const_cast<ExpressionResult &>(
+                        lookupGlobal(name)
+                    ).getResult<Type>(true).ptr()
+                );
             }
-            if(vals) {
+            if(vals.valid()) {
                 bool qSize=vals->size()==this->size();
                 bool qPSize=vals->size()==this->pointSize();
                 reduce(qSize,andOp<bool>());
@@ -99,13 +102,15 @@ namespace Foam {
                         qPSize
                     )
                 ) {
-                    return vals;
-                } else {
-                    Field<Type> *result=new Field<Type>(
-                        this->size(),gAverage(*vals)
+                    return tmp<Field<Type> >(
+                        vals.ptr()
                     );
-                    delete vals;
-                    return result;
+                } else {
+                    return tmp<Field<Type> >(
+                        new Field<Type>(
+                            this->size(),gAverage(vals())
+                        )
+                    );
                 }
             }
         }
@@ -125,9 +130,19 @@ namespace Foam {
         ) {
             word fType=this->getTypeOfField(name);
             if(fType==localVolField::typeName) {
-                tmpVol.set(this->readAndRegister<localVolField>(name,mesh()).ptr());
+                tmpVol.set(
+                    this->readAndRegister<localVolField>(
+                        name,
+                        mesh()
+                    ).ptr()
+                );
             } else if(fType==localSurfaceField::typeName) {
-                tmpSurf.set(this->readAndRegister<localSurfaceField>(name,mesh()).ptr());
+                tmpSurf.set(
+                    this->readAndRegister<localSurfaceField>(
+                        name,
+                        mesh()
+                    ).ptr()
+                );
             }
             // TODO: this constructor doesn't work
             // else if(fType==localPointField::typeName) {
@@ -141,23 +156,30 @@ namespace Foam {
         ) {
             const typename localVolField::PatchFieldType &pField=
                 patch_.lookupPatchField<localVolField,Type>(name);
-            return new Field<Type>(pField);
+
+            return tmp<Field<Type> >(
+                new Field<Type>(pField)
+            );
         } else if(
             patch_.boundaryMesh().mesh().
             objectRegistry::foundObject<localSurfaceField>(name)
         ) {
             const typename localSurfaceField::PatchFieldType &pField=
                 patch_.lookupPatchField<localSurfaceField,Type>(name);
-            return new Field<Type>(pField);
+
+            return tmp<Field<Type> >(
+                new Field<Type>(pField)
+            );
         } else if(
             patch_.boundaryMesh().mesh().
             objectRegistry::foundObject<localPointField>(name)
         ) {
             const typename localPointField::PatchFieldType &pField=
                 patch_.lookupPatchField<localPointField,Type>(name);
-            return new Field<Type>(pField.patchInternalField());
+
+            return pField.patchInternalField();
         } else{
-            FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getField(const string &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
@@ -175,15 +197,20 @@ namespace Foam {
                     // << endl
                     << exit(FatalError);
 
-            return NULL;
+            return tmp<Field<Type> >(
+                new Field<Type>(0)
+            );
         }
     }
 
     template<class Type>
-    Field<Type> *PatchValueExpressionDriver::getOldTimeField(const string &name)
+    tmp<Field<Type> > PatchValueExpressionDriver::getOldTimeField(
+        const string &name
+    )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
-        typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
+        typedef GeometricField<Type,fvsPatchField,surfaceMesh>
+            localSurfaceField;
         typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
 
         autoPtr<localVolField> tmpVol;
@@ -201,9 +228,13 @@ namespace Foam {
         ) {
             word fType=this->getTypeOfField(name);
             if(fType==localVolField::typeName) {
-                tmpVol.set(this->readAndRegister<localVolField>(name,mesh()).ptr());
+                tmpVol.set(
+                    this->readAndRegister<localVolField>(name,mesh()).ptr()
+                );
             } else if(fType==localSurfaceField::typeName) {
-                tmpSurf.set(this->readAndRegister<localSurfaceField>(name,mesh()).ptr());
+                tmpSurf.set(
+                    this->readAndRegister<localSurfaceField>(name,mesh()).ptr()
+                );
             }
             // TODO: this constructor doesn't work
             // else if(fType==localPointField::typeName) {
@@ -220,40 +251,48 @@ namespace Foam {
             const typename localVolField::PatchFieldType &pField=
                 mesh.lookupObject<localVolField>(name).
                 oldTime().boundaryField()[patchI];
-            return new Field<Type>(pField);
+            return tmp<Field<Type> >(
+                new Field<Type>(pField)
+            );
         } else if(
             mesh.objectRegistry::foundObject<localSurfaceField>(name)
         ) {
             const typename localSurfaceField::PatchFieldType &pField=
                 mesh.lookupObject<localSurfaceField>(name).
                 oldTime().boundaryField()[patchI];
-            return new Field<Type>(pField);
+            return tmp<Field<Type> >(
+                new Field<Type>(pField)
+            );
         } else if(
             mesh.objectRegistry::foundObject<localPointField>(name)
         ) {
             const typename localPointField::PatchFieldType &pField=
                 mesh.lookupObject<localPointField>(name).
                 oldTime().boundaryField()[patchI];
-            return new Field<Type>(pField.patchInternalField());
+            return tmp<Field<Type> >(
+                new Field<Type>(pField.patchInternalField())
+            );
         } else{
-            FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getOldTimeField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getOldTimeField(const string &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
                     << exit(FatalError);
 
-            return NULL;
+            return tmp<Field<Type> >(new Field<Type>(0));;
         }
     }
 
     template<class Type>
-    Field<Type> *PatchValueExpressionDriver::getPatchInternalField(const string &name)
+    tmp<Field<Type> > PatchValueExpressionDriver::getPatchInternalField(
+        const string &name
+    )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
         typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
 
         if(hasVariable(name)) {
-            return variable(name).getResult<Type>(true).ptr();
+            return variable(name).getResult<Type>(true);
         }
 
         autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
@@ -272,32 +311,36 @@ namespace Foam {
         ) {
             const typename localVolField::PatchFieldType &pField=
                 patch_.lookupPatchField<localVolField,Type>(name);
-            return new Field<Type>(pField.patchInternalField());
+            return pField.patchInternalField();
         } else if(
             patch_.boundaryMesh().mesh().
             objectRegistry::foundObject<localPointField>(name)
         ) {
             const typename localPointField::PatchFieldType &pField=
                 patch_.lookupPatchField<localPointField,Type>(name);
-            return new Field<Type>(pField.patchInternalField());
+            return pField.patchInternalField();
         } else{
-            FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getPatchInternalField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchInternalField(const string &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found or unsupported type for patchInternalField\n"
                     << endl
                     << exit(FatalError);
 
-            return NULL;
+            return tmp<Field<Type> >(
+                new Field<Type>(0)
+            );
         }
     }
 
     template<class Type>
-    Field<Type> *PatchValueExpressionDriver::getPatchNeighbourField(const string &name)
+    tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(
+        const string &name
+    )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
 
         if(hasVariable(name)) {
-            return variable(name).getResult<Type>(true).ptr();
+            return variable(name).getResult<Type>(true);
         }
 
         autoPtr<localVolField> dummy; // hold on to the field until the calculation is finished
@@ -316,20 +359,25 @@ namespace Foam {
         ) {
             const typename localVolField::PatchFieldType &pField=
                 patch_.lookupPatchField<localVolField,Type>(name);
-            return new Field<Type>(pField.patchNeighbourField());
+            return pField.patchNeighbourField();
         } else{
-            FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getPatchNeighbourField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(const string &name)")
                 << "No field of type " << pTraits<Type>::typeName
-                    << " with the name " << name << " found or unsupported type for patchNeighbourField\n"
+                    << " with the name " << name
+                    << " found or unsupported type for patchNeighbourField\n"
                     << endl
                     << exit(FatalError);
 
-            return NULL;
+            return tmp<Field<Type> >(
+                new Field<Type>(0)
+            );
         }
     }
 
     template<class Type>
-    Field<Type> *PatchValueExpressionDriver::getSurfaceNormalField(const string &name)
+    tmp<Field<Type> > PatchValueExpressionDriver::getSurfaceNormalField(
+        const string &name
+    )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
 
@@ -349,12 +397,13 @@ namespace Foam {
         ) {
             const typename localVolField::PatchFieldType &pField=
                 patch_.lookupPatchField<localVolField,Type>(name);
-            return new Field<Type>(pField.snGrad());
+            return pField.snGrad();
         } else{
-            FatalErrorIn("Field<Type> *PatchValueExpressionDriver::getSurfaceNormalField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getSurfaceNormalField(const string &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << "( " << pTraits<localVolField>::typeName << ")"
-                    << " with the name " << name << " found or unsupported type for snGrad\n"
+                    << " with the name " << name
+                    << " found or unsupported type for snGrad\n"
                     << "Fields of type: "
                     << patch_.boundaryMesh().mesh().objectRegistry::names<localVolField>()
                     << "\nAll registered objects:"
@@ -363,28 +412,30 @@ namespace Foam {
                     << endl
                     << exit(FatalError);
 
-            return NULL;
+            return tmp<Field<Type> >(
+                new Field<Type>(0)
+            );
         }
     }
 
     template<class Type>
-    Field<Type> *PatchValueExpressionDriver::toFace(const Field<Type> &pField)
+    tmp<Field<Type> > PatchValueExpressionDriver::toFace(
+        const Field<Type> &pField
+    )
     {
         primitivePatchInterpolation inter(patch_.patch());
 
-        tmp<Field<Type> > result=inter.pointToFaceInterpolate(pField);
-
-        return result.ptr();
+        return inter.pointToFaceInterpolate(pField);
     }
 
     template<class Type>
-    Field<Type> *PatchValueExpressionDriver::toPoint(const Field<Type> &fField)
+    tmp<Field<Type> > PatchValueExpressionDriver::toPoint(
+        const Field<Type> &fField
+    )
     {
         primitivePatchInterpolation inter(patch_.patch());
 
-        tmp<Field<Type> > result=inter.faceToPointInterpolate(fField);
-
-        return result.ptr();
+        return inter.faceToPointInterpolate(fField);
     }
 
     template<class Type>

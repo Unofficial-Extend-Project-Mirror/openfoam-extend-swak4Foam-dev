@@ -232,39 +232,53 @@ void PatchValueExpressionDriver::parseInternal (int startToken)
     parser.parse ();
 }
 
-vectorField *PatchValueExpressionDriver::makePositionField()
+tmp<vectorField> PatchValueExpressionDriver::makePositionField()
 {
-    return new vectorField(patch_.Cf());
+    return tmp<vectorField>(
+        new vectorField(patch_.Cf())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makePointField()
+tmp<vectorField> PatchValueExpressionDriver::makePointField()
 {
-    return new vectorField(patch_.patch().localPoints());
+    return tmp<vectorField>(
+        new vectorField(patch_.patch().localPoints())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeFaceNormalField()
+tmp<vectorField> PatchValueExpressionDriver::makeFaceNormalField()
 {
-    return new vectorField(patch_.nf());
+    return tmp<vectorField>(
+        new vectorField(patch_.nf())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeFaceAreaField()
+tmp<vectorField> PatchValueExpressionDriver::makeFaceAreaField()
 {
-    return new vectorField(patch_.Sf());
+    return tmp<vectorField>(
+        new vectorField(patch_.Sf())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeCellNeighbourField()
+tmp<vectorField> PatchValueExpressionDriver::makeCellNeighbourField()
 {
-    return new vectorField(patch_.Cn());
+    return tmp<vectorField>(
+        new vectorField(patch_.Cn())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeDeltaField()
+tmp<vectorField> PatchValueExpressionDriver::makeDeltaField()
 {
-    return new vectorField(patch_.delta());
+    return tmp<vectorField>(
+        new vectorField(patch_.delta())
+    );
 }
 
-scalarField *PatchValueExpressionDriver::makeWeightsField()
+tmp<scalarField> PatchValueExpressionDriver::makeWeightsField()
 {
-    return new scalarField(patch_.weights());
+    return tmp<scalarField>(
+        new scalarField(patch_.weights())
+    );
 }
 
 const fvMesh &PatchValueExpressionDriver::mesh() const
@@ -282,20 +296,25 @@ label PatchValueExpressionDriver::pointSize() const
     return patch_.patch().nPoints();
 }
 
-scalarField *PatchValueExpressionDriver::makeFaceIdField()
+tmp<scalarField> PatchValueExpressionDriver::makeFaceIdField()
 {
-    scalarField *result=new scalarField(patch_.size());
-    forAll(*result,i) {
-        (*result)[i]=i;
+    tmp<scalarField> result(
+        new scalarField(patch_.size())
+    );
+    forAll(result(),i) {
+        result()[i]=i;
     }
     return result;
 }
 
-scalarField *PatchValueExpressionDriver::makeNearDistField()
+tmp<scalarField> PatchValueExpressionDriver::makeNearDistField()
 {
-    scalarField *result=new scalarField(patch_.size());
+    tmp<scalarField> result(
+        new scalarField(patch_.size())
+    );
+
     nearWallDist dist(this->mesh());
-    (*result)=dist[patch_.index()];
+    result()=dist[patch_.index()];
     return result;
 }
 
@@ -602,6 +621,27 @@ autoPtr<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
     }
 }
 
+tmp<scalarField> PatchValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!faceSize) {
+        Pout << "Expected size: " << size
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("PatchValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(new scalarField(patch().magSf()));
+}
 
 // ************************************************************************* //
 

@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef conditionalFunctionObjectListProxy_H

@@ -57,7 +57,7 @@ libs
     "libOpenFOAM.so"
     "libcompressibleTurbulenceModel.so"
     "libcompressibleRASModels.so"
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
     "libsimpleSwakFunctionObjects.so"
 );
 

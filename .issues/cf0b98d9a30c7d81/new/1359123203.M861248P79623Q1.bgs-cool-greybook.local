@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 25 Jan 2013 15:12:21 +0100
+State: fixed
+Subject: Add weighted average
+Message-Id: <cf0b98d9a30c7d81-0-artemis@bgs-cool-greybook.local>
+
+Add an accumulator weighted average to the possible accumulations

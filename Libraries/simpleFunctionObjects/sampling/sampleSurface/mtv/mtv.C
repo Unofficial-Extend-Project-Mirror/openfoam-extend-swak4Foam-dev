@@ -26,7 +26,7 @@ Contributors/Copyright:
     2008 Hannes Kroeger (hannes@kroegeronline.net)
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "mtv.H"

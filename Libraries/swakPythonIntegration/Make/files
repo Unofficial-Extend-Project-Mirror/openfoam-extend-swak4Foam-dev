@@ -1,0 +1,11 @@
+pythonInterpreterWrapper.C
+pythonIntegrationFunctionObject.C
+pythonFluIntegrationFunctionObject.C
+executeIfPythonFunctionObject.C
+stdoutFromPythonScriptProvider.C
+writeAndEndPythonFunctionObject.C
+timeManipulationWithPythonFunctionObject.C
+setDeltaTWithPythonFunctionObject.C
+setEndTimeWithPythonFunctionObject.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakPythonIntegration$(SWAK_PYTHON_INTEGRATION_SUFFIX)

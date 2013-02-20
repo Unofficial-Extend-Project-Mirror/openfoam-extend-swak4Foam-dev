@@ -1,4 +1,4 @@
-//  OF-extend Revision: $Id$ 
+//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -27,7 +27,7 @@ Class
     executeIfSwakExpressionFunctionObject
 
 Description
-    This proxy-functionObject only executs its childrens if a 
+    This proxy-functionObject only executs its childrens if a
     swak-expression evaluates to true
 
 SourceFiles
@@ -42,7 +42,7 @@ SourceFiles
 
 #include "CommonValueExpressionDriver.H"
 
-#include "NamedEnum.H"
+#include "LogicalAccumulationNamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,7 +61,7 @@ class executeIfSwakExpressionFunctionObject
 
     //- Disallow default bitwise copy construct
     executeIfSwakExpressionFunctionObject(const executeIfSwakExpressionFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const executeIfSwakExpressionFunctionObject&);
 
@@ -73,19 +73,11 @@ class executeIfSwakExpressionFunctionObject
 
     void readParameters(const dictionary &);
 
-public:
-    enum logicalAccumulations {
-        logAnd,
-        logOr
-    };
-
 private:
-    //- possible logical accumulations
-    static const NamedEnum<logicalAccumulations,2> logicalAccumulationsNames_;
-    logicalAccumulations logicalAccumulation_;
+    LogicalAccumulationNamedEnum::value logicalAccumulation_;
 
 protected:
-    
+
     //- the actual conition that determines whether the FO should be executed
     virtual bool condition();
 

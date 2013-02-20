@@ -93,10 +93,17 @@ public:
     //- Get the Singleton of this class
     static MeshesRepository &getRepository();
 
-    //- get a set using a dictionary (set will be constructed if not existing)
-     fvMesh &addMesh(
+    //- add a mesh and construct a new time for it
+    fvMesh &addMesh(
         const word &name,
         const fileName &caseName,
+        const word &region=polyMesh::defaultRegion
+    );
+
+    //- add a mesh that is in the same case as another mesh
+    fvMesh &addCoupledMesh(
+        const word &name,
+        const word &masterName,
         const word &region=polyMesh::defaultRegion
     );
 

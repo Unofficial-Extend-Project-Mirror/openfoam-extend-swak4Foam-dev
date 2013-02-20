@@ -506,69 +506,73 @@ void CommonValueExpressionDriver::clearResult()
     result_.clearResult();
 }
 
-vectorField *CommonValueExpressionDriver::composeVectorField(
-    scalarField *x,
-    scalarField *y,
-    scalarField *z
+tmp<vectorField> CommonValueExpressionDriver::composeVectorField(
+    const scalarField &x,
+    const scalarField &y,
+    const scalarField &z
 )
 {
     if(
-        x->size() != y->size()
+        x.size() != y.size()
         ||
-        x->size() != z->size()
+        x.size() != z.size()
     ) {
-        FatalErrorIn("vectorField *CommonValueExpressionDriver::composeVectorField")
-            << "Sizes " << x->size() << " " << y->size() << " "
+        FatalErrorIn("tmp<vectorField> CommonValueExpressionDriver::composeVectorField")
+            << "Sizes " << x.size() << " " << y.size() << " "
                 << z-size() << " of the components do not agree"
                 << endl
                 << abort(FatalError);
     }
 
-    vectorField *result=new vectorField(x->size());
+    tmp<vectorField> result(
+        new vectorField(x.size())
+    );
 
-    forAll(*result,faceI) {
-        (*result)[faceI]=Foam::vector((*x)[faceI],(*y)[faceI],(*z)[faceI]);
+    forAll(result(),faceI) {
+        result()[faceI]=Foam::vector(x[faceI],y[faceI],z[faceI]);
     }
 
     return result;
 }
 
-tensorField *CommonValueExpressionDriver::composeTensorField(
-    scalarField *xx,scalarField *xy,scalarField *xz,
-    scalarField *yx,scalarField *yy,scalarField *yz,
-    scalarField *zx,scalarField *zy,scalarField *zz
+tmp<tensorField> CommonValueExpressionDriver::composeTensorField(
+    const scalarField &xx,const scalarField &xy,const scalarField &xz,
+    const scalarField &yx,const scalarField &yy,const scalarField &yz,
+    const scalarField &zx,const scalarField &zy,const scalarField &zz
 )
 {
     if(
-        xx->size() != xy->size()
+        xx.size() != xy.size()
         ||
-        xx->size() != xz->size()
+        xx.size() != xz.size()
         ||
-        xx->size() != yx->size()
+        xx.size() != yx.size()
         ||
-        xx->size() != yy->size()
+        xx.size() != yy.size()
         ||
-        xx->size() != yz->size()
+        xx.size() != yz.size()
         ||
-        xx->size() != zx->size()
+        xx.size() != zx.size()
         ||
-        xx->size() != zy->size()
+        xx.size() != zy.size()
         ||
-        xx->size() != zz->size()
+        xx.size() != zz.size()
     ) {
-        FatalErrorIn("vectorField *CommonValueExpressionDriver::composeVectorField")
+        FatalErrorIn("tmp<vectorField> CommonValueExpressionDriver::composeVectorField")
             << "Sizes of the components do not agree"
                 << endl
                 << abort(FatalError);
     }
 
-    tensorField *result=new tensorField(xx->size());
+    tmp<tensorField> result(
+        new tensorField(xx.size())
+    );
 
-    forAll(*result,faceI) {
-        (*result)[faceI]=Foam::tensor(
-            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
-            (*yx)[faceI],(*yy)[faceI],(*yz)[faceI],
-            (*zx)[faceI],(*zy)[faceI],(*zz)[faceI]
+    forAll(result(),faceI) {
+        result()[faceI]=Foam::tensor(
+            xx[faceI],xy[faceI],xz[faceI],
+            yx[faceI],yy[faceI],yz[faceI],
+            zx[faceI],zy[faceI],zz[faceI]
         );
 
     }
@@ -576,36 +580,38 @@ tensorField *CommonValueExpressionDriver::composeTensorField(
     return result;
 }
 
-symmTensorField *CommonValueExpressionDriver::composeSymmTensorField(
-    scalarField *xx,scalarField *xy,scalarField *xz,
-    scalarField *yy,scalarField *yz,
-    scalarField *zz
+tmp<symmTensorField> CommonValueExpressionDriver::composeSymmTensorField(
+    const scalarField &xx,const scalarField &xy,const scalarField &xz,
+    const scalarField &yy,const scalarField &yz,
+    const scalarField &zz
 )
 {
     if(
-        xx->size() != xy->size()
+        xx.size() != xy.size()
         ||
-        xx->size() != xz->size()
+        xx.size() != xz.size()
         ||
-        xx->size() != yy->size()
+        xx.size() != yy.size()
         ||
-        xx->size() != yz->size()
+        xx.size() != yz.size()
         ||
-        xx->size() != zz->size()
+        xx.size() != zz.size()
     ) {
-        FatalErrorIn("vectorField *CommonValueExpressionDriver::composeVectorField")
+        FatalErrorIn("tmp<vectorField> CommonValueExpressionDriver::composeVectorField")
             << "Sizes of the components do not agree"
                 << endl
                 << abort(FatalError);
     }
 
-    symmTensorField *result=new symmTensorField(xx->size());
+    tmp<symmTensorField> result(
+        new symmTensorField(xx.size())
+    );
 
-    forAll(*result,faceI) {
-        (*result)[faceI]=Foam::symmTensor(
-            (*xx)[faceI],(*xy)[faceI],(*xz)[faceI],
-            (*yy)[faceI],(*yz)[faceI],
-            (*zz)[faceI]
+    forAll(result(),faceI) {
+        result()[faceI]=Foam::symmTensor(
+            xx[faceI],xy[faceI],xz[faceI],
+            yy[faceI],yz[faceI],
+            zz[faceI]
         );
 
     }
@@ -613,15 +619,17 @@ symmTensorField *CommonValueExpressionDriver::composeSymmTensorField(
     return result;
 }
 
-sphericalTensorField *CommonValueExpressionDriver::composeSphericalTensorField(
-    scalarField *ii
+tmp<sphericalTensorField> CommonValueExpressionDriver::composeSphericalTensorField(
+    const scalarField &ii
 )
 {
-    sphericalTensorField *result=new sphericalTensorField(ii->size());
+    tmp<sphericalTensorField> result(
+        new sphericalTensorField(ii.size())
+    );
 
-    forAll(*result,faceI) {
-        (*result)[faceI]=Foam::sphericalTensor(
-            (*ii)[faceI]
+    forAll(result(),faceI) {
+        result()[faceI]=Foam::sphericalTensor(
+            ii[faceI]
         );
 
     }
@@ -661,15 +669,18 @@ const Time &CommonValueExpressionDriver::runTime() const
     return this->mesh().time();
 }
 
-scalarField *CommonValueExpressionDriver::makeModuloField(
+tmp<scalarField> CommonValueExpressionDriver::makeModuloField(
     const scalarField &a,
     const scalarField &b
-)
+) const
 {
     assert(a.size()==b.size());
 
-    scalarField *result=new scalarField(this->size());
-    forAll(*result,i) {
+    tmp<scalarField> result(
+        new scalarField(this->size())
+    );
+
+    forAll(result(),i) {
         scalar val=fmod(a[i],b[i]);
         if(fabs(val)>(b[i]/2)) {
             if(val>0) {
@@ -678,31 +689,38 @@ scalarField *CommonValueExpressionDriver::makeModuloField(
                 val += b[i];
             }
         }
-        (*result)[i]=val;
+        result()[i]=val;
     }
 
     return result;
 }
 
-scalarField *CommonValueExpressionDriver::makeRandomField(label seed)
+tmp<scalarField> CommonValueExpressionDriver::makeRandomField(label seed) const
 {
-    scalarField *result=new scalarField(this->size());
+    tmp<scalarField> result(
+        new scalarField(this->size())
+    );
 
     if(seed<=0) {
         seed=runTime().timeIndex()-seed;
     }
 
     Foam::Random rand(seed);
-    forAll(*result,i) {
-        (*result)[i]=rand.scalar01();
+    forAll(result(),i) {
+        result()[i]=rand.scalar01();
     }
 
     return result;
 }
 
-scalarField *CommonValueExpressionDriver::getLine(const string &name,scalar t)
+tmp<scalarField> CommonValueExpressionDriver::getLine(
+    const string &name,
+    scalar t
+)
 {
-    return new scalarField(this->size(),lines_[name](t));
+    return tmp<scalarField>(
+        new scalarField(this->size(),lines_[name](t))
+    );
 }
 
 tmp<scalarField> CommonValueExpressionDriver::getLookup(
@@ -710,11 +728,13 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup(
     const scalarField &val
 )
 {
-    scalarField *result=new scalarField(val.size());
+    tmp<scalarField> result(
+        new scalarField(val.size())
+    );
     const interpolationTable<scalar> &table=lookup_[name];
 
     forAll(val,i) {
-        (*result)[i]=table(val[i]);
+        result()[i]=table(val[i]);
     }
 
     return tmp<scalarField>(result);
@@ -725,17 +745,21 @@ scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
     return lines_[name](t);
 }
 
-scalarField *CommonValueExpressionDriver::makeGaussRandomField(label seed)
+tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
+    label seed
+) const
 {
-    scalarField *result=new scalarField(this->size());
+    tmp<scalarField> result(
+        new scalarField(this->size())
+    );
 
     if(seed<=0) {
         seed=runTime().timeIndex()-seed;
     }
 
     Foam::Random rand(seed);
-    forAll(*result,i) {
-        (*result)[i]=rand.GaussNormal();
+    forAll(result(),i) {
+        result()[i]=rand.GaussNormal();
     }
 
     return result;
@@ -1493,6 +1517,36 @@ bool CommonValueExpressionDriver::isForeignMesh(
 ) const
 {
     return MeshesRepository::getRepository().hasMesh(name);
+}
+
+tmp<scalarField> CommonValueExpressionDriver::weights(
+        label size,
+        bool point
+    ) const
+{
+    if(point) {
+        const label pSize=this->pointSize();
+        bool isCorrect=(size==pSize);
+        reduce(isCorrect,andOp<bool>());
+        if(!isCorrect) {
+            Pout << "Expected Size: " << size << " PointSize:" << pSize << endl;
+            FatalErrorIn("CommonValueExpressionDriver::weights()")
+                << "At least one processor wants the wrong field size. "
+                    << "Check above"
+                    << endl
+                    << exit(FatalError);
+        }
+        // points have weight 1 per default
+        tmp<scalarField> result(
+            new scalarField(
+                size,
+                1.
+            )
+        );
+        return result;
+    } else {
+        return this->weightsNonPoint(size);
+    }
 }
 
 } // namespace

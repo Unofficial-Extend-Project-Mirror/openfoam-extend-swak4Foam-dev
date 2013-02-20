@@ -161,42 +161,42 @@ void FaPatchValueExpressionDriver::parseInternal (int startToken)
     parser.parse ();
 }
 
-vectorField *FaPatchValueExpressionDriver::makePositionField()
+tmp<vectorField> FaPatchValueExpressionDriver::makePositionField() const
 {
-    return new vectorField(patch_.edgeFaceCentres());
+    return tmp<vectorField>(new vectorField(patch_.edgeFaceCentres()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makePointField()
+tmp<vectorField> FaPatchValueExpressionDriver::makePointField() const
 {
     // if implemented go to the call in the grammar and reuse there
     notImplemented("FaPatchValueExpressionDriver::makePointField()");
 
-    return new vectorField(0);
+    return tmp<vectorField>(new vectorField(0));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeEdgeNormalField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeEdgeNormalField() const
 {
-    return new vectorField(patch_.edgeNormals());
+    return tmp<vectorField>(new vectorField(patch_.edgeNormals()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeEdgeLengthField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeEdgeLengthField() const
 {
-    return new vectorField(patch_.edgeLengths());
+    return tmp<vectorField>(new vectorField(patch_.edgeLengths()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeFaceNeighbourField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeFaceNeighbourField() const
 {
-    return new vectorField(patch_.edgeFaceCentres());
+    return tmp<vectorField>(new vectorField(patch_.edgeFaceCentres()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeDeltaField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeDeltaField() const
 {
-    return new vectorField(patch_.delta());
+    return tmp<vectorField>(new vectorField(patch_.delta()));
 }
 
-scalarField *FaPatchValueExpressionDriver::makeWeightsField()
+tmp<scalarField> FaPatchValueExpressionDriver::makeWeightsField() const
 {
-    return new scalarField(patch_.weights());
+    return tmp<scalarField>(new scalarField(patch_.weights()));
 }
 
 const fvMesh &FaPatchValueExpressionDriver::mesh() const
@@ -219,11 +219,11 @@ label FaPatchValueExpressionDriver::pointSize() const
     return patch_.nPoints();
 }
 
-scalarField *FaPatchValueExpressionDriver::makeEdgeIdField()
+tmp<scalarField> FaPatchValueExpressionDriver::makeEdgeIdField() const
 {
-    scalarField *result=new scalarField(patch_.size());
-    forAll(*result,i) {
-        (*result)[i]=i;
+    tmp<scalarField> result(new scalarField(patch_.size()));
+    forAll(result(),i) {
+        result()[i]=i;
     }
     return result;
 }
@@ -376,6 +376,27 @@ bool FaPatchValueExpressionDriver::existsPluginFunction(
     );
 }
 
+tmp<scalarField> FaPatchValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!faceSize) {
+        Pout << "Expected size: " << size
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("FaPatchValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(mag(makeEdgeLengthField()));
+}
 
 // ************************************************************************* //
 

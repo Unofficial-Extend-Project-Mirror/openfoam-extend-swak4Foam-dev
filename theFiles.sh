@@ -5,9 +5,11 @@ export SWAKLIBS=(groovyBC \
     swakSourceFields \
     simpleFunctionObjects \
     simpleSwakFunctionObjects \
+    simpleLagrangianFunctionObjects \
     swakTopoSources \
     swak4FoamParsers \
-    pythonIntegration \
+    swakPythonIntegration* \
+    swak*FunctionPlugin \
     swakFunctionObjects)
 
 if [ "$FOAM_DEV" != "" ]
@@ -18,6 +20,7 @@ fi
 export SWAKUTILS=(funkySetBoundaryField \
     funkySetFields \
     funkyDoCalc \
+    calcNonUniformOffsetsForMapped \
     replayTransientBC)
 
 if [ "$FOAM_DEV" != "" ]

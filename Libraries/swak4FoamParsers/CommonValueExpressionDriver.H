@@ -161,6 +161,14 @@ protected:
     //- update stuff that needs updating
     virtual bool update();
 
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const = 0;
+
 public:
 
     ExpressionResult &result() { return result_; }
@@ -175,7 +183,17 @@ public:
     //- actual size of the supporting point-field
     virtual label pointSize() const = 0;
 
-    //- access the other mesh name
+    //- weights of the entries
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    //- point determines whether this is a point field or not
+    tmp<scalarField> weights(
+        label size,
+        bool point=false
+    ) const;
+
+   //- access the other mesh name
     const word &otherMeshName() const { return otherMeshName_; }
     word &otherMeshName() { return otherMeshName_; }
 
@@ -261,10 +279,18 @@ protected:
     };
 
     template<class T>
-    inline autoPtr<T> getSet(const fvMesh &,const word &,SetOrigin &origin);
+    inline autoPtr<T> getSet(
+        const fvMesh &,
+        const word &,
+        SetOrigin &origin
+    ) const;
 
     template<class T>
-    inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
+    inline bool updateSet(
+        autoPtr<T> &theSet,
+        const word &,
+        SetOrigin origin
+    ) const;
 
     template<class T>
     autoPtr<T> getOrReadField(
@@ -404,6 +430,10 @@ public:
         const string &expr
     );
 
+    //- calculate the weighted average of a field
+    template<class Type>
+    Type calcWeightedAverage(const Field<Type> &f) const;
+
     //- read information about the foreign meshes and create them
     static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
 
@@ -441,21 +471,33 @@ public:
     void clearResult();
 
     template <class Op,class Type>
-    Field<bool> *doCompare(Field<Type> *a,Op op,Field<Type> *b);
+    tmp<Field<bool> > doCompare(
+        const Field<Type> &a,
+        Op op,
+        const Field<Type> &b
+    );
 
     template <class Op>
-    Field<bool> *doLogicalOp(Field<bool> *a,Op op,Field<bool> *b);
+    tmp<Field<bool> > doLogicalOp(
+        const Field<bool> &a,
+        Op op,
+        const Field<bool> &b
+    );
 
-    inline Field<bool> *doLogicalNot(Field<bool> *a);
+    inline tmp<Field<bool> > doLogicalNot(const Field<bool> &a);
 
     template<class Type>
-    Field<Type> *doConditional(Field<bool> *d,Field<Type> *yes,Field<Type> *no);
+    tmp<Field<Type> > doConditional(
+        const Field<bool> &d,
+        const Field<Type> &yes,
+        const Field<Type> &no
+    );
 
     template<class Type>
-    Field<Type> *makeField(Type,bool isPoint=false);
+    tmp<Field<Type> > makeField(Type,bool isPoint=false);
 
 //     template<class Type>
-//     Field<Type> *getField(const string &name);
+//     tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
     bool is(const string &name,bool isPoint=false) const;
@@ -474,7 +516,7 @@ public:
     inline bool isLine(const string &name) const;
 
     //- get the value for a timeline for a specific time
-    scalarField *getLine(const string &name,scalar t);
+    tmp<scalarField> getLine(const string &name,scalar t);
 
     //- value of the timeline
     scalar getLineValue(const string &name,scalar t);
@@ -520,9 +562,12 @@ public:
     //- get the value for a lookuptable for a set of values
     tmp<scalarField> getLookup(const string &name,const scalarField &val);
 
-    scalarField *makeModuloField(const scalarField &a,const scalarField &b);
-    scalarField *makeRandomField(label seed=0);
-    scalarField *makeGaussRandomField(label seed=0);
+    tmp<scalarField> makeModuloField(
+        const scalarField &a,
+        const scalarField &b
+    ) const;
+    tmp<scalarField> makeRandomField(label seed=0) const;
+    tmp<scalarField> makeGaussRandomField(label seed=0) const;
 
     vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
 
@@ -530,18 +575,24 @@ public:
 
     const Time& runTime() const;
 
-    vectorField *composeVectorField(scalarField *,scalarField *,scalarField *);
-
-    tensorField *composeTensorField(scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *);
-
-    symmTensorField *composeSymmTensorField(
-        scalarField *,scalarField *,scalarField *,
-        scalarField *,scalarField *,scalarField *
+    tmp<vectorField> composeVectorField(
+        const scalarField &,
+        const scalarField &,
+        const scalarField &
     );
 
-    sphericalTensorField *composeSphericalTensorField(scalarField *);
+    tmp<tensorField> composeTensorField(
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &
+    );
+
+    tmp<symmTensorField> composeSymmTensorField(
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &
+    );
+
+    tmp<sphericalTensorField> composeSphericalTensorField(const scalarField &);
 
     // Error handling.
 

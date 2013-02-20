@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 25 Jan 2013 23:00:07 +0100
+Subject: Re: Add =weight=-function to all Drivers
+Message-Id: <cb6d5756c0383bc4-c8c7a409c2a122f2-artemis@bgs-cool-greybook.local>
+References: <cb6d5756c0383bc4-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cb6d5756c0383bc4-0-artemis@bgs-cool-greybook.local>
+
+Implemented for the regular drivers

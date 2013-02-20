@@ -120,6 +120,13 @@ protected:
 
     int startupSymbol(const word &name);
 
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const;
 
 public:
 
@@ -165,42 +172,42 @@ public:
 
     virtual const faMesh &aMesh() const;
 
-    vectorField *makePositionField();
+    tmp<vectorField> makePositionField() const;
 
-    vectorField *makePointField();
+    tmp<vectorField> makePointField() const;
 
-    vectorField *makeEdgeNormalField();
+    tmp<vectorField> makeEdgeNormalField() const;
 
-    vectorField *makeEdgeLengthField();
+    tmp<vectorField> makeEdgeLengthField() const;
 
-    vectorField *makeFaceNeighbourField();
+    tmp<vectorField> makeFaceNeighbourField() const;
 
-    vectorField *makeDeltaField();
+    tmp<vectorField> makeDeltaField() const;
 
-    scalarField *makeWeightsField();
+    tmp<scalarField> makeWeightsField() const;
 
-    scalarField *makeEdgeIdField();
-
-    template<class Type>
-    Field<Type> *getField(const string &name);
+    tmp<scalarField> makeEdgeIdField() const;
 
     template<class Type>
-    Field<Type> *getOldTimeField(const string &name);
+    tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
-    Field<Type> *getSurfaceNormalField(const string &name);
+    tmp<Field<Type> > getOldTimeField(const string &name);
 
     template<class Type>
-    Field<Type> *getPatchInternalField(const string &name);
+    tmp<Field<Type> > getSurfaceNormalField(const string &name);
 
     template<class Type>
-    Field<Type> *getPatchNeighbourField(const string &name);
+    tmp<Field<Type> > getPatchInternalField(const string &name);
 
     template<class Type>
-    Field<Type> *toFace(const Field<Type> &);
+    tmp<Field<Type> > getPatchNeighbourField(const string &name);
 
     template<class Type>
-    Field<Type> *toPoint(const Field<Type> &);
+    tmp<Field<Type> > toFace(const Field<Type> &);
+
+    template<class Type>
+    tmp<Field<Type> > toPoint(const Field<Type> &);
 
     //- return a new plugin-function
     virtual autoPtr<CommonPluginFunction> newPluginFunction(

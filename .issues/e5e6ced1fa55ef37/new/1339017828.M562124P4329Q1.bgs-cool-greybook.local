@@ -1,6 +1,6 @@
 From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Date: Wed, 06 Jun 2012 23:21:43 +0200
-State: new
+State: fixed
 Subject: Get rid of raw pointers in the Parser/Driver-code
 Message-Id: <e5e6ced1fa55ef37-0-artemis@bgs-cool-greybook.local>
 

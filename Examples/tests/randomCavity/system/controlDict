@@ -27,9 +27,11 @@ endTime         0.5;
 
 deltaT          0.005;
 
-writeControl    timeStep;
+// writeControl    timeStep;
+writeControl    adjustableRunTime;
 
-writeInterval   20;
+// writeInterval   20;
+writeInterval   0.05;
 
 purgeWrite      0;
 
@@ -50,10 +52,21 @@ libs (
     "libsimpleFunctionObjects.so"
     "libswakFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
 );
 
 functions {
+    changeDeltaT {
+        type setDeltaTByTimeline;
+        deltaTTable {
+            outOfBounds repeat;
+            readerType csv;
+            hasHeaderLine 1;
+            timeColumn 0;
+            valueColumns ( 1 );
+            fileName "$FOAM_CASE/deltaT.csv";
+        }
+    }
     dynamicFO1 {
         type dynamicFunctionObjectListProxy;
         dictionaryProvider fromFileDictionaryProvider;

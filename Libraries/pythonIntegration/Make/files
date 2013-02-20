@@ -1,8 +1,0 @@
-pythonInterpreterWrapper.C
-pythonIntegrationFunctionObject.C
-pythonFluIntegrationFunctionObject.C
-executeIfPythonFunctionObject.C
-stdoutFromPythonScriptProvider.C
-writeAndEndPythonFunctionObject.C
-
-LIB = $(FOAM_USER_LIBBIN)/libpythonIntegration

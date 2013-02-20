@@ -165,6 +165,46 @@ fvMesh &MeshesRepository::addMesh(
     return *meshes_[name];
 }
 
+fvMesh &MeshesRepository::addCoupledMesh(
+    const word &name,
+    const word &masterName,
+    const word &region
+)
+{
+    if(meshes_.found(name)) {
+        FatalErrorIn("MeshesRepository::addCoupledMesh")
+            << "There is already an entry " << name
+                << " in the repository"
+                << endl
+                << exit(FatalError);
+    }
+    if(!meshes_.found(masterName)) {
+        FatalErrorIn("MeshesRepository::addCoupledMesh")
+            << "There is no entry " << masterName
+                << " in the repository"
+                << endl
+                << "Available keys:" << nl << meshes_.sortedToc()
+                << exit(FatalError);
+    }
+
+    fvMesh &master=*meshes_[masterName];
+    Time &time=const_cast<Time&>(master.time());
+
+    meshes_.insert(
+        name,
+        new fvMesh(
+            IOobject(
+                region,
+                time.timeName(),
+                time,
+                Foam::IOobject::MUST_READ
+            )
+        )
+    );
+
+    return *meshes_[name];
+}
+
 fvMesh &MeshesRepository::getMesh(
     const word &name
 )

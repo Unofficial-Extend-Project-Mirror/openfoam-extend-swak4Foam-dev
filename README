@@ -101,6 +101,38 @@
          function-plugins. They are compiled in the course of the
          normal =swak=-compilation. This makes sure that they are
          consistent with the =swak=-release in the case of an update
+*** Special versions of the python integration
+    *Note*: This section is very special and won't be needed by most
+    people
+
+    The library =libswakPythonIntegration.so= links against a specific
+    version of the python library. In certain circumstances (for
+    instance the OS of the cluster is different from the one that swak
+    was compiled on) this python-version is not available on the
+    target machine. While all other parts of swak will work the
+    python-integration won't load on the target machine. To fix this
+    problem a workaround is provided:
+
+    The script =maintainanceScripts/makeSpecialPythonLibrary.sh=
+    compiles a special version of the =libswakPythonIntegration.so=
+    that is identified by an additional suffix (for instance the
+    suffix =Cluster= makes a file
+    =libswakPythonIntegrationCluster.so=). That script has to be run
+    *on the target system* and needs 3 parameters:
+    1. =SWAK_PYTHON_INCLUDE=
+    2. =SWAK_PYTHON_LINK=
+    3. The suffix
+    For instance
+: ./maintainanceScripts/makeSpecialPythonLibrary.sh -I/opt/local/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 "-L/opt/local/lib -lpython2.5" Version2.5
+    compiles a version for an old python.
+
+    To enable the python-integration in =libs= in =controlDict= *both*
+    python-integrations have to be specified. One of them will fail on
+    each machine (because the required python-library is not there),
+    the other one will provide the python-functionObjects.
+
+    Note: the special libraries won't be updated automatically on the
+    target system. Doing so is the responsibility of the user.
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
@@ -621,6 +653,12 @@ S_{expl} + S_{impl} T
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
+
+   Currenly problematice parts seem to be:
+   - update and =magSf=-calculation of =SampledSurface= (marked in
+     =SampledSurfaceExpressionDriver.C=)
+   - Python interpreter (but no calls in swak were found in the
+     stack-trace that could be responsible)
 ** No point-vector construction for Subsets
    The same problem that was mentioned in
    [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
@@ -1439,6 +1477,18 @@ S_{expl} + S_{impl} T
 **** Move non-parser sources in =swak4FoamParsers= into sub-directories
      Make the directory a little bit cleaner
 ** Next release - version number : 0.2.2
+*** Incompatibilities to previous versions
+**** Python-integration library renamed
+     To avoid clashes with other similar efforts (not that I know of
+     any) the library =libpythonIntegration.so= has been renamed to
+     =libswakPythonIntegration.so=.
+
+     Usually only the =libs=-entry in the controlDict has to be
+     changed (if the library is used at all). Names of the function
+     objects stay the same
+**** Change in write behaviour of =expressionField= and =manipulateField=
+     Now the =outputControl=-entry is honored. If set wrong the field
+     is *no longer* calculated/manipulated at every time-step
 *** Bug fixes
 **** =groovyBC=: =value= reset to $0$ during construction
      If no =refValue= is given during construction then a value of $0$
@@ -1472,6 +1522,16 @@ S_{expl} + S_{impl} T
 **** =valuePatches= did not work for mapped patches
      This kind of patch was not identified as something that could
      have the value fixed
+**** =expressionField= and =manipulateField= did not honor the =outputControl=-entry
+     =expressionFields= were calculated at every time-step, even if
+     the computational cost was high. Now if =outputControl= is
+     =outputTime= the field is only calculated if it is going to be
+     written
+**** Double =namespace Foam= makes compilation of =groovyJump= fail with =icc=
+     Seems like this one was overlooked because =gcc= is more
+     tolerant towards stupidity.
+
+     Reported by Edo Frederix
 *** New features
 **** Access fields from different cases
      It is now possible for expression on =internalFields= to access
@@ -1511,6 +1571,32 @@ S_{expl} + S_{impl} T
      To allow non-uniform =offsets= in the specification of mapped
      patches in =polyMesh/boundary= a utility
      =calcNonUniformOffsetsForMapped= was developed.
+**** Function objects that manipulate time
+     The framework for function objects that manipulate the =runTime=
+     were added. The concrete implementations are
+     - setDeltaTByTimeline :: set the timestep from a data file
+     - setDeltaTWithPython :: set the timestep by evaluating a
+          Python-snipplet that should return a floating point number
+     - setEndTimeWithPython :: set the end time from the evaluation of
+          a Python-snipplet
+**** Plugin-functions for chemical model
+     The library =libswakChemistryModelFunctionPlugin= adds the
+     possibility to calculate properties of the chemistry like
+     reaction rates, chemical timescale and released energy.
+
+     Currently only implemented for =psiChemistryModel=
+
+     If there is no chemistry model in memory it will be loaded and
+     the reaction rates are calculated.
+**** Plugin-functions for radiation model
+     The library =libswakRadiationModelFunctionPlugin= adds the
+     possibility to calculate properties of the radiation like
+     parts of the source terms =Rp= and =Ru= and the current
+     radiation source
+
+     If there is no radiation model in memory it will be loaded and
+     the reaction rates are calculated. Assumes the presence of a
+     temperature field called =T=.
 *** Enhancements
 **** Python-Integration now supports numpy-arrays
      If the =numpy=-library is found then global variables which are
@@ -1572,6 +1658,37 @@ S_{expl} + S_{impl} T
      - foreignMeshesFollowTime :: this allows specifying a list of
           meshes whose time is set to the current time of the running
           case
+**** =replaxTransientBC= outputs timestep
+     This helps debugging timestepping-strategies
+**** New accumulation =weightedAverage=
+     A new possible entry for the =accumulations= calculates an
+     average that is weighted by a facetor that depends on the entity:
+     - cell volume if applicable
+     - face area for surfaces etc
+     - $1$ if there is no appropriate weight (usually values defined
+       on points). The result is equivalent to =average=.
+**** =expressionField= reports name and type of the created field
+     The title says it all. Should give the user additional feedback
+     about what is happening
+**** New boundary condition =groovyPartialSlip= in =groovyStandardBCs=
+     This boundary allows specifying the partial slip fraction of the
+     regular =partialSlip=-BC with an expression.
+**** =funkySetFields= allows switching off the correction of BCs
+     This is sometimes necessary to allow calculations with fields
+     where the boundary conditions have a lot of dependencies
+     (turbulence model, other mesh etc)
+**** Allow selection of additional regions in =funkySetFields=
+     The option =-additionalRegions= allows selecting additional mesh
+     regions for boundary conditions that require it (usually used
+     together with =-preloadFields=).
+
+     For the other case there is an additional option
+     =-otherAdditionalRegions=.
+**** Adding a =-preloadFields=-option to =funkySetFields=
+     This option allows specifying additional field names to be
+     preloaded in command line mode. If multiple mesh regions are
+     specified (including another mesh)it will try to preload the
+     field there too
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
@@ -1582,6 +1699,14 @@ S_{expl} + S_{impl} T
      This new header includes information about the
      =swak4Foam=-version, the =OpenFOAM=-version and macros for
      workarounds that depend on the OpenFOAM-version
+**** =accumulations=-entries converted to =NamedEnums=
+     This forces the entries to be checked while being read. Allowing
+     more consistent treatment
+**** Additional maintenance script for special python-versions
+     This script allows compiling additional versions of
+     =swakPythonIntegration= for cases where the version on the
+     development machine is different from the version on the
+     simulation machine (see installation chapter)
 *** Cosmetics
     Changes without consequences for the user
 **** Change type of =name= in parsers to =word=
@@ -1590,3 +1715,6 @@ S_{expl} + S_{impl} T
 **** Updated contributor lists in =README= and sources
      The list of contributors to each file have been added (mostly by
      script with the information from the repository)
+**** Rewritten methods that return pointers
+     This abomination from the early days of =funkySetFields= has been
+     cleaned

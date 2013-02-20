@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,6 +37,10 @@ Description
 SourceFiles
     EvolveThermoCloudFunctionObject.C
 
+Contributors/Copyright:
+    2012 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef EvolveThermoCloudFunctionObject_H
