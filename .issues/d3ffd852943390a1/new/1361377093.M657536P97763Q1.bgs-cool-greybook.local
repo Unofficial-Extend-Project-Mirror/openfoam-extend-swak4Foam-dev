@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 20 Feb 2013 17:16:43 +0100
+State: new
+Subject: Consistent handling of logical =true= and =false=
+Message-Id: <d3ffd852943390a1-0-artemis@bgs-cool-greybook.local>
+
+Currently only exactely 0 is treated as false. Add a template function
+that consistently transforms a scalarField to a boolList

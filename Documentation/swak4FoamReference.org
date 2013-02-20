@@ -165,7 +165,10 @@ hide circle
    - sphericalTensor :: Spherical tensor
    - boolean :: results of logical operations (can only be =true= or
                 =false=). Certain parsers implement them with scalars
-                being $0$ or $1$
+                being $0$ or $1$. If values other then $0$ or $1$ are
+                found (which can happen for instance due to
+                interpolation) they are interpreted as =true= (only
+                exactly $0$ is interpreted as =false=)
 
    If the type of subexpressions for a certain operator/function is
    incompatible (for instance when trying to add a vector to a scalar)
@@ -307,14 +310,18 @@ hide circle
     - inv :: Inverse
     These functions examine the whole fields (in parallel over all
     processors) and return a field which has one value anywhere:
-    - max :: maximum of the field (for types with multiple components
+    - max(x) :: maximum of the field (for types with multiple components
              it return the maximum of each component)
-    - min :: the minimum
-    - maxPosition :: Only defined for scalar expressions. A vector
+    - min(x) :: the minimum
+    - maxPosition(x) :: Only defined for scalar expressions. A vector
                      with the position where the maximum value is found
-    - minPosition :: Like =maxPosition= but with the minimum
+    - minPosition(x) :: Like =maxPosition= but with the minimum
     - sum :: the sum of all the field values
     - average :: the average of the field values
+    There are also binary forms:
+    - min(x,y) :: Gives back a field that in each "cell" has the
+                  minimum of =x= and =y= in that cell
+    - max(x,y) :: Same for the maximum
     These functions build on the random numbers available in OpenFOAM:
     - rand :: A random number that is uniformly distributed in the
               range $[0,1)$. It *can* take an integer argument that
