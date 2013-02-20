@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "swakRadiationPluginFunction.H"
+#include "swakRadiationModelPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "HashPtrTable.H"

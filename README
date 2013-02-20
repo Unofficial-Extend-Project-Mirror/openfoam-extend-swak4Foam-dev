@@ -1588,6 +1588,15 @@ S_{expl} + S_{impl} T
 
      If there is no chemistry model in memory it will be loaded and
      the reaction rates are calculated.
+**** Plugin-functions for radiation model
+     The library =libswakRadiationModelFunctionPlugin= adds the
+     possibility to calculate properties of the radiation like
+     parts of the source terms =Rp= and =Ru= and the current
+     radiation source
+
+     If there is no radiation model in memory it will be loaded and
+     the reaction rates are calculated. Assumes the presence of a
+     temperature field called =T=.
 *** Enhancements
 **** Python-Integration now supports numpy-arrays
      If the =numpy=-library is found then global variables which are
