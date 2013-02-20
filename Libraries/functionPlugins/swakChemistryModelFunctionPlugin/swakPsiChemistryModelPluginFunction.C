@@ -198,7 +198,11 @@ public:
     ) {}
 
     void doEvaluation() {
+#ifdef FOAM_DELTATCHEM_NOT_DIMENSIONED
+        const scalarField &dtChem=chemistry().deltaTChem();
+#else
         const DimensionedField<scalar,volMesh> &dtChem=chemistry().deltaTChem();
+#endif
 
         autoPtr<volScalarField> val(
             new volScalarField(
@@ -210,11 +214,19 @@ public:
                     IOobject::NO_WRITE
                 ),
                 mesh(),
+#ifdef FOAM_DELTATCHEM_NOT_DIMENSIONED
+                dimensionedScalar("dtChem",dimless,0),
+#else
                 dimensionedScalar("dtChem",dtChem.dimensions(),0),
+#endif
                 "zeroGradient"
             )
         );
+#ifdef FOAM_DELTATCHEM_NOT_DIMENSIONED
+        val->internalField()=dtChem;
+#else
         val->dimensionedInternalField()=dtChem;
+#endif
 
         result().setObjectResult(
             val

@@ -61,6 +61,10 @@ Contributors/Copyright:
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 
+#if FOAM_VERSION4SWAK_MAJOR<1 || FOAM_VERSION4SWAK_MINOR<2
+#define FOAM_DELTATCHEM_NOT_DIMENSIONED
+#endif
+
 #include "swakVersion.H"
 
 #endif
