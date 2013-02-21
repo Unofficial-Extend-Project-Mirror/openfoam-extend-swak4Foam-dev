@@ -1588,6 +1588,13 @@ S_{expl} + S_{impl} T
 
      If there is no chemistry model in memory it will be loaded and
      the reaction rates are calculated.
+
+     There is a function =psiChem_updateChemistry= that forces the
+     chemistry to be recalculated with a specified timestep. For
+     technical reasons this returns a scalar field with the value
+     $0$. So an expression like
+     =psiChem_updateChemistry(0.0001)+psiChem_RR(CH4)= calculates the
+     reaction rate assuming that the timestep is $0.0001$.
 **** Plugin-functions for radiation model
      The library =libswakRadiationModelFunctionPlugin= adds the
      possibility to calculate properties of the radiation like

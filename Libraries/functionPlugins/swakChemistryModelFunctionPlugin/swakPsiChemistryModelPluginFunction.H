@@ -73,6 +73,8 @@ protected:
 
     const psiChemistryModel &chemistry();
 
+    void updateChemistry(const scalar dt);
+
 public:
     swakPsiChemistryModelPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
