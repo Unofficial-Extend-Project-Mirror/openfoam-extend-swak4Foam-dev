@@ -1595,6 +1595,10 @@ S_{expl} + S_{impl} T
      $0$. So an expression like
      =psiChem_updateChemistry(0.0001)+psiChem_RR(CH4)= calculates the
      reaction rate assuming that the timestep is $0.0001$.
+
+     Two additional functions that sum up all the reaction rates (this
+     *should* be $0$) and sum up only positive reaction rates (giving
+     an impression on what is going on)
 **** Plugin-functions for radiation model
      The library =libswakRadiationModelFunctionPlugin= adds the
      possibility to calculate properties of the radiation like

@@ -194,6 +194,90 @@ public:
 defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_RR,0);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_RR,name,psiChem_RR);
 
+class swakPsiChemistryModelPluginFunction_RRError
+: public swakPsiChemistryModelPluginFunction
+{
+public:
+    TypeName("swakPsiChemistryModelPluginFunction_RRError");
+    swakPsiChemistryModelPluginFunction_RRError (
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
+    ): swakPsiChemistryModelPluginFunction(
+        parentDriver,
+        name,
+        "volScalarField"
+    ) {}
+
+    void doEvaluation() {
+        autoPtr<volScalarField> pSum(
+            new volScalarField(
+                0*chemistry().RR(0)
+            )
+        );
+
+        volScalarField &summe=pSum();
+        for(
+            label specI=0;
+            specI<chemistry().thermo().composition().species().size();
+            specI++
+        ) {
+            summe+=chemistry().RR(specI);
+        }
+
+        result().setObjectResult(
+            pSum
+        );
+    }
+};
+
+defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_RRError,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_RRError,name,psiChem_RRError);
+
+class swakPsiChemistryModelPluginFunction_RRSumPositive
+: public swakPsiChemistryModelPluginFunction
+{
+public:
+    TypeName("swakPsiChemistryModelPluginFunction_RRSumPositive");
+    swakPsiChemistryModelPluginFunction_RRSumPositive (
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
+    ): swakPsiChemistryModelPluginFunction(
+        parentDriver,
+        name,
+        "volScalarField"
+    ) {}
+
+    void doEvaluation() {
+        autoPtr<volScalarField> pSum(
+            new volScalarField(
+                0*chemistry().RR(0)
+            )
+        );
+
+        volScalarField &summe=pSum();
+        for(
+            label specI=0;
+            specI<chemistry().thermo().composition().species().size();
+            specI++
+        ) {
+            const volScalarField &RR=chemistry().RR(specI);
+            forAll(summe,cellI) {
+                if(RR[cellI]>0) {
+                    summe[cellI]+=RR[cellI];
+                }
+            }
+        }
+        summe.correctBoundaryConditions();
+
+        result().setObjectResult(
+            pSum
+        );
+    }
+};
+
+defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_RRSumPositive,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_RRSumPositive,name,psiChem_RRSumPositive);
+
 class swakPsiChemistryModelPluginFunction_updateChemistry
 : public swakPsiChemistryModelPluginFunction
 {
