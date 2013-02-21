@@ -51,6 +51,13 @@ Contributors/Copyright:
 #error "This swak4Foam-version is only used for the 2.x-versions of OpenFOAM. For lower versions there is a special branch"
 #endif
 
+#if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
+// Just to make sure that stuff that comes from 1.7 works correctly
+#define FOAM_HAS_SORTED_TOC
+#else
+#define FOAM_OLDTIME_PROBLEM
+#endif
+
 // in 1.6-ext the operation s1 & s2 of two symmetrical tensor fields does not yield a symmetric tensor
 #if defined(FOAM_DEV) || FOAM_VERSION4SWAK_MAJOR>1
 #define FOAM_SYMMTENSOR_WORKAROUND

@@ -118,11 +118,7 @@ const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
                 usePsi=false;
             } else if(debug) {
                 Info << "No " << thermoTypeName << " in basicRhoThermo-types "
-#ifdef FOAM_HAS_SORTED_TOC
                     << basicRhoThermo::fvMeshConstructorTablePtr_->sortedToc()
-#else
-                    << basicRhoThermo::fvMeshConstructorTablePtr_->toc()
-#endif
                     << endl;
             }
             if(usePsi) {
@@ -137,11 +133,7 @@ const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
                     }
                 } else if(debug) {
                     Info << "No " << thermoTypeName << " in basicPsiThermo-types "
-#ifdef FOAM_HAS_SORTED_TOC
                     << basicPsiThermo::fvMeshConstructorTablePtr_->sortedToc()
-#else
-                    << basicPsiThermo::fvMeshConstructorTablePtr_->toc()
-#endif
                         << endl;
                 }
             }
