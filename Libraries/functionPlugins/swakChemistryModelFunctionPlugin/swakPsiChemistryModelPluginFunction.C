@@ -97,6 +97,7 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
 
         Info << "Created chemistry model. Calculating to get values ..."
             << endl;
+
         chemistry_[reg.name()]->solve(
             reg.time().value(),
             reg.time().deltaT().value()
@@ -105,6 +106,16 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
     }
 
     return *(chemistry_[reg.name()]);
+}
+
+void swakPsiChemistryModelPluginFunction::updateChemistry(const scalar dt)
+{
+    const_cast<psiChemistryModel&>(
+        chemistry()
+    ).solve(
+        mesh().time().value(),
+        dt
+    );
 }
 
 const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistry()
@@ -182,6 +193,53 @@ public:
 };
 defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_RR,0);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_RR,name,psiChem_RR);
+
+class swakPsiChemistryModelPluginFunction_updateChemistry
+: public swakPsiChemistryModelPluginFunction
+{
+    scalar timeStep_;
+
+public:
+    TypeName("swakPsiChemistryModelPluginFunction_updateChemistry");
+    swakPsiChemistryModelPluginFunction_updateChemistry (
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
+    ): swakPsiChemistryModelPluginFunction(
+        parentDriver,
+        name,
+        "volScalarField",
+        "timestep primitive scalar"
+    ) {}
+
+    void doEvaluation() {
+        updateChemistry(timeStep_);
+
+        result().setObjectResult(
+            autoPtr<volScalarField>(
+                new volScalarField(
+                    IOobject(
+                        "dummyField",
+                        mesh().time().timeName(),
+                        mesh(),
+                        IOobject::NO_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    mesh(),
+                    dimensionedScalar("dtChem",dimless,0),
+                    "zeroGradient"
+                )
+            )
+        );
+    }
+
+    void setArgument(label index,const scalar &s) {
+        assert(index==0);
+
+        timeStep_=s;
+    }
+};
+defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_updateChemistry,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_updateChemistry,name,psiChem_updateChemistry);
 
 class swakPsiChemistryModelPluginFunction_deltaTChem
 : public swakPsiChemistryModelPluginFunction
