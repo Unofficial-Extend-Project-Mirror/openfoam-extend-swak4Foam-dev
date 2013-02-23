@@ -1,5 +1,8 @@
+#+LATEX_HEADER: \usepackage{float} \usepackage{hyperref} \usepackage{utopia}
 #+TITLE: The /incomplete/ =swak4Foam= reference
 #+AUTHOR: Bernhard F.W. Gschaider
+#+LATEX: \listoffigures
+#+LATEX: \listoftables
 
 * Introduction
   This document gives an overview of the usage of =swak4Foam=. It
@@ -23,7 +26,8 @@
     - the collection of function objects
     - and the function plugins that can extend the parsers
   - the last part gives a short descrition on how to use functionality
-    of =swak4foam= in your own programs
+    of =swak4foam= in your own programs including a description of
+    how to write your own plugin-function
 ** Generating a printable version of this document
    This document was written in =org-mode= (http://orgmode.org) an
    outliner mode for the text editor Emacs. This mode offers a number
@@ -204,7 +208,7 @@ hide circle
    | =cellSet=         | Cell values             | none                           |
    | =set=             | Values on sample points | none                           |
    | =surface=         | Values on the facets    | vertices - not yet implemented |
-   | =internalFaField= | Area (=face) values     | Edge values                    |
+   | =internalFaField= | Area (face) values      | Edge values                    |
    | =faPatch=         | Edge values             | Point values                   |
 
    The following sections describe the basic concepts of the
@@ -257,7 +261,7 @@ hide circle
                expression =c="
     In addition there are two unary operators:
     - =-= :: gives the negative of an expression
-    - - =*= :: :: the /Hodge dual/ of a tensor expression
+    - - =*= :: the /Hodge dual/ of a tensor expression
 **** Component operator =.=
      For the data types with multiple components the single components
      can be accessed as scalar with the operator =.= and the number of
