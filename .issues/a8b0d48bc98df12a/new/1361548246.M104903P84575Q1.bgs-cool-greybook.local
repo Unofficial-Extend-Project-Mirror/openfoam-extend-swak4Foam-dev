@@ -1,0 +1,14 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 22 Feb 2013 16:47:37 +0100
+State: new
+Subject: Plugin-function for evaluation of expression on other mesh
+Message-Id: <a8b0d48bc98df12a-0-artemis@bgs-cool-greybook.local>
+
+The syntax would be
+
+: evaluateElsewhere(meshName,expr)
+
+and evaluate =expr= on the mesh specified as =meshName=
+
+Only problem would be that plugin-functions have to return a specific
+type and that is not known beforehand for =expr=

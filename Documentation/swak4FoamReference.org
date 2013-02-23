@@ -461,25 +461,142 @@ hide circle
      - point(scalar) :: Generate a constant point-field (F)
 **** Other fields
      These functions take a field name and return a field from another
-     place:
-     - mapped(fieldName) :: For a mapped patch get the value of the
-          field "on the other side" (P)
-     - mappedInternal(fieldName) :: Similar but get the value of the
-          internal field "on the other side" (P)
+     place. They are only available in the patch parser:
      - internalField(fieldName) :: Get the value of the field on the
           neighbouring internal cells(P, FP)
      - neighbourField(fieldName) :: For a coupled patch get the value
           of the internal field of the coupled patch (P, FP)
-     This function is the only "differential operator"" defined on
+     These functions are only available if the patch has been defined
+     as a =mappedPatch= (=directMappedPatch= in OpenFOAM before 2.0)
+     or a subclass in the =boundary=-file:
+     - mapped(fieldName) :: For a mapped patch get the value of the
+          field "on the other side" (P)
+     - mappedInternal(fieldName) :: Similar but get the value of the
+          internal field "on the other side" (P)
+     This function is the only "differential operator" defined on
      patches:
      - snGrad(fieldName) :: Gradient of the field =name= in the
           surface normal direction (P, FP)
 *** Variables and fields
+    Names that are not functions specified in the grammar can be a
+    number of things. It is tested for a number of other things (the
+    first matching thing is used) and only when nothing of that name
+    is found an error is raised:
+    1. The name of another mesh. This is only available in the
+       Field-Parser and will be discussed below
+    2. A timeline. This is an object where a scalar is specified as a
+       function of time. The current simulation time is used.
+
+       For the specification see the discussion of the
+       =timelines=-entry below
+    3. A lookup table. This works like a timeline but a scalar (that
+       can be different in each "cell") has to be specified between
+       =(= and =)=
+
+       For details see the discussion of =lookuptables= below
+    4. A field or a variable. Fields are =GeometricFields= that are
+       usually declared and used by the OpenFOAM-solver. Depending on
+       the application they are either
+       - looked up in memory
+       - looked up on disc and read in (in this case they *may* be
+         cached in memory)
+       Variables are intermediate values that have been assigned a
+       name and are stored in memory (more on the declaration of those
+       below.)
+
+       The usual lookup order rules are (but you shouldn't rely on
+       them anyway and give variables etc names that do not "shadow"
+       regular fields):
+       1. Variable of same name and type is found before a field
+       2. Data types are searched in this order: scalar, vector,
+          tensor, symmetrical tensor, spherical tensor
+       3. Native structure before secondary structure
+    5. Names of plugin-functions. The concept of plugin-functions is
+       described below
+**** Fields from other meshes
+     If another mesh named =other= has been specified in the field
+     parser (how to specify that see below) then the expression
+     =other(field)= tries to find =field= on the other mesh and uses
+     the values in the expression (if necessary it interpolates the
+     field to the local mesh. All the usual problems associated with
+     interpolation may occur).
+
+     This mechanism does *not* allow the specification of an
+     arbitrary expression on the other mesh. That would be possible
+     with a (yet unwritten) plugin-function.
+**** Types of variables
+     Once a variable has been set for a parser subsequent evaluations
+     can access its value. The variable can be set multiple times
+     during a timestep. At the end of a timestep the value is lost (so
+     the variable has to be set before it can be used).
+
+     There are two special flavors of variables that have to be
+     specified beforehand and change the value that is read:
+     - stored variables :: these variables keep their value to the
+          next timestep so they can be used *before* they are set. An
+          initial value for that variable has to be provided.
+     - delayed variables :: If this variable is used at a time $t$
+          then the value which that variable had at the time
+          $t-t_{offset}$ will be used. If that time is before the
+          start-time then a default value is used.
 *** Plugin functions
+    Plugin functions are functions that can be added to the parsers
+    by loading a dynamic library. They are added to a dynamic
+    lookup-table and treated similar to the builtin functions. The
+    difference in the behavior is that they are *not* polymorphic:
+    that means that the type of the arguments and the return value
+    are fixed. While for instance the function =mag(x)= works for
+    various types of =x= (scalar, vector, tensor ...) for a plugin
+    function =foo(x)= the type of =x= is fixed.
+
+    There are two basic types for arguments:
+    - primitive types :: these are constant values (no expressions
+         possible) of simple types that can be parsed by the usual
+         =Istream=-mechanism in OpenFOAM. The possible primitive
+         types are
+      - word :: simple names
+      - string :: character strings enclosed by ""
+      - scalar :: real values
+      - bool :: =true= or =false=
+      - label :: integer values
+      - vector :: three values enclosed by =()=
+    - parsed values :: these are values returned by a swak-parser (it
+                       does not necessarily have to be the same parser
+                       type as the calling one. For instance a
+                       plugin-function for a patch-parser can have an
+                       argument that is the result of an expression on
+                       the internal field)
+
+    The first time a parser of a specific type (the field parser for
+    instance) is used and there are plugin-functions registered for
+    that parser then a list of the available functions and there
+    arguments are printed to the standard output. The information
+    given for each function is
+    - the name
+    - type of the return value
+    - the arguments with type and a name that should give a hint on
+      their meaning. The type consists of
+      - the name of the parser (or =primitive= if a primitive value is
+        expected) as given in table \ref{tab:selectionNames}
+      - the type expected from that parser
+    separated by a =/=.
+
+    One example is the following output:
+: "Loaded plugin functions for 'FieldValueExpressionDriver':"
+:   lcFaceMaximum:
+:     "volScalarField lcFaceMaximum(internalField/surfaceScalarField faceField)"
+:  psiChem_RR:
+:    "volScalarField psiChem_RR(primitive/word speciesName)"
+    This means that there is a function =lcFaceMaximum= that returns
+    a =volScalarField= and takes a value of type =surfaceScalarField=
+    as the argument. The function =psiChem_RR= takes the name of a
+    species as the argument.
 ** Parameters
+** Information written for restarting
 * Usable parts
 ** Utilities
 ** Boundary conditions
 ** Function objects
 ** Function plugins
 * Programming
+** Writing plugin-functions
