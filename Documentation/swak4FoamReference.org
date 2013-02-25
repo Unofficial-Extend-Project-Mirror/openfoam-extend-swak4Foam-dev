@@ -40,6 +40,21 @@
    - Graphviz :: http://www.graphviz.org
    - Ditaa :: http://ditaa.sourceforge.net
    - PlantUML :: http://plantuml.sourceforge.net/
+** Authorship and license
+   This document is licensed under the /Creative Commons
+   Attribution-ShareAlike 3.0 Unported/ License (for the full text of
+   the license see
+   [[http://creativecommons.org/licenses/by-sa/3.0/legalcode]]). As long
+   as the terms of the license are met any use of this document is
+   fine (commercial use is explicitly encouraged).
+
+   Authors of this document are:
+   - Bernhard F.W. Gschaider :: original author and responsible for
+        the strange English grammar. He is also the current
+        maintainer of this document
+   (should you do substantial modifications to this document then add
+   yourself to this list and push the changes to a repository where
+   the maintainer can merge them to the main line)
 * The parsers (expression grammar)
   The central concept in =swak4Foam= is the /parser/. A parser reads a
   string with an expression, interprets it according to a grammar and
