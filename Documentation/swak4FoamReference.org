@@ -543,6 +543,22 @@ hide circle
           then the value which that variable had at the time
           $t-t_{offset}$ will be used. If that time is before the
           start-time then a default value is used.
+
+     If a variable sequence is evaluated multiple times during a
+     timestep (for instance because there is a sub-iteration cycle in
+     the solver and a boundary condition is evaluated multiple times)
+     then these variables behave each time as if this was the first
+     time during the time-step and only keep the last value they were
+     assigned for the next time-step. This makes it for instance
+     possible to accumulate things like a mass-flow in a stored
+     variable without bothering how many sub-iterations the
+     non-orthogonal corrector did.
+**** Global variables
+     There is also the possibility to access global variables. These
+     variables are organized in /scopes/ which are a collection of
+     variables. Scopes are only accessed if specified so in the
+     parser. This avoids reading unneeded global variables.There are
+     function objects that can set the values of global variables.
 *** Plugin functions
     Plugin functions are functions that can be added to the parsers
     by loading a dynamic library. They are added to a dynamic
@@ -595,7 +611,272 @@ hide circle
     a =volScalarField= and takes a value of type =surfaceScalarField=
     as the argument. The function =psiChem_RR= takes the name of a
     species as the argument.
+
+    If the evaluation of parameter expression fails the location in
+    this expression will be given. Also the location in the
+    expression that called the plugin-function (in fact the whole
+    stack if this expression is part of another plugin-function call)
 ** Parameters
+   Usually parsers are getting their configuration parameters from an
+   OpenFOAM dictionary (the only exceptions that a non-programming
+   user will encounter are the utilities). For the most commonly used
+   cases these are:
+   - groovyBC :: the sub-dictionary that has the boundary condition
+                 specification (rule of thumb: the one that the =type=
+                 is specified in)
+   - function objects :: the sub-dictionary that specifies the
+        details of the function object (also the one with =type= in
+        it)
+   Some of the parameters are required, some are optional.
+
+   *Note:* parameters like =expression= are *not* part of the parser
+   specification but are part of the item using the parser. The
+   parser "only" evaluates them.
+
+   Description of the parameters are split in two parts:
+   - parameters common to all parsers. This holds the majority of the
+     parameters including variable specification
+   - special parameters for concrete parsers
+   If in the following descriptions a default value for a parameter
+   is specified then the parameter is *not* required.
+*** Common parameters
+    Parameters for debugging the parser are:
+    - debugCommonDriver :: Writes debugging information of the
+         =Common= driver like variable evaluations etc. Makes output
+         very verbose. Type: integer. Default: =0=
+    - traceScanning :: Makes the machine-generated (by =flex=)
+                       lexer-code output debugging information. Type:
+                       Boolean. Default: =false=
+    - traceParsing :: Makes the machine-generated (by =bison=)
+                      parser-code output debugging information. Type:
+                      Boolean. Default: =false=
+    These settings change the behavior of where fields are looked for
+    by the parser. They may be overridden by the using application
+    (for instance for =groovyBC= searching files on disk is
+    counterproductive. For =funkySetFields= it is necessary):
+    - searchOnDisc :: Search fields on the disc. Type:
+                      Boolean. Default: =false=
+    - searchInMemory :: Look for files in memory. Either this or
+                        =searchOnDisc= has to be set. Type:
+                        Boolean. Default: =true=
+    - cacheReadFields :: If =searchOnDisc= is set and a file has been
+         read from disc it is stored in memory to avoid disc access on
+         subsequent read. Type: Boolean. Default: =false=
+    This parameter defines the behavior of the =oldTime=-function:
+    - prevIterIsOldTime :: If for a field no old-time value is
+         stored, but one from a previous iteration then this is
+         used. Type: Boolean. Default: =false=
+    These parameters are optional and are used for specifying
+    timelines and lookup tables to be used in expressions. The only
+    difference between them is how they are used but the
+    specification syntax is the same:
+    - timelines :: Single time-dependent values (for instance an
+                   in-flow velocity). The format of this is "a list of
+                   dictionaries". There is only one entry in that
+                   dictionary that is "swak-specific":
+      - name :: name of the timeline. The timeline will
+                be accessed under that name in
+                expressions.
+	           The other parameters depend on the
+                   =interpolationTable=-class of OpenFOAM:
+      - fileName :: The name of the data file
+      - outOfBounds :: How to behave if an argument outside of the
+                       specified data is given (for instance fail with
+                       an error)
+      - readerType :: Type of the reader. Currently only two types
+                      are supported:
+	- openFoam :: the regular OpenFOAM-format which
+                      is a list of value pairs: time
+                      and value
+	- csv :: Comma separated values format. This format requires
+                 addition parameters.
+        The default value is =openFOAM=
+
+        The following options are only required for the =csv=-format
+      - hasHeaderLine :: Whether the file has a header line that
+                         should be skipped before the actual data
+                         begins
+      - timeColumn :: number of the column of the data that holds the
+                      time. Note: the first column has the number $0$
+                      (C-convention)
+      - valueColumns :: List with the column numbers that hold the
+                        actual data. Length of the list has to be the
+                        number of components in the data type (scalar:
+                        1, vector: 3, tensor: 9)
+      - separator :: Character that separates the data values in a
+                     line. Default: a comma
+    - lookuptables :: Single values that depend on another variables
+                      (for instance a temperature-dependent thermal
+                      conductivity). Specified exactly like
+                      =timelines= but when used a scalar expression
+                      has to be provided.
+**** General variable specification
+     Variables are specified by the parameter =variables=. If this
+     parameter is not set then no variables are accessible. The value
+     of the parameter can have two forms: either a single string or a
+     list of strings (which is just syntactic sugar to make the
+     variable list more readable). Inside the strings single variable
+     specifications are separated by =;= (semicolons). *Note*: the
+     last variable specification also has to be terminated by a
+     semicolon!
+
+     The variables will be evaluated in the order they are
+     declared. A variable can be assigned a value more than once.
+
+     The regular variable assignment is of the form
+: varName=expression;
+     which assigns the result of the =expression= to the variable
+     =varName=. The evaluation of =expression= happens with the
+     current parser and the whole (probably inhomogeneous) solution
+     is saved for further evaluations.
+
+     But variables can also be evaluated on other entities and their
+     value can be used in the /local/ parser. This evaluation of
+     /external expressions/ is triggered by ={}= after the variable
+     name like this:
+: varName{parserType'name/regionName}=expression
+     This means that =expression= is evaluated with the parser
+     specified between ={}=. The form given above is the most general
+     form. The specification of the =regionName= is only needed in
+     multi-mesh cases if another mesh should be accessed. If omitted
+     the current mesh is used. The =parserTypes= can be one of the
+     parsers specified in table \ref{tab:selectionNames} and =name=
+     selects the concrete entity the parser should work on (for
+     instance the patch name or the name of the cell set). If the
+     =parserType= is =patch= then it can be omitted and the
+     specification of the patch name is sufficient:
+: varName{patchName}=expression
+     evaluates the =expression= on patch =patchName=.
+
+     In the general case it is only possible to use external
+     expressions if the expression yields a uniform value (for
+     instance a sum) as a general way to interpolate from any entity
+     to any other entity (for instance from a cell set to a patch) in
+     a predictable, logical way  is not possible. So if the
+     expression yields a non-uniform value then a warning is issued
+     and the average is used.
+
+     The only exception currently implemented is if the current patch
+     is a =mapped= patch and the external expression is evaluated on
+     the "partner patch". In this case the non-uniform result will be
+     mapped to the local patch.
+**** Special variables specifications
+     The two optional values =storedVariables= and =delayedVariables=
+     give swak a hint which variables should be treated special (for
+     an explanation on how these variables work see above)
+
+     =storedVariables= is a list of dictionaries that specify which
+     variables should be stored. The two entries in that dictionary
+     are
+     - name :: the name of the variable. If a variable of that name
+               is encountered during the evaluation of expressions or
+               being assigned to then it is treated as a stored
+               variable (which will keep its value until the next
+               timestep)
+     - initialValue :: if the variable is accessed before it has been
+                       set, then this value is used
+     In addition swak writes an additional entry (which is used for
+     restarting) if the variables are written out (for instance in a
+     =groovyBC=):
+     - value :: the current value of the stored variable as a
+                dictionary. Entries in that dictionary are (although
+                they rarely have to be edited) are
+       - valueType :: word describing the value (for instance =scalar=
+                      meaning that the value is a list of scalars)
+       - isPoint :: whether this value is defined on the /native
+                    structure/ or the points
+       - singleValue :: a boolean. If =true= the value is the same
+                        for the whole list and therefor only a single
+                        value is stored
+       - value :: list with the actual values (type according to the
+                  =valueType=)
+     The optional list =delayedVariables= holds the information about
+     those. The dictionaries hold the following information:
+     - name :: the name of the delayed variable
+     - delay :: how much the value is "delayed" between writing and
+                reading
+     - startupValue :: value to use if time is smaller that =delay=
+                       (and therefor no values can be in the "pipeline")
+     - storeInterval :: Interval in which values are actually stored
+                        (the used delayed values will be linearly
+                        interpolated between these values)
+     And again:
+     - value :: holds the current value for restarting purposes
+**** Specification of global variables
+     The optional entry =globalScopes= gives a list with the names of
+     the global namespaces that are searched for global
+     variables. These namespaces are searched in the order they are
+     specified in this list
+**** Specification of the mesh region
+     If the case is a multi-region case then the mesh region for this
+     parser can be specified. Otherwise the used region is
+     context-dependent (usually the default mesh is used):
+     - region :: Name of the mesh to be used
+*** Parser-specific parameters
+    Certain drivers/parsers have additional parameters.
+**** Additional parameters of the field-parser
+     This has only one additional parameter:
+     - dimensions :: physical dimensions of the result. Depending on
+                     the application this parameter may or may not be
+                     used. Optional (otherwise the result is
+                     dimensionless)
+**** Additional parameter of the patch-driver
+     The only additional parameter here is
+     - mappingInterpolation :: A sub-dictionary with the interpolation
+          schemes to be used if this is a mapped patch and mapping
+          with interpolation is used. Optional. If unset this is an
+          empty dictionary
+     Also instances of this driver where it is not obvious from the
+     context (for a =groovyBC= it is) a parameter to specify the name
+     of the patch is needed:
+     - patchName :: the name of the patch the parser works on
+**** Additional parameters for the subset drivers
+     The additional (optional) parameters for this class of drivers is
+     concerned with what is happening if a field is undefined on the
+     native structure:
+     - autoInterpolate :: If this variable is =true= and for instance
+          the parser works on faces and a field is *not* defined as a
+          face-field but is defined as a volume-field then the driver
+          will automatically interpolate the field to the faces. If
+          the variable is =false= then the evaluation will
+          fail. Default value: =false=
+     - warnAutoInterpolate :: if this is =true= and =autoInterpolate=
+          is =true= then every time a field is automatically
+          interpolated a warning is issued. Default: =true=
+**** Additional parameter for =cellSet= and =faceSet= drivers
+     To specify which set the driver is working on one parameter is
+     needed:
+     - setName :: name of the cell or face-set
+**** Additional parameter for =cellZone= and =faceZone= drivers
+     To specify which zone the driver is working on one parameter is
+     needed:
+     - zoneName :: name of the cell or face-zone
+**** Additional parameters for sampled set and sampled surfaces
+     These two drivers have two parameters that determine how field
+     values are mapped to them:
+     - interpolate :: if this is =true= then the field values are
+                      interpolated to the sample. Otherwise the field
+                      is "only" sampled (the value of the nearest cell
+                      is used). Default: =false=
+     - interpolationType :: This parameter is only read if
+          =interpolate= is =true=. This parameter determines how the
+          interpolation should take place. There is no default value
+          for this.
+     Also there are parameters for each of the parsers that are used
+     to look up the surface or the set in a repository (a database
+     that swak has for these structures).
+     - surfaceName :: name of the sampled surface the sampled driver
+                      should work on
+     - setName :: name of the sampled set to work with
+     Adding sets and surfaces to the repositories can be done with
+     appropriate function objects
+**** Additional parameters for the finite area (FAM) drivers
+     The =faInternalField= driver adds the same parameter as the
+     field-driver:
+     - dimensions :: physical dimensions of the result
+     The =faPatch= driver adds a parameter to determine the name of
+     the patch:
+     - faPatchName :: the name of the patch
 ** Information written for restarting
 * Usable parts
 ** Utilities
@@ -604,3 +885,4 @@ hide circle
 ** Function plugins
 * Programming
 ** Writing plugin-functions
+** Adding new parsers
