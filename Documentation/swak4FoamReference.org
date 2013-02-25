@@ -878,6 +878,21 @@ hide circle
      the patch:
      - faPatchName :: the name of the patch
 ** Information written for restarting
+   Certain features of the parsers (especially stored and delayed
+   variables) need to write information to allow an exact
+   restart. For boundary conditions this is the standard behavior and
+   there (for instance in =groovyBC=) that information is written to
+   the field-file.
+
+   For other items (especially function objects) no such facility
+   exists automatically. If such a driver has data to write (but only
+   then) it creates at write-time in the current time-folder a
+   sub-folder =swak4Foam= in which it saves a dictionary whose file
+   name is composed of the name of the function object and the type
+   name of the driver. During a restart these files are read and
+   stored and delayed variables are restored to the state they had at
+   write them. If this is not the desired behavior these files can be
+   deleted before restart.
 * Usable parts
 ** Utilities
 ** Boundary conditions
