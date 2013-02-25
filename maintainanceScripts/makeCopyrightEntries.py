@@ -60,6 +60,8 @@ swakRevision=" SWAK Revision:"
 
 contribLine=re.compile("\s*(?P<years>[0-9]{4}((-|, )[0-9]{4})*) (?P<name>.+)$")
 
+modifiedFiles=[]
+
 def getContributorsFromLine(line):
     m=contribLine.match(line)
     if m:
@@ -174,6 +176,7 @@ def processFile(f,data):
             f.writelines([l+"\n" for l in cLines])
             f.writelines(lines[swakLine-1:])
             f.close()
+            modifiedFiles.append(f)
 
 def handleFiles(files):
     for f in files:
@@ -205,7 +208,11 @@ print "-"*(nameLen+12)
 for it in allLines.iteritems():
     print tabFormat % it
 
-print
+if len(modifiedFiles)>0:
+    print
+    print len(modifiedFiles),"files modified"
+    print
+
 print "Years - Contributors"
 print "--------------------"
 years=list(set([y for u,y in allContrib]))

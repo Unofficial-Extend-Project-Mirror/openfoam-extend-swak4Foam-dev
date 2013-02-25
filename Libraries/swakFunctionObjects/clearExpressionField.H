@@ -39,7 +39,7 @@ SourceFiles
     clearExpressionField.C
 
 Contributors/Copyright:
-    2010 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
