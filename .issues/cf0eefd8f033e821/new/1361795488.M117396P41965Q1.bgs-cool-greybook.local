@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 25 Feb 2013 13:30:06 +0100
+State: new
+Subject: Check if =mappingInterpolation= is written
+Message-Id: <cf0eefd8f033e821-0-artemis@bgs-cool-greybook.local>
+
+This parameter is probably not written by the patch-driver, but should
+(because groovyBCs depending on it might not restart)

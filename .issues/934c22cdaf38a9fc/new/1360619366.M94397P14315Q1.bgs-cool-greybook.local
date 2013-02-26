@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 11 Feb 2013 22:47:19 +0100
+State: new
+Subject: Point values for sampled surfaces
+Message-Id: <934c22cdaf38a9fc-0-artemis@bgs-cool-greybook.local>
+
+The Subset-Parser does not us =toPoint=. For the sampled surfaces this
+would make sense
