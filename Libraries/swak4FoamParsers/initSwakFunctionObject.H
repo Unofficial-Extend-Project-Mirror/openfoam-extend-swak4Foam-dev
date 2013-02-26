@@ -38,7 +38,7 @@ SourceFiles
     initSwakFunctionObject.C
 
 Contributors/Copyright:
-    2008-2012 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/

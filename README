@@ -48,6 +48,7 @@
    - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
    - 2012 Bruno Santos <wyldckat@gmail.com>
+   - 2013 Georg Reiss <georg.reiss@ice-sf.at>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -612,6 +613,10 @@ S_{expl} + S_{impl} T
 
    Once you have proven by successfully submitting changesets via =hg
    export= you can ask for write access to the mercurial repository.
+
+   Only if you got through Mercurial it can be ensured that your
+   contribution is recognized (if you want to stay anonymous send
+   patches).
 *** Suggest reading
     These topics may be "new" for the average OF-developer:
     - Mercurial :: A short tutorial on this can be found at
