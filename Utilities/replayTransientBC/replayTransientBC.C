@@ -54,8 +54,52 @@ using namespace Foam;
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
+template<class FieldType>
+bool loadFieldFunction(
+    fvMesh &mesh,
+    const word &fName,
+    SLPtrList<FieldType> &fieldList
+) {
+    const Time &runTime=mesh.time();
+
+    IOobject f
+        (
+            fName,
+            runTime.timeName(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+    f.headerOk();
+    word className=f.headerClassName();
+
+    if(className==FieldType::typeName) {
+        Info << "Reading field " << fName << " of type "
+            << FieldType::typeName << endl;
+        fieldList.append(
+            new FieldType
+            (
+                IOobject
+                (
+                    fName,
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh
+            )
+        );
+        return true;
+    } else {
+        return false;
+    }
+}
+
 int main(int argc, char *argv[])
 {
+    Foam::timeSelector::addOptions(false);
+
 #   include "addRegionOption.H"
     argList::validOptions.insert("allowFunctionObjects","");
     argList::validOptions.insert("addDummyPhi","");
@@ -113,62 +157,99 @@ int main(int argc, char *argv[])
 
     SLPtrList<volScalarField> scalarFields;
     SLPtrList<volVectorField> vectorFields;
+    SLPtrList<volTensorField> tensorFields;
+    SLPtrList<volSymmTensorField> symmTensorFields;
+    SLPtrList<volSphericalTensorField> sphericalTensorFields;
 
     forAll(fieldNames,fieldI) {
         word fName=fieldNames[fieldI];
 
-        IOobject f
-            (
-                fName,
-                runTime.timeName(),
-                mesh,
-                IOobject::MUST_READ,
-                IOobject::NO_WRITE
-            );
-        f.headerOk();
-        word className=f.headerClassName();
-
-        if(className=="volScalarField") {
-            Info << "Reading scalar field " << fName << endl;
-            scalarFields.append(
-                new volScalarField
-                (
-                    IOobject
-                    (
-                        fName,
-                        runTime.timeName(),
-                        mesh,
-                        IOobject::MUST_READ,
-                        IOobject::AUTO_WRITE
-                    ),
-                    mesh
-                )
-            );
-        } else if(className=="volVectorField") {
-            Info << "Reading vector field " << fName << endl;
-            vectorFields.append(
-                new volVectorField
-                (
-                    IOobject
-                    (
-                        fName,
-                        runTime.timeName(),
-                        mesh,
-                        IOobject::MUST_READ,
-                        IOobject::AUTO_WRITE
-                    ),
-                    mesh
-                )
-            );
-        } else {
+        if(
+            !loadFieldFunction(mesh,fName,scalarFields)
+            &&
+            !loadFieldFunction(mesh,fName,vectorFields)
+            &&
+            !loadFieldFunction(mesh,fName,tensorFields)
+            &&
+            !loadFieldFunction(mesh,fName,symmTensorFields)
+            &&
+            !loadFieldFunction(mesh,fName,sphericalTensorFields)
+        ) {
             Info << "Field " << fName << " not found " << endl;
         }
     }
 
-    while(runTime.loop())
+    wordList preloadFieldNames;
+    if(!replayDict.found("preloadFields")) {
+        WarningIn(args.executable())
+            << "No list 'preloadFields' defined. Boundary conditions that depend "
+                << "on other fields will fail"
+                << endl;
+
+    } else {
+        preloadFieldNames=wordList(replayDict.lookup("preloadFields"));
+    }
+
+    Foam::instantList timeDirs;
+
+    if(
+        args.options().found("time")
+        ||
+        args.options().found("latestTime")
+    ) {
+        timeDirs = Foam::timeSelector::select0(runTime, args);
+    }
+
+    if(timeDirs.size()>0) {
+        Info << endl << "Jumping to " << timeDirs.size()
+            << " time directories instead of looping" << endl;
+    }
+
+    label timeDirCnt=0;
+
+    while(
+        timeDirs.size()>0
+        ||
+        runTime.loop()
+    )
     {
+        if(timeDirs.size()>0) {
+            if(timeDirCnt>=timeDirs.size()) {
+                break; // unorthodox way to end the loop. Makes both modes work
+            }
+            runTime.setTime(timeDirs[timeDirCnt],timeDirCnt);
+            timeDirCnt++;
+        }
         Info<< "Time = " << runTime.timeName() << nl << endl;
         Info<< "deltaT = " <<  runTime.deltaT().value() << endl;
+
+        SLPtrList<volScalarField> scalarFieldsPre;
+        SLPtrList<volVectorField> vectorFieldsPre;
+        SLPtrList<volTensorField> tensorFieldsPre;
+        SLPtrList<volSymmTensorField> symmTensorFieldsPre;
+        SLPtrList<volSphericalTensorField> sphericalTensorFieldsPre;
+
+        if(preloadFieldNames.size()>0) {
+            Info << "Preloading fields" << endl;
+
+            forAll(preloadFieldNames,fieldI) {
+                word fName=preloadFieldNames[fieldI];
+
+                if(
+                    !loadFieldFunction(mesh,fName,scalarFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,vectorFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,tensorFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,symmTensorFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,sphericalTensorFieldsPre)
+                ) {
+                    Info << "Field " << fName << " not found " << endl;
+                }
+            }
+        }
 
         // force the boundary conditions to be updated
         forAllIter(SLPtrList<volScalarField>,scalarFields,it) {
@@ -177,7 +258,37 @@ int main(int argc, char *argv[])
         forAllIter(SLPtrList<volVectorField>,vectorFields,it) {
             (*it).correctBoundaryConditions();
         }
+        forAllIter(SLPtrList<volVectorField>,tensorFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+        forAllIter(SLPtrList<volVectorField>,symmTensorFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+        forAllIter(SLPtrList<volVectorField>,sphericalTensorFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+
         runTime.write();
+
+        if(timeDirs.size()>0) {
+            Info << "Force writing of fields" << endl;
+
+            forAllIter(SLPtrList<volScalarField>,scalarFields,it) {
+                (*it).write();
+            }
+            forAllIter(SLPtrList<volVectorField>,vectorFields,it) {
+                (*it).write();
+            }
+            forAllIter(SLPtrList<volVectorField>,tensorFields,it) {
+                (*it).write();
+            }
+            forAllIter(SLPtrList<volVectorField>,symmTensorFields,it) {
+                (*it).write();
+            }
+            forAllIter(SLPtrList<volVectorField>,sphericalTensorFields,it) {
+                (*it).write();
+            }
+        }
     }
 
     Info << "End\n" << endl;

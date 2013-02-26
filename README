@@ -1814,6 +1814,17 @@ S_{expl} + S_{impl} T
      preloaded in command line mode. If multiple mesh regions are
      specified (including another mesh)it will try to preload the
      field there too
+**** =replayTransientBC= now supports all volume types
+     Support for tensor-types has been added
+**** =replayTransientBC= preloads fields
+     For boundary conditions that require other fields these can be
+     loaded into memory
+**** =replayTransientBC= allows selection of time-steps
+     The utility now allows the selection of timesteps. In that case
+     it acts fundamentally different: instead of doing a timeloop it
+     jumps to those times, calculates the boundary conditions and
+     writes. The purpose of this mode is generating boundary fields
+     for postprocessing.
 *** Infrastructure
 **** =Allwmake= stops if building of =swak4FoamParsers= fails
      As the majority of installation problems were actually problems
