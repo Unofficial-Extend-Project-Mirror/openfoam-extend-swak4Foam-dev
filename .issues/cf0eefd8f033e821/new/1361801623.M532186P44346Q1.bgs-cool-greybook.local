@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 25 Feb 2013 15:12:59 +0100
+Subject: Re: Check if =mappingInterpolation= is written
+Message-Id: <cf0eefd8f033e821-b57ad34c1425d7bf-artemis@bgs-cool-greybook.local>
+References: <cf0eefd8f033e821-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cf0eefd8f033e821-0-artemis@bgs-cool-greybook.local>
+
+Maybe also other flags are not written (read behaviour for instance).

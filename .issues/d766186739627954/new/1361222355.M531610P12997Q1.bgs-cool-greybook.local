@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 18 Feb 2013 22:17:43 +0100
+State: new
+Subject: Add point and surf-function to other parsers
+Message-Id: <d766186739627954-0-artemis@bgs-cool-greybook.local>
+
+To avoid =toPoint(1)= in =groovyBC=

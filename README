@@ -568,6 +568,12 @@ S_{expl} + S_{impl} T
 ** =maintainanceScripts=
    Undocumented scripts used for maintaining =swak4Foam=. *If you
    don't understand them, don't use them*
+** Documentation
+   Additional documentation. Most written in =org-mode=
+
+   Current contents:
+   - swak4FoamReference :: Reference manual of swak4Foam. Especially
+        concepts like expression syntax and parameters
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
@@ -1582,7 +1588,7 @@ S_{expl} + S_{impl} T
      them more readable and maintainable
 **** Move non-parser sources in =swak4FoamParsers= into sub-directories
      Make the directory a little bit cleaner
-** Next release - version number : 0.2.2
+** 2013-02-28 - version number : 0.2.2
 *** Incompatibilities to previous versions
 **** Python-integration library renamed
      To avoid clashes with other similar efforts (not that I know of
@@ -1859,3 +1865,8 @@ S_{expl} + S_{impl} T
 **** Rewritten methods that return pointers
      This abomination from the early days of =funkySetFields= has been
      cleaned
+*** Documentation
+    Changes to the documentation
+**** Start of the reference-manual
+     A first version of a reference manual is added. Only the first
+     part about expressions and parameters is written.
