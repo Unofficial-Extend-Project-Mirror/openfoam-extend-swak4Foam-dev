@@ -49,6 +49,8 @@ Contributors/Copyright:
 
 #include "printSwakVersion.H"
 
+#include "NumericAccumulationNamedEnum.H"
+
 template <class T>
 void writeData(
     CommonValueExpressionDriver &driver,
@@ -61,21 +63,36 @@ void writeData(
 
     forAll(accumulations,i) {
         const word &aName=accumulations[i];
+        const NumericAccumulationNamedEnum::value accu=
+            NumericAccumulationNamedEnum::names[aName];
+
         T val=pTraits<T>::zero;
 
-        if(aName=="min") {
-            val=gMin(result);
-        } else if(aName=="max") {
-            val=gMax(result);
-        } else if(aName=="sum") {
-            val=gSum(result);
-        } else if(aName=="average") {
-            val=gAverage(result);
-        } else {
-            WarningIn("swakExpressionFunctionObject::writeData")
-                << "Unknown accumultation type " << aName
-                    << ". Currently only 'min', 'max', 'sum' and 'average' are supported"
-                    << endl;
+        switch(accu) {
+            case NumericAccumulationNamedEnum::numMin:
+                val=gMin(result);
+                break;
+            case NumericAccumulationNamedEnum::numMax:
+                val=gMax(result);
+                break;
+            case NumericAccumulationNamedEnum::numSum:
+                val=gSum(result);
+                break;
+            case NumericAccumulationNamedEnum::numAverage:
+                val=gAverage(result);
+                break;
+            // case NumericAccumulationNamedEnum::numSumMag:
+            //     val=gSumMag(result);
+            //     break;
+            case NumericAccumulationNamedEnum::numWeightedAverage:
+                val=driver.calcWeightedAverage(result);
+                break;
+            default:
+                WarningIn("funkyDoCalc")
+                    << "Unimplemented accumultation type "
+                        << NumericAccumulationNamedEnum::names[accu]
+                        << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
+                        << endl;
         }
 
         Info << " " << aName << "=" << val;
