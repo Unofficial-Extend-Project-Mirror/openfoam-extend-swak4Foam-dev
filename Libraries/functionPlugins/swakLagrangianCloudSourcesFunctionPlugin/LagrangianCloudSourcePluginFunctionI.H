@@ -55,7 +55,8 @@ template<class OtherCloudType,class LookupCloudType>
 const OtherCloudType &LagrangianCloudSourcePluginFunction::getCloudAs()
 {
     return
-        dynamicCast<const OtherCloudType &>(
+        //        dynamicCast<const OtherCloudType &>(
+        dynamic_cast<const OtherCloudType &>(
             mesh().template lookupObject<LookupCloudType>
             (
                 cloudName()

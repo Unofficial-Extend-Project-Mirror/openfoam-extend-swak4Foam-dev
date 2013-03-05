@@ -60,7 +60,7 @@ Contributors/Copyright:
 
 // in 1.6-ext the operation s1 & s2 of two symmetrical tensor fields does not yield a symmetric tensor
 #ifdef FOAM_DEV
-#define FOAM_SYMMTENSOR_WORKAROUND
+// #define FOAM_SYMMTENSOR_WORKAROUND
 #endif
 
 // Certain OpenFOAM-versions don't have all tensor operations defined

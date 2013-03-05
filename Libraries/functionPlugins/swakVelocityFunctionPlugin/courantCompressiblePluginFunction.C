@@ -77,7 +77,8 @@ void courantCompressiblePluginFunction::setArgument(
     if(index==0) {
         phi_.set(
             new surfaceScalarField(
-                dynamicCast<const FieldValueExpressionDriver &>(
+                //                dynamicCast<const FieldValueExpressionDriver &>(
+                dynamic_cast<const FieldValueExpressionDriver &>(
                     driver
                 ).getResult<surfaceScalarField>()
             )
@@ -85,7 +86,8 @@ void courantCompressiblePluginFunction::setArgument(
     } else {
         rho_.set(
             new volScalarField(
-                dynamicCast<const FieldValueExpressionDriver &>(
+                //                dynamicCast<const FieldValueExpressionDriver &>(
+                dynamic_cast<const FieldValueExpressionDriver &>(
                     driver
                 ).getResult<volScalarField>()
             )

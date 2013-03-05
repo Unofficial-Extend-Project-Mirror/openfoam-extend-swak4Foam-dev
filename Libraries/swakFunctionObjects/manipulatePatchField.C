@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "manipulatePatchField.H"
@@ -149,7 +149,10 @@ void Foam::manipulatePatchField::manipulatePoint(
 )
 {
     const typename TField::PatchFieldType &pField=field.boundaryField()[
-        dynamicCast<const fvMesh &>(this->obr_).boundaryMesh().findPatchID(this->patchName_)
+        //        dynamicCast<const fvMesh &>(
+        dynamic_cast<const fvMesh &>(
+            this->obr_
+        ).boundaryMesh().findPatchID(this->patchName_)
     ];
     Field<typename TField::value_type> value(pField.patchInternalField());
 

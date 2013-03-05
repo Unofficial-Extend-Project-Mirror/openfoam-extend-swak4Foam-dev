@@ -540,11 +540,13 @@ autoPtr<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
         return CommonValueExpressionDriver::getRemoteResult(otherDriver);
     }
 
-    const mappedPolyPatch &patch=dynamicCast<const mappedPolyPatch&>(
+    //    const mappedPolyPatch &patch=dynamicCast<const mappedPolyPatch&>(
+    const mappedPolyPatch &patch=dynamic_cast<const mappedPolyPatch&>(
         patch_.patch()
     );
     PatchValueExpressionDriver &driver=
-        dynamicCast<PatchValueExpressionDriver&>(otherDriver);
+        //        dynamicCast<PatchValueExpressionDriver&>(otherDriver);
+        dynamic_cast<PatchValueExpressionDriver&>(otherDriver);
 
     if(
         patch.mode()!=mappedPatchBase::NEARESTPATCHFACE

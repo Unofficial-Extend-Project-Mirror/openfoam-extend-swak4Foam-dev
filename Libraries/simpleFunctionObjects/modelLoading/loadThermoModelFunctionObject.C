@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "loadThermoModelFunctionObject.H"
@@ -65,7 +65,8 @@ template <class ModelType>
 autoPtr<ModelType> loadThermoModelFunctionObject<ModelType>::initModel()
 {
     return ModelType::New(
-        dynamicCast<const fvMesh &>(
+        //        dynamicCast<const fvMesh &>(
+        dynamic_cast<const fvMesh &>(
             this->obr()
         )
     );

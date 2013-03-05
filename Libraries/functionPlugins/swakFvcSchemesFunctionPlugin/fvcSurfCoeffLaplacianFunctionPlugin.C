@@ -145,7 +145,8 @@ void fvcSurfCoeffLaplacianFunctionPlugin<T,GT>::setArgument(
     if(index==0) {
         this->coeff_.set(
             new coeffType(
-                dynamicCast<const FieldValueExpressionDriver &>(
+                //                dynamicCast<const FieldValueExpressionDriver &>(
+                dynamic_cast<const FieldValueExpressionDriver &>(
                     driver
                 ).getResult<coeffType>()
             )
@@ -153,7 +154,8 @@ void fvcSurfCoeffLaplacianFunctionPlugin<T,GT>::setArgument(
     } else {
         this->original_.set(
             new originalType(
-                dynamicCast<const FieldValueExpressionDriver &>(
+                //                dynamicCast<const FieldValueExpressionDriver &>(
+                dynamic_cast<const FieldValueExpressionDriver &>(
                     driver
                 ).getResult<originalType>()
             )

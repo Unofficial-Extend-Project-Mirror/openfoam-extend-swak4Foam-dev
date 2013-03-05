@@ -219,7 +219,8 @@ int main(int argc, char *argv[])
                     << endl << endl;
             continue;
         }
-        const mappedPatchBase &mb=dynamicCast<const mappedPatchBase&>(
+        //        const mappedPatchBase &mb=dynamicCast<const mappedPatchBase&>(
+        const mappedPatchBase &mb=dynamic_cast<const mappedPatchBase&>(
             thePatch
         );
         autoPtr<pointField> otherMeshPoints;

@@ -89,7 +89,8 @@ void GeneralSetEvaluationPluginFunction<Type>::setArgument(
     this->values_.set(
         new Field<Type>(
             const_cast<SampledSetValueExpressionDriver &>(
-                dynamicCast<const SampledSetValueExpressionDriver &>(
+                //                dynamicCast<const SampledSetValueExpressionDriver &>(
+                dynamic_cast<const SampledSetValueExpressionDriver &>(
                     driver
                 )
             ).getResult<Type>()
