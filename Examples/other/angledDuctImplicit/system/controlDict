@@ -1022,6 +1022,8 @@ functions
             doEveryThreeSteps {
                 type executeIfPython;
                 readDuringConstruction false;
+                parallelMasterOnly false;
+                isParallelized true;
 
                 conditionCode "return abs(runTime % 3)<1e-5";
                 //                conditionFile "$FOAM_CASE/test.py"
