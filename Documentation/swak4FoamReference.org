@@ -884,7 +884,17 @@ hide circle
                       should work on
      - setName :: name of the sampled set to work with
      Adding sets and surfaces to the repositories can be done with
-     appropriate function objects
+     appropriate function objects. If no surface with the name given
+     by =surfaceName= is present then the specification of the
+     surface is looked for:
+     - surface :: a sub-dictionary with the specification of the
+                  sampled surface (for details see the
+                  OpenFOAM-documentation). This surface is added to the
+                  repository under the name =surfaceName=
+
+     A missing set =setName= is treated in the same way: The
+     specification is looked for
+     - set :: Specification of the sampled set
 **** Additional parameters for the finite area (FAM) drivers
      The =faInternalField= driver adds the same parameter as the
      field-driver:
