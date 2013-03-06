@@ -124,7 +124,8 @@ void fvcConvectionDivFunctionPlugin<T>::setArgument(
     if(index==1) {
         this->original_.set(
             new originalType(
-                dynamicCast<const FieldValueExpressionDriver &>(
+                //                dynamicCast<const FieldValueExpressionDriver &>(
+                dynamic_cast<const FieldValueExpressionDriver &>(
                     driver
                 ).getResult<originalType>()
             )
@@ -132,7 +133,8 @@ void fvcConvectionDivFunctionPlugin<T>::setArgument(
     } else {
         this->flow_.set(
             new surfaceScalarField(
-                dynamicCast<const FieldValueExpressionDriver &>(
+                //                dynamicCast<const FieldValueExpressionDriver &>(
+                dynamic_cast<const FieldValueExpressionDriver &>(
                     driver
                 ).getResult<surfaceScalarField>()
             )

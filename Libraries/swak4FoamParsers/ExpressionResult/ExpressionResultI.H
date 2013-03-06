@@ -287,7 +287,9 @@ namespace Foam {
             }
             generalContent_.set(
                 new Type(
-                    dynamicCast<const Type &>(
+                    dynamic_cast<const Type &>(
+                        // dynamicCast<const Type &>( // doesn't work with gcc 4.2
+
                         result()
                     )
                 )

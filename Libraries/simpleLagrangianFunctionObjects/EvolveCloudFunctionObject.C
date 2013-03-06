@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "EvolveCloudFunctionObject.H"
@@ -79,7 +79,8 @@ EvolveCloudFunctionObject<CloudType>::EvolveCloudFunctionObject
         g_=newG;
     } else {
         const Time &runTime=t;
-        const fvMesh &mesh=dynamicCast<const fvMesh &>(obr_);
+        //        const fvMesh &mesh=dynamicCast<const fvMesh &>(obr_);
+        const fvMesh &mesh=dynamic_cast<const fvMesh &>(obr_);
 
         #include "readGravitationalAcceleration.H"
         g_.dimensions().reset(g.dimensions());

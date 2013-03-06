@@ -89,7 +89,8 @@ void GeneralSurfaceEvaluationPluginFunction<Type>::setArgument(
     this->values_.set(
         new Field<Type>(
             const_cast<SampledSurfaceValueExpressionDriver &>(
-                dynamicCast<const SampledSurfaceValueExpressionDriver &>(
+                //                dynamicCast<const SampledSurfaceValueExpressionDriver &>(
+                dynamic_cast<const SampledSurfaceValueExpressionDriver &>(
                     driver
                 )
             ).getResult<Type>()

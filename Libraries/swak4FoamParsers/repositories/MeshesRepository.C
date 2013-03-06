@@ -183,7 +183,11 @@ fvMesh &MeshesRepository::addCoupledMesh(
             << "There is no entry " << masterName
                 << " in the repository"
                 << endl
+#ifdef FOAM_HAS_SORTED_TOC
                 << "Available keys:" << nl << meshes_.sortedToc()
+#else
+                << "Available keys:" << nl << meshes_.toc()
+#endif
                 << exit(FatalError);
     }
 

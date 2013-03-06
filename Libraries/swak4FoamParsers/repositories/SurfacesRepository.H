@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -41,7 +41,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SurfacesRepository_H
@@ -60,15 +60,21 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class SurfacesRepository
+:
+    public regIOobject
 {
     // Private data
 
+    //- the actual surfaces
     HashPtrTable<sampledSurface,word> surfaces_;
+
+    //- names of the formats to be written
+    HashTable<word,word> formatNames_;
 
     // Constructors
 
     //- Construct null
-    SurfacesRepository();
+    SurfacesRepository(const IOobject &);
 
     //- The only instance of this repository
     static SurfacesRepository *repositoryInstance;
@@ -82,7 +88,7 @@ public:
     virtual ~SurfacesRepository();
 
     //- Get the Singleton of this class
-    static SurfacesRepository &getRepository();
+    static SurfacesRepository &getRepository(const objectRegistry &mesh);
 
     //- get a surface using a dictionary (surface will be constructed if not existing)
     sampledSurface &getSurface(
@@ -95,6 +101,10 @@ public:
         const word &name,
         const fvMesh &mesh
     );
+
+    //- Make sure that this class is not abstract
+    bool writeData(Ostream &) const;
+
 };
 
 

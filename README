@@ -1872,5 +1872,14 @@ S_{expl} + S_{impl} T
      part about expressions and parameters is written.
 ** Next release - version number : 0.2.3
 *** Bug fixes
+**** Compiles on =1.6-ext= again
+     The last release (0.2.2) did not compile on =1.6-ext=. This is
+     fixed
 *** New features
+**** Writing of sampled surfaces and sampled sets
+     With the options =autoWriteSurface= and =autoWriteSets= sampled
+     surfaces and sets are automatically written at each write
+     time. With =writeSurfaceOnConstruction= and
+     =writeSetOnConstruction= both are written when they are
+     created. A format has to be specified. No values are written.
 *** Enhancements

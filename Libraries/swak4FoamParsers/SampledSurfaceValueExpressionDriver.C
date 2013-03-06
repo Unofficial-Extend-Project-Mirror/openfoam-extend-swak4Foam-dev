@@ -110,7 +110,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
 :
     SubsetValueExpressionDriver(true,false),
     theSurface_(
-        SurfacesRepository::getRepository().getSurface(
+        SurfacesRepository::getRepository(mesh).getSurface(
             id,
             mesh
         )
@@ -128,7 +128,7 @@ SampledSurfaceValueExpressionDriver::SampledSurfaceValueExpressionDriver(
  :
     SubsetValueExpressionDriver(dict),
     theSurface_(
-        SurfacesRepository::getRepository().getSurface(
+        SurfacesRepository::getRepository(mesh).getSurface(
             dict,
             mesh
         )

@@ -71,7 +71,10 @@ void lcFaceMinimumPluginFunction::setArgument(
 ) {
     original_.set(
         new surfaceScalarField(
-            dynamicCast<const FieldValueExpressionDriver &>(driver).getResult<surfaceScalarField>()
+            //            dynamicCast<const FieldValueExpressionDriver &>(
+            dynamic_cast<const FieldValueExpressionDriver &>(
+                driver
+            ).getResult<surfaceScalarField>()
         )
     );
 }

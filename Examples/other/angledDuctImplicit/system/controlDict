@@ -493,6 +493,9 @@ functions
             normalVector    (0 0 1);
             interpolate true;
         }
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfacePlane2
     {
@@ -505,6 +508,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceDiffPlane
     {
@@ -523,6 +529,9 @@ functions
         accumulations (
             min
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfacePatch
     {
@@ -532,7 +541,7 @@ functions
         surface {
             type patch;
             patches ( outlet );
-            //            triangulate      false;      
+            //            triangulate      false;
         }
         verbose true;
         expression "mag(U)";
@@ -540,6 +549,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceCuttingPlane
     {
@@ -562,6 +574,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     createThrePointSet
     {
@@ -578,6 +593,9 @@ functions
                 (-0.1 0.02 0.0001)
             );
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat vtk;
     }
     onlyHighPressure {
         type executeIfSwakExpression;
@@ -690,6 +708,9 @@ functions
                 (-0.1 0.02 0.0001)
             );
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat vtk;
         storedVariables (
             {
                 name pInit;
@@ -833,6 +854,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoDist2
     {
@@ -852,6 +876,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoInterpolateOn
     {
@@ -873,6 +900,9 @@ functions
         );
         interpolate on;
         interpolationType cellPointWallModified;
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoInterpolateOff
     {
@@ -893,6 +923,9 @@ functions
             max
         );
         interpolate off;
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoDistCell
     {
@@ -912,6 +945,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     velocityMagnitude
     {
@@ -942,6 +978,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceU45b
     {
@@ -962,6 +1001,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     testSurfaceU45 {
         $testPlaneArea;
@@ -1022,6 +1064,8 @@ functions
             doEveryThreeSteps {
                 type executeIfPython;
                 readDuringConstruction false;
+                parallelMasterOnly false;
+                isParallelized true;
 
                 conditionCode "return abs(runTime % 3)<1e-5";
                 //                conditionFile "$FOAM_CASE/test.py"
@@ -1051,6 +1095,9 @@ functions
                             max
                         );
                     }
+                    writeSurfaceOnConstruction true;
+                    autoWriteSurface true;
+                    surfaceFormat vtk;
                 }
             }
         }
@@ -1109,6 +1156,9 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat vtk;
     }
     createMinMaxLineSet2
     {
@@ -1121,6 +1171,9 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat vtk;
     }
     createMinMaxLineSet3
     {
@@ -1133,6 +1186,9 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat vtk;
     }
     testLineSetNr{
         $testPlaneArea;

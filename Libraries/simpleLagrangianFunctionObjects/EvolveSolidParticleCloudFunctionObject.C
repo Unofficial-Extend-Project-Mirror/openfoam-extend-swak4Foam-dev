@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "EvolveSolidParticleCloudFunctionObject.H"
@@ -103,7 +103,8 @@ bool EvolveSolidParticleCloudFunctionObject::start()
 {
     cloud().set(
         new solidParticleCloud(
-            dynamicCast<const fvMesh &>(
+            //            dynamicCast<const fvMesh &>(
+            dynamic_cast<const fvMesh &>(
                 obr()
             ),
             cloudName()

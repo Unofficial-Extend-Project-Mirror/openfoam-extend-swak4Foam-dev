@@ -122,7 +122,8 @@ void fvcLaplacianFunctionPlugin<T>::setArgument(
     assert(index==0);
     this->original_.set(
         new originalType(
-            dynamicCast<const FieldValueExpressionDriver &>(
+            //            dynamicCast<const FieldValueExpressionDriver &>(
+            dynamic_cast<const FieldValueExpressionDriver &>(
                 driver
             ).getResult<originalType>()
         )

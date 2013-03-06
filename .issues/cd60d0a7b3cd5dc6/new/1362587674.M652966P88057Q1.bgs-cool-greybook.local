@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 06 Mar 2013 17:33:05 +0100
+State: new
+Subject: Use IPython in pythonIntegration for interactive mode
+Message-Id: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+
+If
+
+from IPython import embed
+
+works then call embed() instead of the usual interpreter. Make it
+possible to switch it off

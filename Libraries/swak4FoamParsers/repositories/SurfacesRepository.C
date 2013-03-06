@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,20 +31,23 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SurfacesRepository.H"
+#include "surfaceWriter.H"
 
 namespace Foam {
- 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(SurfacesRepository, 0);
 
 SurfacesRepository *SurfacesRepository::repositoryInstance(NULL);
 
-SurfacesRepository::SurfacesRepository()
+SurfacesRepository::SurfacesRepository(const IOobject &o)
+    :
+    regIOobject(o)
 {
 }
 
@@ -57,10 +60,10 @@ SurfacesRepository::~SurfacesRepository()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-SurfacesRepository &SurfacesRepository::getRepository()
+SurfacesRepository &SurfacesRepository::getRepository(const objectRegistry &obr)
 {
     SurfacesRepository*  ptr=repositoryInstance;
-    
+
     if(debug) {
         Pout << "SurfacesRepository: asking for Singleton" << endl;
     }
@@ -68,9 +71,18 @@ SurfacesRepository &SurfacesRepository::getRepository()
     if(ptr==NULL) {
         Pout << "swak4Foam: Allocating new repository for sampledSurfaces\n";
 
-        ptr=new SurfacesRepository();
+        ptr=new SurfacesRepository(
+            IOobject(
+                "swakSurfaces",
+                obr.time().timeName(),
+                "surfaceRepository",
+                obr.time(),
+                IOobject::NO_READ,
+                IOobject::AUTO_WRITE
+            )
+        );
     }
-    
+
     repositoryInstance=ptr;
 
     return *repositoryInstance;
@@ -86,7 +98,7 @@ sampledSurface &SurfacesRepository::getSurface(
     }
 
     sampledSurface &found=*(surfaces_[name]);
-        
+
     if((&mesh)!=(&(found.mesh()))) {
         FatalErrorIn("SampledSurface &SurfacesRepository::getSurface")
             << "Found a mesh named " << name << " which is not for the mesh "
@@ -113,15 +125,15 @@ sampledSurface &SurfacesRepository::getSurface(
         if(debug) {
             Pout << "SurfacesRepository: " << name << " already exists" << endl;
         }
-        
+
         if(dict.found("surface")) {
             WarningIn("SampledSurface &SurfacesRepository::getSurface")
-                << "Already got a surface named " << name 
+                << "Already got a surface named " << name
                     << ". There is a specification for the surface here "
                     << "which is ignored. It is: " << endl
                     << dict.subDict("surface") << endl;
         }
-        
+
         return getSurface(name,mesh);
     } else {
         if(debug) {
@@ -136,8 +148,71 @@ sampledSurface &SurfacesRepository::getSurface(
             ).ptr()
         );
 
+        bool writeSurface=dict.lookupOrDefault<bool>("autoWriteSurface",false);
+        bool writeSurfaceNow=dict.lookupOrDefault<bool>("writeSurfaceOnConstruction",false);
+        if(
+            writeSurface
+            ||
+            writeSurfaceNow
+        ) {
+            word format(dict.lookup("surfaceFormat"));
+
+            // Just to check whether the format actually exists
+            autoPtr<surfaceWriter > theWriter(
+                surfaceWriter::New(format)
+            );
+
+            if(writeSurface) {
+                formatNames_.insert(name,format);
+            }
+            if(writeSurfaceNow) {
+                Info << "Writing surface " << name << endl;
+
+                sampledSurface &surf=*surfaces_[name];
+                surf.update();
+
+                theWriter->write(
+                    this->path(),
+                    name+"_geometry_AtCreation",
+                    surf.points(),
+                    surf.faces()
+                );
+            }
+        }
+
         return *surfaces_[name];
     }
+}
+
+bool SurfacesRepository::writeData(Ostream &f) const
+{
+    if(debug) {
+        Info << "SurfacesRepository::write()" << endl;
+    }
+
+    f << surfaces_;
+
+    typedef HashTable<word,word> wordWord;
+
+    forAllConstIter(wordWord,formatNames_,it) {
+        const word &name=it.key();
+        const word &format=it();
+
+        const sampledSurface &surf=*surfaces_[name];
+
+        autoPtr<surfaceWriter > theWriter(
+            surfaceWriter::New(format)
+        );
+
+        theWriter->write(
+            f.name().path(),
+            name+"_geometry",
+            surf.points(),
+            surf.faces()
+        );
+    }
+
+    return true;
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

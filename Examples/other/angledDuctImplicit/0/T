@@ -46,6 +46,13 @@ boundaryField
     {
         type            fixedValue;
         value           $internalField;
+        //        type groovyBC;
+        variables (
+            "factor=1;"
+            "nix=log(factor);"
+            "Tout{outlet}=sum(area()*T)/sum(area());"
+        );
+        valueExpression "Tout+nix";
     }
     outlet
     {

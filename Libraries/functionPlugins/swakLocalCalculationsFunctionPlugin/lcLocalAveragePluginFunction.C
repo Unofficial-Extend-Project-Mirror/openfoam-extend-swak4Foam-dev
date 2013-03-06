@@ -73,7 +73,8 @@ void lcLocalAveragePluginFunction::setArgument(
 
     original_.set(
         new volScalarField(
-            dynamicCast<const FieldValueExpressionDriver &>(
+            //            dynamicCast<const FieldValueExpressionDriver &>(
+            dynamic_cast<const FieldValueExpressionDriver &>(
                 driver
             ).getResult<volScalarField>()
         )
