@@ -493,6 +493,9 @@ functions
             normalVector    (0 0 1);
             interpolate true;
         }
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfacePlane2
     {
@@ -505,6 +508,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceDiffPlane
     {
@@ -523,6 +529,9 @@ functions
         accumulations (
             min
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfacePatch
     {
@@ -540,6 +549,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceCuttingPlane
     {
@@ -562,6 +574,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     createThrePointSet
     {
@@ -833,6 +848,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoDist2
     {
@@ -852,6 +870,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoInterpolateOn
     {
@@ -873,6 +894,9 @@ functions
         );
         interpolate on;
         interpolationType cellPointWallModified;
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoInterpolateOff
     {
@@ -893,6 +917,9 @@ functions
             max
         );
         interpolate off;
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceIsoDistCell
     {
@@ -912,6 +939,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     velocityMagnitude
     {
@@ -942,6 +972,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     surfaceU45b
     {
@@ -962,6 +995,9 @@ functions
             min
             max
         );
+        writeSurfaceOnConstruction true;
+        autoWriteSurface true;
+        surfaceFormat vtk;
     }
     testSurfaceU45 {
         $testPlaneArea;
@@ -1053,6 +1089,9 @@ functions
                             max
                         );
                     }
+                    writeSurfaceOnConstruction true;
+                    autoWriteSurface true;
+                    surfaceFormat vtk;
                 }
             }
         }
