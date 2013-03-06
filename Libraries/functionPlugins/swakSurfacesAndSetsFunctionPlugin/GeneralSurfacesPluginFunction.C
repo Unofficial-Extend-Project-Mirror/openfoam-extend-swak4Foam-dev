@@ -80,7 +80,7 @@ void GeneralSurfacesPluginFunction::setArgument(
 
 const sampledSurface &GeneralSurfacesPluginFunction::theSurface() const
 {
-    return SurfacesRepository::getRepository().getSurface(
+    return SurfacesRepository::getRepository(mesh()).getSurface(
         name_,
         mesh()
     );

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "swakRegistryProxySurface.H"
@@ -56,14 +56,16 @@ namespace Foam
 // {
 //     if (debug)
 //     {
-//         Pout<< "swakRegistryProxySurface::createGeometry() - doing nothing" 
+//         Pout<< "swakRegistryProxySurface::createGeometry() - doing nothing"
 //             << endl;
 //     }
 // }
 
 Foam::sampledSurface &Foam::swakRegistryProxySurface::realSurface()
 {
-    return SurfacesRepository::getRepository().getSurface(
+    return SurfacesRepository::getRepository(
+        mesh()
+    ).getSurface(
         surfaceName_,
         static_cast<const fvMesh&>(mesh())
     );
@@ -71,7 +73,9 @@ Foam::sampledSurface &Foam::swakRegistryProxySurface::realSurface()
 
 const Foam::sampledSurface &Foam::swakRegistryProxySurface::realSurface() const
 {
-    return SurfacesRepository::getRepository().getSurface(
+    return SurfacesRepository::getRepository(
+        mesh()
+    ).getSurface(
         surfaceName_,
         static_cast<const fvMesh&>(mesh())
     );

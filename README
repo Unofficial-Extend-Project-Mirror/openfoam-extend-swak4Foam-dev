@@ -1762,4 +1762,10 @@ S_{expl} + S_{impl} T
      The last release (0.2.2) did not compile on =1.6-ext=. This is
      fixed
 *** New features
+**** Writing of sampled surfaces and sampled sets
+     With the options =autoWriteSurface= and =autoWriteSets= sampled
+     surfaces and sets are automatically written at each write
+     time. With =writeSurfaceOnConstruction= and
+     =writeSetOnConstruction= both are written when they are
+     created. A format has to be specified. No values are written.
 *** Enhancements

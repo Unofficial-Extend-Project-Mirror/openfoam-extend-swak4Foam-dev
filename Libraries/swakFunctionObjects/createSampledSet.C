@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "createSampledSet.H"
@@ -71,7 +71,7 @@ Foam::createSampledSet::~createSampledSet()
 void Foam::createSampledSet::read(const dictionary& dict)
 {
     if(active_) {
-        SetsRepository::getRepository().getSet(
+        SetsRepository::getRepository(obr_).getSet(
             dict,
             dynamic_cast<const polyMesh &>(obr_)
         );
