@@ -104,9 +104,9 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
-<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
-<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
-<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+<vectorcomponent,tensorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent,tensorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent,tensorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
 
 <tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
 <tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
@@ -254,6 +254,11 @@ skew                   return token::TOKEN_skew;
 det                    return token::TOKEN_det;
 cof                    return token::TOKEN_cof;
 inv                    return token::TOKEN_inv;
+sph                    return token::TOKEN_sph;
+twoSymm                return token::TOKEN_twoSymm;
+dev2                   return token::TOKEN_dev2;
+eigenValues            return token::TOKEN_eigenValues;
+eigenVectors           return token::TOKEN_eigenVectors;
 
 true                   return token::TOKEN_TRUE;
 false                  return token::TOKEN_FALSE;
