@@ -157,6 +157,15 @@ namespace Foam {
                     << exit(FatalError);
         }
 
+        if(debug) {
+            Pout << "SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal()"
+                << "Type: " << pTraits<Type>::typeName
+                << " name: " << name
+                << " size: " << this->size() << " result: "
+                << result().size()
+                << endl;
+        }
+
         return tmp<Field<Type> >(result.ptr());
     }
 
