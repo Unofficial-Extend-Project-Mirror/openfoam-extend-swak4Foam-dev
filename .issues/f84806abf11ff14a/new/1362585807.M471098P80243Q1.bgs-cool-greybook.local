@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 06 Mar 2013 17:01:07 +0100
+State: new
+Subject: Interpolation for sampled surfaces not working
+Message-Id: <f84806abf11ff14a-0-artemis@bgs-cool-greybook.local>
+
+The problem is that the interpolate-method calculates the values at
+the points (not an interpolated value at the faceCenters)
