@@ -905,6 +905,16 @@ hide circle
      If one of the above options is set then the following option has
      to be set:
      - surfaceFormat :: format in which the surface should be written
+
+     Similar optional entries exist for sampled sets:
+     - writeSetOnConstruction :: if set to =true= the set
+          will be written when it is constructed at the current time
+          in a subfolder =setRepository=
+     - autoWriteSet :: if set to =true= the set is written at
+          every write-time in a subfolder =setRepository=
+     If one of the above options is set then the following option has
+     to be set:
+     - setFormat :: format in which the set should be written
 **** Additional parameters for the finite area (FAM) drivers
      The =faInternalField= driver adds the same parameter as the
      field-driver:

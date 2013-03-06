@@ -80,7 +80,9 @@ void GeneralSetsPluginFunction::setArgument(
 
 const sampledSet &GeneralSetsPluginFunction::theSet() const
 {
-    return SetsRepository::getRepository().getSet(
+    return SetsRepository::getRepository(
+        mesh()
+    ).getSet(
         name_,
         mesh()
     );

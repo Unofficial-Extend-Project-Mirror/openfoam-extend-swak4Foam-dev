@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -41,7 +41,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SetsRepository_H
@@ -49,6 +49,7 @@ Contributors/Copyright:
 
 #include "PtrMap.H"
 #include "sampledSet.H"
+#include "objectRegistry.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,17 +61,23 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class SetsRepository
+:
+    public regIOobject
 {
     // Private data
 
+    //- the actual sets
     HashPtrTable<sampledSet,word> sets_;
+
+    //- names of the formats to be written
+    HashTable<word,word> formatNames_;
 
     HashPtrTable<meshSearch,word> meshSearches_;
 
     // Constructors
 
     //- Construct null
-    SetsRepository();
+    SetsRepository(const IOobject &);
 
     //- The only instance of this repository
     static SetsRepository *repositoryInstance;
@@ -89,7 +96,7 @@ public:
     virtual ~SetsRepository();
 
     //- Get the Singleton of this class
-    static SetsRepository &getRepository();
+    static SetsRepository &getRepository(const objectRegistry &mesh);
 
     //- get a set using a dictionary (set will be constructed if not existing)
     sampledSet &getSet(
@@ -102,6 +109,9 @@ public:
         const word &name,
         const polyMesh &mesh
     );
+
+    //- Make sure that this class is not abstract. Write sets
+    bool writeData(Ostream &) const;
 
 };
 

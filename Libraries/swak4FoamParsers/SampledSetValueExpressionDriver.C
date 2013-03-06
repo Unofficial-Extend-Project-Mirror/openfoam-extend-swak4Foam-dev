@@ -98,7 +98,7 @@ SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(
 :
     SubsetValueExpressionDriver(true,false),
     theSet_(
-        SetsRepository::getRepository().getSet(
+        SetsRepository::getRepository(mesh).getSet(
             id,
             mesh
         )
@@ -115,7 +115,7 @@ SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(
  :
     SubsetValueExpressionDriver(dict),
     theSet_(
-        SetsRepository::getRepository().getSet(
+        SetsRepository::getRepository(mesh).getSet(
             dict,
             mesh
         )

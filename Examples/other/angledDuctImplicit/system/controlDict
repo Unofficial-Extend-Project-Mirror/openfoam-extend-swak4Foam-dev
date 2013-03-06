@@ -593,6 +593,9 @@ functions
                 (-0.1 0.02 0.0001)
             );
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat jplot;
     }
     onlyHighPressure {
         type executeIfSwakExpression;
@@ -705,6 +708,9 @@ functions
                 (-0.1 0.02 0.0001)
             );
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat jplot;
         storedVariables (
             {
                 name pInit;
@@ -1150,6 +1156,9 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat jplot;
     }
     createMinMaxLineSet2
     {
@@ -1162,6 +1171,9 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat jplot;
     }
     createMinMaxLineSet3
     {
@@ -1174,6 +1186,9 @@ functions
             end (0.141421 0.176777 0.025);
             nPoints 1000;
         }
+        writeSetOnConstruction true;
+        autoWriteSet true;
+        setFormat jplot;
     }
     testLineSetNr{
         $testPlaneArea;
