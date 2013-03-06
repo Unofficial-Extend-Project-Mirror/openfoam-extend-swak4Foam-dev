@@ -158,7 +158,7 @@ sampledSurface &SurfacesRepository::getSurface(
             word format(dict.lookup("surfaceFormat"));
 
             // Just to check whether the format actually exists
-            autoPtr<surfaceWriter<scalar> > dummy(
+            autoPtr<surfaceWriter<scalar> > theWriter(
                 surfaceWriter<scalar>::New(format)
             );
 
@@ -166,10 +166,17 @@ sampledSurface &SurfacesRepository::getSurface(
                 formatNames_.insert(name,format);
             }
             if(writeSurfaceNow) {
-                WarningIn("SurfaceRepository::getSurface()")
-                    << "'writeSurfaceOnConstruction' not yet implemented"
-                        << endl;
+                Info << "Writing surface " << name << endl;
 
+                sampledSurface &surf=*surfaces_[name];
+                surf.update();
+
+                theWriter->write(
+                    this->path(),
+                    name+"_geometry_AtCreation",
+                    surf.points(),
+                    surf.faces()
+                );
             }
         }
 

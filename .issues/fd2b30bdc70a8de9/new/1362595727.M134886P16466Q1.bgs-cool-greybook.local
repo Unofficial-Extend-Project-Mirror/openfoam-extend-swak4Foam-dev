@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 06 Mar 2013 19:47:53 +0100
+Subject: Re: Automatically writing surfaces from the registry
+Message-Id: <fd2b30bdc70a8de9-956e3ea217bace84-artemis@bgs-cool-greybook.local>
+References: <fd2b30bdc70a8de9-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <fd2b30bdc70a8de9-0-artemis@bgs-cool-greybook.local>
+
+Now the surface gets written during startup (if requested)
