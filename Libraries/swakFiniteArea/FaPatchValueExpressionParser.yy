@@ -656,7 +656,9 @@ vexp:   vector                  { $$ = $1; }
           }
         | lexp '?' vexp ':' vexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_position '(' ')'        {
@@ -1159,7 +1161,9 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
           }
         | lexp '?' exp ':' exp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_pi {
@@ -1389,7 +1393,9 @@ texp:   tensor                  { $$ = $1; }
           }
         | lexp '?' texp ':' texp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_toFace '(' ptexp ')'        {
@@ -1540,7 +1546,9 @@ yexp:   symmTensor                  { $$ = $1; }
           }
         | lexp '?' yexp ':' yexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_toFace '(' pyexp ')'        {
@@ -1638,7 +1646,9 @@ hexp:   sphericalTensor                  { $$ = $1; }
           }
         | lexp '?' hexp ':' hexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_toFace '(' phexp ')'        {
@@ -1692,47 +1702,65 @@ lexp: TOKEN_TRUE   { $$ = driver.makeField(true).ptr(); }
     | TOKEN_FALSE  { $$ = driver.makeField(false).ptr(); }
     | exp '<' exp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::less<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | exp '>' exp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::greater<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::greater<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | exp TOKEN_LEQ exp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::less_equal<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::less_equal<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | exp TOKEN_GEQ exp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::greater_equal<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::greater_equal<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | exp TOKEN_EQ exp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::equal_to<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::equal_to<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | exp TOKEN_NEQ exp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::not_equal_to<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::not_equal_to<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | '(' lexp ')'		{ $$ = $2; }
     | lexp TOKEN_AND lexp  {
             sameSize($1,$3);
-            $$ = driver.doLogicalOp($1,std::logical_and<Foam::scalar>(),$3);
+            $$ = driver.doLogicalOp(
+                *$1,std::logical_and<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | lexp TOKEN_OR lexp   {
             sameSize($1,$3);
-            $$ = driver.doLogicalOp($1,std::logical_or<Foam::scalar>(),$3);
+            $$ = driver.doLogicalOp(
+                *$1,std::logical_or<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | '!' lexp %prec TOKEN_NOT {
-            $$ = driver.doLogicalNot($2);
+            $$ = driver.doLogicalNot(
+                *$2
+            ).ptr();
             delete $2;
           }
         | evaluateLogicalFunction restOfFunction
@@ -1871,7 +1899,9 @@ pvexp:  pvexp '+' pvexp 		{
         | '(' pvexp ')'		        { $$ = $2; }
         | plexp '?' pvexp ':' pvexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_points '(' ')'        {
@@ -2178,7 +2208,9 @@ pexp:   pexp '+' pexp 		{
           }
         | plexp '?' pexp ':' pexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_toPoint '(' exp ')'        {
@@ -2294,7 +2326,9 @@ ptexp:  ptexp '+' ptexp 		{
           }
         | plexp '?' ptexp ':' ptexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_toPoint '(' texp ')'        {
@@ -2408,7 +2442,9 @@ pyexp:  pyexp '+' pyexp 		{
           }
         | plexp '?' pyexp ':' pyexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_toPoint '(' yexp ')'        {
@@ -2482,7 +2518,9 @@ phexp:  phexp '+' phexp 		{
           }
         | plexp '?' phexp ':' phexp        {
             sameSize($1,$3); sameSize($1,$5);
-            $$ = driver.doConditional($1,$3,$5);
+            $$ = driver.doConditional(
+                *$1,*$3,*$5
+            ).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_toPoint '(' hexp ')'        {
@@ -2518,47 +2556,65 @@ evaluatePointSphericalTensorFunction: TOKEN_FUNCTION_PHID '(' eatCharactersSwitc
 
 plexp: pexp '<' pexp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::less<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::less<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | pexp '>' pexp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::greater<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::greater<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | pexp TOKEN_LEQ pexp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::less_equal<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::less_equal<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | pexp TOKEN_GEQ pexp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::greater_equal<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::greater_equal<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | pexp TOKEN_EQ pexp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::equal_to<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::equal_to<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | pexp TOKEN_NEQ pexp  {
             sameSize($1,$3);
-            $$ = driver.doCompare($1,std::not_equal_to<Foam::scalar>(),$3);
+            $$ = driver.doCompare(
+                *$1,std::not_equal_to<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | '(' plexp ')'		{ $$ = $2; }
     | plexp TOKEN_AND plexp  {
             sameSize($1,$3);
-            $$ = driver.doLogicalOp($1,std::logical_and<Foam::scalar>(),$3);
+            $$ = driver.doLogicalOp(
+                *$1,std::logical_and<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | plexp TOKEN_OR plexp   {
             sameSize($1,$3);
-            $$ = driver.doLogicalOp($1,std::logical_or<Foam::scalar>(),$3);
+            $$ = driver.doLogicalOp(
+                *$1,std::logical_or<Foam::scalar>(),*$3
+            ).ptr();
             delete $1; delete $3;
           }
     | '!' plexp %prec TOKEN_NOT {
-            $$ = driver.doLogicalNot($2);
+            $$ = driver.doLogicalNot(
+                *$2
+            ).ptr();
             delete $2;
           }
         | evaluatePointLogicalFunction restOfFunction
