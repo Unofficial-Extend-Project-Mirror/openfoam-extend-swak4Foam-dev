@@ -39,7 +39,7 @@ Contributors/Copyright:
 #include "addToRunTimeSelectionTable.H"
 
 #include "basicKinematicCloud.H"
-#include "basicThermoCloud.H"
+#include "fluidThermoCloud.H"
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
 
@@ -73,7 +73,7 @@ void lcsMassFractionPluginFunction::doEvaluation()
 
     // pick up the first fitting class
     castAndCall(palpha,volScalarField,basicKinematicCloud,kinematicCloud,alpha());
-    castAndCall(palpha,volScalarField,basicThermoCloud,thermoCloud,alpha());
+    castAndCall(palpha,volScalarField,fluidThermoCloud,thermoCloud,alpha());
     castAndCall(palpha,volScalarField,basicReactingCloud,reactingCloud,alpha());
     castAndCall(palpha,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
 

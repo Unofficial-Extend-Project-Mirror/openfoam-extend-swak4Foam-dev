@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "loadCompressibleTurbulenceModelFunctionObject.H"
@@ -85,7 +85,7 @@ loadCompressibleTurbulenceModelFunctionObject::loadCompressibleTurbulenceModelFu
         obr().lookupObject<surfaceScalarField>(
             dict_.lookup("phiName")
         ),
-        obr().lookupObject<basicThermo>(
+        obr().lookupObject<fluidThermo>(
             dict_.lookup("thermoName")
         )
     );

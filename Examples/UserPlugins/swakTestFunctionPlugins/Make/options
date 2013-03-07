@@ -11,6 +11,7 @@ EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/finiteArea/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/fileFormats/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude
 
 LIB_LIBS = \
@@ -18,5 +19,6 @@ LIB_LIBS = \
     $(FOAM_DEV_LIBS) \
     -lswak4FoamParsers \
     -lsampling \
+    -lfileFormats \
     -lfiniteVolume \
     -lmeshTools

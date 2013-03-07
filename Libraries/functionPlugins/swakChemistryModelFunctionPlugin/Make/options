@@ -20,8 +20,8 @@ LIB_LIBS = \
     -lswak4FoamParsers \
     -lfiniteVolume \
     -lmeshTools \
-    -lbasicThermophysicalModels \
-    -lbasicSolidThermo \
+    -lfluidThermophysicalModels \
+    -lsolidThermo \
     -lspecie \
     -lreactionThermophysicalModels \
     -lchemistryModel \

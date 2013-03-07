@@ -785,7 +785,8 @@ namespace Foam {
         }
         return interpolation.interpolate(
             theMesh.lookupObject<T>(fieldName),
-            theOrder
+            theOrder,
+            eqOp<typename T::value_type>()
         );
     }
 

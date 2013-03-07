@@ -20,5 +20,5 @@ LIB_LIBS = \
     -lswak4FoamParsers \
     -lfiniteVolume \
     -lmeshTools \
-    -lbasicThermophysicalModels \
+    -lfluidThermophysicalModels \
     -lradiationModels

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -39,7 +39,7 @@ SourceFiles
 Contributors/Copyright:
     2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCPointPatchField_H
@@ -54,8 +54,8 @@ Contributors/Copyright:
 
 #else
 
-#    include "mixedPointPatchField.H"
-#    define mixedPointPatchFieldType mixedPointPatchField<Type>
+#    include "valuePointPatchField.H"
+#    define mixedPointPatchFieldType valuePointPatchField<Type>
 
 #endif
 

@@ -288,9 +288,9 @@ scalar MeshesRepository::setTime(
         mesh.readUpdate();
         mesh.readModifiedObjects();
 
-        HashTable<const regIOobject*> content(mesh.lookupClass<regIOobject>());
+        HashTable<regIOobject*> content(mesh.lookupClass<regIOobject>());
 
-        forAllIter(HashTable<const regIOobject*>,content,iter) {
+        forAllIter(HashTable<regIOobject*>,content,iter) {
             word newInstance=theTime.findInstance(
                 (*iter)->local(),
                 iter.key(),

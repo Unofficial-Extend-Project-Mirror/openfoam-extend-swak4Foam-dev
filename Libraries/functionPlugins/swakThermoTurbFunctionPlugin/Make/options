@@ -25,4 +25,4 @@ LIB_LIBS = \
     -lcompressibleTurbulenceModel \
     -lcompressibleLESModels \
     -lcompressibleRASModels \
-    -lbasicThermophysicalModels
+    -lfluidThermophysicalModels

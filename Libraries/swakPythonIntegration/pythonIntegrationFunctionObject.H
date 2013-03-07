@@ -130,6 +130,11 @@ public:
     //- Execute in the end
     virtual bool end();
 
+    virtual void updateMesh(const mapPolyMesh&) {
+    }
+
+    virtual void movePoints(const polyMesh&) {
+    }
 };
 
 

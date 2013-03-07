@@ -28,7 +28,7 @@ LIB_LIBS = \
     -lmeshTools \
     -lsampling \
     -ltriSurface \
-    -lbasicThermophysicalModels \
+    -lfluidThermophysicalModels \
     -lincompressibleTransportModels \
     -lcompressibleTurbulenceModel \
     -lincompressibleTurbulenceModel \

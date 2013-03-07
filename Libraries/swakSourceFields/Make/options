@@ -8,10 +8,12 @@ EXE_INC = \
     -I../swak4FoamParsers/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/fvOptions/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude
 
 LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     -lswak4FoamParsers \
     -lfiniteVolume \
+    -lfvOptions \
     -lmeshTools

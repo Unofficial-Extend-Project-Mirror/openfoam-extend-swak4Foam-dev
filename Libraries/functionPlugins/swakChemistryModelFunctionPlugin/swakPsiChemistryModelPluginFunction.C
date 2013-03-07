@@ -38,8 +38,8 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 #include "HashPtrTable.H"
-#include "basicPsiThermo.H"
-#include "basicRhoThermo.H"
+#include "psiThermo.H"
+#include "rhoThermo.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -118,6 +118,29 @@ void swakPsiChemistryModelPluginFunction::updateChemistry(const scalar dt)
     );
 }
 
+tmp<volScalarField> swakPsiChemistryModelPluginFunction::wrapDimField(
+        const DimensionedField<scalar,volMesh> &dimField
+)
+{
+    tmp<volScalarField> result(
+            new volScalarField(
+                IOobject(
+                    dimField.name(),
+                    mesh().time().timeName(),
+                    mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                mesh(),
+                dimensionedScalar(dimField.name(),dimField.dimensions(),0),
+                "zeroGradient"
+            )
+    );
+    result->dimensionedInternalField()=dimField;
+
+    return result;
+}
+
 const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistry()
 {
     return chemistryInternal(mesh());
@@ -178,9 +201,9 @@ public:
 
         result().setObjectResult(
             autoPtr<volScalarField>(
-                new volScalarField(
+                wrapDimField(
                     chemistry().RR(specI)
-                )
+                ).ptr()
             )
         );
     }
@@ -211,7 +234,7 @@ public:
     void doEvaluation() {
         autoPtr<volScalarField> pSum(
             new volScalarField(
-                0*chemistry().RR(0)
+                0*wrapDimField(chemistry().RR(0))
             )
         );
 
@@ -221,7 +244,7 @@ public:
             specI<chemistry().thermo().composition().species().size();
             specI++
         ) {
-            summe+=chemistry().RR(specI);
+            summe+=wrapDimField(chemistry().RR(specI));
         }
 
         result().setObjectResult(
@@ -250,7 +273,7 @@ public:
     void doEvaluation() {
         autoPtr<volScalarField> pSum(
             new volScalarField(
-                0*chemistry().RR(0)
+                0*wrapDimField(chemistry().RR(0))
             )
         );
 
@@ -260,7 +283,7 @@ public:
             specI<chemistry().thermo().composition().species().size();
             specI++
         ) {
-            const volScalarField &RR=chemistry().RR(specI);
+            const volScalarField &RR=wrapDimField(chemistry().RR(specI));
             forAll(summe,cellI) {
                 if(RR[cellI]>0) {
                     summe[cellI]+=RR[cellI];

@@ -31,32 +31,32 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "loadThermoModelFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "basicPsiThermo.H"
-#include "basicRhoThermo.H"
+#include "psiThermo.H"
+#include "rhoThermo.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    addNamedTemplateToRunTimeSelectionTable(functionObject,loadThermoModelFunctionObject,basicPsiThermo,dictionary,loadPsiThermoModel);
+    addNamedTemplateToRunTimeSelectionTable(functionObject,loadThermoModelFunctionObject,psiThermo,dictionary,loadPsiThermoModel);
 
-    defineTemplateTypeNameAndDebug(loadThermoModelFunctionObject<basicPsiThermo>,0);
-
-    template
-    class loadThermoModelFunctionObject<basicPsiThermo>;
-
-    addNamedTemplateToRunTimeSelectionTable(functionObject,loadThermoModelFunctionObject,basicRhoThermo,dictionary,loadRhoThermoModel);
-
-    defineTemplateTypeNameAndDebug(loadThermoModelFunctionObject<basicRhoThermo>,0);
+    defineTemplateTypeNameAndDebug(loadThermoModelFunctionObject<psiThermo>,0);
 
     template
-    class loadThermoModelFunctionObject<basicRhoThermo>;
+    class loadThermoModelFunctionObject<psiThermo>;
+
+    addNamedTemplateToRunTimeSelectionTable(functionObject,loadThermoModelFunctionObject,rhoThermo,dictionary,loadRhoThermoModel);
+
+    defineTemplateTypeNameAndDebug(loadThermoModelFunctionObject<rhoThermo>,0);
+
+    template
+    class loadThermoModelFunctionObject<rhoThermo>;
 
 } // namespace Foam
 

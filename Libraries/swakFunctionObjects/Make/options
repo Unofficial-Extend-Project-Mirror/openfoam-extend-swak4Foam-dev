@@ -9,9 +9,10 @@ EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/fileFormats/lnInclude \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)//postProcessing/functionObjects/utilities/lnInclude \
-    -I$(LIB_SRC)/lagrangian/basic/lnInclude 
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude
 
 
 LIB_LIBS = \
@@ -19,7 +20,8 @@ LIB_LIBS = \
     -lswak4FoamParsers \
     -lfiniteVolume \
     -lmeshTools \
+    -lfileFormats \
     -lsampling \
     -ltriSurface \
     -lutilityFunctionObjects \
-    -llagrangian 
+    -llagrangian

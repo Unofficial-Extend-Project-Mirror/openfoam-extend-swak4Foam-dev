@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef addForeignMeshes_H
@@ -55,6 +55,7 @@ namespace Foam
 class dictionary;
 class objectRegistry;
 class mapPolyMesh;
+class polyMesh;
 
 class addForeignMeshes
 {
@@ -106,7 +107,7 @@ public:
         {}
 
     //- Update for changes of mesh
-    virtual void movePoints(const pointField&)
+    virtual void movePoints(const polyMesh&)
         {}
 
     //- Clear all data

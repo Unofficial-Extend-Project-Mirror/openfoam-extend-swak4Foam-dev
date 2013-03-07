@@ -38,8 +38,8 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 #include "HashPtrTable.H"
-#include "basicPsiThermo.H"
-#include "basicRhoThermo.H"
+#include "psiThermo.H"
+#include "rhoThermo.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -68,19 +68,19 @@ swakThermophysicalPluginFunction::swakThermophysicalPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
+const fluidThermo &swakThermophysicalPluginFunction::thermoInternal(
     const fvMesh &reg
 )
 {
-    static HashPtrTable<basicThermo> thermo_;
+    static HashPtrTable<fluidThermo> thermo_;
 
-    if(reg.foundObject<basicThermo>("thermophysicalProperties")) {
+    if(reg.foundObject<fluidThermo>("thermophysicalProperties")) {
         if(debug) {
             Info << "swakThermophysicalPluginFunction::thermoInternal: "
                 << "already in memory" << endl;
         }
         // Somebody else already registered this
-        return reg.lookupObject<basicThermo>("thermophysicalProperties");
+        return reg.lookupObject<fluidThermo>("thermophysicalProperties");
     }
     if(!thermo_.found(reg.name())) {
         if(debug) {
@@ -106,34 +106,34 @@ const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
 
             word thermoTypeName=dict["thermoType"];
 
-            basicRhoThermo::fvMeshConstructorTable::iterator cstrIter =
-                basicRhoThermo::fvMeshConstructorTablePtr_->find(
+            rhoThermo::fvMeshConstructorTable::iterator cstrIter =
+                rhoThermo::fvMeshConstructorTablePtr_->find(
                     thermoTypeName
                 );
-            if (cstrIter != basicRhoThermo::fvMeshConstructorTablePtr_->end())
+            if (cstrIter != rhoThermo::fvMeshConstructorTablePtr_->end())
             {
                 if(debug) {
-                    Info << thermoTypeName << " is a basicRhoThermo-type";
+                    Info << thermoTypeName << " is a rhoThermo-type";
                 }
                 usePsi=false;
             } else if(debug) {
-                Info << "No " << thermoTypeName << " in basicRhoThermo-types "
-                    << basicRhoThermo::fvMeshConstructorTablePtr_->sortedToc()
+                Info << "No " << thermoTypeName << " in rhoThermo-types "
+                    << rhoThermo::fvMeshConstructorTablePtr_->sortedToc()
                     << endl;
             }
             if(usePsi) {
-                basicPsiThermo::fvMeshConstructorTable::iterator cstrIter =
-                    basicPsiThermo::fvMeshConstructorTablePtr_->find(
+                psiThermo::fvMeshConstructorTable::iterator cstrIter =
+                    psiThermo::fvMeshConstructorTablePtr_->find(
                         thermoTypeName
                     );
-                if(cstrIter != basicPsiThermo::fvMeshConstructorTablePtr_->end())
+                if(cstrIter != psiThermo::fvMeshConstructorTablePtr_->end())
                 {
                     if(debug) {
-                        Info << thermoTypeName << " is a basicPsiThermo-type";
+                        Info << thermoTypeName << " is a psiThermo-type";
                     }
                 } else if(debug) {
-                    Info << "No " << thermoTypeName << " in basicPsiThermo-types "
-                    << basicPsiThermo::fvMeshConstructorTablePtr_->sortedToc()
+                    Info << "No " << thermoTypeName << " in psiThermo-types "
+                    << psiThermo::fvMeshConstructorTablePtr_->sortedToc()
                         << endl;
                 }
             }
@@ -143,12 +143,12 @@ const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
         if(usePsi) {
             thermo_.set(
                 reg.name(),
-                basicPsiThermo::New(reg).ptr()
+                psiThermo::New(reg).ptr()
             );
         } else {
             thermo_.set(
                 reg.name(),
-                basicRhoThermo::New(reg).ptr()
+                rhoThermo::New(reg).ptr()
             );
         }
     }
@@ -156,7 +156,7 @@ const basicThermo &swakThermophysicalPluginFunction::thermoInternal(
     return *(thermo_[reg.name()]);
 }
 
-const basicThermo &swakThermophysicalPluginFunction::thermo()
+const fluidThermo &swakThermophysicalPluginFunction::thermo()
 {
     return thermoInternal(mesh());
 }
@@ -193,10 +193,10 @@ addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakThermophysicalPlugi
 concreteThermoFunction(p,volScalarField);
 concreteThermoFunction(rho,volScalarField);
 concreteThermoFunction(psi,volScalarField);
-concreteThermoFunction(h,volScalarField);
-concreteThermoFunction(hs,volScalarField);
+concreteThermoFunction(he,volScalarField);
+// concreteThermoFunction(hs,volScalarField);
 concreteThermoFunction(hc,volScalarField);
-concreteThermoFunction(e,volScalarField);
+// concreteThermoFunction(e,volScalarField);
 concreteThermoFunction(T,volScalarField);
 concreteThermoFunction(Cp,volScalarField);
 concreteThermoFunction(Cv,volScalarField);

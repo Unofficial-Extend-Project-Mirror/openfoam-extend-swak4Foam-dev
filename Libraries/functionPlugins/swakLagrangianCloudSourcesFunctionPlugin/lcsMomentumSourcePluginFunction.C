@@ -39,7 +39,7 @@ Contributors/Copyright:
 #include "addToRunTimeSelectionTable.H"
 
 #include "basicKinematicCloud.H"
-#include "basicThermoCloud.H"
+#include "fluidThermoCloud.H"
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
 
@@ -74,7 +74,7 @@ void lcsMomentumSourcePluginFunction::doEvaluation()
 
     // pick up the first fitting class
     castAndCall(pSU,dimVectorField,basicKinematicCloud,kinematicCloud,UTrans());
-    castAndCall(pSU,dimVectorField,basicThermoCloud,thermoCloud,UTrans());
+    castAndCall(pSU,dimVectorField,fluidThermoCloud,thermoCloud,UTrans());
     castAndCall(pSU,dimVectorField,basicReactingCloud,reactingCloud,UTrans());
     castAndCall(pSU,dimVectorField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,UTrans());
 

@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef manipulateField_H
@@ -59,6 +59,7 @@ namespace Foam
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class FieldValueExpressionDriver;
 
@@ -156,7 +157,7 @@ public:
         {}
 
     //- Update for changes of mesh
-    virtual void movePoints(const pointField&)
+    virtual void movePoints(const polyMesh&)
         {}
 };
 

@@ -75,6 +75,10 @@ protected:
 
     void updateChemistry(const scalar dt);
 
+    tmp<volScalarField> wrapDimField(
+        const DimensionedField<scalar,volMesh> &dimField
+    );
+
 public:
     swakPsiChemistryModelPluginFunction(
         const FieldValueExpressionDriver &parentDriver,

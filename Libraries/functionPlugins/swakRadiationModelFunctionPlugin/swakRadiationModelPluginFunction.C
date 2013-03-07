@@ -38,8 +38,8 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 #include "HashPtrTable.H"
-#include "basicPsiThermo.H"
-#include "basicRhoThermo.H"
+#include "psiThermo.H"
+#include "rhoThermo.H"
 
 #include "addToRunTimeSelectionTable.H"
 

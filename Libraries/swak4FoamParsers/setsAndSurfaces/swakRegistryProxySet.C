@@ -88,7 +88,7 @@ Foam::swakRegistryProxySet::swakRegistryProxySet
 (
     const word& name,
     const polyMesh& mesh,
-    meshSearch& search,
+    const meshSearch& search,
     const dictionary& dict
 )
 :
