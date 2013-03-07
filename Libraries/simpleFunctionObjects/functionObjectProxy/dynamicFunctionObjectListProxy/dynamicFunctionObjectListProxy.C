@@ -53,7 +53,9 @@ namespace Foam
         dictionary
     );
 
-    //    defineTypeNameAndDebug(dynamicFunctionObjectListProxy::dynamicDictionaryProvider, 0);
+    typedef dynamicFunctionObjectListProxy::dynamicDictionaryProvider dynProvider;
+
+    defineTypeNameAndDebug(dynProvider, 0);
     defineRunTimeSelectionTable(dynamicFunctionObjectListProxy::dynamicDictionaryProvider,dictionary);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
