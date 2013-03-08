@@ -38,8 +38,7 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 #include "HashPtrTable.H"
-#include "psiThermo.H"
-#include "rhoThermo.H"
+#include "swakThermoTypes.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -118,6 +117,7 @@ void swakPsiChemistryModelPluginFunction::updateChemistry(const scalar dt)
     );
 }
 
+#ifdef FOAM_RR_ONLY_DIMENSIONED_FIELD
 tmp<volScalarField> swakPsiChemistryModelPluginFunction::wrapDimField(
         const DimensionedField<scalar,volMesh> &dimField
 )
@@ -140,6 +140,7 @@ tmp<volScalarField> swakPsiChemistryModelPluginFunction::wrapDimField(
 
     return result;
 }
+#endif
 
 const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistry()
 {
@@ -201,9 +202,15 @@ public:
 
         result().setObjectResult(
             autoPtr<volScalarField>(
+#ifdef FOAM_RR_ONLY_DIMENSIONED_FIELD
                 wrapDimField(
                     chemistry().RR(specI)
                 ).ptr()
+#else
+                new volScalarField(
+                    chemistry().RR(specI)
+                )
+#endif
             )
         );
     }
@@ -234,7 +241,11 @@ public:
     void doEvaluation() {
         autoPtr<volScalarField> pSum(
             new volScalarField(
+#ifdef FOAM_RR_ONLY_DIMENSIONED_FIELD
                 0*wrapDimField(chemistry().RR(0))
+#else
+                0*chemistry().RR(0)
+#endif
             )
         );
 
@@ -244,7 +255,11 @@ public:
             specI<chemistry().thermo().composition().species().size();
             specI++
         ) {
+#ifdef FOAM_RR_ONLY_DIMENSIONED_FIELD
             summe+=wrapDimField(chemistry().RR(specI));
+#else
+            summe+=chemistry().RR(specI);
+#endif
         }
 
         result().setObjectResult(
@@ -273,7 +288,11 @@ public:
     void doEvaluation() {
         autoPtr<volScalarField> pSum(
             new volScalarField(
+#ifdef FOAM_RR_ONLY_DIMENSIONED_FIELD
                 0*wrapDimField(chemistry().RR(0))
+#else
+                0*chemistry().RR(0)
+#endif
             )
         );
 
@@ -283,7 +302,11 @@ public:
             specI<chemistry().thermo().composition().species().size();
             specI++
         ) {
+#ifdef FOAM_RR_ONLY_DIMENSIONED_FIELD
             const volScalarField &RR=wrapDimField(chemistry().RR(specI));
+#else
+            const volScalarField &RR=chemistry().RR(specI);
+#endif
             forAll(summe,cellI) {
                 if(RR[cellI]>0) {
                     summe[cellI]+=RR[cellI];

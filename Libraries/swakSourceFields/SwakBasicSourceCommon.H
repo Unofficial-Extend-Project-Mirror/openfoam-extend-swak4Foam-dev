@@ -46,7 +46,7 @@ Contributors/Copyright:
 #define expressionSource_H
 
 #include "FieldValueExpressionDriver.H"
-#include "fvOption.H"
+#include "swakFvOption.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,7 +60,7 @@ namespace Foam
 template<class T>
 class SwakBasicSourceCommon
 :
-    public fv::option
+    public swakFvOptionType
 {
     // Private data
 

@@ -1871,6 +1871,13 @@ S_{expl} + S_{impl} T
      A first version of a reference manual is added. Only the first
      part about expressions and parameters is written.
 ** Next release - version number : 0.2.3
+*** Incompatibilities to previous versions
+**** =simpleFunctionObjects= and =simpleLagrangianFunctionObjects= no longer independent from rest
+     Due to incompatibilities between OpenFOAM 2.2 and previous
+     versions there are compatibility headers included from the rest
+     of swak4Foam.
+
+     Theoretically both libraries can be easily made independent again.
 *** Bug fixes
 **** Compiles on =1.6-ext= again
      The last release (0.2.2) did not compile on =1.6-ext=. This is

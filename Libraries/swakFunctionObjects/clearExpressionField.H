@@ -121,7 +121,11 @@ public:
         {}
 
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
     virtual void movePoints(const polyMesh&)
+#else
+    virtual void movePoints(const pointField&)
+#endif
         {}
 
 };

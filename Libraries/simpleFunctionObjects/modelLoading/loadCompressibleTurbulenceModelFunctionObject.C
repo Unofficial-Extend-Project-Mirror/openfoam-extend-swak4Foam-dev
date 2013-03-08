@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "volFields.H"
 #include "surfaceFields.H"
 
+#include "swakThermoTypes.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -85,7 +87,7 @@ loadCompressibleTurbulenceModelFunctionObject::loadCompressibleTurbulenceModelFu
         obr().lookupObject<surfaceScalarField>(
             dict_.lookup("phiName")
         ),
-        obr().lookupObject<fluidThermo>(
+        obr().lookupObject<swakFluidThermoType>(
             dict_.lookup("thermoName")
         )
     );

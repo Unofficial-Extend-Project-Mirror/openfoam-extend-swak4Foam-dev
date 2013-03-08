@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 08 Mar 2013 19:23:06 +0100
+State: new
+Subject: updateMesh-method in pythonIntegration should fail without option
+Message-Id: <93cabfb1d2275322-0-artemis@bgs-cool-greybook.local>
+
+If this method is called it will fail if the user does not set an
+option that says "This will work". Similar to isParallelized

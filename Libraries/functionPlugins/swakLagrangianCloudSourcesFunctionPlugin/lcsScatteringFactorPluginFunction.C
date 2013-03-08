@@ -38,7 +38,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "fluidThermoCloud.H"
+#include "swakCloudTypes.H"
+
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
 
@@ -71,7 +72,7 @@ void lcsScatteringFactorPluginFunction::doEvaluation()
     autoPtr<volScalarField> psigmap;
 
     // pick up the first fitting class
-    castAndCall(psigmap,volScalarField,fluidThermoCloud,thermoCloud,sigmap());
+    castAndCall(psigmap,volScalarField,swakFluidThermoCloudType,thermoCloud,sigmap());
     castAndCall(psigmap,volScalarField,basicReactingCloud,reactingCloud,sigmap());
     castAndCall(psigmap,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
 

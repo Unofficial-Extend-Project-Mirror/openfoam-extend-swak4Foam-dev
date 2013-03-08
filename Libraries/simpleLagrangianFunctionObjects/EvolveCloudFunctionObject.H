@@ -131,6 +131,7 @@ public:
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
 
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
     // make functionObject happy but fail because this is not an implementation
     virtual void updateMesh(const mapPolyMesh&) {
         notImplemented("EvolveCloudFunctionObject::updateMesh");
@@ -140,7 +141,7 @@ public:
     virtual void movePoints(const polyMesh&) {
         notImplemented("EvolveCloudFunctionObject::movePoints");
     }
-
+#endif
 
 };
 

@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "volFields.H"
 #include "surfaceFields.H"
 
+#include "swakThermoTypes.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -98,8 +100,8 @@ loadSLGThermoModelFunctionObject::loadSLGThermoModelFunctionObject
             dynamicCast<const fvMesh &>(
                 obr()
             ),
-            const_cast<fluidThermo &>(
-                obr().lookupObject<fluidThermo>(
+            const_cast<swakFluidThermoType &>(
+                obr().lookupObject<swakFluidThermoType>(
                     dict_.lookup("thermoName")
                 )
             )

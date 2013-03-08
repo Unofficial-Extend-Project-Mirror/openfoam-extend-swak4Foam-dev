@@ -55,7 +55,7 @@ SwakBasicSourceCommon<T>::SwakBasicSourceCommon
             const fvMesh& mesh
 )
 :
-    fv::option(name, modelType, dict, mesh),
+    swakFvOptionType(name, modelType, dict, mesh),
     driver_(coeffs(),mesh),
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
@@ -97,7 +97,7 @@ void SwakBasicSourceCommon<T>::writeData(Ostream& os) const {
 
 template<class T>
 bool SwakBasicSourceCommon<T>::read(const dictionary& dict) {
-    if (fv::option::read(dict))
+    if (swakFvOptionType::read(dict))
     {
         setFieldData(coeffs_.subDict("expressions"));
         return true;

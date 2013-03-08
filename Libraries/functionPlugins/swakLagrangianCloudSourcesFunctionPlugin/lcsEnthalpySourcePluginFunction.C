@@ -38,7 +38,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "fluidThermoCloud.H"
+#include "swakCloudTypes.H"
+
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
 
@@ -72,7 +73,7 @@ void lcsEnthalpySourcePluginFunction::doEvaluation()
     autoPtr<dimScalarField> pSh;
 
     // pick up the first fitting class
-    castAndCall(pSh,dimScalarField,fluidThermoCloud,thermoCloud,hsTrans());
+    castAndCall(pSh,dimScalarField,swakFluidThermoCloudType,thermoCloud,hsTrans());
     castAndCall(pSh,dimScalarField,basicReactingCloud,reactingCloud,hsTrans());
     castAndCall(pSh,dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,hsTrans());
 

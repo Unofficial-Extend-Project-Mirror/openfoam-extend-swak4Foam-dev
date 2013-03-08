@@ -54,8 +54,13 @@ Contributors/Copyright:
 
 #else
 
+#ifdef FOAM_NO_MIXED_POINT_PATCH
 #    include "valuePointPatchField.H"
 #    define mixedPointPatchFieldType valuePointPatchField<Type>
+#else
+#    include "mixedPointPatchField.H"
+#    define mixedPointPatchFieldType mixedPointPatchField<Type>
+#endif
 
 #endif
 

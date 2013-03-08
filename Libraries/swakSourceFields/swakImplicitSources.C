@@ -23,20 +23,26 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeFvOption.H"
 #include "SwakImplicitSource.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+#ifdef FOAM_HAS_FVOPTIONS
     namespace fv {
-        makeFvOption(SwakImplicitSource, scalar);
-        makeFvOption(SwakImplicitSource, vector);
-        makeFvOption(SwakImplicitSource, sphericalTensor);
-        makeFvOption(SwakImplicitSource, symmTensor);
-        makeFvOption(SwakImplicitSource, tensor);
+#endif
+
+        makeSwakFvOption(SwakImplicitSource, scalar);
+        makeSwakFvOption(SwakImplicitSource, vector);
+        makeSwakFvOption(SwakImplicitSource, sphericalTensor);
+        makeSwakFvOption(SwakImplicitSource, symmTensor);
+        makeSwakFvOption(SwakImplicitSource, tensor);
+
+#ifdef FOAM_HAS_FVOPTIONS
     }
+#endif
 }
 
 

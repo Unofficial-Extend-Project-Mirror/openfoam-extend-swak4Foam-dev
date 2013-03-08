@@ -64,7 +64,7 @@ EvolveThermoCloudFunctionObject::EvolveThermoCloudFunctionObject
     const dictionary& dict
 )
 :
-    EvolveCloudFunctionObject<fluidThermoCloud>(
+    EvolveCloudFunctionObject<swakFluidThermoCloudType>(
         name,
         t,
         dict
@@ -78,7 +78,7 @@ EvolveThermoCloudFunctionObject::EvolveThermoCloudFunctionObject
 bool EvolveThermoCloudFunctionObject::start()
 {
     cloud().set(
-        new fluidThermoCloud(
+        new swakFluidThermoCloudType(
             cloudName(),
             getField<volScalarField>("rhoName"),
             getField<volVectorField>("UName"),

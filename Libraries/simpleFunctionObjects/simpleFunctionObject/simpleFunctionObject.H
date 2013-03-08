@@ -147,6 +147,7 @@ public:
     //- Sample and write
     virtual void write()=0;
 
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
     // make functionObject happy but fail because this is not an implementation
     virtual void updateMesh(const mapPolyMesh&) {
         notImplemented("simpleFunctionObject::updateMesh");
@@ -156,7 +157,7 @@ public:
     virtual void movePoints(const polyMesh&) {
         notImplemented("simpleFunctionObject::movePoints");
     }
-
+#endif
 
     //- Optional stuff to do after write
     virtual void flush();

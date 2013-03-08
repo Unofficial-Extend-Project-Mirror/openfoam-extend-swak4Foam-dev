@@ -47,7 +47,8 @@ Contributors/Copyright:
 #define EvolveThermoCloudFunctionObject_H
 
 #include "EvolveCloudFunctionObject.H"
-#include "fluidThermoCloud.H"
+
+#include "swakCloudTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,7 +61,7 @@ namespace Foam
 
 class EvolveThermoCloudFunctionObject
 :
-    public EvolveCloudFunctionObject<fluidThermoCloud>
+    public EvolveCloudFunctionObject<swakFluidThermoCloudType>
 {
     // Private Member Functions
 

@@ -28,64 +28,43 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+
+
+Description
+    Define types that were renamed in OpenFOAM 2.2
+
+SourceFiles
+
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "lcsMassFractionPluginFunction.H"
+#ifndef SwakCloudMacroHeader_H
+#define SwakCloudMacroHeader_H
 
-#include "addToRunTimeSelectionTable.H"
+#include "swak.H"
 
-#include "swakCloudTypes.H"
+#ifdef FOAM_HAS_FLUIDTHERMO
 
-#include "basicKinematicCloud.H"
-#include "basicReactingCloud.H"
-#include "basicReactingMultiphaseCloud.H"
+#include "floudThermoCloud.H"
 
 namespace Foam {
-
-defineTypeNameAndDebug(lcsMassFractionPluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction,lcsMassFractionPluginFunction , name, lcsMassFraction);
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-lcsMassFractionPluginFunction::lcsMassFractionPluginFunction(
-    const FieldValueExpressionDriver &parentDriver,
-    const word &name
-):
-    LagrangianCloudSourcePluginFunction(
-        parentDriver,
-        name,
-        "volScalarField"
-    )
-{
+    typedef fluidThermoCloud swakFluidThermoCloudType;
 }
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+#else
 
+#include "basicThermoCloud.H"
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-void lcsMassFractionPluginFunction::doEvaluation()
-{
-    autoPtr<volScalarField> palpha;
-
-    // pick up the first fitting class
-    castAndCall(palpha,volScalarField,basicKinematicCloud,kinematicCloud,alpha());
-    castAndCall(palpha,volScalarField,swakFluidThermoCloudType,thermoCloud,alpha());
-    castAndCall(palpha,volScalarField,basicReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
-
-    noCloudFound(palpha);
-
-    result().setObjectResult(palpha);
+namespace Foam {
+    typedef basicThermoCloud swakFluidThermoCloudType;
 }
+#endif
 
-// * * * * * * * * * * * * * * * Concrete implementations * * * * * * * * * //
 
-
-} // namespace
+#endif
 
 // ************************************************************************* //
