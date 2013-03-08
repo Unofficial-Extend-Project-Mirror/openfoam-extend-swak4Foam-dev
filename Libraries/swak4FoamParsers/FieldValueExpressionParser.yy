@@ -424,6 +424,11 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_det
 %token TOKEN_cof
 %token TOKEN_inv
+%token TOKEN_sph
+%token TOKEN_twoSymm
+%token TOKEN_dev2
+%token TOKEN_eigenValues
+%token TOKEN_eigenVectors
 
 %token TOKEN_log10
 %token TOKEN_asin
@@ -819,6 +824,43 @@ vexp:   vector                                    { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | '(' vexp ')'		                   { $$ = $2; }
+        | TOKEN_eigenValues '(' texp ')'       {
+            $$ = new Foam::volVectorField(Foam::eigenValues(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_eigenValues '(' yexp ')'       {
+            $$ = new Foam::volVectorField(Foam::eigenValues(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | texp '.' tensorComponentSwitch  TOKEN_x                              {
+            $$ = driver.makeVectorField(
+                $1->component(Foam::tensor::XX)(),
+                $1->component(Foam::tensor::XY)(),
+                $1->component(Foam::tensor::XZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
+        | texp '.' tensorComponentSwitch  TOKEN_y                              {
+            $$ = driver.makeVectorField(
+                $1->component(Foam::tensor::YX)(),
+                $1->component(Foam::tensor::YY)(),
+                $1->component(Foam::tensor::YZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
+        | texp '.' tensorComponentSwitch  TOKEN_z                              {
+            $$ = driver.makeVectorField(
+                $1->component(Foam::tensor::ZX)(),
+                $1->component(Foam::tensor::ZY)(),
+                $1->component(Foam::tensor::ZZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_diag '(' texp ')'       {
             $$ = driver.makeVectorField(
                 $3->component(Foam::tensor::XX)(),
@@ -1549,6 +1591,43 @@ fvexp:  fvector                            { $$ = $1; }
             delete $2;
           }
         | '(' fvexp ')'		           { $$ = $2; }
+        | TOKEN_eigenValues '(' ftexp ')'       {
+            $$ = new Foam::surfaceVectorField(Foam::eigenValues(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_eigenValues '(' fyexp ')'       {
+            $$ = new Foam::surfaceVectorField(Foam::eigenValues(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | ftexp '.' tensorComponentSwitch  TOKEN_x                   {
+            $$ = driver.makeSurfaceVectorField(
+                $1->component(Foam::tensor::XX)(),
+                $1->component(Foam::tensor::XY)(),
+                $1->component(Foam::tensor::XZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
+        | ftexp '.' tensorComponentSwitch  TOKEN_y                   {
+            $$ = driver.makeSurfaceVectorField(
+                $1->component(Foam::tensor::YX)(),
+                $1->component(Foam::tensor::YY)(),
+                $1->component(Foam::tensor::YZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
+        | ftexp '.' tensorComponentSwitch  TOKEN_z                   {
+            $$ = driver.makeSurfaceVectorField(
+                $1->component(Foam::tensor::ZX)(),
+                $1->component(Foam::tensor::ZY)(),
+                $1->component(Foam::tensor::ZZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_diag '(' ftexp ')'       {
             $$ = driver.makeSurfaceVectorField(
                 $3->component(Foam::tensor::XX)(),
@@ -2649,6 +2728,18 @@ texp:   tensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_eigenVectors '(' texp ')'       {
+            $$ = new Foam::volTensorField(Foam::eigenVectors(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_eigenVectors '(' yexp ')'       {
+            $$ = driver.makeField<Foam::volTensorField>(
+                Foam::eigenVectors($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_inv '(' texp ')' 	            {
             $$ = new Foam::volTensorField( Foam::inv(*$3) );
             delete $3;
@@ -2663,6 +2754,11 @@ texp:   tensor                  { $$ = $1; }
           }
         | TOKEN_dev '(' texp ')' 	            {
             $$ = new Foam::volTensorField( Foam::dev(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_dev2 '(' texp ')' 	            {
+            $$ = new Foam::volTensorField( Foam::dev2(*$3) );
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -2897,6 +2993,16 @@ yexp:   symmTensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_twoSymm '(' texp ')' 	            {
+            $$ = new Foam::volSymmTensorField( Foam::twoSymm(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_twoSymm '(' yexp ')' 	            {
+            $$ = new Foam::volSymmTensorField( Foam::twoSymm(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_inv '(' yexp ')' 	            {
             $$ = new Foam::volSymmTensorField( Foam::inv(*$3) );
             delete $3;
@@ -2911,6 +3017,11 @@ yexp:   symmTensor                  { $$ = $1; }
           }
         | TOKEN_dev '(' yexp ')' 	            {
             $$ = new Foam::volSymmTensorField( Foam::dev(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_dev2 '(' yexp ')' 	            {
+            $$ = new Foam::volSymmTensorField( Foam::dev2(*$3) );
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3097,6 +3208,27 @@ hexp:   sphericalTensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | '(' hexp ')'		        { $$ = $2; }
+        | TOKEN_sph '(' texp ')'              {
+            $$ = driver.makeField<Foam::volSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_sph '(' yexp ')'              {
+            $$ = driver.makeField<Foam::volSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_sph '(' hexp ')'              {
+            $$ = driver.makeField<Foam::volSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_inv '(' hexp ')' 	           {
             $$ = driver.makeField<Foam::volSphericalTensorField>(
                 Foam::inv($3->internalField())
@@ -3366,6 +3498,18 @@ ftexp:   ftensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_eigenVectors '(' ftexp ')'       {
+            $$ = new Foam::surfaceTensorField(Foam::eigenVectors(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_eigenVectors '(' fyexp ')'       {
+            $$ = driver.makeField<Foam::surfaceTensorField>(
+                Foam::eigenVectors($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_inv '(' ftexp ')' 	            {
             $$ = new Foam::surfaceTensorField( Foam::inv(*$3) );
             delete $3;
@@ -3380,6 +3524,11 @@ ftexp:   ftensor                  { $$ = $1; }
           }
         | TOKEN_dev '(' ftexp ')' 	            {
             $$ = new Foam::surfaceTensorField( Foam::dev(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_dev2 '(' ftexp ')' 	            {
+            $$ = new Foam::surfaceTensorField( Foam::dev2(*$3) );
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3568,6 +3717,16 @@ fyexp:   fsymmTensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_twoSymm '(' ftexp ')' 	            {
+            $$ = new Foam::surfaceSymmTensorField( Foam::twoSymm(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_twoSymm '(' fyexp ')' 	            {
+            $$ = new Foam::surfaceSymmTensorField( Foam::twoSymm(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_inv '(' fyexp ')' 	            {
             $$ = new Foam::surfaceSymmTensorField( Foam::inv(*$3) );
             delete $3;
@@ -3582,6 +3741,11 @@ fyexp:   fsymmTensor                  { $$ = $1; }
           }
         | TOKEN_dev '(' fyexp ')' 	            {
             $$ = new Foam::surfaceSymmTensorField( Foam::dev(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_dev2 '(' fyexp ')' 	            {
+            $$ = new Foam::surfaceSymmTensorField( Foam::dev2(*$3) );
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3724,6 +3888,27 @@ fhexp:   fsphericalTensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | '(' fhexp ')'		        { $$ = $2; }
+        | TOKEN_sph '(' ftexp ')'              {
+            $$ = driver.makeField<Foam::surfaceSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_sph '(' fyexp ')'              {
+            $$ = driver.makeField<Foam::surfaceSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_sph '(' fhexp ')'              {
+            $$ = driver.makeField<Foam::surfaceSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_inv '(' fhexp ')' 	           {
             $$ = driver.makeField<Foam::surfaceSphericalTensorField>(
                 Foam::inv($3->internalField())
@@ -4396,6 +4581,47 @@ pvexp:  pvector                            { $$ = $1; }
             delete $2;
           }
         | '(' pvexp ')'		           { $$ = $2; }
+        | TOKEN_eigenValues '(' ptexp ')'       {
+            $$ = driver.makePointField<Foam::pointVectorField>(
+                Foam::eigenValues($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_eigenValues '(' pyexp ')'       {
+            $$ = driver.makePointField<Foam::pointVectorField>(
+                Foam::eigenValues($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | ptexp '.' tensorComponentSwitch  TOKEN_x                   {
+            $$ = driver.makePointVectorField(
+                $1->component(Foam::tensor::XX)(),
+                $1->component(Foam::tensor::XY)(),
+                $1->component(Foam::tensor::XZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
+        | ptexp '.' tensorComponentSwitch  TOKEN_y                   {
+            $$ = driver.makePointVectorField(
+                $1->component(Foam::tensor::YX)(),
+                $1->component(Foam::tensor::YY)(),
+                $1->component(Foam::tensor::YZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
+        | ptexp '.' tensorComponentSwitch  TOKEN_z                   {
+            $$ = driver.makePointVectorField(
+                $1->component(Foam::tensor::ZX)(),
+                $1->component(Foam::tensor::ZY)(),
+                $1->component(Foam::tensor::ZZ)()
+            ).ptr();
+            delete $1;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_diag '(' ptexp ')'       {
             $$ = driver.makePointVectorField(
                 $3->component(Foam::tensor::XX)(),
@@ -4693,6 +4919,18 @@ ptexp:   ptensor                  { $$ = $1; }
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_eigenVectors '(' ptexp ')'       {
+            $$ = new Foam::pointTensorField(Foam::eigenVectors(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_eigenVectors '(' pyexp ')'       {
+            $$ = driver.makePointField<Foam::pointTensorField>(
+                Foam::eigenVectors($3->internalField())
+            ).ptr();
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
         | TOKEN_inv '(' ptexp ')' 	            {
             $$ = new Foam::pointTensorField( Foam::inv(*$3) );
             delete $3;
@@ -4707,6 +4945,11 @@ ptexp:   ptensor                  { $$ = $1; }
           }
         | TOKEN_dev '(' ptexp ')' 	            {
             $$ = new Foam::pointTensorField( Foam::dev(*$3) );
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_dev2 '(' ptexp ')' 	            {
+            $$ = new Foam::pointTensorField( Foam::dev2(*$3) );
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -4917,6 +5160,18 @@ pyexp:   psymmTensor                  { $$ = $1; }
             ).ptr();
             delete $3;
           }
+        | TOKEN_twoSymm '(' ptexp ')'            {
+            $$ = driver.makePointField<Foam::pointSymmTensorField>(
+                Foam::twoSymm($3->internalField())()
+            ).ptr();
+            delete $3;
+          }
+        | TOKEN_twoSymm '(' pyexp ')'            {
+            $$ = driver.makePointField<Foam::pointSymmTensorField>(
+                Foam::twoSymm($3->internalField())()
+            ).ptr();
+            delete $3;
+          }
         | TOKEN_inv '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 Foam::inv($3->internalField())()
@@ -4932,6 +5187,12 @@ pyexp:   psymmTensor                  { $$ = $1; }
         | TOKEN_dev '(' pyexp ')'            {
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 Foam::dev($3->internalField())()
+            ).ptr();
+            delete $3;
+          }
+        | TOKEN_dev2 '(' pyexp ')'            {
+            $$ = driver.makePointField<Foam::pointSymmTensorField>(
+                Foam::dev2($3->internalField())()
             ).ptr();
             delete $3;
           }
@@ -5071,6 +5332,24 @@ phexp:   psphericalTensor                  { $$ = $1; }
             delete $2;
           }
         | '(' phexp ')'		        { $$ = $2; }
+        | TOKEN_sph '(' ptexp ')'              {
+            $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+          }
+        | TOKEN_sph '(' pyexp ')'              {
+            $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+          }
+        | TOKEN_sph '(' phexp ')'              {
+            $$ = driver.makePointField<Foam::pointSphericalTensorField>(
+                Foam::sph($3->internalField())
+            ).ptr();
+            delete $3;
+          }
         | TOKEN_inv '(' phexp ')'            {
             $$ = driver.makePointField<Foam::pointSphericalTensorField>(
                 Foam::inv($3->internalField())()

@@ -285,14 +285,16 @@ hide circle
      an overview of the components of the various types
      #+CAPTION: Component names for the data types
      #+LABEL: tab:components
-     | Data type          | Components                 |
-     |--------------------+----------------------------|
-     | Vector             | x y z                      |
-     | Tensor             | xx xy xz yx yy yz zx zy zz |
-     | Symmetrical tensor | xx xy xz yy yz zz          |
-     | Spherical tensor   | ii                         |
+     | Data type          | Components                       |
+     |--------------------+----------------------------------|
+     | Vector             | x y z                            |
+     | Tensor             | xx xy xz yx yy yz zx zy zz x y z |
+     | Symmetrical tensor | xx xy xz yy yz zz                |
+     | Spherical tensor   | ii                               |
      For the tensor types there is also the "component" =T= that
      transposes the tensor (=A.T= gives the transposed tensor for =A=)
+
+     =x=, =y= and =z= for tensors are the rows as vectors.
 *** Mathematical functions available in all parsers
     The mathematical functions described in the /Programmers Guide/
     are implemented in all parsers:
@@ -322,11 +324,19 @@ hide circle
     - diag :: returns a vector with the diagonal elements
     - tr :: Trace of the tensor
     - dev :: Deviatoric component
+    - dev2 :: Deviatoric component times two
     - symm :: Symmetric component
+    - twoSymm :: Symmetric component times two
     - skew :: Skew-symmetric component
     - det :: Determinant
     - cof :: Cofactors
     - inv :: Inverse
+    - sph :: Spherical part of a tensor
+    - eigenValues :: Return a vector with the eigenvalues of the
+                     tensor. Sorted by ascending magnitude
+    - eigenVectors :: Return a tensor with the eigenvectors of the tensor
+                      in the rows. Sorted by ascending magnitude
+                      of the eigenvalue
     These functions examine the whole fields (in parallel over all
     processors) and return a field which has one value anywhere:
     - max(x) :: maximum of the field (for types with multiple components

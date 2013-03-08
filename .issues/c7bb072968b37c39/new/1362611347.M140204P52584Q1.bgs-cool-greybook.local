@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 07 Mar 2013 00:07:24 +0100
+State: in-progress
+Subject: Add missing tensor functionality (eigenvalues etc)
+Message-Id: <c7bb072968b37c39-0-artemis@bgs-cool-greybook.local>
+
+Add missing functionality for tensors. Amongest these are
+
+- eigenvalues and vectors
+- operators dev2, sph, twoSymm
+- accessing columns with .x, .y, .z
