@@ -51,6 +51,8 @@ Contributors/Copyright:
 #include "NamedEnum.H"
 #include "volFields.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes

@@ -53,6 +53,8 @@ Contributors/Copyright:
 #include "objectRegistry.H"
 #include "volFields.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

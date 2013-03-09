@@ -49,6 +49,8 @@ Contributors/Copyright:
 #include "primitiveFieldsFwd.H"
 #include "pointFieldFwd.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes

@@ -53,6 +53,8 @@ Contributors/Copyright:
 #include "autoPtr.H"
 #include "dictionary.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes

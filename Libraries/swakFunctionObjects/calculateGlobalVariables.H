@@ -52,6 +52,8 @@ Contributors/Copyright:
 
 #include "CommonValueExpressionDriver.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes

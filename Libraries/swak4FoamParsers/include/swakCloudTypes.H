@@ -49,7 +49,7 @@ Contributors/Copyright:
 
 #ifdef FOAM_HAS_FLUIDTHERMO
 
-#include "floudThermoCloud.H"
+#include "fluidThermoCloud.H"
 
 namespace Foam {
     typedef fluidThermoCloud swakFluidThermoCloudType;

@@ -208,7 +208,7 @@ void groovyBCPointPatchField<Type>::updateCoeffs()
 
     driver_.clearVariables();
 
-#ifdef FOAM_NO_MIXED_POINT_PATCH
+#ifndef FOAM_NO_MIXED_POINT_PATCH
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_,true);
     this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_,true);
     //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);

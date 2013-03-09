@@ -50,6 +50,8 @@ Contributors/Copyright:
 
 #include "SetsRepository.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

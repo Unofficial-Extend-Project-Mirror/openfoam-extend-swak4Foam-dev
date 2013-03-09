@@ -53,6 +53,8 @@ Contributors/Copyright:
 #include "Switch.H"
 #include "autoPtr.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes

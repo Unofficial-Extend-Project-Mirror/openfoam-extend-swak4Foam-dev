@@ -45,6 +45,8 @@ Contributors/Copyright:
 #ifndef groovyBCPointPatchField_H
 #define groovyBCPointPatchField_H
 
+#include "swak.H"
+
 #ifdef FOAM_DEV
 
 #   include "MixedPointPatchField.H"

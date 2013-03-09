@@ -53,6 +53,8 @@ Contributors/Copyright:
 #include "boolList.H"
 #include "Field.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

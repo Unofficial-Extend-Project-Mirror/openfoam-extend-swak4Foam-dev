@@ -102,7 +102,7 @@ Contributors/Copyright:
 // movePoints now gets a polyMesh
 #define FOAM_MOVEPOINTS_GETS_POLYMESH
 
-#endif
+#endif // version starting with 2.2
 
 #include "swakVersion.H"
 

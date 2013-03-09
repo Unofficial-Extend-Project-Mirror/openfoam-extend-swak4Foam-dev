@@ -39,6 +39,8 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "meshSearch.H"
 
+#include "swak.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

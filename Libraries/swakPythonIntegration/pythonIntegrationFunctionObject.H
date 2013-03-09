@@ -55,6 +55,8 @@ Contributors/Copyright:
 
 #include "pythonInterpreterWrapper.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

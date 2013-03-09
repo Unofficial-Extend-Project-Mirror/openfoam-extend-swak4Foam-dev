@@ -51,6 +51,8 @@ Contributors/Copyright:
 #include "volFields.H"
 #include "surfaceFields.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
