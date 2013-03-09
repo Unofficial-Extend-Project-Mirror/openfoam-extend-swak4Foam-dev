@@ -49,7 +49,7 @@ Contributors/Copyright:
 
 #include "runTimeSelectionTables.H"
 
-#include "basicThermo.H"
+#include "swakThermoTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -69,9 +69,9 @@ class swakThermophysicalPluginFunction
     swakThermophysicalPluginFunction(const swakThermophysicalPluginFunction &);
 
 protected:
-    static const basicThermo &thermoInternal(const fvMesh &reg);
+    static const swakFluidThermoType &thermoInternal(const fvMesh &reg);
 
-    const basicThermo &thermo();
+    const swakFluidThermoType &thermo();
 
 public:
     swakThermophysicalPluginFunction(

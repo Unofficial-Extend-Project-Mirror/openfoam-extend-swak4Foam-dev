@@ -55,6 +55,8 @@ Contributors/Copyright:
 
 #include "pythonInterpreterWrapper.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -130,6 +132,13 @@ public:
     //- Execute in the end
     virtual bool end();
 
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+    virtual void updateMesh(const mapPolyMesh&) {
+    }
+
+    virtual void movePoints(const polyMesh&) {
+    }
+#endif
 };
 
 

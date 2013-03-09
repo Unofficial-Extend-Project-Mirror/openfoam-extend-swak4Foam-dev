@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 07 Mar 2013 23:26:57 +0100
+State: new
+Subject: Crash with "log(k)"
+Message-Id: <f4d8b0aec72ce750-0-artemis@bgs-cool-greybook.local>
+
+funkySetFields -time 0.002 -create -field testK -expression "log(k)" -addDummyPhi
+
+in pulsedPitzDaily leads to a segmentation fault. Check whether this
+has to do with the 2.2port or is a general problem

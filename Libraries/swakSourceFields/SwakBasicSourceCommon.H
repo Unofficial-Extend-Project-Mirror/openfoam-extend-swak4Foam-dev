@@ -39,14 +39,14 @@ SourceFiles
 Contributors/Copyright:
     2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionSource_H
 #define expressionSource_H
 
 #include "FieldValueExpressionDriver.H"
-#include "basicSource.H"
+#include "swakFvOption.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,7 +60,7 @@ namespace Foam
 template<class T>
 class SwakBasicSourceCommon
 :
-    public basicSource
+    public swakFvOptionType
 {
     // Private data
 

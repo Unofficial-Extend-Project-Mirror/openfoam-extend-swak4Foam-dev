@@ -38,8 +38,9 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
 #include "basicKinematicCloud.H"
-#include "basicThermoCloud.H"
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
 
@@ -73,7 +74,7 @@ void lcsVolumeFractionPluginFunction::doEvaluation()
 
     // pick up the first fitting class
     castAndCall(ptheta,volScalarField,basicKinematicCloud,kinematicCloud,theta());
-    castAndCall(ptheta,volScalarField,basicThermoCloud,thermoCloud,theta());
+    castAndCall(ptheta,volScalarField,swakFluidThermoCloudType,thermoCloud,theta());
     castAndCall(ptheta,volScalarField,basicReactingCloud,reactingCloud,theta());
     castAndCall(ptheta,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
 

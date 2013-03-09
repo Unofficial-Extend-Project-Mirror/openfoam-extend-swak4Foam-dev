@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-#+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 1.x
+#+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 2.x
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
@@ -53,7 +53,7 @@
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
 ** Requirements
-   - Version 2.0 or 2.1 of OpenFOAM (a version that works with 1.6,
+   - Version 2.0, 2.1 or 2.2 of OpenFOAM (a version that works with 1.6,
      1.6-ext and 1.7 is available separately)
      - The =finiteArea=-stuff will probably work with version 2.0-ext
        (once that is available)
@@ -1871,6 +1871,19 @@ S_{expl} + S_{impl} T
      A first version of a reference manual is added. Only the first
      part about expressions and parameters is written.
 ** Next release - version number : 0.2.3
+*** Supports OpenFOAM 2.2
+    This is the first version to compile with OpenFOAM 2.2
+
+    Due to changes in OpenFOAM it requires several =#ifdef= (something
+    that is usually avoided in the OpenFOAM-world) and other
+    prepocessor definitions)
+*** Incompatibilities to previous versions
+**** =simpleFunctionObjects= and =simpleLagrangianFunctionObjects= no longer independent from rest
+     Due to incompatibilities between OpenFOAM 2.2 and previous
+     versions there are compatibility headers included from the rest
+     of swak4Foam.
+
+     Theoretically both libraries can be easily made independent again.
 *** Bug fixes
 **** Compiles on =1.6-ext= again
      The last release (0.2.2) did not compile on =1.6-ext=. This is

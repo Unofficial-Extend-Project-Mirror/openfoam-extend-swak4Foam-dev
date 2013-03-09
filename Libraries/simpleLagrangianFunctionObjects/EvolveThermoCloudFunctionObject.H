@@ -40,14 +40,15 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef EvolveThermoCloudFunctionObject_H
 #define EvolveThermoCloudFunctionObject_H
 
 #include "EvolveCloudFunctionObject.H"
-#include "basicThermoCloud.H"
+
+#include "swakCloudTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,7 +61,7 @@ namespace Foam
 
 class EvolveThermoCloudFunctionObject
 :
-    public EvolveCloudFunctionObject<basicThermoCloud>
+    public EvolveCloudFunctionObject<swakFluidThermoCloudType>
 {
     // Private Member Functions
 

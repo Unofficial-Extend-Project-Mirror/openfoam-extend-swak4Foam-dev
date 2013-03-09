@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,7 +31,7 @@ Class
     Foam::swakRegistryProxySet
 
 Description
-    A sampledSet that is only a Proxy for one found in the 
+    A sampledSet that is only a Proxy for one found in the
     Set-registry of swak4Foam
 
 SourceFiles
@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakRegistryProxySet_H
@@ -49,6 +49,8 @@ Contributors/Copyright:
 #include "sampledSet.H"
 
 #include "SetsRepository.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -84,7 +86,11 @@ public:
         (
             const word& name,
             const polyMesh& mesh,
+#ifdef FOAM_MESHSEARCH_CONST_SAMPLEDSET
+            const meshSearch& search,
+#else
             meshSearch& search,
+#endif
             const dictionary& dict
         );
 
