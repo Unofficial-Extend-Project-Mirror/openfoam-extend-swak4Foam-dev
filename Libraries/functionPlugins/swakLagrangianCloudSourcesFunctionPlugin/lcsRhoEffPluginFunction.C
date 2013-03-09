@@ -38,8 +38,9 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
 #include "basicKinematicCloud.H"
-#include "basicThermoCloud.H"
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
 
@@ -73,7 +74,7 @@ void lcsRhoEffPluginFunction::doEvaluation()
 
     // pick up the first fitting class
     castAndCall(prhoEff,volScalarField,basicKinematicCloud,kinematicCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,basicThermoCloud,thermoCloud,rhoEff());
+    castAndCall(prhoEff,volScalarField,swakFluidThermoCloudType,thermoCloud,rhoEff());
     castAndCall(prhoEff,volScalarField,basicReactingCloud,reactingCloud,rhoEff());
     castAndCall(prhoEff,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
 

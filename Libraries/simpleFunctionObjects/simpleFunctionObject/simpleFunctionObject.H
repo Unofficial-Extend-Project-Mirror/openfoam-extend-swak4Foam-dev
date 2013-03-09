@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef simpleFunctionObject_H
@@ -52,6 +52,8 @@ Contributors/Copyright:
 #include "HashPtrTable.H"
 #include "boolList.H"
 #include "Field.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -72,7 +74,7 @@ class simpleFunctionObject
 
     //- Disallow default bitwise copy construct
     simpleFunctionObject(const simpleFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const simpleFunctionObject&);
 
@@ -146,6 +148,18 @@ public:
 
     //- Sample and write
     virtual void write()=0;
+
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+    // make functionObject happy but fail because this is not an implementation
+    virtual void updateMesh(const mapPolyMesh&) {
+        notImplemented("simpleFunctionObject::updateMesh");
+    }
+
+    // make functionObject happy but fail because this is not an implementation
+    virtual void movePoints(const polyMesh&) {
+        notImplemented("simpleFunctionObject::movePoints");
+    }
+#endif
 
     //- Optional stuff to do after write
     virtual void flush();

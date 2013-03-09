@@ -1,7 +1,5 @@
 
-ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV
-endif
+include $(OBJECTS_DIR)/../../../../rules/versionOptions
 
 EXE_INC = \
     $(FOAM_DEV_OPTION) 	\
@@ -20,8 +18,8 @@ LIB_LIBS = \
     -lswak4FoamParsers \
     -lfiniteVolume \
     -lmeshTools \
-    -lbasicThermophysicalModels \
-    -lbasicSolidThermo \
+    $(FLUIDTHERMO_LIB) \
+    $(SOLIDTHERMO_LIB) \
     -lspecie \
     -lreactionThermophysicalModels \
     -lchemistryModel \

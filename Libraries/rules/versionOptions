@@ -1,0 +1,17 @@
+# Set switches for libraries that were renamed between versions
+
+ifdef FOAM_DEV
+FOAM_DEV_OPTION = -DFOAM_DEV
+endif
+
+ifeq "2.2" "$(word 1, $(sort 2.2 $(WM_PROJECT_VERSION)))"
+     FILEFORMATS_LIB=-lfileFormats
+     FILEFORMATS_INC=-I$(LIB_SRC)/fileFormats/lnInclude
+     FLUIDTHERMO_LIB=-lfluidThermophysicalModels
+     SOLIDTHERMO_LIB=-lsolidThermo
+     FVOPTIONS_LIB=-lfvOptions
+     FVOPTIONS_INC=-I$(LIB_SRC)/fvOptions/lnInclude
+else
+     FLUIDTHERMO_LIB=-lbasicThermophysicalModels
+     SOLIDTHERMO_LIB=-lbasicSolidThermo
+endif

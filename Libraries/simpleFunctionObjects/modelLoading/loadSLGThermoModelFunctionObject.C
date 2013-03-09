@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "loadSLGThermoModelFunctionObject.H"
@@ -40,6 +40,8 @@ Contributors/Copyright:
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
+
+#include "swakThermoTypes.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -98,8 +100,8 @@ loadSLGThermoModelFunctionObject::loadSLGThermoModelFunctionObject
             dynamicCast<const fvMesh &>(
                 obr()
             ),
-            const_cast<basicThermo &>(
-                obr().lookupObject<basicThermo>(
+            const_cast<swakFluidThermoType &>(
+                obr().lookupObject<swakFluidThermoType>(
                     dict_.lookup("thermoName")
                 )
             )

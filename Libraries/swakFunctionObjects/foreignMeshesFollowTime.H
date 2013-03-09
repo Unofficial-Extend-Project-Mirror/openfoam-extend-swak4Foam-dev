@@ -41,7 +41,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef foreignMeshesFollowTime_H
@@ -50,12 +50,15 @@ Contributors/Copyright:
 #include "primitiveFieldsFwd.H"
 #include "pointFieldFwd.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes
 class dictionary;
 class objectRegistry;
 class mapPolyMesh;
+class polyMesh;
 
 class foreignMeshesFollowTime
 {
@@ -116,7 +119,11 @@ public:
         {}
 
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 
     //- Clear all data

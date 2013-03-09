@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "EvolveThermoCloudFunctionObject.H"
@@ -64,7 +64,7 @@ EvolveThermoCloudFunctionObject::EvolveThermoCloudFunctionObject
     const dictionary& dict
 )
 :
-    EvolveCloudFunctionObject<basicThermoCloud>(
+    EvolveCloudFunctionObject<swakFluidThermoCloudType>(
         name,
         t,
         dict
@@ -78,7 +78,7 @@ EvolveThermoCloudFunctionObject::EvolveThermoCloudFunctionObject
 bool EvolveThermoCloudFunctionObject::start()
 {
     cloud().set(
-        new basicThermoCloud(
+        new swakFluidThermoCloudType(
             cloudName(),
             getField<volScalarField>("rhoName"),
             getField<volVectorField>("UName"),

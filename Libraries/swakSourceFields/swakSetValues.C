@@ -23,7 +23,6 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeBasicSource.H"
 #include "SwakSetValue.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -31,11 +30,20 @@ License
 namespace Foam
 {
 
-    makeBasicSource(SwakSetValue, scalar);
-    makeBasicSource(SwakSetValue, vector);
-    makeBasicSource(SwakSetValue, sphericalTensor);
-    makeBasicSource(SwakSetValue, symmTensor);
-    makeBasicSource(SwakSetValue, tensor);
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
+
+        makeSwakFvOption(SwakSetValue, scalar);
+        makeSwakFvOption(SwakSetValue, vector);
+        makeSwakFvOption(SwakSetValue, sphericalTensor);
+        makeSwakFvOption(SwakSetValue, symmTensor);
+        makeSwakFvOption(SwakSetValue, tensor);
+
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
+
 }
 
 

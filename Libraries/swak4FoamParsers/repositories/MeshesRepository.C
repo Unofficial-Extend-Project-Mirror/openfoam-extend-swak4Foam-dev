@@ -39,6 +39,8 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "meshSearch.H"
 
+#include "swak.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -288,9 +290,15 @@ scalar MeshesRepository::setTime(
         mesh.readUpdate();
         mesh.readModifiedObjects();
 
-        HashTable<const regIOobject*> content(mesh.lookupClass<regIOobject>());
+#ifdef FOAM_LOOKUPCLASS_NO_CONST
+        typedef HashTable<regIOobject*> regIOTable;
+#else
+        typedef HashTable<const regIOobject*> regIOTable;
+#endif
 
-        forAllIter(HashTable<const regIOobject*>,content,iter) {
+        regIOTable content(mesh.lookupClass<regIOobject>());
+
+        forAllIter(regIOTable,content,iter) {
             word newInstance=theTime.findInstance(
                 (*iter)->local(),
                 iter.key(),

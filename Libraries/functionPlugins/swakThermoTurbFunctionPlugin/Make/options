@@ -1,7 +1,5 @@
 
-ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV
-endif
+include $(OBJECTS_DIR)/../../../../rules/versionOptions
 
 EXE_INC = \
     $(FOAM_DEV_OPTION) 	\
@@ -25,4 +23,4 @@ LIB_LIBS = \
     -lcompressibleTurbulenceModel \
     -lcompressibleLESModels \
     -lcompressibleRASModels \
-    -lbasicThermophysicalModels
+    $(FLUIDTHERMO_LIB)

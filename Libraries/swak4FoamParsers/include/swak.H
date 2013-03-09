@@ -72,6 +72,38 @@ Contributors/Copyright:
 #define FOAM_DELTATCHEM_NOT_DIMENSIONED
 #endif
 
+// this changed starting with 2.2
+#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=2 && FOAM_VERSION4SWAK_MAJOR==2)
+
+// lookupClass returns a non-const list
+#define FOAM_LOOKUPCLASS_NO_CONST
+
+// meshSearch parameter for sampledSet-constructor is now const
+#define FOAM_MESHSEARCH_CONST_SAMPLEDSET
+
+// interpolate-method for meshToMesh needs a reduce-operation
+#define FOAM_MESHTOMESH_INTERPOLATE_REDUCE
+
+// functionObject now needs at least dummy-implementations of updateMesh and movePoints
+#define FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+
+// new revised fluidThermo
+#define FOAM_HAS_FLUIDTHERMO
+
+// RR from the chemistry does no longer return a complete field
+#define FOAM_RR_ONLY_DIMENSIONED_FIELD
+
+// there is no mixed-BC for point patches
+#define FOAM_NO_MIXED_POINT_PATCH
+
+// this version has fvOptions
+#define FOAM_HAS_FVOPTIONS
+
+// movePoints now gets a polyMesh
+#define FOAM_MOVEPOINTS_GETS_POLYMESH
+
+#endif // version starting with 2.2
+
 #include "swakVersion.H"
 
 #endif

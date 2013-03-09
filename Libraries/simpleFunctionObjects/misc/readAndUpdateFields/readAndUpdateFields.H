@@ -31,7 +31,7 @@ Class
     Foam::readAndUpdateFields
 
 Description
-    Reads fields at startup and updates the boundary conditions at every 
+    Reads fields at startup and updates the boundary conditions at every
     timestep. Also makes sure that the fields are automatically written
 
 SourceFiles
@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef readAndUpdateFields_H
@@ -51,6 +51,8 @@ Contributors/Copyright:
 #include "volFields.H"
 #include "surfaceFields.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -60,6 +62,7 @@ namespace Foam
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 /*---------------------------------------------------------------------------*\
                          Class readAndUpdateFields Declaration
@@ -167,7 +170,11 @@ public:
         {}
 
         //- Update for changes of mesh
-        virtual void movePoints(const pointField&)
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
+    virtual void movePoints(const pointField&)
+#endif
         {}
 };
 

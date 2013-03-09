@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SwakBasicSourceCommon.H"
@@ -55,7 +55,7 @@ SwakBasicSourceCommon<T>::SwakBasicSourceCommon
             const fvMesh& mesh
 )
 :
-    basicSource(name, modelType, dict, mesh),
+    swakFvOptionType(name, modelType, dict, mesh),
     driver_(coeffs(),mesh),
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
@@ -97,7 +97,7 @@ void SwakBasicSourceCommon<T>::writeData(Ostream& os) const {
 
 template<class T>
 bool SwakBasicSourceCommon<T>::read(const dictionary& dict) {
-    if (basicSource::read(dict))
+    if (swakFvOptionType::read(dict))
     {
         setFieldData(coeffs_.subDict("expressions"));
         return true;
