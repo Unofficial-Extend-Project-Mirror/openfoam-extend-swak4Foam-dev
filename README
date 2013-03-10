@@ -1896,3 +1896,9 @@ S_{expl} + S_{impl} T
      =writeSetOnConstruction= both are written when they are
      created. A format has to be specified. No values are written.
 *** Enhancements
+**** Parsers now support =eigenValues= and =eigenVectors=
+     These function and some other minor ones (=sph=, =dev2=,
+     =twoSymm=) are now supported by the parsers
+**** Extract rows from tensors with component operator
+     The component operators =.x=, =.y= and =.z= now extract the rows
+     from a tensor
