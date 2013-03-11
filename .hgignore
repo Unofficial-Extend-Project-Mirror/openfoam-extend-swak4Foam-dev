@@ -24,7 +24,7 @@ GRTAGS
 auto
 doc
 \#*\#
-*.orig
+# *.orig
 
 debian/rules
 debian/control
