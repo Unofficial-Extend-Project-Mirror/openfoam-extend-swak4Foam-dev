@@ -1888,6 +1888,9 @@ S_{expl} + S_{impl} T
 **** Compiles on =1.6-ext= again
      The last release (0.2.2) did not compile on =1.6-ext=. This is
      fixed
+**** Missing field files for the OSCFD2012-cases
+     Due to a stupid =.hgignore= the =0.orig=-directories were
+     missing. Nobody complained though
 *** New features
 **** Writing of sampled surfaces and sampled sets
      With the options =autoWriteSurface= and =autoWriteSets= sampled

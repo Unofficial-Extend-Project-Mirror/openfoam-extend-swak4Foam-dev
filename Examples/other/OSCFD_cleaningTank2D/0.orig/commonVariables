@@ -1,0 +1,27 @@
+// -*- C++ -*-
+
+variables (
+    "outflow{outlet}=sum(normal()&U*alpha1*area());"
+    "targetVelIn=0.2;"
+    "minFrac=outflow>1e-15 ? 0.25 : 0;"
+    "minHeight=min(pts().y);"
+    "maxHeight=max(pts().y);"
+    "volFlow=sum(targetVelIn*area());"
+    "volFlow=mag(volFlow)<1e-15 ? 1e-15 : volFlow;"
+    "flowFraction=outflow>1e-15 ? outflow/volFlow : 0;"
+    "fraction=max(minFrac,flowFraction);"
+    "fillHeight=minHeight+fraction*(maxHeight-minHeight);"
+    "filled=pos().y<=fillHeight ? 1 : 0;"
+    "filledArea=sum(filled*area());"
+    "velIn=filled>0.5 ? outflow/max(filledArea,1e-15) : 0;"
+);
+
+delayedVariables (
+    {
+        name outflow;
+        delay 15;
+        //        delay 1;
+        storeInterval 0.1;
+        startupValue "0";
+    }
+);
