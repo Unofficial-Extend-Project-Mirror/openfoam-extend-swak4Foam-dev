@@ -20,21 +20,24 @@ internalField   uniform 0;
 
 boundaryField
 {
-    movingWall      
+    movingWall
     {
         type            groovyBC;
         value           uniform 0;
-        valueExpression "rand()*10-5";
+        valueExpression "rand()*bcRange-bcMin";
+        globalScopes (
+            randomVariables
+        );
     }
 
-    fixedWalls      
+    fixedWalls
     {
         type            groovyBC;
         value           uniform 0;
         valueExpression "rand(42)*10-5";
     }
 
-    frontAndBack    
+    frontAndBack
     {
         type            empty;
     }

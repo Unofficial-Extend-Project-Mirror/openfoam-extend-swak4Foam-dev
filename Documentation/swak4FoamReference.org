@@ -473,7 +473,7 @@ hide circle
      secondary structure of a parser
      - interpolate(cellExpr) :: Interpolates to the faces (F, FF)
      - interpolateToPoint(cellExpr) :: Interpolates to points (F)
-     - interpolateToCell(faceExpr) :: Interpolates to the cells (F)
+     - interpolateToCell(pointExpr) :: Interpolates to the cells (F)
      - toPoint(faceExpr) :: To the point values (P, S, FP)
      - toFace(pointExpr) :: To the cell values (P, S, FP)
      These functions are not strictly interpolations, but are used to
