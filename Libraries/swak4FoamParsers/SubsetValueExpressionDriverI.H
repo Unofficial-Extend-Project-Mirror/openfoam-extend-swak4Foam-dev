@@ -58,7 +58,11 @@ namespace Foam {
                 << endl;
         }
 
-        if(this->hasVariable(name)) {
+        if(
+            this->hasVariable(name)
+            &&
+            this->variable(name).valueType()==pTraits<T>::typeName
+        ) {
             if(debug) {
                 Pout << name << " is a variable" << endl;
             }
@@ -131,7 +135,11 @@ namespace Foam {
     {
         // Yeah. I know. Code duplication without end
 
-        if(this->hasVariable(name)) {
+        if(
+            this->hasVariable(name)
+            &&
+            this->variable(name).valueType()==pTraits<T>::typeName
+        ) {
             return this->variable(name).getResult<T>(true);
         }
 

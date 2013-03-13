@@ -71,12 +71,16 @@ namespace Foam {
             autoPtr<Field<Type> >vals;
             bool isPoint=false;
 
-            if(hasVariable(name)) {
+            if(
+                hasVariable(name)
+                &&
+                variable(name).valueType()==pTraits<Type>::typeName
+            ) {
                 isPoint=variable(name).isPoint();
                 vals.set(
                     variable(name).getResult<Type>(true).ptr()
                 );
-            } else if(isGlobal<Type>(name,false)) {
+            } if(isGlobal<Type>(name,false)) {
                 vals.set(
                     const_cast<ExpressionResult &>(
                         lookupGlobal(name)
@@ -291,7 +295,11 @@ namespace Foam {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
         typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
 
-        if(hasVariable(name)) {
+        if(
+            hasVariable(name)
+            &&
+            variable(name).valueType()==pTraits<Type>::typeName
+        ) {
             return variable(name).getResult<Type>(true);
         }
 
@@ -339,7 +347,11 @@ namespace Foam {
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
 
-        if(hasVariable(name)) {
+        if(
+            hasVariable(name)
+            &&
+            variable(name).valueType()==pTraits<Type>::typeName
+        ) {
             return variable(name).getResult<Type>(true);
         }
 

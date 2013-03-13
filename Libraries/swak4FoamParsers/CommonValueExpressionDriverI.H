@@ -543,7 +543,11 @@ namespace Foam {
         typedef typename T::value_type Type;
 
         if(
-            hasVariable(name)
+            (
+                hasVariable(name)
+                &&
+                variable(name).valueType()==pTraits<Type>::typeName
+            )
             ||
             isGlobal<Type>(name,false)
         ) {
@@ -577,7 +581,11 @@ namespace Foam {
             );
 
             Field<Type> vals;
-            if(hasVariable(name)) {
+            if(
+                hasVariable(name)
+                &&
+                variable(name).valueType()==pTraits<Type>::typeName
+            ) {
                 vals=variable(name).getResult<Type>(true);
             } else {
                 vals=const_cast<ExpressionResult &>(
