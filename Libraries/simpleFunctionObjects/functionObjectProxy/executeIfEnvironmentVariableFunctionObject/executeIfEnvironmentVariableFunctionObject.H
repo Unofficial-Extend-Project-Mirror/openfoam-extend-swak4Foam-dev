@@ -32,7 +32,7 @@ Class
     executeIfEnvironmentVariableFunctionObject
 
 Description
-    This proxy-functionObject only executs its childrens if an environment 
+    This proxy-functionObject only executs its childrens if an environment
     variable fits a certain condition:
     - exists
     - does not exist
@@ -44,7 +44,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef executeIfEnvironmentVariableFunctionObject_H
@@ -71,7 +71,7 @@ class executeIfEnvironmentVariableFunctionObject
 
     //- Disallow default bitwise copy construct
     executeIfEnvironmentVariableFunctionObject(const executeIfEnvironmentVariableFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const executeIfEnvironmentVariableFunctionObject&);
 
@@ -84,18 +84,22 @@ class executeIfEnvironmentVariableFunctionObject
     //- reread the data
     void readData(const dictionary& dict);
 
+public:
+    // some compilers need that
     enum fitVariableMode {
         fvmExists,
         fvmDoesNotExist,
         fvmFitsRegexp
     };
-    
+
+private:
+
     static const NamedEnum<fitVariableMode,3> fitVariableModeNames_;
 
     //- the mode with which the variable should be fitted
-    fitVariableMode fitVariableMode_; 
+    fitVariableMode fitVariableMode_;
 protected:
-    
+
     //- the actual conition that determines whether the FO should be executed
     virtual bool condition();
 

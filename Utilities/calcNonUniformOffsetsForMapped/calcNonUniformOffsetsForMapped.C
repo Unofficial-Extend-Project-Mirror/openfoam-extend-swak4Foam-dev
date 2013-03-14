@@ -53,7 +53,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "directMappedPatchBase.H"
 
 namespace Foam {
@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
         autoPtr<pointField> allOtherPoints;
         if(
             mb.mode()==mappedPatchBase::NEARESTPATCHFACE
-#if FOAM_VERSION4SWAK_MAJOR>=2 && FOAM_VERSION4SWAK_MINOR>=1
+#ifdef FOAM_HAS_ABI_PATCHES
             ||
             mb.mode()==mappedPatchBase::NEARESTPATCHFACEAMI
 #endif

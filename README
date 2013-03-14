@@ -1891,6 +1891,8 @@ S_{expl} + S_{impl} T
 **** Missing field files for the OSCFD2012-cases
      Due to a stupid =.hgignore= the =0.orig=-directories were
      missing. Nobody complained though
+**** Did not compile on =2.0.x=
+     This has been fixed
 *** New features
 **** Writing of sampled surfaces and sampled sets
      With the options =autoWriteSurface= and =autoWriteSets= sampled

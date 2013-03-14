@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "solveTransportPDE.H"
@@ -98,7 +98,7 @@ void Foam::solveTransportPDE::read(const dictionary& dict)
         dict.lookup("diffusion") >> diffusionExpression_ >> diffusionDimension_;
         dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit") 
+            dict.lookup("sourceImplicit")
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
         }
         dict.lookup("phi") >> phiExpression_ >> phiDimension_;
@@ -110,7 +110,7 @@ void Foam::solveTransportPDE::solve()
     if(active_) {
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
         dictionary sol=mesh.solutionDict().subDict(fieldName_+"TransportPDE");
-        
+
         FieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
@@ -167,8 +167,8 @@ void Foam::solveTransportPDE::solve()
                 }
                 volScalarField rhoField(driver.getResult<volScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
-            
-                fvMatrix<scalar> ddtMatrix=fvm::ddt(f);
+
+                fvMatrix<scalar> ddtMatrix(fvm::ddt(f));
                 if(
                     !ddtMatrix.diagonal()
                     &&
@@ -192,7 +192,7 @@ void Foam::solveTransportPDE::solve()
                 }
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
-            
+
                 eq-=fvm::SuSp(sourceImplicitField,f);
             }
 

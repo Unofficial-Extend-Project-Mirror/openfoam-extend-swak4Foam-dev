@@ -43,7 +43,7 @@ Contributors/Copyright:
 #include "calculatedFvsPatchFields.H"
 
 #include "foamVersion4swak.H"
-#if (FOAM_VERSION4SWAK_MAJOR>=2) && (FOAM_VERSION4SWAK_MINOR>0)
+#ifndef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "mappedFvPatch.H"
 #include "mappedWallFvPatch.H"
 #else
@@ -56,7 +56,7 @@ Contributors/Copyright:
 #include "volPointInterpolation.H"
 #include "interpolatePointToCell.H"
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "directMappedFvPatch.H"
 #include "directMappedPointPatch.H"
 #else
@@ -125,7 +125,7 @@ inline bool FieldValueExpressionDriver::canBeValuePatch(const fvPatch &patch)
         ||
         isType<fvPatch>(patch)
         ||
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
         isA<directMappedFvPatch>(patch);
 #else
         isA<mappedWallFvPatch>(patch)
@@ -141,7 +141,7 @@ inline bool FieldValueExpressionDriver::canBeValuePatch(const pointPatch &patch)
         ||
         isType<facePointPatch>(patch)
         ||
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
         isA<directMappedPointPatch>(patch);
 #else
         isA<mappedPointPatch>(patch);

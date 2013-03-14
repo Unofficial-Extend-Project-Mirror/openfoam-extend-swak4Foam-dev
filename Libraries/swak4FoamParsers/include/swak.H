@@ -72,6 +72,27 @@ Contributors/Copyright:
 #define FOAM_DELTATCHEM_NOT_DIMENSIONED
 #endif
 
+// Versions before 2.1
+#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MINOR<1 && FOAM_VERSION4SWAK_MAJOR==2)
+
+// what is later called mappedPatch is called directMappedPatch
+#define FOAM_MAPPED_IS_DIRECTMAPPED
+
+#else
+
+// has basicSources
+#define FOAM_HAS_BASICSOURCES
+
+#endif
+
+// this changed starting with 2.1
+#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR==2)
+
+// this Foam-Version now has ABI-patches
+#define FOAM_HAS_ABI_PATCHES
+
+#endif
+
 // this changed starting with 2.2
 #if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=2 && FOAM_VERSION4SWAK_MAJOR==2)
 

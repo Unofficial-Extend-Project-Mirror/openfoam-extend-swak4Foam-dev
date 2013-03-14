@@ -48,7 +48,7 @@ Contributors/Copyright:
 
 #include <nearWallDist.H>
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "directMappedFvPatch.H"
 
 #include "mapDistribute.H"

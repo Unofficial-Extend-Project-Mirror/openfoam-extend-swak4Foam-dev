@@ -197,8 +197,10 @@ public:
     ) {}
 
     void doEvaluation() {
-        const volScalarField T4 = pow4(
-            mesh().lookupObject<volScalarField>("T")
+        const volScalarField T4(
+            pow4(
+                mesh().lookupObject<volScalarField>("T")
+            )
         );
 
         autoPtr<volScalarField> val(

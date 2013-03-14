@@ -155,7 +155,7 @@ void Foam::solveLaplacianPDE::solve()
                 volScalarField rhoField(driver.getResult<volScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
 
-                fvMatrix<scalar> ddtMatrix=fvm::ddt(f);
+                fvMatrix<scalar> ddtMatrix(fvm::ddt(f));
                 if(
                     !ddtMatrix.diagonal()
                     &&

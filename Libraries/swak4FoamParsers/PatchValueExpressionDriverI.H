@@ -41,7 +41,7 @@ Contributors/Copyright:
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "directMappedPatchBase.H"
 #include "interpolationCell.H"
 
@@ -572,7 +572,7 @@ namespace Foam {
 
                 if (interpolationScheme != interpolationCell<T>::typeName)
                 {
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                     notImplemented(
                         "Interpolation scheme "+interpolationScheme
                         +" in version 1.x of OpenFOAM"
@@ -615,7 +615,7 @@ namespace Foam {
                     newValues = lookupMesh.lookupObject<localVolField>(name);
                 }
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 mapDistribute::distribute
                             (
                                 Pstream::defaultCommsType,
@@ -633,7 +633,7 @@ namespace Foam {
             }
 
             case mappedPatchBase::NEARESTPATCHFACE:
-#if FOAM_VERSION4SWAK_MAJOR>=2 && FOAM_VERSION4SWAK_MINOR>=1
+#ifdef FOAM_HAS_ABI_PATCHES
             case mappedPatchBase::NEARESTPATCHFACEAMI:
 #endif
             {
@@ -669,7 +669,7 @@ namespace Foam {
                     }
                 }
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 const mapDistribute& distMap = mpp.map();
                 mapDistribute::distribute
                             (
@@ -730,7 +730,7 @@ namespace Foam {
                     }
                 }
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 mapDistribute::distribute
                             (
                                 Pstream::defaultCommsType,
@@ -785,7 +785,7 @@ namespace Foam {
 
         if(
             mpp.mode()!=mappedPatchBase::NEARESTPATCHFACE
-#if FOAM_VERSION4SWAK_MAJOR>=2 && FOAM_VERSION4SWAK_MINOR>=1
+#ifdef FOAM_HAS_ABI_PATCHES
             &&
             mpp.mode()!=mappedPatchBase::NEARESTPATCHFACEAMI
 #endif
@@ -819,7 +819,7 @@ namespace Foam {
                     << abort(FatalError);
         }
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
         const mapDistribute& distMap = mpp.map();
         mapDistribute::distribute
         (
