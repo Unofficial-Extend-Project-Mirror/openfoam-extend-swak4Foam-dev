@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "solveLaplacianPDE.H"
@@ -97,7 +97,7 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
         dict.lookup("lambda") >> lambdaExpression_ >> lambdaDimension_;
         dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit") 
+            dict.lookup("sourceImplicit")
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
         }
     }
@@ -108,7 +108,7 @@ void Foam::solveLaplacianPDE::solve()
     if(active_) {
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
         dictionary sol=mesh.solutionDict().subDict(fieldName_+"LaplacianPDE");
-        
+
         FieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
@@ -154,7 +154,7 @@ void Foam::solveLaplacianPDE::solve()
                 }
                 volScalarField rhoField(driver.getResult<volScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
-            
+
                 fvMatrix<scalar> ddtMatrix=fvm::ddt(f);
                 if(
                     !ddtMatrix.diagonal()
@@ -179,7 +179,7 @@ void Foam::solveLaplacianPDE::solve()
                 }
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
-            
+
                 eq-=fvm::SuSp(sourceImplicitField,f);
             }
 

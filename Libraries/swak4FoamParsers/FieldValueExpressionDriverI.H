@@ -56,7 +56,7 @@ Contributors/Copyright:
 #include "volPointInterpolation.H"
 #include "interpolatePointToCell.H"
 
-#if FOAM_VERSION4SWAK_MAJOR<2
+#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
 #include "directMappedFvPatch.H"
 #include "directMappedPointPatch.H"
 #else
@@ -125,7 +125,7 @@ inline bool FieldValueExpressionDriver::canBeValuePatch(const fvPatch &patch)
         ||
         isType<fvPatch>(patch)
         ||
-#if FOAM_VERSION4SWAK_MAJOR<2
+#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
         isA<directMappedFvPatch>(patch);
 #else
         isA<mappedWallFvPatch>(patch)
@@ -141,7 +141,7 @@ inline bool FieldValueExpressionDriver::canBeValuePatch(const pointPatch &patch)
         ||
         isType<facePointPatch>(patch)
         ||
-#if FOAM_VERSION4SWAK_MAJOR<2
+#if FOAM_VERSION4SWAK_MAJOR<2 || FOAM_VERSION4SWAK_MINOR<1
         isA<directMappedPointPatch>(patch);
 #else
         isA<mappedPointPatch>(patch);
