@@ -113,6 +113,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_),
+    variableNameIdenticalToField_(orig.variableNameIdenticalToField_),
     scanner_(NULL),
     prevIterIsOldTime_(orig.prevIterIsOldTime_)
 {
@@ -137,6 +138,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     content_(""),
     trace_scanning_ (dict.lookupOrDefault("traceScanning",false)),
     trace_parsing_ (dict.lookupOrDefault("traceParsing",false)),
+    variableNameIdenticalToField_(
+        dict.lookupOrDefault("variableNameIdenticalToField",false)
+    ),
     scanner_(NULL),
     prevIterIsOldTime_(dict.lookupOrDefault("prevIterIsOldTime",false))
 {
@@ -184,6 +188,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     content_(""),
     trace_scanning_ (false),
     trace_parsing_ (false),
+    variableNameIdenticalToField_(false),
     scanner_(NULL),
     prevIterIsOldTime_(false)
 {
@@ -909,6 +914,24 @@ void CommonValueExpressionDriver::evaluateVariable(
     const string &expr
 )
 {
+    if(
+        mesh().foundObject<regIOobject>(name)
+        &&
+        !variableNameIdenticalToField_
+    ) {
+        const regIOobject &ob=mesh().lookupObject<regIOobject>(name);
+
+        WarningIn("CommonValueExpressionDriver::evaluateVariable")
+            << "There is a field named " << name << " of type "
+                << ob.headerClassName() << " found which may be shadowed "
+                << "by the variable of the same name." << nl
+                << "This may lead to trouble" << nl
+                << "If this is OK set 'variableNameIdenticalToField'"
+                << " in the relevant parser" << nl
+                << endl;
+
+    }
+
     parse(expr);
 
     if(debug) {

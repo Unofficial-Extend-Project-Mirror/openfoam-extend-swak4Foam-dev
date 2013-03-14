@@ -473,7 +473,7 @@ hide circle
      secondary structure of a parser
      - interpolate(cellExpr) :: Interpolates to the faces (F, FF)
      - interpolateToPoint(cellExpr) :: Interpolates to points (F)
-     - interpolateToCell(faceExpr) :: Interpolates to the cells (F)
+     - interpolateToCell(pointExpr) :: Interpolates to the cells (F)
      - toPoint(faceExpr) :: To the point values (P, S, FP)
      - toFace(pointExpr) :: To the cell values (P, S, FP)
      These functions are not strictly interpolations, but are used to
@@ -675,6 +675,13 @@ hide circle
     - traceParsing :: Makes the machine-generated (by =bison=)
                       parser-code output debugging information. Type:
                       Boolean. Default: =false=
+    This option allows switching of warnings that point to a probable
+    problem:
+    - variableNameIdenticalToField :: if a variable is set to a name
+         that is identical to the name of a that is already present in
+         the current mesh then a warning is issued because this
+         usually indicates a mix-up. If this option is set to =true=
+         then no warning is given. Default: =false=
     These settings change the behavior of where fields are looked for
     by the parser. They may be overridden by the using application
     (for instance for =groovyBC= searching files on disk is

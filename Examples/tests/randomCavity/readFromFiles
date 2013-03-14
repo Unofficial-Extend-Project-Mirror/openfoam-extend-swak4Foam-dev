@@ -2,11 +2,14 @@
 functions {
     setInternal {
         type manipulateField;
-        expression "randNormal()";
+        expression "randNormal()*internalRange";
         mask "true";
         outputControl timeStep;
         outputInterval 1;
         fieldName randField;
+        globalScopes (
+            randomVariables
+        );
     }
     randStatistics {
         type swakExpression;

@@ -1907,3 +1907,8 @@ S_{expl} + S_{impl} T
 **** Extract rows from tensors with component operator
      The component operators =.x=, =.y= and =.z= now extract the rows
      from a tensor
+**** Variable names that are identical to fields trigger a Warning
+     As this situation (like a variable named =p= for the position
+     that shadows the pressure field =p=) leads to weird errors a
+     warning is given. The warning can be switched of with the option
+     =variableNameIdenticalToField=.

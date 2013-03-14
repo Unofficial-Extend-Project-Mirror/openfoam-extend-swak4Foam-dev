@@ -9,38 +9,21 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      rand;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
-{
-    movingWall
-    {
-        type            groovyBC;
-        value           uniform 0;
-        valueExpression "rand()*bcRange-bcMin";
-        globalScopes (
-            randomVariables
-        );
-    }
-
-    fixedWalls
-    {
-        type            groovyBC;
-        value           uniform 0;
-        valueExpression "rand(42)*10-5";
-    }
-
-    frontAndBack
-    {
-        type            empty;
-    }
+setRand {
+    field randField;
+    expressions
+    (
+        {
+            target testValue;
+            patchName movingWall;
+            expression "time()";
+        }
+    );
 }
-
 // ************************************************************************* //

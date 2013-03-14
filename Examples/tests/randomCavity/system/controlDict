@@ -56,6 +56,27 @@ libs (
 );
 
 functions {
+    addSize {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName randomScale;
+        globalScope randomVariables;
+        globalVariables {
+            bcRange {
+                valueType scalar;
+                value 10;
+            }
+            bcMin {
+                valueType scalar;
+                value 10;
+            }
+            internalRange {
+                valueType scalar;
+                value 0.01;
+            }
+        }
+    }
     changeDeltaT {
         type setDeltaTByTimeline;
         deltaTTable {

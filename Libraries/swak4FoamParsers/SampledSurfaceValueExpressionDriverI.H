@@ -67,7 +67,11 @@ namespace Foam {
         bool oldTime
     )
     {
-        if(this->hasVariable(name)) {
+        if(
+            this->hasVariable(name)
+            &&
+            this->variable(name).valueType()==pTraits<Type>::typeName
+        ) {
             return this->variable(name).getResult<Type>(true);
         }
         autoPtr<Field<Type> > result;

@@ -20,7 +20,7 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
-    inlet           
+    inlet
     {
 //         type            turbulentInlet;
 //         referenceField  uniform (10 0 0);
@@ -30,6 +30,8 @@ boundaryField
         type            groovyBCFixedValue;
 
         //        debugCommonDriver 0;
+
+        //        variableNameIdenticalToField true;
 
       variables (
           "yp=pts().y;"
@@ -50,7 +52,7 @@ boundaryField
         value           uniform (10 0 0);
     }
 
-    outlet          
+    outlet
     {
       type            groovyBC;
       valueExpression "vector(0,0,0)";
@@ -62,19 +64,19 @@ boundaryField
       value           uniform (0 0 0);
     }
 
-    upperWall       
+    upperWall
     {
         type            fixedValue;
         value           uniform (0 0 0);
     }
 
-    lowerWall       
+    lowerWall
     {
         type            fixedValue;
         value           uniform (0 0 0);
     }
 
-    frontAndBack    
+    frontAndBack
     {
         type            empty;
     }

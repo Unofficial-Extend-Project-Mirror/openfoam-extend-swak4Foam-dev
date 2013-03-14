@@ -148,6 +148,8 @@ private:
 
     bool trace_parsing_;
 
+    bool variableNameIdenticalToField_;
+
 protected:
     const ExpressionResult &lookupGlobal(const word &name) const;
 
