@@ -1756,7 +1756,7 @@ S_{expl} + S_{impl} T
 **** Start of the reference-manual
      A first version of a reference manual is added. Only the first
      part about expressions and parameters is written.
-** Next release - version number : 0.2.3
+** 2013-03-18 - version number : 0.2.3
 *** Bug fixes
 **** Compiles on =1.6-ext= again
      The last release (0.2.2) did not compile on =1.6-ext=. This is
