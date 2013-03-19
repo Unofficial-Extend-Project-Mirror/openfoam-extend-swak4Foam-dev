@@ -54,21 +54,24 @@ Foam::mergeRegionsSearchableSurface::mergeRegionsSearchableSurface
     word name(dict.lookup("newName"));
     wordList children(dict.lookup("regions"));
     const wordList &oldNames=delegate().regions();
+    const pointField oldCoords(delegate().coordinates());
 
     label size=oldNames.size()-children.size()+1;
 
     if(size<1) {
         FatalErrorIn("Foam::mergeRegionsSearchableSurface::mergeRegionsSearchableSurface")
-            << "To few regions " << oldNames << " to merge to " 
+            << "To few regions " << oldNames << " to merge to "
                 << children << endl
                 << abort(FatalError);
     }
 
     regions_.setSize(size);
+    coordinates_.setSize(size);
     toRegion_.setSize(oldNames.size());
 
     regions_[0]=name;
     label cnt=1;
+    bool hasZeroCoord=false;
 
     forAll(oldNames,i) {
         const word &n=oldNames[i];
@@ -81,14 +84,19 @@ Foam::mergeRegionsSearchableSurface::mergeRegionsSearchableSurface
         }
         if(found) {
             toRegion_[i]=0;
+            if(!hasZeroCoord) {
+                coordinates_[0]=oldCoords[i];
+                hasZeroCoord=true;
+            }
         } else {
             if(cnt>=size) {
                 FatalErrorIn("Foam::mergeRegionsSearchableSurface::mergeRegionsSearchableSurface")
-                    << "Too few matched regions in " << children 
+                    << "Too few matched regions in " << children
                         << " (old: " << oldNames << ")\n" << endl
                         << abort(FatalError);
             }
             regions_[cnt]=n;
+            coordinates_[cnt]=oldCoords[i];
             toRegion_[i]=cnt;
             cnt++;
         }
@@ -96,7 +104,7 @@ Foam::mergeRegionsSearchableSurface::mergeRegionsSearchableSurface
 
     if(cnt!=size) {
         FatalErrorIn("Foam::mergeRegionsSearchableSurface::mergeRegionsSearchableSurface")
-            << "Mismatch with " << children 
+            << "Mismatch with " << children
                 << " (old: " << oldNames << ")\n" << endl
                 << abort(FatalError);
     }

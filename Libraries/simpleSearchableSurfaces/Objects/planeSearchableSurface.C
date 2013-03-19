@@ -226,5 +226,9 @@ void Foam::planeSearchableSurface::getVolumeType
     }
 }
 
+Foam::pointField Foam::planeSearchableSurface::coordinates() const
+{
+    return pointField(1,plane_.refPoint());
+}
 
 // ************************************************************************* //

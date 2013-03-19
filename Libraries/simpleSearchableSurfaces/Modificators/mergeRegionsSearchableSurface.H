@@ -54,8 +54,11 @@ class mergeRegionsSearchableSurface
     public wrapperSearchableSurface
 {
 private:
-    
+
     wordList regions_;
+
+    pointField coordinates_;
+
     labelList toRegion_;
 
         //- Disallow default bitwise copy construct
@@ -89,6 +92,8 @@ public:
         virtual const wordList& regions() const;
 
         virtual label size() const { return regions().size(); }
+
+        virtual pointField coordinates() const;
 
             //- From a set of points and indices get the region
             virtual void getRegion

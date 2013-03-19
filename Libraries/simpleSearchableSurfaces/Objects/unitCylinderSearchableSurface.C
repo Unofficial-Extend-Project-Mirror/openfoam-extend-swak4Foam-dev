@@ -171,7 +171,7 @@ void Foam::unitCylinderSearchableSurface::findLineAll
 
     if(cnt!=nr) {
         FatalErrorIn("Foam::unitCylinderSearchableSurface::findLineAll")
-            << "Expected number of hits " << nr << " does not match the actual " 
+            << "Expected number of hits " << nr << " does not match the actual "
                 << cnt << endl
                 << abort(FatalError);
     }
@@ -223,7 +223,16 @@ const Foam::wordList& Foam::unitCylinderSearchableSurface::regions() const
     return regions_;
 }
 
+Foam::pointField Foam::unitCylinderSearchableSurface::coordinates() const
+{
+    pointField result(3);
 
+    result[0]=top_.refPoint();
+    result[1]=bottom_.refPoint();
+    result[2]=0.5*(top_.refPoint()+bottom_.refPoint());
+
+    return result;
+}
 
 void Foam::unitCylinderSearchableSurface::findNearest
 (
@@ -351,7 +360,7 @@ void Foam::unitCylinderSearchableSurface::getVolumeType
     {
         const point& pt = points[pointI];
 
-        if(  
+        if(
             pt.z()>1
             ||
             pt.z()<-1

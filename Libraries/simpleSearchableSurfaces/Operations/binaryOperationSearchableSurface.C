@@ -96,6 +96,22 @@ const Foam::wordList& Foam::binaryOperationSearchableSurface::regions() const
     return regions_;
 }
 
+Foam::pointField Foam::binaryOperationSearchableSurface::coordinates() const
+{
+    pointField aCoords(a().coordinates());
+    pointField bCoords(b().coordinates());
+
+    pointField result(aCoords.size()+bCoords.size());
+
+    forAll(aCoords,i) {
+        result[i]=aCoords[i];
+    }
+    forAll(bCoords,i) {
+        result[i+aCoords.size()]=bCoords[i];
+    }
+
+    return result;
+}
 
 // void Foam::binaryOperationSearchableSurface::findNearest
 // (
@@ -151,7 +167,7 @@ void Foam::binaryOperationSearchableSurface::findLineAll
     b().findLineAll(start,end,infoB);
 
     info.setSize(start.size());
-    
+
     forAll(info,i) {
         this->filter(infoA[i],infoB[i],info[i]);
 
@@ -159,9 +175,9 @@ void Foam::binaryOperationSearchableSurface::findLineAll
         for(label j=0;j<(info[i].size()-1);j++) {
             for(label k=j+1;k<info[i].size();k++) {
                 if
-                    ( 
-                        mag(start[i]-info[i][k].rawPoint()) 
-                        < 
+                    (
+                        mag(start[i]-info[i][k].rawPoint())
+                        <
                         mag(start[i]-info[i][j].rawPoint())
                     ) {
                     pointIndexHit tmp=info[i][j];
@@ -196,7 +212,7 @@ void Foam::binaryOperationSearchableSurface::getRegion
     labelList regionB;
     a().getRegion(infoA,regionA);
     b().getRegion(infoB,regionB);
-    
+
     region.setSize(who.size());
 
     label cntA=0,cntB=0;
@@ -243,7 +259,7 @@ void Foam::binaryOperationSearchableSurface::getNormal
     vectorField normalB;
     a().getNormal(infoA,normalA);
     b().getNormal(infoB,normalB);
-    
+
     normal.setSize(who.size());
 
     label cntA=0,cntB=0;
@@ -285,7 +301,7 @@ void  Foam::binaryOperationSearchableSurface::whose
     forAll(hits,i) {
         samples[i]=hits[i].rawPoint();
     }
-    
+
     List<pointIndexHit> nearestA;
     List<pointIndexHit> nearestB;
 
@@ -312,7 +328,7 @@ void  Foam::binaryOperationSearchableSurface::splitHits
 (
     const List<pointIndexHit>& hits,
     const List<bool> &isA,
-    List<pointIndexHit>& hitsA, 
+    List<pointIndexHit>& hitsA,
     List<pointIndexHit>& hitsB
 ) const
 {
@@ -327,10 +343,10 @@ void  Foam::binaryOperationSearchableSurface::splitHits
     }
     hitsA.setSize(nrA);
     hitsB.setSize(nrB);
-    
+
     label cntA=0;
     label cntB=0;
-    
+
     forAll(hits,i) {
         if(isA[i]) {
             hitsA[cntA]=hits[i];
@@ -360,9 +376,9 @@ void  Foam::binaryOperationSearchableSurface::inside
     forAll(hits,i) {
         samples[i]=hits[i].rawPoint();
     }
-    
+
     List<volumeType> vol;
-    
+
     s.getVolumeType(samples,vol);
 
     in.setSize(vol.size());

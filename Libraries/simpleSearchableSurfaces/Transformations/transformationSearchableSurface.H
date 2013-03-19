@@ -106,7 +106,13 @@ public:
     // Member Functions
 
     virtual label size() const { return delegate().size(); }
-    
+
+    virtual pointField coordinates() const
+        {
+            return delegate().coordinates();
+        }
+
+
         virtual const wordList& regions() const;
 
         //- Whether supports volume type below

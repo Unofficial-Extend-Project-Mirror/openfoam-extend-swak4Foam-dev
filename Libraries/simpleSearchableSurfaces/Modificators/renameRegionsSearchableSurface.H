@@ -54,7 +54,7 @@ class renameRegionsSearchableSurface
     public wrapperSearchableSurface
 {
 private:
-    
+
     wordList regions_;
 
         //- Disallow default bitwise copy construct
@@ -86,7 +86,12 @@ public:
     // Member Functions
 
         virtual label size() const { return delegate().size(); }
-    
+
+        virtual pointField coordinates() const
+        {
+            return delegate().coordinates();
+        }
+
         virtual const wordList& regions() const;
 
 };

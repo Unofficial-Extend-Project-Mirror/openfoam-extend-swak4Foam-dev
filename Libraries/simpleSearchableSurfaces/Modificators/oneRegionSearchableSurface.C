@@ -69,6 +69,10 @@ const Foam::wordList& Foam::oneRegionSearchableSurface::regions() const
     return name_;
 }
 
+Foam::pointField Foam::oneRegionSearchableSurface::coordinates() const
+{
+    return pointField(1,delegate().coordinates()[0]);
+}
 
 void Foam::oneRegionSearchableSurface::getRegion
 (

@@ -117,7 +117,9 @@ public:
     // Member Functions
 
         virtual label size() const { return 1; }
-    
+
+        virtual pointField coordinates() const;
+
         virtual const wordList& regions() const;
 
         //- Whether supports volume type below

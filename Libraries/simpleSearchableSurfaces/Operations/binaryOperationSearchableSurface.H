@@ -58,18 +58,18 @@ private:
     // Private Member Data
 
     autoPtr<searchableSurface> a_;
-    
+
     autoPtr<searchableSurface> b_;
-    
+
     label nrARegions_;
- 
+
     label nrBRegions_;
- 
+
     mutable wordList regions_;
 
     //- Disallow default bitwise copy construct
     binaryOperationSearchableSurface(const binaryOperationSearchableSurface&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const binaryOperationSearchableSurface&);
 
@@ -103,7 +103,7 @@ protected:
     (
         const List<pointIndexHit>& hits,
         const List<bool> &isA,
-        List<pointIndexHit>& hitsA, 
+        List<pointIndexHit>& hitsA,
         List<pointIndexHit>& hitsB
     ) const;
 
@@ -172,7 +172,9 @@ public:
         virtual const wordList& regions() const;
 
         virtual label size() const { return regions().size(); }
-    
+
+        virtual pointField coordinates() const;
+
         //- Whether supports volume type below
         virtual bool hasVolumeType() const
         {
