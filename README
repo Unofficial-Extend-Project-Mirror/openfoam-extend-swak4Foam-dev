@@ -1780,3 +1780,7 @@ S_{expl} + S_{impl} T
      that shadows the pressure field =p=) leads to weird errors a
      warning is given. The warning can be switched of with the option
      =variableNameIdenticalToField=.
+** Next release - version number : 0.2.4
+*** Bug fixes
+*** New features
+*** Enhancements
