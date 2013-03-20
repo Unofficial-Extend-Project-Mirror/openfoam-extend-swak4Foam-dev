@@ -125,6 +125,11 @@ const Foam::wordList& Foam::mergeRegionsSearchableSurface::regions() const
     return regions_;
 }
 
+Foam::pointField Foam::mergeRegionsSearchableSurface::coordinates() const
+{
+    return coordinates_;
+}
+
 
 void Foam::mergeRegionsSearchableSurface::getRegion
 (
