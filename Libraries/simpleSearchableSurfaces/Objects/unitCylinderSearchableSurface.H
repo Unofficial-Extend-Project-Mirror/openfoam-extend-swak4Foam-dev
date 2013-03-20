@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef unitCylinderSearchableSurface_H
@@ -49,6 +49,8 @@ Contributors/Copyright:
 #include "searchableSurface.H"
 #include "treeBoundBox.H"
 #include "plane.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -128,7 +130,15 @@ public:
 
         virtual label size() const { return 3; }
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+        virtual tmp<pointField> coordinates() const;
+#else
         virtual pointField coordinates() const;
+#endif
+
+        virtual tmp<pointField> points() const;
+
+        virtual bool overlaps(const boundBox &) const;
 
         virtual const wordList& regions() const;
 

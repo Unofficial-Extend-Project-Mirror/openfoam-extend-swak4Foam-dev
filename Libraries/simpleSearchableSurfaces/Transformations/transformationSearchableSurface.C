@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "transformationSearchableSurface.H"
@@ -138,7 +138,7 @@ const Foam::wordList& Foam::transformationSearchableSurface::regions() const
 //         nearestDistSqr
 //     );
 
-//     return transform(result);    
+//     return transform(result);
 // }
 
 
@@ -169,7 +169,7 @@ const Foam::wordList& Foam::transformationSearchableSurface::regions() const
 //         inverseTransform(end)
 //     );
 
-//     return transform(result);    
+//     return transform(result);
 // }
 
 
@@ -184,7 +184,7 @@ const Foam::wordList& Foam::transformationSearchableSurface::regions() const
 //         inverseTransform(end)
 //     );
 
-//     return transform(result);    
+//     return transform(result);
 // }
 
 
@@ -197,11 +197,11 @@ void Foam::transformationSearchableSurface::findNearest
 {
     pointField iSamples(samples.size());
     List<pointIndexHit> iInfo;
-    
+
     forAll(samples,i) {
         iSamples[i]=inverseTransform(samples[i]);
     }
-    
+
     delegate().findNearest
         (
             iSamples,
@@ -226,12 +226,12 @@ void Foam::transformationSearchableSurface::findLine
     pointField iStart(start.size());
     pointField iEnd(end.size());
     List<pointIndexHit> iInfo;
-    
+
     forAll(start,i) {
         iStart[i]=inverseTransform(start[i]);
         iEnd[i]=inverseTransform(end[i]);
     }
-    
+
     delegate().findLine
         (
             iStart,
@@ -256,12 +256,12 @@ void Foam::transformationSearchableSurface::findLineAny
     pointField iStart(start.size());
     pointField iEnd(end.size());
     List<pointIndexHit> iInfo;
-    
+
     forAll(start,i) {
         iStart[i]=inverseTransform(start[i]);
         iEnd[i]=inverseTransform(end[i]);
     }
-    
+
     delegate().findLineAny
         (
             iStart,
@@ -286,12 +286,12 @@ void Foam::transformationSearchableSurface::findLineAll
     pointField iStart(start.size());
     pointField iEnd(end.size());
     List<List<pointIndexHit> > iInfo;
-    
+
     forAll(start,i) {
         iStart[i]=inverseTransform(start[i]);
         iEnd[i]=inverseTransform(end[i]);
     }
-    
+
     delegate().findLineAll
         (
             iStart,
@@ -363,6 +363,28 @@ void Foam::transformationSearchableSurface::getVolumeType
             iPoints,
             volType
         );
+}
+
+
+Foam::tmp<Foam::pointField> Foam::transformationSearchableSurface::points() const
+{
+    pointField result(delegate().points());
+
+    forAll(result,i) {
+        result[i]=transform(result[i]);
+    }
+
+    return result;
+}
+
+bool Foam::transformationSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::transformationSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
 }
 
 

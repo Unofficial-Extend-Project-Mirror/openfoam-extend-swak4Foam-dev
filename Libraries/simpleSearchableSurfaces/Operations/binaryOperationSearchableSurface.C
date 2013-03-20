@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "binaryOperationSearchableSurface.H"
@@ -106,7 +106,17 @@ const Foam::wordList& Foam::binaryOperationSearchableSurface::regions() const
     return regions_;
 }
 
-Foam::pointField Foam::binaryOperationSearchableSurface::coordinates() const
+Foam::tmp<Foam::pointField> Foam::binaryOperationSearchableSurface::points() const
+{
+    return coordinates();
+}
+
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::binaryOperationSearchableSurface::coordinates() const
 {
     pointField aCoords(a().coordinates());
     pointField bCoords(b().coordinates());
@@ -122,6 +132,17 @@ Foam::pointField Foam::binaryOperationSearchableSurface::coordinates() const
 
     return result;
 }
+
+bool Foam::binaryOperationSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::binaryOperationSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
+}
+
 
 // void Foam::binaryOperationSearchableSurface::findNearest
 // (

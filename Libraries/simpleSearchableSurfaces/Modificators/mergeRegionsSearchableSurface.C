@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "mergeRegionsSearchableSurface.H"
@@ -135,7 +135,12 @@ const Foam::wordList& Foam::mergeRegionsSearchableSurface::regions() const
     return regions_;
 }
 
-Foam::pointField Foam::mergeRegionsSearchableSurface::coordinates() const
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::mergeRegionsSearchableSurface::coordinates() const
 {
     return coordinates_;
 }

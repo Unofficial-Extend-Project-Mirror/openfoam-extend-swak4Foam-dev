@@ -123,6 +123,9 @@ Contributors/Copyright:
 // movePoints now gets a polyMesh
 #define FOAM_MOVEPOINTS_GETS_POLYMESH
 
+// coordinates method of searchable surfaces uses a tmp as return
+#define FOAM_SEARCHABLE_SURF_USES_TMP
+
 #endif // version starting with 2.2
 
 #include "swakVersion.H"

@@ -40,13 +40,15 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef wrapperSearchableSurface_H
 #define wrapperSearchableSurface_H
 
 #include "searchableSurface.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -169,6 +171,14 @@ public:
                 notImplemented("wrapperSearchableSurface::writeData(Ostream&) const");
                 return false;
             }
+
+        virtual tmp<pointField> points() const
+        {
+            return delegate().points();
+        }
+
+        virtual bool overlaps(const boundBox &) const;
+
 
 };
 

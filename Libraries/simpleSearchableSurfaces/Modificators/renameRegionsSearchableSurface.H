@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef renameRegionsSearchableSurface_H
@@ -97,7 +97,11 @@ public:
 
         virtual label size() const { return delegate().size(); }
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+        virtual tmp<pointField> coordinates() const
+#else
         virtual pointField coordinates() const
+#endif
         {
             return delegate().coordinates();
         }

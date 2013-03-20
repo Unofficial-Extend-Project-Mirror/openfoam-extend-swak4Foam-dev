@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "wrapperSearchableSurface.H"
@@ -191,5 +191,14 @@ void Foam::wrapperSearchableSurface::getVolumeType
         );
 }
 
+bool Foam::wrapperSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::wrapperSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
+}
 
 // ************************************************************************* //

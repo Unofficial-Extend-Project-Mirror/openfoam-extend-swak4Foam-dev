@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "unitCylinderSearchableSurface.H"
@@ -233,13 +233,39 @@ const Foam::wordList& Foam::unitCylinderSearchableSurface::regions() const
     return regions_;
 }
 
-Foam::pointField Foam::unitCylinderSearchableSurface::coordinates() const
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::unitCylinderSearchableSurface::coordinates() const
 {
     pointField result(3);
 
     result[0]=top_.refPoint();
     result[1]=bottom_.refPoint();
     result[2]=0.5*(top_.refPoint()+bottom_.refPoint());
+
+    return result;
+}
+
+bool Foam::unitCylinderSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::unitCylinderSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
+}
+
+
+Foam::tmp<Foam::pointField> Foam::unitCylinderSearchableSurface::points() const
+{
+    pointField result(2);
+
+    result[0]=top_.refPoint();
+    result[1]=bottom_.refPoint();
 
     return result;
 }
