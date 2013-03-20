@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "manipulatePatchFieldFunctionObject.H"
