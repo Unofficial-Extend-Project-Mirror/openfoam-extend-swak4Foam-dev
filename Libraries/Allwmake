@@ -111,6 +111,8 @@ fi
 
 wmake libso simpleLagrangianFunctionObjects
 
+wmake libso simpleSearchableSurfaces
+
 if [ "$WE_HAVE_SIMPLE_FUNCTION_OBJECTS" ]; then
     wmake libso simpleSwakFunctionObjects
 else
