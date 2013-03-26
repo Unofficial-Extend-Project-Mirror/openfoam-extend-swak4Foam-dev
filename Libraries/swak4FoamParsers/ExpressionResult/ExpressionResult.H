@@ -219,6 +219,9 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// put this here to make Intel and Fujitsu-compilers happy
+#include "swakPTraitsSpecialization.H"
+
 #include "ExpressionResultI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
