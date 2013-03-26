@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "binaryOperationSearchableSurface.H"
@@ -42,7 +42,7 @@ Contributors/Copyright:
 namespace Foam
 {
 
-defineTypeNameAndDebug(binaryOperationSearchableSurface, 0);
+defineTypeNameAndDebug(binaryOperationSearchableSurface, 1);
 
 }
 
@@ -179,6 +179,15 @@ void Foam::binaryOperationSearchableSurface::findLineAll
     info.setSize(start.size());
 
     forAll(info,i) {
+        if(
+            infoA[i].size()==0
+            &&
+            infoB[i].size()==0
+        ) {
+            info[i].setSize(0);
+            continue;
+        }
+
         this->filter(infoA[i],infoB[i],info[i]);
 
         // it's only ugly bubble-sort
