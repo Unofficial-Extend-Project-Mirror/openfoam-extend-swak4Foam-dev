@@ -3,3 +3,9 @@ export SWAK_PYTHON_LINK="-L/opt/local/lib -lpython2.7"
 
 # List separated by : with directories to user plugins
 export SWAK_USER_PLUGINS=../Examples/UserPlugins/swakTestFunctionPlugins
+
+# Compile the parsers with a lower optimization use only if the
+# compilation of the grammar takes too long (possibly due to memory
+# restrictions on the machine)
+
+export SWAK_COMPILE_GRAMMAR_OPTION="-O1"
