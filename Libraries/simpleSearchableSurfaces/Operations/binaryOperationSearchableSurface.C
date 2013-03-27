@@ -37,6 +37,8 @@ Contributors/Copyright:
 #include "binaryOperationSearchableSurface.H"
 #include "SortableList.H"
 
+#include <cassert>
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -240,10 +242,15 @@ void Foam::binaryOperationSearchableSurface::getRegion
             region[i]=regionA[cntA];
             cntA++;
         } else {
-            region[i]=regionB[cntB]+nrARegions_;
+            if(regionB[cntB]>=0) {
+                region[i]=regionB[cntB]+nrARegions_;
+            } else {
+                region[i]=regionB[cntB];
+            }
             cntB++;
         }
     }
+
     if(cntA!=regionA.size() || cntB!=regionB.size()) {
         FatalErrorIn("binaryOperationSearchableSurface::getRegion")
             << "Something went horribly wrong. The sizes "
@@ -253,6 +260,8 @@ void Foam::binaryOperationSearchableSurface::getRegion
                 << endl
                 << abort(FatalError);
     }
+
+    assert(region.size()==info.size());
 }
 
 
@@ -329,6 +338,8 @@ void  Foam::binaryOperationSearchableSurface::whose
 
     isA.setSize(hits.size());
 
+    //    Info << nearestA << nearestB << endl;
+
     forAll(isA,i) {
         scalar distA=HUGE;
         scalar distB=HUGE;
@@ -338,6 +349,26 @@ void  Foam::binaryOperationSearchableSurface::whose
         if(nearestB[i].hit()) {
             distB=mag(samples[i]-nearestB[i].hitPoint());
         }
+        if(
+            distA>0.9*HUGE // just in case that ==HUGE does not work
+            &&
+            distB>0.9*HUGE
+        ) {
+            FatalErrorIn("Foam::binaryOperationSearchableSurface::whose")
+                << "Neither is a hit"
+                    << endl
+                    << abort(FatalError);
+        }
+        // if(
+        //     distA<SMALL
+        //     &&
+        //     distB<SMALL
+        // ) {
+        //     FatalErrorIn("Foam::binaryOperationSearchableSurface::whose")
+        //         << "both hit"
+        //             << endl
+        //             << abort(FatalError);
+        // }
         // in doubt: A
         isA[i]=( distA <= distB );
     }

@@ -117,15 +117,15 @@ void Foam::differenceSearchableSurface::filter
 
     result.setSize(nr);
     label cnt=0;
-    forAll(hitsA,i) {
-        if(!inB[i]) {
-            result[cnt]=hitsA[i];
-            cnt++;
-        }
-    }
     forAll(hitsB,i) {
         if(inA[i]) {
             result[cnt]=hitsB[i];
+            cnt++;
+        }
+    }
+    forAll(hitsA,i) {
+        if(!inB[i]) {
+            result[cnt]=hitsA[i];
             cnt++;
         }
     }
