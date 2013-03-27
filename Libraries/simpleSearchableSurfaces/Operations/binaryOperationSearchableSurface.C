@@ -217,7 +217,7 @@ void Foam::binaryOperationSearchableSurface::getRegion
     labelList& region
 ) const
 {
-    List<bool> who;
+    List<hitWhom> who;
     whose(info,who);
 
     List<pointIndexHit> infoA;
@@ -238,10 +238,13 @@ void Foam::binaryOperationSearchableSurface::getRegion
 
     label cntA=0,cntB=0;
     forAll(who,i) {
-        if(who[i]) {
+        if(who[i]==BOTH || who[i]==HITSA) {
             region[i]=regionA[cntA];
             cntA++;
-        } else {
+            if(who[i]==BOTH) {
+                cntB++;
+            }
+        } else if(who[i]==HITSB) {
             if(regionB[cntB]>=0) {
                 region[i]=regionB[cntB]+nrARegions_;
             } else {
@@ -271,7 +274,7 @@ void Foam::binaryOperationSearchableSurface::getNormal
     vectorField& normal
 ) const
 {
-    List<bool> who;
+    List<hitWhom> who;
     whose(info,who);
 
     List<pointIndexHit> infoA;
@@ -288,16 +291,19 @@ void Foam::binaryOperationSearchableSurface::getNormal
     a().getNormal(infoA,normalA);
     b().getNormal(infoB,normalB);
 
-    normal.setSize(who.size());
+    normal.setSize(info.size());
 
     label cntA=0,cntB=0;
     forAll(who,i) {
-        if(who[i]) {
+        if(who[i]==BOTH || who[i]==HITSA) {
             normal[i]=normalA[cntA];
             if(revertNormalA(info[i])) {
                 normal[i]*=-1;
             }
             cntA++;
+            if(who[i]==BOTH) {
+                cntB++;
+            }
         } else {
             normal[i]=normalB[cntB];
             if(revertNormalB(info[i])) {
@@ -320,7 +326,7 @@ void Foam::binaryOperationSearchableSurface::getNormal
 void  Foam::binaryOperationSearchableSurface::whose
 (
     const List<pointIndexHit>& hits,
-    List<bool> &isA
+    List<hitWhom> &whom
 ) const
 {
     pointField samples(hits.size());
@@ -336,11 +342,11 @@ void  Foam::binaryOperationSearchableSurface::whose
     a().findNearest(samples,distance,nearestA);
     b().findNearest(samples,distance,nearestB);
 
-    isA.setSize(hits.size());
+    whom.setSize(hits.size(),NONE);
 
     //    Info << nearestA << nearestB << endl;
 
-    forAll(isA,i) {
+    forAll(whom,i) {
         scalar distA=HUGE;
         scalar distB=HUGE;
         if(nearestA[i].hit()) {
@@ -350,34 +356,27 @@ void  Foam::binaryOperationSearchableSurface::whose
             distB=mag(samples[i]-nearestB[i].hitPoint());
         }
         if(
-            distA>0.9*HUGE // just in case that ==HUGE does not work
+            distA>1e-2
             &&
-            distB>0.9*HUGE
+            distB>1e-2
         ) {
-            FatalErrorIn("Foam::binaryOperationSearchableSurface::whose")
-                << "Neither is a hit"
-                    << endl
-                    << abort(FatalError);
+            whom[i]=NONE;
+        } else if(
+            distA<SMALL
+            &&
+            distB<SMALL
+        ) {
+            whom[i]=BOTH;
+        } else {
+            whom[i]=( distA <= distB ? HITSA : HITSB);
         }
-        // if(
-        //     distA<SMALL
-        //     &&
-        //     distB<SMALL
-        // ) {
-        //     FatalErrorIn("Foam::binaryOperationSearchableSurface::whose")
-        //         << "both hit"
-        //             << endl
-        //             << abort(FatalError);
-        // }
-        // in doubt: A
-        isA[i]=( distA <= distB );
     }
 }
 
 void  Foam::binaryOperationSearchableSurface::splitHits
 (
     const List<pointIndexHit>& hits,
-    const List<bool> &isA,
+    const List<hitWhom> &isA,
     List<pointIndexHit>& hitsA,
     List<pointIndexHit>& hitsB
 ) const
@@ -385,12 +384,14 @@ void  Foam::binaryOperationSearchableSurface::splitHits
     label nrA=0;
     label nrB=0;
     forAll(isA,i) {
-        if(isA[i]){
+        if(isA[i]==BOTH || isA[i]==HITSA){
             nrA++;
-        } else {
+        }
+        if(isA[i]==BOTH || isA[i]==HITSB){
             nrB++;
         }
     }
+
     hitsA.setSize(nrA);
     hitsB.setSize(nrB);
 
@@ -398,10 +399,11 @@ void  Foam::binaryOperationSearchableSurface::splitHits
     label cntB=0;
 
     forAll(hits,i) {
-        if(isA[i]) {
+        if(isA[i]==BOTH || isA[i]==HITSA){
             hitsA[cntA]=hits[i];
             cntA++;
-        } else {
+        }
+        if(isA[i]==BOTH || isA[i]==HITSB){
             hitsB[cntB]=hits[i];
             cntB++;
         }

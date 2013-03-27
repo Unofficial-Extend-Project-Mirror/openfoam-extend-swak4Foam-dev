@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef binaryOperationSearchableSurface_H
@@ -101,18 +101,25 @@ protected:
         List<pointIndexHit>& result
     ) const = 0;
 
+    enum hitWhom {
+        NONE,
+        HITSA,
+        HITSB,
+        BOTH
+    };
+
     //- find out who this hit belongs to
     void whose
     (
         const List<pointIndexHit>& hits,
-        List<bool> &isA
+        List<hitWhom> &whom
     ) const;
 
     //- make a list with the hits belonging to one surface
     void splitHits
     (
         const List<pointIndexHit>& hits,
-        const List<bool> &isA,
+        const List<hitWhom> &isA,
         List<pointIndexHit>& hitsA,
         List<pointIndexHit>& hitsB
     ) const;
