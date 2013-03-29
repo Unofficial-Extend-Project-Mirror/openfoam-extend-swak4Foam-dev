@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "unionSearchableSurface.H"
@@ -85,7 +85,7 @@ void Foam::unionSearchableSurface::filter
 
     insideA(hitsB,inA);
     insideB(hitsA,inB);
-    
+
     label nr=0;
     forAll(inA,i) {
         if(!inA[i]) {
@@ -150,8 +150,8 @@ void Foam::unionSearchableSurface::findNearest
             if(hitA[i].hit() == hitB[i].hit()) {
                 if
                     (
-                        mag(sample[i]-hitA[i].rawPoint()) 
-                        < 
+                        mag(sample[i]-hitA[i].rawPoint())
+                        <
                         mag(sample[i]-hitB[i].rawPoint())
                     ) {
                     result[i]=hitA[i];
@@ -171,7 +171,7 @@ void Foam::unionSearchableSurface::findNearest
         }
     }
 }
-    
+
 void Foam::unionSearchableSurface::getVolumeType
 (
     const pointField& points,
@@ -180,7 +180,7 @@ void Foam::unionSearchableSurface::getVolumeType
 {
     List<volumeType> inA;
     List<volumeType> inB;
-    
+
     a().getVolumeType(points,inA);
     b().getVolumeType(points,inB);
 
@@ -189,7 +189,7 @@ void Foam::unionSearchableSurface::getVolumeType
     forAll(volType,i) {
         if( inA[i]==INSIDE || inB[i]==INSIDE ) {
             volType[i]=INSIDE;
-        } else if( inA[i]==OUTSIDE || inB[i]==OUTSIDE ) {
+        } else if( inA[i]==OUTSIDE && inB[i]==OUTSIDE ) {
             volType[i]=OUTSIDE;
         } else {
             volType[i]=UNKNOWN;

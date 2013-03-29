@@ -21,6 +21,38 @@ castellatedMesh true;
 snap            true;
 addLayers       false;
 
+// original test
+baseFormOriginal {
+    a {
+        type searchableBox;
+        min (-1  -1   -0.5);
+        max ( 1   0.5  0.5);
+    }
+
+    b {
+        type searchableBox;
+        min (-0.5  -0.5 -1);
+        max ( 0.5  1     1);
+    }
+}
+
+// test overlap
+baseFormOverlap {
+    a {
+        type searchableBox;
+        min (-1  -1   -1);
+        max ( 1   0    1);
+    }
+
+    b {
+        type searchableBox;
+        min (-1  -1   -1);
+        max ( 1   1    0);
+    }
+}
+
+// baseForm { $baseFormOriginal; }
+baseForm { $baseFormOverlap; }
 
 // Geometry. Definition of all surfaces. All surfaces are of class
 // searchableSurface.
@@ -39,16 +71,7 @@ geometry
             regionName oneNationUnderAGroove;
             surface {
                 type union;
-                a {
-                    type searchableBox;
-                    min (-1  -1   -0.5);
-                    max ( 1   0.5  0.5);
-                }
-                b {
-                    type searchableBox;
-                    min (-0.5  -0.5 -1);
-                    max ( 0.5  1     1);
-                }
+                $baseForm;
             }
         }
     }
@@ -57,17 +80,9 @@ geometry
         type translate;
         translation (0 0 4);
         surface {
+            //            type union;
             type intersect;
-            a {
-                type searchableBox;
-                min (-1  -1   -0.5);
-                max ( 1   0.5  0.5);
-            }
-            b {
-                type searchableBox;
-                min (-0.5  -0.5 -1);
-                max ( 0.5  1     1);
-            }
+            $baseForm;
         }
     }
     differenceTest
@@ -82,17 +97,9 @@ geometry
                 (B_ bbbb)
             );
             surface {
+                //                type union;
                 type difference;
-                a {
-                    type searchableBox;
-                    min (-1  -1   -0.5);
-                    max ( 1   0.5  0.5);
-                }
-                b {
-                    type searchableBox;
-                    min (-0.5  -0.5 -1);
-                    max ( 0.5  1     1);
-                }
+                $baseForm;
             }
         }
     }
@@ -107,17 +114,9 @@ geometry
             surface {
                 type intersect;
                 a {
+                    //                    type union;
                     type exclusive;
-                    a {
-                        type searchableBox;
-                        min (-1  -1   -0.5);
-                        max ( 1   0.5  0.5);
-                    }
-                    b {
-                        type searchableBox;
-                        min (-0.5  -0.5 -1);
-                        max ( 0.5  1     1);
-                    }
+                    $baseForm;
                 }
                 b {
                     type searchableBox;

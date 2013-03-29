@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "transformationSearchableSurface.H"
@@ -111,6 +111,21 @@ const Foam::wordList& Foam::transformationSearchableSurface::regions() const
     return delegate().regions();
 }
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::transformationSearchableSurface::coordinates() const
+{
+    pointField result(delegate().coordinates());
+
+    forAll(result,i) {
+        result[i]=transform(result[i]);
+    }
+
+    return result;
+}
 
 // Foam::pointIndexHit Foam::transformationSearchableSurface::findNearest
 // (

@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "differenceSearchableSurface.H"
@@ -62,6 +62,11 @@ Foam::differenceSearchableSurface::differenceSearchableSurface
 :
     binaryOperationSearchableSurface(io,dict)
 {
+    if(debug) {
+        Info << "Difference regions: " << regions() << endl;
+        Info << "  a: " << a().regions() << endl;
+        Info << "  b: " << b().regions() << endl;
+    }
 }
 
 
@@ -80,35 +85,47 @@ void Foam::differenceSearchableSurface::filter
     List<pointIndexHit>& result
 ) const
 {
+    if(debug) {
+        Info << "differenceSearchableSurface::filter "
+            << " a: " << hitsA.size() << " b: " << hitsB.size()
+            << endl;
+    }
+
     List<bool> inA;
     List<bool> inB;
 
     insideA(hitsB,inA);
     insideB(hitsA,inB);
-    
+
     label nr=0;
     forAll(inA,i) {
         if(inA[i]) {
             nr++;
         }
     }
+    if(debug) {
+        Info << "inA: " << nr << flush;
+    }
     forAll(inB,i) {
         if(!inB[i]) {
             nr++;
         }
     }
+    if(debug) {
+        Info << " inA+inB: " << nr << endl;
+    }
 
     result.setSize(nr);
     label cnt=0;
-    forAll(hitsA,i) {
-        if(!inB[i]) {
-            result[cnt]=hitsA[i];
-            cnt++;
-        }
-    }
     forAll(hitsB,i) {
         if(inA[i]) {
             result[cnt]=hitsB[i];
+            cnt++;
+        }
+    }
+    forAll(hitsA,i) {
+        if(!inB[i]) {
+            result[cnt]=hitsA[i];
             cnt++;
         }
     }
@@ -149,8 +166,8 @@ void Foam::differenceSearchableSurface::findNearest
             // not sure
             if
                 (
-                    mag(sample[i]-hitA[i].rawPoint()) 
-                    < 
+                    mag(sample[i]-hitA[i].rawPoint())
+                    <
                     mag(sample[i]-hitB[i].rawPoint())
                 ) {
                 result[i]=hitA[i];
@@ -160,7 +177,7 @@ void Foam::differenceSearchableSurface::findNearest
         }
     }
 }
-    
+
 void Foam::differenceSearchableSurface::getVolumeType
 (
     const pointField& points,
@@ -169,13 +186,16 @@ void Foam::differenceSearchableSurface::getVolumeType
 {
     List<volumeType> inA;
     List<volumeType> inB;
-    
+
     a().getVolumeType(points,inA);
     b().getVolumeType(points,inB);
 
     volType.setSize(points.size());
 
     forAll(volType,i) {
+        if( inA[i]==UNKNOWN || inB[i]==UNKNOWN ) {
+            volType[i]=UNKNOWN;
+        }
         if( inA[i]==INSIDE && inB[i]==OUTSIDE ) {
             volType[i]=INSIDE;
         } else {

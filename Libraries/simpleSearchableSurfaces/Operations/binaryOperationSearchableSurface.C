@@ -31,18 +31,22 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "binaryOperationSearchableSurface.H"
 #include "SortableList.H"
+
+#include <cassert>
+
+#define USE_BOTH_HITS
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-defineTypeNameAndDebug(binaryOperationSearchableSurface, 0);
+defineTypeNameAndDebug(binaryOperationSearchableSurface, 1);
 
 }
 
@@ -94,6 +98,10 @@ Foam::binaryOperationSearchableSurface::~binaryOperationSearchableSurface()
 
 const Foam::wordList& Foam::binaryOperationSearchableSurface::regions() const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::regions " << name() << endl;
+    }
+
     if(regions_.size() == 0 ) {
         regions_.setSize(nrARegions_+nrBRegions_);
         for(label i=0;i<nrARegions_;i++) {
@@ -118,6 +126,10 @@ Foam::pointField
 #endif
 Foam::binaryOperationSearchableSurface::coordinates() const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::coordinates " << name() << endl;
+    }
+
     pointField aCoords(a().coordinates());
     pointField bCoords(b().coordinates());
 
@@ -161,6 +173,10 @@ void Foam::binaryOperationSearchableSurface::findLine
     List<pointIndexHit>& info
 ) const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::findLine " << name() << endl;
+    }
+
     List<List<pointIndexHit> > infoAll;
     findLineAll(start,end,infoAll);
     info.setSize(start.size());
@@ -180,6 +196,10 @@ void Foam::binaryOperationSearchableSurface::findLineAny
     List<pointIndexHit>& info
 ) const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::findLineAny " << name() << endl;
+    }
+
     findLine(start,end,info);
 }
 
@@ -191,6 +211,9 @@ void Foam::binaryOperationSearchableSurface::findLineAll
     List<List<pointIndexHit> >& info
 ) const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::findLineAll " << name() << endl;
+    }
     List<List<pointIndexHit> > infoA;
     List<List<pointIndexHit> > infoB;
 
@@ -200,9 +223,18 @@ void Foam::binaryOperationSearchableSurface::findLineAll
     info.setSize(start.size());
 
     forAll(info,i) {
+        if(
+            infoA[i].size()==0
+            &&
+            infoB[i].size()==0
+        ) {
+            info[i].setSize(0);
+            continue;
+        }
+
         this->filter(infoA[i],infoB[i],info[i]);
 
-        // it's only ugly bubble-sort
+       // it's only ugly bubble-sort but OK for the small number of points
         for(label j=0;j<(info[i].size()-1);j++) {
             for(label k=j+1;k<info[i].size();k++) {
                 if
@@ -217,8 +249,53 @@ void Foam::binaryOperationSearchableSurface::findLineAll
                 }
             }
         }
+
+        scalar identicalThreshhold=1e-10;
+
+        bool clipIdentical=false;
+        for(label j=1;j<info[i].size();j++) {
+            if(
+                mag(
+                    info[i][j-1].rawPoint()
+                    -
+                    info[i][j].rawPoint()
+                )<identicalThreshhold
+            ) {
+                clipIdentical=true;
+                break;
+            }
+        }
+        if(clipIdentical) {
+            //            Info << "Identical points in " << info[i] << endl;
+            DynamicList<pointIndexHit> cleaned;
+            cleaned.append(info[i][0]);
+            for(label j=1;j<info[i].size();j++) {
+                if(
+                    mag(
+                        cleaned[cleaned.size()-1].rawPoint()
+                        -
+                        info[i][j].rawPoint()
+                    )>identicalThreshhold
+                ){
+                    cleaned.append(info[i][j]);
+                }
+            }
+            info[i]=cleaned;
+            //            Info << "Cleaned: " << info[i] << endl;
+        }
     }
-}
+
+    if(debug) {
+        label cntA=0,cntB=0,cnt=0;
+        forAll(infoA,j) {
+            cntA+=infoA[j].size();
+            cntB+=infoB[j].size();
+            cnt +=info[j].size();
+        }
+        Info << "Found A: " << cntA << " B: " << cntB
+            << " Total: " << cnt << endl;
+    }
+ }
 
 
 void Foam::binaryOperationSearchableSurface::getRegion
@@ -227,7 +304,11 @@ void Foam::binaryOperationSearchableSurface::getRegion
     labelList& region
 ) const
 {
-    List<bool> who;
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::getRegion " << name() << endl;
+    }
+
+    List<hitWhom> who;
     whose(info,who);
 
     List<pointIndexHit> infoA;
@@ -248,14 +329,24 @@ void Foam::binaryOperationSearchableSurface::getRegion
 
     label cntA=0,cntB=0;
     forAll(who,i) {
-        if(who[i]) {
+        if(who[i]==BOTH || who[i]==HITSA) {
             region[i]=regionA[cntA];
             cntA++;
-        } else {
-            region[i]=regionB[cntB]+nrARegions_;
+#ifdef USE_BOTH_HITS
+            if(who[i]==BOTH) {
+                cntB++;
+            }
+#endif
+        } else if(who[i]==HITSB) {
+            if(regionB[cntB]>=0) {
+                region[i]=regionB[cntB]+nrARegions_;
+            } else {
+                region[i]=regionB[cntB];
+            }
             cntB++;
         }
     }
+
     if(cntA!=regionA.size() || cntB!=regionB.size()) {
         FatalErrorIn("binaryOperationSearchableSurface::getRegion")
             << "Something went horribly wrong. The sizes "
@@ -264,6 +355,21 @@ void Foam::binaryOperationSearchableSurface::getRegion
                 << "We're lucky that the program got here\n"
                 << endl
                 << abort(FatalError);
+    }
+
+    assert(region.size()==info.size());
+
+    if(debug) {
+        HashTable<label,label> cnts;
+        forAll(region,i) {
+            label reg=region[i];
+            if(!cnts.found(reg)) {
+                cnts.insert(reg,1);
+            } else {
+                cnts[reg]++;
+            }
+        }
+        Info << "Counts: " << cnts << endl;
     }
 }
 
@@ -274,7 +380,11 @@ void Foam::binaryOperationSearchableSurface::getNormal
     vectorField& normal
 ) const
 {
-    List<bool> who;
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::getNormal " << name() << endl;
+    }
+
+    List<hitWhom> who;
     whose(info,who);
 
     List<pointIndexHit> infoA;
@@ -291,16 +401,19 @@ void Foam::binaryOperationSearchableSurface::getNormal
     a().getNormal(infoA,normalA);
     b().getNormal(infoB,normalB);
 
-    normal.setSize(who.size());
+    normal.setSize(info.size());
 
     label cntA=0,cntB=0;
     forAll(who,i) {
-        if(who[i]) {
+        if(who[i]==BOTH || who[i]==HITSA) {
             normal[i]=normalA[cntA];
             if(revertNormalA(info[i])) {
                 normal[i]*=-1;
             }
             cntA++;
+            if(who[i]==BOTH) {
+                cntB++;
+            }
         } else {
             normal[i]=normalB[cntB];
             if(revertNormalB(info[i])) {
@@ -323,9 +436,13 @@ void Foam::binaryOperationSearchableSurface::getNormal
 void  Foam::binaryOperationSearchableSurface::whose
 (
     const List<pointIndexHit>& hits,
-    List<bool> &isA
+    List<hitWhom> &whom
 ) const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::whose " << name() << endl;
+    }
+
     pointField samples(hits.size());
     scalarField distance(hits.size(),1e5);
 
@@ -339,9 +456,11 @@ void  Foam::binaryOperationSearchableSurface::whose
     a().findNearest(samples,distance,nearestA);
     b().findNearest(samples,distance,nearestB);
 
-    isA.setSize(hits.size());
+    whom.setSize(hits.size(),NONE);
 
-    forAll(isA,i) {
+    //    Info << nearestA << nearestB << endl;
+
+    forAll(whom,i) {
         scalar distA=HUGE;
         scalar distB=HUGE;
         if(nearestA[i].hit()) {
@@ -350,28 +469,69 @@ void  Foam::binaryOperationSearchableSurface::whose
         if(nearestB[i].hit()) {
             distB=mag(samples[i]-nearestB[i].hitPoint());
         }
-        // in doubt: A
-        isA[i]=( distA <= distB );
+        if(
+            distA>1e-5
+            &&
+            distB>1e-5
+        ) {
+            whom[i]=NONE;
+        } else if(
+            distA<SMALL
+            &&
+            distB<SMALL
+        ) {
+            whom[i]=BOTH;
+        } else {
+            whom[i]=( distA <= distB ? HITSA : HITSB);
+        }
+    }
+    if(debug) {
+        label cntA=0,cntB=0,cntBoth=0,cntNone=0;
+        forAll(whom,i) {
+            switch(whom[i]) {
+                case HITSA:
+                    cntA++; break;
+                case HITSB:
+                    cntB++; break;
+                case BOTH:
+                    cntBoth++; break;
+                case NONE:
+                    cntNone++; break;
+            }
+        }
+        Info << whom.size() << " points. A: " << cntA
+            << " B: " << cntB << " Both: " << cntBoth
+            << " None: " << cntNone << endl;
     }
 }
 
 void  Foam::binaryOperationSearchableSurface::splitHits
 (
     const List<pointIndexHit>& hits,
-    const List<bool> &isA,
+    const List<hitWhom> &isA,
     List<pointIndexHit>& hitsA,
     List<pointIndexHit>& hitsB
 ) const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::splitHits " << name() << endl;
+    }
+
     label nrA=0;
     label nrB=0;
     forAll(isA,i) {
-        if(isA[i]){
+        if(isA[i]==BOTH || isA[i]==HITSA){
             nrA++;
-        } else {
+        }
+#ifdef USE_BOTH_HITS
+        if(isA[i]==BOTH || isA[i]==HITSB){
+#else
+        if(isA[i]==HITSB){
+#endif
             nrB++;
         }
     }
+
     hitsA.setSize(nrA);
     hitsB.setSize(nrB);
 
@@ -379,10 +539,15 @@ void  Foam::binaryOperationSearchableSurface::splitHits
     label cntB=0;
 
     forAll(hits,i) {
-        if(isA[i]) {
+        if(isA[i]==BOTH || isA[i]==HITSA){
             hitsA[cntA]=hits[i];
             cntA++;
-        } else {
+        }
+#ifdef USE_BOTH_HITS
+        if(isA[i]==BOTH || isA[i]==HITSB){
+#else
+        if(isA[i]==HITSB){
+#endif
             hitsB[cntB]=hits[i];
             cntB++;
         }
@@ -392,6 +557,10 @@ void  Foam::binaryOperationSearchableSurface::splitHits
             << "Counts differ: " << cntA << "/" << nrA << " " << cntB << "/" << nrB
                 << "\n" << endl
                 << abort(FatalError);
+    }
+    if(debug) {
+        Info << "From " << hits.size() << " to A: " << hitsA.size()
+            << " to B: " << hitsB.size() << endl;
     }
 }
 
@@ -415,6 +584,7 @@ void  Foam::binaryOperationSearchableSurface::inside
     in.setSize(vol.size());
 
     forAll(vol,i) {
+        //        in[i]=(vol[i]==INSIDE || vol[i]==UNKNOWN);
         in[i]=(vol[i]==INSIDE);
     }
 }
