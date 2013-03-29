@@ -126,6 +126,9 @@ Contributors/Copyright:
 // coordinates method of searchable surfaces uses a tmp as return
 #define FOAM_SEARCHABLE_SURF_USES_TMP
 
+// points method of searchable surfaces now part of interface
+#define FOAM_SEARCHABLE_SURF_HAS_POINTS
+
 #endif // version starting with 2.2
 
 #include "swakVersion.H"

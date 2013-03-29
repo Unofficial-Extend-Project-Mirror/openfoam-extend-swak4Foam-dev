@@ -125,7 +125,9 @@ public:
         virtual pointField coordinates() const;
 #endif
 
+#ifdef FOAM_SEARCHABLE_SURF_HAS_POINTS
         virtual tmp<pointField> points() const;
+#endif
 
         virtual const wordList& regions() const;
 

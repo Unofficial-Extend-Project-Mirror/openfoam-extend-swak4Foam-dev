@@ -381,6 +381,7 @@ void Foam::transformationSearchableSurface::getVolumeType
 }
 
 
+#ifdef FOAM_SEARCHABLE_SURF_HAS_POINTS
 Foam::tmp<Foam::pointField> Foam::transformationSearchableSurface::points() const
 {
     pointField result(delegate().points());
@@ -391,6 +392,7 @@ Foam::tmp<Foam::pointField> Foam::transformationSearchableSurface::points() cons
 
     return result;
 }
+#endif
 
 bool Foam::transformationSearchableSurface::overlaps(const boundBox& bb) const
 {

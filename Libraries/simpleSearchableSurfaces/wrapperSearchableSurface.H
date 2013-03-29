@@ -172,10 +172,12 @@ public:
                 return false;
             }
 
+#ifdef FOAM_SEARCHABLE_SURF_HAS_POINTS
         virtual tmp<pointField> points() const
         {
             return delegate().points();
         }
+#endif
 
         virtual bool overlaps(const boundBox &) const;
 
