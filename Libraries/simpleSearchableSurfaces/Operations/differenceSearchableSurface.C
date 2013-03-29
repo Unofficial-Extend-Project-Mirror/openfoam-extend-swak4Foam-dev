@@ -194,10 +194,7 @@ void Foam::differenceSearchableSurface::getVolumeType
 
     forAll(volType,i) {
         if( inA[i]==UNKNOWN || inB[i]==UNKNOWN ) {
-            FatalErrorIn("Foam::differenceSearchableSurface::getVolumeType")
-                << "UNKNOWN not handled: " << inA[i] << " " << inB[i]
-                    << endl
-                    << abort(FatalError);
+            volType[i]=UNKNOWN;
         }
         if( inA[i]==INSIDE && inB[i]==OUTSIDE ) {
             volType[i]=INSIDE;

@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "exclusiveSearchableSurface.H"
@@ -116,8 +116,8 @@ void Foam::exclusiveSearchableSurface::findNearest
     forAll(result,i) {
         if
             (
-                mag(sample[i]-hitA[i].rawPoint()) 
-                < 
+                mag(sample[i]-hitA[i].rawPoint())
+                <
                 mag(sample[i]-hitB[i].rawPoint())
             ) {
             result[i]=hitA[i];
@@ -126,7 +126,7 @@ void Foam::exclusiveSearchableSurface::findNearest
         }
     }
 }
-    
+
 void Foam::exclusiveSearchableSurface::getVolumeType
 (
     const pointField& points,
@@ -135,7 +135,7 @@ void Foam::exclusiveSearchableSurface::getVolumeType
 {
     List<volumeType> inA;
     List<volumeType> inB;
-    
+
     a().getVolumeType(points,inA);
     b().getVolumeType(points,inB);
 
@@ -143,12 +143,14 @@ void Foam::exclusiveSearchableSurface::getVolumeType
 
     forAll(volType,i) {
         if
-            ( 
+            (
                 ( inA[i]==INSIDE && inB[i]==OUTSIDE )
                 ||
                 ( inA[i]==OUTSIDE && inB[i]==INSIDE )
             ) {
             volType[i]=INSIDE;
+        } else if( inA[i]==UNKNOWN || inB[i]==UNKNOWN) {
+            volType[i]=UNKNOWN;
         } else {
             volType[i]=OUTSIDE;
         }

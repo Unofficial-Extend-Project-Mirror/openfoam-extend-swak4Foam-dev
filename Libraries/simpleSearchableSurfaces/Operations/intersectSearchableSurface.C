@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "intersectSearchableSurface.H"
@@ -85,7 +85,7 @@ void Foam::intersectSearchableSurface::filter
 
     insideA(hitsB,inA);
     insideB(hitsA,inB);
-    
+
     label nr=0;
     forAll(inA,i) {
         if(inA[i]) {
@@ -149,8 +149,8 @@ void Foam::intersectSearchableSurface::findNearest
             // not sure
             if
                 (
-                    mag(sample[i]-hitA[i].rawPoint()) 
-                    < 
+                    mag(sample[i]-hitA[i].rawPoint())
+                    <
                     mag(sample[i]-hitB[i].rawPoint())
                 ) {
                 result[i]=hitA[i];
@@ -160,7 +160,7 @@ void Foam::intersectSearchableSurface::findNearest
         }
     }
 }
-    
+
 void Foam::intersectSearchableSurface::getVolumeType
 (
     const pointField& points,
@@ -169,7 +169,7 @@ void Foam::intersectSearchableSurface::getVolumeType
 {
     List<volumeType> inA;
     List<volumeType> inB;
-    
+
     a().getVolumeType(points,inA);
     b().getVolumeType(points,inB);
 
@@ -178,6 +178,8 @@ void Foam::intersectSearchableSurface::getVolumeType
     forAll(volType,i) {
         if( inA[i]==INSIDE && inB[i]==INSIDE ) {
             volType[i]=INSIDE;
+        } else if( inA[i]==UNKNOWN || inB[i]==UNKNOWN) {
+            volType[i]=UNKNOWN;
         } else {
             volType[i]=OUTSIDE;
         }
