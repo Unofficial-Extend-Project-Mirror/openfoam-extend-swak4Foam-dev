@@ -207,6 +207,40 @@ void Foam::binaryOperationSearchableSurface::findLineAll
                 }
             }
         }
+
+        scalar identicalThreshhold=1e-10;
+
+        bool clipIdentical=false;
+        for(label j=1;j<info[i].size();j++) {
+            if(
+                mag(
+                    info[i][j-1].rawPoint()
+                    -
+                    info[i][j].rawPoint()
+                )<identicalThreshhold
+            ) {
+                clipIdentical=true;
+                break;
+            }
+        }
+        if(clipIdentical) {
+            //            Info << "Identical points in " << info[i] << endl;
+            DynamicList<pointIndexHit> cleaned;
+            cleaned.append(info[i][0]);
+            for(label j=1;j<info[i].size();j++) {
+                if(
+                    mag(
+                        cleaned[cleaned.size()-1].rawPoint()
+                        -
+                        info[i][j].rawPoint()
+                    )>identicalThreshhold
+                ){
+                    cleaned.append(info[i][j]);
+                }
+            }
+            info[i]=cleaned;
+            //            Info << "Cleaned: " << info[i] << endl;
+        }
     }
 }
 
