@@ -105,15 +105,6 @@ public:
 
         virtual ~unionSearchableSurface();
 
-    // Multiple point queries.
-
-    virtual void findNearest
-    (
-        const pointField& sample,
-        const scalarField& nearestDistSqr,
-        List<pointIndexHit>&
-    ) const;
-
     void getVolumeType
     (
         const pointField& points,

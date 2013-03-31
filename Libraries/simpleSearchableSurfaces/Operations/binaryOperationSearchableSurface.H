@@ -226,12 +226,12 @@ public:
 
         // Multiple point queries.
 
-//             virtual void findNearest
-//             (
-//                 const pointField& sample,
-//                 const scalarField& nearestDistSqr,
-//                 List<pointIndexHit>&
-//             ) const;
+            virtual void findNearest
+            (
+                const pointField& sample,
+                const scalarField& nearestDistSqr,
+                List<pointIndexHit>&
+            ) const;
 
             virtual void findLine
             (

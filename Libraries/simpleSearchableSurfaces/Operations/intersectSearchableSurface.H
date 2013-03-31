@@ -105,16 +105,7 @@ public:
 
         virtual ~intersectSearchableSurface();
 
-    // Multiple point queries.
-
-    virtual void findNearest
-    (
-        const pointField& sample,
-        const scalarField& nearestDistSqr,
-        List<pointIndexHit>&
-    ) const;
-
-    void getVolumeType
+   void getVolumeType
     (
         const pointField& points,
         List<volumeType>& volType

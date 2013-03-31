@@ -94,48 +94,6 @@ bool Foam::differenceSearchableSurface::decidePoint(
     return false;
 }
 
-void Foam::differenceSearchableSurface::findNearest
-(
-    const pointField& sample,
-    const scalarField& nearestDistSqr,
-    List<pointIndexHit>& result
-) const
-{
-    List<pointIndexHit> hitA;
-    List<pointIndexHit> hitB;
-    a().findNearest(sample,nearestDistSqr,hitA);
-    b().findNearest(sample,nearestDistSqr,hitB);
-
-    List<bool> inA;
-    List<bool> inB;
-    List<bool> sameP;
-    insideA(hitB,inA);
-    insideB(hitA,inB);
-    samePoint(hitA,hitB,sameP);
-
-    result.setSize(sample.size());
-
-    forAll(result,i) {
-        if(!inB[i] && !sameP[i]) {
-            result[i]=hitA[i];
-        } else if(inA[i] && !sameP[i]) {
-            result[i]=hitB[i];
-        } else {
-            // not sure
-            if
-                (
-                    mag(sample[i]-hitA[i].rawPoint())
-                    <
-                    mag(sample[i]-hitB[i].rawPoint())
-                ) {
-                result[i]=hitA[i];
-            } else {
-                result[i]=hitB[i];
-            }
-        }
-    }
-}
-
 void Foam::differenceSearchableSurface::getVolumeType
 (
     const pointField& points,

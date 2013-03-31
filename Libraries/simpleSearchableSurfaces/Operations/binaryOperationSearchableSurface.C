@@ -135,15 +135,71 @@ Foam::pointField Foam::binaryOperationSearchableSurface::coordinates() const
     return result;
 }
 
-// void Foam::binaryOperationSearchableSurface::findNearest
-// (
-//     const pointField& samples,
-//     const scalarField& nearestDistSqr,
-//     List<pointIndexHit>& info
-// ) const
-// {
-// }
+void Foam::binaryOperationSearchableSurface::findNearest
+(
+    const pointField& samples,
+    const scalarField& nearestDistSqr,
+    List<pointIndexHit>& info
+) const
+{
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::findNearest" << endl;
+    }
 
+    List<pointIndexHit> hitA;
+    List<pointIndexHit> hitB;
+    a().findNearest(samples,nearestDistSqr,hitA);
+    b().findNearest(samples,nearestDistSqr,hitB);
+
+    List<bool> inAA,inAB;
+    List<bool> inBA,inBB;
+    List<bool> same;
+
+    insideA(hitB,inAB);
+    insideB(hitA,inBA);
+    insideB(hitB,inBB);
+    insideA(hitA,inAA);
+    samePoint(hitA,hitB,same);
+
+    info.setSize(samples.size());
+
+    forAll(info,i) {
+        hitWhom hA=HITSA;
+        hitWhom hB=HITSB;
+        if(same[i]) {
+            hA=BOTH;
+            hB=BOTH;
+        }
+        bool validA=(hitA[i].hit() && this->decidePoint(hA,inAA[i],inBA[i]));
+        bool validB=(hitB[i].hit() && this->decidePoint(hB,inAB[i],inBB[i]));
+        if(!validA && !validB) {
+            // WarningIn("Foam::binaryOperationSearchableSurface::findNearest")
+            //     << "Neither hit " << hitA[i] << " nor " << hitB[i]
+            //         << " near " << samples[i] << " valid" << endl
+            //         << same[i] << " " << inAA[i] << " " << inBA[i]
+            //         << " " << inAB[i] << " " << inBB[i] << endl
+            //         << mag(hitA[i].rawPoint()-samples[i]) << " "
+            //         << mag(hitB[i].rawPoint()-samples[i])
+            //         << endl;
+        } else if( validA && validB ) {
+            if(same[i]) {
+                info[i]=hitA[i];
+            } else if(
+                mag(samples[i]-hitA[i].rawPoint())
+                <
+                mag(samples[i]-hitB[i].rawPoint())
+            ) {
+                info[i]=hitA[i];
+            } else {
+                info[i]=hitB[i];
+            }
+        } else if( validA ) {
+            info[i]=hitA[i];
+        } else {
+            info[i]=hitB[i];
+        }
+    }
+}
 
 void Foam::binaryOperationSearchableSurface::findLine
 (
@@ -216,7 +272,7 @@ void Foam::binaryOperationSearchableSurface::findLineAll
             continue;
         }
 
-        this->filter(start[i],infoA[i],infoB[i],info[i]);
+        filter(start[i],infoA[i],infoB[i],info[i]);
         if(debug>3) {
             Info << infoA[i] << infoB[i] << info[i] << endl;
         }
@@ -487,6 +543,9 @@ void  Foam::binaryOperationSearchableSurface::whose
 
     //    Info << nearestA << nearestB << endl;
 
+    const scalar sameTolerance=1e-10;
+    const scalar farTolerance=1e-5;
+
     forAll(whom,i) {
         scalar distA=HUGE;
         scalar distB=HUGE;
@@ -497,15 +556,15 @@ void  Foam::binaryOperationSearchableSurface::whose
             distB=mag(samples[i]-nearestB[i].hitPoint());
         }
         if(
-            distA>1e-5
+            distA>farTolerance
             &&
-            distB>1e-5
+            distB>farTolerance
         ) {
             whom[i]=NONE;
         } else if(
-            distA<SMALL
+            distA<sameTolerance
             &&
-            distB<SMALL
+            distB<sameTolerance
         ) {
             whom[i]=BOTH;
         } else {

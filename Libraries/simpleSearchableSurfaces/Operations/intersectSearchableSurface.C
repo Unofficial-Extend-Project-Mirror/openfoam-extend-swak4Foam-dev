@@ -94,46 +94,6 @@ bool Foam::intersectSearchableSurface::decidePoint(
     return false;
 }
 
-void Foam::intersectSearchableSurface::findNearest
-(
-    const pointField& sample,
-    const scalarField& nearestDistSqr,
-    List<pointIndexHit>& result
-) const
-{
-    List<pointIndexHit> hitA;
-    List<pointIndexHit> hitB;
-    a().findNearest(sample,nearestDistSqr,hitA);
-    b().findNearest(sample,nearestDistSqr,hitB);
-
-    List<bool> inA;
-    List<bool> inB;
-    insideA(hitB,inA);
-    insideB(hitA,inB);
-
-    result.setSize(sample.size());
-
-    forAll(result,i) {
-        if(inA[i] && !inB[i]) {
-            result[i]=hitB[i];
-        } else if(!inA[i] && inB[i]) {
-            result[i]=hitA[i];
-        } else {
-            // not sure
-            if
-                (
-                    mag(sample[i]-hitA[i].rawPoint())
-                    <
-                    mag(sample[i]-hitB[i].rawPoint())
-                ) {
-                result[i]=hitA[i];
-            } else {
-                result[i]=hitB[i];
-            }
-        }
-    }
-}
-
 void Foam::intersectSearchableSurface::getVolumeType
 (
     const pointField& points,

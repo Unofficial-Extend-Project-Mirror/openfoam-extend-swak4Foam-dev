@@ -93,61 +93,6 @@ bool Foam::unionSearchableSurface::decidePoint(
     return false;
 }
 
-void Foam::unionSearchableSurface::findNearest
-(
-    const pointField& sample,
-    const scalarField& nearestDistSqr,
-    List<pointIndexHit>& result
-) const
-{
-    if(debug) {
-        Info << "Foam::unionSearchableSurface::findNearest" << endl;
-    }
-
-    List<pointIndexHit> hitA;
-    List<pointIndexHit> hitB;
-    a().findNearest(sample,nearestDistSqr,hitA);
-    b().findNearest(sample,nearestDistSqr,hitB);
-
-    List<bool> inA;
-    List<bool> inB;
-    insideA(hitB,inA);
-    insideB(hitA,inB);
-
-    result.setSize(sample.size());
-
-    forAll(result,i) {
-        if(inA[i] && !inB[i]) {
-            result[i]=hitA[i];
-        } else if(!inA[i] && inB[i]) {
-            result[i]=hitB[i];
-        } else {
-            // not sure
-            if(hitA[i].hit() == hitB[i].hit()) {
-                if
-                    (
-                        mag(sample[i]-hitA[i].rawPoint())
-                        <
-                        mag(sample[i]-hitB[i].rawPoint())
-                    ) {
-                    result[i]=hitA[i];
-                } else {
-                    result[i]=hitB[i];
-                }
-            } else {
-                if(hitA[i].hit()) {
-                    result[i]=hitA[i];
-                } else {
-                    result[i]=hitB[i];
-                }
-            }
-            if(inA[i] && inB[i]) {
-                result[i].setMiss();
-            }
-        }
-    }
-}
-
 void Foam::unionSearchableSurface::getVolumeType
 (
     const pointField& points,

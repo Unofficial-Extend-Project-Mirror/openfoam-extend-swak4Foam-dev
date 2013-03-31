@@ -87,34 +87,6 @@ bool Foam::exclusiveSearchableSurface::decidePoint(
     return false;
 }
 
-void Foam::exclusiveSearchableSurface::findNearest
-(
-    const pointField& sample,
-    const scalarField& nearestDistSqr,
-    List<pointIndexHit>& result
-) const
-{
-    List<pointIndexHit> hitA;
-    List<pointIndexHit> hitB;
-    a().findNearest(sample,nearestDistSqr,hitA);
-    b().findNearest(sample,nearestDistSqr,hitB);
-
-    result.setSize(sample.size());
-
-    forAll(result,i) {
-        if
-            (
-                mag(sample[i]-hitA[i].rawPoint())
-                <
-                mag(sample[i]-hitB[i].rawPoint())
-            ) {
-            result[i]=hitA[i];
-        } else {
-            result[i]=hitB[i];
-        }
-    }
-}
-
 void Foam::exclusiveSearchableSurface::getVolumeType
 (
     const pointField& points,
