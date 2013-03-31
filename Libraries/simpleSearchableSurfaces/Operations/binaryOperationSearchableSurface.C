@@ -602,6 +602,31 @@ void  Foam::binaryOperationSearchableSurface::inside
     }
 }
 
+void Foam::binaryOperationSearchableSurface::samePoint(
+    const List<pointIndexHit>& hitA,
+    const List<pointIndexHit>& hitB,
+    List<bool> &same
+) const
+{
+    if(hitA.size()!=hitB.size()) {
+        FatalErrorIn("Foam::binaryOperationSearchableSurface::samePoint")
+            << "hitA (" << hitA.size() << ") and "
+                << "hitB (" << hitB.size() << ") are not of same size"
+                << endl
+                << abort(FatalError);
+    }
+    const scalar sameTolerance=1e-10;
+
+    same.resize(hitA.size(),false);
+    forAll(same,i) {
+        same[i]=(
+            mag(
+                hitA[i].rawPoint()-hitB[i].rawPoint()
+            )<sameTolerance
+        );
+    }
+}
+
 void Foam::binaryOperationSearchableSurface::collectInfo(
     const point &start,
     const List<pointIndexHit>& hitsA,
@@ -650,6 +675,14 @@ void Foam::binaryOperationSearchableSurface::collectInfo(
             ) < sameTolerance
         ) {
             hits.append(hitsA[cntA]);
+            if(
+                !hitsA[cntA].hit()
+                &&
+                hitsB[cntB].hit()
+            ) {
+                hits[hits.size()-1].setHit();
+                hits[hits.size()-1].setIndex(hitsB[cntB].index());
+            }
             whom.append(BOTH);
             cntA++; cntB++;
         } else if(

@@ -159,6 +159,13 @@ protected:
         );
     }
 
+    void samePoint
+    (
+        const List<pointIndexHit>& hitA,
+        const List<pointIndexHit>& hitB,
+        List<bool> &samr
+    ) const;
+
     //- Collect two lists into one with all relevant information
     void collectInfo(
         const point &start,

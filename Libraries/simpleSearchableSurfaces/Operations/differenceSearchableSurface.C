@@ -127,15 +127,17 @@ void Foam::differenceSearchableSurface::findNearest
 
     List<bool> inA;
     List<bool> inB;
+    List<bool> sameP;
     insideA(hitB,inA);
     insideB(hitA,inB);
+    samePoint(hitA,hitB,sameP);
 
     result.setSize(sample.size());
 
     forAll(result,i) {
-        if(!inB[i]) {
+        if(!inB[i] && !sameP[i]) {
             result[i]=hitA[i];
-        } else if(inA[i]) {
+        } else if(inA[i] && !sameP[i]) {
             result[i]=hitB[i];
         } else {
             // not sure
