@@ -98,6 +98,7 @@ protected:
     //- fitler from the separate hits on the two surfaces who stays in the combination
     virtual void filter
     (
+        const point &start,
         const List<pointIndexHit>& hitsA,
         const List<pointIndexHit>& hitsB,
         List<pointIndexHit>& result
@@ -159,6 +160,17 @@ protected:
             in
         );
     }
+
+    //- Collect two lists into one with all relevant information
+    void collectInfo(
+        const point &start,
+        const List<pointIndexHit>& hitsA,
+        const List<pointIndexHit>& hitsB,
+        List<pointIndexHit>& allHits,
+        List<bool>& insideA,
+        List<bool>& insideB,
+        List<hitWhom>& who
+    ) const;
 
     //- Check whether the normal for a point on surface A should be reverted
     virtual bool revertNormalA(const pointIndexHit&) const = 0;

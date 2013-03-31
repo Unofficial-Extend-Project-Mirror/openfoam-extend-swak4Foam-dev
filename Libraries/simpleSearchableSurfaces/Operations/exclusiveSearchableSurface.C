@@ -75,28 +75,35 @@ Foam::exclusiveSearchableSurface::~exclusiveSearchableSurface()
 
 void Foam::exclusiveSearchableSurface::filter
 (
+    const point &start,
     const List<pointIndexHit>& hitsA,
     const List<pointIndexHit>& hitsB,
     List<pointIndexHit>& result
 ) const
 {
-    result.setSize(hitsA.size()+hitsB.size());
-    label cnt=0;
-    forAll(hitsA,i) {
-        result[cnt]=hitsA[i];
-        cnt++;
+    List<bool> inA;
+    List<bool> inB;
+    List<hitWhom> whom;
+    List<pointIndexHit> hits;
+    collectInfo(
+        start,
+        hitsA,
+        hitsB,
+        hits,
+        inA,
+        inB,
+        whom
+    );
+
+    DynamicList<pointIndexHit> h;
+    forAll(hits,i) {
+        if(
+            whom[i]!=BOTH
+        ) {
+            h.append(hits[i]);
+        }
     }
-    forAll(hitsB,i) {
-        result[cnt]=hitsB[i];
-        cnt++;
-    }
-    if(cnt!=result.size()) {
-        FatalErrorIn("Foam::exclusiveSearchableSurface::filter")
-            << "Something went horribly wrong. Number " << cnt
-                << "different from expected number " << result.size()
-                << endl
-                << abort(FatalError);
-    }
+    result=h;
 }
 
 void Foam::exclusiveSearchableSurface::findNearest

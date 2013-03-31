@@ -80,62 +80,37 @@ Foam::differenceSearchableSurface::~differenceSearchableSurface()
 
 void Foam::differenceSearchableSurface::filter
 (
+    const point &start,
     const List<pointIndexHit>& hitsA,
     const List<pointIndexHit>& hitsB,
     List<pointIndexHit>& result
 ) const
 {
-    if(debug) {
-        Info << "differenceSearchableSurface::filter "
-            << " a: " << hitsA.size() << " b: " << hitsB.size()
-            << endl;
-    }
-
     List<bool> inA;
     List<bool> inB;
+    List<hitWhom> whom;
+    List<pointIndexHit> hits;
+    collectInfo(
+        start,
+        hitsA,
+        hitsB,
+        hits,
+        inA,
+        inB,
+        whom
+    );
 
-    insideA(hitsB,inA);
-    insideB(hitsA,inB);
-
-    label nr=0;
-    forAll(inA,i) {
-        if(inA[i]) {
-            nr++;
+    DynamicList<pointIndexHit> h;
+    forAll(hits,i) {
+        if(
+            (inA[i] && whom[i]==HITSB)
+            ||
+            (!inB[i] && whom[i]==HITSA)
+        ) {
+            h.append(hits[i]);
         }
     }
-    if(debug) {
-        Info << "inA: " << nr << flush;
-    }
-    forAll(inB,i) {
-        if(!inB[i]) {
-            nr++;
-        }
-    }
-    if(debug) {
-        Info << " inA+inB: " << nr << endl;
-    }
-
-    result.setSize(nr);
-    label cnt=0;
-    forAll(hitsB,i) {
-        if(inA[i]) {
-            result[cnt]=hitsB[i];
-            cnt++;
-        }
-    }
-    forAll(hitsA,i) {
-        if(!inB[i]) {
-            result[cnt]=hitsA[i];
-            cnt++;
-        }
-    }
-    if(cnt!=nr) {
-        FatalErrorIn("Foam::differenceSearchableSurface::filter")
-            << "Something went horribly wrong. Number " << cnt
-                << "different from expected number " << nr
-                << endl
-                << abort(FatalError);
-    }
+    result=h;
 }
 
 void Foam::differenceSearchableSurface::findNearest

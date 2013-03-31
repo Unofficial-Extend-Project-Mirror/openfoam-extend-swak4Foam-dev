@@ -75,6 +75,7 @@ Foam::intersectSearchableSurface::~intersectSearchableSurface()
 
 void Foam::intersectSearchableSurface::filter
 (
+    const point &start,
     const List<pointIndexHit>& hitsA,
     const List<pointIndexHit>& hitsB,
     List<pointIndexHit>& result
@@ -82,43 +83,33 @@ void Foam::intersectSearchableSurface::filter
 {
     List<bool> inA;
     List<bool> inB;
+    List<hitWhom> whom;
+    List<pointIndexHit> hits;
+    collectInfo(
+        start,
+        hitsA,
+        hitsB,
+        hits,
+        inA,
+        inB,
+        whom
+    );
 
-    insideA(hitsB,inA);
-    insideB(hitsA,inB);
-
-    label nr=0;
-    forAll(inA,i) {
-        if(inA[i]) {
-            nr++;
+    DynamicList<pointIndexHit> h;
+    forAll(hits,i) {
+        if(
+            whom[i]==BOTH
+        ) {
+            h.append(hits[i]);
+        } else if(
+            (inA[i] && whom[i]==HITSB)
+            ||
+            (inB[i] && whom[i]==HITSA)
+        ) {
+            h.append(hits[i]);
         }
     }
-    forAll(inB,i) {
-        if(inB[i]) {
-            nr++;
-        }
-    }
-
-    result.setSize(nr);
-    label cnt=0;
-    forAll(hitsA,i) {
-        if(inB[i]) {
-            result[cnt]=hitsA[i];
-            cnt++;
-        }
-    }
-    forAll(hitsB,i) {
-        if(inA[i]) {
-            result[cnt]=hitsB[i];
-            cnt++;
-        }
-    }
-    if(cnt!=nr) {
-        FatalErrorIn("Foam::intersectSearchableSurface::filter")
-            << "Something went horribly wrong. Number " << cnt
-                << "different from expected number " << nr
-                << endl
-                << abort(FatalError);
-    }
+    result=h;
 }
 
 void Foam::intersectSearchableSurface::findNearest

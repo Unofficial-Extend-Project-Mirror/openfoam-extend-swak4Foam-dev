@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------*\
+/*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  1.0                                   |
@@ -37,7 +37,7 @@ baseFormOriginal {
 }
 
 // test overlap
-baseFormOverlap {
+ baseFormOverlap {
     a {
         type searchableBox;
         min (-1  -1   -1);
@@ -51,8 +51,8 @@ baseFormOverlap {
     }
 }
 
-// baseForm { $baseFormOriginal; }
-baseForm { $baseFormOverlap; }
+baseForm { $baseFormOriginal; }
+// baseForm { $baseFormOverlap; }
 
 // Geometry. Definition of all surfaces. All surfaces are of class
 // searchableSurface.
