@@ -159,14 +159,6 @@ protected:
         );
     }
 
-    //- Check if a hitpoint is found in both sets
-    void checkBoth(
-        const List<pointIndexHit>& hitsA,
-        const List<pointIndexHit>& hitsB,
-        List<bool> &bothA,
-        List<bool> &bothB
-    ) const;
-
     //- Collect two lists into one with all relevant information
     void collectInfo(
         const point &start,

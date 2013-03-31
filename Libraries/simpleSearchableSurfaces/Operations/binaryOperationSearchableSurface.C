@@ -602,51 +602,6 @@ void  Foam::binaryOperationSearchableSurface::inside
     }
 }
 
-void Foam::binaryOperationSearchableSurface::checkBoth(
-    const List<pointIndexHit>& hitsA,
-    const List<pointIndexHit>& hitsB,
-    List<bool> &bothA,
-    List<bool> &bothB
-) const {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::checkBoth " << name() << endl;
-    }
-
-    bothA.resize(hitsA.size(),false);
-    bothB.resize(hitsB.size(),false);
-
-    const scalar sameTolerance=1e-10;
-
-    forAll(hitsA,i) {
-        forAll(hitsB,j) {
-            if(
-                mag(
-                    hitsA[i].rawPoint()-hitsB[j].rawPoint()
-                ) < sameTolerance
-            ) {
-                bothA[i]=true;
-                bothB[j]=true;
-            }
-        }
-    }
-
-    if(debug) {
-        // these MAY be different
-        int cntA=0,cntB=0;
-        forAll(bothA,i) {
-            if(bothA[i]) {
-                cntA++;
-            }
-        }
-        forAll(bothB,i) {
-            if(bothB[i]) {
-                cntB++;
-            }
-        }
-        Info << "Both A: " << cntA << " " << cntB << endl;
-    }
-}
-
 void Foam::binaryOperationSearchableSurface::collectInfo(
     const point &start,
     const List<pointIndexHit>& hitsA,
