@@ -72,12 +72,10 @@ private:
 
 protected:
 
-    void filter
-    (
-        const point &start,
-        const List<pointIndexHit>& hitsA,
-        const List<pointIndexHit>& hitsB,
-        List<pointIndexHit>& result
+    virtual bool decidePoint(
+        const hitWhom who,
+        const bool inA,
+        const bool inB
     ) const;
 
     //- Check whether the normal for a point on surface A should be reverted

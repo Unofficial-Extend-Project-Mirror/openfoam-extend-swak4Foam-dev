@@ -73,43 +73,25 @@ Foam::intersectSearchableSurface::~intersectSearchableSurface()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::intersectSearchableSurface::filter
-(
-    const point &start,
-    const List<pointIndexHit>& hitsA,
-    const List<pointIndexHit>& hitsB,
-    List<pointIndexHit>& result
+bool Foam::intersectSearchableSurface::decidePoint(
+        const hitWhom who,
+        const bool inA,
+        const bool inB
 ) const
 {
-    List<bool> inA;
-    List<bool> inB;
-    List<hitWhom> whom;
-    List<pointIndexHit> hits;
-    collectInfo(
-        start,
-        hitsA,
-        hitsB,
-        hits,
-        inA,
-        inB,
-        whom
-    );
-
-    DynamicList<pointIndexHit> h;
-    forAll(hits,i) {
-        if(
-            whom[i]==BOTH
-        ) {
-            h.append(hits[i]);
-        } else if(
-            (inA[i] && whom[i]==HITSB)
-            ||
-            (inB[i] && whom[i]==HITSA)
-        ) {
-            h.append(hits[i]);
-        }
+    if(
+        who==BOTH
+    ) {
+        return true;
+    } else if(
+        (inA && who==HITSB)
+        ||
+        (inB && who==HITSA)
+    ) {
+        return true;
     }
-    result=h;
+
+    return false;
 }
 
 void Foam::intersectSearchableSurface::findNearest

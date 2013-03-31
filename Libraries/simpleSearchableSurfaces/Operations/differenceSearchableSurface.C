@@ -78,39 +78,20 @@ Foam::differenceSearchableSurface::~differenceSearchableSurface()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::differenceSearchableSurface::filter
-(
-    const point &start,
-    const List<pointIndexHit>& hitsA,
-    const List<pointIndexHit>& hitsB,
-    List<pointIndexHit>& result
+bool Foam::differenceSearchableSurface::decidePoint(
+    const hitWhom who,
+    const bool inA,
+    const bool inB
 ) const
 {
-    List<bool> inA;
-    List<bool> inB;
-    List<hitWhom> whom;
-    List<pointIndexHit> hits;
-    collectInfo(
-        start,
-        hitsA,
-        hitsB,
-        hits,
-        inA,
-        inB,
-        whom
-    );
-
-    DynamicList<pointIndexHit> h;
-    forAll(hits,i) {
-        if(
-            (inA[i] && whom[i]==HITSB)
-            ||
-            (!inB[i] && whom[i]==HITSA)
-        ) {
-            h.append(hits[i]);
-        }
+    if(
+        (inA && who==HITSB)
+        ||
+        (!inB && who==HITSA)
+    ) {
+        return true;
     }
-    result=h;
+    return false;
 }
 
 void Foam::differenceSearchableSurface::findNearest

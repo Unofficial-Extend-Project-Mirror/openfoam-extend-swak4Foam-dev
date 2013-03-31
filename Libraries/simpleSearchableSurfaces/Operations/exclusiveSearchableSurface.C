@@ -73,37 +73,18 @@ Foam::exclusiveSearchableSurface::~exclusiveSearchableSurface()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::exclusiveSearchableSurface::filter
-(
-    const point &start,
-    const List<pointIndexHit>& hitsA,
-    const List<pointIndexHit>& hitsB,
-    List<pointIndexHit>& result
+bool Foam::exclusiveSearchableSurface::decidePoint(
+    const hitWhom who,
+    const bool inA,
+    const bool inB
 ) const
 {
-    List<bool> inA;
-    List<bool> inB;
-    List<hitWhom> whom;
-    List<pointIndexHit> hits;
-    collectInfo(
-        start,
-        hitsA,
-        hitsB,
-        hits,
-        inA,
-        inB,
-        whom
-    );
-
-    DynamicList<pointIndexHit> h;
-    forAll(hits,i) {
-        if(
-            whom[i]!=BOTH
-        ) {
-            h.append(hits[i]);
-        }
+    if(
+        who!=BOTH
+    ) {
+        return true;
     }
-    result=h;
+    return false;
 }
 
 void Foam::exclusiveSearchableSurface::findNearest

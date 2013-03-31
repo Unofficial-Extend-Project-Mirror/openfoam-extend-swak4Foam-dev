@@ -283,6 +283,47 @@ void Foam::binaryOperationSearchableSurface::findLineAll
     }
  }
 
+void Foam::binaryOperationSearchableSurface::filter
+(
+    const point &start,
+    const List<pointIndexHit>& hitsA,
+    const List<pointIndexHit>& hitsB,
+    List<pointIndexHit>& result
+) const
+{
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::filter" << endl;
+    }
+
+    List<bool> inA;
+    List<bool> inB;
+    List<hitWhom> whom;
+    List<pointIndexHit> hits;
+    collectInfo(
+        start,
+        hitsA,
+        hitsB,
+        hits,
+        inA,
+        inB,
+        whom
+    );
+
+    DynamicList<pointIndexHit> h;
+    forAll(hits,i) {
+        if(
+            this->decidePoint(
+                whom[i],
+                inA[i],
+                inB[i]
+            )
+        ) {
+            h.append(hits[i]);
+        }
+    }
+    result=h;
+}
+
 
 void Foam::binaryOperationSearchableSurface::getRegion
 (

@@ -73,47 +73,24 @@ Foam::unionSearchableSurface::~unionSearchableSurface()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::unionSearchableSurface::filter
-(
-    const point &start,
-    const List<pointIndexHit>& hitsA,
-    const List<pointIndexHit>& hitsB,
-    List<pointIndexHit>& result
-) const
-{
-    if(debug) {
-        Info << "Foam::unionSearchableSurface::filter" << endl;
+bool Foam::unionSearchableSurface::decidePoint(
+    const hitWhom who,
+    const bool inA,
+    const bool inB
+) const {
+    if(
+        who==BOTH
+    ) {
+        return true;
+    } else if(
+        (!inA && who==HITSB)
+        ||
+        (!inB && who==HITSA)
+    ) {
+        return true;
     }
 
-    List<bool> inA;
-    List<bool> inB;
-    List<hitWhom> whom;
-    List<pointIndexHit> hits;
-    collectInfo(
-        start,
-        hitsA,
-        hitsB,
-        hits,
-        inA,
-        inB,
-        whom
-    );
-
-    DynamicList<pointIndexHit> h;
-    forAll(hits,i) {
-        if(
-            whom[i]==BOTH
-        ) {
-            h.append(hits[i]);
-        } else if(
-            (!inA[i] && whom[i]==HITSB)
-            ||
-            (!inB[i] && whom[i]==HITSA)
-        ) {
-            h.append(hits[i]);
-        }
-    }
-    result=h;
+    return false;
 }
 
 void Foam::unionSearchableSurface::findNearest

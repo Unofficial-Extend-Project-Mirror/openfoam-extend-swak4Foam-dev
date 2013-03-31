@@ -100,7 +100,7 @@ protected:
         const List<pointIndexHit>& hitsA,
         const List<pointIndexHit>& hitsB,
         List<pointIndexHit>& result
-    ) const = 0;
+    ) const;
 
     enum hitWhom {
         NONE,
@@ -108,6 +108,12 @@ protected:
         HITSB,
         BOTH
     };
+
+    virtual bool decidePoint(
+        const hitWhom who,
+        const bool inA,
+        const bool inB
+    ) const = 0;
 
     //- find out who this hit belongs to
     void whose
