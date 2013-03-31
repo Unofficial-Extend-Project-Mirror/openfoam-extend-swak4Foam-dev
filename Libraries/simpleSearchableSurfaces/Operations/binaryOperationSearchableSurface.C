@@ -46,7 +46,7 @@ Contributors/Copyright:
 namespace Foam
 {
 
-defineTypeNameAndDebug(binaryOperationSearchableSurface, 1);
+defineTypeNameAndDebug(binaryOperationSearchableSurface, 0);
 
 }
 
@@ -199,6 +199,11 @@ void Foam::binaryOperationSearchableSurface::findLineAll
     a().findLineAll(start,end,infoA);
     b().findLineAll(start,end,infoB);
 
+    if(debug) {
+        Info << "Found a: " << infoA.size() << " b: " << infoB.size()
+            << endl;
+    }
+
     info.setSize(start.size());
 
     forAll(info,i) {
@@ -211,8 +216,10 @@ void Foam::binaryOperationSearchableSurface::findLineAll
             continue;
         }
 
-        this->filter(infoA[i],infoB[i],info[i]);
-
+        this->filter(start[i],infoA[i],infoB[i],info[i]);
+        if(debug>3) {
+            Info << infoA[i] << infoB[i] << info[i] << endl;
+        }
        // it's only ugly bubble-sort but OK for the small number of points
         for(label j=0;j<(info[i].size()-1);j++) {
             for(label k=j+1;k<info[i].size();k++) {
@@ -550,6 +557,9 @@ void  Foam::binaryOperationSearchableSurface::inside
     List<bool> &in
 ) const
 {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::inside " << name() << endl;
+    }
     pointField samples(hits.size());
 
     forAll(hits,i) {
@@ -559,12 +569,160 @@ void  Foam::binaryOperationSearchableSurface::inside
     List<volumeType> vol;
 
     s.getVolumeType(samples,vol);
+    //    this->getVolumeType(samples,vol);
 
     in.setSize(vol.size());
 
     forAll(vol,i) {
         //        in[i]=(vol[i]==INSIDE || vol[i]==UNKNOWN);
         in[i]=(vol[i]==INSIDE);
+    }
+
+    if(debug) {
+        label cntIn=0,cntInside=0,cntOutside=0,cntUnknown=0,cntMixed=0;
+        forAll(in,i) {
+            if(in[i]) {
+                cntIn++;
+            }
+            switch(vol[i]) {
+                case INSIDE:
+                    cntInside++; break;
+                case OUTSIDE:
+                    cntOutside++; break;
+                case MIXED:
+                    cntMixed++; break;
+                case UNKNOWN:
+                    cntUnknown++; break;
+            }
+        }
+        Info << "Inside " << cntIn << " of " << in.size() << endl;
+        Info << "VolType: Inside: " << cntInside << " Outside: "
+            << cntOutside << " Mixed: " << cntMixed << " Unknown: "
+            << cntUnknown << endl;
+    }
+}
+
+void Foam::binaryOperationSearchableSurface::checkBoth(
+    const List<pointIndexHit>& hitsA,
+    const List<pointIndexHit>& hitsB,
+    List<bool> &bothA,
+    List<bool> &bothB
+) const {
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::checkBoth " << name() << endl;
+    }
+
+    bothA.resize(hitsA.size(),false);
+    bothB.resize(hitsB.size(),false);
+
+    const scalar sameTolerance=1e-10;
+
+    forAll(hitsA,i) {
+        forAll(hitsB,j) {
+            if(
+                mag(
+                    hitsA[i].rawPoint()-hitsB[j].rawPoint()
+                ) < sameTolerance
+            ) {
+                bothA[i]=true;
+                bothB[j]=true;
+            }
+        }
+    }
+
+    if(debug) {
+        // these MAY be different
+        int cntA=0,cntB=0;
+        forAll(bothA,i) {
+            if(bothA[i]) {
+                cntA++;
+            }
+        }
+        forAll(bothB,i) {
+            if(bothB[i]) {
+                cntB++;
+            }
+        }
+        Info << "Both A: " << cntA << " " << cntB << endl;
+    }
+}
+
+void Foam::binaryOperationSearchableSurface::collectInfo(
+    const point &start,
+    const List<pointIndexHit>& hitsA,
+    const List<pointIndexHit>& hitsB,
+    List<pointIndexHit>& allHits,
+    List<bool>& inA,
+    List<bool>& inB,
+    List<hitWhom>& who
+) const
+{
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::collectInfo " << name() << endl;
+    }
+
+    DynamicList<pointIndexHit> hits;
+    DynamicList<hitWhom> whom;
+
+    const label sizeA=hitsA.size();
+    const label sizeB=hitsB.size();
+    label cntA=0;
+    label cntB=0;
+    bool goOn=true;
+
+    const scalar sameTolerance=1e-10;
+
+    while(goOn) {
+        if(
+            cntA==sizeA
+            &&
+            cntB==sizeB
+        ) {
+            goOn=false;
+        } else if(cntA==sizeA) {
+            hits.append(hitsB[cntB]);
+            whom.append(HITSB);
+            cntB++;
+        } else if(cntB==sizeB) {
+            hits.append(hitsA[cntA]);
+            whom.append(HITSA);
+            cntA++;
+        } else if(
+            mag(
+                hitsA[cntA].rawPoint()
+                -
+                hitsB[cntB].rawPoint()
+            ) < sameTolerance
+        ) {
+            hits.append(hitsA[cntA]);
+            whom.append(BOTH);
+            cntA++; cntB++;
+        } else if(
+            mag(hitsA[cntA].rawPoint()-start)
+            <
+            mag(hitsB[cntB].rawPoint()-start)
+        ) {
+            hits.append(hitsA[cntA]);
+            whom.append(HITSA);
+            cntA++;
+        } else {
+            hits.append(hitsB[cntB]);
+            whom.append(HITSB);
+            cntB++;
+        }
+    }
+
+    allHits=hits;
+    who=whom;
+
+    insideA(allHits,inA);
+    insideB(allHits,inB);
+
+    if(debug>1) {
+        forAll(allHits,i) {
+            Info << allHits[i] << " whom:  " << whom[i] << " A: "
+                << inA[i] << " inB: " << inB[i] << endl;
+        }
     }
 }
 

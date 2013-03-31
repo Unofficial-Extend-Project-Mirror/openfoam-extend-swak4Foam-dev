@@ -75,6 +75,7 @@ Foam::intersectSearchableSurface::~intersectSearchableSurface()
 
 void Foam::intersectSearchableSurface::filter
 (
+    const point &start,
     const List<pointIndexHit>& hitsA,
     const List<pointIndexHit>& hitsB,
     List<pointIndexHit>& result

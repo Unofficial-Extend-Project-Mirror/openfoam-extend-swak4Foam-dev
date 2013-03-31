@@ -80,6 +80,7 @@ Foam::differenceSearchableSurface::~differenceSearchableSurface()
 
 void Foam::differenceSearchableSurface::filter
 (
+    const point &start,
     const List<pointIndexHit>& hitsA,
     const List<pointIndexHit>& hitsB,
     List<pointIndexHit>& result

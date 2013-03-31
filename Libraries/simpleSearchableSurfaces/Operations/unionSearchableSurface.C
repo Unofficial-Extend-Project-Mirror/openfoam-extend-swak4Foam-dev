@@ -75,50 +75,45 @@ Foam::unionSearchableSurface::~unionSearchableSurface()
 
 void Foam::unionSearchableSurface::filter
 (
+    const point &start,
     const List<pointIndexHit>& hitsA,
     const List<pointIndexHit>& hitsB,
     List<pointIndexHit>& result
 ) const
 {
+    if(debug) {
+        Info << "Foam::unionSearchableSurface::filter" << endl;
+    }
+
     List<bool> inA;
     List<bool> inB;
+    List<hitWhom> whom;
+    List<pointIndexHit> hits;
+    collectInfo(
+        start,
+        hitsA,
+        hitsB,
+        hits,
+        inA,
+        inB,
+        whom
+    );
 
-    insideA(hitsB,inA);
-    insideB(hitsA,inB);
-
-    label nr=0;
-    forAll(inA,i) {
-        if(!inA[i]) {
-            nr++;
+    DynamicList<pointIndexHit> h;
+    forAll(hits,i) {
+        if(
+            whom[i]==BOTH
+        ) {
+            h.append(hits[i]);
+        } else if(
+            (!inA[i] && whom[i]==HITSB)
+            ||
+            (!inB[i] && whom[i]==HITSA)
+        ) {
+            h.append(hits[i]);
         }
     }
-    forAll(inB,i) {
-        if(!inB[i]) {
-            nr++;
-        }
-    }
-
-    result.setSize(nr);
-    label cnt=0;
-    forAll(hitsA,i) {
-        if(!inB[i]) {
-            result[cnt]=hitsA[i];
-            cnt++;
-        }
-    }
-    forAll(hitsB,i) {
-        if(!inA[i]) {
-            result[cnt]=hitsB[i];
-            cnt++;
-        }
-    }
-    if(cnt!=nr) {
-        FatalErrorIn("Foam::unionSearchableSurface::filter")
-            << "Something went horribly wrong. Number " << cnt
-                << "different from expected number " << nr
-                << endl
-                << abort(FatalError);
-    }
+    result=h;
 }
 
 void Foam::unionSearchableSurface::findNearest
@@ -128,6 +123,10 @@ void Foam::unionSearchableSurface::findNearest
     List<pointIndexHit>& result
 ) const
 {
+    if(debug) {
+        Info << "Foam::unionSearchableSurface::findNearest" << endl;
+    }
+
     List<pointIndexHit> hitA;
     List<pointIndexHit> hitB;
     a().findNearest(sample,nearestDistSqr,hitA);
@@ -178,6 +177,10 @@ void Foam::unionSearchableSurface::getVolumeType
     List<volumeType>& volType
 ) const
 {
+    if(debug) {
+        Info << "Foam::unionSearchableSurface::getVolumeType" << endl;
+    }
+
     List<volumeType> inA;
     List<volumeType> inB;
 
@@ -193,6 +196,10 @@ void Foam::unionSearchableSurface::getVolumeType
             volType[i]=OUTSIDE;
         } else {
             volType[i]=UNKNOWN;
+        }
+        if(debug) {
+            Info << "Point: " << points[i] << " A: " << inA[i]
+                << " B: " << inB[i]  << " -> " << volType[i] << endl;
         }
     }
 }

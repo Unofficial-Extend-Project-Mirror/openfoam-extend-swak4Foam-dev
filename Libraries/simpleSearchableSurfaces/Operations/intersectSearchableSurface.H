@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef intersectSearchableSurface_H
@@ -74,6 +74,7 @@ protected:
 
     void filter
     (
+        const point &start,
         const List<pointIndexHit>& hitsA,
         const List<pointIndexHit>& hitsB,
         List<pointIndexHit>& result
@@ -114,7 +115,7 @@ public:
         const scalarField& nearestDistSqr,
         List<pointIndexHit>&
     ) const;
-    
+
     void getVolumeType
     (
         const pointField& points,

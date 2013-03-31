@@ -75,6 +75,7 @@ Foam::exclusiveSearchableSurface::~exclusiveSearchableSurface()
 
 void Foam::exclusiveSearchableSurface::filter
 (
+    const point &start,
     const List<pointIndexHit>& hitsA,
     const List<pointIndexHit>& hitsB,
     List<pointIndexHit>& result
