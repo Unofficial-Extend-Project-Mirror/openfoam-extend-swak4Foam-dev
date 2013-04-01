@@ -14,7 +14,10 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-libs            ("libparMetisDecomp.so");
+libs            (
+    "libsimpleSearchableSurfaces.so"
+    "libparMetisDecomp.so"
+);
 
 application     simpleFoam;
 

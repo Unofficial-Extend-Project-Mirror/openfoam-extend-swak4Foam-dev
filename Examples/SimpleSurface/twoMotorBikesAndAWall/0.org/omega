@@ -31,13 +31,13 @@ boundaryField
         value           $internalField;
     }
 
-    lowerWall
+    ".+Wall.*"
     {
         type            omegaWallFunction;
         value           $internalField;
     }
 
-    "motorBike_.*"
+    "bike._.*"
     {
         type            omegaWallFunction;
         value           $internalField;

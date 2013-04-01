@@ -31,13 +31,13 @@ boundaryField
         value           $internalField;
     }
 
-    lowerWall
+    ".+Wall.*"
     {
         type            kqRWallFunction;
         value           $internalField;
     }
 
-    "motorBike_.*"
+    "bike._.*"
     {
         type            kqRWallFunction;
         value           $internalField;

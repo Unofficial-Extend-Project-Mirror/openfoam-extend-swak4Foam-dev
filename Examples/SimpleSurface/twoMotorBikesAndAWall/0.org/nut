@@ -39,7 +39,7 @@ boundaryField
         value           uniform 0;
     }
 
-    lowerWall
+    ".+Wall.*"
     {
         type            nutWallFunction;
         value           uniform 0;
@@ -51,7 +51,7 @@ boundaryField
         value           uniform 0;
     }
 
-    "motorBike_.*"
+    "bike._.*"
     {
         type            nutWallFunction;
         value           uniform 0;

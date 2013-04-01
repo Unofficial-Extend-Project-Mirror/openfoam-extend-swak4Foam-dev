@@ -67,6 +67,8 @@ private:
 
     // Private Member Data
 
+        autoPtr<IOobject> rename_;
+
         autoPtr<searchableSurface> delegate_;
 
         //- Disallow default bitwise copy construct

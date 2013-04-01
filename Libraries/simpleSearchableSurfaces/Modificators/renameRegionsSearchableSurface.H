@@ -32,7 +32,7 @@ Class
     Foam::renameRegionsSearchableSurface
 
 Description
-    Makes the whole surface one region
+    Rename the regions
 
 SourceFiles
     renameRegionsSearchableSurface.C
@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef renameRegionsSearchableSurface_H
