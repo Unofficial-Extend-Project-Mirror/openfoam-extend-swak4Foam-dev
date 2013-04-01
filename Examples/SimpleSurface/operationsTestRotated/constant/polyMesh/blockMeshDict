@@ -25,30 +25,30 @@ FoamFile
 
 convertToMeters 1;
 
-vertices        
+vertices
 (
     (-2.0 -2.0  0)
     ( 2.0 -2.0  0)
     ( 2.0  2.0  0)
     (-2.0  2.0  0)
-    (-2.0 -2.0  11)
-    ( 2.0 -2.0  11)
-    ( 2.0  2.0  11)
-    (-2.0  2.0  11)
+    (-2.0 -2.0  14)
+    ( 2.0 -2.0  14)
+    ( 2.0  2.0  14)
+    (-2.0  2.0  14)
 );
 
-blocks          
+blocks
 (
-    hex (0 1 2 3 4 5 6 7) (20 20 55) simpleGrading (1 1 1)
+    hex (0 1 2 3 4 5 6 7) (20 20 70) simpleGrading (1 1 1)
 );
 
-edges           
+edges
 (
 );
 
-patches         
+patches
 (
-    patch maxY 
+    patch maxY
     (
         (3 7 6 2)
     )
@@ -74,7 +74,7 @@ patches
     )
 );
 
-mergePatchPairs 
+mergePatchPairs
 (
 );
 

@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef wrapperSearchableSurface_H
@@ -109,6 +109,14 @@ public:
         virtual bool hasVolumeType() const
         {
             return delegate().hasVolumeType();
+        }
+
+        label size() const {
+            return delegate().size();
+        }
+
+        pointField coordinates() const {
+            return delegate().coordinates();
         }
 
         // Multiple point queries.

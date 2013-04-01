@@ -669,7 +669,6 @@ void  Foam::binaryOperationSearchableSurface::inside
     List<volumeType> vol;
 
     s.getVolumeType(samples,vol);
-    //    this->getVolumeType(samples,vol);
 
     in.setSize(vol.size());
 
