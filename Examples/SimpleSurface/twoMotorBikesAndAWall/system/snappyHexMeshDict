@@ -75,18 +75,24 @@ geometry
     }
 
     bike2 {
-        type translate;
-        translation $bike2Move;
+        // oneRegion seems to be necessary because triSurface seems to be a bit weird about coordinates()
+        type oneRegion;
+        regionName bikeAndRider;
 
-        surface
-        {
-            type rotate;
+        surface {
+            type translate;
+            translation $bike2Move;
 
-            rotateFrom (0 0 1);
-            rotateTo   (0.35 0 0.7);
-            surface {
-                $bikeStl;
-                name motorBikeJump;
+            surface
+            {
+                type rotate;
+
+                rotateFrom (0 0 1);
+                rotateTo   (0.35 0 0.7);
+                surface {
+                    $bikeStl;
+                    name motorBikeJump;
+                }
             }
         }
     }
@@ -218,17 +224,17 @@ castellatedMeshControls
                 inGroups (motorBike1);
             }
         }
-        // bike2
-        // {
-        //     // Surface-wise min and max refinement level
-        //     level (5 6);
+        bike2
+        {
+            // Surface-wise min and max refinement level
+            level (5 6);
 
-        //     patchInfo
-        //     {
-        //         type wall;
-        //         inGroups (motorBike2);
-        //     }
-        // }
+            patchInfo
+            {
+                type wall;
+                inGroups (motorBike2);
+            }
+        }
         enterWall
         {
             level (3 4);
