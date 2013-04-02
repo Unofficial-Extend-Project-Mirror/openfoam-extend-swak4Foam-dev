@@ -44,17 +44,22 @@ refineBox {
 geometry
 {
     bike1 {
-        type translate;
-        translation $bike1Move;
+        type oneRegion;
+        regionName bikeAndRider;
 
-        surface
-        {
-            type rotate;
+        surface {
+            type translate;
+            translation $bike1Move;
 
-            rotateFrom (-1 0 0);
-            rotateTo   (-0.8 0.3 0);
-            surface {
-                $bikeStl;
+            surface
+            {
+                type rotate;
+
+                rotateFrom (-1 0 0);
+                rotateTo   (-0.8 0.3 0);
+                surface {
+                    $bikeStl;
+                }
             }
         }
     }
@@ -303,6 +308,10 @@ addLayersControls
     layers
     {
         minZ
+        {
+            nSurfaceLayers 1;
+        }
+        "bike(.+)_bikeAndRider"
         {
             nSurfaceLayers 1;
         }
