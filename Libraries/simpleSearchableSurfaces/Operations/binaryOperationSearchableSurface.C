@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "binaryOperationSearchableSurface.H"
@@ -155,16 +155,71 @@ bool Foam::binaryOperationSearchableSurface::overlaps(const boundBox& bb) const
     return false;
 }
 
+void Foam::binaryOperationSearchableSurface::findNearest
+(
+    const pointField& samples,
+    const scalarField& nearestDistSqr,
+    List<pointIndexHit>& info
+) const
+{
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::findNearest" << endl;
+    }
 
-// void Foam::binaryOperationSearchableSurface::findNearest
-// (
-//     const pointField& samples,
-//     const scalarField& nearestDistSqr,
-//     List<pointIndexHit>& info
-// ) const
-// {
-// }
+    List<pointIndexHit> hitA;
+    List<pointIndexHit> hitB;
+    a().findNearest(samples,nearestDistSqr,hitA);
+    b().findNearest(samples,nearestDistSqr,hitB);
 
+    List<bool> inAA,inAB;
+    List<bool> inBA,inBB;
+    List<bool> same;
+
+    insideA(hitB,inAB);
+    insideB(hitA,inBA);
+    insideB(hitB,inBB);
+    insideA(hitA,inAA);
+    samePoint(hitA,hitB,same);
+
+    info.setSize(samples.size());
+
+    forAll(info,i) {
+        hitWhom hA=HITSA;
+        hitWhom hB=HITSB;
+        if(same[i]) {
+            hA=BOTH;
+            hB=BOTH;
+        }
+        bool validA=(hitA[i].hit() && this->decidePoint(hA,inAA[i],inBA[i]));
+        bool validB=(hitB[i].hit() && this->decidePoint(hB,inAB[i],inBB[i]));
+        if(!validA && !validB) {
+            // WarningIn("Foam::binaryOperationSearchableSurface::findNearest")
+            //     << "Neither hit " << hitA[i] << " nor " << hitB[i]
+            //         << " near " << samples[i] << " valid" << endl
+            //         << same[i] << " " << inAA[i] << " " << inBA[i]
+            //         << " " << inAB[i] << " " << inBB[i] << endl
+            //         << mag(hitA[i].rawPoint()-samples[i]) << " "
+            //         << mag(hitB[i].rawPoint()-samples[i])
+            //         << endl;
+        } else if( validA && validB ) {
+            if(same[i]) {
+                info[i]=hitA[i];
+            } else if(
+                mag(samples[i]-hitA[i].rawPoint())
+                <
+                mag(samples[i]-hitB[i].rawPoint())
+            ) {
+                info[i]=hitA[i];
+            } else {
+                info[i]=hitB[i];
+            }
+        } else if( validA ) {
+            info[i]=hitA[i];
+        } else {
+            info[i]=hitB[i];
+        }
+    }
+}
 
 void Foam::binaryOperationSearchableSurface::findLine
 (
@@ -237,7 +292,7 @@ void Foam::binaryOperationSearchableSurface::findLineAll
             continue;
         }
 
-        this->filter(start[i],infoA[i],infoB[i],info[i]);
+        filter(start[i],infoA[i],infoB[i],info[i]);
         if(debug>3) {
             Info << infoA[i] << infoB[i] << info[i] << endl;
         }
@@ -303,6 +358,47 @@ void Foam::binaryOperationSearchableSurface::findLineAll
             << " Total: " << cnt << endl;
     }
  }
+
+void Foam::binaryOperationSearchableSurface::filter
+(
+    const point &start,
+    const List<pointIndexHit>& hitsA,
+    const List<pointIndexHit>& hitsB,
+    List<pointIndexHit>& result
+) const
+{
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::filter" << endl;
+    }
+
+    List<bool> inA;
+    List<bool> inB;
+    List<hitWhom> whom;
+    List<pointIndexHit> hits;
+    collectInfo(
+        start,
+        hitsA,
+        hitsB,
+        hits,
+        inA,
+        inB,
+        whom
+    );
+
+    DynamicList<pointIndexHit> h;
+    forAll(hits,i) {
+        if(
+            this->decidePoint(
+                whom[i],
+                inA[i],
+                inB[i]
+            )
+        ) {
+            h.append(hits[i]);
+        }
+    }
+    result=h;
+}
 
 
 void Foam::binaryOperationSearchableSurface::getRegion
@@ -467,6 +563,9 @@ void  Foam::binaryOperationSearchableSurface::whose
 
     //    Info << nearestA << nearestB << endl;
 
+    const scalar sameTolerance=1e-10;
+    const scalar farTolerance=1e-5;
+
     forAll(whom,i) {
         scalar distA=HUGE;
         scalar distB=HUGE;
@@ -477,15 +576,15 @@ void  Foam::binaryOperationSearchableSurface::whose
             distB=mag(samples[i]-nearestB[i].hitPoint());
         }
         if(
-            distA>1e-5
+            distA>farTolerance
             &&
-            distB>1e-5
+            distB>farTolerance
         ) {
             whom[i]=NONE;
         } else if(
-            distA<SMALL
+            distA<sameTolerance
             &&
-            distB<SMALL
+            distB<sameTolerance
         ) {
             whom[i]=BOTH;
         } else {
@@ -590,7 +689,6 @@ void  Foam::binaryOperationSearchableSurface::inside
     List<volumeType> vol;
 
     s.getVolumeType(samples,vol);
-    //    this->getVolumeType(samples,vol);
 
     in.setSize(vol.size());
 
@@ -620,6 +718,31 @@ void  Foam::binaryOperationSearchableSurface::inside
         Info << "VolType: Inside: " << cntInside << " Outside: "
             << cntOutside << " Mixed: " << cntMixed << " Unknown: "
             << cntUnknown << endl;
+    }
+}
+
+void Foam::binaryOperationSearchableSurface::samePoint(
+    const List<pointIndexHit>& hitA,
+    const List<pointIndexHit>& hitB,
+    List<bool> &same
+) const
+{
+    if(hitA.size()!=hitB.size()) {
+        FatalErrorIn("Foam::binaryOperationSearchableSurface::samePoint")
+            << "hitA (" << hitA.size() << ") and "
+                << "hitB (" << hitB.size() << ") are not of same size"
+                << endl
+                << abort(FatalError);
+    }
+    const scalar sameTolerance=1e-10;
+
+    same.resize(hitA.size(),false);
+    forAll(same,i) {
+        same[i]=(
+            mag(
+                hitA[i].rawPoint()-hitB[i].rawPoint()
+            )<sameTolerance
+        );
     }
 }
 
@@ -671,6 +794,14 @@ void Foam::binaryOperationSearchableSurface::collectInfo(
             ) < sameTolerance
         ) {
             hits.append(hitsA[cntA]);
+            if(
+                !hitsA[cntA].hit()
+                &&
+                hitsB[cntB].hit()
+            ) {
+                hits[hits.size()-1].setHit();
+                hits[hits.size()-1].setIndex(hitsB[cntB].index());
+            }
             whom.append(BOTH);
             cntA++; cntB++;
         } else if(

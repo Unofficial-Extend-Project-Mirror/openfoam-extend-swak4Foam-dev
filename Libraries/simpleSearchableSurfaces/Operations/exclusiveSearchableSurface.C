@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "exclusiveSearchableSurface.H"
@@ -73,65 +73,18 @@ Foam::exclusiveSearchableSurface::~exclusiveSearchableSurface()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::exclusiveSearchableSurface::filter
-(
-    const point &start,
-    const List<pointIndexHit>& hitsA,
-    const List<pointIndexHit>& hitsB,
-    List<pointIndexHit>& result
+bool Foam::exclusiveSearchableSurface::decidePoint(
+    const hitWhom who,
+    const bool inA,
+    const bool inB
 ) const
 {
-    List<bool> inA;
-    List<bool> inB;
-    List<hitWhom> whom;
-    List<pointIndexHit> hits;
-    collectInfo(
-        start,
-        hitsA,
-        hitsB,
-        hits,
-        inA,
-        inB,
-        whom
-    );
-
-    DynamicList<pointIndexHit> h;
-    forAll(hits,i) {
-        if(
-            whom[i]!=BOTH
-        ) {
-            h.append(hits[i]);
-        }
+    if(
+        who!=BOTH
+    ) {
+        return true;
     }
-    result=h;
-}
-
-void Foam::exclusiveSearchableSurface::findNearest
-(
-    const pointField& sample,
-    const scalarField& nearestDistSqr,
-    List<pointIndexHit>& result
-) const
-{
-    List<pointIndexHit> hitA;
-    List<pointIndexHit> hitB;
-    a().findNearest(sample,nearestDistSqr,hitA);
-    b().findNearest(sample,nearestDistSqr,hitB);
-
-    result.setSize(sample.size());
-
-    forAll(result,i) {
-        if
-            (
-                mag(sample[i]-hitA[i].rawPoint())
-                <
-                mag(sample[i]-hitB[i].rawPoint())
-            ) {
-            result[i]=hitA[i];
-        } else {
-            result[i]=hitB[i];
-        }
-    }
+    return false;
 }
 
 void Foam::exclusiveSearchableSurface::getVolumeType

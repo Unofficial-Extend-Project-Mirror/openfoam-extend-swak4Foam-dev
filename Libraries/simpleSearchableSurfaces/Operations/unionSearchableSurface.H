@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef unionSearchableSurface_H
@@ -72,12 +72,10 @@ private:
 
 protected:
 
-    void filter
-    (
-        const point &start,
-        const List<pointIndexHit>& hitsA,
-        const List<pointIndexHit>& hitsB,
-        List<pointIndexHit>& result
+    virtual bool decidePoint(
+        const hitWhom who,
+        const bool inA,
+        const bool inB
     ) const;
 
     //- Check whether the normal for a point on surface A should be reverted
@@ -106,15 +104,6 @@ public:
     // Destructor
 
         virtual ~unionSearchableSurface();
-
-    // Multiple point queries.
-
-    virtual void findNearest
-    (
-        const pointField& sample,
-        const scalarField& nearestDistSqr,
-        List<pointIndexHit>&
-    ) const;
 
     void getVolumeType
     (

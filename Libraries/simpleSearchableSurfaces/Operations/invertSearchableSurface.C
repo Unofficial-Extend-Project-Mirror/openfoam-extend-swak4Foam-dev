@@ -34,17 +34,16 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "unionSearchableSurface.H"
+#include "invertSearchableSurface.H"
 #include "addToRunTimeSelectionTable.H"
-#include "transform.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-defineTypeNameAndDebug(unionSearchableSurface, 0);
-addToRunTimeSelectionTable(searchableSurface, unionSearchableSurface, dict);
+    defineTypeNameAndDebug(invertSearchableSurface, 0);
+    addToRunTimeSelectionTable(searchableSurface, invertSearchableSurface, dict);
 
 }
 
@@ -54,75 +53,61 @@ addToRunTimeSelectionTable(searchableSurface, unionSearchableSurface, dict);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::unionSearchableSurface::unionSearchableSurface
+Foam::invertSearchableSurface::invertSearchableSurface
 (
     const IOobject& io,
     const dictionary& dict
 )
 :
-    binaryOperationSearchableSurface(io,dict)
+    wrapperSearchableSurface(io,dict)
 {
 }
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::unionSearchableSurface::~unionSearchableSurface()
+Foam::invertSearchableSurface::~invertSearchableSurface()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool Foam::unionSearchableSurface::decidePoint(
-    const hitWhom who,
-    const bool inA,
-    const bool inB
-) const {
-    if(
-        who==BOTH
-    ) {
-        return true;
-    } else if(
-        (!inA && who==HITSB)
-        ||
-        (!inB && who==HITSA)
-    ) {
-        return true;
-    }
 
-    return false;
-}
 
-void Foam::unionSearchableSurface::getVolumeType
+void Foam::invertSearchableSurface::getVolumeType
 (
     const pointField& points,
     List<volumeType>& volType
 ) const
 {
-    if(debug) {
-        Info << "Foam::unionSearchableSurface::getVolumeType" << endl;
-    }
-
-    List<volumeType> inA;
-    List<volumeType> inB;
-
-    a().getVolumeType(points,inA);
-    b().getVolumeType(points,inB);
-
-    volType.setSize(points.size());
+    delegate().getVolumeType
+        (
+            points,
+            volType
+        );
 
     forAll(volType,i) {
-        if( inA[i]==INSIDE || inB[i]==INSIDE ) {
-            volType[i]=INSIDE;
-        } else if( inA[i]==OUTSIDE && inB[i]==OUTSIDE ) {
+        if(volType[i]==INSIDE) {
             volType[i]=OUTSIDE;
-        } else {
-            volType[i]=UNKNOWN;
+        } else if(volType[i]==OUTSIDE) {
+            volType[i]=INSIDE;
         }
-        if(debug) {
-            Info << "Point: " << points[i] << " A: " << inA[i]
-                << " B: " << inB[i]  << " -> " << volType[i] << endl;
-        }
+    }
+}
+
+void Foam::invertSearchableSurface::getNormal
+(
+    const List<pointIndexHit>& hits,
+    vectorField& normal
+) const
+{
+    delegate().getNormal(
+        hits,
+        normal
+    );
+
+    forAll(normal,i) {
+        normal[i]=-normal[i];
     }
 }
 

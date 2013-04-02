@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef binaryOperationSearchableSurface_H
@@ -102,7 +102,7 @@ protected:
         const List<pointIndexHit>& hitsA,
         const List<pointIndexHit>& hitsB,
         List<pointIndexHit>& result
-    ) const = 0;
+    ) const;
 
     enum hitWhom {
         NONE,
@@ -110,6 +110,12 @@ protected:
         HITSB,
         BOTH
     };
+
+    virtual bool decidePoint(
+        const hitWhom who,
+        const bool inA,
+        const bool inB
+    ) const = 0;
 
     //- find out who this hit belongs to
     void whose
@@ -160,6 +166,13 @@ protected:
             in
         );
     }
+
+    void samePoint
+    (
+        const List<pointIndexHit>& hitA,
+        const List<pointIndexHit>& hitB,
+        List<bool> &samr
+    ) const;
 
     //- Collect two lists into one with all relevant information
     void collectInfo(
@@ -223,12 +236,12 @@ public:
 
         // Multiple point queries.
 
-//             virtual void findNearest
-//             (
-//                 const pointField& sample,
-//                 const scalarField& nearestDistSqr,
-//                 List<pointIndexHit>&
-//             ) const;
+            virtual void findNearest
+            (
+                const pointField& sample,
+                const scalarField& nearestDistSqr,
+                List<pointIndexHit>&
+            ) const;
 
             virtual void findLine
             (

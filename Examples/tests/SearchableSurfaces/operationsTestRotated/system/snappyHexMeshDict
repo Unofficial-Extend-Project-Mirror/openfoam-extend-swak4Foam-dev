@@ -51,8 +51,8 @@ baseFormOverlap {
     }
 }
 
-baseForm { $baseFormOriginal; }
-// baseForm { $baseFormOverlap; }
+// baseForm { $baseFormOriginal; }
+baseForm { $baseFormOverlap; }
 
 // Geometry. Definition of all surfaces. All surfaces are of class
 // searchableSurface.
@@ -122,6 +122,28 @@ geometry
                     type searchableBox;
                     min ( 0   -2  -2);
                     max ( 2    2   2);
+                }
+            }
+        }
+    }
+    invertTest
+    {
+        type translate;
+        translation (0 0 11.5);
+        surface {
+            type rotate;
+            rotateFrom (1 0 0);
+            rotateTo   (1 1 1);
+            surface {
+                type intersect;
+                $baseForm
+                b {
+                    type invert;
+                    surface {
+                        type searchableBox;
+                        min (-1.0001  -1.0001   -1.0001);
+                        max ( 1.0001   1.0001    0.0001);
+                    }
                 }
             }
         }
@@ -204,6 +226,12 @@ castellatedMeshControls
             level (2 2);
         }
         exclusiveTest
+        {
+            // Surface-wise min and max refinement level
+            level (2 2);
+        }
+
+        invertTest
         {
             // Surface-wise min and max refinement level
             level (2 2);

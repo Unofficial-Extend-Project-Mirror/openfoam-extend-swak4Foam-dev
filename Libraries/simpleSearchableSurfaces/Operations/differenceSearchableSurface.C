@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "differenceSearchableSurface.H"
@@ -78,79 +78,20 @@ Foam::differenceSearchableSurface::~differenceSearchableSurface()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::differenceSearchableSurface::filter
-(
-    const point &start,
-    const List<pointIndexHit>& hitsA,
-    const List<pointIndexHit>& hitsB,
-    List<pointIndexHit>& result
+bool Foam::differenceSearchableSurface::decidePoint(
+    const hitWhom who,
+    const bool inA,
+    const bool inB
 ) const
 {
-    List<bool> inA;
-    List<bool> inB;
-    List<hitWhom> whom;
-    List<pointIndexHit> hits;
-    collectInfo(
-        start,
-        hitsA,
-        hitsB,
-        hits,
-        inA,
-        inB,
-        whom
-    );
-
-    DynamicList<pointIndexHit> h;
-    forAll(hits,i) {
-        if(
-            (inA[i] && whom[i]==HITSB)
-            ||
-            (!inB[i] && whom[i]==HITSA)
-        ) {
-            h.append(hits[i]);
-        }
+    if(
+        (inA && who==HITSB)
+        ||
+        (!inB && who==HITSA)
+    ) {
+        return true;
     }
-    result=h;
-}
-
-void Foam::differenceSearchableSurface::findNearest
-(
-    const pointField& sample,
-    const scalarField& nearestDistSqr,
-    List<pointIndexHit>& result
-) const
-{
-    List<pointIndexHit> hitA;
-    List<pointIndexHit> hitB;
-    a().findNearest(sample,nearestDistSqr,hitA);
-    b().findNearest(sample,nearestDistSqr,hitB);
-
-    List<bool> inA;
-    List<bool> inB;
-    insideA(hitB,inA);
-    insideB(hitA,inB);
-
-    result.setSize(sample.size());
-
-    forAll(result,i) {
-        if(!inB[i]) {
-            result[i]=hitA[i];
-        } else if(inA[i]) {
-            result[i]=hitB[i];
-        } else {
-            // not sure
-            if
-                (
-                    mag(sample[i]-hitA[i].rawPoint())
-                    <
-                    mag(sample[i]-hitB[i].rawPoint())
-                ) {
-                result[i]=hitA[i];
-            } else {
-                result[i]=hitB[i];
-            }
-        }
-    }
+    return false;
 }
 
 void Foam::differenceSearchableSurface::getVolumeType

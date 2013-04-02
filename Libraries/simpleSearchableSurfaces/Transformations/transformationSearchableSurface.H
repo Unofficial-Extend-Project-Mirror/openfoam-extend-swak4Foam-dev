@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef transformationSearchableSurface_H
@@ -68,6 +68,8 @@ class transformationSearchableSurface
 private:
 
     // Private Member Data
+
+        autoPtr<IOobject> rename_;
 
         autoPtr<searchableSurface> delegate_;
 

@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::renameRegionsSearchableSurface
+    Foam::invertSearchableSurface
 
 Description
-    Rename the regions
+    Invert the volume of the wrapped surface
 
 SourceFiles
-    renameRegionsSearchableSurface.C
+    invertSearchableSurface.C
 
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,8 +43,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef renameRegionsSearchableSurface_H
-#define renameRegionsSearchableSurface_H
+#ifndef invertSearchableSurface_H
+#define invertSearchableSurface_H
 
 #include "wrapperSearchableSurface.H"
 
@@ -56,33 +56,30 @@ namespace Foam
 // Forward declaration of classes
 
 /*---------------------------------------------------------------------------*\
-                           Class renameRegionsSearchableSurface Declaration
+                           Class invertSearchableSurface Declaration
 \*---------------------------------------------------------------------------*/
 
-class renameRegionsSearchableSurface
+class invertSearchableSurface
 :
     public wrapperSearchableSurface
 {
 private:
-
-    wordList regions_;
-
-        //- Disallow default bitwise copy construct
-        renameRegionsSearchableSurface(const renameRegionsSearchableSurface&);
+       //- Disallow default bitwise copy construct
+        invertSearchableSurface(const invertSearchableSurface&);
 
         //- Disallow default bitwise assignment
-        void operator=(const renameRegionsSearchableSurface&);
+        void operator=(const invertSearchableSurface&);
 
 public:
 
     //- Runtime type information
-    TypeName("renameRegions");
+    TypeName("invert");
 
 
     // Constructors
 
         //- Construct from dictionary (used by searchableSurface)
-        renameRegionsSearchableSurface
+        invertSearchableSurface
         (
             const IOobject& io,
             const dictionary& dict
@@ -90,23 +87,23 @@ public:
 
     // Destructor
 
-        virtual ~renameRegionsSearchableSurface();
+        virtual ~invertSearchableSurface();
 
 
     // Member Functions
 
-        virtual label size() const { return delegate().size(); }
+    void getVolumeType
+    (
+        const pointField& points,
+        List<volumeType>& volType
+    ) const;
 
-#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
-        virtual tmp<pointField> coordinates() const
-#else
-        virtual pointField coordinates() const
-#endif
-        {
-            return delegate().coordinates();
-        }
-
-        virtual const wordList& regions() const;
+    //- From a set of points and indices get the normal
+    void getNormal
+    (
+        const List<pointIndexHit>&,
+        vectorField& normal
+    ) const;
 
 };
 

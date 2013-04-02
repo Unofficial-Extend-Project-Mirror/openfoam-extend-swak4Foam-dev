@@ -113,6 +113,20 @@ public:
             return delegate().hasVolumeType();
         }
 
+        label size() const {
+            return delegate().size();
+        }
+
+
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+        virtual tmp<pointField> coordinates() const
+#else
+        virtual pointField coordinates() const
+#endif
+        {
+            return delegate().coordinates();
+        }
+
         // Multiple point queries.
 
             virtual void findNearest

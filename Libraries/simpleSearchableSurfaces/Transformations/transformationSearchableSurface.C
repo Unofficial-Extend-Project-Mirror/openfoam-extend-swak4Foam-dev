@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "transformationSearchableSurface.H"
@@ -61,11 +61,26 @@ Foam::transformationSearchableSurface::transformationSearchableSurface
 )
 :
     searchableSurface(io),
+    rename_(
+        dict.subDict("surface").found("rename")
+        ?
+        new IOobject(
+            word(dict.subDict("surface")["rename"]),
+            static_cast<const searchableSurface&>(*this).instance(),
+            io.local(),
+            io.db(),
+            io.readOpt(),
+            io.writeOpt(),
+            false
+        )
+        :
+        NULL
+    ),
     delegate_(
         searchableSurface::New
         (
             word(dict.subDict("surface").lookup("type")),
-            *this,
+            (rename_.valid() ? rename_() : *this),
             dict.subDict("surface")
         )
     )
