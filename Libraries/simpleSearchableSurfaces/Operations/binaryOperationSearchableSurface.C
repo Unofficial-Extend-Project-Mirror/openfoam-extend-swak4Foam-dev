@@ -427,10 +427,28 @@ void Foam::binaryOperationSearchableSurface::getRegion
                 region[i]=regionB[cntB];
             }
             cntB++;
+        } else if(who[i]==NONE) {
+            FatalErrorIn("binaryOperationSearchableSurface::getRegion")
+                << "The hit " << info[i] << " hits none of both"
+                    << endl
+                    << abort(FatalError);
         }
     }
 
     if(cntA!=regionA.size() || cntB!=regionB.size()) {
+        label cntA=0,cntB=0,cntBoth=0,cntNone=0;
+        forAll(who,i) {
+            switch(who[i]) {
+                case HITSA:
+                    cntA++; break;
+                case HITSB:
+                    cntB++; break;
+                case BOTH:
+                    cntBoth++; break;
+                case NONE:
+                    cntNone++; break;
+            }
+        }
         FatalErrorIn("binaryOperationSearchableSurface::getRegion")
             << "Something went horribly wrong. The sizes "
                 << cntA << "!=" << regionA.size() << " and/or "
@@ -481,39 +499,58 @@ void Foam::binaryOperationSearchableSurface::getNormal
 
     vectorField normalA;
     vectorField normalB;
-    a().getNormal(infoA,normalA);
-    b().getNormal(infoB,normalB);
+    a().getNormal(info,normalA);
+    b().getNormal(info,normalB);
 
     normal.setSize(info.size());
 
     label cntA=0,cntB=0;
     forAll(who,i) {
-        if(who[i]==BOTH || who[i]==HITSA) {
-            normal[i]=normalA[cntA];
+        if(who[i]==BOTH || who[i]==HITSA || who[i]==NONE) {
+            normal[i]=normalA[i];
             if(revertNormalA(info[i])) {
                 normal[i]*=-1;
             }
-            cntA++;
+            if(who[i]!=NONE) {
+                cntA++;
+            }
             if(who[i]==BOTH) {
                 cntB++;
             }
-        } else {
-            normal[i]=normalB[cntB];
+        } else if(who[i]==HITSB) {
+            normal[i]=normalB[i];
             if(revertNormalB(info[i])) {
                 normal[i]*=-1;
             }
             cntB++;
         }
     }
-    if(cntA!=normalA.size() || cntB!=normalB.size()) {
-        FatalErrorIn("binaryOperationSearchableSurface::getNormal")
-            << "Something went horribly wrong. The sizes "
-                << cntA << "!=" << normalA.size() << " and/or "
-                << cntB << "!=" << normalB.size() << "\n"
-                << "We're lucky that the program got here\n"
-                << endl
-                << abort(FatalError);
-    }
+    // if(cntA!=normalA.size() || cntB!=normalB.size()) {
+    //     label cntA=0,cntB=0,cntBoth=0,cntNone=0;
+    //     forAll(who,i) {
+    //         switch(who[i]) {
+    //             case HITSA:
+    //                 cntA++; break;
+    //             case HITSB:
+    //                 cntB++; break;
+    //             case BOTH:
+    //                 cntBoth++; break;
+    //             case NONE:
+    //                 cntNone++; break;
+    //         }
+    //     }
+    //     Info << who.size() << " points. A: " << cntA
+    //         << " B: " << cntB << " Both: " << cntBoth
+    //         << " None: " << cntNone << endl;
+
+    //     FatalErrorIn("binaryOperationSearchableSurface::getNormal")
+    //         << "Something went horribly wrong. The sizes "
+    //             << cntA << "!=" << normalA.size() << " and/or "
+    //             << cntB << "!=" << normalB.size() << "\n"
+    //             << "We're lucky that the program got here\n"
+    //             << endl
+    //             << abort(FatalError);
+    // }
 }
 
 void  Foam::binaryOperationSearchableSurface::whose
