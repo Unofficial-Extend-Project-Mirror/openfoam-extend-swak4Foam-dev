@@ -133,13 +133,22 @@ Foam::pointField
 #endif
 Foam::transformationSearchableSurface::coordinates() const
 {
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    tmp<pointField> tResult(new pointField(delegate().coordinates()));
+    pointField &result=tResult();
+#else
     pointField result(delegate().coordinates());
+#endif
 
     forAll(result,i) {
         result[i]=transform(result[i]);
     }
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tResult;
+#else
     return result;
+#endif
 }
 
 // Foam::pointIndexHit Foam::transformationSearchableSurface::findNearest
