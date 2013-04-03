@@ -233,10 +233,10 @@ castellatedMeshControls
         {
             level (3 4);
         }
-        // middleWall
-        // {
-        //      level (3 4);
-        // }
+        middleWall
+        {
+             level (3 4);
+        }
         rampWall
         {
             level (3 4);
