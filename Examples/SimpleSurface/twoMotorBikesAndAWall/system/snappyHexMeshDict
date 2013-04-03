@@ -218,17 +218,17 @@ castellatedMeshControls
                 inGroups (motorBike1);
             }
         }
-        // bike2
-        // {
-        //     // Surface-wise min and max refinement level
-        //     level (5 6);
+        bike2
+        {
+            // Surface-wise min and max refinement level
+            level (5 6);
 
-        //     patchInfo
-        //     {
-        //         type wall;
-        //         inGroups (motorBike2);
-        //     }
-        // }
+            patchInfo
+            {
+                type wall;
+                inGroups (motorBike2);
+            }
+        }
         enterWall
         {
             level (3 4);
