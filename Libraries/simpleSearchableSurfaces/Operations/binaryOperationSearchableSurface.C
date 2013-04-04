@@ -102,8 +102,10 @@ Foam::label Foam::binaryOperationSearchableSurface::toIndexA(
 ) const
 {
     if(index>=nrARegions_) {
-        //        return -1;
-        return 0;
+        Info << "A: " << index << "/" << nrARegions_
+            << " " << regions() << endl;
+        return -1;
+        //        return 0;
     } else {
         return index;
     }
@@ -114,8 +116,9 @@ Foam::label Foam::binaryOperationSearchableSurface::toIndexB(
 ) const
 {
     if(index<nrARegions_) {
-        //        return -1;
-        return 0;
+        Info << "B: " << index << "/" << nrARegions_ << endl;
+        return -1;
+        //        return 0;
     } else {
         return index-nrARegions_;
     }
@@ -455,6 +458,10 @@ void Foam::binaryOperationSearchableSurface::getRegion
         } else if(who[i]==NONE) {
             //            region[i]=-1;
             region[i]=0;
+            WarningIn("Foam::binaryOperationSearchableSurface::getRegion")
+                << "Hit " << info[i] << " does not fit any component" << endl
+                    << "Defaulting to 0" << endl;
+
             // FatalErrorIn("binaryOperationSearchableSurface::getRegion")
             //     << "The hit " << info[i] << " hits none of both"
             //         << endl
@@ -696,7 +703,7 @@ void  Foam::binaryOperationSearchableSurface::splitHits
     forAll(hits,i) {
         if(isA[i]==BOTH || isA[i]==HITSA){
             hitsA[cntA]=hits[i];
-            hitsA[cntA].setIndex(toIndexA(hitsA[cntA].index()));
+            //            hitsA[cntA].setIndex(toIndexA(hitsA[cntA].index()));
             cntA++;
         }
 #ifdef USE_BOTH_HITS
@@ -705,7 +712,7 @@ void  Foam::binaryOperationSearchableSurface::splitHits
         if(isA[i]==HITSB){
 #endif
             hitsB[cntB]=hits[i];
-            hitsB[cntB].setIndex(toIndexB(hitsB[cntB].index()));
+            //            hitsB[cntB].setIndex(toIndexB(hitsB[cntB].index()));
             cntB++;
         }
     }
