@@ -21,37 +21,37 @@ FoamFile
     {
         type            wall;
         nFaces          1198;
-        startFace       246354;
+        startFace       409903;
     }
     outside
     {
         type            patch;
-        nFaces          3534;
-        startFace       247552;
+        nFaces          4312;
+        startFace       411101;
     }
     sky
     {
         type            patch;
-        nFaces          1600;
-        startFace       251086;
+        nFaces          3600;
+        startFace       415413;
     }
     volcano_wall
     {
         type            wall;
-        nFaces          1536;
-        startFace       252686;
+        nFaces          1828;
+        startFace       419013;
     }
     volcano_inlet
     {
         type            wall;
         nFaces          68;
-        startFace       254222;
+        startFace       420841;
     }
     land_region0
     {
         type            wall;
-        nFaces          8043;
-        startFace       254290;
+        nFaces          15022;
+        startFace       420909;
     }
 )
 
