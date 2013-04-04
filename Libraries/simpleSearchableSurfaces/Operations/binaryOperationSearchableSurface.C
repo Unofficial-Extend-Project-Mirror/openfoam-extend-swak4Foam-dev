@@ -96,6 +96,31 @@ Foam::binaryOperationSearchableSurface::~binaryOperationSearchableSurface()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+
+Foam::label Foam::binaryOperationSearchableSurface::toIndexA(
+    const label index
+) const
+{
+    if(index>=nrARegions_) {
+        //        return -1;
+        return 0;
+    } else {
+        return index;
+    }
+}
+
+Foam::label Foam::binaryOperationSearchableSurface::toIndexB(
+    const label index
+) const
+{
+    if(index<nrARegions_) {
+        //        return -1;
+        return 0;
+    } else {
+        return index-nrARegions_;
+    }
+}
+
 const Foam::wordList& Foam::binaryOperationSearchableSurface::regions() const
 {
     if(debug) {
@@ -428,27 +453,33 @@ void Foam::binaryOperationSearchableSurface::getRegion
             }
             cntB++;
         } else if(who[i]==NONE) {
-            FatalErrorIn("binaryOperationSearchableSurface::getRegion")
-                << "The hit " << info[i] << " hits none of both"
-                    << endl
-                    << abort(FatalError);
+            //            region[i]=-1;
+            region[i]=0;
+            // FatalErrorIn("binaryOperationSearchableSurface::getRegion")
+            //     << "The hit " << info[i] << " hits none of both"
+            //         << endl
+            //         << abort(FatalError);
         }
     }
 
     if(cntA!=regionA.size() || cntB!=regionB.size()) {
-        label cntA=0,cntB=0,cntBoth=0,cntNone=0;
+        label cntInA=0,cntInB=0,cntBoth=0,cntNone=0;
         forAll(who,i) {
             switch(who[i]) {
                 case HITSA:
-                    cntA++; break;
+                    cntInA++; break;
                 case HITSB:
-                    cntB++; break;
+                    cntInB++; break;
                 case BOTH:
                     cntBoth++; break;
                 case NONE:
                     cntNone++; break;
             }
         }
+        Info << who.size() << " points. A: " << cntInA
+            << " B: " << cntInB << " Both: " << cntBoth
+            << " None: " << cntNone << endl;
+
         FatalErrorIn("binaryOperationSearchableSurface::getRegion")
             << "Something went horribly wrong. The sizes "
                 << cntA << "!=" << regionA.size() << " and/or "
@@ -499,15 +530,15 @@ void Foam::binaryOperationSearchableSurface::getNormal
 
     vectorField normalA;
     vectorField normalB;
-    a().getNormal(info,normalA);
-    b().getNormal(info,normalB);
+    a().getNormal(infoA,normalA);
+    b().getNormal(infoB,normalB);
 
     normal.setSize(info.size());
 
     label cntA=0,cntB=0;
     forAll(who,i) {
         if(who[i]==BOTH || who[i]==HITSA || who[i]==NONE) {
-            normal[i]=normalA[i];
+            normal[i]=normalA[cntA];
             if(revertNormalA(info[i])) {
                 normal[i]*=-1;
             }
@@ -518,39 +549,40 @@ void Foam::binaryOperationSearchableSurface::getNormal
                 cntB++;
             }
         } else if(who[i]==HITSB) {
-            normal[i]=normalB[i];
+            normal[i]=normalB[cntB];
             if(revertNormalB(info[i])) {
                 normal[i]*=-1;
             }
             cntB++;
         }
     }
-    // if(cntA!=normalA.size() || cntB!=normalB.size()) {
-    //     label cntA=0,cntB=0,cntBoth=0,cntNone=0;
-    //     forAll(who,i) {
-    //         switch(who[i]) {
-    //             case HITSA:
-    //                 cntA++; break;
-    //             case HITSB:
-    //                 cntB++; break;
-    //             case BOTH:
-    //                 cntBoth++; break;
-    //             case NONE:
-    //                 cntNone++; break;
-    //         }
-    //     }
-    //     Info << who.size() << " points. A: " << cntA
-    //         << " B: " << cntB << " Both: " << cntBoth
-    //         << " None: " << cntNone << endl;
 
-    //     FatalErrorIn("binaryOperationSearchableSurface::getNormal")
-    //         << "Something went horribly wrong. The sizes "
-    //             << cntA << "!=" << normalA.size() << " and/or "
-    //             << cntB << "!=" << normalB.size() << "\n"
-    //             << "We're lucky that the program got here\n"
-    //             << endl
-    //             << abort(FatalError);
-    // }
+    if(cntA!=normalA.size() || cntB!=normalB.size()) {
+        label cntInA=0,cntInB=0,cntBoth=0,cntNone=0;
+        forAll(who,i) {
+            switch(who[i]) {
+                case HITSA:
+                    cntInA++; break;
+                case HITSB:
+                    cntInB++; break;
+                case BOTH:
+                    cntBoth++; break;
+                case NONE:
+                    cntNone++; break;
+            }
+        }
+        Info << who.size() << " points. A: " << cntInA
+            << " B: " << cntInB << " Both: " << cntBoth
+            << " None: " << cntNone << endl;
+
+        FatalErrorIn("binaryOperationSearchableSurface::getNormal")
+            << "Something went horribly wrong. The sizes "
+                << cntA << "!=" << normalA.size() << " and/or "
+                << cntB << "!=" << normalB.size() << "\n"
+                << "We're lucky that the program got here\n"
+                << endl
+                << abort(FatalError);
+    }
 }
 
 void  Foam::binaryOperationSearchableSurface::whose
@@ -664,6 +696,7 @@ void  Foam::binaryOperationSearchableSurface::splitHits
     forAll(hits,i) {
         if(isA[i]==BOTH || isA[i]==HITSA){
             hitsA[cntA]=hits[i];
+            hitsA[cntA].setIndex(toIndexA(hitsA[cntA].index()));
             cntA++;
         }
 #ifdef USE_BOTH_HITS
@@ -672,6 +705,7 @@ void  Foam::binaryOperationSearchableSurface::splitHits
         if(isA[i]==HITSB){
 #endif
             hitsB[cntB]=hits[i];
+            hitsB[cntB].setIndex(toIndexB(hitsB[cntB].index()));
             cntB++;
         }
     }
