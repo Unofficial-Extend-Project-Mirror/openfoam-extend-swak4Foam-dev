@@ -85,6 +85,12 @@ private:
     //- Disallow default bitwise assignment
     void operator=(const binaryOperationSearchableSurface&);
 
+    //- Calculate from the common index the index of region A
+    label toIndexA(const label index) const;
+
+    //- Calculate from the common index the index of region B
+    label toIndexB(const label index) const;
+
 protected:
 
     searchableSurface &a() { return a_(); }
