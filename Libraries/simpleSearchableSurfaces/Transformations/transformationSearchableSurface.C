@@ -369,6 +369,13 @@ void Foam::transformationSearchableSurface::getNormal
             iInfo,
             normal
         );
+    forAll(normal,i) {
+        //        Info << normal[i] << " at " << iInfo[i].rawPoint() << endl;
+        //        Info << info[i].rawPoint() << transform(iInfo[i].rawPoint()) << endl;
+        vector toPt=iInfo[i].rawPoint()+normal[i];
+        normal[i]=transform(toPt)-info[i].rawPoint();
+        //        Info << " -> " << normal[i] << " " << toPt << " " << transform(toPt) << endl;
+    }
 }
 
 
