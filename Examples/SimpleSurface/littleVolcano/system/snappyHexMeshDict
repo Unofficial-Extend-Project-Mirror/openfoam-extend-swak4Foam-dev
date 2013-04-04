@@ -28,62 +28,79 @@ addLayers       false;
 // - to 'snap' the mesh boundary to the surface
 geometry
 {
-    volcanoBase {
-        type difference;
-        a {
-            type union;
+    volcano {
+        type renameRegions;
+        replacementPairs (
+            (B_bottom inlet)
+        );
+        surface {
+            type mergeRegions;
+            newName wall;
+            regions (
+                A_A_ascii
+                A_B_ascii
+                B_top
+                B_hull
+            );
 
-            a {
-                type translate;
-                translation (0.1 0.1 1.5);
-
-                surface {
-                    type scale;
-                    scale (2 2 3);
-
-                    surface {
-                        type rotate;
-                        rotateFrom (1 0 0);
-                        rotateTo   (0 0 1);
-
-                        surface
-                        {
-                            rename FineCone.stl;
-                            type triSurfaceMesh;
-                        }
-                    }
-                }
-            }
-            b {
-                type translate;
-                translation (0 0 0.5);
-
-                surface {
-                    type scale;
-                    scale (8 8 4);
-
-                    surface {
-                        type rotate;
-                        rotateFrom (1 0 0);
-                        rotateTo   (0 0 1);
-
-                        surface
-                        {
-                            rename CoarseCone.stl;
-                            type triSurfaceMesh;
-                        }
-                    }
-                }
-            }
-        }
-        b {
-            type translate;
-            translation (0 0 2);
             surface {
-                type scale;
-                scale (0.25 0.25 1);
-                surface {
-                    type unitCylinder;
+                type difference;
+                a {
+                    type union;
+
+                    a {
+                        type translate;
+                        translation (0.1 0.1 1.5);
+
+                        surface {
+                            type scale;
+                            scale (2 2 3);
+
+                            surface {
+                                type rotate;
+                                rotateFrom (1 0 0);
+                                rotateTo   (0 0 1);
+
+                                surface
+                                {
+                                    rename FineCone.stl;
+                                    type triSurfaceMesh;
+                                }
+                            }
+                        }
+                    }
+                    b {
+                        type translate;
+                        translation (0 0 0.5);
+
+                        surface {
+                            type scale;
+                            scale (8 8 4);
+
+                            surface {
+                                type rotate;
+                                rotateFrom (1 0 0);
+                                rotateTo   (0 0 1);
+
+                                surface
+                                {
+                                    rename CoarseCone.stl;
+                                    type triSurfaceMesh;
+                                }
+                            }
+                        }
+                    }
+                }
+                b {
+                    type translate;
+                    translation (0 0 2);
+                    surface {
+                        type scale;
+                        scale (0.25 0.25 1);
+                        surface {
+                            type unitCylinder;
+                        }
+                    }
                 }
             }
         }
@@ -172,7 +189,7 @@ castellatedMeshControls
 
     refinementSurfaces
     {
-        volcanoBase
+        volcano
         {
             //            level (3 4);
             level (2 3);

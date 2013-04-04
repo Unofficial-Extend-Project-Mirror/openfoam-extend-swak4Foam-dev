@@ -20,27 +20,36 @@ internalField   uniform 0;
 
 boundaryField
 {
-    inlet
+    volcano_inlet
+    {
+        type            zeroGradient;
+    }
+
+    sky
     {
         type            fixedValue;
         value           uniform 0;
     }
 
-    atmosphere
+    outside
     {
-        type            fixedValue;
-        value           uniform 0;
+        type            buoyantPressure;
     }
 
-    walls
+    volcano_wall
     {
         type            fixedFluxPressure;
         adjoint         no;
     }
 
-    defaultFaces
+    "land.+"
     {
-        type            empty;
+        $volcano_wall;
+    }
+
+    sea
+    {
+        type zeroGradient;
     }
 }
 

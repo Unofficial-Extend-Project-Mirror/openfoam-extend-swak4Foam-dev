@@ -20,19 +20,25 @@ internalField   uniform 0;
 
 boundaryField
 {
-    inlet
+    volcano_inlet
     {
         type            inletOutlet;
         value           uniform 1;
         inletValue      uniform 1;
     }
 
-    atmosphere
+    sky
     {
-        type            zeroGradient;
+        type            inletOutlet;
+        value           uniform 1;
+        inletValue      uniform 0;
     }
 
-    walls
+    outside {
+        $sky;
+    }
+
+    volcano_wall
     {
         type           constantAlphaContactAngle;
         theta0         45;
@@ -40,9 +46,14 @@ boundaryField
         value          uniform 0;
     }
 
-    defaultFaces
+    "land.+" {
+        $volcano_wall;
+        theta0         15;
+    }
+
+    sea
     {
-        type            empty;
+        type zeroGradient;
     }
 }
 

@@ -39,7 +39,7 @@ edges
 
 patches
 (
-    wall bottom
+    wall sea
     (
         (0 3 2 1)
     )
