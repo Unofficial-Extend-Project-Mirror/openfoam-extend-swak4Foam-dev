@@ -17,7 +17,7 @@ FoamFile
 // Which of the steps to run
 castellatedMesh true;
 snap            true;
-addLayers       false;
+addLayers       true;
 
 
 // Geometry. Definition of all surfaces. All surfaces are of class
@@ -192,12 +192,12 @@ castellatedMeshControls
         volcano
         {
             //            level (3 4);
-            level (2 3);
+            level (1 2);
         }
         land
         {
             //            level (3 4);
-            level (2 3);
+            level (1 2);
         }
     }
 
@@ -273,279 +273,11 @@ addLayersControls
     // Per final patch (so not geometry!) the layer information
     layers
     {
-        minZ
+        "land_.+"
         {
             nSurfaceLayers 1;
         }
-        "bike(.+)_bikeAndRider"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_frt-fairing:001%1"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_windshield:002%2"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-rim:005%5"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-rim:010%10"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-wh-rim:011%11"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-wh-brake-disk:012%12"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_frame:016-shadow%13"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-susp:014%14"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-susp:014-shadow%15"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_frame:016%16"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-rim:005-shadow%17"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-chain-hub:022%22"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rearseat%24"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_frt-fairing%25"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_windshield%26"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_headlights%27"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_driversseat%28"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-body%29"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fuel-tank%30"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_exhaust%31"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-rim%32"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-mud-guard%33"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-wh-rim%34"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-wh-brake-disk%35"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-brake-caliper%36"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-wh-tyre%37"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_hbars%38"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-forks%39"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_chain%40"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-tyre%41"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_square-dial%42"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_round-dial%43"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_dial-holder%44"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-susp%45"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-brake-lights%46"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-light-bracket%47"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_frame%48"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-mud-guard%49"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-susp-spring-damp%50"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fairing-inner-plate%51"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_clutch-housing%52"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_radiator%53"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_water-pipe%54"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_water-pump%55"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_engine%56"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-shock-link%57"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-brake-fluid-pot-bracket%58"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-brake-fluid-pot%59"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_footpeg%60"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-chain-hub%61"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-brake-caliper%62"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rider-helmet%65"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rider-visor%66"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rider-boots%67"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rider-gloves%68"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rider-body%69"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_frame:0%70"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_frt-fairing:001-shadow%74"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_windshield-shadow%75"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-mud-guard-shadow%81"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_fr-wh-brake-disk-shadow%83"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-mud-guard-shadow%84"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-susp-spring-damp-shadow%85"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_radiator-shadow%86"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-shock-link-shadow%87"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rear-brake-fluid-pot-bracket-shadow%88"
-        {
-            nSurfaceLayers 1;
-        }
-        "bike(.+)_rr-wh-chain-hub-shadow%89"
+        sea
         {
             nSurfaceLayers 1;
         }

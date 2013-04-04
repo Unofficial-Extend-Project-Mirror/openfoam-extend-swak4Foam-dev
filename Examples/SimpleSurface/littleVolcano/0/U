@@ -30,13 +30,16 @@ boundaryField
     sky
     {
         type            fixedValue;
-        value           uniform (1 0 0);
+        value           uniform (0 0 0);
     }
 
     outside
     {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
+        type mixed;
+        refValue $internalField;
+        refGradient $internalField;
+        valueFraction uniform 0.5;
+        value $internalField;
     }
 
     volcano_wall

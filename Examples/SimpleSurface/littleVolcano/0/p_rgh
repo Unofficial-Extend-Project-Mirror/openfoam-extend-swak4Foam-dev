@@ -33,7 +33,7 @@ boundaryField
 
     outside
     {
-        type            buoyantPressure;
+        $sky;
     }
 
     volcano_wall
