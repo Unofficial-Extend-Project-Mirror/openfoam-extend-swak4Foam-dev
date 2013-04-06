@@ -96,8 +96,11 @@ Contributors/Copyright:
 // this changed starting with 2.2
 #if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=2 && FOAM_VERSION4SWAK_MAJOR==2)
 
+#if FOAM_VERSION4SWAK_MAJOR>2 || FOAM_VERSION4SWAK_MINOR>2 || FOAM_VERSION4SWAK_PATCH!=0
+// this is NOT changed in 2.2.0 but in the earliest commits of 2.2.x
 // lookupClass returns a non-const list
 #define FOAM_LOOKUPCLASS_NO_CONST
+#endif
 
 // meshSearch parameter for sampledSet-constructor is now const
 #define FOAM_MESHSEARCH_CONST_SAMPLEDSET
