@@ -1,8 +1,13 @@
+swak4foam-%(ofpkg)s (0.2.3-1~ppa1~precise1) precise; urgency=low
+
+  * New package to test how it works
+
+ -- Bernhard F.W.Gschaider <bgschaid@ice-sf.at>  Sat, 06 Apr 2013 15:56:00 +0200
 swak4foam-%(ofpkg)s (0.2.0-2~ppa1~lucid1) lucid; urgency=low
 
   * Packaging for the Workshop
 
- -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Th, 3 May 2012 20:25:29 +0200
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Thu, 3 May 2012 20:25:29 +0200
 
 swak4foam-%(ofpkg)s (0.2.0-1~ppa1~lucid1) lucid; urgency=low
 
