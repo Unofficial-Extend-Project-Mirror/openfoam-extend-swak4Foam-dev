@@ -1,17 +1,53 @@
- 
+/*----------------------- -*- C++ -*- ---------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
+License
+    This file is part of swak4Foam.
+
+    swak4Foam is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    swak4Foam is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
+
+Description
+
+
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
+\*---------------------------------------------------------------------------*/
 %{                                          /* -*- C++ -*- */
 #include "SubsetValueExpressionDriverYY.H"
 #include <errno.h>
+#include "SubsetValueExpressionParser.tab.hh"
+typedef parserSubset::SubsetValueExpressionParser::semantic_type YYSTYPE;
+#include "CommonPluginFunction.H"
 %}
 
 %s setname
 %s vectorcomponent
 %s tensorcomponent
+%x parsedByOtherParser
 %x needsIntegerParameter
 
-%option noyywrap nounput batch debug 
+%option noyywrap nounput batch debug
 %option stack
 %option prefix="parserSubset"
+%option reentrant
+%option bison-bridge
 
 id      [[:alpha:]_][[:alnum:]_]*
 setid   [[:alpha:]_][[:alnum:]_-]*
@@ -27,7 +63,20 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 %%
 
 %{
+    typedef parserSubset::SubsetValueExpressionParser::token token;
+
     yylloc->step ();
+
+    if (start_token)
+    {
+        if(driver.traceScanning()) {
+            Foam::Info << "Start token: " << start_token << Foam::endl;
+        }
+
+        int t = start_token;
+        start_token = 0;
+        return t;
+    }
 %}
 
 <INITIAL,setname,needsIntegerParameter>[ \t]+             yylloc->step ();
@@ -49,9 +98,9 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
-<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
-<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
-<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+<vectorcomponent,tensorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent,tensorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent,tensorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
 
 <tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
 <tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
@@ -63,6 +112,7 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <tensorcomponent>zy    { BEGIN(INITIAL); return token::TOKEN_zy; }
 <tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
 <tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
+<tensorcomponent>T     { BEGIN(INITIAL); return token::TOKEN_transpose; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -134,7 +184,6 @@ false                  return token::TOKEN_FALSE;
 toPoint                 return token::TOKEN_toPoint;
 toFace                  return token::TOKEN_toFace;
 
-transpose              return token::TOKEN_transpose;
 diag                   return token::TOKEN_diag;
 tr                     return token::TOKEN_tr;
 dev                    return token::TOKEN_dev;
@@ -143,7 +192,11 @@ skew                   return token::TOKEN_skew;
 det                    return token::TOKEN_det;
 cof                    return token::TOKEN_cof;
 inv                    return token::TOKEN_inv;
-
+sph                    return token::TOKEN_sph;
+twoSymm                return token::TOKEN_twoSymm;
+dev2                   return token::TOKEN_dev2;
+eigenValues            return token::TOKEN_eigenValues;
+eigenVectors           return token::TOKEN_eigenVectors;
 
 {float}                {
                        errno = 0;
@@ -158,7 +211,7 @@ inv                    return token::TOKEN_inv;
                      }
 
 <INITIAL>{id}                 {
-    Foam::string *ptr=new Foam::string (yytext);
+    Foam::word *ptr=new Foam::word (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isLookup(*ptr)) {
@@ -187,10 +240,69 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr; return token::TOKEN_PSID;
         //    } else if(driver.is<Foam::bool>(*ptr,true)) {
         //        yylval->name = ptr; return token::TOKEN_PLID;
+    } else if(driver.existsPluginFunction(*ptr)) {
+        // OK. We'll create the function two times. But this is less messy
+        // than passing it two times
+        Foam::autoPtr<Foam::CommonPluginFunction> fInfo(
+            driver.newPluginFunction(
+                *ptr
+            )
+        );
+
+        int tokenTyp=-1;
+        if(fInfo->returnType()=="scalar") {
+             tokenTyp=token::TOKEN_FUNCTION_SID;
+        } else if(fInfo->returnType()=="vector") {
+             tokenTyp=token::TOKEN_FUNCTION_VID;
+        } else if(fInfo->returnType()=="tensor") {
+             tokenTyp=token::TOKEN_FUNCTION_TID;
+        } else if(fInfo->returnType()=="symmTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_YID;
+        } else if(fInfo->returnType()=="sphericalTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_HID;
+        } else if(fInfo->returnType()=="pointScalar") {
+             tokenTyp=token::TOKEN_FUNCTION_PSID;
+        } else if(fInfo->returnType()=="pointVector") {
+             tokenTyp=token::TOKEN_FUNCTION_PVID;
+        } else if(fInfo->returnType()=="pointTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_PTID;
+        } else if(fInfo->returnType()=="pointSymmTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_PYID;
+        } else if(fInfo->returnType()=="pointSphericalTensor") {
+             tokenTyp=token::TOKEN_FUNCTION_PHID;
+        } else {
+            driver.error (
+                *yylloc,
+                "Function "+*ptr+" returns unsupported type "
+                + fInfo->returnType()
+            );
+        }
+
+        yylval->name = ptr;
+        return tokenTyp;
     } else {
+        if((*ptr)=="I") {
+            delete ptr;
+            return token::TOKEN_unitTensor;
+        }
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
                      }
+
+<parsedByOtherParser>. {
+    numberOfFunctionChars--;
+    if(driver.traceScanning()) {
+        Foam::Info << " Remaining characters to be eaten: "
+            << numberOfFunctionChars
+            << Foam::endl;
+    }
+    if(numberOfFunctionChars>0) {
+        return token::TOKEN_IN_FUNCTION_CHAR;
+    } else {
+        BEGIN(INITIAL);
+        return token::TOKEN_LAST_FUNCTION_CHAR;
+    }
+                       }
 
 .                    driver.error (*yylloc, "invalid character");
 <needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
@@ -198,30 +310,91 @@ inv                    return token::TOKEN_inv;
 
 %%
 
-YY_BUFFER_STATE bufferSubset;
+// YY_BUFFER_STATE bufferSubset;
 
 void SubsetValueExpressionDriver::scan_begin ()
 {
-    yy_flex_debug = trace_scanning_;
-    bufferSubset=yy_scan_string(content_.c_str());
-    
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::scan_begin "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 
-//    if (!(yyin = fopen (file.c_str (), "r")))
-//        error (std::string ("cannot open ") + file);
+    if(scanner_!=NULL) {
+        FatalErrorIn("SubsetValueExpressionDriver::scan_begin")
+            << "Already existing scanner " << getHex(scanner_)
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_init(&scanner_);
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    yy_flex_debug = traceScanning();
+    /* bufferSubset= */ yy_scan_string(content().c_str(),scanner_);
+
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::scan_begin - finished "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
 }
 
 void SubsetValueExpressionDriver::scan_end ()
 {
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::scan_end "
+            << getHex(this) << endl;
+       Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    if(scanner_==NULL) {
+        FatalErrorIn("SubsetValueExpressionDriver::scan_end")
+            << "Uninitialized Scanner. Can't delete it"
+                << endl
+                << exit(FatalError);
+
+    }
+
+    yylex_destroy(scanner_);
+
+    scanner_=NULL;
 //	    fclose (yyin);
-    yy_delete_buffer(bufferSubset);
+//    yy_delete_buffer(bufferSubset);
+}
+
+void SubsetValueExpressionDriver::startEatCharacters()
+{
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::startEatCharacters() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
+    BEGIN(parsedByOtherParser);
 }
 
 void SubsetValueExpressionDriver::startVectorComponent()
 {
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::startVectorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(vectorcomponent);
 }
 
 void SubsetValueExpressionDriver::startTensorComponent()
 {
+    if(traceScanning()) {
+        Info << "SubsetValueExpressionDriver::startTensorComponent() "
+            << getHex(this) << endl;
+        Info << "Scanner: " << getHex(scanner_) << endl;
+    }
+
+    struct yyguts_t * yyg = (struct yyguts_t*)scanner_;
     BEGIN(tensorcomponent);
 }

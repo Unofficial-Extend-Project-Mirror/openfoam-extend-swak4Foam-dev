@@ -1,5 +1,5 @@
 # -*- mode: org -*-
-#+TITLE: =README= for =swak4Foam=
+#+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 2.x
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
@@ -21,59 +21,136 @@
    Bernhard Gschaider (bgschaid@ice-sf.at)
 ** Current Maintainer
    Bernhard Gschaider (bgschaid@ice-sf.at)
-** Contributors 
+** Contributors
    In alphabetical order of the surname
+   - Martin Beaudoin :: =trackDictionary= in =simpleFunctionObjects=
+   - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
+                      problem with =groovyBC=)
+   - Oliver Borm :: =patchMassFlowAverage= in =simpleFunctionObjects=
    - Peter Keller :: =sprinklerInlet=-case
+   - Martin Kroeger :: =mtv= surface writer in =simpleFunctionObjects=
    - Andreas Otto :: fixed the =circulatingSplash=-case
    - Alexey Petrov :: =pythonFlu=-integration
-   - Bruno Santos :: 
+   - Bruno Santos ::
      - Compilation with Intel compiler and Mingw
      - Rewrite of =mybison= and =myflex= to allow parallel compilation
        with =WM_COMPPROCS=
-   - Martin Becker :: The =potentialPitzDaily=-case (demonstrating a
-                      problem with =groovyBC=)
    If anyone is forgotten: let me know
 
-   Contributors to =simpleFunctionObjects= are listed separately in
-   the =README= of that library
+   According to the commits in the =mercurial=-repository (and
+   the repositories of the projects from which swak emerged)
+   contributors are (ordered by the year of their first contribution):
+   - 2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+   - 2008 Hannes Kroeger (hannes@kroegeronline.net)
+   - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
+   - 2010 Marianne Mataln <mmataln@ice-sf>
+   - 2010 Oliver Borm (oli.borm@web.de)
+   - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
+   - 2011 Petr Vita <petr.vita@unileoben.ac.at>
+   - 2012 Bruno Santos <wyldckat@gmail.com>
+   - 2013 Georg Reiss <georg.reiss@ice-sf.at>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
 ** Requirements
-   - Version 2.0 or 2.1 of OpenFOAM (a version that works with 1.6,
+   - Version 2.0, 2.1 or 2.2 of OpenFOAM (a version that works with 1.6,
      1.6-ext and 1.7 is available separately)
      - The =finiteArea=-stuff will probably work with version 2.0-ext
        (once that is available)
    - the compiler generators =bison= and =flex=
-     - =swak4Foam= is known to work with =bison= version 2.3 and
-       higher. Lower versions *may* work. If it works with a lower
-       version please report it
+     - bison :: =swak4Foam= is known to work with =bison= version 2.4 and
+       higher. Version 2.3 compiles but the plugin-functionality does
+                not work correctly
+     - flex :: since the introduction of the plugin functions at least
+               a flex version of =2.5.33= is required (=2.5.35= is the
+               lowest *confirmed* version)
+
+   Both of these are mainstream packages (they are for instance needed
+   to compile =gcc=) and should exist on every Linux distribution. Use
+   the package manager of your distribution to install them and *only*
+   if the compilation process of =swak4Foam= complains about too low
+   versions try to install them from other sources.
+
+   =swak4Foam= tries to keep the requirements on these as low as
+   possible and sometimes lower versions than the ones reported *may*
+   work. If they do please report so.
+
+   The version of bison can be checked with
+: bison -V
+   The version of flex with
+: flex -V
 ** Building
-: wmake all 
+: wmake all
    at the base directory should build all the libraries and
    tools.
 
-  The main library =swak4FoamParsers= can't be built in parallel (no
-  values of =WM_NCOMPPROCS= bigger than 1)
+   Rerun the command to make sure that there was no problem with the
+   compilation (this should be quite fast and only report libraries
+   being created and some administrative stuff)
 *** Additional configuration
     Some features (currently only the =Python=-integration may need
     third party software. The paths to these packages can be configured
     in a file =swakConfiguration= (an example file
     =swakConfiguration.example= is provided). If that file is not
     present these unconfigured features will not be compiled.
+
+    Environment variables that can be set in this file are:
+    - SWAK_PYTHON_INCLUDE :: Path to the =Python.h= file of the used
+         =python=-installation
+    - SWAK_PYTHON_LINK :: Options to link the =python=-library to the
+         library for the =python=-integration
+    - SWAK_USER_PLUGINS :: A list of paths separated by
+         semicolons. These are the directories of libraries with
+         function-plugins. They are compiled in the course of the
+         normal =swak=-compilation. This makes sure that they are
+         consistent with the =swak=-release in the case of an update
 *** Possible compilation failure with old 2.0.x-versions
     With older versions of 2.0.x (or 2.0 or 2.0.1) it is possible that
     the compilation of  =swakCodedFunctionObject= will fail. In that
     case remove the last parameter to the
     =codedFunctionObject=-constructor in =swakCodedFunctionObject.C=
     (it is clearly marked by a comment)
+*** Special versions of the python integration
+    *Note*: This section is very special and won't be needed by most
+    people
+
+    The library =libswakPythonIntegration.so= links against a specific
+    version of the python library. In certain circumstances (for
+    instance the OS of the cluster is different from the one that swak
+    was compiled on) this python-version is not available on the
+    target machine. While all other parts of swak will work the
+    python-integration won't load on the target machine. To fix this
+    problem a workaround is provided:
+
+    The script =maintainanceScripts/makeSpecialPythonLibrary.sh=
+    compiles a special version of the =libswakPythonIntegration.so=
+    that is identified by an additional suffix (for instance the
+    suffix =Cluster= makes a file
+    =libswakPythonIntegrationCluster.so=). That script has to be run
+    *on the target system* and needs 3 parameters:
+    1. =SWAK_PYTHON_INCLUDE=
+    2. =SWAK_PYTHON_LINK=
+    3. The suffix
+    For instance
+: ./maintainanceScripts/makeSpecialPythonLibrary.sh -I/opt/local/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 "-L/opt/local/lib -lpython2.5" Version2.5
+    compiles a version for an old python.
+
+    To enable the python-integration in =libs= in =controlDict= *both*
+    python-integrations have to be specified. One of them will fail on
+    each machine (because the required python-library is not there),
+    the other one will provide the python-functionObjects.
+
+    Note: the special libraries won't be updated automatically on the
+    target system. Doing so is the responsibility of the user.
 ** Global installation
    If the libraries and utilities are considered stable and the should
    be available to everyone (without having to recompile them) the
-   script =copySwakFilesToSite.sh= can be used to copy them to the
+   script =copySwakFilesToSite.sh= in the directory
+   =maintainanceScripts= can be used to copy them to the
    global site-specific directories.
 
-   The script =removeSwakFilesFromSite.sh= removes all these files
+   The script =removeSwakFilesFromSite.sh= in the directory
+   =maintainanceScripts= removes all these files
    from the global directories. The =removeSwakFilesFromLocal.sh= does
    the same for the user directories (this makes sure that no
    self-compiled version /shadows/ the global version (which would
@@ -88,13 +165,17 @@
    global installation*
 ** Packaging
 *** Debian
-    The command =build dpkg= builds a Debian/Ubuntu package for 
+    The command =build dpkg= builds a Debian/Ubuntu package for
     the *currently enabled* OpenFOAM-package. Note:
     - it is assumed that the currently used OF-version was also
       installed by the package manager
     - the =dev= package is built but poorly maintained
     Changes in the packaging should be done in the branch
-      =debianPackaging= of the Mercurial-repository
+    =debianPackaging= of the Mercurial-repository and later be
+    merged to the =default=-branch.
+
+    Packaging for OpenFOAM 2.x should be done in the branch
+    =debianPackaging_2.x=
 
     *Note:* Due to the problem described with the global installation
     it might be necessary to deinstall a previously installed package
@@ -141,20 +222,26 @@
 
 		   Assumes that the =SWAK4FOAM_SRC= environment
                    variable is set to the =Libraries=-directory of the
-                   =swak4Foam=-sources 
+                   =swak4Foam=-sources
     - solveLaplacianPDE :: Solve the Poisson equation
 \begin{equation}
 \frac{\partial \rho T}{\partial t} - \nabla \lambda \nabla T =
-S_{expl} + S_{impl} T  
+S_{expl} + S_{impl} T
 \end{equation}
          for $T$ where $\rho$, $\lambda$ and $S$ can be specified
     - solveTransportPDE :: Solve the transport equation
 \begin{equation}
 \frac{\partial \rho T}{\partial t} + \div(\phi,T) - \nabla \lambda \nabla T =
-S_{expl} + S_{impl} T  
+S_{expl} + S_{impl} T
 \end{equation}
          for $T$ where $\rho$, $\lambda$ and $S$ can be
          specified. Plus the name of the field $\phi$
+    - addForeignMeshes :: this allows specifying new foreign
+         meshes. These can be used in subsequent function-objects or
+         other swak-expressions on =internalFields=
+    - foreignMeshesFollowTime :: this allows specifying a list of
+         meshes whose time is set to the current time of the running
+         case
 *** =simpleSwakFunctionObjects=
     Function objects based on the =simpleFunctionObjects=-library
     (which is a prerequisite for compiling it).
@@ -169,9 +256,19 @@ S_{expl} + S_{impl} T
     - forceEquation :: force an equation to fixed values in selected
                        locations. Has to be used after constructing
                        the equation and before solving
+    These sources are based on =basicSource= and can be used
+    *without* a modification of the solver (they are only available in
+    the 2.x version):
+    - SwakSetValue :: sets values according to a mask or the
+                      mechanism provided by =basicSource=
+    - SwakExplicitSource :: Uses the calculated source term on the
+         right hand side of the equation
+    - SwakImplicitSource :: Uses a calculated scalar-field to add an
+         implicit source term (source is *without* the actual field)
+
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
-    =cellSet= and =faceSet=-utilities 
+    =cellSet= and =faceSet=-utilities
 *** =swakFiniteArea=
     Implements parsers for the =finiteArea=-stuff in 1.6-ext. Also
     implements =groovyBC= for =areaField= and =expressionField= and
@@ -195,16 +292,42 @@ S_{expl} + S_{impl} T
 *** =fluFunctionObjectDriver=
     Driver for =functionObjects= that implemented entirely in =Python=
     using the =pythonFlu=-library
+*** =functionPlugins=
+    Directory with a number of libraries with function-plugins:
+    - swakFacSchemesFunctionPlugin :: functions with selectable
+         discretization schemes for FAM (only used in 1.6-ext)
+    - swakFvcSchemesFunctionPlugin :: functions with selectable
+         schemes for FVM
+    - swakLocalCalculationsFunctionPlugin :: calculations that are
+         local to a cell (Minimum of the face values or so)
+    - swakMeshQualityFunctionPlugin :: calculate mesh quality criteria
+         like orthogonality, skewness and ascpect ratio
+    - swakRandomFunctionPlugin :: different random number
+         distributions. Currently only exponential
+    - swakSurfacesAndSetsFunctionPlugin :: calculates distances from
+         =sampledSurfaces= and =sampledSets= and projects calculated
+         values from these onto a volume field
+    - swakThermoTurbFunctionPlugin :: Access functions from the
+         thermophysical model and the turbulence model in the current
+         region. Loads the model only if necessary
+    - swakTransportTurbFunctionPlugin :: Same as above but for
+         incompressible models
+    - swakLagrangianCloudSourcesFunctionPlugin :: Functions that get
+         informations like source terms from clouds of particles (due
+         to technical reasons this works only for the regular
+         /intermediate/ clouds)
+    - swakVelocityFunctionPlugin :: Functions that work on the flow
+         field (currently only the local Courant-number)
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
-    expressions 
+    expressions
 *** =funkySetAreaFields=
     Utility like =funkySetFields= for =areaFields= (only works with
-    1.6-ext) 
+    1.6-ext)
 *** =funkySetBoundaryField=
     Sets any field on a boundary to a non-uniform value based on an
-    expression. 
+    expression.
 
     Acts without deeper understanding of the underlying boundary condition
 *** =replayTransientBC=
@@ -217,6 +340,11 @@ S_{expl} + S_{impl} T
     Evaluates expressions that are listed in a dictionary using data
     that is found on the disc and prints summarized data (min, max,
     average, sum) to the screen
+*** =calcNonUniformOffsetsForMapped=
+    Calculates the =offsets=-entry in the =polyMesh/boundary=-file
+    according to the specification in a dictionary. Only needed if you
+    have mapped patches and the regular uniform offset is not enough
+    for your purposes
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -231,11 +359,12 @@ S_{expl} + S_{impl} T
          =clearField= from the
          =swakFunctionObjects=. =patchExpression= from
          =simpleSwakFunctionObjects=. =solveLaplacianPDE= and
-         =solveTransportPDE= for solving equations
+         =solveTransportPDE= for solving equations,
+         =pythonIntegration= with calculations using =numpy=
 **** wobbler
     - Solver :: solidDisplacementFoam
-**** circulatingSplash 
-    - Solver :: interDyMFoam 
+**** circulatingSplash
+    - Solver :: interDyMFoam
 **** movingConeDistorted
     - Solver :: pimpleDyMFoam
     - Also demonstrates :: =swakExpression= with =surface=. Due to a
@@ -245,12 +374,16 @@ S_{expl} + S_{impl} T
     - Mesh preparation :: Execute the script =prepare.sh= in that
          directory (requires PyFoam: if not installed change in the
          =boundary=-file the type of the =defaultFaces= to =wall=)
+**** delayed-t-junction
+    - Solver :: pimpleFoam
+    - Demonstrates :: Delayed variables to simulate an inflow that
+                      depends on the value of the outflow
 **** multiRegionHeaterFeedback
     - Solver :: chtMultiRegionFoam
     - Mesh preparation :: Execute the script =prepare.sh= in that
-         directory 
+         directory
     - Also demonstrated :: =patchExpression= and =swakExpression= from
-         =simpleSwakFunctionObjects=. 
+         =simpleSwakFunctionObjects=.
 **** fillingTheDam
      - Solver :: interFoam
      - Also demonstrates :: Usage of a =sampledSet= defined in the
@@ -266,6 +399,8 @@ S_{expl} + S_{impl} T
      - Description :: Demonstrates the use of =groovyB= with
                       =potentialFoam= (also a problem connected with
                       that). Provided by Martin Backer
+*** FunkyDoCalc
+    Example dictionaries for =funkyDoCalc=
 *** FunkySetFields
     Example dictionary for =funkySetFields=
 *** FunkySetBoundaryFields
@@ -320,7 +455,8 @@ S_{expl} + S_{impl} T
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
           =swakExpression=-functionObject. Also an example dictionary
-          that demonstrates the use of =funkyDoCalc=
+          that demonstrates the use of =funkyDoCalc=. Demonstrates
+          "live" comparing to another case using /foreign meshes/
 **** =angledDuctImplicitTransient=
      - Solver :: rhoPorousMRFPimpleFoam
      - Mesh preparation :: Execute the =makeMesh.sh=-script in that
@@ -334,12 +470,22 @@ S_{expl} + S_{impl} T
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
-**** =mixingGam=
+**** =mixingDam=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
+**** OSCFD_cleaningTank3D
+     - Solver :: interFoam
+     - Case preparation :: run the =prepareCase.sh=-script
+     - Description :: The case described on the slides of the
+                      talk about =swak4Foam= at the  OSCFD-conference
+                      2012 in London
+     - Demonstrates :: Boundary conditions, function objects, global
+                       variables and delayed variables
+**** OSCFD_cleaningTank2D
+     A 2D-variant of the above case
 *** PythonIntegration
     Demonstrate the integration of =Python=. Mostly using =PyFoam= but
     also with =pythonFlu=
@@ -362,6 +508,10 @@ S_{expl} + S_{impl} T
                        gravity and feeding it into a =goovyBC= via
                        global variables
      - Case preparation :: Just call =funkySetFields -time 0=
+**** =multiRegionHeaterBuildFunctionObjects=
+     - Solver :: chtMultiRegionFoam
+     - Demonstrates :: Building the specification of function objects
+                       at run-time via a Python-script
 *** =CodeStream=
     Demonstrates working together with the =coded=-stuff in OpenFOAM 2.0
 *** solvePDE
@@ -377,20 +527,67 @@ S_{expl} + S_{impl} T
 **** pitzDailyWithPDE
      - Solver :: scalarTransportFoam
      - Demonstrates :: Solving additional transport equations
+*** BasicSourceSubclasses
+    These examples test the source terms based on =basicSource=. They
+    only work with OpenFOAM 2.x and all use the =simpleFoam=-solver
+**** pitzDailyWithSwirl
+     - Demonstrates :: Fixing the values of the velocity in a region
+                       with =SwakSetValues=
+**** pitzDailyWithExplicitPoroPlug
+     - Demonstrates :: Implementing a simple porous plug by adding the
+                       Darcy-term as a source term with
+                       =SwakExplicitSource=
+**** pitzDailyWithImplicitPoroPlug
+     - Demonstrates :: Same as =pitzDailyWithExplicitPoroPlug= but
+                       with an implicit source term with
+                       =SwakImplicitSource=
+*** Lagrangian
+    Tests for the functionObjects that create and evolve a cloud of
+    particles
+**** hotStream
+     - Solver :: replayTransientBC
+     - Mesh preparation :: =prepareCase.sh=-script
+     - Demonstrates :: 3 clouds (kinematic, reacting,
+                       solidParticle). Loading of a thermophysical
+                       model with a functionObject. Plugin functions
+                       for information about the clouds
+**** angledDuctWithBalls
+     - Solver :: rhoPimpleFoam
+     - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
 *** tests
-    Simple test cases for specific features
+    Simple test cases for specific features. The names of the
+    directories should give you a hint what is tested there. Most of
+    them don't need a real solver but =replayTransientBC= or
+    =scalarTransportFoam=.
+
+    *Note*: for some features these cases are the only example there
+     is. Sorry
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
 ** =maintainanceScripts=
    Undocumented scripts used for maintaining =swak4Foam=. *If you
    don't understand them, don't use them*
+** Documentation
+   Additional documentation. Most written in =org-mode=
+
+   Current contents:
+   - swak4FoamReference :: Reference manual of swak4Foam. Especially
+        concepts like expression syntax and parameters
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
-   http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90 
-   
+   http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90
+
    A sourceforge-account is required for reporting
+*** Things to do before reporting bug
+    If you're reporting a bug about the compilation please run
+    =Allwmake= *twice* and only report the messages from the second
+    run. This makes analyzing the log easier as only the unsuccessful
+    commands will be reported.
+
+    If the problem seems to be a missing library rerun the compilation
+    to make sure that there wasn't a problem with that.
 ** Development
    Contributions to to =swak4Foam= are most welcome. If you want to
    contribute clone the Mercurial archive of the sources
@@ -405,7 +602,7 @@ S_{expl} + S_{impl} T
    "yours". Such contributions will not be merged
 
    Once development on the branch is finished export the relevant
-   changesets with 
+   changesets with
 : hg export <nodeID>
    (=nodeID= being the ids of "your" changesets) and send them to the
    maintainer (or attach them to a bug report on Manits). The changes
@@ -422,6 +619,10 @@ S_{expl} + S_{impl} T
 
    Once you have proven by successfully submitting changesets via =hg
    export= you can ask for write access to the mercurial repository.
+
+   Only if you got through Mercurial it can be ensured that your
+   contribution is recognized (if you want to stay anonymous send
+   patches).
 *** Suggest reading
     These topics may be "new" for the average OF-developer:
     - Mercurial :: A short tutorial on this can be found at
@@ -448,7 +649,7 @@ S_{expl} + S_{impl} T
                     will eventually become the =default=-branch
     - debianPackaging :: Branch for generating new Debian-packages of
          =swak4Foam=. If somebody wants to "inherit" this: contact the
-         maintainer 
+         maintainer
     - finiteArea :: In this branch the things for the
                     =finiteArea=-discretization (only present in
                     =1.6-ext=) is developed. Usually gets merged back
@@ -457,7 +658,7 @@ S_{expl} + S_{impl} T
     As an experimental feature distributed bug-tracking was introduced
     using the /Artemis/-extension for /Mercurial/ (see
     =http://hg.mrzv.org/Artemis/=). An up-to-date version can be
-    installed by 
+    installed by
 : hg clone http://hg.mrzv.org/Artemis/
     somewhere and installing the plugin by editing =.hgrc=.
 
@@ -470,14 +671,14 @@ S_{expl} + S_{impl} T
   under the terms of the GNU General Public License as published by the
   Free Software Foundation; either version 2 of the License, or (at your
   option) any later version.  See the file COPYING in this directory,
-  for a description of the GNU General Public License terms under which 
+  for a description of the GNU General Public License terms under which
   you can copy the files.
 * Known bugs
   The following list is not complete. If the Artemis extension (see
   above) is installed then
 : hg ilist
   gives a more up-to-date list
-** Moving meshes and =sampledSurfaces= 
+** Moving meshes and =sampledSurfaces=
    It seems that with moving meshes =sampledSurfaces= don't get
    updated. This seems to be a problem with OpenFOAM itself (the
    regular =surfaces=-functionObject doesn't get updated. This is
@@ -492,13 +693,19 @@ S_{expl} + S_{impl} T
    Not really bugs, but stuff that bugs me
 *** Pointers in the driver code
     This is necessary because of =bison=. Investigate possibilities to
-    replace these by =tmp= and =autoPtr= 
+    replace these by =tmp= and =autoPtr=
 ** Possible memory loss
    =valgrind= reports some lost memory for stuff that is not directly
    allocated by =swak4Foam= (in OpenFOAM-sources)
 
    Will investigate. Relevant places are marked by comments in the
    code. Also the construction of =sampledSet= seems to loose memory
+
+   Currenly problematice parts seem to be:
+   - update and =magSf=-calculation of =SampledSurface= (marked in
+     =SampledSurfaceExpressionDriver.C=)
+   - Python interpreter (but no calls in swak were found in the
+     stack-trace that could be responsible)
 ** Non-treatment of the inner product =&= of symmetric tensors
    Before OpenFOAM 2.1 the inner product of two symmetric tensors was
    a symmetric tensor. Since 2.1 it is a general tensor. As the
@@ -519,19 +726,19 @@ S_{expl} + S_{impl} T
 *** Parser for =sampledSurfaces=
     Now expressions for the field on a sampled surface can be
     evaluated. All =sampledSurfaces= offered by OpenFOAM now can be
-    used 
+    used
 *** Multiline =variables=
     The =variables= entry (most notably used in =groovyBC= and
     =swakExpression=) now can be a list of strings. This allows some
     kind of "formatting" (one expression per line) and should improve
     readability
-*** Two maintainance-scripts were added 
+*** Two maintainance-scripts were added
     These can copy the libraries and utilities to the global
     installation (for those who think that the swak4Foam-stuff is
     stable enough and want to 'bless' all users at their site with
     it). Note that any local installation still takes precedence
     (because =$FOAM_USER_APPBIN= is before =$FOAM_APPBIN= in the
-    =$PATH= 
+    =$PATH=
 *** Parsers using 'external variables' are now run-time selectable
     This allows the inclusion of other parsers with the regular
     =swak4Foam= parsers and include them seamlessly with the
@@ -590,9 +797,9 @@ S_{expl} + S_{impl} T
 ** 2011-07-26 - version number : 0.1.4
 *** Port to OpenFOAM 2.0
     This is the first release that officially supports OpenFOAM 2.0
-    
+
     Also it is the first release that incorporates the
-    =simpleFunctionObjects=-library 
+    =simpleFunctionObjects=-library
 *** New features:
 **** Rewrite of =rand= and =randNormal=
      - These two functions now can receive an integer seed that
@@ -636,7 +843,7 @@ S_{expl} + S_{impl} T
      libraries is subject to change
 **** Global variables
      It is now possible to define variables that are 'global': They
-     can be read in any entity. 
+     can be read in any entity.
 
      Currently these variables can only be uniform.
 
@@ -691,7 +898,7 @@ S_{expl} + S_{impl} T
      the =Allwmake=-script now generates a header file
      =foamVersion4swak.H= that defines the symbols
      =FOAM_VERSION4SWAK_MAJOR=, =FOAM_VERSION4SWAK_MINOR= and
-     =FOAM_VERSION4SWAK_PATCH= 
+     =FOAM_VERSION4SWAK_PATCH=
 *** Technical
 **** Refactoring of the FieldDriver
      - now can also produce surfaceFields
@@ -719,13 +926,13 @@ S_{expl} + S_{impl} T
 **** General =phi= in =solveTransportPDE=
      Due to the refactoring of the =FieldDriver= now =phi= can be
      specified by a general expression (instead of 'only' a
-     field-name) 
+     field-name)
 **** =funkySetFields= now also writes surfaceFields
      Can write =surfaceVector= and =surfaceScalar=-Fields. Condition
      has to be consistent
 **** Function objects now =surfaceField=-aware
      =expressionField= and =manipulateField= now can create or modify
-     =surfaceFields= 
+     =surfaceFields=
 **** =funkySetFields= and function objects support tensors
      =funkySetFields= and the function objects =expressionField= and
      =manipulateField=  now also work with the three tensor-types
@@ -735,7 +942,7 @@ S_{expl} + S_{impl} T
      expression evaluates to a =volScalarField= then the old semantic
      applies (faces are in the set if one cell is =true= and the other
      is =false=).
-     
+
      This only works for internal faces
 **** =addGlobalVariable= allows setting more than one value
      If there is an entry =globalVariables= then this dictionary is
@@ -836,7 +1043,7 @@ S_{expl} + S_{impl} T
      Extra evaluation of boundary condition that should fix the
      problem with =calculated= patches causes =funkySetFields= to fail
      with stock boundary conditions if not all fields are present in
-     memory 
+     memory
 *** Discontinued features
 **** =groovyFlowRateInletVelocity=
      This boundary condition will be removed in future releases
@@ -855,12 +1062,12 @@ S_{expl} + S_{impl} T
      For fields (not expressions!) the value at a previous timestep
      can be gotten via =oldTime(field)= if that information exists
      (also for =funkySetFields= if the corresponding file =field_0=
-     exists. 
-     
+     exists.
+
      For fields that support it (basically volume-fields) there is
      also a =ddt=-operator that calculates the explicit
      time-derivative (if information about the last timestep exists)
-     
+
      Currently implemented for
      - internalFields :: =oldTime= and =ddt=
      - patch :: only =oldTime=
@@ -873,6 +1080,21 @@ S_{expl} + S_{impl} T
      If there is no old time value stored and in the parser dictionary
      the parameter =prevIterIsOldTime= is set, then the previous
      iteration value is used as the old time.
+**** Boundary condition =groovcBCDirection=
+     Based on the =directionMixed= boundary condition this allows to
+     set a boundary condition as a Dirichlet-condition only in certain
+     directions while in the other directions it is a
+     gradient-condition
+
+     *Note*: this should have been in the last release but was
+      forgotten to merge into the default branch
+**** Boundary condition =groovyBCJump=
+     Boundary condition that imposes a jump in the value on a cyclic
+     boundary condition pair (based on =jumpCyclic=). Only works for
+     scalar values
+
+     *Note*: this should have been in the last release but was
+      forgotten to merge into the default branch
 **** Function to return the position of minimum and maximum
      The functions =minPosition= and =maxPosition= return the position
      of the minimum or the maximum of a scalar field
@@ -889,7 +1111,7 @@ S_{expl} + S_{impl} T
        to existing pointZones or pointSets
      - Functions =interpolateToCell= and =interpolateToPoint=
        interpolate from pointFields to volFields and from volFields to
-       pointFields 
+       pointFields
 
      Utilities and functionObjects affected by this are
      - =funkySetFields=
@@ -907,7 +1129,7 @@ S_{expl} + S_{impl} T
      - timeName :: Name of the current time as a string. Allows the
                    construction of directory names
      - outputTime :: Boolean that indicates whether this is a timestep
-                     where OpenFOAM will write output 
+                     where OpenFOAM will write output
 **** Additional operators from the =fvc=-namespace
      The missing operators from the =fvc=-namespace have been added to
      the Field-parser. These are
@@ -953,7 +1175,7 @@ S_{expl} + S_{impl} T
                   current time (processor dependent)
 **** User must acknowledge parallelization in Python-integration
      In parallel runs the user must set the =isParallelized= to =true=
-     if the =parallelMasterOnly= is set to =false=. 
+     if the =parallelMasterOnly= is set to =false=.
 
      With that he indicates that in his opinion the Python-code has no
      bad side-effects in parallel runs and that he doesn't blame
@@ -1007,7 +1229,7 @@ S_{expl} + S_{impl} T
 **** Missing tensor components for point-Fields in some parsers
      All parsers except the field-parser were missing the access to
      tensor components in the grammar
-**** No vector construction possible for point-vectors (and tensors) in PatchField     
+**** No vector construction possible for point-vectors (and tensors) in PatchField
      As mentioned in
      [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
      it was not possible to construct a point-vector field using
@@ -1026,11 +1248,25 @@ S_{expl} + S_{impl} T
      Preprocessor symbol =linux= unknown. Replaced with =__linux__=
 **** Enhancement to the =trackDictionary=-functionObject
      Now handles bad or non-existent filenames for dictionaries to
-     track 
+     track
 
      Fix provided by Martin Beaudoin
-** Next release - version number : 0.2.1
+** 2012-10-18 - version number : 0.2.1
+*** Requirements
+**** =flex 2.5.35=
+     This version is needed for the reentrant parsers. =2.5.33= *may*
+     work but is untested. Version =2.5.4= which is on some old
+     systems definitely does not work
+**** =bison 2.4=
+     Version 2.3 compiles but there is an offset-problem with the
+     locations that breaks the Plugin-functionality
+
+     Mac-users will have to install =bison= from another source (for
+     instance =MacPorts=)
 *** Bug fixes
+**** Make sure that =Allwmake= always uses the =bash=
+     On Ubuntu =/bin/sh= is something else and the scripts fail.
+     Hardcode to =/bin/bash=
 **** =downloadSimpleFunctionObjects.sh= still in Makefile
      This script (which was removed long ago) was still referenced in
      the =Makefile=.
@@ -1043,9 +1279,636 @@ S_{expl} + S_{impl} T
 **** =mappedFvPatch= not treated like regular patches
      The field-driver created patch fields there as =calcuated= when
      =zeroGradient= would have been more appropriate
+**** =flip()= for =faceSet= not correctly calculated
+     A =SortableList= was used which meant that the vector with the
+     flip values was not in the correct order
+**** =fset()= crashes when =faceSet= has boundary faces
+     This problem was due to a non-special treatment of faces on the
+     boundary. Fixed (for =faceZone= as well).
+
+     Also boundary faces are now honored in =expressionToFace= if the
+     expression is a surface-field (for the volume-field logic
+     boundary faces will never work)
+**** =groovyBC= produced incorrect results with =wallHeatFlux= etc
+     The reason was that during construction =refGradient=, =refValue=
+     etc were not read correctly (if present).
+
+     This is now fixed in =groovyBC= and the other BCs (=groovyBC= for
+     pointFields and =groovyBCDirection=)
+**** Global variables not found in =faField=
+     The Lexer correctly identified the variable but the =getField=
+     method did not know how to get it.
+
+     Fixed
+**** Wrong type of condition field in =funkySetAreaFields=
+     If no condition was evaluated the utility generated a
+     pseudo-field of the wrong length
+**** =calculated=-patches $0$ for some operations
+     For some operations in the =Field=-driver the
+     =calculated=-patches had the value $0$ instead of the number of
+     the next cell. This caused certain calculations to fail (give
+     $0$)
+
+     The =FaField=-driver did no fixing of the =calculated=-patches at
+     all.
+
+     This is fixed
+**** =sqr= of a =vector= should produce a =symmTensor=
+     Reported in
+     http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=150
+
+     Added the =sqr= at the right place to the grammars. Also some
+     other missing tensor operations (=dev= and =symm=).
+**** =funkySetFields= produced wrong values on processor patches
+     Patch fields were not copied any no =correctBoundaryField= was
+     called for technical reasons.
+
+     Fix: values copied by hand
+**** =sortedToc= does not exist for =1.6-ext=
+     Introduced a preprocessor symbol that allows using sortedToc on
+     newer versions
+**** Wrong =size()= and =pointSize()= reported for =FaField=-driver
+     This was due to a strange () (still don't know what happened
+     there)
+**** Memory leak in the field drivers
+     The strings of parsed IDs were not properly deleted. Funnily this
+     was done correctly in the Patch and the Subset-driver. Also for
+     timelines-
+
+     Also fixed a leak with the labels of plugin-functions that was
+     present with all drivers
+**** Maintenance scripts not working with non-=bash= =/bin/sh=
+     Reported by Oliver Krueger that on systems where =/bin/sh= is not
+     a =bash= anymore (newer Ubuntu and SuSE) the sourcing of
+     =theFiles.sh= doesn't work anymore.
+
+     Fixed and moved all the files to the =maintainanceScripts=-folder
+**** =cof= and =diag= undefined
+     Added. Diag had to be reprogrammed as it is not implemented for
+     fields (probably for performance reasons).
+
+     Also some tensor operators were missing (probably lost during copy/paste)
+****  No new file created if number of patches for patchAverage changes
+      Reported in
+      https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=153
+
+      Fixed by removing all file pointers if the number of patches changes
+**** =variables= intolerant on spaces
+     Spaces in the list of variables made the reading
+     fail because words can't contain spaces. For instance
+: "var =T*2;"
+     Now all the spaces are removed before assigning to
+     variables. This will also remove spaces on the "inside" thus
+     making
+: "v ar =T*2;"
+     the same as the above expression. But it is unlikely that the
+     call will be used in this way
+**** Missing =div=-operations
+     These valid =div=-operations were missing from the grammar:
+     - Divergence of a volume-tensor (all three kinds) producing a
+       vector
+     - Divergence of a surface-tensor (all three kinds) producing a
+       volume-tensor
+**** Fields created by =expressionField= written too late
+     Fields created by that function object were written with the
+     value from the timestep before because the regular write occurs
+     before the execution of the function objects.
+
+     Fixed
+**** =storedVariables= did not require a =initialValue=
+     Now an initial value is required (instead of the default empty
+     string which caused parser failure)
+**** Dimension checking makes =expressionField= fail
+     Reason is that during the calculation of the variables dimensions
+     are checked.
+
+     Now the functionObject switches the checking off. But a more
+     general solution is desirable
+**** =expressionField= at last timestep not written
+     The functionObject does not write (and calculate) the field at
+     the last timestep.
+
+     Fixed with an one-liner
+**** =groovyBC= makes =interFoam=-runs fail unpredictably
+     Reason was an uninitialized =valueFraction= which sometimes has
+     values that cause a floating point exception. Fixed
+**** Global variables of different sizes break parallel runs
+     Because =size()= was equal to the expected size on some
+     processors. Not on all. Now the branch is taken if the size is
+     equal on *all* processors
+**** Fields treated with =readAndUpdateFields= were written one timestep too late
+     Fields were not written after the boundary condition was
+     updated. Now they are
 *** Enhancements
 **** Topology-operators now support =variables= etc
      The topology operators =expressionToCell=, =expressionToFace= and
      =expressionToPoint= now support =variables= and the other
      supporting keywords if being constructed with a dictionary (for
      instance from the =topoSet=-utility)
+**** Fields touched by =manipulateField= being written
+     Usually the manipulated version of the fields is not written as
+     the manipulation happens *after* writing. The option
+     =writeManipulated= enforces writing.
+
+     Writing is not the default behavior to avoid side-effects
+**** Indicator functions =onPatch= and =internalFace= added to field-expressions
+     The function =onPatch(name)= returns a surface-field that is $1$
+     on all faces that belong to patch =name=.
+
+     The function =internalFace()= is $1$ on all internal faces and
+     $0$ on all patches
+**** Non-uniform second argument for =pow=
+     Now the second argument to the =pow=-function can be a
+     non-constant
+**** Added transpose to the tensors
+     The expression =A.T()= transposes the tensor =A= (for symmetrical
+     and spherical tensors it leaves them untouched)
+**** Added unit tensor =I= to parsers
+     If no field =I= is defined then this is used as the unit-tensor
+**** Added the /Hodge dual/ operator
+     The unary operator =*= calculates for tensors and symmetrical
+     tensors the hodge dual
+**** =replayTransientBC= can now switch on function-objects via dictionary
+     The optional entry =useFunctionObjects= switches on the execution
+     of function objects during the calculation
+**** =replayTransientBC= can now create a =phi=-field via dictionary
+     The optional entry =addDummyPhi= creates a =phi=-field
+**** =expressionField= now allows the specification of a dimension
+     The =dimensions=-entry is now read at the same time the variables
+     are read (this should work for all programs/functionObjects where
+     the parser is not constructed using a dictionary but the
+     dictionary is later searched for the =variables=-entry)
+*** New features
+**** Allow dynamically loaded plugins that add new functions to parsers
+     This allows easy extension of the functionality of =swak4Foam=
+     without modifying the grammar files.
+
+     The way it works is that new functions are added to a
+     runtime-selection table. If the grammar can not resolve a symbol
+     as a built-in function or a field (but only then) it looks up the
+     name in this table and evaluates the function. Parameters are
+     parsed separately and can be:
+     - primitive data types :: integer, float, string and word
+     - swak-expression :: an expression parsed by one of the
+          swak-parsers. The type of this expression does not
+          necessarily have to be the same as the one of the 'main'
+          expression.
+     The first time a plugin function is searched =swak4Foam= prints a
+     list of all the available functions of this type. Information
+     included is the return type and the types of the parameters
+     (these include the parser used, the expected type and a parameter
+     name).
+
+     Libraries with plugin-functions are added via the =libs=-entry in
+     the =system/controlDict=
+
+     A number of plugin-libraries are already included covering these
+     topics:
+     - Evaluation of functions of the turbulence, transport or thermo
+       model
+     - Different random number distributions
+     - Functions to "project" =sampledSets= and =sampledSurfaces= onto
+       a volume-field
+     - Execute explicit discretization functions (like =grad=) but
+       select the used scheme in the function instead of using the
+       value from =fvSchemes=
+     - Calculations of the mesh quality (same way =checkMesh= does)
+       and return as fields
+     - Do calculations locally on a cell (like the maximum on its
+       faces)
+     - Get the source fields and other properties from lagrangian
+       clouds based on the basic intermediate cloud classes
+       (Kinematic, Thermo, Reacting, ReactingMultiphase)
+
+     It has been tried to make the names unique instead of
+     short. Usually function names from one library are prefixed with
+     the same short string.
+**** Dynamically generated lists of =functionObjects=
+     The new =dynamicFunctionObjectListProxy= in the
+     =simpleFunctionObjects= can generate a =functionObjectList= from
+     a string and execute them during the run like regular
+     function-objects.
+
+     The string is provided by a special class (the so called
+     =dictionaryProvider=). Current implementations for the provider are:
+     - fromFileDictionaryProvider :: reads the text from a dictionary
+          file
+     - stdoutFromCommandProvider :: executes a program and takes the
+          standard output as the dictionary text
+     - stdoutFromPythonScriptProvider :: executes a python-script and
+          takes the stdout as the dictionary text
+     The string must be in the format o a regular OpenFOAM-dictionary
+     with an entry =functions= from which the functionObjects are
+     generated
+**** Function object =readAndUpdateFields=
+     This FO in the =simpleFunctionObjects= reads a number of fields
+     and updates their boundary conditions at every timestep.
+
+     Main purpose is to let =groovyBC= do calculations and use the
+     results for post-processing purposes
+
+     Does not support surface-fields as these don't have a
+     =correctBoundaryConditions=-method.
+
+     Example of the usage in the =angledDuctImplicit=-case (the
+     results are of limited value because of the temperature boundary
+     condition)
+**** Source terms based on =basicSource=
+     Three source terms were added. These source terms are in the
+     =swakSourceFields=-library and can be used with solvers that use
+     the =sourcesProperties=-dictionary. The sources are
+     - SwakSetValue :: sets values according to a mask or the
+                       mechanism provided by =basicSource=
+     - SwakExplicitSource :: Uses the calculated source term on the
+          right hand side of the equation
+     - SwakImplicitSource :: Uses a calculated scalar-field to add an
+          implicit source term (source is *without* the actual field)
+     These fields are only implemented in the 2.x-version of =swak=
+     because the interface of =basicSource= is very different in 1.7
+     and a backport was unnecessary
+**** Function objects that stop a run gracefully
+     =simpleFunctionObjects= now has a function object
+     =writeAndEndFieldRange= that stops a run (and writes the last
+     time) if a field is outside a specified range.
+
+     A similar function object =writeAndEndSwakExpression= is in the
+     =simpleSwakFunctionObjects= that stops if a swak-expression
+     evaluates to true. =writeAndEndPython= does the same in
+     =pythonIntegration=.
+
+     Note: after the run is written one more timestep is calculated
+     (this seems to be due to the fact that FOs are calculated at the
+     start of a timestep). Also there are issues if the next timestep
+     is a scheduled write-time (this only seem to be an issue with
+     1.7.x. It all works fine on 2.1.x)
+**** Function-objects to load thermophysical and turbulence models
+     New function objects in the =simpleFunctionObjects= allow the
+     loading of such models for solvers/utilities that don't have such
+     models but where some functionObject (for instance) needs such a
+     model to be in memory
+**** Function-objects that create and evolve clouds of lagrangian particles
+     Added as part of the =simpleFunctionObjects= some functionObjects
+     that create a cloud of particles and evolve them at every
+     timestep.
+
+     The appropriate fields needed by every cloud have to be present
+     (either supplied by the solver or via a =functionObject=)
+**** Function-object =manipulatePatchField= to manipulate the field on patches
+     This function objects allows the manipulation of patch fields
+     like =manipulateField= allows the manipulation of the internal
+     field. Only use if desperate
+**** Delayed variables to simulate responses
+     If a variable is declared in the =delayedVariables=-list then its
+     behavior changes: when a value is assigned to that variable then
+     the value is not immediately used but after the time specified in
+     =delay=. Values are stored at intervals =storeInterval= and
+     interpolated linearly. If no stored data is available then the
+     value of the expression =startupValue= is used.
+
+     This feature allows the modeling of boundary conditions that
+     react with a delay to flow conditions
+**** Allow preloading of fields in =funkySetFields=
+     To satisfy the requirements of certain boundary conditions
+     =funkySetFields= now allows the preloading of fields. This is
+     only available in dictionary mode with the =preloadFields=-entry
+     (for each entry in the =expressions=-list separately)
+*** Infrastructure
+**** Compilation script checks =SWAK4FOAM_SRC=
+     The environment variable =SWAK4FOAM_SRC= is needed for the
+     =swakCoded=-functionObject. The =Allwmake=-script now checks
+     whether this variable exists and prints a message with the
+     correct value if it doesn't. It also checks whether the value is
+     correct and warns if it isn't
+**** =Allwmake= creates symbolic links in =swakFiniteArea=
+     The links to =mybison= and =myflex= are missing when the sources
+     are downloaded as a tarball. The =Allwmake=-script now creates
+     these links if they are missing
+**** Reformatting of the parser sources
+     Sources of the parsers have been completely reformatted to make
+     them more readable and maintainable
+**** Move non-parser sources in =swak4FoamParsers= into sub-directories
+     Make the directory a little bit cleaner
+** 2013-02-28 - version number : 0.2.2
+*** Incompatibilities to previous versions
+**** Python-integration library renamed
+     To avoid clashes with other similar efforts (not that I know of
+     any) the library =libpythonIntegration.so= has been renamed to
+     =libswakPythonIntegration.so=.
+
+     Usually only the =libs=-entry in the controlDict has to be
+     changed (if the library is used at all). Names of the function
+     objects stay the same
+**** Change in write behaviour of =expressionField= and =manipulateField=
+     Now the =outputControl=-entry is honored. If set wrong the field
+     is *no longer* calculated/manipulated at every time-step
+*** Bug fixes
+**** 2.x-branch did not compile on 2.0
+     Branch only compiled on 2.1, but not on 2.0 due to changes in the
+     OpenFOAM-API
+
+     Fix provided by Bruno Santos
+**** =groovyBC=: =value= reset to $0$ during construction
+     If no =refValue= is given during construction then a value of $0$
+     is assumed for this and during a preliminary update the value is
+     reset to this value.
+
+     Fixed by using the =value= as the =refValue= if no =refValue= is
+     specified
+**** Unspecified =value= in =addGlobalVariables= produces obscure error message
+     The error message occured much later when a =tmp= tried to copy a
+     =NULL=-pointer and was not obvious at all for the general user. Fixed
+**** Did not compile on =1.6-ext=
+     1.6-ext does not consider the product of two symmetrical tensors
+     to be symmetrical. Fixed
+**** Python integration did not get global variables
+     Change in the interface of the =ExpressionResult=-class
+     broke the access of global variables from a
+     Python-functionObject. Fixed
+**** =maintainanceScripts/makeSwakVersionFile.py= failed when no Mercurial is installed
+     This didn't influence the compilation (as there is already a
+     current version file there) but confused people.
+**** Non-uniform variables for =internalField= only worked correctly for volume fields
+     Face and point fields did not propagate the information correctly
+     and were treated as non-uniform volume fields of the wrong
+     size. This should now be fixed
+**** Division of =faceFields= causes division by zero
+     The reason was that the patches of the divisor had a value of
+     zero. This has been fixed by only dividing the
+     =internalFields()=. Same for =pointFields=.
+**** =valuePatches= did not work for mapped patches
+     This kind of patch was not identified as something that could
+     have the value fixed
+<<<<<<< variant A
+**** Recent versions of 2.1.x break compilation of =CommonValueExpressionDriver.C=
+     The definition of the operator =lessOp= clashed with another
+     definition. Renamed.
+
+     Fix provided by Bruno Santos
+**** =expressionField= and =manipulateField= did not honor the =outputControl=-entry
+     =expressionFields= were calculated at every time-step, even if
+     the computational cost was high. Now if =outputControl= is
+     =outputTime= the field is only calculated if it is going to be
+     written
+**** Double =namespace Foam= makes compilation of =groovyJump= fail with =icc=
+     Seems like this one was overlooked because =gcc= is more
+     tolerant towards stupidity.
+
+     Reported by Edo Frederix
+*** New Examples
+**** Cases from the /OSCFD12/ Conference in London
+     On the slides the case files were promised
+*** New features
+**** Access fields from different cases
+     It is now possible for expression on =internalFields= to access
+     fields from different cases. These fields are always read from
+     disk when being accessed for the first time and stay cached in
+     memory until the time is changed. The data is interpolated to the
+     current mesh with the =meshToMesh=-class (which is the workhorse
+     of the =mapFields=-utility)
+
+     The meshes are stored in a repository and are accessed via a
+     name. If for instance the mesh is known under the name
+     =otherMesh= then in an expression the term =otherMesh(T)= is the
+     field =T= from that other mesh at the specified time interpolated
+     to the current mesh.
+
+     Certain function objects and parser instances allow specifying
+     foreign meshes in a subdictionary =foreignMeshes=.
+**** Patch-expressions now support mapped-patches
+     This is the long asked for feature to "get non-uniform values
+     from other patches". It only works if the patches are specified
+     as =mapped= (or =directMapped= for 1.x). Therefor a patch can
+     only access one other patch with this.
+
+     On a mapped patch =mapped(T)= gets field =T= from whatever this
+     patch maps from (other patch, cells, faces). =mappedInternal(T)=
+     gets the values from the internal cells on the other patch (this
+     only works for patches).
+
+     On a mapped patch an external variable expression for patches now
+     changes its meaning: if =other= is the patch that the current
+     patch maps from (and only then) then =var{patch'other}=expr=
+     evaluates =expr= on the other patch and then maps the values to
+     the current patch (=var= may be non-uniform). In all other
+     circumstances =var= will get a uniform value which is derived
+     from whatever =expr= evaluates to.
+
+     To allow non-uniform =offsets= in the specification of mapped
+     patches in =polyMesh/boundary= a utility
+     =calcNonUniformOffsetsForMapped= was developed.
+**** Function objects that manipulate time
+     The framework for function objects that manipulate the =runTime=
+     were added. The concrete implementations are
+     - setDeltaTByTimeline :: set the timestep from a data file
+     - setDeltaTWithPython :: set the timestep by evaluating a
+          Python-snipplet that should return a floating point number
+     - setEndTimeWithPython :: set the end time from the evaluation of
+          a Python-snipplet
+**** Plugin-functions for chemical model
+     The library =libswakChemistryModelFunctionPlugin= adds the
+     possibility to calculate properties of the chemistry like
+     reaction rates, chemical timescale and released energy.
+
+     Currently only implemented for =psiChemistryModel=
+
+     If there is no chemistry model in memory it will be loaded and
+     the reaction rates are calculated.
+
+     There is a function =psiChem_updateChemistry= that forces the
+     chemistry to be recalculated with a specified timestep. For
+     technical reasons this returns a scalar field with the value
+     $0$. So an expression like
+     =psiChem_updateChemistry(0.0001)+psiChem_RR(CH4)= calculates the
+     reaction rate assuming that the timestep is $0.0001$.
+
+     Two additional functions that sum up all the reaction rates (this
+     *should* be $0$) and sum up only positive reaction rates (giving
+     an impression on what is going on)
+**** Plugin-functions for radiation model
+     The library =libswakRadiationModelFunctionPlugin= adds the
+     possibility to calculate properties of the radiation like
+     parts of the source terms =Rp= and =Ru= and the current
+     radiation source
+
+     If there is no radiation model in memory it will be loaded and
+     the reaction rates are calculated. Assumes the presence of a
+     temperature field called =T=.
+*** Enhancements
+**** Python-Integration now supports numpy-arrays
+     If the =numpy=-library is found then global variables which are
+     fields are being transformed to =numpy=-arrays. These arrays can
+     be accessed with the usual =numpy=-array access like =a[i,j]= or
+     =a[i,:]=. Global variables are made accessible *by
+     reference*. This means that writing a value changes the global
+     variable. Setting the whole variable has to be done by slicing
+     =a[:]=3= (=a=3= removes it from the workspace). Vectors and
+     tensors are two-dimensional arrays. They have
+     convenience-attributes that return the whole vector of a
+     component (like =a.x= for vectors or =a.xx= for tensors). To
+     overwrite these they have to be sliced: =a.x[:]=0= (=a.x=0= only
+     changes the attribute)
+
+     If a variable that is going to a global namespace is a
+     =numpy=-array then it is translated by the following rules:
+     vectors are transformed to =scalarField=. Arrays with 3 columns
+     to =vectorField=, 9 columns to =tensorField= and 6 columns to
+     =symmTensorField=. Different column-numbers produce errors
+**** Optional parameter =writeCode=/=writeFile= for =pythonIntegrationFunctionObject=
+     If this is set then this Python-code is executed every time a
+     time-step was written to disk
+**** Python-integration has convenience-functions to create data files
+     Python-integration now has two conventience-functions that return
+     a filename with the full path and create the directories if
+     necessary. The file is *not* created (that is the responsibility
+     of the Python-code).
+
+     The functions are (=name= is the name of the function object)
+     - dataFile(fname) :: creates a directory
+          =<case>/<name>_data/<time>=. To be used for data that is
+          written at times that differ from write-time
+     - timeDataFile(fname) :: creates a directory
+          =<case>/<time>/<name>_data=. Should only be used for data
+          that is written only at write-time
+**** Switch off dimension checking in =funkyDoCalc=
+     A command lione switch =-noDimensionChecking= is added that
+     allows switching off the checking of dimensions if this makes
+     expressions fail
+**** =funkySetFields= allows accessing fields from another mesh
+     If another case (with time and region) is specified via command
+     line options (no dictionary) then in the expressions the other
+     mesh can be accessed under the name =other=
+
+     Main application for this is comparing to other cases (but also
+     comparing different timesteps of the same case with each other).
+
+     Used time is either fixed or set to the currently used (this can
+     be selected via the command line)
+**** =funkyDoCalc= allows specifying foreign meshes
+     Each expression can specify foreign meshes with a
+     =foreignMeshes=-subdict
+**** Function objects to load and update foreign meshes
+     There are two new function objects:
+     - addForeignMeshes :: this allows specifying new foreign
+          meshes. These can be used in subsequent function-objects or
+          other swak-expressions on =internalFields=
+     - foreignMeshesFollowTime :: this allows specifying a list of
+          meshes whose time is set to the current time of the running
+          case
+**** =replaxTransientBC= outputs timestep
+     This helps debugging timestepping-strategies
+**** New accumulation =weightedAverage=
+     A new possible entry for the =accumulations= calculates an
+     average that is weighted by a facetor that depends on the entity:
+     - cell volume if applicable
+     - face area for surfaces etc
+     - $1$ if there is no appropriate weight (usually values defined
+       on points). The result is equivalent to =average=.
+**** =expressionField= reports name and type of the created field
+     The title says it all. Should give the user additional feedback
+     about what is happening
+**** New boundary condition =groovyPartialSlip= in =groovyStandardBCs=
+     This boundary allows specifying the partial slip fraction of the
+     regular =partialSlip=-BC with an expression.
+**** =funkySetFields= allows switching off the correction of BCs
+     This is sometimes necessary to allow calculations with fields
+     where the boundary conditions have a lot of dependencies
+     (turbulence model, other mesh etc)
+**** Allow selection of additional regions in =funkySetFields=
+     The option =-additionalRegions= allows selecting additional mesh
+     regions for boundary conditions that require it (usually used
+     together with =-preloadFields=).
+
+     For the other case there is an additional option
+     =-otherAdditionalRegions=.
+**** Adding a =-preloadFields=-option to =funkySetFields=
+     This option allows specifying additional field names to be
+     preloaded in command line mode. If multiple mesh regions are
+     specified (including another mesh)it will try to preload the
+     field there too
+**** =replayTransientBC= now supports all volume types
+     Support for tensor-types has been added
+**** =replayTransientBC= preloads fields
+     For boundary conditions that require other fields these can be
+     loaded into memory
+**** =replayTransientBC= allows selection of time-steps
+     The utility now allows the selection of timesteps. In that case
+     it acts fundamentally different: instead of doing a timeloop it
+     jumps to those times, calculates the boundary conditions and
+     writes. The purpose of this mode is generating boundary fields
+     for postprocessing.
+*** Infrastructure
+**** =Allwmake= stops if building of =swak4FoamParsers= fails
+     As the majority of installation problems were actually problems
+     with the compilation of the library =swak4FoamParsers= and as
+     this library is central for all other things in =swak4Foam= the
+     compilation terminates if this library is not built
+**** Header =swak.H= with version information and macros
+     This new header includes information about the
+     =swak4Foam=-version, the =OpenFOAM=-version and macros for
+     workarounds that depend on the OpenFOAM-version
+**** =accumulations=-entries converted to =NamedEnums=
+     This forces the entries to be checked while being read. Allowing
+     more consistent treatment
+**** Additional maintenance script for special python-versions
+     This script allows compiling additional versions of
+     =swakPythonIntegration= for cases where the version on the
+     development machine is different from the version on the
+     simulation machine (see installation chapter)
+*** Cosmetics
+    Changes without consequences for the user
+**** Change type of =name= in parsers to =word=
+     The valid characters for an identifier were the same as in =word=
+     (was =string= before)
+**** Updated contributor lists in =README= and sources
+     The list of contributors to each file have been added (mostly by
+     script with the information from the repository)
+**** Rewritten methods that return pointers
+     This abomination from the early days of =funkySetFields= has been
+     cleaned
+*** Documentation
+    Changes to the documentation
+**** Start of the reference-manual
+     A first version of a reference manual is added. Only the first
+     part about expressions and parameters is written.
+** 2013-03-18 - version number : 0.2.3
+*** Supports OpenFOAM 2.2
+    This is the first version to compile with OpenFOAM 2.2
+
+    Due to changes in OpenFOAM it requires several =#ifdef= (something
+    that is usually avoided in the OpenFOAM-world) and other
+    prepocessor definitions)
+*** Incompatibilities to previous versions
+**** =simpleFunctionObjects= and =simpleLagrangianFunctionObjects= no longer independent from rest
+     Due to incompatibilities between OpenFOAM 2.2 and previous
+     versions there are compatibility headers included from the rest
+     of swak4Foam.
+
+     Theoretically both libraries can be easily made independent again.
+*** Bug fixes
+**** Compiles on =1.6-ext= again
+     The last release (0.2.2) did not compile on =1.6-ext=. This is
+     fixed
+**** Missing field files for the OSCFD2012-cases
+     Due to a stupid =.hgignore= the =0.orig=-directories were
+     missing. Nobody complained though
+**** Did not compile on =2.0.x=
+     This has been fixed
+*** New features
+**** Writing of sampled surfaces and sampled sets
+     With the options =autoWriteSurface= and =autoWriteSets= sampled
+     surfaces and sets are automatically written at each write
+     time. With =writeSurfaceOnConstruction= and
+     =writeSetOnConstruction= both are written when they are
+     created. A format has to be specified. No values are written.
+*** Enhancements
+**** Parsers now support =eigenValues= and =eigenVectors=
+     These function and some other minor ones (=sph=, =dev2=,
+     =twoSymm=) are now supported by the parsers
+**** Extract rows from tensors with component operator
+     The component operators =.x=, =.y= and =.z= now extract the rows
+     from a tensor
+**** Variable names that are identical to fields trigger a Warning
+     As this situation (like a variable named =p= for the position
+     that shadows the pressure field =p=) leads to weird errors a
+     warning is given. The warning can be switched of with the option
+     =variableNameIdenticalToField=.

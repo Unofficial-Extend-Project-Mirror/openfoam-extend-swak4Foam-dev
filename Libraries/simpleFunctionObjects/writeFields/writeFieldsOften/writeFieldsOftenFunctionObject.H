@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -49,6 +54,10 @@ functions
 SourceFiles
     writeFieldsOftenFunctionObject.C
 
+Contributors/Copyright:
+    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeFieldsOftenFunctionObject_H

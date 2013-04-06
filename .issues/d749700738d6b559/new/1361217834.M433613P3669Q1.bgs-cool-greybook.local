@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 18 Feb 2013 21:01:31 +0100
+State: new
+Subject: Check if there a forms of laplacian missing
+Message-Id: <d749700738d6b559-0-artemis@bgs-cool-greybook.local>
+
+Especially forms like laplacian(cellScalar,cellVector)

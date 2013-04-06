@@ -1,0 +1,81 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+theVariables (
+    "minY=interpolateToCell(min(pts().y));"
+    "maxY=interpolateToCell(max(pts().y));"
+);
+
+expressions
+(
+	initU
+	{
+		field U;
+		create false;
+		expression "500*vector(1,0,0)*(pos().y-minY)*(maxY-pos().y)*(1+0.1*randNormal())";
+                valuePatches ( left );
+		keepPatches true;
+                variables $theVariables;
+	}
+	lowerRhoPseudo
+	{
+		field rhoPseudo;
+		create false;
+		expression "10";
+		keepPatches true;
+                valuePatches ( left );
+                variables $theVariables;
+                condition "pos().y < (minY+maxY)/2";
+	}
+	upperO2
+	{
+		field O2;
+		create false;
+		expression "0.2";
+		keepPatches true;
+                valuePatches ( left );
+                variables $theVariables;
+                condition "pos().y > (minY+maxY)/2";
+	}
+	lowerH2O
+	{
+		field H2O;
+		create false;
+		expression "0.2";
+		keepPatches true;
+                valuePatches ( left );
+                variables $theVariables;
+                condition "pos().y < (minY+maxY)/2";
+	}
+	upperT
+	{
+		field T;
+		create false;
+		expression "500";
+		keepPatches true;
+                valuePatches ( left );
+                variables $theVariables;
+                condition "pos().y > (minY+maxY)/2";
+	}
+	lowerMu
+	{
+		field mu;
+		create false;
+		expression "1e-2";
+		keepPatches true;
+                valuePatches ( left );
+                variables $theVariables;
+                condition "pos().y < (minY+maxY)/2";
+	}
+);

@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alpha1;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+
+boundaryField
+{
+    "outlet."
+    {
+        type zeroGradient;
+    }
+    inlet1
+    {
+        type            groovyBC;
+        valueExpression "sin(normPos+time()*10)";
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "normPos=pi*(pos().x-minX)/(maxX-minX);"
+        );
+        value           uniform 0;
+    }
+    inlet2
+    {
+        type            groovyBC;
+        value uniform 0;
+        valueExpression "out";
+        variables (
+            "out{patch'outlet1}=1+T;"
+        );
+        delayedVariables (
+            {
+                name out;
+                startupValue "1";
+                storeInterval 0.05;
+                delay 1;
+            }
+        );
+    }
+    walls
+    {
+        type            zeroGradient;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

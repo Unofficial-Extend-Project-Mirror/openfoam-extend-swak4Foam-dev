@@ -105,12 +105,14 @@ functions
 );
 ///////////////////////////////////////////////////////////////////////////////
 
-Author
-    Martin Beaudoin, Hydro-Quebec (2008)
-
 SourceFiles
     trackDictionaryFunctionObject.C
 
+Contributors/Copyright:
+    2008-2009 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef trackDictionaryFunctionObject_H
@@ -150,7 +152,7 @@ class trackDictionaryFunctionObject
     bool echoControlDictOptimisationSwitches_;
     bool echoControlDictTolerances_;
     bool echoControlDictDimensionedConstants_;
-    
+
     //- Section separator strings
     string sectionStartSeparator_;
     string sectionEndSeparator_;

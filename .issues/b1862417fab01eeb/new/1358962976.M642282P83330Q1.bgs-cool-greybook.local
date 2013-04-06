@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 23 Jan 2013 18:40:58 +0100
+State: new
+Subject: coded-functionOBjects for time manipulation
+Message-Id: <b1862417fab01eeb-0-artemis@bgs-cool-greybook.local>
+
+Subclass function objects that do time-maipulation with coded-variants
+in OF 2.1

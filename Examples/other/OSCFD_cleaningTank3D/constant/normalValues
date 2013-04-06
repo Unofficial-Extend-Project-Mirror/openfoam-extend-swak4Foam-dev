@@ -1,0 +1,18 @@
+// cell size
+dx 0.5;
+
+// elevation of inlet
+hIn 10;
+
+// inlet above ground
+inY 5;
+
+// size of the outlet
+// outSize 12.5;
+outSize 9;
+
+// size of the channel
+// channelH 5;
+// channelW 5;
+channelH 10;
+channelW 10;

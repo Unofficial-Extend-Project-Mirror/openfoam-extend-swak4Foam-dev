@@ -30,6 +30,9 @@ divSchemes
     div(rho*phi,U)  Gauss limitedLinearV 1;
     div(phi,alpha)  Gauss vanLeer;
     div(phirb,alpha) Gauss interfaceCompression;
+
+    //    div((phi*interpolate(rho)),tracer) Gauss vanLeer01;
+    div(phi,tracer) Gauss vanLeer01;
 }
 
 laplacianSchemes

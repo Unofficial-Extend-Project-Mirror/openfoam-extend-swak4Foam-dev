@@ -22,9 +22,9 @@ actions (
         name beforeFilter;
 
         action new;
-        
+
         source expressionToFace;
-        
+
         sourceInfo {
             expression "set(inlet)";
         }
@@ -35,11 +35,37 @@ actions (
         name afterFilter;
 
         action new;
-        
+
         source expressionToFace;
-        
+
         sourceInfo {
             expression "set(outlet)";
+        }
+    }
+    {
+        type faceSet;
+
+        name inletPatch;
+
+        action new;
+
+        source expressionToFace;
+
+        sourceInfo {
+            expression "onPatch(inlet)";
+        }
+    }
+    {
+        type faceSet;
+
+        name halfInlet;
+
+        action new;
+
+        source expressionToFace;
+
+        sourceInfo {
+            expression "fset(inletPatch) && fpos().z>interpolate(0)";
         }
     }
     {
@@ -48,11 +74,37 @@ actions (
         name afterFilterSlaveCells;
 
         action new;
-        
+
         source expressionToCell;
-        
+
         sourceInfo {
             expression "set(outlet)";
+        }
+    }
+    {
+        type cellSet;
+
+        name inletPatchSlaveCells;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "false";
+        }
+    }
+    {
+        type cellSet;
+
+        name halfInletSlaveCells;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "false";
         }
     }
     {
@@ -61,9 +113,9 @@ actions (
         name beforeFilterSlaveCells;
 
         action new;
-        
+
         source expressionToCell;
-        
+
         sourceInfo {
             expression "set(inlet)";
         }

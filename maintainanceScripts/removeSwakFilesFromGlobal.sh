@@ -1,11 +1,11 @@
 #! /bin/sh
 
-. theFiles.sh
+. ./theFiles.sh
 
 for lib in ${SWAKLIBS[@]}
 do
   echo "Removing lib$lib from $FOAM_LIBBIN"
-  rm $FOAM_LIBBIN/lib$lib.* 
+  rm $FOAM_LIBBIN/lib$lib.*
 done
 
 for util in ${SWAKUTILS[@]}

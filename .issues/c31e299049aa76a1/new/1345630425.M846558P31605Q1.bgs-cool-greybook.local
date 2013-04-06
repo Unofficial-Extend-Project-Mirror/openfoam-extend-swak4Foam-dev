@@ -1,0 +1,23 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 22 Aug 2012 12:12:03 +0200
+State: new
+Subject: Problem with isspace(word) on 1.7.x
+Message-Id: <c31e299049aa76a1-0-artemis@bgs-cool-greybook.local>
+
+This is not strictly a swak-Problem.
+
+valgrind reports this (on 1.7.x):
+
+==29861== Conditional jump or move depends on uninitialised value(s)
+==29861==    at 0x1000047B7: Foam::isspace(char) (char.H:61)
+==29861==    by 0x100004D0D: Foam::word::valid(char) (wordI.H:121)
+==29861==    by 0x10000EC2A: bool Foam::string::valid<Foam::word>(Foam::string const&) (stringI.H:68)
+==29861==    by 0x100005DEC: bool Foam::string::stripInvalid<Foam::word>(Foam::string&) (stringI.H:80)
+==29861==    by 0x100004A77: Foam::word::stripInvalid() (wordI.H:36)
+==29861==    by 0x100004C10: Foam::word::word(std::string const&, bool) (wordI.H:84)
+==29861==    by 0xB88674: Foam::word Foam::name<Foam::Vector<double>, double, 3>(Foam::VectorSpace<Foam::Vector<double>, double, 3> const&) (VectorSpace.C:75)
+==29861==    by 0xB847E7: Foam::dimensioned<Foam::Vector<double> >::dimensioned(Foam::Vector<double> const&) (dimensionedType.H:98)
+==29861==    by 0x416EA48: Foam::GeometricField<Foam::Vector<double>, Foam::fvPatchField, Foam::volMesh>* Foam::FieldValueExpressionDriver::makeConstantFieldInternal<Foam::GeometricField<Foam::Vector<double>, Foam::fvPatchField, Foam::volMesh>, Foam::fvMesh>(Foam::GeometricField<Foam::Vector<double>, Foam::fvPatchField, Foam::volMesh>::value_type const&, Foam::fvMesh const&, bool) (FieldValueExpressionDriverI.H:616)
+==29861==    by 0x4108A1D: Foam::GeometricField<Foam::Vector<double>, Foam::fvPatchField, Foam::volMesh>* Foam::FieldValueExpressionDriver::makeConstantField<Foam::GeometricField<Foam::Vector<double>, Foam::fvPatchField, Foam::volMesh> >(Foam::GeometricField<Foam::Vector<double>, Foam::fvPatchField, Foam::volMesh>::value_type const&, bool) (FieldValueExpressionDriverI.H:570)
+==29861==    by 0x40C43E7: parserField::FieldValueExpressionParser::parse() (FieldValueExpressionParser.yy:724)
+==29861==    by 0x42F84FD: Foam::FieldValueExpressionDriver::parseInternal(int) (FieldValueExpressionDriver.C:118)

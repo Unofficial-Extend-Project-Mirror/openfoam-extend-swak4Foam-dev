@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,6 +37,10 @@ Description
 SourceFiles
     initSwakFunctionObject.C
 
+Contributors/Copyright:
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef initSwakFunctionObject_H
@@ -43,6 +52,8 @@ SourceFiles
 #include "HashPtrTable.H"
 #include "boolList.H"
 #include "Field.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,7 +74,7 @@ class initSwakFunctionObject
 
     //- Disallow default bitwise copy construct
     initSwakFunctionObject(const initSwakFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const initSwakFunctionObject&);
 
@@ -96,6 +107,18 @@ public:
 
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
+
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+    // make functionObject happy but fail because this is not an implementation
+    virtual void updateMesh(const mapPolyMesh&) {
+        notImplemented("initSwakFunctionObject::updateMesh");
+    }
+
+    // make functionObject happy but fail because this is not an implementation
+    virtual void movePoints(const polyMesh&) {
+        notImplemented("initSwakFunctionObject::movePoints");
+    }
+#endif
 
 };
 

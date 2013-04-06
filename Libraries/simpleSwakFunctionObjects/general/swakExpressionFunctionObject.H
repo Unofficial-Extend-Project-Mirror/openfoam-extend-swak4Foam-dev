@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,6 +37,10 @@ Description
 SourceFiles
     swakExpressionFunctionObject.C
 
+Contributors/Copyright:
+    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakExpressionFunctionObject_H
@@ -40,6 +49,8 @@ SourceFiles
 #include "timelineFunctionObject.H"
 
 #include "CommonValueExpressionDriver.H"
+
+#include "NumericAccumulationNamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,7 +70,7 @@ class swakExpressionFunctionObject
 
     //- Disallow default bitwise copy construct
     swakExpressionFunctionObject(const swakExpressionFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const swakExpressionFunctionObject&);
 
@@ -67,11 +78,11 @@ class swakExpressionFunctionObject
     template <class T>
     Field<T> evaluate(const word& fieldName,T preset) const;
 
-    //- the expression that is to be evaluated 
+    //- the expression that is to be evaluated
     string expression_;
 
     //- list with the accumulations of evaluated expression
-    wordList accumulations_;
+    List<NumericAccumulationNamedEnum::value> accumulations_;
 
     //- the expression driver
     autoPtr<CommonValueExpressionDriver> driver_;

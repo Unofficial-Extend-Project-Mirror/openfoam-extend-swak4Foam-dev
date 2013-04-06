@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 04 Oct 2012 12:55:25 +0200
+State: new
+Subject: Aid conversion from bool to scalar
+Message-Id: <91156da30f192d9a-0-artemis@bgs-cool-greybook.local>
+
+Either add a function "scalar(bool)" or make it automatic

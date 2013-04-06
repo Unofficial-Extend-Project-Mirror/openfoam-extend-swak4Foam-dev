@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -36,11 +36,16 @@ Description
 SourceFiles
     groovyBCPointPatchField.C
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCPointPatchField_H
 #define groovyBCPointPatchField_H
+
+#include "swak.H"
 
 #ifdef FOAM_DEV
 
@@ -51,8 +56,13 @@ SourceFiles
 
 #else
 
+#ifdef FOAM_NO_MIXED_POINT_PATCH
+#    include "valuePointPatchField.H"
+#    define mixedPointPatchFieldType valuePointPatchField<Type>
+#else
 #    include "mixedPointPatchField.H"
 #    define mixedPointPatchFieldType mixedPointPatchField<Type>
+#endif
 
 #endif
 

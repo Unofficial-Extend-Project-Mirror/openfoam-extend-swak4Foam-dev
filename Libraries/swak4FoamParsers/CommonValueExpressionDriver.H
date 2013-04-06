@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,10 @@ SourceFiles
     CommonValueExpressionDriverI.H
     CommonValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef CommonValueExpressionDriver_H
@@ -52,6 +55,9 @@ SourceFiles
 
 #include "ExpressionResult.H"
 #include "StoredExpressionResult.H"
+#include "DelayedExpressionResult.H"
+
+#include "MeshesRepository.H"
 
 namespace Foam
 {
@@ -63,6 +69,8 @@ namespace Foam
 class ExpressionDriverWriter;
 
 class initSwakFunctionObject;
+
+class CommonPluginFunction;
 
 class CommonValueExpressionDriver
 {
@@ -76,9 +84,9 @@ class CommonValueExpressionDriver
     //- variables from a dictionary
     stringList variableStrings_;
 
-    //- this one is in charge for writing and restoring 
+    //- this one is in charge for writing and restoring
 
-    //- by using it this class doesn't have to inherit from regIOobject 
+    //- by using it this class doesn't have to inherit from regIOobject
     //- (which would be an overkill and inconvenient)
     autoPtr<ExpressionDriverWriter> writer_;
 
@@ -88,24 +96,47 @@ class CommonValueExpressionDriver
     //- getting our own pointMesh
     autoPtr<pointMesh> pMesh_;
 
-protected:
+    //- the position to which the parser progressed
+    label parserLastPos_;
 
+    //- string that allows more detailed allocation of the context
+    string contextString_;
+
+    //- string that stores the name of the other mesh (if that is going to be used)
+    word otherMeshName_;
+
+protected:
+    //- get the string of the context in a form that is usable for an error message
+    std::string getContextString();
+
+    const string contextString() const { return contextString_; }
+
+    //- little helper method to print hex adresses
+    word getHex(const void *) const;
+
+    //- access last position
+    const label &parserLastPos() const { return parserLastPos_; }
+
+    //- access last position
+    label &parserLastPos() { return parserLastPos_; }
+
+    //- get the result from another driver. Overrideable to allow mapping
+    virtual autoPtr<ExpressionResult> getRemoteResult(
+        CommonValueExpressionDriver &otherDriver
+    );
+
+private:
     ExpressionResult result_;
 
     HashTable<ExpressionResult,word> variables_;
 
     List<StoredExpressionResult> storedVariables_;
 
-    label storedVariablesIndex_;
+    HashTable<DelayedExpressionResult,word> delayedVariables_;
+
+    label specialVariablesIndex_;
 
     wordList globalVariableScopes_;
-
-    const ExpressionResult &lookupGlobal(const word &name) const;
-
-    template<class T>
-    bool isGlobal(const word &name,bool isPoint) const;
-
-    void setGlobalScopes(const wordList &);
 
     HashTable<interpolationTable<scalar>,word> lines_;
 
@@ -117,12 +148,41 @@ protected:
 
     bool trace_parsing_;
 
-    // Handling the scanner 
+    bool variableNameIdenticalToField_;
+
+protected:
+    const ExpressionResult &lookupGlobal(const word &name) const;
+
+    template<class T>
+    bool isGlobal(const word &name,bool isPoint,label expectedSize=-1) const;
+
+    void setGlobalScopes(const wordList &);
+
+    //- scanner state for reentrant lexer
+    void *scanner_;
+
+    // Handling the scanner
     virtual void scan_begin()=0;
     virtual void scan_end()=0;
 
     //- update stuff that needs updating
     virtual bool update();
+
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const = 0;
+
+public:
+
+    ExpressionResult &result() { return result_; }
+
+    const ExpressionResult &result() const { return result_; }
+
+    const string &content() const { return content_; }
 
     //- actual size of the field
     virtual label size() const = 0;
@@ -130,6 +190,21 @@ protected:
     //- actual size of the supporting point-field
     virtual label pointSize() const = 0;
 
+    //- weights of the entries
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    //- point determines whether this is a point field or not
+    tmp<scalarField> weights(
+        label size,
+        bool point=false
+    ) const;
+
+   //- access the other mesh name
+    const word &otherMeshName() const { return otherMeshName_; }
+    word &otherMeshName() { return otherMeshName_; }
+
+protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
 
@@ -142,7 +217,7 @@ protected:
     //- set the default Mesh (if it is unset)
     static bool setUnsetDefaultMesh(const fvMesh &);
 
-    //- set the default Mesh 
+    //- set the default Mesh
     static bool resetDefaultMesh(const fvMesh &);
 
     //- get the default Mesh (if one is defined)
@@ -157,7 +232,7 @@ protected:
     );
 
     //- look through the current variable values and update the stored variables
-    void updateStoredVariables(bool force=false);
+    void updateSpecialVariables(bool force=false);
 
     //- read data from the writer
     virtual void getData(const dictionary &);
@@ -185,7 +260,7 @@ private:
     bool prevIterIsOldTime_;
 
 protected:
-   
+
     inline bool cacheReadFields() const { return cacheReadFields_; }
 
     inline bool searchInMemory() const { return searchInMemory_; }
@@ -196,7 +271,13 @@ protected:
 
     inline bool prevIterIsOldTime() const { return prevIterIsOldTime_; }
 
+    string getTypeOfFieldInternal(
+        const fvMesh &mesh,
+        const string &name
+    ) const;
+
     string getTypeOfField(const string &name) const;
+
     string getTypeOfSet(const string &name) const;
 
     template<class T,class Mesh>
@@ -214,10 +295,18 @@ protected:
     };
 
     template<class T>
-    inline autoPtr<T> getSet(const fvMesh &,const word &,SetOrigin &origin);
+    inline autoPtr<T> getSet(
+        const fvMesh &,
+        const word &,
+        SetOrigin &origin
+    ) const;
 
     template<class T>
-    inline bool updateSet(autoPtr<T> &theSet,const word &,SetOrigin origin);
+    inline bool updateSet(
+        autoPtr<T> &theSet,
+        const word &,
+        SetOrigin origin
+    ) const;
 
     template<class T>
     autoPtr<T> getOrReadField(
@@ -243,6 +332,26 @@ protected:
 
     template<class T>
     inline void correctField(T &f) const;
+
+    typedef HashTable<int> StartupSymbols;
+
+    template<class T>
+    class SymbolTable
+    :
+    public StartupSymbols
+    {
+    public:
+        SymbolTable();
+    };
+
+    virtual int startupSymbol(const word &name) = 0;
+
+    virtual void parseInternal(int startSymbol) = 0;
+
+    //- only subclasses have write-access
+    //    inline  HashTable<ExpressionResult,word> &variables();
+    ExpressionResult &variable(const word &name);
+
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -281,7 +390,7 @@ public:
         bool searchInMemory=true,
         bool searchOnDisc=false
     );
-    
+
     //- Copy construct
     CommonValueExpressionDriver(
         const CommonValueExpressionDriver&
@@ -320,7 +429,10 @@ public:
 
     // Member Functions
 
-    inline const HashTable<ExpressionResult,word> &variables() const;
+    //    inline const HashTable<ExpressionResult,word> &variables() const;
+    const ExpressionResult &variable(const word &name) const;
+
+    bool hasVariable(const word &name) const;
 
     void setSearchBehaviour(
         bool cacheReadFields,
@@ -336,11 +448,22 @@ public:
 
     void evaluateVariable(const word &name,const string &expr);
 
-    void evaluateVariableRemote(const string &remoteExpr,const word &name,const string &expr);
+    void evaluateVariableRemote(
+        const string &remoteExpr,
+        const word &name,
+        const string &expr
+    );
 
-    //- read the list of variable strings (or initialize with a single string)
+    //- calculate the weighted average of a field
+    template<class Type>
+    Type calcWeightedAverage(const Field<Type> &f) const;
+
+    //- read information about the foreign meshes and create them
+    static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
+
+   //- read the list of variable strings (or initialize with a single string)
     static stringList readVariableStrings(const dictionary &dict);
- 
+
     //- read the list of variable strings (or initialize with a single string)
     void setVariableStrings(const dictionary &dict);
 
@@ -362,7 +485,7 @@ public:
 
     string outputEntry();
 
-    word getResultType();
+    virtual word getResultType();
 
     ExpressionResult getUniform(label size,bool noWarning);
 
@@ -372,27 +495,39 @@ public:
     void clearResult();
 
     template <class Op,class Type>
-    Field<bool> *doCompare(Field<Type> *a,Op op,Field<Type> *b);
+    tmp<Field<bool> > doCompare(
+        const Field<Type> &a,
+        Op op,
+        const Field<Type> &b
+    );
 
     template <class Op>
-    Field<bool> *doLogicalOp(Field<bool> *a,Op op,Field<bool> *b);
+    tmp<Field<bool> > doLogicalOp(
+        const Field<bool> &a,
+        Op op,
+        const Field<bool> &b
+    );
 
-    inline Field<bool> *doLogicalNot(Field<bool> *a);
-    
-    template<class Type>
-    Field<Type> *doConditional(Field<bool> *d,Field<Type> *yes,Field<Type> *no);
+    inline tmp<Field<bool> > doLogicalNot(const Field<bool> &a);
 
     template<class Type>
-    Field<Type> *makeField(Type,bool isPoint=false);
+    tmp<Field<Type> > doConditional(
+        const Field<bool> &d,
+        const Field<Type> &yes,
+        const Field<Type> &no
+    );
+
+    template<class Type>
+    tmp<Field<Type> > makeField(Type,bool isPoint=false);
 
 //     template<class Type>
-//     Field<Type> *getField(const string &name);
+//     tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
     bool is(const string &name,bool isPoint=false) const;
 
     template<class Type>
-    bool isVariable(const string &name,bool isPoint=false) const;
+    bool isVariable(const string &name,bool isPoint=false,label expectSize=-1) const;
 
     template<class Type>
     bool isField(const string &name,bool isPoint=false) const;
@@ -405,22 +540,45 @@ public:
     inline bool isLine(const string &name) const;
 
     //- get the value for a timeline for a specific time
-    scalarField *getLine(const string &name,scalar t);
+    tmp<scalarField> getLine(const string &name,scalar t);
 
     //- value of the timeline
     scalar getLineValue(const string &name,scalar t);
 
     //- read some interpolation tables
-    void readTables(Istream &is,HashTable<interpolationTable<scalar> > &,bool clear=true);
+    void readTables(
+        Istream &is,
+        HashTable<interpolationTable<scalar> > &,
+        bool clear=true
+    );
+
+    //- is this mesh in the repository
+    bool isForeignMesh(const word &name) const;
+
+    template<class T>
+    bool isForeignField(
+        const word &meshName,
+        const word &fieldName
+    ) const;
+
+    template<class T>
+    tmp<T> interpolateForeignField(
+        const word &meshName,
+        const word &fieldName,
+        meshToMesh::order theOrder=meshToMesh::INTERPOLATE
+    ) const;
 
     //- read all the interpolation tables known to man
     void readTables(const dictionary &);
 
     //- read variables and tables (for objects that were not constructed by a dictionary)
-    void readVariablesAndTables(const dictionary &);
+    virtual void readVariablesAndTables(const dictionary &);
 
     //- write some interpolation tables
-    void writeTables(Ostream &os,const HashTable<interpolationTable<scalar> > &) const;
+    void writeTables(
+        Ostream &os,
+        const HashTable<interpolationTable<scalar> > &
+    ) const;
 
     //- is this a lookup table
     inline bool isLookup(const string &name) const;
@@ -428,9 +586,12 @@ public:
     //- get the value for a lookuptable for a set of values
     tmp<scalarField> getLookup(const string &name,const scalarField &val);
 
-    scalarField *makeModuloField(const scalarField &a,const scalarField &b);
-    scalarField *makeRandomField(label seed=0);
-    scalarField *makeGaussRandomField(label seed=0);
+    tmp<scalarField> makeModuloField(
+        const scalarField &a,
+        const scalarField &b
+    ) const;
+    tmp<scalarField> makeRandomField(label seed=0) const;
+    tmp<scalarField> makeGaussRandomField(label seed=0) const;
 
     vector getPositionOfMinimum(const scalarField &,const vectorField &) const;
 
@@ -438,16 +599,24 @@ public:
 
     const Time& runTime() const;
 
-    vectorField *composeVectorField(scalarField *,scalarField *,scalarField *);
+    tmp<vectorField> composeVectorField(
+        const scalarField &,
+        const scalarField &,
+        const scalarField &
+    );
 
-    tensorField *composeTensorField(scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *,
-                                    scalarField *,scalarField *,scalarField *);
+    tmp<tensorField> composeTensorField(
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &
+    );
 
-    symmTensorField *composeSymmTensorField(scalarField *,scalarField *,scalarField *,
-                                            scalarField *,scalarField *,scalarField *);
+    tmp<symmTensorField> composeSymmTensorField(
+        const scalarField &,const scalarField &,const scalarField &,
+        const scalarField &,const scalarField &,const scalarField &
+    );
 
-    sphericalTensorField *composeSphericalTensorField(scalarField *);
+    tmp<sphericalTensorField> composeSphericalTensorField(const scalarField &);
 
     // Error handling.
 
@@ -455,8 +624,8 @@ public:
     void error (const Location& l, const std::string& m);
     void error (const std::string& m);
 
-    // Handling the parser
-    virtual void parse(const std::string& f)=0;
+    //- Handling the parser
+    label parse(const std::string& f,const word &start="");
 
     // Handling temporary variables
     void clearVariables();
@@ -467,6 +636,10 @@ public:
         bool parsing
     );
 
+    bool traceScanning() const { return trace_scanning_; }
+
+    bool traceParsing() const { return trace_parsing_; }
+
     //- create a writer for this object
     void createWriterAndRead(const word &name);
 
@@ -474,9 +647,24 @@ public:
     //- Should enable exact restarts
     void tryWrite() const;
 
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    ) = 0;
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    ) = 0;
+
+    //- append a string to the conext for error messages
+    void appendToContext(const string &value);
+
     friend class ExpressionDriverWriter;
 
     friend class initSwakFunctionObject;
+
+    friend class CommonPluginFunction;
 };
 
 

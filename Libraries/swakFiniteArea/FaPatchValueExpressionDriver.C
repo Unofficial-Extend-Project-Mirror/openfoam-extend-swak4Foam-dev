@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,10 +28,14 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "FaPatchValueExpressionDriver.H"
+#include "FaPatchValuePluginFunction.H"
 
 #include "Random.H"
 
@@ -40,6 +44,8 @@ License
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+word FaPatchValueExpressionDriver::driverName_="faPatch";
 
 defineTypeNameAndDebug(FaPatchValueExpressionDriver, 0);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaPatchValueExpressionDriver, dictionary, faPatch);
@@ -51,13 +57,17 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, FaPatchValueExpress
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const FaPatchValueExpressionDriver& orig)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const FaPatchValueExpressionDriver& orig
+)
 :
     FaCommonValueExpressionDriver(orig),
     patch_(orig.patch_)
 {}
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const faPatch& patch)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const faPatch& patch
+)
 :
     FaCommonValueExpressionDriver(),
     patch_(patch)
@@ -77,7 +87,10 @@ label getPatchID(const faMesh &mesh,const word &name)
     return result;
 }
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvMesh&mesh
+)
  :
     FaCommonValueExpressionDriver(dict),
     patch_(
@@ -103,7 +116,10 @@ FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const dictionary& dic
 {
 }
 
-FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(const word& id,const fvMesh&mesh)
+FaPatchValueExpressionDriver::FaPatchValueExpressionDriver(
+    const word& id,
+    const fvMesh&mesh
+)
  :
     FaCommonValueExpressionDriver(),
     patch_(
@@ -133,52 +149,54 @@ FaPatchValueExpressionDriver::~FaPatchValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void FaPatchValueExpressionDriver::parse (const std::string& f)
+void FaPatchValueExpressionDriver::parseInternal (int startToken)
 {
-    content_ = f;
-    scan_begin ();
-    parserFaPatch::FaPatchValueExpressionParser parser (*this);
-    parser.set_debug_level (trace_parsing_);
+    parserFaPatch::FaPatchValueExpressionParser parser (
+        scanner_,
+        *this,
+        startToken,
+        0
+    );
+    parser.set_debug_level (traceParsing());
     parser.parse ();
-    scan_end ();
 }
 
-vectorField *FaPatchValueExpressionDriver::makePositionField()
+tmp<vectorField> FaPatchValueExpressionDriver::makePositionField() const
 {
-    return new vectorField(patch_.edgeFaceCentres());
+    return tmp<vectorField>(new vectorField(patch_.edgeFaceCentres()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makePointField()
+tmp<vectorField> FaPatchValueExpressionDriver::makePointField() const
 {
     // if implemented go to the call in the grammar and reuse there
     notImplemented("FaPatchValueExpressionDriver::makePointField()");
 
-    return new vectorField(0);
+    return tmp<vectorField>(new vectorField(0));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeEdgeNormalField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeEdgeNormalField() const
 {
-    return new vectorField(patch_.edgeNormals());
+    return tmp<vectorField>(new vectorField(patch_.edgeNormals()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeEdgeLengthField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeEdgeLengthField() const
 {
-    return new vectorField(patch_.edgeLengths());
+    return tmp<vectorField>(new vectorField(patch_.edgeLengths()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeFaceNeighbourField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeFaceNeighbourField() const
 {
-    return new vectorField(patch_.edgeFaceCentres());
+    return tmp<vectorField>(new vectorField(patch_.edgeFaceCentres()));
 }
 
-vectorField *FaPatchValueExpressionDriver::makeDeltaField()
+tmp<vectorField> FaPatchValueExpressionDriver::makeDeltaField() const
 {
-    return new vectorField(patch_.delta());
+    return tmp<vectorField>(new vectorField(patch_.delta()));
 }
 
-scalarField *FaPatchValueExpressionDriver::makeWeightsField()
+tmp<scalarField> FaPatchValueExpressionDriver::makeWeightsField() const
 {
-    return new scalarField(patch_.weights());
+    return tmp<scalarField>(new scalarField(patch_.weights()));
 }
 
 const fvMesh &FaPatchValueExpressionDriver::mesh() const
@@ -201,13 +219,183 @@ label FaPatchValueExpressionDriver::pointSize() const
     return patch_.nPoints();
 }
 
-scalarField *FaPatchValueExpressionDriver::makeEdgeIdField()
+tmp<scalarField> FaPatchValueExpressionDriver::makeEdgeIdField() const
 {
-    scalarField *result=new scalarField(patch_.size());
-    forAll(*result,i) {
-        (*result)[i]=i;
+    tmp<scalarField> result(new scalarField(patch_.size()));
+    forAll(result(),i) {
+        result()[i]=i;
     }
     return result;
+}
+
+template<>
+FaPatchValueExpressionDriver::SymbolTable<FaPatchValueExpressionDriver>::SymbolTable()
+:
+StartupSymbols()
+{
+    // default value
+    insert("",parserFaPatch::FaPatchValueExpressionParser::token::START_DEFAULT);
+
+    insert(
+        "scalar_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_SCALAR_COMMA
+    );
+    insert(
+        "scalar_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_SCALAR_CLOSE
+    );
+    insert(
+        "point_scalar_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_SCALAR_COMMA
+    );
+    insert(
+        "point_scalar_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+    );
+    insert(
+        "vector_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_VECTOR_COMMA
+    );
+    insert(
+        "vector_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_VECTOR_CLOSE
+    );
+    insert(
+        "point_vector_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_VECTOR_COMMA
+    );
+    insert(
+        "point_vector_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+    );
+    insert(
+        "tensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_TENSOR_COMMA
+    );
+    insert(
+        "tensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_TENSOR_CLOSE
+    );
+    insert(
+        "point_tensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_TENSOR_COMMA
+    );
+    insert(
+        "point_tensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+    );
+    insert(
+        "symmTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_YTENSOR_COMMA
+    );
+    insert(
+        "symmTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_YTENSOR_CLOSE
+    );
+    insert(
+        "point_symmTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_YTENSOR_COMMA
+    );
+    insert(
+        "point_symmTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+    );
+    insert(
+        "sphericalTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_HTENSOR_COMMA
+    );
+    insert(
+        "sphericalTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_HTENSOR_CLOSE
+    );
+    insert(
+        "point_sphericalTensor_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_HTENSOR_COMMA
+    );
+    insert(
+        "point_sphericalTensor_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+    );
+    insert(
+        "logical_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_LOGICAL_COMMA
+    );
+    insert(
+        "logical_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_FACE_LOGICAL_CLOSE
+    );
+    insert(
+        "point_logical_SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_LOGICAL_COMMA
+    );
+    insert(
+        "point_logical_CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+    );
+
+    insert(
+        "CL",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_CLOSE_ONLY
+    );
+    insert(
+        "SC",
+        parserFaPatch::FaPatchValueExpressionParser::token::START_COMMA_ONLY
+    );
+}
+
+
+const FaPatchValueExpressionDriver::SymbolTable<FaPatchValueExpressionDriver> &FaPatchValueExpressionDriver::symbolTable()
+{
+    static SymbolTable<FaPatchValueExpressionDriver> actualTable;
+
+    return actualTable;
+}
+
+int FaPatchValueExpressionDriver::startupSymbol(const word &name) {
+    return symbolTable()[name];
+}
+
+
+autoPtr<CommonPluginFunction> FaPatchValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        FaPatchValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool FaPatchValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return FaPatchValuePluginFunction::exists(
+        *this,
+        name
+    );
+}
+
+tmp<scalarField> FaPatchValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!faceSize) {
+        Pout << "Expected size: " << size
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("FaPatchValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(mag(makeEdgeLengthField()));
 }
 
 // ************************************************************************* //

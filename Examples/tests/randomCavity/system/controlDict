@@ -27,9 +27,11 @@ endTime         0.5;
 
 deltaT          0.005;
 
-writeControl    timeStep;
+// writeControl    timeStep;
+writeControl    adjustableRunTime;
 
-writeInterval   20;
+// writeInterval   20;
+writeInterval   0.05;
 
 purgeWrite      0;
 
@@ -47,6 +49,64 @@ runTimeModifiable yes;
 
 libs (
     "libgroovyBC.so"
+    "libsimpleFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakPythonIntegration.so"
 );
+
+functions {
+    addSize {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName randomScale;
+        globalScope randomVariables;
+        globalVariables {
+            bcRange {
+                valueType scalar;
+                value 10;
+            }
+            bcMin {
+                valueType scalar;
+                value 10;
+            }
+            internalRange {
+                valueType scalar;
+                value 0.01;
+            }
+        }
+    }
+    changeDeltaT {
+        type setDeltaTByTimeline;
+        deltaTTable {
+            outOfBounds repeat;
+            readerType csv;
+            hasHeaderLine 1;
+            timeColumn 0;
+            valueColumns ( 1 );
+            fileName "$FOAM_CASE/deltaT.csv";
+        }
+    }
+    dynamicFO1 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider fromFileDictionaryProvider;
+        dictionaryFile "$FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
+    dynamicFO2 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromCommandProvider;
+        theCommand "cat $FOAM_CASE/readFromFiles";
+        readDuringConstruction true;
+    }
+    dynamicFO3 {
+        type dynamicFunctionObjectListProxy;
+        dictionaryProvider stdoutFromPythonScriptProvider;
+        scriptCode "print 'functions {}'";
+        interactiveAfterException true;
+        readDuringConstruction true;
+    }
+}
 
 // ************************************************************************* //

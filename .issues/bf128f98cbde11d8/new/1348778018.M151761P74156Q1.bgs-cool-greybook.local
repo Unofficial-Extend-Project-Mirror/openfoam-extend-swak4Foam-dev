@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 27 Sep 2012 22:28:01 +0200
+Subject: Re: Delayed Variables
+Message-Id: <bf128f98cbde11d8-cf3242b1a1fb06d4-artemis@bgs-cool-greybook.local>
+References: <bf128f98cbde11d8-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <bf128f98cbde11d8-0-artemis@bgs-cool-greybook.local>
+
+General plan: delayed variables store a series of ExpressionResults
+(in addition to the sketched interface there will also be a parameter
+that says how often a value will be saved). Older values will be
+discarded. When the delayed value is requested it will be interpolated
+between the two best-fitting values

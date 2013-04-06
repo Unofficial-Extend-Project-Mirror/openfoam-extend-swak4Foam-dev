@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 25 Feb 2013 15:59:48 +0100
+State: new
+Subject: Check whether delayed variables get correctly written for restart
+Message-Id: <aef7e606caa14bcd-0-artemis@bgs-cool-greybook.local>
+
+Especially in CommonExpressionDriver::prepareData only the stored
+variables are written

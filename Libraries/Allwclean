@@ -1,6 +1,6 @@
 #! /bin/sh
 
-if [ -d simpleFunctionObjects ]; then 
+if [ -d simpleFunctionObjects ]; then
     wclean simpleFunctionObjects
 fi
 
@@ -17,6 +17,8 @@ wclean swakFunctionObjects
 
 wclean simpleSwakFunctionObjects
 
+wclean simpleLagrangianFunctionObjects
+
 wclean swakTopoSources
 
 wclean swakSourceFields
@@ -25,7 +27,20 @@ wclean swakFiniteArea
 
 wclean groovyStandardBCs
 
-wclean pythonIntegration
+wclean swakPythonIntegration
+
+(cd functionPlugins; ./Allwclean)
 
 # remove residual from bison
 rm -f */*.output
+
+if [ "$SWAK_USER_PLUGINS" != "" ]
+then
+    plugins=$(echo $SWAK_USER_PLUGINS | tr ";" "\n")
+
+    for plug in $plugins
+    do
+	echo "Clearing user function-plugin $plug"
+	wclean $plugins
+    done
+fi

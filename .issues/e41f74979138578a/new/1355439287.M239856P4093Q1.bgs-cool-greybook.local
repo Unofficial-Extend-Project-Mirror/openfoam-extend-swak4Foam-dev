@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 13 Dec 2012 23:53:48 +0100
+State: new
+Subject: Revise parameters in CommonValueExpressionDriver
+Message-Id: <e41f74979138578a-0-artemis@bgs-cool-greybook.local>
+
+Lot of parameters arestring when word is sufficient

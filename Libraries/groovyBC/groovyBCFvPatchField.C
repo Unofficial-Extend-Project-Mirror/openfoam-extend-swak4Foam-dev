@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCFvPatchField.H"
@@ -57,6 +60,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 
     this->refValue() = pTraits<Type>::zero;
     this->refGrad() = pTraits<Type>::zero;
+    this->valueFraction() = 1;
 }
 
 
@@ -97,7 +101,11 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
 
     driver_.readVariablesAndTables(dict);
 
-    this->refValue() = pTraits<Type>::zero;
+    if (dict.found("refValue")) {
+        this->refValue() = Field<Type>("refValue", dict, p.size());
+    } else {
+        this->refValue() = pTraits<Type>::zero;
+    }
 
     if (dict.found("value"))
     {
@@ -105,6 +113,10 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
         (
             Field<Type>("value", dict, p.size())
         );
+	if (!dict.found("refValue")) {
+ 	    // make sure that refValue has a sensible value for the "update" below
+	    this->refValue() = Field<Type>("value", dict, p.size());
+	}
     }
     else
     {
@@ -122,12 +134,40 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
             << endl;
     }
 
-    this->refGrad() = pTraits<Type>::zero;
-    this->valueFraction() = 1;
+    if (dict.found("refGradient")) {
+        this->refGrad() = Field<Type>("refGradient", dict, p.size());
+    } else {
+        this->refGrad() = pTraits<Type>::zero;
+    }
+
+    if (dict.found("valueFraction")) {
+        this->valueFraction() = Field<scalar>("valueFraction", dict, p.size());
+    } else {
+        this->valueFraction() = 1;
+    }
 
     if(this->evaluateDuringConstruction()) {
         // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
         this->evaluate();
+    } else {
+        // emulate mixedFvPatchField<Type>::evaluate, but avoid calling "our" updateCoeffs
+        if (!this->updated())
+        {
+            this->mixedFvPatchField<Type>::updateCoeffs();
+        }
+
+        Field<Type>::operator=
+            (
+                this->valueFraction()*this->refValue()
+                +
+                (1.0 - this->valueFraction())*
+                (
+                    this->patchInternalField()
+                    + this->refGrad()/this->patch().deltaCoeffs()
+                )
+            );
+
+        fvPatchField<Type>::evaluate();
     }
 }
 
@@ -192,7 +232,7 @@ void groovyBCFvPatchField<Type>::updateCoeffs()
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
     this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
     this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_);
-    
+
     mixedFvPatchField<Type>::updateCoeffs();
 }
 

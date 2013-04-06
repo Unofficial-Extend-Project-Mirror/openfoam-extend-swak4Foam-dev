@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "patchFunctionObject.H"
@@ -58,8 +67,13 @@ patchFunctionObject::patchFunctionObject
 
 bool patchFunctionObject::start()
 {
+    wordList oldPatchNames(patchNames_);
     patchNames_ = wordList(dict_.lookup("patches"));
 
+    // the patches changed
+    if(patchNames_!=oldPatchNames) {
+        closeAllFiles();
+    }
     timelineFunctionObject::start();
 
     patchIndizes_.setSize(patchNames_.size());
@@ -69,8 +83,8 @@ bool patchFunctionObject::start()
         const word &name=patchNames_[i];
         patchIndizes_[i]=mesh.boundaryMesh().findPatchID(name);
         if(patchIndizes_[i]<0) {
-            WarningIn("patchFunctionObject::start()") 
-                << " Patch " << name << " does not exist in patches: " 
+            WarningIn("patchFunctionObject::start()")
+                << " Patch " << name << " does not exist in patches: "
                     << mesh.boundaryMesh().names() << endl;
         }
     }

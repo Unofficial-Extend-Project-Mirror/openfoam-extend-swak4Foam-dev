@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,10 @@ SourceFiles
     SubsetValueExpressionDriverI.H
     SubsetValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SubsetValueExpressionDriverYY_H
@@ -47,7 +50,7 @@ SourceFiles
 
 #include "SubsetValueExpressionDriver.H"
 
-#define YY_DECL int parserSubsetlex(parserSubset::SubsetValueExpressionParser::semantic_type* yylval,parserSubset::location* yylloc,Foam::SubsetValueExpressionDriver &driver)
+#define YY_DECL int parserSubsetlex(parserSubset::SubsetValueExpressionParser::semantic_type* yylval_param,parserSubset::location* yylloc,void *yyscanner,Foam::SubsetValueExpressionDriver &driver,int& start_token,int& numberOfFunctionChars)
 
 YY_DECL;
 

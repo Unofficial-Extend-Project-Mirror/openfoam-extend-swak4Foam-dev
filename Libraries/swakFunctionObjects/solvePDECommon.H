@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,6 +37,10 @@ Description
 SourceFiles
     solvePDECommon.C
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef solvePDECommon_H
@@ -42,18 +51,21 @@ SourceFiles
 #include "NamedEnum.H"
 #include "volFields.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class solvePDECommon
 {
     //- Disallow default bitwise copy construct
     solvePDECommon(const solvePDECommon&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const solvePDECommon&);
 
@@ -74,7 +86,7 @@ protected:
     //- name of the function object
     const word name_;
 
-    //- name of the field that is being solved for 
+    //- name of the field that is being solved for
     word fieldName_;
 
     //- is this a steady calculation
@@ -96,7 +108,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     solvePDECommon
@@ -116,22 +128,26 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute
     virtual void execute();
-    
+
     //- Execute at the final time-loop
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 
 };

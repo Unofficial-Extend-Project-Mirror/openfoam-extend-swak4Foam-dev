@@ -17,9 +17,9 @@ fi
 
 for lib in ${SWAKLIBS[@]}
 do
-    if [ -e $FOAM_LIBBIN/lib$lib.$SOEXT ]; then 
+    if [ -e $FOAM_LIBBIN/lib$lib.$SOEXT ]; then
 	echo "$FOAM_LIBBIN/lib$lib.$SOEXT shadows library that will be compiled. This might break the compilation of the utilities"
-	if [ -z $I_KNOW_THE_RISCS ]; then 
+	if [ -z $I_KNOW_THE_RISCS ]; then
 	    echo "Set the environment variable I_KNOW_THE_RISCS if you want to continue nevertheless"
 	    exit 42
 	fi
@@ -45,3 +45,16 @@ fi
 
 # (cd Examples/tests/fluIntegration/libRegistered; wmake)
 
+PROPOSED_SWAK4FOAM_SRC=`pwd`"/Libraries"
+
+if [ -z $SWAK4FOAM_SRC ]; then
+    echo
+    echo
+    echo "If you want to use swakCoded-function object or compile software based on swak set the environment variable SWAK4FOAM_SRC to $PROPOSED_SWAK4FOAM_SRC (most people will be fine without setting that variable)"
+else
+    if [ $SWAK4FOAM_SRC != $PROPOSED_SWAK4FOAM_SRC ]; then
+	echo
+	echo
+	echo "The environment variable SWAK4FOAM_SRC has the value $SWAK4FOAM_SRC instead of the expected value $PROPOSED_SWAK4FOAM_SRC - Maybe it points to a different installation."
+    fi
+fi

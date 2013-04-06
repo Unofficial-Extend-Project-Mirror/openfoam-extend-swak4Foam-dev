@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 21 Jan 2013 16:27:32 +0100
+Subject: Re: Manipulating Time with functionObjects
+Message-Id: <c12ad3817236b635-c2b0fd09e61952e6-artemis@bgs-cool-greybook.local>
+References: <c12ad3817236b635-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <c12ad3817236b635-0-artemis@bgs-cool-greybook.local>
+
+Added timeline-functionObject and two functionObjects that change
+timeStep and endTime with Python

@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -27,12 +32,16 @@ Class
     calculateGlobalVariables
 
 Description
-    Function object that calculates some variables and adds them to a globel 
+    Function object that calculates some variables and adds them to a globel
     namespace
 
 SourceFiles
     calculateGlobalVariables.C
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef calculateGlobalVariables_H
@@ -43,18 +52,21 @@ SourceFiles
 
 #include "CommonValueExpressionDriver.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes
 class dictionary;
 class objectRegistry;
 class mapPolyMesh;
+class polyMesh;
 
 class calculateGlobalVariables
 {
     //- Disallow default bitwise copy construct
     calculateGlobalVariables(const calculateGlobalVariables&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const calculateGlobalVariables&);
 
@@ -68,7 +80,7 @@ class calculateGlobalVariables
     wordList toGlobalVariables_;
 
 protected:
-    
+
     void executeAndWriteToGlobal();
 
 public:
@@ -78,7 +90,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     calculateGlobalVariables
@@ -98,22 +110,26 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 
     //- Clear all data

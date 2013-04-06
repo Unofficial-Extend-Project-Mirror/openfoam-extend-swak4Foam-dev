@@ -1,0 +1,102 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rhoPimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10;
+
+deltaT          1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  no;
+
+maxCo           10;
+
+maxDeltaT       1;
+
+libs (
+    "libsimpleFunctionObjects.so"
+    "libsimpleLagrangianFunctionObjects.so"
+    "libswakLagrangianCloudSourcesFunctionPlugin.so"
+    "libswakFunctionObjects.so"
+);
+
+functions {
+    getSLGThermoForParcels {
+        type loadSLGThermoModel;
+        correctModel false;
+        allowReload false;
+        thermoName thermophysicalProperties;
+    }
+    hotParticle {
+        //        type evolveKinematicCloud;
+        type evolveThermoCloud;
+        //        type evolveConstReactingCloud;
+        cloudName hotParticleCloud;
+        g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
+        rhoName rho;
+        //        muName mu;
+        UName U;
+        SLGThermoName SLGThermo;
+    }
+    momentumSourceKinematic {
+        //        enabled false;
+
+        type expressionField;
+        autowrite true;
+        expression "lcsMomentumSource(hotParticleCloud)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName hotParticleCloudMomentumSource;
+    }
+    enthalpySourceKinematic {
+        //        enabled false;
+
+        type expressionField;
+        autowrite true;
+        expression "lcsEnthalpySource(hotParticleCloud)";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName hotParticleCloudEnthalpySource;
+    }
+}
+
+
+// ************************************************************************* //

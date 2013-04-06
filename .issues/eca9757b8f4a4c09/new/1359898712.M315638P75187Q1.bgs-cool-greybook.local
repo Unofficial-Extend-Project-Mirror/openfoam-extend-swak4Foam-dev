@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 03 Feb 2013 14:24:54 +0100
+Subject: Re: Implement a cell-colouriing-function
+Message-Id: <eca9757b8f4a4c09-aab4c280f9ccc77f-artemis@bgs-cool-greybook.local>
+References: <eca9757b8f4a4c09-0-artemis@workstation008.office.ice-sf.at>
+In-Reply-To: <eca9757b8f4a4c09-0-artemis@workstation008.office.ice-sf.at>
+
+Other strategy would be:
+http://www.cs.purdue.edu/homes/agebreme/publications/EuroPar05_coloring.pdf
+A Scalable Parallel Graph Coloring Algorithm for Distributed Memory Computers
+Erik G. Boman, Doruk Bozdag, Umit Catalyurek, Assefaw H. Gebremedhin,
+Fredrik Manne

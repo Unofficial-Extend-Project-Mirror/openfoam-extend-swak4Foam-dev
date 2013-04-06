@@ -22,6 +22,7 @@ startTime       0;
 
 stopAt          endTime;
 
+// endTime         0.001;
 endTime         0.1;
 
 deltaT          1e-05;
@@ -172,7 +173,7 @@ functions
         outputInterval 1;
         fieldName kineticEnergy;
         expression "U&U+k";
-        autowrite true;        
+        autowrite true;
     }
     kineticOut
     {
@@ -181,7 +182,7 @@ functions
             min max sum average
         );
         patches (
-            inlet 
+            inlet
             outlet
             upperWall
             lowerWall
@@ -196,7 +197,7 @@ functions
             sum
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "mag(Sf())*(U&U+k*phi)";
@@ -209,7 +210,7 @@ functions
             min max average
         );
         patches (
-            inlet 
+            inlet
         );
         variables "pOut{outlet}=average(p);";
         //        variables "pOut{}=average(p);";
@@ -224,7 +225,7 @@ functions
             min max average
         );
         patches (
-            outlet 
+            outlet
         );
         variables "pAverage{}=sum(p*vol())/sum(vol());";
         expression "pAverage-p";
@@ -235,7 +236,7 @@ functions
         // Just for checking whether tha othr massflow is correct
         type patchMassFlow;
         patches (
-            inlet 
+            inlet
             outlet
         );
         verbose true;
@@ -248,7 +249,7 @@ functions
             sum
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "phi";
@@ -261,7 +262,7 @@ functions
             sum
         );
         patches (
-            inlet 
+            inlet
             outlet
         );
         expression "U&Sf()";
@@ -274,6 +275,7 @@ functions
         fieldName k;
         outputControl timeStep;
         outputInterval 1;
+        writeManipulated true;
     }
     clearKinetic
     {
@@ -331,8 +333,8 @@ functions
     {
         type patchExpression;
         valueType patch;
-        patches ( 
-            lowerWall 
+        patches (
+            lowerWall
             upperWall
         );
         expression "mag((p-oldTime(p))/deltaT())";
@@ -342,14 +344,116 @@ functions
         );
         verbose true;
     }
+    RField
+    {
+        type expressionField;
+        autowrite true;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName turbulenceR;
+        expression "turb_R()";
+    }
+    RMax
+    {
+        type volumeMinMax;
+        verbose true;
+        fields (
+            turbulenceR
+        );
+    }
+    stopHighU {
+        type writeAndEndFieldRange;
+        fieldName U;
+        minimum -10;
+        maximum 40;
+    }
+    stopIfNoChange {
+        type writeAndEndSwakExpression;
+        valueType internalField;
+        logicalExpression "mag(diffU)<threshold";
+        logicalAccumulation and;
+        variables (
+            "diffU=U-oldU;"
+            "threshold=0.1;"
+            "oldU=U;"
+        );
+        storedVariables (
+            {
+                name oldU;
+                initialValue "vector(1e5,1e5,1e5)";
+            }
+        );
+    }
+    // stopIfPython {
+    //     type writeAndEndPython;
+    //     conditionCode "return runTime>4e-5";
+    // }
+    doWithPython {
+        type executeIfFunctionObjectPresent;
+        functions {
+            doWithNumpy {
+                type executeIfPython;
+                functions {
+                    getVelocity {
+                        type calculateGlobalVariables;
+                        outputControl timeStep;
+                        outputInterval 1;
+                        valueType internalField;
+                        toGlobalNamespace pythonStatistics;
+                        variables (
+                            "UField=U;"
+                            "RField=turbulenceR;"
+                            "volume=vol();"
+                        );
+                        toGlobalVariables (
+                            UField
+                            RField
+                            volume
+                        );
+                    }
+                    calculateDistribution {
+                        type pythonIntegration;
+                        startCode "componentSum=0";
+                        endCode "";
+                        executeFile "$FOAM_CASE/system/calcHistogram.py";
+                        writeFile "$FOAM_CASE/system/calcHistogram2D.py";
+                        swakToPythonNamespaces (
+                            pythonStatistics
+                        );
+                        pythonToSwakNamespace fromNumpy;
+                        pythonToSwakVariables (
+                            componentSum
+                        );
+                    }
+                    writeComonentField {
+                        type expressionField;
+                        autowrite true;
+                        outputControl outputTime;
+                        fieldName componentSumFromPython;
+                        expression "componentSum";
+                        globalScopes (
+                            fromNumpy
+                        );
+                    }
+                }
+                readDuringConstruction true;
+                conditionFile "$FOAM_CASE/system/checkForNumpy.py";
+            }
+        }
+        readDuringConstruction true;
+        functionObjectName executeIfPython;
+    }
 );
 
-libs ( 
-    "libOpenFOAM.so" 
-    "libgroovyBC.so" 
-    "libgroovyStandardBCs.so" 
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libgroovyStandardBCs.so"
+    "libsimpleFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakPythonIntegration.so"
+    "libswakTransportTurbFunctionPlugin.so"
 ) ;
 
 // ************************************************************************* //

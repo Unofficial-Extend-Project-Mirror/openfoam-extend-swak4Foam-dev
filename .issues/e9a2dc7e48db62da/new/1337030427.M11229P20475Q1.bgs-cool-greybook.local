@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 14 May 2012 23:17:45 +0200
+State: fixed
+Subject: =readAndUpdateField=-functionObject
+Message-Id: <e9a2dc7e48db62da-0-artemis@bgs-cool-greybook.local>
+
+functionObject that reads a field and updates the boundary
+conditions. This would allow post-processing-fields for boundaries. 
+
+Possible alternate implementation: construct the field and its
+boundary conditions from a dictionary in the FO-specification (for
+selected patches)

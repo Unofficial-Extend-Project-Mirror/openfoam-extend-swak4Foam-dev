@@ -1,0 +1,13 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 01 Feb 2013 16:10:09 +0100
+Subject: Re: Implement a cell-colouriing-function
+Message-Id: <eca9757b8f4a4c09-b7274cee8e779531-artemis@bgs-cool-greybook.local>
+References: <eca9757b8f4a4c09-0-artemis@workstation008.office.ice-sf.at>
+In-Reply-To: <eca9757b8f4a4c09-0-artemis@workstation008.office.ice-sf.at>
+
+Best algorithm seems to be in "Parallel Symmetry-Breaking in Sparse
+Graphs" by Andrew V. Goldberg, Serge A. Plotkin, and Gregory E. Shannon
+according to http://en.wikipedia.org/wiki/Graph_coloring#cite_note-16
+
+
+http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CE8QFjAC&url=http%3A%2F%2Fciteseerx.ist.psu.edu%2Fviewdoc%2Fdownload%3Fdoi%3D10.1.1.39.269%26rep%3Drep1%26type%3Dps&ei=xdULUcS-O4SGswach4CABQ&usg=AFQjCNHn-xbhKtiiTPK4uCeOif1ZoVw1mQ&sig2=jpwktg7KIvby3pAx_kLhIA&bvm=bv.41867550,d.Yms

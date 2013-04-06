@@ -1,0 +1,14 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 18 Jan 2013 16:01:32 +0100
+Subject: Re: Manipulating Time with functionObjects
+Message-Id: <c12ad3817236b635-ce707ceef6b8ec4b-artemis@bgs-cool-greybook.local>
+References: <c12ad3817236b635-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <c12ad3817236b635-0-artemis@bgs-cool-greybook.local>
+
+Idea of implementation:
+
+Class that has virtual methods
+- setDeltaT
+- setEndTime
+
+Concrete subclass that sets deltaT according to a timeline

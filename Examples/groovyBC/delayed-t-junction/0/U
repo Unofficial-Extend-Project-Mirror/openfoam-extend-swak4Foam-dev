@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet1
+    {
+        type            groovyBC;
+        valueExpression "-inVel*normal()"
+        value           uniform (0 0 0);
+        variables (
+            "A=sum(area());"
+            "outFlow{outlet}=sum((U&normal())*area());"
+            "myFlow=0.5*outFlow;"
+            "inVel=myFlow/sum(area());"
+        );
+        delayedVariables (
+            {
+                name outFlow;
+                startupValue "0";
+                storeInterval 0.001;
+                delay 0.1;
+            }
+        );
+    }
+
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform (0 0 0);
+        value           uniform (0 0 0);
+    }
+
+    inlet2
+    {
+        type            groovyBC;
+        valueExpression "-inVel*normal()"
+        value           uniform (0 0 0);
+        variables (
+            "targetFlow=min(1,time()/0.05)*(1+0.2*sin(time()*20))*0.002;"
+            "inFlow1{inlet1}=mag(sum((U&normal())*area()));"
+            "myFlow=targetFlow-inFlow1;"
+            "inVel=(1+0.1*sin(time()*35))*myFlow/sum(area());"
+        );
+    }
+
+    defaultFaces
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+}
+
+// ************************************************************************* //

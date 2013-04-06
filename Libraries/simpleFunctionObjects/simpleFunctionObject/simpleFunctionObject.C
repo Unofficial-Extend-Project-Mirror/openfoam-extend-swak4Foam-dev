@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "simpleFunctionObject.H"
@@ -72,8 +81,8 @@ simpleFunctionObject::simpleFunctionObject
     time_(t),
     dict_(dict),
     regionName_(
-        dict_.found("region") 
-        ? dict_.lookup("region") 
+        dict_.found("region")
+        ? dict_.lookup("region")
         : polyMesh::defaultRegion
     ),
     obr_(time_.lookupObject<objectRegistry>(regionName_))
@@ -91,7 +100,7 @@ simpleFunctionObject::simpleFunctionObject
 bool simpleFunctionObject::start()
 {
     timeSteps_=outputInterval_;
-    
+
     return true;
 }
 
@@ -110,18 +119,30 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
 
 bool simpleFunctionObject::execute(const bool forceWrite)
 {
+    if(debug) {
+        Info << name() << "::execute() - Entering" << endl;
+    }
     if(time_.time().value()<after_) {
+        if(debug) {
+            Info << name() << "::execute() - Leaving - after" << endl;
+        }
         return true;
     }
 
     timeSteps_++;
 
     if(this->outputTime(forceWrite)) {
+        if(debug) {
+            Info << name() << "::execute() - outputTime" << endl;
+        }
         timeSteps_=0;
         write();
         flush();
     }
 
+    if(debug) {
+        Info << name() << "::execute() - Leaving" << endl;
+    }
     return true;
 }
 

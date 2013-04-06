@@ -22,9 +22,11 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Author
-    Martin Beaudoin, Hydro-Quebec (2008)
+Contributors/Copyright:
+    2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
+ SWAK Revision: $Id$
 \*----------------------------------------------------------------------------*/
 
 #include "trackDictionaryFunctionObject.H"
@@ -294,7 +296,7 @@ void Foam::trackDictionaryFunctionObject::initializeDictionaryList()
 
         if(Pstream::parRun())
         {
-            dictionaryName = ".." / dictionaryName; 
+            dictionaryName = ".." / dictionaryName;
         }
 
         if(debug && Pstream::master())
@@ -324,7 +326,7 @@ void Foam::trackDictionaryFunctionObject::initializeDictionaryList()
     }
 }
 
-//- Return the start of section separator, 
+//- Return the start of section separator,
 Foam::string Foam::trackDictionaryFunctionObject::echoSectionSeparator(
     const string& separatorString,
     const string& sectionId)

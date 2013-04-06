@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "patchExpressionFunctionObject.H"
@@ -57,7 +66,11 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
     patchFunctionObject(name,t,dict),
     expression_(dict.lookup("expression")),
     data_(dict),
-    accumulations_(dict.lookup("accumulations"))
+    accumulations_(
+        NumericAccumulationNamedEnum::readAccumulations(
+            dict,"accumulations"
+        )
+    )
 {
 }
 
@@ -97,7 +110,9 @@ stringList patchExpressionFunctionObject::columnNames()
     stringList result(accumulations_.size());
 
     forAll(accumulations_,i) {
-        result[i]=accumulations_[i];
+        result[i]=NumericAccumulationNamedEnum::names[
+            accumulations_[i]
+        ];
     }
 
     return result;
@@ -114,7 +129,7 @@ void patchExpressionFunctionObject::write()
         if(verbose()) {
             Info << "Expression " << name() << " on " << patchNames_[i] << ": ";
         }
-        
+
         driver.clearVariables();
         driver.parse(expression_);
         word rType=driver.getResultType();
@@ -129,7 +144,7 @@ void patchExpressionFunctionObject::write()
             writeTheData<symmTensor>(patchNames_[i],driver);
         } else if(rType==pTraits<sphericalTensor>::typeName) {
             writeTheData<sphericalTensor>(patchNames_[i],driver);
-        }  
+        }
 
         if(verbose()) {
             Info << endl;
@@ -143,9 +158,9 @@ void patchExpressionFunctionObject::write()
 bool patchExpressionFunctionObject::start()
 {
     const fvMesh &mesh=refCast<const fvMesh>(obr_);
-    
+
     bool result=patchFunctionObject::start();
-    
+
     drivers_.clear();
     drivers_.resize(patchIndizes_.size());
 

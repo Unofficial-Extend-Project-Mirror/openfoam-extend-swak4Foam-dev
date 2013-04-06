@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 28 Aug 2012 14:56:17 +0200
+Subject: Re: Allow =pow= to have a non-constant exponent
+Message-Id: <ff70baa6594401f5-9c20d0f1268c90f9-artemis@bgs-cool-greybook.local>
+References: <ff70baa6594401f5-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ff70baa6594401f5-0-artemis@bgs-cool-greybook.local>
+
+Introduced for the three non-FAM grammars
+
+Rule with the constant introduces a reduce/reduce-conflict

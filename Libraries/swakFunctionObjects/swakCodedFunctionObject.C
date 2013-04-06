@@ -34,6 +34,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 
 #include "GlobalVariablesRepository.H"
+#include "foamVersion4swak.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -61,6 +62,14 @@ Foam::swakCodedFunctionObject::swakCodedFunctionObject
     const dictionary& dict
 )
 :
+#if (FOAM_VERSION4SWAK_MAJOR==2) && (FOAM_VERSION4SWAK_MINOR==0) && \
+    (FOAM_VERSION4SWAK_PATCH>=0)
+    codedFunctionObject(
+        name,
+        time,
+        dict
+    ),
+#else
     codedFunctionObject(
         name,
         time,
@@ -69,6 +78,7 @@ Foam::swakCodedFunctionObject::swakCodedFunctionObject
         // if compilation fails here then you've got an old version of 2.0.x.
         // remove this last "false". It will compile but won't work properly
     ),
+#endif
     swakToCodedNamespaces_(
         dict.lookupOrDefault<wordList>(
             "swakToCodedNamespaces",
@@ -296,7 +306,12 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
         );
     }
 
+#if (FOAM_VERSION4SWAK_MAJOR==2) && (FOAM_VERSION4SWAK_MINOR==0) && \
+    (FOAM_VERSION4SWAK_PATCH>=0)
+    updateLibrary();
+#else
     updateLibrary(redirectType_);
+#endif
     return redirectFunctionObject().read(dict);
 }
 

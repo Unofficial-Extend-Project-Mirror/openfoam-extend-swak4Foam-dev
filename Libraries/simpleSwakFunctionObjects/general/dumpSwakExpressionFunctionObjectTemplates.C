@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "dumpSwakExpressionFunctionObject.H"
@@ -42,7 +51,7 @@ namespace Foam
 template<>
 void dumpSwakExpressionFunctionObject::writeValue(Ostream &o,const scalar &val,unsigned int &w)
 {
-    o << setw(w) << val;    
+    o << setw(w) << val;
 }
 
 template<class Type>
@@ -50,13 +59,13 @@ void dumpSwakExpressionFunctionObject::writeValue(Ostream &o,const Type &val,uns
 {
     for(label j=0;j<Type::nComponents;j++) {
         o << setw(w) << val[j];
-    }    
+    }
 }
 
 template <class T>
 void dumpSwakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &driver)
 {
-    Field<T> result=driver.getResult<T>();
+    Field<T> result(driver.getResult<T>());
 
     if (Pstream::master()) {
         writeTime(name(),time().value());

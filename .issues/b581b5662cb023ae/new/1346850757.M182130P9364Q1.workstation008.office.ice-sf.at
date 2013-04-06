@@ -1,0 +1,8 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 05 Sep 2012 15:11:39 +0200
+Subject: Re: Function objects to terminate a run
+Message-Id: <b581b5662cb023ae-c5c8509818da9dbe-artemis@workstation008.office.ice-sf.at>
+References: <b581b5662cb023ae-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <b581b5662cb023ae-0-artemis@bgs-cool-greybook.local>
+
+Implemented the simplest version. Because the function objects are called AFTER it was decided to proceed one more timestep is written

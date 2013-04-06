@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -27,12 +32,16 @@ Class
     createSampledSet
 
 Description
-    Function object creates a sampledSet and puts it into a repository 
+    Function object creates a sampledSet and puts it into a repository
     to be used by others
 
 SourceFiles
     createSampledSet.C
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef createSampledSet_H
@@ -41,18 +50,21 @@ SourceFiles
 #include "primitiveFieldsFwd.H"
 #include "pointFieldFwd.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class createSampledSet
 {
     //- Disallow default bitwise copy construct
     createSampledSet(const createSampledSet&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const createSampledSet&);
 
@@ -71,7 +83,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     createSampledSet
@@ -91,22 +103,26 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 
     //- Clear all data

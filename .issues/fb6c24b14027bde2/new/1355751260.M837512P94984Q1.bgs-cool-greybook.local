@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 17 Dec 2012 14:33:18 +0100
+Subject: Re: Interpolation from other case
+Message-Id: <fb6c24b14027bde2-d0d094ee5584e14c-artemis@bgs-cool-greybook.local>
+References: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+
+Added function objects to add the meshes. Now it is fully usable

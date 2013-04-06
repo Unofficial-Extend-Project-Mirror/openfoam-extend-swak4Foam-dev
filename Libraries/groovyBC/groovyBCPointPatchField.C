@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCPointPatchField.H"
@@ -70,8 +73,10 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     groovyBCCommon<Type>(false,true),
     driver_(getFvPatch(this->patch()))
 {
+#ifndef FOAM_NO_MIXED_POINT_PATCH
     this->refValue() = pTraits<Type>::zero;
     this->valueFraction() = 0.0;
+#endif
 }
 
 
@@ -89,7 +94,13 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 {
     driver_.readVariablesAndTables(dict);
 
-    this->refValue() = pTraits<Type>::zero;
+#ifndef FOAM_NO_MIXED_POINT_PATCH
+    if (dict.found("refValue")) {
+        this->refValue() = Field<Type>("refValue", dict, p.size());
+    } else {
+        this->refValue() = pTraits<Type>::zero;
+    }
+#endif
 
     if (dict.found("value"))
     {
@@ -100,7 +111,10 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     }
     else
     {
+#ifndef FOAM_NO_MIXED_POINT_PATCH
         Field<Type>::operator=(this->refValue());
+#endif
+
         WarningIn(
             "groovyBCPointPatchField<Type>::groovyBCPointPatchField"
             "("
@@ -110,16 +124,27 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore using "
+#ifndef FOAM_NO_MIXED_POINT_PATCH
             << this->refValue()
+#endif
             << endl;
     }
 
     //    this->refGrad() = pTraits<Type>::zero;
-    this->valueFraction() = 1;
+
+#ifndef FOAM_NO_MIXED_POINT_PATCH
+    if (dict.found("valueFraction")) {
+        this->valueFraction() = Field<scalar>("valueFraction", dict, p.size());
+    } else {
+        this->valueFraction() = 1;
+    }
+#endif
 
     if(this->evaluateDuringConstruction()) {
         // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
         this->evaluate();
+    } else {
+        // mixed-BC DOES NOT call evaluate during construction
     }
 }
 
@@ -167,7 +192,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 template<class Type>
 void groovyBCPointPatchField<Type>::updateCoeffs()
 {
-    if(debug) 
+    if(debug)
     {
         Info << "groovyBCFvPatchField<Type>::updateCoeffs" << endl;
         Info << "Value: " << this->valueExpression_ << endl;
@@ -183,11 +208,18 @@ void groovyBCPointPatchField<Type>::updateCoeffs()
 
     driver_.clearVariables();
 
+#ifndef FOAM_NO_MIXED_POINT_PATCH
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_,true);
-    //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);
     this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_,true);
-    
-    mixedPointPatchFieldType::updateCoeffs();
+    //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);
+#else
+    Field<Type>::operator=
+        (
+            driver_.evaluate<Type>(this->valueExpression_,true)
+        );
+#endif
+
+   mixedPointPatchFieldType::updateCoeffs();
 }
 
 
@@ -202,7 +234,7 @@ void groovyBCPointPatchField<Type>::write(Ostream& os) const
 
     driver_.writeCommon(os,this->debug_ || debug);
 }
-    
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

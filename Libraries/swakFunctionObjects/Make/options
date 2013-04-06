@@ -1,7 +1,5 @@
 
-ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV
-endif
+include $(OBJECTS_DIR)/../../../rules/versionOptions
 
 EXE_INC = \
     $(FOAM_DEV_OPTION) 	\
@@ -9,9 +7,10 @@ EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
+    $(FILEFORMATS_INC) \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)//postProcessing/functionObjects/utilities/lnInclude \
-    -I$(LIB_SRC)/lagrangian/basic/lnInclude 
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude
 
 
 LIB_LIBS = \
@@ -19,7 +18,8 @@ LIB_LIBS = \
     -lswak4FoamParsers \
     -lfiniteVolume \
     -lmeshTools \
+    $(FILEFORMATS_LIB) \
     -lsampling \
     -ltriSurface \
     -lutilityFunctionObjects \
-    -llagrangian 
+    -llagrangian

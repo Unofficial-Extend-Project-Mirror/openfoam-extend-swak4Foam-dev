@@ -1,0 +1,13 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 17 Dec 2012 20:33:54 +0100
+State: new
+Subject: Flood-filling plugin-function function
+Message-Id: <eac5b6aa4c379a61-0-artemis@bgs-cool-greybook.local>
+
+Example Usage: floodFill(mag(pos()-vector(0,1,0))<2,0,1,0) would fill
+sphere of radius 2 around (0 1 0) with 1. This function can be used to
+identify regions
+
+Possibliy in the same library as:
+
+eca9757b8f4a4c09 : Implement a cell-colouriing-function

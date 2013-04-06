@@ -6,6 +6,7 @@ cleanStuff:
 	wcleanLnIncludeAll
 
 prepareDebian:
+	cp swakConfiguration.debian swakConfiguration
 	cd debian; ./prepareForPackaging.py
 
 dpkg-only: cleanStuff prepareDebian
