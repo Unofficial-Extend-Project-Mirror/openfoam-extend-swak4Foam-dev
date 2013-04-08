@@ -294,6 +294,14 @@ S_{expl} + S_{impl} T
 
     This library is only compiled if the paths to the Python-Headers
     are configured in the =swakConfiguration=-file (see above)
+*** =simpleLagrangianFunctionObjects=
+    Function objects that allow the easy addition of lagrangian
+    clouds to a case. No other libraries from =swak4Foam= are needed
+    for this
+*** =simpleSearchableSurfaces=
+    Additional =searchableSurfaces= (for use in =snappyHexMesh=)
+    which include boolean operations for other surfaces and
+    coordinate transformations
 *** =fluFunctionObjectDriver=
     Driver for =functionObjects= that implemented entirely in =Python=
     using the =pythonFlu=-library
@@ -548,7 +556,7 @@ S_{expl} + S_{impl} T
                        =SwakImplicitSource=
 *** Lagrangian
     Tests for the functionObjects that create and evolve a cloud of
-    particles
+    particles (library =simpleLagrangianFunctionObjects=)
 **** hotStream
      - Solver :: replayTransientBC
      - Mesh preparation :: =prepareCase.sh=-script
@@ -559,6 +567,26 @@ S_{expl} + S_{impl} T
 **** angledDuctWithBalls
      - Solver :: rhoPimpleFoam
      - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
+*** SimpleSurface
+    Examples for the use of the =simpleSearchableSurfaces=-library.
+**** twoMotorbikesAndAWall
+     - Solver :: simpleFoam (alternatively use the
+                 =caseRun.sh=-script)
+     - Case preparation :: Script =caseSetup.sh= is provided
+     - Demonstrates :: Using the same STL-file more than once in a
+                       case by applying coordinate
+                       transformations. *Note:* the physics of this
+                       case are more than questionable as the frame
+                       of reference for both motorbikes is wrong
+**** littleVolcano
+     - Solver :: interFoam
+     - Case preparation :: Script =caseSetup.sh= is provided
+     - Demonstrates :: Boolean operations on STL-files
+**** chargedPlates
+     - Solver :: electrostaticFoam
+     - Case preparation :: Script =caseSetup.sh= is provided
+     - Demonstrates :: Boolean operations with regular surfaces
+     Physics of the case not as expected (charge-distribution)
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -1934,4 +1962,17 @@ S_{expl} + S_{impl} T
      =ExpressionResult.C= that had to be moved to =ExpressionResult.H=
      to allow compilation on these non-=gcc=-compilers
 *** New features
+**** Library with additional =searchableSurfaces=
+     The library =simpleSearchableSurfaces= adds more searchable
+     surfaces to be used in =snappyHexMesh=. Types of surfaces in
+     that library are
+     - some objects that duplicate existing surfaces and are only
+       there for historical reasons (except the cylinder which
+       distinguishes between different sides)
+     - wrappers for other surfaces that do coordinate transformations
+       with it: rotation, translation, scaling
+     - wrappers that take two surfaces and do boolean operations with
+       them: union, intersection, difference, exclusive difference
+     - Some wrappers that manipulate the regions of a surface: rename
+       them, collect them into one region
 *** Enhancements
