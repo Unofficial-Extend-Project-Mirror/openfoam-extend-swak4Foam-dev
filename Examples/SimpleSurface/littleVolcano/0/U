@@ -1,0 +1,63 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    volcano_inlet
+    {
+        type            fixedValue;
+        value           uniform (0 0 1);
+    }
+
+    sky
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    outside
+    {
+        type mixed;
+        refValue $internalField;
+        refGradient $internalField;
+        valueFraction uniform 0.5;
+        value $internalField;
+    }
+
+    volcano_wall
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    "land.+"
+    {
+        $volcano_wall;
+    }
+
+    sea
+    {
+        type slip;
+    }
+}
+
+
+// ************************************************************************* //
