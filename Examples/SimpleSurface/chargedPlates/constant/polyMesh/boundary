@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.x                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -21,19 +21,19 @@ FoamFile
     {
         type            wall;
         nFaces          12000;
-        startFace       352104;
+        startFace       352143;
     }
     withHole_plate
     {
         type            wall;
-        nFaces          5302;
-        startFace       364104;
+        nFaces          3485;
+        startFace       364143;
     }
     withBump_plate
     {
         type            wall;
-        nFaces          7485;
-        startFace       369406;
+        nFaces          6869;
+        startFace       367628;
     }
 )
 
