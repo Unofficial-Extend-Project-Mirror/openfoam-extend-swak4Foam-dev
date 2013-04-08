@@ -541,6 +541,11 @@ S_{expl} + S_{impl} T
      - Solver :: interFoam
      - Case preparation :: Script =caseSetup.sh= is provided
      - Demonstrates :: Boolean operations on STL-files
+**** chargedPlates
+     - Solver :: electrostaticFoam
+     - Case preparation :: Script =caseSetup.sh= is provided
+     - Demonstrates :: Boolean operations with regular surfaces
+     Physics of the case not as expected (charge-distribution)
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
