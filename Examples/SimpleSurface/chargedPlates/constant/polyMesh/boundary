@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
+|  \\    /   O peration     | Version:  1.7.x                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -9,56 +9,32 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    object      blockMeshDict;
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-convertToMeters 1;
-
-vertices
+3
 (
-    (-10 -10 0)
-    (  5 -10 0)
-    (  5   5 0)
-    (-10   5 0)
-    (-10 -10 5)
-    (  5 -10 5)
-    (  5   5 5)
-    (-10   5 5)
-);
-
-blocks
-(
-    hex (0 1 2 3 4 5 6 7) (60 60 20) simpleGrading (1 1 1)
-);
-
-edges
-(
-);
-
-patches
-(
-    wall sea
-    (
-        (0 3 2 1)
-    )
-    patch outside
-    (
-        (1 5 4 0)
-        (3 7 6 2)
-        (0 4 7 3)
-        (2 6 5 1)
-    )
-    patch sky
-    (
-        (4 5 6 7)
-    )
-);
-
-mergePatchPairs
-(
-);
-
+    box
+    {
+        type            wall;
+        nFaces          12000;
+        startFace       352104;
+    }
+    withHole_plate
+    {
+        type            wall;
+        nFaces          5302;
+        startFace       364104;
+    }
+    withBump_plate
+    {
+        type            wall;
+        nFaces          7485;
+        startFace       369406;
+    }
+)
 
 // ************************************************************************* //

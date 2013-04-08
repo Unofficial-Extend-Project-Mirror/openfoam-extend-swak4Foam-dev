@@ -10,55 +10,39 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      blockMeshDict;
+    object      decomposeParDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-convertToMeters 1;
+numberOfSubdomains 6;
 
-vertices
-(
-    (-10 -10 0)
-    (  5 -10 0)
-    (  5   5 0)
-    (-10   5 0)
-    (-10 -10 5)
-    (  5 -10 5)
-    (  5   5 5)
-    (-10   5 5)
-);
+method          hierarchical;
+//method          metis;
+//method          parMetis;
 
-blocks
-(
-    hex (0 1 2 3 4 5 6 7) (60 60 20) simpleGrading (1 1 1)
-);
+simpleCoeffs
+{
+    n               (4 1 1);
+    delta           0.001;
+}
 
-edges
-(
-);
+hierarchicalCoeffs
+{
+    n               (3 2 1);
+    delta           0.001;
+    order           xyz;
+}
 
-patches
-(
-    wall sea
-    (
-        (0 3 2 1)
-    )
-    patch outside
-    (
-        (1 5 4 0)
-        (3 7 6 2)
-        (0 4 7 3)
-        (2 6 5 1)
-    )
-    patch sky
-    (
-        (4 5 6 7)
-    )
-);
+manualCoeffs
+{
+    dataFile        "cellDecomposition";
+}
 
-mergePatchPairs
-(
-);
+metisCoeffs
+{
+    //n                   (5 1 1);
+    //cellWeightsFile     "constant/cellWeightsFile";
+}
 
 
 // ************************************************************************* //

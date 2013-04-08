@@ -17,7 +17,7 @@ FoamFile
 // Which of the steps to run
 castellatedMesh true;
 snap            true;
-addLayers       true;
+addLayers       false;
 
 
 // Geometry. Definition of all surfaces. All surfaces are of class
@@ -28,94 +28,62 @@ addLayers       true;
 // - to 'snap' the mesh boundary to the surface
 geometry
 {
-    volcano {
-        type renameRegions;
-        replacementPairs (
-            (B_bottom inlet)
-        );
+    withHole {
+        type oneRegion;
+        regionName plate;
         surface {
-            type mergeRegions;
-            newName wall;
-            regions (
-                A_A_ascii
-                A_B_ascii
-                B_top
-                B_hull
-            );
-
+            type translate;
+            translation (-0.05 0 0.05 );
             surface {
-                type difference;
-                a {
-                    type union;
-
+                type rotate;
+                rotateFrom (0 0 1);
+                rotateTo   (1 0 0);
+                surface {
+                    type difference;
                     a {
-                        type translate;
-                        translation (0.1 0.1 1.5);
-
-                        surface {
-                            type scale;
-                            scale (2 2 3);
-
-                            surface {
-                                type rotate;
-                                rotateFrom (1 0 0);
-                                rotateTo   (0 0 1);
-
-                                surface
-                                {
-                                    rename FineCone.stl;
-                                    type triSurfaceMesh;
-                                }
-                            }
-                        }
+                        type searchableCylinder;
+                        point1 (0 0 -0.001);
+                        point2 (0.0005 0.0005  0.001);
+                        radius 0.025;
                     }
                     b {
-                        type translate;
-                        translation (0 0 0.5);
-
-                        surface {
-                            type scale;
-                            scale (8 8 4);
-
-                            surface {
-                                type rotate;
-                                rotateFrom (1 0 0);
-                                rotateTo   (0 0 1);
-
-                                surface
-                                {
-                                    rename CoarseCone.stl;
-                                    type triSurfaceMesh;
-                                }
-                            }
-                        }
-                    }
-                }
-                b {
-                    type translate;
-                    translation (0 0 2);
-                    surface {
-                        type scale;
-                        scale (0.25 0.25 1);
-                        surface {
-                            type unitCylinder;
-                        }
+                        type searchableBox;
+                        max  (0.01 0.01 0.02);
+                        min  (-0.01 -0.01 -0.02);
                     }
                 }
             }
         }
     }
-    land {
-        type rotate;
-        rotateFrom (0 0 1);
-        rotateTo   (0.2 0.2 0.9);
+    withBump {
+        type oneRegion;
+        regionName plate;
         surface {
-            type plane;
-            plane {
-                planeType pointAndNormal;
-                pointAndNormalDict {
-                    basePoint (0 0 0);
-                    normalVector (0 0 1);
+            type translate;
+            translation (0.05 0 0.05 );
+            surface {
+                type rotate;
+                rotateFrom (0 0 1);
+                rotateTo   (1 0 0);
+                surface {
+                    type union;
+                    a {
+                        // type searchablePlate;
+                        // origin (-0.03 -0.03 0.001);
+                        // span (0.06 0.06 0);
+                        type searchableBox;
+                        min (-0.03 -0.03 -0.001);
+                        max ( 0.03  0.03  0.001);
+                    }
+                    b {
+                        type scale;
+                        scale (0.95 0.75 0.2);
+                        surface {
+                            type searchableSphere;
+                            centre (0.01 0.01 0);
+                            radius 0.02;
+                        }
+                    }
                 }
             }
         }
@@ -189,12 +157,12 @@ castellatedMeshControls
 
     refinementSurfaces
     {
-        volcano
+        withHole
         {
             //            level (3 4);
             level (1 2);
         }
-        land
+        withBump
         {
             //            level (3 4);
             level (1 2);
@@ -236,7 +204,7 @@ castellatedMeshControls
     // section reachable from the locationInMesh is kept.
     // NOTE: This point should never be on a face, always inside a cell, even
     // after refinement.
-    locationInMesh (4.9 4.9 0.43);
+    locationInMesh (0.099 0.099 0.099);
 
 
     // Whether any faceZones (as specified in the refinementSurfaces)
@@ -295,14 +263,6 @@ addLayersControls
     // Per final patch (so not geometry!) the layer information
     layers
     {
-        "land_.+"
-        {
-            nSurfaceLayers 1;
-        }
-        sea
-        {
-            nSurfaceLayers 1;
-        }
     }
 
     // Expansion factor for layer mesh
