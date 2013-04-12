@@ -159,7 +159,17 @@ void GlobalVariablesRepository::addValue(
 
     ResultTable &theScope=getScope(scope);
 
-    theScope.set(name,new ExpressionResult(value));
+    if(!theScope.found(name)) {
+        if(debug) {
+            Info << name << " is new. Inserting" << endl;
+        }
+        theScope.set(name,new ExpressionResult(value));
+    } else {
+        if(debug) {
+            Info << name << " is already there. Setting" << endl;
+        }
+        (*theScope[name])=value;
+    }
 }
 
 void GlobalVariablesRepository::addValue(
