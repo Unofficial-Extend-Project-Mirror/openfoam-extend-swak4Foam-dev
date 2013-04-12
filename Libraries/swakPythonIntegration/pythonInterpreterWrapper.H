@@ -73,6 +73,8 @@ class pythonInterpreterWrapper
 
     // Private data
 
+    const objectRegistry& obr_;
+
     //- state of 'my' Python subinterpreter
     PyThreadState *pythonState_;
 
@@ -172,6 +174,7 @@ public:
     //- Construct from components
     pythonInterpreterWrapper
     (
+        const objectRegistry& obr,
         const dictionary&
     );
 

@@ -64,7 +64,10 @@ writeAndEndPythonFunctionObject::writeAndEndPythonFunctionObject
 )
 :
     writeAndEndFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(dict)
+    pythonInterpreterWrapper(
+        t.db(),
+        dict
+    )
 {
     if(parallelNoRun()) {
         return;

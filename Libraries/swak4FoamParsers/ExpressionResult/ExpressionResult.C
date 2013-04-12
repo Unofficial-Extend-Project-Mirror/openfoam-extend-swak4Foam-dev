@@ -40,11 +40,17 @@ Contributors/Copyright:
 #include "symmTensor.H"
 #include "sphericalTensor.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 // #include "swakPTraitsSpecialization.H"
 
 namespace Foam {
 
 defineTypeNameAndDebug(ExpressionResult,0);
+
+defineRunTimeSelectionTable(ExpressionResult, dictionary);
+
+addToRunTimeSelectionTable(ExpressionResult, ExpressionResult, dictionary);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -147,6 +153,40 @@ ExpressionResult::ExpressionResult(
     }
 }
 
+autoPtr<ExpressionResult> ExpressionResult::New
+(
+    const dictionary& dict
+)
+{
+    word resultType(dict.lookup("resultType"));
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(resultType);
+
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "autoPtr<ExpressionResult> ExpressionResult::New"
+        )   << "Unknown  ExpressionResult type " << resultType
+            << endl << endl
+            << "Valid resultTypes are :" << endl
+#ifdef FOAM_HAS_SORTED_TOC
+            << dictionaryConstructorTablePtr_->sortedToc() // does not work in 1.6
+#else
+            << dictionaryConstructorTablePtr_->toc()
+#endif
+            << exit(FatalError);
+    }
+
+    if(debug) {
+        Pout << "Creating result of type " << resultType << endl;
+    }
+
+    return autoPtr<ExpressionResult>
+    (
+        cstrIter()(dict)
+    );
+}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -373,6 +413,9 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
     out << token::BEGIN_BLOCK << endl;
 
     if( data.valPtr_ ) {
+        out.writeKeyword("resultType");
+        out << word(data.type()) << token::END_STATEMENT << nl;
+
         out.writeKeyword("valueType");
         out << word(data.valType_) << token::END_STATEMENT << nl;
 

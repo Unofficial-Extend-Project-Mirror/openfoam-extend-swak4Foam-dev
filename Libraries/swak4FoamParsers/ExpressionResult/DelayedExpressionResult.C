@@ -40,12 +40,15 @@ Contributors/Copyright:
 #include "symmTensor.H"
 #include "sphericalTensor.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 #include <cassert>
 
 namespace Foam {
 
 defineTypeNameAndDebug(DelayedExpressionResult,0);
 
+addToRunTimeSelectionTable(ExpressionResult, DelayedExpressionResult, dictionary);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

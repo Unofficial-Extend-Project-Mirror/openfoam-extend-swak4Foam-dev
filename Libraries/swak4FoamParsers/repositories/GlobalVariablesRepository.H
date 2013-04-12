@@ -49,6 +49,8 @@ Contributors/Copyright:
 
 #include "HashPtrTable.H"
 
+#include "regIOobject.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -59,6 +61,8 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class GlobalVariablesRepository
+:
+    public regIOobject
 {
 public:
     typedef HashPtrTable<ExpressionResult,word> ResultTable;
@@ -71,7 +75,7 @@ private:
     // Constructors
 
     //- Construct null
-    GlobalVariablesRepository();
+    GlobalVariablesRepository(const objectRegistry &obr);
 
     //- The only instance of this repository
     static GlobalVariablesRepository *repositoryInstance;
@@ -89,7 +93,9 @@ public:
     virtual ~GlobalVariablesRepository();
 
     //- Get the Singleton of this class
-    static GlobalVariablesRepository &getGlobalVariables();
+    static GlobalVariablesRepository &getGlobalVariables(
+        const objectRegistry &obr
+    );
 
     //- get a global variable (if there is one)
     const ExpressionResult &get(
@@ -116,6 +122,10 @@ public:
 
     //- get a global namespace
     ResultTable &getNamespace(const word &name);
+
+    virtual bool writeData(Ostream &) const ;
+
+    virtual bool readData(Istream &);
 };
 
 

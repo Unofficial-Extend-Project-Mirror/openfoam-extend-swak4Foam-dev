@@ -17,7 +17,8 @@ FoamFile
 
 application     simpleFoam;
 
-startFrom       startTime;
+//startFrom       startTime;
+startFrom       latestTime;
 
 startTime       0;
 

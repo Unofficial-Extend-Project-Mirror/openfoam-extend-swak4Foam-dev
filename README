@@ -1846,4 +1846,4 @@ S_{expl} + S_{impl} T
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be
-     inserted there
+     inserted there. They are also now saved for restarting

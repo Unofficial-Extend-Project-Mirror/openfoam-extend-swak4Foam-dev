@@ -60,8 +60,10 @@ namespace Foam
 
 pythonInterpreterWrapper::pythonInterpreterWrapper
 (
+    const objectRegistry& obr,
     const dictionary& dict
 ):
+    obr_(obr),
     useNumpy_(dict.lookupOrDefault<bool>("useNumpy",true)),
     tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
     warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
@@ -534,7 +536,9 @@ void pythonInterpreterWrapper::getGlobals()
 
     forAll(swakToPythonNamespaces_,nameI) {
         const GlobalVariablesRepository::ResultTable &vars=
-            GlobalVariablesRepository::getGlobalVariables().getNamespace(
+            GlobalVariablesRepository::getGlobalVariables(
+                obr_
+            ).getNamespace(
                swakToPythonNamespaces_[nameI]
             );
         forAllConstIter(
@@ -845,7 +849,9 @@ void pythonInterpreterWrapper::setGlobals()
                     << endl;
         }
 
-        GlobalVariablesRepository::getGlobalVariables().addValue(
+        GlobalVariablesRepository::getGlobalVariables(
+            obr_
+        ).addValue(
             name,
             pythonToSwakNamespace_,
             eResult

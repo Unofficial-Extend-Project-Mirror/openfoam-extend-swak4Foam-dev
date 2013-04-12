@@ -64,8 +64,13 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
+    functionObject(
+        name
+    ),
+    pythonInterpreterWrapper(
+        t.db(),
+        dict
+    ),
     time_(t)
 {
     if(parallelNoRun()) {

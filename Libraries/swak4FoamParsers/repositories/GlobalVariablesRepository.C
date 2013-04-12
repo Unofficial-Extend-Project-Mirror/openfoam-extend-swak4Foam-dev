@@ -36,6 +36,9 @@ Contributors/Copyright:
 
 #include "GlobalVariablesRepository.H"
 
+#include "objectRegistry.H"
+#include "Time.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -46,8 +49,33 @@ GlobalVariablesRepository *GlobalVariablesRepository::repositoryInstance(NULL);
 
 ExpressionResult GlobalVariablesRepository::zero_;
 
-GlobalVariablesRepository::GlobalVariablesRepository()
+GlobalVariablesRepository::GlobalVariablesRepository(
+    const objectRegistry &obr
+)
+    :
+    regIOobject(
+        IOobject(
+            "global_variables",
+            obr.time().timeName(),
+            "swak4Foam",
+            obr.time(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        )
+    )
 {
+    if(debug) {
+        Pout << "GlobalVariablesRepository at "
+            << objectPath() << " created" << endl;
+    }
+
+    if(headerOk()) {
+        if(debug) {
+            Pout << "Found a file " <<  objectPath() << endl;
+        }
+
+        readData(readStream("GlobalVariablesRepository"));
+    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -59,7 +87,33 @@ GlobalVariablesRepository::~GlobalVariablesRepository()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
+bool GlobalVariablesRepository::writeData(Ostream &os) const
+{
+    if(debug) {
+        Pout << "GlobalVariablesRepository at " << objectPath()
+            << " writing" << endl;
+    }
+
+    os << globalVariables_;
+
+    return os.good();
+}
+
+bool GlobalVariablesRepository::readData(Istream &is)
+{
+    if(debug) {
+        Pout << "GlobalVariablesRepository at " << objectPath()
+            << " reading" << endl;
+    }
+
+    is >> globalVariables_;
+
+    return !is.bad();
+}
+
+GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables(
+    const objectRegistry &obr
+)
 {
     GlobalVariablesRepository*  ptr=repositoryInstance;
 
@@ -70,7 +124,7 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
     if(ptr==NULL) {
         Pout << "swak4Foam: Allocating new repository for sampledGlobalVariables\n";
 
-        ptr=new GlobalVariablesRepository();
+        ptr=new GlobalVariablesRepository(obr);
     }
 
     repositoryInstance=ptr;

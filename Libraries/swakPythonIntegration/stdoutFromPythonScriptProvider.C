@@ -63,7 +63,10 @@ namespace Foam
             dict,
             owner
         ),
-        pythonInterpreterWrapper(dict)
+        pythonInterpreterWrapper(
+            const_cast<dynamicFunctionObjectListProxy&>(owner).obr(),
+            dict
+        )
     {
         if(parallelNoRun()) {
             return;

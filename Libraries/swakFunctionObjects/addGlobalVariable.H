@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef addGlobalVariable_H
@@ -60,9 +60,11 @@ class addGlobalVariable
 {
     //- Disallow default bitwise copy construct
     addGlobalVariable(const addGlobalVariable&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const addGlobalVariable&);
+
+    const objectRegistry& obr_;
 
 public:
 
@@ -71,7 +73,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     addGlobalVariable
@@ -91,20 +93,20 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
     virtual void movePoints(const pointField&)
         {}
