@@ -543,12 +543,14 @@ void pythonInterpreterWrapper::getGlobals()
             iter
         ) {
             const word &var=iter.key();
+            const ExpressionResult &value=*(*iter);
+
             if(
                 !useNumpy_
                 ||
-                (*iter).isSingleValue()
+                value.isSingleValue()
             ) {
-                ExpressionResult val=(*iter).getUniform(
+                ExpressionResult val=value.getUniform(
                     1,
                     !warnOnNonUniform_
                 );
@@ -581,7 +583,7 @@ void pythonInterpreterWrapper::getGlobals()
                             << exit(FatalError);
                 }
             } else {
-                const ExpressionResult &val=(*iter);
+                const ExpressionResult &val=value;
                 if(debug) {
                     Info << "Building a numpy-Array for global " << var
                         << " at address " << val.getAddressAsDecimal()

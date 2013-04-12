@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -39,13 +39,15 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef GlobalVariablesRepository_H
 #define GlobalVariablesRepository_H
 
 #include "ExpressionResult.H"
+
+#include "HashPtrTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,7 +61,7 @@ namespace Foam
 class GlobalVariablesRepository
 {
 public:
-   typedef HashTable<ExpressionResult,word> ResultTable;
+    typedef HashPtrTable<ExpressionResult,word> ResultTable;
 
 private:
    // Private data
@@ -75,6 +77,8 @@ private:
     static GlobalVariablesRepository *repositoryInstance;
 
     static ExpressionResult zero_;
+
+    ResultTable &getScope(const word &name);
 
 public:
      //- Runtime type information
@@ -97,6 +101,12 @@ public:
         const word &name,
         const word &scope,
         const ExpressionResult &value
+    );
+
+    void addValue(
+        const word &name,
+        const word &scope,
+        autoPtr<ExpressionResult> value
     );
 
     void addValue(

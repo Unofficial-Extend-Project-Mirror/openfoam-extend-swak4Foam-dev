@@ -1844,3 +1844,6 @@ S_{expl} + S_{impl} T
      - Some wrappers that manipulate the regions of a surface: rename
        them, collect them into one region
 *** Enhancements
+**** Global variables now can be subclasses of =ExpressionResult=
+     This allows other variable types like stored variables to be
+     inserted there

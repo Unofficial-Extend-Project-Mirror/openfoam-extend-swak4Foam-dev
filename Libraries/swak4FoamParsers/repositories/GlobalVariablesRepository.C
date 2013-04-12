@@ -104,9 +104,10 @@ const ExpressionResult &GlobalVariablesRepository::get(
         const ResultTable &scope=globalVariables_[scopeName];
         if(scope.found(name)) {
             if(debug) {
-                Pout << name << " ( " << scopeName << " )= " << scope[name] << endl;
+                Pout << name << " ( " << scopeName << " )= "
+                    << *scope[name] << endl;
             }
-            return scope[name];
+            return *scope[name];
         }
     }
 
@@ -133,6 +134,18 @@ void GlobalVariablesRepository::addValue(
     );
 }
 
+GlobalVariablesRepository::ResultTable
+&GlobalVariablesRepository::getScope(const word &scope)
+{
+    if(!globalVariables_.found(scope)) {
+        if(debug) {
+            Pout << "Creating global scope " << scope << endl;
+        }
+        globalVariables_.insert(scope,ResultTable());
+    }
+    return globalVariables_[scope];
+}
+
 void GlobalVariablesRepository::addValue(
     const word &name,
     const word &scope,
@@ -143,16 +156,26 @@ void GlobalVariablesRepository::addValue(
         Pout << "Adding " << name << " to global scope "
             << scope << " Size: " << value.size() << endl;
     }
-    if(!globalVariables_.found(scope)) {
-        if(debug) {
-            Pout << "Creating global scope " << scope << endl;
-        }
-        globalVariables_.insert(scope,ResultTable());
+
+    ResultTable &theScope=getScope(scope);
+
+    theScope.set(name,new ExpressionResult(value));
+}
+
+void GlobalVariablesRepository::addValue(
+    const word &name,
+    const word &scope,
+    autoPtr<ExpressionResult> value
+)
+{
+    if(debug) {
+        Pout << "Adding autoPtr " << name << " to global scope "
+            << scope << " Size: " << value->size() << endl;
     }
 
-    ResultTable &theScope=globalVariables_[scope];
+    ResultTable &theScope=getScope(scope);
 
-    theScope.set(name,value);
+    theScope.set(name,value.ptr());
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
