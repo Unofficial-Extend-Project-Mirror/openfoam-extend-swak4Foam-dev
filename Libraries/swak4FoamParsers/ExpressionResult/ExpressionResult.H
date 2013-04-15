@@ -129,6 +129,15 @@ public:
         ),
         (dict)
     );
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        ExpressionResult,
+        nothing,
+        (
+        ),
+        ()
+    );
 
     // Constructors
 

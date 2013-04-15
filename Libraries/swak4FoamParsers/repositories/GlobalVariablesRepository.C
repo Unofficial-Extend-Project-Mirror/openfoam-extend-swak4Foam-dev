@@ -142,6 +142,9 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables(
         forAllIter(ResultTableTable,all,table) {
             forAllIter(ResultTable,(*table),iter) {
                 (*iter)->reset();
+                // if(!(*iter)->hasValue()) {
+                //     (*table).erase(iter);
+                // }
             }
         }
         repositoryInstance->lastTimeIndex_=obr.time().timeIndex();

@@ -47,6 +47,7 @@ namespace Foam {
 defineTypeNameAndDebug(StackExpressionResult,0);
 
 addToRunTimeSelectionTable(ExpressionResult, StackExpressionResult, dictionary);
+addToRunTimeSelectionTable(ExpressionResult, StackExpressionResult, nothing);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

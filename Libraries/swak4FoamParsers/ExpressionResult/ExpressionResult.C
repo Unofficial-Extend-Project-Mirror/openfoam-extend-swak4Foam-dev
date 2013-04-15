@@ -49,8 +49,10 @@ namespace Foam {
 defineTypeNameAndDebug(ExpressionResult,0);
 
 defineRunTimeSelectionTable(ExpressionResult, dictionary);
+defineRunTimeSelectionTable(ExpressionResult, nothing);
 
 addToRunTimeSelectionTable(ExpressionResult, ExpressionResult, dictionary);
+addToRunTimeSelectionTable(ExpressionResult, ExpressionResult, nothing);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -163,33 +165,65 @@ autoPtr<ExpressionResult> ExpressionResult::New
     if(dict.found("resultType")) {
         resultType=word(dict.lookup("resultType"));
     }
-    dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(resultType);
+    bool unset=dict.lookupOrDefault<bool>("unsetValue",false);
 
-    if (cstrIter == dictionaryConstructorTablePtr_->end())
-    {
-        FatalErrorIn
-        (
-            "autoPtr<ExpressionResult> ExpressionResult::New"
-        )   << "Unknown  ExpressionResult type " << resultType
-            << endl << endl
-            << "Valid resultTypes are :" << endl
+    if(unset) {
+        nothingConstructorTable::iterator cstrIter =
+            nothingConstructorTablePtr_->find(resultType);
+
+        if (cstrIter == nothingConstructorTablePtr_->end())
+        {
+            FatalErrorIn
+                (
+                    "autoPtr<ExpressionResult> ExpressionResult::New"
+                )   << "Unknown  ExpressionResult type " << resultType
+                    << endl << endl
+                    << "Valid resultTypes are :" << endl
 #ifdef FOAM_HAS_SORTED_TOC
-            << dictionaryConstructorTablePtr_->sortedToc() // does not work in 1.6
+                    << nothingConstructorTablePtr_->sortedToc() // does not work in 1.6
 #else
-            << dictionaryConstructorTablePtr_->toc()
+                    << nothingConstructorTablePtr_->toc()
 #endif
-            << exit(FatalError);
-    }
+                    << exit(FatalError);
+        }
 
-    if(debug) {
-        Pout << "Creating result of type " << resultType << endl;
-    }
+        if(debug) {
+            Pout << "Creating result of type " << resultType << endl;
+        }
 
-    return autoPtr<ExpressionResult>
-    (
-        cstrIter()(dict)
-    );
+        return autoPtr<ExpressionResult>
+            (
+                cstrIter()()
+            );
+    } else {
+        dictionaryConstructorTable::iterator cstrIter =
+            dictionaryConstructorTablePtr_->find(resultType);
+
+        if (cstrIter == dictionaryConstructorTablePtr_->end())
+        {
+            FatalErrorIn
+                (
+                    "autoPtr<ExpressionResult> ExpressionResult::New"
+                )   << "Unknown  ExpressionResult type " << resultType
+                    << endl << endl
+                    << "Valid resultTypes are :" << endl
+#ifdef FOAM_HAS_SORTED_TOC
+                    << dictionaryConstructorTablePtr_->sortedToc() // does not work in 1.6
+#else
+                    << dictionaryConstructorTablePtr_->toc()
+#endif
+                    << exit(FatalError);
+        }
+
+        if(debug) {
+            Pout << "Creating result of type " << resultType << endl;
+        }
+
+        return autoPtr<ExpressionResult>
+            (
+                cstrIter()(dict)
+            );
+    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -420,10 +454,10 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 {
     out << token::BEGIN_BLOCK << endl;
 
-    if( data.valPtr_ ) {
-        out.writeKeyword("resultType");
-        out << word(data.type()) << token::END_STATEMENT << nl;
+    out.writeKeyword("resultType");
+    out << word(data.type()) << token::END_STATEMENT << nl;
 
+    if( data.valPtr_ ) {
         out.writeKeyword("valueType");
         out << word(data.valType_) << token::END_STATEMENT << nl;
 
@@ -451,7 +485,8 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
         }
         out << token::END_STATEMENT << nl;
     } else {
-        out << "ExpressionResult: not data defined";
+        out.writeKeyword("unsetValue");
+        out << true << token::END_STATEMENT << nl;
     }
 
     out << token::END_BLOCK << endl;
