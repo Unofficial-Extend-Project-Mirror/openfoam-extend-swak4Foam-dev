@@ -525,6 +525,15 @@ S_{expl} + S_{impl} T
      - Solver :: chtMultiRegionFoam
      - Demonstrates :: Building the specification of function objects
                        at run-time via a Python-script
+**** =slicedPitzDaily=
+     - Solver :: simpleFoam
+     - Demonstrates :: Using a python-script to dynamically generate
+                       multiple function objects (sampled
+                       surfaces). Using stack-variables to calculate
+                       the results and write them. Using a stored
+                       stack-variable to monitor the pressure at a
+                       point and stop the run if the pressure didn't
+                       change there for the last 50 iterations
 *** =CodeStream=
     Demonstrates working together with the =coded=-stuff in OpenFOAM 2.0
 *** solvePDE
