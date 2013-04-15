@@ -109,6 +109,12 @@ bool GlobalVariablesRepository::readData(Istream &is)
 
     is >> globalVariables_;
 
+    Info << globalVariables_;
+
+    if(debug) {
+        Pout << "GlobalVariablesRepository reading finished" << endl;
+    }
+
     return !is.bad();
 }
 
@@ -190,7 +196,8 @@ const ExpressionResult &GlobalVariablesRepository::get(
 
 void GlobalVariablesRepository::addValue(
     const dictionary &dict,
-    const word scopeIn
+    const word scopeIn,
+    const bool overwrite
 ) {
     word name(dict.lookup("globalName"));
     word scope;
@@ -205,13 +212,15 @@ void GlobalVariablesRepository::addValue(
         addValue(
             name,
             scope,
-            ExpressionResult::New(dict)
+            ExpressionResult::New(dict),
+            overwrite
         );
     } else {
         addValue(
             name,
             scope,
-            ExpressionResult(dict,true)
+            ExpressionResult(dict,true),
+            overwrite
         );
     }
 }
@@ -231,7 +240,8 @@ GlobalVariablesRepository::ResultTable
 void GlobalVariablesRepository::addValue(
     const word &name,
     const word &scope,
-    const ExpressionResult &value
+    const ExpressionResult &value,
+    const bool overwrite
 )
 {
     if(debug) {
@@ -246,7 +256,7 @@ void GlobalVariablesRepository::addValue(
             Info << name << " is new. Inserting" << endl;
         }
         theScope.set(name,new ExpressionResult(value));
-    } else {
+    } else if(overwrite) {
         if(debug) {
             Info << name << " is already there. Setting" << endl;
         }
@@ -283,7 +293,8 @@ bool GlobalVariablesRepository::removeValue(
 void GlobalVariablesRepository::addValue(
     const word &name,
     const word &scope,
-    autoPtr<ExpressionResult> value
+    autoPtr<ExpressionResult> value,
+    const bool overwrite
 )
 {
     if(debug) {
@@ -293,7 +304,13 @@ void GlobalVariablesRepository::addValue(
 
     ResultTable &theScope=getScope(scope);
 
-    theScope.set(name,value.ptr());
+    if(
+        overwrite
+        ||
+        !theScope.found(name)
+    ) {
+        theScope.set(name,value.ptr());
+    }
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

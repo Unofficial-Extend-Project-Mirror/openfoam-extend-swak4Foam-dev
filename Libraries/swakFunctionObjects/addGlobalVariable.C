@@ -75,14 +75,19 @@ void Foam::addGlobalVariable::read(const dictionary& dict)
             ).addValue(
                 name,
                 scope,
-                ExpressionResult(dict,true,true)
+                ExpressionResult(dict,true,true),
+                false
             );
         }
     } else {
         if(dict.found("resultType")) {
             GlobalVariablesRepository::getGlobalVariables(
                 obr_
-            ).addValue(dict);
+            ).addValue(
+                dict,
+                "",
+                false
+            );
         }
     }
 }

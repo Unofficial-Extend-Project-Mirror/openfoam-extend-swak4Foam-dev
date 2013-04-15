@@ -153,6 +153,43 @@ functions {
                 globalScope rawData;
             }
         }
+    }
+    addPressureLine {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        resultType StoredStackExpressionResult;
+
+        globalScope pressureProbe;
+        globalName pressureMeasure;
+    }
+    addToPressureLine {
+         type calculateGlobalVariables;
+         outputControl timeStep;
+         outputInterval 1;
+         valueType set;
+         setName onePoint;
+         set {
+             type cloud;
+             axis s;
+             points ((0.15 0 0));
+         }
+         toGlobalNamespace pressureProbe;
+         toGlobalVariables (
+             pressureMeasure
+         );
+         variables (
+             "pressureMeasure=average(p);"
+         );
+    }
+    stopIfSetUnchanged {
+        type setEndTimeWithPython;
+        endTimeFile "$FOAM_CASE/system/endIfPUnchanged.py";
+        swakToPythonNamespaces (
+            pressureProbe
+        );
+        interactiveAfterException true;
+    }
 };
 
 // ************************************************************************* //

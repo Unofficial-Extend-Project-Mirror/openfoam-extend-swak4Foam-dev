@@ -1848,6 +1848,9 @@ S_{expl} + S_{impl} T
      a value then the *uniform* value of the right hand side is
      appended to the variable. Useful for collecting multiple values
      for output.
+
+     Variant =StoredStackExpresionResult= keeps the values between
+     timesteps and allows the collection of timeline data
 **** Function object =dumpGlobalVariable=
      Dumps the value of a global variable into a line of a file
 **** Function object =removeGlobalVariable=

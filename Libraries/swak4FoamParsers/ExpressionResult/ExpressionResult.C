@@ -82,6 +82,11 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
+        // if(rhs.type()!="ExpressionResult") {
+        //     FatalErrorIn("Hepp")
+        //         << "Hey"
+        //             << abort(FatalError);
+        // }
         Info << "Rhs: " << rhs << endl;
     }
 
@@ -188,7 +193,7 @@ autoPtr<ExpressionResult> ExpressionResult::New
         }
 
         if(debug) {
-            Pout << "Creating result of type " << resultType << endl;
+            Pout << "Creating unset result of type " << resultType << endl;
         }
 
         return autoPtr<ExpressionResult>
@@ -496,6 +501,10 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 
 Istream & operator>>(Istream &in,ExpressionResult &data)
 {
+    if(ExpressionResult::debug) {
+        Info << "operator>>(Istream &in,ExpressionResult &data)" << endl;
+    }
+
     dictionary dict(in);
 
     data=ExpressionResult(dict);
