@@ -67,7 +67,7 @@ StackExpressionResult::StackExpressionResult(
 
 StackExpressionResult::StackExpressionResult(const dictionary &dict)
 :
-    ExpressionResult(dict.subOrEmptyDict("value"))
+    ExpressionResult(dict)
 {
 }
 
