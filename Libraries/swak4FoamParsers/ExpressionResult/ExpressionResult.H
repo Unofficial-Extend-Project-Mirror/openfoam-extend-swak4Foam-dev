@@ -177,7 +177,7 @@ public:
 
     virtual ~ExpressionResult();
 
-    void operator=(const ExpressionResult&);
+    virtual void operator=(const ExpressionResult&);
 
     template<class Type>
     inline void setResult(Field<Type> *,bool isPoint=false);
