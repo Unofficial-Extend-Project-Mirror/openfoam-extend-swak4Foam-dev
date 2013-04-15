@@ -254,6 +254,32 @@ void GlobalVariablesRepository::addValue(
     }
 }
 
+bool GlobalVariablesRepository::removeValue(
+    const word &name,
+    const word &scope
+)
+{
+    if(debug) {
+        Pout << "Removing " << name << " to global scope "
+            << scope << endl;
+    }
+
+    ResultTable &theScope=getScope(scope);
+
+    if(!theScope.found(name)) {
+        if(debug) {
+            Info << name << " is not there." << endl;
+        }
+        return false;
+    } else {
+        if(debug) {
+            Info << name << " is there. Removing" << endl;
+        }
+        ResultTable::iterator iter=theScope.find(name);
+        return theScope.erase(iter);
+    }
+}
+
 void GlobalVariablesRepository::addValue(
     const word &name,
     const word &scope,

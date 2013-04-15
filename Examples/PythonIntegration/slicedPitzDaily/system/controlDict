@@ -141,6 +141,17 @@ functions {
                 );
                 interactiveAfterException true;
             }
+            removeLargeVariables {
+                type removeGlobalVariable;
+                outputControl timeStep;
+                outputInterval 1;
+                globalVariables (
+                    allPressure
+                    allPositions
+                    allVolume
+                );
+                globalScope rawData;
+            }
         }
 };
 

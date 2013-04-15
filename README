@@ -1850,6 +1850,8 @@ S_{expl} + S_{impl} T
      for output.
 **** Function object =dumpGlobalVariable=
      Dumps the value of a global variable into a line of a file
+**** Function object =removeGlobalVariable=
+     Removes a global variable (mainly used to preserve memory)
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be

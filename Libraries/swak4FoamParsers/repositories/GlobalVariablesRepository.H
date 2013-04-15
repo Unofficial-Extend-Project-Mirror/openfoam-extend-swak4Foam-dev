@@ -112,6 +112,11 @@ public:
         const ExpressionResult &value
     );
 
+    bool removeValue(
+        const word &name,
+        const word &scope
+    );
+
     void addValue(
         const word &name,
         const word &scope,
