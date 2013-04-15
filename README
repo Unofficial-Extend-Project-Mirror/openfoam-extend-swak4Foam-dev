@@ -1856,3 +1856,6 @@ S_{expl} + S_{impl} T
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be
      inserted there. They are also now saved for restarting
+**** =endTime= now added to Python-wrapper
+     All classes using the python interpreter now have a variable
+     =endTime= with the current end-time value
