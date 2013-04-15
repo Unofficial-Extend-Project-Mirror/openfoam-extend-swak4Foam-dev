@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "StoredExpressionResult.H"
+#include "StoredStackExpressionResult.H"
 #include "vector.H"
 #include "tensor.H"
 #include "symmTensor.H"
@@ -44,107 +44,75 @@ Contributors/Copyright:
 
 namespace Foam {
 
-defineTypeNameAndDebug(StoredExpressionResult,0);
+defineTypeNameAndDebug(StoredStackExpressionResult,0);
 
-addToRunTimeSelectionTable(ExpressionResult, StoredExpressionResult, dictionary);
-addToRunTimeSelectionTable(ExpressionResult, StoredExpressionResult, nothing);
+addToRunTimeSelectionTable(ExpressionResult, StoredStackExpressionResult, dictionary);
+addToRunTimeSelectionTable(ExpressionResult, StoredStackExpressionResult, nothing);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-StoredExpressionResult::StoredExpressionResult()
+StoredStackExpressionResult::StoredStackExpressionResult()
 :
-    ExpressionResult(),
-    name_("None"),
-    initialValueExpression_("")
+    StackExpressionResult()
 {
 }
 
-StoredExpressionResult::StoredExpressionResult(
-    const StoredExpressionResult &rhs
+StoredStackExpressionResult::StoredStackExpressionResult(
+    const StoredStackExpressionResult &rhs
 )
 :
-    ExpressionResult(rhs),
-    name_(rhs.name_),
-    initialValueExpression_(rhs.initialValueExpression_)
+    StackExpressionResult(rhs)
 {
 }
 
-StoredExpressionResult::StoredExpressionResult(const dictionary &dict)
+StoredStackExpressionResult::StoredStackExpressionResult(const dictionary &dict)
 :
-    ExpressionResult(dict.subOrEmptyDict("value")),
-    name_(dict.lookup("name")),
-    initialValueExpression_(dict.lookup("initialValue"))
+    StackExpressionResult(dict)
 {
+    if(debug) {
+        Info << "StoredStackExpressionResult::StoredStackExpressionResult(const dictionary &dict)" << endl;
+        Info << "Value: " << (*this) << endl;
+    }
 }
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-StoredExpressionResult::~StoredExpressionResult()
+StoredStackExpressionResult::~StoredStackExpressionResult()
 {
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void StoredStackExpressionResult::reset()
+{
+    // do nothing
+}
+
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-void StoredExpressionResult::operator=(const StoredExpressionResult& rhs)
+void StoredStackExpressionResult::operator=(const StoredStackExpressionResult& rhs)
 {
+    if(debug) {
+        Info << "StoredStackExpressionResult::operator=(const StoredStackExpressionResult& rhs)" << endl;
+    }
     // Check for assignment to self
     if (this == &rhs)
     {
-        FatalErrorIn("StoredExpressionResult::operator=(const StoredExpressionResult&)")
+        FatalErrorIn("StoredStackExpressionResult::operator=(const StoredStackExpressionResult&)")
             << "Attempted assignment to self"
             << exit(FatalError);
     }
 
-    static_cast<ExpressionResult&>(*this)=rhs;
-
-    name_=rhs.name_;
-    initialValueExpression_=rhs.initialValueExpression_;
-}
-
-void StoredExpressionResult::operator=(const ExpressionResult& rhs)
-{
-    static_cast<ExpressionResult&>(*this)=rhs;
+    static_cast<StackExpressionResult&>(*this)=rhs;
 }
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
-Ostream & operator<<(Ostream &out,const StoredExpressionResult &data)
-{
-    out << token::BEGIN_BLOCK << endl;
-
-    out.writeKeyword("name");
-    out << word(data.name_) << token::END_STATEMENT << nl;
-
-    out.writeKeyword("initialValue");
-    out << data.initialValueExpression_ << token::END_STATEMENT << nl;
-
-    out.writeKeyword("value");
-    out << static_cast<const ExpressionResult &>(data);
-
-    out << token::END_BLOCK << endl;
-
-    return out;
-}
-
-Istream & operator>>(Istream &in,StoredExpressionResult &data)
-{
-    dictionary dict(in);
-
-    data=StoredExpressionResult(dict);
-
-    return in;
-}
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
-bool operator!=(const StoredExpressionResult &,const StoredExpressionResult &)
-{
-    return false;
-}
 
 } // namespace
 

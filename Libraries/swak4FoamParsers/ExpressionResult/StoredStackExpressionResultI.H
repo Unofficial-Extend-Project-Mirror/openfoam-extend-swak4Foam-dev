@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,51 +29,19 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "timeManipulationWithPythonFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
-
-#include "polyMesh.H"
-#include "IOmanip.H"
-#include "Time.H"
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-namespace Foam
-{
-    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
+namespace Foam {
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-timeManipulationWithPythonFunctionObject::timeManipulationWithPythonFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    timeManipulationFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
-{
-    if(parallelNoRun()) {
-        return;
-    }
 
-    initEnvironment(t);
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    setRunTime(t);
 }
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-} // namespace Foam
 
 // ************************************************************************* //

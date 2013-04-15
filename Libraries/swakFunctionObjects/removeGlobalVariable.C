@@ -29,51 +29,72 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#include "timeManipulationWithPythonFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
+#include "removeGlobalVariable.H"
 
-#include "polyMesh.H"
-#include "IOmanip.H"
-#include "Time.H"
+#include "GlobalVariablesRepository.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-namespace Foam
-{
-    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-timeManipulationWithPythonFunctionObject::timeManipulationWithPythonFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    timeManipulationFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
-{
-    if(parallelNoRun()) {
-        return;
-    }
-
-    initEnvironment(t);
-
-    setRunTime(t);
+namespace Foam {
+    defineTypeNameAndDebug(removeGlobalVariable,0);
 }
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+Foam::removeGlobalVariable::removeGlobalVariable
+(
+    const word& name,
+    const objectRegistry& obr,
+    const dictionary& dict,
+    const bool loadFromFiles
+)
+    :
+    obr_(obr)
+{
+    read(dict);
+    execute();
+}
 
-} // namespace Foam
+Foam::removeGlobalVariable::~removeGlobalVariable()
+{}
+
+void Foam::removeGlobalVariable::read(const dictionary& dict)
+{
+    names_=wordList(dict.lookup("globalVariables"));
+    scope_=word(dict.lookup("globalScope"));
+}
+
+void Foam::removeGlobalVariable::execute()
+{
+   forAll(names_,i) {
+        const word &name=names_[i];
+
+        bool removed=GlobalVariablesRepository::getGlobalVariables(
+            obr_
+        ).removeValue(
+            name,
+            scope_
+        );
+        if(!removed) {
+            WarningIn("Foam::removeGlobalVariable::read(const dictionary& dict)")
+                << "Variable " << name << " in scope " << scope_
+                    << " not removed" << endl;
+        }
+   }
+}
+
+
+void Foam::removeGlobalVariable::end()
+{
+}
+
+void Foam::removeGlobalVariable::write()
+{
+}
+
+void Foam::removeGlobalVariable::clearData()
+{
+}
 
 // ************************************************************************* //

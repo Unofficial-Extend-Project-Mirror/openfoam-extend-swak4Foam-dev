@@ -14,6 +14,8 @@ ExpressionDriverWriter.C
 ExpressionResult/ExpressionResult.C
 ExpressionResult/StoredExpressionResult.C
 ExpressionResult/DelayedExpressionResult.C
+ExpressionResult/StackExpressionResult.C
+ExpressionResult/StoredStackExpressionResult.C
 
 setsAndSurfaces/swakRegistryProxySurface.C
 setsAndSurfaces/swakRegistryProxySet.C

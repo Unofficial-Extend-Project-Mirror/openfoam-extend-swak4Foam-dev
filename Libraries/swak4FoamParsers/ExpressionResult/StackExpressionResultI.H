@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,51 +29,64 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "timeManipulationWithPythonFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
+namespace Foam {
 
-#include "polyMesh.H"
-#include "IOmanip.H"
-#include "Time.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
+template<class T>
+void StackExpressionResult::pushInternal(ExpressionResult &atEnd)
 {
-    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
+    if(debug) {
+        Info << "StackExpressionResult::pushInternal(ExpressionResult &atEnd) "
+            << pTraits<T>::typeName << endl;
+    }
+    Field<T> oldValue(getResult<T>(false));
+    autoPtr<Field<T> > pNewValue(new Field<T>(oldValue.size()+1));
+    Field<T> &newValue=pNewValue();
 
+    forAll(oldValue,i) {
+        newValue[i]=oldValue[i];
+    }
+    newValue[oldValue.size()]=atEnd.getResult<T>(true)()[0];
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-timeManipulationWithPythonFunctionObject::timeManipulationWithPythonFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    timeManipulationFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
-{
-    if(parallelNoRun()) {
-        return;
+    if(debug) {
+        Info << "New value:" << newValue << endl;
     }
 
-    initEnvironment(t);
-
-    setRunTime(t);
+    this->setResult(
+        pNewValue.ptr(),
+        this->isPoint()
+    );
 }
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+template<class T>
+ExpressionResult StackExpressionResult::popInternal()
+{
+    Field<T> oldValue(getResult<T>(false));
+    autoPtr<Field<T> > pNewValue(new Field<T>(oldValue.size()-1));
+    Field<T> &newValue=pNewValue();
 
-} // namespace Foam
+    forAll(newValue,i) {
+        newValue[i]=oldValue[i];
+    }
+    Field<T> result(1,oldValue[newValue.size()]);
+
+    this->setResult(
+        pNewValue.ptr(),
+        this->isPoint()
+    );
+
+    return ExpressionResult(result);
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+}
 
 // ************************************************************************* //

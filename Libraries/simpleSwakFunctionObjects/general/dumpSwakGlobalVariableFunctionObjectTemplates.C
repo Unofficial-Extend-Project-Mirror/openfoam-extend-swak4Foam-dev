@@ -29,51 +29,67 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#include "timeManipulationWithPythonFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
-
-#include "polyMesh.H"
+#include "dumpSwakGlobalVariableFunctionObject.H"
+#include "volFields.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "fvMesh.H"
+#include "fvCFD.H"
+#include "GlobalVariablesRepository.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
 
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-timeManipulationWithPythonFunctionObject::timeManipulationWithPythonFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    timeManipulationFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
-{
-    if(parallelNoRun()) {
-        return;
-    }
-
-    initEnvironment(t);
-
-    setRunTime(t);
-}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-} // namespace Foam
+template<>
+void dumpSwakGlobalVariableFunctionObject::writeValue(
+    Ostream &o,
+    const scalar &val,
+    unsigned int &w
+)
+{
+    o << setw(w) << val;
+}
+
+template<class Type>
+void dumpSwakGlobalVariableFunctionObject::writeValue(
+    Ostream &o,
+    const Type &val,
+    unsigned int &w
+)
+{
+    for(label j=0;j<Type::nComponents;j++) {
+        o << setw(w) << val[j];
+    }
+}
+
+template <class T>
+void dumpSwakGlobalVariableFunctionObject::writeTheData(
+    ExpressionResult &value
+)
+{
+    Field<T> result(value.getResult<T>());
+
+    if (Pstream::master()) {
+        writeTime(name(),time().value());
+        writeData(name(),result);
+        endData(name());
+    } else {
+        Pout << "My data is lost because for dumpSwakGlobalVariableFunctionObject"
+            << " only the masters data gets written" << endl;
+    }
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
 
 // ************************************************************************* //

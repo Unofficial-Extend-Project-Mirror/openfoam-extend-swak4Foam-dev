@@ -34,131 +34,103 @@ Contributors/Copyright:
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#include "pythonIntegrationFunctionObject.H"
+#include "dumpSwakGlobalVariableFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "polyMesh.H"
-#include "IOmanip.H"
-#include "Time.H"
-#include "IFstream.H"
+#include "volFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
+    defineTypeNameAndDebug(dumpSwakGlobalVariableFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        pythonIntegrationFunctionObject,
+        dumpSwakGlobalVariableFunctionObject,
         dictionary
     );
 
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
+dumpSwakGlobalVariableFunctionObject::dumpSwakGlobalVariableFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    functionObject(
-        name
-    ),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    ),
-    time_(t)
+    timelineFunctionObject(name,t,dict),
+    globalScope_(dict.lookup("globalScope")),
+    globalName_(dict.lookup("globalName"))
 {
-    if(parallelNoRun()) {
-        return;
+    const string warnSwitch="IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData";
+    if(!dict.lookupOrDefault<bool>(warnSwitch,false)) {
+        WarningIn("dumpSwakGlobalVariableFunctionObject::dumpSwakGlobalVariableFunctionObject")
+            << "This functionObject may write huge amounts of data. "
+                << "If you understand the risks set the switch " << warnSwitch
+                << " to 'true' to get rid of this warning"
+                << endl;
     }
-
-    initEnvironment(t);
-
-    {
-        PyObject *m = PyImport_AddModule("__main__");
-        PyObject_SetAttrString(
-            m,
-            "functionObjectName",
-            PyString_FromString(this->name().c_str())
-        );
-    }
-
-    setRunTime();
-
-    read(dict);
-}
-
-pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
-{
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void pythonIntegrationFunctionObject::setRunTime()
+word dumpSwakGlobalVariableFunctionObject::dirName()
 {
-    pythonInterpreterWrapper::setRunTime(time_);
+    return typeName;
 }
 
-bool pythonIntegrationFunctionObject::start()
+wordList dumpSwakGlobalVariableFunctionObject::fileNames()
 {
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
+    return wordList(1,name());
 }
 
-bool pythonIntegrationFunctionObject::execute()
+stringList dumpSwakGlobalVariableFunctionObject::columnNames()
 {
-    if(parallelNoRun()) {
-        return true;
-    }
-
-    setRunTime();
-
-    executeCode(executeCode_,true);
-
-    if(this->time_.outputTime()) {
-        executeCode(writeCode_,true);
-    }
-
-    return true;
+    return stringList(1,"No way to know how much data will follow");
 }
 
-bool pythonIntegrationFunctionObject::end()
+void dumpSwakGlobalVariableFunctionObject::write()
 {
-    if(parallelNoRun()) {
-        return true;
+
+    if(verbose()) {
+        Info << "Global " << name() << " : ";
     }
 
-    setRunTime();
+    ExpressionResult value(
+        GlobalVariablesRepository::getGlobalVariables(
+                obr_
+        ).get(
+            globalName_,
+            wordList(1,globalScope_)
+        )
+    );
 
-    executeCode(endCode_,true);
+    word rType(value.valueType());
 
-    return true;
-}
-
-bool pythonIntegrationFunctionObject::read(const dictionary& dict)
-{
-    if(parallelNoRun()) {
-        return true;
+    if(rType==pTraits<scalar>::typeName) {
+        writeTheData<scalar>(value);
+    } else if(rType==pTraits<vector>::typeName) {
+        writeTheData<vector>(value);
+    } else if(rType==pTraits<tensor>::typeName) {
+        writeTheData<tensor>(value);
+    } else if(rType==pTraits<symmTensor>::typeName) {
+        writeTheData<symmTensor>(value);
+    } else if(rType==pTraits<sphericalTensor>::typeName) {
+        writeTheData<sphericalTensor>(value);
+    } else {
+        WarningIn("dumpSwakGlobalVariableFunctionObject::write()")
+            << "Don't know how to handle type " << rType
+                << endl;
     }
 
-    readCode(dict,"start",startCode_);
-    readCode(dict,"end",endCode_);
-    readCode(dict,"execute",executeCode_);
-    readCode(dict,"write",writeCode_,false);
-
-    return true; // start();
+    if(verbose()) {
+        Info << endl;
+    }
 }
 
 } // namespace Foam

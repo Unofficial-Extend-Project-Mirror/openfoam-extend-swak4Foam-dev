@@ -29,14 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    calculateGlobalVariables
+    dumpSwakGlobalVariableFunctionObject
 
 Description
-    Function object that calculates some variables and adds them to a globel
-    namespace
+    Output a complete global variable into a line
 
 SourceFiles
-    calculateGlobalVariables.C
+    dumpSwakGlobalVariableFunctionObject.C
 
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,97 +43,88 @@ Contributors/Copyright:
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef calculateGlobalVariables_H
-#define calculateGlobalVariables_H
+#ifndef dumpSwakGlobalVariableFunctionObject_H
+#define dumpSwakGlobalVariableFunctionObject_H
 
-#include "primitiveFieldsFwd.H"
-#include "pointFieldFwd.H"
+#include "timelineFunctionObject.H"
 
 #include "CommonValueExpressionDriver.H"
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
 namespace Foam
 {
-// Forward declaration of classes
-class dictionary;
-class objectRegistry;
-class mapPolyMesh;
 
-class calculateGlobalVariables
+/*---------------------------------------------------------------------------*\
+                           Class dumpSwakGlobalVariableFunctionObject Declaration
+\*---------------------------------------------------------------------------*/
+
+class dumpSwakGlobalVariableFunctionObject
+:
+    public timelineFunctionObject
 {
+
+    // Private Member Functions
+
     //- Disallow default bitwise copy construct
-    calculateGlobalVariables(const calculateGlobalVariables&);
+    dumpSwakGlobalVariableFunctionObject(const dumpSwakGlobalVariableFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const calculateGlobalVariables&);
+    void operator=(const dumpSwakGlobalVariableFunctionObject&);
 
-    const objectRegistry& obr_;
+    //- evaluate the expression
+    template <class T>
+    Field<T> evaluate(const word& fieldName,T preset) const;
 
-   //- the expression driver
-    autoPtr<CommonValueExpressionDriver> driver_;
+    template<class Type>
+    static void writeValue(Ostream &o,const Type &val,unsigned int &w);
 
-    //- the global namespace the variables should go to
-    word toGlobalNamespace_;
+    word globalScope_;
 
-    //- list of variables that should go to the global namespace
-    wordList toGlobalVariables_;
+    word globalName_;
 
 protected:
 
-    void executeAndWriteToGlobal();
+    word dirName();
 
+    stringList columnNames();
+
+    wordList fileNames();
+
+    template<class T>
+    void writeTheData(ExpressionResult &value);
 public:
 
     //- Runtime type information
-    TypeName("calculateGlobalVariables");
+    TypeName("dumpSwakGlobalVariable");
 
 
     // Constructors
 
-    //- Construct for given objectRegistry and dictionary.
-    //  Allow the possibility to load fields from files
-    calculateGlobalVariables
+    //- Construct from components
+    dumpSwakGlobalVariableFunctionObject
     (
-        const word& name,
-        const objectRegistry&,
-        const dictionary&,
-        const bool loadFromFiles = false
+        const word&,
+        const Time&,
+        const dictionary&
     );
 
-
-    //- Destructor
-    virtual ~calculateGlobalVariables();
-
-
-    // Member Functions
-
-    //- Read the forces data
-    virtual void read(const dictionary&);
-
-    //- Execute, currently does nothing
-    virtual void execute();
-
-    //- Execute at the final time-loop, currently does nothing
-    virtual void end();
-
-    //- Write the forces
+    //- Do the writing
     virtual void write();
 
-    //- Update for changes of mesh
-    virtual void updateMesh(const mapPolyMesh&)
-        {}
-
-    //- Update for changes of mesh
-    virtual void movePoints(const pointField&)
-        {}
-
-    //- Clear all data
-    void clearData();
 };
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#   include "dumpSwakGlobalVariableFunctionObjectTemplates.C"
+#endif
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif
+
+// ************************************************************************* //

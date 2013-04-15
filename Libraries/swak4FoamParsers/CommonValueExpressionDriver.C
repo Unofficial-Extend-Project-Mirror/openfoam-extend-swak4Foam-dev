@@ -1315,7 +1315,9 @@ const ExpressionResult &CommonValueExpressionDriver::lookupGlobal(
 ) const
 {
     const ExpressionResult &result(
-        GlobalVariablesRepository::getGlobalVariables().get(
+        GlobalVariablesRepository::getGlobalVariables(
+            this->mesh()
+        ).get(
             name,
             globalVariableScopes_
         )

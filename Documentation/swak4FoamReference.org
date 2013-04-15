@@ -578,6 +578,20 @@ hide circle
      possible to accumulate things like a mass-flow in a stored
      variable without bothering how many sub-iterations the
      non-orthogonal corrector did.
+
+     There are two additional flavors of variables for advanced
+     usage. They only make sense for global variables and the types
+     have to be specified before they are first used:
+     - StackExpressionResult :: this variable starts with a size of
+          $0$. If a value is assigned than the *uniform* value is
+          appended to this variable (making it grow from a size of
+          $N$ to $N+1$). The purpose of this variable is collecting
+          multiple values. At the end of a time-step the size of the
+          variable is reset to $0$
+     - StoredStackExpressionResult :: like =StackExpressionResult=
+          but the value is not erased between time-steps. Purpose of
+          this variable is collecting a timeline of a single value
+          (for instance to check convergence)
 **** Global variables
      There is also the possibility to access global variables. These
      variables are organized in /scopes/ which are a collection of

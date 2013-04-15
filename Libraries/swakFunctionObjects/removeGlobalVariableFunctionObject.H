@@ -28,52 +28,34 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Class
+    removeGlobalVariableFunctionObject
 
- SWAK Revision: $Id$
+Description
+    Function object that removes a global variable
+
+SourceFiles
+    removeGlobalVariableFunctionObject.C
+
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#include "timeManipulationWithPythonFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
+#ifndef removeGlobalVariableFunctionObject_H
+#define removeGlobalVariableFunctionObject_H
 
-#include "polyMesh.H"
-#include "IOmanip.H"
-#include "Time.H"
+#include "removeGlobalVariable.H"
+#include "OutputFilterFunctionObject.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-timeManipulationWithPythonFunctionObject::timeManipulationWithPythonFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    timeManipulationFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
-{
-    if(parallelNoRun()) {
-        return;
-    }
-
-    initEnvironment(t);
-
-    setRunTime(t);
+    typedef OutputFilterFunctionObject<removeGlobalVariable> removeGlobalVariableFunctionObject;
 }
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // namespace Foam
-
-// ************************************************************************* //
+#endif

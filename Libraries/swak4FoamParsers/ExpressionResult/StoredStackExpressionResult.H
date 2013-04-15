@@ -29,14 +29,14 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::StoredExpressionResult
+    Foam::StoredStackExpressionResult
 
 Description
 
 SourceFiles
-    StoredExpressionResultI.H
-    StoredExpressionResult.C
-    StoredExpressionResultIO.C
+    StoredStackExpressionResultI.H
+    StoredStackExpressionResult.C
+    StoredStackExpressionResultIO.C
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,10 +44,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef StoredExpressionResult_H
-#define StoredExpressionResult_H
+#ifndef StoredStackExpressionResult_H
+#define StoredStackExpressionResult_H
 
-#include "ExpressionResult.H"
+#include "StackExpressionResult.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,63 +55,48 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class StoredExpressionResult Declaration
+                           Class StoredStackExpressionResult Declaration
 \*---------------------------------------------------------------------------*/
 
-class StoredExpressionResult
+class StoredStackExpressionResult
 :
-    public ExpressionResult
+    public StackExpressionResult
 {
     // Private data
 
-    word name_;
+protected:
 
-    string initialValueExpression_;
+    //- reset at new timestep according to type
+    virtual void reset();
 
 public:
 
      //- Runtime type information
-    TypeName("StoredExpressionResult");
+    TypeName("StoredStackExpressionResult");
 
     // Constructors
 
     //- Construct null
-    StoredExpressionResult();
+    StoredStackExpressionResult();
 
     //- Construct as copy
-    StoredExpressionResult(const StoredExpressionResult&);
+    StoredStackExpressionResult(const StoredStackExpressionResult&);
 
     //- Construct from a dictionary
-    StoredExpressionResult(const dictionary&);
+    StoredStackExpressionResult(const dictionary&);
 
     // Destructor
 
-    virtual ~StoredExpressionResult();
+    virtual ~StoredStackExpressionResult();
 
-    void operator=(const StoredExpressionResult&);
-
-    void operator=(const ExpressionResult&);
+    void operator=(const StoredStackExpressionResult&);
 
     virtual autoPtr<ExpressionResult> clone() const {
         return autoPtr<ExpressionResult>(
-            new StoredExpressionResult(*this)
+            new StoredStackExpressionResult(*this)
         );
     }
 
-    const word name() const { return name_; }
-
-    const string initialValueExpression() const
-        {
-            return initialValueExpression_;
-        }
-
-    friend Ostream & operator<<(Ostream &,const StoredExpressionResult &);
-
-    friend Istream & operator>>(Istream &,StoredExpressionResult &);
-
-    friend bool operator!=(
-        const StoredExpressionResult &,const StoredExpressionResult &
-    );
 };
 
 
@@ -121,7 +106,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "StoredExpressionResultI.H"
+#include "StoredStackExpressionResultI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

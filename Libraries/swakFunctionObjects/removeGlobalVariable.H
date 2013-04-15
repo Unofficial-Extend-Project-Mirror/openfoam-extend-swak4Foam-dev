@@ -29,14 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    calculateGlobalVariables
+    removeGlobalVariable
 
 Description
-    Function object that calculates some variables and adds them to a globel
-    namespace
+    Function object that removes a global variable
 
 SourceFiles
-    calculateGlobalVariables.C
+    removeGlobalVariable.C
 
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,13 +43,11 @@ Contributors/Copyright:
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef calculateGlobalVariables_H
-#define calculateGlobalVariables_H
+#ifndef removeGlobalVariable_H
+#define removeGlobalVariable_H
 
 #include "primitiveFieldsFwd.H"
 #include "pointFieldFwd.H"
-
-#include "CommonValueExpressionDriver.H"
 
 namespace Foam
 {
@@ -59,40 +56,31 @@ class dictionary;
 class objectRegistry;
 class mapPolyMesh;
 
-class calculateGlobalVariables
+class removeGlobalVariable
 {
     //- Disallow default bitwise copy construct
-    calculateGlobalVariables(const calculateGlobalVariables&);
+    removeGlobalVariable(const removeGlobalVariable&);
 
     //- Disallow default bitwise assignment
-    void operator=(const calculateGlobalVariables&);
+    void operator=(const removeGlobalVariable&);
 
     const objectRegistry& obr_;
 
-   //- the expression driver
-    autoPtr<CommonValueExpressionDriver> driver_;
+    wordList names_;
 
-    //- the global namespace the variables should go to
-    word toGlobalNamespace_;
-
-    //- list of variables that should go to the global namespace
-    wordList toGlobalVariables_;
-
-protected:
-
-    void executeAndWriteToGlobal();
+    word scope_;
 
 public:
 
     //- Runtime type information
-    TypeName("calculateGlobalVariables");
+    TypeName("removeGlobalVariable");
 
 
     // Constructors
 
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
-    calculateGlobalVariables
+    removeGlobalVariable
     (
         const word& name,
         const objectRegistry&,
@@ -102,7 +90,7 @@ public:
 
 
     //- Destructor
-    virtual ~calculateGlobalVariables();
+    virtual ~removeGlobalVariable();
 
 
     // Member Functions

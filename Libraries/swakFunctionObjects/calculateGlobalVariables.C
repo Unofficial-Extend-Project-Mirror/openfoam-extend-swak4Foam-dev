@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "calculateGlobalVariables.H"
@@ -50,6 +50,7 @@ Foam::calculateGlobalVariables::calculateGlobalVariables
     const bool loadFromFiles
 )
     :
+    obr_(obr),
     driver_(
         CommonValueExpressionDriver::New(
             dict,
@@ -82,7 +83,9 @@ void Foam::calculateGlobalVariables::executeAndWriteToGlobal()
             Info << "Getting variable " << name << endl;
         }
 
-        GlobalVariablesRepository::getGlobalVariables().addValue(
+        GlobalVariablesRepository::getGlobalVariables(
+            obr_
+        ).addValue(
             name,
             toGlobalNamespace_,
             const_cast<const CommonValueExpressionDriver&>(
