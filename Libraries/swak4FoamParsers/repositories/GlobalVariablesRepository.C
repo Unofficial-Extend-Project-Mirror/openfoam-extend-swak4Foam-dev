@@ -109,8 +109,6 @@ bool GlobalVariablesRepository::readData(Istream &is)
 
     is >> globalVariables_;
 
-    Info << globalVariables_;
-
     if(debug) {
         Pout << "GlobalVariablesRepository reading finished" << endl;
     }
@@ -313,6 +311,26 @@ void GlobalVariablesRepository::addValue(
     }
 }
 
+GlobalVariablesRepository::ResultTable::ResultTable(const ResultTable &r)
+    :
+    HashPtrTable<ExpressionResult,word>()
+{
+    for(const_iterator iter=r.begin();iter!=r.end();iter++) {
+        this->insert(iter.key(),(**iter).clone().ptr());
+    }
+}
+
+GlobalVariablesRepository::ResultTable::ResultTable(Istream &in)
+    :
+    HashPtrTable<ExpressionResult,word>(in)
+{
+}
+
+GlobalVariablesRepository::ResultTable::ResultTable()
+    :
+    HashPtrTable<ExpressionResult,word>()
+{
+}
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 

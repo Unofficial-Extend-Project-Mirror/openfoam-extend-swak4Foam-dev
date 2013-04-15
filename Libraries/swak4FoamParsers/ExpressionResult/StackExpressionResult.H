@@ -94,6 +94,12 @@ public:
 
     void operator=(const ExpressionResult&);
 
+    virtual autoPtr<ExpressionResult> clone() const {
+        return autoPtr<ExpressionResult>(
+            new StackExpressionResult(*this)
+        );
+    }
+
     // friend Ostream & operator<<(Ostream &,const StackExpressionResult &);
 
     // friend Istream & operator>>(Istream &,StackExpressionResult &);

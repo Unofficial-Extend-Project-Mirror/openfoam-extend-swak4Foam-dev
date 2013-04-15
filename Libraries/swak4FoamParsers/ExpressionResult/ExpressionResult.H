@@ -191,6 +191,12 @@ public:
 
     virtual void operator=(const ExpressionResult&);
 
+    virtual autoPtr<ExpressionResult> clone() const {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(*this)
+        );
+    }
+
     template<class Type>
     inline void setResult(Field<Type> *,bool isPoint=false);
 

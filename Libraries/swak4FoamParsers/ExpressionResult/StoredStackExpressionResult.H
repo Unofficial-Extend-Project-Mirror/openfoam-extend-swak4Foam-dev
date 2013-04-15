@@ -91,6 +91,12 @@ public:
 
     void operator=(const StoredStackExpressionResult&);
 
+    virtual autoPtr<ExpressionResult> clone() const {
+        return autoPtr<ExpressionResult>(
+            new StoredStackExpressionResult(*this)
+        );
+    }
+
 };
 
 

@@ -65,7 +65,15 @@ class GlobalVariablesRepository
     public regIOobject
 {
 public:
-    typedef HashPtrTable<ExpressionResult,word> ResultTable;
+    class ResultTable
+    :
+    public HashPtrTable<ExpressionResult,word>
+    {
+    public:
+        ResultTable(const ResultTable &r);
+        ResultTable(Istream &);
+        ResultTable();
+    };
 private:
    // Private data
 
