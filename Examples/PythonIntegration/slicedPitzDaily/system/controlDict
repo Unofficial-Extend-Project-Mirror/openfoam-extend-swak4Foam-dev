@@ -53,28 +53,6 @@ libs (
 );
 
 functions {
-    // valuesToCollect {
-    //     type addGlobalVariable;
-    //     outputControl timeStep;
-    //     outputInterval 1;
-    //     resultType StackExpressionResult;
-
-    //     globalName cutValues;
-    //     globalScope collectValues;
-    // }
-    // appendToVariable {
-    //     type calculateGlobalVariables;
-    //     outputControl timeStep;
-    //     outputInterval 1;
-    //     valueType internalField;
-    //     toGlobalNamespace collectValues;
-    //     toGlobalVariables (
-    //         cutValues
-    //     );
-    //     variables (
-    //         "cutValues=time();"
-    //     );
-    // }
     addMinX {
         type calculateGlobalVariables;
         outputControl timeStep;
@@ -131,7 +109,37 @@ functions {
             writePlanePressures {
                 $writePlanePositions;
                 globalName pressure;
-             }
+            }
+            getPressureAndPosition {
+                type calculateGlobalVariables;
+                outputControl timeStep;
+                outputInterval 1;
+                valueType internalField;
+                toGlobalNamespace rawData;
+                toGlobalVariables (
+                    allPressure
+                    allPositions
+                    allVolume
+                );
+                variables (
+                    "allPressure=p;"
+                    "allPositions=pos().x;"
+                    "allVolume=vol();"
+                );
+            }
+            calculatePressureBins {
+                type pythonIntegration;
+                startCode "";
+                writeCode "";
+                executeFile "$FOAM_CASE/system/calculatePressureInBins.py";
+                endCode "";
+                swakToPythonNamespaces (
+                    rawData
+                    planeValues
+                    meshSize
+                );
+                interactiveAfterException true;
+            }
         }
 };
 
