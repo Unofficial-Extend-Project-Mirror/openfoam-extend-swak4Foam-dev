@@ -57,7 +57,8 @@ timeManipulationFunctionObject::timeManipulationFunctionObject
 )
 :
     simpleFunctionObject(name,t,dict),
-    tolerateAdaptiveTimestep_(false)
+    tolerateAdaptiveTimestep_(false),
+    myEndTime_(-1)
 {
 }
 
@@ -129,6 +130,24 @@ void timeManipulationFunctionObject::write()
             time().endTime().value() << " to " << newEndTime << endl;
 
         const_cast<Time&>(time()).setEndTime(newEndTime);
+
+        myEndTime_=newEndTime;
+    }
+
+    if(
+        myEndTime_>-1
+        &&
+        time().value()>=time().endTime().value()
+        &&
+        !time().outputTime()
+    ) {
+        WarningIn("timeManipulationFunctionObject::write()")
+            << "Forcing write because we (" << name()
+                << ") changed the endTime to "
+                << myEndTime_ << " and this is not a write-time"
+                << endl;
+
+        const_cast<Time&>(time()).writeNow();
     }
 }
 
