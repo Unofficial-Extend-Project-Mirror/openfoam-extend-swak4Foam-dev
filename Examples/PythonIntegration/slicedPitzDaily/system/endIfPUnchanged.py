@@ -1,5 +1,5 @@
 tail=50
-thres=1e-3;
+thres=1e-4;
 
 if outputTime:
     numpy.savetxt(dataFile("pressureMeasure"),pressureMeasure)
