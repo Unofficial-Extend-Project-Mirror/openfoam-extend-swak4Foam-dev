@@ -1843,6 +1843,13 @@ S_{expl} + S_{impl} T
        them: union, intersection, difference, exclusive difference
      - Some wrappers that manipulate the regions of a surface: rename
        them, collect them into one region
+**** New variable type =StackedExpressionResult=
+     This type is used to collect multiple values. If it is assigned
+     a value then the *uniform* value of the right hand side is
+     appended to the variable. Useful for collecting multiple values
+     for output.
+**** Function object =dumpGlobalVariable=
+     Dumps the value of a global variable into a line of a file
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be

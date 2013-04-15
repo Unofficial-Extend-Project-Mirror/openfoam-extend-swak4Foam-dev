@@ -112,6 +112,9 @@ protected:
     //- ugly workaround for templated methods not being virtual
     inline virtual ExpressionResult &toBeSet();
 
+    //- reset at new timestep according to type
+    virtual void reset();
+
 public:
     //- Runtime type information
     TypeName("ExpressionResult");
@@ -234,6 +237,8 @@ public:
     friend ExpressionResult operator+(
         const ExpressionResult &,const ExpressionResult &
     );
+
+    friend class GlobalVariablesRepository;
 
     //- get the address of the field as a decimal string
 

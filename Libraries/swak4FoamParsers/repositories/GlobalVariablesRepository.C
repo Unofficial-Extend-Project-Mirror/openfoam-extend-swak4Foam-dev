@@ -62,7 +62,8 @@ GlobalVariablesRepository::GlobalVariablesRepository(
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         )
-    )
+    ),
+    lastTimeIndex_(obr.time().timeIndex())
 {
     if(debug) {
         Pout << "GlobalVariablesRepository at "
@@ -129,6 +130,22 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables(
 
     repositoryInstance=ptr;
 
+    if(
+        repositoryInstance->lastTimeIndex_
+        !=
+        obr.time().timeIndex()
+    ) {
+        if(debug) {
+            Info << "Resetting variables" << endl;
+        }
+        ResultTableTable &all=repositoryInstance->globalVariables_;
+        forAllIter(ResultTableTable,all,table) {
+            forAllIter(ResultTable,(*table),iter) {
+                (*iter)->reset();
+            }
+        }
+        repositoryInstance->lastTimeIndex_=obr.time().timeIndex();
+    }
     return *repositoryInstance;
 }
 
@@ -181,11 +198,19 @@ void GlobalVariablesRepository::addValue(
         scope=word(dict.lookup("globalScope"));
     }
 
-    addValue(
-        name,
-        scope,
-        ExpressionResult(dict,true)
-    );
+    if(dict.found("resultType")) {
+        addValue(
+            name,
+            scope,
+            ExpressionResult::New(dict)
+        );
+    } else {
+        addValue(
+            name,
+            scope,
+            ExpressionResult(dict,true)
+        );
+    }
 }
 
 GlobalVariablesRepository::ResultTable

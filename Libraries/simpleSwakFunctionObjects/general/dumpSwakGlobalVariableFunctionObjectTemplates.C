@@ -29,79 +29,67 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#include "addGlobalVariable.H"
-
+#include "dumpSwakGlobalVariableFunctionObject.H"
+#include "volFields.H"
+#include "IOmanip.H"
+#include "fvMesh.H"
+#include "fvCFD.H"
 #include "GlobalVariablesRepository.H"
 
-namespace Foam {
-    defineTypeNameAndDebug(addGlobalVariable,0);
-}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::addGlobalVariable::addGlobalVariable
-(
-    const word& name,
-    const objectRegistry& obr,
-    const dictionary& dict,
-    const bool loadFromFiles
+namespace Foam
+{
+
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<>
+void dumpSwakGlobalVariableFunctionObject::writeValue(
+    Ostream &o,
+    const scalar &val,
+    unsigned int &w
 )
-    :
-    obr_(obr)
 {
-    read(dict);
-    execute();
+    o << setw(w) << val;
 }
 
-Foam::addGlobalVariable::~addGlobalVariable()
-{}
-
-void Foam::addGlobalVariable::read(const dictionary& dict)
+template<class Type>
+void dumpSwakGlobalVariableFunctionObject::writeValue(
+    Ostream &o,
+    const Type &val,
+    unsigned int &w
+)
 {
-    if(dict.found("globalVariables")) {
-        const dictionary variables(dict.subDict("globalVariables"));
-        const word scope(dict.lookup("globalScope"));
-
-        wordList names(variables.toc());
-        forAll(names,i) {
-            const word &name=names[i];
-            const dictionary &dict=variables.subDict(name);
-
-            GlobalVariablesRepository::getGlobalVariables(
-                obr_
-            ).addValue(
-                name,
-                scope,
-                ExpressionResult(dict,true,true)
-            );
-        }
-    } else {
-        if(dict.found("resultType")) {
-            GlobalVariablesRepository::getGlobalVariables(
-                obr_
-            ).addValue(dict);
-        }
+    for(label j=0;j<Type::nComponents;j++) {
+        o << setw(w) << val[j];
     }
 }
 
-void Foam::addGlobalVariable::execute()
+template <class T>
+void dumpSwakGlobalVariableFunctionObject::writeTheData(
+    ExpressionResult &value
+)
 {
+    Field<T> result(value.getResult<T>());
+
+    if (Pstream::master()) {
+        writeTime(name(),time().value());
+        writeData(name(),result);
+        endData(name());
+    } else {
+        Pout << "My data is lost because for dumpSwakGlobalVariableFunctionObject"
+            << " only the masters data gets written" << endl;
+    }
 }
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-void Foam::addGlobalVariable::end()
-{
-}
-
-void Foam::addGlobalVariable::write()
-{
-}
-
-void Foam::addGlobalVariable::clearData()
-{
-}
+} // End namespace Foam
 
 // ************************************************************************* //

@@ -113,9 +113,14 @@ ExpressionResult StackExpressionResult::pop()
 
 void StackExpressionResult::push(ExpressionResult &atEnd)
 {
+    if(debug) {
+        Info << "StackExpressionResult::push(ExpressionResult &atEnd)" << endl;
+        Info << "Pushing: " << atEnd << endl;
+    }
     if(!hasValue()) {
         // this is the first push
-        static_cast<ExpressionResult>(*this)=atEnd;
+        //        static_cast<ExpressionResult>(*this)=atEnd;
+        ExpressionResult::operator=(atEnd);
     } else {
         if(valueType()!=atEnd.valueType()) {
             FatalErrorIn("StackExpressionResult::push(const ExpressionResult &atEnd)")
@@ -141,12 +146,18 @@ void StackExpressionResult::push(ExpressionResult &atEnd)
                     << abort(FatalError);
         }
     }
+    if(debug) {
+        Info << "After push: " << *this << endl;
+    }
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 void StackExpressionResult::operator=(const StackExpressionResult& rhs)
 {
+    if(debug) {
+        Info << "StackExpressionResult::operator=(const StackExpressionResult& rhs)" << endl;
+    }
     // Check for assignment to self
     if (this == &rhs)
     {
@@ -160,6 +171,9 @@ void StackExpressionResult::operator=(const StackExpressionResult& rhs)
 
 void StackExpressionResult::operator=(const ExpressionResult& rhs)
 {
+    if(debug) {
+        Info << "StackExpressionResult::operator=(const ExpressionResult& rhs)" << endl;
+    }
     ExpressionResult last(
         rhs.getUniform(
             1,

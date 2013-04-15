@@ -80,6 +80,7 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
+        Info << "Rhs: " << rhs << endl;
     }
 
     (*this)=rhs;
@@ -158,7 +159,10 @@ autoPtr<ExpressionResult> ExpressionResult::New
     const dictionary& dict
 )
 {
-    word resultType(dict.lookup("resultType"));
+    word resultType("ExpressionResult");
+    if(dict.found("resultType")) {
+        resultType=word(dict.lookup("resultType"));
+    }
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(resultType);
 
@@ -205,6 +209,10 @@ ExpressionResult::~ExpressionResult()
 bool ExpressionResult::hasValue() const
 {
     return valType_!="None" && valPtr_!=NULL;
+}
+
+void ExpressionResult::reset() {
+    clearResult();
 }
 
 void ExpressionResult::clearResult()

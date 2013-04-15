@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
+    \\  /    A nd           | Copyright  held by original author
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,27 +29,26 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::GlobalVariablesRepository
+    dumpSwakGlobalVariableFunctionObject
 
 Description
+    Output a complete global variable into a line
 
 SourceFiles
-    GlobalVariablesRepository.C
+    dumpSwakGlobalVariableFunctionObject.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef GlobalVariablesRepository_H
-#define GlobalVariablesRepository_H
+#ifndef dumpSwakGlobalVariableFunctionObject_H
+#define dumpSwakGlobalVariableFunctionObject_H
 
-#include "ExpressionResult.H"
+#include "timelineFunctionObject.H"
 
-#include "HashPtrTable.H"
-
-#include "regIOobject.H"
+#include "CommonValueExpressionDriver.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,78 +56,62 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class GlobalVariablesRepository Declaration
+                           Class dumpSwakGlobalVariableFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class GlobalVariablesRepository
+class dumpSwakGlobalVariableFunctionObject
 :
-    public regIOobject
+    public timelineFunctionObject
 {
+
+    // Private Member Functions
+
+    //- Disallow default bitwise copy construct
+    dumpSwakGlobalVariableFunctionObject(const dumpSwakGlobalVariableFunctionObject&);
+
+    //- Disallow default bitwise assignment
+    void operator=(const dumpSwakGlobalVariableFunctionObject&);
+
+    //- evaluate the expression
+    template <class T>
+    Field<T> evaluate(const word& fieldName,T preset) const;
+
+    template<class Type>
+    static void writeValue(Ostream &o,const Type &val,unsigned int &w);
+
+    word globalScope_;
+
+    word globalName_;
+
+protected:
+
+    word dirName();
+
+    stringList columnNames();
+
+    wordList fileNames();
+
+    template<class T>
+    void writeTheData(ExpressionResult &value);
 public:
-    typedef HashPtrTable<ExpressionResult,word> ResultTable;
-private:
-   // Private data
 
-    typedef HashTable<ResultTable,word> ResultTableTable;
+    //- Runtime type information
+    TypeName("dumpSwakGlobalVariable");
 
-    ResultTableTable globalVariables_;
 
     // Constructors
 
-    //- Construct null
-    GlobalVariablesRepository(const objectRegistry &obr);
-
-    //- The only instance of this repository
-    static GlobalVariablesRepository *repositoryInstance;
-
-    static ExpressionResult zero_;
-
-    ResultTable &getScope(const word &name);
-
-    label lastTimeIndex_;
-
-public:
-     //- Runtime type information
-    TypeName("GlobalVariablesRepository");
-
-    //- Destructor
-
-    virtual ~GlobalVariablesRepository();
-
-    //- Get the Singleton of this class
-    static GlobalVariablesRepository &getGlobalVariables(
-        const objectRegistry &obr
+    //- Construct from components
+    dumpSwakGlobalVariableFunctionObject
+    (
+        const word&,
+        const Time&,
+        const dictionary&
     );
 
-    //- get a global variable (if there is one)
-    const ExpressionResult &get(
-        const word &name,
-        const wordList &scopes
-    );
+    //- Do the writing
+    virtual void write();
 
-    void addValue(
-        const word &name,
-        const word &scope,
-        const ExpressionResult &value
-    );
-
-    void addValue(
-        const word &name,
-        const word &scope,
-        autoPtr<ExpressionResult> value
-    );
-
-    void addValue(
-        const dictionary &dict,
-        const word scope=""
-    );
-
-    //- get a global namespace
-    ResultTable &getNamespace(const word &name);
-
-    virtual bool writeData(Ostream &) const ;
-
-    virtual bool readData(Istream &);
 };
 
 
@@ -136,7 +119,9 @@ public:
 
 } // End namespace Foam
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#ifdef NoRepository
+#   include "dumpSwakGlobalVariableFunctionObjectTemplates.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

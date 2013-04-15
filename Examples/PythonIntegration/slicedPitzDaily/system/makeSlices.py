@@ -46,6 +46,25 @@ pressureTemplate="""
         );
     }
 """
+addToVars="""
+     appendToVariable%(nr)d {
+         type calculateGlobalVariables;
+         outputControl timeStep;
+         outputInterval 1;
+         valueType surface;
+
+         surfaceName autoPlane%(nr)d;
+         toGlobalNamespace planeValues;
+         toGlobalVariables (
+             positions
+             pressure
+         );
+         variables (
+             "positions=average(pos().x);"
+             "pressure=sum(p*area())/sum(area());"
+         );
+     }
+"""
 
 print "functions {"
 for i in range(nr):
@@ -53,4 +72,5 @@ for i in range(nr):
     data= { "nr": i, "x": x }
     print planeTemplate % data
     print pressureTemplate % data
+    print addToVars % data
 print "}"

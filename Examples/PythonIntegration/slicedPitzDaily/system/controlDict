@@ -53,6 +53,28 @@ libs (
 );
 
 functions {
+    // valuesToCollect {
+    //     type addGlobalVariable;
+    //     outputControl timeStep;
+    //     outputInterval 1;
+    //     resultType StackExpressionResult;
+
+    //     globalName cutValues;
+    //     globalScope collectValues;
+    // }
+    // appendToVariable {
+    //     type calculateGlobalVariables;
+    //     outputControl timeStep;
+    //     outputInterval 1;
+    //     valueType internalField;
+    //     toGlobalNamespace collectValues;
+    //     toGlobalVariables (
+    //         cutValues
+    //     );
+    //     variables (
+    //         "cutValues=time();"
+    //     );
+    // }
     addMinX {
         type calculateGlobalVariables;
         outputControl timeStep;
@@ -76,6 +98,19 @@ functions {
         useNumpy false;
         conditionCode "return (int(runTime) % 10)==0";
         functions {
+            positionsToCollect {
+                type addGlobalVariable;
+                outputControl timeStep;
+                outputInterval 1;
+                resultType StackExpressionResult;
+
+                globalScope planeValues;
+                globalName positions;
+            }
+            pressuresToCollect {
+                $positionsToCollect;
+                globalName pressure;
+            }
             makeSlice {
                 type dynamicFunctionObjectListProxy;
                 dictionaryProvider stdoutFromPythonScriptProvider;
@@ -87,6 +122,16 @@ functions {
                     meshSize
                 );
             }
+            writePlanePositions {
+                type dumpSwakGlobalVariable;
+
+                globalName positions;
+                globalScope planeValues;
+            }
+            writePlanePressures {
+                $writePlanePositions;
+                globalName pressure;
+             }
         }
 };
 
