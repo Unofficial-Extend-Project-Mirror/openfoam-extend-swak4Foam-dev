@@ -71,7 +71,10 @@ executeIfPythonFunctionObject::executeIfPythonFunctionObject
         t,
         dict
     ),
-    pythonInterpreterWrapper(dict)
+    pythonInterpreterWrapper(
+        t.db(),
+        dict
+    )
 {
     if(parallelNoRun()) {
         return;
