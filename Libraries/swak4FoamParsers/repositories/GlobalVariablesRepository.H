@@ -114,7 +114,7 @@ public:
         const wordList &scopes
     );
 
-    void addValue(
+    ExpressionResult& addValue(
         const word &name,
         const word &scope,
         const ExpressionResult &value,
@@ -126,14 +126,14 @@ public:
         const word &scope
     );
 
-    void addValue(
+    ExpressionResult& addValue(
         const word &name,
         const word &scope,
         autoPtr<ExpressionResult> value,
         const bool overwrite=true
     );
 
-    void addValue(
+    ExpressionResult& addValue(
         const dictionary &dict,
         const word scope="",
         const bool overwrite=true

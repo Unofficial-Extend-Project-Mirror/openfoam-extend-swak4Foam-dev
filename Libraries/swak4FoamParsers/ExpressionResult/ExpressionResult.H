@@ -107,13 +107,19 @@ class ExpressionResult
     template <typename T>
     inline void setObjectResultInternal(autoPtr<T> o);
 
+    // whether or not the variable will be reset
+    bool noReset_;
+
 protected:
 
     //- ugly workaround for templated methods not being virtual
     inline virtual ExpressionResult &toBeSet();
 
     //- reset at new timestep according to type
-    virtual void reset();
+    void reset(bool force=false);
+
+    //- reset at new timestep according to type
+    virtual void resetInternal();
 
 public:
     //- Runtime type information
@@ -259,6 +265,11 @@ public:
 
     //- Currently only needed for the python integrtation
     word getAddressAsDecimal() const;
+
+    void noReset() { noReset_=true; }
+
+    void allowReset() { noReset_=false; }
+
 };
 
 

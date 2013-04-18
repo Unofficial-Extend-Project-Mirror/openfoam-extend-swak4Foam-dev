@@ -63,7 +63,8 @@ ExpressionResult::ExpressionResult()
     valPtr_(NULL),
     isPoint_(false),
     isSingleValue_(true),
-    objectSize_(-1)
+    objectSize_(-1),
+    noReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult()" << endl;
@@ -78,7 +79,8 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     valPtr_(NULL),
     isPoint_(false),
     isSingleValue_(true),
-    objectSize_(-1)
+    objectSize_(-1),
+    noReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
@@ -106,7 +108,10 @@ ExpressionResult::ExpressionResult(
     isSingleValue_(
         dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
     ),
-    objectSize_(-1)
+    objectSize_(-1),
+    noReset_(
+        dict.lookupOrDefault<bool>("noReset",false)
+    )
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)" << endl;
@@ -250,8 +255,18 @@ bool ExpressionResult::hasValue() const
     return valType_!="None" && valPtr_!=NULL;
 }
 
-void ExpressionResult::reset() {
+void ExpressionResult::resetInternal() {
     clearResult();
+}
+
+void ExpressionResult::reset(bool force) {
+    if(
+        force
+        ||
+        !noReset_
+    ) {
+        this->resetInternal();
+    }
 }
 
 void ExpressionResult::clearResult()
@@ -461,6 +476,9 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 
     out.writeKeyword("resultType");
     out << word(data.type()) << token::END_STATEMENT << nl;
+
+    out.writeKeyword("noReset");
+    out << data.noReset_ << token::END_STATEMENT << nl;
 
     if( data.valPtr_ ) {
         out.writeKeyword("valueType");

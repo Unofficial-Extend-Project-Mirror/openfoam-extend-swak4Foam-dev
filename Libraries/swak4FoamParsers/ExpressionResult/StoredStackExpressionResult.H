@@ -67,7 +67,7 @@ class StoredStackExpressionResult
 protected:
 
     //- reset at new timestep according to type
-    virtual void reset();
+    virtual void resetInternal();
 
 public:
 

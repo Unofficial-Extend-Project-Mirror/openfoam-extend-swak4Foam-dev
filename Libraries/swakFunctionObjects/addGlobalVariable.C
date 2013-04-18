@@ -70,7 +70,7 @@ void Foam::addGlobalVariable::read(const dictionary& dict)
             const word &name=names[i];
             const dictionary &dict=variables.subDict(name);
 
-            GlobalVariablesRepository::getGlobalVariables(
+            ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
                 obr_
             ).addValue(
                 name,
@@ -78,17 +78,17 @@ void Foam::addGlobalVariable::read(const dictionary& dict)
                 ExpressionResult(dict,true,true),
                 false
             );
+            res.noReset();
         }
     } else {
-        if(dict.found("resultType")) {
-            GlobalVariablesRepository::getGlobalVariables(
-                obr_
-            ).addValue(
-                dict,
-                "",
-                false
-            );
-        }
+        ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
+            obr_
+        ).addValue(
+            dict,
+            "",
+            false
+        );
+        res.noReset();
     }
 }
 
