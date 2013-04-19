@@ -85,7 +85,7 @@ StoredStackExpressionResult::~StoredStackExpressionResult()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void StoredStackExpressionResult::reset()
+void StoredStackExpressionResult::resetInternal()
 {
     // do nothing
 }

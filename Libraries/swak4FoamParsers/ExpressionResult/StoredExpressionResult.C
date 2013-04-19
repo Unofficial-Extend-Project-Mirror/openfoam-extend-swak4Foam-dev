@@ -107,7 +107,8 @@ void StoredExpressionResult::operator=(const StoredExpressionResult& rhs)
 
 void StoredExpressionResult::operator=(const ExpressionResult& rhs)
 {
-    static_cast<ExpressionResult&>(*this)=rhs;
+    //    static_cast<ExpressionResult&>(*this)=rhs;
+   this->ExpressionResult::operator=(rhs);
 }
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //

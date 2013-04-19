@@ -192,7 +192,7 @@ const ExpressionResult &GlobalVariablesRepository::get(
     return zero_;
 }
 
-void GlobalVariablesRepository::addValue(
+ExpressionResult& GlobalVariablesRepository::addValue(
     const dictionary &dict,
     const word scopeIn,
     const bool overwrite
@@ -207,14 +207,14 @@ void GlobalVariablesRepository::addValue(
     }
 
     if(dict.found("resultType")) {
-        addValue(
+        return addValue(
             name,
             scope,
             ExpressionResult::New(dict),
             overwrite
         );
     } else {
-        addValue(
+        return addValue(
             name,
             scope,
             ExpressionResult(dict,true),
@@ -235,7 +235,7 @@ GlobalVariablesRepository::ResultTable
     return globalVariables_[scope];
 }
 
-void GlobalVariablesRepository::addValue(
+ExpressionResult& GlobalVariablesRepository::addValue(
     const word &name,
     const word &scope,
     const ExpressionResult &value,
@@ -260,6 +260,8 @@ void GlobalVariablesRepository::addValue(
         }
         (*theScope[name])=value;
     }
+
+    return (*theScope[name]);
 }
 
 bool GlobalVariablesRepository::removeValue(
@@ -288,7 +290,7 @@ bool GlobalVariablesRepository::removeValue(
     }
 }
 
-void GlobalVariablesRepository::addValue(
+ExpressionResult& GlobalVariablesRepository::addValue(
     const word &name,
     const word &scope,
     autoPtr<ExpressionResult> value,
@@ -309,6 +311,8 @@ void GlobalVariablesRepository::addValue(
     ) {
         theScope.set(name,value.ptr());
     }
+
+    return (*theScope[name]);
 }
 
 GlobalVariablesRepository::ResultTable::ResultTable(const ResultTable &r)
