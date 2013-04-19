@@ -1838,6 +1838,10 @@ S_{expl} + S_{impl} T
      There were template specializations for =pTraits= in
      =ExpressionResult.C= that had to be moved to =ExpressionResult.H=
      to allow compilation on these non-=gcc=-compilers
+**** =executeIf=-function objects are executed if =readDuringConstruction= is set to =true=
+     Even if the condition evaluates to =false= the function objects
+     in the list are executed. This makes the run fail if the purpose
+     of the condition was to guard from such a situation. Fixed
 *** New features
 **** Library with additional =searchableSurfaces=
      The library =simpleSearchableSurfaces= adds more searchable

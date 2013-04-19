@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "functionObjectListProxy.H"
@@ -90,6 +90,17 @@ functionObjectListProxy::functionObjectListProxy
         }
         //        initFunctions();
         read(dict);
+    } else if(
+        !allowReadingDuringConstruction
+        &&
+        readBool(dict.lookup("readDuringConstruction"))
+    ) {
+        WarningIn("functionObjectListProxy::functionObjectListProxy")
+            << "For " << name << " the 'readDuringConstruction'-variable "
+                << " is ignored because this concrete class does not allow "
+                << " constructing the functionObjects during construction"
+                << endl;
+
     }
 }
 
