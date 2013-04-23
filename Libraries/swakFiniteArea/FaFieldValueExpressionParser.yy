@@ -121,7 +121,7 @@ Contributors/Copyright:
 namespace Foam {
 template<class T>
 autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
-    const string &name,
+    const word &name,
     const parserFaField::location &loc,
     int &scanned
 ) {

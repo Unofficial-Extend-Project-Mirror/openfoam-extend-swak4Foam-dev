@@ -41,7 +41,7 @@ namespace Foam {
 
 template<class T>
 autoPtr<T> FaFieldValueExpressionDriver::getField(
-    const string &name,
+    const word &name,
     bool getOldTime
 )
 {
@@ -103,7 +103,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
                 Type minVal=gMin(vals);
                 Type maxVal=gMax(vals);
                 if(mag(minVal-maxVal)>SMALL) {
-                    WarningIn("FaFieldValueExpressionDriver::getField(const string &name)")
+                    WarningIn("FaFieldValueExpressionDriver::getField(const word &name)")
                         << "The minimum value " << minVal << " and the maximum "
                             << maxVal << " differ. I will use the average " << avg
                             << endl;
@@ -160,7 +160,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
     }
 
     if(!f.valid()) {
-        FatalErrorIn("FaFieldValueExpressionDriver::getField(const string &name)")
+        FatalErrorIn("FaFieldValueExpressionDriver::getField(const word &name)")
             << "Could not find the field " << name
                 << " in memory or on disc" << endl
                 << exit(FatalError);
