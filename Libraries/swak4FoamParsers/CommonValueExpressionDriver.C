@@ -514,6 +514,16 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
         os << token::END_STATEMENT << nl;
     }
 
+    if(aliases_.size()>0) {
+        os.writeKeyword("aliases");
+        os << token::BEGIN_BLOCK << endl;
+        wordList toc(aliases_.toc());
+        forAll(toc,i) {
+            os.writeKeyword(toc[i]);
+            os << aliases_[toc[i]] << token::END_STATEMENT << nl;
+        }
+        os << token::END_BLOCK << endl;
+    }
     return os;
 }
 
