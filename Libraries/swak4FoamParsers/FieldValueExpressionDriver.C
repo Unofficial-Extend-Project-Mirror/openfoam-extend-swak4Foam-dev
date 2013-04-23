@@ -170,7 +170,7 @@ void FieldValueExpressionDriver::parseInternal(int startToken)
     parser.parse ();
 }
 
-bool FieldValueExpressionDriver::isCellSet(const string &name)
+bool FieldValueExpressionDriver::isCellSet(const word &name)
 {
     if(getTypeOfSet(name)=="cellSet") {
         return true;
@@ -179,7 +179,7 @@ bool FieldValueExpressionDriver::isCellSet(const string &name)
     }
 }
 
-bool FieldValueExpressionDriver::isCellZone(const string &name)
+bool FieldValueExpressionDriver::isCellZone(const word &name)
 {
     if(mesh_.cellZones().findZoneID(name)>=0) {
         return true;
@@ -188,7 +188,7 @@ bool FieldValueExpressionDriver::isCellZone(const string &name)
     }
 }
 
-bool FieldValueExpressionDriver::isFaceSet(const string &name)
+bool FieldValueExpressionDriver::isFaceSet(const word &name)
 {
     if(getTypeOfSet(name)=="faceSet") {
         return true;
@@ -197,7 +197,7 @@ bool FieldValueExpressionDriver::isFaceSet(const string &name)
     }
 }
 
-bool FieldValueExpressionDriver::isFaceZone(const string &name)
+bool FieldValueExpressionDriver::isFaceZone(const word &name)
 {
     if(mesh_.faceZones().findZoneID(name)>=0) {
         return true;
@@ -206,7 +206,7 @@ bool FieldValueExpressionDriver::isFaceZone(const string &name)
     }
 }
 
-bool FieldValueExpressionDriver::isPointSet(const string &name)
+bool FieldValueExpressionDriver::isPointSet(const word &name)
 {
     if(getTypeOfSet(name)=="pointSet") {
         return true;
@@ -215,7 +215,7 @@ bool FieldValueExpressionDriver::isPointSet(const string &name)
     }
 }
 
-bool FieldValueExpressionDriver::isPointZone(const string &name)
+bool FieldValueExpressionDriver::isPointZone(const word &name)
 {
     if(mesh_.pointZones().findZoneID(name)>=0) {
         return true;
@@ -606,7 +606,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeRDistanceField(const volVect
     return f;
 }
 
-tmp<volScalarField> FieldValueExpressionDriver::makeCellSetField(const string &name)
+tmp<volScalarField> FieldValueExpressionDriver::makeCellSetField(const word &name)
 {
   tmp<volScalarField> f=makeConstantField<volScalarField>(0);
 
@@ -658,13 +658,13 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeInternalFaceField()
     return f;
 }
 
-tmp<surfaceScalarField> FieldValueExpressionDriver::makeOnPatchField(const string &name)
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeOnPatchField(const word &name)
 {
     tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(0,true);
 
     label patchI=mesh().boundaryMesh().findPatchID(name);
     if(patchI<0) {
-        FatalErrorIn("makeFaceSetField(const string &name)")
+        FatalErrorIn("makeFaceSetField(const word &name)")
             << "Patch name " << name << " not in valid names"
                 << mesh().boundaryMesh().names()
                 << endl
@@ -678,7 +678,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeOnPatchField(const strin
     return f;
 }
 
-tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceSetField(const string &name)
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceSetField(const word &name)
 {
     tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(0,true);
 
@@ -714,7 +714,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceSetField(const strin
       } else {
           label patchI=mesh().boundaryMesh().whichPatch(faces[faceI]);
           if(patchI<0) {
-              FatalErrorIn("FieldValueExpressionDriver::makeFaceSetField(const string &name")
+              FatalErrorIn("FieldValueExpressionDriver::makeFaceSetField(const word &name")
                   << "Face " << faces[faceI] << " of faceSet "
                       << name << " is not in the mesh"
                       << endl
@@ -731,7 +731,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceSetField(const strin
   return f;
 }
 
-tmp<pointScalarField> FieldValueExpressionDriver::makePointSetField(const string &name)
+tmp<pointScalarField> FieldValueExpressionDriver::makePointSetField(const word &name)
 {
   tmp<pointScalarField> f=makePointConstantField<pointScalarField>(0);
 
@@ -768,7 +768,7 @@ tmp<pointScalarField> FieldValueExpressionDriver::makePointSetField(const string
   return f;
 }
 
-tmp<volScalarField> FieldValueExpressionDriver::makeCellZoneField(const string &name)
+tmp<volScalarField> FieldValueExpressionDriver::makeCellZoneField(const word &name)
 {
   tmp<volScalarField> f=makeConstantField<volScalarField>(0);
   label zoneID=mesh_.cellZones().findZoneID(name);
@@ -785,7 +785,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeCellZoneField(const string &
   return f;
 }
 
-tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceZoneField(const string &name)
+tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceZoneField(const word &name)
 {
   tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(0);
   label zoneID=mesh_.faceZones().findZoneID(name);
@@ -800,7 +800,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceZoneField(const stri
       } else {
           label patchI=mesh().boundaryMesh().whichPatch(faceI);
           if(patchI<0) {
-              FatalErrorIn("FieldValueExpressionDriver::makeFaceZoneField(const string &name")
+              FatalErrorIn("FieldValueExpressionDriver::makeFaceZoneField(const word &name")
                   << "Face " << faceI << " of faceZone "
                       << name << " is not in the mesh"
                       << endl
@@ -817,7 +817,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceZoneField(const stri
   return f;
 }
 
-tmp<pointScalarField> FieldValueExpressionDriver::makePointZoneField(const string &name)
+tmp<pointScalarField> FieldValueExpressionDriver::makePointZoneField(const word &name)
 {
   tmp<pointScalarField> f=makePointConstantField<pointScalarField>(0);
   label zoneID=mesh_.pointZones().findZoneID(name);

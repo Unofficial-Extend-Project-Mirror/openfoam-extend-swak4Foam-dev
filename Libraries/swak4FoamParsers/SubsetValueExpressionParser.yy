@@ -101,7 +101,7 @@ Contributors/Copyright:
 namespace Foam {
     template<class T>
     autoPtr<Field<T> > SubsetValueExpressionDriver::evaluatePluginFunction(
-        const string &name,
+        const word &name,
         const parserSubset::location &loc,
         int &scanned,
         bool isPoint

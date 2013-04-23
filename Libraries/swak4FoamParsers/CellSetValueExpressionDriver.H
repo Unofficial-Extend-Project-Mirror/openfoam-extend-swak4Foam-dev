@@ -146,27 +146,27 @@ public:
     virtual bool isCell() { return true; }
 
     virtual tmp<Field<scalar> > getScalarField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     );
 
     virtual tmp<Field<vector> > getVectorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     );
 
     virtual tmp<Field<tensor> > getTensorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     );
 
     virtual tmp<Field<symmTensor> > getSymmTensorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     );
 
     virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     );
 

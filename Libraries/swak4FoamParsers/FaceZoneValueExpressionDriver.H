@@ -140,23 +140,23 @@ public:
     virtual bool isCell() { return false; }
 
     virtual tmp<Field<scalar> > getScalarField(
-        const string &name,bool oldTime=false
+        const word &name,bool oldTime=false
     );
 
     virtual tmp<Field<vector> > getVectorField(
-        const string &name,bool oldTime=false
+        const word &name,bool oldTime=false
     );
 
     virtual tmp<Field<tensor> > getTensorField(
-        const string &name,bool oldTime=false
+        const word &name,bool oldTime=false
     );
 
     virtual tmp<Field<symmTensor> > getSymmTensorField(
-        const string &name,bool oldTime=false
+        const word &name,bool oldTime=false
     );
 
     virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
-        const string &name,bool oldTime=false
+        const word &name,bool oldTime=false
     );
 
     // Handling the parser

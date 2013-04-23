@@ -110,7 +110,7 @@ protected:
     //- execute a plugin-function
     template<class T>
     autoPtr<Field<T> > evaluatePluginFunction(
-        const string &name,
+        const word &name,
         const parserFaPatch::location &loc,
         int &scanned,
         bool isPoint=false
@@ -189,19 +189,19 @@ public:
     tmp<scalarField> makeEdgeIdField() const;
 
     template<class Type>
-    tmp<Field<Type> > getField(const string &name);
+    tmp<Field<Type> > getField(const word &name);
 
     template<class Type>
-    tmp<Field<Type> > getOldTimeField(const string &name);
+    tmp<Field<Type> > getOldTimeField(const word &name);
 
     template<class Type>
-    tmp<Field<Type> > getSurfaceNormalField(const string &name);
+    tmp<Field<Type> > getSurfaceNormalField(const word &name);
 
     template<class Type>
-    tmp<Field<Type> > getPatchInternalField(const string &name);
+    tmp<Field<Type> > getPatchInternalField(const word &name);
 
     template<class Type>
-    tmp<Field<Type> > getPatchNeighbourField(const string &name);
+    tmp<Field<Type> > getPatchNeighbourField(const word &name);
 
     template<class Type>
     tmp<Field<Type> > toFace(const Field<Type> &);

@@ -1965,11 +1965,19 @@ S_{expl} + S_{impl} T
      *after* the regular switches and should alter the behavior of
      the compiler. Set in =swakConfiguration= if you want to set this
      permanently
+*** Cosmetics
+    Changes without consequences for the user
+**** Methods use =word= for names instead of =string=
+     Methods that look for fields now use the appropriate data type
 *** Bug fixes
 **** Compilation on Fujitsu (and probably Intel) compilers
      There were template specializations for =pTraits= in
      =ExpressionResult.C= that had to be moved to =ExpressionResult.H=
      to allow compilation on these non-=gcc=-compilers
+**** =executeIf=-function objects are executed if =readDuringConstruction= is set to =true=
+     Even if the condition evaluates to =false= the function objects
+     in the list are executed. This makes the run fail if the purpose
+     of the condition was to guard from such a situation. Fixed
 *** New features
 **** Library with additional =searchableSurfaces=
      The library =simpleSearchableSurfaces= adds more searchable
@@ -1996,6 +2004,19 @@ S_{expl} + S_{impl} T
      Dumps the value of a global variable into a line of a file
 **** Function object =removeGlobalVariable=
      Removes a global variable (mainly used to preserve memory)
+**** Optional entry =aliases= for parser specifications
+     This dictionary allows the specification of alias names and
+     their real names. If an alias name is found in an expression
+     then it is replaced by the real name when looking for
+     fields. The application for this is that OpenFOAM allows
+     characters in field names that are not valid in swak-names and
+     would break the grammar if they were (for instance =-= or
+     =:=). By setting an alias such fields can still be accessed.
+**** Function object to dump registered objects
+     The function object =listRegisteredObjects= in the
+     =simpleFunctionObjects= lists all the objects currently
+     registered with the mesh. Mainly used for debugging ("Which
+     fields are currently available?")
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be

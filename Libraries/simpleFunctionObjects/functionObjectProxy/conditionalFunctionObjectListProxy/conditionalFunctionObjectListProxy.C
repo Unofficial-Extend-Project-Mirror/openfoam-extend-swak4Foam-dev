@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "conditionalFunctionObjectListProxy.H"
@@ -60,7 +60,8 @@ conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
     functionObjectListProxy(
         name,
         t,
-        dict
+        dict,
+        false
     )
 {
 }
@@ -71,7 +72,7 @@ conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
 bool conditionalFunctionObjectListProxy::execute(const bool forceWrite)
 {
     if(writeDebug()) {
-        Info << this->name() << " condition::execute() condition: " 
+        Info << this->name() << " condition::execute() condition: "
             << condition() << endl;
     }
 
@@ -85,7 +86,7 @@ bool conditionalFunctionObjectListProxy::execute(const bool forceWrite)
 bool conditionalFunctionObjectListProxy::start()
 {
     if(writeDebug()) {
-        Info << this->name() << " condition::start() condition: " 
+        Info << this->name() << " condition::start() condition: "
             << condition() << endl;
     }
 
@@ -99,7 +100,7 @@ bool conditionalFunctionObjectListProxy::start()
 bool conditionalFunctionObjectListProxy::end()
 {
     if(writeDebug()) {
-        Info << this->name() << " condition::end() condition: " 
+        Info << this->name() << " condition::end() condition: "
             << condition() << endl;
     }
 
@@ -113,7 +114,7 @@ bool conditionalFunctionObjectListProxy::end()
 bool conditionalFunctionObjectListProxy::read(const dictionary& dict)
 {
     if(writeDebug()) {
-        Info << this->name() << " condition::read() condition: " 
+        Info << this->name() << " condition::read() condition: "
             << condition() << endl;
     }
 

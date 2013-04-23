@@ -47,11 +47,20 @@ namespace Foam {
 
     template<class FieldType,class Subset,class T>
     tmp<Field<T> > SubsetValueExpressionDriver::getFieldInternal(
-        const string &name,
+        const word &inName,
         const Subset &sub,
         bool oldTime
     )
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "SubsetValueExpressionDriver::getFieldInternal. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         if(debug) {
             Pout << "SubsetValueExpressionDriver::getFieldInternal"
                 << " searching for " << name << " Type: " << Subset::typeName
@@ -128,13 +137,21 @@ namespace Foam {
 
     template<class FieldType,class IFieldType,class Subset,class T>
     tmp<Field<T> > SubsetValueExpressionDriver::getFieldInternalAndInterpolate(
-        const string &name,
+        const word &inName,
         const Subset &sub,
         bool oldTime
     )
     {
         // Yeah. I know. Code duplication without end
 
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "SubsetValueExpressionDriver::getFieldInternalAndInterpolate. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
         if(
             this->hasVariable(name)
             &&
@@ -195,7 +212,7 @@ namespace Foam {
             if(
                 this->warnAutoInterpolate_
             ) {
-                WarningIn("Field<T> *SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)")
+                WarningIn("Field<T> *SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const word &name,const Subset &sub)")
                     << "Going to interpolate " << name
                         << endl;
             }
@@ -283,7 +300,7 @@ namespace Foam {
         }
 
         if(!done) {
-            FatalErrorIn("SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)")
+            FatalErrorIn("SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const word &name,const Subset &sub)")
                 << "Could not find a field name " << name
                     << " of type " << pTraits<T>::typeName
                     << " (neither " << FieldType::typeName
