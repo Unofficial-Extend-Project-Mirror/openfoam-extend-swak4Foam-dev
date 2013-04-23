@@ -1880,6 +1880,11 @@ S_{expl} + S_{impl} T
      characters in field names that are not valid in swak-names and
      would break the grammar if they were (for instance =-= or
      =:=). By setting an alias such fields can still be accessed.
+**** Function object to dump registered objects
+     The function object =listRegisteredObjects= in the
+     =simpleFunctionObjects= lists all the objects currently
+     registered with the mesh. Mainly used for debugging ("Which
+     fields are currently available?")
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be

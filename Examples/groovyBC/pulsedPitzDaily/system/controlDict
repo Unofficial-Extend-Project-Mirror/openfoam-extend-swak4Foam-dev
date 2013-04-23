@@ -447,6 +447,9 @@ functions
         readDuringConstruction true;
         functionObjectName executeIfPython;
     }
+    // showRegistered {
+    //     type listRegisteredObjects;
+    // }
 );
 
 libs (
