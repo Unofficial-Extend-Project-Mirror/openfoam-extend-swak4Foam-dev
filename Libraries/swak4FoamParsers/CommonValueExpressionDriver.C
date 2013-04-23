@@ -720,7 +720,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeRandomField(label seed) const
 }
 
 tmp<scalarField> CommonValueExpressionDriver::getLine(
-    const string &name,
+    const word &name,
     scalar t
 )
 {
@@ -730,7 +730,7 @@ tmp<scalarField> CommonValueExpressionDriver::getLine(
 }
 
 tmp<scalarField> CommonValueExpressionDriver::getLookup(
-    const string &name,
+    const word &name,
     const scalarField &val
 )
 {
@@ -746,7 +746,7 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup(
     return tmp<scalarField>(result);
 }
 
-scalar CommonValueExpressionDriver::getLineValue(const string &name,scalar t)
+scalar CommonValueExpressionDriver::getLineValue(const word &name,scalar t)
 {
     return lines_[name](t);
 }
@@ -1172,14 +1172,14 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
     );
 }
 
-string CommonValueExpressionDriver::getTypeOfField(const string &name) const
+word CommonValueExpressionDriver::getTypeOfField(const word &name) const
 {
     return getTypeOfFieldInternal(mesh(),name);
 }
 
-string CommonValueExpressionDriver::getTypeOfFieldInternal(
+word CommonValueExpressionDriver::getTypeOfFieldInternal(
     const fvMesh &theMesh,
-    const string &name
+    const word &name
 ) const
 {
     IOobject f
@@ -1202,7 +1202,7 @@ string CommonValueExpressionDriver::getTypeOfFieldInternal(
     return f.headerClassName();
 }
 
-string CommonValueExpressionDriver::getTypeOfSet(const string &name) const
+word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
 {
     if(debug) {
         Pout << "Looking for set named " << name << endl;

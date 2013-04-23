@@ -47,7 +47,7 @@ namespace Foam {
 
     template<class FieldType,class Subset,class T>
     tmp<Field<T> > SubsetValueExpressionDriver::getFieldInternal(
-        const string &name,
+        const word &inName,
         const Subset &sub,
         bool oldTime
     )
@@ -128,7 +128,7 @@ namespace Foam {
 
     template<class FieldType,class IFieldType,class Subset,class T>
     tmp<Field<T> > SubsetValueExpressionDriver::getFieldInternalAndInterpolate(
-        const string &name,
+        const word &inName,
         const Subset &sub,
         bool oldTime
     )
@@ -195,7 +195,7 @@ namespace Foam {
             if(
                 this->warnAutoInterpolate_
             ) {
-                WarningIn("Field<T> *SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)")
+                WarningIn("Field<T> *SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const word &name,const Subset &sub)")
                     << "Going to interpolate " << name
                         << endl;
             }
@@ -283,7 +283,7 @@ namespace Foam {
         }
 
         if(!done) {
-            FatalErrorIn("SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const string &name,const Subset &sub)")
+            FatalErrorIn("SubsetValueExpressionDriver::getFieldInternalAndInterpolate(const word &name,const Subset &sub)")
                 << "Could not find a field name " << name
                     << " of type " << pTraits<T>::typeName
                     << " (neither " << FieldType::typeName

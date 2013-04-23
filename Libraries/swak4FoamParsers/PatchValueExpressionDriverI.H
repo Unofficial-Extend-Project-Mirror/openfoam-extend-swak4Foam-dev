@@ -61,7 +61,7 @@ namespace Foam {
 namespace Foam {
 
    template<class Type>
-    tmp<Field<Type> > PatchValueExpressionDriver::getField(const string &name)
+    tmp<Field<Type> > PatchValueExpressionDriver::getField(const word &name)
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
         typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
@@ -183,7 +183,7 @@ namespace Foam {
 
             return pField.patchInternalField();
         } else{
-            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getField(const word &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
@@ -209,7 +209,7 @@ namespace Foam {
 
     template<class Type>
     tmp<Field<Type> > PatchValueExpressionDriver::getOldTimeField(
-        const string &name
+        const word &name
     )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
@@ -277,7 +277,7 @@ namespace Foam {
                 new Field<Type>(pField.patchInternalField())
             );
         } else{
-            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getOldTimeField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getOldTimeField(const word &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl
@@ -289,7 +289,7 @@ namespace Foam {
 
     template<class Type>
     tmp<Field<Type> > PatchValueExpressionDriver::getPatchInternalField(
-        const string &name
+        const word &name
     )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
@@ -328,7 +328,7 @@ namespace Foam {
                 patch_.lookupPatchField<localPointField,Type>(name);
             return pField.patchInternalField();
         } else{
-            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchInternalField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchInternalField(const word &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found or unsupported type for patchInternalField\n"
                     << endl
@@ -342,7 +342,7 @@ namespace Foam {
 
     template<class Type>
     tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(
-        const string &name
+        const word &name
     )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
@@ -373,7 +373,7 @@ namespace Foam {
                 patch_.lookupPatchField<localVolField,Type>(name);
             return pField.patchNeighbourField();
         } else{
-            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getPatchNeighbourField(const word &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name
                     << " found or unsupported type for patchNeighbourField\n"
@@ -388,7 +388,7 @@ namespace Foam {
 
     template<class Type>
     tmp<Field<Type> > PatchValueExpressionDriver::getSurfaceNormalField(
-        const string &name
+        const word &name
     )
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
@@ -411,7 +411,7 @@ namespace Foam {
                 patch_.lookupPatchField<localVolField,Type>(name);
             return pField.snGrad();
         } else{
-            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getSurfaceNormalField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > PatchValueExpressionDriver::getSurfaceNormalField(const word &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << "( " << pTraits<localVolField>::typeName << ")"
                     << " with the name " << name

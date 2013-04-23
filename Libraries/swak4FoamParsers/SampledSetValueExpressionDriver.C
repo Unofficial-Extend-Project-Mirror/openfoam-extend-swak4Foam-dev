@@ -155,7 +155,7 @@ bool SampledSetValueExpressionDriver::update()
 }
 
 tmp<Field<scalar> > SampledSetValueExpressionDriver::getScalarField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return sampleOrInterpolateInternal<scalar,volScalarField,surfaceScalarField>
@@ -166,7 +166,7 @@ tmp<Field<scalar> > SampledSetValueExpressionDriver::getScalarField(
 }
 
 tmp<Field<vector> > SampledSetValueExpressionDriver::getVectorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return sampleOrInterpolateInternal<vector,volVectorField,surfaceVectorField>
@@ -177,7 +177,7 @@ tmp<Field<vector> > SampledSetValueExpressionDriver::getVectorField(
 }
 
 tmp<Field<tensor> > SampledSetValueExpressionDriver::getTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return sampleOrInterpolateInternal<tensor,volTensorField,surfaceTensorField>
@@ -188,7 +188,7 @@ tmp<Field<tensor> > SampledSetValueExpressionDriver::getTensorField(
 }
 
 tmp<Field<symmTensor> > SampledSetValueExpressionDriver::getSymmTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return sampleOrInterpolateInternal<symmTensor,volSymmTensorField,
@@ -201,7 +201,7 @@ tmp<Field<symmTensor> > SampledSetValueExpressionDriver::getSymmTensorField(
 
 tmp<Field<sphericalTensor> >
 SampledSetValueExpressionDriver::getSphericalTensorField(
-        const string &name,bool oldTime
+        const word &name,bool oldTime
 )
 {
     return sampleOrInterpolateInternal<sphericalTensor,

@@ -124,7 +124,7 @@ namespace Foam {
 
     template<class Type>
     bool CommonValueExpressionDriver::isVariable(
-        const string &name,
+        const word &name,
         bool isPoint,
         label expectedSize
     ) const
@@ -222,7 +222,7 @@ namespace Foam {
     }
 
     template<class Type>
-    bool CommonValueExpressionDriver::is(const string &name,bool isPoint) const
+    bool CommonValueExpressionDriver::is(const word &name,bool isPoint) const
     {
         if(isVariable<Type>(name,isPoint)) {
             return true;
@@ -233,7 +233,7 @@ namespace Foam {
 
     template<class Type>
     bool CommonValueExpressionDriver::isField(
-        const string &name,
+        const word &name,
         bool isPoint
     ) const
     {
@@ -495,7 +495,7 @@ namespace Foam {
 
     template<class T>
     autoPtr<T> CommonValueExpressionDriver::getOrReadField(
-        const string &name,
+        const word &name,
         bool failIfNoneFound,
         bool getOldTime
     )
@@ -510,7 +510,7 @@ namespace Foam {
 
     template<class T>
     autoPtr<T> CommonValueExpressionDriver::getOrReadPointField(
-        const string &name,
+        const word &name,
         bool failIfNoneFound,
         bool getOldTime
     )
@@ -525,7 +525,7 @@ namespace Foam {
 
     template<class T,class Mesh>
     autoPtr<T> CommonValueExpressionDriver::getOrReadFieldInternal(
-        const string &name,
+        const word &inName,
         const Mesh &actualMesh,
         bool failIfNoneFound,
         bool getOldTime
@@ -610,7 +610,7 @@ namespace Foam {
                     Type minVal=gMin(vals);
                     Type maxVal=gMax(vals);
                     if(mag(minVal-maxVal)>SMALL) {
-                        WarningIn("CommonValueExpressionDriver::getOrReadFieldInternal(const string &name)")
+                        WarningIn("CommonValueExpressionDriver::getOrReadFieldInternal(const word &name)")
                             << "The minimum value " << minVal
                                 << " and the maximum " << maxVal
                                 << " differ. I will use the average " << avg
@@ -681,8 +681,9 @@ namespace Foam {
             &&
             failIfNoneFound
         ) {
-            FatalErrorIn("CommonValueExpressionDriver::getOrReadFieldInternal(const string &name)")
+            FatalErrorIn("CommonValueExpressionDriver::getOrReadFieldInternal(const word &name)")
                 << "Could not find the field " << name
+                    << " (" << inName << ")"
                     << " in memory or on disc" << endl
                     << exit(FatalError);
         }
@@ -876,18 +877,18 @@ namespace Foam {
         }
     }
 
-    inline bool CommonValueExpressionDriver::isLine(const string &name) const
+    inline bool CommonValueExpressionDriver::isLine(const word &name) const
     {
         return lines_.found(name);
     }
 
-    inline bool CommonValueExpressionDriver::isLookup(const string &name) const
+    inline bool CommonValueExpressionDriver::isLookup(const word &name) const
     {
         return lookup_.found(name);
     }
 
     /*    template<class Type>
-    Field<Type> *CommonValueExpressionDriver::getField(const string &name)
+    Field<Type> *CommonValueExpressionDriver::getField(const word &name)
     {
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
         typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
@@ -919,7 +920,7 @@ namespace Foam {
                 patch_.lookupPatchField<localPointField,Type>(name);
             return new Field<Type>(pField.patchInternalField());
         } else{
-            FatalErrorIn("Field<Type> *CommonValueExpressionDriver::getField(const string &name)")
+            FatalErrorIn("Field<Type> *CommonValueExpressionDriver::getField(const word &name)")
                 << "No field of type " << pTraits<Type>::typeName
                     << " with the name " << name << " found\n"
                     << endl

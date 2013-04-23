@@ -1833,6 +1833,10 @@ S_{expl} + S_{impl} T
      *after* the regular switches and should alter the behavior of
      the compiler. Set in =swakConfiguration= if you want to set this
      permanently
+*** Cosmetics
+    Changes without consequences for the user
+**** Methods use =word= for names instead of =string=
+     Methods that look for fields now use the appropriate data type
 *** Bug fixes
 **** Compilation on Fujitsu (and probably Intel) compilers
      There were template specializations for =pTraits= in

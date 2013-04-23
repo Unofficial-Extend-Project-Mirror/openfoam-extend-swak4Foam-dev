@@ -100,7 +100,7 @@ protected:
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
     tmp<Field<T> > getFieldInternal(
-        const string &name,
+        const word &name,
         const Subset &sub,
         bool oldTime=false
     );
@@ -108,7 +108,7 @@ protected:
     //- General Method to get the values and interpolate
     template<class FieldType,class IFieldType,class Subset,class T>
     tmp<Field<T> > getFieldInternalAndInterpolate(
-        const string &name,
+        const word &name,
         const Subset &sub,
         bool oldTime=false
     );
@@ -176,27 +176,27 @@ public:
 //     Field<Type> *getField(const string &name);
 
     virtual tmp<Field<scalar> > getScalarField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     )=0;
 
     virtual tmp<Field<vector> > getVectorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     )=0;
 
     virtual tmp<Field<tensor> > getTensorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     )=0;
 
     virtual tmp<Field<symmTensor> > getSymmTensorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     )=0;
 
     virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
-        const string &name,
+        const word &name,
         bool oldTime=false
     )=0;
 
@@ -206,7 +206,7 @@ public:
     //- execute a plugin-function
     template<class T>
     autoPtr<Field<T> > evaluatePluginFunction(
-        const string &name,
+        const word &name,
         const parserSubset::location &loc,
         int &scanned,
         bool isPoint=false
