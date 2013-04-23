@@ -149,7 +149,7 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(
 }
 
 tmp<Field<scalar> > CellZoneValueExpressionDriver::getScalarField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternal<volScalarField,cellZone,scalar>(
@@ -158,7 +158,7 @@ tmp<Field<scalar> > CellZoneValueExpressionDriver::getScalarField(
 }
 
 tmp<Field<vector> > CellZoneValueExpressionDriver::getVectorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternal<volVectorField,cellZone,vector>(
@@ -167,7 +167,7 @@ tmp<Field<vector> > CellZoneValueExpressionDriver::getVectorField(
 }
 
 tmp<Field<tensor> > CellZoneValueExpressionDriver::getTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternal<volTensorField,cellZone,tensor>(
@@ -176,7 +176,7 @@ tmp<Field<tensor> > CellZoneValueExpressionDriver::getTensorField(
 }
 
 tmp<Field<symmTensor> > CellZoneValueExpressionDriver::getSymmTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternal<volSymmTensorField,cellZone,symmTensor>(
@@ -185,7 +185,7 @@ tmp<Field<symmTensor> > CellZoneValueExpressionDriver::getSymmTensorField(
 }
 
 tmp<Field<sphericalTensor> > CellZoneValueExpressionDriver::getSphericalTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternal<volSphericalTensorField,cellZone,sphericalTensor>(

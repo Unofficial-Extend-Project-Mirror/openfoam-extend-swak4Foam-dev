@@ -100,6 +100,9 @@ class CommonValueExpressionDriver
     //- string that stores the name of the other mesh (if that is going to be used)
     word otherMeshName_;
 
+    //- list with aliases. Meant to workaround situations where fields have names that don't fit what swak accepts as a field name
+    HashTable<word,word> aliases_;
+
 protected:
     //- get the string of the context in a form that is usable for an error message
     std::string getContextString();
@@ -120,6 +123,20 @@ protected:
         CommonValueExpressionDriver &otherDriver
     );
 
+    //- is there an alias with that name
+    bool hasAlias(const word &name) const;
+
+    //- return the actual name for an alias
+    word getAlias(const word &name) const;
+
+    const HashTable<word,word> &aliases() const
+        {
+            return aliases_;
+        }
+
+    void setAliases(const HashTable<word,word> &orig) {
+        aliases_=orig;
+    }
 private:
     ExpressionResult result_;
 
@@ -257,14 +274,18 @@ protected:
 
     inline bool prevIterIsOldTime() const { return prevIterIsOldTime_; }
 
-    string getTypeOfFieldInternal(
+    word getTypeOfFieldInternal(
         const fvMesh &mesh,
-        const string &name
+        const word &name
     ) const;
 
-    string getTypeOfField(const string &name) const;
+    word getTypeOfField(
+        const word &name
+    ) const;
 
-    string getTypeOfSet(const string &name) const;
+    word getTypeOfSet(
+        const word &name
+    ) const;
 
     template<class T,class Mesh>
     inline tmp<T> readAndRegister(
@@ -296,21 +317,21 @@ protected:
 
     template<class T>
     autoPtr<T> getOrReadField(
-        const string &name,
+        const word &name,
         bool failIfNoneFound=true,
         bool getOldTime=false
     );
 
     template<class T>
     autoPtr<T> getOrReadPointField(
-        const string &name,
+        const word &name,
         bool failIfNoneFound=true,
         bool getOldTime=false
     );
 
     template<class T,class Mesh>
     autoPtr<T> getOrReadFieldInternal(
-        const string &name,
+        const word &name,
         const Mesh &mesh,
         bool failIfNoneFound=true,
         bool getOldTime=false
@@ -502,26 +523,46 @@ public:
 //     tmp<Field<Type> > getField(const string &name);
 
     template<class Type>
-    bool is(const string &name,bool isPoint=false) const;
+    bool is(
+        const word &name,
+        bool isPoint=false
+    ) const;
 
     template<class Type>
-    bool isVariable(const string &name,bool isPoint=false,label expectSize=-1) const;
+    bool isVariable(
+        const word &name,
+        bool isPoint=false,
+        label expectSize=-1
+    ) const;
 
     template<class Type>
-    bool isField(const string &name,bool isPoint=false) const;
+    bool isField(
+        const word &name,
+        bool isPoint=false
+    ) const;
 
     // checking for variables
     template<class T>
-    bool isThere(const string &name) const;
+    bool isThere(
+        const word &name
+    ) const;
 
     //- is this a timeline
-    inline bool isLine(const string &name) const;
+    inline bool isLine(
+        const word &name
+    ) const;
 
     //- get the value for a timeline for a specific time
-    tmp<scalarField> getLine(const string &name,scalar t);
+    tmp<scalarField> getLine(
+        const word &name,
+        scalar t
+    );
 
     //- value of the timeline
-    scalar getLineValue(const string &name,scalar t);
+    scalar getLineValue(
+        const word &name,
+        scalar t
+    );
 
     //- read some interpolation tables
     void readTables(
@@ -531,7 +572,9 @@ public:
     );
 
     //- is this mesh in the repository
-    bool isForeignMesh(const word &name) const;
+    bool isForeignMesh(
+        const word &name
+    ) const;
 
     template<class T>
     bool isForeignField(
@@ -559,10 +602,15 @@ public:
     ) const;
 
     //- is this a lookup table
-    inline bool isLookup(const string &name) const;
+    inline bool isLookup(
+        const word &name
+    ) const;
 
     //- get the value for a lookuptable for a set of values
-    tmp<scalarField> getLookup(const string &name,const scalarField &val);
+    tmp<scalarField> getLookup(
+        const word &name,
+        const scalarField &val
+    );
 
     tmp<scalarField> makeModuloField(
         const scalarField &a,

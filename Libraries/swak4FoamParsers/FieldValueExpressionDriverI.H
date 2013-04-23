@@ -66,7 +66,7 @@ Contributors/Copyright:
 namespace Foam {
 
 template<class T>
-tmp<T>  FieldValueExpressionDriver::getField(const string &name,bool getOldTime)
+tmp<T>  FieldValueExpressionDriver::getField(const word &name,bool getOldTime)
 {
     return tmp<T>(
         this->getOrReadField<T>(
@@ -79,7 +79,7 @@ tmp<T>  FieldValueExpressionDriver::getField(const string &name,bool getOldTime)
 
 template<class T>
 tmp<T>  FieldValueExpressionDriver::getPointField(
-    const string &name,
+    const word &name,
     bool getOldTime
 )
 {

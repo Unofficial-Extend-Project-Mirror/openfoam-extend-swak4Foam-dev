@@ -46,7 +46,7 @@ Contributors/Copyright:
 namespace Foam {
 
     template<class Type>
-    tmp<Field<Type> > FaPatchValueExpressionDriver::getField(const string &name)
+    tmp<Field<Type> > FaPatchValueExpressionDriver::getField(const word &name)
     {
         typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;
         typedef GeometricField<Type,faePatchField,edgeMesh> localEdgeField;
@@ -134,7 +134,7 @@ namespace Foam {
                 new Field<Type>(pField.patchInternalField())
             );
         } else{
-            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getField(const word &name)")
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found\n"
                     << endl
@@ -146,7 +146,7 @@ namespace Foam {
 
     template<class Type>
     tmp<Field<Type> > FaPatchValueExpressionDriver::getOldTimeField(
-        const string &name
+        const word &name
     )
     {
         typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;
@@ -211,7 +211,7 @@ namespace Foam {
                 new Field<Type>(pField.patchInternalField())
             );
         } else{
-            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getField(const word &name)")
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found\n"
                     << endl
@@ -222,7 +222,7 @@ namespace Foam {
     }
 
     template<class Type>
-    tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchInternalField(const string &name)
+    tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchInternalField(const word &name)
     {
         typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;
         typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
@@ -250,7 +250,7 @@ namespace Foam {
                 new Field<Type>(pField.patchInternalField())
             );
         } else{
-            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchInternalField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchInternalField(const word &name)")
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for patchInternalField\n"
                     << endl
@@ -261,7 +261,7 @@ namespace Foam {
     }
 
     template<class Type>
-    tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchNeighbourField(const string &name)
+    tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchNeighbourField(const word &name)
     {
         typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;
 
@@ -279,7 +279,7 @@ namespace Foam {
                 new Field<Type>(pField.patchNeighbourField())
             );
         } else{
-            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchNeighbourField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getPatchNeighbourField(const word &name)")
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for patchNeighbourField\n"
                     << endl
@@ -290,7 +290,7 @@ namespace Foam {
     }
 
     template<class Type>
-    tmp<Field<Type> > FaPatchValueExpressionDriver::getSurfaceNormalField(const string &name)
+    tmp<Field<Type> > FaPatchValueExpressionDriver::getSurfaceNormalField(const word &name)
     {
         typedef GeometricField<Type,faPatchField,areaMesh> localAreaField;
 
@@ -304,7 +304,7 @@ namespace Foam {
                 new Field<Type>(pField.snGrad())
             );
         } else{
-            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getSurfaceNormalField(const string &name)")
+            FatalErrorIn("tmp<Field<Type> > FaPatchValueExpressionDriver::getSurfaceNormalField(const word &name)")
                 << "No field of type " << pTraits<scalar>::typeName
                     << " with the name " << name << " found or unsupported type for lnGrad\n"
                     << endl

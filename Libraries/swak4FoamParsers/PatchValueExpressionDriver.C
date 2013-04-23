@@ -126,7 +126,7 @@ label getPatchID(const fvMesh &mesh,const word &name)
 {
     label result=mesh.boundaryMesh().findPatchID(name);
     if(result<0) {
-        FatalErrorIn("getPatchID(const fvMesh &mesh,const string &name)")
+        FatalErrorIn("getPatchID(const fvMesh &mesh,const word &name)")
             << "The patch " << name << " was not found in "
                 << mesh.boundaryMesh().names()
                 << endl

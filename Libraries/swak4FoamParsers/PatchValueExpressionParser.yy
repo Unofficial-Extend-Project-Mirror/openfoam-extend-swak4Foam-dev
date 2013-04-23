@@ -99,7 +99,7 @@ Contributors/Copyright:
 namespace Foam {
     template<class T>
     autoPtr<Field<T> > PatchValueExpressionDriver::evaluatePluginFunction(
-        const string &name,
+        const word &name,
         const parserPatch::location &loc,
         int &scanned,
         bool isPoint
