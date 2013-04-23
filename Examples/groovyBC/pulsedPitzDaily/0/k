@@ -20,34 +20,38 @@ internalField   uniform 2e-05;
 
 boundaryField
 {
-    inlet           
+    inlet
     {
         type            groovyBC;
-        variables "kAvg{}=sum(k*vol())/sum(vol());";
+        variables "kAvg{}=sum(theKFieldItself*vol())/sum(vol());";
         valueExpression "0.5*(kAvg+2e-5)";
+        aliases  {
+            // just for testing
+            theKFieldItself k;
+        };
         value           uniform 2e-05;
     }
 
-    outlet          
+    outlet
     {
         type            inletOutlet;
         inletValue      uniform 0;
         value           uniform 0;
     }
 
-    upperWall       
+    upperWall
     {
         type            fixedValue;
         value           uniform 0;
     }
 
-    lowerWall       
+    lowerWall
     {
         type            fixedValue;
         value           uniform 0;
     }
 
-    frontAndBack    
+    frontAndBack
     {
         type            empty;
     }

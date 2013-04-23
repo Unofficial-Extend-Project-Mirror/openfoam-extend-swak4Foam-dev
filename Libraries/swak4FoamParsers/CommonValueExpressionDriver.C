@@ -67,6 +67,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 :
     variableStrings_(orig.variableStrings_),
     contextString_(orig.contextString_),
+    aliases_(orig.aliases_),
     result_(orig.result_),
     variables_(orig.variables_),
     storedVariables_(orig.storedVariables_),
@@ -138,6 +139,20 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     );
 
     readTables(dict);
+
+    if(dict.found("aliases")) {
+        dictionary aliasDict(dict.subDict("aliases"));
+        wordList toc(aliasDict.toc());
+        forAll(toc,i) {
+            aliases_.insert(
+                toc[i],
+                word(aliasDict[toc[i]])
+            );
+        }
+        if(debug) {
+            Info << "Reading aliases: " << aliases_ << endl;
+        }
+    }
 }
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(
@@ -983,6 +998,9 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     otherDriver->setGlobalScopes(
         this->globalVariableScopes_
     );
+    otherDriver->setAliases(
+        this->aliases()
+    );
 
     otherDriver->parse(expr);
 
@@ -1204,6 +1222,15 @@ word CommonValueExpressionDriver::getTypeOfFieldInternal(
 
 word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
 {
+    word name(inName);
+    if(this->hasAlias(name)) {
+        if(debug) {
+            Pout << "CommonValueExpressionDriver::getTypeOfSet. Name: " << name
+                << " is an alias for " << this->getAlias(name) << endl;
+        }
+        name=this->getAlias(name);
+    }
+
     if(debug) {
         Pout << "Looking for set named " << name << endl;
     }
@@ -1572,6 +1599,31 @@ tmp<scalarField> CommonValueExpressionDriver::weights(
         return result;
     } else {
         return this->weightsNonPoint(size);
+    }
+}
+
+bool CommonValueExpressionDriver::hasAlias(const word &name) const
+{
+    if(debug) {
+        Info << "CommonValueExpressionDriver::hasAlias " << name
+            << " : " << aliases_.found(name) << " of "
+            << aliases_.size() << endl;
+    }
+    return aliases_.found(name);
+}
+
+word CommonValueExpressionDriver::getAlias(const word &name) const
+{
+    if(!aliases_.found(name)){
+        FatalErrorIn("CommonValueExpressionDriver::getAlias(const word &name) const")
+            << "No alias of name " << name << " found." << endl
+                << "Available aliases are " << aliases_.toc()
+                << endl
+                << exit(FatalError);
+        return word();
+
+    } else {
+        return aliases_[name];
     }
 }
 

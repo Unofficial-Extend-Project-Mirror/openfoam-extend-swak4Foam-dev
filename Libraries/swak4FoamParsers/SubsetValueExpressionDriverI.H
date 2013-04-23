@@ -52,6 +52,15 @@ namespace Foam {
         bool oldTime
     )
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "SubsetValueExpressionDriver::getFieldInternal. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         if(debug) {
             Pout << "SubsetValueExpressionDriver::getFieldInternal"
                 << " searching for " << name << " Type: " << Subset::typeName
@@ -135,6 +144,14 @@ namespace Foam {
     {
         // Yeah. I know. Code duplication without end
 
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "SubsetValueExpressionDriver::getFieldInternalAndInterpolate. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
         if(
             this->hasVariable(name)
             &&

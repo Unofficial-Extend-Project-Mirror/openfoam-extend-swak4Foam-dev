@@ -100,6 +100,9 @@ class CommonValueExpressionDriver
     //- string that stores the name of the other mesh (if that is going to be used)
     word otherMeshName_;
 
+    //- list with aliases. Meant to workaround situations where fields have names that don't fit what swak accepts as a field name
+    HashTable<word,word> aliases_;
+
 protected:
     //- get the string of the context in a form that is usable for an error message
     std::string getContextString();
@@ -120,6 +123,20 @@ protected:
         CommonValueExpressionDriver &otherDriver
     );
 
+    //- is there an alias with that name
+    bool hasAlias(const word &name) const;
+
+    //- return the actual name for an alias
+    word getAlias(const word &name) const;
+
+    const HashTable<word,word> &aliases() const
+        {
+            return aliases_;
+        }
+
+    void setAliases(const HashTable<word,word> &orig) {
+        aliases_=orig;
+    }
 private:
     ExpressionResult result_;
 

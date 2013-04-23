@@ -288,11 +288,15 @@ functions
     {
         type swakExpression;
         valueType internalField;
-        expression "mag(ddt(U))";
+        expression "mag(ddt(foo))";
         accumulations (
             average
             max
         );
+        aliases {
+            foo U;
+            bar p;
+        }
         verbose true;
     }
     pressureChangeInTime

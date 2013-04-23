@@ -267,10 +267,19 @@ namespace Foam {
     template<class T>
     inline bool CommonValueExpressionDriver::updateSet(
         autoPtr<T> &theSet,
-        const word &name,
+        const word &inName,
         SetOrigin origin
     ) const
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::updateSet. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         label oldSize=theSet->size();
 
         bool updated=false;
@@ -365,10 +374,18 @@ namespace Foam {
     template<class T>
     inline autoPtr<T> CommonValueExpressionDriver::getSet(
         const fvMesh &mesh,
-        const word &name,
+        const word &inName,
         SetOrigin &origin
     ) const
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::getSet. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
         // avoid the possibility of name-clashes
         const word regName=name+"RegisteredNameFor"+T::typeName;
 
@@ -531,6 +548,15 @@ namespace Foam {
         bool getOldTime
     )
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::getOrReadFieldInternal. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         if(debug) {
             Pout << "CommonValueExpressionDriver::getOrReadField. Name: "
                 << name << " Type: " << T::typeName << endl;
@@ -718,10 +744,19 @@ namespace Foam {
 
     template<class T,class Mesh>
     inline tmp<T> CommonValueExpressionDriver::readAndRegister(
-        const word &name,
+        const word &inName,
         const Mesh &actualMesh
     )
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::readAndRegister. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         tmp<T>f(
             new T(
                 IOobject
@@ -748,11 +783,29 @@ namespace Foam {
 
     template<class T>
     tmp<T> CommonValueExpressionDriver::interpolateForeignField(
-        const word &meshName,
-        const word &fieldName,
+        const word &inMeshName,
+        const word &inFieldName,
         meshToMesh::order theOrder
     ) const
     {
+        word meshName(inMeshName);
+        if(this->hasAlias(meshName)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::interpolateForeignField. MeshName: " << meshName
+                    << " is an alias for " << this->getAlias(meshName) << endl;
+            }
+            meshName=this->getAlias(meshName);
+        }
+        word fieldName(inFieldName);
+        if(this->hasAlias(fieldName)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::interpolateForeignField. fieldName: "
+                    << fieldName
+                    << " is an alias for " << this->getAlias(fieldName) << endl;
+            }
+            fieldName=this->getAlias(fieldName);
+        }
+
         const fvMesh &theMesh=MeshesRepository::getRepository().getMesh(
             meshName
         );
@@ -802,9 +855,18 @@ namespace Foam {
     template<class T>
     bool CommonValueExpressionDriver::CommonValueExpressionDriver::isForeignField(
         const word &meshName,
-        const word &name
+        const word &inName
     ) const
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::isForeignField. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         if(!isForeignMesh(meshName)) {
             return false;
         }
@@ -842,9 +904,18 @@ namespace Foam {
 
     template<class T>
     bool CommonValueExpressionDriver::CommonValueExpressionDriver::isThere(
-        const string &name
+        const word &inName
     ) const
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::isThere. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         if(debug) {
             Pout << "CommonValueExpressionDriver::isThere. Name: " << name
                 << " Type: " << T::typeName << " searchInMemory: "
