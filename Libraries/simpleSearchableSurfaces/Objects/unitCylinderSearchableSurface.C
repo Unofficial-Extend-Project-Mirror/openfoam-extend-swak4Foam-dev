@@ -246,7 +246,11 @@ Foam::unitCylinderSearchableSurface::coordinates() const
     result[1]=bottom_.refPoint();
     result[2]=0.5*(top_.refPoint()+bottom_.refPoint());
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(result));
+#else
     return result;
+#endif
 }
 
 bool Foam::unitCylinderSearchableSurface::overlaps(const boundBox& bb) const

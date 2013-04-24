@@ -142,7 +142,11 @@ Foam::pointField
 #endif
 Foam::mergeRegionsSearchableSurface::coordinates() const
 {
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(coordinates_));
+#else
     return coordinates_;
+#endif
 }
 
 

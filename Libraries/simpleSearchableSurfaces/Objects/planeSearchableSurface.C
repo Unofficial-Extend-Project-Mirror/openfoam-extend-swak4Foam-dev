@@ -243,7 +243,11 @@ Foam::pointField
 #endif
 Foam::planeSearchableSurface::coordinates() const
 {
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(1,plane_.refPoint()));
+#else
     return pointField(1,plane_.refPoint());
+#endif
 }
 
 Foam::tmp<Foam::pointField> Foam::planeSearchableSurface::points() const

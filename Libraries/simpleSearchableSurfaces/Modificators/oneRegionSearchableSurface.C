@@ -87,7 +87,7 @@ Foam::pointField
 Foam::oneRegionSearchableSurface::coordinates() const
 {
 #ifdef FOAM_SEARCHABLE_SURF_USES_TMP
-    return pointField(1,delegate().coordinates()()[0]);
+    return tmp<pointField>(new pointField(1,delegate().coordinates()()[0]));
 #else
     return pointField(1,delegate().coordinates()[0]);
 #endif

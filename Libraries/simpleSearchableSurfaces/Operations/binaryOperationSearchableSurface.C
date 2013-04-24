@@ -186,7 +186,11 @@ Foam::binaryOperationSearchableSurface::coordinates() const
         Info << "A: " << aCoords.size() << " B: " << bCoords.size()
             << " -> " << result.size() << "(" << this->size() << ")" << endl;
     }
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(result));
+#else
     return result;
+#endif
 }
 
 bool Foam::binaryOperationSearchableSurface::overlaps(const boundBox& bb) const
