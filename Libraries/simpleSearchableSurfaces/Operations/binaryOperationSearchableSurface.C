@@ -46,7 +46,7 @@ Contributors/Copyright:
 namespace Foam
 {
 
-defineTypeNameAndDebug(binaryOperationSearchableSurface, 0);
+defineTypeNameAndDebug(binaryOperationSearchableSurface, 1);
 
 }
 
@@ -63,12 +63,14 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
 )
 :
     searchableSurface(io),
+    aName_(dict.lookupOrDefault<word>("aName","A")),
+    bName_(dict.lookupOrDefault<word>("bName","B")),
     a_(
         searchableSurface::New
         (
             word(dict.subDict("a").lookup("type")),
             IOobject(
-                name()+"_"+word(dict.lookup("type"))+"_A",
+                name()+"_"+word(dict.lookup("type"))+"_"+aName_,
                 io.instance(),
                 io.db(),
                 io.readOpt(),
@@ -82,7 +84,7 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
         (
             word(dict.subDict("b").lookup("type")),
             IOobject(
-                name()+"_"+word(dict.lookup("type"))+"_B",
+                name()+"_"+word(dict.lookup("type"))+"_"+bName_,
                 io.instance(),
                 io.db(),
                 io.readOpt(),
@@ -98,6 +100,21 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
         b().regions().size()
     )
 {
+    if(aName_==bName_) {
+        FatalErrorIn("binaryOperationSearchableSurface::binaryOperationSearchableSurface")
+            << "'aName' and 'bName' have the same value " << aName_
+                << " for " << name()
+                << endl
+                << exit(FatalError);
+    }
+    if(regions().size()!=size()) {
+        FatalErrorIn("binaryOperationSearchableSurface::binaryOperationSearchableSurface")
+            << "Number of regions " << regions().size() << " not equal to size "
+                << size() << nl << "Regions: " << regions()
+                << endl
+                << exit(FatalError);
+
+    }
 }
 
 
@@ -146,10 +163,10 @@ const Foam::wordList& Foam::binaryOperationSearchableSurface::regions() const
     if(regions_.size() == 0 ) {
         regions_.setSize(nrARegions_+nrBRegions_);
         for(label i=0;i<nrARegions_;i++) {
-            regions_[i]="A_"+a().regions()[i];
+            regions_[i]=aName_+"_"+a().regions()[i];
         }
         for(label i=0;i<nrBRegions_;i++) {
-            regions_[i+nrARegions_]="B_"+b().regions()[i];
+            regions_[i+nrARegions_]=bName_+"_"+b().regions()[i];
         }
     }
     return regions_;
@@ -176,6 +193,15 @@ Foam::pointField Foam::binaryOperationSearchableSurface::coordinates() const
         Info << "A: " << aCoords.size() << " B: " << bCoords.size()
             << " -> " << result.size() << "(" << this->size() << ")" << endl;
     }
+    // if(result.size()!=this->size()) {
+    //     WarningIn("binaryOperationSearchableSurface::coordinates()")
+    //         << "Number of coordinates " << result.size() << " does not match "
+    //             << " the promised size: " << this->size() << endl
+    //             << "Coordinates: " << result << endl
+    //             << "Regions: " << regions() << endl;
+    //         //                << exit(FatalError);
+
+    // }
     return result;
 }
 
@@ -196,6 +222,7 @@ void Foam::binaryOperationSearchableSurface::findNearest
     List<pointIndexHit> hitB;
     if(debug) {
         Info << "Doing A" << endl;
+        Info << samples << nearestDistSqr;
     }
     a().findNearest(samples,nearestDistSqr,hitA);
     if(debug) {

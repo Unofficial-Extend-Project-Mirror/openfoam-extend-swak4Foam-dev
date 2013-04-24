@@ -65,7 +65,16 @@ Foam::renameRegionsSearchableSurface::renameRegionsSearchableSurface
     regions_=delegate().regions();
     List<Pair<word> > replace(dict.lookup("replacementPairs"));
 
+    if(debug) {
+        Info << "renameRegionsSearchableSurface::renameRegionsSearchableSurface"
+            << endl;
+        Info << "Old regions: " << regions_ << endl;
+        Info << "Replacements: " << replace << endl;
+    }
     forAll(replace,i) {
+        if(replace[i].second()=="_") {
+            replace[i].second()="";
+        }
         forAll(regions_,j) {
             regions_[j].replaceAll
                 (
@@ -73,6 +82,9 @@ Foam::renameRegionsSearchableSurface::renameRegionsSearchableSurface
                     replace[i].second()
                 );
         }
+    }
+    if(debug) {
+        Info << "New regions: " << regions_ << endl;
     }
 }
 

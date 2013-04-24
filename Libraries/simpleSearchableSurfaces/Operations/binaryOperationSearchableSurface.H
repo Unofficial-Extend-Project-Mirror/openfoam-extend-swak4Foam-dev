@@ -65,6 +65,10 @@ class binaryOperationSearchableSurface
 {
 private:
 
+    word aName_;
+
+    word bName_;
+
     // Private Member Data
 
     autoPtr<searchableSurface> a_;
