@@ -73,6 +73,13 @@ geometry
         }
     }
 
+    cylinder3
+    {
+        type searchableCylinderWithDirections;
+        point1 (2 2.5 -1);
+        point2 (2 2.5  1);
+        radius 1;
+    }
 //     cylinder2
 //     {
 //         type scale;
@@ -87,6 +94,17 @@ geometry
         type searchableSphere;
         centre (0 0 0);
         radius 6;
+    }
+
+    box1 {
+        type searchableBox;
+        min (0 -3 0.5);
+        max (1 -2 1.5);
+    }
+    box2 {
+        type searchableBoxWithDirections;
+        min (0 -3 -1.5);
+        max (1 -2 -0.5);
     }
 };
 
@@ -165,10 +183,25 @@ castellatedMeshControls
             // Surface-wise min and max refinement level
             level (2 3);
         }
+        cylinder3
+        {
+            // Surface-wise min and max refinement level
+            level (2 3);
+        }
         igloo
         {
             // Surface-wise min and max refinement level
             level (1 1);
+        }
+        box1
+        {
+            // Surface-wise min and max refinement level
+            level (2 3);
+        }
+        box2
+        {
+            // Surface-wise min and max refinement level
+            level (2 3);
         }
     }
 
