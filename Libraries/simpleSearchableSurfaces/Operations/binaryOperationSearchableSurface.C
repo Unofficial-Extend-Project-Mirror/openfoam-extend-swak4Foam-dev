@@ -247,7 +247,6 @@ void Foam::binaryOperationSearchableSurface::findNearest
     List<pointIndexHit> hitB;
     if(debug) {
         Info << "Doing A" << endl;
-        Info << samples << nearestDistSqr;
     }
     a().findNearest(samples,nearestDistSqr,hitA);
     if(debug) {
