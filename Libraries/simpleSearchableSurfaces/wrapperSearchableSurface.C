@@ -66,7 +66,7 @@ Foam::wrapperSearchableSurface::wrapperSearchableSurface
         (
             word(dict.subDict("surface").lookup("type")),
             IOobject(
-                name()+"_"+word(dict.lookup("type")),
+                io.name()+"_wrappedBy_"+word(dict.lookup("type")),
                 io.instance(),
                 io.db(),
                 io.readOpt(),
@@ -75,7 +75,20 @@ Foam::wrapperSearchableSurface::wrapperSearchableSurface
             dict.subDict("surface")
         )
     )
-{}
+{
+    if(debug) {
+        Info << "wrapperSearchableSurface::wrapperSearchableSurface" << endl
+            << name() << " wraps " << delegate().name() << endl;
+    }
+    if(regions().size()!=size()) {
+        FatalErrorIn("wrapperSearchableSurface::wrapperSearchableSurface")
+            << "Number of regions " << regions().size() << " not equal to size "
+                << size() << nl << "Regions: " << regions()
+                << endl
+                << exit(FatalError);
+
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
