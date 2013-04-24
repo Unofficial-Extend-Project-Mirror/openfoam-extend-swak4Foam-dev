@@ -1853,7 +1853,8 @@ S_{expl} + S_{impl} T
      that library are
      - some objects that duplicate existing surfaces and are only
        there for historical reasons (except the cylinder which
-       distinguishes between different sides)
+       distinguishes between different sides). Others wrap existing
+       surfaces and expose the different sides
      - wrappers for other surfaces that do coordinate transformations
        with it: rotation, translation, scaling
      - wrappers that take two surfaces and do boolean operations with

@@ -48,7 +48,7 @@ geometry
         }
     }
 
-    cylinder 
+    cylinder
     {
         type translate;
         translation (2 0 0);
@@ -64,7 +64,7 @@ geometry
         surface {
             type rotate;
             rotateFrom (0 0 1);
-            rotateTo   (-0.5 1 1); 
+            rotateTo   (-0.5 1 1);
             surface {
                 type scale;
                 scale (0.75 1.5 3);
@@ -79,6 +79,13 @@ geometry
         }
     }
 
+    cylinder3
+    {
+        type searchableCylinderWithDirections;
+        point1 (2 2.5 -1);
+        point2 (2 2.5  1);
+        radius 1;
+    }
 //     cylinder2
 //     {
 //         type scale;
@@ -93,6 +100,17 @@ geometry
         type searchableSphere;
         centre (0 0 0);
         radius 6;
+    }
+
+    box1 {
+        type searchableBox;
+        min (0 -3 0.5);
+        max (1 -2 1.5);
+    }
+    box2 {
+        type searchableBoxWithDirections;
+        min (0 -3 -1.5);
+        max (1 -2 -0.5);
     }
 };
 
@@ -171,10 +189,25 @@ castellatedMeshControls
             // Surface-wise min and max refinement level
             level (2 3);
         }
+        cylinder3
+        {
+            // Surface-wise min and max refinement level
+            level (2 3);
+        }
         igloo
         {
             // Surface-wise min and max refinement level
             level (1 1);
+        }
+        box1
+        {
+            // Surface-wise min and max refinement level
+            level (2 3);
+        }
+        box2
+        {
+            // Surface-wise min and max refinement level
+            level (2 3);
         }
     }
 
@@ -262,7 +295,7 @@ addLayersControls
     //  is the
     //  thickness of the layer furthest away from the wall.
     //  Relative to undistorted size of cell outside layer.
-    finalLayerRatio 0.5; 
+    finalLayerRatio 0.5;
 
     //- Minimum thickness of cell layer. If for any reason layer
     //  cannot be above minThickness do not add layer.
@@ -285,20 +318,20 @@ addLayersControls
     //  before upon reaching a correct mesh.
     nRelaxIter 5;
 
-    // Number of smoothing iterations of surface normals 
+    // Number of smoothing iterations of surface normals
     nSmoothSurfaceNormals 1;
 
-    // Number of smoothing iterations of interior mesh movement direction  
+    // Number of smoothing iterations of interior mesh movement direction
     nSmoothNormals 3;
 
     // Smooth layer thickness over surface patches
     nSmoothThickness 10;
 
-    // Stop layer growth on highly warped cells 
+    // Stop layer growth on highly warped cells
     maxFaceThicknessRatio 0.5;
 
-    // Reduce layer growth where ratio thickness to medial 
-    // distance is large 
+    // Reduce layer growth where ratio thickness to medial
+    // distance is large
     maxThicknessToMedialRatio 0.3;
 
     // Angle used to pick up medial axis points
@@ -344,7 +377,7 @@ meshQualityControls
     //- 1 = hex, <= 0 = folded or flattened illegal cell
     minDeterminant 0.001;
 
-    //- minFaceWeight (0 -> 0.5) 
+    //- minFaceWeight (0 -> 0.5)
     minFaceWeight 0.05;
 
     //- minVolRatio (0 -> 1)
