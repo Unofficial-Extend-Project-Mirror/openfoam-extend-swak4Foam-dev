@@ -46,7 +46,7 @@ Contributors/Copyright:
 namespace Foam
 {
 
-defineTypeNameAndDebug(binaryOperationSearchableSurface, 1);
+defineTypeNameAndDebug(binaryOperationSearchableSurface, 0);
 
 }
 
