@@ -67,7 +67,13 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
         searchableSurface::New
         (
             word(dict.subDict("a").lookup("type")),
-            *this,
+            IOobject(
+                name()+"_"+word(dict.lookup("type"))+"_A",
+                io.instance(),
+                io.db(),
+                io.readOpt(),
+                io.writeOpt()
+            ),
             dict.subDict("a")
         )
     ),
@@ -75,7 +81,13 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
         searchableSurface::New
         (
             word(dict.subDict("b").lookup("type")),
-            *this,
+            IOobject(
+                name()+"_"+word(dict.lookup("type"))+"_B",
+                io.instance(),
+                io.db(),
+                io.readOpt(),
+                io.writeOpt()
+            ),
             dict.subDict("b")
         )
     ),
@@ -85,7 +97,8 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
     nrBRegions_(
         b().regions().size()
     )
-{}
+{
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -169,7 +182,10 @@ Foam::binaryOperationSearchableSurface::coordinates() const
     forAll(bCoords,i) {
         result[i+aCoords.size()]=bCoords[i];
     }
-
+    if(debug) {
+        Info << "A: " << aCoords.size() << " B: " << bCoords.size()
+            << " -> " << result.size() << "(" << this->size() << ")" << endl;
+    }
     return result;
 }
 
@@ -191,12 +207,20 @@ void Foam::binaryOperationSearchableSurface::findNearest
 ) const
 {
     if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::findNearest" << endl;
+        Info << "Foam::binaryOperationSearchableSurface::findNearest "
+            << name() << " : "
+            << samples.size() << " samples" << endl;
     }
 
     List<pointIndexHit> hitA;
     List<pointIndexHit> hitB;
+    if(debug) {
+        Info << "Doing A" << endl;
+    }
     a().findNearest(samples,nearestDistSqr,hitA);
+    if(debug) {
+        Info << "Doing B" << endl;
+    }
     b().findNearest(samples,nearestDistSqr,hitB);
 
     List<bool> inAA,inAB;
@@ -246,6 +270,9 @@ void Foam::binaryOperationSearchableSurface::findNearest
         } else {
             info[i]=hitB[i];
         }
+    }
+    if(debug) {
+        Info << "Foam::binaryOperationSearchableSurface::findNearest - leaving" << endl;
     }
 }
 

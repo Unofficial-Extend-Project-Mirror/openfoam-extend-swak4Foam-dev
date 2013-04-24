@@ -65,7 +65,13 @@ Foam::wrapperSearchableSurface::wrapperSearchableSurface
         searchableSurface::New
         (
             word(dict.subDict("surface").lookup("type")),
-            *this,
+            IOobject(
+                name()+"_"+word(dict.lookup("type")),
+                io.instance(),
+                io.db(),
+                io.readOpt(),
+                io.writeOpt()
+            ),
             dict.subDict("surface")
         )
     )
