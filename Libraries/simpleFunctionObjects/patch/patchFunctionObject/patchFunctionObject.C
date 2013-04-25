@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchFunctionObject.H"
@@ -39,6 +39,8 @@ Contributors/Copyright:
 
 #include "volFields.H"
 #include "OStringStream.H"
+#include "wordReList.H"
+#include "stringListOps.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -68,7 +70,19 @@ patchFunctionObject::patchFunctionObject
 bool patchFunctionObject::start()
 {
     wordList oldPatchNames(patchNames_);
-    patchNames_ = wordList(dict_.lookup("patches"));
+    wordReList newPatches(dict_.lookup("patches"));
+    HashSet<word> patchNamesNew;
+
+    const fvMesh &mesh=refCast<const fvMesh>(obr_);
+    wordList allPatches(mesh.boundaryMesh().names());
+    forAll(newPatches,i) {
+        labelList IDs=findStrings(newPatches[i],allPatches);
+        forAll(IDs,j) {
+            patchNamesNew.insert(allPatches[IDs[j]]);
+        }
+    }
+
+    patchNames_=patchNamesNew.toc();
 
     // the patches changed
     if(patchNames_!=oldPatchNames) {
@@ -78,7 +92,6 @@ bool patchFunctionObject::start()
 
     patchIndizes_.setSize(patchNames_.size());
 
-    const fvMesh &mesh=refCast<const fvMesh>(obr_);
     forAll(patchNames_,i) {
         const word &name=patchNames_[i];
         patchIndizes_[i]=mesh.boundaryMesh().findPatchID(name);
