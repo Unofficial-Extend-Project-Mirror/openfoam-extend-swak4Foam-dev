@@ -55,6 +55,8 @@ StackExpressionResult::StackExpressionResult()
 :
     ExpressionResult()
 {
+    // this has to be reset every timestep to work
+    setNeedsReset(true);
 }
 
 StackExpressionResult::StackExpressionResult(
@@ -63,12 +65,16 @@ StackExpressionResult::StackExpressionResult(
 :
     ExpressionResult(rhs)
 {
+    // this has to be reset every timestep to work
+    setNeedsReset(true);
 }
 
 StackExpressionResult::StackExpressionResult(const dictionary &dict)
 :
     ExpressionResult(dict)
 {
+    // this has to be reset every timestep to work
+    setNeedsReset(true);
 }
 
 
