@@ -2029,3 +2029,7 @@ S_{expl} + S_{impl} T
      If one of the functionObjects for time-manipulation set the
      end-time and it is reached and this is no time for output a
      complete output of the fields is forced
+**** Function-objects based on =patch= from the =simpleFunctionObjects= now accept regular expression
+     This includes the =patchExpression=-functionObject. The supplied
+     list is now interpreted as a list of regular expressions and all
+     patches that match are included and processed
