@@ -97,7 +97,7 @@ geometry
 
     igloo
     {
-        type searchableSphere;
+        type searchableSphereWithFix;
         centre (0 0 0);
         radius 6;
     }
