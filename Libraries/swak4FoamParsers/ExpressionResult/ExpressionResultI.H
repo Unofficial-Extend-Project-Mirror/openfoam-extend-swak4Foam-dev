@@ -45,7 +45,8 @@ namespace Foam {
         valPtr_(NULL),
         isPoint_(false),
         isSingleValue_(true),
-        noReset_(false)
+        noReset_(false),
+        needsReset_(false)
     {
         if(debug) {
             Info << "ExpressionResult::ExpressionResult(const Field<Type>  &f)" << endl;
@@ -60,7 +61,8 @@ namespace Foam {
         valPtr_(NULL),
         isPoint_(false),
         isSingleValue_(true),
-        noReset_(false)
+        noReset_(false),
+        needsReset_(false)
     {
         if(debug) {
             Info << "ExpressionResult::ExpressionResult(autoPtr<Type> o)" << endl;
@@ -75,7 +77,8 @@ namespace Foam {
         valPtr_(NULL),
         isPoint_(false),
         isSingleValue_(true),
-        noReset_(false)
+        noReset_(false),
+        needsReset_(false)
     {
         if(debug) {
             Info << "ExpressionResult::ExpressionResult(const dimensioned<Type>  &f)" << endl;
@@ -93,7 +96,8 @@ namespace Foam {
         valPtr_(NULL),
         isPoint_(false),
         isSingleValue_(true),
-        noReset_(false)
+        noReset_(false),
+        needsReset_(false)
     {
         if(debug) {
             Info << "ExpressionResult::ExpressionResult(const Type &f, ...)" << endl;

@@ -4,6 +4,7 @@ Objects/planeSearchableSurface.C
 Objects/unitCylinderSearchableSurface.C
 Objects/searchableCylinderWithDirections.C
 Objects/searchableBoxWithDirections.C
+Objects/searchableSphereWithFix.C
 
 Transformations/transformationSearchableSurface.C
 Transformations/translateSearchableSurface.C

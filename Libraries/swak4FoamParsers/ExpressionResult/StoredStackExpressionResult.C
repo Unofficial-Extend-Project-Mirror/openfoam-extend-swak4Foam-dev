@@ -55,6 +55,8 @@ StoredStackExpressionResult::StoredStackExpressionResult()
 :
     StackExpressionResult()
 {
+    // reset the setting of the parent-class
+    setNeedsReset(false);
 }
 
 StoredStackExpressionResult::StoredStackExpressionResult(
@@ -63,6 +65,8 @@ StoredStackExpressionResult::StoredStackExpressionResult(
 :
     StackExpressionResult(rhs)
 {
+    // reset the setting of the parent-class
+    setNeedsReset(false);
 }
 
 StoredStackExpressionResult::StoredStackExpressionResult(const dictionary &dict)
@@ -73,6 +77,8 @@ StoredStackExpressionResult::StoredStackExpressionResult(const dictionary &dict)
         Info << "StoredStackExpressionResult::StoredStackExpressionResult(const dictionary &dict)" << endl;
         Info << "Value: " << (*this) << endl;
     }
+    // reset the setting of the parent-class
+    setNeedsReset(false);
 }
 
 

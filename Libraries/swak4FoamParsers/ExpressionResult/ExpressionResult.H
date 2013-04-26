@@ -114,16 +114,22 @@ class ExpressionResult
     // whether or not the variable will be reset
     bool noReset_;
 
+    // this overrides noReset_ but is only accessible for subclasses
+    bool needsReset_;
+
 protected:
 
     //- ugly workaround for templated methods not being virtual
     inline virtual ExpressionResult &toBeSet();
 
-    //- reset at new timestep according to type
-    void reset(bool force=false);
+    //- reset at new timestep according to type - true if it was actually reset
+    bool reset(bool force=false);
 
     //- reset at new timestep according to type
     virtual void resetInternal();
+
+    //- sets needsReset_
+    void setNeedsReset(bool val) { needsReset_=val; }
 
 public:
     //- Runtime type information

@@ -64,7 +64,8 @@ ExpressionResult::ExpressionResult()
     isPoint_(false),
     isSingleValue_(true),
     objectSize_(-1),
-    noReset_(false)
+    noReset_(false),
+    needsReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult()" << endl;
@@ -80,7 +81,8 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     isPoint_(false),
     isSingleValue_(true),
     objectSize_(-1),
-    noReset_(false)
+    noReset_(false),
+    needsReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
@@ -111,7 +113,8 @@ ExpressionResult::ExpressionResult(
     objectSize_(-1),
     noReset_(
         dict.lookupOrDefault<bool>("noReset",false)
-    )
+    ),
+    needsReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)" << endl;
@@ -259,13 +262,19 @@ void ExpressionResult::resetInternal() {
     clearResult();
 }
 
-void ExpressionResult::reset(bool force) {
+bool ExpressionResult::reset(bool force) {
     if(
         force
         ||
         !noReset_
+        ||
+        needsReset_
     ) {
         this->resetInternal();
+
+        return true;
+    } else {
+        return false;
     }
 }
 
