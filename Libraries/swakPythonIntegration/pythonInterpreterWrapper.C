@@ -237,7 +237,7 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
 
         "def dataFile(name):\n"
         "    import os\n"
-        "    d=os.path.join(caseDir,functionObjectName+'_data',timeName)\n"
+        "    d=os.path.join(caseDir,'postProcessing',functionObjectName+'_data',timeName)\n"
         "    makeDataDir(d)\n"
         "    return os.path.join(d,name)\n"
     );
