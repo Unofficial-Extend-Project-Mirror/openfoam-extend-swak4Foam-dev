@@ -115,6 +115,14 @@ void distributionFunctionObject::write() {
         writeADistribution(distSymmTensor_);
         writeADistribution(distSphericalTensor_);
     }
+
+    if(verbose()) {
+        reportADistribution(distScalar_);
+        reportADistribution(distVector_);
+        reportADistribution(distTensor_);
+        reportADistribution(distSymmTensor_);
+        reportADistribution(distSphericalTensor_);
+    }
 }
 
 wordList distributionFunctionObject::fileNames() {

@@ -458,11 +458,19 @@ functions
         fieldName p;
         distributionBinWidth 0.1;
         distributionMaxBinNr 5000;
+        verbose true;
     }
     distributionOfU {
         $distributionOfP;
 
         fieldName U;
+        distributionBinWidth 0.01;
+    }
+    distributionOfPhi {
+        $distributionOfP;
+
+        fieldName phi;
+        distributionBinWidth 1e-7;
     }
 };
 

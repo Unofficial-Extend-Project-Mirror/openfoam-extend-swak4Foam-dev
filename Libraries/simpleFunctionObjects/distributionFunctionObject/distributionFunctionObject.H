@@ -87,6 +87,9 @@ class distributionFunctionObject
     template<class Type>
     void writeADistribution(const autoPtr<SimpleDistribution<Type> > &pDist);
 
+    template<class Type>
+    void reportADistribution(const autoPtr<SimpleDistribution<Type> > &pDist);
+
     bool startup_;
     scalar startTime_;
 protected:

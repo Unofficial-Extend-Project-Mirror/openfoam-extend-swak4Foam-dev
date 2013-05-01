@@ -36,6 +36,7 @@ Contributors/Copyright:
 
 #include "distributionFunctionObject.H"
 #include "IOmanip.H"
+#include "Time.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -102,13 +103,18 @@ void distributionFunctionObject::writeATimeline(
     const SimpleDistribution<Type> &dist=pDist();
 
     for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        word name(this->baseName()+"_"+pTraits<Type>::componentNames[i]);
+        writeTime(name,this->time().value());
+
         List<scalar> data(2);
         data[0]=component(dist.mean(),i);
         data[1]=component(dist.median(),i);
+
         writeData(
-            this->baseName()+"_"+pTraits<Type>::componentNames[i],
+            name,
             data
         );
+        endData(name);
     }
 }
 
@@ -124,6 +130,22 @@ void distributionFunctionObject::writeADistribution(
     dist.write(
         this->dataDir()/(this->baseName()+"_distribution")
     );
+}
+
+template<class Type>
+void distributionFunctionObject::reportADistribution(
+    const autoPtr<SimpleDistribution<Type> > &pDist
+) {
+    if(!pDist.valid()) {
+        return;
+    }
+    const SimpleDistribution<Type> &dist=pDist();
+
+    Info<< regionString()
+        << " Distribution of " << this->baseName()
+        << "(" << pTraits<Type>::typeName << "): "
+        << dist.maxNrBins() << " bins. Mean: " << dist.mean()
+        << " Median: " << dist.median() << endl;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
