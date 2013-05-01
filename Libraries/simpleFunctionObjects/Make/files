@@ -3,6 +3,7 @@ SolverInfo/SolverInfo.C
 simpleFunctionObject/simpleFunctionObject.C
 simpleDataFunctionObject/simpleDataFunctionObject.C
 timelineFunctionObject/timelineFunctionObject.C
+distributionFunctionObject/distributionFunctionObject.C
 
 patch/patchFunctionObject/patchFunctionObject.C
 patch/patchFieldFunctionObject/patchFieldFunctionObject.C
@@ -16,6 +17,7 @@ volume/volumeAverageFunctionObject/volumeAverageFunctionObject.C
 volume/volumeFieldFunctionObject/volumeFieldFunctionObject.C
 volume/volumeIntegrateFunctionObject/volumeIntegrateFunctionObject.C
 volume/volumeMinMaxFunctionObject/volumeMinMaxFunctionObject.C
+volume/volumeDistributionFunctionObject/volumeDistributionFunctionObject.C
 
 misc/panicDump/panicDumpFunctionObject.C
 misc/listRegisteredObjects/listRegisteredObjectsFunctionObject.C

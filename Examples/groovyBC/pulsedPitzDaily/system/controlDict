@@ -46,7 +46,7 @@ timePrecision   6;
 runTimeModifiable yes;
 
 functions
-(
+{
     distance {
         // should  be the distance from the inlet. Currently wrong
         type solveLaplacianPDE;
@@ -450,7 +450,20 @@ functions
     // showRegistered {
     //     type listRegisteredObjects;
     // }
-);
+    distributionOfP {
+        type volumeDistribution;
+        outputInterval  10;
+        writeTimeline true;
+        writeDistribution true;
+        fieldName p;
+        distributionBinWidth 0.1;
+    }
+    distributionOfU {
+        $distributionOfP;
+
+        fieldName U;
+    }
+};
 
 libs (
     "libOpenFOAM.so"

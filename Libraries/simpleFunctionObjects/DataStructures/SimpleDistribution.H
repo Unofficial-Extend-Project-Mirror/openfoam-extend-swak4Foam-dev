@@ -29,74 +29,67 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    SimpleDistribution
 
 Description
-    Basis for the other function objects here. Creates the directory and the files
+    Encapsulates the regular Distribution-class to allow fast usage with fields
+    and parallelize
 
 SourceFiles
-    simpleFunctionObject.C
+    SimpleDistribution.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#ifndef SimpleDistribution_H
+#define SimpleDistribution_H
 
-#include "simpleFunctionObject.H"
+#include "Distribution.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class SimpleDistribution Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
+template<class Type>
+class SimpleDistribution
 :
-    public simpleFunctionObject
+    protected Distribution<Type>
 {
-    // Private Member Functions
+    // Private data
+
+   // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+    SimpleDistribution(const SimpleDistribution&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
-
-protected:
-
-    //- Get the path to the data directory
-    fileName dataDir();
-
-    //- Get the path to the base directory
-    fileName baseDir();
-
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
+    void operator=(const SimpleDistribution&);
 
 public:
 
-    //- Runtime type information
-    TypeName("simpleDataFunctionObject");
+    //- from a dictionary
+    SimpleDistribution(const dictionary &dict);
 
-
-    // Constructors
-
-    //- Construct from components
-    simpleDataFunctionObject
-    (
-        const word&,
-        const Time&,
-        const dictionary&
+    void calc(
+        const Field<Type> &values,
+        const scalarField &weights
     );
 
-    bool start();
+    Type mean() const { return Distribution<Type>::mean(); }
 
+    Type median() const { return Distribution<Type>::median(); }
+
+    void write(const fileName& filePrefix) const {
+        Distribution<Type>::write(filePrefix);
+    }
 };
 
 
@@ -104,8 +97,11 @@ public:
 
 } // End namespace Foam
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#ifdef NoRepository
+#   include "SimpleDistribution.C"
+#endif
+
 
 #endif
 

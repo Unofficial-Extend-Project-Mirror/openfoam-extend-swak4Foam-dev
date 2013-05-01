@@ -28,77 +28,76 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    simpleFunctionObject
-
-Description
-    Basis for the other function objects here. Creates the directory and the files
-
-SourceFiles
-    simpleFunctionObject.C
-
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#include "distributionFunctionObject.H"
+#include "IOmanip.H"
 
-#include "simpleFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-
+namespace Foam {
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class distributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
-:
-    public simpleFunctionObject
+template <typename Type>
+autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
+    const Field<Type> &values,
+    const Field<scalar> &weights
+)
 {
-    // Private Member Functions
+    clearDistributions();
 
-    //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
-
-    //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
-
-protected:
-
-    //- Get the path to the data directory
-    fileName dataDir();
-
-    //- Get the path to the base directory
-    fileName baseDir();
-
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
-
-public:
-
-    //- Runtime type information
-    TypeName("simpleDataFunctionObject");
-
-
-    // Constructors
-
-    //- Construct from components
-    simpleDataFunctionObject
-    (
-        const word&,
-        const Time&,
-        const dictionary&
+    autoPtr<SimpleDistribution<Type> > pDist(
+        new SimpleDistribution<Type>(
+            dict()
+        )
     );
 
-    bool start();
+    SimpleDistribution<Type> &dist=pDist();
 
-};
+    dist.calc(values,weights);
 
+    return pDist;
+}
+
+template<class Type>
+void distributionFunctionObject::writeATimeline(
+    const autoPtr<SimpleDistribution<Type> > &pDist
+) {
+    if(!pDist.valid()) {
+        return;
+    }
+    const SimpleDistribution<Type> &dist=pDist();
+
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        List<scalar> data(2);
+        data[0]=component(dist.mean(),i);
+        data[1]=component(dist.median(),i);
+        writeData(
+            this->baseName()+"_"+pTraits<Type>::componentNames[i],
+            data
+        );
+    }
+}
+
+template<class Type>
+void distributionFunctionObject::writeADistribution(
+    const autoPtr<SimpleDistribution<Type> > &pDist
+) {
+    if(!pDist.valid()) {
+        return;
+    }
+    const SimpleDistribution<Type> &dist=pDist();
+
+    dist.write(
+        this->dataDir()/(this->baseName()+"_distribution")
+    );
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -107,6 +106,5 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#endif
 
 // ************************************************************************* //

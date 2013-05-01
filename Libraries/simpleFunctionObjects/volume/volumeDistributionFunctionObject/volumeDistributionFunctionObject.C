@@ -28,85 +28,66 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    simpleFunctionObject
-
-Description
-    Basis for the other function objects here. Creates the directory and the files
-
-SourceFiles
-    simpleFunctionObject.C
-
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#include "volumeDistributionFunctionObject.H"
+#include "addToRunTimeSelectionTable.H"
 
-#include "simpleFunctionObject.H"
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "pointFields.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+    defineTypeNameAndDebug(volumeDistributionFunctionObject, 0);
 
-/*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
-\*---------------------------------------------------------------------------*/
-
-class simpleDataFunctionObject
-:
-    public simpleFunctionObject
-{
-    // Private Member Functions
-
-    //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
-
-    //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
-
-protected:
-
-    //- Get the path to the data directory
-    fileName dataDir();
-
-    //- Get the path to the base directory
-    fileName baseDir();
-
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
-
-public:
-
-    //- Runtime type information
-    TypeName("simpleDataFunctionObject");
-
-
-    // Constructors
-
-    //- Construct from components
-    simpleDataFunctionObject
+    addToRunTimeSelectionTable
     (
-        const word&,
-        const Time&,
-        const dictionary&
+        functionObject,
+        volumeDistributionFunctionObject,
+        dictionary
     );
 
-    bool start();
-
-};
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-} // End namespace Foam
+volumeDistributionFunctionObject::volumeDistributionFunctionObject
+(
+    const word& name,
+    const Time& t,
+    const dictionary& dict
+)
+:
+    distributionFunctionObject(name,t,dict),
+    fieldName_(dict.lookup("fieldName"))
+{
+}
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+word volumeDistributionFunctionObject::dirName()
+{
+    return typeName+"_"+fieldName_;
+}
+
+word volumeDistributionFunctionObject::baseName()
+{
+    return fieldName_;
+}
+
+void volumeDistributionFunctionObject::getDistribution()
+{
+    getDistributionInternal(distScalar_);
+}
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
+} // namespace Foam
 
 // ************************************************************************* //
