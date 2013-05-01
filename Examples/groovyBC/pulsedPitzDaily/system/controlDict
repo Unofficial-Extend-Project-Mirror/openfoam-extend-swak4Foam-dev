@@ -451,8 +451,8 @@ functions
     //     type listRegisteredObjects;
     // }
     distributionOfP {
-        type volumeDistribution;
-        outputInterval  10;
+        type fieldDistribution;
+        //        outputInterval  10;
         writeTimeline true;
         writeDistribution true;
         fieldName p;

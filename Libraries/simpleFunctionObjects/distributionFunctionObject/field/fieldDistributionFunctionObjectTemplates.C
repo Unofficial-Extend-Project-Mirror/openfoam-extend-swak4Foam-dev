@@ -29,65 +29,66 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "volumeDistributionFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
-
+#include "fieldDistributionFunctionObject.H"
 #include "volFields.H"
-#include "surfaceFields.H"
-#include "pointFields.H"
+#include "IOmanip.H"
+#include "fvMesh.H"
+#include "fvCFD.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(volumeDistributionFunctionObject, 0);
 
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        volumeDistributionFunctionObject,
-        dictionary
-    );
-
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-volumeDistributionFunctionObject::volumeDistributionFunctionObject
-(
-    const word& name,
-    const Time& t,
-    const dictionary& dict
-)
-:
-    distributionFunctionObject(name,t,dict),
-    fieldName_(dict.lookup("fieldName"))
-{
-}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-word volumeDistributionFunctionObject::dirName()
-{
-    return typeName+"_"+fieldName_;
+template <typename T>
+void fieldDistributionFunctionObject::getDistributionInternal(
+    autoPtr<SimpleDistribution<T> > &dist
+) {
+    const fvMesh &mesh=refCast<const fvMesh>(obr_);
+
+    typedef GeometricField<T,fvPatchField,volMesh> volTField;
+    typedef GeometricField<T,fvsPatchField,surfaceMesh> surfaceTField;
+    typedef GeometricField<T,pointPatchField,pointMesh> pointTField;
+
+    if(mesh.foundObject<volTField>(fieldName_)) {
+        dist=setData(
+            mesh.lookupObject<volTField>(
+                fieldName_
+            ).internalField(),
+            mesh.V()
+        );
+        return;
+    }
+    if(mesh.foundObject<surfaceTField>(fieldName_)) {
+        dist=setData(
+            mesh.lookupObject<surfaceTField>(
+                fieldName_
+            ).internalField(),
+            mesh.magSf()
+        );
+        return;
+    }
+    if(mesh.foundObject<pointTField>(fieldName_)) {
+        dist=setData(
+            mesh.lookupObject<pointTField>(
+                fieldName_
+            ).internalField(),
+            scalarField(mesh.nPoints(),1)
+        );
+        return;
+    }
 }
 
-word volumeDistributionFunctionObject::baseName()
-{
-    return fieldName_;
-}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-void volumeDistributionFunctionObject::getDistribution()
-{
-    getDistributionInternal(distScalar_);
-}
-
-
-} // namespace Foam
+} // End namespace Foam
 
 // ************************************************************************* //

@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    volumeDistributionFunctionObject
+    fieldDistributionFunctionObject
 
 Description
-    Distribution of a fields on the volume
+    Distribution of a fields
 
 SourceFiles
-    volumeDistributionFunctionObject.C
+    fieldDistributionFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,8 +43,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef volumeDistributionFunctionObject_H
-#define volumeDistributionFunctionObject_H
+#ifndef fieldDistributionFunctionObject_H
+#define fieldDistributionFunctionObject_H
 
 #include "distributionFunctionObject.H"
 
@@ -54,10 +54,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class volumeDistributionFunctionObject Declaration
+                           Class fieldDistributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class volumeDistributionFunctionObject
+class fieldDistributionFunctionObject
 :
     public distributionFunctionObject
 {
@@ -65,10 +65,10 @@ class volumeDistributionFunctionObject
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    volumeDistributionFunctionObject(const volumeDistributionFunctionObject&);
+    fieldDistributionFunctionObject(const fieldDistributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const volumeDistributionFunctionObject&);
+    void operator=(const fieldDistributionFunctionObject&);
 
     word fieldName_;
 
@@ -85,13 +85,13 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("volumeDistribution");
+    TypeName("fieldDistribution");
 
 
     // Constructors
 
     //- Construct from components
-    volumeDistributionFunctionObject
+    fieldDistributionFunctionObject
     (
         const word&,
         const Time&,
@@ -106,7 +106,7 @@ public:
 } // End namespace Foam
 
 #ifdef NoRepository
-#   include "volumeDistributionFunctionObjectTemplates.C"
+#   include "fieldDistributionFunctionObjectTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
