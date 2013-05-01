@@ -85,6 +85,10 @@ word fieldDistributionFunctionObject::baseName()
 void fieldDistributionFunctionObject::getDistribution()
 {
     getDistributionInternal(distScalar_);
+    getDistributionInternal(distVector_);
+    getDistributionInternal(distTensor_);
+    getDistributionInternal(distSymmTensor_);
+    getDistributionInternal(distSphericalTensor_);
 }
 
 
