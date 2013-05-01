@@ -126,9 +126,12 @@ void distributionFunctionObject::writeADistribution(
         return;
     }
     const SimpleDistribution<Type> &dist=pDist();
+    fileName theDir(this->baseDir()/"distributions"/obr().time().timeName());
+
+    mkDir(theDir);
 
     dist.write(
-        this->dataDir()/(this->baseName()+"_distribution")
+        theDir/(this->baseName()+"_distribution")
     );
 }
 

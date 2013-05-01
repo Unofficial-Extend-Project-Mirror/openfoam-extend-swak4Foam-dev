@@ -71,7 +71,7 @@ class simpleDataFunctionObject
 protected:
 
     //- Get the path to the data directory
-    fileName dataDir();
+    virtual fileName dataDir();
 
     //- Get the path to the base directory
     fileName baseDir();

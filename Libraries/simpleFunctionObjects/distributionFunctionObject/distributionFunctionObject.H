@@ -91,7 +91,7 @@ class distributionFunctionObject
     void reportADistribution(const autoPtr<SimpleDistribution<Type> > &pDist);
 
     bool startup_;
-    scalar startTime_;
+    word startTime_;
 protected:
 
     autoPtr<SimpleDistribution<scalar> > distScalar_;
@@ -107,6 +107,8 @@ protected:
     );
 
     void clearDistributions();
+
+    virtual fileName dataDir();
 
 public:
 

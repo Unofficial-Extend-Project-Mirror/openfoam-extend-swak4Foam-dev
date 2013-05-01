@@ -63,8 +63,20 @@ distributionFunctionObject::distributionFunctionObject
         readBool(dict.lookup("writeDistribution"))
     ),
     startup_(false),
-    startTime_(-1)
+    startTime_("none")
 {
+    if(writeTimeline_ && writeDistribution_) {
+        WarningIn("distributionFunctionObject::distributionFunctionObject")
+            << "Both 'writeTimeline' and 'writeDistribution' set. "
+                << "This is usually not a good idea because of the amount of data written"
+                << endl;
+    }
+    if(!writeTimeline_ && writeDistribution_) {
+        WarningIn("distributionFunctionObject::distributionFunctionObject")
+            << "Both 'writeTimeline' and 'writeDistribution' not set. "
+                << "This makes calculating the distribution futile"
+                << endl;
+    }
 }
 
 
@@ -80,7 +92,7 @@ void distributionFunctionObject::clearDistributions() {
 
 bool distributionFunctionObject::start() {
     startup_=true;
-    startTime_=time().value();
+    startTime_=time().timeName();
 
     return true;
 }
@@ -89,6 +101,15 @@ void distributionFunctionObject::flush() {
 
     if(writeTimeline()) {
         timelineFunctionObject::flush();
+    }
+}
+
+fileName distributionFunctionObject::dataDir()
+{
+    if(startup_) {
+        return baseDir()/startTime_;
+    } else {
+        return timelineFunctionObject::dataDir();
     }
 }
 
