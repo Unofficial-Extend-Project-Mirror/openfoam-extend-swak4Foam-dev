@@ -76,7 +76,7 @@ class SimpleDistribution
 public:
 
     //- from a dictionary
-    SimpleDistribution(const dictionary &dict);
+    SimpleDistribution(const scalar binSize);
 
     void calc(
         const Field<Type> &values,
@@ -90,6 +90,9 @@ public:
     void write(const fileName& filePrefix) const {
         Distribution<Type>::write(filePrefix);
     }
+
+    label maxNrBins() const;
+
 };
 
 

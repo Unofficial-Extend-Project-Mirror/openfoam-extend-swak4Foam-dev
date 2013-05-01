@@ -52,15 +52,42 @@ autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
 {
     clearDistributions();
 
-    autoPtr<SimpleDistribution<Type> > pDist(
-        new SimpleDistribution<Type>(
-            dict()
-        )
+    scalar binSize=readScalar(dict().lookup("distributionBinWidth"));
+    label binNrMax=dict().lookupOrDefault<label>(
+        "distributionMaxBinNr",
+        1000
     );
 
-    SimpleDistribution<Type> &dist=pDist();
+    autoPtr<SimpleDistribution<Type> > pDist;
 
-    dist.calc(values,weights);
+    bool goOn=true;
+    while(goOn) {
+        goOn=false;
+
+        pDist.reset(
+            new SimpleDistribution<Type>(
+                binSize
+            )
+        );
+
+        SimpleDistribution<Type> &dist=pDist();
+
+        dist.calc(values,weights);
+
+        if(dist.maxNrBins()>binNrMax) {
+            scalar newBinSize=binSize*(1.1*dist.maxNrBins())/binNrMax;
+            WarningIn("distributionFunctionObject::setData")
+                << "Number of bin " << dist.maxNrBins()
+                    << " exceeds allowed number "
+                    << binNrMax << ". Increasing binSize from " << binSize
+                    << " to " << newBinSize << endl
+                    << "If you want to increase the maximum number of bins "
+                    << "set the variable 'distributionMaxBinNr' to a higher value"
+                    << endl;
+            binSize=newBinSize;
+            goOn=true;
+        }
+    }
 
     return pDist;
 }

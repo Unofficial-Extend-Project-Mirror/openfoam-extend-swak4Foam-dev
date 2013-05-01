@@ -41,12 +41,27 @@ namespace Foam {
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-SimpleDistribution<Type>::SimpleDistribution(const dictionary& dict)
+SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 :
     Distribution<Type>(
-        pTraits<Type>::one*readScalar(dict.lookup("distributionBinWidth"))
+        pTraits<Type>::one*binSize
     )
 {
+}
+
+template <typename Type>
+label SimpleDistribution<Type>::maxNrBins() const
+{
+    label maxBin=0;
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        Pair<label> lim=this->validLimits(i);
+        label spread=lim.second()-lim.first();
+        if(spread>maxBin) {
+            maxBin=spread;
+        }
+    }
+
+    return maxBin;
 }
 
 template<class Type>
