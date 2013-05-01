@@ -195,8 +195,8 @@ stringList distributionFunctionObject::columnNames() {
     DynamicList<string> names;
     names.append("mean");
     names.append("median");
-    // names.append("min");
-    // names.append("max");
+    names.append("min");
+    names.append("max");
 
     return stringList(names);
 }

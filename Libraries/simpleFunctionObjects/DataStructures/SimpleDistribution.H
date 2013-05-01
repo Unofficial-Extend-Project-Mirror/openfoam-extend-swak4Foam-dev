@@ -87,6 +87,10 @@ public:
 
     Type median() const { return Distribution<Type>::median(); }
 
+    Type min() const;
+
+    Type max() const;
+
     void write(const fileName& filePrefix) const {
         Distribution<Type>::write(filePrefix);
     }

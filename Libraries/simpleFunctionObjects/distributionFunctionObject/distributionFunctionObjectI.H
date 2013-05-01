@@ -106,9 +106,11 @@ void distributionFunctionObject::writeATimeline(
         word name(this->baseName()+"_"+pTraits<Type>::componentNames[i]);
         writeTime(name,this->time().value());
 
-        List<scalar> data(2);
+        List<scalar> data(4);
         data[0]=component(dist.mean(),i);
         data[1]=component(dist.median(),i);
+        data[2]=component(dist.min(),i);
+        data[3]=component(dist.max(),i);
 
         writeData(
             name,
@@ -148,7 +150,8 @@ void distributionFunctionObject::reportADistribution(
         << " Distribution of " << this->baseName()
         << "(" << pTraits<Type>::typeName << "): "
         << dist.maxNrBins() << " bins. Mean: " << dist.mean()
-        << " Median: " << dist.median() << endl;
+        << " Median: " << dist.median()
+        << " Min: " << dist.min() << " Max: " << dist.max() << endl;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

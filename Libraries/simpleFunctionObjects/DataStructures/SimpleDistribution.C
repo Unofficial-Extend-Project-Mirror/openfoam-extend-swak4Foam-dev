@@ -64,6 +64,32 @@ label SimpleDistribution<Type>::maxNrBins() const
     return maxBin;
 }
 
+template <typename Type>
+Type SimpleDistribution<Type>::min() const
+{
+    Type val(pTraits<Type>::zero);
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        label index=this->validLimits(i).first();
+        label key=this->keys(i)[index];
+        setComponent(val,i)=component(this->binWidth(),i)*key;
+    }
+
+    return val;
+}
+
+template <typename Type>
+Type SimpleDistribution<Type>::max() const
+{
+    Type val(pTraits<Type>::zero);
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        label index=this->validLimits(i).second();
+        label key=this->keys(i)[index];
+        setComponent(val,i)=component(this->binWidth(),i)*(key+1);
+    }
+
+    return val;
+}
+
 template<class Type>
 void SimpleDistribution<Type>::calc(
     const Field<Type> &values,
