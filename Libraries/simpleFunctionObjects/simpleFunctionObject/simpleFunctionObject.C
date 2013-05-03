@@ -157,7 +157,8 @@ bool simpleFunctionObject::outputTime()
             break;
         case ocmDeltaT:
             {
-                scalar now=time_.value();
+                // factor (1-SMALL) is necessary to 'hit' exact timesteps
+                scalar now=time_.value()*(1-SMALL);
                 scalar dt=time_.deltaT().value();
                 label stepNow=label(now/outputDeltaT_);
                 label stepNext=label((now+dt)/outputDeltaT_);
