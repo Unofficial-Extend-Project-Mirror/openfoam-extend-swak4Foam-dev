@@ -1924,3 +1924,12 @@ S_{expl} + S_{impl} T
      This includes the =patchExpression=-functionObject. The supplied
      list is now interpreted as a list of regular expressions and all
      patches that match are included and processed
+**** More flexible output control for functionObjects based on =simpleFunctionObjects=
+     An optional parameter =outputControlMode= now allows control on
+     when the function object will be executed. Possible values are:
+     - timestep :: Every =outputInterval= timesteps the object will
+                   be executed. This is the default behaviour with an
+                   interval $1$
+     - deltaT :: Approximately every =outputDeltaT= times it will be
+                 executed. The nearest possible timestep is used
+     - outputTime :: Executed whenever a regular output is scheduled

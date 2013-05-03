@@ -460,6 +460,7 @@ functions
     distributionOfP {
         type fieldDistribution;
         //        outputInterval  10;
+        outputControlMode outputTime;
         writeTimeline true;
         writeDistribution true;
         fieldName p;
@@ -481,6 +482,8 @@ functions
     }
     wallDistributionP {
         type patchFieldDistribution;
+        outputControlMode deltaT;
+        outputDeltaT 5e-5;
         writeTimeline true;
         writeDistribution true;
         fieldName p;
@@ -493,6 +496,8 @@ functions
     }
     lowVelocityLogK {
         type swakExpressionDistribution;
+        outputControlMode deltaT;
+        outputDeltaT 5e-5;
         writeTimeline true;
         writeDistribution true;
         verbose true;

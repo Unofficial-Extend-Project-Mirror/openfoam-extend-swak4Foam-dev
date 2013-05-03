@@ -52,6 +52,7 @@ Contributors/Copyright:
 #include "HashPtrTable.H"
 #include "boolList.H"
 #include "Field.H"
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,6 +69,13 @@ class simpleFunctionObject
 :
     public functionObject
 {
+public:
+    enum outputControlMode {
+        ocmTimestep,
+        ocmDeltaT,
+        ocmOutputTime
+    };
+private:
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
@@ -90,10 +98,19 @@ class simpleFunctionObject
     //- how many time-steps since last output
     label timeSteps_;
 
+    //- possible outputControl-modes
+    static const NamedEnum<outputControlMode,3> outputControlModeNames_;
+    outputControlMode outputControlMode_;
+
     //- how many time-steps between outputs
     label outputInterval_;
 
+    //- deltaT for output
+    scalar outputDeltaT_;
+
     const Time& time_;
+
+    scalar lastWrite_;
 
 protected:
 
