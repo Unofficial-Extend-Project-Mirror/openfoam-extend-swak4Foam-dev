@@ -114,6 +114,8 @@ fileName distributionFunctionObject::dataDir()
 }
 
 void distributionFunctionObject::write() {
+    clearDistributions();
+
     getDistribution();
 
     if(writeTimeline() && startup_) {
@@ -121,28 +123,30 @@ void distributionFunctionObject::write() {
     }
     startup_=false;
 
-    if(writeTimeline()) {
-        writeATimeline(distScalar_);
-        writeATimeline(distVector_);
-        writeATimeline(distTensor_);
-        writeATimeline(distSymmTensor_);
-        writeATimeline(distSphericalTensor_);
-    }
+    if(Pstream::master()) {
+        if(writeTimeline()) {
+            writeATimeline(distScalar_);
+            writeATimeline(distVector_);
+            writeATimeline(distTensor_);
+            writeATimeline(distSymmTensor_);
+            writeATimeline(distSphericalTensor_);
+        }
 
-    if(writeDistribution()) {
-        writeADistribution(distScalar_);
-        writeADistribution(distVector_);
-        writeADistribution(distTensor_);
-        writeADistribution(distSymmTensor_);
-        writeADistribution(distSphericalTensor_);
-    }
+        if(writeDistribution()) {
+            writeADistribution(distScalar_);
+            writeADistribution(distVector_);
+            writeADistribution(distTensor_);
+            writeADistribution(distSymmTensor_);
+            writeADistribution(distSphericalTensor_);
+        }
 
-    if(verbose()) {
-        reportADistribution(distScalar_);
-        reportADistribution(distVector_);
-        reportADistribution(distTensor_);
-        reportADistribution(distSymmTensor_);
-        reportADistribution(distSphericalTensor_);
+        if(verbose()) {
+            reportADistribution(distScalar_);
+            reportADistribution(distVector_);
+            reportADistribution(distTensor_);
+            reportADistribution(distSymmTensor_);
+            reportADistribution(distSphericalTensor_);
+        }
     }
 }
 
