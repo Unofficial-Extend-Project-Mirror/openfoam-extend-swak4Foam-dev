@@ -1905,6 +1905,10 @@ S_{expl} + S_{impl} T
      =simpleFunctionObjects= lists all the objects currently
      registered with the mesh. Mainly used for debugging ("Which
      fields are currently available?")
+**** Function object that only executes its children if the run is serial/parallel
+     The new functionObject =executeIfParallelSerial= allows
+     specifying if a list of function objects should only be run if
+     the simulation is running in serial or parallel.
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be

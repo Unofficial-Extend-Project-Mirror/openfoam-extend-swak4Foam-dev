@@ -392,7 +392,12 @@ functions
     //     type writeAndEndPython;
     //     conditionCode "return runTime>4e-5";
     // }
-    doWithPython {
+    onlySerial {
+      type executeIfParallelSerial;
+      readDuringConstruction true;
+      runIfParallel false;
+      functions {
+       doWithPython {
         type executeIfFunctionObjectPresent;
         functions {
             doWithNumpy {
@@ -446,6 +451,8 @@ functions
         }
         readDuringConstruction true;
         functionObjectName executeIfPython;
+       }
+      }
     }
     // showRegistered {
     //     type listRegisteredObjects;
