@@ -6,6 +6,7 @@ timelineFunctionObject/timelineFunctionObject.C
 
 distributionFunctionObject/distributionFunctionObject.C
 distributionFunctionObject/field/fieldDistributionFunctionObject.C
+distributionFunctionObject/patchField/patchFieldDistributionFunctionObject.C
 
 patch/patchFunctionObject/patchFunctionObject.C
 patch/patchFieldFunctionObject/patchFieldFunctionObject.C

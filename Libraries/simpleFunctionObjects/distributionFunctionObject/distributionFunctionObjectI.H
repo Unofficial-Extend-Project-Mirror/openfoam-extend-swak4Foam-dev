@@ -51,7 +51,7 @@ autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
     const Field<scalar> &weights
 )
 {
-    clearDistributions();
+    //    clearDistributions();
 
     scalar binSize=readScalar(dict().lookup("distributionBinWidth"));
     label binNrMax=dict().lookupOrDefault<label>(

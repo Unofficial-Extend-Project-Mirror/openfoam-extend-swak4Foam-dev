@@ -49,6 +49,20 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 {
 }
 
+template<class Type>
+SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
+:
+    Distribution<Type>(o)
+{
+}
+
+template<class Type>
+SimpleDistribution<Type>::SimpleDistribution(const SimpleDistribution<Type> &o)
+:
+    Distribution<Type>(o)
+{
+}
+
 template <typename Type>
 label SimpleDistribution<Type>::maxNrBins() const
 {
@@ -114,6 +128,25 @@ void SimpleDistribution<Type>::calc(
 
     Distribution<Type> &myself=*this;
     reduce(myself,plusOp<Distribution<Type> >());
+}
+
+template<class Type>
+void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
+{
+    Distribution<Type>::operator=(other);
+}
+
+template<class Type>
+SimpleDistribution<Type> operator+
+(
+    const SimpleDistribution<Type>&sa,
+    const SimpleDistribution<Type>&sb
+)
+{
+    return
+        reinterpret_cast<const Distribution<Type>&>(sa)
+        +
+        reinterpret_cast<const Distribution<Type>&>(sb);
 }
 
 }

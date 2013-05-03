@@ -68,15 +68,21 @@ class SimpleDistribution
    // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    SimpleDistribution(const SimpleDistribution&);
+    //    SimpleDistribution(const SimpleDistribution&);
 
     //- Disallow default bitwise assignment
-    void operator=(const SimpleDistribution&);
+    //    void operator=(const SimpleDistribution&);
 
 public:
 
     //- from a dictionary
     SimpleDistribution(const scalar binSize);
+
+    //- from a base class
+    SimpleDistribution(const Distribution<Type> &);
+
+    //- direct copy
+    SimpleDistribution(const SimpleDistribution<Type> &);
 
     void calc(
         const Field<Type> &values,
@@ -97,7 +103,18 @@ public:
 
     label maxNrBins() const;
 
+    // Member Operators
+
+    void operator=(const SimpleDistribution<Type>&);
+
 };
+
+template<class Type>
+SimpleDistribution<Type> operator+
+(
+    const SimpleDistribution<Type>&,
+    const SimpleDistribution<Type>&
+);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

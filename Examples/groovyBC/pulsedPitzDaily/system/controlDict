@@ -472,6 +472,18 @@ functions
         fieldName phi;
         distributionBinWidth 1e-7;
     }
+    wallDistributionP {
+        type patchFieldDistribution;
+        writeTimeline true;
+        writeDistribution true;
+        fieldName p;
+        patchNames (
+            ".+Wall"
+        );
+        distributionBinWidth 0.1;
+        distributionMaxBinNr 100;
+        verbose true;
+    }
 };
 
 libs (

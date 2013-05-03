@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    fieldDistributionFunctionObject
+    patchFieldDistributionFunctionObject
 
 Description
-    Distribution of a field on the interior
+    Distribution of a field on a patch
 
 SourceFiles
-    fieldDistributionFunctionObject.C
+    patchFieldDistributionFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,10 +43,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef fieldDistributionFunctionObject_H
-#define fieldDistributionFunctionObject_H
+#ifndef patchFieldDistributionFunctionObject_H
+#define patchFieldDistributionFunctionObject_H
 
-#include "distributionFunctionObject.H"
+#include "fieldDistributionFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,23 +54,25 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class fieldDistributionFunctionObject Declaration
+                           Class patchFieldDistributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class fieldDistributionFunctionObject
+class patchFieldDistributionFunctionObject
 :
-    public distributionFunctionObject
+    public fieldDistributionFunctionObject
 {
 
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    fieldDistributionFunctionObject(const fieldDistributionFunctionObject&);
+    patchFieldDistributionFunctionObject(const patchFieldDistributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const fieldDistributionFunctionObject&);
+    void operator=(const patchFieldDistributionFunctionObject&);
 
-    word fieldName_;
+    wordList patchNames_;
+
+    labelList patchIDs_;
 
     template <typename T>
     void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
@@ -82,18 +84,16 @@ protected:
 
     virtual void getDistribution();
 
-    const word &fieldName() const { return fieldName_; }
-
 public:
 
     //- Runtime type information
-    TypeName("fieldDistribution");
+    TypeName("patchFieldDistribution");
 
 
     // Constructors
 
     //- Construct from components
-    fieldDistributionFunctionObject
+    patchFieldDistributionFunctionObject
     (
         const word&,
         const Time&,
@@ -108,7 +108,7 @@ public:
 } // End namespace Foam
 
 #ifdef NoRepository
-#   include "fieldDistributionFunctionObjectTemplates.C"
+#   include "patchFieldDistributionFunctionObjectTemplates.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
