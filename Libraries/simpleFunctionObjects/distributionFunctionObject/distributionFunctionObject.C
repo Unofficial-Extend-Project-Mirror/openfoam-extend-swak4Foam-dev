@@ -201,6 +201,7 @@ stringList distributionFunctionObject::columnNames() {
     names.append("median");
     names.append("min");
     names.append("max");
+    names.append("totalWeight");
 
     return stringList(names);
 }

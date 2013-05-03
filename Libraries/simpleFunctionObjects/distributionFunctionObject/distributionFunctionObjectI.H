@@ -106,11 +106,12 @@ void distributionFunctionObject::writeATimeline(
         word name(this->baseName()+"_"+pTraits<Type>::componentNames[i]);
         writeTime(name,this->time().value());
 
-        List<scalar> data(4);
-        data[0]=component(dist.mean(),i);
-        data[1]=component(dist.median(),i);
-        data[2]=component(dist.min(),i);
-        data[3]=component(dist.max(),i);
+        DynamicList<scalar> data;
+        data.append(component(dist.mean(),i));
+        data.append(component(dist.median(),i));
+        data.append(component(dist.min(),i));
+        data.append(component(dist.max(),i));
+        data.append(dist.totalWeight(i));
 
         writeData(
             name,

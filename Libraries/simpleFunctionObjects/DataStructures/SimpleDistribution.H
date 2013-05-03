@@ -93,6 +93,9 @@ public:
 
     Type median() const { return Distribution<Type>::median(); }
 
+    scalar totalWeight(direction cmpt) const
+        { return Distribution<Type>::totalWeight(cmpt); }
+
     Type min() const;
 
     Type max() const;
