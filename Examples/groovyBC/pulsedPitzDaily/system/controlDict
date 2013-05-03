@@ -523,6 +523,20 @@ functions
         weight "vol()";
         distributionBinWidth 0.1;
     }
+    wallVelocityGradient {
+        type patchExpressionDistribution;
+        outputControlMode deltaT;
+        outputDeltaT 5e-5;
+        writeTimeline true;
+        writeDistribution true;
+        verbose true;
+        expression "snGrad(U)";
+        distributionBinWidth 1;
+        distributionMaxBinNr 100;
+        patchNames (
+            ".+Wall"
+        );
+    }
 };
 
 libs (
