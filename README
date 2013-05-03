@@ -1909,6 +1909,34 @@ S_{expl} + S_{impl} T
      The new functionObject =executeIfParallelSerial= allows
      specifying if a list of function objects should only be run if
      the simulation is running in serial or parallel.
+**** Function objects to calculate distributions
+     There are now four function objects that calculate distributions
+     of fields. Distributions are calculated based on the
+     =Distribution=-class that is part of OpenFOAM starting from
+     version 2.0 and uses a weighting for added values. There are two
+     kinds of output
+     - a timeline with the key characteristics of the distribution
+     - directories with the distributions at specific times. These
+       are written "raw" and accumulated
+     For tensors and vectors these are output separately for every
+     component.  These outputs can be switched on and off
+     separately. The user has to specify the bin-width for the
+     classification. If the bin-width is too small and the
+     distribution becomes too small it is scaled down.
+
+     The two function-objects in the =simpleFunctionObjects= are:
+     - fieldDistribution :: distribution of field values weighted by
+          the cell volume
+     - patchFieldDistribution :: distribution of a field on a number
+          of patches weighted by the face area
+     In =swakSimpleFunctionObjects= the two functionObjects are:
+     - swakExpressionDistribution :: distribution of an =expression=
+          on some entity. The user also has to specify and expression
+          =weight= with the weight of each value and a logical
+          expression =mask=. Values are only used if =mask= is =true=
+          at the place
+     - patchExpressionDistribution :: distribution of =expression= on
+          a number of patches. As the weight the face-area is used
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be

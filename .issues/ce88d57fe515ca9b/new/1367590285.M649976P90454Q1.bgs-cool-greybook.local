@@ -1,0 +1,14 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 03 May 2013 16:08:42 +0200
+Subject: Re: Function object that calculates a distribution
+Message-Id: <ce88d57fe515ca9b-e4642ef1e1695116-artemis@bgs-cool-greybook.local>
+References: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+
+Distributions are ready and will be merged into the main line
+
+What remains to do is "average value by". The idea would be to have
+two distributions. One =weight*value= the other =weight=. Both over
+=xvalue=. The average would then be =sum(weight*value)= divided by
+=sum(weight)=. This should be possible as the =xvalue= bins should be
+the same
