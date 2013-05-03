@@ -29,25 +29,26 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    SimpleDistribution
+    swakExpressionDistributionFunctionObject
 
 Description
-    Encapsulates the regular Distribution-class to allow fast usage with fields
-    and parallelize
+    Distribution of a swak-expression
 
 SourceFiles
-    SimpleDistribution.C
+    swakExpressionDistributionFunctionObject.C
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SimpleDistribution_H
-#define SimpleDistribution_H
+#ifndef swakExpressionDistributionFunctionObject_H
+#define swakExpressionDistributionFunctionObject_H
 
-#include "Distribution.H"
+#include "distributionFunctionObject.H"
+
+#include "CommonValueExpressionDriver.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,86 +56,79 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SimpleDistribution Declaration
+                           Class swakExpressionDistributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
-class SimpleDistribution
+class swakExpressionDistributionFunctionObject
 :
-    protected Distribution<Type>
+    public distributionFunctionObject
 {
-    // Private data
 
-   // Private Member Functions
+    // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    //    SimpleDistribution(const SimpleDistribution&);
+    swakExpressionDistributionFunctionObject(const swakExpressionDistributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    //    void operator=(const SimpleDistribution&);
+    void operator=(const swakExpressionDistributionFunctionObject&);
+
+
+    //- the expression that is to be evaluated
+    string expression_;
+
+    //- the expression for the weight
+    string weightExpression_;
+
+    //- the expression for the mask
+    string maskExpression_;
+
+    //- the expression driver
+    autoPtr<CommonValueExpressionDriver> driver_;
+
+    template <typename T>
+    void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
+
+    autoPtr<Field<scalar> > weightValues_;
+
+    autoPtr<Field<bool> > maskValues_;
+
+protected:
+
+    word dirName();
+
+    virtual word baseName();
+
+    virtual void getDistribution();
 
 public:
 
-    //- from a dictionary
-    SimpleDistribution(const scalar binSize);
+    //- Runtime type information
+    TypeName("swakExpressionDistribution");
 
-    //- from a base class
-    SimpleDistribution(const Distribution<Type> &);
 
-    //- direct copy
-    SimpleDistribution(const SimpleDistribution<Type> &);
+    // Constructors
 
-    void calc(
-        const Field<Type> &values,
-        const scalarField &weights
+    //- Construct from components
+    swakExpressionDistributionFunctionObject
+    (
+        const word&,
+        const Time&,
+        const dictionary&
     );
 
-   void calc(
-        const Field<Type> &values,
-        const scalarField &weights,
-        const Field<bool> &mask
-    );
-
-    Type mean() const { return Distribution<Type>::mean(); }
-
-    Type median() const { return Distribution<Type>::median(); }
-
-    scalar totalWeight(direction cmpt) const
-        { return Distribution<Type>::totalWeight(cmpt); }
-
-    Type min() const;
-
-    Type max() const;
-
-    void write(const fileName& filePrefix) const {
-        Distribution<Type>::write(filePrefix);
-    }
-
-    label maxNrBins() const;
-
-    // Member Operators
-
-    void operator=(const SimpleDistribution<Type>&);
-
+    void write();
 };
-
-template<class Type>
-SimpleDistribution<Type> operator+
-(
-    const SimpleDistribution<Type>&,
-    const SimpleDistribution<Type>&
-);
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 #ifdef NoRepository
-#   include "SimpleDistribution.C"
+#   include "swakExpressionDistributionFunctionObjectTemplates.C"
 #endif
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif
 

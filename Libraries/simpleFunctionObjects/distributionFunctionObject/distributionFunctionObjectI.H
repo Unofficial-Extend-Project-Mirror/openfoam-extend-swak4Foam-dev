@@ -51,8 +51,22 @@ autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
     const Field<scalar> &weights
 )
 {
-    //    clearDistributions();
+    Field<bool> mask(values.size(),true);
 
+    return setData(
+        values,
+        weights,
+        mask
+    );
+}
+
+template <typename Type>
+autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
+    const Field<Type> &values,
+    const Field<scalar> &weights,
+    const Field<bool> &mask
+)
+{
     scalar binSize=readScalar(dict().lookup("distributionBinWidth"));
     label binNrMax=dict().lookupOrDefault<label>(
         "distributionMaxBinNr",
@@ -73,7 +87,7 @@ autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
 
         SimpleDistribution<Type> &dist=pDist();
 
-        dist.calc(values,weights);
+        dist.calc(values,weights,mask);
 
         if(dist.maxNrBins()>binNrMax) {
             scalar newBinSize=binSize*(1.1*dist.maxNrBins())/binNrMax;

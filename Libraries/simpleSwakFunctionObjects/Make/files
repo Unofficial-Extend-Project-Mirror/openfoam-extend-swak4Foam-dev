@@ -1,6 +1,7 @@
 general/swakExpressionFunctionObject.C
 general/dumpSwakExpressionFunctionObject.C
 general/dumpSwakGlobalVariableFunctionObject.C
+general/swakExpressionDistributionFunctionObject.C
 
 general/writeAndEndSwakExpressionFunctionObject.C
 

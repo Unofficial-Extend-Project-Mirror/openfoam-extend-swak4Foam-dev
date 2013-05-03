@@ -491,6 +491,26 @@ functions
         distributionMaxBinNr 100;
         verbose true;
     }
+    lowVelocityLogK {
+        type swakExpressionDistribution;
+        writeTimeline true;
+        writeDistribution true;
+        verbose true;
+        expression "log(k)";
+        mask "mag(U)<1";
+        weight "vol()";
+        valueType internalField;
+        distributionBinWidth 0.1;
+    }
+    centerVelocityDistribution {
+        $lowVelocityLogK;
+        valueType cellZone;
+        zoneName center;
+        expression "U";
+        mask "true";
+        weight "vol()";
+        distributionBinWidth 0.1;
+    }
 };
 
 libs (

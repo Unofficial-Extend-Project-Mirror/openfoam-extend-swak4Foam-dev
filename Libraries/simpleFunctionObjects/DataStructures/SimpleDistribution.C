@@ -131,6 +131,40 @@ void SimpleDistribution<Type>::calc(
 }
 
 template<class Type>
+void SimpleDistribution<Type>::calc(
+    const Field<Type> &values,
+    const scalarField &weights,
+    const Field<bool> &mask
+)
+{
+    if(
+        values.size()!=weights.size()
+        ||
+        values.size()!=mask.size()
+    ) {
+        FatalErrorIn("SimpleDistribution::calc - with mask")
+            << "Size " << values.size() << " of the values and size "
+                << weights.size() << " of the weights or the size of the mask "
+                << mask.size() << " differ"
+                << endl
+                << exit(FatalError);
+    }
+
+    this->clear();
+    forAll(values,i) {
+        if(mask[i]) {
+            this->add(
+                values[i],
+                pTraits<Type>::one*weights[i]
+            );
+        }
+    }
+
+    Distribution<Type> &myself=*this;
+    reduce(myself,plusOp<Distribution<Type> >());
+}
+
+template<class Type>
 void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
 {
     Distribution<Type>::operator=(other);

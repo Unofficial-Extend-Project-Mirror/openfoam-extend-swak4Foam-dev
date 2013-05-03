@@ -106,6 +106,13 @@ protected:
         const Field<scalar> &weights
     );
 
+    template<class Type>
+    autoPtr<SimpleDistribution<Type> > setData(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask
+    );
+
     void clearDistributions();
 
     virtual fileName dataDir();
