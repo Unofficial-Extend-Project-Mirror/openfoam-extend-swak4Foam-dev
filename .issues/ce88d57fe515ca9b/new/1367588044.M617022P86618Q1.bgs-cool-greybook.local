@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 03 May 2013 15:33:15 +0200
+Subject: Re: Function object that calculates a distribution
+Message-Id: <ce88d57fe515ca9b-85bd983d491e082d-artemis@bgs-cool-greybook.local>
+References: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+
+Now allows calculation of expressions in the general case and on
+multiple patches

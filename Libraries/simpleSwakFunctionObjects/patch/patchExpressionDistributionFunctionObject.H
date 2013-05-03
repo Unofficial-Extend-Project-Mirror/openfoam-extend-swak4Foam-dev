@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    patchExpressionDistributionFunctionObject
 
 Description
-    Basis for the other function objects here. Creates the directory and the files
+    Distribution of an expression on a patch
 
 SourceFiles
-    simpleFunctionObject.C
+    patchExpressionDistributionFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,52 +43,66 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#ifndef patchExpressionDistributionFunctionObject_H
+#define patchExpressionDistributionFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "distributionFunctionObject.H"
+#include "PatchValueExpressionDriver.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class patchExpressionDistributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
+class patchExpressionDistributionFunctionObject
 :
-    public simpleFunctionObject
+    public distributionFunctionObject
 {
+
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+    patchExpressionDistributionFunctionObject(const patchExpressionDistributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
+    void operator=(const patchExpressionDistributionFunctionObject&);
 
+    wordList patchNames_;
+
+    labelList patchIDs_;
+
+    template <typename T>
+    void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
 protected:
 
-    //- Get the path to the data directory
-    virtual fileName dataDir();
+    word dirName();
 
-    //- Get the path to the base directory
-    fileName baseDir();
+    virtual word baseName();
 
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
+    virtual void getDistribution();
+
+    //- the expression that is to be evaluated
+    string expression_;
+
+    //- the specification
+    dictionary data_;
+
+    PtrList<PatchValueExpressionDriver> drivers_;
 
 public:
 
     //- Runtime type information
-    TypeName("simpleDataFunctionObject");
+    TypeName("patchExpressionDistribution");
 
 
     // Constructors
 
     //- Construct from components
-    simpleDataFunctionObject
+    patchExpressionDistributionFunctionObject
     (
         const word&,
         const Time&,
@@ -97,6 +111,7 @@ public:
 
     bool start();
 
+    void write();
 };
 
 
@@ -104,6 +119,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#   include "patchExpressionDistributionFunctionObjectTemplates.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

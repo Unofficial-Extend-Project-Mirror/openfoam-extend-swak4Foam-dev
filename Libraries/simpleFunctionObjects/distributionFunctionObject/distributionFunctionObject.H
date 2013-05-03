@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    distributionFunctionObject
 
 Description
-    Basis for the other function objects here. Evaluates the most common options
+    Basis for function objects that generate distributions
 
 SourceFiles
-    simpleFunctionObject.C
+    distributionFunctionObject.C
 
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,16 +43,18 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleFunctionObject_H
-#define simpleFunctionObject_H
+#ifndef distributionFunctionObject_H
+#define distributionFunctionObject_H
 
-#include "functionObject.H"
-#include "dictionary.H"
-#include "OFstream.H"
-#include "HashPtrTable.H"
-#include "boolList.H"
-#include "Field.H"
+#include "timelineFunctionObject.H"
 #include "NamedEnum.H"
+
+#include "SimpleDistribution.H"
+
+#include "vector.H"
+#include "tensor.H"
+#include "symmTensor.H"
+#include "sphericalTensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,91 +62,73 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleFunctionObject Declaration
+                           Class distributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-    class objectRegistry;
-
-class simpleFunctionObject
+class distributionFunctionObject
 :
-    public functionObject
+    public timelineFunctionObject
 {
-public:
-    enum outputControlMode {
-        ocmTimestep,
-        ocmDeltaT,
-        ocmOutputTime
-    };
-private:
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleFunctionObject(const simpleFunctionObject&);
+    distributionFunctionObject(const distributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleFunctionObject&);
+    void operator=(const distributionFunctionObject&);
 
-    // Private data
+    bool writeTimeline_;
 
-    //- Do output on the terminal
-    bool verbose_;
+    bool writeDistribution_;
 
-    //- Write debug-information to the terminal
-    bool writeDebug_;
+    template<class Type>
+    void writeATimeline(const autoPtr<SimpleDistribution<Type> > &pDist);
 
-    //- Time after which calculation should start
-    scalar after_;
+    template<class Type>
+    void writeADistribution(const autoPtr<SimpleDistribution<Type> > &pDist);
 
-    //- how many time-steps since last output
-    label timeSteps_;
+    template<class Type>
+    void reportADistribution(const autoPtr<SimpleDistribution<Type> > &pDist);
 
-    //- possible outputControl-modes
-    static const NamedEnum<outputControlMode,3> outputControlModeNames_;
-    outputControlMode outputControlMode_;
-
-    //- how many time-steps between outputs
-    label outputInterval_;
-
-    //- deltaT for output
-    scalar outputDeltaT_;
-
-    const Time& time_;
-
-    scalar lastWrite_;
-
+    bool startup_;
+    word startTime_;
 protected:
 
-    dictionary dict_;
+    autoPtr<SimpleDistribution<scalar> > distScalar_;
+    autoPtr<SimpleDistribution<vector> > distVector_;
+    autoPtr<SimpleDistribution<tensor> > distTensor_;
+    autoPtr<SimpleDistribution<symmTensor> > distSymmTensor_;
+    autoPtr<SimpleDistribution<sphericalTensor> > distSphericalTensor_;
 
-    word regionName_;
+    template<class Type>
+    autoPtr<SimpleDistribution<Type> > setData(
+        const Field<Type> &values,
+        const Field<scalar> &weights
+    );
 
-    string regionString_;
+    template<class Type>
+    autoPtr<SimpleDistribution<Type> > setData(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask
+    );
 
-    const char *regionString() const { return regionString_.c_str(); }
+    void clearDistributions();
 
-    const objectRegistry& obr_;
-
-    //- Do output on the terminal
-    bool verbose() const { return verbose_; }
-
-    //- Write debug-information to tthe terminal
-    bool writeDebug() const { return writeDebug_; }
-
-    //- Do output this time?
-    virtual bool outputTime();
+    virtual fileName dataDir();
 
 public:
 
     //- Runtime type information
-    TypeName("simpleFunctionObject");
+    TypeName("distributionFunctionObject");
 
 
     // Constructors
 
     //- Construct from components
-    simpleFunctionObject
+    distributionFunctionObject
     (
-        const word&,
+        const word &name,
         const Time&,
         const dictionary&
     );
@@ -152,31 +136,26 @@ public:
 
     // Member Functions
 
-    //- start is called at the start of the time-loop
-    virtual bool start();
+    bool writeTimeline() const { return writeTimeline_; }
 
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
+    bool writeDistribution() const { return writeDistribution_; }
 
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
-
-    //- Sample and write
-    virtual void write()=0;
-
-    //- Optional stuff to do after write
     virtual void flush();
 
-    //- the actual time
-    const Time &time() const { return time_; }
+    virtual void write();
 
-    //- the actual time
-    scalar after() const { return after_; }
+    virtual bool start();
 
-    const objectRegistry &obr() const { return obr_; }
+protected:
+    virtual stringList columnNames();
 
-    const dictionary &dict() const { return dict_; }
+    virtual wordList fileNames();
 
+    virtual word baseName()=0;
+
+    virtual stringList componentNames();
+
+    virtual void getDistribution()=0;
 };
 
 
@@ -186,6 +165,10 @@ public:
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "distributionFunctionObjectI.H"
+#endif
 
 #endif
 

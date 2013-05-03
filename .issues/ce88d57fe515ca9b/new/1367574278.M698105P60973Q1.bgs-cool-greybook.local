@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 03 May 2013 11:43:31 +0200
+Subject: Re: Function object that calculates a distribution
+Message-Id: <ce88d57fe515ca9b-a7a655bd18867869-artemis@bgs-cool-greybook.local>
+References: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+
+Extended to calculate on multiple patches
+
+Also: now runs in parallel

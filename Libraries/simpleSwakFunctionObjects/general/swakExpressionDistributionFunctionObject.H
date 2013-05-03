@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    swakExpressionDistributionFunctionObject
 
 Description
-    Basis for the other function objects here. Creates the directory and the files
+    Distribution of a swak-expression
 
 SourceFiles
-    simpleFunctionObject.C
+    swakExpressionDistributionFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,60 +43,80 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#ifndef swakExpressionDistributionFunctionObject_H
+#define swakExpressionDistributionFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "distributionFunctionObject.H"
+
+#include "CommonValueExpressionDriver.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class swakExpressionDistributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
+class swakExpressionDistributionFunctionObject
 :
-    public simpleFunctionObject
+    public distributionFunctionObject
 {
+
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+    swakExpressionDistributionFunctionObject(const swakExpressionDistributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
+    void operator=(const swakExpressionDistributionFunctionObject&);
+
+
+    //- the expression that is to be evaluated
+    string expression_;
+
+    //- the expression for the weight
+    string weightExpression_;
+
+    //- the expression for the mask
+    string maskExpression_;
+
+    //- the expression driver
+    autoPtr<CommonValueExpressionDriver> driver_;
+
+    template <typename T>
+    void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
+
+    autoPtr<Field<scalar> > weightValues_;
+
+    autoPtr<Field<bool> > maskValues_;
 
 protected:
 
-    //- Get the path to the data directory
-    virtual fileName dataDir();
+    word dirName();
 
-    //- Get the path to the base directory
-    fileName baseDir();
+    virtual word baseName();
 
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
+    virtual void getDistribution();
 
 public:
 
     //- Runtime type information
-    TypeName("simpleDataFunctionObject");
+    TypeName("swakExpressionDistribution");
 
 
     // Constructors
 
     //- Construct from components
-    simpleDataFunctionObject
+    swakExpressionDistributionFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    bool start();
-
+    void write();
 };
 
 
@@ -104,6 +124,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#   include "swakExpressionDistributionFunctionObjectTemplates.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

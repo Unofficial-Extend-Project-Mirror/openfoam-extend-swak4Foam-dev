@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 30 Apr 2013 19:41:48 +0200
+Subject: Re: Function object that calculates a distribution
+Message-Id: <ce88d57fe515ca9b-b5f742a89f2bc0fa-artemis@bgs-cool-greybook.local>
+References: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+
+Use the Distribution class that is in 2.0.x and following. Copy it
+into the 1.x-branch
