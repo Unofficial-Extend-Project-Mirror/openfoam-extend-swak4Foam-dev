@@ -511,6 +511,13 @@ functions
         weight "vol()";
         distributionBinWidth 0.1;
     }
+    noDistributionOutput {
+        $lowVelocityLogK;
+        expression "mag(U)";
+        mask "false";
+        weight "vol()";
+        distributionBinWidth 0.1;
+    }
 };
 
 libs (

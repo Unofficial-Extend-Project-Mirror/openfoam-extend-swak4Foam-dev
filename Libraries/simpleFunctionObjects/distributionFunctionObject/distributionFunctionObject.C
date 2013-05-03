@@ -123,6 +123,51 @@ void distributionFunctionObject::write() {
     }
     startup_=false;
 
+    bool zeroDistribution=false;
+
+    if(
+        distScalar_.valid()
+        &&
+        distScalar_->maxNrBins()<=0
+    ) {
+        zeroDistribution=true;
+    }
+    if(
+        distVector_.valid()
+        &&
+        distVector_->maxNrBins()<=0
+    ) {
+        zeroDistribution=true;
+    }
+    if(
+        distTensor_.valid()
+        &&
+        distTensor_->maxNrBins()<=0
+    ) {
+        zeroDistribution=true;
+    }
+    if(
+        distSymmTensor_.valid()
+        &&
+        distSymmTensor_->maxNrBins()<=0
+    ) {
+        zeroDistribution=true;
+    }
+    if(
+        distSphericalTensor_.valid()
+        &&
+        distSphericalTensor_->maxNrBins()<=0
+    ) {
+        zeroDistribution=true;
+    }
+
+    if(zeroDistribution) {
+        WarningIn("distributionFunctionObject::write")
+            << "Distribution for " << name() << " has size 0. "
+                << "Doing nothing"
+                << endl;
+        return;
+    }
     if(Pstream::master()) {
         if(writeTimeline()) {
             writeATimeline(distScalar_);
