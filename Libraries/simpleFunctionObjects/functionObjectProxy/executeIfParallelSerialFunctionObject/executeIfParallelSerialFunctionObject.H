@@ -29,73 +29,73 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    executeIfParallelSerialFunctionObject
 
 Description
-    Basis for the other function objects here. Creates the directory and the files
+    This function objects only executes its children only if the run is
+    serial/parallel
 
 SourceFiles
-    simpleFunctionObject.C
+    executeIfParallelSerialFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#ifndef executeIfParallelSerialFunctionObject_H
+#define executeIfParallelSerialFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "conditionalFunctionObjectListProxy.H"
+#include "regExp.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class executeIfParallelSerialFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
+class executeIfParallelSerialFunctionObject
 :
-    public simpleFunctionObject
+    public conditionalFunctionObjectListProxy
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+    executeIfParallelSerialFunctionObject(const executeIfParallelSerialFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
+    void operator=(const executeIfParallelSerialFunctionObject&);
+
+    //- execute only if this is a parallel run
+    bool runIfParallel_;
 
 protected:
 
-    //- Get the path to the data directory
-    virtual fileName dataDir();
-
-    //- Get the path to the base directory
-    fileName baseDir();
-
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
+    //- the actual conition that determines whether the FO should be executed
+    virtual bool condition();
 
 public:
 
     //- Runtime type information
-    TypeName("simpleDataFunctionObject");
+    TypeName("executeIfParallelSerial");
 
 
     // Constructors
 
     //- Construct from components
-    simpleDataFunctionObject
+    executeIfParallelSerialFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    bool start();
+    bool read(const dictionary& dict);
 
 };
 

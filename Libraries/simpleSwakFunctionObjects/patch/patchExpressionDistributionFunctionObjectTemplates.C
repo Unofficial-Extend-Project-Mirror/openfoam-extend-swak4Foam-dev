@@ -28,85 +28,57 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    simpleFunctionObject
-
-Description
-    Basis for the other function objects here. Creates the directory and the files
-
-SourceFiles
-    simpleFunctionObject.C
-
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#include "fieldDistributionFunctionObject.H"
+#include "volFields.H"
+#include "IOmanip.H"
+#include "fvMesh.H"
+#include "fvCFD.H"
 
-#include "simpleFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-/*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
-\*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
-:
-    public simpleFunctionObject
-{
-    // Private Member Functions
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-    //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+template <typename T>
+void patchExpressionDistributionFunctionObject::getDistributionInternal(
+    autoPtr<SimpleDistribution<T> > &dist
+) {
+    if(drivers_[0].getResultType()!=pTraits<T>::typeName) {
+        return;
+    }
+    bool firstTime=true;
 
-    //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
+    forAll(patchIDs_,i) {
+        autoPtr<SimpleDistribution<T> > partial;
 
-protected:
+        partial=setData(
+            drivers_[i].getResult<T>()(),
+            drivers_[i].patch().magSf()
+        );
 
-    //- Get the path to the data directory
-    virtual fileName dataDir();
-
-    //- Get the path to the base directory
-    fileName baseDir();
-
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
-
-public:
-
-    //- Runtime type information
-    TypeName("simpleDataFunctionObject");
-
-
-    // Constructors
-
-    //- Construct from components
-    simpleDataFunctionObject
-    (
-        const word&,
-        const Time&,
-        const dictionary&
-    );
-
-    bool start();
-
-};
-
+        if(partial.valid()) {
+            if(firstTime) {
+                firstTime=false;
+                dist=partial;
+            } else {
+                SimpleDistribution<T> &d=dist();
+                d=d+partial();
+            }
+        }
+    }
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
 
 // ************************************************************************* //

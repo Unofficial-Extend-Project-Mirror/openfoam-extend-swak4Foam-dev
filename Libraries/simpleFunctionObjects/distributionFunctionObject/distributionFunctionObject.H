@@ -29,74 +29,133 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    distributionFunctionObject
 
 Description
-    Basis for the other function objects here. Creates the directory and the files
+    Basis for function objects that generate distributions
 
 SourceFiles
-    simpleFunctionObject.C
+    distributionFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#ifndef distributionFunctionObject_H
+#define distributionFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "timelineFunctionObject.H"
+#include "NamedEnum.H"
+
+#include "SimpleDistribution.H"
+
+#include "vector.H"
+#include "tensor.H"
+#include "symmTensor.H"
+#include "sphericalTensor.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class distributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
+class distributionFunctionObject
 :
-    public simpleFunctionObject
+    public timelineFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+    distributionFunctionObject(const distributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
+    void operator=(const distributionFunctionObject&);
 
+    bool writeTimeline_;
+
+    bool writeDistribution_;
+
+    template<class Type>
+    void writeATimeline(const autoPtr<SimpleDistribution<Type> > &pDist);
+
+    template<class Type>
+    void writeADistribution(const autoPtr<SimpleDistribution<Type> > &pDist);
+
+    template<class Type>
+    void reportADistribution(const autoPtr<SimpleDistribution<Type> > &pDist);
+
+    bool startup_;
+    word startTime_;
 protected:
 
-    //- Get the path to the data directory
+    autoPtr<SimpleDistribution<scalar> > distScalar_;
+    autoPtr<SimpleDistribution<vector> > distVector_;
+    autoPtr<SimpleDistribution<tensor> > distTensor_;
+    autoPtr<SimpleDistribution<symmTensor> > distSymmTensor_;
+    autoPtr<SimpleDistribution<sphericalTensor> > distSphericalTensor_;
+
+    template<class Type>
+    autoPtr<SimpleDistribution<Type> > setData(
+        const Field<Type> &values,
+        const Field<scalar> &weights
+    );
+
+    template<class Type>
+    autoPtr<SimpleDistribution<Type> > setData(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask
+    );
+
+    void clearDistributions();
+
     virtual fileName dataDir();
-
-    //- Get the path to the base directory
-    fileName baseDir();
-
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
 
 public:
 
     //- Runtime type information
-    TypeName("simpleDataFunctionObject");
+    TypeName("distributionFunctionObject");
 
 
     // Constructors
 
     //- Construct from components
-    simpleDataFunctionObject
+    distributionFunctionObject
     (
-        const word&,
+        const word &name,
         const Time&,
         const dictionary&
     );
 
-    bool start();
 
+    // Member Functions
+
+    bool writeTimeline() const { return writeTimeline_; }
+
+    bool writeDistribution() const { return writeDistribution_; }
+
+    virtual void flush();
+
+    virtual void write();
+
+    virtual bool start();
+
+protected:
+    virtual stringList columnNames();
+
+    virtual wordList fileNames();
+
+    virtual word baseName()=0;
+
+    virtual stringList componentNames();
+
+    virtual void getDistribution()=0;
 };
 
 
@@ -106,6 +165,10 @@ public:
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "distributionFunctionObjectI.H"
+#endif
 
 #endif
 

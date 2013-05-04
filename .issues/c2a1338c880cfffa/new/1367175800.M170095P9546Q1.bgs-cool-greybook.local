@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 28 Apr 2013 21:03:01 +0200
+Subject: Re: -region-option has no effect with FSF in dictionary-mode
+Message-Id: <c2a1338c880cfffa-fef59b76de983596-artemis@bgs-cool-greybook.local>
+References: <c2a1338c880cfffa-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <c2a1338c880cfffa-0-artemis@bgs-cool-greybook.local>
+
+It has. The reporter didn't read the error message

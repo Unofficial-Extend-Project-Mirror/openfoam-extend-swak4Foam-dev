@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    fieldDistributionFunctionObject
 
 Description
-    Basis for the other function objects here. Creates the directory and the files
+    Distribution of a field on the interior
 
 SourceFiles
-    simpleFunctionObject.C
+    fieldDistributionFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,59 +43,62 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#ifndef fieldDistributionFunctionObject_H
+#define fieldDistributionFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "distributionFunctionObject.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class fieldDistributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
+class fieldDistributionFunctionObject
 :
-    public simpleFunctionObject
+    public distributionFunctionObject
 {
+
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+    fieldDistributionFunctionObject(const fieldDistributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
+    void operator=(const fieldDistributionFunctionObject&);
 
+    word fieldName_;
+
+    template <typename T>
+    void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
 protected:
 
-    //- Get the path to the data directory
-    virtual fileName dataDir();
+    word dirName();
 
-    //- Get the path to the base directory
-    fileName baseDir();
+    virtual word baseName();
 
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
+    virtual void getDistribution();
+
+    const word &fieldName() const { return fieldName_; }
 
 public:
 
     //- Runtime type information
-    TypeName("simpleDataFunctionObject");
+    TypeName("fieldDistribution");
 
 
     // Constructors
 
     //- Construct from components
-    simpleDataFunctionObject
+    fieldDistributionFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
-
-    bool start();
 
 };
 
@@ -104,6 +107,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#   include "fieldDistributionFunctionObjectTemplates.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

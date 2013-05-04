@@ -2037,6 +2037,38 @@ S_{expl} + S_{impl} T
      =simpleFunctionObjects= lists all the objects currently
      registered with the mesh. Mainly used for debugging ("Which
      fields are currently available?")
+**** Function object that only executes its children if the run is serial/parallel
+     The new functionObject =executeIfParallelSerial= allows
+     specifying if a list of function objects should only be run if
+     the simulation is running in serial or parallel.
+**** Function objects to calculate distributions
+     There are now four function objects that calculate distributions
+     of fields. Distributions are calculated based on the
+     =Distribution=-class that is part of OpenFOAM starting from
+     version 2.0 and uses a weighting for added values. There are two
+     kinds of output
+     - a timeline with the key characteristics of the distribution
+     - directories with the distributions at specific times. These
+       are written "raw" and accumulated
+     For tensors and vectors these are output separately for every
+     component.  These outputs can be switched on and off
+     separately. The user has to specify the bin-width for the
+     classification. If the bin-width is too small and the
+     distribution becomes too small it is scaled down.
+
+     The two function-objects in the =simpleFunctionObjects= are:
+     - fieldDistribution :: distribution of field values weighted by
+          the cell volume
+     - patchFieldDistribution :: distribution of a field on a number
+          of patches weighted by the face area
+     In =swakSimpleFunctionObjects= the two functionObjects are:
+     - swakExpressionDistribution :: distribution of an =expression=
+          on some entity. The user also has to specify and expression
+          =weight= with the weight of each value and a logical
+          expression =mask=. Values are only used if =mask= is =true=
+          at the place
+     - patchExpressionDistribution :: distribution of =expression= on
+          a number of patches. As the weight the face-area is used
 *** Enhancements
 **** Global variables now can be subclasses of =ExpressionResult=
      This allows other variable types like stored variables to be
@@ -2052,3 +2084,12 @@ S_{expl} + S_{impl} T
      This includes the =patchExpression=-functionObject. The supplied
      list is now interpreted as a list of regular expressions and all
      patches that match are included and processed
+**** More flexible output control for functionObjects based on =simpleFunctionObjects=
+     An optional parameter =outputControlMode= now allows control on
+     when the function object will be executed. Possible values are:
+     - timestep :: Every =outputInterval= timesteps the object will
+                   be executed. This is the default behaviour with an
+                   interval $1$
+     - deltaT :: Approximately every =outputDeltaT= times it will be
+                 executed. The nearest possible timestep is used
+     - outputTime :: Executed whenever a regular output is scheduled

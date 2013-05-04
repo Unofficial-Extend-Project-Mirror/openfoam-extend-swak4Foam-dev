@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    simpleFunctionObject
+    patchFieldDistributionFunctionObject
 
 Description
-    Basis for the other function objects here. Creates the directory and the files
+    Distribution of a field on a patch
 
 SourceFiles
-    simpleFunctionObject.C
+    patchFieldDistributionFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -43,59 +43,62 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef simpleDataFunctionObject_H
-#define simpleDataFunctionObject_H
+#ifndef patchFieldDistributionFunctionObject_H
+#define patchFieldDistributionFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "fieldDistributionFunctionObject.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class simpleDataFunctionObject Declaration
+                           Class patchFieldDistributionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class simpleDataFunctionObject
+class patchFieldDistributionFunctionObject
 :
-    public simpleFunctionObject
+    public fieldDistributionFunctionObject
 {
+
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    simpleDataFunctionObject(const simpleDataFunctionObject&);
+    patchFieldDistributionFunctionObject(const patchFieldDistributionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simpleDataFunctionObject&);
+    void operator=(const patchFieldDistributionFunctionObject&);
 
+    wordList patchNames_;
+
+    labelList patchIDs_;
+
+    template <typename T>
+    void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
 protected:
 
-    //- Get the path to the data directory
-    virtual fileName dataDir();
+    word dirName();
 
-    //- Get the path to the base directory
-    fileName baseDir();
+    virtual word baseName();
 
-    //- Name of the sub-dictionary of the case
-    virtual word dirName()=0;
+    virtual void getDistribution();
 
 public:
 
     //- Runtime type information
-    TypeName("simpleDataFunctionObject");
+    TypeName("patchFieldDistribution");
 
 
     // Constructors
 
     //- Construct from components
-    simpleDataFunctionObject
+    patchFieldDistributionFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
-
-    bool start();
 
 };
 
@@ -104,6 +107,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#   include "patchFieldDistributionFunctionObjectTemplates.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
