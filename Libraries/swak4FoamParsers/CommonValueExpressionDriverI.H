@@ -233,10 +233,19 @@ namespace Foam {
 
     template<class Type>
     bool CommonValueExpressionDriver::isField(
-        const word &name,
+        const word &inName,
         bool isPoint
     ) const
     {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::isField. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
         typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
         typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
         typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
@@ -958,50 +967,6 @@ namespace Foam {
         return lookup_.found(name);
     }
 
-    /*    template<class Type>
-    Field<Type> *CommonValueExpressionDriver::getField(const word &name)
-    {
-        typedef GeometricField<Type,fvPatchField,volMesh> localVolField;
-        typedef GeometricField<Type,fvsPatchField,surfaceMesh> localSurfaceField;
-        typedef GeometricField<Type,pointPatchField,pointMesh> localPointField;
-
-        if(variables_.found(name)) {
-            return variables_[name].getResult<Type>(true).ptr();
-        }
-
-        if(
-            this->mesh().
-            objectRegistry::foundObject<localVolField>(name)
-        ) {
-            const typename localVolField::PatchFieldType &pField=
-                patch_.lookupPatchField<localVolField,Type>(name);
-            return new Field<Type>(pField);
-        } else if(
-            this->mesh().
-            objectRegistry::foundObject<localSurfaceField>(name)
-        ) {
-            const typename localSurfaceField::PatchFieldType &pField=
-                patch_.lookupPatchField<localSurfaceField,Type>(name);
-            return new Field<Type>(pField);
-        } else if(
-            this->mesh().
-            objectRegistry::foundObject<localPointField>(name)
-        ) {
-            const typename localPointField::PatchFieldType &pField=
-                patch_.lookupPatchField<localPointField,Type>(name);
-            return new Field<Type>(pField.patchInternalField());
-        } else{
-            FatalErrorIn("Field<Type> *CommonValueExpressionDriver::getField(const word &name)")
-                << "No field of type " << pTraits<Type>::typeName
-                    << " with the name " << name << " found\n"
-                    << endl
-                    << exit(FatalError);
-
-            return NULL;
-        }
-    }
-        */
-
     template <class Op,class Type>
     tmp<Field<bool> > CommonValueExpressionDriver::doCompare(
         const Field<Type> &a,
@@ -1132,16 +1097,6 @@ namespace Foam {
         const Type tSum=gSum(weights*result);
         return tSum/wSum;
     }
-
-    // inline HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables()
-    // {
-    //     return variables_;
-    // }
-
-    // inline const HashTable<ExpressionResult,word> &CommonValueExpressionDriver::variables() const
-    // {
-    //     return variables_;
-    // }
 
 }
 
