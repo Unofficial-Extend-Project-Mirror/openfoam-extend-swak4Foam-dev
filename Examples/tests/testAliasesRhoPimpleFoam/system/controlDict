@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rhoPimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1;
+
+deltaT          0.01;
+
+writeControl    runTime;
+
+writeInterval   0.1;
+
+purgeWrite      0;
+
+// writeFormat     binary;
+writeFormat     ascii;
+
+writePrecision  10;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  no;
+
+maxCo           0.3;
+
+maxDeltaT       1;
+
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libgroovyBC.so"
+);
+
+functions {
+    HeatLoss
+    {
+        type patchExpression;
+        patches ( ".+Wall.*" );
+        verbose true;
+        aliases {
+            al thermo:alpha;
+                }
+        expression"(al+alphat)*area()*snGrad(h)";
+        accumulations (sum);
+        //        debugCommonDriver 1;
+    }
+};
+
+// ************************************************************************* //
