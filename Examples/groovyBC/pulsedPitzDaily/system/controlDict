@@ -46,7 +46,7 @@ timePrecision   6;
 runTimeModifiable yes;
 
 functions
-(
+{
     distance {
         // should  be the distance from the inlet. Currently wrong
         type solveLaplacianPDE;
@@ -288,11 +288,15 @@ functions
     {
         type swakExpression;
         valueType internalField;
-        expression "mag(ddt(U))";
+        expression "mag(ddt(foo))";
         accumulations (
             average
             max
         );
+        aliases {
+            foo U;
+            bar p;
+        }
         verbose true;
     }
     pressureChangeInTime
@@ -388,7 +392,12 @@ functions
     //     type writeAndEndPython;
     //     conditionCode "return runTime>4e-5";
     // }
-    doWithPython {
+    onlySerial {
+      type executeIfParallelSerial;
+      readDuringConstruction true;
+      runIfParallel false;
+      functions {
+       doWithPython {
         type executeIfFunctionObjectPresent;
         functions {
             doWithNumpy {
@@ -442,8 +451,93 @@ functions
         }
         readDuringConstruction true;
         functionObjectName executeIfPython;
+       }
+      }
     }
-);
+    // showRegistered {
+    //     type listRegisteredObjects;
+    // }
+    distributionOfP {
+        type fieldDistribution;
+        //        outputInterval  10;
+        outputControlMode outputTime;
+        writeTimeline true;
+        writeDistribution true;
+        fieldName p;
+        distributionBinWidth 0.1;
+        distributionMaxBinNr 5000;
+        verbose true;
+    }
+    distributionOfU {
+        $distributionOfP;
+
+        fieldName U;
+        distributionBinWidth 0.01;
+    }
+    distributionOfPhi {
+        $distributionOfP;
+
+        fieldName phi;
+        distributionBinWidth 1e-7;
+    }
+    wallDistributionP {
+        type patchFieldDistribution;
+        outputControlMode deltaT;
+        outputDeltaT 5e-5;
+        writeTimeline true;
+        writeDistribution true;
+        fieldName p;
+        patchNames (
+            ".+Wall"
+        );
+        distributionBinWidth 0.1;
+        distributionMaxBinNr 100;
+        verbose true;
+    }
+    lowVelocityLogK {
+        type swakExpressionDistribution;
+        outputControlMode deltaT;
+        outputDeltaT 5e-5;
+        writeTimeline true;
+        writeDistribution true;
+        verbose true;
+        expression "log(max(k,1e-12))";
+        mask "mag(U)<1";
+        weight "vol()";
+        valueType internalField;
+        distributionBinWidth 0.1;
+    }
+    centerVelocityDistribution {
+        $lowVelocityLogK;
+        valueType cellZone;
+        zoneName center;
+        expression "U";
+        mask "true";
+        weight "vol()";
+        distributionBinWidth 0.1;
+    }
+    noDistributionOutput {
+        $lowVelocityLogK;
+        expression "mag(U)";
+        mask "false";
+        weight "vol()";
+        distributionBinWidth 0.1;
+    }
+    wallVelocityGradient {
+        type patchExpressionDistribution;
+        outputControlMode deltaT;
+        outputDeltaT 5e-5;
+        writeTimeline true;
+        writeDistribution true;
+        verbose true;
+        expression "snGrad(U)";
+        distributionBinWidth 1;
+        distributionMaxBinNr 100;
+        patchNames (
+            ".+Wall"
+        );
+    }
+};
 
 libs (
     "libOpenFOAM.so"

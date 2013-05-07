@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 26 Apr 2013 14:09:16 +0200
+State: fixed
+Subject: Redirect outputs to postprocessing-Directory
+Message-Id: <f07c8214fc84bb79-0-artemis@bgs-cool-greybook.local>
+
+This is more in tune with the behaviour in OF 2.2

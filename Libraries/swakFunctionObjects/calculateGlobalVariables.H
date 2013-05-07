@@ -70,7 +70,9 @@ class calculateGlobalVariables
     //- Disallow default bitwise assignment
     void operator=(const calculateGlobalVariables&);
 
-    //- the expression driver
+    const objectRegistry& obr_;
+
+   //- the expression driver
     autoPtr<CommonValueExpressionDriver> driver_;
 
     //- the global namespace the variables should go to

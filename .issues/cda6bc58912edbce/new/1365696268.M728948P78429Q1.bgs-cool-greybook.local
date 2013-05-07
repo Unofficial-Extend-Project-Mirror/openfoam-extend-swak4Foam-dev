@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 11 Apr 2013 17:58:05 +0200
+State: new
+Subject: Real support for fv::option
+Message-Id: <cda6bc58912edbce-0-artemis@bgs-cool-greybook.local>
+
+Check whether the current workaround is reall usable in the
+fv::option-framework
+
+Write a new object that can register to multiple equations but shares
+a common set of variables. This should allow common setting of
+conditions while still being consistent

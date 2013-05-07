@@ -30,6 +30,7 @@ License
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Georg Reiss <georg.reiss@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -40,10 +41,14 @@ Contributors/Copyright:
 #include "symmTensor.H"
 #include "sphericalTensor.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(StoredExpressionResult,0);
 
+addToRunTimeSelectionTable(ExpressionResult, StoredExpressionResult, dictionary);
+addToRunTimeSelectionTable(ExpressionResult, StoredExpressionResult, nothing);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -103,7 +108,8 @@ void StoredExpressionResult::operator=(const StoredExpressionResult& rhs)
 
 void StoredExpressionResult::operator=(const ExpressionResult& rhs)
 {
-    static_cast<ExpressionResult&>(*this)=rhs;
+    //    static_cast<ExpressionResult&>(*this)=rhs;
+   this->ExpressionResult::operator=(rhs);
 }
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //

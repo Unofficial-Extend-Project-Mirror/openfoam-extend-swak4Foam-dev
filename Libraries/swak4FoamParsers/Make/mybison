@@ -1,7 +1,6 @@
 .SUFFIXES: .yy
 
-yytoo = rm -f $*.C $*.tab.hh; mkdir $$$$; cd $$$$; bison -ra -v $(YYPREFIX) -d ../$$SOURCE ; mv *.tab.cc ../$*.C ; sed -i.bak "s/position.hh/$(*F)_position.hh/" location.hh ; mv location.hh ../lnInclude/$(*F)_location.hh ; mv stack.hh ../lnInclude/$(*F)_stack.hh ; mv position.hh ../lnInclude/$(*F)_position.hh ; sed -i.bak "s/stack.hh/$(*F)_stack.hh/;s/location.hh/$(*F)_location.hh/" $(*F).tab.hh ;mv *.hh ../lnInclude ; touch -r ../$$SOURCE ../lnInclude/$(*F)*.hh ; cd ..; rm -r $$$$; $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c  $*.C -o $@ 
+yytoo = rm -f $*.C $*.tab.hh; mkdir $$$$; cd $$$$; bison -ra -v $(YYPREFIX) -d ../$$SOURCE ; mv *.tab.cc ../$*.C ; sed -i.bak "s/position.hh/$(*F)_position.hh/" location.hh ; mv location.hh ../lnInclude/$(*F)_location.hh ; mv stack.hh ../lnInclude/$(*F)_stack.hh ; mv position.hh ../lnInclude/$(*F)_position.hh ; sed -i.bak "s/stack.hh/$(*F)_stack.hh/;s/location.hh/$(*F)_location.hh/" $(*F).tab.hh ;mv *.hh ../lnInclude ; touch -r ../$$SOURCE ../lnInclude/$(*F)*.hh ; cd ..; rm -r $$$$; if [ -z "$(SWAK_COMPILE_GRAMMAR_OPTION)" ]; then echo -e "\n\nIf compilation of the grammers takes prohibitivly long set SWAK_COMPILE_GRAMMAR_OPTION to something like -O1\n\n" ; fi;  $(WM_SCHEDULER) $(CC) $(c++FLAGS) $(SWAK_COMPILE_GRAMMAR_OPTION) -c $*.C -o $@
 
 .yy.dep:
 	$(MAKE_DEP)
-

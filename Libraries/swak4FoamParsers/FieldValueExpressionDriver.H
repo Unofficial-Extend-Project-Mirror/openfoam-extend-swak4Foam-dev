@@ -172,7 +172,7 @@ protected:
     //- execute a plugin-function
     template<class T>
     autoPtr<T> evaluatePluginFunction(
-        const string &name,
+        const word &name,
         const parserField::location &loc,
         int &scanned
     );
@@ -198,21 +198,21 @@ public:
     void scan_begin ();
     void scan_end ();
 
-    bool isCellSet(const string &name);
-    bool isCellZone(const string &name);
+    bool isCellSet(const word &name);
+    bool isCellZone(const word &name);
 
-    bool isFaceSet(const string &name);
-    bool isFaceZone(const string &name);
+    bool isFaceSet(const word &name);
+    bool isFaceZone(const word &name);
 
-    bool isPointSet(const string &name);
-    bool isPointZone(const string &name);
+    bool isPointSet(const word &name);
+    bool isPointZone(const word &name);
 
     // returning fields
     template<class T>
-    tmp<T> getField(const string &name,bool getOldTime=false);
+    tmp<T> getField(const word &name,bool getOldTime=false);
 
     template<class T>
-    tmp<T> getPointField(const string &name,bool getOldTime=false);
+    tmp<T> getPointField(const word &name,bool getOldTime=false);
 
     // make constant fields
     tmp<volVectorField> makeVectorField(
@@ -320,14 +320,14 @@ public:
         const GeometricField<Type,pointPatchField,pointMesh> &field
     );
 
-    tmp<volScalarField> makeCellSetField(const string &name);
-    tmp<volScalarField> makeCellZoneField(const string &name);
-    tmp<surfaceScalarField> makeFaceSetField(const string &name);
-    tmp<surfaceScalarField> makeFaceZoneField(const string &name);
-    tmp<pointScalarField> makePointSetField(const string &name);
-    tmp<pointScalarField> makePointZoneField(const string &name);
+    tmp<volScalarField> makeCellSetField(const word &name);
+    tmp<volScalarField> makeCellZoneField(const word &name);
+    tmp<surfaceScalarField> makeFaceSetField(const word &name);
+    tmp<surfaceScalarField> makeFaceZoneField(const word &name);
+    tmp<pointScalarField> makePointSetField(const word &name);
+    tmp<pointScalarField> makePointZoneField(const word &name);
 
-    tmp<surfaceScalarField> makeOnPatchField(const string &name);
+    tmp<surfaceScalarField> makeOnPatchField(const word &name);
     tmp<surfaceScalarField> makeInternalFaceField();
 
     // modulo operator

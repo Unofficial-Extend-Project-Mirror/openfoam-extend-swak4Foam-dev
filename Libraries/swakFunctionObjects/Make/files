@@ -12,6 +12,8 @@ createSampledSet.C
 createSampledSetFunctionObject.C
 addGlobalVariable.C
 addGlobalVariableFunctionObject.C
+removeGlobalVariable.C
+removeGlobalVariableFunctionObject.C
 
 swakCodedFunctionObject.C
 

@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef simpleDataFunctionObject_H
@@ -64,14 +64,14 @@ class simpleDataFunctionObject
 
     //- Disallow default bitwise copy construct
     simpleDataFunctionObject(const simpleDataFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const simpleDataFunctionObject&);
 
 protected:
 
     //- Get the path to the data directory
-    fileName dataDir();
+    virtual fileName dataDir();
 
     //- Get the path to the base directory
     fileName baseDir();

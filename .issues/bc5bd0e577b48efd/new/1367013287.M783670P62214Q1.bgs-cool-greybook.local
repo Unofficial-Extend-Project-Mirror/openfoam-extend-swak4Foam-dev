@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 26 Apr 2013 23:54:05 +0200
+Subject: Re: ExpressionResult not correctly read back when written in binaryMode
+Message-Id: <bc5bd0e577b48efd-e74491ae2d62e8f2-artemis@bgs-cool-greybook.local>
+References: <bc5bd0e577b48efd-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <bc5bd0e577b48efd-0-artemis@bgs-cool-greybook.local>
+
+Reproducable. Maybe stuff should be written out with writeEntry

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -39,13 +39,17 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef GlobalVariablesRepository_H
 #define GlobalVariablesRepository_H
 
 #include "ExpressionResult.H"
+
+#include "HashPtrTable.H"
+
+#include "regIOobject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,24 +61,39 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class GlobalVariablesRepository
+:
+    public regIOobject
 {
 public:
-   typedef HashTable<ExpressionResult,word> ResultTable;
-
+    class ResultTable
+    :
+    public HashPtrTable<ExpressionResult,word>
+    {
+    public:
+        ResultTable(const ResultTable &r);
+        ResultTable(Istream &);
+        ResultTable();
+    };
 private:
    // Private data
 
-     HashTable<ResultTable,word> globalVariables_;
+    typedef HashTable<ResultTable,word> ResultTableTable;
+
+    ResultTableTable globalVariables_;
 
     // Constructors
 
     //- Construct null
-    GlobalVariablesRepository();
+    GlobalVariablesRepository(const objectRegistry &obr);
 
     //- The only instance of this repository
     static GlobalVariablesRepository *repositoryInstance;
 
     static ExpressionResult zero_;
+
+    ResultTable &getScope(const word &name);
+
+    label lastTimeIndex_;
 
 public:
      //- Runtime type information
@@ -85,7 +104,9 @@ public:
     virtual ~GlobalVariablesRepository();
 
     //- Get the Singleton of this class
-    static GlobalVariablesRepository &getGlobalVariables();
+    static GlobalVariablesRepository &getGlobalVariables(
+        const objectRegistry &obr
+    );
 
     //- get a global variable (if there is one)
     const ExpressionResult &get(
@@ -93,19 +114,37 @@ public:
         const wordList &scopes
     );
 
-    void addValue(
+    ExpressionResult& addValue(
         const word &name,
         const word &scope,
-        const ExpressionResult &value
+        const ExpressionResult &value,
+        const bool overwrite=true
     );
 
-    void addValue(
+    bool removeValue(
+        const word &name,
+        const word &scope
+    );
+
+    ExpressionResult& addValue(
+        const word &name,
+        const word &scope,
+        autoPtr<ExpressionResult> value,
+        const bool overwrite=true
+    );
+
+    ExpressionResult& addValue(
         const dictionary &dict,
-        const word scope=""
+        const word scope="",
+        const bool overwrite=true
     );
 
     //- get a global namespace
     ResultTable &getNamespace(const word &name);
+
+    virtual bool writeData(Ostream &) const ;
+
+    virtual bool readData(Istream &);
 };
 
 

@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "pythonInterpreterWrapper.H"
@@ -62,8 +62,10 @@ namespace Foam
 
 pythonInterpreterWrapper::pythonInterpreterWrapper
 (
+    const objectRegistry& obr,
     const dictionary& dict
 ):
+    obr_(obr),
     useNumpy_(dict.lookupOrDefault<bool>("useNumpy",true)),
     tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
     warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
@@ -235,7 +237,7 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
 
         "def dataFile(name):\n"
         "    import os\n"
-        "    d=os.path.join(caseDir,functionObjectName+'_data',timeName)\n"
+        "    d=os.path.join(caseDir,'postProcessing',functionObjectName+'_data',timeName)\n"
         "    makeDataDir(d)\n"
         "    return os.path.join(d,name)\n"
     );
@@ -303,6 +305,7 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject_SetAttrString(m,"deltaT",PyFloat_FromDouble(time.deltaT().value()));
+    PyObject_SetAttrString(m,"endTime",PyFloat_FromDouble(time.endTime().value()));
     PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
     PyObject_SetAttrString(m,"timeName",PyString_FromString(time.timeName().c_str()));
     PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));
@@ -536,7 +539,9 @@ void pythonInterpreterWrapper::getGlobals()
 
     forAll(swakToPythonNamespaces_,nameI) {
         const GlobalVariablesRepository::ResultTable &vars=
-            GlobalVariablesRepository::getGlobalVariables().getNamespace(
+            GlobalVariablesRepository::getGlobalVariables(
+                obr_
+            ).getNamespace(
                swakToPythonNamespaces_[nameI]
             );
         forAllConstIter(
@@ -545,12 +550,14 @@ void pythonInterpreterWrapper::getGlobals()
             iter
         ) {
             const word &var=iter.key();
+            const ExpressionResult &value=*(*iter);
+
             if(
                 !useNumpy_
                 ||
-                (*iter).isSingleValue()
+                value.isSingleValue()
             ) {
-                ExpressionResult val=(*iter).getUniform(
+                ExpressionResult val=value.getUniform(
                     1,
                     !warnOnNonUniform_
                 );
@@ -583,7 +590,7 @@ void pythonInterpreterWrapper::getGlobals()
                             << exit(FatalError);
                 }
             } else {
-                const ExpressionResult &val=(*iter);
+                const ExpressionResult &val=value;
                 if(debug) {
                     Info << "Building a numpy-Array for global " << var
                         << " at address " << val.getAddressAsDecimal()
@@ -845,7 +852,9 @@ void pythonInterpreterWrapper::setGlobals()
                     << endl;
         }
 
-        GlobalVariablesRepository::getGlobalVariables().addValue(
+        GlobalVariablesRepository::getGlobalVariables(
+            obr_
+        ).addValue(
             name,
             pythonToSwakNamespace_,
             eResult

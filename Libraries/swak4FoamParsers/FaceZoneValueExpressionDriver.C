@@ -150,7 +150,7 @@ inline label SubsetValueExpressionDriver::getIndexFromIterator(
 }
 
 tmp<Field<scalar> > FaceZoneValueExpressionDriver::getScalarField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternalAndInterpolate
@@ -162,7 +162,7 @@ tmp<Field<scalar> > FaceZoneValueExpressionDriver::getScalarField(
 }
 
 tmp<Field<vector> > FaceZoneValueExpressionDriver::getVectorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternalAndInterpolate
@@ -174,7 +174,7 @@ tmp<Field<vector> > FaceZoneValueExpressionDriver::getVectorField(
 }
 
 tmp<Field<tensor> > FaceZoneValueExpressionDriver::getTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternalAndInterpolate
@@ -186,7 +186,7 @@ tmp<Field<tensor> > FaceZoneValueExpressionDriver::getTensorField(
 }
 
 tmp<Field<symmTensor> > FaceZoneValueExpressionDriver::getSymmTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternalAndInterpolate
@@ -199,7 +199,7 @@ tmp<Field<symmTensor> > FaceZoneValueExpressionDriver::getSymmTensorField(
 
 tmp<Field<sphericalTensor> >
 FaceZoneValueExpressionDriver::getSphericalTensorField(
-    const string &name,bool oldTime
+    const word &name,bool oldTime
 )
 {
     return getFieldInternalAndInterpolate

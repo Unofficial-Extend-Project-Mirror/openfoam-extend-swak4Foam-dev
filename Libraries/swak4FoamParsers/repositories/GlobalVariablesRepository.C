@@ -36,6 +36,9 @@ Contributors/Copyright:
 
 #include "GlobalVariablesRepository.H"
 
+#include "objectRegistry.H"
+#include "Time.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -46,8 +49,34 @@ GlobalVariablesRepository *GlobalVariablesRepository::repositoryInstance(NULL);
 
 ExpressionResult GlobalVariablesRepository::zero_;
 
-GlobalVariablesRepository::GlobalVariablesRepository()
+GlobalVariablesRepository::GlobalVariablesRepository(
+    const objectRegistry &obr
+)
+    :
+    regIOobject(
+        IOobject(
+            "global_variables",
+            obr.time().timeName(),
+            "swak4Foam",
+            obr.time(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        )
+    ),
+    lastTimeIndex_(obr.time().timeIndex())
 {
+    if(debug) {
+        Pout << "GlobalVariablesRepository at "
+            << objectPath() << " created" << endl;
+    }
+
+    if(headerOk()) {
+        if(debug) {
+            Pout << "Found a file " <<  objectPath() << endl;
+        }
+
+        readData(readStream("GlobalVariablesRepository"));
+    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -59,7 +88,37 @@ GlobalVariablesRepository::~GlobalVariablesRepository()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
+bool GlobalVariablesRepository::writeData(Ostream &os) const
+{
+    if(debug) {
+        Pout << "GlobalVariablesRepository at " << objectPath()
+            << " writing" << endl;
+    }
+
+    os << globalVariables_;
+
+    return os.good();
+}
+
+bool GlobalVariablesRepository::readData(Istream &is)
+{
+    if(debug) {
+        Pout << "GlobalVariablesRepository at " << objectPath()
+            << " reading" << endl;
+    }
+
+    is >> globalVariables_;
+
+    if(debug) {
+        Pout << "GlobalVariablesRepository reading finished" << endl;
+    }
+
+    return !is.bad();
+}
+
+GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables(
+    const objectRegistry &obr
+)
 {
     GlobalVariablesRepository*  ptr=repositoryInstance;
 
@@ -70,11 +129,30 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables()
     if(ptr==NULL) {
         Pout << "swak4Foam: Allocating new repository for sampledGlobalVariables\n";
 
-        ptr=new GlobalVariablesRepository();
+        ptr=new GlobalVariablesRepository(obr);
     }
 
     repositoryInstance=ptr;
 
+    if(
+        repositoryInstance->lastTimeIndex_
+        !=
+        obr.time().timeIndex()
+    ) {
+        if(debug) {
+            Info << "Resetting variables" << endl;
+        }
+        ResultTableTable &all=repositoryInstance->globalVariables_;
+        forAllIter(ResultTableTable,all,table) {
+            forAllIter(ResultTable,(*table),iter) {
+                (*iter)->reset();
+                // if(!(*iter)->hasValue()) {
+                //     (*table).erase(iter);
+                // }
+            }
+        }
+        repositoryInstance->lastTimeIndex_=obr.time().timeIndex();
+    }
     return *repositoryInstance;
 }
 
@@ -104,18 +182,20 @@ const ExpressionResult &GlobalVariablesRepository::get(
         const ResultTable &scope=globalVariables_[scopeName];
         if(scope.found(name)) {
             if(debug) {
-                Pout << name << " ( " << scopeName << " )= " << scope[name] << endl;
+                Pout << name << " ( " << scopeName << " )= "
+                    << *scope[name] << endl;
             }
-            return scope[name];
+            return *scope[name];
         }
     }
 
     return zero_;
 }
 
-void GlobalVariablesRepository::addValue(
+ExpressionResult& GlobalVariablesRepository::addValue(
     const dictionary &dict,
-    const word scopeIn
+    const word scopeIn,
+    const bool overwrite
 ) {
     word name(dict.lookup("globalName"));
     word scope;
@@ -126,35 +206,135 @@ void GlobalVariablesRepository::addValue(
         scope=word(dict.lookup("globalScope"));
     }
 
-    addValue(
-        name,
-        scope,
-        ExpressionResult(dict,true)
-    );
+    if(dict.found("resultType")) {
+        return addValue(
+            name,
+            scope,
+            ExpressionResult::New(dict),
+            overwrite
+        );
+    } else {
+        return addValue(
+            name,
+            scope,
+            ExpressionResult(dict,true),
+            overwrite
+        );
+    }
 }
 
-void GlobalVariablesRepository::addValue(
-    const word &name,
-    const word &scope,
-    const ExpressionResult &value
-)
+GlobalVariablesRepository::ResultTable
+&GlobalVariablesRepository::getScope(const word &scope)
 {
-    if(debug) {
-        Pout << "Adding " << name << " to global scope "
-            << scope << " Size: " << value.size() << endl;
-    }
     if(!globalVariables_.found(scope)) {
         if(debug) {
             Pout << "Creating global scope " << scope << endl;
         }
         globalVariables_.insert(scope,ResultTable());
     }
-
-    ResultTable &theScope=globalVariables_[scope];
-
-    theScope.set(name,value);
+    return globalVariables_[scope];
 }
 
+ExpressionResult& GlobalVariablesRepository::addValue(
+    const word &name,
+    const word &scope,
+    const ExpressionResult &value,
+    const bool overwrite
+)
+{
+    if(debug) {
+        Pout << "Adding " << name << " to global scope "
+            << scope << " Size: " << value.size() << endl;
+    }
+
+    ResultTable &theScope=getScope(scope);
+
+    if(!theScope.found(name)) {
+        if(debug) {
+            Info << name << " is new. Inserting" << endl;
+        }
+        theScope.set(name,new ExpressionResult(value));
+    } else if(overwrite) {
+        if(debug) {
+            Info << name << " is already there. Setting" << endl;
+        }
+        (*theScope[name])=value;
+    }
+
+    return (*theScope[name]);
+}
+
+bool GlobalVariablesRepository::removeValue(
+    const word &name,
+    const word &scope
+)
+{
+    if(debug) {
+        Pout << "Removing " << name << " to global scope "
+            << scope << endl;
+    }
+
+    ResultTable &theScope=getScope(scope);
+
+    if(!theScope.found(name)) {
+        if(debug) {
+            Info << name << " is not there." << endl;
+        }
+        return false;
+    } else {
+        if(debug) {
+            Info << name << " is there. Removing" << endl;
+        }
+        ResultTable::iterator iter=theScope.find(name);
+        return theScope.erase(iter);
+    }
+}
+
+ExpressionResult& GlobalVariablesRepository::addValue(
+    const word &name,
+    const word &scope,
+    autoPtr<ExpressionResult> value,
+    const bool overwrite
+)
+{
+    if(debug) {
+        Pout << "Adding autoPtr " << name << " to global scope "
+            << scope << " Size: " << value->size() << endl;
+    }
+
+    ResultTable &theScope=getScope(scope);
+
+    if(
+        overwrite
+        ||
+        !theScope.found(name)
+    ) {
+        theScope.set(name,value.ptr());
+    }
+
+    return (*theScope[name]);
+}
+
+GlobalVariablesRepository::ResultTable::ResultTable(const ResultTable &r)
+    :
+    HashPtrTable<ExpressionResult,word>()
+{
+    for(const_iterator iter=r.begin();iter!=r.end();iter++) {
+        this->insert(iter.key(),(**iter).clone().ptr());
+    }
+}
+
+GlobalVariablesRepository::ResultTable::ResultTable(Istream &in)
+    :
+    HashPtrTable<ExpressionResult,word>(in)
+{
+}
+
+GlobalVariablesRepository::ResultTable::ResultTable()
+    :
+    HashPtrTable<ExpressionResult,word>()
+{
+}
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 

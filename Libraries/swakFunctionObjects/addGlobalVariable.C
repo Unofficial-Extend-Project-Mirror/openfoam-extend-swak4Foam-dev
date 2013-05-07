@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "addGlobalVariable.H"
@@ -49,6 +49,8 @@ Foam::addGlobalVariable::addGlobalVariable
     const dictionary& dict,
     const bool loadFromFiles
 )
+    :
+    obr_(obr)
 {
     read(dict);
     execute();
@@ -68,14 +70,25 @@ void Foam::addGlobalVariable::read(const dictionary& dict)
             const word &name=names[i];
             const dictionary &dict=variables.subDict(name);
 
-            GlobalVariablesRepository::getGlobalVariables().addValue(
+            ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
+                obr_
+            ).addValue(
                 name,
                 scope,
-                ExpressionResult(dict,true,true)
+                ExpressionResult(dict,true,true),
+                false
             );
+            res.noReset();
         }
     } else {
-        GlobalVariablesRepository::getGlobalVariables().addValue(dict);
+        ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
+            obr_
+        ).addValue(
+            dict,
+            "",
+            false
+        );
+        res.noReset();
     }
 }
 

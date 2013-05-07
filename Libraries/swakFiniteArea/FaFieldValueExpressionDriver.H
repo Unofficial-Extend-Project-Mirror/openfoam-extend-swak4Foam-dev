@@ -153,7 +153,7 @@ protected:
     //- execute a plugin-function
     template<class T>
     autoPtr<T> evaluatePluginFunction(
-        const string &name,
+        const word &name,
         const parserFaField::location &loc,
         int &scanned
     );
@@ -181,7 +181,7 @@ public:
     // returning fields
     template<class T>
     autoPtr<T> getField(
-        const string &name,
+        const word &name,
         bool getOldTime=false
     );
 

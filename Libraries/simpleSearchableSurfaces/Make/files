@@ -1,0 +1,25 @@
+wrapperSearchableSurface.C
+
+Objects/planeSearchableSurface.C
+Objects/unitCylinderSearchableSurface.C
+Objects/searchableCylinderWithDirections.C
+Objects/searchableBoxWithDirections.C
+Objects/searchableSphereWithFix.C
+
+Transformations/transformationSearchableSurface.C
+Transformations/translateSearchableSurface.C
+Transformations/scaleSearchableSurface.C
+Transformations/rotateSearchableSurface.C
+
+Operations/binaryOperationSearchableSurface.C
+Operations/unionSearchableSurface.C
+Operations/intersectSearchableSurface.C
+Operations/differenceSearchableSurface.C
+Operations/exclusiveSearchableSurface.C
+Operations/invertSearchableSurface.C
+
+Modificators/oneRegionSearchableSurface.C
+Modificators/renameRegionsSearchableSurface.C
+Modificators/mergeRegionsSearchableSurface.C
+
+LIB = $(FOAM_USER_LIBBIN)/libsimpleSearchableSurfaces

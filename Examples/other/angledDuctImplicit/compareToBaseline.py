@@ -18,16 +18,20 @@ gpFile=open("comparison.gnuplot","w")
 
 for f in listdir("baselineData"):
     print "\n\n Comparing:",f
-    TimelinePlot(args=[".",
-                       "--dir="+f,
-                       "--reference-dir="+path.join("baselineData",f),
-                       "--basic-mode=lines",
-                       "--vector-mode="+vectorMode,
-                       "--compare","--metrics","--min-time=30"])
+    try:
+        TimelinePlot(args=[".",
+                           "--dir="+path.join("postProcessing",f),
+                           "--reference-dir="+path.join("baselineData",f),
+                           "--basic-mode=lines",
+                           "--vector-mode="+vectorMode,
+                           "--compare","--metrics","--min-time=30"])
+    except Exception,e:
+        print "Comparison failed",e
+
     tmp=sys.stdout
     sys.stdout=gpFile
     TimelinePlot(args=[".",
-                       "--dir="+f,
+                       "--dir="+path.join("postProcessing",f),
                        "--reference-dir="+path.join("baselineData",f),
                        "--basic-mode=lines",
                        "--vector-mode="+vectorMode])

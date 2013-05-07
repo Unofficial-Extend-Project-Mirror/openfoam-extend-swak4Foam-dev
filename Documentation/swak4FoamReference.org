@@ -506,6 +506,13 @@ hide circle
      patches:
      - snGrad(fieldName) :: Gradient of the field =name= in the
           surface normal direction (P, FP)
+*** Valid names
+    Valid names in swak4Foam start with either a letter or =_= and
+    continue with any number of letters, digits or =_=.
+
+    OpenFOAM allows the definition of names that have other
+    characters too (like =:= or =-=). In that case these fields can
+    be accessed using the =aliases=.
 *** Variables and fields
     Names that are not functions specified in the grammar can be a
     number of things. It is tested for a number of other things (the
@@ -540,6 +547,12 @@ hide circle
        2. Data types are searched in this order: scalar, vector,
           tensor, symmetrical tensor, spherical tensor
        3. Native structure before secondary structure
+
+       Before looking for a field the =aliases= table is checked and
+       if the current name is found there instead the /real name/
+       defined for that alias is searched. This allows accessing
+       fields that have names with characters that are not valid for
+       swak-names.
     5. Names of plugin-functions. The concept of plugin-functions is
        described below
 **** Fields from other meshes
@@ -578,6 +591,20 @@ hide circle
      possible to accumulate things like a mass-flow in a stored
      variable without bothering how many sub-iterations the
      non-orthogonal corrector did.
+
+     There are two additional flavors of variables for advanced
+     usage. They only make sense for global variables and the types
+     have to be specified before they are first used:
+     - StackExpressionResult :: this variable starts with a size of
+          $0$. If a value is assigned than the *uniform* value is
+          appended to this variable (making it grow from a size of
+          $N$ to $N+1$). The purpose of this variable is collecting
+          multiple values. At the end of a time-step the size of the
+          variable is reset to $0$
+     - StoredStackExpressionResult :: like =StackExpressionResult=
+          but the value is not erased between time-steps. Purpose of
+          this variable is collecting a timeline of a single value
+          (for instance to check convergence)
 **** Global variables
      There is also the possibility to access global variables. These
      variables are organized in /scopes/ which are a collection of
@@ -742,6 +769,13 @@ hide circle
                       conductivity). Specified exactly like
                       =timelines= but when used a scalar expression
                       has to be provided.
+    This optional parameter can be used to define aliases for field
+    and set names:
+    - aliases :: This is a dictionary that has the information which
+                 /real/ field name belongs to an alias name. Alias
+                 names got to conform to the standard for
+                 swak-names. Real names are according to the
+                 OpenFOAM-standard (which allows more characters)
 **** General variable specification
      Variables are specified by the parameter =variables=. If this
      parameter is not set then no variables are accessible. The value

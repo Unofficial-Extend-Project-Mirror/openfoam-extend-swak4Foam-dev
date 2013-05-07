@@ -1,0 +1,6 @@
+pRange {
+       expr "Range (%f%) bigger than (%f%)";
+       theTitle "Temporal change of p";
+       titles (change target);
+       logscale true;
+}

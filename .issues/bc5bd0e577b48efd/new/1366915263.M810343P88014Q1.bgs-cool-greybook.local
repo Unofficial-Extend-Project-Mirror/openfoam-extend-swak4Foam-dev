@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 25 Apr 2013 20:39:36 +0200
+State: fixed
+Subject: ExpressionResult not correctly read back when written in binaryMode
+Message-Id: <bc5bd0e577b48efd-0-artemis@bgs-cool-greybook.local>
+
+Manifests with global variables

@@ -73,6 +73,8 @@ class timeManipulationFunctionObject
 
     bool tolerateAdaptiveTimestep_;
 
+    scalar myEndTime_;
+
 public:
 
     //- Runtime type information

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 26 Apr 2013 11:13:16 +0200
+State: new
+Subject: Alternative Courant-implementation
+Message-Id: <fd3b4ad3884e9a03-0-artemis@bgs-cool-greybook.local>
+
+Implementation of the courant-number differs between 1.6-ext and
+2.2. Add the other one as an alternative impleemntation

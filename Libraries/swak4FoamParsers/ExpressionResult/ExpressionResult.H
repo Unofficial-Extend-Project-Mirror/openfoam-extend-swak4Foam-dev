@@ -57,6 +57,8 @@ Contributors/Copyright:
 #include "dimensionedType.H"
 #include "IOobject.H"
 
+ #include "runTimeSelectionTables.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -89,7 +91,10 @@ class ExpressionResult
     void uglyDelete();
 
     template<class Type>
-    ExpressionResult getUniformInternal(const label size,bool noWarn) const;
+    ExpressionResult getUniformInternal(
+        const label size,
+        bool noWarn
+    ) const;
 
     template<class Type>
     inline void setResultInternal(Field<Type> *,bool isPoint=false);
@@ -106,14 +111,49 @@ class ExpressionResult
     template <typename T>
     inline void setObjectResultInternal(autoPtr<T> o);
 
+    // whether or not the variable will be reset
+    bool noReset_;
+
+    // this overrides noReset_ but is only accessible for subclasses
+    bool needsReset_;
+
 protected:
 
     //- ugly workaround for templated methods not being virtual
     inline virtual ExpressionResult &toBeSet();
 
+    //- reset at new timestep according to type - true if it was actually reset
+    bool reset(bool force=false);
+
+    //- reset at new timestep according to type
+    virtual void resetInternal();
+
+    //- sets needsReset_
+    void setNeedsReset(bool val) { needsReset_=val; }
+
 public:
     //- Runtime type information
     TypeName("ExpressionResult");
+
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        ExpressionResult,
+        dictionary,
+        (
+            const dictionary& dict
+        ),
+        (dict)
+    );
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        ExpressionResult,
+        nothing,
+        (
+        ),
+        ()
+    );
 
     // Constructors
 
@@ -124,7 +164,11 @@ public:
     ExpressionResult(const ExpressionResult&);
 
     //- Construct from a dictionary
-    ExpressionResult(const dictionary&,bool isSingleValue=false,bool needsValue=false);
+    ExpressionResult(
+        const dictionary&,
+        bool isSingleValue=false,
+        bool needsValue=false
+    );
 
     //- Construct from a field
     template<class Type>
@@ -137,6 +181,12 @@ public:
     //- Construct from a dimensioned value
     template<class Type>
     ExpressionResult(const dimensioned<Type>  &f);
+
+    //- Return a reference to the selected value driver
+    static autoPtr<ExpressionResult> New
+    (
+        const dictionary& dict
+    );
 
     template <int, class T = void> struct enable_if_rank0 {};
     template <class T> struct enable_if_rank0<0, T> { typedef T type; };
@@ -155,7 +205,13 @@ public:
 
     virtual ~ExpressionResult();
 
-    void operator=(const ExpressionResult&);
+    virtual void operator=(const ExpressionResult&);
+
+    virtual autoPtr<ExpressionResult> clone() const {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(*this)
+        );
+    }
 
     template<class Type>
     inline void setResult(Field<Type> *,bool isPoint=false);
@@ -183,7 +239,10 @@ public:
     ExpressionResult getUniform(const label size,bool noWarn) const;
 
     template<template<class> class BinOp,class Type>
-    inline Type getReduced(BinOp<Type> op,Type initial=pTraits<Type>::zero);
+    inline Type getReduced(
+        BinOp<Type> op,
+        Type initial=pTraits<Type>::zero
+    );
 
     void clearResult();
 
@@ -210,10 +269,17 @@ public:
         const ExpressionResult &,const ExpressionResult &
     );
 
+    friend class GlobalVariablesRepository;
+
     //- get the address of the field as a decimal string
 
     //- Currently only needed for the python integrtation
     word getAddressAsDecimal() const;
+
+    void noReset() { noReset_=true; }
+
+    void allowReset() { noReset_=false; }
+
 };
 
 
@@ -222,6 +288,9 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// put this here to make Intel and Fujitsu-compilers happy
+#include "swakPTraitsSpecialization.H"
 
 #include "ExpressionResultI.H"
 

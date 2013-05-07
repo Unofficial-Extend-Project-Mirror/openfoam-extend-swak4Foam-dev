@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "stdoutFromPythonScriptProvider.H"
@@ -63,7 +63,10 @@ namespace Foam
             dict,
             owner
         ),
-        pythonInterpreterWrapper(dict)
+        pythonInterpreterWrapper(
+            const_cast<dynamicFunctionObjectListProxy&>(owner).obr(),
+            dict
+        )
     {
         if(parallelNoRun()) {
             return;

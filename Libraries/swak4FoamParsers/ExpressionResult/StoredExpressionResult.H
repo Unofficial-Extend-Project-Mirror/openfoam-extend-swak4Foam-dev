@@ -92,6 +92,12 @@ public:
 
     void operator=(const ExpressionResult&);
 
+    virtual autoPtr<ExpressionResult> clone() const {
+        return autoPtr<ExpressionResult>(
+            new StoredExpressionResult(*this)
+        );
+    }
+
     const word name() const { return name_; }
 
     const string initialValueExpression() const

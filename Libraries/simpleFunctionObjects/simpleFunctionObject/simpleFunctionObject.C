@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "simpleFunctionObject.H"
@@ -46,6 +46,16 @@ Contributors/Copyright:
 namespace Foam
 {
     defineTypeNameAndDebug(simpleFunctionObject, 0);
+
+template<>
+const char* NamedEnum<Foam::simpleFunctionObject::outputControlMode,3>::names[]=
+{
+    "timestep",
+    "deltaT",
+    "outputTime"
+};
+const NamedEnum<simpleFunctionObject::outputControlMode,3> simpleFunctionObject::outputControlModeNames_;
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -73,12 +83,19 @@ simpleFunctionObject::simpleFunctionObject
         : t.startTime().value()-1
     ),
     timeSteps_(0),
+    outputControlMode_(
+        outputControlModeNames_[
+            dict.lookupOrDefault<word>("outputControlMode","timestep")
+        ]
+    ),
     outputInterval_(
         dict.found("outputInterval")
         ? readLabel(dict.lookup("outputInterval"))
         : 1
     ),
+    outputDeltaT_(1.),
     time_(t),
+    lastWrite_(time_.value()),
     dict_(dict),
     regionName_(
         dict_.found("region")
@@ -87,6 +104,27 @@ simpleFunctionObject::simpleFunctionObject
     ),
     obr_(time_.lookupObject<objectRegistry>(regionName_))
 {
+    if(!dict.found("outputControlMode")) {
+        WarningIn("simpleFunctionObject::simpleFunctionObject")
+            << "'outputControlMode' not found in " << this->name() << endl
+                << "Assuming: " << outputControlModeNames_[outputControlMode_]
+                << endl;
+    }
+    switch(outputControlMode_) {
+        case ocmTimestep:
+            if(!dict.found("outputInterval")) {
+                WarningIn("simpleFunctionObject::simpleFunctionObject")
+                    << "'outputInterval' not found in " << this->name() << endl
+                        << "Assuming: " << outputInterval_
+                        << endl;
+            }
+            break;
+        case ocmDeltaT:
+            outputDeltaT_=readScalar(dict.lookup("outputDeltaT"));
+            break;
+        default:
+            break;
+    }
     if(regionName_==polyMesh::defaultRegion) {
         regionString_ = "";
     } else {
@@ -106,15 +144,45 @@ bool simpleFunctionObject::start()
 
 bool simpleFunctionObject::outputTime(const bool forceWrite)
 {
-    return 
-        (
-            ((outputInterval_>0) && (timeSteps_>=outputInterval_))
-            &&
-            time_.time().value()>=after_
-        ) 
-        ||
-        forceWrite
-        ;
+    if(time_.time().value()<after_) {
+        return false;
+    }
+    bool doOutput=false;
+
+    switch(outputControlMode_) {
+        case ocmTimestep:
+            if((outputInterval_>0) && (timeSteps_>=outputInterval_)) {
+                doOutput=true;
+            }
+            break;
+        case ocmDeltaT:
+            {
+                // factor (1-SMALL) is necessary to 'hit' exact timesteps
+                scalar now=time_.value()*(1-SMALL);
+                scalar dt=time_.deltaT().value();
+                label stepNow=label(now/outputDeltaT_);
+                label stepNext=label((now+dt)/outputDeltaT_);
+                if(
+                    stepNow!=stepNext
+                    ||
+                    (lastWrite_+outputDeltaT_) < now
+                ) {
+                    doOutput=true;
+                    lastWrite_=outputDeltaT_*int((now+dt)/outputDeltaT_);
+                }
+            }
+            break;
+        case ocmOutputTime:
+            doOutput=time_.outputTime();
+            break;
+        default:
+            FatalErrorIn("simpleFunctionObject::outputTime()")
+                << "'outputControlMode' not implemented in " << name() << endl
+                    << "Mode: " << outputControlModeNames_[outputControlMode_]
+                    << endl
+                    << exit(FatalError);
+    }
+    return doOutput || forceWrite;
 }
 
 bool simpleFunctionObject::execute(const bool forceWrite)

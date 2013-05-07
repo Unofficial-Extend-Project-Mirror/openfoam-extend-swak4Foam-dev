@@ -6,7 +6,7 @@ import re
 
 from subprocess import Popen,PIPE
 try:
-    output = Popen(["hgg", "branch"], stdout=PIPE).communicate()[0]
+    output = Popen(["hg", "branch"], stdout=PIPE).communicate()[0]
     isPackage = (output.find("debian")==0)
 except OSError:
     # there is no mercurial

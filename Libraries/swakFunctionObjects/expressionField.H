@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionField_H

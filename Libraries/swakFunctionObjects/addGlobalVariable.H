@@ -67,6 +67,8 @@ class addGlobalVariable
     //- Disallow default bitwise assignment
     void operator=(const addGlobalVariable&);
 
+    const objectRegistry& obr_;
+
 public:
 
     //- Runtime type information

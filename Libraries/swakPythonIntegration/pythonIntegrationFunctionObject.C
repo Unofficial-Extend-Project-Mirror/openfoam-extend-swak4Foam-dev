@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "pythonIntegrationFunctionObject.H"
@@ -64,8 +64,13 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(name),
-    pythonInterpreterWrapper(dict),
+    functionObject(
+        name
+    ),
+    pythonInterpreterWrapper(
+        t.db(),
+        dict
+    ),
     time_(t)
 {
     if(parallelNoRun()) {

@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "simpleDataFunctionObject.H"
@@ -77,12 +77,14 @@ fileName simpleDataFunctionObject::baseDir()
         theDir =
             obr_.time().path()
             /".."
+            /"postProcessing"
             /dir;
     }
     else
     {
         theDir =
             obr_.time().path()
+            /"postProcessing"
             /dir;
     }
 

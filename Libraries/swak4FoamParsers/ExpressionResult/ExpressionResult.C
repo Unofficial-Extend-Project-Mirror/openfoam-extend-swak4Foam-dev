@@ -40,9 +40,19 @@ Contributors/Copyright:
 #include "symmTensor.H"
 #include "sphericalTensor.H"
 
+#include "addToRunTimeSelectionTable.H"
+
+// #include "swakPTraitsSpecialization.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(ExpressionResult,0);
+
+defineRunTimeSelectionTable(ExpressionResult, dictionary);
+defineRunTimeSelectionTable(ExpressionResult, nothing);
+
+addToRunTimeSelectionTable(ExpressionResult, ExpressionResult, dictionary);
+addToRunTimeSelectionTable(ExpressionResult, ExpressionResult, nothing);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -53,7 +63,9 @@ ExpressionResult::ExpressionResult()
     valPtr_(NULL),
     isPoint_(false),
     isSingleValue_(true),
-    objectSize_(-1)
+    objectSize_(-1),
+    noReset_(false),
+    needsReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult()" << endl;
@@ -68,10 +80,18 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     valPtr_(NULL),
     isPoint_(false),
     isSingleValue_(true),
-    objectSize_(-1)
+    objectSize_(-1),
+    noReset_(false),
+    needsReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
+        // if(rhs.type()!="ExpressionResult") {
+        //     FatalErrorIn("Hepp")
+        //         << "Hey"
+        //             << abort(FatalError);
+        // }
+        Info << "Rhs: " << rhs << endl;
     }
 
     (*this)=rhs;
@@ -90,7 +110,11 @@ ExpressionResult::ExpressionResult(
     isSingleValue_(
         dict.lookupOrDefault<bool>("isSingleValue",isSingleValue)
     ),
-    objectSize_(-1)
+    objectSize_(-1),
+    noReset_(
+        dict.lookupOrDefault<bool>("noReset",false)
+    ),
+    needsReset_(false)
 {
     if(debug) {
         Info << "ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)" << endl;
@@ -117,18 +141,20 @@ ExpressionResult::ExpressionResult(
                         << exit(FatalError);
             }
         } else {
+            label fs=readLabel(dict.lookup("fieldSize"));
+
             if(valType_==pTraits<scalar>::typeName) {
-                valPtr_=new scalarField(dict.lookup("value"));
+                valPtr_=new scalarField("value",dict,fs);
             } else if(valType_==vector::typeName) {
-                valPtr_=new Field<vector>(dict.lookup("value"));
+                valPtr_=new Field<vector>("value",dict,fs);
             } else if(valType_==tensor::typeName) {
-                valPtr_=new Field<tensor>(dict.lookup("value"));
+                valPtr_=new Field<tensor>("value",dict,fs);
             } else if(valType_==symmTensor::typeName) {
-                valPtr_=new Field<symmTensor>(dict.lookup("value"));
+                valPtr_=new Field<symmTensor>("value",dict,fs);
             } else if(valType_==sphericalTensor::typeName) {
-                valPtr_=new Field<sphericalTensor>(dict.lookup("value"));
+                valPtr_=new Field<sphericalTensor>("value",dict,fs);
             } else if(valType_==pTraits<bool>::typeName) {
-                valPtr_=new Field<bool>(dict.lookup("value"));
+                valPtr_=new Field<bool>("value",dict,fs);
             } else {
                 FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
                     << "Don't know how to read data type " << valType_ << endl
@@ -145,6 +171,75 @@ ExpressionResult::ExpressionResult(
     }
 }
 
+autoPtr<ExpressionResult> ExpressionResult::New
+(
+    const dictionary& dict
+)
+{
+    word resultType("ExpressionResult");
+    if(dict.found("resultType")) {
+        resultType=word(dict.lookup("resultType"));
+    }
+    bool unset=dict.lookupOrDefault<bool>("unsetValue",false);
+
+    if(unset) {
+        nothingConstructorTable::iterator cstrIter =
+            nothingConstructorTablePtr_->find(resultType);
+
+        if (cstrIter == nothingConstructorTablePtr_->end())
+        {
+            FatalErrorIn
+                (
+                    "autoPtr<ExpressionResult> ExpressionResult::New"
+                )   << "Unknown  ExpressionResult type " << resultType
+                    << endl << endl
+                    << "Valid resultTypes are :" << endl
+#ifdef FOAM_HAS_SORTED_TOC
+                    << nothingConstructorTablePtr_->sortedToc() // does not work in 1.6
+#else
+                    << nothingConstructorTablePtr_->toc()
+#endif
+                    << exit(FatalError);
+        }
+
+        if(debug) {
+            Pout << "Creating unset result of type " << resultType << endl;
+        }
+
+        return autoPtr<ExpressionResult>
+            (
+                cstrIter()()
+            );
+    } else {
+        dictionaryConstructorTable::iterator cstrIter =
+            dictionaryConstructorTablePtr_->find(resultType);
+
+        if (cstrIter == dictionaryConstructorTablePtr_->end())
+        {
+            FatalErrorIn
+                (
+                    "autoPtr<ExpressionResult> ExpressionResult::New"
+                )   << "Unknown  ExpressionResult type " << resultType
+                    << endl << endl
+                    << "Valid resultTypes are :" << endl
+#ifdef FOAM_HAS_SORTED_TOC
+                    << dictionaryConstructorTablePtr_->sortedToc() // does not work in 1.6
+#else
+                    << dictionaryConstructorTablePtr_->toc()
+#endif
+                    << exit(FatalError);
+        }
+
+        if(debug) {
+            Pout << "Creating result of type " << resultType << endl;
+        }
+
+        return autoPtr<ExpressionResult>
+            (
+                cstrIter()(dict)
+            );
+    }
+}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -163,6 +258,26 @@ ExpressionResult::~ExpressionResult()
 bool ExpressionResult::hasValue() const
 {
     return valType_!="None" && valPtr_!=NULL;
+}
+
+void ExpressionResult::resetInternal() {
+    clearResult();
+}
+
+bool ExpressionResult::reset(bool force) {
+    if(
+        force
+        ||
+        !noReset_
+        ||
+        needsReset_
+    ) {
+        this->resetInternal();
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void ExpressionResult::clearResult()
@@ -366,32 +481,15 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 // * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
 
-// I have NO idea why this is necessary, but since the introduction of the
-// enable_if_rank0-stuff the function below does not compile without it
-
-template<>
-class pTraits<token::punctuationToken>
-{};
-
-template<int N>
-class pTraits<char [N]>
-{};
-
-template<>
-class pTraits<Ostream&(Ostream&)>
-{};
-
-template<>
-class pTraits<char>
-{};
-
-template<>
-class pTraits<const char *>
-{};
-
 Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 {
     out << token::BEGIN_BLOCK << endl;
+
+    out.writeKeyword("resultType");
+    out << word(data.type()) << token::END_STATEMENT << nl;
+
+    out.writeKeyword("noReset");
+    out << data.noReset_ << token::END_STATEMENT << nl;
 
     if( data.valPtr_ ) {
         out.writeKeyword("valueType");
@@ -403,25 +501,47 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
         out.writeKeyword("isSingleValue");
         out << data.isSingleValue_ << token::END_STATEMENT << nl;
 
-        out.writeKeyword("value");
-        if(data.valType_==pTraits<scalar>::typeName) {
-            out << *static_cast<scalarField*>(data.valPtr_);
-        } else if(data.valType_==vector::typeName) {
-            out << *static_cast<Field<vector>*>(data.valPtr_);
-        } else if(data.valType_==tensor::typeName) {
-            out << *static_cast<Field<tensor>*>(data.valPtr_);
-        } else if(data.valType_==symmTensor::typeName) {
-            out << *static_cast<Field<symmTensor>*>(data.valPtr_);
-        } else if(data.valType_==sphericalTensor::typeName) {
-            out << *static_cast<Field<sphericalTensor>*>(data.valPtr_);
-        } else if(data.valType_==pTraits<bool>::typeName) {
-            out << *static_cast<Field<bool>*>(data.valPtr_);
+        out.writeKeyword("fieldSize");
+        out << data.size() << token::END_STATEMENT << nl;
+
+        if(data.isSingleValue_) {
+            out.writeKeyword("value");
+            if(data.valType_==pTraits<scalar>::typeName) {
+                out << (*static_cast<Field<scalar>*>(data.valPtr_))[0];
+            } else if(data.valType_==vector::typeName) {
+                out << (*static_cast<Field<vector>*>(data.valPtr_))[0];
+            } else if(data.valType_==tensor::typeName) {
+                out << (*static_cast<Field<tensor>*>(data.valPtr_))[0];
+            } else if(data.valType_==symmTensor::typeName) {
+                out << (*static_cast<Field<symmTensor>*>(data.valPtr_))[0];
+            } else if(data.valType_==sphericalTensor::typeName) {
+                out << (*static_cast<Field<sphericalTensor>*>(data.valPtr_))[0];
+            } else if(data.valType_==pTraits<bool>::typeName) {
+                out << (*static_cast<Field<bool>*>(data.valPtr_))[0];
+            } else {
+                out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+            }
+            out << token::END_STATEMENT << nl;
         } else {
-            out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+            if(data.valType_==pTraits<scalar>::typeName) {
+                static_cast<Field<scalar>*>(data.valPtr_)->writeEntry("value",out);
+            } else if(data.valType_==vector::typeName) {
+                static_cast<Field<vector>*>(data.valPtr_)->writeEntry("value",out);
+            } else if(data.valType_==tensor::typeName) {
+                static_cast<Field<tensor>*>(data.valPtr_)->writeEntry("value",out);
+            } else if(data.valType_==symmTensor::typeName) {
+                static_cast<Field<symmTensor>*>(data.valPtr_)->writeEntry("value",out);
+            } else if(data.valType_==sphericalTensor::typeName) {
+                static_cast<Field<sphericalTensor>*>(data.valPtr_)->writeEntry("value",out);
+            } else if(data.valType_==pTraits<bool>::typeName) {
+                static_cast<Field<bool>*>(data.valPtr_)->writeEntry("value",out);
+            } else {
+                out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+            }
         }
-        out << token::END_STATEMENT << nl;
     } else {
-        out << "ExpressionResult: not data defined";
+        out.writeKeyword("unsetValue");
+        out << true << token::END_STATEMENT << nl;
     }
 
     out << token::END_BLOCK << endl;
@@ -431,6 +551,10 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 
 Istream & operator>>(Istream &in,ExpressionResult &data)
 {
+    if(ExpressionResult::debug) {
+        Info << "operator>>(Istream &in,ExpressionResult &data)" << endl;
+    }
+
     dictionary dict(in);
 
     data=ExpressionResult(dict);
