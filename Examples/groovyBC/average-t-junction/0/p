@@ -20,12 +20,12 @@ internalField   uniform 100000;
 
 boundaryField
 {
-    inlet      
+    inlet
     {
-        //type            totalPressure;
+        type            totalPressure;
         //p0              uniform 100040;
 
-        type            timeVaryingTotalPressure;
+        //        type            timeVaryingTotalPressure;
         p0              100040; // only used for restarts
         outOfBounds     clamp;
         fileName        "$FOAM_CASE/constant/p0vsTime";
@@ -38,7 +38,7 @@ boundaryField
         value           uniform 100040;
     }
 
-    outlet1     
+    outlet1
     {
         type            groovyBC;
         valueExpression "0.5*(pInlet+pOutlet2)";
@@ -46,7 +46,7 @@ boundaryField
         value           uniform 100010;
     }
 
-    outlet2    
+    outlet2
     {
         type            fixedValue;
         value           uniform 100000;

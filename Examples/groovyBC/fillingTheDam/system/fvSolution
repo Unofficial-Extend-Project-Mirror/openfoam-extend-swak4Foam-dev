@@ -77,6 +77,10 @@ PIMPLE
     cAlpha          1;
 }
 
+PIMPLE {
+    $PISO;
+}
+
 tracerTransportPDE
 {
 }

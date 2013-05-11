@@ -33,6 +33,7 @@ divSchemes
 
     //    div((phi*interpolate(rho)),tracer) Gauss vanLeer01;
     div(phi,tracer) Gauss vanLeer01;
+    div((muEff*dev(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes

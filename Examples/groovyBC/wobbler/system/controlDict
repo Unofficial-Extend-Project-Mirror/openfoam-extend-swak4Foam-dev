@@ -50,9 +50,9 @@ functions (
     biggestD
     {
         type patchExpression;
-        patches ( 
-            free 
-            forced 
+        patches (
+            free
+            forced
             other
         );
         expression "mag(D)";
@@ -79,9 +79,12 @@ functions (
         expression "maxD";
         verbose true;
     }
+    // listFields {
+    //     type listRegisteredObjects;
+    // }
     biggestDFreeMem2
     {
-        type patchExpression; 
+        type patchExpression;
         patches (
             free
             forced
@@ -145,10 +148,10 @@ functions (
 );
 
 libs (
-    "libOpenFOAM.so" 
+    "libOpenFOAM.so"
     "libgroovyBC.so"
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
 );
 
 // ************************************************************************* //

@@ -55,7 +55,7 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         limited 0.333;
+    default         limited corrected 0.333;
 }
 
 fluxRequired

@@ -45,7 +45,10 @@ dictionaryReplacement
             }
             "heater_to_.*"
             {
-                type            compressible::turbulentTemperatureCoupledBaffle;
+                //                type            compressible::turbulentTemperatureCoupledBaffle;
+                type            compressible::turbulentTemperatureCoupledBaffleMixed;
+                kappa           solidThermo;
+                kappaName       none;
                 neighbourFieldName T;
                 K               solidThermo;
                 KName           none;
