@@ -523,21 +523,29 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
             }
             out << token::END_STATEMENT << nl;
         } else {
+            out.writeKeyword("value");
             if(data.valType_==pTraits<scalar>::typeName) {
-                static_cast<Field<scalar>*>(data.valPtr_)->writeEntry("value",out);
+                out << "nonuniform " << (*static_cast<Field<scalar>*>(data.valPtr_));
+                //                static_cast<Field<scalar>*>(data.valPtr_)->writeEntry("value",out);
             } else if(data.valType_==vector::typeName) {
-                static_cast<Field<vector>*>(data.valPtr_)->writeEntry("value",out);
+                out << "nonuniform " << (*static_cast<Field<vector>*>(data.valPtr_));
+                //                static_cast<Field<vector>*>(data.valPtr_)->writeEntry("value",out);
             } else if(data.valType_==tensor::typeName) {
-                static_cast<Field<tensor>*>(data.valPtr_)->writeEntry("value",out);
+                out << "nonuniform " << (*static_cast<Field<tensor>*>(data.valPtr_));
+                //                static_cast<Field<tensor>*>(data.valPtr_)->writeEntry("value",out);
             } else if(data.valType_==symmTensor::typeName) {
-                static_cast<Field<symmTensor>*>(data.valPtr_)->writeEntry("value",out);
+                out << "nonuniform " << (*static_cast<Field<symmTensor>*>(data.valPtr_));
+                //                static_cast<Field<symmTensor>*>(data.valPtr_)->writeEntry("value",out);
             } else if(data.valType_==sphericalTensor::typeName) {
-                static_cast<Field<sphericalTensor>*>(data.valPtr_)->writeEntry("value",out);
+                out << "nonuniform " << (*static_cast<Field<sphericalTensor>*>(data.valPtr_));
+                //                static_cast<Field<sphericalTensor>*>(data.valPtr_)->writeEntry("value",out);
             } else if(data.valType_==pTraits<bool>::typeName) {
-                static_cast<Field<bool>*>(data.valPtr_)->writeEntry("value",out);
+                out << "nonuniform " << (*static_cast<Field<bool>*>(data.valPtr_));
+                //                static_cast<Field<bool>*>(data.valPtr_)->writeEntry("value",out);
             } else {
                 out << "ExpressionResult: unknown data type " << data.valType_ << endl;
             }
+            out << token::END_STATEMENT << nl;
         }
     } else {
         out.writeKeyword("unsetValue");
