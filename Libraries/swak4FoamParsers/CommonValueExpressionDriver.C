@@ -198,6 +198,7 @@ void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
             storedVariables_.size()>0
         ) {
             WarningIn("CommonValueExpressionDriver::readVariablesAndTables")
+                << "Context: " << contextString() << endl
                 << "Seems like 'storedVariables' was already read."
                     << " No update from "
                     << dict.lookup("storedVariables")
@@ -218,6 +219,7 @@ void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
             delayedVariables_.size()>0
         ) {
             WarningIn("CommonValueExpressionDriver::readVariablesAndTables")
+                << "Context: " << contextString() << endl
                 << "Seems like 'delayedVariables' was already read."
                     << " No update from "
                     << dict.lookup("delayedVariables")
@@ -555,6 +557,7 @@ tmp<vectorField> CommonValueExpressionDriver::composeVectorField(
         x.size() != z.size()
     ) {
         FatalErrorIn("tmp<vectorField> CommonValueExpressionDriver::composeVectorField")
+            << "Context: " << contextString() << endl
             << "Sizes " << x.size() << " " << y.size() << " "
                 << z-size() << " of the components do not agree"
                 << endl
@@ -596,6 +599,7 @@ tmp<tensorField> CommonValueExpressionDriver::composeTensorField(
         xx.size() != zz.size()
     ) {
         FatalErrorIn("tmp<vectorField> CommonValueExpressionDriver::composeVectorField")
+            << "Context: " << contextString() << endl
             << "Sizes of the components do not agree"
                 << endl
                 << abort(FatalError);
@@ -635,6 +639,7 @@ tmp<symmTensorField> CommonValueExpressionDriver::composeSymmTensorField(
         xx.size() != zz.size()
     ) {
         FatalErrorIn("tmp<vectorField> CommonValueExpressionDriver::composeVectorField")
+            << "Context: " << contextString() << endl
             << "Sizes of the components do not agree"
                 << endl
                 << abort(FatalError);
@@ -914,6 +919,7 @@ void CommonValueExpressionDriver::evaluateVariable(
         const regIOobject &ob=mesh().lookupObject<regIOobject>(name);
 
         WarningIn("CommonValueExpressionDriver::evaluateVariable")
+            << "Context: " << contextString() << endl
             << "There is a field named " << name << " of type "
                 << ob.headerClassName() << " found which may be shadowed "
                 << "by the variable of the same name." << nl
@@ -1083,6 +1089,7 @@ void CommonValueExpressionDriver::addVariables(
         end=exprList.find(';',start);
         if(end==std::string::npos) {
             FatalErrorIn("CommonValueExpressionDriver::addVariables(const string &exprList,bool clear)")
+                << "Context: " << contextString() << endl
                 << "No terminating ';' found in expression '"
                     << exprList.substr(start) << "'\n"
                     << endl
@@ -1091,6 +1098,7 @@ void CommonValueExpressionDriver::addVariables(
         std::string::size_type  eqPos=exprList.find('=',start);
         if(eqPos==std::string::npos || eqPos > end) {
             FatalErrorIn("CommonValueExpressionDriver::addVariables(const string &exprList,bool clear)")
+                << "Context: " << contextString() << endl
                 << "No '=' found in expression '"
                     << exprList.substr(start,end-start) << "'\n"
                     << endl
@@ -1103,6 +1111,7 @@ void CommonValueExpressionDriver::addVariables(
             std::string::size_type  endPos=exprList.find('}',start);
             if(endPos>=eqPos) {
                 FatalErrorIn("CommonValueExpressionDriver::addVariables")
+                    << "Context: " << contextString() << endl
                     << "No closing '}' found in "
                         << exprList.substr(start,eqPos-start)
                         << endl
@@ -1603,6 +1612,7 @@ tmp<scalarField> CommonValueExpressionDriver::weights(
         if(!isCorrect) {
             Pout << "Expected Size: " << size << " PointSize:" << pSize << endl;
             FatalErrorIn("CommonValueExpressionDriver::weights()")
+                << "Context: " << contextString() << endl
                 << "At least one processor wants the wrong field size. "
                     << "Check above"
                     << endl
@@ -1635,6 +1645,7 @@ word CommonValueExpressionDriver::getAlias(const word &name) const
 {
     if(!aliases_.found(name)){
         FatalErrorIn("CommonValueExpressionDriver::getAlias(const word &name) const")
+            << "Context: " << contextString() << endl
             << "No alias of name " << name << " found." << endl
                 << "Available aliases are " << aliases_.toc()
                 << endl
