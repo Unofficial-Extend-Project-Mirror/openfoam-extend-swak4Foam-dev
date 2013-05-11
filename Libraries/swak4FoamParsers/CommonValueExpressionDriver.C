@@ -120,6 +120,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         storedVariables_=List<StoredExpressionResult>(
             dict.lookup("storedVariables")
         );
+        if(debug) {
+            Info << "Read stored variables:" << storedVariables_ << endl;
+        }
     }
 
     if(dict.found("delayedVariables")) {
@@ -129,6 +132,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         forAll(readDelays,i)
         {
             delayedVariables_.insert(readDelays[i].name(),readDelays[i]);
+        }
+        if(debug) {
+            Info << "Read delayed variables:" << delayedVariables_ << endl;
         }
     }
 
@@ -859,6 +865,9 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
             iter().setReadValue(result_);
             if(debug) {
                 Pout << "Value " << iter() << endl;
+                Pout << "Type " << iter().valueType() << "("
+                    << result_.valueType() << ")" << endl;
+
             }
         } else {
             if(debug) {
@@ -1023,7 +1032,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
 
     if(delayedVariables_.found(name)) {
         if(debug) {
-            Pout << name << " is delayed" << endl;
+            Pout << name << " is delayed - setting" << endl;
         }
         delayedVariables_[name]=otherResult();
     } else {
