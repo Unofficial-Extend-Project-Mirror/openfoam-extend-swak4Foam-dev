@@ -187,6 +187,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+
     if(dict.found("globalScopes")) {
         setGlobalScopes(wordList(dict.lookup("globalScopes")));
     }

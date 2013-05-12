@@ -607,13 +607,18 @@ namespace Foam {
                         this->mesh().time().timeName(),
                         this->mesh(),
                         IOobject::NO_READ,
-                        IOobject::NO_WRITE
+                        IOobject::NO_WRITE,
+                        false  // don't register
                     ),
                     actualMesh,
                     dimensioned<Type>(name,nullDim,pTraits<Type>::zero),
                     patchType
                 )
             );
+            if(debug) {
+                Pout <<"New field: " << name << " ownedByRegistry"
+                    << f->ownedByRegistry() << endl;
+            }
 
             Field<Type> vals;
             if(
