@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 12 May 2013 13:32:34 +0200
+Subject: Re: Problem with shadowing variables where no field is present
+Message-Id: <cdf756fec88770ec-f3be6b807d608e3e-artemis@bgs-cool-greybook.local>
+References: <cdf756fec88770ec-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cdf756fec88770ec-0-artemis@bgs-cool-greybook.local>
+
+Problem was that the variable field was registered with the mesh

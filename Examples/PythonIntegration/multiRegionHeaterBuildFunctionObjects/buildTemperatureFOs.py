@@ -9,25 +9,25 @@ rInfo=ParsedParameterFile(path.join(constantDir,"regionProperties"))
 template="""
 functions {
 <!--(for name in fluids)-->
-   energyFluid_In_$name$ {
+   energyFluid_In_|name| {
         type swakExpression;
-        region $name$;
+        region |name|;
         expression "h*vol()";
         accumulations ( sum );
         valueType internalField;
         verbose true;
-   } 
+   }
 <!--(end)-->
 <!--(for name in solids)-->
-   energySolid_In_$name$ {
+   energySolid_In_|name| {
         type swakExpression;
-        region $name$;
+        region |name|;
 //        expression "rho*cp*T*vol()";
         expression "rho*T*vol()";
         accumulations ( sum );
         valueType internalField;
         verbose true;
-   } 
+   }
 <!--(end)-->
 }
 """

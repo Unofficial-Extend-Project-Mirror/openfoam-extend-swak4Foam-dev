@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 12 May 2013 00:42:01 +0200
+Subject: Re: Problem with restarting delayed variables
+Message-Id: <bd1007a35aac8142-c1e1e3eb54f630b1-artemis@bgs-cool-greybook.local>
+References: <bd1007a35aac8142-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <bd1007a35aac8142-0-artemis@bgs-cool-greybook.local>
+
+transferCompoundToken gave error. Rewriting to simpler in/output

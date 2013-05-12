@@ -294,7 +294,8 @@ tmp<volVectorField> FieldValueExpressionDriver::makePositionField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             vector(0,0,0)
@@ -319,7 +320,8 @@ tmp<pointVectorField> FieldValueExpressionDriver::makePointPositionField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             this->pMesh(),
             vector::zero,
@@ -341,7 +343,8 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFacePositionField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             vector::zero
@@ -364,7 +367,8 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceProjectionField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             vector(0,0,0)
@@ -463,7 +467,8 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             vector(0,0,0)
@@ -486,7 +491,8 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeAreaField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             0.
@@ -509,7 +515,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeVolumeField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             0.
@@ -536,7 +543,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             0.
@@ -562,7 +570,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeNearDistanceField()
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             0.,
@@ -590,7 +599,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeRDistanceField(const volVect
                 time(),
                 mesh_,
                 IOobject::NO_READ,
-                IOobject::NO_WRITE
+                IOobject::NO_WRITE,
+                false // don't register
             ),
             mesh_,
             0.

@@ -47,6 +47,9 @@ graphFormat     raw;
 runTimeModifiable yes;
 
 functions (
+    // listVariables {
+    //     type listRegisteredObjects;
+    // }
     biggestD
     {
         type patchExpression;
@@ -139,12 +142,18 @@ functions (
                 initialValue "0";
             }
         );
-        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        variables (
+            "maxD=( mag(D) > maxD) ? mag(D) : maxD;"
+        );
         expression "maxD";
         autowrite true;
         outputControl timeStep;
         outputInterval 1;
+        //        debugCommonDriver 1;
     }
+    // listVariables {
+    //     type listRegisteredObjects;
+    // }
 );
 
 libs (

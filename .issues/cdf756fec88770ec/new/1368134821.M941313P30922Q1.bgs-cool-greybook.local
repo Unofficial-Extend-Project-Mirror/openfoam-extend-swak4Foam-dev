@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 09 May 2013 23:25:26 +0200
+State: fixed
+Subject: Problem with shadowing variables where no field is present
+Message-Id: <cdf756fec88770ec-0-artemis@bgs-cool-greybook.local>
+
+Warnings for the maxD-variable in the wobbler-case
