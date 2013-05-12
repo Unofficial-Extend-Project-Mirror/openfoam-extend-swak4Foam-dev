@@ -1869,6 +1869,8 @@ S_{expl} + S_{impl} T
      These fields were registered with the mesh which might have
      disturbed similar named /real/ fields. Also did the fields
      generated for variables get registered
+**** Missing files in =potentialPitzDaily=-case
+     Missing initial conditions made this case a bit pointless
 *** New features
 **** Library with additional =searchableSurfaces=
      The library =simpleSearchableSurfaces= adds more searchable
