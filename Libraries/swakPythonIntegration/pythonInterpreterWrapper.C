@@ -94,6 +94,8 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         dict.lookupOrDefault<bool>("interactiveAfterException",false)
     )
 {
+    debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug);
+
     if(!dict.found("useNumpy")) {
         WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
             << "Switch 'useNumpy' not found in " << dict.name() << nl
@@ -850,13 +852,14 @@ void pythonInterpreterWrapper::setGlobals()
                     << endl;
         }
 
-        GlobalVariablesRepository::getGlobalVariables(
+        ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
             obr_
         ).addValue(
             name,
             pythonToSwakNamespace_,
             eResult
         );
+        res.noReset();
     }
 }
 
