@@ -1848,6 +1848,9 @@ S_{expl} + S_{impl} T
      *after* the regular switches and should alter the behavior of
      the compiler. Set in =swakConfiguration= if you want to set this
      permanently
+**** Use =bash= instead of =sh= in maintainance scripts
+     Some distributions don't use good old =bash= as the default
+     shell. This breaks some scripts in subtle and not so subtle ways
 *** Cosmetics
     Changes without consequences for the user
 **** Methods use =word= for names instead of =string=
