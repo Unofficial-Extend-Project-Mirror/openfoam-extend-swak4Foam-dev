@@ -19,4 +19,9 @@ fluidRegionNames ( bottomAir topAir );
 
 solidRegionNames ( heater leftSolid rightSolid );
 
+regions (
+    fluid $fluidRegionNames
+    solid $solidRegionNames
+);
+
 // ************************************************************************* //

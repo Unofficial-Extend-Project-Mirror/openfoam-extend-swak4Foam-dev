@@ -31,8 +31,8 @@ divSchemes
 
 laplacianSchemes
 {
-    default         none;
-    laplacian(K,T) Gauss linear limited 0.333;
+    default             none;
+    laplacian(alpha,h)  Gauss linear limited corrected 0.333;
 }
 
 interpolationSchemes
@@ -42,7 +42,7 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         limited 0.333;
+    default         limited corrected 0.333;
 }
 
 fluxRequired
