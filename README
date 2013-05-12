@@ -1865,6 +1865,10 @@ S_{expl} + S_{impl} T
      This was fixed by writing the fields properly with
      =writeValue=. This may introduce a little incompatibility when
      reading files written by old versions
+**** Generated fields like =vol()= were registered
+     These fields were registered with the mesh which might have
+     disturbed similar named /real/ fields. Also did the fields
+     generated for variables get registered
 *** New features
 **** Library with additional =searchableSurfaces=
      The library =simpleSearchableSurfaces= adds more searchable
