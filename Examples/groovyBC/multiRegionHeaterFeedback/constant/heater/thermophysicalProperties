@@ -10,44 +10,44 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      fvSchemes;
+    object      thermophysicalProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-ddtSchemes
+thermoType
 {
-    default Euler;
+    type            heSolidThermo;
+    mixture         pureMixture;
+    transport       constIso;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
 }
 
-gradSchemes
+mixture
 {
-    default         Gauss linear;
-}
+    specie
+    {
+        nMoles      1;
+        molWeight   50;
+    }
 
-divSchemes
-{
-    default         none;
-}
+    transport
+    {
+        kappa   80;
+    }
 
-laplacianSchemes
-{
-    default              none;
-    laplacian(alpha,h)   Gauss linear limited corrected 0.333;
-}
+    thermodynamics
+    {
+        Hf      0;
+        Cp      450;
+    }
 
-interpolationSchemes
-{
-    default         linear;
-}
-
-snGradSchemes
-{
-    default         limited corrected 0.333;
-}
-
-fluxRequired
-{
-    default         no;
+    equationOfState
+    {
+        rho     8000;
+    }
 }
 
 // ************************************************************************* //
