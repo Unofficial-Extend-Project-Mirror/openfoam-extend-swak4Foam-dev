@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 12 May 2013 16:01:56 +0200
+State: new
+Subject: Mysterious field =mag(D)= in wobbler-case
+Message-Id: <aa3eb95455fdb90a-0-artemis@bgs-cool-greybook.local>
+
+If listVariables is activated then every second instance a field
+=mag(D)= is displayed. Seems like this is an intermediate variable
+that gets registered

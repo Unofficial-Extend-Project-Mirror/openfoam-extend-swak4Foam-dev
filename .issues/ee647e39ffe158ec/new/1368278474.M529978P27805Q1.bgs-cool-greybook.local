@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 11 May 2013 15:19:26 +0200
+State: fixed
+Subject: circulatingSplash funkySetFields not working
+Message-Id: <ee647e39ffe158ec-0-artemis@bgs-cool-greybook.local>
+
+Because "alpha1 not found"

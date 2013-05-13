@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 11 May 2013 15:22:21 +0200
+State: fixed
+Subject: delayed-t-junction not working
+Message-Id: <ad6054234cafe4a1-0-artemis@bgs-cool-greybook.local>
+
+Variable outFlow not found

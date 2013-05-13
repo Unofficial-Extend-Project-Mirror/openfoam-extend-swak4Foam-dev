@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 13 May 2013 21:02:25 +0200
+Subject: Re: circulatingSplash funkySetFields not working
+Message-Id: <ee647e39ffe158ec-8eff229e244986bd-artemis@bgs-cool-greybook.local>
+References: <ee647e39ffe158ec-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ee647e39ffe158ec-0-artemis@bgs-cool-greybook.local>
+
+Problem was just a stray character in the alpha1-file

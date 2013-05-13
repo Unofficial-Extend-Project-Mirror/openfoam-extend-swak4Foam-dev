@@ -58,8 +58,9 @@ functions
         globalName error;
         globalScope errorResults;
         valueType scalar;
-        value (1 2 3);
+        value nonuniform (1 2 3);
         isSingleValue false;
+        fieldSize 3;
     }
     addTest {
         type addGlobalVariable;
@@ -120,7 +121,7 @@ functions
             );
 
             Info << "Cylinder radius = " << radius.value() << " m" << endl;
-            
+
             volVectorField UA
             (
                 IOobject

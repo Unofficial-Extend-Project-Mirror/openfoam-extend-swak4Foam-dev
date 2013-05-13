@@ -34,9 +34,11 @@ boundaryField
     inlet
     {
         type               groovyBC;
+        //        type            fixedValue;
         value              uniform (0 0 0);
         valueExpression    "0.25*up";
         globalScopes ( whichWayDown );
+        //        debugCommonDriver 1;
     }
     frontAndBackPlanes
     {

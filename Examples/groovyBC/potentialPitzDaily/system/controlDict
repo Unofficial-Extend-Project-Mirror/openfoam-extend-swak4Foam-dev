@@ -46,4 +46,8 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
+libs (
+    "libgroovyBC.so"
+);
+
 // ************************************************************************* //

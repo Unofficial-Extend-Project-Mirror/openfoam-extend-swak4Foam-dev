@@ -62,6 +62,8 @@ DelayedExpressionResult::DelayedExpressionResult()
     storeInterval_(1),
     delay_(10)
 {
+    // noReset();
+    // setNeedsReset(false);
 }
 
 DelayedExpressionResult::DelayedExpressionResult(
@@ -76,6 +78,8 @@ DelayedExpressionResult::DelayedExpressionResult(
     storeInterval_(rhs.storeInterval_),
     delay_(rhs.delay_)
 {
+    // noReset();
+    // setNeedsReset(false);
 }
 
 DelayedExpressionResult::DelayedExpressionResult(const dictionary &dict)
@@ -107,6 +111,11 @@ DelayedExpressionResult::~DelayedExpressionResult()
 
 void DelayedExpressionResult::operator=(const DelayedExpressionResult& rhs)
 {
+    if(debug) {
+        Info << "DelayedExpressionResult::operator=(const DelayedExpressionResult& rhs)"
+            << endl;
+    }
+
     // Check for assignment to self
     if (this == &rhs)
     {
@@ -128,6 +137,8 @@ void DelayedExpressionResult::operator=(const DelayedExpressionResult& rhs)
 void DelayedExpressionResult::operator=(const ExpressionResult& rhs)
 {
     if(debug) {
+        Info << "DelayedExpressionResult::operator=(const ExpressionResult& rhs)"
+            << endl;
         Pout << "Setting " << name() << " with " << rhs << endl;
     }
     settingResult_=rhs;
@@ -218,7 +229,11 @@ bool DelayedExpressionResult::updateReadValue(const scalar &time)
 
 void DelayedExpressionResult::setReadValue(const ExpressionResult &val)
 {
-    static_cast<ExpressionResult&>(*this)=val;
+    if(debug) {
+        Info << "DelayedExpressionResult::setReadValue"
+            << endl;
+    }
+    ExpressionResult::operator=(val);
 }
 
 void DelayedExpressionResult::storeValue(const scalar &time)

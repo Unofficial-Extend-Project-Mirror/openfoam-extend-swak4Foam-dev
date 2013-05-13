@@ -14,7 +14,17 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-thermoType      hRhoThermo<pureMixture<constTransport<specieThermo<hConstThermo<perfectGas>>>>>;
+// thermoType      heRhoThermo<pureMixture<hConst<perfectGas<specie>>,sensibleEnthalpy>>>;
+thermoType
+{
+    type            heRhoThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState perfectGas;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
 
 mixture
 {

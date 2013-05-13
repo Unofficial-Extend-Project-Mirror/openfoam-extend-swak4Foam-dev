@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.0.0                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -31,8 +31,8 @@ divSchemes
 
 laplacianSchemes
 {
-    default         none;
-    laplacian(K,T) Gauss linear limited 0.333;
+    default             none;
+    laplacian(alpha,h)  Gauss linear limited corrected 0.333;
 }
 
 interpolationSchemes
@@ -42,7 +42,7 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         limited 0.333;
+    default         limited corrected 0.333;
 }
 
 fluxRequired

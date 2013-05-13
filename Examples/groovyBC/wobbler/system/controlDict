@@ -47,12 +47,15 @@ graphFormat     raw;
 runTimeModifiable yes;
 
 functions (
+    // listVariables {
+    //     type listRegisteredObjects;
+    // }
     biggestD
     {
         type patchExpression;
-        patches ( 
-            free 
-            forced 
+        patches (
+            free
+            forced
             other
         );
         expression "mag(D)";
@@ -79,9 +82,12 @@ functions (
         expression "maxD";
         verbose true;
     }
+    // listFields {
+    //     type listRegisteredObjects;
+    // }
     biggestDFreeMem2
     {
-        type patchExpression; 
+        type patchExpression;
         patches (
             free
             forced
@@ -136,19 +142,25 @@ functions (
                 initialValue "0";
             }
         );
-        variables ( "maxD=( mag(D) > maxD) ? mag(D) : maxD;");
+        variables (
+            "maxD=( mag(D) > maxD) ? mag(D) : maxD;"
+        );
         expression "maxD";
         autowrite true;
         outputControl timeStep;
         outputInterval 1;
+        //        debugCommonDriver 1;
     }
+    // listVariables {
+    //     type listRegisteredObjects;
+    // }
 );
 
 libs (
-    "libOpenFOAM.so" 
+    "libOpenFOAM.so"
     "libgroovyBC.so"
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
 );
 
 // ************************************************************************* //

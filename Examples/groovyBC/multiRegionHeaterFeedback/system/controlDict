@@ -74,10 +74,17 @@ functions
         expression "T";
         verbose true;
     }
+    // listFields {
+    //     type listRegisteredObjects;
+    //     region heater;
+    // }
     energyRegionheater{
         type swakExpression;
         region heater;
         //        expression "vol()*T*cp*rho";
+        aliases {
+            rho thermo:rho;
+        }
         expression "vol()*T*rho";
         accumulations ( sum );
         valueType internalField;
@@ -99,6 +106,9 @@ functions
         variables "rightE{/rightSolid}=sum(T*rho*vol());";
         //        expression "sum(T*cp*rho*vol())+rightE";
         expression "sum(T*rho*vol())+rightE";
+        aliases {
+            rho thermo:rho;
+        }
         accumulations ( average );
         valueType internalField;
         verbose true;

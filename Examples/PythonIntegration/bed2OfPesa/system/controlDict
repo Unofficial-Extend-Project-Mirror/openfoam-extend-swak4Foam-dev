@@ -54,6 +54,7 @@ maxDeltaT       1e-05;
 libs (
     "libswakPythonIntegration.so"
     "libgroovyBC.so"
+    //    "libsimpleSwakFunctionObjects.so"
 );
 
 functions
@@ -68,7 +69,15 @@ functions
         pythonToSwakVariables (g up);
         //        interactiveAfterExecute true;
         //        interactiveAfterException true;
+        //        debugPythonWrapper 1;
     }
+    // testUp {
+    //     type swakExpression;
+    //     valueType internalField;
+    //     expression "up";
+    //     verbose  true;
+    //     accumulations ( average );
+    // }
     fieldAverage1
     {
         type           fieldAverage;

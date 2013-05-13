@@ -173,7 +173,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
 
         const word scopeName("swakGlobalNamespace_"+name);
         codePrefix+="GlobalVariablesRepository::ResultTable &"+scopeName
-            +"=GlobalVariablesRepository::getGlobalVariables().getNamespace(\""
+            +"=GlobalVariablesRepository::getGlobalVariables(mesh().time()).getNamespace(\""
             +name+"\");\n";
         forAllConstIter(
             GlobalVariablesRepository::ResultTable,
@@ -183,13 +183,13 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
             const ExpressionResult &val=*(*iter);
             if(val.hasValue()) {
                 if(val.isSingleValue()) {
-                    codePrefix+=val.type()+" "+iter.key()
-                        +"("+scopeName+"[\""+iter.key()+"\"].getResult<"
-                        +val.type()+">(true)()[0]);\n";
+                    codePrefix+=val.valueType()+" "+iter.key()
+                        +"("+scopeName+"[\""+iter.key()+"\"]->getResult<"
+                        +val.valueType()+">(true)()[0]);\n";
                 } else {
-                    codePrefix+="Field<"+val.type()+"> "+iter.key()
-                        +"("+scopeName+"[\""+iter.key()+"\"].getResult<"
-                        +val.type()+">(true));\n";
+                    codePrefix+="Field<"+val.valueType()+"> "+iter.key()
+                        +"("+scopeName+"[\""+iter.key()+"\"]->getResult<"
+                        +val.valueType()+">(true));\n";
                 }
                 if(verboseCode_) {
                     codePrefix+="Info << \"Got variable: " + iter.key() + ": \" << "
@@ -207,12 +207,12 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     if(codedToSwakNamespace_!="") {
         forAll(codedToSwakVariables_,i) {
             word name=codedToSwakVariables_[i];
-            codePostfix+="GlobalVariablesRepository::getGlobalVariables().";
+            codePostfix+="GlobalVariablesRepository::getGlobalVariables(mesh().time()).";
             codePostfix+="addValue(\""+name+"\",\""+codedToSwakNamespace_+
                 "\",ExpressionResult("+name+"));\n";
             if(verboseCode_ && 0) {
                 codePostfix+="Info << \"Wrote " + name + " as: \" << "
-                    +"GlobalVariablesRepository::getGlobalVariables()."
+                    +"GlobalVariablesRepository::getGlobalVariables(mesh().time())."
                     +"getNamespace(\""+codedToSwakNamespace_+"\")"
                     +"[\""+name+"\"] << endl;\n";
             }

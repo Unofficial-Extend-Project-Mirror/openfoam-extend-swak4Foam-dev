@@ -328,7 +328,8 @@ functions
                         startCode "";
                         executeCode "";
                         writeFile "$FOAM_CASE/system/calcFillingAtHeight.py";
-                        endFile $writeFile;
+                        endFile "$FOAM_CASE/system/calcFillingAtHeight.py";
+                        //                        endFile $writeFile;
                         swakToPythonNamespaces (
                             pythonStatistics
                         );

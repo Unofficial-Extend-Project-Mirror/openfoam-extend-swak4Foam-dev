@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 09 May 2013 15:37:09 +0200
+State: new
+Subject: circulatingSplash not working
+Message-Id: <ff4acdc68ecee11c-0-artemis@bgs-cool-greybook.local>
+
+Circular dependence with the global variables and alpha1
