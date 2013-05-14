@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,7 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "swakDataEntry.H"
@@ -42,10 +42,11 @@ Foam::swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary
 {
     Istream& is(dict.lookup(entryName));
     word entryType(is);
-    
+
     data_.read(is);
 
     expression_=string(data_.lookup("expression"));
+    independentVariableName_=word(data_.lookup("independentVariableName"));
 }
 
 
@@ -55,7 +56,8 @@ Foam::swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
     DataEntry<Type>(cnst),
     data_(cnst.data_),
     //    driver_(cnst.driver_->clone()),
-    expression_(cnst.expression_)
+    expression_(cnst.expression_),
+    independentVariableName_(cnst.independentVariableName_)
 {}
 
 
@@ -85,12 +87,49 @@ Type Foam::swakDataEntry<Type>::value(const scalar x) const
 {
     CommonValueExpressionDriver &theDriver=const_cast<swakDataEntry<Type> &>(
         *this
-    ).driver();    
+    ).driver();
 
-    // TODO: set x as a variable
     theDriver.clearVariables();
+    theDriver.addUniformVariable(
+        independentVariableName_,
+        x
+    );
 
     return theDriver.evaluateUniform<Type>(expression_);
+}
+
+template<class Type>
+Type Foam::swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
+{
+    CommonValueExpressionDriver &theDriver=const_cast<swakDataEntry<Type> &>(
+        *this
+    ).driver();
+
+    theDriver.clearVariables();
+    label intervalls=readLabel(data_.lookup("integrationIntervalls"));
+    scalar dx=(x2-x1)/intervalls;
+
+    scalar x=x1;
+    theDriver.addUniformVariable(
+        independentVariableName_,
+        x
+    );
+    Type valOld=theDriver.evaluateUniform<Type>(expression_);
+    Type result=pTraits<Type>::zero;
+    while((x+SMALL)<x2) {
+        x+=dx;
+        theDriver.addUniformVariable(
+            independentVariableName_,
+            x
+        );
+        Type valNew=theDriver.evaluateUniform<Type>(expression_);
+        result+=0.5*(valOld+valNew)*dx;
+        valOld=valNew;
+    }
+    // Info << "Integrate " << expression_ << " from " << x1 << " to "
+    //     << x2 << " -> " << result << endl;
+
+    return result;
 }
 
 // * * * * * * * * * * * * * *  IOStream operators * * * * * * * * * * * * * //

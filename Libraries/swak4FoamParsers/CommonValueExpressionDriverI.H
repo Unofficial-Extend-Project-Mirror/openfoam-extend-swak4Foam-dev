@@ -1106,6 +1106,15 @@ namespace Foam {
         return tSum/wSum;
     }
 
+    template<class T>
+    void CommonValueExpressionDriver::addUniformVariable(
+        const word &name,
+        const T &val
+    ) {
+        ExpressionResult e;
+        e.setSingleValue(val);
+        variables_.set(name,e);
+    }
 }
 
 

@@ -475,6 +475,13 @@ public:
         const string &expr
     );
 
+    //- allows adding uniform variables from outside
+    template<class T>
+    void addUniformVariable(
+        const word &name,
+        const T &val
+    );
+
     //- calculate the weighted average of a field
     template<class Type>
     Type calcWeightedAverage(const Field<Type> &f) const;

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -36,7 +36,7 @@ Description
 SourceFiles
     swakDataEntry.C
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakDataEntry_H
@@ -79,10 +79,13 @@ class swakDataEntry
     //- the expression that should be evaluated
     string expression_;
 
+    //- name of the independent variable
+    word independentVariableName_;
+
     // Private Member Functions
 
-        //- Disallow default bitwise assignment
-        void operator=(const swakDataEntry<Type>&);
+    //- Disallow default bitwise assignment
+    void operator=(const swakDataEntry<Type>&);
 
 
     //- get (and set if necessary) the driver
@@ -118,8 +121,8 @@ public:
         //- Return constant value
         Type value(const scalar) const;
 
-//         //- Integrate between two values
-//         Type integrate(const scalar x1, const scalar x2) const;
+    //- Integrate between two values
+    Type integrate(const scalar x1, const scalar x2) const;
 
 
     // I/O

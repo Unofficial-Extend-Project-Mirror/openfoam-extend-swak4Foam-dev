@@ -2104,3 +2104,10 @@ S_{expl} + S_{impl} T
      - deltaT :: Approximately every =outputDeltaT= times it will be
                  executed. The nearest possible timestep is used
      - outputTime :: Executed whenever a regular output is scheduled
+**** =swakDataEntry= improved
+     Two enhancements
+     - the name of the independent variable  no can be
+       specified. This variable holds the value that is passed to the
+       data entry as a uniform value
+     - data entry can now be integrated. This allows using it for
+       instance for the injection rate in lagrangian models
