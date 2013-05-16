@@ -2008,6 +2008,9 @@ S_{expl} + S_{impl} T
      generated for variables get registered
 **** Missing files in =potentialPitzDaily=-case
      Missing initial conditions made this case a bit pointless
+**** =log(vol())= gives floating point exception
+     This was due to the boundaries being set to 0. Fixed. Also for
+     the =dist()= function
 *** New features
 **** Library with additional =searchableSurfaces=
      The library =simpleSearchableSurfaces= adds more searchable
