@@ -285,7 +285,8 @@ tmp<volVectorField> FieldValueExpressionDriver::makePositionField()
                 false // don't register
             ),
             mesh_,
-            vector(0,0,0)
+            vector(0,0,0),
+            "zeroGradient"
         )
     );
     f->dimensions().reset(mesh_.C().dimensions());
@@ -316,6 +317,7 @@ tmp<pointVectorField> FieldValueExpressionDriver::makePointPositionField()
         )
     );
     f->internalField()=mesh_.points();
+    f->correctBoundaryConditions();
 
     return f;
 }
@@ -506,7 +508,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeVolumeField()
                 false // don't register
             ),
             mesh_,
-            0.
+            0.,
+            "zeroGradient"
         )
     );
     const scalarField &V=mesh_.V();
@@ -534,12 +537,13 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceField()
                 false // don't register
             ),
             mesh_,
-            0.
+            0.,
+            "fixedValue"
         )
     );
     f->dimensions().reset(mesh_.C().dimensions());
     wallDist dist(mesh_);
-    f()=dist;
+    f()==dist;
     f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
@@ -590,7 +594,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeRDistanceField(const volVect
                 false // don't register
             ),
             mesh_,
-            0.
+            0.,
+            "zeroGradient"
         )
     );
 
