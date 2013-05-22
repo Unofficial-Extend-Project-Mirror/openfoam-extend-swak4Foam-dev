@@ -1851,6 +1851,8 @@ S_{expl} + S_{impl} T
 **** Use =bash= instead of =sh= in maintainance scripts
      Some distributions don't use good old =bash= as the default
      shell. This breaks some scripts in subtle and not so subtle ways
+**** Build-script prints swak-version in the beginning
+     To filter bug-reports with outdated versions
 *** Cosmetics
     Changes without consequences for the user
 **** Methods use =word= for names instead of =string=
