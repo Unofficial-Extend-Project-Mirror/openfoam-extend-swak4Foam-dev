@@ -1975,3 +1975,7 @@ S_{expl} + S_{impl} T
      - deltaT :: Approximately every =outputDeltaT= times it will be
                  executed. The nearest possible timestep is used
      - outputTime :: Executed whenever a regular output is scheduled
+** Next release - version number : 0.2.5
+*** Bug fixes
+*** New features
+*** Enhancements
