@@ -33,6 +33,8 @@ for l in readme.readlines():
 
 vmajor,vminor,vpatch=verstring.split(".")
 
+print "Swak version is %s.%s.%s" % (vmajor,vminor,vpatch)
+
 versionH=path.join(path.dirname(sys.argv[0]),
                    "..",
                    "Libraries",

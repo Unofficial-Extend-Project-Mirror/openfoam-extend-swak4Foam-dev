@@ -1954,7 +1954,7 @@ S_{expl} + S_{impl} T
      that shadows the pressure field =p=) leads to weird errors a
      warning is given. The warning can be switched of with the option
      =variableNameIdenticalToField=.
-** Next release - version number : 0.2.4
+** 2013-05-24 - version number : 0.2.4
 *** Incompatibilities to previous versions
 **** Data directories now generated in folder =postProcessing= instead of case folder
      According to the convention introduced in OpenFOAM 2.2 now the
@@ -1985,6 +1985,8 @@ S_{expl} + S_{impl} T
 **** Use =bash= instead of =sh= in maintainance scripts
      Some distributions don't use good old =bash= as the default
      shell. This breaks some scripts in subtle and not so subtle ways
+**** Build-script prints swak-version in the beginning
+     To filter bug-reports with outdated versions
 *** Cosmetics
     Changes without consequences for the user
 **** Methods use =word= for names instead of =string=
