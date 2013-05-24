@@ -1,3 +1,8 @@
+swak4foam-%(ofpkg)s (0.2.4-1~ppa1~precise1) precise; urgency=low
+
+  * New package for the stick of the 8th OF-Workshp
+
+ -- Bernhard F.W.Gschaider <bgschaid@ice-sf.at>  Fri, 24 May 2013 19:56:00 +0200
 swak4foam-%(ofpkg)s (0.2.3-1~ppa1~precise1) precise; urgency=low
 
   * New package to test how it works
