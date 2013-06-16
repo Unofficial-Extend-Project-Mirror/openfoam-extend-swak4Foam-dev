@@ -60,6 +60,11 @@ Foam::clearExpressionField::clearExpressionField
 Foam::clearExpressionField::~clearExpressionField()
 {}
 
+void Foam::clearExpressionField::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::clearExpressionField::read(const dictionary& dict)
 {
     name_=word(dict.lookup("fieldName"));

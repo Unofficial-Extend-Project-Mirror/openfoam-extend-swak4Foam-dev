@@ -219,6 +219,11 @@ void Foam::manipulatePatchField::manipulatePoint(
     }
 }
 
+void Foam::manipulatePatchField::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::manipulatePatchField::read(const dictionary& dict)
 {
     if(active_) {

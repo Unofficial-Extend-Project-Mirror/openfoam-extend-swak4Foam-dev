@@ -102,6 +102,11 @@ void Foam::calculateGlobalVariables::executeAndWriteToGlobal()
     }
 }
 
+void Foam::calculateGlobalVariables::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::calculateGlobalVariables::read(const dictionary& dict)
 {
     WarningIn("Foam::calculateGlobalVariables::read(const dictionary& dict)")
