@@ -68,6 +68,11 @@ Foam::createSampledSet::createSampledSet
 Foam::createSampledSet::~createSampledSet()
 {}
 
+void Foam::createSampledSet::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::createSampledSet::read(const dictionary& dict)
 {
     if(active_) {

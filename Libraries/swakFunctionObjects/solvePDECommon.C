@@ -75,6 +75,11 @@ Foam::solvePDECommon::solvePDECommon
 Foam::solvePDECommon::~solvePDECommon()
 {}
 
+void Foam::solvePDECommon::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::solvePDECommon::read(const dictionary& dict)
 {
     if(active_) {

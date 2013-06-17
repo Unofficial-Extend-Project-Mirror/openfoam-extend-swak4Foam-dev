@@ -100,6 +100,11 @@ void Foam::expressionField::storeField(
     }
 }
 
+void Foam::expressionField::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::expressionField::read(const dictionary& dict)
 {
     if(active_) {

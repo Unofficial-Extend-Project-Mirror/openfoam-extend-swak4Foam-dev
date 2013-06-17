@@ -66,6 +66,11 @@ Foam::createSampledSurface::createSampledSurface
 Foam::createSampledSurface::~createSampledSurface()
 {}
 
+void Foam::createSampledSurface::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::createSampledSurface::read(const dictionary& dict)
 {
     if(active_) {

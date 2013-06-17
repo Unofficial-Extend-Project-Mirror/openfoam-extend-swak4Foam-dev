@@ -78,6 +78,11 @@ void Foam::foreignMeshesFollowTime::followCurrentTime()
     }
 }
 
+void Foam::foreignMeshesFollowTime::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::foreignMeshesFollowTime::read(const dictionary& dict)
 {
     followingMeshes_=wordList(dict.lookup("followingMeshes"));

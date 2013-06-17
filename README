@@ -2118,5 +2118,10 @@ S_{expl} + S_{impl} T
        instance for the injection rate in lagrangian models
 ** Next release - version number : 0.2.5
 *** Bug fixes
+**** Missing =timeSet= in function-objects
+     This method has been added in 2.2.x and breaks the compilation
+     of several function-objects
+
+     Fix developed by Bruno Santos
 *** New features
 *** Enhancements
