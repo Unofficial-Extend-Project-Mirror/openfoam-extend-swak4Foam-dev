@@ -50,7 +50,7 @@ namespace Foam
 template<>
 const char* NamedEnum<Foam::simpleFunctionObject::outputControlMode,3>::names[]=
 {
-    "timestep",
+    "timeStep",
     "deltaT",
     "outputTime"
 };
@@ -85,7 +85,7 @@ simpleFunctionObject::simpleFunctionObject
     timeSteps_(0),
     outputControlMode_(
         outputControlModeNames_[
-            dict.lookupOrDefault<word>("outputControlMode","timestep")
+            dict.lookupOrDefault<word>("outputControlMode","timeStep")
         ]
     ),
     outputInterval_(
