@@ -489,6 +489,8 @@ S_{expl} + S_{impl} T
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
+*** From Presentations
+    Cases that were shown in some presentations
 **** OSCFD_cleaningTank3D
      - Solver :: interFoam
      - Case preparation :: run the =prepareCase.sh=-script
@@ -2125,3 +2127,6 @@ S_{expl} + S_{impl} T
      Fix developed by Bruno Santos
 *** New features
 *** Enhancements
+*** Examples
+**** Moved the OSCFD-examples to a different directory
+     Started one new directory for all cases from presentations
