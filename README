@@ -489,7 +489,7 @@ S_{expl} + S_{impl} T
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
-*** From Presentations
+*** FromPresentations
     Cases that were shown in some presentations
 **** OSCFD_cleaningTank3D
      - Solver :: interFoam
@@ -501,6 +501,22 @@ S_{expl} + S_{impl} T
                        variables and delayed variables
 **** OSCFD_cleaningTank2D
      A 2D-variant of the above case
+**** OFW8_sandPitOfCarcoon
+     - Solver :: twoPhaseEulerFoam
+     - Case preparation :: run the =prepareCase.sh=-script
+     - Description :: Simulate a sand-monster from the StarWars-movie
+                      "Return of the Jedi"
+     - Demonstrates :: Use of =funkySetFields=, =groovyBC= and
+                       functionObjects for lagrangian particles
+**** OFW8_landspeedersInCanyon
+     - solver :: simpleFoam
+     - Case preparation :: run the =prepareCase.sh=-script
+     - Description :: Simulates two landSpeeders (as seen in the
+                      StarWars-movie "A New Hope")
+     - Demonstrates :: Advanced searchableSurfaces (for
+                       =snappyHexMesh=), functionObject for passive
+                       scalar, functionObject to calculate
+                       distributions
 *** PythonIntegration
     Demonstrate the integration of =Python=. Mostly using =PyFoam= but
     also with =pythonFlu=
@@ -2130,3 +2146,9 @@ S_{expl} + S_{impl} T
 *** Examples
 **** Moved the OSCFD-examples to a different directory
      Started one new directory for all cases from presentations
+**** Added examples from the swak-training at the 8th Workshop
+     Two new examples
+     - sandPitsOfCarcoon :: Reenacting a scene from "Return of the
+          Jedi" with =twoPhaseEulerFoam=
+     - landspeedersInCanyon :: Simulating two landspeeders from "A new
+          hope" with =simpleFoam=
