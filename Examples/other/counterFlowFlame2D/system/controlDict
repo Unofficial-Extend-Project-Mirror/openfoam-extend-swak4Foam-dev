@@ -51,6 +51,7 @@ maxCo           0.4;
 
 libs (
     "libsimpleFunctionObjects.so"
+    "libswakFunctionObjects.so"
 );
 
 functions {
@@ -68,6 +69,14 @@ functions {
                 overrideP true;
                 initialiseUBCs true;
                 onlyAtStartup true;
+            }
+            resetPhi {
+                type manipulateField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName phi;
+                expression "interpolate(rho)*(interpolate(U)&face())";
+                mask "surf(true)";
             }
         }
     }
