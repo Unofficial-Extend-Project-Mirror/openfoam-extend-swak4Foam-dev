@@ -1993,4 +1993,6 @@ S_{expl} + S_{impl} T
      The function object =executeIfStartTime= executes its children
      if the current time is the =startTime= from the =controlDict=
      (which isn't necessarily the first time step in a restarted case)
+**** Function object that calculates the potential flow
+     To be used on an existing field to set reasonable initial conditions
 *** Enhancements

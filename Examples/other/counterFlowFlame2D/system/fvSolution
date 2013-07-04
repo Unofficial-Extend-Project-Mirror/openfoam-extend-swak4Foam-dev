@@ -32,6 +32,10 @@ solvers
         relTol           0.0;
     }
 
+    p.potential {
+        $p;
+    }
+
     "(U|Yi|hs|k|epsilon)"
     {
         solver          PBiCG;
@@ -45,6 +49,11 @@ PISO
 {
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 5;
 }
 
 
