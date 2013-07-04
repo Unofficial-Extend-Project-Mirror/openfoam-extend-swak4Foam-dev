@@ -1989,4 +1989,8 @@ S_{expl} + S_{impl} T
      function-objects.
 *** Bug fixes
 *** New features
+**** Function object that is only executed if the current time is the =startTime=
+     The function object =executeIfStartTime= executes its children
+     if the current time is the =startTime= from the =controlDict=
+     (which isn't necessarily the first time step in a restarted case)
 *** Enhancements
