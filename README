@@ -459,12 +459,17 @@ S_{expl} + S_{impl} T
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
-**** =mixingGam=
+**** =mixingDam=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
+**** =counterFlowFlame2D=
+     - Solver :: reactingFoam
+     - Case preparation :: run the supplied script =prepareCase.sh=
+     - Demonstrates :: Demonstrates setting calculated initial
+                       conditions with functionObjects
 *** PythonIntegration
     Demonstrate the integration of =Python=. Mostly using =PyFoam= but
     also with =pythonFlu=
