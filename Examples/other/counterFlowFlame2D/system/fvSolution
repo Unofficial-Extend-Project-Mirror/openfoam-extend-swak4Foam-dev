@@ -43,6 +43,15 @@ solvers
         tolerance       1e-06;
         relTol          0;
     }
+    CH4 {
+        $Yi;
+    }
+    O2 {
+        $CH4;
+    }
+    T {
+        $p;
+    }
 }
 
 PISO
@@ -56,5 +65,16 @@ potentialFlow
     nNonOrthogonalCorrectors 5;
 }
 
+CH4TransportPDE
+{
+    nNonOrthogonalCorrectors 2;
+}
+
+O2TransportPDE {
+    $CH4TransportPDE;
+}
+TLaplacianPDE {
+    nNonOrthogonalCorrectors 3;
+}
 
 // ************************************************************************* //

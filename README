@@ -1996,3 +1996,9 @@ S_{expl} + S_{impl} T
 **** Function object that calculates the potential flow
      To be used on an existing field to set reasonable initial conditions
 *** Enhancements
+**** Function objects that calculate PDEs can use fields from memory
+     If the field is found in memory this is used instead of a file
+     read from disc.
+**** Function objects that calculate PDEs can write fields before solving
+     An additional switch =writeBeforeAfter= allows writing the field
+     before and after solving

@@ -52,6 +52,7 @@ maxCo           0.4;
 libs (
     "libsimpleFunctionObjects.so"
     "libswakFunctionObjects.so"
+    "libswakThermoTurbFunctionPlugin.so"
 );
 
 functions {
@@ -77,6 +78,43 @@ functions {
                 fieldName phi;
                 expression "interpolate(rho)*(interpolate(U)&face())";
                 mask "surf(true)";
+            }
+            moveCH4 {
+                type solveTransportPDE;
+                outputControl timeStep;
+                outputInterval 1;
+                solveAt startup;
+                fieldName CH4;
+                steady true;
+                writeBeforeAfter true;
+                useFieldFromMemory true;
+                diffusion "rhoTurb_alphaEff()" [1 -1 -1 0 0 0 0];
+                source "0" [1 -3 -1 0 0 0 0];
+                phi "phi" [1 0 -1 0 0 0 0];
+            }
+            moveO2 {
+                $moveCH4;
+                fieldName O2;
+            }
+            resetN2 {
+                type manipulateField;
+                outputControl timeStep;
+                outputInterval 1;
+                fieldName N2;
+                expression "min(1,max(0,1-O2-CH4))";
+                mask "true";
+            }
+            calcT {
+                type solveLaplacianPDE;
+                outputControl timeStep;
+                outputInterval 1;
+                solveAt startup;
+                fieldName T;
+                steady true;
+                writeBeforeAfter true;
+                useFieldFromMemory true;
+                lambda "rhoTurb_alphaEff()" [0 -1 -1 0 0 0 0];
+                source "0" [0 -3 -1 1 0 0 0];
             }
         }
     }
