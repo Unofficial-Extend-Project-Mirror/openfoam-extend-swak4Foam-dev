@@ -465,7 +465,7 @@ S_{expl} + S_{impl} T
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
-**** =counterFlowFlame2D=
+**** =counterFlowFlame2DInitialized=
      - Solver :: reactingFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Demonstrates setting calculated initial
