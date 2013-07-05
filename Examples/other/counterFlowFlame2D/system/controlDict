@@ -60,6 +60,7 @@ functions {
         type executeIfStartTime;
         readDuringConstruction true;
         runIfStartTime true;
+        enabled r;
         functions {
             calcPotentialU {
                 type initPotentialFlow;
@@ -72,12 +73,16 @@ functions {
                 onlyAtStartup true;
             }
             resetPhi {
-                type manipulateField;
+                type recalcPhi;
                 outputControl timeStep;
                 outputInterval 1;
-                fieldName phi;
-                expression "interpolate(rho)*(interpolate(U)&face())";
-                mask "surf(true)";
+                writeOldFields true;
+                writeFields true;
+                UName U;
+                pName p;
+                phiName phi;
+                rhoName rho;
+                onlyAtStartup true;
             }
             moveCH4 {
                 type solveTransportPDE;

@@ -1994,7 +1994,11 @@ S_{expl} + S_{impl} T
      if the current time is the =startTime= from the =controlDict=
      (which isn't necessarily the first time step in a restarted case)
 **** Function object that calculates the potential flow
-     To be used on an existing field to set reasonable initial conditions
+     To be used on an existing field to set reasonable initial
+     conditions
+**** Function object that forces a recalculation of =phi=
+     Named =recalcPhi= in the simpleFunctionObjects. Usually needed
+     when some other functionObject manipulates velocity or density
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file

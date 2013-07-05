@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "solveAreaLaplacianPDE.H"
@@ -77,7 +77,7 @@ Foam::solveAreaLaplacianPDE::solveAreaLaplacianPDE
     read(dict);
 
     if(solveAt_==saStartup) {
-        solve();
+        solveWrapper();
     }
 }
 
@@ -95,7 +95,7 @@ void Foam::solveAreaLaplacianPDE::read(const dictionary& dict)
         dict.lookup("lambda") >> lambdaExpression_ >> lambdaDimension_;
         dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit") 
+            dict.lookup("sourceImplicit")
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
         }
     }
@@ -106,7 +106,7 @@ void Foam::solveAreaLaplacianPDE::solve()
     if(active_) {
         const faMesh& mesh = driver_->aMesh();
         dictionary sol=mesh.solutionDict().subDict(fieldName_+"LaplacianPDE");
-        
+
         FaFieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
@@ -155,7 +155,7 @@ void Foam::solveAreaLaplacianPDE::solve()
 
                 areaScalarField rhoField(driver.getResult<areaScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
-            
+
                 faMatrix<scalar> ddtMatrix=fam::ddt(f);
                 if(
                     !ddtMatrix.diagonal()
@@ -181,7 +181,7 @@ void Foam::solveAreaLaplacianPDE::solve()
 
                 areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
-            
+
                 eq-=fam::SuSp(sourceImplicitField,f);
             }
 

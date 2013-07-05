@@ -39,7 +39,7 @@ Contributors/Copyright:
 #include "polyMesh.H"
 
 namespace Foam {
-    defineTypeNameAndDebug(solvePDECommon,1);
+    defineTypeNameAndDebug(solvePDECommon,0);
 }
 
 template<>
