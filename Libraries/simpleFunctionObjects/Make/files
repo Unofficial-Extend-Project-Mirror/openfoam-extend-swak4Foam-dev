@@ -59,5 +59,6 @@ timeManipulation/setDeltaTByTimelineFunctionObject/setDeltaTByTimelineFunctionOb
 initialization/initPotentialFlow/initPotentialFlowFunctionObject.C
 
 update/recalcPhi/recalcPhiFunctionObject.C
+update/correctThermo/correctThermoFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects

@@ -122,6 +122,17 @@ functions {
                 lambda "rhoTurb_alphaEff()" [0 -1 -1 0 0 0 0];
                 source "0" [0 -3 -1 1 0 0 0];
             }
+            correctThermo {
+                type correctThermo;
+                outputControlMode startup;
+                onlyAtStartup true;
+                updateRho true;
+                rhoName rho;
+            }
+            resetPhiAgain {
+                // Change of rho will give a different phi
+                $resetPhi;
+            }
             writeRhoEtc {
                 type writeAdditionalFields;
                 fieldNames (

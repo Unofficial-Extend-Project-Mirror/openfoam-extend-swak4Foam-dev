@@ -1999,6 +1999,9 @@ S_{expl} + S_{impl} T
 **** Function object that forces a recalculation of =phi=
      Named =recalcPhi= in the simpleFunctionObjects. Usually needed
      when some other functionObject manipulates velocity or density
+**** Function object that corrects thermophysical model
+     Name =correctThermo=. Recalculates the thermophysical
+     model. To be used after manipulating temperature etc
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file
