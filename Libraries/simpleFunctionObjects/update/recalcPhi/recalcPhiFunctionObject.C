@@ -111,6 +111,12 @@ void recalcPhiFunctionObject::calcPhi()
         mesh.lookupObject<surfaceScalarField>(phiName_)
     );
 
+    if(writeOldFields_) {
+        Info << "Writing copy of old " << phiName_ << endl;
+        surfaceScalarField oldPhi(phiName_+".old",phi);
+        oldPhi.write();
+    }
+
     if(phi.dimensions()==dimensionSet(0,3,-1,0,0,0,0)) {
         phi = fvc::interpolate(U) & mesh.Sf();
     } else if(phi.dimensions()==dimensionSet(1,0,-1,0,0,0,0)) {
@@ -129,12 +135,6 @@ void recalcPhiFunctionObject::calcPhi()
 
     }
     adjustPhi(phi, U, p);
-
-    if(writeOldFields_) {
-        Info << "Writing copy of old " << phiName_ << endl;
-        surfaceScalarField oldPhi(phiName_+".old",phi);
-        oldPhi.write();
-    }
 
     if(writeFields_) {
         Info << "Writing new value of " << phiName_ << endl;
