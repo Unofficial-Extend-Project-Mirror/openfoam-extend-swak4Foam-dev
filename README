@@ -2006,3 +2006,5 @@ S_{expl} + S_{impl} T
 **** Function objects that calculate PDEs can write fields before solving
      An additional switch =writeBeforeAfter= allows writing the field
      before and after solving
+**** simpleFunctionObjects have addition =outputControlMode=
+     Mode =startup= executes the FO only during construction

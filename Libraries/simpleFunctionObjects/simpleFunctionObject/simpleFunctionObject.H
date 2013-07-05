@@ -73,7 +73,8 @@ public:
     enum outputControlMode {
         ocmTimestep,
         ocmDeltaT,
-        ocmOutputTime
+        ocmOutputTime,
+        ocmStartup
     };
 private:
     // Private Member Functions
@@ -99,7 +100,7 @@ private:
     label timeSteps_;
 
     //- possible outputControl-modes
-    static const NamedEnum<outputControlMode,3> outputControlModeNames_;
+    static const NamedEnum<outputControlMode,4> outputControlModeNames_;
     outputControlMode outputControlMode_;
 
     //- how many time-steps between outputs

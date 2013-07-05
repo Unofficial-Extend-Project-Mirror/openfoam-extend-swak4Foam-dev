@@ -60,12 +60,14 @@ functions {
         type executeIfStartTime;
         readDuringConstruction true;
         runIfStartTime true;
+        outputControlMode startup;
         enabled r;
         functions {
             calcPotentialU {
                 type initPotentialFlow;
                 UName U;
                 pName p;
+                outputControlMode startup;
                 writeOldFields true;
                 writeFields true;
                 overrideP true;
@@ -74,8 +76,7 @@ functions {
             }
             resetPhi {
                 type recalcPhi;
-                outputControl timeStep;
-                outputInterval 1;
+                outputControlMode startup;
                 writeOldFields true;
                 writeFields true;
                 UName U;

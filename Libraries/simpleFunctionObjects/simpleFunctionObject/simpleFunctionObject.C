@@ -48,13 +48,14 @@ namespace Foam
     defineTypeNameAndDebug(simpleFunctionObject, 0);
 
 template<>
-const char* NamedEnum<Foam::simpleFunctionObject::outputControlMode,3>::names[]=
+const char* NamedEnum<Foam::simpleFunctionObject::outputControlMode,4>::names[]=
 {
     "timeStep",
     "deltaT",
-    "outputTime"
+    "outputTime",
+    "startup"
 };
-const NamedEnum<simpleFunctionObject::outputControlMode,3> simpleFunctionObject::outputControlModeNames_;
+const NamedEnum<simpleFunctionObject::outputControlMode,4> simpleFunctionObject::outputControlModeNames_;
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -175,6 +176,9 @@ bool simpleFunctionObject::outputTime()
         case ocmOutputTime:
             doOutput=time_.outputTime();
             break;
+        case ocmStartup:
+            doOutput=false;
+            break;
         default:
             FatalErrorIn("simpleFunctionObject::outputTime()")
                 << "'outputControlMode' not implemented in " << name() << endl
@@ -231,7 +235,14 @@ bool simpleFunctionObject::read(const dictionary& dict)
             after_=readScalar(dict.lookup("after"));
         }
 
-        return start();
+        bool isStart=start();
+
+        if(outputControlMode_==ocmStartup) {
+            write();
+            flush();
+        }
+
+        return isStart;
     }
     else
     {
