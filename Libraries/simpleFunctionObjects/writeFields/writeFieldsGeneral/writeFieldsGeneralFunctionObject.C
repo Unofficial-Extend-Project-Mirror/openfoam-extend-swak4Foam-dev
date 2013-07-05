@@ -79,6 +79,8 @@ bool writeFieldsGeneralFunctionObject::start()
 
 void writeFieldsGeneralFunctionObject::write()
 {
+    label totalCnt=0;
+
     forAll(fieldNames_,i) {
         const word &name=fieldNames_[i];
         label cnt=0;
@@ -103,8 +105,11 @@ void writeFieldsGeneralFunctionObject::write()
             WarningIn("writeFieldsGeneralFunctionObject::write()")
                 << " No field with the name " << name
                     << " found" << endl;
+        } else {
+            totalCnt++;
         }
     }
+    Info << name() << " triggered writing of " << totalCnt << " fields" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
