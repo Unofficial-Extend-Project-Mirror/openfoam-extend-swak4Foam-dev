@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeFieldsGeneralFunctionObject_H
@@ -64,7 +64,7 @@ class writeFieldsGeneralFunctionObject
 
     //- Disallow default bitwise copy construct
     writeFieldsGeneralFunctionObject(const writeFieldsGeneralFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const writeFieldsGeneralFunctionObject&);
 
@@ -76,8 +76,8 @@ class writeFieldsGeneralFunctionObject
     bool writeField(const word &name) const;
 
 protected:
-    //- Overwrite the default output time
-    virtual bool outputTime();
+    // //- Overwrite the default output time
+    // virtual bool outputTime();
 public:
 
     // Constructors

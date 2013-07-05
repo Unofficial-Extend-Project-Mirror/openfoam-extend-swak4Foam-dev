@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "writeFieldsGeneralFunctionObject.H"
@@ -68,13 +68,13 @@ bool writeFieldsGeneralFunctionObject::start()
     return true;
 }
 
-bool writeFieldsGeneralFunctionObject::outputTime()
-{
-    return (
-        time().outputTime()
-        &&
-        time().time().value()>=after());
-}
+// bool writeFieldsGeneralFunctionObject::outputTime()
+// {
+//     return (
+//         time().outputTime()
+//         &&
+//         time().time().value()>=after());
+// }
 
 
 void writeFieldsGeneralFunctionObject::write()
@@ -97,13 +97,13 @@ void writeFieldsGeneralFunctionObject::write()
 
         if(cnt>1) {
             WarningIn("writeFieldsGeneralFunctionObject::write()")
-                << " More than one (" << cnt 
+                << " More than one (" << cnt
                     << ") fields are known by the name " << name << endl;
         } else if(cnt<0) {
             WarningIn("writeFieldsGeneralFunctionObject::write()")
                 << " No field with the name " << name
                     << " found" << endl;
-        }                
+        }
     }
 }
 
