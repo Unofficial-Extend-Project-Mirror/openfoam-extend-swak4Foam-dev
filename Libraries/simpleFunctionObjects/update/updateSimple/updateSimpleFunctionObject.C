@@ -34,90 +34,61 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "recalcThermoHFunctionObject.H"
+#include "updateSimpleFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "Time.H"
 
-#include "basicThermo.H"
-
-#include "fixedEnthalpyFvPatchScalarField.H"
-#include "gradientEnthalpyFvPatchScalarField.H"
-#include "mixedEnthalpyFvPatchScalarField.H"
-
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-    defineTypeNameAndDebug(recalcThermoHFunctionObject, 0);
-
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        recalcThermoHFunctionObject,
-        dictionary
-    );
+    defineTypeNameAndDebug(updateSimpleFunctionObject, 0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-recalcThermoHFunctionObject::recalcThermoHFunctionObject
+updateSimpleFunctionObject::updateSimpleFunctionObject
 (
     const word &name,
     const Time& t,
     const dictionary& dict
 )
 :
-    updateSimpleFunctionObject(name,t,dict)
+    simpleFunctionObject(name,t,dict)
 {
 }
 
-void recalcThermoHFunctionObject::recalc()
+bool updateSimpleFunctionObject::start()
 {
-    basicThermo &thermo=const_cast<basicThermo&>(
-        obr_.lookupObject<basicThermo>("thermophysicalProperties")
-    );
-    Info << "Recalculating enthalpy h" << endl;
+    simpleFunctionObject::start();
 
-    const volScalarField &T=thermo.T();
-    volScalarField &h=thermo.h();
-
-    labelList allCells(T.size());
-    forAll(allCells,cellI) {
-        allCells[cellI]=cellI;
-    }
-    h.internalField()=thermo.h(
-        T.internalField(),
-        allCells
-    );
-    forAll(h.boundaryField(), patchi)
-    {
-        h.boundaryField()[patchi] ==
-            thermo.h(
-                T.boundaryField()[patchi],
-                patchi
-            );
+    runIfStartTime_=dict_.lookupOrDefault<bool>("runIfStartTime",false);
+    onlyAtStartup_=readBool(dict_.lookup("onlyAtStartup"));
+    if(onlyAtStartup_) {
+        runIfStartTime_=readBool(dict_.lookup("runIfStartTime"));
     }
 
-    // hBoundaryCorrection
-    volScalarField::GeometricBoundaryField& hbf = h.boundaryField();
-
-    forAll(hbf, patchi)
-    {
-        if (isA<gradientEnthalpyFvPatchScalarField>(hbf[patchi]))
-        {
-            refCast<gradientEnthalpyFvPatchScalarField>(hbf[patchi]).gradient()
-                = hbf[patchi].fvPatchField::snGrad();
-        }
-        else if (isA<mixedEnthalpyFvPatchScalarField>(hbf[patchi]))
-        {
-            refCast<mixedEnthalpyFvPatchScalarField>(hbf[patchi]).refGrad()
-                = hbf[patchi].fvPatchField::snGrad();
+    if(onlyAtStartup_) {
+        if(
+            !runIfStartTime_
+            ||
+            time().value()==time().startTime().value()
+        ) {
+            recalc();
         }
     }
 
+    return true;
+}
+
+void updateSimpleFunctionObject::write()
+{
+    if(!onlyAtStartup_) {
+        recalc();
+    }
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

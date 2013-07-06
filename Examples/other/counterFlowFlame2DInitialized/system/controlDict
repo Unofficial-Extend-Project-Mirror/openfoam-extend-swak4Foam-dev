@@ -61,7 +61,6 @@ functions {
         readDuringConstruction true;
         runIfStartTime true;
         outputControlMode startup;
-        enabled r;
         functions {
             calcPotentialU {
                 type initPotentialFlow;
@@ -73,6 +72,7 @@ functions {
                 overrideP true;
                 initialiseUBCs true;
                 onlyAtStartup true;
+                runIfStartTime true;
             }
             resetPhi {
                 type recalcPhi;
@@ -84,6 +84,7 @@ functions {
                 phiName phi;
                 rhoName rho;
                 onlyAtStartup true;
+                runIfStartTime true;
             }
             moveCH4 {
                 type solveTransportPDE;
@@ -131,6 +132,7 @@ functions {
                 type correctThermo;
                 outputControlMode startup;
                 onlyAtStartup true;
+                runIfStartTime true;
                 updateRho true;
                 rhoName rho;
             }

@@ -58,6 +58,7 @@ timeManipulation/setDeltaTByTimelineFunctionObject/setDeltaTByTimelineFunctionOb
 
 initialization/initPotentialFlow/initPotentialFlowFunctionObject.C
 
+update/updateSimple/updateSimpleFunctionObject.C
 update/recalcPhi/recalcPhiFunctionObject.C
 update/correctThermo/correctThermoFunctionObject.C
 update/recalcThermoH/recalcThermoHFunctionObject.C

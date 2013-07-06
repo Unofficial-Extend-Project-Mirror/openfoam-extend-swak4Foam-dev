@@ -66,36 +66,22 @@ correctThermoFunctionObject::correctThermoFunctionObject
     const dictionary& dict
 )
 :
-    simpleFunctionObject(name,t,dict),
+    updateSimpleFunctionObject(name,t,dict),
     rhoName_("none")
 {
 }
 
 bool correctThermoFunctionObject::start()
 {
-    simpleFunctionObject::start();
-
-    onlyAtStartup_=readBool(dict_.lookup("onlyAtStartup"));
     updateRho_=readBool(dict_.lookup("updateRho"));
     if(updateRho_) {
         rhoName_=word(dict_.lookup("rhoName"));
     }
 
-    if(onlyAtStartup_) {
-        correctThermo();
-    }
-
-    return true;
+    return updateSimpleFunctionObject::start();
 }
 
-void correctThermoFunctionObject::write()
-{
-    if(!onlyAtStartup_) {
-        correctThermo();
-    }
-}
-
-void correctThermoFunctionObject::correctThermo()
+void correctThermoFunctionObject::recalc()
 {
     basicThermo &thermo=const_cast<basicThermo&>(
         obr_.lookupObject<basicThermo>("thermophysicalProperties")

@@ -46,7 +46,7 @@ Contributors/Copyright:
 #ifndef recalcThermoHFunctionObject_H
 #define recalcThermoHFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "updateSimpleFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -58,7 +58,7 @@ namespace Foam
 
 class recalcThermoHFunctionObject
 :
-    public simpleFunctionObject
+    public updateSimpleFunctionObject
 {
     // Private Member Functions
 
@@ -67,9 +67,6 @@ class recalcThermoHFunctionObject
 
     //- Disallow default bitwise assignment
     void operator=(const recalcThermoHFunctionObject&);
-
-   //- do this at startup or every time
-    bool onlyAtStartup_;
 
 protected:
     //- do the actual phi calculation
@@ -89,10 +86,6 @@ public:
         const Time&,
         const dictionary&
     );
-
-    bool start();
-
-    void write();
 };
 
 

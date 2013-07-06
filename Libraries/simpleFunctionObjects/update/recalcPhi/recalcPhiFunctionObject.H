@@ -46,7 +46,7 @@ Contributors/Copyright:
 #ifndef recalcPhiFunctionObject_H
 #define recalcPhiFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "updateSimpleFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -58,7 +58,7 @@ namespace Foam
 
 class recalcPhiFunctionObject
 :
-    public simpleFunctionObject
+    public updateSimpleFunctionObject
 {
     // Private Member Functions
 
@@ -86,12 +86,9 @@ class recalcPhiFunctionObject
     //- write the old fields?
     bool writeOldFields_;
 
-   //- do this at startup or every time
-    bool onlyAtStartup_;
-
 protected:
     //- do the actual phi calculation
-    void calcPhi();
+    void recalc();
 
 public:
 
@@ -109,8 +106,6 @@ public:
     );
 
     bool start();
-
-    void write();
 };
 
 

@@ -66,37 +66,23 @@ recalcPhiFunctionObject::recalcPhiFunctionObject
     const dictionary& dict
 )
 :
-    simpleFunctionObject(name,t,dict)
+    updateSimpleFunctionObject(name,t,dict)
 {
 }
 
 bool recalcPhiFunctionObject::start()
 {
-    simpleFunctionObject::start();
-
     UName_=word(dict_.lookup("UName"));
     phiName_=word(dict_.lookup("phiName"));
     pName_=word(dict_.lookup("pName"));
     rhoName_=dict_.lookupOrDefault<word>("rhoName","none");
     writeOldFields_=readBool(dict_.lookup("writeOldFields"));
     writeFields_=readBool(dict_.lookup("writeFields"));
-    onlyAtStartup_=readBool(dict_.lookup("onlyAtStartup"));
 
-    if(onlyAtStartup_) {
-        calcPhi();
-    }
-
-    return true;
+    return updateSimpleFunctionObject::start();
 }
 
-void recalcPhiFunctionObject::write()
-{
-    if(!onlyAtStartup_) {
-        calcPhi();
-    }
-}
-
-void recalcPhiFunctionObject::calcPhi()
+void recalcPhiFunctionObject::recalc()
 {
     Info << "Calculating flux field " << phiName_
         << " for velocity " << UName_ << endl;

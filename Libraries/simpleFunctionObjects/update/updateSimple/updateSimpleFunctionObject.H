@@ -29,14 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    initPotentialFlowFunctionObject
+    updateSimpleFunctionObject
 
 Description
-    Calculate the potential flow field solution for a field. Either just at
-    the start or at every time step
+    A function object base class for initializing or updating fields
 
 SourceFiles
-    initPotentialFlowFunctionObject.C
+    updateSimpleFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,62 +43,50 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef initPotentialFlowFunctionObject_H
-#define initPotentialFlowFunctionObject_H
+#ifndef updateSimpleFunctionObject_H
+#define updateSimpleFunctionObject_H
 
-#include "updateSimpleFunctionObject.H"
+#include "simpleFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class initPotentialFlowFunctionObject Declaration
+                           Class updateSimpleFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class initPotentialFlowFunctionObject
+class updateSimpleFunctionObject
 :
-    public updateSimpleFunctionObject
+    public simpleFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    initPotentialFlowFunctionObject(const initPotentialFlowFunctionObject&);
+    updateSimpleFunctionObject(const updateSimpleFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const initPotentialFlowFunctionObject&);
+    void operator=(const updateSimpleFunctionObject&);
 
-    //- name of the velocity field
-    word UName_;
+    //- do this at startup or every time
+    bool onlyAtStartup_;
 
-    //- name of the pressure
-    word pName_;
-
-    //- write the fields?
-    bool writeFields_;
-
-    //- write the old fields?
-    bool writeOldFields_;
-
-    //- override pressure?
-    bool overrideP_;
-
-    //- initialize the U BCs?
-    bool initialiseUBCs_;
+    //- only do if this isn't a restart
+    bool runIfStartTime_;
 
 protected:
-    //- do the actual potential flow calculation
-    void recalc();
+    //- do the actual recalculation
+    virtual void recalc() = 0;
 
 public:
 
     //- Runtime type information
-    TypeName("initPotentialFlow");
+    TypeName("updateSimple");
 
     // Constructors
 
     //- Construct from components
-    initPotentialFlowFunctionObject
+    updateSimpleFunctionObject
     (
         const word&,
         const Time&,
@@ -107,6 +94,8 @@ public:
     );
 
     bool start();
+
+    void write();
 };
 
 

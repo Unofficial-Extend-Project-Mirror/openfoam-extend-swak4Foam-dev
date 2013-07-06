@@ -46,7 +46,7 @@ Contributors/Copyright:
 #ifndef correctThermoFunctionObject_H
 #define correctThermoFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "updateSimpleFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -58,7 +58,7 @@ namespace Foam
 
 class correctThermoFunctionObject
 :
-    public simpleFunctionObject
+    public updateSimpleFunctionObject
 {
     // Private Member Functions
 
@@ -68,9 +68,6 @@ class correctThermoFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const correctThermoFunctionObject&);
 
-   //- do this at startup or every time
-    bool onlyAtStartup_;
-
     //- should we update rho
     bool updateRho_;
 
@@ -79,7 +76,7 @@ class correctThermoFunctionObject
 
 protected:
     //- do the actual phi calculation
-    void correctThermo();
+    void recalc();
 
 public:
 
@@ -97,8 +94,6 @@ public:
     );
 
     bool start();
-
-    void write();
 };
 
 

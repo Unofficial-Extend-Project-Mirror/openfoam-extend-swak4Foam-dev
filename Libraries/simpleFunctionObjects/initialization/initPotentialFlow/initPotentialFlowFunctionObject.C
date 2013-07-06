@@ -66,37 +66,23 @@ initPotentialFlowFunctionObject::initPotentialFlowFunctionObject
     const dictionary& dict
 )
 :
-    simpleFunctionObject(name,t,dict)
+    updateSimpleFunctionObject(name,t,dict)
 {
 }
 
 bool initPotentialFlowFunctionObject::start()
 {
-    simpleFunctionObject::start();
-
     UName_=word(dict_.lookup("UName"));
     pName_=word(dict_.lookup("pName"));
     writeOldFields_=readBool(dict_.lookup("writeOldFields"));
     writeFields_=readBool(dict_.lookup("writeFields"));
     overrideP_=readBool(dict_.lookup("overrideP"));
     initialiseUBCs_=readBool(dict_.lookup("initialiseUBCs"));
-    onlyAtStartup_=readBool(dict_.lookup("onlyAtStartup"));
 
-    if(onlyAtStartup_) {
-        calcPotentialFlow();
-    }
-
-    return true;
+    return updateSimpleFunctionObject::start();
 }
 
-void initPotentialFlowFunctionObject::write()
-{
-    if(!onlyAtStartup_) {
-        calcPotentialFlow();
-    }
-}
-
-void initPotentialFlowFunctionObject::calcPotentialFlow()
+void initPotentialFlowFunctionObject::recalc()
 {
     Info << "Solving potential flow for velocity " << UName_
         << " and pressure " << pName_ << endl;
