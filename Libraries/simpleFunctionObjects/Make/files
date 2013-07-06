@@ -62,5 +62,7 @@ update/updateSimple/updateSimpleFunctionObject.C
 update/recalcPhi/recalcPhiFunctionObject.C
 update/correctThermo/correctThermoFunctionObject.C
 update/recalcThermoH/recalcThermoHFunctionObject.C
+update/recalcThermoHs/recalcThermoHsFunctionObject.C
+update/recalcThermoE/recalcThermoEFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects

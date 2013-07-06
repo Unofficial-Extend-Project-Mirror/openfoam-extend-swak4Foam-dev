@@ -121,13 +121,18 @@ functions {
                 writeBeforeAfter true;
                 useFieldFromMemory true;
                 lambda "rhoTurb_alphaEff()" [0 -1 -1 0 0 0 0];
-                source "0" [0 -3 -1 1 0 0 0];
+                variables (
+                    "factor=1e1;"
+                    "TRef=300;"
+                );
+                source "factor*(T-TRef)" [0 -3 -1 1 0 0 0];
             }
-            // recalcEnthalpy {
-            //     type recalcThermoH;
-            //     outputControlMode startup;
-            //     onlyAtStartup true;
-            // }
+            recalcEnthalpy {
+                type recalcThermoHs;
+                outputControlMode startup;
+                runIfStartTime true;
+                onlyAtStartup true;
+            }
             correctThermo {
                 type correctThermo;
                 outputControlMode startup;
@@ -145,6 +150,7 @@ functions {
                 fieldNames (
                     rho
                     psi
+                    hs
                 );
                 outputControlMode startup;
             }
