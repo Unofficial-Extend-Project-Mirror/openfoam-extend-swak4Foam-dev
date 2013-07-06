@@ -2005,7 +2005,7 @@ S_{expl} + S_{impl} T
 **** Function objects that recalculate the energy of a thermophysical model
      Recalculate enthalpy, sensible enthalpy or internal energy
      according to the current temperature. This allows making this
-     consistent depending if the temperature has been manipulated
+     consistent if the temperature has been manipulated
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file

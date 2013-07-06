@@ -88,7 +88,7 @@ executeIfStartTimeFunctionObject::executeIfStartTimeFunctionObject
 
 bool executeIfStartTimeFunctionObject::condition()
 {
-    if(time().value()==time().startTime().value()) {
+    if(time().timeIndex()==0) {
         return runIfStartTime_;
     } else {
         return !runIfStartTime_;

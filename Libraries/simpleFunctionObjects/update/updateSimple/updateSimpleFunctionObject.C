@@ -75,7 +75,7 @@ bool updateSimpleFunctionObject::start()
         if(
             !runIfStartTime_
             ||
-            time().value()==time().startTime().value()
+            time().timeIndex()==0
         ) {
             recalc();
         }

@@ -150,7 +150,7 @@ functions {
                 fieldNames (
                     rho
                     psi
-                    hs
+                    //                    hs
                 );
                 outputControlMode startup;
             }
