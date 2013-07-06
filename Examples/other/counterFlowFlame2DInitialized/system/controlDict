@@ -122,6 +122,11 @@ functions {
                 lambda "rhoTurb_alphaEff()" [0 -1 -1 0 0 0 0];
                 source "0" [0 -3 -1 1 0 0 0];
             }
+            // recalcEnthalpy {
+            //     type recalcThermoH;
+            //     outputControlMode startup;
+            //     onlyAtStartup true;
+            // }
             correctThermo {
                 type correctThermo;
                 outputControlMode startup;

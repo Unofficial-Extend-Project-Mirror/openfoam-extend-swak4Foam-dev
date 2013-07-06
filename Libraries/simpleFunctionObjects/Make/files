@@ -60,5 +60,6 @@ initialization/initPotentialFlow/initPotentialFlowFunctionObject.C
 
 update/recalcPhi/recalcPhiFunctionObject.C
 update/correctThermo/correctThermoFunctionObject.C
+update/recalcThermoH/recalcThermoHFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleFunctionObjects
