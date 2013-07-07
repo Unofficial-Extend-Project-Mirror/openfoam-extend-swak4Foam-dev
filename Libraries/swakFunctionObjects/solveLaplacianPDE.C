@@ -99,6 +99,14 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
         if(dict.found("sourceImplicit")) {
             dict.lookup("sourceImplicit")
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
+        } else {
+            if(sourceExpression_!="0") {
+                WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")
+                    << "Source expression " << sourceExpression_ << " set. "
+                        << "Consider factoring out parts to 'sourceImplicit'\n"
+                        << endl;
+
+            }
         }
     }
 }
