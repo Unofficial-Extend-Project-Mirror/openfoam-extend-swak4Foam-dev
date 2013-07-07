@@ -122,6 +122,18 @@ void Foam::solveAreaTransportPDE::solve()
         FaFieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
+        if(
+            nCorr==0
+            &&
+            steady_
+        ) {
+            WarningIn("Foam::solveTransportPDE::solve()")
+                << name_ << " is steady. It is recommended to have in "
+                    << sol.name() << " a nCorrectors>0"
+                    << endl;
+
+        }
+
         for (int corr=0; corr<=nCorr; corr++) {
 
             driver.clearVariables();

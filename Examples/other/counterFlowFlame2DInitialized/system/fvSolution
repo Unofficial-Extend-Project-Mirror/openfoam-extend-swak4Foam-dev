@@ -67,6 +67,7 @@ potentialFlow
 
 CH4TransportPDE
 {
+    nCorrectors     5;
     nNonOrthogonalCorrectors 2;
 }
 
@@ -74,6 +75,7 @@ O2TransportPDE {
     $CH4TransportPDE;
 }
 TLaplacianPDE {
+    nCorrectors     15;
     nNonOrthogonalCorrectors 3;
 }
 
