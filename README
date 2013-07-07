@@ -459,12 +459,21 @@ S_{expl} + S_{impl} T
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
-**** =mixingGam=
+**** =mixingDam=
      - Solver :: interFoam
      - Case preparation :: run the supplied script =prepareCase.sh=
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
+**** =counterFlowFlame2DInitialized=
+     Demonstrates initializing a case with initial conditions that
+     approximate the real flow.
+     - Solver :: reactingFoam
+     - Case preparation :: run the supplied script
+          =prepareCase.sh=. *Caution:* this has to be done *every*
+          time before running the case
+     - Demonstrates :: Demonstrates setting calculated initial
+                       conditions with functionObjects
 *** PythonIntegration
     Demonstrate the integration of =Python=. Mostly using =PyFoam= but
     also with =pythonFlu=
@@ -1983,5 +1992,33 @@ S_{expl} + S_{impl} T
      to be consistent with the nomenclature in the 'regular'
      function-objects.
 *** Bug fixes
+**** =sourceImplicit= unstable
+     For some reason using =SuSp= gave unstable results for the
+     PDE-functionObjects. Changed to =Sp=
 *** New features
+**** Function object that is only executed if the current time is the =startTime=
+     The function object =executeIfStartTime= executes its children
+     if the current time is the =startTime= from the =controlDict=
+     (which isn't necessarily the first time step in a restarted case)
+**** Function object that calculates the potential flow
+     To be used on an existing field to set reasonable initial
+     conditions
+**** Function object that forces a recalculation of =phi=
+     Named =recalcPhi= in the simpleFunctionObjects. Usually needed
+     when some other functionObject manipulates velocity or density
+**** Function object that corrects thermophysical model
+     Name =correctThermo=. Recalculates the thermophysical
+     model. To be used after manipulating temperature etc
+**** Function objects that recalculate the energy of a thermophysical model
+     Recalculate enthalpy, sensible enthalpy or internal energy
+     according to the current temperature. This allows making this
+     consistent if the temperature has been manipulated
 *** Enhancements
+**** Function objects that calculate PDEs can use fields from memory
+     If the field is found in memory this is used instead of a file
+     read from disc.
+**** Function objects that calculate PDEs can write fields before solving
+     An additional switch =writeBeforeAfter= allows writing the field
+     before and after solving
+**** simpleFunctionObjects have addition =outputControlMode=
+     Mode =startup= executes the FO only during construction

@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef solvePDECommon_H
@@ -62,7 +62,7 @@ class solvePDECommon
 {
     //- Disallow default bitwise copy construct
     solvePDECommon(const solvePDECommon&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const solvePDECommon&);
 
@@ -83,20 +83,32 @@ protected:
     //- name of the function object
     const word name_;
 
-    //- name of the field that is being solved for 
+    //- name of the field that is being solved for
     word fieldName_;
 
     //- is this a steady calculation
     bool steady_;
 
+private:
     //- do the actual solving
     virtual void solve() = 0;
+
+protected:
+    //- Wrapper around solve()
+    void solveWrapper();
 
     //- write specific data
     virtual void writeData() = 0;
 
     static const NamedEnum<solveAt,3> solveAtNames_;
     solveAt solveAt_;
+
+    //- should the fields before and after be written?
+    bool writeBeforeAfter_;
+
+    virtual void writeOldField() = 0;
+
+    virtual void writeNewField() = 0;
 
 public:
 
@@ -105,7 +117,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     solvePDECommon
@@ -125,20 +137,20 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute
     virtual void execute();
-    
+
     //- Execute at the final time-loop
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
     virtual void movePoints(const pointField&)
         {}

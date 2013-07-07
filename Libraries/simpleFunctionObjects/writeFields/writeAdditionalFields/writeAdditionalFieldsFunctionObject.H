@@ -37,7 +37,7 @@ Description
 
 Example usage: writes Enthalpy and viscosity after t=15
 
-functions 
+functions
 (
     writeEnthalpy {
         functionObjectLibs ("libsimpleFunctionObjects.so");
@@ -53,7 +53,7 @@ SourceFiles
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeAdditionalFieldsFunctionObject_H
@@ -77,14 +77,14 @@ class writeAdditionalFieldsFunctionObject
 
     //- Disallow default bitwise copy construct
     writeAdditionalFieldsFunctionObject(const writeAdditionalFieldsFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const writeAdditionalFieldsFunctionObject&);
 
 protected:
 
-    //- Overwrite the default output time
-    virtual bool outputTime();
+    // //- Overwrite the default output time
+    // virtual bool outputTime();
 public:
 
     //- Runtime type information
