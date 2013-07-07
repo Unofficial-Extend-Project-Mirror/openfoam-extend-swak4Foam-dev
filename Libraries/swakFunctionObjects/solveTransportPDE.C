@@ -213,7 +213,7 @@ void Foam::solveTransportPDE::solve()
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
 
-                eq-=fvm::SuSp(sourceImplicitField,f);
+                eq-=fvm::Sp(sourceImplicitField,f);
             }
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);

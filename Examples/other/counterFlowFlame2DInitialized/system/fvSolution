@@ -75,7 +75,7 @@ O2TransportPDE {
     $CH4TransportPDE;
 }
 TLaplacianPDE {
-    nCorrectors     15;
+    nCorrectors     1;
     nNonOrthogonalCorrectors 3;
 }
 

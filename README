@@ -466,8 +466,12 @@ S_{expl} + S_{impl} T
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
 **** =counterFlowFlame2DInitialized=
+     Demonstrates initializing a case with initial conditions that
+     approximate the real flow.
      - Solver :: reactingFoam
-     - Case preparation :: run the supplied script =prepareCase.sh=
+     - Case preparation :: run the supplied script
+          =prepareCase.sh=. *Caution:* this has to be done *every*
+          time before running the case
      - Demonstrates :: Demonstrates setting calculated initial
                        conditions with functionObjects
 *** PythonIntegration
@@ -1988,6 +1992,9 @@ S_{expl} + S_{impl} T
      to be consistent with the nomenclature in the 'regular'
      function-objects.
 *** Bug fixes
+**** =sourceImplicit= unstable
+     For some reason using =SuSp= gave unstable results for the
+     PDE-functionObjects. Changed to =Sp=
 *** New features
 **** Function object that is only executed if the current time is the =startTime=
      The function object =executeIfStartTime= executes its children

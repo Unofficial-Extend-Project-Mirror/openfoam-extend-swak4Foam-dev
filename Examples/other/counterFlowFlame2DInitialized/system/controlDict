@@ -122,13 +122,13 @@ functions {
                 useFieldFromMemory true;
                 lambda "rhoTurb_alphaEff()" [0 -1 -1 0 0 0 0];
                 variables (
-                    "factor=5e-1;"
+                    "factor=1e1;"
                     "TRef=300;"
                 );
-                source "-factor*(T-TRef)" [0 -3 -1 1 0 0 0];
-                sourceImplicit "0" [0 -3 -1 0 0 0 0];
-                // source "factor*TRef" [0 -3 -1 1 0 0 0];
-                // sourceImplicit "-factor" [0 -3 -1 0 0 0 0];
+                // source "-factor*(T-TRef)" [0 -3 -1 1 0 0 0];
+                // sourceImplicit "0" [0 -3 -1 0 0 0 0];
+                source "factor*TRef" [0 -3 -1 1 0 0 0];
+                sourceImplicit "-factor" [0 -3 -1 0 0 0 0];
             }
             recalcEnthalpy {
                 type recalcThermoHs;

@@ -202,7 +202,7 @@ void Foam::solveAreaLaplacianPDE::solve()
                 areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
 
-                eq-=fam::SuSp(sourceImplicitField,f);
+                eq-=fam::Sp(sourceImplicitField,f);
             }
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
