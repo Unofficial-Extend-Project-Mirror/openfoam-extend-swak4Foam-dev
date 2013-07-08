@@ -125,7 +125,7 @@ bool conditionalFunctionObjectListProxy::execute()
         return functionObjectListProxy::execute();
     } else {
         if(else_.valid()) {
-            return else_->execute(forceWrite);
+            return else_->execute();
         } else {
             return true;
         }
