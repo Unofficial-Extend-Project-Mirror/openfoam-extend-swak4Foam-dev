@@ -131,7 +131,8 @@ functions {
                 sourceImplicit "-factor" [0 -3 -1 0 0 0 0];
             }
             recalcEnthalpy {
-                type recalcThermoHs;
+                //                type recalcThermoHs;
+                type recalcThermoHe;
                 outputControlMode startup;
                 runIfStartTime true;
                 onlyAtStartup true;

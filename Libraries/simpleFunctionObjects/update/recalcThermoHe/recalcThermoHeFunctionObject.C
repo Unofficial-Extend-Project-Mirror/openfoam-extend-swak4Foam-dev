@@ -36,9 +36,9 @@ Contributors/Copyright:
 
 #include "foamVersion4swak.H"
 
-#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR<2)
+#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR>=2)
 
-#include "recalcThermoHFunctionObject.H"
+#include "recalcThermoHeFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
@@ -47,27 +47,27 @@ Contributors/Copyright:
 
 #include "basicThermo.H"
 
-#include "fixedEnthalpyFvPatchScalarField.H"
-#include "gradientEnthalpyFvPatchScalarField.H"
-#include "mixedEnthalpyFvPatchScalarField.H"
+#include "fixedEnergyFvPatchScalarField.H"
+#include "gradientEnergyFvPatchScalarField.H"
+#include "mixedEnergyFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-    defineTypeNameAndDebug(recalcThermoHFunctionObject, 0);
+    defineTypeNameAndDebug(recalcThermoHeFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        recalcThermoHFunctionObject,
+        recalcThermoHeFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-recalcThermoHFunctionObject::recalcThermoHFunctionObject
+recalcThermoHeFunctionObject::recalcThermoHeFunctionObject
 (
     const word &name,
     const Time& t,
@@ -78,7 +78,7 @@ recalcThermoHFunctionObject::recalcThermoHFunctionObject
 {
 }
 
-void recalcThermoHFunctionObject::recalc()
+void recalcThermoHeFunctionObject::recalc()
 {
     basicThermo &thermo=const_cast<basicThermo&>(
         obr_.lookupObject<basicThermo>("thermophysicalProperties")
@@ -86,20 +86,24 @@ void recalcThermoHFunctionObject::recalc()
     Info << "Recalculating enthalpy h" << endl;
 
     const volScalarField &T=thermo.T();
-    volScalarField &h=thermo.h();
+    const volScalarField &p=thermo.p();
+
+    volScalarField &h=thermo.he();
 
     labelList allCells(T.size());
     forAll(allCells,cellI) {
         allCells[cellI]=cellI;
     }
-    h.internalField()=thermo.h(
+    h.internalField()=thermo.he(
+        p.internalField(),
         T.internalField(),
         allCells
     );
     forAll(h.boundaryField(), patchi)
     {
         h.boundaryField()[patchi] ==
-            thermo.h(
+            thermo.he(
+                p.boundaryField()[patchi],
                 T.boundaryField()[patchi],
                 patchi
             );
@@ -110,14 +114,14 @@ void recalcThermoHFunctionObject::recalc()
 
     forAll(hbf, patchi)
     {
-        if (isA<gradientEnthalpyFvPatchScalarField>(hbf[patchi]))
+        if (isA<gradientEnergyFvPatchScalarField>(hbf[patchi]))
         {
-            refCast<gradientEnthalpyFvPatchScalarField>(hbf[patchi]).gradient()
+            refCast<gradientEnergyFvPatchScalarField>(hbf[patchi]).gradient()
                 = hbf[patchi].fvPatchField::snGrad();
         }
-        else if (isA<mixedEnthalpyFvPatchScalarField>(hbf[patchi]))
+        else if (isA<mixedEnergyFvPatchScalarField>(hbf[patchi]))
         {
-            refCast<mixedEnthalpyFvPatchScalarField>(hbf[patchi]).refGrad()
+            refCast<mixedEnergyFvPatchScalarField>(hbf[patchi]).refGrad()
                 = hbf[patchi].fvPatchField::snGrad();
         }
     }

@@ -22,26 +22,47 @@ solvers
         solver          PCG;
         preconditioner  DIC;
         tolerance       1e-06;
+        relTol          0.1;
+    }
+    rhoFinal
+    {
+        $rho;
+        tolerance       1e-06;
         relTol          0;
     }
+
     p
     {
         solver           PCG;
         preconditioner   DIC;
         tolerance        1e-6;
+        relTol           0.1;
+    }
+    pFinal
+    {
+        $p;
+        tolerance        1e-6;
         relTol           0.0;
     }
-
     p.potential {
-        $p;
+        $pFinal;
     }
 
-    "(U|Yi|hs|k|epsilon)"
+    "(U|hs|h|k|epsilon)"
     {
         solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-06;
+        relTol          0.1;
+    }
+    "(U|hs|h|k|epsilon)Final"
+    {
+        $hs;
         relTol          0;
+    }
+    Yi
+    {
+        $hFinal;
     }
     CH4 {
         $Yi;
@@ -56,6 +77,14 @@ solvers
 
 PISO
 {
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 0;
+}
+
+PIMPLE
+{
+    momentumPredictor no;
+    nOuterCorrectors  1;
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
 }

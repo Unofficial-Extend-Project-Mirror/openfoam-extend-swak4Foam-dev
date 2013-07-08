@@ -9,14 +9,21 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       uniformDimensionedVectorField;
+    class       dictionary;
     location    "constant";
-    object      g;
+    object      combustionProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -2 0 0 0 0];
-value           ( 0 0 0 );
+combustionModel  PaSR<psiChemistryCombustion>;
+
+active  true;
+
+PaSRCoeffs
+{
+    Cmix                0.1;
+    turbulentReaction   on;
+}
 
 
 // ************************************************************************* //
