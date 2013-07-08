@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef solvePDECommon_H
@@ -92,14 +92,26 @@ protected:
     //- is this a steady calculation
     bool steady_;
 
+private:
     //- do the actual solving
     virtual void solve() = 0;
+
+protected:
+    //- Wrapper around solve()
+    void solveWrapper();
 
     //- write specific data
     virtual void writeData() = 0;
 
     static const NamedEnum<solveAt,3> solveAtNames_;
     solveAt solveAt_;
+
+    //- should the fields before and after be written?
+    bool writeBeforeAfter_;
+
+    virtual void writeOldField() = 0;
+
+    virtual void writeNewField() = 0;
 
 public:
 

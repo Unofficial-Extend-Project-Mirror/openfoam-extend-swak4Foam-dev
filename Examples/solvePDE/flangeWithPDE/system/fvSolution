@@ -24,15 +24,15 @@ solvers
         tolerance       1e-06;
         relTol          0;
     }
-    TSteady 
+    TSteady
     {
         $T;
     }
-    TSteadyAlternate 
+    TSteadyAlternate
     {
         $T;
     }
-    TTransient 
+    TTransient
     {
         $T;
     }
@@ -46,11 +46,13 @@ SIMPLE
 TSteadyLaplacianPDE
 {
     $SIMPLE;
+    nCorrectors 10;
 }
 
 TSteadyAlternateLaplacianPDE
 {
     $SIMPLE;
+    nCorrectors 2;
 }
 
 TTransientLaplacianPDE

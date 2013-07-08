@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "solvePDECommon.H"
@@ -82,6 +82,9 @@ void Foam::solvePDECommon::timeSet()
 
 void Foam::solvePDECommon::read(const dictionary& dict)
 {
+    if(debug) {
+        Info << "Foam::solvePDECommon::read()" << endl;
+    }
     if(active_) {
         solveAt_=
             solveAtNames_.read(
@@ -90,17 +93,22 @@ void Foam::solvePDECommon::read(const dictionary& dict)
         fieldName_=word(dict.lookup("fieldName"));
 
         steady_=readBool(dict.lookup("steady"));
+
+        writeBeforeAfter_=dict.lookupOrDefault<bool>("writeBeforeAfter",false);
     }
 }
 
 void Foam::solvePDECommon::execute()
 {
+    if(debug) {
+        Info << "Foam::solvePDECommon::execute()" << endl;
+    }
     if(solveAt_==saTimestep) {
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
 
-        solve();
+        solveWrapper();
 
-        // as this is executed after the general write, write the field separately 
+        // as this is executed after the general write, write the field separately
         if(mesh.time().outputTime()) {
             writeData();
         }
@@ -110,18 +118,44 @@ void Foam::solvePDECommon::execute()
 
 void Foam::solvePDECommon::end()
 {
+    if(debug) {
+        Info << "Foam::solvePDECommon::end()" << endl;
+    }
     execute();
+}
+
+void Foam::solvePDECommon::solveWrapper()
+{
+    if(debug) {
+        Info << "Foam::solvePDECommon::solveWrapper()" << endl;
+    }
+    const fvMesh& mesh = refCast<const fvMesh>(obr_);
+
+    if(writeBeforeAfter_) {
+        Info << "Write " << fieldName_ << " before" << endl;
+        this->writeOldField();
+    }
+
+    solve();
+
+    if(writeBeforeAfter_ && !mesh.time().outputTime()) {
+        Info << "Write " << fieldName_ << " after" << endl;
+        this->writeNewField();
+    }
 }
 
 void Foam::solvePDECommon::write()
 {
+    if(debug) {
+        Info << "Foam::solvePDECommon::write()" << endl;
+    }
     const fvMesh& mesh = refCast<const fvMesh>(obr_);
     if(
         solveAt_==saWrite
         &&
         mesh.time().outputTime()
     ) {
-        solve();
+        solveWrapper();
 
         writeData();
     }

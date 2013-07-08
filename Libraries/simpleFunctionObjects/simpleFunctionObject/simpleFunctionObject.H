@@ -72,10 +72,11 @@ class simpleFunctionObject
     public functionObject
 {
 public:
-    enum outputControlMode {
+    enum outputControlModeType {
         ocmTimestep,
         ocmDeltaT,
-        ocmOutputTime
+        ocmOutputTime,
+        ocmStartup
     };
 private:
     // Private Member Functions
@@ -101,8 +102,8 @@ private:
     label timeSteps_;
 
     //- possible outputControl-modes
-    static const NamedEnum<outputControlMode,3> outputControlModeNames_;
-    outputControlMode outputControlMode_;
+    static const NamedEnum<outputControlModeType,4> outputControlModeTypeNames_;
+    outputControlModeType outputControlMode_;
 
     //- how many time-steps between outputs
     label outputInterval_;
@@ -115,6 +116,9 @@ private:
     scalar lastWrite_;
 
 protected:
+
+    outputControlModeType outputControlMode() const
+        { return outputControlMode_; }
 
     dictionary dict_;
 
