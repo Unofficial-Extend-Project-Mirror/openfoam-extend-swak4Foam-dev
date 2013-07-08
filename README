@@ -1996,6 +1996,13 @@ S_{expl} + S_{impl} T
      For some reason using =SuSp= gave unstable results for the
      PDE-functionObjects. Changed to =Sp=
 *** New features
+**** Function object that executes if the OpenFOAM-version is right
+     The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
+     executes if the OpenFOAM-version is bigger or equal to a
+     specified version. The arguments =majorVersion= and
+     =minorVersion= are required. If =patchVersion= is not specified
+     it will match any version. A =git= version (=.x=) will match any
+     patch-version
 **** Function object that is only executed if the current time is the =startTime=
      The function object =executeIfStartTime= executes its children
      if the current time is the =startTime= from the =controlDict=
