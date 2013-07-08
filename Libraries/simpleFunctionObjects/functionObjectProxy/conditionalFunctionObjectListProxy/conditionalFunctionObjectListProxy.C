@@ -45,7 +45,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(conditionalFunctionObjectListProxy, 1);
+    defineTypeNameAndDebug(conditionalFunctionObjectListProxy, 0);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
