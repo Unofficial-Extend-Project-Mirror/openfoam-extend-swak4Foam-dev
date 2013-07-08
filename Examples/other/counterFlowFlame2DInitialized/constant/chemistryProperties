@@ -21,6 +21,9 @@ chemistryType
     chemistryThermo   psi;
 }
 
+chemistrySolver ode;
+psiChemistryModel ODEChemistryModel<gasThermoPhysics>;
+
 chemistry           on;
 
 initialChemicalTimeStep 1e-07;
