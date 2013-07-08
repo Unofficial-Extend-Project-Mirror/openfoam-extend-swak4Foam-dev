@@ -2189,6 +2189,11 @@ S_{expl} + S_{impl} T
      before and after solving
 **** simpleFunctionObjects have addition =outputControlMode=
      Mode =startup= executes the FO only during construction
+**** Conditional functionObjects now have optional =else=
+     It is now possible to add a sub-dictionary =else= that is used
+     to initialize a =functionObjectProxy= that is executed if the
+     condition is *not* fulfilled. The sub-dictionary inherits all
+     settings that are not set from the parent-dictionary
 *** Examples
 **** Moved the OSCFD-examples to a different directory
      Started one new directory for all cases from presentations
