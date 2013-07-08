@@ -1,0 +1,100 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.005;
+
+writeControl    timeStep;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions {
+    function_1
+    {
+        functionObjectLibs ("libswakFunctionObjects.so");
+        outputControl timeStep;
+        outputInterval 1;
+        type swakCoded;
+        redirectType  function_1;
+        code
+            #{
+            Info << "Function 0000001" << endl;
+        #};
+    }
+
+    function_2
+    {
+        functionObjectLibs ("libswakFunctionObjects.so");
+        outputControl timeStep;
+        outputInterval 1;
+        type swakCoded;
+        redirectType  function_2;
+        code
+            #{
+            Info << "Function 0000002" << endl;
+        #};
+    }
+    function_3
+    {
+        functionObjectLibs ("libutilityFunctionObjects.so");
+        outputControl timeStep;
+        outputInterval 1;
+        type coded;
+        redirectType function_3;
+        code
+            #{
+            Info << "Function 0000003" << endl;
+        #};
+    }
+    function_4
+    {
+        functionObjectLibs ("libutilityFunctionObjects.so");
+        outputControl timeStep;
+        outputInterval 1;
+        type coded;
+        redirectType function_4;
+        code
+            #{
+            Info << "Function 0000004" << endl;
+        #};
+    }
+}
+
+// ************************************************************************* //
