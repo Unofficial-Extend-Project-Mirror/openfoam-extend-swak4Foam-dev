@@ -93,6 +93,12 @@ label executeIfOpenFOAMVersionBiggerEqualFunctionObject::toLabel(const string &v
 
 bool executeIfOpenFOAMVersionBiggerEqualFunctionObject::condition()
 {
+#define TOSTRING(x) string(#x)
+
+    label foamVersionPatch=-1;
+    if(TOSTRING(FOAM_VERSION4SWAK_PATCH)!="x") {
+        foamVersionPatch=toLabel(TOSTRING(FOAM_VERSION4SWAK_PATCH));
+    }
     if(majorVersion_>FOAM_VERSION4SWAK_MAJOR) {
         return false;
     } else if(majorVersion_<FOAM_VERSION4SWAK_MAJOR) {
@@ -101,11 +107,12 @@ bool executeIfOpenFOAMVersionBiggerEqualFunctionObject::condition()
         return false;
     } else if(minorVersion_<FOAM_VERSION4SWAK_MINOR) {
         return true;
-    } else if(FOAM_VERSION4SWAK_PATCH<0) {
+    } else if(foamVersionPatch<0) {
         return true;
     } else {
-        return patchVersion_<=FOAM_VERSION4SWAK_PATCH;
+        return patchVersion_<=foamVersionPatch;
     }
+#undef TOSTRING
 }
 
 void executeIfOpenFOAMVersionBiggerEqualFunctionObject::readData(const dictionary& dict)
