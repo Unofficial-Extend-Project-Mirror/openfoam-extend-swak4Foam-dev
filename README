@@ -1995,6 +1995,15 @@ S_{expl} + S_{impl} T
 **** =sourceImplicit= unstable
      For some reason using =SuSp= gave unstable results for the
      PDE-functionObjects. Changed to =Sp=
+**** No logical variables found by most parsers
+     Reported as
+     https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=172
+
+     Only the field parser correctly found logical variables (although
+     they were stored). Added a method to pick up the variables (the
+     reason why this part was commented out is that there is no such
+     thing as a =volBoolField= and that is what the regular mechanism
+     expected)
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only

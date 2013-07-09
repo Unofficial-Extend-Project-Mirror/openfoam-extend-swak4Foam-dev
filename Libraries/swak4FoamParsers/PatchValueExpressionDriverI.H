@@ -79,6 +79,7 @@ namespace Foam {
         {
             autoPtr<Field<Type> >vals;
             bool isPoint=false;
+            bool isSingleValue=false;
 
             if(
                 hasVariable(name)
@@ -86,14 +87,17 @@ namespace Foam {
                 variable(name).valueType()==pTraits<Type>::typeName
             ) {
                 isPoint=variable(name).isPoint();
+                isSingleValue=variable(name).isSingleValue();
                 vals.set(
                     variable(name).getResult<Type>(true).ptr()
                 );
-            } if(isGlobal<Type>(name,false)) {
+            } else if(isGlobal<Type>(name,false)) {
+                ExpressionResult &var=const_cast<ExpressionResult &>(
+                    lookupGlobal(name)
+                );
+                isSingleValue=var.isSingleValue();
                 vals.set(
-                    const_cast<ExpressionResult &>(
-                        lookupGlobal(name)
-                    ).getResult<Type>(true).ptr()
+                    var.getResult<Type>(true).ptr()
                 );
             }
             if(vals.valid()) {
@@ -119,6 +123,14 @@ namespace Foam {
                         vals.ptr()
                     );
                 } else {
+                    if(!isSingleValue) {
+                        WarningIn("PatchValueExpressionDriver::getField(const word &inName)")
+                            << "Variable " << name
+                                << " is not a single value but does not "
+                                << "fit the size. Using average and "
+                                << "hoping for the best"
+                                << endl;
+                    }
                     return tmp<Field<Type> >(
                         new Field<Type>(
                             this->size(),gAverage(vals())
