@@ -1916,10 +1916,11 @@ lexp: TOKEN_TRUE   { $$ = driver.makeField(true).ptr(); }
             $$ = driver.doLogicalNot(*$2).ptr();
             delete $2;
           }
-        | evaluateLogicalFunction restOfFunction
-//    | TOKEN_LID		{
-//            $$=driver.getField<Foam::bool>(*$1);delete $1;
-//    }
+    | evaluateLogicalFunction restOfFunction
+    | TOKEN_LID		{
+        $$=driver.getVariable<bool>(*$1,driver.size()).ptr();
+        delete $1;
+      }
 ;
 
 evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
@@ -2968,9 +2969,10 @@ plexp: pexp '<' pexp  {
             delete $2;
           }
     | evaluatePointLogicalFunction restOfFunction
-//    | TOKEN_PLID		{
-//            $$=driver.getField<Foam::bool>(*$1);delete $1;
-//    }
+    | TOKEN_PLID		{
+        $$=driver.getVariable<bool>(*$1,driver.pointSize()).ptr();
+        delete $1;
+ }
 ;
 
 evaluatePointLogicalFunction: TOKEN_FUNCTION_PLID '(' eatCharactersSwitch

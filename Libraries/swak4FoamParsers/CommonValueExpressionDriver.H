@@ -548,8 +548,11 @@ public:
     template<class Type>
     tmp<Field<Type> > makeField(Type,bool isPoint=false);
 
-//     template<class Type>
-//     tmp<Field<Type> > getField(const string &name);
+    template<class Type>
+    tmp<Field<Type> > getVariable(
+        const word &name,
+        const label expectedSize
+    );
 
     template<class Type>
     bool is(

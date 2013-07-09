@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      rand;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    movingWall
+    {
+        type            groovyBC;
+        value           uniform 0;
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "half=(minX+maxX)/2;"
+            "isHalf=pos().x>half;"
+        );
+        valueExpression "isHalf ? 1 : -1";
+    }
+
+    fixedWalls
+    {
+        type            groovyBC;
+        value           uniform 0;
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "half=(minX+maxX)/2;"
+        );
+        valueExpression "pos().x>half ? 1 : -1";
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //
