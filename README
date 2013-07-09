@@ -2159,6 +2159,11 @@ S_{expl} + S_{impl} T
 **** =sourceImplicit= unstable
      For some reason using =SuSp= gave unstable results for the
      PDE-functionObjects. Changed to =Sp=
+**** Fixed bug were only one =swakCoded= worked at a time
+     Bug originally reported
+     https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=179
+     in. Reason was that the variable describing the type was not
+     correctly set.
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only

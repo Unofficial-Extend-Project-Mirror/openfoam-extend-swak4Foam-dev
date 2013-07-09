@@ -156,6 +156,8 @@ void Foam::swakCodedFunctionObject::injectSwakCode(const word &key,const string 
 
 bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
 {
+    dict.lookup("redirectType") >> redirectType_;
+
     //  bool success=codedFunctionObject::read(dict);
     //  Info << dict.lookup("code") << dict.lookup("code") << endl;
     string codePrefix="// inserted by swak - start\n";

@@ -52,7 +52,7 @@ functions {
         outputControl timeStep;
         outputInterval 1;
         type swakCoded;
-        redirectType  function_1;
+        redirectType  "function_1";
         code
             #{
             Info << "Function 0000001" << endl;
