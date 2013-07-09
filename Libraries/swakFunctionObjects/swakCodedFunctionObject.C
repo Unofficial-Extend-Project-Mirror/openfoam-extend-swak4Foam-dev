@@ -256,6 +256,24 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
 //         ""
 //     );
 
+    const entry* dataPtr = dict.lookupEntryPtr
+    (
+        "codeData",
+        false,
+        false
+    );
+    if (dataPtr)
+    {
+        codeData_ = stringOps::trim(string(dataPtr->stream()));
+        stringOps::inplaceExpand(codeData_, dict);
+        dynamicCodeContext::addLineDirective
+        (
+            codeData_,
+            dataPtr->startLineNumber(),
+            dict.name()
+        );
+    }
+
     const entry* readPtr = dict.lookupEntryPtr
     (
         "codeRead",
