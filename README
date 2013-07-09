@@ -2164,6 +2164,9 @@ S_{expl} + S_{impl} T
      https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=179
      in. Reason was that the variable describing the type was not
      correctly set.
+**** Incorrectly read entries in =swakCoded=
+     The entries =codeEnd= and =codeExecute= were not correctly read
+     but instead the entry =codeRead= was read. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only

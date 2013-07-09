@@ -300,7 +300,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     );
     if (execPtr)
     {
-        codeExecute_ = stringOps::trim(codePrefix+string(readPtr->stream())+codePostfix);
+        codeExecute_ = stringOps::trim(codePrefix+string(execPtr->stream())+codePostfix);
         stringOps::inplaceExpand(codeExecute_, dict);
         dynamicCodeContext::addLineDirective
         (
@@ -318,7 +318,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     );
     if (execPtr)
     {
-        codeEnd_ = stringOps::trim(codePrefix+string(readPtr->stream())+codePostfix);
+        codeEnd_ = stringOps::trim(codePrefix+string(endPtr->stream())+codePostfix);
         stringOps::inplaceExpand(codeEnd_, dict);
         dynamicCodeContext::addLineDirective
         (

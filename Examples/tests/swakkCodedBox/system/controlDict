@@ -55,7 +55,25 @@ functions {
         redirectType  "function_1";
         code
             #{
-            Info << "Function 0000001" << endl;
+            Info << "Function 0000001 " << counter_ << endl;
+        #};
+        codeData
+            #{
+            label counter_;
+        #};
+        codeRead
+            #{
+            Info << "Function 0000001 read" << endl;
+        counter_=0;
+        #};
+        codeExecute
+            #{
+            Info << "Function 0000001 execute" << endl;
+        counter_++;
+        #};
+        codeEnd
+            #{
+            Info << "Function 0000001 end " << counter_ << endl;
         #};
     }
 
