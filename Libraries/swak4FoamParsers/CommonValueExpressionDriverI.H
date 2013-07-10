@@ -132,7 +132,8 @@ namespace Foam {
         if(debug) {
             Pout << "CommonValueExpressionDriver::isVariable "
                 << " looking for " << name << " isPoint: " << isPoint
-                << " of type " << pTraits<Type>::typeName;
+                << " of type " << pTraits<Type>::typeName
+                << " Expected size: " << expectedSize;
         }
 
         if(hasVariable(name)) {

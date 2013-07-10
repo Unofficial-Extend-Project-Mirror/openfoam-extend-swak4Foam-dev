@@ -2007,6 +2007,13 @@ S_{expl} + S_{impl} T
      reason why this part was commented out is that there is no such
      thing as a =volBoolField= and that is what the regular mechanism
      expected)
+**** =sampledSurface= not correctly updated at time of write
+     Reported as
+     https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=176
+
+     In that case the driver was written before the surface was
+     updated thus generating fields of size $0$. Now =update= is
+     called at various places (to make sure it is called in any instance)
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
