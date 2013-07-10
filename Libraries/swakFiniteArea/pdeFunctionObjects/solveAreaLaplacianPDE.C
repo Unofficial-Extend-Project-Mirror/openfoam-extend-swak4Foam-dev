@@ -156,7 +156,7 @@ void Foam::solveAreaLaplacianPDE::solve()
             areaScalarField sourceField(driver.getResult<areaScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
 
-            areaScalarField &f=theField_();
+            areaScalarField &f=theField();
 
             faMatrix<scalar> eq(
                 -fam::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")

@@ -170,7 +170,7 @@ void Foam::solveAreaTransportPDE::solve()
 
             phiField.dimensions().reset(phiDimension_);
 
-            areaScalarField &f=theField_();
+            areaScalarField &f=theField();
 
             faMatrix<scalar> eq(
                 fam::div(phiField,f)
