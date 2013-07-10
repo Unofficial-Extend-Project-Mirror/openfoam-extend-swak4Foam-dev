@@ -82,6 +82,9 @@ protected:
     //- update stuff the surface
     virtual bool update();
 
+    //- force update if needed
+    void updateIfNeeded();
+
     //- should we interpolate?
     bool interpolate_;
 

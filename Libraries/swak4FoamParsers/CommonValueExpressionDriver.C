@@ -858,6 +858,15 @@ bool CommonValueExpressionDriver::update()
 
 void CommonValueExpressionDriver::updateSpecialVariables(bool force)
 {
+    if(debug) {
+        Info << "CommonValueExpressionDriver::updateSpecialVariables(bool force)"
+            << " Force: " << force << endl;
+    }
+    bool updated=this->update();
+    if(debug) {
+        Info << "Updated: " << updated << endl;
+    }
+
     if(specialVariablesIndex_<0) {
         if(debug) {
             Pout << "First update: " << mesh().time().timeIndex() << endl;
@@ -867,11 +876,16 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
             StoredExpressionResult &v=storedVariables_[i];
             if(!v.hasValue()) {
                 if(debug) {
-                    Pout << "First valuate: " << v.initialValueExpression()
+                    Pout << "First value: " << v.initialValueExpression()
                         << " -> " << v.name() << endl;
                 }
                 parse(v.initialValueExpression());
                 v=result_;
+                if(debug) {
+                    Info << "Parser size: " << this->size() << endl;
+                    Info << "Calculated: " << result_ << endl;
+                    Info << "Stored: " << v << endl;
+                }
             }
         }
     }
@@ -1475,6 +1489,10 @@ bool CommonValueExpressionDriver::hasDataToWrite() const
 
 void CommonValueExpressionDriver::getData(const dictionary &dict)
 {
+    if(debug) {
+        Info << "CommonValueExpressionDriver::getData(const dictionary &dict)" << endl;
+    }
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
             dict.lookup("storedVariables")
@@ -1484,6 +1502,14 @@ void CommonValueExpressionDriver::getData(const dictionary &dict)
 
 void CommonValueExpressionDriver::prepareData(dictionary &dict) const
 {
+    if(debug) {
+        Info << "CommonValueExpressionDriver::prepareData(dictionary &dict)" << endl;
+    }
+    bool updated=const_cast<CommonValueExpressionDriver&>(*this).update();
+    if(debug && updated) {
+        Info << "Updated before write" << endl;
+    }
+
     if(storedVariables_.size()>0) {
         const_cast<CommonValueExpressionDriver&>(
             *this
