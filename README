@@ -580,6 +580,9 @@ S_{expl} + S_{impl} T
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
+*** BugCases
+    These are cases provided by users to demonstrate bugs. Not
+    maintained nor documented and may be removed at any time
 ** =maintainanceScripts=
    Undocumented scripts used for maintaining =swak4Foam=. *If you
    don't understand them, don't use them*
