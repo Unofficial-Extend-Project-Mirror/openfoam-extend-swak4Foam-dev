@@ -1,6 +1,6 @@
 From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Date: Thu, 07 Mar 2013 00:07:24 +0100
-State: in-progress
+State: fixed
 Subject: Add missing tensor functionality (eigenvalues etc)
 Message-Id: <c7bb072968b37c39-0-artemis@bgs-cool-greybook.local>
 

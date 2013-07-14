@@ -2053,3 +2053,6 @@ S_{expl} + S_{impl} T
      to initialize a =functionObjectProxy= that is executed if the
      condition is *not* fulfilled. The sub-dictionary inherits all
      settings that are not set from the parent-dictionary
+**** Parsers in =swakFiniteArea= no also have complete tensor-operations
+     The two parsers in that library now also support the complete
+     set of tensor operations (like =eigenValues= etc)
