@@ -88,7 +88,7 @@ word swakExpressionDistributionFunctionObject::dirName()
 
 word swakExpressionDistributionFunctionObject::baseName()
 {
-    return "expession";
+    return "expression";
 }
 
 void swakExpressionDistributionFunctionObject::getDistribution()
