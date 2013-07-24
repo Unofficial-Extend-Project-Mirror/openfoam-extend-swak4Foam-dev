@@ -4,7 +4,11 @@ BISONPATH=`which bison`
 NOBISON=$?
 
 if [[ $NOBISON != 0 ]]; then
+    echo
     echo "No 'bison' found. This is absolutely essential for swak4Foam. Can't go on"
+    echo "Every Linux has a binary package that installs bison (http://www.gnu.org/software/bison/). Install it. Then go on"
+    echo "BTW: it was listed as a requirement in the README. You read that, didn't you?"
+    echo
     exit 42
 fi
 
@@ -12,7 +16,11 @@ FLEXPATH=`which flex`
 NOFLEX=$?
 
 if [[ $NOFLEX != 0 ]]; then
+    echo
     echo "No 'flex' found. This is absolutely essential for swak4Foam. Can't go on"
+    echo "Every Linux has a binary package that installs flex (http://flex.sourceforge.net). Install it. Then go on"
+    echo "BTW: it was listed as a requirement in the README. You read that, didn't you?"
+    echo
     exit 42
 fi
 
@@ -158,7 +166,9 @@ then
     fi
     wmake libso swakPythonIntegration
 else
-    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration"
+    echo
+    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
+    echo
 fi
 
 (cd functionPlugins; wmake all)
@@ -172,4 +182,8 @@ then
 	echo "Compiling user function-plugin $plug"
 	wmake libso $plugins
     done
+else
+    echo
+    echo "If you have your own function-plugins you can specify them using the SWAK_USER_PLUGINS environment variable and they would be compiled now. If you don't know what this means: don't bother. You propably don't need it"
+    echo
 fi

@@ -1988,6 +1988,11 @@ S_{expl} + S_{impl} T
                  executed. The nearest possible timestep is used
      - outputTime :: Executed whenever a regular output is scheduled
 ** Next release - version number : 0.2.5
+*** Infrastructure
+**** Make error messages in =Allwmake= more verbose
+     The error messages where already quite verbose. But people
+     didn't understand them and asked the same questions over and
+     over ...
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
