@@ -516,6 +516,10 @@ functions
         weight "vol()";
         distributionBinWidth 0.1;
     }
+    weightDifferCenterVelocityDistribution {
+        $centerVelocityDistribution;
+        weight "vol()*vector(mag(pos().x),mag(pos().y),mag(pos().z))";
+    }
     noDistributionOutput {
         $lowVelocityLogK;
         expression "mag(U)";

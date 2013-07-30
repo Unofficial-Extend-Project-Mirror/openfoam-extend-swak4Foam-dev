@@ -105,13 +105,13 @@ Type SimpleDistribution<Type>::max() const
 }
 
 template<class Type>
-void SimpleDistribution<Type>::calc(
+void SimpleDistribution<Type>::calcScalarWeight(
     const Field<Type> &values,
-    const scalarField &weights
+    const Field<scalar> &weights
 )
 {
     if(values.size()!=weights.size()) {
-        FatalErrorIn("SimpleDistribution::calc")
+        FatalErrorIn("SimpleDistribution::calcScalarWeight")
             << "Size " << values.size() << " of the values and size "
                 << weights.size() << " of the weights differ"
                 << endl
@@ -131,9 +131,69 @@ void SimpleDistribution<Type>::calc(
 }
 
 template<class Type>
+void SimpleDistribution<Type>::calcScalarWeight(
+    const Field<Type> &values,
+    const Field<scalar> &weights,
+    const Field<bool> &mask
+)
+{
+    if(
+        values.size()!=weights.size()
+        ||
+        values.size()!=mask.size()
+    ) {
+        FatalErrorIn("SimpleDistribution::calcScalarWeight - with mask")
+            << "Size " << values.size() << " of the values and size "
+                << weights.size() << " of the weights or the size of the mask "
+                << mask.size() << " differ"
+                << endl
+                << exit(FatalError);
+    }
+
+    this->clear();
+    forAll(values,i) {
+        if(mask[i]) {
+            this->add(
+                values[i],
+                pTraits<Type>::one*weights[i]
+            );
+        }
+    }
+
+    Distribution<Type> &myself=*this;
+    reduce(myself,plusOp<Distribution<Type> >());
+}
+
+template<class Type>
 void SimpleDistribution<Type>::calc(
     const Field<Type> &values,
-    const scalarField &weights,
+    const Field<Type> &weights
+)
+{
+    if(values.size()!=weights.size()) {
+        FatalErrorIn("SimpleDistribution::calc")
+            << "Size " << values.size() << " of the values and size "
+                << weights.size() << " of the weights differ"
+                << endl
+                << exit(FatalError);
+    }
+
+    this->clear();
+    forAll(values,i) {
+        this->add(
+            values[i],
+            weights[i]
+        );
+    }
+
+    Distribution<Type> &myself=*this;
+    reduce(myself,plusOp<Distribution<Type> >());
+}
+
+template<class Type>
+void SimpleDistribution<Type>::calc(
+    const Field<Type> &values,
+    const Field<Type> &weights,
     const Field<bool> &mask
 )
 {
@@ -155,7 +215,7 @@ void SimpleDistribution<Type>::calc(
         if(mask[i]) {
             this->add(
                 values[i],
-                pTraits<Type>::one*weights[i]
+                weights[i]
             );
         }
     }

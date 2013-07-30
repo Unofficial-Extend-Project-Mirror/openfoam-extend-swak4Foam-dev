@@ -60,7 +60,7 @@ void patchExpressionDistributionFunctionObject::getDistributionInternal(
     forAll(patchIDs_,i) {
         autoPtr<SimpleDistribution<T> > partial;
 
-        partial=setData(
+        partial=setDataScalar(
             drivers_[i].getResult<T>()(),
             drivers_[i].patch().magSf()
         );

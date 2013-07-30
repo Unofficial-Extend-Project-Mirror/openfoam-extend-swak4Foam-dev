@@ -65,7 +65,7 @@ void patchFieldDistributionFunctionObject::getDistributionInternal(
         autoPtr<SimpleDistribution<T> > partial;
 
         if(mesh.foundObject<volTField>(fieldName())) {
-            partial=setData(
+            partial=setDataScalar(
                 mesh.lookupObject<volTField>(
                     fieldName()
                 ).boundaryField()[patchID],
@@ -73,7 +73,7 @@ void patchFieldDistributionFunctionObject::getDistributionInternal(
             );
         }
         if(mesh.foundObject<surfaceTField>(fieldName())) {
-            partial=setData(
+            partial=setDataScalar(
                 mesh.lookupObject<surfaceTField>(
                     fieldName()
                 ).boundaryField()[patchID],
@@ -81,7 +81,7 @@ void patchFieldDistributionFunctionObject::getDistributionInternal(
             );
         }
         if(mesh.foundObject<pointTField>(fieldName())) {
-            partial=setData(
+            partial=setDataScalar(
                 mesh.lookupObject<pointTField>(
                     fieldName()
                 ).boundaryField()[patchID].patchInternalField()(),

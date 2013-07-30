@@ -86,12 +86,23 @@ public:
 
     void calc(
         const Field<Type> &values,
-        const scalarField &weights
+        const Field<Type> &weights
     );
 
-   void calc(
+    void calc(
         const Field<Type> &values,
-        const scalarField &weights,
+        const Field<Type> &weights,
+        const Field<bool> &mask
+    );
+
+   void calcScalarWeight(
+        const Field<Type> &values,
+        const Field<scalar> &weights
+    );
+
+   void calcScalarWeight(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
         const Field<bool> &mask
     );
 

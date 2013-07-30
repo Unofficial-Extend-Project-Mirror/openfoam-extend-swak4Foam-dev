@@ -2061,3 +2061,7 @@ S_{expl} + S_{impl} T
 **** Parsers in =swakFiniteArea= no also have complete tensor-operations
      The two parsers in that library now also support the complete
      set of tensor operations (like =eigenValues= etc)
+**** =swakExpressionDistribution= now allows non-scalar weights
+     For expressions whose results is not a scalar now the weight
+     function can either be a scalar or of the same type as the
+     expression (so every component can have a separate weight)

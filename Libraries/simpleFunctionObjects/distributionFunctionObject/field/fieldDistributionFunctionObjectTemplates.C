@@ -59,7 +59,7 @@ void fieldDistributionFunctionObject::getDistributionInternal(
     typedef GeometricField<T,pointPatchField,pointMesh> pointTField;
 
     if(mesh.foundObject<volTField>(fieldName_)) {
-        dist=setData(
+        dist=setDataScalar(
             mesh.lookupObject<volTField>(
                 fieldName_
             ).internalField(),
@@ -68,7 +68,7 @@ void fieldDistributionFunctionObject::getDistributionInternal(
         return;
     }
     if(mesh.foundObject<surfaceTField>(fieldName_)) {
-        dist=setData(
+        dist=setDataScalar(
             mesh.lookupObject<surfaceTField>(
                 fieldName_
             ).internalField(),
@@ -77,7 +77,7 @@ void fieldDistributionFunctionObject::getDistributionInternal(
         return;
     }
     if(mesh.foundObject<pointTField>(fieldName_)) {
-        dist=setData(
+        dist=setDataScalar(
             mesh.lookupObject<pointTField>(
                 fieldName_
             ).internalField(),

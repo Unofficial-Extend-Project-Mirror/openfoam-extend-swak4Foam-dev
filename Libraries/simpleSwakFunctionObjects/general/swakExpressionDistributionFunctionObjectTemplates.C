@@ -50,13 +50,40 @@ namespace Foam
 
 template <typename T>
 void swakExpressionDistributionFunctionObject::getDistributionInternal(
-    autoPtr<SimpleDistribution<T> > &dist
+    autoPtr<SimpleDistribution<T> > &dist,
+    autoPtr<Field<T> > &sameWeight
 ) {
-    dist=setData(
-        driver_->getResult<T>()(),
-        weightValues_(),
-        maskValues_()
-    );
+    if(sameWeight.valid()) {
+        dist=setData(
+            driver_->getResult<T>()(),
+            sameWeight(),
+            maskValues_()
+        );
+    } else if(weightValuesScalar_.valid()) {
+        dist=setDataScalar(
+            driver_->getResult<T>()(),
+            weightValuesScalar_(),
+            maskValues_()
+        );
+    } else {
+        FatalErrorIn("swakExpressionDistributionFunctionObject::getDistributionInternal")
+            << "Weight neither of type " << pTraits<scalar>::typeName
+                << " nor " << pTraits<T>::typeName
+                << endl
+                << "Set weights are: "
+                << pTraits<scalar>::typeName << ":"
+                << weightValuesScalar_.valid() << " "
+                << pTraits<vector>::typeName << ":"
+                << weightValuesVector_.valid() << " "
+                << pTraits<tensor>::typeName << ":"
+                << weightValuesTensor_.valid() << " "
+                << pTraits<symmTensor>::typeName << ":"
+                << weightValuesSymmTensor_.valid() << " "
+                << pTraits<sphericalTensor>::typeName << ":"
+                << weightValuesSphericalTensor_.valid() << " "
+                << exit(FatalError);
+
+    }
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
