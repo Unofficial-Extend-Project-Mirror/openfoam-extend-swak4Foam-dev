@@ -225,6 +225,44 @@ void SimpleDistribution<Type>::calc(
 }
 
 template<class Type>
+void SimpleDistribution<Type>::divideByDistribution(
+    const SimpleDistribution<Type> &weightSum,
+    const Type &valueIfZero
+)
+{
+    if(this->size()!=weightSum.size()) {
+        FatalErrorIn("SimpleDistribution<Type>::divideByDistribution")
+            << "Number of components " << this->size() << " differs from "
+                << "number of components in divisor " << weightSum.size()
+                << endl
+                << exit(FatalError);
+    }
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        List<scalar> &vals=(*this)[cmpt];
+        const List<scalar> &weights=weightSum[cmpt];
+        const scalar zero=component(valueIfZero,cmpt);
+
+        if(vals.size()!=weights.size()) {
+            FatalErrorIn("SimpleDistribution<Type>::divideByDistribution")
+                << "For component " << cmpt << " the size " << vals.size()
+                    << " of the data and " << weights.size() << " of the weights "
+                    << "differ"
+                    << endl
+                    << exit(FatalError);
+        }
+
+        forAll(vals,i) {
+            if(mag(weights[i])<SMALL) {
+                vals[i]=zero;
+            } else {
+                vals[i]/=weights[i];
+            }
+        }
+    }
+}
+
+template<class Type>
 void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
 {
     Distribution<Type>::operator=(other);
@@ -241,6 +279,28 @@ SimpleDistribution<Type> operator+
         reinterpret_cast<const Distribution<Type>&>(sa)
         +
         reinterpret_cast<const Distribution<Type>&>(sb);
+}
+
+template<class Type>
+void Foam::SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
+{
+    List< List< Pair<scalar> > > rawDistribution = this->raw();
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        const List< Pair<scalar> >& rawPairs = rawDistribution[cmpt];
+
+        OFstream os(filePrefix + '_' + pTraits<Type>::componentNames[cmpt]);
+
+        os  << "# key raw" << endl;
+
+        forAll(rawPairs, i)
+        {
+            os  << rawPairs[i].first()
+                << ' ' << rawPairs[i].second()
+                << nl;
+        }
+    }
 }
 
 }

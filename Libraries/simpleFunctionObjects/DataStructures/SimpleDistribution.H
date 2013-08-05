@@ -106,6 +106,11 @@ public:
         const Field<bool> &mask
     );
 
+    void divideByDistribution(
+        const SimpleDistribution<Type> &weightSum,
+        const Type &valueIfZero
+    );
+
     Type mean() const { return Distribution<Type>::mean(); }
 
     Type median() const { return Distribution<Type>::median(); }
@@ -122,6 +127,10 @@ public:
     }
 
     label maxNrBins() const;
+
+    //- Write the distribution to file: only key and raw.
+    //  Produces a separate file for each component.
+    void writeRaw(const fileName& filePrefix) const;
 
     // Member Operators
 

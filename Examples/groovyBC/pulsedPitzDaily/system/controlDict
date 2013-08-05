@@ -494,6 +494,36 @@ functions
         distributionMaxBinNr 100;
         verbose true;
     }
+    averagePressureDistributionX {
+        type swakExpressionAverageDistribution;
+        verbose true;
+        outputControlMode outputTime;
+        valueType internalField;
+        expression "p";
+        weight "1";
+        mask "1";
+        abscissa "pos().x";
+        binNumber 50;
+        valueIfZero -100;
+    }
+    averagePressureDistributionXTooFine {
+        $averagePressureDistributionX;
+        binNumber 200;
+    }
+    averagePressureDistribution {
+        $averagePressureDistributionX;
+        abscissa "pos()";
+        valueIfZero (-100 -100 -100);
+    }
+    averageVelocityDistributionX {
+        $averagePressureDistributionX;
+        expression "U";
+    }
+    averageVelocityDistribution {
+        $averageVelocityDistributionX;
+        abscissa "pos()";
+        valueIfZero (-100 -100 -100);
+    }
     lowVelocityLogK {
         type swakExpressionDistribution;
         outputControlMode deltaT;
