@@ -56,10 +56,11 @@ void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExp
     Field<T> results(accumulations_.size());
 
     forAll(accumulations_,i) {
-        const NumericAccumulationNamedEnum::value accu=accumulations_[i];
+        const NumericAccumulationNamedEnum::accuSpecification accu=
+            accumulations_[i];
         T val=pTraits<T>::zero;
 
-        switch(accu) {
+        switch(accu.first()) {
             case NumericAccumulationNamedEnum::numMin:
                 val=gMin(result);
                 break;
@@ -81,13 +82,13 @@ void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExp
             default:
                 WarningIn("patchExpressionFunctionObject::writeData")
                     << "Unknown accumultation type "
-                        << NumericAccumulationNamedEnum::names[accu]
+                        << NumericAccumulationNamedEnum::names[accu.first()]
                         << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
                         << endl;
         }
         results[i]=val;
         if(verbose()) {
-            Info << " " << NumericAccumulationNamedEnum::names[accu]
+            Info << " " << NumericAccumulationNamedEnum::names[accu.first()]
                 << "=" << val;
         }
     }

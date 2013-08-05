@@ -48,6 +48,8 @@ Contributors/Copyright:
 #include "NamedEnum.H"
 #include "dictionary.H"
 
+#include "Tuple2.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -72,13 +74,17 @@ public:
         numSumMag
     };
 
+    typedef Tuple2<value,label> accuSpecification;
+
     //- String representation of order enums
     static const NamedEnum<value, 6> names;
 
-    static List<value> readAccumulations(
+    static List<accuSpecification> readAccumulations(
         const dictionary &dict,
         const word &name
     );
+
+    static word toString(const accuSpecification &);
 };
 
 

@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakExpressionFunctionObject_H
@@ -82,7 +82,7 @@ class swakExpressionFunctionObject
     string expression_;
 
     //- list with the accumulations of evaluated expression
-    List<NumericAccumulationNamedEnum::value> accumulations_;
+    List<NumericAccumulationNamedEnum::accuSpecification> accumulations_;
 
     //- the expression driver
     autoPtr<CommonValueExpressionDriver> driver_;

@@ -59,22 +59,47 @@ const NamedEnum<NumericAccumulationNamedEnum::value, 6>
     NumericAccumulationNamedEnum::names;
 
 
-List<NumericAccumulationNamedEnum::value> NumericAccumulationNamedEnum::readAccumulations(const dictionary &dict, const word &name) {
+List<NumericAccumulationNamedEnum::accuSpecification>
+NumericAccumulationNamedEnum::readAccumulations(
+    const dictionary &dict,
+    const word &name
+) {
     const wordList aNames(dict.lookup(name));
 
-    List<value> accus(aNames.size());
+    List<accuSpecification> accus(aNames.size());
 
     forAll(aNames,i) {
-        if(!names.found(aNames[i])) {
+        label percent=-1;
+        string aName;
+        size_t numPos=aNames[i].find_first_of("0123456789");
+        if(numPos==std::string::npos) {
+            aName=aNames[i];
+        } else {
+            aName=aNames[i](numPos);
+            percent=readLabel(
+                IStringStream(aNames[i](numPos,aNames[i].size()-numPos))()
+            );
+        }
+        if(!names.found(aName)) {
             // setting it up to fail
             Info << endl << "Problem in " << dict.name()
                 << " with the entry " << name << ":" << endl;
         }
 
-        accus[i]=names[aNames[i]];
+        accus[i].first()=names[aName];
+        accus[i].second()=percent;
     }
-
     return accus;
+}
+
+word NumericAccumulationNamedEnum::toString(const accuSpecification &accu)
+{
+    OStringStream o;
+    o << NumericAccumulationNamedEnum::names[accu.first()];
+    if(accu.second()>=0) {
+        o << accu.second();
+    }
+    return word(o.str());
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

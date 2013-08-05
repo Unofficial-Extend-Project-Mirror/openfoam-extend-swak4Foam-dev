@@ -85,7 +85,7 @@ class patchExpressionFunctionObject
     dictionary data_;
 
     //- list with the accumulations of evaluated expression
-    List<NumericAccumulationNamedEnum::value> accumulations_;
+    List<NumericAccumulationNamedEnum::accuSpecification> accumulations_;
 
     PtrList<PatchValueExpressionDriver> drivers_;
 

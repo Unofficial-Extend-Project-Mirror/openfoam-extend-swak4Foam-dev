@@ -49,17 +49,20 @@ namespace Foam
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template <class T>
-void swakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &driver)
+void swakExpressionFunctionObject::writeTheData(
+    CommonValueExpressionDriver &driver
+)
 {
     Field<T> result=driver.getResult<T>();
 
     Field<T> results(accumulations_.size());
 
     forAll(accumulations_,i) {
-        const NumericAccumulationNamedEnum::value accu=accumulations_[i];
+        const NumericAccumulationNamedEnum::accuSpecification accu=
+            accumulations_[i];
         T val=pTraits<T>::zero;
 
-        switch(accu) {
+        switch(accu.first()) {
             case NumericAccumulationNamedEnum::numMin:
                 val=gMin(result);
                 break;
@@ -81,13 +84,13 @@ void swakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &dri
             default:
                 WarningIn("swakExpressionFunctionObject::writeData")
                     << "Unimplemented accumultation type "
-                        << NumericAccumulationNamedEnum::names[accu]
+                        << NumericAccumulationNamedEnum::names[accu.first()]
                         << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
                         << endl;
         }
         results[i]=val;
         if(verbose()) {
-            Info << " " << NumericAccumulationNamedEnum::names[accu]
+            Info << " " << NumericAccumulationNamedEnum::names[accu.first()]
                 << "=" << val;
         }
     }
