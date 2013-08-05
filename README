@@ -1993,6 +1993,10 @@ S_{expl} + S_{impl} T
      The error messages where already quite verbose. But people
      didn't understand them and asked the same questions over and
      over ...
+**** =simpleFunctionObjects= no longer considered an independent project
+     As there are going to be more cross-dependencies the
+     =simpleFunctionObjects= now have to be part of swak. Changes to
+     the compile-scripts reflect this.
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
