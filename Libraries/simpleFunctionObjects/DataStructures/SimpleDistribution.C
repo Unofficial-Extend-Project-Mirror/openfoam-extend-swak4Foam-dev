@@ -303,6 +303,17 @@ void Foam::SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
     }
 }
 
+template<class Type>
+Ostream& operator<<
+(
+    Ostream& os,
+    const SimpleDistribution<Type>& d
+)
+{
+    os  <<  static_cast<const Distribution<Type> &>(d);
+    return os;
+}
+
 }
 
 // ************************************************************************* //

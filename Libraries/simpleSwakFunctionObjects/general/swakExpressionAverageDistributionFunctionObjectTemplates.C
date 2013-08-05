@@ -89,9 +89,15 @@ swakExpressionAverageDistributionFunctionObject::setData(
     AType binSize=pTraits<AType>::zero;
     for(direction i=0;i<pTraits<AType>::nComponents;i++) {
         setComponent(binSize,i)=max(
-            SMALL,
-            component(span,i)/binNr
+            SMALL*1e5,
+            component(span,i)/(binNr+1)
         );
+    }
+
+    if(debug) {
+        Info << "swakExpressionAverageDistributionFunctionObject::setData "
+            << "span: " << span << " nrBins: " << binNr
+            << " binSize: " << binSize << endl;
     }
 
     autoPtr<PtrList<SimpleDistribution<AType> > > pDists(
@@ -118,10 +124,17 @@ swakExpressionAverageDistributionFunctionObject::setData(
         dist.calcScalarWeight(xValues,values.component(i)*weights,mask);
         wDist.calcScalarWeight(xValues,weights,mask);
 
+        if(debug>1) {
+            Info << "Dist: " << dist << endl
+                << "Weight: " << wDist << endl;
+        }
         dist.divideByDistribution(
             wDist,
             valueIfZero
         );
+        if(debug>1) {
+            Info << "Dist: " << dist << endl;
+        }
     }
 
     return pDists;
@@ -213,6 +226,8 @@ void swakExpressionAverageDistributionFunctionObject::writeADistribution(
         if(componentNames_.size()>1) {
             fName+="_"+componentNames_[i];
         }
+        Info << "Write " << i << endl;
+        Info << dist[i] << endl;
         dist[i].writeRaw(
             fName
         );
@@ -230,14 +245,17 @@ void swakExpressionAverageDistributionFunctionObject::reportADistribution(
 
     Info<< regionString()
         << " Distribution of " << this->baseName()
-        << "(" << pTraits<Type>::typeName << "): "
-        << dist[0].maxNrBins() << " bins. ";
+        << "(" << pTraits<Type>::typeName << "): ";
+    if(componentNames_.size()>1) {
+        Info << endl;
+    }
 
     forAll(componentNames_,i) {
         if(componentNames_.size()>1) {
             Info << componentNames_[i] << ": ";
         }
-        Info << " Min: " << dist[i].min() << " Max: " << dist[i].max() << endl;
+        Info << dist[i].maxNrBins() << " bins. "
+            << " Min: " << dist[i].min() << " Max: " << dist[i].max() << endl;
     }
 
     Info << endl;

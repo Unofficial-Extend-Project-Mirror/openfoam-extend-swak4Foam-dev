@@ -54,6 +54,13 @@ Contributors/Copyright:
 namespace Foam
 {
 
+template<class Type>
+class SimpleDistribution;
+
+template<class Type>
+Ostream& operator<<(Ostream&, const SimpleDistribution<Type>&);
+
+
 /*---------------------------------------------------------------------------*\
                            Class SimpleDistribution Declaration
 \*---------------------------------------------------------------------------*/
@@ -136,6 +143,11 @@ public:
 
     void operator=(const SimpleDistribution<Type>&);
 
+    friend Ostream& operator<< <Type>
+    (
+        Ostream&,
+        const SimpleDistribution<Type>&
+    );
 };
 
 template<class Type>

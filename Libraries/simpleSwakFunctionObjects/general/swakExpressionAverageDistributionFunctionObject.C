@@ -119,27 +119,6 @@ word swakExpressionAverageDistributionFunctionObject::baseName()
 }
 
 
-// void swakExpressionAverageDistributionFunctionObject::getDistribution()
-// {
-//     word rType=driver_->CommonValueExpressionDriver::getResultType();
-
-//     if(rType==pTraits<scalar>::typeName) {
-//         getDistributionInternal(distScalar_);
-//     } else if(rType==pTraits<vector>::typeName) {
-//         getDistributionInternal(distVector_);
-//     } else if(rType==pTraits<vector>::typeName) {
-//         getDistributionInternal(distTensor_);
-//     } else if(rType==pTraits<vector>::typeName) {
-//         getDistributionInternal(distSymmTensor_);
-//     } else if(rType==pTraits<vector>::typeName) {
-//         getDistributionInternal(distSphericalTensor_);
-//     } else {
-//         WarningIn("swakExpressionAverageDistributionFunctionObject::getDistribution()")
-//             << "Don't know how to handle type " << rType
-//                 << endl;
-//     }
-// }
-
 void swakExpressionAverageDistributionFunctionObject::write()
 {
     if(verbose()) {

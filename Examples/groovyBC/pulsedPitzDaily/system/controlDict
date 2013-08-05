@@ -500,7 +500,7 @@ functions
         outputControlMode outputTime;
         valueType internalField;
         expression "p";
-        weight "1";
+        weight "vol()";
         mask "1";
         abscissa "pos().x";
         binNumber 50;
