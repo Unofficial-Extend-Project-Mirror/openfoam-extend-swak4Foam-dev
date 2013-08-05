@@ -2044,6 +2044,14 @@ S_{expl} + S_{impl} T
      Recalculate enthalpy, sensible enthalpy or internal energy
      according to the current temperature. This allows making this
      consistent if the temperature has been manipulated
+**** Function object that calculates the average of one variable as a function of another
+     The function object =swakExpressionAverageDistribution=
+     calculates the average of one function (the =expression=) as a
+     distribution over another (the =abscissa=). An example would be
+     the average pressure in x-direction with =abscissa= being
+     ="pos().x"=, =expression= being just ="p"= and the =weight=
+     being ="vol()"=. The weight has to be a scalar. All other
+     expressions can be any data-type
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file

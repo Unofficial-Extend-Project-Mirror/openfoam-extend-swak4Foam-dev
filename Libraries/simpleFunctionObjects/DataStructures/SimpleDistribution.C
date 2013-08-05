@@ -237,11 +237,18 @@ void SimpleDistribution<Type>::divideByDistribution(
                 << endl
                 << exit(FatalError);
     }
+
+    validLimits_=List<Pair<label> >(
+        pTraits<Type>::nComponents,
+        Pair<label>(-1,-1)
+    );
+
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         List<scalar> &vals=(*this)[cmpt];
         const List<scalar> &weights=weightSum[cmpt];
         const scalar zero=component(valueIfZero,cmpt);
+        Pair<label> &limits=validLimits_[cmpt];
 
         if(vals.size()!=weights.size()) {
             FatalErrorIn("SimpleDistribution<Type>::divideByDistribution")
@@ -257,8 +264,30 @@ void SimpleDistribution<Type>::divideByDistribution(
                 vals[i]=zero;
             } else {
                 vals[i]/=weights[i];
+                if (limits.first() == -1)
+                {
+                    limits.first() = i;
+                    limits.second() = i;
+                }
+                else
+                {
+                    limits.second() = i;
+                }
             }
         }
+    }
+}
+
+template<class Type>
+Pair<label> SimpleDistribution<Type>::validLimits
+(
+    direction cmpt
+) const
+{
+    if(validLimits_.size()<=cmpt) {
+        return Distribution<Type>::validLimits(cmpt);
+    } else {
+        return validLimits_[cmpt];
     }
 }
 
@@ -284,7 +313,44 @@ SimpleDistribution<Type> operator+
 template<class Type>
 void Foam::SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 {
-    List< List< Pair<scalar> > > rawDistribution = this->raw();
+    //     List< List< Pair<scalar> > > rawDistribution = this->raw();
+
+    // Copy paste from Distribution::raw to use our validLimits
+    List< List < Pair<scalar> > > rawDistribution(pTraits<Type>::nComponents);
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        const List<scalar>& cmptDistribution = (*this)[cmpt];
+
+        if (cmptDistribution.empty())
+        {
+            continue;
+        }
+
+        List<label> cmptKeys = this->keys(cmpt);
+
+        List< Pair<scalar> >& rawDist = rawDistribution[cmpt];
+
+        Pair<label> limits = validLimits(cmpt);
+
+        rawDist.setSize(limits.second() - limits.first() + 1);
+
+        for
+        (
+            label k = limits.first(), i = 0;
+            k <= limits.second();
+            k++, i++
+        )
+        {
+            label key = cmptKeys[k];
+
+            rawDist[i].first() = (0.5 + scalar(key))*component(
+                this->binWidth(), cmpt
+            );
+
+            rawDist[i].second() = cmptDistribution[k];
+        }
+    }
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {

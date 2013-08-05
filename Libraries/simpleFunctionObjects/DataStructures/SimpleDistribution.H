@@ -80,6 +80,12 @@ class SimpleDistribution
     //- Disallow default bitwise assignment
     //    void operator=(const SimpleDistribution&);
 
+    //- store the valid limits
+    List<Pair<label> > validLimits_;
+
+protected:
+    //- Returns the indices of the first and last non-zero entries
+    Pair<label> validLimits(direction cmpt) const;
 public:
 
     //- from a dictionary

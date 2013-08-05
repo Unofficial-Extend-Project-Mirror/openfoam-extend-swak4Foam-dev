@@ -226,8 +226,6 @@ void swakExpressionAverageDistributionFunctionObject::writeADistribution(
         if(componentNames_.size()>1) {
             fName+="_"+componentNames_[i];
         }
-        Info << "Write " << i << endl;
-        Info << dist[i] << endl;
         dist[i].writeRaw(
             fName
         );
