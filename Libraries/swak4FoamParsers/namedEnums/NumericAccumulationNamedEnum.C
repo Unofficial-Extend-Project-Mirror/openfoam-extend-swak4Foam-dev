@@ -35,6 +35,7 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "NumericAccumulationNamedEnum.H"
+#include "HashSet.H"
 
 namespace Foam {
 
@@ -64,21 +65,28 @@ NumericAccumulationNamedEnum::readAccumulations(
     const dictionary &dict,
     const word &name
 ) {
+    HashSet<NumericAccumulationNamedEnum::value> needsArgument;
+    // insert accumulators that need an argument here
+
     const wordList aNames(dict.lookup(name));
 
     List<accuSpecification> accus(aNames.size());
 
     forAll(aNames,i) {
-        label percent=-1;
+        scalar value=-HUGE;
+        bool hasValue=false;
+
         string aName;
-        size_t numPos=aNames[i].find_first_of("0123456789");
+        // valid starts for a floating point number
+        size_t numPos=aNames[i].find_first_of("+-.0123456789");
         if(numPos==std::string::npos) {
             aName=aNames[i];
         } else {
             aName=aNames[i](numPos);
-            percent=readLabel(
+            value=readScalar(
                 IStringStream(aNames[i](numPos,aNames[i].size()-numPos))()
             );
+            hasValue=true;
         }
         if(!names.found(aName)) {
             // setting it up to fail
@@ -87,7 +95,28 @@ NumericAccumulationNamedEnum::readAccumulations(
         }
 
         accus[i].first()=names[aName];
-        accus[i].second()=percent;
+
+        if(hasValue) {
+            if(!needsArgument.found(accus[i].first())) {
+                FatalErrorIn("NumericAccumulationNamedEnum::readAccumulations")
+                    << "Problem in " << dict.name() << " with " << aNames[i]
+                        << endl
+                        << "Accumulator " << aName
+                        << " does not need an argument" << endl
+                        << exit(FatalError);
+            }
+        } else {
+            if(needsArgument.found(accus[i].first())) {
+                FatalErrorIn("NumericAccumulationNamedEnum::readAccumulations")
+                    << "Problem in " << dict.name() << " with " << aNames[i]
+                        << endl
+                        << "Accumulator " << aName
+                        << " needs an argument" << endl
+                        << exit(FatalError);
+            }
+        }
+
+        accus[i].second()=value;
     }
     return accus;
 }

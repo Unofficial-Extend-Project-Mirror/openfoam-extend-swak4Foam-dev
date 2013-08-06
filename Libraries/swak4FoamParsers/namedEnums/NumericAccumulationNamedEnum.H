@@ -74,7 +74,7 @@ public:
         numSumMag
     };
 
-    typedef Tuple2<value,label> accuSpecification;
+    typedef Tuple2<value,scalar> accuSpecification;
 
     //- String representation of order enums
     static const NamedEnum<value, 6> names;
