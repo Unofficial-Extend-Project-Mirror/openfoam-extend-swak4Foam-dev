@@ -135,6 +135,12 @@ public:
 
     Type max() const;
 
+    //- return the value where a fraction of the distribution is smaller
+    Type quantile(scalar frac) const;
+
+    //- return the fraction of the distribution that is smaller than the value
+    Type smaller(scalar value) const;
+
     void write(const fileName& filePrefix) const {
         Distribution<Type>::write(filePrefix);
     }
