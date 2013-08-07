@@ -70,7 +70,7 @@ void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExp
 
         results[i]=val;
         if(verbose()) {
-            Info << " " << NumericAccumulationNamedEnum::names[accu.first()]
+            Info << " " << accu
                 << "=" << val;
         }
     }

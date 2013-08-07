@@ -72,7 +72,7 @@ void swakExpressionFunctionObject::writeTheData(
 
         results[i]=val;
         if(verbose()) {
-            Info << " " << NumericAccumulationNamedEnum::names[accu.first()]
+            Info << " " << accu
                 << "=" << val;
         }
     }

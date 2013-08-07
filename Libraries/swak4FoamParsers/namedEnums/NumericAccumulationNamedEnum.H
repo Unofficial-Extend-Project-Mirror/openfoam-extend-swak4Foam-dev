@@ -84,10 +84,18 @@ public:
         const word &name
     );
 
+    static List<accuSpecification> readAccumulations(
+        const wordList &names,
+        const fileName &name
+    );
+
     static word toString(const accuSpecification &);
 };
 
-
+Ostream &operator<<(
+    Ostream &,
+    const NumericAccumulationNamedEnum::accuSpecification &
+);
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

@@ -65,6 +65,19 @@ NumericAccumulationNamedEnum::readAccumulations(
     const dictionary &dict,
     const word &name
 ) {
+    const wordList aNames(dict.lookup(name));
+
+    return readAccumulations(
+        aNames,
+        dict.name()
+    );
+}
+
+List<NumericAccumulationNamedEnum::accuSpecification>
+NumericAccumulationNamedEnum::readAccumulations(
+    const wordList &aNames,
+    const fileName &name
+) {
     HashSet<NumericAccumulationNamedEnum::value> needsArgument;
     // insert accumulators that need an argument here
 
@@ -90,7 +103,7 @@ NumericAccumulationNamedEnum::readAccumulations(
         }
         if(!names.found(aName)) {
             // setting it up to fail
-            Info << endl << "Problem in " << dict.name()
+            Info << endl << "Problem in " << name
                 << " with the entry " << name << ":" << endl;
         }
 
@@ -99,7 +112,7 @@ NumericAccumulationNamedEnum::readAccumulations(
         if(hasValue) {
             if(!needsArgument.found(accus[i].first())) {
                 FatalErrorIn("NumericAccumulationNamedEnum::readAccumulations")
-                    << "Problem in " << dict.name() << " with " << aNames[i]
+                    << "Problem in " << name << " with " << aNames[i]
                         << endl
                         << "Accumulator " << aName
                         << " does not need an argument" << endl
@@ -108,7 +121,7 @@ NumericAccumulationNamedEnum::readAccumulations(
         } else {
             if(needsArgument.found(accus[i].first())) {
                 FatalErrorIn("NumericAccumulationNamedEnum::readAccumulations")
-                    << "Problem in " << dict.name() << " with " << aNames[i]
+                    << "Problem in " << name << " with " << aNames[i]
                         << endl
                         << "Accumulator " << aName
                         << " needs an argument" << endl
@@ -125,11 +138,21 @@ word NumericAccumulationNamedEnum::toString(const accuSpecification &accu)
 {
     OStringStream o;
     o << NumericAccumulationNamedEnum::names[accu.first()];
-    if(accu.second()>=0) {
+    if(accu.second()>-HUGE) {
         o << accu.second();
     }
     return word(o.str());
 }
+
+Ostream &operator<<(
+    Ostream &o,
+    const NumericAccumulationNamedEnum::accuSpecification &accu
+)
+{
+    o << NumericAccumulationNamedEnum::toString(accu);
+    return o;
+}
+
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 

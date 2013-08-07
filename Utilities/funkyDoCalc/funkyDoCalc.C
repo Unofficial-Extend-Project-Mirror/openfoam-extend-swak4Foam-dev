@@ -49,53 +49,30 @@ Contributors/Copyright:
 
 #include "printSwakVersion.H"
 
-#include "NumericAccumulationNamedEnum.H"
+#include "AccumulationCalculation.H"
 
 template <class T>
 void writeData(
     CommonValueExpressionDriver &driver,
-    const wordList &accumulations
+    const List<NumericAccumulationNamedEnum::accuSpecification> &accumulations
 )
 {
     bool isPoint=driver.result().isPoint();
 
     Field<T> result=driver.getResult<T>(isPoint);
 
+    AccumulationCalculation<T> calculator(
+        result,
+        isPoint,
+        driver
+    );
     forAll(accumulations,i) {
-        const word &aName=accumulations[i];
-        const NumericAccumulationNamedEnum::value accu=
-            NumericAccumulationNamedEnum::names[aName];
+        const NumericAccumulationNamedEnum::accuSpecification accu=
+            accumulations[i];
 
-        T val=pTraits<T>::zero;
+        T val=calculator(accu);
 
-        switch(accu) {
-            case NumericAccumulationNamedEnum::numMin:
-                val=gMin(result);
-                break;
-            case NumericAccumulationNamedEnum::numMax:
-                val=gMax(result);
-                break;
-            case NumericAccumulationNamedEnum::numSum:
-                val=gSum(result);
-                break;
-            case NumericAccumulationNamedEnum::numAverage:
-                val=gAverage(result);
-                break;
-            // case NumericAccumulationNamedEnum::numSumMag:
-            //     val=gSumMag(result);
-            //     break;
-            case NumericAccumulationNamedEnum::numWeightedAverage:
-                val=driver.calcWeightedAverage(result);
-                break;
-            default:
-                WarningIn("funkyDoCalc")
-                    << "Unimplemented accumultation type "
-                        << NumericAccumulationNamedEnum::names[accu]
-                        << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
-                        << endl;
-        }
-
-        Info << " " << aName << "=" << val;
+        Info << " " << accu << "=" << val;
     }
 }
 
@@ -186,7 +163,13 @@ int main(int argc, char *argv[])
 
             autoPtr<CommonValueExpressionDriver> driver=
                 CommonValueExpressionDriver::New(dict,mesh);
-            wordList accumulations(dict.lookup("accumulations"));
+            wordList accumulationNames(dict.lookup("accumulations"));
+            List<NumericAccumulationNamedEnum::accuSpecification> accumulations(
+                NumericAccumulationNamedEnum::readAccumulations(
+                    accumulationNames,
+                    dict.name()
+                )
+            );
 
             driver->setSearchBehaviour(
                 true,
