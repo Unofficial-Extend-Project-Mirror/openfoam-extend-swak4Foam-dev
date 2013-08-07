@@ -71,13 +71,25 @@ public:
         numAverage,
         numWeightedAverage,
         numSum,
-        numSumMag
+        numSumMag,
+        numWeightedSum,
+        numIntegrate,
+        numMedian,
+        numWeightedMedian,
+        numQuantile,
+        numWeightedQuantile,
+        numRange,
+        numWeightedRange,
+        numSmaller,
+        numWeightedSmaller,
+        numBigger,
+        numWeightedBigger
     };
 
     typedef Tuple2<value,scalar> accuSpecification;
 
     //- String representation of order enums
-    static const NamedEnum<value, 6> names;
+    static const NamedEnum<value, 18> names;
 
     static List<accuSpecification> readAccumulations(
         const dictionary &dict,

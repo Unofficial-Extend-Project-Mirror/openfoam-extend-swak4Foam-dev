@@ -55,6 +55,7 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasMinimum_(false),
     hasAverage_(false),
     hasSum_(false),
+    hasWeightedSum_(false),
     hasSumMag_(false)
 {
 }
@@ -95,9 +96,10 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::distribution()
                 numberOfBins
             )
         );
+        Field<scalar> oneWeight(data_.size(),1);
         distribution_().calcScalarWeight(
             data_,
-            oneField()
+            oneWeight
         );
     }
 
@@ -177,6 +179,16 @@ Type AccumulationCalculation<Type>::sum()
 }
 
 template <typename Type>
+Type AccumulationCalculation<Type>::weightedSum()
+{
+    if(!hasWeightedSum_) {
+        weightedSum_=gSum(data_*weights());
+        hasWeightedSum_=true;
+    }
+    return weightedSum_;
+}
+
+template <typename Type>
 Type AccumulationCalculation<Type>::sumMag()
 {
     if(!hasSumMag_) {
@@ -193,6 +205,27 @@ Type AccumulationCalculation<Type>::operator()(
     const NumericAccumulationNamedEnum::accuSpecification &accu
 ) {
     switch(accu.first()) {
+        case NumericAccumulationNamedEnum::numQuantile:
+        case NumericAccumulationNamedEnum::numWeightedQuantile:
+        case NumericAccumulationNamedEnum::numRange:
+        case NumericAccumulationNamedEnum::numWeightedRange:
+            if(
+                accu.second()<0
+                ||
+                accu.second()>1
+            ) {
+                WarningIn("AccumulationCalculation<Type>operator()")
+                    << "Accumulation " << accu << " does not have parameter "
+                        << "in the range [0,1]"
+                        << endl;
+            }
+            break;
+        default:
+            // others need no range checking
+            ;
+    }
+
+    switch(accu.first()) {
         case NumericAccumulationNamedEnum::numMin:
             return minimum();
             break;
@@ -201,6 +234,10 @@ Type AccumulationCalculation<Type>::operator()(
             break;
         case NumericAccumulationNamedEnum::numSum:
             return sum();
+            break;
+        case NumericAccumulationNamedEnum::numWeightedSum:
+        case NumericAccumulationNamedEnum::numIntegrate:
+            return weightedSum();
             break;
         case NumericAccumulationNamedEnum::numAverage:
             return average();
@@ -211,9 +248,43 @@ Type AccumulationCalculation<Type>::operator()(
         case NumericAccumulationNamedEnum::numWeightedAverage:
             return weightedAverage();
             break;
+        case NumericAccumulationNamedEnum::numMedian:
+            return distribution().median();
+            break;
+        case NumericAccumulationNamedEnum::numWeightedMedian:
+            return weightedDistribution().median();
+            break;
+        case NumericAccumulationNamedEnum::numQuantile:
+            return distribution().quantile(accu.second());
+            break;
+        case NumericAccumulationNamedEnum::numWeightedQuantile:
+            return weightedDistribution().quantile(accu.second());
+            break;
+        case NumericAccumulationNamedEnum::numRange:
+            return distribution().quantile(0.5*(1+accu.second()))
+                -
+                distribution().quantile(0.5*(1-accu.second()));
+            break;
+        case NumericAccumulationNamedEnum::numWeightedRange:
+            return weightedDistribution().quantile(0.5*(1+accu.second()))
+                -
+                weightedDistribution().quantile(0.5*(1-accu.second()));
+            break;
+        case NumericAccumulationNamedEnum::numSmaller:
+            return distribution().smaller(accu.second());
+            break;
+        case NumericAccumulationNamedEnum::numBigger:
+            return pTraits<Type>::one-distribution().smaller(accu.second());
+            break;
+        case NumericAccumulationNamedEnum::numWeightedSmaller:
+            return weightedDistribution().smaller(accu.second());
+            break;
+        case NumericAccumulationNamedEnum::numWeightedBigger:
+            return pTraits<Type>::one-weightedDistribution().smaller(accu.second());
+            break;
         default:
             WarningIn("AccumulationCalculation<Type>operator()")
-                << "Unknown accumultation type "
+                << "Unimplemented accumultation type "
                     << NumericAccumulationNamedEnum::names[accu.first()]
                 // << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
                     << endl;

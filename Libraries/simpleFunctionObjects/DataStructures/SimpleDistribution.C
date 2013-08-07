@@ -419,10 +419,10 @@ Type Foam::SimpleDistribution<Type>::smaller(scalar value) const
         if (normDist.size())
         {
             scalar firstValue=
-                normDist[0]
+                normDist[0].first()
                 -0.5*component(this->binWidth(), cmpt);
             scalar lastValue=
-                normDist[normDist.size()-1]
+                normDist[normDist.size()-1].first()
                 +0.5*component(this->binWidth(), cmpt);
 
             if( value < firstValue ) {

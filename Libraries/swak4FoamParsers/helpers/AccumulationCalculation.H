@@ -110,6 +110,9 @@ class AccumulationCalculation
     bool hasSum_;
     Type sum_;
 
+     bool hasWeightedSum_;
+    Type weightedSum_;
+
     bool hasSumMag_;
     Type sumMag_;
 
@@ -144,6 +147,7 @@ public:
     Type weightedAverage();
     Type sum();
     Type sumMag();
+    Type weightedSum();
 
     //- do an accumulation according to a specification
     Type operator()(const NumericAccumulationNamedEnum::accuSpecification &);

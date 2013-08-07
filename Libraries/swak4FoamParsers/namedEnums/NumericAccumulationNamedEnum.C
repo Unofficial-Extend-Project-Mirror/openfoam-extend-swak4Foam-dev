@@ -45,18 +45,30 @@ template<>
 const char* NamedEnum
 <
     NumericAccumulationNamedEnum::value,
-    6
+    18
 >::names[] =
 {
     "min",
     "max",
     "average",
     "weightedAverage",
-    "sum",
-    "sumMag"
+    "sum",         // 5
+    "sumMag",
+    "weightedSum",
+    "integrate",
+    "median",
+    "weightedMedian",   // 10
+    "quantile",
+    "weightedQuantile",
+    "range",
+    "weightedRange",
+    "smaller",          // 15
+    "weightedSmaller",
+    "bigger",
+    "weightedBigger"
 };
 
-const NamedEnum<NumericAccumulationNamedEnum::value, 6>
+const NamedEnum<NumericAccumulationNamedEnum::value, 18>
     NumericAccumulationNamedEnum::names;
 
 
@@ -79,9 +91,14 @@ NumericAccumulationNamedEnum::readAccumulations(
     const fileName &name
 ) {
     HashSet<NumericAccumulationNamedEnum::value> needsArgument;
-    // insert accumulators that need an argument here
-
-    const wordList aNames(dict.lookup(name));
+    needsArgument.insert(numQuantile);
+    needsArgument.insert(numRange);
+    needsArgument.insert(numSmaller);
+    needsArgument.insert(numBigger);
+    needsArgument.insert(numWeightedQuantile);
+    needsArgument.insert(numWeightedRange);
+    needsArgument.insert(numWeightedSmaller);
+    needsArgument.insert(numWeightedBigger);
 
     List<accuSpecification> accus(aNames.size());
 
@@ -91,7 +108,7 @@ NumericAccumulationNamedEnum::readAccumulations(
 
         string aName;
         // valid starts for a floating point number
-        size_t numPos=aNames[i].find_first_of("+-.0123456789");
+        size_t numPos=aNames[i].find_first_of("-.0123456789");
         if(numPos==std::string::npos) {
             aName=aNames[i];
         } else {
