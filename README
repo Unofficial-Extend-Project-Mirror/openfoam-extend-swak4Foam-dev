@@ -2081,3 +2081,26 @@ S_{expl} + S_{impl} T
      For expressions whose results is not a scalar now the weight
      function can either be a scalar or of the same type as the
      expression (so every component can have a separate weight)
+**** More options for =accumulations=
+     A number of possible accumulations have been added. Most of
+     these are based on distributions. If the =weighted= variant is
+     chosen then the meaning is the more physical one (for =weighted=
+     the 'natural' weight of the quantity is used. For instance for
+     cells the cell volume. Otherwise the weight $1$ is used). Some
+     of these accumulations need a single floating point number as a
+     parameter. This is simply added to the name. The added
+     accumulations are:
+     - weightedSum :: sum of the quantity times the weight. There is
+                      an alias =integrate= for this
+     - median :: The value for which 50% of the distribution are
+                 smaller than this. More robust alternative to
+                 =average=
+     - quantile :: =quantile0.25= for instance is the value for which
+                   25% of the distribution are smaller than it
+     - range :: The difference of the quantile of $\frac{1+f}{2}$ and
+                $\frac{1-f}{2}$. For instance =range0.9= gives the
+                range in which 90% of the values are (from the quantile
+                5% to 95%)
+     - smaller :: The fraction of the distribution that is smaller
+                  than a given value
+     - bigger :: The inverse of =smaller=

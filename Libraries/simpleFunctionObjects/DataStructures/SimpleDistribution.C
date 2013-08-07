@@ -360,6 +360,7 @@ Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
                 label previousNonZeroIndex = 0;
 
                 scalar cumulative = 0.0;
+                bool done=false;
 
                 forAll(normDist, nD)
                 {
@@ -387,6 +388,7 @@ Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
                         setComponent(quantileValue, cmpt) =
                             (frac - Skm1)*(xk - xkm1)/(Sk - Skm1) + xkm1;
 
+                        done=true;
                         break;
                     }
                     else if (mag(normDist[nD].second()) > VSMALL)
@@ -396,6 +398,29 @@ Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
 
                         previousNonZeroIndex = nD;
                     }
+                }
+                if(!done) {
+                    // the quantile is in the last bin or on its edge
+                    scalar xk =
+                        normDist[normDist.size()-1].first()
+                        + 0.5*component(this->binWidth(), cmpt);
+
+                    scalar xkm1 =
+                        normDist[previousNonZeroIndex].first()
+                        - 0.5*component(this->binWidth(), cmpt);
+
+                    scalar Sk =
+                        cumulative
+                        + (
+                            normDist[normDist.size()-1].second()
+                            *
+                            component(this->binWidth(), cmpt)
+                        );
+
+                    scalar Skm1 = cumulative;
+
+                    setComponent(quantileValue, cmpt) =
+                        (frac - Skm1)*(xk - xkm1)/(Sk - Skm1) + xkm1;
                 }
             }
         }

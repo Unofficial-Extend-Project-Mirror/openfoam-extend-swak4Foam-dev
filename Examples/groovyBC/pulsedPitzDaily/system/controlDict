@@ -336,6 +336,12 @@ functions
         );
         verbose true;
     }
+    velocityStatistics
+    {
+        $pressureStatistics;
+
+        expression "U";
+    }
     pressureChangeInTime
     {
         type swakExpression;
