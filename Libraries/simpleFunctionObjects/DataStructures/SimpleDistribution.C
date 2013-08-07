@@ -50,6 +50,15 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 }
 
 template<class Type>
+SimpleDistribution<Type>::SimpleDistribution(const Type span,const label binNr)
+:
+    Distribution<Type>(
+        span/binNr
+    )
+{
+}
+
+template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
 :
     Distribution<Type>(o)
