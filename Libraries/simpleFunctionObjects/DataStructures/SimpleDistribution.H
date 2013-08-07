@@ -86,6 +86,10 @@ class SimpleDistribution
 protected:
     //- Returns the indices of the first and last non-zero entries
     Pair<label> validLimits(direction cmpt) const;
+
+    //- round value down to the next nearst power of 10
+    Type smaller10Power(const Type value);
+
 public:
 
     //- setting a size

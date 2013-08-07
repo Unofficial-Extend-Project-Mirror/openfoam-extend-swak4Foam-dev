@@ -50,10 +50,32 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 }
 
 template<class Type>
+Type SimpleDistribution<Type>::smaller10Power(const Type value)
+{
+    Type result=value;
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        const scalar v=component(value,i);
+        if(v>SMALL) {
+            setComponent(result,i)=
+                pow(
+                    10,
+                    floor(
+                        log10(v)
+                    )
+                );
+        }
+    }
+
+    return result;
+}
+
+template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const Type span,const label binNr)
 :
     Distribution<Type>(
-        span/binNr
+        smaller10Power(
+            span/binNr
+        )
     )
 {
 }
