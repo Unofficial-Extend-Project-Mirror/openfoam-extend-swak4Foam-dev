@@ -179,7 +179,7 @@ functions
     {
         type patchExpression;
         accumulations (
-            min max sum average
+            min max sum average sumMag weightedAverage
         );
         patches (
             inlet

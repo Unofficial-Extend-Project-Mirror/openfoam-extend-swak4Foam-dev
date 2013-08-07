@@ -2023,6 +2023,10 @@ S_{expl} + S_{impl} T
      In that case the driver was written before the surface was
      updated thus generating fields of size $0$. Now =update= is
      called at various places (to make sure it is called in any instance)
+**** =sumMag=-accumulation now working
+     This accumulation was available but not implemented. Now implemented.
+
+     For non-scalar types it is calculated separately for each component
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only

@@ -179,13 +179,10 @@ Type AccumulationCalculation<Type>::sum()
 template <typename Type>
 Type AccumulationCalculation<Type>::sumMag()
 {
-    WarningIn("AccumulationCalculation<Type>::sumMag()")
-        << "'sumMag' not correctly implemented"
-            << endl;
-
     if(!hasSumMag_) {
-        // TODO        sumMag_=gSumMag(data_)*pTraits<Type>::one;
-        sumMag_=pTraits<Type>::zero;
+        for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+            setComponent(sumMag_,i)=gSumMag(data_.component(i));
+        }
         hasSumMag_=true;
     }
     return sumMag_;
