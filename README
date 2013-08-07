@@ -2057,8 +2057,8 @@ S_{expl} + S_{impl} T
      calculates the average of one function (the =expression=) as a
      distribution over another (the =abscissa=). An example would be
      the average pressure in x-direction with =abscissa= being
-     ="pos().x"=, =expression= being just ="p"= and the =weight=
-     being ="vol()"=. The weight has to be a scalar. All other
+     =pos().x=, =expression= being just =p= and the =weight=
+     being =vol()=. The weight has to be a scalar. All other
      expressions can be any data-type
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
