@@ -122,10 +122,6 @@ protected:
 
     const scalarField &weights();
 
-    const SimpleDistribution<Type> &distribution();
-
-    const SimpleDistribution<Type> &weightedDistribution();
-
 public:
      //- Runtime type information
     //    TypeName("AccumulationCalculation");
@@ -140,6 +136,10 @@ public:
     //- Destructor
 
     ~AccumulationCalculation();
+
+    const SimpleDistribution<Type> &distribution();
+
+    const SimpleDistribution<Type> &weightedDistribution();
 
     Type maximum();
     Type minimum();

@@ -57,6 +57,7 @@ Contributors/Copyright:
 #include "AccumulationCalculation.H"
 
 #include "IOobjectList.H"
+#include "IOmanip.H"
 
 // Yeah. I know. Global variables. Eeeeevil. But convenient
 label nrOfQuantiles=0;
@@ -65,11 +66,86 @@ bool doBoundary=false;
 bool doZones=false;
 bool doSets=false;
 
+string csvHeader="";
+string csvLine="";
+string csvText="";
+
+void startLine(
+    const Time &time,
+    const string &entName
+) {
+    //    Info << csvHeader << endl << csvLine << endl;
+    if(csvLine!="") {
+        csvText+=csvLine+"\n";
+    }
+    csvHeader="time,entity";
+    csvLine=time.timeName()+","+entName;
+}
+
+void endTime() {
+    if(csvLine!="") {
+        csvText+=csvLine+"\n";
+    }
+    csvLine="";
+    csvHeader+="\n";
+}
+
+template <typename Type>
+Ostream& writeValue(
+    Ostream &o,
+    Type value
+) {
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        o << setw(IOstream::defaultPrecision() + 7)
+            << component(value,i);
+    }
+    return o;
+}
+
+template <typename Type>
+Ostream& writeData(
+    Ostream &o,
+    Type value,
+    const string annotation,
+    const word header,
+    bool newLine=false
+) {
+    const label annotationLen=25;
+    if(annotation!="") {
+        o << annotation.c_str();
+        for(label i=0;i<(annotationLen-label(annotation.size()));i++) {
+            o << " ";
+        }
+    }
+    writeValue(o,value);
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        scalar v=component(value,i);
+        csvHeader+=","+header;
+        if(pTraits<Type>::nComponents>1) {
+            csvHeader+=string(" ")+pTraits<Type>::componentNames[i];
+        }
+        OStringStream s;
+        s << v;
+        csvLine+=","+s.str();
+    }
+    if(newLine) {
+        o << endl;
+    }
+    return o;
+}
+
 template <typename Type>
 void reportValues(
     const word &fieldName,
-    CommonValueExpressionDriver &driver
+    const fvMesh &mesh,
+    CommonValueExpressionDriver &driver,
+    const string &entName
 ) {
+    startLine(
+        mesh.time(),
+        entName
+    );
+
     Field<Type> result(
         driver.evaluate<Type>(fieldName)
     );
@@ -80,13 +156,39 @@ void reportValues(
         driver
     );
 
-    Info << "Min: " << calculator.minimum() << endl;
-    Info << "Max: " << calculator.maximum() << endl;
+    writeData(Info,calculator.minimum(),"Range (min-max)","minimum");
+    Info << " | ";
+    writeData(Info,calculator.maximum(),"","maximum",true);
+
+    writeData(
+        Info,calculator.average(),
+        "Average | weighted","average");
+    Info << " | ";
+    writeData(
+        Info,calculator.weightedAverage(),
+        "","average_weighted",true);
+
+    writeData(
+        Info,calculator.sum(),
+        "Sum | weighted","sum");
+    Info << " | ";
+    writeData(
+        Info,calculator.weightedSum(),
+        "","sum_weighted",true);
+
+    writeData(
+        Info,calculator.distribution().median(),
+        "Median | weighted","median");
+    Info << " | ";
+    writeData(
+        Info,calculator.distribution().median(),
+        "","median_weighted",true);
 }
 
 template <typename Type,typename DriverType>
 void reportZones(
     const word &fieldName,
+    const fvMesh &mesh,
     const ZoneMesh<typename DriverType::EntityType,polyMesh> &zoneMesh
 ) {
     forAll(zoneMesh,i) {
@@ -97,7 +199,9 @@ void reportZones(
         zoneDriver.setAutoInterpolate(true,false);
         reportValues<typename Type::value_type>(
             fieldName,
-            zoneDriver
+            mesh,
+            zoneDriver,
+            DriverType::EntityType::typeName+" "+zoneMesh[i].name()
         );
     }
 }
@@ -133,7 +237,9 @@ void reportSets(
         setDriver.setAutoInterpolate(true,false);
         reportValues<typename Type::value_type>(
             fieldName,
-            setDriver
+            mesh,
+            setDriver,
+            DriverType::EntityType::typeName+" "+setNames[i]
         );
     }
 }
@@ -184,7 +290,9 @@ bool reportAField(
         );
         reportValues<typename Type::value_type>(
             fieldName,
-            fieldDriver
+            mesh,
+            fieldDriver,
+            "internalField"
         );
     }
 
@@ -199,7 +307,9 @@ bool reportAField(
                 );
                 reportValues<typename Type::value_type>(
                     fieldName,
-                    patchDriver
+                    mesh,
+                    patchDriver,
+                    "patch "+bound[patchI].name()
                 );
             }
         }
@@ -213,6 +323,7 @@ bool reportAField(
         ) {
             reportZones<Type,CellZoneValueExpressionDriver>(
                 fieldName,
+                mesh,
                 mesh.cellZones()
             );
         } else if(mesh.cellZones().size()>0) {
@@ -223,6 +334,7 @@ bool reportAField(
 
         reportZones<Type,FaceZoneValueExpressionDriver>(
             fieldName,
+            mesh,
             mesh.faceZones()
         );
     }
@@ -254,6 +366,8 @@ bool reportAField(
         );
     }
 
+    endTime();
+
     return true;
 }
 
@@ -274,6 +388,8 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("doBoundary","");
     argList::validOptions.insert("doZones","");
     argList::validOptions.insert("doSets","");
+
+    argList::validOptions.insert("csvName","<name of the CSV-file to be written>");
 
 #   include "setRootCase.H"
 
@@ -304,6 +420,17 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+    autoPtr<OFstream> csv;
+    if(args.options().found("csvName")) {
+        fileName csvName=args.options()["csvName"]+"_"
+            +fieldName+"_"+mesh.name()+".csv";
+        csv.set(
+            new OFstream(csvName)
+        );
+    }
+
+    string oldCsvHeader="";
+
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
@@ -326,6 +453,23 @@ int main(int argc, char *argv[])
                 << "No field " << fieldName << " found at "
                     << mesh.time().timeName()
                     << endl;
+        } else {
+            if(csv.valid()) {
+                if(oldCsvHeader=="") {
+                    csv().write(csvHeader.c_str());
+                } else if(csvHeader!=oldCsvHeader) {
+                    WarningIn(args.executable())
+                        << "Current and old CSV-header differ. "
+                            << "Probably the field changed the data-type"
+                            << endl
+                            << "Current: " << csvHeader << endl
+                            << "Old: " << oldCsvHeader << endl;
+                }
+                csv().write(csvText.c_str());
+                csvText="";
+                oldCsvHeader=csvHeader;
+                csv().flush();
+            }
         }
 
         Info << endl;
