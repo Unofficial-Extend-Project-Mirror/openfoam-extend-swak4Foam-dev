@@ -1,5 +1,6 @@
 # -*- mode: org -*-
 #+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 1.x
+#+OPTIONS: H:4
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions

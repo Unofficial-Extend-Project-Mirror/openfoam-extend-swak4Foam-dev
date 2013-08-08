@@ -997,3 +997,50 @@ hide circle
 * Programming
 ** Writing plugin-functions
 ** Adding new parsers
+* Bits and pieces
+  This section holds bits of documentation that will later be moved
+  to different places when the parts in whose context it makes sense
+  are written.
+
+  But for the time being they are useful if they are *anywhere*
+** Accumulations
+   For function objects where a large number of values are to be
+   broken down to a single value =swak4Foam= has the concept of
+   accumulations. Usually a list of those is specified in a list
+   =accumulations=. There is a number of possible values. Some of
+   these are based on distributions. If the =weighted= variant is
+   chosen then the meaning is the more physical one (for =weighted=
+   the 'natural' weight of the quantity is used. For instance for
+   cells the cell volume. Otherwise the weight $1$ is used). Some
+   of these accumulations need a single floating point number as a
+   parameter. This is simply added to the name. The added
+   accumulations are:
+   - min :: Minimum value
+   - max :: Maximum value
+   - sum :: Sum of the values
+   - weightedSum :: sum of the quantity times the weight.
+   - integrate :: Alias for =weightedSum=
+   - average :: Average of the values
+   - weightedAverage :: Weighted variant of =average=
+   - median :: The value for which 50% of the distribution are
+               smaller than this. More robust alternative to
+               =average=
+   - weightedMedian :: Weighted variant of =median=
+   - quantile :: =quantile0.25= for instance is the value for which
+                 25% of the distribution are smaller than it
+   - weightedQuantile :: Weighted variant of =quantile=
+   - range :: The difference of the quantile of $\frac{1+f}{2}$ and
+              $\frac{1-f}{2}$. For instance =range0.9= gives the
+              range in which 90% of the values are (from the quantile
+              5% to 95%)
+   - weightedRange :: Weighted variant of =range=
+   - smaller :: The fraction of the distribution that is smaller
+                than a given value
+   - weightedSmaller :: Weighted variant of =smaller=
+   - bigger :: The inverse of =smaller=
+   - weightedBigger :: Weighted variant of =bigger=
+   - size :: The size of the underlying entity (usually number of
+             cells, faces, points). For types with more than one
+             components all the components have the same value
+   - weightSum :: Sum of the weights of the underlying
+                  entity. Usually the volume oder the area of it.

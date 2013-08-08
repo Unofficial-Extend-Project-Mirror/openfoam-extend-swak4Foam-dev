@@ -1,6 +1,6 @@
 From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Date: Wed, 24 Jul 2013 01:28:35 +0200
-State: in-progress
+State: fixed
 Subject: Add median and quantil to the possible accumulations
 Message-Id: <e270e03f06c82bf8-0-artemis@bgs-cool-greybook.local>
 
