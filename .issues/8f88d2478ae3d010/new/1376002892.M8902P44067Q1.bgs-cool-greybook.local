@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 09 Aug 2013 00:56:37 +0200
+State: new
+Subject: Currently does not compile with bison 3.0
+Message-Id: <8f88d2478ae3d010-0-artemis@bgs-cool-greybook.local>
+
+Make sure that is compiles with 2.x and 3.x
