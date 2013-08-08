@@ -51,6 +51,8 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     data_(data),
     isPoint_(isPoint),
     driver_(driver),
+    hasWeightSum_(false),
+    hasSize_(false),
     hasMaximum_(false),
     hasMinimum_(false),
     hasAverage_(false),
@@ -123,6 +125,27 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::weightedDistribut
     }
 
     return weightedDistribution_();
+}
+
+template <typename Type>
+scalar AccumulationCalculation<Type>::weightSum()
+{
+    if(!hasWeightSum_) {
+        weightSum_=gSum(weights());
+        hasWeightSum_=true;
+    }
+    return weightSum_;
+}
+
+template <typename Type>
+label AccumulationCalculation<Type>::size()
+{
+    if(!hasSize_) {
+        size_=data_.size();
+        reduce(size_,plusOp<label>());
+        hasSize_=true;
+    }
+    return size_;
 }
 
 template <typename Type>

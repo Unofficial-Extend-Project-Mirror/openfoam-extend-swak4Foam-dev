@@ -95,6 +95,12 @@ class AccumulationCalculation
     //- on demand weighted distribution
     autoPtr<SimpleDistribution<Type> > weightedDistribution_;
 
+    bool hasWeightSum_;
+    scalar weightSum_;
+
+    bool hasSize_;
+    label size_;
+
     bool hasMaximum_;
     Type maximum_;
 
@@ -110,7 +116,7 @@ class AccumulationCalculation
     bool hasSum_;
     Type sum_;
 
-     bool hasWeightedSum_;
+    bool hasWeightedSum_;
     Type weightedSum_;
 
     bool hasSumMag_;
@@ -140,6 +146,9 @@ public:
     const SimpleDistribution<Type> &distribution();
 
     const SimpleDistribution<Type> &weightedDistribution();
+
+    label size();
+    scalar weightSum();
 
     Type maximum();
     Type minimum();

@@ -156,6 +156,10 @@ void reportValues(
         driver
     );
 
+    writeData(Info,calculator.size(),"Size | Weight Sum","size");
+    Info << " | ";
+    writeData(Info,calculator.weightSum(),"","weight_sum",true);
+
     writeData(Info,calculator.minimum(),"Range (min-max)","minimum");
     Info << " | ";
     writeData(Info,calculator.maximum(),"","maximum",true);
