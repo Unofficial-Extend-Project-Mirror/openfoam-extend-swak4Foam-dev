@@ -30,5 +30,6 @@ debian/rules
 debian/control
 
 swakConfiguration
+foamVersionThisIsCompiledFor
 
 Libraries/swak4FoamParsers/foamVersion4swak.H

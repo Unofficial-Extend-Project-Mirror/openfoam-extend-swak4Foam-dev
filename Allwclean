@@ -1,5 +1,7 @@
 #! /bin/sh
 
+rm -f foamVersionThisIsCompiledFor
+
 if [ -e swakConfiguration ]; then
     echo "Reading variables from 'swakConfiguration'"
     source ./swakConfiguration

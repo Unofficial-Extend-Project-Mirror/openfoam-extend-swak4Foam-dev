@@ -1,5 +1,18 @@
 #! /bin/bash
 
+if [ -e foamVersionThisIsCompiledFor ]; then
+    prevVersion=$(<foamVersionThisIsCompiledFor)
+    echo "Previously compiled for OpenFOAM $prevVersion"
+    if [ "$WM_PROJECT_VERSION" != "$prevVersion" ]; then
+	echo "The current OpenFOAM-version $WM_PROJECT_VERSION is different from the one used for compiling before ($prevVersion). Use ./Allwclean before compiling"
+	exit 42
+    fi
+    unset prevVersion
+else
+    echo "This is a clean install"
+    echo $WM_PROJECT_VERSION >foamVersionThisIsCompiledFor
+fi
+
 if [ -e swakConfiguration ]; then
     echo "Reading variables from 'swakConfiguration'"
     source swakConfiguration

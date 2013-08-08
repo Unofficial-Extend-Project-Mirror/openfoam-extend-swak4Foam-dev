@@ -1998,6 +1998,10 @@ S_{expl} + S_{impl} T
      As there are going to be more cross-dependencies the
      =simpleFunctionObjects= now have to be part of swak. Changes to
      the compile-scripts reflect this.
+**** =Allwmake= makes sure that swak is compiled for the same installation
+     The script writes the version it is used with to disk and at
+     later compiles that this is the same (this makes sure that not a
+     wrong version is used inadvertently to compile)
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
