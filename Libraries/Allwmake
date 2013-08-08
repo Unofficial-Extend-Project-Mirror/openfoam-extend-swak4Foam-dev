@@ -41,6 +41,14 @@ if [[ $BISONVER < 2.4 ]]; then
     fi
 fi
 
+if [[ $BISONVER > 2.999 ]]; then
+    echo "swak4Foam only confirmed to work with Bison 2.x"
+    if [ -z $DEVELOPE_FOR_NEW_BISON ]; then
+	echo "Set the environment variable DEVELOPE_FOR_NEW_BISON if you want to continue anyway."
+	exit 42
+    fi
+fi
+
 FLEXVER=`flex -V | head -n 1| tr ' ' '\n' | tail -n 1`
 MINORVER=`echo $FLEXVER | tr '.' '\n' | tail -n 1`
 
