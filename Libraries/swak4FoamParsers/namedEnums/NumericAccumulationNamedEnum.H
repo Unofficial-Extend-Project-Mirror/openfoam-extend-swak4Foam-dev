@@ -48,6 +48,8 @@ Contributors/Copyright:
 #include "NamedEnum.H"
 #include "dictionary.H"
 
+#include "Tuple2.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -69,19 +71,45 @@ public:
         numAverage,
         numWeightedAverage,
         numSum,
-        numSumMag
+        numSumMag,
+        numWeightedSum,
+        numIntegrate,
+        numMedian,
+        numWeightedMedian,
+        numQuantile,
+        numWeightedQuantile,
+        numRange,
+        numWeightedRange,
+        numSmaller,
+        numWeightedSmaller,
+        numBigger,
+        numWeightedBigger,
+        numWeightSum,
+        numSize
     };
 
-    //- String representation of order enums
-    static const NamedEnum<value, 6> names;
+    typedef Tuple2<value,scalar> accuSpecification;
 
-    static List<value> readAccumulations(
+    //- String representation of order enums
+    static const NamedEnum<value, 20> names;
+
+    static List<accuSpecification> readAccumulations(
         const dictionary &dict,
         const word &name
     );
+
+    static List<accuSpecification> readAccumulations(
+        const wordList &names,
+        const fileName &name
+    );
+
+    static word toString(const accuSpecification &);
 };
 
-
+Ostream &operator<<(
+    Ostream &,
+    const NumericAccumulationNamedEnum::accuSpecification &
+);
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

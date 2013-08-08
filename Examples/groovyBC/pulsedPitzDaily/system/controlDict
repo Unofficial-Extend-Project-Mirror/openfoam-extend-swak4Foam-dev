@@ -179,7 +179,7 @@ functions
     {
         type patchExpression;
         accumulations (
-            min max sum average
+            min max sum average sumMag weightedAverage
         );
         patches (
             inlet
@@ -298,6 +298,49 @@ functions
             bar p;
         }
         verbose true;
+    }
+    pressureStatistics
+    {
+        type swakExpression;
+        valueType internalField;
+        expression "p";
+        accumulations (
+            average
+            weightedAverage
+            min
+            max
+            median
+            weightedMedian
+            quantile0.5
+            weightedQuantile0.5
+            range0.9
+            weightedRange0.9
+            weightedQuantile.05
+            weightedQuantile.95
+            smaller100
+            bigger100
+            weightedSmaller100
+            weightedBigger100
+            smaller0
+            weightedSmaller0
+            integrate
+            weightedSum
+            weightedQuantile0
+            weightedQuantile1
+            // weightedQuantile-1
+            // weightedQuantile2e1
+            smaller-1e3
+            bigger-1e3
+            smaller1e3
+            bigger1e3
+        );
+        verbose true;
+    }
+    velocityStatistics
+    {
+        $pressureStatistics;
+
+        expression "U";
     }
     pressureChangeInTime
     {

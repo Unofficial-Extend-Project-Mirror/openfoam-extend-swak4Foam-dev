@@ -90,6 +90,9 @@ public:
      //- Runtime type information
     TypeName("FaceSetValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef faceSet EntityType;
+
     static const word &driverName() { return driverName_; }
 
    // Constructors

@@ -1,0 +1,14 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 06 Aug 2013 17:17:52 +0200
+Subject: Re: Add median and quantil to the possible accumulations
+Message-Id: <e270e03f06c82bf8-a2bb2814952af122-artemis@bgs-cool-greybook.local>
+References: <e270e03f06c82bf8-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e270e03f06c82bf8-0-artemis@bgs-cool-greybook.local>
+
+Add accumulations like
+
+smaller345.4
+smallerWeighted345.4
+
+which returns the fraction that is smaller than that value. As
+syntactic sugar also add bigger variants

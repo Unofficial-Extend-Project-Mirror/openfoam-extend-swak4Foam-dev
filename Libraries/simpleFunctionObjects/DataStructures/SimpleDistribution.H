@@ -86,10 +86,17 @@ class SimpleDistribution
 protected:
     //- Returns the indices of the first and last non-zero entries
     Pair<label> validLimits(direction cmpt) const;
+
+    //- round value down to the next nearst power of 10
+    Type smaller10Power(const Type value);
+
 public:
 
-    //- from a dictionary
+    //- setting a size
     SimpleDistribution(const scalar binSize);
+
+    //- setting using a span plus the bin number
+    SimpleDistribution(const Type span,const label binNr);
 
     //- from a base class
     SimpleDistribution(const Distribution<Type> &);
@@ -134,6 +141,12 @@ public:
     Type min() const;
 
     Type max() const;
+
+    //- return the value where a fraction of the distribution is smaller
+    Type quantile(scalar frac) const;
+
+    //- return the fraction of the distribution that is smaller than the value
+    Type smaller(scalar value) const;
 
     void write(const fileName& filePrefix) const {
         Distribution<Type>::write(filePrefix);

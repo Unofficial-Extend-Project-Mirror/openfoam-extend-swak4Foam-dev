@@ -1,5 +1,6 @@
 # -*- mode: org -*-
 #+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 1.x
+#+OPTIONS: H:4
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
@@ -1993,6 +1994,10 @@ S_{expl} + S_{impl} T
      The error messages where already quite verbose. But people
      didn't understand them and asked the same questions over and
      over ...
+**** =simpleFunctionObjects= no longer considered an independent project
+     As there are going to be more cross-dependencies the
+     =simpleFunctionObjects= now have to be part of swak. Changes to
+     the compile-scripts reflect this.
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
@@ -2019,6 +2024,10 @@ S_{expl} + S_{impl} T
      In that case the driver was written before the surface was
      updated thus generating fields of size $0$. Now =update= is
      called at various places (to make sure it is called in any instance)
+**** =sumMag=-accumulation now working
+     This accumulation was available but not implemented. Now implemented.
+
+     For non-scalar types it is calculated separately for each component
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
@@ -2049,9 +2058,14 @@ S_{expl} + S_{impl} T
      calculates the average of one function (the =expression=) as a
      distribution over another (the =abscissa=). An example would be
      the average pressure in x-direction with =abscissa= being
-     ="pos().x"=, =expression= being just ="p"= and the =weight=
-     being ="vol()"=. The weight has to be a scalar. All other
+     =pos().x=, =expression= being just =p= and the =weight=
+     being =vol()=. The weight has to be a scalar. All other
      expressions can be any data-type
+**** New utility =fieldReport=
+     This utility prints some quantitative statistics about a
+     specified field. Optionally these statistics can also be printed
+     for patches, sets and zones. The data can be written to a
+     CSV-file. Also the distributions of the field can be written.
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file
@@ -2073,3 +2087,31 @@ S_{expl} + S_{impl} T
      For expressions whose results is not a scalar now the weight
      function can either be a scalar or of the same type as the
      expression (so every component can have a separate weight)
+**** More options for =accumulations=
+     A number of possible accumulations have been added. Most of
+     these are based on distributions. If the =weighted= variant is
+     chosen then the meaning is the more physical one (for =weighted=
+     the 'natural' weight of the quantity is used. For instance for
+     cells the cell volume. Otherwise the weight $1$ is used). Some
+     of these accumulations need a single floating point number as a
+     parameter. This is simply added to the name. The added
+     accumulations are:
+     - weightedSum :: sum of the quantity times the weight. There is
+                      an alias =integrate= for this
+     - median :: The value for which 50% of the distribution are
+                 smaller than this. More robust alternative to
+                 =average=
+     - quantile :: =quantile0.25= for instance is the value for which
+                   25% of the distribution are smaller than it
+     - range :: The difference of the quantile of $\frac{1+f}{2}$ and
+                $\frac{1-f}{2}$. For instance =range0.9= gives the
+                range in which 90% of the values are (from the quantile
+                5% to 95%)
+     - smaller :: The fraction of the distribution that is smaller
+                  than a given value
+     - bigger :: The inverse of =smaller=
+     - size :: The size of the underlying entity (usually number of
+               cells, faces, points). For types with more than one
+               components all the components have the same value
+     - weightSum :: Sum of the weights of the underlying
+                    entity. Usually the volume oder the area of it.

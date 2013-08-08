@@ -50,6 +50,37 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 }
 
 template<class Type>
+Type SimpleDistribution<Type>::smaller10Power(const Type value)
+{
+    Type result=value;
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        const scalar v=component(value,i);
+        if(v>SMALL) {
+            setComponent(result,i)=
+                pow(
+                    10,
+                    floor(
+                        log10(v)
+                    )
+                );
+        }
+    }
+
+    return result;
+}
+
+template<class Type>
+SimpleDistribution<Type>::SimpleDistribution(const Type span,const label binNr)
+:
+    Distribution<Type>(
+        smaller10Power(
+            span/binNr
+        )
+    )
+{
+}
+
+template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
 :
     Distribution<Type>(o)
@@ -308,6 +339,215 @@ SimpleDistribution<Type> operator+
         reinterpret_cast<const Distribution<Type>&>(sa)
         +
         reinterpret_cast<const Distribution<Type>&>(sb);
+}
+
+    // generalization of the median-method from Distribution
+template<class Type>
+Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
+{
+    Type quantileValue(pTraits<Type>::zero);
+
+    List< List < Pair<scalar> > > normDistribution = this->normalised();
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        List< Pair<scalar> >& normDist = normDistribution[cmpt];
+
+        if (normDist.size())
+        {
+            if (normDist.size() == 1)
+            {
+                setComponent(quantileValue, cmpt) = normDist[0].first();
+            }
+            else if
+            (
+                normDist.size() > 1
+                && normDist[0].second()*component(this->binWidth(), cmpt) > frac
+            )
+            {
+                scalar xk =
+                    normDist[0].first()
+                  + 0.5*component(this->binWidth(), cmpt);
+
+                scalar xkm1 =
+                    normDist[0].first()
+                  - 0.5*component(this->binWidth(), cmpt);
+
+                scalar Sk = (normDist[0].second())*component(this->binWidth(), cmpt);
+
+                setComponent(quantileValue, cmpt) = frac*(xk - xkm1)/(Sk) + xkm1;
+            }
+            else
+            {
+                label previousNonZeroIndex = 0;
+
+                scalar cumulative = 0.0;
+                bool done=false;
+
+                forAll(normDist, nD)
+                {
+                    if
+                    (
+                        cumulative
+                      + (normDist[nD].second()*component(this->binWidth(), cmpt))
+                      > frac
+                    )
+                    {
+                        scalar xk =
+                            normDist[nD].first()
+                          + 0.5*component(this->binWidth(), cmpt);
+
+                        scalar xkm1 =
+                            normDist[previousNonZeroIndex].first()
+                          + 0.5*component(this->binWidth(), cmpt);
+
+                        scalar Sk =
+                            cumulative
+                          + (normDist[nD].second()*component(this->binWidth(), cmpt));
+
+                        scalar Skm1 = cumulative;
+
+                        setComponent(quantileValue, cmpt) =
+                            (frac - Skm1)*(xk - xkm1)/(Sk - Skm1) + xkm1;
+
+                        done=true;
+                        break;
+                    }
+                    else if (mag(normDist[nD].second()) > VSMALL)
+                    {
+                        cumulative +=
+                            normDist[nD].second()*component(this->binWidth(), cmpt);
+
+                        previousNonZeroIndex = nD;
+                    }
+                }
+                if(!done) {
+                    // the quantile is in the last bin or on its edge
+                    scalar xk =
+                        normDist[normDist.size()-1].first()
+                        + 0.5*component(this->binWidth(), cmpt);
+
+                    scalar xkm1 =
+                        normDist[previousNonZeroIndex].first()
+                        - 0.5*component(this->binWidth(), cmpt);
+
+                    scalar Sk =
+                        cumulative
+                        + (
+                            normDist[normDist.size()-1].second()
+                            *
+                            component(this->binWidth(), cmpt)
+                        );
+
+                    scalar Skm1 = cumulative;
+
+                    setComponent(quantileValue, cmpt) =
+                        (frac - Skm1)*(xk - xkm1)/(Sk - Skm1) + xkm1;
+                }
+            }
+        }
+
+    }
+
+    return quantileValue;
+}
+
+template<class Type>
+Type Foam::SimpleDistribution<Type>::smaller(scalar value) const
+{
+    Type smallerValue(-1*pTraits<Type>::one);
+
+    List< List < Pair<scalar> > > normDistribution = this->normalised();
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        List< Pair<scalar> >& normDist = normDistribution[cmpt];
+
+        if (normDist.size())
+        {
+            scalar firstValue=
+                normDist[0].first()
+                -0.5*component(this->binWidth(), cmpt);
+            scalar lastValue=
+                normDist[normDist.size()-1].first()
+                +0.5*component(this->binWidth(), cmpt);
+
+            if( value < firstValue ) {
+                setComponent(smallerValue, cmpt) = 0;
+            } else if( value > lastValue ) {
+                setComponent(smallerValue, cmpt) = 1;
+            }
+            else if (normDist.size() == 1)
+            {
+                // fraction of the only bin
+                setComponent(smallerValue, cmpt) =
+                    (value-firstValue)
+                    /
+                    (component(this->binWidth(), cmpt)+SMALL);
+            }
+            else if
+            (
+                normDist.size() > 1
+                && (firstValue+component(this->binWidth(), cmpt))>value
+            )
+            {
+                // fraction of the bin
+                setComponent(smallerValue, cmpt) =
+                    normDist[0].second()
+                    *
+                    (value-firstValue);
+            }
+            else
+            {
+                scalar cumulative = 0.0;
+                bool done=false;
+
+                forAll(normDist, nD)
+                {
+                    if
+                    (
+                        value
+                        <
+                        (
+                            normDist[nD].first()
+                            +
+                            0.5*component(this->binWidth(), cmpt)
+                        )
+                    )
+                    {
+                        setComponent(smallerValue, cmpt) =
+                            cumulative
+                            +
+                            normDist[nD].second()
+                            *
+                            (
+                                value
+                                -
+                                (
+                                    normDist[nD].first()
+                                    -
+                                    0.5*component(this->binWidth(), cmpt)
+                                )
+                            );
+                        done=true;
+                        break;
+                    }
+                    else if (mag(normDist[nD].second()) > VSMALL)
+                    {
+                        cumulative +=
+                            normDist[nD].second()*component(this->binWidth(), cmpt);
+                    }
+                }
+                // shouldn't be needed. Just in case
+                if(!done) {
+                    setComponent(smallerValue, cmpt) = 1;
+                }
+            }
+        }
+
+    }
+
+    return smallerValue;
 }
 
 template<class Type>

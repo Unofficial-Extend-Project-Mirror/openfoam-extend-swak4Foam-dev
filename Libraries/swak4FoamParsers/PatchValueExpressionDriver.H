@@ -166,6 +166,9 @@ public:
     //- Runtime type information
     TypeName("PatchValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef fvPatch EntityType;
+
     static const word &driverName() { return driverName_; }
 
     // Constructors

@@ -11,3 +11,5 @@ wclean funkySetAreaFields
 wclean funkyDoCalc
 
 wclean calcNonUniformOffsetsForMapped
+
+wclean fieldReport
