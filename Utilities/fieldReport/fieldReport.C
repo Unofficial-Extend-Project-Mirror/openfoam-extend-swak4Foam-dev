@@ -73,6 +73,8 @@ string csvHeader="";
 string csvLine="";
 string csvText="";
 
+fileName distributionsDirectory="";
+
 scalarList splitValuesString (
     const string &values
 ) {
@@ -287,6 +289,29 @@ void reportValues(
         writeData(
             Info,calculator(wbigger),
             "",NumericAccumulationNamedEnum::toString(wbigger),true);
+    }
+
+    if(distributionsDirectory!="") {
+        string name(entName);
+        name.replaceAll(" ","_");
+
+        fileName toDir=distributionsDirectory
+            /
+            mesh.time().timeName();
+
+        mkDir(toDir);
+
+        Info << "\nWriting distributions to " << toDir << endl;
+        calculator.distribution().write(
+            toDir
+            /
+            fieldName+"_"+name
+        );
+        calculator.weightedDistribution().write(
+            toDir
+            /
+            "weighted_"+fieldName+"_"+name
+        );
     }
 }
 
@@ -503,6 +528,7 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("doSets","");
 
     argList::validOptions.insert("csvName","<name of the CSV-file to be written>");
+    argList::validOptions.insert("distributionsDirectory","<name of the directory where distributions are written to>");
 
 #   include "setRootCase.H"
 
@@ -544,6 +570,9 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+    if(args.options().found("distributionsDirectory")) {
+        distributionsDirectory=args.options()["distributionsDirectory"];
+    }
     autoPtr<OFstream> csv;
     if(args.options().found("csvName")) {
         fileName csvName=args.options()["csvName"]+"_"

@@ -2060,6 +2060,11 @@ S_{expl} + S_{impl} T
      =pos().x=, =expression= being just =p= and the =weight=
      being =vol()=. The weight has to be a scalar. All other
      expressions can be any data-type
+**** New utility =fieldReport=
+     This utility prints some quantitative statistics about a
+     specified field. Optionally these statistics can also be printed
+     for patches, sets and zones. The data can be written to a
+     CSV-file. Also the distributions of the field can be written.
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file
