@@ -87,6 +87,9 @@ public:
      //- Runtime type information
     TypeName("CellZoneValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef cellZone EntityType;
+
     static const word &driverName() { return driverName_; }
 
    // Constructors

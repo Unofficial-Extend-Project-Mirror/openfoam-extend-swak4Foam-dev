@@ -100,6 +100,9 @@ public:
      //- Runtime type information
     TypeName("SampledSetValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef sampledSet EntityType;
+
     static const word &driverName() { return driverName_; }
 
     // Constructors
