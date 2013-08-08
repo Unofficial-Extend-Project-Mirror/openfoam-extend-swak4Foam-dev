@@ -42,6 +42,11 @@ Contributors/Copyright:
 #include "fvCFD.H"
 
 #include "FieldValueExpressionDriver.H"
+#include "PatchValueExpressionDriver.H"
+#include "CellZoneValueExpressionDriver.H"
+#include "FaceZoneValueExpressionDriver.H"
+#include "CellSetValueExpressionDriver.H"
+#include "FaceSetValueExpressionDriver.H"
 
 #include "timeSelector.H"
 
@@ -51,8 +56,14 @@ Contributors/Copyright:
 
 #include "AccumulationCalculation.H"
 
+#include "IOobjectList.H"
+
 // Yeah. I know. Global variables. Eeeeevil. But convenient
-label nrOfQuantiles=9;
+label nrOfQuantiles=0;
+bool doField=true;
+bool doBoundary=false;
+bool doZones=false;
+bool doSets=false;
 
 template <typename Type>
 void reportValues(
@@ -71,6 +82,60 @@ void reportValues(
 
     Info << "Min: " << calculator.minimum() << endl;
     Info << "Max: " << calculator.maximum() << endl;
+}
+
+template <typename Type,typename DriverType>
+void reportZones(
+    const word &fieldName,
+    const ZoneMesh<typename DriverType::EntityType,polyMesh> &zoneMesh
+) {
+    forAll(zoneMesh,i) {
+        Info << "\n" << DriverType::EntityType::typeName << " "
+            << zoneMesh[i].name() << endl;
+
+        DriverType zoneDriver(zoneMesh[i]);
+        zoneDriver.setAutoInterpolate(true,false);
+        reportValues<typename Type::value_type>(
+            fieldName,
+            zoneDriver
+        );
+    }
+}
+
+template<class SetType>
+wordList findSets(const fvMesh &mesh)
+{
+    IOobjectList objects
+        (
+            mesh,
+            mesh.pointsInstance(),
+            polyMesh::meshSubDir/"sets"
+        );
+
+    return objects.lookupClass(SetType::typeName).names();
+}
+
+ template <typename Type,typename DriverType>
+void reportSets(
+    const word &fieldName,
+    const fvMesh &mesh,
+    const wordList &setNames
+) {
+    forAll(setNames,i) {
+        Info << "\n" << DriverType::EntityType::typeName << " "
+            << setNames[i] << endl;
+
+        typename DriverType::EntityType theSet(
+            mesh,
+            setNames[i]
+        );
+        DriverType setDriver(theSet);
+        setDriver.setAutoInterpolate(true,false);
+        reportValues<typename Type::value_type>(
+            fieldName,
+            setDriver
+        );
+    }
 }
 
 template <typename Type>
@@ -109,17 +174,85 @@ bool reportAField(
         mesh
     );
 
-    Info << "\nInternal field:" << endl;
-    FieldValueExpressionDriver fieldDriver(
-        mesh,
-        false,
-        true,     // search in Memory
-        false
-    );
-    reportValues<typename Type::value_type>(
-        fieldName,
-        fieldDriver
-    );
+    if(doField) {
+        Info << "\nInternal field:" << endl;
+        FieldValueExpressionDriver fieldDriver(
+            mesh,
+            false,
+            true,     // search in Memory
+            false
+        );
+        reportValues<typename Type::value_type>(
+            fieldName,
+            fieldDriver
+        );
+    }
+
+    if(doBoundary) {
+        HashSet<word> isConstraint(fvPatch::constraintTypes());
+        const fvBoundaryMesh & bound=mesh.boundary();
+        forAll(bound,patchI) {
+            if(!isConstraint.found(bound[patchI].type())) {
+                Info << "\nPatch field: " << bound[patchI].name() << endl;
+                PatchValueExpressionDriver patchDriver(
+                    bound[patchI]
+                );
+                reportValues<typename Type::value_type>(
+                    fieldName,
+                    patchDriver
+                );
+            }
+        }
+    }
+
+    if(doZones) {
+        if(
+            Type::PatchFieldType::typeName
+            ==
+            "fvPatchField"
+        ) {
+            reportZones<Type,CellZoneValueExpressionDriver>(
+                fieldName,
+                mesh.cellZones()
+            );
+        } else if(mesh.cellZones().size()>0) {
+            Info << "\nSkipping cellZones because field type "
+                << Type::typeName << " is not supported for them"
+                << endl;
+        }
+
+        reportZones<Type,FaceZoneValueExpressionDriver>(
+            fieldName,
+            mesh.faceZones()
+        );
+    }
+
+    if(doSets) {
+        wordList cellSets=findSets<cellSet>(mesh);
+
+        if(
+            Type::PatchFieldType::typeName
+            ==
+            "fvPatchField"
+        ) {
+            reportSets<Type,CellSetValueExpressionDriver>(
+                fieldName,
+                mesh,
+                cellSets
+            );
+        } else if(cellSets.size()>0) {
+            Info << "\nSkipping cellSets because field type "
+                << Type::typeName << " is not supported for them"
+                << endl;
+        }
+
+        wordList faceSets=findSets<faceSet>(mesh);
+        reportSets<Type,FaceSetValueExpressionDriver>(
+            fieldName,
+            mesh,
+            faceSets
+        );
+    }
 
     return true;
 }
@@ -137,18 +270,26 @@ int main(int argc, char *argv[])
         "nrOfQuantiles",
         "<nr of quantiles - defaults to 9>"
     );
+    argList::validOptions.insert("noDoField","");
+    argList::validOptions.insert("doBoundary","");
+    argList::validOptions.insert("doZones","");
+    argList::validOptions.insert("doSets","");
 
 #   include "setRootCase.H"
 
     printSwakVersion();
 
     word fieldName(args.args()[1]);
-    nrOfQuantiles=9;
+    nrOfQuantiles=0;
     if(args.options().found("nrOfQuantiles")) {
         nrOfQuantiles=readLabel(
             IStringStream(args.options()["nrOfQuantiles"])()
         );
     }
+    doField=!args.options().found("noDoField");
+    doBoundary=args.options().found("doBoundary");
+    doZones=args.options().found("doZones");
+    doSets=args.options().found("doSets");
 
     if (!args.options().found("time") && !args.options().found("latestTime")) {
         FatalErrorIn("main()")
