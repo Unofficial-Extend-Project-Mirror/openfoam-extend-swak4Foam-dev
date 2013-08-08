@@ -61,6 +61,9 @@ Contributors/Copyright:
 
 // Yeah. I know. Global variables. Eeeeevil. But convenient
 label nrOfQuantiles=0;
+scalarList fractionBiggerThan(0);
+scalarList fractionSmallerThan(0);
+
 bool doField=true;
 bool doBoundary=false;
 bool doZones=false;
@@ -69,6 +72,36 @@ bool doSets=false;
 string csvHeader="";
 string csvLine="";
 string csvText="";
+
+scalarList splitValuesString (
+    const string &values
+) {
+    DynamicList<scalar> result;
+
+    std::string::size_type start=0;
+    std::string::size_type end=0;
+
+    while(start<values.length()) {
+        end=values.find(',',start);
+        if(end==std::string::npos) {
+            end=values.length();
+        }
+        result.append(
+            readScalar(
+                IStringStream(
+                    values.substr(
+                        start,end-start
+                    )
+                )()
+            )
+        );
+        start=end+1;
+    }
+
+    result.shrink();
+
+    return result;
+}
 
 void startLine(
     const Time &time,
@@ -187,6 +220,74 @@ void reportValues(
     writeData(
         Info,calculator.distribution().median(),
         "","median_weighted",true);
+
+    if(nrOfQuantiles) {
+        scalar dx=1./nrOfQuantiles;
+        for(label i=1;i<nrOfQuantiles;i++) {
+            scalar thisQuantile=dx*i;
+            NumericAccumulationNamedEnum::accuSpecification quant(
+                NumericAccumulationNamedEnum::numQuantile,
+                thisQuantile
+            );
+            NumericAccumulationNamedEnum::accuSpecification wquant(
+                NumericAccumulationNamedEnum::numWeightedQuantile,
+                thisQuantile
+            );
+            OStringStream annotation;
+            annotation << thisQuantile << " quantile | weighted";
+
+            writeData(
+                Info,calculator(quant),
+                annotation.str(),NumericAccumulationNamedEnum::toString(quant));
+            Info << " | ";
+            writeData(
+                Info,calculator(wquant),
+                "",NumericAccumulationNamedEnum::toString(wquant),true);
+        }
+    }
+
+    forAll(fractionSmallerThan,i) {
+        scalar value=fractionSmallerThan[i];
+        NumericAccumulationNamedEnum::accuSpecification smaller(
+            NumericAccumulationNamedEnum::numSmaller,
+            value
+        );
+        NumericAccumulationNamedEnum::accuSpecification wsmaller(
+            NumericAccumulationNamedEnum::numWeightedSmaller,
+            value
+        );
+        OStringStream annotation;
+        annotation << "x <= " << value << " | weighted";
+
+        writeData(
+            Info,calculator(smaller),
+            annotation.str(),NumericAccumulationNamedEnum::toString(smaller));
+        Info << " | ";
+        writeData(
+            Info,calculator(wsmaller),
+            "",NumericAccumulationNamedEnum::toString(wsmaller),true);
+    }
+    forAll(fractionBiggerThan,i) {
+        scalar value=fractionBiggerThan[i];
+        NumericAccumulationNamedEnum::accuSpecification bigger(
+            NumericAccumulationNamedEnum::numBigger,
+            value
+        );
+        NumericAccumulationNamedEnum::accuSpecification wbigger(
+            NumericAccumulationNamedEnum::numWeightedBigger,
+            value
+        );
+        OStringStream annotation;
+        annotation << "x > " << value << " | weighted";
+
+        writeData(
+            Info,calculator(bigger),
+            annotation.str(),NumericAccumulationNamedEnum::toString(bigger));
+        Info << " | ";
+        writeData(
+            Info,calculator(wbigger),
+            "",NumericAccumulationNamedEnum::toString(wbigger),true);
+    }
 }
 
 template <typename Type,typename DriverType>
@@ -388,6 +489,14 @@ int main(int argc, char *argv[])
         "nrOfQuantiles",
         "<nr of quantiles - defaults to 9>"
     );
+    argList::validOptions.insert(
+        "fractionBiggerThan",
+        "<comma separated list of values>"
+    );
+    argList::validOptions.insert(
+        "fractionSmallerThan",
+        "<comma separated list of values>"
+    );
     argList::validOptions.insert("noDoField","");
     argList::validOptions.insert("doBoundary","");
     argList::validOptions.insert("doZones","");
@@ -406,6 +515,17 @@ int main(int argc, char *argv[])
             IStringStream(args.options()["nrOfQuantiles"])()
         );
     }
+    if(args.options().found("fractionBiggerThan")) {
+        fractionBiggerThan=splitValuesString(
+            args.options()["fractionBiggerThan"]
+        );
+    }
+    if(args.options().found("fractionSmallerThan")) {
+        fractionSmallerThan=splitValuesString(
+            args.options()["fractionSmallerThan"]
+        );
+    }
+
     doField=!args.options().found("noDoField");
     doBoundary=args.options().found("doBoundary");
     doZones=args.options().found("doZones");

@@ -483,7 +483,7 @@ Type Foam::SimpleDistribution<Type>::smaller(scalar value) const
                 setComponent(smallerValue, cmpt) =
                     (value-firstValue)
                     /
-                    component(this->binWidth(), cmpt);
+                    (component(this->binWidth(), cmpt)+SMALL);
             }
             else if
             (
