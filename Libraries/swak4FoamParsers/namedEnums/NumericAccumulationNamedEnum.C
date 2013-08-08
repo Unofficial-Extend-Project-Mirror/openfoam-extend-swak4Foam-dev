@@ -45,7 +45,7 @@ template<>
 const char* NamedEnum
 <
     NumericAccumulationNamedEnum::value,
-    18
+    20
 >::names[] =
 {
     "min",
@@ -65,10 +65,12 @@ const char* NamedEnum
     "smaller",          // 15
     "weightedSmaller",
     "bigger",
-    "weightedBigger"
+    "weightedBigger",
+    "weightSum",
+    "size",             // 20
 };
 
-const NamedEnum<NumericAccumulationNamedEnum::value, 18>
+const NamedEnum<NumericAccumulationNamedEnum::value, 20>
     NumericAccumulationNamedEnum::names;
 
 

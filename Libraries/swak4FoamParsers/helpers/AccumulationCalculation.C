@@ -249,6 +249,12 @@ Type AccumulationCalculation<Type>::operator()(
     }
 
     switch(accu.first()) {
+        case NumericAccumulationNamedEnum::numSize:
+            return size()*pTraits<Type>::one;
+            break;
+        case NumericAccumulationNamedEnum::numWeightSum:
+            return weightSum()*pTraits<Type>::one;
+            break;
         case NumericAccumulationNamedEnum::numMin:
             return minimum();
             break;

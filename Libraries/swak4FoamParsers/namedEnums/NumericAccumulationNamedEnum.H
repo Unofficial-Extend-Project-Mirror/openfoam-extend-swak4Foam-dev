@@ -83,13 +83,15 @@ public:
         numSmaller,
         numWeightedSmaller,
         numBigger,
-        numWeightedBigger
+        numWeightedBigger,
+        numWeightSum,
+        numSize
     };
 
     typedef Tuple2<value,scalar> accuSpecification;
 
     //- String representation of order enums
-    static const NamedEnum<value, 18> names;
+    static const NamedEnum<value, 20> names;
 
     static List<accuSpecification> readAccumulations(
         const dictionary &dict,

@@ -2104,3 +2104,8 @@ S_{expl} + S_{impl} T
      - smaller :: The fraction of the distribution that is smaller
                   than a given value
      - bigger :: The inverse of =smaller=
+     - size :: The size of the underlying entity (usually number of
+               cells, faces, points). For types with more than one
+               components all the components have the same value
+     - weightSum :: Sum of the weights of the underlying
+                    entity. Usually the volume oder the area of it.
