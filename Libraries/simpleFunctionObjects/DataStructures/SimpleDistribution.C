@@ -47,6 +47,12 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
         pTraits<Type>::one*binSize
     )
 {
+    if(binSize<SMALL) {
+        FatalErrorIn("SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)")
+            << "Specified bin size " << binSize << " is smaller than " << SMALL
+                << endl
+                << exit(FatalError);
+    }
 }
 
 template<class Type>
@@ -63,6 +69,8 @@ Type SimpleDistribution<Type>::smaller10Power(const Type value)
                         log10(v)
                     )
                 );
+        } else {
+            setComponent(result,i)=SMALL;
         }
     }
 
