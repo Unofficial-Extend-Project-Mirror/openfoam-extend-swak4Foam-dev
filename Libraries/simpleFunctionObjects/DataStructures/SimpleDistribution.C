@@ -381,7 +381,7 @@ void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
 
     // generalization of the median-method from Distribution
 template<class Type>
-Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
+Type SimpleDistribution<Type>::quantile(scalar frac) const
 {
     Type quantileValue(pTraits<Type>::zero);
 
@@ -491,7 +491,7 @@ Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
 }
 
 template<class Type>
-Type Foam::SimpleDistribution<Type>::smaller(scalar value) const
+Type SimpleDistribution<Type>::smaller(scalar value) const
 {
     Type smallerValue(-1*pTraits<Type>::one);
 
@@ -590,7 +590,7 @@ Type Foam::SimpleDistribution<Type>::smaller(scalar value) const
 
 
 template<class Type>
-List< List < Pair<scalar> > > Foam::SimpleDistribution<Type>::rawNegative() const
+List< List < Pair<scalar> > > SimpleDistribution<Type>::rawNegative() const
 {
     const_cast<SimpleDistribution<Type>&>(*this).recalcLimits();
 
@@ -635,7 +635,7 @@ List< List < Pair<scalar> > > Foam::SimpleDistribution<Type>::rawNegative() cons
 }
 
 template<class Type>
-void Foam::SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
+void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 {
     List< List < Pair<scalar> > > rawDistribution = rawNegative();
 
