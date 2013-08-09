@@ -174,9 +174,9 @@ void SimpleDistribution<Type>::calcScalarWeight(
         );
     }
 
-    recalcLimits();
-
     reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
 }
 
 template <typename Type>
@@ -237,9 +237,9 @@ void SimpleDistribution<Type>::calcScalarWeight(
         }
     }
 
-    recalcLimits();
-
     reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
 }
 
 template<class Type>
@@ -264,9 +264,9 @@ void SimpleDistribution<Type>::calc(
         );
     }
 
-    recalcLimits();
-
     reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
 }
 
 template<class Type>
@@ -299,9 +299,9 @@ void SimpleDistribution<Type>::calc(
         }
     }
 
-    recalcLimits();
-
     reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
 }
 
 template<class Type>
@@ -663,6 +663,7 @@ Istream& operator>>
     SimpleDistribution<Type>& d
 ) {
     is  >>  static_cast<Distribution<Type> &>(d);
+    d.recalcLimits();
     return is;
 }
 
