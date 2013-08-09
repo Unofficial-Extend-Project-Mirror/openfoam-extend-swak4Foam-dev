@@ -1,7 +1,5 @@
 #! /bin/sh
 
-rm -f foamVersionThisIsCompiledFor
-
 if [ -e swakConfiguration ]; then
     echo "Reading variables from 'swakConfiguration'"
     source ./swakConfiguration
@@ -12,3 +10,5 @@ fi
 (cd Utilities; ./Allwclean )
 
 # (cd Examples/tests/fluIntegration/libRegistered; wclean)
+
+rm -f foamVersionThisIsCompiledFor
