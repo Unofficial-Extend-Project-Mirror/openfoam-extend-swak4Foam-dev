@@ -133,6 +133,9 @@ public:
     //- Runtime type information
     TypeName("FaPatchValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef faPatch EntityType;
+
     static const word &driverName() { return driverName_; }
 
     // Constructors

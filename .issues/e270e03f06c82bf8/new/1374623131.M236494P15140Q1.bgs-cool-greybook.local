@@ -1,0 +1,22 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 24 Jul 2013 01:28:35 +0200
+State: fixed
+Subject: Add median and quantil to the possible accumulations
+Message-Id: <e270e03f06c82bf8-0-artemis@bgs-cool-greybook.local>
+
+Calculation via the SimpleDistribution: dump the values into it and
+then get "value at x% of the cumulative distribution" with a function
+that is modeled on the median-function in the Distribution-class (Name
+quantile)
+
+Accumulations implemented:
+- median :: 50%-quantile
+- medianWeighted :: 50%-quantile with the "native" weight
+- range50 :: Range between the 75% and 25%-quantile
+- rangeWeighted50 :: Same but weighted
+- rangeGeneral :: specify percentage with a separate parameter
+- quantileGeneral :: one specific quantile
+
+For the General-Form the value could be extracted from the name:
+quantile75 would be used as type quantile in the lookup and be
+calculated at 75%

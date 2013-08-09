@@ -67,7 +67,8 @@ distributionFunctionObject::distributionFunctionObject
 {
     if(writeTimeline_ && writeDistribution_) {
         WarningIn("distributionFunctionObject::distributionFunctionObject")
-            << "Both 'writeTimeline' and 'writeDistribution' set. "
+            << "Both 'writeTimeline' and 'writeDistribution' set in " << name
+                << ". "
                 << "This is usually not a good idea because of the amount of data written"
                 << endl;
     }

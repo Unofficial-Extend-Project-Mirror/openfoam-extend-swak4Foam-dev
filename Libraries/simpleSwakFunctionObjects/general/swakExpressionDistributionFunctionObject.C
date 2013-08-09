@@ -88,7 +88,7 @@ word swakExpressionDistributionFunctionObject::dirName()
 
 word swakExpressionDistributionFunctionObject::baseName()
 {
-    return "expession";
+    return "expression";
 }
 
 void swakExpressionDistributionFunctionObject::getDistribution()
@@ -96,15 +96,30 @@ void swakExpressionDistributionFunctionObject::getDistribution()
     word rType=driver_->CommonValueExpressionDriver::getResultType();
 
     if(rType==pTraits<scalar>::typeName) {
-        getDistributionInternal(distScalar_);
+        getDistributionInternal(
+            distScalar_,
+            weightValuesScalar_
+        );
     } else if(rType==pTraits<vector>::typeName) {
-        getDistributionInternal(distVector_);
+        getDistributionInternal(
+            distVector_,
+            weightValuesVector_
+        );
     } else if(rType==pTraits<vector>::typeName) {
-        getDistributionInternal(distTensor_);
+        getDistributionInternal(
+            distTensor_,
+            weightValuesTensor_
+        );
     } else if(rType==pTraits<vector>::typeName) {
-        getDistributionInternal(distSymmTensor_);
+        getDistributionInternal(
+            distSymmTensor_,
+            weightValuesSymmTensor_
+        );
     } else if(rType==pTraits<vector>::typeName) {
-        getDistributionInternal(distSphericalTensor_);
+        getDistributionInternal(
+            distSphericalTensor_,
+            weightValuesSphericalTensor_
+        );
     } else {
         WarningIn("swakExpressionDistributionFunctionObject::getDistribution()")
             << "Don't know how to handle type " << rType
@@ -125,9 +140,46 @@ void swakExpressionDistributionFunctionObject::write()
         driver_->CommonValueExpressionDriver::getResultType()
         ==
         pTraits<scalar>::typeName
+
     ) {
-        weightValues_.reset(
+        weightValuesScalar_.reset(
             driver_->getResult<scalar>().ptr()
+        );
+    } else if(
+        driver_->CommonValueExpressionDriver::getResultType()
+        ==
+        pTraits<vector>::typeName
+
+    ) {
+        weightValuesVector_.reset(
+            driver_->getResult<vector>().ptr()
+        );
+    } else if(
+        driver_->CommonValueExpressionDriver::getResultType()
+        ==
+        pTraits<tensor>::typeName
+
+    ) {
+        weightValuesTensor_.reset(
+            driver_->getResult<tensor>().ptr()
+        );
+    } else if(
+        driver_->CommonValueExpressionDriver::getResultType()
+        ==
+        pTraits<symmTensor>::typeName
+
+    ) {
+        weightValuesSymmTensor_.reset(
+            driver_->getResult<symmTensor>().ptr()
+        );
+    } else if(
+        driver_->CommonValueExpressionDriver::getResultType()
+        ==
+        pTraits<sphericalTensor>::typeName
+
+    ) {
+        weightValuesSphericalTensor_.reset(
+            driver_->getResult<sphericalTensor>().ptr()
         );
     } else {
         FatalErrorIn("swakExpressionDistributionFunctionObject::write()")

@@ -43,6 +43,8 @@ Contributors/Copyright:
 
 #include "fvCFD.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -156,7 +158,11 @@ void initPotentialFlowFunctionObject::recalc()
 
         pEqn.setReference(pRefCell, pRefValue);
 
+#ifdef FOAM_FV_MESH_HAS_NO_SOLVERDICT
+        pEqn.solve(mesh.solutionDict().subDict(pName_+".potential"));
+#else
         pEqn.solve(mesh.solverDict(pName_+".potential"));
+#endif
 
         if (nonOrth == nNonOrthCorr)
         {

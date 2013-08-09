@@ -86,9 +86,16 @@ class swakExpressionDistributionFunctionObject
     autoPtr<CommonValueExpressionDriver> driver_;
 
     template <typename T>
-    void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
+    void getDistributionInternal(
+        autoPtr<SimpleDistribution<T> > &dist,
+        autoPtr<Field<T> > &sameWeight
+    );
 
-    autoPtr<Field<scalar> > weightValues_;
+    autoPtr<Field<scalar> > weightValuesScalar_;
+    autoPtr<Field<vector> > weightValuesVector_;
+    autoPtr<Field<tensor> > weightValuesTensor_;
+    autoPtr<Field<symmTensor> > weightValuesSymmTensor_;
+    autoPtr<Field<sphericalTensor> > weightValuesSphericalTensor_;
 
     autoPtr<Field<bool> > maskValues_;
 

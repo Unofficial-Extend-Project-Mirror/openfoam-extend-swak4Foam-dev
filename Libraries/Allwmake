@@ -4,7 +4,11 @@ BISONPATH=`which bison`
 NOBISON=$?
 
 if [[ $NOBISON != 0 ]]; then
+    echo
     echo "No 'bison' found. This is absolutely essential for swak4Foam. Can't go on"
+    echo "Every Linux has a binary package that installs bison (http://www.gnu.org/software/bison/). Install it. Then go on"
+    echo "BTW: it was listed as a requirement in the README. You read that, didn't you?"
+    echo
     exit 42
 fi
 
@@ -12,7 +16,11 @@ FLEXPATH=`which flex`
 NOFLEX=$?
 
 if [[ $NOFLEX != 0 ]]; then
+    echo
     echo "No 'flex' found. This is absolutely essential for swak4Foam. Can't go on"
+    echo "Every Linux has a binary package that installs flex (http://flex.sourceforge.net). Install it. Then go on"
+    echo "BTW: it was listed as a requirement in the README. You read that, didn't you?"
+    echo
     exit 42
 fi
 
@@ -84,6 +92,8 @@ else
     mv $versionFile.tmp $versionFile
 fi
 
+wmakeLnInclude simpleFunctionObjects
+
 wmake libso swak4FoamParsers
 
 PARSERSOK=$?
@@ -97,29 +107,13 @@ wmake libso groovyBC
 
 wmake libso swakFunctionObjects
 
-unset WE_HAVE_SIMPLE_FUNCTION_OBJECTS
-
-if [ -d simpleFunctionObjects ]; then
-    WE_HAVE_SIMPLE_FUNCTION_OBJECTS=1
-
-    wmake libso simpleFunctionObjects
-else
-    if [ -d "$WM_PROJECT_USER_DIR/Libraries/simpleFunctionObjects/lnInclude" ]; then
-	WE_HAVE_SIMPLE_FUNCTION_OBJECTS=1
-    fi
-fi
+wmake libso simpleFunctionObjects
 
 wmake libso simpleLagrangianFunctionObjects
 
 wmake libso simpleSearchableSurfaces
 
-if [ "$WE_HAVE_SIMPLE_FUNCTION_OBJECTS" ]; then
-    wmake libso simpleSwakFunctionObjects
-else
-    echo "\n   simpleSwakFunctionObjects not compiled because no simpleFunctionObjects installation found\n"
-fi
-
-unset WE_HAVE_SIMPLE_FUNCTION_OBJECTS
+wmake libso simpleSwakFunctionObjects
 
 wmake libso swakTopoSources
 
@@ -162,7 +156,9 @@ then
     fi
     wmake libso swakPythonIntegration
 else
-    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration"
+    echo
+    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
+    echo
 fi
 
 (cd functionPlugins; wmake all)
@@ -176,4 +172,8 @@ then
 	echo "Compiling user function-plugin $plug"
 	wmake libso $plugins
     done
+else
+    echo
+    echo "If you have your own function-plugins you can specify them using the SWAK_USER_PLUGINS environment variable and they would be compiled now. If you don't know what this means: don't bother. You propably don't need it"
+    echo
 fi

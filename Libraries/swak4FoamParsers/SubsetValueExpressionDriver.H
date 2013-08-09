@@ -151,6 +151,10 @@ public:
 
     ~SubsetValueExpressionDriver();
 
+    void setAutoInterpolate(
+        bool autoInterpolate,
+        bool warnAutoInterpolate
+    );
 
     // Member Functions
 

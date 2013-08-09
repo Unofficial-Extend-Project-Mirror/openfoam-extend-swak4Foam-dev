@@ -103,14 +103,31 @@ protected:
     template<class Type>
     autoPtr<SimpleDistribution<Type> > setData(
         const Field<Type> &values,
-        const Field<scalar> &weights
+        const Field<Type> &weights,
+        const scalar binWidth=-1
     );
 
     template<class Type>
     autoPtr<SimpleDistribution<Type> > setData(
         const Field<Type> &values,
+        const Field<Type> &weights,
+        const Field<bool> &mask,
+        const scalar binWidth=-1
+    );
+
+    template<class Type>
+    autoPtr<SimpleDistribution<Type> > setDataScalar(
+        const Field<Type> &values,
         const Field<scalar> &weights,
-        const Field<bool> &mask
+        const scalar binWidth=-1
+    );
+
+    template<class Type>
+    autoPtr<SimpleDistribution<Type> > setDataScalar(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask,
+        const scalar binWidth=-1
     );
 
     void clearDistributions();

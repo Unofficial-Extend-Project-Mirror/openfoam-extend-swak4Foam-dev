@@ -4,7 +4,7 @@ if [ -e swakConfiguration ]; then
     echo "Reading variables from 'swakConfiguration'"
     source swakConfiguration
 else
-    echo "No 'swakConfiguration'. Python etc won't work"
+    echo "No file 'swakConfiguration'. Python etc won't work. See README for details"
 fi
 
 . theFiles.sh
@@ -33,6 +33,7 @@ echo "Checking swak4Foam-version and generating file"
 
 if [ $? != 0 ]; then
     echo "Requirements for Library not satisfied. I see no sense in going on"
+    echo "Check the README before you go on to ask. And search: Most likely your problem occured to 5 other people before and has been solved on the MessageBoard"
     exit 42
 fi
 

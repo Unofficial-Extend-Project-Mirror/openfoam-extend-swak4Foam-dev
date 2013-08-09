@@ -95,6 +95,9 @@ public:
 
     TypeName("FieldValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef fvMesh EntityType;
+
     static const word &driverName() { return driverName_; }
 
     //- old style constructor

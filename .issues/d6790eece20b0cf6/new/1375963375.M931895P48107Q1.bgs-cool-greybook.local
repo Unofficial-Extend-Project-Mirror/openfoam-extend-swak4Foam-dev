@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 08 Aug 2013 14:02:04 +0200
+State: new
+Subject: Support for pointZones and pointSets
+Message-Id: <d6790eece20b0cf6-0-artemis@bgs-cool-greybook.local>
+
+For completeness add support for these zones too

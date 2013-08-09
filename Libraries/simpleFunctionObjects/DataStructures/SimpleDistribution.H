@@ -54,6 +54,13 @@ Contributors/Copyright:
 namespace Foam
 {
 
+template<class Type>
+class SimpleDistribution;
+
+template<class Type>
+Ostream& operator<<(Ostream&, const SimpleDistribution<Type>&);
+
+
 /*---------------------------------------------------------------------------*\
                            Class SimpleDistribution Declaration
 \*---------------------------------------------------------------------------*/
@@ -73,10 +80,23 @@ class SimpleDistribution
     //- Disallow default bitwise assignment
     //    void operator=(const SimpleDistribution&);
 
+    //- store the valid limits
+    List<Pair<label> > validLimits_;
+
+protected:
+    //- Returns the indices of the first and last non-zero entries
+    Pair<label> validLimits(direction cmpt) const;
+
+    //- round value down to the next nearst power of 10
+    Type smaller10Power(const Type value);
+
 public:
 
-    //- from a dictionary
+    //- setting a size
     SimpleDistribution(const scalar binSize);
+
+    //- setting using a span plus the bin number
+    SimpleDistribution(const Type span,const label binNr);
 
     //- from a base class
     SimpleDistribution(const Distribution<Type> &);
@@ -86,13 +106,29 @@ public:
 
     void calc(
         const Field<Type> &values,
-        const scalarField &weights
+        const Field<Type> &weights
     );
 
-   void calc(
+    void calc(
         const Field<Type> &values,
-        const scalarField &weights,
+        const Field<Type> &weights,
         const Field<bool> &mask
+    );
+
+   void calcScalarWeight(
+        const Field<Type> &values,
+        const Field<scalar> &weights
+    );
+
+   void calcScalarWeight(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask
+    );
+
+    void divideByDistribution(
+        const SimpleDistribution<Type> &weightSum,
+        const Type &valueIfZero
     );
 
     Type mean() const { return Distribution<Type>::mean(); }
@@ -106,16 +142,31 @@ public:
 
     Type max() const;
 
+    //- return the value where a fraction of the distribution is smaller
+    Type quantile(scalar frac) const;
+
+    //- return the fraction of the distribution that is smaller than the value
+    Type smaller(scalar value) const;
+
     void write(const fileName& filePrefix) const {
         Distribution<Type>::write(filePrefix);
     }
 
     label maxNrBins() const;
 
+    //- Write the distribution to file: only key and raw.
+    //  Produces a separate file for each component.
+    void writeRaw(const fileName& filePrefix) const;
+
     // Member Operators
 
     void operator=(const SimpleDistribution<Type>&);
 
+    friend Ostream& operator<< <Type>
+    (
+        Ostream&,
+        const SimpleDistribution<Type>&
+    );
 };
 
 template<class Type>

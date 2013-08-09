@@ -94,6 +94,8 @@ public:
 
     static const word &driverName() { return driverName_; }
 
+    //- entity this driver operates on
+    typedef cellSet EntityType;
 
    // Constructors
 
