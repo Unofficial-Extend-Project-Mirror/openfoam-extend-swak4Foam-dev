@@ -207,7 +207,8 @@ void ContributionScalarPluginFunction<Driver,PluginType>::setArgument(
 
     values_.set(
         new scalarField(
-            theDriver.CommonValueExpressionDriver::getResult<scalar>()
+            // template requested by clang 3.3
+            theDriver.CommonValueExpressionDriver::template getResult<scalar>()
         )
     );
 
