@@ -1,0 +1,22 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 09 Aug 2013 14:34:43 +0200
+State: new
+Subject: Function plugin for quantile-calculations
+Message-Id: <fc563afc73772339-0-artemis@bgs-cool-greybook.local>
+
+Write a function-plugin that implements a function like
+
+quantile(expr,frac)
+weightedQuantile(expr,frac)
+
+that calculates the value of expr where frac of the distribution is
+smaller than.
+
+Also possible
+
+smaller(expr,val)
+
+Whether frac is a constant or a field ... to be decided. Field is more
+general, but will it be needed?
+
+Make it general via Templates to implement it for all entities
