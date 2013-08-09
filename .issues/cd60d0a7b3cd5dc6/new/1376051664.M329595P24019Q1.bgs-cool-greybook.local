@@ -1,0 +1,16 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 09 Aug 2013 14:31:29 +0200
+Subject: Re: Use IPython in pythonIntegration for interactive mode
+Message-Id: <cd60d0a7b3cd5dc6-a0d3d6a8945a9c70-artemis@bgs-cool-greybook.local>
+References: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+
+According to
+
+http://mail.scipy.org/pipermail/ipython-user/2003-May/001928.html
+
+for older versions of IPython this should work
+
+from IPython.Shell import IPythonShellEmbed
+ipshell = IPythonShellEmbed()
+ipshell()

@@ -58,8 +58,17 @@ template<class Type>
 class SimpleDistribution;
 
 template<class Type>
+Istream& operator>>(Istream&, SimpleDistribution<Type>&);
+
+template<class Type>
 Ostream& operator<<(Ostream&, const SimpleDistribution<Type>&);
 
+template<class Type>
+SimpleDistribution<Type> operator+
+(
+    const SimpleDistribution<Type>&,
+    const SimpleDistribution<Type>&
+);
 
 /*---------------------------------------------------------------------------*\
                            Class SimpleDistribution Declaration
@@ -74,7 +83,7 @@ class SimpleDistribution
 
    // Private Member Functions
 
-    //- Disallow default bitwise copy construct
+   //- Disallow default bitwise copy construct
     //    SimpleDistribution(const SimpleDistribution&);
 
     //- Disallow default bitwise assignment
@@ -82,6 +91,8 @@ class SimpleDistribution
 
     //- store the valid limits
     List<Pair<label> > validLimits_;
+
+    void recalcLimits();
 
 protected:
     //- Returns the indices of the first and last non-zero entries
@@ -92,7 +103,10 @@ protected:
 
 public:
 
-    //- setting a size
+    //- Construct null
+    SimpleDistribution();
+
+     //- setting a size
     SimpleDistribution(const scalar binSize);
 
     //- setting using a span plus the bin number
@@ -131,6 +145,9 @@ public:
         const Type &valueIfZero
     );
 
+    //- Return the distribution of the total bin weights - adapted to allow negative weights
+    List< List < Pair<scalar> > > rawNegative() const;
+
     Type mean() const { return Distribution<Type>::mean(); }
 
     Type median() const { return Distribution<Type>::median(); }
@@ -167,15 +184,19 @@ public:
         Ostream&,
         const SimpleDistribution<Type>&
     );
+
+    friend Istream& operator>> <Type>
+    (
+        Istream& is,
+        SimpleDistribution<Type>& d
+    );
+
+   friend SimpleDistribution<Type> operator+ <Type>
+    (
+        const SimpleDistribution<Type>& d1,
+        const SimpleDistribution<Type>& d2
+    );
 };
-
-template<class Type>
-SimpleDistribution<Type> operator+
-(
-    const SimpleDistribution<Type>&,
-    const SimpleDistribution<Type>&
-);
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -10,3 +10,5 @@ fi
 (cd Utilities; ./Allwclean )
 
 # (cd Examples/tests/fluIntegration/libRegistered; wclean)
+
+rm -f foamVersionThisIsCompiledFor

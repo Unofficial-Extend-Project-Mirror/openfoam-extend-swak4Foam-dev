@@ -266,7 +266,7 @@ tmp<scalarField> CellSetValueExpressionDriver::weightsNonPoint(
     bool isCell=(size==cellSize);
     reduce(isCell,andOp<bool>());
 
-    if(!cellSize) {
+    if(!isCell) {
         Pout << "Expected size: " << size
             << " Cell size: " << cellSize << endl;
 

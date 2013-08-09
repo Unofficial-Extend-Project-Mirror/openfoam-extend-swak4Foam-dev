@@ -2157,6 +2157,10 @@ S_{expl} + S_{impl} T
      As there are going to be more cross-dependencies the
      =simpleFunctionObjects= now have to be part of swak. Changes to
      the compile-scripts reflect this.
+**** =Allwmake= makes sure that swak is compiled for the same installation
+     The script writes the version it is used with to disk and at
+     later compiles that this is the same (this makes sure that not a
+     wrong version is used inadvertently to compile)
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
@@ -2200,6 +2204,9 @@ S_{expl} + S_{impl} T
      This accumulation was available but not implemented. Now implemented.
 
      For non-scalar types it is calculated separately for each component
+**** Calculation of weight fields failed if size on one processor was $0$
+     This was due to a logical error that was propagated through
+     mindless copy/paste (only the Field-driver got it right). Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only

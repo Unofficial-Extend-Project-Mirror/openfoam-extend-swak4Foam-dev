@@ -41,6 +41,13 @@ namespace Foam {
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
+SimpleDistribution<Type>::SimpleDistribution()
+:
+    Distribution<Type>()
+{
+}
+
+template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 :
     Distribution<Type>(
@@ -93,6 +100,7 @@ SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
 :
     Distribution<Type>(o)
 {
+    recalcLimits();
 }
 
 template<class Type>
@@ -100,6 +108,7 @@ SimpleDistribution<Type>::SimpleDistribution(const SimpleDistribution<Type> &o)
 :
     Distribution<Type>(o)
 {
+    recalcLimits();
 }
 
 template <typename Type>
@@ -165,8 +174,37 @@ void SimpleDistribution<Type>::calcScalarWeight(
         );
     }
 
-    Distribution<Type> &myself=*this;
-    reduce(myself,plusOp<Distribution<Type> >());
+    reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
+}
+
+template <typename Type>
+void SimpleDistribution<Type>::recalcLimits()
+{
+    validLimits_=List<Pair<label> >(
+        pTraits<Type>::nComponents,
+        Pair<label>(-1,-1)
+    );
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        const List<scalar> &vals=(*this)[cmpt];
+        Pair<label> &limits=validLimits_[cmpt];
+        forAll(vals,i) {
+            if(mag(vals[i])>VSMALL) {
+                if (limits.first() == -1)
+                {
+                    limits.first() = i;
+                    limits.second() = i;
+                }
+                else
+                {
+                    limits.second() = i;
+                }
+            }
+        }
+    }
 }
 
 template<class Type>
@@ -199,8 +237,9 @@ void SimpleDistribution<Type>::calcScalarWeight(
         }
     }
 
-    Distribution<Type> &myself=*this;
-    reduce(myself,plusOp<Distribution<Type> >());
+    reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
 }
 
 template<class Type>
@@ -225,8 +264,9 @@ void SimpleDistribution<Type>::calc(
         );
     }
 
-    Distribution<Type> &myself=*this;
-    reduce(myself,plusOp<Distribution<Type> >());
+    reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
 }
 
 template<class Type>
@@ -259,8 +299,9 @@ void SimpleDistribution<Type>::calc(
         }
     }
 
-    Distribution<Type> &myself=*this;
-    reduce(myself,plusOp<Distribution<Type> >());
+    reduce(*this,plusOp<SimpleDistribution<Type> >());
+
+    recalcLimits();
 }
 
 template<class Type>
@@ -299,7 +340,7 @@ void SimpleDistribution<Type>::divideByDistribution(
         }
 
         forAll(vals,i) {
-            if(mag(weights[i])<SMALL) {
+            if(mag(weights[i])<VSMALL) {
                 vals[i]=zero;
             } else {
                 vals[i]/=weights[i];
@@ -323,7 +364,7 @@ Pair<label> SimpleDistribution<Type>::validLimits
     direction cmpt
 ) const
 {
-    if(validLimits_.size()<=cmpt) {
+    if(validLimits_.size()<=label(cmpt)) {
         return Distribution<Type>::validLimits(cmpt);
     } else {
         return validLimits_[cmpt];
@@ -334,24 +375,13 @@ template<class Type>
 void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
 {
     Distribution<Type>::operator=(other);
-}
 
-template<class Type>
-SimpleDistribution<Type> operator+
-(
-    const SimpleDistribution<Type>&sa,
-    const SimpleDistribution<Type>&sb
-)
-{
-    return
-        reinterpret_cast<const Distribution<Type>&>(sa)
-        +
-        reinterpret_cast<const Distribution<Type>&>(sb);
+    recalcLimits();
 }
 
     // generalization of the median-method from Distribution
 template<class Type>
-Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
+Type SimpleDistribution<Type>::quantile(scalar frac) const
 {
     Type quantileValue(pTraits<Type>::zero);
 
@@ -461,7 +491,7 @@ Type Foam::SimpleDistribution<Type>::quantile(scalar frac) const
 }
 
 template<class Type>
-Type Foam::SimpleDistribution<Type>::smaller(scalar value) const
+Type SimpleDistribution<Type>::smaller(scalar value) const
 {
     Type smallerValue(-1*pTraits<Type>::one);
 
@@ -558,10 +588,11 @@ Type Foam::SimpleDistribution<Type>::smaller(scalar value) const
     return smallerValue;
 }
 
+
 template<class Type>
-void Foam::SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
+List< List < Pair<scalar> > > SimpleDistribution<Type>::rawNegative() const
 {
-    //     List< List< Pair<scalar> > > rawDistribution = this->raw();
+    const_cast<SimpleDistribution<Type>&>(*this).recalcLimits();
 
     // Copy paste from Distribution::raw to use our validLimits
     List< List < Pair<scalar> > > rawDistribution(pTraits<Type>::nComponents);
@@ -600,6 +631,14 @@ void Foam::SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
         }
     }
 
+    return rawDistribution;
+}
+
+template<class Type>
+void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
+{
+    List< List < Pair<scalar> > > rawDistribution = rawNegative();
+
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         const List< Pair<scalar> >& rawPairs = rawDistribution[cmpt];
@@ -618,6 +657,17 @@ void Foam::SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 }
 
 template<class Type>
+Istream& operator>>
+(
+    Istream& is,
+    SimpleDistribution<Type>& d
+) {
+    is  >>  static_cast<Distribution<Type> &>(d);
+    d.recalcLimits();
+    return is;
+}
+
+template<class Type>
 Ostream& operator<<
 (
     Ostream& os,
@@ -627,6 +677,61 @@ Ostream& operator<<
     os  <<  static_cast<const Distribution<Type> &>(d);
     return os;
 }
+
+    // Copy/paste from Distribution.C with two changed lines
+template<class Type>
+SimpleDistribution<Type> operator+
+(
+    const SimpleDistribution<Type>& d1,
+    const SimpleDistribution<Type>& d2
+)
+{
+    // The coarsest binWidth is the sensible choice
+    SimpleDistribution<Type> d(max(d1.binWidth(), d2.binWidth()));
+
+    List< List< List < Pair<scalar> > > > rawDists(2);
+
+    // the changed lines
+    rawDists[0] = d1.rawNegative();
+    rawDists[1] = d2.rawNegative();
+
+    forAll(rawDists, rDI)
+    {
+        for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+        {
+            List<scalar>& cmptSimpleDistribution = d[cmpt];
+
+            const List < Pair<scalar> >& cmptRaw = rawDists[rDI][cmpt];
+
+            forAll(cmptRaw, rI)
+            {
+                scalar valueToAdd = cmptRaw[rI].first();
+                scalar cmptWeight = cmptRaw[rI].second();
+
+                label n =
+                label
+                (
+                    component(valueToAdd, cmpt)
+                   /component(d.binWidth(), cmpt)
+                )
+                - label
+                (
+                    neg(component(valueToAdd, cmpt)
+                   /component(d.binWidth(), cmpt))
+                );
+
+                label listIndex = d.index(cmpt, n);
+
+                cmptSimpleDistribution[listIndex] += cmptWeight;
+            }
+        }
+    }
+
+    d.recalcLimits();
+
+    return d;
+}
+
 
 }
 
