@@ -70,7 +70,8 @@ Type SimpleDistribution<Type>::smaller10Power(const Type value)
                     )
                 );
         } else {
-            setComponent(result,i)=SMALL;
+            setComponent(result,i)=1;
+            // we don't care. And SMALL is not a good decision
         }
     }
 
