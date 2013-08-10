@@ -96,7 +96,7 @@ public:
     SimpleDistribution(const scalar binSize);
 
     //- setting using a span plus the bin number
-    SimpleDistribution(const Type span,const label binNr);
+    SimpleDistribution(const Type min,const Type max,const label binNr);
 
     //- from a base class
     SimpleDistribution(const Distribution<Type> &);
