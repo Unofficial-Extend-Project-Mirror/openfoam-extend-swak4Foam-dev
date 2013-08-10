@@ -94,7 +94,8 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::distribution()
     if(!distribution_.valid()) {
         distribution_.set(
             new SimpleDistribution<Type>(
-                this->maximum()-this->minimum(),
+                this->minimum(),
+                this->maximum(),
                 numberOfBins
             )
         );
@@ -114,7 +115,8 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::weightedDistribut
     if(!weightedDistribution_.valid()) {
         weightedDistribution_.set(
             new SimpleDistribution<Type>(
-                this->maximum()-this->minimum(),
+                this->minimum(),
+                this->maximum(),
                 numberOfBins
             )
         );

@@ -77,8 +77,7 @@ Type SimpleDistribution<Type>::smaller10Power(const Type value)
                     )
                 );
         } else {
-            setComponent(result,i)=1;
-            // we don't care. And SMALL is not a good decision
+            setComponent(result,i)=SMALL;
         }
     }
 
@@ -86,11 +85,23 @@ Type SimpleDistribution<Type>::smaller10Power(const Type value)
 }
 
 template<class Type>
-SimpleDistribution<Type>::SimpleDistribution(const Type span,const label binNr)
+SimpleDistribution<Type>::SimpleDistribution(
+    const Type mini,
+    const Type maxi,
+    const label binNr
+)
 :
     Distribution<Type>(
-        smaller10Power(
-            span/binNr
+        Foam::max(
+            smaller10Power(
+                (maxi-mini)/binNr
+            ),
+            // avoid overflow if span=0 but mini/maxi is big
+            1e3*pTraits<Type>::one*(
+                Foam::max(
+                    mag(maxi),mag(mini)
+                )/scalar(pTraits<label>::max)
+            )
         )
     )
 {
