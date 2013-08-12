@@ -82,6 +82,14 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+    if(!spec.found("libs")) {
+        FatalErrorIn(args.executable())
+            << "No entry 'libs' in " << spec.name()
+                << endl
+                << exit(FatalError);
+    }
+    dlLibraryTable::open(spec,"libs");
+
     wordList preloadFieldNames(spec.lookup("preloadFields"));
 
     if(!spec.found("functions")) {
@@ -89,7 +97,6 @@ int main(int argc, char *argv[])
             << "No entry 'functions' in " << spec.name()
                 << endl
                 << exit(FatalError);
-
     }
 
     Info << "Preloading fields" << endl;

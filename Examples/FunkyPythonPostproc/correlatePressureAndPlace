@@ -23,7 +23,7 @@ preloadFields (
 );
 
 functions {
-    test {
+    gradField {
         type expressionField;
         outputControl timeStep;
         outputInterval 1;
@@ -31,6 +31,27 @@ functions {
         expression "grad(p)";
         autowrite true;
     }
+    toGlobalNamespace {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+
+        valueType internalField;
+        toGlobalNamespace fieldData;
+        toGlobalVariables (
+            positions
+        );
+        variables (
+            "positions=pos();"
+            "velocity=U;"
+            "pressure=p;"
+            "gradPressure=gradP;"
+        );
+    }
 }
+
+libs (
+    "libswakFunctionObjects.so"
+);
 
 // ************************************************************************* //
