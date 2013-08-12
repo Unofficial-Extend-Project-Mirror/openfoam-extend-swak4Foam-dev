@@ -52,6 +52,8 @@ Contributors/Copyright:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
+#include "loadFieldFunction.H"
+
 int main(int argc, char *argv[])
 {
 
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
     printSwakVersion();
 
     IFstream theFile(args.args()[1]);
-    dictionary theExpressions(theFile);
+    dictionary spec(theFile);
     bool interactive(args.options().found("interactive"));
 
     if (!args.options().found("time") && !args.options().found("latestTime")) {
@@ -80,6 +82,50 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+    wordList preloadFieldNames(spec.lookup("preloadFields"));
+
+    if(!spec.found("functions")) {
+        FatalErrorIn(args.executable())
+            << "No entry 'functions' in " << spec.name()
+                << endl
+                << exit(FatalError);
+
+    }
+
+    Info << "Preloading fields" << endl;
+    SLPtrList<volScalarField> scalarFieldsPre;
+    SLPtrList<volVectorField> vectorFieldsPre;
+    SLPtrList<volTensorField> tensorFieldsPre;
+    SLPtrList<volSymmTensorField> symmTensorFieldsPre;
+    SLPtrList<volSphericalTensorField> sphericalTensorFieldsPre;
+
+    forAll(preloadFieldNames,fieldI) {
+        word fName=preloadFieldNames[fieldI];
+
+        if(
+            !loadFieldFunction(mesh,fName,scalarFieldsPre)
+            &&
+            !loadFieldFunction(mesh,fName,vectorFieldsPre)
+            &&
+            !loadFieldFunction(mesh,fName,tensorFieldsPre)
+            &&
+            !loadFieldFunction(mesh,fName,symmTensorFieldsPre)
+            &&
+            !loadFieldFunction(mesh,fName,sphericalTensorFieldsPre)
+        ) {
+            Info << "Field " << fName << " not found " << endl;
+        }
+    }
+
+    functionObjectList functions(
+        mesh.time(),
+        spec
+    );
+
+    Info << "Function objects: start" << endl << endl;
+    functions.start();
+    Info << endl;
+
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
@@ -87,10 +133,41 @@ int main(int argc, char *argv[])
         Foam::Info << "\nTime = " << runTime.timeName() << Foam::endl;
 
         mesh.readUpdate();
+        Info << "Reloading fields" << endl;
+        forAllIter(SLPtrList<volScalarField>,scalarFieldsPre,i){
+            Info << (*i).name() << " ... " << flush;
+            (*i).read();
+        }
+        forAllIter(SLPtrList<volVectorField>,vectorFieldsPre,i){
+            Info << (*i).name() << " ... " << flush;
+            (*i).read();
+        }
+        forAllIter(SLPtrList<volTensorField>,tensorFieldsPre,i){
+            Info << (*i).name() << " ... " << flush;
+            (*i).read();
+        }
+        forAllIter(SLPtrList<volSymmTensorField>,symmTensorFieldsPre,i){
+            Info << (*i).name() << " ... " << flush;
+            (*i).read();
+        }
+        forAllIter(SLPtrList<volSphericalTensorField>,sphericalTensorFieldsPre,i){
+            Info << (*i).name() << " ... " << flush;
+            (*i).read();
+        }
 
+        Info << endl << endl;
+
+        Info << "Function objects: execute" << endl << endl;
+        functions.execute();
+        Info << endl;
 
         Info << endl;
     }
+
+    Info << "Function objects: end" << endl << endl;
+    functions.end();
+    Info << endl;
+
 
     Info << "End\n" << endl;
 
