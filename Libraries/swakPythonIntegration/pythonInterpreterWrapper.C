@@ -173,7 +173,6 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
                 << "Assuming it to be 'true' (if that is not what you want "
                 << "set it. Also set it to make this warning go away)"
                 << endl;
-
     }
 
     if(!dict.found("useIPython")) {
@@ -182,7 +181,6 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
                 << "Assuming it to be 'true' (if that is not what you want "
                 << "set it. Also set it to make this warning go away)"
                 << endl;
-
     }
 
     if(interpreterCount==0) {
@@ -219,6 +217,10 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     interpreterCount++;
 
     pythonState_=Py_NewInterpreter();
+
+    //    interactiveLoop("Clean");
+
+    initIPython();
 
     if(debug) {
         Info << "Currently " << interpreterCount
