@@ -23,6 +23,7 @@ preloadFields (
 );
 
 python {
+    //    startCode "import sys;print sys.path";
     startCode "print dir()";
     // endCode "import IPython;IPython.embed(header='OpenFOAM',config='pylab')";
     // executeCode $endCode;
@@ -35,6 +36,7 @@ python {
 
     useNumpy true;
     useIPython true;
+    //    interactiveAfterExecute true;
 }
 
 functions {
