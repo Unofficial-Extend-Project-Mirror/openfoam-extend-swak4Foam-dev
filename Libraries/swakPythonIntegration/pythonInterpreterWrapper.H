@@ -83,6 +83,15 @@ class pythonInterpreterWrapper
     //- whether or not to use the numpy library
     bool useNumpy_;
 
+    //- whether or not to use IPython as the shell if it is installed
+    bool useIPython_;
+
+    //- whether or not we tried IPython
+    bool triedIPython_;
+
+    //- embed IPython using the old convention
+    bool oldIPython_;
+
     //- should exceptions be tolerated or lead to a fatal error?
     bool tolerateExceptions_;
 
@@ -124,6 +133,9 @@ class pythonInterpreterWrapper
     void getGlobals();
 
     void setGlobals();
+
+    void initIPython();
+
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;
@@ -141,6 +153,9 @@ protected:
 
     //- Check whether we want to continue (parallel)
     bool parallelNoRun(bool doWarning=false);
+
+    //- run an interactive sesssion
+    void interactiveLoop(const string &banner);
 
 public:
     //- Execute code. Return true if there was no problem

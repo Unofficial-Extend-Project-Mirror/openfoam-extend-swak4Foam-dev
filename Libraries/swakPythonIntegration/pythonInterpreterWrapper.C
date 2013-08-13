@@ -58,6 +58,68 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+void pythonInterpreterWrapper::initIPython() {
+    if(!triedIPython_) {
+        triedIPython_=true;
+
+        if(useIPython_) {
+            if(debug) {
+                Info << "Attempting to import IPython" << endl;
+            }
+            int fail=PyRun_SimpleString("import IPython");
+            if(fail) {
+                WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+                    << "Importing of IPython failed. Falling back to regular shell"
+                        << endl;
+                useIPython_=false;
+            } else {
+                PyObject *ipython=PyImport_AddModule("IPython");
+                if(ipython==NULL) {
+                    WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+                        << "Can't find IPython-module. Switching IPython off"
+                            << endl;
+                    useIPython_=false;
+                } else {
+                    if(
+                        PyObject_HasAttrString(
+                            ipython,
+                            "embed"
+                        )
+                    ) {
+                        if(debug) {
+                            Info << "New style IPython embedding" << endl;
+                        }
+                    } else if(
+                        PyObject_HasAttrString(
+                            ipython,
+                            "Shell"
+                        )
+                    ) {
+                        oldIPython_=true;
+                        WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+                            << "Old style IPython embedding"
+                                << endl;
+                    } else {
+                        useIPython_=false;
+                        WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+                            << "Did not find a known way of embedding IPython. Using normal shell"
+                                << endl;
+
+                    }
+                }
+            }
+        }
+        if(!useIPython_) {
+            if(debug) {
+                Info << "Preparing interpreter for convenient history editing" << endl;
+            }
+            PyRun_SimpleString("import rlcompleter, readline");
+            // this currently has no effect in the embedded shell
+            PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
+        }
+    }
+}
+
 pythonInterpreterWrapper::pythonInterpreterWrapper
 (
     const objectRegistry& obr,
@@ -67,6 +129,9 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     obr_(obr),
     dict_(dict),
     useNumpy_(dict.lookupOrDefault<bool>("useNumpy",true)),
+    useIPython_(dict.lookupOrDefault<bool>("useIPython",true)),
+    triedIPython_(false),
+    oldIPython_(false),
     tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
     warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
     isParallelized_(dict.lookupOrDefault<bool>("isParallelized",false)),
@@ -105,6 +170,15 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     if(!dict.found("useNumpy")) {
         WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
             << "Switch 'useNumpy' not found in " << dict.name() << nl
+                << "Assuming it to be 'true' (if that is not what you want "
+                << "set it. Also set it to make this warning go away)"
+                << endl;
+
+    }
+
+    if(!dict.found("useIPython")) {
+        WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+            << "Switch 'useIPython' not found in " << dict.name() << nl
                 << "Assuming it to be 'true' (if that is not what you want "
                 << "set it. Also set it to make this warning go away)"
                 << endl;
@@ -156,12 +230,12 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         ||
         interactiveAfterException_
     ) {
-        if(debug) {
-            Info << "Preparing interpreter for convenient history editing" << endl;
+    } else {
+        if(useIPython_) {
+            WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+                << "'useIPython' not needed if there is no interactivity"
+                    << endl;
         }
-        PyRun_SimpleString("import rlcompleter, readline");
-        // this currently has no effect in the embedded shell
-        PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
     }
 
     if(useNumpy_) {
@@ -498,6 +572,44 @@ void pythonInterpreterWrapper::setInteractive(
 {
     interactiveAfterExecute_=interactiveAfterExecute;
     interactiveAfterException_=interactiveAfterException;
+    if(
+        interactiveAfterExecute_
+        ||
+        interactiveAfterException_
+    ) {
+        initIPython();
+    }
+}
+
+void pythonInterpreterWrapper::interactiveLoop(
+    const string &banner
+) {
+    if(!useIPython_) {
+        if(banner!="") {
+            Info << endl << banner.c_str() << endl;
+        }
+        Info << "Continue with Ctrl-D" << endl;
+
+        PyRun_InteractiveLoop(stdin,"test");
+        clearerr(stdin);
+    } else {
+        string cmdString="";
+        if(oldIPython_) {
+            cmdString=
+                "_ipshell=IPython.Shell.IPythonShellEmbed()\n"
+                "_ipshell(banner='"+banner+"')\n";
+        } else {
+            cmdString=
+                "IPython.embed(header='"+banner+"')\n";
+        }
+        int fail=PyRun_SimpleString(cmdString.c_str());
+        if(fail) {
+            WarningIn("pythonInterpreterWrapper::interactiveLoop")
+                << "Problem executing "+cmdString
+                    << endl;
+
+        }
+    }
 }
 
 void pythonInterpreterWrapper::doAfterExecution(
@@ -518,9 +630,8 @@ void pythonInterpreterWrapper::doAfterExecution(
         fail!=0
     ) {
         Info << "Got an exception for "<< code
-            << " now you can interact. Continue with Ctrl-D" << endl;
-        PyRun_InteractiveLoop(stdin,"test");
-        clearerr(stdin);
+            << " now you can interact." << endl;
+        interactiveLoop("Exception handling");
     }
     if(
         fail!=0
@@ -539,9 +650,8 @@ void pythonInterpreterWrapper::doAfterExecution(
 
     if(interactiveAfterExecute_) {
         Info << "Executed "<< code
-            << " now you can interact. Continue with Ctrl-D" << endl;
-        PyRun_InteractiveLoop(stdin,"test");
-        clearerr(stdin);
+            << " now you can interact." << endl;
+        interactiveLoop("After execution");
     }
 
     if(putVariables) {

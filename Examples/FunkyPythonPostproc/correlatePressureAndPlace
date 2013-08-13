@@ -24,14 +24,17 @@ preloadFields (
 
 python {
     startCode "print dir()";
-    executeCode "print dir()";
-    endCode "print 'Time:',runTime";
+    // endCode "import IPython;IPython.embed(header='OpenFOAM',config='pylab')";
+    // executeCode $endCode;
+    endCode "print positions.shape";
+    executeCode $endCode;
 
     swakToPythonNamespaces (
         fieldData
     );
 
     useNumpy true;
+    useIPython true;
 }
 
 functions {
