@@ -140,7 +140,8 @@ int main(int argc, char *argv[])
     pythonInterpreterWrapper python(
         mesh,
         pySpec,
-        true // force reading of to namespace
+        true, // force reading of to namespace
+        false // not a separate interpreter - "fixes" import problem
     );
     python.setInteractive(
         interactive,

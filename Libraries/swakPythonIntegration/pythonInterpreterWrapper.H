@@ -80,6 +80,9 @@ class pythonInterpreterWrapper
     //- state of 'my' Python subinterpreter
     PyThreadState *pythonState_;
 
+    //- state of 'old' Python subinterpreter
+    PyThreadState *oldPythonState_;
+
     //- whether or not to use the numpy library
     bool useNumpy_;
 
@@ -232,7 +235,8 @@ public:
     (
         const objectRegistry& obr,
         const dictionary&,
-        bool forceToNamespace=false
+        bool forceToNamespace=false,
+        bool separateInterpreter=true
     );
 
     virtual ~pythonInterpreterWrapper();

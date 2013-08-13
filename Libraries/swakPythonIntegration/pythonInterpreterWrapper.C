@@ -128,10 +128,13 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 (
     const objectRegistry& obr,
     const dictionary& dict,
-    bool forceToNamespace
+    bool forceToNamespace,
+    bool separateInterpreter
 ):
     obr_(obr),
     dict_(dict),
+    pythonState_(NULL),
+    oldPythonState_(NULL),
     useNumpy_(dict.lookupOrDefault<bool>("useNumpy",true)),
     useIPython_(dict.lookupOrDefault<bool>("useIPython",true)),
     triedIPython_(false),
@@ -192,6 +195,8 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
             Info << "Initializing Python" << endl;
         }
         Py_Initialize();
+        // PyRun_SimpleString("import IPython\n" // here it works as expected
+        // "IPython.embed()\n");
     }
 
     if(Pstream::parRun()) {
@@ -220,8 +225,10 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     interpreterCount++;
 
-    pythonState_=Py_NewInterpreter();
-
+    oldPythonState_=PyThreadState_Get();
+    if(separateInterpreter) {
+        pythonState_=Py_NewInterpreter();
+    }
     //    interactiveLoop("Clean");
 
     initIPython();
@@ -363,10 +370,11 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
         return;
     }
 
-    PyThreadState_Swap(pythonState_);
-    Py_EndInterpreter(pythonState_);
-    pythonState_=NULL;
-
+    if(pythonState_) {
+        PyThreadState_Swap(pythonState_);
+        Py_EndInterpreter(pythonState_);
+        pythonState_=NULL;
+    }
     if(debug) {
         Info << "Currently " << interpreterCount
             << " Python interpreters (deleting one)" << endl;
@@ -401,7 +409,9 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
 
 void pythonInterpreterWrapper::setInterpreter()
 {
-    PyThreadState_Swap(pythonState_);
+    if(pythonState_) {
+        PyThreadState_Swap(pythonState_);
+    }
 }
 
 bool pythonInterpreterWrapper::executeCode(
@@ -625,6 +635,9 @@ bool pythonInterpreterWrapper::importLib(const word &name)
     if(debug) {
         Info << "Importing library " << name << endl;
     }
+
+    //    PyThreadState *oldState=PyThreadState_Swap(oldPythonState_);
+
     PyObject * mainModule = PyImport_AddModule("__main__");
     if(mainModule==NULL) {
         WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
@@ -640,6 +653,17 @@ bool pythonInterpreterWrapper::importLib(const word &name)
         return false;
     }
     PyModule_AddObject(mainModule, name.c_str(), libModule);
+
+    // PyThreadState_Swap(oldState);
+
+    // PyObject * mainModule2 = PyImport_AddModule("__main__");
+    // if(mainModule==NULL) {
+    //     WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
+    //         << "Could not get module __main__ when importing " << name
+    //             << endl;
+    //     return false;
+    // }
+    // PyModule_AddObject(mainModule2, name.c_str(), libModule);
 
     return true;
 }
