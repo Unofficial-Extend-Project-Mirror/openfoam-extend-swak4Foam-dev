@@ -61,15 +61,21 @@ namespace Foam
 pythonInterpreterWrapper::pythonInterpreterWrapper
 (
     const objectRegistry& obr,
-    const dictionary& dict
+    const dictionary& dict,
+    bool forceToNamespace
 ):
     obr_(obr),
+    dict_(dict),
     useNumpy_(dict.lookupOrDefault<bool>("useNumpy",true)),
     tolerateExceptions_(dict.lookupOrDefault<bool>("tolerateExceptions",false)),
     warnOnNonUniform_(dict.lookupOrDefault<bool>("warnOnNonUniform",true)),
     isParallelized_(dict.lookupOrDefault<bool>("isParallelized",false)),
     parallelMasterOnly_(false),
     swakToPythonNamespaces_(
+        forceToNamespace
+        ?
+        wordList(dict.lookup("swakToPythonNamespaces"))
+        :
         dict.lookupOrDefault<wordList>(
             "swakToPythonNamespaces",
             wordList(0)
@@ -317,7 +323,11 @@ void pythonInterpreterWrapper::setInterpreter()
     PyThreadState_Swap(pythonState_);
 }
 
-bool pythonInterpreterWrapper::executeCode(const string &code,bool putVariables,bool failOnException)
+bool pythonInterpreterWrapper::executeCode(
+    const string &code,
+    bool putVariables,
+    bool failOnException
+)
 {
     setInterpreter();
 
@@ -480,7 +490,22 @@ T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException
     return result;
 }
 
-void pythonInterpreterWrapper::doAfterExecution(bool fail,const string &code,bool putVariables,bool failOnException)
+
+void pythonInterpreterWrapper::setInteractive(
+    bool interactiveAfterExecute,
+    bool interactiveAfterException
+)
+{
+    interactiveAfterExecute_=interactiveAfterExecute;
+    interactiveAfterException_=interactiveAfterException;
+}
+
+void pythonInterpreterWrapper::doAfterExecution(
+    bool fail,
+    const string &code,
+    bool putVariables,
+    bool failOnException
+)
 {
     if(fail!=0) {
         Info << "Python Exception" << endl;
@@ -861,6 +886,20 @@ void pythonInterpreterWrapper::setGlobals()
         );
         res.noReset();
     }
+}
+
+string pythonInterpreterWrapper::readCode(
+    const word &prefix,
+    bool mustRead
+) {
+    string result;
+    readCode(
+        dict_,
+        prefix,
+        result,
+        mustRead
+    );
+    return result;
 }
 
 void pythonInterpreterWrapper::readCode(

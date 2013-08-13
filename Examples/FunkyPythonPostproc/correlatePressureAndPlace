@@ -22,6 +22,18 @@ preloadFields (
     U
 );
 
+python {
+    startCode "print dir()";
+    executeCode "print dir()";
+    endCode "print 'Time:',runTime";
+
+    swakToPythonNamespaces (
+        fieldData
+    );
+
+    useNumpy true;
+}
+
 functions {
     gradField {
         type expressionField;

@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     Foam::argList::validArgs.append("dictionary with specs");
 #   include "addRegionOption.H"
     argList::validOptions.insert("interactive","");
+    argList::validOptions.insert("debugOnException","");
 
 #   include "setRootCase.H"
 
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
     IFstream theFile(args.args()[1]);
     dictionary spec(theFile);
     bool interactive(args.options().found("interactive"));
+    bool failOnException(!args.options().found("debugOnException"));
 
     if (!args.options().found("time") && !args.options().found("latestTime")) {
         FatalErrorIn("main()")
@@ -129,13 +131,47 @@ int main(int argc, char *argv[])
         spec
     );
 
+    const dictionary &pySpec=spec.subDict("python");
+
     Info << "Function objects: start" << endl << endl;
     functions.start();
     Info << endl;
 
+    pythonInterpreterWrapper python(
+        mesh,
+        pySpec,
+        true // force reading of to namespace
+    );
+    python.setInteractive(
+        interactive,
+        !failOnException
+    );
+
+    python.initEnvironment(mesh.time());
+    python.setRunTime(mesh.time());
+
+    string startCode=python.readCode(
+        "start"
+    );
+    string executeCode=python.readCode(
+        "execute"
+    );
+    string endCode=python.readCode(
+        "end"
+    );
+    if(startCode!="") {
+        Info << "Executing start code" << endl;
+        bool ok=python.executeCode(
+            startCode,
+            true,
+            failOnException
+        );
+    }
+
     forAll(timeDirs, timeI)
     {
         runTime.setTime(timeDirs[timeI], timeI);
+        python.setRunTime(mesh.time());
 
         Foam::Info << "\nTime = " << runTime.timeName() << Foam::endl;
 
@@ -168,6 +204,15 @@ int main(int argc, char *argv[])
         functions.execute();
         Info << endl;
 
+        if(executeCode!="") {
+            Info << "Executing execute code" << endl;
+            bool ok=python.executeCode(
+                executeCode,
+                true,
+                failOnException
+            );
+        }
+
         Info << endl;
     }
 
@@ -175,6 +220,15 @@ int main(int argc, char *argv[])
     functions.end();
     Info << endl;
 
+    if(endCode!="") {
+        Info << "Executing end code" << endl;
+        bool ok=python.executeCode(
+            endCode,
+            true,
+            failOnException
+        );
+        Info << endl;
+    }
 
     Info << "End\n" << endl;
 
