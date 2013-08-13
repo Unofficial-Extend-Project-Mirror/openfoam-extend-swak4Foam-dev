@@ -35,6 +35,9 @@ python {
 
     useNumpy true;
     useIPython true;
+    //     useIPython false;
+
+    //   interactiveAfterExecute true;
 }
 
 functions {
