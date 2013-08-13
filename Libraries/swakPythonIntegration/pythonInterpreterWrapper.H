@@ -157,6 +157,9 @@ protected:
     //- run an interactive sesssion
     void interactiveLoop(const string &banner);
 
+    //- import a single library
+    bool importLib(const word &name);
+
 public:
     //- Execute code. Return true if there was no problem
     bool executeCode(

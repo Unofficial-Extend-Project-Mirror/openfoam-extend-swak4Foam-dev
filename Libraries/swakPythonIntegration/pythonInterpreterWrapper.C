@@ -66,7 +66,8 @@ void pythonInterpreterWrapper::initIPython() {
             if(debug) {
                 Info << "Attempting to import IPython" << endl;
             }
-            int fail=PyRun_SimpleString("import IPython");
+            //            int fail=PyRun_SimpleString("import IPython");
+            bool fail=!importLib("IPython");
             if(fail) {
                 WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
                     << "Importing of IPython failed. Falling back to regular shell"
@@ -113,7 +114,10 @@ void pythonInterpreterWrapper::initIPython() {
             if(debug) {
                 Info << "Preparing interpreter for convenient history editing" << endl;
             }
-            PyRun_SimpleString("import rlcompleter, readline");
+            //            PyRun_SimpleString("import rlcompleter, readline");
+            importLib("rlcompleter");
+            importLib("readline");
+
             // this currently has no effect in the embedded shell
             PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
         }
@@ -244,7 +248,8 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         if(debug) {
             Info << "Attempting to import numpy" << endl;
         }
-        int fail=PyRun_SimpleString("import numpy");
+        //        int fail=PyRun_SimpleString("import numpy");
+        int fail=!importLib("numpy");
         if(fail) {
             FatalErrorIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
                 << "Problem during import of numpy." << nl
@@ -612,6 +617,31 @@ void pythonInterpreterWrapper::interactiveLoop(
 
         }
     }
+}
+
+
+bool pythonInterpreterWrapper::importLib(const word &name)
+{
+    if(debug) {
+        Info << "Importing library " << name << endl;
+    }
+    PyObject * mainModule = PyImport_AddModule("__main__");
+    if(mainModule==NULL) {
+        WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
+            << "Could not get module __main__ when importing " << name
+                << endl;
+        return false;
+    }
+    PyObject * libModule = PyImport_ImportModule(name.c_str());
+    if(libModule==NULL) {
+        WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
+            << "Could not import " << name
+                << endl;
+        return false;
+    }
+    PyModule_AddObject(mainModule, name.c_str(), libModule);
+
+    return true;
 }
 
 void pythonInterpreterWrapper::doAfterExecution(
