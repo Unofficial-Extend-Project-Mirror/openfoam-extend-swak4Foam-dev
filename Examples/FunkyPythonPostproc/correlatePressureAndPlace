@@ -23,12 +23,16 @@ preloadFields (
 );
 
 python {
+    startFile "correlatePressureAndPlaceStart.py";
+    executeFile "correlatePressureAndPlaceExecute.py";
+    endFile "correlatePressureAndPlaceEnd.py";
     //    startCode "import sys;print sys.path";
-    startCode "print dir()";
+    //    startCode "print dir()";
+    //    startCode "import scipy.stats";
     // endCode "import IPython;IPython.embed(header='OpenFOAM',config='pylab')";
     // executeCode $endCode;
-    endCode "print positions.shape";
-    executeCode $endCode;
+    //    endCode "print positions.shape";
+    //     executeCode $endCode;
 
     swakToPythonNamespaces (
         fieldData
@@ -38,7 +42,8 @@ python {
     useIPython true;
     //    useIPython false;
 
-    //   interactiveAfterExecute true;
+    //    interactiveAfterExecute true;
+    interactiveAfterException true;
 }
 
 functions {
@@ -59,12 +64,25 @@ functions {
         toGlobalNamespace fieldData;
         toGlobalVariables (
             positions
+            velocity
+            pressure
+            gradPressure
         );
         variables (
-            "positions=pos();"
             "velocity=U;"
+            "positions=pos();"
             "pressure=p;"
             "gradPressure=gradP;"
+        );
+    }
+    checkFields {
+        type volumeMinMax;
+        verbose true;
+        outputControlMode timeStep;
+        outputInterval 1;
+        fields (
+            p
+            U
         );
     }
 }
