@@ -2122,3 +2122,8 @@ S_{expl} + S_{impl} T
                components all the components have the same value
      - weightSum :: Sum of the weights of the underlying
                     entity. Usually the volume oder the area of it.
+**** Python code files are now searched more flexible
+     If a file specified with an option like =startFile= in a
+     Python-functionObject (or similar) is not found in the current
+     directory the path of the dictionary it is specified in is
+     prepended and the file is searched there

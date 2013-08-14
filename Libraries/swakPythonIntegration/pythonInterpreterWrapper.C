@@ -1105,9 +1105,14 @@ void pythonInterpreterWrapper::readCode(
             fileName fName(dict.lookup(prefix+"File"));
             fName.expand();
             if(!exists(fName)) {
-                FatalErrorIn("pythonInterpreterWrapper::readCode")
-                    << "Can't find source file " << fName
-                        << endl << exit(FatalError);
+                fileName oldFName=fName;
+                fName=dict.name().path() / fName;
+                if(!exists(fName)) {
+                    FatalErrorIn("pythonInterpreterWrapper::readCode")
+                        << "Can't find source file " << oldFName
+                            << " or "<< fName
+                            << endl << exit(FatalError);
+                }
             }
 
             IFstream in(fName);
