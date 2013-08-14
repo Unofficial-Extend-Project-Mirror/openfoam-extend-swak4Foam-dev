@@ -85,6 +85,15 @@ functions {
             U
         );
     }
+    // testSecondPython {
+    //     type pythonIntegration;
+    //     startCode "print dir()";
+    //     executeCode $startCode;
+    //     endCode $startCode;
+    //     useNumpy false;
+    //     useIPython false;
+    //     interactiveAfterExecute false;
+    // }
 }
 
 libs (

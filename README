@@ -2076,6 +2076,15 @@ S_{expl} + S_{impl} T
      specified field. Optionally these statistics can also be printed
      for patches, sets and zones. The data can be written to a
      CSV-file. Also the distributions of the field can be written.
+**** New utility =funkyPythonPostproc=
+     This utility needs a dictionary and a specification of
+     times. For each time it
+     - loads a list of fields specified in the dictionary
+     - executes a list of function objects specified in the dictionary
+     - executes python-scripts
+     The idea is that the function objects pass data to the
+     python-scripts via global variables and the python-scripts do
+     whatever they like
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file
@@ -2130,3 +2139,6 @@ S_{expl} + S_{impl} T
      Python-functionObject (or similar) is not found in the current
      directory the path of the dictionary it is specified in is
      prepended and the file is searched there
+**** Python integration no uses =IPython= if possible
+     The interactive shell of the python integration now uses
+     =IPython= if it is installed. This improves tab-completion etc
