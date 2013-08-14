@@ -178,26 +178,13 @@ int main(int argc, char *argv[])
 
         mesh.readUpdate();
         Info << "Reloading fields" << endl;
-        forAllIter(SLPtrList<volScalarField>,scalarFieldsPre,i){
-            Info << (*i).name() << " ... " << flush;
-            (*i).read();
-        }
-        forAllIter(SLPtrList<volVectorField>,vectorFieldsPre,i){
-            Info << (*i).name() << " ... " << flush;
-            (*i).read();
-        }
-        forAllIter(SLPtrList<volTensorField>,tensorFieldsPre,i){
-            Info << (*i).name() << " ... " << flush;
-            (*i).read();
-        }
-        forAllIter(SLPtrList<volSymmTensorField>,symmTensorFieldsPre,i){
-            Info << (*i).name() << " ... " << flush;
-            (*i).read();
-        }
-        forAllIter(SLPtrList<volSphericalTensorField>,sphericalTensorFieldsPre,i){
-            Info << (*i).name() << " ... " << flush;
-            (*i).read();
-        }
+        // scalarFieldsPre.clear();
+        // loadFieldFunction(mesh,"p",scalarFieldsPre);
+        Info << reloadFieldsFunction(mesh,scalarFieldsPre).c_str() << flush;
+        Info << reloadFieldsFunction(mesh,vectorFieldsPre).c_str() << flush;
+        Info << reloadFieldsFunction(mesh,tensorFieldsPre).c_str() << flush;
+        Info << reloadFieldsFunction(mesh,symmTensorFieldsPre).c_str() << flush;
+        Info << reloadFieldsFunction(mesh,sphericalTensorFieldsPre).c_str() << flush;
 
         Info << endl << endl;
 

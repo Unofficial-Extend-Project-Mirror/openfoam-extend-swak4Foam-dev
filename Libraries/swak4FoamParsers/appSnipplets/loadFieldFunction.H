@@ -79,5 +79,59 @@ bool loadFieldFunction(
     }
 }
 
+template<class FieldType>
+string reloadFieldsFunction(
+    fvMesh &mesh,
+    SLPtrList<FieldType> &fieldList
+) {
+    if(fieldList.size()<=0) {
+        return "";
+    }
+    const Time &runTime=mesh.time();
+    string result="Reloading type "+FieldType::typeName+": ";
+
+    forAllIter(typename SLPtrList<FieldType>,fieldList,i){
+        FieldType &field=(*i);
+        const word &fName=field.name();
+        result+=fName+" ";
+
+        IOobject f
+            (
+                fName,
+                runTime.timeName(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::NO_WRITE
+            );
+        if(f.headerOk()) {
+            word className=f.headerClassName();
+
+            if(className==FieldType::typeName) {
+                result+="ok ";
+                FieldType newField(
+                    IOobject
+                    (
+                        fName,
+                        runTime.timeName(),
+                        mesh,
+                        IOobject::MUST_READ,
+                        IOobject::AUTO_WRITE
+                    ),
+                    mesh
+                );
+                field==newField;
+            } else {
+                result+="wrong:"+className+" ";
+            }
+        } else {
+            result+="missing ";
+        }
+        result+="...";
+    }
+    result+="\n";
+
+    return result;
+}
+
 
 // ************************************************************************* //
