@@ -2035,6 +2035,9 @@ S_{expl} + S_{impl} T
 **** Calculation of weight fields failed if size on one processor was $0$
      This was due to a logical error that was propagated through
      mindless copy/paste (only the Field-driver got it right). Fixed
+**** =groovyTotalPressure= does not read =value=
+     Because it is not initialized from the superclass when the
+     dictionary constructor is used. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
