@@ -105,9 +105,8 @@ void pythonInterpreterWrapper::initIPython() {
         triedIPython_=true;
 
         if(useIPython_) {
-            if(debug) {
-                Info << "Attempting to import IPython" << endl;
-            }
+            Dbug << "Attempting to import IPython" << endl;
+
             //            int fail=PyRun_SimpleString("import IPython");
             bool fail=!importLib("IPython");
             if(fail) {
@@ -129,9 +128,7 @@ void pythonInterpreterWrapper::initIPython() {
                             "embed"
                         )
                     ) {
-                        if(debug) {
-                            Info << "New style IPython embedding" << endl;
-                        }
+                        Dbug << "New style IPython embedding" << endl;
                     } else if(
                         PyObject_HasAttrString(
                             ipython,
@@ -153,9 +150,8 @@ void pythonInterpreterWrapper::initIPython() {
             }
         }
         if(!useIPython_) {
-            if(debug) {
-                Info << "Preparing interpreter for convenient history editing" << endl;
-            }
+            Dbug << "Preparing interpreter for convenient history editing" << endl;
+
             //            PyRun_SimpleString("import rlcompleter, readline");
             importLib("rlcompleter");
             importLib("readline");
@@ -214,7 +210,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         dict.lookupOrDefault<bool>("interactiveAfterException",false)
     )
 {
-    Pbug << "Parallel Starting constructor" << endl;
+    Pbug << "Starting constructor" << endl;
 
     debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug);
 
@@ -235,18 +231,16 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     }
 
     if(interpreterCount==0) {
-        if(debug) {
-            Info << "Initializing Python" << endl;
-        }
+        Dbug << "Initializing Python" << endl;
+
         Py_Initialize();
         // PyRun_SimpleString("import IPython\n" // here it works as expected
         // "IPython.embed()\n");
     }
 
     if(Pstream::parRun()) {
-        if(debug) {
-            Info << "This is a parallel run" << endl;
-        }
+        Pbug << "This is a parallel run" << endl;
+
         parallelMasterOnly_=readBool(dict.lookup("parallelMasterOnly"));
     }
 
@@ -277,10 +271,8 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     initIPython();
 
-    if(debug) {
-        Info << "Currently " << interpreterCount
-            << " Python interpreters (created one)" << endl;
-    }
+    Pbug << "Currently " << interpreterCount
+        << " Python interpreters (created one)" << endl;
 
     if(
         interactiveAfterExecute_
@@ -296,9 +288,8 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     }
 
     if(useNumpy_) {
-        if(debug) {
-            Info << "Attempting to import numpy" << endl;
-        }
+        Dbug << "Attempting to import numpy" << endl;
+
         //        int fail=PyRun_SimpleString("import numpy");
         int fail=!importLib("numpy");
         if(fail) {
@@ -419,20 +410,18 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
         Py_EndInterpreter(pythonState_);
         pythonState_=NULL;
     }
-    if(debug) {
-        Info << "Currently " << interpreterCount
-            << " Python interpreters (deleting one)" << endl;
-    }
+
+    Dbug << "Currently " << interpreterCount
+        << " Python interpreters (deleting one)" << endl;
 
     interpreterCount--;
     if(interpreterCount==0) {
-        if(debug) {
-            Info << "Finalizing Python" << endl;
-        }
-        PyThreadState_Swap(NULL);
+        Dbug << "Finalizing Python" << endl;
+
+        PyThreadState_Swap(oldPythonState_);
 
         // This causes a segfault
-        //        Py_Finalize();
+        Py_Finalize();
     }
 }
 
@@ -570,10 +559,8 @@ T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException
         functionCode+="    "+line+"\n";
     }
 
-    if(debug) {
-        Info << "Function code:" << endl
-            << functionCode;
-    }
+    Dbug << "Function code:" << endl
+        << functionCode;
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject *d = PyModule_GetDict(m);
@@ -582,13 +569,10 @@ T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException
     PyObject *pCode=(Py_CompileString(functionCode.c_str(),"<string from swak>",Py_file_input));
 
     if( pCode!=NULL && !PyErr_Occurred()) {
-        if(debug) {
-            Info << "Compiled " << code << endl;
-        }
+        Dbug << "Compiled " << code << endl;
+
         PyObject *pFunc=PyFunction_New(pCode,d);
-        if(debug) {
-            Info << "Is function: " << PyFunction_Check(pFunc) << endl;
-        }
+        Dbug << "Is function: " << PyFunction_Check(pFunc) << endl;
 
         PyObject *pTemp=PyObject_CallFunction(pFunc,NULL);
         Py_DECREF(pTemp);
@@ -605,22 +589,21 @@ T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException
         if(debug) {
             PyObject *str=PyObject_Str(pResult);
 
-            Info << "Result is " << PyString_AsString(str) << endl;
+            Dbug << "Result is " << PyString_AsString(str) << endl;
 
             Py_DECREF(str);
         }
         //        result=PyObject_IsTrue(pResult);
         result=Func()(pResult);
-        if(debug) {
-            Info << "Evaluated to " << result << endl;
-        }
+        Dbug << "Evaluated to " << result << endl;
+
         Py_DECREF(pResult);
     }
 
     bool success=(pResult!=NULL && !PyErr_Occurred());
-    if(debug) {
-        Info << "Success of execution " << success << endl;
-    }
+
+    Dbug << "Success of execution " << success << endl;
+
     doAfterExecution(!success,code,false,failOnException);
     return result;
 }
@@ -683,10 +666,9 @@ bool pythonInterpreterWrapper::importLib(
     if(as=="") {
         as=name;
     }
-    if(debug) {
-        Info << "Importing library " << name
-            << " as " << as << endl;
-    }
+
+    Dbug << "Importing library " << name
+        << " as " << as << endl;
 
     //    PyThreadState *oldState=PyThreadState_Swap(oldPythonState_);
 
@@ -773,10 +755,8 @@ void pythonInterpreterWrapper::getGlobals()
         return;
     }
 
-    if(debug) {
-        Info << "Getting global variables from namespaces "
-            << swakToPythonNamespaces_ << endl;
-    }
+    Dbug << "Getting global variables from namespaces "
+        << swakToPythonNamespaces_ << endl;
 
     PyObject *m = PyImport_AddModule("__main__");
 
@@ -834,13 +814,13 @@ void pythonInterpreterWrapper::getGlobals()
                 }
             } else {
                 const ExpressionResult &val=value;
-                if(debug) {
-                    Info << "Building a numpy-Array for global " << var
-                        << " at address " << val.getAddressAsDecimal()
-                        << " with size " << val.size()
-                        << " and type " << val.valueType()
-                        << endl;
-                }
+
+                Dbug << "Building a numpy-Array for global " << var
+                    << " at address " << val.getAddressAsDecimal()
+                    << " with size " << val.size()
+                    << " and type " << val.valueType()
+                    << endl;
+
                 OStringStream cmd;
                 cmd << var << "=OpenFOAMFieldArray(";
                 cmd << "address='" << val.getAddressAsDecimal() << "',";
@@ -865,9 +845,9 @@ void pythonInterpreterWrapper::getGlobals()
                     cmd << ",nr=" << nr;
                 }
                 cmd << ")";
-                if(debug) {
-                    Info << "Python: " << cmd.str() << endl;
-                }
+
+                Dbug << "Python: " << cmd.str() << endl;
+
                 PyRun_SimpleString(cmd.str().c_str());
             }
         }
@@ -880,18 +860,15 @@ void pythonInterpreterWrapper::setGlobals()
         return;
     }
 
-    if(debug) {
-        Info << "Writing variables " << pythonToSwakVariables_
-            << " to namespace " << pythonToSwakNamespace_ << endl;
-    }
+    Dbug << "Writing variables " << pythonToSwakVariables_
+        << " to namespace " << pythonToSwakNamespace_ << endl;
 
     PyObject *m = PyImport_AddModule("__main__");
 
     forAll(pythonToSwakVariables_,i) {
         const word &name=pythonToSwakVariables_[i];
-        if(debug) {
-            Info << "Getting variable "<< name << endl;
-        }
+
+        Dbug << "Getting variable "<< name << endl;
 
         if(
             !PyObject_HasAttrString(
@@ -915,37 +892,33 @@ void pythonInterpreterWrapper::setGlobals()
             &&
             PySequence_Check(pVar)==0 // this rules out numpy-arrays
         ) {
-            if(debug) {
-                Info << name << " is a scalar" << endl;
-            }
+            Dbug << name << " is a scalar" << endl;
+
             PyObject *val=PyNumber_Float(pVar);
             scalar result=PyFloat_AsDouble(val);
             Py_DECREF(val);
-            if(debug) {
-                Info << name << " is " << result << endl;
-            }
+
+            Dbug << name << " is " << result << endl;
 
             eResult.setResult(result,1);
 
         } else if(PySequence_Check(pVar)) {
-            if(debug) {
-                Info << name << " is a sequence" << endl;
-            }
+            Dbug << name << " is a sequence" << endl;
+
             if(
                 useNumpy_
                 &&
                 PyObject_HasAttrString(pVar,"__array_interface__")
             ) {
-                if(debug) {
-                    Info << name << " is a numpy-array" << endl;
-                }
+                Dbug << name << " is a numpy-array" << endl;
+
                 PyObject *interface=PyObject_GetAttrString(
                     pVar,
                     "__array_interface__"
                 );
                 if(debug) {
                     PyObject *repr=PyObject_Str(interface);
-                    Info << "__array__interface__"
+                    Dbug << "__array__interface__"
                         << string(PyString_AsString(repr)) << endl;
                     Py_DECREF(repr);
                 }
@@ -958,13 +931,13 @@ void pythonInterpreterWrapper::setGlobals()
                         "typestr"
                     )
                 );
-                if(debug) {
-                    Info << "Expected typestring "
-                        << string(PyString_AsString(typestrExpected))
-                        << " present typestring "
-                        << string(PyString_AsString(typestrIs))
-                        << endl;
-                }
+
+                Dbug << "Expected typestring "
+                    << string(PyString_AsString(typestrExpected))
+                    << " present typestring "
+                    << string(PyString_AsString(typestrIs))
+                    << endl;
+
                 if(
                     string(PyString_AsString(typestrExpected))
                     !=
@@ -1054,18 +1027,15 @@ void pythonInterpreterWrapper::setGlobals()
                         Py_DECREF(repr);
                 }
 
-               if(debug) {
-                    Info << "Created result" << eResult << endl;
-                }
+                Dbug << "Created result" << eResult << endl;
 
                 Py_DECREF(typestrExpected);
                 Py_DECREF(typestrIs);
             } else {
                 PyObject *tuple=PySequence_Tuple(pVar);
                 if(PyTuple_GET_SIZE(tuple)==3) {
-                    if(debug) {
-                        Info << name << " is a vector" << endl;
-                    }
+                    Dbug << name << " is a vector" << endl;
+
                     vector val;
                     bool success=PyArg_ParseTuple(tuple,"ddd",&(val.x()),&(val.y()),&(val.z()));
                     if(!success) {
@@ -1074,9 +1044,7 @@ void pythonInterpreterWrapper::setGlobals()
                                 << exit(FatalError)
                                 << endl;
                     }
-                    if(debug) {
-                        Info << name << " is " << val << endl;
-                    }
+                    Dbug << name << " is " << val << endl;
 
                     eResult.setResult(val,1);
                 } else {
