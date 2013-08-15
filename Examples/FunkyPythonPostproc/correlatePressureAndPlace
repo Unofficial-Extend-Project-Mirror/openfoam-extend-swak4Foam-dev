@@ -87,7 +87,8 @@ functions {
     }
     // testSecondPython {
     //     type pythonIntegration;
-    //     startCode "print dir()";
+    //     //        startCode "print 'Start';import scipy.stats;print dir()";
+    //     startCode "print 'Start'";
     //     executeCode $startCode;
     //     endCode $startCode;
     //     useNumpy false;

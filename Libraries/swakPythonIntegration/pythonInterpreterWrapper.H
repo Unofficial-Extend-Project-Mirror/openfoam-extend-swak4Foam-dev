@@ -161,7 +161,10 @@ protected:
     void interactiveLoop(const string &banner);
 
     //- import a single library
-    bool importLib(const word &name);
+    bool importLib(
+        const word &name,
+        const word &as=""
+    );
 
 public:
     //- Execute code. Return true if there was no problem

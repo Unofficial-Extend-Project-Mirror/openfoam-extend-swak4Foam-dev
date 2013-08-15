@@ -674,10 +674,18 @@ void pythonInterpreterWrapper::interactiveLoop(
 }
 
 
-bool pythonInterpreterWrapper::importLib(const word &name)
+bool pythonInterpreterWrapper::importLib(
+    const word &name,
+    const word &asSpec
+)
 {
+    word as=asSpec;
+    if(as=="") {
+        as=name;
+    }
     if(debug) {
-        Info << "Importing library " << name << endl;
+        Info << "Importing library " << name
+            << " as " << as << endl;
     }
 
     //    PyThreadState *oldState=PyThreadState_Swap(oldPythonState_);
@@ -696,7 +704,7 @@ bool pythonInterpreterWrapper::importLib(const word &name)
                 << endl;
         return false;
     }
-    PyModule_AddObject(mainModule, name.c_str(), libModule);
+    PyModule_AddObject(mainModule, as.c_str(), libModule);
 
     // PyThreadState_Swap(oldState);
 
