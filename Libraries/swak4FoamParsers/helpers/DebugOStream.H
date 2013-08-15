@@ -29,53 +29,66 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-
+    Foam::DebugOStream
 
 Description
-    Define versions and flags for swak to distinguish different features
-    via #ifdef
+    Stream that prefixes a class name and an adress to the output to make
+    distinguishing output from different objects easier. Usually used through
+    two preprocessor macros:
+
+    Dbug : for parallel runs only outputs on the master processor
+    Pbug : for parallel runs outputs on all processors and prefixes the
+           processor number
 
 SourceFiles
+    DebugOStream.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakMacroHeader_H
-#define SwakMacroHeader_H
+#ifndef DebugOStream_H
+#define DebugOStream_H
 
-#include "foamVersion4swak.H"
+#include "prefixOSstream.H"
 
-#if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
-#define FOAM_HAS_SORTED_TOC
-#else
-#define FOAM_OLDTIME_PROBLEM
-#endif
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#if (FOAM_VERSION4SWAK_MAJOR > 1)
-#error "This swak4Foam-version is only used for the 1.x-versions of OpenFOAM. For higher versions there is a special branch"
-#endif
+namespace Foam
+{
 
-// in 1.6-ext the operation s1 & s2 of two symmetrical tensor fields does not yield a symmetric tensor
-#ifdef FOAM_DEV
-#define FOAM_SYMMTENSOR_WORKAROUND
-#endif
+/*---------------------------------------------------------------------------*\
+                           Class DebugOStream Declaration
+\*---------------------------------------------------------------------------*/
 
-// Certain OpenFOAM-versions don't have all tensor operations defined
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
-#define FOAM_INCOMPLETE_OPERATORS
-#endif
+class DebugOStream
+:
+    public prefixOSstream
+{
+public:
+    //- Constructor
+    DebugOStream(
+        ostream &o,
+        const word &typeName,
+        void *object,
+        const bool parallel=false
+    );
+    DebugOStream &operator()() { return *this; }
+};
 
-// Certain OpenFOAM-versions don't have this method in fvMesh
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
-#define FOAM_FV_MESH_HAS_NO_SOLVERDICT
-#endif
+#define Dbug if(debug && Pstream::master()) DebugOStream(cout,typeName,this)()
+#define Pbug if(debug) DebugOStream(cout,typeName,this,true)()
 
-#include "swakVersion.H"
 
-#include "DebugOStream.H"
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif
 

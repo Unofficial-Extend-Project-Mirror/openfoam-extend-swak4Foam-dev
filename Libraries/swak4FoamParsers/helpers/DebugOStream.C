@@ -28,55 +28,52 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-
-
-Description
-    Define versions and flags for swak to distinguish different features
-    via #ifdef
-
-SourceFiles
-
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakMacroHeader_H
-#define SwakMacroHeader_H
-
-#include "foamVersion4swak.H"
-
-#if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
-#define FOAM_HAS_SORTED_TOC
-#else
-#define FOAM_OLDTIME_PROBLEM
-#endif
-
-#if (FOAM_VERSION4SWAK_MAJOR > 1)
-#error "This swak4Foam-version is only used for the 1.x-versions of OpenFOAM. For higher versions there is a special branch"
-#endif
-
-// in 1.6-ext the operation s1 & s2 of two symmetrical tensor fields does not yield a symmetric tensor
-#ifdef FOAM_DEV
-#define FOAM_SYMMTENSOR_WORKAROUND
-#endif
-
-// Certain OpenFOAM-versions don't have all tensor operations defined
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
-#define FOAM_INCOMPLETE_OPERATORS
-#endif
-
-// Certain OpenFOAM-versions don't have this method in fvMesh
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
-#define FOAM_FV_MESH_HAS_NO_SOLVERDICT
-#endif
-
-#include "swakVersion.H"
-
 #include "DebugOStream.H"
+#include "Pstream.H"
+#include <sstream>
 
-#endif
+namespace Foam {
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+    // Move to separate module later
+DebugOStream::DebugOStream(
+    ostream &o,
+    const word &typeName,
+    void *object,
+    const bool parallel
+)
+    :
+    prefixOSstream(
+        o,
+        typeName
+    )
+{
+    prefix()=typeName+"(";
+    std::ostringstream makeHex;
+    makeHex << std::hex << object;
+    prefix()+=makeHex.str()+") ";
+    if(Pstream::parRun() && parallel) {
+        std::ostringstream proc;
+        proc << "[" << Pstream::myProcNo() << "]";
+        prefix()=proc.str()+prefix();
+    }
+}
+
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
+
+
+// * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
+
+
+// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+
+} // namespace
 
 // ************************************************************************* //

@@ -56,48 +56,6 @@ namespace Foam
 
     label pythonInterpreterWrapper::interpreterCount=0;
 
-    // Move to separate module later
-class DebugOStream
-:
-    public prefixOSstream
-{
-public:
-    //- Constructor
-    DebugOStream(
-        ostream &o,
-        const word &typeName,
-        void *object,
-        const bool parallel=false
-    );
-    DebugOStream &operator()() { return *this; }
-};
-
-DebugOStream::DebugOStream(
-    ostream &o,
-    const word &typeName,
-    void *object,
-    const bool parallel
-)
-    :
-    prefixOSstream(
-        o,
-        typeName
-    )
-{
-    prefix()=typeName+"(";
-    std::ostringstream makeHex;
-    makeHex << std::hex << object;
-    prefix()+=makeHex.str()+") ";
-    if(Pstream::parRun() && parallel) {
-        std::ostringstream proc;
-        proc << "[" << Pstream::myProcNo() << "]";
-        prefix()=proc.str()+prefix();
-    }
-}
-
-#define Dbug if(debug && Pstream::master()) DebugOStream(cout,typeName,this)()
-#define Pbug if(debug) DebugOStream(cout,typeName,this,true)()
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 void pythonInterpreterWrapper::initIPython() {

@@ -1,4 +1,5 @@
 helpers/printSwakVersion.C
+helpers/DebugOStream.C
 
 repositories/SurfacesRepository.C
 repositories/MeshesRepository.C

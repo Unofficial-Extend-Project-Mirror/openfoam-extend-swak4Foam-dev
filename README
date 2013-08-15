@@ -2002,6 +2002,16 @@ S_{expl} + S_{impl} T
      The script writes the version it is used with to disk and at
      later compiles that this is the same (this makes sure that not a
      wrong version is used inadvertently to compile)
+**** Additional macros for Debugging output
+     There are two macros defined that inside an object write the name
+     of the class and the address of the object (if debug is
+     enabled). This makes the output easier distinguishable from the
+     output from other classes/objects. The two macros are:
+     - Dbug :: Writes the debug information *only* on the master processor
+     - Pbug :: Writes the output on all processors and for parallel
+               runs prefixes the processor number
+     Both macros are to be used like regular streams and don't have
+     to be enclosed in =if(debug){}= (this is part of the macro)
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
