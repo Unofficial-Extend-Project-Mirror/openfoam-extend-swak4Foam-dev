@@ -44,6 +44,11 @@ python {
 
     //    interactiveAfterExecute true;
     interactiveAfterException true;
+
+    importLibs {
+        matplotlib;
+        stats scipy.stats;
+    }
 }
 
 functions {
@@ -85,16 +90,19 @@ functions {
             U
         );
     }
-    // testSecondPython {
-    //     type pythonIntegration;
-    //     startCode "print 'Start';import scipy.stats;print dir()";
-    //     //        startCode "print 'Start'";
-    //     executeCode $startCode;
-    //     endCode $startCode;
-    //     useNumpy false;
-    //     useIPython false;
-    //     interactiveAfterExecute false;
-    // }
+    testSecondPython {
+        type pythonIntegration;
+        //        startCode "print 'Start';import scipy.stats;print dir()";
+        startCode "print 'Start'";
+        executeCode $startCode;
+        endCode $startCode;
+        useNumpy false;
+        useIPython false;
+        interactiveAfterExecute false;
+        importLibs {
+            stats scipy.stats;
+        }
+    }
 }
 
 libs (

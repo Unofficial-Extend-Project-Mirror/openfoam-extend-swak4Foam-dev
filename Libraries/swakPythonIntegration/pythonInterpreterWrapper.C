@@ -52,7 +52,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonInterpreterWrapper, 1);
+    defineTypeNameAndDebug(pythonInterpreterWrapper, 0);
 
     label pythonInterpreterWrapper::interpreterCount=0;
     PyThreadState *pythonInterpreterWrapper::mainThreadState=NULL;
@@ -314,12 +314,24 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         );
     }
 
+    if(dict.found("importLibs")) {
+        const dictionary &libList=dict.subDict("importLibs");
+        forAllConstIter(dictionary,libList,iter) {
+            word as=(*iter).keyword();
+            word full((*iter).stream());
+            if(full=="") {
+                full=as;
+            }
+            importLib(full,as,true);
+        }
+    } else {
+        WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
+            << "No dictionary 'importLibs' found in " << dict.name()
+                << endl << "If code hangs during importing try importing "
+            "the libraries from here first"
+                << endl;
 
-    // PyThreadState *old=PyThreadState_Swap(mainThreadState);
-    // importLib("scipy.stats","stats");
-    // Info << "Hey" << endl;
-    // PyThreadState_Swap(old);
-    // Info << "Hey" << endl;
+    }
 
     PyEval_ReleaseThread(pythonState_);
 
@@ -697,7 +709,8 @@ void pythonInterpreterWrapper::interactiveLoop(
 
 bool pythonInterpreterWrapper::importLib(
     const word &name,
-    const word &asSpec
+    const word &asSpec,
+    bool useMainThreadState
 )
 {
     word as=asSpec;
@@ -708,8 +721,6 @@ bool pythonInterpreterWrapper::importLib(
     Dbug << "Importing library " << name
         << " as " << as << endl;
 
-    //    PyThreadState *oldState=PyThreadState_Swap(oldPythonState_);
-
     PyObject * mainModule = PyImport_AddModule("__main__");
     if(mainModule==NULL) {
         WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
@@ -717,25 +728,38 @@ bool pythonInterpreterWrapper::importLib(
                 << endl;
         return false;
     }
+
+    PyThreadState *old=NULL;
+    if(useMainThreadState) {
+        old=PyThreadState_Swap(mainThreadState);
+        Dbug << "Swapped from " << getHex(old) << " to "
+            << getHex(mainThreadState) << "(main state)" << endl;
+    }
     PyObject * libModule = PyImport_ImportModule(name.c_str());
     if(libModule==NULL) {
         WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
             << "Could not import " << name
                 << endl;
+        if(useMainThreadState) {
+            Dbug << "Emergency swap of states" << endl;
+            PyThreadState_Swap(old);
+        }
+
         return false;
     }
+    if(useMainThreadState) {
+        PyObject * mainModule2 = PyImport_AddModule("__main__");
+        if(mainModule2==NULL) {
+            WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
+                << "Could not get module __main__ when importing " << name
+                    << endl;
+        } else {
+            PyModule_AddObject(mainModule2, name.c_str(), libModule);
+        }
+        Dbug << "Swap of states - back" << endl;
+        PyThreadState_Swap(old);
+    }
     PyModule_AddObject(mainModule, as.c_str(), libModule);
-
-    // PyThreadState_Swap(oldState);
-
-    // PyObject * mainModule2 = PyImport_AddModule("__main__");
-    // if(mainModule==NULL) {
-    //     WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
-    //         << "Could not get module __main__ when importing " << name
-    //             << endl;
-    //     return false;
-    // }
-    // PyModule_AddObject(mainModule2, name.c_str(), libModule);
 
     return true;
 }

@@ -167,7 +167,8 @@ protected:
     //- import a single library
     bool importLib(
         const word &name,
-        const word &as=""
+        const word &as="",
+        bool useMainThreadStat=false
     );
 
 public:

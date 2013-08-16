@@ -1,5 +1,5 @@
 times.append(runTime)
-r=scipy.stats.linregress(positions.x,pressure)
+r=stats.linregress(positions.x,pressure)
 slopes.append(r[0])
 offsets.append(r[1])
 
