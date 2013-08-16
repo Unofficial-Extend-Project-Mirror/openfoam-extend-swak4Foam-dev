@@ -55,15 +55,19 @@ DebugOStream::DebugOStream(
         typeName
     )
 {
-    prefix()=typeName+"(";
-    std::ostringstream makeHex;
-    makeHex << std::hex << object;
-    prefix()+=makeHex.str()+") ";
+    prefix()=typeName+"("+getHex(object)+") ";
     if(Pstream::parRun() && parallel) {
         std::ostringstream proc;
         proc << "[" << Pstream::myProcNo() << "]";
         prefix()=proc.str()+prefix();
     }
+}
+
+word getHex(const void *ptr)
+{
+    std::ostringstream makeHex;
+    makeHex << std::hex << (void*)ptr;
+    return word(makeHex.str());
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

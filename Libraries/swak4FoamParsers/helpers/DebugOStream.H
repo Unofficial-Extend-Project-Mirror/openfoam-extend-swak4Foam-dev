@@ -76,11 +76,15 @@ public:
         const bool parallel=false
     );
     DebugOStream &operator()() { return *this; }
+
 };
 
+// to be used as "streams"
 #define Dbug if(debug && Pstream::master()) DebugOStream(cout,typeName,this)()
 #define Pbug if(debug) DebugOStream(cout,typeName,this,true)()
 
+//- get the value of the pointer as a word
+word getHex(const void *ptr);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
