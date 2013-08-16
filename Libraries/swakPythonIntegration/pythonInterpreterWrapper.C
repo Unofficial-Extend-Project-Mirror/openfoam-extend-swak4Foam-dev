@@ -52,14 +52,17 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonInterpreterWrapper, 0);
+    defineTypeNameAndDebug(pythonInterpreterWrapper, 1);
 
     label pythonInterpreterWrapper::interpreterCount=0;
+    PyThreadState *pythonInterpreterWrapper::mainThreadState=NULL;
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 void pythonInterpreterWrapper::initIPython() {
+    Dbug << "Initializing IPython" << endl;
     if(!triedIPython_) {
+        Dbug << "For real" << endl;
         triedIPython_=true;
 
         if(useIPython_) {
@@ -192,6 +195,21 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         Dbug << "Initializing Python" << endl;
 
         Py_Initialize();
+
+        if(debug) {
+            PyThreadState *current=PyGILState_GetThisThreadState();
+            Pbug << "GIL-state before thread" << getHex(current) << endl;
+        }
+        PyEval_InitThreads();
+         if(debug) {
+            PyThreadState *current=PyGILState_GetThisThreadState();
+            Pbug << "GIL-state after thread" << getHex(current) << endl;
+        }
+        // importLib("scipy.stats","stats"); - OK
+        mainThreadState = PyEval_SaveThread();
+        // importLib("scipy.stats","stats"); - segFault
+
+        Pbug << "Main thread state: " << getHex(mainThreadState) << endl;
         // PyRun_SimpleString("import IPython\n" // here it works as expected
         // "IPython.embed()\n");
     }
@@ -221,9 +239,11 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     interpreterCount++;
 
-    oldPythonState_=PyThreadState_Get();
+    //    oldPythonState_=PyThreadState_Get();
     if(separateInterpreter) {
+        Pbug << "Getting new interpreter" << endl;
         pythonState_=Py_NewInterpreter();
+        Pbug << "Interpreter state: " << getHex(pythonState_) << endl;
     }
     //    interactiveLoop("Clean");
 
@@ -293,10 +313,25 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
             "      if obj is None: return\n"
         );
     }
-}
+
+
+    // PyThreadState *old=PyThreadState_Swap(mainThreadState);
+    // importLib("scipy.stats","stats");
+    // Info << "Hey" << endl;
+    // PyThreadState_Swap(old);
+    // Info << "Hey" << endl;
+
+    PyEval_ReleaseThread(pythonState_);
+
+    Dbug << "End constructor" << endl;
+ }
 
 void pythonInterpreterWrapper::initEnvironment(const Time &t)
 {
+    Dbug << "initEnvironment" << endl;
+
+    setInterpreter();
+
     PyObject *m = PyImport_AddModule("__main__");
 
     PyObject_SetAttrString(m,"functionObjectName",PyString_FromString("notAFunctionObject"));
@@ -328,6 +363,8 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
         "    makeDataDir(d)\n"
         "    return os.path.join(d,name)\n"
     );
+
+    releaseInterpreter();
 }
 
 bool pythonInterpreterWrapper::parallelNoRun(bool doWarning)
@@ -387,6 +424,8 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
 
 void pythonInterpreterWrapper::setRunTime(const Time &time)
 {
+    Dbug << "setRunTime " << time.timeName() << endl;
+
     setInterpreter();
 
     PyObject *m = PyImport_AddModule("__main__");
@@ -396,13 +435,32 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
     PyObject_SetAttrString(m,"timeName",PyString_FromString(time.timeName().c_str()));
     PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));
     PyObject_SetAttrString(m,"timeDir",PyString_FromString((time.path()/time.timeName()).c_str()));
+
+    releaseInterpreter();
 }
 
 void pythonInterpreterWrapper::setInterpreter()
 {
-    if(pythonState_) {
-        PyThreadState_Swap(pythonState_);
+    Pbug << "setInterpreter" << endl;
+
+    if(debug) {
+        PyThreadState *current=PyGILState_GetThisThreadState();
+        Pbug << "Current GIL-state " << getHex(current) << endl;
     }
+
+    if(pythonState_) {
+        Pbug << "Setting state to " << getHex(pythonState_) << endl;
+        PyThreadState *old=PyThreadState_Swap(pythonState_);
+        //        PyThreadState *old=PyThreadState_Swap(mainThreadState);
+        Pbug << "Old state: " << getHex(old) << endl;
+    }
+}
+
+void pythonInterpreterWrapper::releaseInterpreter()
+{
+    Pbug << "releaseInterpreter" << endl;
+    PyEval_ReleaseThread(pythonState_);
+    //     PyEval_ReleaseThread(mainThreadState);
 }
 
 bool pythonInterpreterWrapper::executeCode(
@@ -411,13 +469,19 @@ bool pythonInterpreterWrapper::executeCode(
     bool failOnException
 )
 {
+    Dbug << "ExecuteCode: " << code << endl;
+
     setInterpreter();
 
     getGlobals();
 
+    Dbug << "Execute" << endl;
     int fail=PyRun_SimpleString(code.c_str());
+    Dbug << "Fail: " << fail << endl;
 
     doAfterExecution(fail,code,putVariables,failOnException);
+
+    releaseInterpreter();
 
     return fail==0;
 }
@@ -428,6 +492,8 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
     bool putVariables,
     bool failOnException
 ) {
+    Dbug << "ExecuteCodeCaptureOutput: " << code << endl;
+
     setInterpreter();
 
     getGlobals();
@@ -461,6 +527,10 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
     PyObject* output = PyObject_GetAttrString(catcher, "data");
 
     stdout=string(PyString_AsString(output));
+
+    Pbug << "Fail: " << fail << " Captured: " << stdout << endl;
+
+    releaseInterpreter();
 
     return fail==0;
 }
@@ -502,8 +572,13 @@ label pythonInterpreterWrapper::evaluateCodeLabel(const string &code,bool failOn
 }
 
 template <typename T,class Func>
-T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException)
+T pythonInterpreterWrapper::evaluateCode(
+    const string &code,
+    bool failOnException
+)
 {
+    Dbug << "evaluateCode: " << code << endl;
+
     setInterpreter();
 
     getGlobals();
@@ -563,6 +638,9 @@ T pythonInterpreterWrapper::evaluateCode(const string &code,bool failOnException
     Dbug << "Success of execution " << success << endl;
 
     doAfterExecution(!success,code,false,failOnException);
+
+    releaseInterpreter();
+
     return result;
 }
 
@@ -586,6 +664,8 @@ void pythonInterpreterWrapper::setInteractive(
 void pythonInterpreterWrapper::interactiveLoop(
     const string &banner
 ) {
+    Dbug << "interactiveLoop" << endl;
+
     if(!useIPython_) {
         if(banner!="") {
             Info << endl << banner.c_str() << endl;
@@ -810,6 +890,7 @@ void pythonInterpreterWrapper::getGlobals()
             }
         }
     }
+    Dbug << "End getGlobals" << endl;
 }
 
 void pythonInterpreterWrapper::setGlobals()

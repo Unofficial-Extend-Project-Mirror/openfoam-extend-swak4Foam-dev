@@ -141,7 +141,8 @@ int main(int argc, char *argv[])
         mesh,
         pySpec,
         true, // force reading of to namespace
-        false // not a separate interpreter - "fixes" import problem
+        //        false // not a separate interpreter - "fixes" import problem
+        true
     );
     python.setInteractive(
         interactive,

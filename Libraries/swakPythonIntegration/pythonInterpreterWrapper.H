@@ -142,6 +142,7 @@ class pythonInterpreterWrapper
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;
+    static PyThreadState *mainThreadState;
 
     //- Execute after the python-code has been called
     void doAfterExecution(
@@ -153,6 +154,9 @@ protected:
 
     //- set the state to "my" interpreter
     void setInterpreter();
+
+    //- release the state to "my" interpreter
+    void releaseInterpreter();
 
     //- Check whether we want to continue (parallel)
     bool parallelNoRun(bool doWarning=false);

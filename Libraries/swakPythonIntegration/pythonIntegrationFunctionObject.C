@@ -80,12 +80,14 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
     initEnvironment(t);
 
     {
+        setInterpreter();
         PyObject *m = PyImport_AddModule("__main__");
         PyObject_SetAttrString(
             m,
             "functionObjectName",
             PyString_FromString(this->name().c_str())
         );
+        releaseInterpreter();
     }
 
     setRunTime();
