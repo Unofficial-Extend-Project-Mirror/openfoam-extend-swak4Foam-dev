@@ -2152,3 +2152,9 @@ S_{expl} + S_{impl} T
 **** Python integration no uses =IPython= if possible
      The interactive shell of the python integration now uses
      =IPython= if it is installed. This improves tab-completion etc
+**** Preload libraries in the Python integration
+     As problematic libraries could hand during importing these
+     libraries can be imported in a safe way using the optional
+     =importLibs=-entry which is a dictionary. The keys are the names
+     under which the imports will appear in the Python-namespace. The
+     value is optional and the name of the actual library

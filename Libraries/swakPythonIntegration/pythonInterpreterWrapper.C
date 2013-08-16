@@ -412,23 +412,32 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
         return;
     }
 
+    Dbug << "Currently " << interpreterCount
+        << " Python interpreters (deleting one)" << endl;
+
     if(pythonState_) {
         PyThreadState_Swap(pythonState_);
         Py_EndInterpreter(pythonState_);
+        PyEval_ReleaseLock();
         pythonState_=NULL;
     }
-
-    Dbug << "Currently " << interpreterCount
-        << " Python interpreters (deleting one)" << endl;
 
     interpreterCount--;
     if(interpreterCount==0) {
         Dbug << "Finalizing Python" << endl;
 
-        PyThreadState_Swap(oldPythonState_);
+        //        PyThreadState_Swap(oldPythonState_);
+        //        PyThreadState_Swap(mainThreadState);
 
+        PyEval_RestoreThread(mainThreadState);
         // This causes a segfault
-        Py_Finalize();
+        //        Py_Finalize();
+        WarningIn("pythonInterpreterWrapper::~pythonInterpreterWrapper()")
+            << "Python not properly finalized (alternative would have been a "
+                << "segmentation fault)." << endl
+                << "This shouldn't be a problem as the program has finished anyway"
+                << endl;
+
     }
 }
 
