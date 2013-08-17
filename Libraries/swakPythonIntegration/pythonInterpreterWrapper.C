@@ -127,13 +127,11 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 (
     const objectRegistry& obr,
     const dictionary& dict,
-    bool forceToNamespace,
-    bool separateInterpreter
+    bool forceToNamespace
 ):
     obr_(obr),
     dict_(dict),
     pythonState_(NULL),
-    oldPythonState_(NULL),
     useNumpy_(dict.lookupOrDefault<bool>("useNumpy",true)),
     useIPython_(dict.lookupOrDefault<bool>("useIPython",true)),
     triedIPython_(false),
@@ -239,12 +237,10 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     interpreterCount++;
 
-    //    oldPythonState_=PyThreadState_Get();
-    if(separateInterpreter) {
-        Pbug << "Getting new interpreter" << endl;
-        pythonState_=Py_NewInterpreter();
-        Pbug << "Interpreter state: " << getHex(pythonState_) << endl;
-    }
+    Pbug << "Getting new interpreter" << endl;
+    pythonState_=Py_NewInterpreter();
+    Pbug << "Interpreter state: " << getHex(pythonState_) << endl;
+
     //    interactiveLoop("Clean");
 
     initIPython();
@@ -425,9 +421,6 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
     interpreterCount--;
     if(interpreterCount==0) {
         Dbug << "Finalizing Python" << endl;
-
-        //        PyThreadState_Swap(oldPythonState_);
-        //        PyThreadState_Swap(mainThreadState);
 
         PyEval_RestoreThread(mainThreadState);
         // This causes a segfault
