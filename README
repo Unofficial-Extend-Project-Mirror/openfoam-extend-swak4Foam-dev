@@ -1698,7 +1698,7 @@ S_{expl} + S_{impl} T
      If this is set then this Python-code is executed every time a
      time-step was written to disk
 **** Python-integration has convenience-functions to create data files
-     Python-integration now has two conventience-functions that return
+     Python-integration now has two convenience-functions that return
      a filename with the full path and create the directories if
      necessary. The file is *not* created (that is the responsibility
      of the Python-code).
@@ -2012,6 +2012,15 @@ S_{expl} + S_{impl} T
                runs prefixes the processor number
      Both macros are to be used like regular streams and don't have
      to be enclosed in =if(debug){}= (this is part of the macro)
+*** Documentation
+    Important enhancements of the documentation in the
+    =Documentations=-folder
+**** Documentation of =accumulations=
+     The possible values of the common =accumulations=-lists are
+     documented
+**** General documentation of the Python-embedding
+     The general options and the behavior of the Python-embedding are
+     described
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
