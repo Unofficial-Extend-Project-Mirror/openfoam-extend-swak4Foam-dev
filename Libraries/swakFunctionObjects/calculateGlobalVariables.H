@@ -78,6 +78,9 @@ class calculateGlobalVariables
     //- list of variables that should go to the global namespace
     wordList toGlobalVariables_;
 
+    //- whether or not to reset the variable
+    bool noReset_;
+
 protected:
 
     void executeAndWriteToGlobal();

@@ -246,6 +246,8 @@ ExpressionResult& GlobalVariablesRepository::addValue(
         (*theScope[name])=value;
     }
 
+    Dbug << "Added: " << (*theScope[name]) << endl;
+
     return (*theScope[name]);
 }
 
