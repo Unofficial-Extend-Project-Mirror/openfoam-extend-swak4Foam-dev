@@ -50,7 +50,7 @@ functions {
     {
         type pythonIntegration;
 
-        //        debugPythonWrapper 1; // switching on
+        debugPythonWrapper 1; // switching on
 
         startCode "print 'Starting';a=0; print dir()";
         executeCode "a+=1; print 'a:',a";
@@ -276,11 +276,14 @@ functions {
     }
     pythonDeltaT {
         type setDeltaTWithPython;
+        parallelMasterOnly true;
         deltaTCode "import math;return 0.005*(1+0.5*math.sin(20*runTime))";
     }
     pythonEndTime {
         type setEndTimeWithPython;
-        endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
+        parallelMasterOnly false;
+        isParallelized true;
+       endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
     }
 }
 

@@ -73,6 +73,7 @@ void pythonInterpreterWrapper::initIPython() {
             if(fail) {
                 WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
                     << "Importing of IPython failed. Falling back to regular shell"
+                        << " for " << dict_.name()
                         << endl;
                 useIPython_=false;
             } else {
@@ -80,6 +81,7 @@ void pythonInterpreterWrapper::initIPython() {
                 if(ipython==NULL) {
                     WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
                         << "Can't find IPython-module. Switching IPython off"
+                            << " for " << dict_.name()
                             << endl;
                     useIPython_=false;
                 } else {
@@ -99,11 +101,13 @@ void pythonInterpreterWrapper::initIPython() {
                         oldIPython_=true;
                         WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
                             << "Old style IPython embedding"
+                                << " for " << dict_.name()
                                 << endl;
                     } else {
                         useIPython_=false;
                         WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
                             << "Did not find a known way of embedding IPython. Using normal shell"
+                                << " for " << dict_.name()
                                 << endl;
 
                     }
@@ -171,6 +175,8 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 {
     Pbug << "Starting constructor" << endl;
 
+    syncParallel();
+
     debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug);
 
     if(!dict.found("useNumpy")) {
@@ -190,7 +196,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     }
 
     if(interpreterCount==0) {
-        Dbug << "Initializing Python" << endl;
+        Pbug << "Initializing Python" << endl;
 
         Py_Initialize();
 
@@ -219,6 +225,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     }
 
     if(parallelNoRun(true)) {
+        Pbug << "Getting out because of 'parallelNoRun'" << endl;
         return;
     }
 
@@ -256,7 +263,8 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     } else {
         if(useIPython_) {
             WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
-                << "'useIPython' not needed if there is no interactivity"
+                << "'useIPython' not needed in " << dict.name()
+                    << " if there is no interactivity"
                     << endl;
         }
     }
@@ -331,12 +339,14 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     PyEval_ReleaseThread(pythonState_);
 
-    Dbug << "End constructor" << endl;
+    Pbug << "End constructor" << endl;
  }
 
 void pythonInterpreterWrapper::initEnvironment(const Time &t)
 {
-    Dbug << "initEnvironment" << endl;
+    assertParallel("initEnvironment");
+
+    Pbug << "initEnvironment" << endl;
 
     setInterpreter();
 
@@ -357,7 +367,14 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
         "def makeDataDir(d):\n"
         "    import os\n"
         "    if not os.path.exists(d):\n"
-        "        os.makedirs(d)\n"
+        "        try:\n"
+        "            os.makedirs(d)\n"
+        "        except OSError:\n"
+        "            if not os.path.exists(d):\n"
+        "                import sys\n"
+        "                raise sys.exc_info()[1]\n"
+        "            else:\n"
+        "                print 'Possible race condition while creating',d\n"
 
         "def timeDataFile(name):\n"
         "    import os\n"
@@ -375,12 +392,18 @@ void pythonInterpreterWrapper::initEnvironment(const Time &t)
     releaseInterpreter();
 }
 
+bool pythonInterpreterWrapper::parallelMustBroadcast()
+{
+    return Pstream::parRun() && parallelMasterOnly_;
+}
+
 bool pythonInterpreterWrapper::parallelNoRun(bool doWarning)
 {
     if(Pstream::parRun()) {
         if(isParallelized_ && doWarning) {
             WarningIn("bool pythonInterpreterWrapper::parallelNoRun()")
-                << "The parameter 'isParallelized' was set. This means that the "
+                << "The parameter 'isParallelized' was set in " << dict_.name()
+                    << ". This means that the "
                     << "Python code has no adverse side effects in parallel"
                     << endl;
         }
@@ -391,7 +414,7 @@ bool pythonInterpreterWrapper::parallelNoRun(bool doWarning)
                 FatalErrorIn("pythonInterpreterWrapper::parallelNoRun(bool doWarning)")
                     << "This is a parallel run and the Python-snipplets may have"
                         << " adverse side effects. If you do not think so set"
-                        << " the 'isParallelized'-flag to true"
+                        << " the 'isParallelized'-flag to true in " << dict_.name()
                         << endl
                         << exit(FatalError);
             }
@@ -436,9 +459,23 @@ pythonInterpreterWrapper::~pythonInterpreterWrapper()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void pythonInterpreterWrapper::assertParallel(const word &name)
+{
+    if(Pstream::parRun() && parallelNoRun()) {
+        FatalErrorIn("pythonInterpreterWrapper::"+name)
+            << "This function is not meant to be called on this processor" << endl
+                << "Programmers error"
+                << endl
+                << exit(FatalError);
+
+    }
+}
+
 void pythonInterpreterWrapper::setRunTime(const Time &time)
 {
-    Dbug << "setRunTime " << time.timeName() << endl;
+    assertParallel("setRunTime");
+
+    Pbug << "setRunTime " << time.timeName() << endl;
 
     setInterpreter();
 
@@ -455,6 +492,8 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
 
 void pythonInterpreterWrapper::setInterpreter()
 {
+    assertParallel("setInterpreter");
+
     Pbug << "setInterpreter" << endl;
 
     if(debug) {
@@ -472,6 +511,8 @@ void pythonInterpreterWrapper::setInterpreter()
 
 void pythonInterpreterWrapper::releaseInterpreter()
 {
+    assertParallel("releaseInterpreter");
+
     Pbug << "releaseInterpreter" << endl;
     PyEval_ReleaseThread(pythonState_);
     //     PyEval_ReleaseThread(mainThreadState);
@@ -483,19 +524,33 @@ bool pythonInterpreterWrapper::executeCode(
     bool failOnException
 )
 {
-    Dbug << "ExecuteCode: " << code << endl;
+    Pbug << "ExecuteCode: " << code << endl;
+    syncParallel();
 
-    setInterpreter();
+    int fail=0;
 
-    getGlobals();
+    if(!parallelNoRun()) {
+        setInterpreter();
 
-    Dbug << "Execute" << endl;
-    int fail=PyRun_SimpleString(code.c_str());
-    Dbug << "Fail: " << fail << endl;
+        getGlobals();
 
-    doAfterExecution(fail,code,putVariables,failOnException);
+        Pbug << "Execute" << endl;
+        fail=PyRun_SimpleString(code.c_str());
+        Pbug << "Fail: " << fail << endl;
 
-    releaseInterpreter();
+        doAfterExecution(fail,code,putVariables,failOnException);
+
+        releaseInterpreter();
+    }
+
+    if(parallelMustBroadcast()) {
+        Pbug << "Prescatter: " << fail << endl;
+        Pstream::scatter(fail);
+        Pbug << "Postscatter: " << fail << endl;
+        if(putVariables) {
+            scatterGlobals();
+        }
+    }
 
     return fail==0;
 }
@@ -506,15 +561,19 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
     bool putVariables,
     bool failOnException
 ) {
-    Dbug << "ExecuteCodeCaptureOutput: " << code << endl;
+    Pbug << "ExecuteCodeCaptureOutput: " << code << endl;
+    syncParallel();
 
-    setInterpreter();
+    int fail=0;
 
-    getGlobals();
+    if(!parallelNoRun()) {
+        setInterpreter();
 
-    PyObject *m = PyImport_AddModule("__main__");
+        getGlobals();
 
-    char const* catcherCode =
+        PyObject *m = PyImport_AddModule("__main__");
+
+        char const* catcherCode =
 "# catcher code\n"
 "import sys\n"
 "class __StdoutCatcher:\n"
@@ -526,25 +585,36 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
 "__precatcherStdout = sys.stdout\n"
 "sys.stdout = __catcher\n";
 
-    PyRun_SimpleString(catcherCode);
+        PyRun_SimpleString(catcherCode);
 
-    int fail=PyRun_SimpleString(code.c_str());
+        fail=PyRun_SimpleString(code.c_str());
 
-    char const* postCatchCode =
+        char const* postCatchCode =
 "sys.stdout = __precatcherStdout\n";
 
-    PyRun_SimpleString(postCatchCode);
+        PyRun_SimpleString(postCatchCode);
 
-    doAfterExecution(fail,code,putVariables,failOnException);
+        doAfterExecution(fail,code,putVariables,failOnException);
 
-    PyObject* catcher = PyObject_GetAttrString(m, "__catcher");
-    PyObject* output = PyObject_GetAttrString(catcher, "data");
+        PyObject* catcher = PyObject_GetAttrString(m, "__catcher");
+        PyObject* output = PyObject_GetAttrString(catcher, "data");
 
-    stdout=string(PyString_AsString(output));
+        stdout=string(PyString_AsString(output));
 
-    Pbug << "Fail: " << fail << " Captured: " << stdout << endl;
+        Pbug << "Fail: " << fail << " Captured: " << stdout << endl;
 
-    releaseInterpreter();
+        releaseInterpreter();
+    }
+
+    if(parallelMustBroadcast()) {
+        Pbug << "Prescatter: " << fail << endl;
+        Pstream::scatter(fail);
+        Pstream::scatter(stdout);
+        Pbug << "Postscatter: " << fail << endl;
+        if(putVariables) {
+            scatterGlobals();
+        }
+    }
 
     return fail==0;
 }
@@ -558,6 +628,8 @@ public:
 
 bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool failOnException)
 {
+    Pbug << "evaluateCodeTrueOrFalse" << endl;
+
     return evaluateCode<bool,pyToBool>(code,failOnException);
 }
 
@@ -570,6 +642,8 @@ public:
 
 scalar pythonInterpreterWrapper::evaluateCodeScalar(const string &code,bool failOnException)
 {
+    Pbug << "evaluateCodeScalar" << endl;
+
     return evaluateCode<scalar,pyToScalar>(code,failOnException);
 }
 
@@ -582,6 +656,8 @@ public:
 
 label pythonInterpreterWrapper::evaluateCodeLabel(const string &code,bool failOnException)
 {
+    Pbug << "evaluateCodeLabel" << endl;
+
     return evaluateCode<label,pyToLabel>(code,failOnException);
 }
 
@@ -591,69 +667,78 @@ T pythonInterpreterWrapper::evaluateCode(
     bool failOnException
 )
 {
-    Dbug << "evaluateCode: " << code << endl;
+    Pbug << "evaluateCode: " << code << endl;
+    syncParallel();
 
-    setInterpreter();
-
-    getGlobals();
-
-    const word funcName("decisionFunction");
-    string functionCode="def "+funcName+"():\n";
-
-    std::stringstream ss(code.c_str());
-    std::string line;
-    while(std::getline(ss, line)) {
-        functionCode+="    "+line+"\n";
-    }
-
-    Dbug << "Function code:" << endl
-        << functionCode;
-
-    PyObject *m = PyImport_AddModule("__main__");
-    PyObject *d = PyModule_GetDict(m);
-
-    PyObject *pResult=NULL;
-    PyObject *pCode=(Py_CompileString(functionCode.c_str(),"<string from swak>",Py_file_input));
-
-    if( pCode!=NULL && !PyErr_Occurred()) {
-        Dbug << "Compiled " << code << endl;
-
-        PyObject *pFunc=PyFunction_New(pCode,d);
-        Dbug << "Is function: " << PyFunction_Check(pFunc) << endl;
-
-        PyObject *pTemp=PyObject_CallFunction(pFunc,NULL);
-        Py_DECREF(pTemp);
-
-        pResult=PyRun_String((funcName+"()").c_str(),Py_eval_input,d,d);
-
-        Py_DECREF(pFunc);
-        Py_DECREF(pCode);
-    }
-    //    bool result=false;
     T result=pTraits<T>::zero;
+    if(!parallelNoRun()) {
+        setInterpreter();
 
-    if(pResult!=NULL) {
-        if(debug) {
-            PyObject *str=PyObject_Str(pResult);
+        getGlobals();
 
-            Dbug << "Result is " << PyString_AsString(str) << endl;
+        const word funcName("decisionFunction");
+        string functionCode="def "+funcName+"():\n";
 
-            Py_DECREF(str);
+        std::stringstream ss(code.c_str());
+        std::string line;
+        while(std::getline(ss, line)) {
+            functionCode+="    "+line+"\n";
         }
-        //        result=PyObject_IsTrue(pResult);
-        result=Func()(pResult);
-        Dbug << "Evaluated to " << result << endl;
 
-        Py_DECREF(pResult);
+        Pbug << "Function code:" << endl
+            << functionCode;
+
+        PyObject *m = PyImport_AddModule("__main__");
+        PyObject *d = PyModule_GetDict(m);
+
+        PyObject *pResult=NULL;
+        PyObject *pCode=(Py_CompileString(functionCode.c_str(),"<string from swak>",Py_file_input));
+
+        if( pCode!=NULL && !PyErr_Occurred()) {
+            Pbug << "Compiled " << code << endl;
+
+            PyObject *pFunc=PyFunction_New(pCode,d);
+            Dbug << "Is function: " << PyFunction_Check(pFunc) << endl;
+
+            PyObject *pTemp=PyObject_CallFunction(pFunc,NULL);
+            Py_DECREF(pTemp);
+
+            pResult=PyRun_String((funcName+"()").c_str(),Py_eval_input,d,d);
+
+            Py_DECREF(pFunc);
+            Py_DECREF(pCode);
+        }
+
+        if(pResult!=NULL) {
+            if(debug) {
+                PyObject *str=PyObject_Str(pResult);
+
+                Pbug << "Result is " << PyString_AsString(str) << endl;
+
+                Py_DECREF(str);
+            }
+
+            result=Func()(pResult);
+            Pbug << "Evaluated to " << result << endl;
+
+            Py_DECREF(pResult);
+        }
+
+        bool success=(pResult!=NULL && !PyErr_Occurred());
+
+        Pbug << "Success of execution " << success << endl;
+
+        doAfterExecution(!success,code,false,failOnException);
+
+        releaseInterpreter();
     }
 
-    bool success=(pResult!=NULL && !PyErr_Occurred());
-
-    Dbug << "Success of execution " << success << endl;
-
-    doAfterExecution(!success,code,false,failOnException);
-
-    releaseInterpreter();
+    if(parallelMustBroadcast()) {
+        Pbug << "Prescatter: " << result << endl;
+        Pstream::scatter(result);
+        Pbug << "Postscatter: " << result << endl;
+        //        scatterGlobals();
+    }
 
     return result;
 }
@@ -727,6 +812,7 @@ bool pythonInterpreterWrapper::importLib(
     if(mainModule==NULL) {
         WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
             << "Could not get module __main__ when importing " << name
+                << " in " << dict_.name()
                 << endl;
         return false;
     }
@@ -740,7 +826,7 @@ bool pythonInterpreterWrapper::importLib(
     PyObject * libModule = PyImport_ImportModule(name.c_str());
     if(libModule==NULL) {
         WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
-            << "Could not import " << name
+            << "Could not import " << name << " in " << dict_.name()
                 << endl;
         if(useMainThreadState) {
             Dbug << "Emergency swap of states" << endl;
@@ -754,6 +840,7 @@ bool pythonInterpreterWrapper::importLib(
         if(mainModule2==NULL) {
             WarningIn("pythonInterpreterWrapper::importLib(const word &name)")
                 << "Could not get module __main__ when importing " << name
+                    << " in " << dict_.name()
                     << endl;
         } else {
             PyModule_AddObject(mainModule2, name.c_str(), libModule);
@@ -815,16 +902,20 @@ void pythonInterpreterWrapper::doAfterExecution(
 
 void pythonInterpreterWrapper::getGlobals()
 {
+    assertParallel("getGlobals");
+
     if(swakToPythonNamespaces_.size()==0) {
         return;
     }
 
-    Dbug << "Getting global variables from namespaces "
+    Pbug << "Getting global variables from namespaces "
         << swakToPythonNamespaces_ << endl;
 
     PyObject *m = PyImport_AddModule("__main__");
 
     forAll(swakToPythonNamespaces_,nameI) {
+        Pbug << "Namespace: " << swakToPythonNamespaces_[nameI] << endl;
+
         const GlobalVariablesRepository::ResultTable &vars=
             GlobalVariablesRepository::getGlobalVariables(
                 obr_
@@ -839,15 +930,22 @@ void pythonInterpreterWrapper::getGlobals()
             const word &var=iter.key();
             const ExpressionResult &value=*(*iter);
 
+            Pbug << "Variable: " << var << endl;
+
             if(
                 !useNumpy_
                 ||
                 value.isSingleValue()
             ) {
+                Pbug << "Single value. No numpy" << endl;
+
                 ExpressionResult val=value.getUniform(
                     1,
                     !warnOnNonUniform_
                 );
+
+                Pbug << "Value: " << val;
+
                 if(val.valueType()==pTraits<scalar>::typeName) {
                     PyObject_SetAttrString
                         (
@@ -879,7 +977,7 @@ void pythonInterpreterWrapper::getGlobals()
             } else {
                 const ExpressionResult &val=value;
 
-                Dbug << "Building a numpy-Array for global " << var
+                Pbug << "Building a numpy-Array for global " << var
                     << " at address " << val.getAddressAsDecimal()
                     << " with size " << val.size()
                     << " and type " << val.valueType()
@@ -910,17 +1008,21 @@ void pythonInterpreterWrapper::getGlobals()
                 }
                 cmd << ")";
 
-                Dbug << "Python: " << cmd.str() << endl;
+                Pbug << "Python: " << cmd.str() << endl;
 
                 PyRun_SimpleString(cmd.str().c_str());
             }
+            Pbug << "Variable done" << endl;
         }
+        Pbug << "Namespace done" << endl;
     }
     Dbug << "End getGlobals" << endl;
 }
 
 void pythonInterpreterWrapper::setGlobals()
 {
+    assertParallel("setGlobals");
+
     if(pythonToSwakVariables_.size()==0) {
         return;
     }
@@ -1214,6 +1316,62 @@ void pythonInterpreterWrapper::readCode(
     }
 }
 
+void pythonInterpreterWrapper::scatterGlobals()
+{
+    Pbug << "scatterGlobals" << endl;
+
+    forAll(pythonToSwakVariables_,i) {
+        const word &name=pythonToSwakVariables_[i];
+        Pbug << "Scattering " << name << endl;
+
+        ExpressionResult result;
+        if(!parallelNoRun()) {
+            result=*GlobalVariablesRepository::getGlobalVariables(
+                obr_
+            ).getNamespace(
+                pythonToSwakNamespace_
+            )[name];
+            Pbug << "Value to scatter: " << result << endl;
+        }
+        Pstream::scatter(result);
+        if(parallelNoRun()) {
+            Info << "Setting value of " << name << endl;
+
+            ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
+                obr_
+            ).addValue(
+                name,
+                pythonToSwakNamespace_,
+                result
+            );
+            res.noReset();
+        }
+    }
+}
+
+void pythonInterpreterWrapper::syncParallel() const
+{
+    static label nr=0;
+
+    if(Pstream::parRun()) {
+        nr++;
+        label id=nr;
+        Pbug << "syncParallel: wait nr " << nr << endl;
+        reduce(id,plusOp<label>());
+        Pbug << "syncParallel: all here " << id << endl;
+        if(id!=nr*Pstream::nProcs()) {
+            Pout << "syncParallel. Id: " << id
+                << " expected: " << nr*Pstream::nProcs() << endl;
+            FatalErrorIn("pythonInterpreterWrapper::syncParallel()")
+                << "Wrong sequence number. Out of sync"
+                    << endl
+                    << exit(FatalError);
+
+         }
+    } else {
+        Dbug << "syncParallel: no wait" << endl;
+    }
+}
 
 } // namespace Foam
 

@@ -158,6 +158,12 @@ protected:
     //- Check whether we want to continue (parallel)
     bool parallelNoRun(bool doWarning=false);
 
+    //- make sure that no functions are called that are no meant to be called in parallel
+    void assertParallel(const word &name);
+
+    //- whether the result has to be broadcast from the master processor
+    bool parallelMustBroadcast();
+
     //- run an interactive sesssion
     void interactiveLoop(const string &banner);
 
@@ -167,6 +173,12 @@ protected:
         const word &as="",
         bool useMainThreadStat=false
     );
+
+    //- copy the global variables to other processors if only the master has them
+    void scatterGlobals();
+
+    //- wait for all processors
+    void syncParallel() const;
 
 public:
     //- Execute code. Return true if there was no problem

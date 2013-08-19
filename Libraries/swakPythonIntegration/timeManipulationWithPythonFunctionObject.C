@@ -41,11 +41,13 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
+    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 1);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -63,13 +65,11 @@ timeManipulationWithPythonFunctionObject::timeManipulationWithPythonFunctionObje
         dict
     )
 {
-    if(parallelNoRun()) {
-        return;
+    if(!parallelNoRun()) {
+        initEnvironment(t);
+
+        setRunTime(t);
     }
-
-    initEnvironment(t);
-
-    setRunTime(t);
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
