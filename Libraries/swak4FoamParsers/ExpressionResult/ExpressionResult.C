@@ -67,7 +67,7 @@ ExpressionResult::ExpressionResult()
     noReset_(false),
     needsReset_(false)
 {
-    Dbug << "ExpressionResult()" << endl;
+    Pbug << "ExpressionResult()" << endl;
 
     clearResult();
 }
@@ -83,8 +83,8 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     noReset_(false),
     needsReset_(false)
 {
-    Dbug << "ExpressionResult(const ExpressionResult &rhs)" << endl;
-    Dbug << "Rhs: " << rhs << endl;
+    Pbug << "ExpressionResult(const ExpressionResult &rhs)" << endl;
+    Pbug << "Rhs: " << rhs << endl;
 
     (*this)=rhs;
 }
@@ -108,7 +108,7 @@ ExpressionResult::ExpressionResult(
     ),
     needsReset_(false)
 {
-    Dbug << "ExpressionResult(const dictionary &dict,bool isSingleValue)"
+    Pbug << "ExpressionResult(const dictionary &dict,bool isSingleValue)"
         << endl;
 
     if(
@@ -236,7 +236,7 @@ autoPtr<ExpressionResult> ExpressionResult::New
 
 ExpressionResult::~ExpressionResult()
 {
-    Dbug << "~ExpressionResult()" << endl;
+    Pbug << "~ExpressionResult()" << endl;
 
     uglyDelete();
 }
@@ -271,26 +271,26 @@ bool ExpressionResult::reset(bool force) {
 
 void ExpressionResult::clearResult()
 {
-    Dbug << "Clearing result" << endl;
+    Pbug << "Clearing result" << endl;
 
     uglyDelete();
 
-    Dbug << "Clearing object" << endl;
+    Pbug << "Clearing object" << endl;
 
     generalContent_.reset();
     objectSize_=-1;
 
-    Dbug << "Clearing result - done" << endl;
+    Pbug << "Clearing result - done" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 void ExpressionResult::uglyDelete()
 {
-    Dbug << "uglyDelete" << endl;
+    Pbug << "uglyDelete" << endl;
 
     if( valPtr_ ) {
-        Dbug << "uglyDelete - clearing pointer" << endl;
+        Pbug << "uglyDelete - clearing pointer" << endl;
 
         if(valType_==pTraits<scalar>::typeName) {
             delete static_cast<scalarField*>(valPtr_);
@@ -314,7 +314,7 @@ void ExpressionResult::uglyDelete()
     valType_="Void";
     valPtr_=NULL;
 
-    Dbug << "uglyDelete - done" << endl;
+    Pbug << "uglyDelete - done" << endl;
 }
 
 ExpressionResult ExpressionResult::getUniform(
@@ -382,9 +382,9 @@ label ExpressionResult::size() const {
 
 void ExpressionResult::operator=(const ExpressionResult& rhs)
 {
-    Dbug << "operator=(const ExpressionResult& rhs)"
+    Pbug << "operator=(const ExpressionResult& rhs)"
         << endl;
-    Dbug << "Rhs: " << rhs << endl;
+    Pbug << "Rhs: " << rhs << endl;
 
     // Check for assignment to self
     if (this == &rhs)
@@ -460,6 +460,11 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 {
+    if(ExpressionResult::debug) {
+        Pout << "operator<<(Ostream &out,const ExpressionResult &data) "
+            << getHex(&data) << endl;
+    }
+
     out << token::BEGIN_BLOCK << endl;
 
     out.writeKeyword("resultType");
@@ -537,7 +542,7 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 Istream & operator>>(Istream &in,ExpressionResult &data)
 {
     if(ExpressionResult::debug) {
-        Info << "operator>>(Istream &in,ExpressionResult &data)" << endl;
+        Pout << "operator>>(Istream &in,ExpressionResult &data)" << endl;
     }
 
     dictionary dict(in);

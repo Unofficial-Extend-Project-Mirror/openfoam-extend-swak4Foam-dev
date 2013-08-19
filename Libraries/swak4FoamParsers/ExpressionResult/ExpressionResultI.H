@@ -48,7 +48,7 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        Dbug << "ExpressionResult(const Field<Type>  &f)"
+        Pbug << "ExpressionResult(const Field<Type>  &f)"
             << endl;
 
         setResult(f);
@@ -64,7 +64,7 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        Dbug << "ExpressionResult(autoPtr<Type> o)" << endl;
+        Pbug << "ExpressionResult(autoPtr<Type> o)" << endl;
 
         setObjectResult(o);
     }
@@ -79,7 +79,7 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        Dbug << "ExpressionResult(const dimensioned<Type>  &f)"
+        Pbug << "ExpressionResult(const dimensioned<Type>  &f)"
             << endl;
 
         setSingleValue(f.value());
@@ -98,7 +98,7 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        Dbug << "ExpressionResult(const Type &f, ...)"
+        Pbug << "ExpressionResult(const Type &f, ...)"
             << endl;
 
         setSingleValue(f);
@@ -112,7 +112,7 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)
     {
-        Dbug << "setResult(const Field<Type> &val,bool isPoint)"
+        Pbug << "setResult(const Field<Type> &val,bool isPoint)"
             << endl;
 
         toBeSet().setResultInternal(val,isPoint);
@@ -122,7 +122,7 @@ namespace Foam {
     void ExpressionResult::setResultInternal(
         const Field<Type> &val,bool isPoint
     ) {
-        Dbug << "setResultInternal" << endl;
+        Pbug << "setResultInternal" << endl;
 
         clearResult();
 
@@ -132,7 +132,7 @@ namespace Foam {
         isPoint_=isPoint;
         isSingleValue_=false;
 
-        Dbug << "setResultInternal - done" << endl;
+        Pbug << "setResultInternal - done" << endl;
     }
 
     template <class T>
@@ -144,7 +144,7 @@ namespace Foam {
     template <class T>
     void ExpressionResult::setObjectResultInternal(autoPtr<T> o)
     {
-        Dbug << "setObjectResultInternal(autoPtr<T> o)" << endl;
+        Pbug << "setObjectResultInternal(autoPtr<T> o)" << endl;
 
         //        valType_=pTraits<T>::typeName;
         valType_=o().typeName;
@@ -166,7 +166,7 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResultInternal(Field<Type> *val,bool isPoint)
     {
-        Dbug << "setResultInternal(Field<Type> *val,bool isPoint)"
+        Pbug << "setResultInternal(Field<Type> *val,bool isPoint)"
             << endl;
 
         clearResult();
@@ -187,7 +187,7 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResultInternal(Type val,label size)
     {
-        Dbug << "setResultInternal(Type val,label size)"
+        Pbug << "setResultInternal(Type val,label size)"
             << endl;
 
         clearResult();
@@ -208,7 +208,7 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setSingleValueInternal(Type val)
     {
-        Dbug << "setSingleValueInternal(Type val)" << endl;
+        Pbug << "setSingleValueInternal(Type val)" << endl;
 
         clearResult();
 
@@ -222,7 +222,7 @@ namespace Foam {
     template<class Type>
     inline tmp<Field<Type> > ExpressionResult::getResult(bool keep)
     {
-        Dbug << "getResult(bool keep "
+        Pbug << "getResult(bool keep "
             << keep << ")" << endl;
 
         if(valType_!=pTraits<Type>::typeName) {
@@ -262,7 +262,7 @@ namespace Foam {
     template<class Type>
     inline tmp<Type> ExpressionResult::getObjectResult(bool keep)
     {
-        Dbug << "getObjectResult: " << keep << endl;
+        Pbug << "getObjectResult: " << keep << endl;
 
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Type> ExpressionResult::getObjectResult()")
@@ -279,7 +279,7 @@ namespace Foam {
         );
 
         if(keep) {
-            Dbug << "getObjectResult: make copy" << endl;
+            Pbug << "getObjectResult: make copy" << endl;
 
             generalContent_.set(
                 new Type(
@@ -290,13 +290,13 @@ namespace Foam {
                     )
                 )
             );
-            Dbug << "getObjectResult: make copy - done" << endl;
+            Pbug << "getObjectResult: make copy - done" << endl;
 
         } else {
             clearResult();
         }
 
-        Dbug << "getObjectResult - done" << endl;
+        Pbug << "getObjectResult - done" << endl;
 
         return result;
     }
