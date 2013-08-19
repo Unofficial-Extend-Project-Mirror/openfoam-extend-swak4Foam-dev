@@ -941,7 +941,8 @@ void pythonInterpreterWrapper::getGlobals()
 
                 ExpressionResult val=value.getUniform(
                     1,
-                    !warnOnNonUniform_
+                    !warnOnNonUniform_,
+                    !Pstream::parRun() || !parallelMasterOnly_
                 );
 
                 Pbug << "Value: " << val;

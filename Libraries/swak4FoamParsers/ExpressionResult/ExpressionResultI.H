@@ -304,16 +304,30 @@ namespace Foam {
     template<class Type>
     ExpressionResult ExpressionResult::getUniformInternal(
         const label size,
-        bool noWarn
+        bool noWarn,
+        bool parallel
     ) const
     {
         ExpressionResult result;
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
-        Type avg=gAverage(vals);
+        Type avg;
+        if(parallel) {
+            avg=gAverage(vals);
+        } else {
+            avg=average(vals);
+        }
 
         if(!noWarn) {
-            Type minVal=gMin(vals);
-            Type maxVal=gMax(vals);
+            Type minVal;
+            Type maxVal;
+            if(parallel) {
+                minVal=gMin(vals);
+                maxVal=gMax(vals);
+            } else {
+                minVal=min(vals);
+                maxVal=max(vals);
+            }
+
             if(mag(minVal-maxVal)>SMALL) {
                 WarningIn("ExpressionResult::getUniformInternal(const label size,bool noWarn)")
                     << "The minimum value " << minVal << " and the maximum "

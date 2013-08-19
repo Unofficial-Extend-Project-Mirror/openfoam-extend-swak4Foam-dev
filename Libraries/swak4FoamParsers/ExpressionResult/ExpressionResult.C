@@ -319,20 +319,21 @@ void ExpressionResult::uglyDelete()
 
 ExpressionResult ExpressionResult::getUniform(
     const label size,
-    bool noWarn
+    bool noWarn,
+    bool parallel
 ) const
 {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {
-            return getUniformInternal<scalar>(size,noWarn);
+            return getUniformInternal<scalar>(size,noWarn,parallel);
         } else if(valType_==vector::typeName) {
-            return getUniformInternal<vector>(size,noWarn);
+            return getUniformInternal<vector>(size,noWarn,parallel);
         } else if(valType_==tensor::typeName) {
-            return getUniformInternal<tensor>(size,noWarn);
+            return getUniformInternal<tensor>(size,noWarn,parallel);
         } else if(valType_==symmTensor::typeName) {
-            return getUniformInternal<symmTensor>(size,noWarn);
+            return getUniformInternal<symmTensor>(size,noWarn,parallel);
         } else if(valType_==sphericalTensor::typeName) {
-            return getUniformInternal<sphericalTensor>(size,noWarn);
+            return getUniformInternal<sphericalTensor>(size,noWarn,parallel);
         } else if(valType_==pTraits<bool>::typeName) {
             FatalErrorIn("ExpressionResult::getUniformInternal<bool>(const label size,bool noWarn)")
                 << "This specialisation is not implemented"
