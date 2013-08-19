@@ -46,7 +46,7 @@ namespace Foam {
 DebugOStream::DebugOStream(
     ostream &o,
     const word &typeName,
-    void *object,
+    const void *object,
     const bool parallel
 )
     :
