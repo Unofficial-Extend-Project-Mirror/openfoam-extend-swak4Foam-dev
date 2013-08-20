@@ -461,9 +461,13 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 {
+    //    out.format(IOstream::ASCII);
+
     if(ExpressionResult::debug) {
         Pout << "operator<<(Ostream &out,const ExpressionResult &data) "
             << getHex(&data) << endl;
+        Pout << "Format: " << (out.format()==IOstream::ASCII ? "ASCII" : "BINARY")
+            << endl;
     }
 
     out << token::BEGIN_BLOCK << endl;
@@ -543,7 +547,10 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 Istream & operator>>(Istream &in,ExpressionResult &data)
 {
     if(ExpressionResult::debug) {
-        Pout << "operator>>(Istream &in,ExpressionResult &data)" << endl;
+        Pout << "operator>>(Istream &in,ExpressionResult &data)"
+            << getHex(&data) << endl;
+        Pout << "Format: " << (in.format()==IOstream::ASCII ? "ASCII" : "BINARY")
+            << endl;
     }
 
     dictionary dict(in);
