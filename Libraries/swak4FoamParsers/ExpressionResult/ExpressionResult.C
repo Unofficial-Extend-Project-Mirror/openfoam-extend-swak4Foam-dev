@@ -67,9 +67,8 @@ ExpressionResult::ExpressionResult()
     noReset_(false),
     needsReset_(false)
 {
-    if(debug) {
-        Info << "ExpressionResult::ExpressionResult()" << endl;
-    }
+    Pbug << "ExpressionResult()" << endl;
+
     clearResult();
 }
 
@@ -84,15 +83,8 @@ ExpressionResult::ExpressionResult(const ExpressionResult &rhs)
     noReset_(false),
     needsReset_(false)
 {
-    if(debug) {
-        Info << "ExpressionResult::ExpressionResult(const ExpressionResult &rhs)" << endl;
-        // if(rhs.type()!="ExpressionResult") {
-        //     FatalErrorIn("Hepp")
-        //         << "Hey"
-        //             << abort(FatalError);
-        // }
-        Info << "Rhs: " << rhs << endl;
-    }
+    Pbug << "ExpressionResult(const ExpressionResult &rhs)" << endl;
+    Pbug << "Rhs: " << rhs << endl;
 
     (*this)=rhs;
 }
@@ -116,9 +108,8 @@ ExpressionResult::ExpressionResult(
     ),
     needsReset_(false)
 {
-    if(debug) {
-        Info << "ExpressionResult::ExpressionResult(const dictionary &dict,bool isSingleValue)" << endl;
-    }
+    Pbug << "ExpressionResult(const dictionary &dict,bool isSingleValue)"
+        << endl;
 
     if(
         dict.found("value")
@@ -245,9 +236,7 @@ autoPtr<ExpressionResult> ExpressionResult::New
 
 ExpressionResult::~ExpressionResult()
 {
-    if(debug) {
-        Info << "ExpressionResult::~ExpressionResult()" << endl;
-    }
+    Pbug << "~ExpressionResult()" << endl;
 
     uglyDelete();
 }
@@ -282,35 +271,26 @@ bool ExpressionResult::reset(bool force) {
 
 void ExpressionResult::clearResult()
 {
-    if(debug) {
-        Info << "ExpressionResult: Clearing result" << endl;
-    }
+    Pbug << "Clearing result" << endl;
 
     uglyDelete();
 
-    if(debug) {
-        Info << "ExpressionResult: Clearing object" << endl;
-    }
+    Pbug << "Clearing object" << endl;
+
     generalContent_.reset();
     objectSize_=-1;
 
-    if(debug) {
-        Info << "ExpressionResult: Clearing result - done" << endl;
-    }
+    Pbug << "Clearing result - done" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 void ExpressionResult::uglyDelete()
 {
-    if(debug) {
-        Info << "ExpressionResult: uglyDelete" << endl;
-    }
+    Pbug << "uglyDelete" << endl;
 
     if( valPtr_ ) {
-        if(debug) {
-            Info << "ExpressionResult: uglyDelete - clearing pointer" << endl;
-        }
+        Pbug << "uglyDelete - clearing pointer" << endl;
 
         if(valType_==pTraits<scalar>::typeName) {
             delete static_cast<scalarField*>(valPtr_);
@@ -334,27 +314,26 @@ void ExpressionResult::uglyDelete()
     valType_="Void";
     valPtr_=NULL;
 
-    if(debug) {
-        Info << "ExpressionResult: uglyDelete - done" << endl;
-    }
+    Pbug << "uglyDelete - done" << endl;
 }
 
 ExpressionResult ExpressionResult::getUniform(
     const label size,
-    bool noWarn
+    bool noWarn,
+    bool parallel
 ) const
 {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {
-            return getUniformInternal<scalar>(size,noWarn);
+            return getUniformInternal<scalar>(size,noWarn,parallel);
         } else if(valType_==vector::typeName) {
-            return getUniformInternal<vector>(size,noWarn);
+            return getUniformInternal<vector>(size,noWarn,parallel);
         } else if(valType_==tensor::typeName) {
-            return getUniformInternal<tensor>(size,noWarn);
+            return getUniformInternal<tensor>(size,noWarn,parallel);
         } else if(valType_==symmTensor::typeName) {
-            return getUniformInternal<symmTensor>(size,noWarn);
+            return getUniformInternal<symmTensor>(size,noWarn,parallel);
         } else if(valType_==sphericalTensor::typeName) {
-            return getUniformInternal<sphericalTensor>(size,noWarn);
+            return getUniformInternal<sphericalTensor>(size,noWarn,parallel);
         } else if(valType_==pTraits<bool>::typeName) {
             FatalErrorIn("ExpressionResult::getUniformInternal<bool>(const label size,bool noWarn)")
                 << "This specialisation is not implemented"
@@ -404,11 +383,10 @@ label ExpressionResult::size() const {
 
 void ExpressionResult::operator=(const ExpressionResult& rhs)
 {
-    if(debug) {
-        Info << "ExpressionResult::operator=(const ExpressionResult& rhs)"
-            << endl;
-        Info << "Rhs: " << rhs << endl;
-    }
+    Pbug << "operator=(const ExpressionResult& rhs)"
+        << endl;
+    Pbug << "Rhs: " << rhs << endl;
+
     // Check for assignment to self
     if (this == &rhs)
     {
@@ -483,6 +461,15 @@ void ExpressionResult::operator=(const ExpressionResult& rhs)
 
 Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 {
+    //    out.format(IOstream::ASCII);
+
+    if(ExpressionResult::debug) {
+        Pout << "operator<<(Ostream &out,const ExpressionResult &data) "
+            << getHex(&data) << endl;
+        Pout << "Format: " << (out.format()==IOstream::ASCII ? "ASCII" : "BINARY")
+            << endl;
+    }
+
     out << token::BEGIN_BLOCK << endl;
 
     out.writeKeyword("resultType");
@@ -560,7 +547,10 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
 Istream & operator>>(Istream &in,ExpressionResult &data)
 {
     if(ExpressionResult::debug) {
-        Info << "operator>>(Istream &in,ExpressionResult &data)" << endl;
+        Pout << "operator>>(Istream &in,ExpressionResult &data)"
+            << getHex(&data) << endl;
+        Pout << "Format: " << (in.format()==IOstream::ASCII ? "ASCII" : "BINARY")
+            << endl;
     }
 
     dictionary dict(in);

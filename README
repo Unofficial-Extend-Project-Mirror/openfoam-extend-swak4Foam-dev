@@ -1698,7 +1698,7 @@ S_{expl} + S_{impl} T
      If this is set then this Python-code is executed every time a
      time-step was written to disk
 **** Python-integration has convenience-functions to create data files
-     Python-integration now has two conventience-functions that return
+     Python-integration now has two convenience-functions that return
      a filename with the full path and create the directories if
      necessary. The file is *not* created (that is the responsibility
      of the Python-code).
@@ -2002,6 +2002,25 @@ S_{expl} + S_{impl} T
      The script writes the version it is used with to disk and at
      later compiles that this is the same (this makes sure that not a
      wrong version is used inadvertently to compile)
+**** Additional macros for Debugging output
+     There are two macros defined that inside an object write the name
+     of the class and the address of the object (if debug is
+     enabled). This makes the output easier distinguishable from the
+     output from other classes/objects. The two macros are:
+     - Dbug :: Writes the debug information *only* on the master processor
+     - Pbug :: Writes the output on all processors and for parallel
+               runs prefixes the processor number
+     Both macros are to be used like regular streams and don't have
+     to be enclosed in =if(debug){}= (this is part of the macro)
+*** Documentation
+    Important enhancements of the documentation in the
+    =Documentations=-folder
+**** Documentation of =accumulations=
+     The possible values of the common =accumulations=-lists are
+     documented
+**** General documentation of the Python-embedding
+     The general options and the behavior of the Python-embedding are
+     described
 *** Incompatibilities to previous versions
 **** =outputControlMode= =timestep= renamed to =timeStep=
      Because of report
@@ -2035,6 +2054,9 @@ S_{expl} + S_{impl} T
 **** Calculation of weight fields failed if size on one processor was $0$
      This was due to a logical error that was propagated through
      mindless copy/paste (only the Field-driver got it right). Fixed
+**** =groovyTotalPressure= does not read =value=
+     Because it is not initialized from the superclass when the
+     dictionary constructor is used. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
@@ -2073,6 +2095,15 @@ S_{expl} + S_{impl} T
      specified field. Optionally these statistics can also be printed
      for patches, sets and zones. The data can be written to a
      CSV-file. Also the distributions of the field can be written.
+**** New utility =funkyPythonPostproc=
+     This utility needs a dictionary and a specification of
+     times. For each time it
+     - loads a list of fields specified in the dictionary
+     - executes a list of function objects specified in the dictionary
+     - executes python-scripts
+     The idea is that the function objects pass data to the
+     python-scripts via global variables and the python-scripts do
+     whatever they like
 *** Enhancements
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file
@@ -2122,3 +2153,17 @@ S_{expl} + S_{impl} T
                components all the components have the same value
      - weightSum :: Sum of the weights of the underlying
                     entity. Usually the volume oder the area of it.
+**** Python code files are now searched more flexible
+     If a file specified with an option like =startFile= in a
+     Python-functionObject (or similar) is not found in the current
+     directory the path of the dictionary it is specified in is
+     prepended and the file is searched there
+**** Python integration no uses =IPython= if possible
+     The interactive shell of the python integration now uses
+     =IPython= if it is installed. This improves tab-completion etc
+**** Preload libraries in the Python integration
+     As problematic libraries could hand during importing these
+     libraries can be imported in a safe way using the optional
+     =importLibs=-entry which is a dictionary. The keys are the names
+     under which the imports will appear in the Python-namespace. The
+     value is optional and the name of the actual library

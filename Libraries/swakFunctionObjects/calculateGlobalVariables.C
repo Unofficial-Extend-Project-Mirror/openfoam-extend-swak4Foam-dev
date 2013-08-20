@@ -58,10 +58,18 @@ Foam::calculateGlobalVariables::calculateGlobalVariables
         )
     ),
     toGlobalNamespace_(dict.lookup("toGlobalNamespace")),
-    toGlobalVariables_(dict.lookup("toGlobalVariables"))
+    toGlobalVariables_(dict.lookup("toGlobalVariables")),
+    noReset_(dict.lookupOrDefault<bool>("noReset",false))
 {
     if(debug) {
         Info << "calculateGlobalVariables " << name << " created" << endl;
+    }
+
+    if(!dict.found("noReset")) {
+        WarningIn("calculateGlobalVariables::calculateGlobalVariables")
+            << "No entry 'noReset' in " << dict.name()
+                << ". Assumig 'false'"<< endl;
+
     }
 
     driver_->createWriterAndRead(name+"_"+type());
@@ -83,7 +91,7 @@ void Foam::calculateGlobalVariables::executeAndWriteToGlobal()
             Info << "Getting variable " << name << endl;
         }
 
-        GlobalVariablesRepository::getGlobalVariables(
+        ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
             obr_
         ).addValue(
             name,
@@ -92,6 +100,10 @@ void Foam::calculateGlobalVariables::executeAndWriteToGlobal()
                 driver_()
             ).variable(name)
         );
+
+        if(noReset_) {
+            res.noReset();
+        }
 
         if(debug) {
             Pout << "Has value "

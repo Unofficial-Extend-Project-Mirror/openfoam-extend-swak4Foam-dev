@@ -48,9 +48,9 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        if(debug) {
-            Info << "ExpressionResult::ExpressionResult(const Field<Type>  &f)" << endl;
-        }
+        Pbug << "ExpressionResult(const Field<Type>  &f)"
+            << endl;
+
         setResult(f);
     }
 
@@ -64,9 +64,8 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        if(debug) {
-            Info << "ExpressionResult::ExpressionResult(autoPtr<Type> o)" << endl;
-        }
+        Pbug << "ExpressionResult(autoPtr<Type> o)" << endl;
+
         setObjectResult(o);
     }
 
@@ -80,9 +79,9 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        if(debug) {
-            Info << "ExpressionResult::ExpressionResult(const dimensioned<Type>  &f)" << endl;
-        }
+        Pbug << "ExpressionResult(const dimensioned<Type>  &f)"
+            << endl;
+
         setSingleValue(f.value());
     }
 
@@ -99,9 +98,9 @@ namespace Foam {
         noReset_(false),
         needsReset_(false)
     {
-        if(debug) {
-            Info << "ExpressionResult::ExpressionResult(const Type &f, ...)" << endl;
-        }
+        Pbug << "ExpressionResult(const Type &f, ...)"
+            << endl;
+
         setSingleValue(f);
     }
 
@@ -113,9 +112,9 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResult(const Field<Type> &val,bool isPoint)
     {
-        if(debug) {
-            Info << "ExpressionResult::setResult(const Field<Type> &val,bool isPoint)" << endl;
-        }
+        Pbug << "setResult(const Field<Type> &val,bool isPoint)"
+            << endl;
+
         toBeSet().setResultInternal(val,isPoint);
     }
 
@@ -123,9 +122,7 @@ namespace Foam {
     void ExpressionResult::setResultInternal(
         const Field<Type> &val,bool isPoint
     ) {
-        if(debug) {
-            Info << "ExpressionResult::setResultInternal" << endl;
-        }
+        Pbug << "setResultInternal" << endl;
 
         clearResult();
 
@@ -135,9 +132,7 @@ namespace Foam {
         isPoint_=isPoint;
         isSingleValue_=false;
 
-        if(debug) {
-            Info << "ExpressionResult::setResultInternal - done" << endl;
-        }
+        Pbug << "setResultInternal - done" << endl;
     }
 
     template <class T>
@@ -149,9 +144,8 @@ namespace Foam {
     template <class T>
     void ExpressionResult::setObjectResultInternal(autoPtr<T> o)
     {
-        if(debug) {
-            Info << "ExpressionResult::setObjectResultInternal(autoPtr<T> o)" << endl;
-        }
+        Pbug << "setObjectResultInternal(autoPtr<T> o)" << endl;
+
         //        valType_=pTraits<T>::typeName;
         valType_=o().typeName;
 
@@ -172,9 +166,9 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResultInternal(Field<Type> *val,bool isPoint)
     {
-        if(debug) {
-            Info << "ExpressionResult::setResultInternal(Field<Type> *val,bool isPoint)" << endl;
-        }
+        Pbug << "setResultInternal(Field<Type> *val,bool isPoint)"
+            << endl;
+
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -193,9 +187,9 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setResultInternal(Type val,label size)
     {
-        if(debug) {
-            Info << "ExpressionResult::setResultInternal(Type val,label size)" << endl;
-        }
+        Pbug << "setResultInternal(Type val,label size)"
+            << endl;
+
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -214,9 +208,8 @@ namespace Foam {
     template<class Type>
     void ExpressionResult::setSingleValueInternal(Type val)
     {
-        if(debug) {
-            Info << "ExpressionResult::setSingleValueInternal(Type val)" << endl;
-        }
+        Pbug << "setSingleValueInternal(Type val)" << endl;
+
         clearResult();
 
         valType_=pTraits<Type>::typeName;
@@ -229,10 +222,8 @@ namespace Foam {
     template<class Type>
     inline tmp<Field<Type> > ExpressionResult::getResult(bool keep)
     {
-        if(debug) {
-            Info << "ExpressionResult::getResult(bool keep "
-                << keep << ")" << endl;
-        }
+        Pbug << "getResult(bool keep "
+            << keep << ")" << endl;
 
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Field<Type> > ExpressionResult::getResult()")
@@ -271,9 +262,7 @@ namespace Foam {
     template<class Type>
     inline tmp<Type> ExpressionResult::getObjectResult(bool keep)
     {
-        if(debug) {
-            Info << "ExpressionResult: getObjectResult: " << keep << endl;
-        }
+        Pbug << "getObjectResult: " << keep << endl;
 
         if(valType_!=pTraits<Type>::typeName) {
             FatalErrorIn("tmp<Type> ExpressionResult::getObjectResult()")
@@ -290,9 +279,8 @@ namespace Foam {
         );
 
         if(keep) {
-            if(debug) {
-                Info << "ExpressionResult: getObjectResult: make copy" << endl;
-            }
+            Pbug << "getObjectResult: make copy" << endl;
+
             generalContent_.set(
                 new Type(
                     dynamic_cast<const Type &>(
@@ -302,32 +290,44 @@ namespace Foam {
                     )
                 )
             );
-            if(debug) {
-                Info << "ExpressionResult: getObjectResult: make copy - done" << endl;
-            }
+            Pbug << "getObjectResult: make copy - done" << endl;
+
         } else {
             clearResult();
         }
 
-        if(debug) {
-            Info << "ExpressionResult: getObjectResult - done" << endl;
-        }
+        Pbug << "getObjectResult - done" << endl;
+
         return result;
     }
 
     template<class Type>
     ExpressionResult ExpressionResult::getUniformInternal(
         const label size,
-        bool noWarn
+        bool noWarn,
+        bool parallel
     ) const
     {
         ExpressionResult result;
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
-        Type avg=gAverage(vals);
+        Type avg;
+        if(parallel) {
+            avg=gAverage(vals);
+        } else {
+            avg=average(vals);
+        }
 
         if(!noWarn) {
-            Type minVal=gMin(vals);
-            Type maxVal=gMax(vals);
+            Type minVal;
+            Type maxVal;
+            if(parallel) {
+                minVal=gMin(vals);
+                maxVal=gMax(vals);
+            } else {
+                minVal=min(vals);
+                maxVal=max(vals);
+            }
+
             if(mag(minVal-maxVal)>SMALL) {
                 WarningIn("ExpressionResult::getUniformInternal(const label size,bool noWarn)")
                     << "The minimum value " << minVal << " and the maximum "

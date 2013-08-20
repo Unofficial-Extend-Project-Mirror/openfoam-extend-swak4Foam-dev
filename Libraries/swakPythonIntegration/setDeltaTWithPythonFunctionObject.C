@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -82,14 +84,18 @@ void setDeltaTWithPythonFunctionObject::readParameters(const dictionary &dict)
 
 scalar setDeltaTWithPythonFunctionObject::deltaT()
 {
-    setRunTime(time());
+    if(!parallelNoRun()) {
+        setRunTime(time());
+    }
 
     if(writeDebug()) {
-        Info << "Evaluating " << deltaTCode_ << endl;
+        Pbug << "Evaluating " << deltaTCode_ << endl;
     }
+
     scalar result=evaluateCodeScalar(deltaTCode_,true);
+
     if(writeDebug()) {
-        Info << "Evaluated to " << result << endl;
+        Pbug << "Evaluated to " << result << endl;
     }
 
     if(result!=time().deltaT().value()) {

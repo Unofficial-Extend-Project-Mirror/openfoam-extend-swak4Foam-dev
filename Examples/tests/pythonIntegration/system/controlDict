@@ -49,6 +49,9 @@ functions {
     pythonSimple
     {
         type pythonIntegration;
+
+        //        debugPythonWrapper 1; // switching on
+
         startCode "print 'Starting';a=0; print dir()";
         executeCode "a+=1; print 'a:',a";
         endCode "print 'Never been here'";
@@ -56,6 +59,7 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
         useNumpy false;
+        useIPython true;
     }
     pythonOutput
     {
@@ -67,6 +71,7 @@ functions {
         //        tolerateExceptions true;
         parallelMasterOnly true;
         useNumpy false;
+        useIPython true;
     }
     pythonPaths
     {
@@ -78,6 +83,7 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
         useNumpy false;
+        useIPython true;
     }
     pythonPyFoam
     {
@@ -89,6 +95,7 @@ functions {
         //        tolerateExceptions true;
         parallelMasterOnly true;
         useNumpy false;
+        useIPython true;
     }
     pythonPythonFlu
     {
@@ -100,6 +107,7 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
         useNumpy false;
+        useIPython true;
     }
     onlyWithFlu {
         type executeIfPython;
@@ -107,6 +115,7 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
         useNumpy false;
+        useIPython true;
 
         conditionFile "$FOAM_CASE/checkPythonFlu.py";
 
@@ -130,6 +139,7 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
         useNumpy false;
+        useIPython true;
 
         conditionFile "$FOAM_CASE/checkMpi4Py.py";
 
@@ -180,6 +190,20 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
         useNumpy false;
+        useIPython true;
+    }
+    pythonGetGlobalsScatter
+    {
+        $pythonGetGlobals;
+        parallelMasterOnly true;
+        pythonToSwakNamespace testPythonScatter;
+    }
+    pythonGetGlobalsScatterNumpy
+    {
+        $pythonGetGlobals;
+        parallelMasterOnly true;
+        pythonToSwakNamespace testPythonScatterNumpy;
+        useNumpy true;
     }
     pythonGetPyFoamGlobals
     {
@@ -194,6 +218,7 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
         useNumpy false;
+        useIPython true;
     }
     startupFacePositions {
         $addVector;
@@ -215,6 +240,7 @@ functions {
             "facePos=pos();"
             "faceArea=area();"
         );
+        noReset true;
     }
     pythonGetNonUniformGetGlobals
     {
@@ -222,6 +248,7 @@ functions {
         isParallelized true;
         parallelMasterOnly false;
         useNumpy true;
+        useIPython true;
         swakToPythonNamespaces (
             testPython
             testPythonFields
@@ -240,6 +267,7 @@ functions {
         type pythonIntegration;
         isParallelized true;
         useNumpy true;
+        useIPython true;
         parallelMasterOnly false;
         swakToPythonNamespaces (
             testPython
@@ -261,11 +289,26 @@ functions {
     }
     pythonDeltaT {
         type setDeltaTWithPython;
+        parallelMasterOnly true;
         deltaTCode "import math;return 0.005*(1+0.5*math.sin(20*runTime))";
     }
     pythonEndTime {
         type setEndTimeWithPython;
+        parallelMasterOnly false;
+        isParallelized true;
         endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
+    }
+    pythonDynamic {
+        type dynamicFunctionObjectListProxy;
+        readDuringConstruction true;
+        dictionaryProvider stdoutFromPythonScriptProvider;
+        parallelMasterOnly true;
+        scriptFile "$FOAM_CASE/printFO.py";
+    }
+    pythonDynamic2 {
+        $pythonDynamic;
+        parallelMasterOnly false;
+        isParallelized true;
     }
 }
 

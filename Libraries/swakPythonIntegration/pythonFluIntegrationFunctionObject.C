@@ -66,10 +66,6 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
 :
     pythonIntegrationFunctionObject(name,t,dict)
 {
-    if(parallelNoRun()) {
-        return;
-    }
-
     if(!executeCode("import Foam",false)) {
         FatalErrorIn("pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject")
             << "Python can not import module Foam. Probably no pythonFlu installed"
@@ -82,15 +78,21 @@ pythonFluIntegrationFunctionObject::pythonFluIntegrationFunctionObject
     executeCode("from Foam.integrationHelpers.getObjectsFromPointers import getTimeFromPtr",false,true); // this should work, but doesn't
     // executeCode("from Foam.src.OpenFOAM.db.Time.Time import getTimeFromPtrOld as getTimeFromPtr",false,true); // This works
 
-    PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
+    if(!parallelNoRun()) {
+        setInterpreter();
 
-    PyObject *m = PyImport_AddModule("__main__");
-    PyObject_SetAttrString(m,"theTime",time);
-    executeCode("time=getTimeFromPtr(theTime)",true,false);
+        PyObject *time=PyCObject_FromVoidPtr((void*)(&t),NULL);
 
-    // Get rid of the helper stuff
-    PyRun_SimpleString("del theTime");
-    PyRun_SimpleString("del getTimeFromPtr");
+        PyObject *m = PyImport_AddModule("__main__");
+        PyObject_SetAttrString(m,"theTime",time);
+        executeCode("time=getTimeFromPtr(theTime)",true,false);
+
+        // Get rid of the helper stuff
+        PyRun_SimpleString("del theTime");
+        PyRun_SimpleString("del getTimeFromPtr");
+
+        releaseInterpreter();
+    }
 }
 
 pythonFluIntegrationFunctionObject::~pythonFluIntegrationFunctionObject()

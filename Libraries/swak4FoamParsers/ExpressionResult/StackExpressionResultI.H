@@ -42,10 +42,9 @@ namespace Foam {
 template<class T>
 void StackExpressionResult::pushInternal(ExpressionResult &atEnd)
 {
-    if(debug) {
-        Info << "StackExpressionResult::pushInternal(ExpressionResult &atEnd) "
+    Dbug << "pushInternal(ExpressionResult &atEnd) "
             << pTraits<T>::typeName << endl;
-    }
+
     Field<T> oldValue(getResult<T>(false));
     autoPtr<Field<T> > pNewValue(new Field<T>(oldValue.size()+1));
     Field<T> &newValue=pNewValue();
@@ -55,9 +54,7 @@ void StackExpressionResult::pushInternal(ExpressionResult &atEnd)
     }
     newValue[oldValue.size()]=atEnd.getResult<T>(true)()[0];
 
-    if(debug) {
-        Info << "New value:" << newValue << endl;
-    }
+    Dbug << "New value:" << newValue << endl;
 
     this->setResult(
         pNewValue.ptr(),

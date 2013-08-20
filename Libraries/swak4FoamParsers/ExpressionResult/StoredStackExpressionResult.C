@@ -73,10 +73,9 @@ StoredStackExpressionResult::StoredStackExpressionResult(const dictionary &dict)
 :
     StackExpressionResult(dict)
 {
-    if(debug) {
-        Info << "StoredStackExpressionResult::StoredStackExpressionResult(const dictionary &dict)" << endl;
-        Info << "Value: " << (*this) << endl;
-    }
+    Dbug << "StoredStackExpressionResult(const dictionary &dict)" << endl;
+    Dbug << "Value: " << (*this) << endl;
+
     // reset the setting of the parent-class
     setNeedsReset(false);
 }
@@ -100,9 +99,8 @@ void StoredStackExpressionResult::resetInternal()
 
 void StoredStackExpressionResult::operator=(const StoredStackExpressionResult& rhs)
 {
-    if(debug) {
-        Info << "StoredStackExpressionResult::operator=(const StoredStackExpressionResult& rhs)" << endl;
-    }
+    Dbug << "operator=(const StoredStackExpressionResult& rhs)" << endl;
+
     // Check for assignment to self
     if (this == &rhs)
     {
