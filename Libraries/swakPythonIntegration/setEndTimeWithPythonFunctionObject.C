@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -82,14 +84,16 @@ void setEndTimeWithPythonFunctionObject::readParameters(const dictionary &dict)
 
 scalar setEndTimeWithPythonFunctionObject::endTime()
 {
-    setRunTime(time());
+    if(!parallelNoRun()) {
+        setRunTime(time());
+    }
 
     if(writeDebug()) {
-        Info << "Evaluating " << endTimeCode_ << endl;
+        Pbug << "Evaluating " << endTimeCode_ << endl;
     }
     scalar result=evaluateCodeScalar(endTimeCode_,true);
     if(writeDebug()) {
-        Info << "Evaluated to " << result << endl;
+        Pbug << "Evaluated to " << result << endl;
     }
 
     if(result!=time().endTime().value()) {

@@ -76,13 +76,11 @@ executeIfPythonFunctionObject::executeIfPythonFunctionObject
         dict
     )
 {
-    if(parallelNoRun()) {
-        return;
+    if(!parallelNoRun()) {
+        initEnvironment(t);
+
+        setRunTime(t);
     }
-
-    initEnvironment(t);
-
-    setRunTime(t);
 
     readParameters(dict);
 }
@@ -92,7 +90,9 @@ executeIfPythonFunctionObject::executeIfPythonFunctionObject
 
 bool executeIfPythonFunctionObject::condition()
 {
-    setRunTime(time());
+    if(!parallelNoRun()) {
+        setRunTime(time());
+    }
 
     if(writeDebug()) {
         Info << "Evaluating " << conditionCode_ << endl;

@@ -155,6 +155,125 @@ int main(int argc, char *argv[])
         DelayedExpressionResult dResult(data.subDict("dResult"));
         StoredExpressionResult storedResult(data.subDict("storedResult"));
     }
+    {
+        scalarField data(2,0);
+        data[0]=1;
+
+        ExpressionResult uResult(data);
+        Info << "To write: " << uResult << endl;
+        OStringStream o;
+        o << uResult;
+        IStringStream i(o.str());
+        ExpressionResult test;
+        i >> test;
+        Info << "Read: " << test << endl;;
+    }
+
+    if(Pstream::parRun()) {
+        bool test2=true;
+        reduce(test2,andOp<bool>());
+        Pout << "Go on" << endl;
+
+        Info << endl << "Test hand implemented scatter" << endl << endl;
+        {
+            // compy/pasted from gatherScatter.C
+
+            const List<Pstream::commsStruct>& comms=
+                Pstream::linearCommunication();
+
+            ExpressionResult Value;
+            if(Pstream::master()) {
+                scalarField data(2,0);
+                data[0]=1;
+
+                Value=ExpressionResult(data);
+            }
+
+            // Get my communication order
+            const Pstream::commsStruct& myComm = comms[Pstream::myProcNo()];
+
+            Pout << "From above: " << myComm.above()
+                    << endl;
+
+            // Reveive from up
+            if (myComm.above() != -1)
+            {
+                if (contiguous<ExpressionResult>())
+                {
+                    IPstream::read
+                        (
+                            Pstream::scheduled,
+                            myComm.above(),
+                            reinterpret_cast<char*>(&Value),
+                            sizeof(ExpressionResult)
+                        );
+                }
+                else
+                {
+                    ::sleep(1);
+                    Pout << "Receiving" << endl;
+                    IPstream fromAbove(Pstream::scheduled, myComm.above(),0,IOstream::BINARY);
+                    //                    fromAbove.format(IOstream::ASCII);
+                    string incoming="";
+                    // while(!fromAbove.eof()) {
+                    //     char c;
+                    //     fromAbove.read(c);
+                    //     incoming+=c;
+                    // }
+                    fromAbove >> incoming;
+                    Pout << "Incoming: " << incoming << endl;
+                    IStringStream inStream(incoming);
+                    inStream >> Value;
+                    Pout << "Received" << endl;
+                }
+            }
+
+            // Send to my downstairs neighbours
+            forAll(myComm.below(), belowI)
+            {
+                Pout << "Below: " << belowI << " " << myComm.below()[belowI]
+                    << endl;
+
+                if (contiguous<ExpressionResult>())
+                {
+                    OPstream::write
+                        (
+                            Pstream::scheduled,
+                            myComm.below()[belowI],
+                            reinterpret_cast<const char*>(&Value),
+                            sizeof(ExpressionResult)
+                        );
+                }
+                else
+                {
+                    Pout << "Sending" << endl;
+                    OPstream toBelow(Pstream::scheduled,myComm.below()[belowI],0,IOstream::BINARY);
+                    OStringStream outgoing;
+                    outgoing << Value;
+                    Pout << "Outgoing:" << outgoing.str() << endl;
+                    toBelow << outgoing.str();
+                    Pout << "Sent" << endl;
+                }
+            }
+            Pout << "My scatter: " << Value << endl;
+        }
+        bool test=true;
+        Pout << "Waiting" << endl;
+        reduce(test,andOp<bool>());
+        Pout << "Go on" << endl;
+
+        Info << endl << "Test scatter" << endl << endl;
+        ExpressionResult r;
+        if(Pstream::master()) {
+            scalarField data(2,0);
+            data[0]=1;
+
+            r=ExpressionResult(data);
+        }
+        Pout << "Pre-Scattered: " << r << endl;
+        Pstream::scatter(r);
+        Pout << "Scattered: " << r << endl;
+    }
 
     Info << "End\n" << endl;
 

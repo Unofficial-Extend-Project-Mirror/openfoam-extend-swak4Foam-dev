@@ -30,6 +30,7 @@ boundaryField
         //        type            fixedValue;
         type            groovyTotalPressure;
         value           uniform 0;
+        gamma 0;
         variables (
             "base=0.;"
             "maxP{}=max(p);"

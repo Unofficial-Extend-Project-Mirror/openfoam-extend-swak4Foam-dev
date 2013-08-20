@@ -1,0 +1,10 @@
+#! /bin/sh
+
+if [ "$SWAK_PYTHON_INCLUDE" != "" ]; then
+    wmake
+else
+    echo
+    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration. Utility funkyPythonPostproc not compiled"
+    echo
+    exit 0
+fi

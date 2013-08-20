@@ -93,7 +93,8 @@ class ExpressionResult
     template<class Type>
     ExpressionResult getUniformInternal(
         const label size,
-        bool noWarn
+        bool noWarn,
+        bool parallel
     ) const;
 
     template<class Type>
@@ -236,7 +237,11 @@ public:
     inline tmp<Type> getObjectResult(bool keep=false);
 
     // Construct a uniform field from the current results
-    ExpressionResult getUniform(const label size,bool noWarn) const;
+    ExpressionResult getUniform(
+        const label size,
+        bool noWarn,
+        bool parallel=true
+    ) const;
 
     template<template<class> class BinOp,class Type>
     inline Type getReduced(

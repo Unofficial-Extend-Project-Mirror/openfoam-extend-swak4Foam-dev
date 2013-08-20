@@ -68,13 +68,11 @@ namespace Foam
             dict
         )
     {
-        if(parallelNoRun()) {
-            return;
+        if(!parallelNoRun()) {
+            initEnvironment(owner.time());
+
+            setRunTime(owner.time());
         }
-
-        initEnvironment(owner.time());
-
-        setRunTime(owner.time());
 
         readCode(dict,"script",thePythonScript_);
     }
@@ -83,16 +81,13 @@ namespace Foam
     string stdoutFromPythonScriptProvider::getDictionaryText() {
         string buffer;
 
-        if(parallelNoRun()) {
-            return buffer;
-        }
-
         executeCodeCaptureOutput(
             thePythonScript_,
             buffer,
             false,
             true
         );
+
         return buffer;
     }
 

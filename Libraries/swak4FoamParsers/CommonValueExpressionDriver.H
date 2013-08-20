@@ -114,9 +114,6 @@ protected:
 
     const string contextString() const { return contextString_; }
 
-    //- little helper method to print hex adresses
-    word getHex(const void *) const;
-
     //- access last position
     const label &parserLastPos() const { return parserLastPos_; }
 

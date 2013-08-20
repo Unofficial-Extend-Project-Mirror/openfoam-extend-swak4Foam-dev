@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 20 Aug 2013 18:23:39 +0200
+Subject: Re: Use IPython in pythonIntegration for interactive mode
+Message-Id: <cd60d0a7b3cd5dc6-9eb905440f5e9df2-artemis@bgs-cool-greybook.local>
+References: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+
+Imports are now happening in the main thread. Now it seems to work OK

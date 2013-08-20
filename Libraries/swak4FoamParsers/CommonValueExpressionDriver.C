@@ -1599,13 +1599,6 @@ vector CommonValueExpressionDriver::getPositionOfMaximum(
 
 }
 
-word CommonValueExpressionDriver::getHex(const void *ptr) const
-{
-    std::ostringstream makeHex;
-    makeHex << std::hex << (void*)ptr;
-    return word(makeHex.str());
-}
-
 std::string CommonValueExpressionDriver::getContextString()
 {
     if(contextString_=="") {

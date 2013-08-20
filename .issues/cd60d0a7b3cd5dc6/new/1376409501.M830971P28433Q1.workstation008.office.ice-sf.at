@@ -1,0 +1,8 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 13 Aug 2013 17:57:16 +0200
+Subject: Re: Use IPython in pythonIntegration for interactive mode
+Message-Id: <cd60d0a7b3cd5dc6-93cf6a1308a67a34-artemis@workstation008.office.ice-sf.at>
+References: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+
+The old-school IPython embedding doesn't work due to problems with the import

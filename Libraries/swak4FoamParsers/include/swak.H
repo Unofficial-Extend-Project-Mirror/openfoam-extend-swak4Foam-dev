@@ -141,6 +141,8 @@ Contributors/Copyright:
 
 #include "swakVersion.H"
 
+#include "DebugOStream.H"
+
 #endif
 
 // ************************************************************************* //

@@ -42,6 +42,8 @@ Contributors/Copyright:
 #include "Time.H"
 #include "IFstream.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -73,22 +75,22 @@ pythonIntegrationFunctionObject::pythonIntegrationFunctionObject
     ),
     time_(t)
 {
-    if(parallelNoRun()) {
-        return;
-    }
+    Pbug << "Constructor" << endl;
 
-    initEnvironment(t);
+    if(!parallelNoRun()) {
+        initEnvironment(t);
 
-    {
+        setInterpreter();
         PyObject *m = PyImport_AddModule("__main__");
         PyObject_SetAttrString(
             m,
             "functionObjectName",
             PyString_FromString(this->name().c_str())
         );
-    }
+        releaseInterpreter();
 
-    setRunTime();
+        setRunTime();
+    }
 
     read(dict);
 }
@@ -101,29 +103,29 @@ pythonIntegrationFunctionObject::~pythonIntegrationFunctionObject()
 
 void pythonIntegrationFunctionObject::setRunTime()
 {
+    Pbug << "setRunTime" << endl;
+
     pythonInterpreterWrapper::setRunTime(time_);
 }
 
 bool pythonIntegrationFunctionObject::start()
 {
-    if(parallelNoRun()) {
-        return true;
+    Pbug << "start" << endl;
+
+    if(!parallelNoRun()) {
+        setRunTime();
     }
 
-    setRunTime();
-
-    executeCode(startCode_,true);
-
-    return true;
+    return executeCode(startCode_,true);
 }
 
 bool pythonIntegrationFunctionObject::execute(bool)
 {
-    if(parallelNoRun()) {
-        return true;
-    }
+    Pbug << "execute" << endl;
 
-    setRunTime();
+    if(!parallelNoRun()) {
+        setRunTime();
+    }
 
     executeCode(executeCode_,true);
 
@@ -136,22 +138,18 @@ bool pythonIntegrationFunctionObject::execute(bool)
 
 bool pythonIntegrationFunctionObject::end()
 {
-    if(parallelNoRun()) {
-        return true;
+    Pbug << "end" << endl;
+
+    if(!parallelNoRun()) {
+        setRunTime();
     }
 
-    setRunTime();
-
-    executeCode(endCode_,true);
-
-    return true;
+    return executeCode(endCode_,true);
 }
 
 bool pythonIntegrationFunctionObject::read(const dictionary& dict)
 {
-    if(parallelNoRun()) {
-        return true;
-    }
+    Pbug << "read" << endl;
 
     readCode(dict,"start",startCode_);
     readCode(dict,"end",endCode_);

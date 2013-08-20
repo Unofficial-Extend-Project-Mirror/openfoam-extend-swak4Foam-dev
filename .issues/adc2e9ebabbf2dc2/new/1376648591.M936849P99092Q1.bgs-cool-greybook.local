@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 16 Aug 2013 12:22:42 +0200
+Subject: Re: Function-object to list registered objects
+Message-Id: <adc2e9ebabbf2dc2-8a5fc5cfdc34cb78-artemis@bgs-cool-greybook.local>
+References: <adc2e9ebabbf2dc2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <adc2e9ebabbf2dc2-0-artemis@bgs-cool-greybook.local>
+
+listRegisteredObjects is there for some time. Sub-registries not yet treated
