@@ -2158,7 +2158,7 @@ S_{expl} + S_{impl} T
      Python-functionObject (or similar) is not found in the current
      directory the path of the dictionary it is specified in is
      prepended and the file is searched there
-**** Python integration no uses =IPython= if possible
+**** Python integration now uses =IPython= if possible
      The interactive shell of the python integration now uses
      =IPython= if it is installed. This improves tab-completion etc
 **** Preload libraries in the Python integration
