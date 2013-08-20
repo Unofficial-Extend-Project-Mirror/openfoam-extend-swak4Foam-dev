@@ -49,6 +49,9 @@ python {
         matplotlib;
         stats scipy.stats;
     }
+
+    parallelMasterOnly false;
+    isParallelized false;
 }
 
 functions {
@@ -102,6 +105,8 @@ functions {
         importLibs {
             stats scipy.stats;
         }
+        parallelMasterOnly false;
+        isParallelized false;
     }
 }
 

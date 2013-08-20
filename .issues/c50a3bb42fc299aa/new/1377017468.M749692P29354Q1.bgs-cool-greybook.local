@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 20 Aug 2013 18:48:35 +0200
+State: new
+Subject: Collect and decompose variables in parallel calculations
+Message-Id: <c50a3bb42fc299aa-0-artemis@bgs-cool-greybook.local>
+
+Add function objects that collect all the variable data in parallel
+runs and later distribute them. This would allow Python-objects that
+work only on one processor to work in master only-mode
+
+Composition would concatenate then fields in the order of the
+processors. Decomposition would split them in the same way

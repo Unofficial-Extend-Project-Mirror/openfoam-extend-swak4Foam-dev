@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 20 Aug 2013 18:39:03 +0200
+Subject: Re: Make Python-code parallel-aware
+Message-Id: <8395a9769408ef85-846c61ad6ebb7135-artemis@bgs-cool-greybook.local>
+References: <8395a9769408ef85-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <8395a9769408ef85-0-artemis@bgs-cool-greybook.local>
+
+Variables now get distributed.
+
+Using mpi4py is the responsibility of the user
