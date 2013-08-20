@@ -296,7 +296,19 @@ functions {
         type setEndTimeWithPython;
         parallelMasterOnly false;
         isParallelized true;
-       endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
+        endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
+    }
+    pythonDynamic {
+        type dynamicFunctionObjectListProxy;
+        readDuringConstruction true;
+        dictionaryProvider stdoutFromPythonScriptProvider;
+        parallelMasterOnly true;
+        scriptFile "$FOAM_CASE/printFO.py";
+    }
+    pythonDynamic2 {
+        $pythonDynamic;
+        parallelMasterOnly false;
+        isParallelized true;
     }
 }
 

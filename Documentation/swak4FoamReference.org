@@ -1076,7 +1076,13 @@ hide circle
     the script execution of the program is terminated (it is possible
     to find the source of the problem on the Python-shell). In the
     end specified Python-variables are copied to a global namespace
-    for other parts of swak to work with them.
+    for other parts of swak to work with them. In parallel there are
+    two cases:
+    - the script is only executed on the master. In this case the
+      variables are pushed to all the other processors and they have
+      the same value on all processors (no decomposition is done)
+    - the script is executed on all processors: in this case each
+      processor only has its "own" variables
 **** On =numpy=-variables
      If the =numpy=-library is found then global variables which are
      fields are being transformed to =numpy=-arrays. These arrays can
