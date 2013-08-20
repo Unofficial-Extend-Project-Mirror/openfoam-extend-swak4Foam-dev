@@ -48,7 +48,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 1);
+    defineTypeNameAndDebug(pythonIntegrationFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (

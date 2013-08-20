@@ -1334,7 +1334,37 @@ void pythonInterpreterWrapper::scatterGlobals()
             )[name];
             Pbug << "Value to scatter: " << result << endl;
         }
-        Pstream::scatter(result);
+
+        // this doesn't work for some dubious reason
+        // Pstream::scatter(result);
+
+        //- do the scattering by ourself
+        List<Pstream::commsStruct> comms;
+        if (Pstream::nProcs() < Pstream::nProcsSimpleSum)
+        {
+            comms=Pstream::linearCommunication();
+        }
+        else
+        {
+            comms=Pstream::treeCommunication();
+        }
+        const Pstream::commsStruct& myComm = comms[Pstream::myProcNo()];
+        if (myComm.above() != -1)
+        {
+            string incoming="";
+            IPstream fromAbove(Pstream::scheduled, myComm.above());
+            fromAbove >> incoming;
+            IStringStream inStream(incoming);
+            inStream >> result;
+        }
+        forAll(myComm.below(), belowI)
+        {
+            OPstream toBelow(Pstream::scheduled,myComm.below()[belowI]);
+            OStringStream outgoing;
+            outgoing << result;
+            toBelow << outgoing.str();
+        }
+
         if(parallelNoRun()) {
             Info << "Setting value of " << name << endl;
 

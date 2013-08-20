@@ -50,7 +50,7 @@ functions {
     {
         type pythonIntegration;
 
-        debugPythonWrapper 1; // switching on
+        //        debugPythonWrapper 1; // switching on
 
         startCode "print 'Starting';a=0; print dir()";
         executeCode "a+=1; print 'a:',a";

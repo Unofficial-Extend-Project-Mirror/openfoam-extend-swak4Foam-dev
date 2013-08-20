@@ -212,17 +212,18 @@ int main(int argc, char *argv[])
                 {
                     ::sleep(1);
                     Pout << "Receiving" << endl;
-                    IPstream fromAbove(Pstream::scheduled, myComm.above(),0,IOstream::ASCII);
+                    IPstream fromAbove(Pstream::scheduled, myComm.above(),0,IOstream::BINARY);
                     //                    fromAbove.format(IOstream::ASCII);
                     string incoming="";
-                    while(!fromAbove.eof()) {
-                        char c;
-                        fromAbove.read(c);
-                        incoming+=c;
-                    }
+                    // while(!fromAbove.eof()) {
+                    //     char c;
+                    //     fromAbove.read(c);
+                    //     incoming+=c;
+                    // }
+                    fromAbove >> incoming;
                     Pout << "Incoming: " << incoming << endl;
-                    fromAbove.rewind();
-                    fromAbove >> Value;
+                    IStringStream inStream(incoming);
+                    inStream >> Value;
                     Pout << "Received" << endl;
                 }
             }
@@ -246,8 +247,11 @@ int main(int argc, char *argv[])
                 else
                 {
                     Pout << "Sending" << endl;
-                    OPstream toBelow(Pstream::scheduled,myComm.below()[belowI],0,IOstream::ASCII);
-                    toBelow << Value;
+                    OPstream toBelow(Pstream::scheduled,myComm.below()[belowI],0,IOstream::BINARY);
+                    OStringStream outgoing;
+                    outgoing << Value;
+                    Pout << "Outgoing:" << outgoing.str() << endl;
+                    toBelow << outgoing.str();
                     Pout << "Sent" << endl;
                 }
             }

@@ -47,7 +47,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(setDeltaTWithPythonFunctionObject, 1);
+    defineTypeNameAndDebug(setDeltaTWithPythonFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
