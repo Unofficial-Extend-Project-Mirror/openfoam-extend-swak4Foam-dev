@@ -220,7 +220,7 @@ void reportValues(
         "Median | weighted","median");
     Info << " | ";
     writeData(
-        Info,calculator.distribution().median(),
+        Info,calculator.weightedDistribution().median(),
         "","median_weighted",true);
 
     if(nrOfQuantiles) {
