@@ -56,6 +56,7 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasMaximum_(false),
     hasMinimum_(false),
     hasAverage_(false),
+    hasWeightedAverage_(false),
     hasSum_(false),
     hasWeightedSum_(false),
     hasSumMag_(false)

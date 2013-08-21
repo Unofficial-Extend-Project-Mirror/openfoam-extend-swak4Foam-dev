@@ -100,7 +100,7 @@ public:
     TypeName("FaFieldValueExpressionDriver");
 
     //- entity this driver operates on
-    typedef aMesh EntityType;
+    typedef faMesh EntityType;
 
     static const word &driverName() { return driverName_; }
 
