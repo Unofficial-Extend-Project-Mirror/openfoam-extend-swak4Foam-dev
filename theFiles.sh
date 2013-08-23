@@ -9,6 +9,7 @@ export SWAKLIBS=(groovyBC \
     simpleSearchableSurfaces \
     swakTopoSources \
     swak4FoamParsers \
+    swakLagrangianParser \
     swakPythonIntegration* \
     swak*FunctionPlugin \
     swakFunctionObjects)
