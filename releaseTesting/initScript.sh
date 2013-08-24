@@ -2,17 +2,23 @@
 
 echo "Init script"
 
+apt-get -y install python-software-properties
+
+VERS=$(lsb_release -cs)
+echo deb http://www.openfoam.org/download/ubuntu $VERS main > /etc/apt/sources.list.d/openfoam.list
+
+add-apt-repository ppa:mercurial-ppa/releases
+
 apt-get -y install mercurial
 apt-get -y install bison
 apt-get -y install flex
 apt-get -y install g++
 apt-get -y install make
-
-VERS=$(lsb_release -cs)
-echo deb http://www.openfoam.org/download/ubuntu $VERS main > /etc/apt/sources.list.d/openfoam.list
+apt-get -y install python-dev
 
 apt-get update -y
 apt-get install -y --force-yes openfoam221
+apt-get install -y --force-yes openfoam171
 
 SWAKDIR=/home/vagrant/swak4Foam
 
