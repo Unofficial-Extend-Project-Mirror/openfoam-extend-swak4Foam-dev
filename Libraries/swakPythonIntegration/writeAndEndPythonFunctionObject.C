@@ -69,13 +69,11 @@ writeAndEndPythonFunctionObject::writeAndEndPythonFunctionObject
         dict
     )
 {
-    if(parallelNoRun()) {
-        return;
+    if(!parallelNoRun()) {
+        initEnvironment(t);
+
+        setRunTime(t);
     }
-
-    initEnvironment(t);
-
-    setRunTime(t);
 
     readParameters(dict);
 }
@@ -93,7 +91,9 @@ void writeAndEndPythonFunctionObject::readParameters(const dictionary &dict)
 
 bool writeAndEndPythonFunctionObject::endRunNow()
 {
-    setRunTime(time());
+    if(!parallelNoRun()) {
+        setRunTime(time());
+    }
 
     if(writeDebug()) {
         Info << "Evaluating " << conditionCode_ << endl;

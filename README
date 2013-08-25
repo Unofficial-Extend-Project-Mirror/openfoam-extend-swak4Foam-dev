@@ -1,5 +1,6 @@
 # -*- mode: org -*-
 #+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 2.x
+#+OPTIONS: H:4
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
@@ -489,6 +490,17 @@ S_{expl} + S_{impl} T
      - Demonstrates :: Emulate a "moving gravitation" by using the
                        =manipulateField=-functionObject to recalculate
                        =gh= and =ghf=
+**** =counterFlowFlame2DInitialized=
+     Demonstrates initializing a case with initial conditions that
+     approximate the real flow.
+     - Solver :: reactingFoam
+     - Case preparation :: run the supplied script
+          =prepareCase.sh=. *Caution:* this has to be done *every*
+          time before running the case
+     - Demonstrates :: Demonstrates setting calculated initial
+                       conditions with functionObjects
+*** FromPresentations
+    Cases that were shown in some presentations
 **** OSCFD_cleaningTank3D
      - Solver :: interFoam
      - Case preparation :: run the =prepareCase.sh=-script
@@ -499,6 +511,22 @@ S_{expl} + S_{impl} T
                        variables and delayed variables
 **** OSCFD_cleaningTank2D
      A 2D-variant of the above case
+**** OFW8_sandPitOfCarcoon
+     - Solver :: twoPhaseEulerFoam
+     - Case preparation :: run the =prepareCase.sh=-script
+     - Description :: Simulate a sand-monster from the StarWars-movie
+                      "Return of the Jedi"
+     - Demonstrates :: Use of =funkySetFields=, =groovyBC= and
+                       functionObjects for lagrangian particles
+**** OFW8_landspeedersInCanyon
+     - solver :: simpleFoam
+     - Case preparation :: run the =prepareCase.sh=-script
+     - Description :: Simulates two landSpeeders (as seen in the
+                      StarWars-movie "A New Hope")
+     - Demonstrates :: Advanced searchableSurfaces (for
+                       =snappyHexMesh=), functionObject for passive
+                       scalar, functionObject to calculate
+                       distributions
 *** PythonIntegration
     Demonstrate the integration of =Python=. Mostly using =PyFoam= but
     also with =pythonFlu=
@@ -607,6 +635,9 @@ S_{expl} + S_{impl} T
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
+*** BugCases
+    These are cases provided by users to demonstrate bugs. Not
+    maintained nor documented and may be removed at any time
 ** =maintainanceScripts=
    Undocumented scripts used for maintaining =swak4Foam=. *If you
    don't understand them, don't use them*
@@ -1799,7 +1830,7 @@ S_{expl} + S_{impl} T
      If this is set then this Python-code is executed every time a
      time-step was written to disk
 **** Python-integration has convenience-functions to create data files
-     Python-integration now has two conventience-functions that return
+     Python-integration now has two convenience-functions that return
      a filename with the full path and create the directories if
      necessary. The file is *not* created (that is the responsibility
      of the Python-code).
@@ -2116,3 +2147,209 @@ S_{expl} + S_{impl} T
        data entry as a uniform value
      - data entry can now be integrated. This allows using it for
        instance for the injection rate in lagrangian models
+** Next release - version number : 0.2.5
+*** Infrastructure
+**** Make error messages in =Allwmake= more verbose
+     The error messages where already quite verbose. But people
+     didn't understand them and asked the same questions over and
+     over ...
+**** =simpleFunctionObjects= no longer considered an independent project
+     As there are going to be more cross-dependencies the
+     =simpleFunctionObjects= now have to be part of swak. Changes to
+     the compile-scripts reflect this.
+**** =Allwmake= makes sure that swak is compiled for the same installation
+     The script writes the version it is used with to disk and at
+     later compiles that this is the same (this makes sure that not a
+     wrong version is used inadvertently to compile)
+**** Additional macros for Debugging output
+     There are two macros defined that inside an object write the name
+     of the class and the address of the object (if debug is
+     enabled). This makes the output easier distinguishable from the
+     output from other classes/objects. The two macros are:
+     - Dbug :: Writes the debug information *only* on the master processor
+     - Pbug :: Writes the output on all processors and for parallel
+               runs prefixes the processor number
+     Both macros are to be used like regular streams and don't have
+     to be enclosed in =if(debug){}= (this is part of the macro)
+*** Documentation
+    Important enhancements of the documentation in the
+    =Documentations=-folder
+**** Documentation of =accumulations=
+     The possible values of the common =accumulations=-lists are
+     documented
+**** General documentation of the Python-embedding
+     The general options and the behavior of the Python-embedding are
+     described
+*** Incompatibilities to previous versions
+**** =outputControlMode= =timestep= renamed to =timeStep=
+     Because of report
+     https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=177
+     to be consistent with the nomenclature in the 'regular'
+     function-objects.
+*** Bug fixes
+**** Missing =timeSet= in function-objects
+     This method has been added in 2.2.x and breaks the compilation
+     of several function-objects
+
+     Fix developed by Bruno Santos
+**** =sourceImplicit= unstable
+     For some reason using =SuSp= gave unstable results for the
+     PDE-functionObjects. Changed to =Sp=
+**** Fixed bug were only one =swakCoded= worked at a time
+     Bug originally reported
+     https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=179
+     in. Reason was that the variable describing the type was not
+     correctly set.
+**** Incorrectly read entries in =swakCoded=
+     The entries =codeEnd= and =codeExecute= were not correctly read
+     but instead the entry =codeRead= was read. Fixed
+**** No logical variables found by most parsers
+     Reported as
+     https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=172
+
+     Only the field parser correctly found logical variables (although
+     they were stored). Added a method to pick up the variables (the
+     reason why this part was commented out is that there is no such
+     thing as a =volBoolField= and that is what the regular mechanism
+     expected)
+**** =sampledSurface= not correctly updated at time of write
+     Reported as
+     https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=176
+
+     In that case the driver was written before the surface was
+     updated thus generating fields of size $0$. Now =update= is
+     called at various places (to make sure it is called in any instance)
+**** =sumMag=-accumulation now working
+     This accumulation was available but not implemented. Now implemented.
+
+     For non-scalar types it is calculated separately for each component
+**** Calculation of weight fields failed if size on one processor was $0$
+     This was due to a logical error that was propagated through
+     mindless copy/paste (only the Field-driver got it right). Fixed
+**** =groovyTotalPressure= does not read =value=
+     Because it is not initialized from the superclass when the
+     dictionary constructor is used. Fixed
+*** New features
+**** Function object that executes if the OpenFOAM-version is right
+     The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
+     executes if the OpenFOAM-version is bigger or equal to a
+     specified version. The arguments =majorVersion= and
+     =minorVersion= are required. If =patchVersion= is not specified
+     it will match any version. A =git= version (=.x=) will match any
+     patch-version
+**** Function object that is only executed if the current time is the =startTime=
+     The function object =executeIfStartTime= executes its children
+     if the current time is the =startTime= from the =controlDict=
+     (which isn't necessarily the first time step in a restarted case)
+**** Function object that calculates the potential flow
+     To be used on an existing field to set reasonable initial
+     conditions
+**** Function object that forces a recalculation of =phi=
+     Named =recalcPhi= in the simpleFunctionObjects. Usually needed
+     when some other functionObject manipulates velocity or density
+**** Function object that corrects thermophysical model
+     Name =correctThermo=. Recalculates the thermophysical
+     model. To be used after manipulating temperature etc
+**** Function objects that recalculate the energy of a thermophysical model
+     Recalculate enthalpy, sensible enthalpy or internal energy
+     according to the current temperature. This allows making this
+     consistent if the temperature has been manipulated.
+
+     For OpenFOAM after 2.2 these are replaced by one that
+     recalculates the energy or enthalpy
+**** Function object that calculates the average of one variable as a function of another
+     The function object =swakExpressionAverageDistribution=
+     calculates the average of one function (the =expression=) as a
+     distribution over another (the =abscissa=). An example would be
+     the average pressure in x-direction with =abscissa= being
+     =pos().x=, =expression= being just =p= and the =weight=
+     being =vol()=. The weight has to be a scalar. All other
+     expressions can be any data-type
+**** New utility =fieldReport=
+     This utility prints some quantitative statistics about a
+     specified field. Optionally these statistics can also be printed
+     for patches, sets and zones. The data can be written to a
+     CSV-file. Also the distributions of the field can be written.
+**** New utility =funkyPythonPostproc=
+     This utility needs a dictionary and a specification of
+     times. For each time it
+     - loads a list of fields specified in the dictionary
+     - executes a list of function objects specified in the dictionary
+     - executes python-scripts
+     The idea is that the function objects pass data to the
+     python-scripts via global variables and the python-scripts do
+     whatever they like
+*** Enhancements
+**** Function objects that calculate PDEs can use fields from memory
+     If the field is found in memory this is used instead of a file
+     read from disc.
+**** Function objects that calculate PDEs can write fields before solving
+     An additional switch =writeBeforeAfter= allows writing the field
+     before and after solving
+**** simpleFunctionObjects have addition =outputControlMode=
+     Mode =startup= executes the FO only during construction
+**** Conditional functionObjects now have optional =else=
+     It is now possible to add a sub-dictionary =else= that is used
+     to initialize a =functionObjectProxy= that is executed if the
+     condition is *not* fulfilled. The sub-dictionary inherits all
+     settings that are not set from the parent-dictionary
+**** =swakCoded= now allows addition of data to functionObject
+     The entry =codeData= is now read and inserted into the functionObject
+**** Parsers in =swakFiniteArea= no also have complete tensor-operations
+     The two parsers in that library now also support the complete
+     set of tensor operations (like =eigenValues= etc)
+**** =swakExpressionDistribution= now allows non-scalar weights
+     For expressions whose results is not a scalar now the weight
+     function can either be a scalar or of the same type as the
+     expression (so every component can have a separate weight)
+**** More options for =accumulations=
+     A number of possible accumulations have been added. Most of
+     these are based on distributions. If the =weighted= variant is
+     chosen then the meaning is the more physical one (for =weighted=
+     the 'natural' weight of the quantity is used. For instance for
+     cells the cell volume. Otherwise the weight $1$ is used). Some
+     of these accumulations need a single floating point number as a
+     parameter. This is simply added to the name. The added
+     accumulations are:
+     - weightedSum :: sum of the quantity times the weight. There is
+                      an alias =integrate= for this
+     - median :: The value for which 50% of the distribution are
+                 smaller than this. More robust alternative to
+                 =average=
+     - quantile :: =quantile0.25= for instance is the value for which
+                   25% of the distribution are smaller than it
+     - range :: The difference of the quantile of $\frac{1+f}{2}$ and
+                $\frac{1-f}{2}$. For instance =range0.9= gives the
+                range in which 90% of the values are (from the quantile
+                5% to 95%)
+     - smaller :: The fraction of the distribution that is smaller
+                  than a given value
+     - bigger :: The inverse of =smaller=
+     - size :: The size of the underlying entity (usually number of
+               cells, faces, points). For types with more than one
+               components all the components have the same value
+     - weightSum :: Sum of the weights of the underlying
+                    entity. Usually the volume oder the area of it.
+**** Python code files are now searched more flexible
+     If a file specified with an option like =startFile= in a
+     Python-functionObject (or similar) is not found in the current
+     directory the path of the dictionary it is specified in is
+     prepended and the file is searched there
+**** Python integration now uses =IPython= if possible
+     The interactive shell of the python integration now uses
+     =IPython= if it is installed. This improves tab-completion etc
+**** Preload libraries in the Python integration
+     As problematic libraries could hand during importing these
+     libraries can be imported in a safe way using the optional
+     =importLibs=-entry which is a dictionary. The keys are the names
+     under which the imports will appear in the Python-namespace. The
+     value is optional and the name of the actual library
+*** Examples
+**** Moved the OSCFD-examples to a different directory
+     Started one new directory for all cases from presentations
+**** Added examples from the swak-training at the 8th Workshop
+     Two new examples
+     - sandPitsOfCarcoon :: Reenacting a scene from "Return of the
+          Jedi" with =twoPhaseEulerFoam=
+     - landspeedersInCanyon :: Simulating two landspeeders from "A new
+          hope" with =simpleFoam=

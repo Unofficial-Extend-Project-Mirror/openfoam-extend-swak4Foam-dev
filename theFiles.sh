@@ -22,6 +22,8 @@ export SWAKUTILS=(funkySetBoundaryField \
     funkySetFields \
     funkyDoCalc \
     calcNonUniformOffsetsForMapped \
+    fieldReport \
+    funkyPythonPostproc \
     replayTransientBC)
 
 if [ "$FOAM_DEV" != "" ]

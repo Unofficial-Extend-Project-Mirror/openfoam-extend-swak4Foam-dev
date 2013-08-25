@@ -44,22 +44,6 @@ Contributors/Copyright:
 #include <cassert>
 
 namespace Foam {
-    label SampledSurfaceValueExpressionDriver::size() const
-    {
-        return theSurface_.faces().size();
-    }
-
-    label SampledSurfaceValueExpressionDriver::pointSize() const
-    {
-        return theSurface_.points().size();
-    }
-
-    const fvMesh &SampledSurfaceValueExpressionDriver::mesh() const
-    {
-        //        return dynamicCast<const fvMesh&>(faceZone_.zoneMesh().mesh()); // doesn't work with gcc 4.2
-        return dynamic_cast<const fvMesh&>(theSurface_.mesh());
-    }
-
     template<class Type,class volField,class surfField>
     tmp<Field<Type> >
     SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 15 Jul 2013 00:00:18 +0200
+State: fixed
+Subject: Post-processing utility with Python-integration
+Message-Id: <892b499519b6a554-0-artemis@bgs-cool-greybook.local>
+
+Gets fields from swak-expressions and then drops to a Python-shell or
+execute a Python-script

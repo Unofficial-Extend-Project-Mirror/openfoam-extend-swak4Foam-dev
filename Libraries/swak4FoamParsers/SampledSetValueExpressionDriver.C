@@ -306,7 +306,7 @@ tmp<scalarField> SampledSetValueExpressionDriver::weightsNonPoint(
     bool isFace=(size==faceSize);
     reduce(isFace,andOp<bool>());
 
-    if(!faceSize) {
+    if(!isFace) {
         Pout << "Expected size: " << size
             << " The size: " << faceSize << endl;
 

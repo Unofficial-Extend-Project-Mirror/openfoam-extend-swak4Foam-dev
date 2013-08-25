@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "writeAdditionalFieldsFunctionObject.H"
@@ -73,16 +73,20 @@ bool writeAdditionalFieldsFunctionObject::start()
 
     Info << "Additional fields " << fieldNames() << " will be written" << endl;
 
+    if(outputControlMode()==ocmStartup) {
+        write();
+    }
+
     return true;
 }
 
-bool writeAdditionalFieldsFunctionObject::outputTime()
-{
-    return (
-        time().outputTime()
-        &&
-        time().time().value()>=after());
-}
+// bool writeAdditionalFieldsFunctionObject::outputTime()
+// {
+//     return (
+//         time().outputTime()
+//         &&
+//         time().time().value()>=after());
+// }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

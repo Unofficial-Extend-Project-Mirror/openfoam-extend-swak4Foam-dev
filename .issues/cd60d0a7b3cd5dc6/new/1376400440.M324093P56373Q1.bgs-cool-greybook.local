@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 13 Aug 2013 15:26:13 +0200
+Subject: Re: Use IPython in pythonIntegration for interactive mode
+Message-Id: <cd60d0a7b3cd5dc6-a9f50b223deb73b5-artemis@bgs-cool-greybook.local>
+References: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cd60d0a7b3cd5dc6-0-artemis@bgs-cool-greybook.local>
+
+First implementation.
+
+Old style embedding not yet testested. Problem with tab of imports

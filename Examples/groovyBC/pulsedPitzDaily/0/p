@@ -20,16 +20,17 @@ internalField   uniform 0;
 
 boundaryField
 {
-    inlet           
+    inlet
     {
         type            zeroGradient;
     }
 
-    outlet          
+    outlet
     {
         //        type            fixedValue;
         type            groovyTotalPressure;
         value           uniform 0;
+        gamma 0;
         variables (
             "base=0.;"
             "maxP{}=max(p);"
@@ -39,20 +40,21 @@ boundaryField
             "maxY=max(yp);"
             "scale=0.1*(maxP-minP)/(maxY-minY);"
         );
+        p0 $value;
         p0Expression "base+scale*(pos().y-minY)";
     }
 
-    upperWall       
+    upperWall
     {
         type            zeroGradient;
     }
 
-    lowerWall       
+    lowerWall
     {
         type            zeroGradient;
     }
 
-    frontAndBack    
+    frontAndBack
     {
         type            empty;
     }

@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef conditionalFunctionObjectListProxy_H
@@ -65,12 +65,18 @@ class conditionalFunctionObjectListProxy
 
     //- Disallow default bitwise copy construct
     conditionalFunctionObjectListProxy(const conditionalFunctionObjectListProxy&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const conditionalFunctionObjectListProxy&);
 
+    autoPtr<functionObjectListProxy> else_;
+
+    autoPtr<dictionary> elseDict_;
+
+    //- read the else-part
+    void readElse(const dictionary &dict);
 protected:
-    
+
     //- the actual conition that determines whether the FO should be executed
     virtual bool condition()=0;
 
@@ -101,7 +107,7 @@ public:
     //- Called when Time::run() determines that the time-loop exits.
     //  By default it simply calls execute().
     virtual bool end();
-    
+
     //- Read and set the function object if its data have changed
     virtual bool read(const dictionary&);
 };

@@ -1,0 +1,20 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 12 Aug 2013 20:32:08 +0200
+Subject: Re: Post-processing utility with Python-integration
+Message-Id: <892b499519b6a554-a81a83c98b64f95d-artemis@bgs-cool-greybook.local>
+References: <892b499519b6a554-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <892b499519b6a554-0-artemis@bgs-cool-greybook.local>
+
+The utility will be called funkyPythonPostproc. There are two modes
+
+- interactive mode: No script is specified and the user is dropped
+  down to a python-shell with every timestep
+- script mode: a script is specified. Dropping to the shell is
+  optional
+
+How data gets into Python: dictionary with a list of function-objects
+that get executed. This way a lot of code can be reused. Also does the
+dictionary specify a list of global namespaces that are imported into
+Python.
+
+Additionally there is a list of fields to be preloaded

@@ -94,9 +94,9 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 \<=                   return token::TOKEN_LEQ;
 \>=                   return token::TOKEN_GEQ;
 
-<vectorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
-<vectorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
-<vectorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
+<vectorcomponent,tensorcomponent>x    { BEGIN(INITIAL); return token::TOKEN_x; }
+<vectorcomponent,tensorcomponent>y    { BEGIN(INITIAL); return token::TOKEN_y; }
+<vectorcomponent,tensorcomponent>z    { BEGIN(INITIAL); return token::TOKEN_z; }
 
 <tensorcomponent>xx    { BEGIN(INITIAL); return token::TOKEN_xx; }
 <tensorcomponent>xy    { BEGIN(INITIAL); return token::TOKEN_xy; }
@@ -191,6 +191,11 @@ skew                   return token::TOKEN_skew;
 det                    return token::TOKEN_det;
 cof                    return token::TOKEN_cof;
 inv                    return token::TOKEN_inv;
+sph                    return token::TOKEN_sph;
+twoSymm                return token::TOKEN_twoSymm;
+dev2                   return token::TOKEN_dev2;
+eigenValues            return token::TOKEN_eigenValues;
+eigenVectors           return token::TOKEN_eigenVectors;
 
 
 {float}                {
@@ -221,8 +226,8 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr; return token::TOKEN_YID;
     } else if(driver.is<Foam::sphericalTensor>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_HID;
-        //    } else if(driver.is<Foam::bool>(*ptr)) {
-        //        yylval->name = ptr; return token::TOKEN_LID;
+    } else if(driver.isVariable<bool>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LID;
     } else if(driver.is<Foam::scalar>(*ptr,true)) {
         yylval->name = ptr; return token::TOKEN_PSID;
     } else if(driver.is<Foam::vector>(*ptr,true)) {
@@ -233,8 +238,8 @@ inv                    return token::TOKEN_inv;
         yylval->name = ptr; return token::TOKEN_PYID;
     } else if(driver.is<Foam::sphericalTensor>(*ptr,true)) {
         yylval->name = ptr; return token::TOKEN_PHID;
-        //    } else if(driver.is<Foam::bool>(*ptr,true)) {
-        //        yylval->name = ptr; return token::TOKEN_PLID;
+    } else if(driver.isVariable<bool>(*ptr,true)) {
+        yylval->name = ptr; return token::TOKEN_PLID;
     } else if(Foam::FaPatchValuePluginFunction::exists(driver,*ptr)) {
         // OK. We'll create the function two times. But this is less messy
         // than passing it two times

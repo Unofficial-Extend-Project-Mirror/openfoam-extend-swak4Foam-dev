@@ -99,6 +99,9 @@ private:
 public:
     TypeName("FaFieldValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef faMesh EntityType;
+
     static const word &driverName() { return driverName_; }
 
     //- simpler Constructor

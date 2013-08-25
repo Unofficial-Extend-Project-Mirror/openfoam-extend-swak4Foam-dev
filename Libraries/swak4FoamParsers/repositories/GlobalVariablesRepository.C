@@ -65,15 +65,11 @@ GlobalVariablesRepository::GlobalVariablesRepository(
     ),
     lastTimeIndex_(obr.time().timeIndex())
 {
-    if(debug) {
-        Pout << "GlobalVariablesRepository at "
-            << objectPath() << " created" << endl;
-    }
+    Pbug << "GlobalVariablesRepository at "
+        << objectPath() << " created" << endl;
 
     if(headerOk()) {
-        if(debug) {
-            Pout << "Found a file " <<  objectPath() << endl;
-        }
+        Pbug << "Found a file " <<  objectPath() << endl;
 
         readData(readStream("GlobalVariablesRepository"));
     }
@@ -90,10 +86,8 @@ GlobalVariablesRepository::~GlobalVariablesRepository()
 
 bool GlobalVariablesRepository::writeData(Ostream &os) const
 {
-    if(debug) {
-        Pout << "GlobalVariablesRepository at " << objectPath()
+    Pbug << "GlobalVariablesRepository at " << objectPath()
             << " writing" << endl;
-    }
 
     os << globalVariables_;
 
@@ -102,16 +96,12 @@ bool GlobalVariablesRepository::writeData(Ostream &os) const
 
 bool GlobalVariablesRepository::readData(Istream &is)
 {
-    if(debug) {
-        Pout << "GlobalVariablesRepository at " << objectPath()
-            << " reading" << endl;
-    }
+    Pbug << "GlobalVariablesRepository at " << objectPath()
+        << " reading" << endl;
 
     is >> globalVariables_;
 
-    if(debug) {
-        Pout << "GlobalVariablesRepository reading finished" << endl;
-    }
+    Pbug << "GlobalVariablesRepository reading finished" << endl;
 
     return !is.bad();
 }
@@ -123,7 +113,7 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables(
     GlobalVariablesRepository*  ptr=repositoryInstance;
 
     if(debug) {
-        Pout << "GlobalVariablesRepository: asking for Singleton" << endl;
+        Info << "GlobalVariablesRepository: asking for Singleton" << endl;
     }
 
     if(ptr==NULL) {
@@ -142,6 +132,7 @@ GlobalVariablesRepository &GlobalVariablesRepository::getGlobalVariables(
         if(debug) {
             Info << "Resetting variables" << endl;
         }
+
         ResultTableTable &all=repositoryInstance->globalVariables_;
         forAllIter(ResultTableTable,all,table) {
             forAllIter(ResultTable,(*table),iter) {
@@ -181,10 +172,9 @@ const ExpressionResult &GlobalVariablesRepository::get(
 
         const ResultTable &scope=globalVariables_[scopeName];
         if(scope.found(name)) {
-            if(debug) {
-                Pout << name << " ( " << scopeName << " )= "
-                    << *scope[name] << endl;
-            }
+            Pbug << name << " ( " << scopeName << " )= "
+                << *scope[name] << endl;
+
             return *scope[name];
         }
     }
@@ -227,9 +217,8 @@ GlobalVariablesRepository::ResultTable
 &GlobalVariablesRepository::getScope(const word &scope)
 {
     if(!globalVariables_.found(scope)) {
-        if(debug) {
-            Pout << "Creating global scope " << scope << endl;
-        }
+        Pbug << "Creating global scope " << scope << endl;
+
         globalVariables_.insert(scope,ResultTable());
     }
     return globalVariables_[scope];
@@ -242,24 +231,22 @@ ExpressionResult& GlobalVariablesRepository::addValue(
     const bool overwrite
 )
 {
-    if(debug) {
-        Pout << "Adding " << name << " to global scope "
-            << scope << " Size: " << value.size() << endl;
-    }
+    Pbug << "Adding " << name << " to global scope "
+        << scope << " Size: " << value.size() << endl;
 
     ResultTable &theScope=getScope(scope);
 
     if(!theScope.found(name)) {
-        if(debug) {
-            Info << name << " is new. Inserting" << endl;
-        }
+        Dbug << name << " is new. Inserting" << endl;
+
         theScope.set(name,new ExpressionResult(value));
     } else if(overwrite) {
-        if(debug) {
-            Info << name << " is already there. Setting" << endl;
-        }
+        Dbug << name << " is already there. Setting" << endl;
+
         (*theScope[name])=value;
     }
+
+    Dbug << "Added: " << (*theScope[name]) << endl;
 
     return (*theScope[name]);
 }
@@ -269,22 +256,18 @@ bool GlobalVariablesRepository::removeValue(
     const word &scope
 )
 {
-    if(debug) {
-        Pout << "Removing " << name << " to global scope "
-            << scope << endl;
-    }
+    Pbug << "Removing " << name << " to global scope "
+        << scope << endl;
 
     ResultTable &theScope=getScope(scope);
 
     if(!theScope.found(name)) {
-        if(debug) {
-            Info << name << " is not there." << endl;
-        }
+        Dbug << name << " is not there." << endl;
+
         return false;
     } else {
-        if(debug) {
-            Info << name << " is there. Removing" << endl;
-        }
+        Dbug << name << " is there. Removing" << endl;
+
         ResultTable::iterator iter=theScope.find(name);
         return theScope.erase(iter);
     }
@@ -297,10 +280,8 @@ ExpressionResult& GlobalVariablesRepository::addValue(
     const bool overwrite
 )
 {
-    if(debug) {
-        Pout << "Adding autoPtr " << name << " to global scope "
-            << scope << " Size: " << value->size() << endl;
-    }
+    Pbug << "Adding autoPtr " << name << " to global scope "
+        << scope << " Size: " << value->size() << endl;
 
     ResultTable &theScope=getScope(scope);
 

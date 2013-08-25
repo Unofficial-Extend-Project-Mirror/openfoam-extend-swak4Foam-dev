@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyTotalPressureFvPatchScalarField.H"
@@ -61,7 +61,7 @@ Foam::groovyTotalPressureFvPatchScalarField::groovyTotalPressureFvPatchScalarFie
     const dictionary& dict
 )
 :
-    totalPressureFvPatchScalarField(p, iF),
+    totalPressureFvPatchScalarField(p, iF,dict),
     p0Expression_(dict.lookup("p0Expression")),
     driver_(dict,this->patch())
 {
@@ -127,7 +127,7 @@ void Foam::groovyTotalPressureFvPatchScalarField::write(Ostream& os) const
 
     os.writeKeyword("p0Expression")
         << p0Expression_ << token::END_STATEMENT << nl;
-    
+
     driver_.writeCommon(os,debug);
 }
 

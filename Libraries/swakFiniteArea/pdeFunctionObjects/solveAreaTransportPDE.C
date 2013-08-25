@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "solveAreaTransportPDE.H"
@@ -80,7 +80,7 @@ Foam::solveAreaTransportPDE::solveAreaTransportPDE
     read(dict);
 
     if(solveAt_==saStartup) {
-        solve();
+        solveWrapper();
     }
 }
 
@@ -98,8 +98,16 @@ void Foam::solveAreaTransportPDE::read(const dictionary& dict)
         dict.lookup("diffusion") >> diffusionExpression_ >> diffusionDimension_;
         dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit") 
+            dict.lookup("sourceImplicit")
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
+        } else {
+            if(sourceExpression_!="0") {
+                WarningIn("Foam::solveAreaTransportPDE::read(const dictionary& dict)")
+                    << "Source expression " << sourceExpression_ << " set. "
+                        << "Consider factoring out parts to 'sourceImplicit'\n"
+                        << endl;
+
+            }
         }
         dict.lookup("phi") >> phiExpression_ >> phiDimension_;
     }
@@ -110,10 +118,22 @@ void Foam::solveAreaTransportPDE::solve()
     if(active_) {
         const faMesh& mesh = driver_->aMesh();
         dictionary sol=mesh.solutionDict().subDict(fieldName_+"TransportPDE");
-        
+
         FaFieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
+        if(
+            nCorr==0
+            &&
+            steady_
+        ) {
+            WarningIn("Foam::solveTransportPDE::solve()")
+                << name_ << " is steady. It is recommended to have in "
+                    << sol.name() << " a nCorrectors>0"
+                    << endl;
+
+        }
+
         for (int corr=0; corr<=nCorr; corr++) {
 
             driver.clearVariables();
@@ -150,7 +170,7 @@ void Foam::solveAreaTransportPDE::solve()
 
             phiField.dimensions().reset(phiDimension_);
 
-            areaScalarField &f=theField_();
+            areaScalarField &f=theField();
 
             faMatrix<scalar> eq(
                 fam::div(phiField,f)
@@ -169,7 +189,7 @@ void Foam::solveAreaTransportPDE::solve()
                 }
                 areaScalarField rhoField(driver.getResult<areaScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
-            
+
                 faMatrix<scalar> ddtMatrix=fam::ddt(f);
                 if(
                     !ddtMatrix.diagonal()
@@ -194,8 +214,8 @@ void Foam::solveAreaTransportPDE::solve()
                 }
                 areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
-            
-                eq-=fam::SuSp(sourceImplicitField,f);
+
+                eq-=fam::Sp(sourceImplicitField,f);
             }
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);

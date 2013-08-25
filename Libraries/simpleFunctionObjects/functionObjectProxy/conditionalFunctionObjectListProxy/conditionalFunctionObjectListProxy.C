@@ -64,14 +64,59 @@ conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
         false
     )
 {
+    if(debug) {
+        Info << "conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy" << endl;
+    }
+    if(dict.found("else")) {
+        if(debug) {
+            Info << "'else' found" << endl;
+        }
+        readElse(dict);
+    }
 }
 
+void conditionalFunctionObjectListProxy::readElse(const dictionary &dict)
+{
+    if(debug) {
+        Info << "conditionalFunctionObjectListProxy::readElse" << endl;
+    }
+    elseDict_.set(
+        new dictionary(dict.subDict("else"))
+    );
+    if(!elseDict_->found("functions")) {
+        FatalErrorIn("conditionalFunctionObjectListProxy::readElse(const dictionary &dict)")
+            << "Dictionary " << dict.name() << " has an 'else'-entry but that "
+                << "has no 'functions'-entry"
+                << endl
+                << exit(FatalError);
+    }
+
+    // get missing entries from the parent
+    elseDict_()|=dict;
+    elseDict_().remove("else");
+
+    if(debug) {
+        Info << elseDict_() << endl;
+    }
+
+    else_.set(
+        new functionObjectListProxy(
+            name()+"_else",
+            time(),
+            elseDict_(),
+            false
+        )
+    );
+    if(debug) {
+        Info << "conditionalFunctionObjectListProxy::readElse finished" << endl;
+    }
+}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool conditionalFunctionObjectListProxy::execute(const bool forceWrite)
 {
-    if(writeDebug()) {
+    if(writeDebug() || debug) {
         Info << this->name() << " condition::execute() condition: "
             << condition() << endl;
     }
@@ -79,13 +124,17 @@ bool conditionalFunctionObjectListProxy::execute(const bool forceWrite)
     if(condition()) {
         return functionObjectListProxy::execute(forceWrite);
     } else {
-        return true;
+        if(else_.valid()) {
+            return else_->execute(forceWrite);
+        } else {
+            return true;
+        }
     }
 }
 
 bool conditionalFunctionObjectListProxy::start()
 {
-    if(writeDebug()) {
+    if(writeDebug() || debug) {
         Info << this->name() << " condition::start() condition: "
             << condition() << endl;
     }
@@ -93,13 +142,17 @@ bool conditionalFunctionObjectListProxy::start()
     if(condition()) {
         return functionObjectListProxy::start();
     } else {
-        return true;
+        if(else_.valid()) {
+            return else_->start();
+        } else {
+            return true;
+        }
     }
 }
 
 bool conditionalFunctionObjectListProxy::end()
 {
-    if(writeDebug()) {
+    if(writeDebug() || debug) {
         Info << this->name() << " condition::end() condition: "
             << condition() << endl;
     }
@@ -107,13 +160,17 @@ bool conditionalFunctionObjectListProxy::end()
     if(condition()) {
         return functionObjectListProxy::end();
     } else {
-        return true;
+        if(else_.valid()) {
+            return else_->end();
+        } else {
+            return true;
+        }
     }
 }
 
 bool conditionalFunctionObjectListProxy::read(const dictionary& dict)
 {
-    if(writeDebug()) {
+    if(writeDebug() || debug) {
         Info << this->name() << " condition::read() condition: "
             << condition() << endl;
     }
@@ -121,7 +178,11 @@ bool conditionalFunctionObjectListProxy::read(const dictionary& dict)
     if(condition()) {
         return functionObjectListProxy::read(dict);
     } else {
-        return true;
+        if(else_.valid()) {
+            return else_->read(dict);
+        } else {
+            return true;
+        }
     }
 }
 

@@ -774,7 +774,7 @@ tmp<scalarField> FaFieldValueExpressionDriver::weightsNonPoint(
     bool isFace=(size==faceSize);
     reduce(isFace,andOp<bool>());
 
-    if(!faceSize) {
+    if(!isFace) {
         Pout << "Expected size: " << size
             << " Face size: " << faceSize << endl;
 

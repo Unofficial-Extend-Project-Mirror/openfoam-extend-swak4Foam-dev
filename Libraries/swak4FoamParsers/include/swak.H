@@ -134,7 +134,14 @@ Contributors/Copyright:
 
 #endif // version starting with 2.2
 
+// Certain OpenFOAM-versions don't have this method in fvMesh
+#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
+#define FOAM_FV_MESH_HAS_NO_SOLVERDICT
+#endif
+
 #include "swakVersion.H"
+
+#include "DebugOStream.H"
 
 #endif
 

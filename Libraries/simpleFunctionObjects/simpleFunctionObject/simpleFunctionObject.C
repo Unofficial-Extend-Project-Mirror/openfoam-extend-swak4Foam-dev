@@ -48,13 +48,14 @@ namespace Foam
     defineTypeNameAndDebug(simpleFunctionObject, 0);
 
 template<>
-const char* NamedEnum<Foam::simpleFunctionObject::outputControlMode,3>::names[]=
+const char* NamedEnum<Foam::simpleFunctionObject::outputControlModeType,4>::names[]=
 {
-    "timestep",
+    "timeStep",
     "deltaT",
-    "outputTime"
+    "outputTime",
+    "startup"
 };
-const NamedEnum<simpleFunctionObject::outputControlMode,3> simpleFunctionObject::outputControlModeNames_;
+const NamedEnum<simpleFunctionObject::outputControlModeType,4> simpleFunctionObject::outputControlModeTypeNames_;
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -84,8 +85,8 @@ simpleFunctionObject::simpleFunctionObject
     ),
     timeSteps_(0),
     outputControlMode_(
-        outputControlModeNames_[
-            dict.lookupOrDefault<word>("outputControlMode","timestep")
+        outputControlModeTypeNames_[
+            dict.lookupOrDefault<word>("outputControlMode","timeStep")
         ]
     ),
     outputInterval_(
@@ -107,7 +108,7 @@ simpleFunctionObject::simpleFunctionObject
     if(!dict.found("outputControlMode")) {
         WarningIn("simpleFunctionObject::simpleFunctionObject")
             << "'outputControlMode' not found in " << this->name() << endl
-                << "Assuming: " << outputControlModeNames_[outputControlMode_]
+                << "Assuming: " << outputControlModeTypeNames_[outputControlMode_]
                 << endl;
     }
     switch(outputControlMode_) {
@@ -175,10 +176,13 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
         case ocmOutputTime:
             doOutput=time_.outputTime();
             break;
+        case ocmStartup:
+            doOutput=false;
+            break;
         default:
             FatalErrorIn("simpleFunctionObject::outputTime()")
                 << "'outputControlMode' not implemented in " << name() << endl
-                    << "Mode: " << outputControlModeNames_[outputControlMode_]
+                    << "Mode: " << outputControlModeTypeNames_[outputControlMode_]
                     << endl
                     << exit(FatalError);
     }
@@ -231,7 +235,14 @@ bool simpleFunctionObject::read(const dictionary& dict)
             after_=readScalar(dict.lookup("after"));
         }
 
-        return start();
+        bool isStart=start();
+
+        if(outputControlMode()==ocmStartup) {
+            write();
+            flush();
+        }
+
+        return isStart;
     }
     else
     {

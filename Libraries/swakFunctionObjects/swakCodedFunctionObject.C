@@ -156,6 +156,8 @@ void Foam::swakCodedFunctionObject::injectSwakCode(const word &key,const string 
 
 bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
 {
+    dict.lookup("redirectType") >> redirectType_;
+
     //  bool success=codedFunctionObject::read(dict);
     //  Info << dict.lookup("code") << dict.lookup("code") << endl;
     string codePrefix="// inserted by swak - start\n";
@@ -254,6 +256,24 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
 //         ""
 //     );
 
+    const entry* dataPtr = dict.lookupEntryPtr
+    (
+        "codeData",
+        false,
+        false
+    );
+    if (dataPtr)
+    {
+        codeData_ = stringOps::trim(string(dataPtr->stream()));
+        stringOps::inplaceExpand(codeData_, dict);
+        dynamicCodeContext::addLineDirective
+        (
+            codeData_,
+            dataPtr->startLineNumber(),
+            dict.name()
+        );
+    }
+
     const entry* readPtr = dict.lookupEntryPtr
     (
         "codeRead",
@@ -280,7 +300,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     );
     if (execPtr)
     {
-        codeExecute_ = stringOps::trim(codePrefix+string(readPtr->stream())+codePostfix);
+        codeExecute_ = stringOps::trim(codePrefix+string(execPtr->stream())+codePostfix);
         stringOps::inplaceExpand(codeExecute_, dict);
         dynamicCodeContext::addLineDirective
         (
@@ -298,7 +318,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     );
     if (execPtr)
     {
-        codeEnd_ = stringOps::trim(codePrefix+string(readPtr->stream())+codePostfix);
+        codeEnd_ = stringOps::trim(codePrefix+string(endPtr->stream())+codePostfix);
         stringOps::inplaceExpand(codeEnd_, dict);
         dynamicCodeContext::addLineDirective
         (

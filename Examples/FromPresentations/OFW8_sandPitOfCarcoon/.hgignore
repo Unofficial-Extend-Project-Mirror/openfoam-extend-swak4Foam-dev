@@ -1,0 +1,6 @@
+syntax: re
+
+glob:*.gz
+glob:*~
+glob:*.foam
+re:.*\.logfile

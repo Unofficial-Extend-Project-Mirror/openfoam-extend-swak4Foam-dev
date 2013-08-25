@@ -153,6 +153,9 @@ public:
             return name_;
         }
 
+        //- Called when time was set at the end of the Time::operator++ 
+        virtual void timeSet();         
+
         //- Read the field min/max data
         virtual void read(const dictionary&);
 

@@ -82,6 +82,9 @@ protected:
     //- update stuff the surface
     virtual bool update();
 
+    //- force update if needed
+    void updateIfNeeded();
+
     //- should we interpolate?
     bool interpolate_;
 
@@ -99,6 +102,9 @@ public:
 
      //- Runtime type information
     TypeName("SampledSurfaceValueExpressionDriver");
+
+    //- entity this driver operates on
+    typedef sampledSurface EntityType;
 
     static const word &driverName() { return driverName_; }
 

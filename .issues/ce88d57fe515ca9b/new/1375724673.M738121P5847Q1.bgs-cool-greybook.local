@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 05 Aug 2013 19:43:48 +0200
+Subject: Re: Function object that calculates a distribution
+Message-Id: <ce88d57fe515ca9b-9fe9a226d3527fa8-artemis@bgs-cool-greybook.local>
+References: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ce88d57fe515ca9b-0-artemis@bgs-cool-greybook.local>
+
+Now the average-by is also implemented.

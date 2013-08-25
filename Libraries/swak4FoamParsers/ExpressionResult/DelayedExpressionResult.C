@@ -111,10 +111,8 @@ DelayedExpressionResult::~DelayedExpressionResult()
 
 void DelayedExpressionResult::operator=(const DelayedExpressionResult& rhs)
 {
-    if(debug) {
-        Info << "DelayedExpressionResult::operator=(const DelayedExpressionResult& rhs)"
+    Dbug << "operator=(const DelayedExpressionResult& rhs)"
             << endl;
-    }
 
     // Check for assignment to self
     if (this == &rhs)
@@ -136,38 +134,32 @@ void DelayedExpressionResult::operator=(const DelayedExpressionResult& rhs)
 
 void DelayedExpressionResult::operator=(const ExpressionResult& rhs)
 {
-    if(debug) {
-        Info << "DelayedExpressionResult::operator=(const ExpressionResult& rhs)"
-            << endl;
-        Pout << "Setting " << name() << " with " << rhs << endl;
-    }
+    Dbug << "operator=(const ExpressionResult& rhs)"
+        << endl;
+    Pbug << "Setting " << name() << " with " << rhs << endl;
+
     settingResult_=rhs;
 }
 
 bool DelayedExpressionResult::updateReadValue(const scalar &time)
 {
-    if(debug) {
-        Pout << "Updating delayed " << name() << " for t=" << time << endl;
-    }
+    Pbug << "Updating delayed " << name() << " for t=" << time << endl;
 
     if(storedValues_.size()<=0) {
-        if(debug) {
-            Pout << "Delayed variable " << name() << " has no stored values"
-                << endl;
-        }
+        Pbug << "Delayed variable " << name() << " has no stored values"
+            << endl;
+
         // no shirt, no data, no service
         return false;
     }
     const ValueAtTime &first=storedValues_.first();
-    if(debug) {
-        Pout << "First stored value for t=" << first.first()
-            << " -> " << bool(first.first()>(time-delay_)) << endl;
-    }
+
+    Pbug << "First stored value for t=" << first.first()
+        << " -> " << bool(first.first()>(time-delay_)) << endl;
 
     if(first.first()>(time-delay_)) {
-        if(debug) {
-            Pout << "No matching data yet" << endl;
-        }
+        Pbug << "No matching data yet" << endl;
+
         // we have no matching data yet
         return false;
     }
@@ -186,23 +178,20 @@ bool DelayedExpressionResult::updateReadValue(const scalar &time)
     DLList<ValueAtTime>::const_iterator next=current;
     ++next;
     while(next!=storedValues_.end()) {
-        if(debug) {
-            Pout << "Basepoints  t=" << current().first()
-                << " and t=" << next().first() << " - " << flush;
-        }
+        Pbug << "Basepoints  t=" << current().first()
+            << " and t=" << next().first() << " - " << flush;
+
         if(
             (time-delay_)>=current().first()
             &&
             (time-delay_)<=next().first()
         ) {
-            if(debug) {
-                Pout << " fit" << endl;
-            }
+            Pbug << " fit" << endl;
+
             break;
         }
-        if(debug) {
-            Pout << " next" << endl;
-        }
+        Pbug << " next" << endl;
+
         current=next;
         ++next;
     }
@@ -213,14 +202,11 @@ bool DelayedExpressionResult::updateReadValue(const scalar &time)
     const scalar step=next().first()-current().first();
     const scalar f=((time-delay_)-current().first())/step;
 
-    if(debug) {
-        Pout << "Using f=" << f << " (step " << step << ")" << endl;
-    }
+    Pbug << "Using f=" << f << " (step " << step << ")" << endl;
 
     ExpressionResult val((1-f)*current().second()+f*next().second());
-    if(debug) {
-        Pout << "New value " << val << endl;
-    }
+
+    Pbug << "New value " << val << endl;
 
     setReadValue(val);
 
@@ -229,46 +215,39 @@ bool DelayedExpressionResult::updateReadValue(const scalar &time)
 
 void DelayedExpressionResult::setReadValue(const ExpressionResult &val)
 {
-    if(debug) {
-        Info << "DelayedExpressionResult::setReadValue"
-            << endl;
-    }
+    Dbug << "setReadValue"
+        << endl;
+
     ExpressionResult::operator=(val);
 }
 
 void DelayedExpressionResult::storeValue(const scalar &time)
 {
-    if(debug) {
-        Pout << "Storing value " << name() << " at t="
-            << time << endl;
-    }
+    Pbug << "Storing value " << name() << " at t="
+        << time << endl;
+
     bool append=false;
 
     if(storedValues_.size()<=0) {
-        if(debug) {
-            Pout << "First value - appending" << endl;
-        }
+        Pbug << "First value - appending" << endl;
+
         append=true;
     } else {
         const scalar lastTime=storedValues_.last().first();
-        if(debug) {
-            Pout << "Last stored time t=" << lastTime << flush;
-        }
+
+        Pbug << "Last stored time t=" << lastTime << flush;
+
         if(lastTime+SMALL>=time) {
             // basically the same. Fall through to replace
-            if(debug) {
-                Pout << " Almost same - replacing" << endl;
-            }
+            Pbug << " Almost same - replacing" << endl;
         } else if((time-lastTime)>=0.999*storeInterval_) {
-            if(debug) {
-                Pout << " Interval " << storeInterval_
-                    << "passed - appending"<< endl;
-            }
+            Pbug << " Interval " << storeInterval_
+                << "passed - appending"<< endl;
+
             append=true;
         } else {
-            if(debug) {
-                Pout << " Middle. Nothing done" << endl;
-            }
+            Pbug << " Middle. Nothing done" << endl;
+
             // we're in the middle. Forget it
             return;
         }
@@ -283,9 +262,8 @@ void DelayedExpressionResult::storeValue(const scalar &time)
             notEmpty=true;
         }
 
-        if(debug) {
-            Pout << "Appending " << settingResult_ << endl;
-        }
+        Pbug << "Appending " << settingResult_ << endl;
+
         storedValues_.append(ValueAtTime(time,settingResult_));
         if(notEmpty) {
             while(
@@ -293,17 +271,15 @@ void DelayedExpressionResult::storeValue(const scalar &time)
                 >=
                 delay_
             ) {
-                if(debug) {
-                    Pout << "Removing t=" << storedValues_.first().first()
-                        << " because it is older than " << delay_ << endl;
-                }
+                Pbug << "Removing t=" << storedValues_.first().first()
+                    << " because it is older than " << delay_ << endl;
+
                 storedValues_.removeHead();
             }
         }
     } else {
-        if(debug) {
-            Pout << "Replacing with " << settingResult_ << endl;
-        }
+        Pbug << "Replacing with " << settingResult_ << endl;
+
         storedValues_.last().second()=settingResult_;
     }
 }

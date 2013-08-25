@@ -48,7 +48,8 @@ namespace Foam {
 template <typename Type>
 autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
     const Field<Type> &values,
-    const Field<scalar> &weights
+    const Field<Type> &weights,
+        const scalar binWidth
 )
 {
     Field<bool> mask(values.size(),true);
@@ -56,18 +57,41 @@ autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
     return setData(
         values,
         weights,
-        mask
+        mask,
+        binWidth
+    );
+}
+
+template <typename Type>
+autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setDataScalar(
+    const Field<Type> &values,
+    const Field<scalar> &weights,
+        const scalar binWidth
+)
+{
+    Field<bool> mask(values.size(),true);
+
+    return setDataScalar(
+        values,
+        weights,
+        mask,
+        binWidth
     );
 }
 
 template <typename Type>
 autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
     const Field<Type> &values,
-    const Field<scalar> &weights,
-    const Field<bool> &mask
+    const Field<Type> &weights,
+    const Field<bool> &mask,
+    const scalar binWidth
 )
 {
-    scalar binSize=readScalar(dict().lookup("distributionBinWidth"));
+    scalar binSize=binWidth;
+    if(binSize<0) {
+        binSize=readScalar(dict().lookup("distributionBinWidth"));
+    }
+
     label binNrMax=dict().lookupOrDefault<label>(
         "distributionMaxBinNr",
         1000
@@ -92,6 +116,58 @@ autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setData(
         if(dist.maxNrBins()>binNrMax) {
             scalar newBinSize=binSize*(1.1*dist.maxNrBins())/binNrMax;
             WarningIn("distributionFunctionObject::setData")
+                << "Number of bin " << dist.maxNrBins()
+                    << " exceeds allowed number "
+                    << binNrMax << ". Increasing binSize from " << binSize
+                    << " to " << newBinSize << endl
+                    << "If you want to increase the maximum number of bins "
+                    << "set the variable 'distributionMaxBinNr' to a higher value"
+                    << endl;
+            binSize=newBinSize;
+            goOn=true;
+        }
+    }
+
+    return pDist;
+}
+
+template <typename Type>
+autoPtr<SimpleDistribution<Type> > distributionFunctionObject::setDataScalar(
+    const Field<Type> &values,
+    const Field<scalar> &weights,
+    const Field<bool> &mask,
+    const scalar binWidth
+)
+{
+    scalar binSize=binWidth;
+    if(binSize<0) {
+        binSize=readScalar(dict().lookup("distributionBinWidth"));
+    }
+
+    label binNrMax=dict().lookupOrDefault<label>(
+        "distributionMaxBinNr",
+        1000
+    );
+
+    autoPtr<SimpleDistribution<Type> > pDist;
+
+    bool goOn=true;
+    while(goOn) {
+        goOn=false;
+
+        pDist.reset(
+            new SimpleDistribution<Type>(
+                binSize
+            )
+        );
+
+        SimpleDistribution<Type> &dist=pDist();
+
+        dist.calcScalarWeight(values,weights,mask);
+
+        if(dist.maxNrBins()>binNrMax) {
+            scalar newBinSize=binSize*(1.1*dist.maxNrBins())/binNrMax;
+            WarningIn("distributionFunctionObject::setDataScalar")
                 << "Number of bin " << dist.maxNrBins()
                     << " exceeds allowed number "
                     << binNrMax << ". Increasing binSize from " << binSize

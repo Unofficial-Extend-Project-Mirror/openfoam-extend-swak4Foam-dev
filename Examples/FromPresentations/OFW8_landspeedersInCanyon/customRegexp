@@ -1,0 +1,27 @@
+velChange {
+	  expr "Expression velocityChange :  min=(%f%) max=(%f%) weightedAverage=(%f%)";
+	  theTitle "Change of U compared to last iteration";
+	  titles (
+	      min max average
+	  );
+	  logscale true;
+}
+changePos {
+	  expr "Expression velocityChangePos :  max=\((%f%) (%f%) (%f%)\)";
+	  theTitle "Position of maximum change";
+	  titles (
+	      x y z
+	  );
+}
+exhaustConcentration {
+		     type dynamic;
+		     theTitle "Average exhaust";
+		     idNr 1;
+		     expr "Expression exhaustMeasure on (.+):  average=(%f%)";
+}
+exhaustTotal {
+	     type slave;
+	     master exhaustConcentration;
+	     expr "Expression exhaustDistribution :  min=%f% max=%f% weightedAverage=(%f%)";
+	     titles (average);
+}

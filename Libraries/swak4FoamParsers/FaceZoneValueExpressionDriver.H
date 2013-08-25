@@ -86,6 +86,9 @@ public:
      //- Runtime type information
     TypeName("FaceZoneValueExpressionDriver");
 
+    //- entity this driver operates on
+    typedef faceZone EntityType;
+
     static const word &driverName() { return driverName_; }
 
    // Constructors

@@ -81,6 +81,9 @@ class calculateGlobalVariables
     //- list of variables that should go to the global namespace
     wordList toGlobalVariables_;
 
+    //- whether or not to reset the variable
+    bool noReset_;
+
 protected:
 
     void executeAndWriteToGlobal();
@@ -109,6 +112,9 @@ public:
 
 
     // Member Functions
+
+    //- Called when time was set at the end of the Time::operator++ 
+    virtual void timeSet();         
 
     //- Read the forces data
     virtual void read(const dictionary&);

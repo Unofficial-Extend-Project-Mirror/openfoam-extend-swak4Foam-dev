@@ -35,6 +35,12 @@ SIMPLE
     nNonOrthogonalCorrectors 0;
 }
 
+TSteadyTransportPDE
+{
+    $SIMPLE;
+    //    nCorrectors 15;
+}
+
 "T.+TransportPDE"
 {
     $SIMPLE;

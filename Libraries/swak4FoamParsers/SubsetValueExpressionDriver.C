@@ -82,6 +82,15 @@ SubsetValueExpressionDriver::~SubsetValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void SubsetValueExpressionDriver::setAutoInterpolate(
+    bool autoInterpolate,
+    bool warnAutoInterpolate
+)
+{
+    autoInterpolate_=autoInterpolate;
+    warnAutoInterpolate_=warnAutoInterpolate;
+}
+
 void SubsetValueExpressionDriver::parseInternal (int startToken)
 {
     parserSubset::SubsetValueExpressionParser parser (

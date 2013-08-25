@@ -132,7 +132,8 @@ namespace Foam {
         if(debug) {
             Pout << "CommonValueExpressionDriver::isVariable "
                 << " looking for " << name << " isPoint: " << isPoint
-                << " of type " << pTraits<Type>::typeName;
+                << " of type " << pTraits<Type>::typeName
+                << " Expected size: " << expectedSize;
         }
 
         if(hasVariable(name)) {
@@ -755,6 +756,84 @@ namespace Foam {
         return f;
     }
 
+    template<class Type>
+    tmp<Field<Type> > CommonValueExpressionDriver::getVariable(
+        const word &inName,
+        const label expectedSize
+    )
+    {
+        word name(inName);
+        if(this->hasAlias(name)) {
+            if(debug) {
+                Pout << "CommonValueExpressionDriver::getVariable. Name: " << name
+                    << " is an alias for " << this->getAlias(name) << endl;
+            }
+            name=this->getAlias(name);
+        }
+
+        autoPtr<Field<Type> >vals;
+        bool isSingleValue=false;
+
+        if(
+            hasVariable(name)
+            &&
+            variable(name).valueType()==pTraits<Type>::typeName
+        ) {
+            isSingleValue=variable(name).isSingleValue();
+            vals.set(
+                variable(name).getResult<Type>(true).ptr()
+            );
+        } else if(isGlobal<Type>(name,false)) {
+            ExpressionResult &var=const_cast<ExpressionResult &>(
+                lookupGlobal(name)
+            );
+            isSingleValue=var.isSingleValue();
+            vals.set(
+                var.getResult<Type>(true).ptr()
+            );
+        }
+
+        if(vals.valid()) {
+            bool qSize=vals->size()==expectedSize;
+
+            reduce(qSize,andOp<bool>());
+
+            if(
+                qSize
+            ) {
+                return tmp<Field<Type> >(
+                    vals.ptr()
+                );
+            } else {
+                if(!isSingleValue) {
+                    WarningIn("CommonValueExpressionDriver::getVariable(const word &inName,const label expectedSize)")
+                        << "Variable " << name
+                            << " is not a single value but does not "
+                            << "fit the size " << expectedSize
+                            << ". Using average and "
+                            << "hoping for the best"
+                            << endl;
+                }
+                return tmp<Field<Type> >(
+                    new Field<Type>(
+                        expectedSize,gAverage(vals())
+                    )
+                );
+            }
+        } else {
+            FatalErrorIn("CommonValueExpressionDriver::getVariable(const word &inName,const label expectedSize)")
+                << "Variable " << inName << " (aliased to " << name
+                    << ") not found."
+                    << endl
+                    << exit(FatalError);
+
+            return tmp<Field<Type> >(
+                new Field<Type>(
+                    expectedSize,pTraits<Type>::zero
+                )
+            );
+       }
+    }
 
     template<class T,class Mesh>
     inline tmp<T> CommonValueExpressionDriver::readAndRegister(

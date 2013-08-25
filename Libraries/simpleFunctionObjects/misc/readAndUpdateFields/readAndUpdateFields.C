@@ -88,6 +88,11 @@ Foam::readAndUpdateFields::~readAndUpdateFields()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void Foam::readAndUpdateFields::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::readAndUpdateFields::read(const dictionary& dict)
 {
     if (active_)

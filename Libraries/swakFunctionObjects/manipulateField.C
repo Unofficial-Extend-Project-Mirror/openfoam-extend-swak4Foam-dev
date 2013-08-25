@@ -144,6 +144,11 @@ void Foam::manipulateField::manipulateSurface(
     }
 }
 
+void Foam::manipulateField::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::manipulateField::read(const dictionary& dict)
 {
     if(active_) {

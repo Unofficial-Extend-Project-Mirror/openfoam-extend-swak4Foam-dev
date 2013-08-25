@@ -1,0 +1,134 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      reactingCloud1Properties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         false;
+    transient       yes;
+    cellValueSourceCorrection off;
+
+    interpolationSchemes
+    {
+        rho             cell;
+        U               cellPoint;
+        mu              cell;
+        totalMu              cell;
+        DUcDt cell;
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+    }
+}
+
+constantProperties
+{
+    //    rho0            964;
+    rho0            2000;
+    youngsModulus   6e8;
+    poissonsRatio   0.35;
+
+    constantVolume  false;
+}
+
+subModels
+{
+    particleForces
+    {
+        // nonSphereDrag {
+        //     phi 0.5;
+        // };
+        sphereDrag;
+        gravity;
+        // virtualMass {
+        //     Cvm 0.5;
+        // };
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            type            patchInjection;
+            massTotal       0;
+            parcelBasisType fixed;
+            patchName       top;
+            nParticle       100;
+            SOI             0;
+            duration        1;
+            U0              ( 0 0 -1 );
+            parcelsPerSecond  100;
+            sizeDistribution
+            {
+                type        fixedValue;
+                fixedValueDistribution
+                {
+                    value   0.06;
+                }
+            }
+
+            flowRateProfile swak {
+                expression "exp(-t)";
+                independentVariableName t;
+                valueType patch;
+                patchName top;
+                integrationIntervalls 100;
+            };
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel standardWallInteraction;
+
+    heatTransferModel none;
+
+    surfaceFilmModel none;
+
+    collisionModel none;
+
+    radiation off;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+    }
+}
+
+
+cloudFunctions
+{
+    patchPostProcessing {
+        maxStoredParcels 1000;
+        patches ( bottom top );
+    };
+    voidFraction;
+    particleTrap {
+        alphaName alpha1;
+        threshold 0.45;
+    };
+    particleTracks {
+        trackInterval 10;
+        maxSamples 5000;
+        resetOnWrite false;
+    }
+}
+
+
+// ************************************************************************* //

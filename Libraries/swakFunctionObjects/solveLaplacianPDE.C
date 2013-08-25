@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "solveLaplacianPDE.H"
@@ -79,7 +79,7 @@ Foam::solveLaplacianPDE::solveLaplacianPDE
     read(dict);
 
     if(solveAt_==saStartup) {
-        solve();
+        solveWrapper();
     }
 }
 
@@ -99,6 +99,14 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
         if(dict.found("sourceImplicit")) {
             dict.lookup("sourceImplicit")
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
+        } else {
+            if(sourceExpression_!="0") {
+                WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")
+                    << "Source expression " << sourceExpression_ << " set. "
+                        << "Consider factoring out parts to 'sourceImplicit'\n"
+                        << endl;
+
+            }
         }
     }
 }
@@ -112,6 +120,18 @@ void Foam::solveLaplacianPDE::solve()
         FieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
+        if(
+            nCorr==0
+            &&
+            steady_
+        ) {
+            WarningIn("Foam::solveTransportPDE::solve()")
+                << name_ << " is steady. It is recommended to have in "
+                    << sol.name() << " a nCorrectors>0"
+                    << endl;
+
+        }
+
         for (int corr=0; corr<=nCorr; corr++) {
 
             driver.clearVariables();
@@ -136,7 +156,7 @@ void Foam::solveLaplacianPDE::solve()
             volScalarField sourceField(driver.getResult<volScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
 
-            volScalarField &f=theField_();
+            volScalarField &f=theField();
 
             fvMatrix<scalar> eq(
                 -fvm::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")
@@ -180,7 +200,7 @@ void Foam::solveLaplacianPDE::solve()
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
 
-                eq-=fvm::SuSp(sourceImplicitField,f);
+                eq-=fvm::Sp(sourceImplicitField,f);
             }
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);

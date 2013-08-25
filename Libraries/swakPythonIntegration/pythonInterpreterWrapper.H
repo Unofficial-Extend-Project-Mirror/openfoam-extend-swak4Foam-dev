@@ -75,11 +75,22 @@ class pythonInterpreterWrapper
 
     const objectRegistry& obr_;
 
+    const dictionary& dict_;
+
     //- state of 'my' Python subinterpreter
     PyThreadState *pythonState_;
 
     //- whether or not to use the numpy library
     bool useNumpy_;
+
+    //- whether or not to use IPython as the shell if it is installed
+    bool useIPython_;
+
+    //- whether or not we tried IPython
+    bool triedIPython_;
+
+    //- embed IPython using the old convention
+    bool oldIPython_;
 
     //- should exceptions be tolerated or lead to a fatal error?
     bool tolerateExceptions_;
@@ -122,48 +133,113 @@ class pythonInterpreterWrapper
     void getGlobals();
 
     void setGlobals();
+
+    void initIPython();
+
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;
-
-    //- Execute code. Return true if there was no problem
-    bool executeCode(const string &code,bool putVariables,bool failOnException=false);
-
-    //- Execute code and capture the stdout. Return true if there was no problem
-    bool executeCodeCaptureOutput(const string &code,string &stdout,bool putVariables,bool failOnException=false);
-
-    //- Execute code and return a value
-    template <typename T,class Func>
-    T evaluateCode(const string &code,bool failOnException=false);
-
-    //- Execute code and see if it returns to true or false
-    bool evaluateCodeTrueOrFalse(const string &code,bool failOnException=false);
-
-     //- Execute code and use the return value as a float value
-    scalar evaluateCodeScalar(const string &code,bool failOnException=false);
-
-      //- Execute code and use the return value as a integer value
-    label evaluateCodeLabel(const string &code,bool failOnException=false);
+    static PyThreadState *mainThreadState;
 
     //- Execute after the python-code has been called
-    void doAfterExecution(bool fail,const string &code,bool putVariables,bool failOnException=false);
-
-    //- Read code according to the dictionary
-    void readCode(const dictionary &dict,const word &prefix,string &code,bool mustRead=true);
+    void doAfterExecution(
+        bool fail,
+        const string &code,
+        bool putVariables,
+        bool failOnException=false
+    );
 
     //- set the state to "my" interpreter
     void setInterpreter();
 
-    //- set the variable 'runTime' in the interpreter
-    void setRunTime(const Time &time);
+    //- release the state to "my" interpreter
+    void releaseInterpreter();
 
     //- Check whether we want to continue (parallel)
     bool parallelNoRun(bool doWarning=false);
 
+    //- make sure that no functions are called that are no meant to be called in parallel
+    void assertParallel(const word &name);
+
+    //- whether the result has to be broadcast from the master processor
+    bool parallelMustBroadcast();
+
+    //- run an interactive sesssion
+    void interactiveLoop(const string &banner);
+
+    //- import a single library
+    bool importLib(
+        const word &name,
+        const word &as="",
+        bool useMainThreadStat=false
+    );
+
+    //- copy the global variables to other processors if only the master has them
+    void scatterGlobals();
+
+    //- wait for all processors
+    void syncParallel() const;
+
+public:
+    //- Execute code. Return true if there was no problem
+    bool executeCode(
+        const string &code,
+        bool putVariables,
+        bool failOnException=false
+    );
+
+    //- Execute code and capture the stdout. Return true if there was no problem
+    bool executeCodeCaptureOutput(
+        const string &code,
+        string &stdout,
+        bool putVariables,
+        bool failOnException=false
+    );
+
+    //- Execute code and return a value
+    template <typename T,class Func>
+    T evaluateCode(
+        const string &code,
+        bool failOnException=false
+    );
+
+    //- Execute code and see if it returns to true or false
+    bool evaluateCodeTrueOrFalse(
+        const string &code,
+        bool failOnException=false
+    );
+
+     //- Execute code and use the return value as a float value
+    scalar evaluateCodeScalar(
+        const string &code,
+        bool failOnException=false
+    );
+
+      //- Execute code and use the return value as a integer value
+    label evaluateCodeLabel(
+        const string &code,
+        bool failOnException=false
+    );
+
+    //- Read code according to the dictionary
+    void readCode(
+        const dictionary &dict,
+        const word &prefix,
+        string &code,
+        bool mustRead=true
+    );
+
+    //- shorthand for reading
+    string readCode(
+        const word &prefix,
+        bool mustRead=true
+    );
+
     //- set up the environment with the basic variables
     void initEnvironment(const Time &t);
 
-public:
+    //- set the variable 'runTime' in the interpreter
+    void setRunTime(const Time &time);
 
     //- Runtime type information
     TypeName("pythonInterpreterWrapper");
@@ -175,11 +251,16 @@ public:
     pythonInterpreterWrapper
     (
         const objectRegistry& obr,
-        const dictionary&
+        const dictionary&,
+        bool forceToNamespace=false
     );
 
     virtual ~pythonInterpreterWrapper();
 
+    void setInteractive(
+        bool interactiveAfterExecute,
+        bool interactiveAfterException
+    );
 };
 
 

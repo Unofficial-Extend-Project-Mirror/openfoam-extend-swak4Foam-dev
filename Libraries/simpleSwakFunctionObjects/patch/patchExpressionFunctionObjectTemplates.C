@@ -40,6 +40,8 @@ Contributors/Copyright:
 #include "fvMesh.H"
 #include "fvCFD.H"
 
+#include "AccumulationCalculation.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -53,41 +55,22 @@ void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExp
 {
     Field<T> result(driver.getResult<T>());
 
+    AccumulationCalculation<T> calculator(
+        result,
+        driver.result().isPoint(),
+        driver
+    );
+
     Field<T> results(accumulations_.size());
 
     forAll(accumulations_,i) {
-        const NumericAccumulationNamedEnum::value accu=accumulations_[i];
-        T val=pTraits<T>::zero;
+        const NumericAccumulationNamedEnum::accuSpecification accu=
+            accumulations_[i];
+        T val=calculator(accu);
 
-        switch(accu) {
-            case NumericAccumulationNamedEnum::numMin:
-                val=gMin(result);
-                break;
-            case NumericAccumulationNamedEnum::numMax:
-                val=gMax(result);
-                break;
-            case NumericAccumulationNamedEnum::numSum:
-                val=gSum(result);
-                break;
-            case NumericAccumulationNamedEnum::numAverage:
-                val=gAverage(result);
-                break;
-            // case NumericAccumulationNamedEnum::numSumMag:
-            //     val=gSumMag(result);
-            //     break;
-            case NumericAccumulationNamedEnum::numWeightedAverage:
-                val=driver.calcWeightedAverage(result);
-                break;
-            default:
-                WarningIn("patchExpressionFunctionObject::writeData")
-                    << "Unknown accumultation type "
-                        << NumericAccumulationNamedEnum::names[accu]
-                        << ". Currently only 'min', 'max', 'sum', 'weightedAverage' and 'average' are supported"
-                        << endl;
-        }
         results[i]=val;
         if(verbose()) {
-            Info << " " << NumericAccumulationNamedEnum::names[accu]
+            Info << " " << accu
                 << "=" << val;
         }
     }

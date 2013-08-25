@@ -1,0 +1,111 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    rho
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-06;
+        relTol          0.1;
+    }
+    rhoFinal
+    {
+        $rho;
+        tolerance       1e-06;
+        relTol          0;
+    }
+
+    p
+    {
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-6;
+        relTol           0.1;
+    }
+    pFinal
+    {
+        $p;
+        tolerance        1e-6;
+        relTol           0.0;
+    }
+    p.potential {
+        $pFinal;
+    }
+
+    "(U|hs|h|k|epsilon)"
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-06;
+        relTol          0.1;
+    }
+    "(U|hs|h|k|epsilon)Final"
+    {
+        $hs;
+        relTol          0;
+    }
+    Yi
+    {
+        $hFinal;
+    }
+    CH4 {
+        $Yi;
+    }
+    O2 {
+        $CH4;
+    }
+    T {
+        $p;
+    }
+}
+
+PISO
+{
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 0;
+}
+
+PIMPLE
+{
+    momentumPredictor no;
+    nOuterCorrectors  1;
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 0;
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 5;
+}
+
+CH4TransportPDE
+{
+    nCorrectors     5;
+    nNonOrthogonalCorrectors 2;
+}
+
+O2TransportPDE {
+    $CH4TransportPDE;
+}
+TLaplacianPDE {
+    nCorrectors     1;
+    nNonOrthogonalCorrectors 3;
+}
+
+// ************************************************************************* //

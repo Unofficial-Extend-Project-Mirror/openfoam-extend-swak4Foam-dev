@@ -1,0 +1,48 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 24 Jun 2013 12:55:24 +0200
+State: new
+Subject: Add state-machine for switching states
+Message-Id: <d1a29e85a9ec8239-0-artemis@cp20-142.tu-graz.ac.at>
+
+Idea would be to make things like the cleaningTanks more readable by
+not storing states in a number of global variables but by adding a
+state-machine that does all the decisions and then writes the decision
+to a number of global variables that will be used by other
+functionObjects or boundary conditions. Specification would be somehow
+like this
+
+openCloseValve {
+	       type stateMachine;
+	       initialState openValve;
+	       states {
+	              openValve {
+		          // switch from openValve to closeValve if
+			  //	       condition is me
+		          closeValve {
+			       expression "min(p)<1.1e5";
+			  }
+		      }
+		      closeValve {
+		          openValve {
+			       expression "max(p)<1.5e5";
+			  }
+			  panicOpen {
+			       variables (
+			           "probeP{set'probes}=max(p);"
+			       );
+			       expression "probeP>2e5;"
+			  }
+		      }
+		      panicOpen {
+		          openValve {
+			       expression "max(p)<1.5e5";
+			  }
+		      }
+	       }
+	       toGlobalNamespace openCloseValve;
+}
+
+This will create boolean variables that are named like the states in
+the global namespace. Other entities can then use those variables. If
+multiple conditions trigger a state transition the last onre wins but
+will give warnings
