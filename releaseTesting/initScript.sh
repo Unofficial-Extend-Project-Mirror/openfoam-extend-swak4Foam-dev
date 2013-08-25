@@ -1,6 +1,8 @@
 #! /bin/bash
 
-echo "Init script"
+boxName=$1
+
+echo "Init script for $boxName"
 
 apt-get -y install python-software-properties
 
@@ -25,8 +27,21 @@ apt-get -y install debhelper devscripts cdbs
 apt-get -y install emacs
 
 apt-get update -y
-apt-get install -y --force-yes openfoam221
-apt-get install -y --force-yes openfoam171
+
+case "$boxName" in
+    lucid)
+	ofPackages=( "171" "201" "211" )
+	;;
+    precise)
+	ofPackages=( "221" )
+	;;
+esac
+
+for v in "${ofPackages[@]}"
+do
+    echo "Installing OpenFOAM $v"
+    apt-get install -y --force-yes "openfoam$v"
+done
 
 SWAKDIR=/home/vagrant/swak4Foam
 
@@ -34,7 +49,12 @@ if [ ! -e $SWAKDIR ]
 then
     hg clone /swakSources $SWAKDIR
     (cd $SWAKDIR; ln -s swakConfiguration.debian swakConfiguration )
-    (cd $SWAKDIR;  hg update port_2.0.x )
+    if [ "$boxName" == "precise" ]
+    then
+	(cd $SWAKDIR;  hg update port_2.0.x )
+    else
+	(cd $SWAKDIR;  hg update develop )
+    fi
     chown -R vagrant:vagrant $SWAKDIR
 else
     echo "Repository already there. No cloning"

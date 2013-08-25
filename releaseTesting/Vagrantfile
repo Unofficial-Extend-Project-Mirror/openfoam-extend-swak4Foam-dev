@@ -102,16 +102,24 @@ Vagrant.configure("2") do |config|
   #
   #   chef.validation_client_name = "ORGNAME-validator"
 
-  config.vm.provision :shell, :path => "initScript.sh"
+#  config.vm.provision :shell, :path => "initScript.sh", :args => "lucid"
 
   config.vm.define :lucid do |lucid|
     lucid.vm.box = "lucid64"
     lucid.vm.box_url = "http://files.vagrantup.com/lucid64.box"
+    lucid.vm.provision :shell do |s|
+      s.args   = "lucid"
+      s.path   = "initScript.sh"
+    end
   end
 
   config.vm.define :precise do |precise|
     precise.vm.box = "precise64"
     precise.vm.box_url = "http://files.vagrantup.com/precise64.box"
+    lucid.vm.provision :shell do |s|
+      s.args   = "precise"
+      s.path   = "initScript.sh"
+    end
   end
 
 end
