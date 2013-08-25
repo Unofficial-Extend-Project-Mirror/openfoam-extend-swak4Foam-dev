@@ -16,6 +16,14 @@ apt-get -y install g++
 apt-get -y install make
 apt-get -y install python-dev
 
+# Needed for packaging
+apt-get -y install default-mta
+apt-get -y install dpkg-dev
+apt-get -y install debhelper devscripts cdbs
+
+# Not needed. Just to keep Bernhard happy
+apt-get -y install emacs
+
 apt-get update -y
 apt-get install -y --force-yes openfoam221
 apt-get install -y --force-yes openfoam171
