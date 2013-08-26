@@ -34,7 +34,7 @@ case "$boxName" in
 	ofPackages=( "171" "201" "211" )
 	;;
     precise)
-	ofPackages=( "221" )
+	ofPackages=( "221" "211" "220" )
 	;;
 esac
 
