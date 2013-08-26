@@ -116,7 +116,7 @@ Vagrant.configure("2") do |config|
   config.vm.define :precise do |precise|
     precise.vm.box = "precise64"
     precise.vm.box_url = "http://files.vagrantup.com/precise64.box"
-    lucid.vm.provision :shell do |s|
+    precise.vm.provision :shell do |s|
       s.args   = "precise"
       s.path   = "initScript.sh"
     end

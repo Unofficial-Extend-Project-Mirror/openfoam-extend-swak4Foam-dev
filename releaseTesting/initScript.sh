@@ -60,4 +60,15 @@ else
     echo "Repository already there. No cloning"
 fi
 
+for f in $(ls -A /vagrant/skel)
+do
+    target="/home/vagrant/$f"
+    if [ -e $target ]
+    then
+	echo "$target already there"
+    else
+	cp -r "/vagrant/skel/$f" $target
+    fi
+done
+
 echo "Ended"
