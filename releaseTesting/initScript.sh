@@ -19,6 +19,7 @@ apt-get -y install make
 apt-get -y install python-dev
 
 # Needed for packaging
+export DEBIAN_FRONTEND=noninteractive
 apt-get -y install default-mta
 apt-get -y install dpkg-dev
 apt-get -y install debhelper devscripts cdbs
