@@ -40,6 +40,7 @@ typedef parserCloud::CloudValueExpressionParser::semantic_type YYSTYPE;
 %s setname
 %s vectorcomponent
 %s tensorcomponent
+%s fluidphase
 %x parsedByOtherParser
 %x needsIntegerParameter
 
@@ -79,13 +80,13 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     }
 %}
 
-<INITIAL,setname,needsIntegerParameter>[ \t]+             yylloc->step ();
+<INITIAL,setname,needsIntegerParameter,fluidphase>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
 <INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
 
-<needsIntegerParameter>[(] return yytext[0];
-<needsIntegerParameter>[)] { BEGIN(INITIAL); return yytext[0]; }
+<needsIntegerParameter,fluidphase>[(] return yytext[0];
+<needsIntegerParameter,fluidphase>[)] { BEGIN(INITIAL); return yytext[0]; }
 
 %{
     typedef parserCloud::CloudValueExpressionParser::token token;
@@ -113,6 +114,8 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
 <tensorcomponent>zz    { BEGIN(INITIAL); return token::TOKEN_zz; }
 <tensorcomponent>ii    { BEGIN(INITIAL); return token::TOKEN_ii; }
 <tensorcomponent>T     { BEGIN(INITIAL); return token::TOKEN_transpose; }
+
+fluidPhase             { BEGIN(fluidphase); return token::TOKEN_fluidPhase; }
 
 pow                   return token::TOKEN_pow;
 exp                   return token::TOKEN_exp;
@@ -155,16 +158,10 @@ negative              return token::TOKEN_neg;
 
 pi                    return token::TOKEN_pi;
 pos                   return token::TOKEN_position;
-area                  return token::TOKEN_area;
-vol                   return token::TOKEN_volume;
-pts                   return token::TOKEN_points;
-Sf                    return token::TOKEN_Sf;
-normal                return token::TOKEN_normal;
 rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
 randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
-flip                  return token::TOKEN_flip;
 randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
 randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
@@ -180,9 +177,6 @@ sphericalTensor        return token::TOKEN_SPHERICAL_TENSOR;
 
 true                   return token::TOKEN_TRUE;
 false                  return token::TOKEN_FALSE;
-
-toPoint                 return token::TOKEN_toPoint;
-toFace                  return token::TOKEN_toFace;
 
 diag                   return token::TOKEN_diag;
 tr                     return token::TOKEN_tr;
@@ -210,36 +204,41 @@ eigenVectors           return token::TOKEN_eigenVectors;
                        return token::TOKEN_INT;
                      }
 
+<fluidphase>{id}                 {
+    Foam::word *ptr=new Foam::word (yytext);
+    if(driver.is<Foam::vector>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_GAS_VID;
+    } else if(driver.is<Foam::tensor>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_GAS_TID;
+    } else if(driver.is<Foam::symmTensor>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_GAS_YID;
+    } else if(driver.is<Foam::sphericalTensor>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_GAS_HID;
+    } else if(driver.is<Foam::scalar>(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_GAS_SID;
+    } else {
+        driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
+    }
+}
+
 <INITIAL>{id}                 {
     Foam::word *ptr=new Foam::word (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isLookup(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LOOKUP;
-    } else if(driver.is<Foam::vector>(*ptr)) {
+    } else if(driver.isVectorField(*ptr)) {
         yylval->name = ptr; return token::TOKEN_VID;
-    } else if(driver.is<Foam::tensor>(*ptr)) {
+    } else if(driver.isTensorField(*ptr)) {
         yylval->name = ptr; return token::TOKEN_TID;
-    } else if(driver.is<Foam::symmTensor>(*ptr)) {
+    } else if(driver.isSymmTensorField(*ptr)) {
         yylval->name = ptr; return token::TOKEN_YID;
-    } else if(driver.is<Foam::sphericalTensor>(*ptr)) {
+    } else if(driver.isSphericalTensorField(*ptr)) {
         yylval->name = ptr; return token::TOKEN_HID;
-    } else if(driver.is<Foam::scalar>(*ptr)) {
+    } else if(driver.isScalarField(*ptr)) {
         yylval->name = ptr; return token::TOKEN_SID;
     } else if(driver.isVariable<bool>(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LID;
-    } else if(driver.is<Foam::vector>(*ptr,true)) {
-        yylval->name = ptr; return token::TOKEN_PVID;
-    } else if(driver.is<Foam::tensor>(*ptr,true)) {
-        yylval->name = ptr; return token::TOKEN_PTID;
-    } else if(driver.is<Foam::symmTensor>(*ptr,true)) {
-        yylval->name = ptr; return token::TOKEN_PYID;
-    } else if(driver.is<Foam::sphericalTensor>(*ptr,true)) {
-        yylval->name = ptr; return token::TOKEN_PHID;
-    } else if(driver.is<Foam::scalar>(*ptr,true)) {
-        yylval->name = ptr; return token::TOKEN_PSID;
-    } else if(driver.isVariable<bool>(*ptr,true)) {
-        yylval->name = ptr; return token::TOKEN_PLID;
     } else if(driver.existsPluginFunction(*ptr)) {
         // OK. We'll create the function two times. But this is less messy
         // than passing it two times
@@ -260,16 +259,6 @@ eigenVectors           return token::TOKEN_eigenVectors;
              tokenTyp=token::TOKEN_FUNCTION_YID;
         } else if(fInfo->returnType()=="sphericalTensor") {
              tokenTyp=token::TOKEN_FUNCTION_HID;
-        } else if(fInfo->returnType()=="pointScalar") {
-             tokenTyp=token::TOKEN_FUNCTION_PSID;
-        } else if(fInfo->returnType()=="pointVector") {
-             tokenTyp=token::TOKEN_FUNCTION_PVID;
-        } else if(fInfo->returnType()=="pointTensor") {
-             tokenTyp=token::TOKEN_FUNCTION_PTID;
-        } else if(fInfo->returnType()=="pointSymmTensor") {
-             tokenTyp=token::TOKEN_FUNCTION_PYID;
-        } else if(fInfo->returnType()=="pointSphericalTensor") {
-             tokenTyp=token::TOKEN_FUNCTION_PHID;
         } else {
             driver.error (
                 *yylloc,
@@ -306,6 +295,7 @@ eigenVectors           return token::TOKEN_eigenVectors;
 
 .                    driver.error (*yylloc, "invalid character");
 <needsIntegerParameter>.                    driver.error (*yylloc, "invalid character when only an integer parameter is expected");
+<fluidphase>.        driver.error (*yylloc, "invalid character when only a field name is expected");
 
 
 %%

@@ -36,6 +36,8 @@ Contributors/Copyright:
 
 #include "CloudValueExpressionDriver.H"
 
+#include "addToRunTimeSelectionTable.H"
+
 #include "Random.H"
 
 namespace Foam {
@@ -43,6 +45,10 @@ namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
+
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, dictionary, cloud);
+addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, idName, cloud);
+
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -53,25 +59,21 @@ defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
 CloudValueExpressionDriver::CloudValueExpressionDriver(const CloudValueExpressionDriver& orig)
 :
     CommonValueExpressionDriver(orig),
-    autoInterpolate_(orig.autoInterpolate_),
-    warnAutoInterpolate_(orig.warnAutoInterpolate_)
-{}
+    cloud_(orig.cloud_)
 
-CloudValueExpressionDriver::CloudValueExpressionDriver(const dictionary& dict)
-:
-    CommonValueExpressionDriver(dict),
-    autoInterpolate_(dict.lookupOrDefault("autoInterpolate",false)),
-    warnAutoInterpolate_(dict.lookupOrDefault("warnAutoInterpolate",true))
 {}
 
 CloudValueExpressionDriver::CloudValueExpressionDriver(
-        bool autoInterpolate,
-        bool warnAutoInterpolate
+    const dictionary& dict,
+    const fvMesh& mesh
 )
 :
-    CommonValueExpressionDriver(),
-    autoInterpolate_(autoInterpolate),
-    warnAutoInterpolate_(warnAutoInterpolate)
+    CommonValueExpressionDriver(dict),
+    cloud_(
+        mesh.lookupObject<cloud>(
+            word(dict.lookup("cloudName"))
+        )
+    )
 {}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -81,15 +83,6 @@ CloudValueExpressionDriver::~CloudValueExpressionDriver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-void CloudValueExpressionDriver::setAutoInterpolate(
-    bool autoInterpolate,
-    bool warnAutoInterpolate
-)
-{
-    autoInterpolate_=autoInterpolate;
-    warnAutoInterpolate_=warnAutoInterpolate;
-}
 
 void CloudValueExpressionDriver::parseInternal (int startToken)
 {
@@ -121,25 +114,6 @@ tmp<vectorField> CloudValueExpressionDriver::makePositionField() const
     return tmp<vectorField>(new vectorField(0));
 }
 
-// tmp<vectorField> CloudValueExpressionDriver::makePointField() const
-// {
-//     notImplemented("CloudValueExpressionDriver::makePointField");
-// }
-
-tmp<vectorField> CloudValueExpressionDriver::makeFaceNormalField() const
-{
-    notImplemented("CloudValueExpressionDriver::makeFaceNormalField");
-
-    return tmp<vectorField>(new vectorField(0));
-}
-
-tmp<vectorField> CloudValueExpressionDriver::makeFaceAreaField() const
-{
-    notImplemented("CloudValueExpressionDriver::makeFaceAreaField");
-
-    return tmp<vectorField>(new vectorField(0));
-}
-
 template<>
 CloudValueExpressionDriver::SymbolTable<CloudValueExpressionDriver>::SymbolTable()
 :
@@ -150,99 +124,51 @@ StartupSymbols()
 
     insert(
         "scalar_SC",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_SCALAR_COMMA
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_SCALAR_COMMA
     );
     insert(
         "scalar_CL",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_SCALAR_CLOSE
-    );
-    insert(
-        "point_scalar_SC",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_SCALAR_COMMA
-    );
-    insert(
-        "point_scalar_CL",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_SCALAR_CLOSE
     );
     insert(
         "vector_SC",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_VECTOR_COMMA
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_VECTOR_COMMA
     );
     insert(
         "vector_CL",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_VECTOR_CLOSE
-    );
-    insert(
-        "point_vector_SC",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_VECTOR_COMMA
-    );
-    insert(
-        "point_vector_CL",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_VECTOR_CLOSE
     );
     insert(
         "tensor_SC",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_TENSOR_COMMA
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_TENSOR_COMMA
     );
     insert(
         "tensor_CL",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_TENSOR_CLOSE
-    );
-    insert(
-        "point_tensor_SC",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_TENSOR_COMMA
-    );
-    insert(
-        "point_tensor_CL",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_TENSOR_CLOSE
     );
     insert(
         "symmTensor_SC",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_YTENSOR_COMMA
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_YTENSOR_COMMA
     );
     insert(
         "symmTensor_CL",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_YTENSOR_CLOSE
-    );
-    insert(
-        "point_symmTensor_SC",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_YTENSOR_COMMA
-    );
-    insert(
-        "point_symmTensor_CL",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_YTENSOR_CLOSE
     );
     insert(
         "sphericalTensor_SC",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_HTENSOR_COMMA
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_HTENSOR_COMMA
     );
     insert(
         "sphericalTensor_CL",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_HTENSOR_CLOSE
-    );
-    insert(
-        "point_sphericalTensor_SC",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_HTENSOR_COMMA
-    );
-    insert(
-        "point_sphericalTensor_CL",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_HTENSOR_CLOSE
     );
     insert(
         "logical_SC",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_LOGICAL_COMMA
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_LOGICAL_COMMA
     );
     insert(
         "logical_CL",
-        parserCloud::CloudValueExpressionParser::token::START_FACE_LOGICAL_CLOSE
-    );
-    insert(
-        "point_logical_SC",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_LOGICAL_COMMA
-    );
-    insert(
-        "point_logical_CL",
-        parserCloud::CloudValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+        parserCloud::CloudValueExpressionParser::token::START_CLOUD_LOGICAL_CLOSE
     );
 
     insert(
@@ -264,6 +190,31 @@ const CloudValueExpressionDriver::SymbolTable<CloudValueExpressionDriver> &Cloud
 
 int CloudValueExpressionDriver::startupSymbol(const word &name) {
     return symbolTable()[name];
+}
+
+tmp<scalarField> CloudValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    notImplemented("CloudValueExpressionDriver::weightsNonPoint");
+
+    return tmp<scalarField>(new scalarField(0));
+}
+
+label CloudValueExpressionDriver::size() const
+{
+    return cloud_.size();
+}
+
+label CloudValueExpressionDriver::pointSize() const
+{
+    notImplemented("CloudValueExpressionDriver::pointSize()");
+    return 0;
+}
+
+const fvMesh &CloudValueExpressionDriver::mesh() const
+{
+    return dynamic_cast<const fvMesh&>(cloud_.db());
 }
 
 // ************************************************************************* //

@@ -54,6 +54,8 @@ Contributors/Copyright:
 
 #include "CommonValueExpressionDriver.H"
 
+#include "cloud.H"
+
 namespace Foam {
     class CloudValueExpressionDriver;
 }
@@ -80,10 +82,8 @@ class CloudValueExpressionDriver
 {
     // Private data
 
-    //- allow automatic interpolation
-    bool autoInterpolate_;
-    //- warn on automatic interpolation
-    bool warnAutoInterpolate_;
+    //- the cloud
+    const cloud &cloud_;
 
     // Private Member Functions
 
@@ -92,32 +92,6 @@ protected:
     // Handling the scanner
     void scan_begin();
     void scan_end();
-
-    //- get the index from the container iterator
-    template<class Iter>
-    inline label getIndexFromIterator(const Iter &it) const;
-
-    //- General Method to get the values
-    template<class FieldType,class Cloud,class T>
-    tmp<Field<T> > getFieldInternal(
-        const word &name,
-        const Cloud &sub,
-        bool oldTime=false
-    );
-
-    //- General Method to get the values and interpolate
-    template<class FieldType,class IFieldType,class Cloud,class T>
-    tmp<Field<T> > getFieldInternalAndInterpolate(
-        const word &name,
-        const Cloud &sub,
-        bool oldTime=false
-    );
-
-    //- General Method to get values from a field
-    template<class Cloud,class T>
-    tmp<Field<T> > getFromFieldInternal(
-        const Field<T> &original,const Cloud &sub
-    ) const;
 
     //- set the state of the lexer to scanning vector components
     void startVectorComponent();
@@ -128,6 +102,19 @@ protected:
     //- set the state to "eat characters"
     void startEatCharacters();
 
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const;
+
+    //- get field values from the continous phase
+    template <typename Type>
+    tmp<Field<Type> > getFluidField(
+        const word &name
+    );
 public:
 
      //- Runtime type information
@@ -135,74 +122,86 @@ public:
 
     // Constructors
 
-    //- Construct from components
-    CloudValueExpressionDriver(
-        bool autoInterpolate=false,
-        bool warnAutoInterpolate=true
-    );
+    // //- Construct from components
+    // CloudValueExpressionDriver(
+    //     bool autoInterpolate=false,
+    //     bool warnAutoInterpolate=true
+    // );
 
     //- Copy construct
     CloudValueExpressionDriver(const CloudValueExpressionDriver&);
 
-    //- Copy from a dictionary
-    CloudValueExpressionDriver(const dictionary&);
+    //- Construct from a dictionary
+    CloudValueExpressionDriver(
+        const dictionary&,
+        const fvMesh&
+    );
+
+    //- Construct from an id
+    CloudValueExpressionDriver(
+        const word&,
+        const fvMesh&
+    );
 
     // Destructor
 
     ~CloudValueExpressionDriver();
 
-    void setAutoInterpolate(
-        bool autoInterpolate,
-        bool warnAutoInterpolate
-    );
-
     // Member Functions
 
-    virtual tmp<vectorField> makePositionField() const = 0;
-
-    virtual tmp<scalarField> makeFaceAreaMagField() const = 0;
-
-    virtual tmp<scalarField> makeCellVolumeField() const = 0;
-
-    //     virtual tmp<vectorField> makePointField() const = 0;
-
-    virtual tmp<vectorField> makeFaceNormalField() const = 0;
-
-    virtual tmp<vectorField> makeFaceAreaField() const = 0;
-
-    virtual tmp<scalarField> makeFaceFlipField() const = 0;
-
-    virtual bool isCell()=0;
+    tmp<vectorField> makePositionField() const;
 
     tmp<scalarField> makeIdField();
 
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
-    virtual tmp<Field<scalar> > getScalarField(
-        const word &name,
-        bool oldTime=false
-    )=0;
+    bool isScalarField(const word &name);
+    bool isVectorField(const word &name);
+    bool isTensorField(const word &name);
+    bool isSymmTensorField(const word &name);
+    bool isSphericalTensorField(const word &name);
 
-    virtual tmp<Field<vector> > getVectorField(
+    tmp<Field<scalar> > getScalarField(
         const word &name,
         bool oldTime=false
-    )=0;
+    );
 
-    virtual tmp<Field<tensor> > getTensorField(
+    tmp<Field<vector> > getVectorField(
         const word &name,
         bool oldTime=false
-    )=0;
+    );
 
-    virtual tmp<Field<symmTensor> > getSymmTensorField(
+    tmp<Field<tensor> > getTensorField(
         const word &name,
         bool oldTime=false
-    )=0;
+    );
 
-    virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
+    tmp<Field<symmTensor> > getSymmTensorField(
         const word &name,
         bool oldTime=false
-    )=0;
+    );
+
+    tmp<Field<sphericalTensor> > getSphericalTensorField(
+        const word &name,
+        bool oldTime=false
+    );
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
+
+    inline virtual label size() const;
+
+    inline virtual label pointSize() const;
+
+    inline virtual const fvMesh &mesh() const;
 
     // Handling the parser
     void parseInternal(int startToken);
