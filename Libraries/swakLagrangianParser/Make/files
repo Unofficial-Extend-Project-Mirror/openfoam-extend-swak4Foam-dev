@@ -1,2 +1,5 @@
+CloudValueExpressionParser.yy
+CloudValueExpressionLexer.ll
+CloudValueExpressionDriver.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakLagrangianParser

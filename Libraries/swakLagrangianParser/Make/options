@@ -1,3 +1,6 @@
+include $(OBJECTS_DIR)/../mybison
+include $(OBJECTS_DIR)/../myflex
+
 EXE_INC = \
     -I../swak4FoamParsers/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
