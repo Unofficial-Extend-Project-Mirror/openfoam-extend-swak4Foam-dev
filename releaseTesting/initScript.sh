@@ -4,12 +4,19 @@ boxName=$1
 
 echo "Init script for $boxName"
 
-apt-get -y install python-software-properties
+if [ "$boxName" == "lucid" ]
+then
+    # needed for add-appt-repository
+    apt-get -y install python-software-properties
+
+    add-apt-repository ppa:mercurial-ppa/releases
+fi
+
 
 VERS=$(lsb_release -cs)
 echo deb http://www.openfoam.org/download/ubuntu $VERS main > /etc/apt/sources.list.d/openfoam.list
 
-add-apt-repository ppa:mercurial-ppa/releases
+apt-get update -y
 
 apt-get -y install mercurial
 apt-get -y install bison
@@ -26,8 +33,6 @@ apt-get -y install debhelper devscripts cdbs
 
 # Not needed. Just to keep Bernhard happy
 apt-get -y install emacs
-
-apt-get update -y
 
 case "$boxName" in
     lucid)
