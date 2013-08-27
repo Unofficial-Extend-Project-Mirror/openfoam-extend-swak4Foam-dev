@@ -538,18 +538,27 @@ S_{expl} + S_{impl} T
                        with an implicit source term with
                        =SwakImplicitSource=
 *** Lagrangian
-    Tests for the functionObjects that create and evolve a cloud of
-    particles (library =simpleLagrangianFunctionObjects=)
-**** hotStream
-     - Solver :: replayTransientBC
-     - Mesh preparation :: =prepareCase.sh=-script
-     - Demonstrates :: 3 clouds (kinematic, reacting,
-                       solidParticle). Loading of a thermophysical
-                       model with a functionObject. Plugin functions
-                       for information about the clouds
-**** angledDuctWithBalls
-     - Solver :: rhoPimpleFoam
-     - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
+    Stuff that has to do with lagrangian particles
+**** functionObjects
+     Tests for the functionObjects that create and evolve a cloud of
+     particles (library =simpleLagrangianFunctionObjects=)
+***** hotStream
+      - Solver :: replayTransientBC
+      - Mesh preparation :: =prepareCase.sh=-script
+      - Demonstrates :: 3 clouds (kinematic, reacting,
+                       	solidParticle). Loading of a thermophysical
+                       	model with a functionObject. Plugin functions
+                       	for information about the clouds
+***** angledDuctWithBalls
+      - Solver :: rhoPimpleFoam
+      - Demonstrates :: Thermo-cloud. Functions for lagrangian
+                        particles
+**** parser
+     Testing the =cloud=-parser for lagrangiant particles
+***** evaporationTestWithExpressions
+      - Solver :: reactingParcelFoam
+      - Demonstrates :: Adding evaluations on the cloud to a regular
+                        case
 *** SimpleSurface
     Examples for the use of the =simpleSearchableSurfaces=-library.
 **** twoMotorbikesAndAWall
