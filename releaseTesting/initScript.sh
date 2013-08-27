@@ -25,8 +25,15 @@ apt-get -y install g++
 apt-get -y install make
 apt-get -y install python-dev
 
-# Needed for packaging
+# Make sure that default-mta installs
+debconf-set-selections <<< "postfix postfix/mailname string vagrant.test.machine.com"
+debconf-set-selections <<< "postfix postfix/myhostname string vagrant.test.machine.com"
+debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+debconf-set-selections <<< "postfix postfix/destinations string localhost"
+
 export DEBIAN_FRONTEND=noninteractive
+
+# Needed for packaging
 apt-get -y install default-mta
 apt-get -y install dpkg-dev
 apt-get -y install debhelper devscripts cdbs
