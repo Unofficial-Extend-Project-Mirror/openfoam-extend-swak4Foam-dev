@@ -197,11 +197,11 @@ public:
         const word &name
     );
 
-    inline virtual label size() const;
+    virtual label size() const;
 
-    inline virtual label pointSize() const;
+    virtual label pointSize() const;
 
-    inline virtual const fvMesh &mesh() const;
+    const fvMesh &mesh() const;
 
     // Handling the parser
     void parseInternal(int startToken);

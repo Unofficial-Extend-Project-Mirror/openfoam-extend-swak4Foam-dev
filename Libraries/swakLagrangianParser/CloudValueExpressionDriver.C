@@ -35,6 +35,7 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "CloudValueExpressionDriver.H"
+#include "CloudValuePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -44,7 +45,7 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
+defineTypeNameAndDebug(CloudValueExpressionDriver, 1);
 
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, dictionary, cloud);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, idName, cloud);
@@ -74,7 +75,10 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
             word(dict.lookup("cloudName"))
         )
     )
-{}
+{
+    Dbug << "Constructed from dictionary" << endl;
+    Dbug << "Type of cloud: " << cloud_.type() << endl;
+}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -215,6 +219,26 @@ label CloudValueExpressionDriver::pointSize() const
 const fvMesh &CloudValueExpressionDriver::mesh() const
 {
     return dynamic_cast<const fvMesh&>(cloud_.db());
+}
+
+autoPtr<CommonPluginFunction> CloudValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        CloudValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool CloudValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return CloudValuePluginFunction::exists(
+        *this,
+        name
+    );
 }
 
 // ************************************************************************* //

@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  10;
 
-writeCompression uncompressed;
+writeCompression compressed;
 
 timeFormat      general;
 
@@ -51,5 +51,26 @@ maxCo           0.3;
 
 maxDeltaT       1e-03;
 
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libswakLagrangianParser.so"
+);
+
+functions {
+    cloudPosition {
+        type swakExpression;
+        outputControlMode timeStep;
+        expression "pos()";
+        accumulations (
+            min
+            max
+            average
+            weightedAverage
+        );
+
+        valueType cloud;
+        cloudName reactingCloud1;
+    }
+}
 
 // ************************************************************************* //
