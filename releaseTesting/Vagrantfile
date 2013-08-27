@@ -113,6 +113,15 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  config.vm.define :maverick do |maverick|
+    maverick.vm.box = "maverick64"
+    maverick.vm.box_url = "http://mathie-vagrant-boxes.s3.amazonaws.com/maverick64.box"
+    maverick.vm.provision :shell do |s|
+      s.args   = "lucid"
+      s.path   = "initScript.sh"
+    end
+  end
+
   config.vm.define :precise do |precise|
     precise.vm.box = "precise64"
     precise.vm.box_url = "http://files.vagrantup.com/precise64.box"
