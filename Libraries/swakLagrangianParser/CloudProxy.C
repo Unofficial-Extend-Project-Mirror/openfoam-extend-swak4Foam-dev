@@ -228,7 +228,7 @@ Ostream &operator<<(Ostream &o,const CloudProxy &p)
     forAll(names,i) {
     o << setw(nameWidth) << names[i] << " | " << setw(typeWidth)
         << p.fieldTypes_[names[i]] << " | "
-        << p.fieldDescriptions_[names[i]] << endl;
+        << p.fieldDescriptions_[names[i]].c_str() << endl;
     }
 
     return o;

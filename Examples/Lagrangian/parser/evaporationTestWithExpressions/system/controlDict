@@ -65,7 +65,7 @@ functions {
             min
             max
             average
-            //            weightedAverage
+            weightedAverage
         );
         verbose true;
 

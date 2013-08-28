@@ -86,12 +86,16 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
         )
     )
 {
+    Info << endl << "'cloud'-driver in " << dict.name() << endl;
+
     Dbug << "Constructed from dictionary" << endl;
     Dbug << "Type of cloud: " << cloud_.type() << endl;
 
     //    Dbug << "thermoReactingCloud - typename " << Cloud<BasicReactingParcel<gasThermoPhysics> >::typeName << endl;
     // Dbug << "Is kinematicCloud? " << isA<kinematicCloud>(cloud_) << endl;
     // Dbug << "Is solidParticleCloud? " << isA<solidParticleCloud>(cloud_) << endl;
+
+    Info << proxy_() << endl;
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
