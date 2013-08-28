@@ -40,7 +40,7 @@ typedef parserCloud::CloudValueExpressionParser::semantic_type YYSTYPE;
 %s setname
 %s vectorcomponent
 %s tensorcomponent
-%s fluidphase
+%x fluidphase
 %x parsedByOtherParser
 %x needsIntegerParameter
 
