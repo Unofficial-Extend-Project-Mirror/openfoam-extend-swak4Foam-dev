@@ -163,28 +163,23 @@ public:
     bool isSphericalTensorField(const word &name);
 
     tmp<Field<scalar> > getScalarField(
-        const word &name,
-        bool oldTime=false
+        const word &name
     );
 
     tmp<Field<vector> > getVectorField(
-        const word &name,
-        bool oldTime=false
+        const word &name
     );
 
     tmp<Field<tensor> > getTensorField(
-        const word &name,
-        bool oldTime=false
+        const word &name
     );
 
     tmp<Field<symmTensor> > getSymmTensorField(
-        const word &name,
-        bool oldTime=false
+        const word &name
     );
 
     tmp<Field<sphericalTensor> > getSphericalTensorField(
-        const word &name,
-        bool oldTime=false
+        const word &name
     );
 
     //- return a new plugin-function

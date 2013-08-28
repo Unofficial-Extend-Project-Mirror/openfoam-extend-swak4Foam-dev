@@ -240,7 +240,6 @@ namespace Foam {
 
 %token TOKEN_deltaT
 %token TOKEN_time
-%token TOKEN_oldTime
 
 %token TOKEN_pow
 %token TOKEN_log
@@ -580,10 +579,6 @@ vexp:   vector                  { $$ = $1; }
         | TOKEN_VID {
             $$=driver.getVectorField(*$1).ptr();
             delete $1;
-                    }
-        | TOKEN_oldTime '(' TOKEN_VID ')' {
-            $$=driver.getVectorField(*$3,true).ptr();
-            delete $3;
                     }
         | TOKEN_min '(' vexp ',' vexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
@@ -1072,10 +1067,6 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             $$=driver.getScalarField(*$1).ptr();
             delete $1;
 				}
-        | TOKEN_oldTime '(' TOKEN_SID ')' {
-            $$=driver.getScalarField(*$3,true).ptr();
-            delete $3;
-                    }
 	| TOKEN_LINE		{
             $$=driver.getLine(*$1,driver.runTime().time().value()).ptr();
             delete $1;
@@ -1253,10 +1244,6 @@ texp:   tensor                  { $$ = $1; }
             $$=driver.getTensorField(*$1).ptr();
             delete $1;
                     }
-        | TOKEN_oldTime '(' TOKEN_TID ')' {
-            $$=driver.getTensorField(*$3,true).ptr();
-            delete $3;
-                    }
         | TOKEN_min '(' texp ',' texp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1405,10 +1392,6 @@ yexp:   symmTensor                  { $$ = $1; }
             $$=driver.getSymmTensorField(*$1).ptr();
             delete $1;
                     }
-        | TOKEN_oldTime '(' TOKEN_YID ')' {
-            $$=driver.getSymmTensorField(*$3,true).ptr();
-            delete $3;
-                    }
         | TOKEN_min '(' yexp ',' yexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
             delete $3; delete $5;
@@ -1507,10 +1490,6 @@ hexp:   sphericalTensor                  { $$ = $1; }
         | TOKEN_HID {
             $$=driver.getSphericalTensorField(*$1).ptr();
             delete $1;
-                    }
-        | TOKEN_oldTime '(' TOKEN_HID ')' {
-            $$=driver.getSphericalTensorField(*$3,true).ptr();
-            delete $3;
                     }
         | TOKEN_min '(' hexp ',' hexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();

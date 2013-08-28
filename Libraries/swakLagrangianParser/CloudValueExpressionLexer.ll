@@ -168,8 +168,6 @@ randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNo
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
 
-oldTime               return token::TOKEN_oldTime;
-
 vector                 return token::TOKEN_VECTOR;
 tensor                 return token::TOKEN_TENSOR;
 symmTensor             return token::TOKEN_SYMM_TENSOR;
