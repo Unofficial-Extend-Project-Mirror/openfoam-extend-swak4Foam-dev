@@ -170,6 +170,11 @@ public:
 
 };
 
+#define addCloudProxyToTable(ProxyType,CloudType)\
+    CloudProxy::addcloudConstructorToTable                              \
+    <ProxyType<CloudType> >                                             \
+    add##ProxyType##CloudType##cloudConstructorToCloudProxyTable(       \
+        Cloud<CloudType::particleType>::typeName)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

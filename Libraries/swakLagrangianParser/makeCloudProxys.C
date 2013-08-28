@@ -44,15 +44,9 @@ Contributors/Copyright:
 namespace Foam
 {
 
-    // addNamedTemplateToRunTimeSelectionTable(
-    //     CloudProxy,
-    //     CloudProxyForReactingParcel,
-    //     thermoReactingCloud,
-    //     cloud,
-    //     BasicReactingParcelgasThermoPhysics
-    // );
-
-    CloudProxy::addcloudConstructorToTable<CloudProxyForReactingParcel<thermoReactingCloud> > addCloudProxyForReactingParcelthermoReactingCloudcloudConstructorToCloudProxyTable(Cloud<thermoReactingCloud::particleType>::typeName);
+    addCloudProxyToTable(CloudProxyForReactingParcel,thermoReactingCloud);
+    addCloudProxyToTable(CloudProxyForReactingParcel,constThermoReactingCloud);
+    addCloudProxyToTable(CloudProxyForReactingParcel,icoPoly8ThermoReactingCloud);
 
 } // namespace end
 

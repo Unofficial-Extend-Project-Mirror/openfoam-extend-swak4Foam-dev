@@ -71,6 +71,7 @@ functions {
 
         valueType cloud;
         cloudName reactingCloud1;
+        //        alternateCloudType test;
     }
 }
 
