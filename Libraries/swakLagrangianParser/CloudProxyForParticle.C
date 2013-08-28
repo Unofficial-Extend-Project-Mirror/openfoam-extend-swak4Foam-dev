@@ -1,0 +1,173 @@
+/*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is based on OpenFOAM.
+
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Contributors/Copyright:
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
+\*---------------------------------------------------------------------------*/
+
+#include "CloudProxyForParticle.H"
+
+#include "DebugOStream.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class CloudType>
+CloudProxyForParticle<CloudType>::CloudProxyForParticle
+(
+    const cloud& c
+)
+:
+    CloudProxy(c),
+    cloud_(
+        dynamicCast<const CloudType&>(
+            c
+        )
+    )
+{
+    addField<scalar>("origProc"   ,"Originating processor");
+    addField<scalar>("origId"     ,"Original id");
+    addField<vector>("normal"     ,"Normal of the tet the particle occupies");
+    addField<vector>("oldNormal"  ,"Old normal of the tet the particle occupies");
+}
+
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+template<class CloudType>
+CloudProxyForParticle<CloudType>::~CloudProxyForParticle()
+{}
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class CloudType>
+tmp<Field<scalar> > CloudProxyForParticle<CloudType>::getScalarField(
+    const word &name
+) const
+{
+    FatalErrorIn("tmp<Field<scalar> > CloudProxyForParticle<CloudType>::getScalarField")
+        << "No scalar field with name " << name << " defined for cloud "
+            << cloud_.name() << " of type " // << cloud_.CloudTyptype()
+            << endl
+            << exit(FatalError);
+    return tmp<Field<scalar> >(
+        new Field<scalar>(0)
+    );
+}
+
+template<class CloudType>
+tmp<Field<vector> > CloudProxyForParticle<CloudType>::getVectorField(
+    const word &name
+) const
+{
+    FatalErrorIn("tmp<Field<vector> > CloudProxyForParticle<CloudType>::getVectorField")
+        << "No vector field with name " << name << " defined for cloud "
+            << cloud_.name() << " of type " // << cloud_.CloudTyptype()
+            << endl
+            << exit(FatalError);
+    return tmp<Field<vector> >(
+        new Field<vector>(0)
+    );
+}
+
+template<class CloudType>
+tmp<Field<tensor> > CloudProxyForParticle<CloudType>::getTensorField(
+    const word &name
+) const
+{
+    FatalErrorIn("tmp<Field<tensor> > CloudProxyForParticle<CloudType>::getTensorField")
+        << "No tensor field with name " << name << " defined for cloud "
+            << cloud_.name() << " of type " // << cloud_.CloudTyptype()
+            << endl
+            << exit(FatalError);
+    return tmp<Field<tensor> >(
+        new Field<tensor>(0)
+    );
+}
+
+template<class CloudType>
+tmp<Field<symmTensor> > CloudProxyForParticle<CloudType>::getSymmTensorField(
+    const word &name
+) const
+{
+    FatalErrorIn("tmp<Field<symmTensor> > CloudProxyForParticle<CloudType>::getSymmTensorField")
+        << "No symmTensor field with name " << name << " defined for cloud "
+            << cloud_.name() << " of type " // << cloud_.CloudTyptype()
+            << endl
+            << exit(FatalError);
+    return tmp<Field<symmTensor> >(
+        new Field<symmTensor>(0)
+    );
+}
+
+template<class CloudType>
+tmp<Field<sphericalTensor> > CloudProxyForParticle<CloudType>::getSphericalTensorField(
+    const word &name
+) const
+{
+    FatalErrorIn("tmp<Field<sphericalTensor> > CloudProxyForParticle<CloudType>::getSphericalTensorField")
+        << "No sphericalTensor field with name " << name << " defined for cloud "
+            << cloud_.name() << " of type " // << cloud_.CloudTyptype()
+            << endl
+            << exit(FatalError);
+    return tmp<Field<sphericalTensor> >(
+        new Field<sphericalTensor>(0)
+    );
+}
+
+template<class CloudType>
+tmp<Field<vector> > CloudProxyForParticle<CloudType>::getPositions() const
+{
+    tmp<Field<vector> > tPos(
+        new Field<vector>(theCloud().size())
+    );
+    Field<vector> &pos=tPos();
+    label i=0;
+    forAllConstIter(typename CloudType,theCloud(),it)
+    {
+	const particleType &p=(*it);
+        pos[i]=p.position();
+        i++;
+    }
+
+    return tPos;
+}
+
+} // namespace end
+
+// ************************************************************************* //

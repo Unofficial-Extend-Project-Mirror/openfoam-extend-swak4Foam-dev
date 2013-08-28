@@ -65,8 +65,9 @@ functions {
             min
             max
             average
-            weightedAverage
+            //            weightedAverage
         );
+        verbose true;
 
         valueType cloud;
         cloudName reactingCloud1;

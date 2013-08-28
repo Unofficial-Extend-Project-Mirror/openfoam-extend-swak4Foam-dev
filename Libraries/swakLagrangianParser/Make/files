@@ -4,4 +4,8 @@ CloudValueExpressionDriver.C
 
 CloudValuePluginFunction.C
 
+CloudProxy.C
+
+makeCloudProxys.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakLagrangianParser

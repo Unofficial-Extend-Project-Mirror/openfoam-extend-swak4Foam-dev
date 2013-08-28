@@ -36,10 +36,14 @@ Contributors/Copyright:
 
 #include "CloudValueExpressionDriver.H"
 #include "CloudValuePluginFunction.H"
+#include "CloudProxy.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 #include "Random.H"
+
+// #include "BasicReactingCloud.H"
+// #include "solidParticleCloud.H"
 
 namespace Foam {
 
@@ -60,8 +64,8 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressio
 CloudValueExpressionDriver::CloudValueExpressionDriver(const CloudValueExpressionDriver& orig)
 :
     CommonValueExpressionDriver(orig),
-    cloud_(orig.cloud_)
-
+    cloud_(orig.cloud_),
+    proxy_(CloudProxy::New(cloud_))
 {}
 
 CloudValueExpressionDriver::CloudValueExpressionDriver(
@@ -74,10 +78,20 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
         mesh.lookupObject<cloud>(
             word(dict.lookup("cloudName"))
         )
+    ),
+    proxy_(
+        CloudProxy::New(
+            cloud_,
+            dict
+        )
     )
 {
     Dbug << "Constructed from dictionary" << endl;
     Dbug << "Type of cloud: " << cloud_.type() << endl;
+
+    //    Dbug << "thermoReactingCloud - typename " << Cloud<BasicReactingParcel<gasThermoPhysics> >::typeName << endl;
+    // Dbug << "Is kinematicCloud? " << isA<kinematicCloud>(cloud_) << endl;
+    // Dbug << "Is solidParticleCloud? " << isA<solidParticleCloud>(cloud_) << endl;
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -113,9 +127,7 @@ tmp<scalarField> CloudValueExpressionDriver::makeIdField()
 
 tmp<vectorField> CloudValueExpressionDriver::makePositionField() const
 {
-    notImplemented("CloudValueExpressionDriver::makePositionField");
-
-    return tmp<vectorField>(new vectorField(0));
+    return proxy_->getPositions();
 }
 
 template<>
@@ -239,6 +251,66 @@ bool CloudValueExpressionDriver::existsPluginFunction(
         *this,
         name
     );
+}
+
+bool CloudValueExpressionDriver::isScalarField(
+    const word &name
+) {
+    return proxy_->isScalarField(name);
+}
+
+tmp<Field<scalar> > CloudValueExpressionDriver::getScalarField(
+    const word &name
+) {
+    return proxy_->getScalarField(name);
+}
+
+bool CloudValueExpressionDriver::isVectorField(
+    const word &name
+) {
+    return proxy_->isVectorField(name);
+}
+
+tmp<Field<vector> > CloudValueExpressionDriver::getVectorField(
+    const word &name
+) {
+    return proxy_->getVectorField(name);
+}
+
+bool CloudValueExpressionDriver::isTensorField(
+    const word &name
+) {
+    return proxy_->isTensorField(name);
+}
+
+tmp<Field<tensor> > CloudValueExpressionDriver::getTensorField(
+    const word &name
+) {
+    return proxy_->getTensorField(name);
+}
+
+bool CloudValueExpressionDriver::isSymmTensorField(
+    const word &name
+) {
+    return proxy_->isSymmTensorField(name);
+}
+
+tmp<Field<symmTensor> > CloudValueExpressionDriver::getSymmTensorField(
+    const word &name
+) {
+    return proxy_->getSymmTensorField(name);
+}
+
+bool CloudValueExpressionDriver::isSphericalTensorField(
+    const word &name
+) {
+    return proxy_->isSphericalTensorField(name);
+}
+
+tmp<Field<sphericalTensor> > CloudValueExpressionDriver::getSphericalTensorField(
+    const word &name
+) {
+    return proxy_->getSphericalTensorField(name);
 }
 
 // ************************************************************************* //

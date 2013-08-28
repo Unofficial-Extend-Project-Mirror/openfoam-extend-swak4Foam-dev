@@ -72,6 +72,8 @@ namespace parserCloud {
 namespace Foam
 {
 
+class CloudProxy;
+
 /*---------------------------------------------------------------------------*\
                            Class CloudValueExpressionDriver Declaration
 \*---------------------------------------------------------------------------*/
@@ -84,6 +86,9 @@ class CloudValueExpressionDriver
 
     //- the cloud
     const cloud &cloud_;
+
+    //- the actual class dealing with the particle cloud
+    autoPtr<CloudProxy> proxy_;
 
     // Private Member Functions
 
