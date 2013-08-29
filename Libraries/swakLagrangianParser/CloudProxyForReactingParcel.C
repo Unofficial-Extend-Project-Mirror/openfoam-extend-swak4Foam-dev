@@ -75,6 +75,25 @@ tmp<Field<scalar> > CloudProxyForReactingParcel<CloudType>::getScalarField(
     return CloudProxyForParticle<CloudType>::getScalarField(name);
 }
 
+template<class CloudType>
+tmp<Field<scalar> > CloudProxyForReactingParcel<CloudType>::weights() const
+{
+    tmp<Field<scalar> > tWeight(
+        new Field<scalar>(this->theCloud().size())
+    );
+    Field<scalar> &weight=tWeight();
+    label i=0;
+    forAllConstIter(typename CloudType,this->theCloud(),it)
+    {
+	const typename CloudProxyForReactingParcel<CloudType>::particleType &p=(*it);
+        weight[i]=p.nParticle()*p.mass();
+        i++;
+    }
+
+    return tWeight;
+}
+
+
 } // namespace end
 
 // ************************************************************************* //

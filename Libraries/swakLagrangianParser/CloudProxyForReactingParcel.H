@@ -84,6 +84,8 @@ public:
         const word &name
     ) const;
 
+    tmp<Field<scalar> > weights() const;
+
 };
 
 
