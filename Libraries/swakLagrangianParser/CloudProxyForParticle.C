@@ -37,6 +37,8 @@ Contributors/Copyright:
 
 #include "DebugOStream.H"
 
+#include <functional>
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -159,21 +161,41 @@ tmp<Field<scalar> > CloudProxyForParticle<CloudType>::weights() const
 }
 
 template<class CloudType>
-tmp<Field<vector> > CloudProxyForParticle<CloudType>::getPositions() const
+template<class RType,class Func>
+tmp<Field<RType> > CloudProxyForParticle<CloudType>::mapToParticles(
+    const Func &f
+) const
 {
-    tmp<Field<vector> > tPos(
-        new Field<vector>(theCloud().size())
+    tmp<Field<RType> > tResult(
+        new Field<RType>(theCloud().size())
     );
-    Field<vector> &pos=tPos();
+    Field<RType> &result=tResult();
     label i=0;
     forAllConstIter(typename CloudType,theCloud(),it)
     {
 	const particleType &p=(*it);
-        pos[i]=p.position();
+        result[i]=f(&p);
         i++;
     }
 
-    return tPos;
+    return tResult;
+}
+
+    // workaround for a template not defined in <functional>
+template <typename S,typename T>
+inline std::const_mem_fun_t<S,T> const_mem_fun(S (T::*f)() const)
+{
+  return std::const_mem_fun_t<S,T>(f);
+}
+
+template<class CloudType>
+tmp<Field<vector> > CloudProxyForParticle<CloudType>::getPositions() const
+{
+    return mapToParticles<vector>(
+        const_mem_fun(
+            &particleType::position
+        )
+    );
 }
 
 template<class CloudType>

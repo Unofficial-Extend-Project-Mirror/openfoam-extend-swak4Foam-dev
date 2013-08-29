@@ -68,6 +68,11 @@ class CloudProxyForParticle
     //- Disallow copy construct
     CloudProxyForParticle(const CloudProxyForParticle &);
 
+protected:
+    template<class RType,class Func>
+    tmp<Field<RType> > mapToParticles(
+        const Func &f
+    ) const;
 public:
 
     typedef CloudType cloudType;
