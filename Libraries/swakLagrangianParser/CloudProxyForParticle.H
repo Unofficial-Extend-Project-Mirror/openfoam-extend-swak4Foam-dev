@@ -110,6 +110,10 @@ public:
 
     tmp<Field<vector> > getPositions() const;
 
+    tmp<Field<scalar> > weights() const;
+
+    label size() const;
+
 };
 
 

@@ -216,14 +216,27 @@ tmp<scalarField> CloudValueExpressionDriver::weightsNonPoint(
     label size
 ) const
 {
-    notImplemented("CloudValueExpressionDriver::weightsNonPoint");
+    const label cloudSize=proxy_->size();
+    bool isCorrect=(size==cloudSize);
+    reduce(isCorrect,andOp<bool>());
+    if(!isCorrect) {
+        Pout << "Expected cloud size: " << size
+            << " Real cloud size: " << cloudSize << endl;
 
-    return tmp<scalarField>(new scalarField(0));
+        FatalErrorIn("CloudValueExpressionDriver::weightsNonPoint")
+            << "Expected weight size not expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+
+    }
+
+    return proxy_->weights();
 }
 
 label CloudValueExpressionDriver::size() const
 {
-    return cloud_.size();
+    return proxy_->size();
 }
 
 label CloudValueExpressionDriver::pointSize() const

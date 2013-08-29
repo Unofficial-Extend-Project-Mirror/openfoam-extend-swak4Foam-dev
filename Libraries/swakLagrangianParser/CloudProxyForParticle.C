@@ -151,6 +151,14 @@ tmp<Field<sphericalTensor> > CloudProxyForParticle<CloudType>::getSphericalTenso
 }
 
 template<class CloudType>
+tmp<Field<scalar> > CloudProxyForParticle<CloudType>::weights() const
+{
+    return tmp<Field<scalar> >(
+        new Field<scalar>(theCloud().size(),1.0)
+    );
+}
+
+template<class CloudType>
 tmp<Field<vector> > CloudProxyForParticle<CloudType>::getPositions() const
 {
     tmp<Field<vector> > tPos(
@@ -167,6 +175,13 @@ tmp<Field<vector> > CloudProxyForParticle<CloudType>::getPositions() const
 
     return tPos;
 }
+
+template<class CloudType>
+label CloudProxyForParticle<CloudType>::size() const
+{
+    return cloud_.size();
+}
+
 
 } // namespace end
 
