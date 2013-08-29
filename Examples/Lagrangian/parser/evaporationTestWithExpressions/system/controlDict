@@ -73,6 +73,10 @@ functions {
         cloudName reactingCloud1;
         //        alternateCloudType test;
     }
+    cloudWeights {
+        $cloudPosition;
+        expression "weight()";
+    }
 }
 
 // ************************************************************************* //

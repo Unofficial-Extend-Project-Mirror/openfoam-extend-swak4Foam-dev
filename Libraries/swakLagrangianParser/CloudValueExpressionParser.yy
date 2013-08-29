@@ -296,6 +296,7 @@ namespace Foam {
 %token TOKEN_eigenVectors
 
 %token TOKEN_cpu
+%token TOKEN_weight
 
 %left '?' ':'
 %left TOKEN_OR
@@ -1029,6 +1030,9 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             $$ = driver.makeField(
                 Foam::scalar(Foam::Pstream::myProcNo())
             ).ptr();
+          }
+        | TOKEN_weight'(' ')'                          {
+            $$ = driver.weights(driver.size()).ptr();
           }
         | TOKEN_rand '(' ')'        { $$ = driver.makeRandomField().ptr(); }
         | TOKEN_rand '(' TOKEN_INT ')'        {
