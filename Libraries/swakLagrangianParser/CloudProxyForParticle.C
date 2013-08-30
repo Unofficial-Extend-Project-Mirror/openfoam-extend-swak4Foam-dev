@@ -46,6 +46,74 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+    // workaround for a template not defined in <functional>
+template <typename S,typename T>
+inline std::const_mem_fun_t<S,T> const_mem_fun(S (T::*f)() const)
+{
+    return std::const_mem_fun_t<S,T>(f);
+}
+
+// template <typename S,typename T,class A>
+// inline std::const_mem_fun1_t<S,T,A> const_mem_fun1(S (T::*f)(A) const)
+// {
+//     return std::const_mem_fun1_t<S,T,A>(f);
+// }
+
+template <typename S,typename T>
+inline void const_fun(S (T::*f)() const)
+{
+}
+
+template<class CloudType>
+class ParticleMethodWrapper
+{
+
+public:
+    typedef typename CloudType::particleType particleType;
+    typedef vector RType;
+
+    ParticleMethodWrapper()
+        {}
+    virtual ~ParticleMethodWrapper()
+        {}
+
+    virtual RType operator()(const particleType &) const = 0;
+};
+
+template<class CloudType>
+class ParticleMethodWrapperNoParameter
+:
+    public ParticleMethodWrapper<CloudType>
+{
+
+public:
+    typedef typename ParticleMethodWrapper<CloudType>::RType RType;
+    typedef typename ParticleMethodWrapper<CloudType>::particleType particleType;
+
+    typedef const RType& (particleType::*FSig)() const;
+
+    FSig fPtr;
+
+    ParticleMethodWrapperNoParameter(FSig f):
+        ParticleMethodWrapper<CloudType>(),
+        fPtr(f)
+        {}
+
+    virtual ~ParticleMethodWrapperNoParameter()
+        {}
+
+    virtual RType
+    operator()(const typename ParticleMethodWrapper<CloudType>::particleType &p) const
+        {
+            return ((p).*(fPtr))();
+        }
+};
+
+template <class T,class RType>
+RType (T::*use_const_overload(RType (T::*const_member_function)() const))() const
+{
+    return const_member_function;
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -61,7 +129,31 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             c
         )
     )
+
 {
+    // typename ParticleMethodWrapperNoParameter<CloudType>::FSig s=use_const_overload(&particleType::position);
+    // const_fun(&particleType::position);
+    ParticleMethodWrapper<CloudType> *m=
+        new ParticleMethodWrapperNoParameter<CloudType>(
+            use_const_overload(&particleType::position)
+        );
+
+    forAllConstIter(typename CloudType,theCloud(),it)
+    {
+        const particleType &p=(*it);
+        (*m)(p);
+    }
+    // typedef std::const_mem_fun_t<const vector&,particleType> methodType;
+
+    // std::unary_function<const vector&,particleType> &t=methodType(
+    //             &particleType::position
+    // );
+
+    // typedef std::const_mem_fun1_t<tmp<Field<vector> >,CloudProxyForParticle<CloudType>,methodType> mapType;
+    // mapType m=mapType(&CloudProxyForParticle<CloudType>::mapToParticles<vector,mapType>);
+
+    //    //    void *t2=&particleType::position;
+
     addField<scalar>("origProc"   ,"Originating processor");
     addField<scalar>("origId"     ,"Original id");
     addField<vector>("normal"     ,"Normal of the tet the particle occupies");
@@ -179,13 +271,6 @@ tmp<Field<RType> > CloudProxyForParticle<CloudType>::mapToParticles(
     }
 
     return tResult;
-}
-
-    // workaround for a template not defined in <functional>
-template <typename S,typename T>
-inline std::const_mem_fun_t<S,T> const_mem_fun(S (T::*f)() const)
-{
-  return std::const_mem_fun_t<S,T>(f);
 }
 
 template<class CloudType>
