@@ -55,7 +55,28 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
 :
     CloudProxyForParticle<CloudType>(c)
 {
-    //    addField<scalar>("mass0"   ,"Initial mass");
+    typedef CloudProxyForParticle<CloudType> baseType;
+
+    this->addScalarFunction(
+        "mass0",
+        "Initial mass",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::mass0
+        )
+    );
+
+    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
+    forAll(phaseTypes,i) {
+        const word &name=phaseTypes[i];
+        this->addScalarFunction(
+            "Y"+name,
+            "Mass fraction of "+name,
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::Y,
+                i
+            )
+        );
+    }
 }
 
 

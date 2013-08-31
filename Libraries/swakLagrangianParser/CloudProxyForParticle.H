@@ -119,7 +119,7 @@ protected:
             }
     };
 
-    template<class RType>
+    template<class RType,class FType=RType>
     class ParticleMethodWrapperValue
     :
     public ParticleMethodWrapper<RType>
@@ -128,7 +128,7 @@ protected:
     public:
         typedef typename ParticleMethodWrapper<RType>::particleType particleType;
 
-        typedef RType (particleType::*FSig)() const;
+        typedef FType (particleType::*FSig)() const;
 
         FSig fPtr_;
 
@@ -179,6 +179,51 @@ protected:
                 return ((p).*(fPtr_))()[index_];
             }
     };
+
+    HashPtrTable<ParticleMethodWrapper<scalar>,word,string::hash>
+      scalarFunctions_;
+
+    void addScalarFunction(
+        const word &name,
+        const string &description,
+        ParticleMethodWrapper<scalar> *ptr
+    );
+
+    HashPtrTable<ParticleMethodWrapper<vector>,word,string::hash>
+      vectorFunctions_;
+
+    void addVectorFunction(
+        const word &name,
+        const string &description,
+        ParticleMethodWrapper<vector> *ptr
+    );
+
+    HashPtrTable<ParticleMethodWrapper<tensor>,word,string::hash>
+      tensorFunctions_;
+
+    void addTensorFunction(
+        const word &name,
+        const string &description,
+        ParticleMethodWrapper<tensor> *ptr
+    );
+
+    HashPtrTable<ParticleMethodWrapper<symmTensor>,word,string::hash>
+      symmTensorFunctions_;
+
+    void addSymmTensorFunction(
+        const word &name,
+        const string &description,
+        ParticleMethodWrapper<symmTensor> *ptr
+    );
+
+    HashPtrTable<ParticleMethodWrapper<sphericalTensor>,word,string::hash>
+      sphericalTensorFunctions_;
+
+    void addSphericalTensorFunction(
+        const word &name,
+        const string &description,
+        ParticleMethodWrapper<sphericalTensor> *ptr
+    );
 
 public:
 

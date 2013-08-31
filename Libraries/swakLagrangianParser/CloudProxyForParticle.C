@@ -69,40 +69,62 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
     )
 
 {
-    ParticleMethodWrapper<vector> *m=
-        new ParticleMethodWrapperReference<vector>(
-            &particleType::position
-        );
-    mapToParticles<vector>((*m));
-
-    ParticleMethodWrapper<scalar> *m2=
-        new ParticleMethodWrapperFieldElement<scalar>(
-            &particleType::Y,
-            0
-        );
-    mapToParticles<scalar>((*m2));
-
-    ParticleMethodWrapper<scalar> *m3=
+    addScalarFunction(
+        "origProc",
+        "Originating processor",
+        new ParticleMethodWrapperValue<scalar,label>(
+            &particleType::origProc
+        )
+    );
+    addScalarFunction(
+        "origId",
+        "Original id",
+        new ParticleMethodWrapperValue<scalar,label>(
+            &particleType::origId
+        )
+    );
+    addScalarFunction(
+        "cell",
+        "number of the cell",
+        new ParticleMethodWrapperValue<scalar,label>(
+            &particleType::cell
+        )
+    );
+    addScalarFunction(
+        "face",
+        "number of the face",
+        new ParticleMethodWrapperValue<scalar,label>(
+            &particleType::face
+        )
+    );
+    addScalarFunction(
+        "softImpact",
+        "used impact model",
+        new ParticleMethodWrapperValue<scalar,bool>(
+            &particleType::softImpact
+        )
+    );
+    addScalarFunction(
+        "onBoundary",
+        "is this currently on the boundary",
+        new ParticleMethodWrapperValue<scalar,bool>(
+            &particleType::onBoundary
+        )
+    );
+    addScalarFunction(
+        "currentTime",
+        "current time of the particle",
         new ParticleMethodWrapperValue<scalar>(
-            &particleType::mass0
-        );
-    mapToParticles<scalar>((*m3));
-
-    // typedef std::const_mem_fun_t<const vector&,particleType> methodType;
-
-    // std::unary_function<const vector&,particleType> &t=methodType(
-    //             &particleType::position
-    // );
-
-    // typedef std::const_mem_fun1_t<tmp<Field<vector> >,CloudProxyForParticle<CloudType>,methodType> mapType;
-    // mapType m=mapType(&CloudProxyForParticle<CloudType>::mapToParticles<vector,mapType>);
-
-    //    //    void *t2=&particleType::position;
-
-    addField<scalar>("origProc"   ,"Originating processor");
-    addField<scalar>("origId"     ,"Original id");
-    addField<vector>("normal"     ,"Normal of the tet the particle occupies");
-    addField<vector>("oldNormal"  ,"Old normal of the tet the particle occupies");
+            &particleType::currentTime
+        )
+    );
+    addScalarFunction(
+        "stepFraction",
+        "fraction of the tijme-step completed",
+        new ParticleMethodWrapperValue<scalar>(
+            &particleType::stepFraction
+        )
+    );
 }
 
 
@@ -115,10 +137,87 @@ CloudProxyForParticle<CloudType>::~CloudProxyForParticle()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CloudType>
+void CloudProxyForParticle<CloudType>::addScalarFunction(
+    const word &name,
+    const string &description,
+    ParticleMethodWrapper<scalar> *ptr
+)
+{
+    addField<scalar>(name,description);
+    scalarFunctions_.set(
+        name,
+        ptr
+    );
+}
+
+template<class CloudType>
+void CloudProxyForParticle<CloudType>::addVectorFunction(
+    const word &name,
+    const string &description,
+    ParticleMethodWrapper<vector> *ptr
+)
+{
+    addField<vector>(name,description);
+    vectorFunctions_.set(
+        name,
+        ptr
+    );
+}
+
+template<class CloudType>
+void CloudProxyForParticle<CloudType>::addTensorFunction(
+    const word &name,
+    const string &description,
+    ParticleMethodWrapper<tensor> *ptr
+)
+{
+    addField<tensor>(name,description);
+    tensorFunctions_.set(
+        name,
+        ptr
+    );
+}
+
+template<class CloudType>
+void CloudProxyForParticle<CloudType>::addSymmTensorFunction(
+    const word &name,
+    const string &description,
+    ParticleMethodWrapper<symmTensor> *ptr
+)
+{
+    addField<symmTensor>(name,description);
+    symmTensorFunctions_.set(
+        name,
+        ptr
+    );
+}
+
+template<class CloudType>
+void CloudProxyForParticle<CloudType>::addSphericalTensorFunction(
+    const word &name,
+    const string &description,
+    ParticleMethodWrapper<sphericalTensor> *ptr
+)
+{
+    addField<sphericalTensor>(name,description);
+    sphericalTensorFunctions_.set(
+        name,
+        ptr
+    );
+}
+
+template<class CloudType>
 tmp<Field<scalar> > CloudProxyForParticle<CloudType>::getScalarField(
     const word &name
 ) const
 {
+    if(scalarFunctions_.found(name)) {
+        Dbug << "Found " << name << " in scalar table" << endl;
+        return mapToParticles<scalar>(
+            *scalarFunctions_[name]
+        );
+    }
+
     FatalErrorIn("tmp<Field<scalar> > CloudProxyForParticle<CloudType>::getScalarField")
         << "No scalar field with name " << name << " defined for cloud "
             << cloud_.name() << " of type " // << cloud_.CloudTyptype()
@@ -134,6 +233,13 @@ tmp<Field<vector> > CloudProxyForParticle<CloudType>::getVectorField(
     const word &name
 ) const
 {
+    if(vectorFunctions_.found(name)) {
+        Dbug << "Found " << name << " in vector table" << endl;
+        return mapToParticles<vector>(
+            *vectorFunctions_[name]
+        );
+    }
+
     FatalErrorIn("tmp<Field<vector> > CloudProxyForParticle<CloudType>::getVectorField")
         << "No vector field with name " << name << " defined for cloud "
             << cloud_.name() << " of type " // << cloud_.CloudTyptype()
@@ -149,6 +255,13 @@ tmp<Field<tensor> > CloudProxyForParticle<CloudType>::getTensorField(
     const word &name
 ) const
 {
+    if(tensorFunctions_.found(name)) {
+        Dbug << "Found " << name << " in tensor table" << endl;
+        return mapToParticles<tensor>(
+            *tensorFunctions_[name]
+        );
+    }
+
     FatalErrorIn("tmp<Field<tensor> > CloudProxyForParticle<CloudType>::getTensorField")
         << "No tensor field with name " << name << " defined for cloud "
             << cloud_.name() << " of type " // << cloud_.CloudTyptype()
@@ -164,6 +277,13 @@ tmp<Field<symmTensor> > CloudProxyForParticle<CloudType>::getSymmTensorField(
     const word &name
 ) const
 {
+    if(symmTensorFunctions_.found(name)) {
+        Dbug << "Found " << name << " in symmTensor table" << endl;
+        return mapToParticles<symmTensor>(
+            *symmTensorFunctions_[name]
+        );
+    }
+
     FatalErrorIn("tmp<Field<symmTensor> > CloudProxyForParticle<CloudType>::getSymmTensorField")
         << "No symmTensor field with name " << name << " defined for cloud "
             << cloud_.name() << " of type " // << cloud_.CloudTyptype()
@@ -179,6 +299,13 @@ tmp<Field<sphericalTensor> > CloudProxyForParticle<CloudType>::getSphericalTenso
     const word &name
 ) const
 {
+    if(sphericalTensorFunctions_.found(name)) {
+        Dbug << "Found " << name << " in sphericalTensor table" << endl;
+        return mapToParticles<sphericalTensor>(
+            *sphericalTensorFunctions_[name]
+        );
+    }
+
     FatalErrorIn("tmp<Field<sphericalTensor> > CloudProxyForParticle<CloudType>::getSphericalTensorField")
         << "No sphericalTensor field with name " << name << " defined for cloud "
             << cloud_.name() << " of type " // << cloud_.CloudTyptype()

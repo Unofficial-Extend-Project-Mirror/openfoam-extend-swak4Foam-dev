@@ -77,6 +77,26 @@ functions {
         $cloudPosition;
         expression "weight()";
     }
+    cloudIds {
+        $cloudPosition;
+        expression "origId";
+    }
+    cloudSoftImpact {
+        $cloudPosition;
+        expression "softImpact";
+    }
+    cloudCurrentTime {
+        $cloudPosition;
+        expression "currentTime";
+    }
+    cloudStepFraction {
+        $cloudPosition;
+        expression "stepFraction";
+    }
+    cloudWaterFraction {
+        $cloudPosition;
+        expression "YH2O*mass0";
+    }
 }
 
 // ************************************************************************* //
