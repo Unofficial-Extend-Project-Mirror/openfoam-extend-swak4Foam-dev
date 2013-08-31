@@ -148,6 +148,31 @@ protected:
     };
 
     template<class RType>
+    class ParticleMethodWrapperConstant
+    :
+    public ParticleMethodWrapper<RType>
+    {
+        RType value_;
+
+    public:
+        typedef typename ParticleMethodWrapper<RType>::particleType particleType;
+
+        ParticleMethodWrapperConstant(RType value):
+            ParticleMethodWrapper<RType>(),
+            value_(value)
+            {}
+
+        virtual ~ParticleMethodWrapperConstant()
+            {}
+
+        virtual RType
+        operator()(const particleType &p) const
+            {
+                return value_;
+            }
+    };
+
+    template<class RType>
     class ParticleMethodWrapperFieldElement
     :
     public ParticleMethodWrapper<RType>

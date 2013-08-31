@@ -86,6 +86,31 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
         )
     );
 
+    //- constant Properties
+    const typename CloudType::particleType::constantProperties &constProps=
+        this->theCloud().constProps();
+
+    this->addScalarFunction(
+        "pMin",
+        "Minimum pressure (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.pMin()
+        )
+    );
+    this->addScalarFunction(
+        "Tvap",
+        "Vaporisation temperature (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.Tvap()
+        )
+    );
+    this->addScalarFunction(
+        "Tbp",
+        "Boiling point (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.Tbp()
+        )
+    );
 }
 
 

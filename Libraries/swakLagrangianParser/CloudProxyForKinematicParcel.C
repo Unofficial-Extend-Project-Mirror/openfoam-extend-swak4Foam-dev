@@ -144,6 +144,31 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
         )
     );
 
+    //- constant Properties
+    const typename CloudType::particleType::constantProperties &constProps=
+        this->theCloud().constProps();
+
+    this->addScalarFunction(
+        "rhoMin",
+        "Minimum density (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.rhoMin()
+        )
+    );
+    this->addScalarFunction(
+        "rho0",
+        "Particle density (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.rho0()
+        )
+    );
+    this->addScalarFunction(
+        "minParticleMass",
+        "Minimum particle mass (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.minParticleMass()
+        )
+    );
 }
 
 

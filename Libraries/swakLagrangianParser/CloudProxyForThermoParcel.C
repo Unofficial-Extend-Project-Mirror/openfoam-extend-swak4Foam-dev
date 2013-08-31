@@ -72,6 +72,53 @@ CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
         )
     );
 
+    //- constant Properties
+    const typename CloudType::particleType::constantProperties &constProps=
+        this->theCloud().constProps();
+
+    this->addScalarFunction(
+        "T0",
+        "Initial temperature (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.T0()
+        )
+    );
+    this->addScalarFunction(
+        "TMin",
+        "Minimum temperature (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.TMin()
+        )
+    );
+    this->addScalarFunction(
+        "cp0",
+        "Specific heat capacity (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.cp0()
+        )
+    );
+    this->addScalarFunction(
+        "epsilon0",
+        "Particle emissivity (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.epsilon0()
+        )
+    );
+    this->addScalarFunction(
+        "f0",
+        "Particle scattering factor (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.f0()
+        )
+    );
+    this->addScalarFunction(
+        "Pr",
+        "Default carrier Prandtl number (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.Pr()
+        )
+    );
+
 }
 
 

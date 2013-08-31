@@ -109,6 +109,24 @@ CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphas
         )
     );
 
+    //- constant Properties
+    const typename CloudType::particleType::constantProperties &constProps=
+        this->theCloud().constProps();
+
+    this->addScalarFunction(
+        "LDevol",
+        "Latent heat of devolatilisation (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.LDevol()
+        )
+    );
+    this->addScalarFunction(
+        "hRetentionCoeff",
+        "Fraction of enthalpy retained due to surface reactions(constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.hRetentionCoeff()
+        )
+    );
 }
 
 

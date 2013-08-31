@@ -93,9 +93,17 @@ functions {
         $cloudPosition;
         expression "stepFraction";
     }
-    cloudWaterFraction {
+    cloudWaterMass {
         $cloudPosition;
-        expression "YH2O*mass0";
+        expression "YH2O*mass";
+    }
+    cloudRelativeMass {
+        $cloudPosition;
+        expression "mass/mass0";
+    }
+    cloudTemperatureChange {
+        $cloudPosition;
+        expression "T-T0";
     }
     cloudVelocityDifference {
         $cloudPosition;
