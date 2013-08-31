@@ -97,6 +97,10 @@ functions {
         $cloudPosition;
         expression "YH2O*mass0";
     }
+    cloudVelocityDifference {
+        $cloudPosition;
+        expression "U-fluidPhase(U)";
+    }
 }
 
 // ************************************************************************* //

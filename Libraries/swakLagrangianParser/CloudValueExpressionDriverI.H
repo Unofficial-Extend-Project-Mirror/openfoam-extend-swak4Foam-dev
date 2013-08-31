@@ -45,7 +45,14 @@ Contributors/Copyright:
 
 namespace Foam {
 
-
+    template <typename Type>
+    tmp<Field<Type > > CloudValueExpressionDriver::getFluidField(word const&)
+    {
+        notImplemented("CloudValueExpressionDriver::getFluidField(word const&)");
+        return tmp<Field<Type> >(
+            new Field<Type>(0)
+        );
+    }
 }
 
 
