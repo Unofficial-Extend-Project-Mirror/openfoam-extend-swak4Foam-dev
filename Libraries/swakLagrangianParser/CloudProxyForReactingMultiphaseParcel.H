@@ -27,38 +27,74 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::CloudProxyForReactingMultiphaseParcel
+
+Description
+
+SourceFiles
+    CloudProxyForReactingMultiphaseParcel.C
+
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "CloudProxyForReactingMultiphaseParcel.H"
+#ifndef CloudProxyForReactingMultiphaseParcel_H
+#define CloudProxyForReactingMultiphaseParcel_H
 
-#include "addToRunTimeSelectionTable.H"
+#include "CloudProxyForReactingParcel.H"
 
-#include "BasicReactingMultiphaseCloud.H"
-#include "BasicReactingCloud.H"
-#include "basicKinematicCloud.H"
-#include "basicThermoCloud.H"
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-    addCloudProxyToTable(CloudProxyForKinematicParcel,basicKinematicCloud);
+/*---------------------------------------------------------------------------*\
+                       Class CloudProxyForReactingMultiphaseParcel Declaration
+\*---------------------------------------------------------------------------*/
 
-    addCloudProxyToTable(CloudProxyForThermoParcel,basicThermoCloud);
+template<class CloudType>
+class CloudProxyForReactingMultiphaseParcel
+:
+    public CloudProxyForReactingParcel<CloudType>
+{
+    //- Disallow default bitwise assignment
+    void operator=(const CloudProxyForReactingMultiphaseParcel&);
 
-    addCloudProxyToTable(CloudProxyForReactingParcel,thermoReactingCloud);
-    addCloudProxyToTable(CloudProxyForReactingParcel,constThermoReactingCloud);
-    addCloudProxyToTable(CloudProxyForReactingParcel,icoPoly8ThermoReactingCloud);
+    //- Disallow copy construct
+    CloudProxyForReactingMultiphaseParcel(const CloudProxyForReactingMultiphaseParcel &);
 
-    addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,thermoReactingMultiphaseCloud);
-    addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,constThermoReactingMultiphaseCloud);
-    addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,icoPoly8ThermoReactingMultiphaseCloud);
+public:
 
-} // namespace end
+    // Constructors
+
+    //- Construct from components
+    CloudProxyForReactingMultiphaseParcel
+    (
+        const cloud &
+    );
+
+    // Destructor
+
+    virtual ~CloudProxyForReactingMultiphaseParcel();
+
+};
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "CloudProxyForReactingMultiphaseParcel.C"
+#endif
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

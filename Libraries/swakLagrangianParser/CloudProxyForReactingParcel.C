@@ -77,6 +77,15 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             )
         );
     }
+
+    this->addScalarFunction(
+        "pc",
+        "Owner cell pressure",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::pc
+        )
+    );
+
 }
 
 

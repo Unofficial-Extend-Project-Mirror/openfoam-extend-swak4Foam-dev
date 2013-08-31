@@ -56,6 +56,94 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
     CloudProxyForParticle<CloudType>(c)
 {
     typedef CloudProxyForParticle<CloudType> baseType;
+
+    this->addBoolFunction(
+        "active",
+        "Is this parcel active?",
+        new typename baseType::template ParticleMethodWrapperValue<bool>(
+            &CloudType::particleType::active
+        )
+    );
+    this->addScalarFunction(
+        "typeId",
+        "Type ID",
+        new typename baseType::template ParticleMethodWrapperValue<scalar,label>(
+            &CloudType::particleType::typeId
+        )
+    );
+    this->addScalarFunction(
+        "nParticle",
+        "Number of particles",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::nParticle
+        )
+    );
+    this->addScalarFunction(
+        "d",
+        "Diameter",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::d
+        )
+    );
+    this->addVectorFunction(
+        "U",
+        "Velocity",
+        new typename baseType::template ParticleMethodWrapperReference<vector>(
+            &CloudType::particleType::U
+        )
+    );
+    this->addScalarFunction(
+        "rho",
+        "Density",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::rho
+        )
+    );
+    this->addScalarFunction(
+        "tTurb",
+        "Time in turbulent eddy",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::tTurb
+        )
+    );
+    this->addVectorFunction(
+        "UTurb",
+        "Turbulent velocity fluctuations",
+        new typename baseType::template ParticleMethodWrapperReference<vector>(
+            &CloudType::particleType::UTurb
+        )
+    );
+
+    // helper functions
+    this->addScalarFunction(
+        "mass",
+        "Particle mass",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::mass
+        )
+    );
+    this->addScalarFunction(
+        "volume",
+        "Particle volume",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::volume
+        )
+    );
+    this->addScalarFunction(
+        "areaP",
+        "Particle projected area",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::areaP
+        )
+    );
+    this->addScalarFunction(
+        "areaS",
+        "Particle surface area",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::areaS
+        )
+    );
+
 }
 
 

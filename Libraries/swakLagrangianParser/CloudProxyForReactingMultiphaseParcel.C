@@ -33,7 +33,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "CloudProxyForThermoParcel.H"
+#include "CloudProxyForReactingMultiphaseParcel.H"
 
 #include "DebugOStream.H"
 
@@ -48,27 +48,64 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CloudType>
-CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
+CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphaseParcel
 (
-    const cloud& c
+    const cloud& cl
 )
 :
-    CloudProxyForKinematicParcel<CloudType>(c)
+    CloudProxyForReactingParcel<CloudType>(cl)
 {
     typedef CloudProxyForParticle<CloudType> baseType;
 
+    const CloudType &c=this->theCloud();
+
+    const label idGas = c.composition().idGas();
+    const wordList& gasNames = c.composition().componentNames(idGas);
+    forAll(gasNames,i) {
+        const word &name=gasNames[i];
+        this->addScalarFunction(
+            "YGas_"+name,
+            "Mass fraction of "+name+" (gas)",
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::YGas,
+                i
+            )
+        );
+    }
+
+    const label idLiquid = c.composition().idLiquid();
+    const wordList& liquidNames = c.composition().componentNames(idLiquid);
+    forAll(liquidNames,i) {
+        const word &name=liquidNames[i];
+        this->addScalarFunction(
+            "YLiquid_"+name,
+            "Mass fraction of "+name+" (liquid)",
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::YLiquid,
+                i
+            )
+        );
+    }
+
+    const label idSolid = c.composition().idSolid();
+    const wordList& solidNames = c.composition().componentNames(idSolid);
+    forAll(solidNames,i) {
+        const word &name=solidNames[i];
+        this->addScalarFunction(
+            "YSolid_"+name,
+            "Mass fraction of "+name+" (solid)",
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::YSolid,
+                i
+            )
+        );
+    }
+
     this->addScalarFunction(
-        "T",
-        "Temperature",
+        "pc",
+        "Owner cell pressure",
         new typename baseType::template ParticleMethodWrapperValue<scalar>(
-            &CloudType::particleType::T
-        )
-    );
-    this->addScalarFunction(
-        "cp",
-        "Specific heat capacity",
-        new typename baseType::template ParticleMethodWrapperValue<scalar>(
-            &CloudType::particleType::cp
+            &CloudType::particleType::pc
         )
     );
 
@@ -78,10 +115,11 @@ CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class CloudType>
-CloudProxyForThermoParcel<CloudType>::~CloudProxyForThermoParcel()
+CloudProxyForReactingMultiphaseParcel<CloudType>::~CloudProxyForReactingMultiphaseParcel()
 {}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
 
 } // namespace end
 

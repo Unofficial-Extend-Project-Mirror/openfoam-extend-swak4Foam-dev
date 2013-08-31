@@ -120,7 +120,7 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
     );
     addScalarFunction(
         "stepFraction",
-        "fraction of the tijme-step completed",
+        "fraction of the time-step completed",
         new ParticleMethodWrapperValue<scalar>(
             &particleType::stepFraction
         )
