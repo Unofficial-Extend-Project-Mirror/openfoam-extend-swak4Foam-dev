@@ -44,7 +44,7 @@ Contributors/Copyright:
 namespace Foam
 {
 
-defineTypeNameAndDebug(CloudProxy, 1);
+defineTypeNameAndDebug(CloudProxy, 0);
 
 defineRunTimeSelectionTable(CloudProxy,cloud);
 
@@ -171,6 +171,14 @@ bool CloudProxy::isScalarField(const word &name) const
         fieldTypes_.found(name)
         &&
         fieldTypes_[name]==pTraits<scalar>::typeName;
+}
+
+bool CloudProxy::isBoolField(const word &name) const
+{
+    return
+        fieldTypes_.found(name)
+        &&
+        fieldTypes_[name]==pTraits<bool>::typeName;
 }
 
 bool CloudProxy::isVectorField(const word &name) const

@@ -189,6 +189,15 @@ protected:
         ParticleMethodWrapper<scalar> *ptr
     );
 
+    HashPtrTable<ParticleMethodWrapper<bool>,word,string::hash>
+      boolFunctions_;
+
+    void addBoolFunction(
+        const word &name,
+        const string &description,
+        ParticleMethodWrapper<bool> *ptr
+    );
+
     HashPtrTable<ParticleMethodWrapper<vector>,word,string::hash>
       vectorFunctions_;
 
@@ -249,7 +258,11 @@ public:
         const word &name
     ) const;
 
-    virtual tmp<Field<vector> > getVectorField(
+    virtual tmp<Field<bool> > getBoolField(
+        const word &name
+    ) const;
+
+     virtual tmp<Field<vector> > getVectorField(
         const word &name
     ) const;
 

@@ -164,6 +164,11 @@ public:
         const word &name
     ) const = 0;
 
+    bool isBoolField(const word &name) const;
+    virtual tmp<Field<bool> > getBoolField(
+        const word &name
+    ) const = 0;
+
     virtual tmp<Field<vector> > getPositions() const = 0;
 
     virtual tmp<Field<scalar> > weights() const = 0;

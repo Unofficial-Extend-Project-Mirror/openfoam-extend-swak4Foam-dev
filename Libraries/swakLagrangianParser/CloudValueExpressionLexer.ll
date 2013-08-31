@@ -236,7 +236,7 @@ eigenVectors           return token::TOKEN_eigenVectors;
         yylval->name = ptr; return token::TOKEN_HID;
     } else if(driver.isScalarField(*ptr)) {
         yylval->name = ptr; return token::TOKEN_SID;
-    } else if(driver.isVariable<bool>(*ptr)) {
+    } else if(driver.isBoolField(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LID;
     } else if(driver.existsPluginFunction(*ptr)) {
         // OK. We'll create the function two times. But this is less messy

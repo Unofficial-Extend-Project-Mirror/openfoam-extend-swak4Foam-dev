@@ -49,7 +49,7 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CloudValueExpressionDriver, 1);
+defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
 
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, dictionary, cloud);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, idName, cloud);
@@ -273,61 +273,115 @@ bool CloudValueExpressionDriver::existsPluginFunction(
 bool CloudValueExpressionDriver::isScalarField(
     const word &name
 ) {
-    return proxy_->isScalarField(name);
+    return
+        proxy_->isScalarField(name)
+        ||
+        isVariable<scalar>(name);
 }
 
 tmp<Field<scalar> > CloudValueExpressionDriver::getScalarField(
     const word &name
 ) {
-    return proxy_->getScalarField(name);
+    if(proxy_->isScalarField(name)) {
+        return proxy_->getScalarField(name);
+    } else {
+        return getVariable<scalar>(name,size());
+    }
 }
 
 bool CloudValueExpressionDriver::isVectorField(
     const word &name
 ) {
-    return proxy_->isVectorField(name);
+    return
+        proxy_->isVectorField(name)
+        ||
+        isVariable<vector>(name);
 }
 
 tmp<Field<vector> > CloudValueExpressionDriver::getVectorField(
     const word &name
 ) {
-    return proxy_->getVectorField(name);
+    if(proxy_->isVectorField(name)) {
+        return proxy_->getVectorField(name);
+    } else {
+        return getVariable<vector>(name,size());
+    }
 }
 
 bool CloudValueExpressionDriver::isTensorField(
     const word &name
 ) {
-    return proxy_->isTensorField(name);
+    return
+        proxy_->isTensorField(name)
+        ||
+        isVariable<tensor>(name);
 }
 
 tmp<Field<tensor> > CloudValueExpressionDriver::getTensorField(
     const word &name
 ) {
-    return proxy_->getTensorField(name);
+    if(proxy_->isTensorField(name)) {
+        return proxy_->getTensorField(name);
+    } else {
+        return getVariable<tensor>(name,size());
+    }
 }
 
 bool CloudValueExpressionDriver::isSymmTensorField(
     const word &name
 ) {
-    return proxy_->isSymmTensorField(name);
+    return
+        proxy_->isSymmTensorField(name)
+        ||
+        isVariable<symmTensor>(name);
 }
 
 tmp<Field<symmTensor> > CloudValueExpressionDriver::getSymmTensorField(
     const word &name
 ) {
-    return proxy_->getSymmTensorField(name);
+    if(proxy_->isSymmTensorField(name)) {
+        return proxy_->getSymmTensorField(name);
+    } else {
+        return getVariable<symmTensor>(name,size());
+    }
 }
 
 bool CloudValueExpressionDriver::isSphericalTensorField(
     const word &name
 ) {
-    return proxy_->isSphericalTensorField(name);
+    return
+        proxy_->isSphericalTensorField(name)
+        ||
+        isVariable<sphericalTensor>(name);
 }
 
 tmp<Field<sphericalTensor> > CloudValueExpressionDriver::getSphericalTensorField(
     const word &name
 ) {
-    return proxy_->getSphericalTensorField(name);
+    if(proxy_->isSphericalTensorField(name)) {
+        return proxy_->getSphericalTensorField(name);
+    } else {
+        return getVariable<sphericalTensor>(name,size());
+    }
+}
+
+bool CloudValueExpressionDriver::isBoolField(
+    const word &name
+) {
+    return
+        proxy_->isBoolField(name)
+        ||
+        isVariable<bool>(name);
+}
+
+tmp<Field<bool> > CloudValueExpressionDriver::getBoolField(
+    const word &name
+) {
+    if(proxy_->isBoolField(name)) {
+        return proxy_->getBoolField(name);
+    } else {
+        return getVariable<bool>(name,size());
+    }
 }
 
 // ************************************************************************* //

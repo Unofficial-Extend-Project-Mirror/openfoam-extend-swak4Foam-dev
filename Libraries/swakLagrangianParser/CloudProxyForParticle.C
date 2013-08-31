@@ -97,17 +97,17 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::face
         )
     );
-    addScalarFunction(
+    addBoolFunction(
         "softImpact",
         "used impact model",
-        new ParticleMethodWrapperValue<scalar,bool>(
+        new ParticleMethodWrapperValue<bool>(
             &particleType::softImpact
         )
     );
-    addScalarFunction(
+    addBoolFunction(
         "onBoundary",
         "is this currently on the boundary",
-        new ParticleMethodWrapperValue<scalar,bool>(
+        new ParticleMethodWrapperValue<bool>(
             &particleType::onBoundary
         )
     );
@@ -145,6 +145,20 @@ void CloudProxyForParticle<CloudType>::addScalarFunction(
 {
     addField<scalar>(name,description);
     scalarFunctions_.set(
+        name,
+        ptr
+    );
+}
+
+template<class CloudType>
+void CloudProxyForParticle<CloudType>::addBoolFunction(
+    const word &name,
+    const string &description,
+    ParticleMethodWrapper<bool> *ptr
+)
+{
+    addField<bool>(name,description);
+    boolFunctions_.set(
         name,
         ptr
     );
@@ -225,6 +239,28 @@ tmp<Field<scalar> > CloudProxyForParticle<CloudType>::getScalarField(
             << exit(FatalError);
     return tmp<Field<scalar> >(
         new Field<scalar>(0)
+    );
+}
+
+template<class CloudType>
+tmp<Field<bool> > CloudProxyForParticle<CloudType>::getBoolField(
+    const word &name
+) const
+{
+    if(boolFunctions_.found(name)) {
+        Dbug << "Found " << name << " in bool table" << endl;
+        return mapToParticles<bool>(
+            *boolFunctions_[name]
+        );
+    }
+
+    FatalErrorIn("tmp<Field<bool> > CloudProxyForParticle<CloudType>::getBoolField")
+        << "No bool field with name " << name << " defined for cloud "
+            << cloud_.name() << " of type " // << cloud_.CloudTyptype()
+            << endl
+            << exit(FatalError);
+    return tmp<Field<bool> >(
+        new Field<bool>(0)
     );
 }
 

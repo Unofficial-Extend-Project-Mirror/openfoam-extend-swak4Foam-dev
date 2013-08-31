@@ -166,6 +166,7 @@ public:
     bool isTensorField(const word &name);
     bool isSymmTensorField(const word &name);
     bool isSphericalTensorField(const word &name);
+    bool isBoolField(const word &name);
 
     tmp<Field<scalar> > getScalarField(
         const word &name
@@ -184,6 +185,10 @@ public:
     );
 
     tmp<Field<sphericalTensor> > getSphericalTensorField(
+        const word &name
+    );
+
+    tmp<Field<bool> > getBoolField(
         const word &name
     );
 

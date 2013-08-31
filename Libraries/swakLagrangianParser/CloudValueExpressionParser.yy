@@ -1587,7 +1587,7 @@ lexp: TOKEN_TRUE   { $$ = driver.makeField(true).ptr(); }
           }
         | evaluateLogicalFunction restOfFunction
     | TOKEN_LID		{
-            $$=driver.getVariable<bool>(*$1,driver.size()).ptr();
+            $$=driver.getBoolField(*$1).ptr();
             delete $1;
       }
 ;
