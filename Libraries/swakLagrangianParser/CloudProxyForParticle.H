@@ -73,6 +73,113 @@ protected:
     tmp<Field<RType> > mapToParticles(
         const Func &f
     ) const;
+
+    //- abstract class to store pointers to member functions of the particle class
+    template<class RType>
+    class ParticleMethodWrapper
+    {
+    public:
+        typedef typename CloudType::particleType particleType;
+
+        ParticleMethodWrapper()
+            {}
+        virtual ~ParticleMethodWrapper()
+            {}
+
+        virtual RType operator()(const particleType &) const = 0;
+        RType operator()(const particleType *p) const
+            { return operator()(*p); }
+    };
+
+    template<class RType>
+    class ParticleMethodWrapperReference
+    :
+    public ParticleMethodWrapper<RType>
+    {
+
+    public:
+        typedef typename ParticleMethodWrapper<RType>::particleType particleType;
+
+        typedef const RType& (particleType::*FSig)() const;
+
+        FSig fPtr_;
+
+        ParticleMethodWrapperReference(FSig f):
+            ParticleMethodWrapper<RType>(),
+            fPtr_(f)
+            {}
+
+        virtual ~ParticleMethodWrapperReference()
+            {}
+
+        virtual RType
+        operator()(const particleType &p) const
+            {
+                return ((p).*(fPtr_))();
+            }
+    };
+
+    template<class RType>
+    class ParticleMethodWrapperValue
+    :
+    public ParticleMethodWrapper<RType>
+    {
+
+    public:
+        typedef typename ParticleMethodWrapper<RType>::particleType particleType;
+
+        typedef RType (particleType::*FSig)() const;
+
+        FSig fPtr_;
+
+        ParticleMethodWrapperValue(FSig f):
+            ParticleMethodWrapper<RType>(),
+            fPtr_(f)
+            {}
+
+        virtual ~ParticleMethodWrapperValue()
+            {}
+
+        virtual RType
+        operator()(const particleType &p) const
+            {
+                return ((p).*(fPtr_))();
+            }
+    };
+
+    template<class RType>
+    class ParticleMethodWrapperFieldElement
+    :
+    public ParticleMethodWrapper<RType>
+    {
+
+    public:
+        typedef typename ParticleMethodWrapper<RType>::particleType particleType;
+
+        typedef const Field<RType>& (particleType::*FSig)() const;
+
+        FSig fPtr_;
+        label index_;
+
+        ParticleMethodWrapperFieldElement(
+            FSig f,
+            label index
+        ):
+            ParticleMethodWrapper<RType>(),
+            fPtr_(f),
+            index_(index)
+            {}
+
+        virtual ~ParticleMethodWrapperFieldElement()
+            {}
+
+        virtual RType
+        operator()(const particleType &p) const
+            {
+                return ((p).*(fPtr_))()[index_];
+            }
+    };
+
 public:
 
     typedef CloudType cloudType;

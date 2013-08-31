@@ -53,68 +53,6 @@ inline std::const_mem_fun_t<S,T> const_mem_fun(S (T::*f)() const)
     return std::const_mem_fun_t<S,T>(f);
 }
 
-// template <typename S,typename T,class A>
-// inline std::const_mem_fun1_t<S,T,A> const_mem_fun1(S (T::*f)(A) const)
-// {
-//     return std::const_mem_fun1_t<S,T,A>(f);
-// }
-
-template <typename S,typename T>
-inline void const_fun(S (T::*f)() const)
-{
-}
-
-template<class CloudType>
-class ParticleMethodWrapper
-{
-
-public:
-    typedef typename CloudType::particleType particleType;
-    typedef vector RType;
-
-    ParticleMethodWrapper()
-        {}
-    virtual ~ParticleMethodWrapper()
-        {}
-
-    virtual RType operator()(const particleType &) const = 0;
-};
-
-template<class CloudType>
-class ParticleMethodWrapperNoParameter
-:
-    public ParticleMethodWrapper<CloudType>
-{
-
-public:
-    typedef typename ParticleMethodWrapper<CloudType>::RType RType;
-    typedef typename ParticleMethodWrapper<CloudType>::particleType particleType;
-
-    typedef const RType& (particleType::*FSig)() const;
-
-    FSig fPtr;
-
-    ParticleMethodWrapperNoParameter(FSig f):
-        ParticleMethodWrapper<CloudType>(),
-        fPtr(f)
-        {}
-
-    virtual ~ParticleMethodWrapperNoParameter()
-        {}
-
-    virtual RType
-    operator()(const typename ParticleMethodWrapper<CloudType>::particleType &p) const
-        {
-            return ((p).*(fPtr))();
-        }
-};
-
-template <class T,class RType>
-RType (T::*use_const_overload(RType (T::*const_member_function)() const))() const
-{
-    return const_member_function;
-}
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CloudType>
@@ -131,18 +69,25 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
     )
 
 {
-    // typename ParticleMethodWrapperNoParameter<CloudType>::FSig s=use_const_overload(&particleType::position);
-    // const_fun(&particleType::position);
-    ParticleMethodWrapper<CloudType> *m=
-        new ParticleMethodWrapperNoParameter<CloudType>(
-            use_const_overload(&particleType::position)
+    ParticleMethodWrapper<vector> *m=
+        new ParticleMethodWrapperReference<vector>(
+            &particleType::position
         );
+    mapToParticles<vector>((*m));
 
-    forAllConstIter(typename CloudType,theCloud(),it)
-    {
-        const particleType &p=(*it);
-        (*m)(p);
-    }
+    ParticleMethodWrapper<scalar> *m2=
+        new ParticleMethodWrapperFieldElement<scalar>(
+            &particleType::Y,
+            0
+        );
+    mapToParticles<scalar>((*m2));
+
+    ParticleMethodWrapper<scalar> *m3=
+        new ParticleMethodWrapperValue<scalar>(
+            &particleType::mass0
+        );
+    mapToParticles<scalar>((*m3));
+
     // typedef std::const_mem_fun_t<const vector&,particleType> methodType;
 
     // std::unary_function<const vector&,particleType> &t=methodType(
