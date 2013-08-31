@@ -27,68 +27,74 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::CloudProxyForThermoParcel
+
+Description
+
+SourceFiles
+    CloudProxyForThermoParcel.C
+
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "CloudProxyForReactingParcel.H"
+#ifndef CloudProxyForThermoParcel_H
+#define CloudProxyForThermoParcel_H
 
-#include "DebugOStream.H"
+#include "CloudProxyForKinematicParcel.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+/*---------------------------------------------------------------------------*\
+                       Class CloudProxyForThermoParcel Declaration
+\*---------------------------------------------------------------------------*/
 
 template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
-(
-    const cloud& c
-)
+class CloudProxyForThermoParcel
 :
-    CloudProxyForThermoParcel<CloudType>(c)
+    public CloudProxyForKinematicParcel<CloudType>
 {
-    typedef CloudProxyForParticle<CloudType> baseType;
+    //- Disallow default bitwise assignment
+    void operator=(const CloudProxyForThermoParcel&);
 
-    this->addScalarFunction(
-        "mass0",
-        "Initial mass",
-        new typename baseType::template ParticleMethodWrapperValue<scalar>(
-            &CloudType::particleType::mass0
-        )
+    //- Disallow copy construct
+    CloudProxyForThermoParcel(const CloudProxyForThermoParcel &);
+
+public:
+
+    // Constructors
+
+    //- Construct from components
+    CloudProxyForThermoParcel
+    (
+        const cloud &
     );
 
-    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
-    forAll(phaseTypes,i) {
-        const word &name=phaseTypes[i];
-        this->addScalarFunction(
-            "Y"+name,
-            "Mass fraction of "+name,
-            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
-                &CloudType::particleType::Y,
-                i
-            )
-        );
-    }
-}
+    // Destructor
+
+    virtual ~CloudProxyForThermoParcel();
+
+};
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::~CloudProxyForReactingParcel()
-{}
+} // End namespace Foam
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#ifdef NoRepository
+#   include "CloudProxyForThermoParcel.C"
+#endif
 
-} // namespace end
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

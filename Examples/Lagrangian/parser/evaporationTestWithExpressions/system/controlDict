@@ -71,11 +71,11 @@ functions {
 
         valueType cloud;
         cloudName reactingCloud1;
-        //        alternateCloudType test;
     }
     cloudWeights {
         $cloudPosition;
         expression "weight()";
+        //   alternateCloudType Cloud<basicKinematicParcel;
     }
     cloudIds {
         $cloudPosition;

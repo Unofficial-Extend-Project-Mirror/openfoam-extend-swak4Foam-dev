@@ -27,68 +27,76 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::CloudProxyForKinematicParcel
+
+Description
+
+SourceFiles
+    CloudProxyForKinematicParcel.C
+
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "CloudProxyForReactingParcel.H"
+#ifndef CloudProxyForKinematicParcel_H
+#define CloudProxyForKinematicParcel_H
 
-#include "DebugOStream.H"
+#include "CloudProxyForParticle.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+/*---------------------------------------------------------------------------*\
+                       Class CloudProxyForKinematicParcel Declaration
+\*---------------------------------------------------------------------------*/
 
 template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
-(
-    const cloud& c
-)
+class CloudProxyForKinematicParcel
 :
-    CloudProxyForThermoParcel<CloudType>(c)
+    public CloudProxyForParticle<CloudType>
 {
-    typedef CloudProxyForParticle<CloudType> baseType;
+    //- Disallow default bitwise assignment
+    void operator=(const CloudProxyForKinematicParcel&);
 
-    this->addScalarFunction(
-        "mass0",
-        "Initial mass",
-        new typename baseType::template ParticleMethodWrapperValue<scalar>(
-            &CloudType::particleType::mass0
-        )
+    //- Disallow copy construct
+    CloudProxyForKinematicParcel(const CloudProxyForKinematicParcel &);
+
+public:
+
+    // Constructors
+
+    //- Construct from components
+    CloudProxyForKinematicParcel
+    (
+        const cloud &
     );
 
-    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
-    forAll(phaseTypes,i) {
-        const word &name=phaseTypes[i];
-        this->addScalarFunction(
-            "Y"+name,
-            "Mass fraction of "+name,
-            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
-                &CloudType::particleType::Y,
-                i
-            )
-        );
-    }
-}
+    // Destructor
+
+    virtual ~CloudProxyForKinematicParcel();
+
+    tmp<Field<scalar> > weights() const;
+
+};
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::~CloudProxyForReactingParcel()
-{}
+} // End namespace Foam
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#ifdef NoRepository
+#   include "CloudProxyForKinematicParcel.C"
+#endif
 
-} // namespace end
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

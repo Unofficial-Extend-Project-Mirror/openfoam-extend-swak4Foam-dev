@@ -33,7 +33,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "CloudProxyForReactingParcel.H"
+#include "CloudProxyForThermoParcel.H"
 
 #include "DebugOStream.H"
 
@@ -48,46 +48,25 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
+CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
 (
     const cloud& c
 )
 :
-    CloudProxyForThermoParcel<CloudType>(c)
+    CloudProxyForKinematicParcel<CloudType>(c)
 {
     typedef CloudProxyForParticle<CloudType> baseType;
 
-    this->addScalarFunction(
-        "mass0",
-        "Initial mass",
-        new typename baseType::template ParticleMethodWrapperValue<scalar>(
-            &CloudType::particleType::mass0
-        )
-    );
-
-    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
-    forAll(phaseTypes,i) {
-        const word &name=phaseTypes[i];
-        this->addScalarFunction(
-            "Y"+name,
-            "Mass fraction of "+name,
-            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
-                &CloudType::particleType::Y,
-                i
-            )
-        );
-    }
 }
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::~CloudProxyForReactingParcel()
+CloudProxyForThermoParcel<CloudType>::~CloudProxyForThermoParcel()
 {}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
 
 } // namespace end
 

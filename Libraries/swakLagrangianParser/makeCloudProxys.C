@@ -38,11 +38,17 @@ Contributors/Copyright:
 #include "addToRunTimeSelectionTable.H"
 
 #include "BasicReactingCloud.H"
+#include "basicKinematicCloud.H"
+#include "basicThermoCloud.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+    addCloudProxyToTable(CloudProxyForKinematicParcel,basicKinematicCloud);
+
+    addCloudProxyToTable(CloudProxyForThermoParcel,basicThermoCloud);
 
     addCloudProxyToTable(CloudProxyForReactingParcel,thermoReactingCloud);
     addCloudProxyToTable(CloudProxyForReactingParcel,constThermoReactingCloud);

@@ -44,7 +44,7 @@ Contributors/Copyright:
 #ifndef CloudProxyForReactingParcel_H
 #define CloudProxyForReactingParcel_H
 
-#include "CloudProxyForParticle.H"
+#include "CloudProxyForThermoParcel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,7 +58,7 @@ namespace Foam
 template<class CloudType>
 class CloudProxyForReactingParcel
 :
-    public CloudProxyForParticle<CloudType>
+    public CloudProxyForThermoParcel<CloudType>
 {
     //- Disallow default bitwise assignment
     void operator=(const CloudProxyForReactingParcel&);
@@ -79,12 +79,6 @@ public:
     // Destructor
 
     virtual ~CloudProxyForReactingParcel();
-
-    virtual tmp<Field<scalar> > getScalarField(
-        const word &name
-    ) const;
-
-    tmp<Field<scalar> > weights() const;
 
 };
 

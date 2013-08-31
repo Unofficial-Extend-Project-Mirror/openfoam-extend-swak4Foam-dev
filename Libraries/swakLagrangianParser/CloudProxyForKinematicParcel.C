@@ -33,7 +33,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "CloudProxyForReactingParcel.H"
+#include "CloudProxyForKinematicParcel.H"
 
 #include "DebugOStream.H"
 
@@ -48,45 +48,42 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
+CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
 (
     const cloud& c
 )
 :
-    CloudProxyForThermoParcel<CloudType>(c)
+    CloudProxyForParticle<CloudType>(c)
 {
     typedef CloudProxyForParticle<CloudType> baseType;
-
-    this->addScalarFunction(
-        "mass0",
-        "Initial mass",
-        new typename baseType::template ParticleMethodWrapperValue<scalar>(
-            &CloudType::particleType::mass0
-        )
-    );
-
-    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
-    forAll(phaseTypes,i) {
-        const word &name=phaseTypes[i];
-        this->addScalarFunction(
-            "Y"+name,
-            "Mass fraction of "+name,
-            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
-                &CloudType::particleType::Y,
-                i
-            )
-        );
-    }
 }
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::~CloudProxyForReactingParcel()
+CloudProxyForKinematicParcel<CloudType>::~CloudProxyForKinematicParcel()
 {}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class CloudType>
+tmp<Field<scalar> > CloudProxyForKinematicParcel<CloudType>::weights() const
+{
+    tmp<Field<scalar> > tWeight(
+        new Field<scalar>(this->theCloud().size())
+    );
+    Field<scalar> &weight=tWeight();
+    label i=0;
+    forAllConstIter(typename CloudType,this->theCloud(),it)
+    {
+	const typename CloudProxyForKinematicParcel<CloudType>::particleType &p=(*it);
+        weight[i]=p.nParticle()*p.mass();
+        i++;
+    }
+
+    return tWeight;
+}
 
 
 } // namespace end
