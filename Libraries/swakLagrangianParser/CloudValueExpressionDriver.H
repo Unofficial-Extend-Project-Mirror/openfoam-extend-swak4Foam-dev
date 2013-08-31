@@ -90,6 +90,9 @@ class CloudValueExpressionDriver
     //- the actual class dealing with the particle cloud
     autoPtr<CloudProxy> proxy_;
 
+    //- the interpolation schemes
+    dictionary interpolationSchemes_;
+
     // Private Member Functions
 
 protected:

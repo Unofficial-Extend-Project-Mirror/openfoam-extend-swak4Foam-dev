@@ -43,16 +43,65 @@ Contributors/Copyright:
 
 #include <cassert>
 
+#include "CloudProxy.H"
+
 namespace Foam {
 
     template <typename Type>
-    tmp<Field<Type > > CloudValueExpressionDriver::getFluidField(word const&)
+    tmp<Field<Type > > CloudValueExpressionDriver::getFluidField(
+        word const&name
+    )
     {
-        notImplemented("CloudValueExpressionDriver::getFluidField(word const&)");
-        return tmp<Field<Type> >(
-            new Field<Type>(0)
+        Field<vector> positions=proxy_->getPositions();
+        Field<label> cells=proxy_->getCells();
+
+        tmp<Field<Type> > pResult(
+            new Field<Type>(
+                cells.size(),
+                pTraits<Type>::zero
+            )
         );
-    }
+        Field<Type> &result=pResult();
+
+        typedef GeometricField< Type, fvPatchField, volMesh > volField;
+
+        if(
+            this->searchInMemory()
+            &&
+            this->mesh().foundObject<volField>(name)
+        ) {
+            const volField &f=this->mesh().lookupObject<volField>(name);
+
+            autoPtr<interpolation<Type> > inter=interpolation<Type>::New(
+                interpolationSchemes_,
+                f
+            );
+            forAll(result,i) {
+                result[i]=inter().interpolate(
+                    positions[i],
+                    cells[i]
+                );
+            }
+        } else {
+            autoPtr<volField> f=this->getOrReadField<volField>(
+                name,
+                true // fail if not found
+            );
+
+            autoPtr<interpolation<Type> > inter=interpolation<Type>::New(
+                interpolationSchemes_,
+                f
+            );
+            forAll(result,i) {
+                result[i]=inter().interpolate(
+                    positions[i],
+                    cells[i]
+                );
+            }
+        }
+
+        return pResult;
+   }
 }
 
 

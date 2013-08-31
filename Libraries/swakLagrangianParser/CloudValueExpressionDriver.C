@@ -84,6 +84,9 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
             cloud_,
             dict
         )
+    ),
+    interpolationSchemes_(
+        dict.subOrEmptyDict("interpolationSchemes")
     )
 {
     Info << endl << "'cloud'-driver in " << dict.name() << endl;

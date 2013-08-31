@@ -392,6 +392,16 @@ tmp<Field<vector> > CloudProxyForParticle<CloudType>::getPositions() const
 }
 
 template<class CloudType>
+tmp<Field<label> > CloudProxyForParticle<CloudType>::getCells() const
+{
+    return mapToParticles<label>(
+        const_mem_fun(
+            &particleType::cell
+        )
+    );
+}
+
+template<class CloudType>
 label CloudProxyForParticle<CloudType>::size() const
 {
     return cloud_.size();

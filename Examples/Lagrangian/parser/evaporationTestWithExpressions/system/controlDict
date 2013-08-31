@@ -105,9 +105,31 @@ functions {
         $cloudPosition;
         expression "T-T0";
     }
+    cloudTemperatureDiff {
+        $cloudPosition;
+        expression "T-fluidPhase(T)";
+        interpolationSchemes {
+            T cellPoint;
+        }
+    }
     cloudVelocityDifference {
         $cloudPosition;
         expression "U-fluidPhase(U)";
+        interpolationSchemes {
+            U cellPoint;
+        }
+    }
+    cloudVelocityDifferenceFace {
+        $cloudVelocityDifference;
+        interpolationSchemes {
+            U cellPointFace;
+        }
+    }
+    cloudVelocityDifferenceCell {
+        $cloudVelocityDifference;
+        interpolationSchemes {
+            U cell;
+        }
     }
 }
 

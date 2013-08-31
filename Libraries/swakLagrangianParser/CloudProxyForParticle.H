@@ -305,6 +305,8 @@ public:
 
     tmp<Field<vector> > getPositions() const;
 
+    tmp<Field<label> > getCells() const;
+
     tmp<Field<scalar> > weights() const;
 
     label size() const;

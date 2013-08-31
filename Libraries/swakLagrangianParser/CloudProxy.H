@@ -171,6 +171,8 @@ public:
 
     virtual tmp<Field<vector> > getPositions() const = 0;
 
+    virtual tmp<Field<label> > getCells() const = 0;
+
     virtual tmp<Field<scalar> > weights() const = 0;
 
     virtual label size() const = 0;
