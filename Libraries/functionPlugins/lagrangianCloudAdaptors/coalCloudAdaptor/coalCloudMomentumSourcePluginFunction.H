@@ -29,12 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::lcsEnthalpySourcePluginFunction
+    Foam::coalCloudMomentumSourcePluginFunction
 
 Description
 
 SourceFiles
-    lcsEnthalpySourcePluginFunction.C
+    coalCloudMomentumSourcePluginFunction.C
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -42,10 +42,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef lcsEnthalpySourcePluginFunction_H
-#define lcsEnthalpySourcePluginFunction_H
+#ifndef coalCloudMomentumSourcePluginFunction_H
+#define coalCloudMomentumSourcePluginFunction_H
 
-#include "LagrangianCloudSourcePluginFunction.H"
+#include "lcsMomentumSourcePluginFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,35 +53,31 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class lcsEnthalpySourcePluginFunction Declaration
+                           Class coalCloudMomentumSourcePluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-class lcsEnthalpySourcePluginFunction
+class coalCloudMomentumSourcePluginFunction
 :
-    public LagrangianCloudSourcePluginFunction
+    public lcsMomentumSourcePluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const lcsEnthalpySourcePluginFunction &);
+    void operator=(const coalCloudMomentumSourcePluginFunction &);
 
-    lcsEnthalpySourcePluginFunction(const lcsEnthalpySourcePluginFunction &);
+    coalCloudMomentumSourcePluginFunction(const coalCloudMomentumSourcePluginFunction &);
 
 protected:
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-
-    virtual autoPtr<dimScalarField> internalEvaluate();
+    virtual autoPtr<dimVectorField> internalEvaluate();
 
 public:
 
-    lcsEnthalpySourcePluginFunction(
+    coalCloudMomentumSourcePluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name
     );
 
-    virtual ~lcsEnthalpySourcePluginFunction() {}
+    virtual ~coalCloudMomentumSourcePluginFunction() {}
 
-    TypeName("lcsEnthalpySourcePluginFunction");
-
-    void doEvaluation();
+    TypeName("coalCloudMomentumSourcePluginFunction");
 
 };
 

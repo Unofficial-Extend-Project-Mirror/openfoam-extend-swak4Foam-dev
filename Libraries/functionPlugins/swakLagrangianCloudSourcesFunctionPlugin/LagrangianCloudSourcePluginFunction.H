@@ -117,20 +117,9 @@ public:
 #   include "LagrangianCloudSourcePluginFunctionI.H"
 #endif
 
-// set a autoPtr to the needed cloud. This is required because
-// "similar" clouds don't really inherit (because of the template paramter)
-#define castAndCall(rVar,rType,neededType,usedType,theCall)    \
-    if(!rVar.valid() && hasCloudAs<neededType>()) {            \
-        rVar.set(                                              \
-            new rType(                                         \
-                getCloudAs<neededType,usedType>().theCall      \
-            )                                                  \
-        );                                                     \
-    }
-
 // return a autoPtr to the needed field. This is required because
 // "similar" clouds don't really inherit (because of the template paramter)
-#define tryCall(rVar,rType,neededType,usedType,theCall)    \
+#define tryCall(rType,neededType,usedType,theCall)    \
     if(hasCloudAs<neededType>()) {                             \
         return autoPtr<rType> (                                \
             new rType(                                         \

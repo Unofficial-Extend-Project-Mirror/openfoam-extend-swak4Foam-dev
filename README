@@ -313,6 +313,18 @@ S_{expl} + S_{impl} T
          /intermediate/ clouds)
     - swakVelocityFunctionPlugin :: Functions that work on the flow
          field (currently only the local Courant-number)
+**** lagrangianCloudAdaptors-directory
+     Because of the templating all plugin-functions have to be
+     reinstaniated for new particle classes. The libraries in this
+     directory
+     - reimplement the functions from
+       =swakLagrangianCloudSourcesFunctionPlugin=
+     - the =CloudProxy= for the =cloud= parser
+     for special particle classes. These are
+     - coalCloudAdaptor :: the library =libswakCoalCloudAdaptor= that
+          handels the =CoalParcel=-class
+     These libraries have to be included in the =libs=-entry to
+     be able to handle these libraries
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with

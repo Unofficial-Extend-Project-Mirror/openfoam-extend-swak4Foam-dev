@@ -34,30 +34,26 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "lcsVolumeFractionPluginFunction.H"
+#include "coalCloudSpeciesSourcePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "basicKinematicCloud.H"
-#include "basicThermoCloud.H"
-#include "BasicReactingCloud.H"
-#include "BasicReactingMultiphaseCloud.H"
+#include "CoalCloud.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(lcsVolumeFractionPluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction,lcsVolumeFractionPluginFunction , name, lcsVolumeFraction);
+defineTypeNameAndDebug(coalCloudSpeciesSourcePluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,coalCloudSpeciesSourcePluginFunction , name, coalCloudSpeciesSource);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-lcsVolumeFractionPluginFunction::lcsVolumeFractionPluginFunction(
+coalCloudSpeciesSourcePluginFunction::coalCloudSpeciesSourcePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    LagrangianCloudSourcePluginFunction(
+    lcsSpeciesSourcePluginFunction(
         parentDriver,
-        name,
-        "volScalarField"
+        name
     )
 {
 }
@@ -67,28 +63,24 @@ lcsVolumeFractionPluginFunction::lcsVolumeFractionPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-autoPtr<volScalarField> lcsVolumeFractionPluginFunction::internalEvaluate()
+label coalCloudSpeciesSourcePluginFunction::getIndex(wordList &speciesList)
 {
-    // pick up the first fitting class
-    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,theta());
-    tryCall(volScalarField,basicThermoCloud,thermoCloud,theta());
-    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,theta());
-    tryCall(volScalarField,thermoReactingCloud,reactingCloud,theta());
-    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,theta());
-    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
-    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
-    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+    getSpeciesIndex(constThermoCoalCloud,reactingMultiphaseCloud);
+    getSpeciesIndex(thermoCoalCloud,reactingMultiphaseCloud);
+    getSpeciesIndex(icoPoly8ThermoCoalCloud,reactingMultiphaseCloud);
 
-    return autoPtr<volScalarField>();
+    return lcsSpeciesSourcePluginFunction::getIndex(speciesList);
 }
 
-void lcsVolumeFractionPluginFunction::doEvaluation()
+autoPtr<lcsSpeciesSourcePluginFunction::dimScalarField>
+coalCloudSpeciesSourcePluginFunction::internalEvaluate(const label index)
 {
-    autoPtr<volScalarField> ptheta=internalEvaluate();
+    // pick up the first fitting class
+    tryCall(dimScalarField,constThermoCoalCloud,reactingMultiphaseCloud,Srho(index));
+    tryCall(dimScalarField,thermoCoalCloud,reactingMultiphaseCloud,Srho(index));
+    tryCall(dimScalarField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,Srho(index));
 
-    noCloudFound(ptheta);
-
-    result().setObjectResult(ptheta);
+    return lcsSpeciesSourcePluginFunction::internalEvaluate(index);
 }
 
 // * * * * * * * * * * * * * * * Concrete implementations * * * * * * * * * //

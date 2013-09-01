@@ -29,12 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::lcsEnthalpySourcePluginFunction
+    Foam::coalCloudScatteringFactorPluginFunction
 
 Description
 
 SourceFiles
-    lcsEnthalpySourcePluginFunction.C
+    coalCloudScatteringFactorPluginFunction.C
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -42,10 +42,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef lcsEnthalpySourcePluginFunction_H
-#define lcsEnthalpySourcePluginFunction_H
+#ifndef coalCloudScatteringFactorPluginFunction_H
+#define coalCloudScatteringFactorPluginFunction_H
 
-#include "LagrangianCloudSourcePluginFunction.H"
+#include "lcsScatteringFactorPluginFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,35 +53,31 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class lcsEnthalpySourcePluginFunction Declaration
+                           Class coalCloudScatteringFactorPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-class lcsEnthalpySourcePluginFunction
+class coalCloudScatteringFactorPluginFunction
 :
-    public LagrangianCloudSourcePluginFunction
+    public lcsScatteringFactorPluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const lcsEnthalpySourcePluginFunction &);
+    void operator=(const coalCloudScatteringFactorPluginFunction &);
 
-    lcsEnthalpySourcePluginFunction(const lcsEnthalpySourcePluginFunction &);
+    coalCloudScatteringFactorPluginFunction(const coalCloudScatteringFactorPluginFunction &);
 
 protected:
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-
-    virtual autoPtr<dimScalarField> internalEvaluate();
+    virtual autoPtr<volScalarField> internalEvaluate();
 
 public:
 
-    lcsEnthalpySourcePluginFunction(
+    coalCloudScatteringFactorPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name
     );
 
-    virtual ~lcsEnthalpySourcePluginFunction() {}
+    virtual ~coalCloudScatteringFactorPluginFunction() {}
 
-    TypeName("lcsEnthalpySourcePluginFunction");
-
-    void doEvaluation();
+    TypeName("coalCloudScatteringFactorPluginFunction");
 
 };
 

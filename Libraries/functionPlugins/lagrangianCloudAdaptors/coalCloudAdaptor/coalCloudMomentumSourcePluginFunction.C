@@ -34,30 +34,26 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "lcsVolumeFractionPluginFunction.H"
+#include "coalCloudMomentumSourcePluginFunction.H"
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "basicKinematicCloud.H"
-#include "basicThermoCloud.H"
-#include "BasicReactingCloud.H"
-#include "BasicReactingMultiphaseCloud.H"
+#include "CoalCloud.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(lcsVolumeFractionPluginFunction,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction,lcsVolumeFractionPluginFunction , name, lcsVolumeFraction);
+defineTypeNameAndDebug(coalCloudMomentumSourcePluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,coalCloudMomentumSourcePluginFunction , name, coalCloudMomentumSource);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-lcsVolumeFractionPluginFunction::lcsVolumeFractionPluginFunction(
+coalCloudMomentumSourcePluginFunction::coalCloudMomentumSourcePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    LagrangianCloudSourcePluginFunction(
+    lcsMomentumSourcePluginFunction(
         parentDriver,
-        name,
-        "volScalarField"
+        name
     )
 {
 }
@@ -67,28 +63,15 @@ lcsVolumeFractionPluginFunction::lcsVolumeFractionPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-autoPtr<volScalarField> lcsVolumeFractionPluginFunction::internalEvaluate()
+autoPtr<lcsMomentumSourcePluginFunction::dimVectorField>
+coalCloudMomentumSourcePluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
-    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,theta());
-    tryCall(volScalarField,basicThermoCloud,thermoCloud,theta());
-    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,theta());
-    tryCall(volScalarField,thermoReactingCloud,reactingCloud,theta());
-    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,theta());
-    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
-    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
-    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+    tryCall(dimVectorField,constThermoCoalCloud,reactingMultiphaseCloud,SU());
+    tryCall(dimVectorField,thermoCoalCloud,reactingMultiphaseCloud,SU());
+    tryCall(dimVectorField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,SU());
 
-    return autoPtr<volScalarField>();
-}
-
-void lcsVolumeFractionPluginFunction::doEvaluation()
-{
-    autoPtr<volScalarField> ptheta=internalEvaluate();
-
-    noCloudFound(ptheta);
-
-    result().setObjectResult(ptheta);
+    return lcsMomentumSourcePluginFunction::internalEvaluate();
 }
 
 // * * * * * * * * * * * * * * * Concrete implementations * * * * * * * * * //

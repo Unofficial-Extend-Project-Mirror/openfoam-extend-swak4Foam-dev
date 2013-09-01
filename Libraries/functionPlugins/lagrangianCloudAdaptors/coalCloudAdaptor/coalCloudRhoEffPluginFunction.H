@@ -29,12 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::lcsEnthalpySourcePluginFunction
+    Foam::coalCloudRhoEffPluginFunction
 
 Description
 
 SourceFiles
-    lcsEnthalpySourcePluginFunction.C
+    coalCloudRhoEffPluginFunction.C
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -42,10 +42,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef lcsEnthalpySourcePluginFunction_H
-#define lcsEnthalpySourcePluginFunction_H
+#ifndef coalCloudRhoEffPluginFunction_H
+#define coalCloudRhoEffPluginFunction_H
 
-#include "LagrangianCloudSourcePluginFunction.H"
+#include "lcsRhoEffPluginFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,35 +53,30 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class lcsEnthalpySourcePluginFunction Declaration
+                           Class coalCloudRhoEffPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-class lcsEnthalpySourcePluginFunction
+class coalCloudRhoEffPluginFunction
 :
-    public LagrangianCloudSourcePluginFunction
+    public lcsRhoEffPluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const lcsEnthalpySourcePluginFunction &);
+    void operator=(const coalCloudRhoEffPluginFunction &);
 
-    lcsEnthalpySourcePluginFunction(const lcsEnthalpySourcePluginFunction &);
+    coalCloudRhoEffPluginFunction(const coalCloudRhoEffPluginFunction &);
 
-protected:
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-
-    virtual autoPtr<dimScalarField> internalEvaluate();
+    virtual autoPtr<volScalarField> internalEvaluate();
 
 public:
 
-    lcsEnthalpySourcePluginFunction(
+    coalCloudRhoEffPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name
     );
 
-    virtual ~lcsEnthalpySourcePluginFunction() {}
+    virtual ~coalCloudRhoEffPluginFunction() {}
 
-    TypeName("lcsEnthalpySourcePluginFunction");
-
-    void doEvaluation();
+    TypeName("coalCloudRhoEffPluginFunction");
 
 };
 

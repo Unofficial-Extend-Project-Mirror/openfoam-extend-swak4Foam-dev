@@ -66,9 +66,9 @@ coalCloudVolumeFractionPluginFunction::coalCloudVolumeFractionPluginFunction(
 autoPtr<volScalarField> coalCloudVolumeFractionPluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
-    tryCall(ptheta,volScalarField,constThermoCoalCloud,reactingMultiphaseCloud,theta());
-    tryCall(ptheta,volScalarField,thermoCoalCloud,reactingMultiphaseCloud,theta());
-    tryCall(ptheta,volScalarField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,theta());
+    tryCall(volScalarField,constThermoCoalCloud,reactingMultiphaseCloud,theta());
+    tryCall(volScalarField,thermoCoalCloud,reactingMultiphaseCloud,theta());
+    tryCall(volScalarField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,theta());
 
     return lcsVolumeFractionPluginFunction::internalEvaluate();
 }

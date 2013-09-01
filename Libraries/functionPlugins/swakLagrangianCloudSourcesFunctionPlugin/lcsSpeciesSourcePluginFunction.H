@@ -65,8 +65,14 @@ class lcsSpeciesSourcePluginFunction
 
     lcsSpeciesSourcePluginFunction(const lcsSpeciesSourcePluginFunction &);
 
+protected:
     word speciesName_;
 
+    typedef DimensionedField<scalar,volMesh> dimScalarField;
+
+    virtual autoPtr<dimScalarField> internalEvaluate(const label index);
+
+    virtual label getIndex(wordList &specList);
 public:
 
     lcsSpeciesSourcePluginFunction(
@@ -84,6 +90,15 @@ public:
 
 };
 
+#define getSpeciesIndex(neededType,usedType)                                \
+    if(hasCloudAs<neededType>()) {                                      \
+        const speciesTable &spec=                                       \
+            getCloudAs<neededType,usedType>().mcCarrierThermo ().species(); \
+        speciesList=spec;                                               \
+        if(spec.contains(speciesName_)) {                               \
+            return spec[speciesName_];                                  \
+        }                                                               \
+    }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

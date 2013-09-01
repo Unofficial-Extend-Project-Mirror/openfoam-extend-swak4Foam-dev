@@ -66,19 +66,24 @@ lcsEnthalpySourcePluginFunction::lcsEnthalpySourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<lcsEnthalpySourcePluginFunction::dimScalarField>
+lcsEnthalpySourcePluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(dimScalarField,basicThermoCloud,thermoCloud,Sh());
+    tryCall(dimScalarField,constThermoReactingCloud,reactingCloud,Sh());
+    tryCall(dimScalarField,thermoReactingCloud,reactingCloud,Sh());
+    tryCall(dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Sh());
+    tryCall(dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+    tryCall(dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+    tryCall(dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+
+    return autoPtr<dimScalarField>();
+}
+
 void lcsEnthalpySourcePluginFunction::doEvaluation()
 {
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-    autoPtr<dimScalarField> pSh;
-
-    // pick up the first fitting class
-    castAndCall(pSh,dimScalarField,basicThermoCloud,thermoCloud,Sh());
-    castAndCall(pSh,dimScalarField,constThermoReactingCloud,reactingCloud,Sh());
-    castAndCall(pSh,dimScalarField,thermoReactingCloud,reactingCloud,Sh());
-    castAndCall(pSh,dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Sh());
-    castAndCall(pSh,dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
-    castAndCall(pSh,dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
-    castAndCall(pSh,dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+    autoPtr<dimScalarField> pSh=internalEvaluate();
 
     noCloudFound(pSh);
 

@@ -1,0 +1,12 @@
+massSources {
+	    theTitle "Mass sources";
+	    expr "Expression coal(.+)Source :  min=(%f%) max=(%f%) weightedAverage=(%f%)";
+	    type dynamic;
+	    idNr 1;
+	    titles (
+	    	   min
+		   max
+		   average
+	    );
+	    logscale true;
+}

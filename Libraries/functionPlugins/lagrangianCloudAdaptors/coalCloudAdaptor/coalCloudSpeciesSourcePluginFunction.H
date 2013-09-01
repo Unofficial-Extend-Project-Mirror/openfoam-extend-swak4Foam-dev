@@ -29,12 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::lcsEnthalpySourcePluginFunction
+    Foam::coalCloudSpeciesSourcePluginFunction
 
 Description
 
 SourceFiles
-    lcsEnthalpySourcePluginFunction.C
+    coalCloudSpeciesSourcePluginFunction.C
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -42,10 +42,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef lcsEnthalpySourcePluginFunction_H
-#define lcsEnthalpySourcePluginFunction_H
+#ifndef coalCloudSpeciesSourcePluginFunction_H
+#define coalCloudSpeciesSourcePluginFunction_H
 
-#include "LagrangianCloudSourcePluginFunction.H"
+#include "lcsSpeciesSourcePluginFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,35 +53,33 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class lcsEnthalpySourcePluginFunction Declaration
+                           Class coalCloudSpeciesSourcePluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-class lcsEnthalpySourcePluginFunction
+class coalCloudSpeciesSourcePluginFunction
 :
-    public LagrangianCloudSourcePluginFunction
+    public lcsSpeciesSourcePluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const lcsEnthalpySourcePluginFunction &);
+    void operator=(const coalCloudSpeciesSourcePluginFunction &);
 
-    lcsEnthalpySourcePluginFunction(const lcsEnthalpySourcePluginFunction &);
+    coalCloudSpeciesSourcePluginFunction(const coalCloudSpeciesSourcePluginFunction &);
 
 protected:
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
+    label getIndex(wordList &speciesList);
 
-    virtual autoPtr<dimScalarField> internalEvaluate();
+    autoPtr<dimScalarField> internalEvaluate(const label);
 
 public:
 
-    lcsEnthalpySourcePluginFunction(
+    coalCloudSpeciesSourcePluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name
     );
 
-    virtual ~lcsEnthalpySourcePluginFunction() {}
+    virtual ~coalCloudSpeciesSourcePluginFunction() {}
 
-    TypeName("lcsEnthalpySourcePluginFunction");
-
-    void doEvaluation();
+    TypeName("coalCloudSpeciesSourcePluginFunction");
 
 };
 
