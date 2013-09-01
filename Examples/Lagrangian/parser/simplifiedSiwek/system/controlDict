@@ -54,25 +54,41 @@ maxDeltaT       1;
 libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakLagrangianParser.so"
+    "libswakLagrangianCloudSourcesFunctionPlugin.so"
 );
 
 functions {
-    coalPosition {
+    limestoneFraction {
         type swakExpression;
-        outputControlMode timeStep;
-        expression "pos()";
+        valueType internalField;
+        verbose true;
         accumulations (
             min
             max
-            average
             weightedAverage
         );
-        verbose true;
-
-        valueType cloud;
-        cloudName coalCloud1;
-        //        alternateCloudType Cloud<basicKinematicParcel>;
+        expression "lcsVolumeFraction(limestoneCloud1)";
     }
+    coalFraction {
+        $limestoneFraction;
+        expression "lcsVolumeFraction(coalCloud1)";
+    }
+    // coalPosition {
+    //     type swakExpression;
+    //     outputControlMode timeStep;
+    //     expression "pos()";
+    //     accumulations (
+    //         min
+    //         max
+    //         average
+    //         weightedAverage
+    //     );
+    //     verbose true;
+
+    //     valueType cloud;
+    //     cloudName coalCloud1;
+    //     //        alternateCloudType Cloud<basicKinematicParcel>;
+    // }
 }
 
 // ************************************************************************* //

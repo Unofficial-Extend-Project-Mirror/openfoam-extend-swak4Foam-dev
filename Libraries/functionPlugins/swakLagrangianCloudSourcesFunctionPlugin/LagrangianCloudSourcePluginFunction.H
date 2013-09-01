@@ -77,6 +77,8 @@ protected:
     template<class LookupCloudType>
     bool hasCloudAs();
 
+    Ostream& listAvailableClouds(Ostream &o);
+
     template<class OtherCloudType,class LookupCloudType>
     const OtherCloudType &getCloudAs();
 
@@ -124,8 +126,9 @@ public:
 // Fail if no cloud data was found
 #define noCloudFound(pVar) \
     if(!pVar.valid()) { \
+    listAvailableClouds(Info); \
     FatalErrorIn("Plugin function "+this->name()) \
-    << "No matching cloud " << this->cloudName() << "found" \
+    << "No matching cloud " << this->cloudName() << " found" \
         << endl \
     << exit(FatalError); \
     }

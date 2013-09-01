@@ -37,6 +37,9 @@ Contributors/Copyright:
 #include "LagrangianCloudSourcePluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
+#include "cloud.H"
+#include "IOmanip.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -66,6 +69,26 @@ LagrangianCloudSourcePluginFunction::LagrangianCloudSourcePluginFunction(
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+Ostream& LagrangianCloudSourcePluginFunction::listAvailableClouds(Ostream &o)
+{
+    o << nl << nl << "Available clouds in " << mesh().name() << endl;
+    typedef HashTable<const cloud *> cloudTable;
+    cloudTable clouds=mesh().lookupClass<cloud>();
+    if(clouds.size()==0) {
+        o << " No clouds available\n" << endl;
+    }
+    const label nameWidth=20;
+    o << setw(nameWidth) << "Name" << " | " << "Type" << endl;
+    o << "-------------------------------------------------------------" << endl;
+    forAllConstIter(cloudTable,clouds,it) {
+        o << setw(nameWidth) << it.key() << " | "
+            << (*(*it)).type() << endl;
+    }
+    o << "-------------------------------------------------------------" << endl;
+    return o;
+}
+
 
 void LagrangianCloudSourcePluginFunction::setArgument(
     label index,
