@@ -29,12 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::lcsVolumeFractionPluginFunction
+    Foam::coalCloudVolumeFractionPluginFunction
 
 Description
 
 SourceFiles
-    lcsVolumeFractionPluginFunction.C
+    coalCloudVolumeFractionPluginFunction.C
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -42,10 +42,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef lcsVolumeFractionPluginFunction_H
-#define lcsVolumeFractionPluginFunction_H
+#ifndef coalCloudVolumeFractionPluginFunction_H
+#define coalCloudVolumeFractionPluginFunction_H
 
-#include "LagrangianCloudSourcePluginFunction.H"
+#include "lcsVolumeFractionPluginFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,33 +53,30 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class lcsVolumeFractionPluginFunction Declaration
+                           Class coalCloudVolumeFractionPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-class lcsVolumeFractionPluginFunction
+class coalCloudVolumeFractionPluginFunction
 :
-    public LagrangianCloudSourcePluginFunction
+    public lcsVolumeFractionPluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const lcsVolumeFractionPluginFunction &);
+    void operator=(const coalCloudVolumeFractionPluginFunction &);
 
-    lcsVolumeFractionPluginFunction(const lcsVolumeFractionPluginFunction &);
+    coalCloudVolumeFractionPluginFunction(const coalCloudVolumeFractionPluginFunction &);
 
-protected:
     virtual autoPtr<volScalarField> internalEvaluate();
 
 public:
 
-    lcsVolumeFractionPluginFunction(
+    coalCloudVolumeFractionPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name
     );
 
-    virtual ~lcsVolumeFractionPluginFunction() {}
+    virtual ~coalCloudVolumeFractionPluginFunction() {}
 
-    TypeName("lcsVolumeFractionPluginFunction");
-
-    void doEvaluation();
+    TypeName("coalCloudVolumeFractionPluginFunction");
 
 };
 

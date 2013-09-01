@@ -128,6 +128,17 @@ public:
         );                                                     \
     }
 
+// return a autoPtr to the needed field. This is required because
+// "similar" clouds don't really inherit (because of the template paramter)
+#define tryCall(rVar,rType,neededType,usedType,theCall)    \
+    if(hasCloudAs<neededType>()) {                             \
+        return autoPtr<rType> (                                \
+            new rType(                                         \
+                getCloudAs<neededType,usedType>().theCall      \
+            )                                                  \
+        );                                                     \
+    }
+
 // Fail if no cloud data was found
 #define noCloudFound(pVar) \
     if(!pVar.valid()) {                                                 \

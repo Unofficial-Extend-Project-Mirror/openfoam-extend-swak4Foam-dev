@@ -55,6 +55,7 @@ libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakLagrangianParser.so"
     "libswakLagrangianCloudSourcesFunctionPlugin.so"
+    "libswakCoalCloudAdaptor.so"
 );
 
 functions {
@@ -67,11 +68,11 @@ functions {
             max
             weightedAverage
         );
-        expression "lcsVolumeFraction(limestoneCloud1)";
+        expression "coalCloudVolumeFraction(limestoneCloud1)";
     }
     coalFraction {
         $limestoneFraction;
-        expression "lcsVolumeFraction(coalCloud1)";
+        expression "coalCloudVolumeFraction(coalCloud1)";
     }
     // coalPosition {
     //     type swakExpression;
