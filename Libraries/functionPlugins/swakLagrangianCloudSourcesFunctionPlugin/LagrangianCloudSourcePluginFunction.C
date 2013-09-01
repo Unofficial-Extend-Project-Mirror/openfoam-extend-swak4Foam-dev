@@ -86,6 +86,12 @@ Ostream& LagrangianCloudSourcePluginFunction::listAvailableClouds(Ostream &o)
             << (*(*it)).type() << endl;
     }
     o << "-------------------------------------------------------------" << endl;
+    if(mesh().foundObject<cloud>(cloudName())) {
+        o << "Cloud " << cloudName() << " has type "
+            << mesh().lookupObject<cloud>(cloudName()).type() << " typeid:"
+            << typeid(mesh().lookupObject<cloud>(cloudName())).name()
+            << endl;
+    }
     return o;
 }
 

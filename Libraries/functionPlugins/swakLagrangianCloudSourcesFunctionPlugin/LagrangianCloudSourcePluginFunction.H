@@ -71,6 +71,8 @@ class LagrangianCloudSourcePluginFunction
 
     word cloudName_;
 
+    HashSet<word> supportedTypes_;
+
 protected:
     //    typedef CloudType cloudType;
 
@@ -83,6 +85,9 @@ protected:
     const OtherCloudType &getCloudAs();
 
     const word &cloudName() const { return cloudName_; }
+
+    const HashSet<word> &supportedTypes() const
+        { return supportedTypes_; }
 
 public:
     LagrangianCloudSourcePluginFunction(
@@ -115,22 +120,24 @@ public:
 // set a autoPtr to the needed cloud. This is required because
 // "similar" clouds don't really inherit (because of the template paramter)
 #define castAndCall(rVar,rType,neededType,usedType,theCall)    \
-    if(!rVar.valid() && hasCloudAs<neededType>()) { \
-        rVar.set( \
-            new rType( \
-                getCloudAs<neededType,usedType>().theCall \
-            ) \
-        );\
-    }\
+    if(!rVar.valid() && hasCloudAs<neededType>()) {            \
+        rVar.set(                                              \
+            new rType(                                         \
+                getCloudAs<neededType,usedType>().theCall      \
+            )                                                  \
+        );                                                     \
+    }
 
 // Fail if no cloud data was found
 #define noCloudFound(pVar) \
-    if(!pVar.valid()) { \
-    listAvailableClouds(Info); \
-    FatalErrorIn("Plugin function "+this->name()) \
-    << "No matching cloud " << this->cloudName() << " found" \
-        << endl \
-    << exit(FatalError); \
+    if(!pVar.valid()) {                                                 \
+        listAvailableClouds(Info);                                      \
+        FatalErrorIn("Plugin function "+this->name())                   \
+            << "No matching cloud " << this->cloudName() << " found"    \
+                << endl                                                 \
+                << "Supported cloud types (typeid): "                   \
+                << supportedTypes() << endl                             \
+                << exit(FatalError);                                    \
     }
 
 
