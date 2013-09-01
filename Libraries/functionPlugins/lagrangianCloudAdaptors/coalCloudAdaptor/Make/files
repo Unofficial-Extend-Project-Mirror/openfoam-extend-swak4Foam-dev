@@ -1,3 +1,4 @@
 coalCloudVolumeFractionPluginFunction.C
+makeCoalCloudProxys.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakCoalCloudAdaptor

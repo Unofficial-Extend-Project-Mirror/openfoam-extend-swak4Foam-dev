@@ -74,22 +74,22 @@ functions {
         $limestoneFraction;
         expression "coalCloudVolumeFraction(coalCloud1)";
     }
-    // coalPosition {
-    //     type swakExpression;
-    //     outputControlMode timeStep;
-    //     expression "pos()";
-    //     accumulations (
-    //         min
-    //         max
-    //         average
-    //         weightedAverage
-    //     );
-    //     verbose true;
+    coalPosition {
+        type swakExpression;
+        outputControlMode timeStep;
+        expression "pos()";
+        accumulations (
+            min
+            max
+            average
+            weightedAverage
+        );
+        verbose true;
 
-    //     valueType cloud;
-    //     cloudName coalCloud1;
-    //     //        alternateCloudType Cloud<basicKinematicParcel>;
-    // }
+        valueType cloud;
+        cloudName coalCloud1;
+        //        alternateCloudType Cloud<basicKinematicParcel>;
+    }
 }
 
 // ************************************************************************* //
