@@ -37,6 +37,8 @@ apt-get -y install flex
 apt-get -y install g++
 apt-get -y install make
 apt-get -y install python-dev
+apt-get -y install ccache
+
 echo
 echo "Setting for postfix"
 echo
@@ -117,4 +119,9 @@ do
     fi
 done
 
+echo
+echo "Current ccache:"
+CCACHE_DIR=/vagrant/ccache4vm; ccache --show-stats
+
+echo
 echo "Ended"
