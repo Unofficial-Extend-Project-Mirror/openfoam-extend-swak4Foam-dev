@@ -121,7 +121,7 @@ done
 
 echo
 echo "Current ccache:"
-CCACHE_DIR=/vagrant/ccache4vm; ccache --show-stats
+export CCACHE_DIR=/vagrant/ccache4vm; ccache --show-stats
 
 echo
 echo "Ended"
