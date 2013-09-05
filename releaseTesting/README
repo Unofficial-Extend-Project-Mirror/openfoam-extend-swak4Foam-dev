@@ -1,0 +1,30 @@
+# -*- mode: org -*-
+#+TITLE: Virtual machines for testing and Packaging
+* Prerequisites
+  These virtual machines require
+  - VirtualBox :: for running
+  - Vagrant :: to automatically set them up
+* Starting
+  A virtual machine is set up with
+: vagrant up <machineName>
+  will download a virtual machine image and set it up. It will then
+  modify the image:
+  - add packages required to compile swak4Foam and package them
+  - install binary packages of OpenFOAM
+  - mount the directory of the sources
+  - from this directory clone it to the local disc with mercurial
+  One can then connect to the virtual machine with
+: vagrant ssh <machinName>
+  and will be in the =$HOME= directory of the user =vagrant= where in
+  the directory =swak4Foam= the sources are available. Modifications
+  can be pushed "outside" the virtual machine with
+: hg push
+* Virtual machines
+  Currently existing virtual machines are
+  - precise :: Latest LTS Ubuntu. This has the most recent
+               OF-binaries but *not* 1.7.x
+  - lucid :: Previous LTS Ubuntu. Has 1.7.x but currently problems
+             with automatic setting up (something with the
+             =postfix=-package)
+  - maverick :: Tries to fix the problems with the
+                =lucid=-machine. Not yet working
