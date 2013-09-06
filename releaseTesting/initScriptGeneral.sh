@@ -22,13 +22,19 @@ then
     echo
     echo "Getting swak-sources"
     echo
+
+    SWAKParent="/swakSources"
+
+    branchName=`hg branch -R $SWAKParent`
+
+    echo "Parent is on branch $branchName"
+
     if [ "$boxName" == "precise" ]
     then
+	echo "Using 2.x-branch anyway"
 	branchName="port_2.0.x"
-    else
-	branchName="develop"
     fi
-    su vagrant - -c "hg clone -r $branchName /swakSources $SWAKDIR"
+    su vagrant - -c "hg clone -u $branchName $SWAKParent $SWAKDIR"
     (cd $SWAKDIR; ln -s swakConfiguration.debian swakConfiguration )
     chown -R vagrant:vagrant $SWAKDIR
 else
