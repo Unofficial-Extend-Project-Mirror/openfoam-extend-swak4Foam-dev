@@ -17,7 +17,7 @@ def yumDependencies():
     else:
         command="yum","install","mesa-libOSMesa.x86_64","tk.x86_64","tcl.x86_64","gcc","gcc-c++","bison","ncurses-devel.x86_64","tix.x86_64","glibc-devel.x86_64","flex","zlib-devel.x86_64","libXt-devel.x86_64"
         subprocess.call(command)
-        
+
 def replaceInLine(file,search,replace):
     print "Replacing "+search+" with "+replace+" in file"+file
     for line in fileinput.FileInput(file,inplace=1):
@@ -27,17 +27,17 @@ def replaceInLine(file,search,replace):
 def writeTobashrc(path,version,name,extra):
     fileHandle = open ( os.environ['HOME']+"/.bashrc", 'a' )
     fileHandle.write ( 'alias '+name+'=\"'+path+'/'+name+'-'+version+'/'+extra+'\"\n' )
-    fileHandle.close() 
-    
+    fileHandle.close()
+
 def writeToOFbashrc(alias,path,version,name,extra):
     fileHandle = open ( os.environ['HOME']+"/.bashrc", 'a' )
     fileHandle.write ( 'alias '+alias+'=\". '+path+'/OpenFOAM/'+name+'-'+version+'/'+extra+'\"\n' )
-    fileHandle.close() 
-    
+    fileHandle.close()
+
 def writeStartNetgen(path,package,name):
     fileName = path+"/"+package+"/bin/start_"+name
     fileHandle = open ( fileName , 'w' )
-    fileHandle.write ( 
+    fileHandle.write (
 """#!/bin/bash\n
 export NETGENDIR="""+path+"""/"""+package+"""/bin\n
 export PATH="""+path+"""/"""+package+"""/bin:$PATH\n
@@ -46,11 +46,11 @@ export LD_LIBRARY_PATH="""+path+"""/"""+package+"""/lib:$LD_LIBRARY_PATH\n
 """ )
     fileHandle.close()
     os.chmod(fileName,0755)
-    
+
 def writeStartEngrid(path,package,name):
     fileName = path+"/"+package+"/bin/start_"+name
     fileHandle = open ( fileName , 'w' )
-    fileHandle.write( 
+    fileHandle.write(
 """#!/bin/bash\n
 export PATH="""+path+"""/"""+package+"""/bin:$PATH\n
 export LD_LIBRARY_PATH="""+path+"""/"""+package+"""/lib:$LD_LIBRARY_PATH\n
@@ -62,7 +62,7 @@ export LD_LIBRARY_PATH="""+path+"""/"""+package+"""/lib:$LD_LIBRARY_PATH\n
 def writeStartParaview(path,package,name,version):
     fileName = path+"/"+package+"/bin/start_"+name
     fileHandle = open ( fileName , 'w' )
-    fileHandle.write( 
+    fileHandle.write(
 """#!/bin/bash\n
 export PATH="""+path+"""/"""+package+"""/bin:$PATH\n
 export LD_LIBRARY_PATH="""+path+"""/"""+package+"""/lib/"""+name+"""-"""+version+""":$LD_LIBRARY_PATH\n
@@ -70,11 +70,11 @@ export LD_LIBRARY_PATH="""+path+"""/"""+package+"""/lib/"""+name+"""-"""+version
 """)
     fileHandle.close()
     os.chmod(fileName,0755)
-    
+
 def writeStartGmsh(path,package,name):
     fileName = path+"/"+package+"/bin/start_"+name
     fileHandle = open ( fileName , 'w' )
-    fileHandle.write ( 
+    fileHandle.write (
 """#!/bin/bash\n
 export PATH="""+path+"""/"""+package+"""/bin:$PATH\n
 export LD_LIBRARY_PATH="""+path+"""/"""+package+"""/lib:$LD_LIBRARY_PATH\n
@@ -99,8 +99,8 @@ def setupInstallDir(path):
 
 def deleteTmpFiles(package):
     os.remove(package)
-                
-            
+
+
 def untarPackage(path,package):
     if os.access(path+package, os.F_OK) == True:
         print "Already unpacked "+package+", skipping"
@@ -108,10 +108,10 @@ def untarPackage(path,package):
         print "Unpacking "+package+", might take a minut or two"
         command = "tar","-xf",package,"-C",path,"--totals"
         subprocess.call(command)
-    
+
 def downloadPackage(url,package):
     if os.path.isfile(package):
-        print "Already downloaded "+package+",skipping" 
+        print "Already downloaded "+package+",skipping"
     else:
         print "Downloading "+package
         down = url+package
@@ -129,7 +129,7 @@ def installNetgen(path,version,rel):
     except:
         print "File was not downloaded please check your connection"
         sys.exit(1)
-    
+
     untarPackage(path, package+".tar.gz")
     print "adding netgen-"+version+" to .bashrc file for user running the script"
     writeStartNetgen(path, package, "netgen")
@@ -150,7 +150,7 @@ def installEngrid(path,version,rel):
     print "adding engrid-"+version+" to .bashrc file for user running the script"
     writeStartEngrid(path, package, "engrid")
     writeTobashrc(path, version, "engrid", "/bin/./start_engrid")
-    
+
 def installParaview(path,version,rel):
     print "installing Paraview-"+version+" to "+path+"/paraview-"+version
     setupInstallDir(path)
@@ -166,7 +166,7 @@ def installParaview(path,version,rel):
     print "adding paraview-"+version+" to .bashrc file for user running the script"
     writeStartParaview(path, package, "paraview",version[:-2])
     writeTobashrc(path, version, "paraview", "/bin/./start_paraview")
-    
+
 def installGmsh(path,version,rel):
     print "installing Gmsh-"+version+" to "+path+"/gmsh-"+version
     setupInstallDir(path)
@@ -182,7 +182,7 @@ def installGmsh(path,version,rel):
     print "adding gmsh-"+version+" to .bashrc file for user running the script"
     writeStartGmsh(path, package, "gmsh")
     writeTobashrc(path, version, "gmsh", "/bin/./start_gmsh")
-    
+
 def installOpenFOAM(path,version,alias,rel):
     print "installing OpenFOAM-"+version+" to "+path+"/OpenFOAM/OpenFOAM-"+version
     OFpath=path+"/OpenFOAM/"
@@ -227,66 +227,66 @@ def installOpenFOAM(path,version,alias,rel):
 
     print "adding OpenFOAM-"+version+" to .bashrc file for user running the script"
     writeToOFbashrc(alias, path, version, "OpenFOAM", "/etc/bashrc")
-    
-    
+
+
 def main():
     usage = "usage: %prog [options] arg"
 
     parser = OptionParser()
-    
+
     parser.add_option("--yum",
-            action="store_false", dest="yum", default=True, 
+            action="store_false", dest="yum", default=True,
             help="Install yum packages")
 
     parser.add_option("--paraview",
-            action="store_false", dest="paraview", default=True, 
+            action="store_false", dest="paraview", default=True,
             help="Install latest paraview")
 
     parser.add_option("--netgen",
-            action="store_false", dest="netgen", default=True, 
+            action="store_false", dest="netgen", default=True,
             help="Install latest netgen")
 
     parser.add_option("--engrid",
-            action="store_false", dest="engrid", default=True, 
+            action="store_false", dest="engrid", default=True,
             help="Install latest engrid")
-    
+
     parser.add_option("--gmsh",
-            action="store_false", dest="gmsh", default=True, 
+            action="store_false", dest="gmsh", default=True,
             help="Install latest gmsh")
-    
+
     parser.add_option("--nonOF",
-        action="store_false", dest="nonOF", default=True, 
+        action="store_false", dest="nonOF", default=True,
         help="Install all non OpenFOAM applications (the four above)")
-    
+
     parser.add_option("--OF20",
-            action="store_false", dest="OF20", default=True, 
+            action="store_false", dest="OF20", default=True,
             help="Install OpenFOAM-2.0.x")
 
     parser.add_option("--OF21",
-            action="store_false", dest="OF21", default=True, 
+            action="store_false", dest="OF21", default=True,
             help="Install OpenFOAM-2.1.1")
-   
+
     parser.add_option("--OF22",
-            action="store_false", dest="OF22", default=True, 
+            action="store_false", dest="OF22", default=True,
             help="Install OpenFOAM-2.2.x")
 
     parser.add_option("--OF16",
-            action="store_false", dest="OF16", default=True, 
+            action="store_false", dest="OF16", default=True,
             help="Install OpenFOAM-1.6-ext")
 
     parser.add_option("-p", "--path",
-        action="store", type="string", dest="path", default=os.environ['HOME']+"/centFOAM/", 
+        action="store", type="string", dest="path", default=os.environ['HOME']+"/centFOAM/",
         help="Path to install directory, default "+os.environ['HOME']+"/centFOAM/")
 
-    parser.add_option("-q", "--quiet", 
-            action="store_false", dest="verbose", default=True, 
+    parser.add_option("-q", "--quiet",
+            action="store_false", dest="verbose", default=True,
             help="don't print status messages to stdout")
-    
+
     (options, args) = parser.parse_args()
-    
+
     print "All packages will be downloaded to this folder\n and extracted to "+options.path
-    raw_input("Press enter to continue")
-    
+#    raw_input("Press enter to continue")
+
     release=platform.release()
     print 'release  :', release
     if re.search("el6",release):
@@ -314,7 +314,7 @@ def main():
             installOpenFOAM(options.path, "2.2.x", "OF22",rel)
         if options.OF16==False:
             installOpenFOAM(options.path, "1.6-ext", "OF16",rel)
-        
+
     elif re.search("el5",release):
         rel="5.x"
         print "Using 5.x\n"

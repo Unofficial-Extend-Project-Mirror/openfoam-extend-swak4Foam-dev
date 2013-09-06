@@ -16,13 +16,30 @@ yum install -y bison
 yum install -y flex
 yum install -y ccache
 
+# needed by CentFOAM
+yum install -y libXt-devel mesa-libOSMesa tcl tix  tk
+
 # Not needed. Just to keep Bernhard happy
 yum install -y emacs
 
 cd /home/vagrant/
 
-# wget http://downloads.sourceforge.net/project/centfoam/centFOAM.py?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fcentfoam%2Ffiles%2F&ts=1378420317&use_mirror=switch
-# chmod a+x centFOAM.py
+of21Dir=/home/vagrant/centFOAM/OpenFOAM/OpenFOAM-2.1.1
+if [ ! -e $of21Dir ]
+then
+    su vagrant - -c "/vagrant/ThirdParty/centFOAM.py --OF21"
+fi
+
+# half a Gig. Currently 2.1 is enough
+# su vagrant - -c "/vagrant/ThirdParty/centFOAM.py --OF21"
+
+of16Dir=/home/vagrant/centFOAM/OpenFOAM/OpenFOAM-1.6-ext
+if [ ! -e $of16Dir ]
+then
+    su vagrant - -c "/vagrant/ThirdParty/centFOAM.py --OF16"
+fi
+
+ln -s ./centFOAM/OpenFOAM/ .
 
 /vagrant/initScriptGeneral.sh
 
