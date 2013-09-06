@@ -885,7 +885,8 @@ void pythonInterpreterWrapper::doAfterExecution(
     ) {
         FatalErrorIn("pythonInterpreterWrapper::doAfterExecution")
             << "Python exception raised by " << nl
-                << code
+	    << code << endl
+	    << "To debug set 'interactiveAfterException true;' in " << dict_.name()
                 << endl << exit(FatalError);
     }
 
