@@ -22,9 +22,16 @@ yum install -y libXt-devel mesa-libOSMesa tcl tix  tk
 # Not needed. Just to keep Bernhard happy
 yum install -y emacs
 
+# stuff for testing python
+yum install -y ipython scipy python-matplotlib
+
 cd /home/vagrant/
 
 of21Dir=/home/vagrant/centFOAM/OpenFOAM/OpenFOAM-2.1.1
+
+# comment out to really install this OF2.1
+mkdir -p $of21Dir
+
 if [ ! -e $of21Dir ]
 then
     su vagrant - -c "/vagrant/ThirdParty/centFOAM.py --OF21"
