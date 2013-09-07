@@ -782,7 +782,9 @@ void pythonInterpreterWrapper::interactiveLoop(
             cmdString=
                 "_ipshell=IPython.Shell.IPythonShellEmbed()\n"
                 "_ipshell.set_banner('"+banner+"')\n"
+	        "IPython.completer.readline.parse_and_bind('tab: complete')\n"
                 "_ipshell()\n";
+            // this (parse and bind) currently has no effect in the embedded shell
         } else {
             cmdString=
                 "IPython.embed(header='"+banner+"')\n";
