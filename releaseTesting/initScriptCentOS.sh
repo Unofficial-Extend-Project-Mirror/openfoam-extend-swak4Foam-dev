@@ -12,6 +12,12 @@ rpm -Uhv http://fedora.aau.at/epel/6/x86_64/epel-release-6-8.noarch.rpm
 rpm -Uhv http://pkgs.repoforge.org/mercurial/mercurial-2.2.2-1.el6.rfx.x86_64.rpm
 # Don't want to add too many repositories
 
+# minimal is OK. But man should be there
+yum install -y man man-pages
+
+# this should add the iberty-library
+yum install -y binutils-devel
+
 yum install -y bison
 yum install -y flex
 yum install -y ccache
@@ -31,6 +37,7 @@ of21Dir=/home/vagrant/centFOAM/OpenFOAM/OpenFOAM-2.1.1
 
 # comment out to really install this OF2.1
 mkdir -p $of21Dir
+chown -R vagrant /home/vagrant/centFOAM
 
 if [ ! -e $of21Dir ]
 then
