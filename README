@@ -593,6 +593,9 @@ S_{expl} + S_{impl} T
    Current contents:
    - swak4FoamReference :: Reference manual of swak4Foam. Especially
         concepts like expression syntax and parameters
+** releaseTesting
+   Scripts and configuration to test for a release in a virtual
+   machine using =vagrant=. Also to be used for packaging
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
