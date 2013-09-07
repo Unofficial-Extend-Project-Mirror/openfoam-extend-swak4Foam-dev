@@ -52,7 +52,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonInterpreterWrapper, 0);
+    defineTypeNameAndDebug(pythonInterpreterWrapper, 1);
 
     label pythonInterpreterWrapper::interpreterCount=0;
     PyThreadState *pythonInterpreterWrapper::mainThreadState=NULL;
@@ -66,6 +66,9 @@ void pythonInterpreterWrapper::initIPython() {
         triedIPython_=true;
 
         if(useIPython_) {
+    	    importLib("sys");
+	    PyRun_SimpleString("if 'argv' not in dir(sys): sys.argv=[]");
+	    
             Dbug << "Attempting to import IPython" << endl;
 
             //            int fail=PyRun_SimpleString("import IPython");
@@ -778,11 +781,16 @@ void pythonInterpreterWrapper::interactiveLoop(
         if(oldIPython_) {
             cmdString=
                 "_ipshell=IPython.Shell.IPythonShellEmbed()\n"
-                "_ipshell(banner='"+banner+"')\n";
+                "_ipshell.set_banner('"+banner+"')\n"
+	        "IPython.completer.readline.parse_and_bind('tab: complete')\n"
+                "_ipshell()\n";
+            // this (parse and bind) currently has no effect in the embedded shell
         } else {
             cmdString=
                 "IPython.embed(header='"+banner+"')\n";
         }
+	Dbug << "Executing " << cmdString << " to start IPython" << endl;
+
         int fail=PyRun_SimpleString(cmdString.c_str());
         if(fail) {
             WarningIn("pythonInterpreterWrapper::interactiveLoop")
@@ -885,7 +893,8 @@ void pythonInterpreterWrapper::doAfterExecution(
     ) {
         FatalErrorIn("pythonInterpreterWrapper::doAfterExecution")
             << "Python exception raised by " << nl
-                << code
+	    << code << endl
+	    << "To debug set 'interactiveAfterException true;' in " << dict_.name()
                 << endl << exit(FatalError);
     }
 
