@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 09 Sep 2013 15:16:29 +0200
+State: new
+Subject: Tab-completion in regular Python and old IPython not working
+Message-Id: <c73ebd811c2c66d7-0-artemis@bgs-cool-greybook.local>
+
+This seems to have to do with a wrong use of readline. But it works on
+a regular Python-shell

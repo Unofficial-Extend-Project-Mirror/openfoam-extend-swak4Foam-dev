@@ -52,7 +52,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(pythonInterpreterWrapper, 1);
+    defineTypeNameAndDebug(pythonInterpreterWrapper, 0);
 
     label pythonInterpreterWrapper::interpreterCount=0;
     PyThreadState *pythonInterpreterWrapper::mainThreadState=NULL;
@@ -67,8 +67,8 @@ void pythonInterpreterWrapper::initIPython() {
 
         if(useIPython_) {
     	    importLib("sys");
-	    PyRun_SimpleString("if 'argv' not in dir(sys): sys.argv=[]");
-	    
+	    PyRun_SimpleString("if 'argv' not in dir(sys): sys.argv=['OF-executable']");
+
             Dbug << "Attempting to import IPython" << endl;
 
             //            int fail=PyRun_SimpleString("import IPython");
