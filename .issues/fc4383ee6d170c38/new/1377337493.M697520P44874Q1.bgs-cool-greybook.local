@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 24 Aug 2013 11:40:49 +0200
+State: new
+Subject: Separate directories for output on parallel Python
+Message-Id: <fc4383ee6d170c38-0-artemis@bgs-cool-greybook.local>
+
+If a run is parallel and not in master-only mode then each processor
+should get a separate directory (unless being asked to)
+
+Maybe introduce a python variable master-only or so

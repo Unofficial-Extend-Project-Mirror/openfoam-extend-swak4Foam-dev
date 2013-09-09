@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 22 Aug 2013 12:11:56 +0200
+State: new
+Subject: Allow relative offset for otherMesh-feature
+Message-Id: <bb18a3763f7a49bb-0-artemis@bgs-cool-greybook.local>
+
+Add to funkySetFields an option -otherTimeDeltaT that allows
+specifying "get from the other mesh the time +deltaT". This makes it
+easier to calculate the change between times for a large number of timesteps
