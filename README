@@ -2064,6 +2064,8 @@ S_{expl} + S_{impl} T
 **** =groovyTotalPressure= does not read =value=
      Because it is not initialized from the superclass when the
      dictionary constructor is used. Fixed
+**** For multiple times the option =addDummyPhi= makes =funkySetFields= crash
+     Because the pointer is already set. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
