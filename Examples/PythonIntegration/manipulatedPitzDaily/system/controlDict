@@ -57,6 +57,9 @@ functions (
         executeFile "$FOAM_CASE/executeResidualScaling.py";
         endFile "$FOAM_CASE/endResidualScaling.py";
         parallelMasterOnly true;  // In parallel runs only the master needs to execute this
+	interactiveAfterException true;
+        //        interactiveAfterExecute true;
+	//	useIPython false;
     }
 );
 

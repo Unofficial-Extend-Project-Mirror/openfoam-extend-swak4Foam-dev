@@ -614,6 +614,9 @@ S_{expl} + S_{impl} T
    Current contents:
    - swak4FoamReference :: Reference manual of swak4Foam. Especially
         concepts like expression syntax and parameters
+** releaseTesting
+   Scripts and configuration to test for a release in a virtual
+   machine using =vagrant=. Also to be used for packaging
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
@@ -751,6 +754,10 @@ S_{expl} + S_{impl} T
    [[https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130]]
    is also true for subsets. But as the interpolation is not
    implemented for most subsets this will be postponed
+** No tab-completion for regular Python-shell and old IPython-versions
+   The tab-completion does not work except for up-to-date versions of
+   IPython. This seems to be a problem with the =readline=-library
+   inside an embedded Python. Low priority
 * History
 ** 2010-09-13 - version number : 0.1
    First Release
