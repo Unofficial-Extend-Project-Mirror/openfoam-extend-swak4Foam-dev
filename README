@@ -2236,6 +2236,8 @@ S_{expl} + S_{impl} T
 **** =groovyTotalPressure= does not read =value=
      Because it is not initialized from the superclass when the
      dictionary constructor is used. Fixed
+**** For multiple times the option =addDummyPhi= makes =funkySetFields= crash
+     Because the pointer is already set. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
@@ -2351,6 +2353,22 @@ S_{expl} + S_{impl} T
      =importLibs=-entry which is a dictionary. The keys are the names
      under which the imports will appear in the Python-namespace. The
      value is optional and the name of the actual library
+**** Added standard function =weight()=
+     All parsers now implement a function =weight()= that returns the
+     "natural" weight that is used for instance in the weighted
+     average (for internal fields that would be for instance the cell
+     volume)
+**** =funkyDoCalc= now writes files
+     Two kinds of files are optionally written
+     - CSV-files with the values of an evaluation (each evaluation
+       gets its own file)
+     - Distributions of the evaluations (in a separate directory for
+       each time)
+     All the files go into a directory whose name is derived from the
+     name of the evaluation. The outputs can be switched on with the
+     options =writeDistributions= and =writeCsv=. Either
+     - from the command line: this switches it on for *all* evaluations
+     - one "per dictionary"-basis for each evaluation separately
 *** Examples
 **** Moved the OSCFD-examples to a different directory
      Started one new directory for all cases from presentations
