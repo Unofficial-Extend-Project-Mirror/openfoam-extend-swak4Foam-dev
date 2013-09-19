@@ -795,7 +795,11 @@ int main(int argc, char *argv[])
             Info << "Other mesh set to time " << time << endl;
         }
 
-        if(args.options().found("addDummyPhi")) {
+        if(
+            args.options().found("addDummyPhi")
+            &&
+            !dummyPhi.valid()
+        ) {
             Info << "Adding a dummy phi to make inletOutlet happy" << endl;
             dummyPhi.set(
                 new surfaceScalarField(
