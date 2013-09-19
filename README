@@ -2195,3 +2195,14 @@ S_{expl} + S_{impl} T
      "natural" weight that is used for instance in the weighted
      average (for internal fields that would be for instance the cell
      volume)
+**** =funkyDoCalc= now writes files
+     Two kinds of files are optionally written
+     - CSV-files with the values of an evaluation (each evaluation
+       gets its own file)
+     - Distributions of the evaluations (in a separate directory for
+       each time)
+     All the files go into a directory whose name is derived from the
+     name of the evaluation. The outputs can be switched on with the
+     options =writeDistributions= and =writeCsv=. Either
+     - from the command line: this switches it on for *all* evaluations
+     - one "per dictionary"-basis for each evaluation separately
