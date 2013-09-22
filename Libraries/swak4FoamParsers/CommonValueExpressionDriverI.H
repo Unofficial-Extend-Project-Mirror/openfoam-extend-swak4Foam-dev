@@ -1021,6 +1021,14 @@ namespace Foam {
                     Pout << "Found " << name << " in memory" << endl;
                 }
                 return true;
+            } else if(debug) {
+                Info << "No " << name << " of type " << T::typeName
+                    << " found in memory";
+                if(this->mesh().foundObject<IOobject>(name)) {
+                    Info<< " but of type "
+                        << this->mesh().lookupObject<IOobject>(name).headerClassName();
+                }
+                Info << endl;
             }
         }
 
