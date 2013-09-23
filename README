@@ -2070,6 +2070,8 @@ S_{expl} + S_{impl} T
      If the dictionary was read after the construction the aliases
      are not read. Fixed by moving this reading to the tables reading
      which is used in every time a dictionary is involved
+**** Gravity not correctly passed in =evolveXXCloud=
+     Passed a value where a reference would have been needed. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
