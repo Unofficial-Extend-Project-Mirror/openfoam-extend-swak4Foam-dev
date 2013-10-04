@@ -216,6 +216,10 @@ void Foam::solveTransportPDE::solve()
                 eq-=fvm::Sp(sourceImplicitField,f);
             }
 
+            if(doRelax(corr==nCorr)) {
+                eq.relax();
+            }
+
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
             for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
             {

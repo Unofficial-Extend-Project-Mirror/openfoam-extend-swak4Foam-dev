@@ -92,6 +92,15 @@ functions
 
         phi "phi" [0 3 -1 0 0];
     }
+    residualTimeRelax {
+        $residualTime;
+        fieldName residualTimeRelax;
+    }
+    residualTimeRelaxFinal {
+        $residualTime;
+        fieldName residualTimeRelaxFinal;
+        relaxLastIteration true;
+    }
     scalarTransport {
         // result doubtful
         type solveTransportPDE;
