@@ -2198,3 +2198,8 @@ S_{expl} + S_{impl} T
      options =writeDistributions= and =writeCsv=. Either
      - from the command line: this switches it on for *all* evaluations
      - one "per dictionary"-basis for each evaluation separately
+**** PDE-functionObjects now relax their equations
+     The PDE-functionObjects now honor the =relaxationFactors. If
+     =steady= is =false= then relaxation has to be switched on using
+     =relaxUnsteady=. For the last corrector iteration the equation
+     is not relaxed unless the parameter =relaxLastIteration= is set.
