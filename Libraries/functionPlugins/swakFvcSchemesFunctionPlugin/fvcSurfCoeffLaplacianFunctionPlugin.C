@@ -56,9 +56,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<scalar,scalar> laplacianScalarScalar
 defineTemplateTypeNameAndDebug(laplacianScalarScalar,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,scalar,scalar,name,fvcSurfCoeffScalarLaplacianScalar);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<scalar,vector> laplacianScalarVector;
-defineTemplateTypeNameAndDebug(laplacianScalarVector,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,scalar,vector,name,fvcSurfCoeffVectorLaplacianScalar);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<scalar,vector> laplacianScalarVector;
+// defineTemplateTypeNameAndDebug(laplacianScalarVector,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,scalar,vector,name,fvcSurfCoeffVectorLaplacianScalar);
 
 typedef fvcSurfCoeffLaplacianFunctionPlugin<scalar,tensor> laplacianScalarTensor;
 defineTemplateTypeNameAndDebug(laplacianScalarTensor,0);
@@ -68,9 +68,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<scalar,symmTensor> laplacianScalarSy
 defineTemplateTypeNameAndDebug(laplacianScalarSymmTensor,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,scalar,symmTensor,name,fvcSurfCoeffSymmTensorLaplacianScalar);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<scalar,sphericalTensor> laplacianScalarSphericalTensor;
-defineTemplateTypeNameAndDebug(laplacianScalarSphericalTensor,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,scalar,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianScalar);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<scalar,sphericalTensor> laplacianScalarSphericalTensor;
+// defineTemplateTypeNameAndDebug(laplacianScalarSphericalTensor,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,scalar,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianScalar);
 
     // vector
 
@@ -78,9 +78,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<vector,scalar> laplacianVectorScalar
 defineTemplateTypeNameAndDebug(laplacianVectorScalar,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,vector,scalar,name,fvcSurfCoeffScalarLaplacianVector);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<vector,vector> laplacianVectorVector;
-defineTemplateTypeNameAndDebug(laplacianVectorVector,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,vector,vector,name,fvcSurfCoeffVectorLaplacianVector);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<vector,vector> laplacianVectorVector;
+// defineTemplateTypeNameAndDebug(laplacianVectorVector,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,vector,vector,name,fvcSurfCoeffVectorLaplacianVector);
 
 typedef fvcSurfCoeffLaplacianFunctionPlugin<vector,tensor> laplacianVectorTensor;
 defineTemplateTypeNameAndDebug(laplacianVectorTensor,0);
@@ -90,9 +90,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<vector,symmTensor> laplacianVectorSy
 defineTemplateTypeNameAndDebug(laplacianVectorSymmTensor,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,vector,symmTensor,name,fvcSurfCoeffSymmTensorLaplacianVector);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<vector,sphericalTensor> laplacianVectorSphericalTensor;
-defineTemplateTypeNameAndDebug(laplacianVectorSphericalTensor,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,vector,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianVector);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<vector,sphericalTensor> laplacianVectorSphericalTensor;
+// defineTemplateTypeNameAndDebug(laplacianVectorSphericalTensor,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,vector,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianVector);
 
     // tensor
 
@@ -100,9 +100,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<tensor,scalar> laplacianTensorScalar
 defineTemplateTypeNameAndDebug(laplacianTensorScalar,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,tensor,scalar,name,fvcSurfCoeffScalarLaplacianTensor);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<tensor,vector> laplacianTensorVector;
-defineTemplateTypeNameAndDebug(laplacianTensorVector,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,tensor,vector,name,fvcSurfCoeffVectorLaplacianTensor);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<tensor,vector> laplacianTensorVector;
+// defineTemplateTypeNameAndDebug(laplacianTensorVector,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,tensor,vector,name,fvcSurfCoeffVectorLaplacianTensor);
 
 typedef fvcSurfCoeffLaplacianFunctionPlugin<tensor,tensor> laplacianTensorTensor;
 defineTemplateTypeNameAndDebug(laplacianTensorTensor,0);
@@ -112,9 +112,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<tensor,symmTensor> laplacianTensorSy
 defineTemplateTypeNameAndDebug(laplacianTensorSymmTensor,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,tensor,symmTensor,name,fvcSurfCoeffSymmTensorLaplacianTensor);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<tensor,sphericalTensor> laplacianTensorSphericalTensor;
-defineTemplateTypeNameAndDebug(laplacianTensorSphericalTensor,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,tensor,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianTensor);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<tensor,sphericalTensor> laplacianTensorSphericalTensor;
+// defineTemplateTypeNameAndDebug(laplacianTensorSphericalTensor,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,tensor,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianTensor);
 
     // symmTensor
 
@@ -122,9 +122,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<symmTensor,scalar> laplacianSymmTens
 defineTemplateTypeNameAndDebug(laplacianSymmTensorScalar,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,symmTensor,scalar,name,fvcSurfCoeffScalarLaplacianSymmTensor);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<symmTensor,vector> laplacianSymmTensorVector;
-defineTemplateTypeNameAndDebug(laplacianSymmTensorVector,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,symmTensor,vector,name,fvcSurfCoeffVectorLaplacianSymmTensor);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<symmTensor,vector> laplacianSymmTensorVector;
+// defineTemplateTypeNameAndDebug(laplacianSymmTensorVector,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,symmTensor,vector,name,fvcSurfCoeffVectorLaplacianSymmTensor);
 
 typedef fvcSurfCoeffLaplacianFunctionPlugin<symmTensor,tensor> laplacianSymmTensorTensor;
 defineTemplateTypeNameAndDebug(laplacianSymmTensorTensor,0);
@@ -134,9 +134,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<symmTensor,symmTensor> laplacianSymm
 defineTemplateTypeNameAndDebug(laplacianSymmTensorSymmTensor,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,symmTensor,symmTensor,name,fvcSurfCoeffSymmTensorLaplacianSymmTensor);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<symmTensor,sphericalTensor> laplacianSymmTensorSphericalTensor;
-defineTemplateTypeNameAndDebug(laplacianSymmTensorSphericalTensor,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,symmTensor,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianSymmTensor);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<symmTensor,sphericalTensor> laplacianSymmTensorSphericalTensor;
+// defineTemplateTypeNameAndDebug(laplacianSymmTensorSphericalTensor,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,symmTensor,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianSymmTensor);
 
     // sphericalTensor
 
@@ -144,9 +144,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<sphericalTensor,scalar> laplacianSph
 defineTemplateTypeNameAndDebug(laplacianSphericalTensorScalar,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,sphericalTensor,scalar,name,fvcSurfCoeffScalarLaplacianSphericalTensor);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<sphericalTensor,vector> laplacianSphericalTensorVector;
-defineTemplateTypeNameAndDebug(laplacianSphericalTensorVector,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,sphericalTensor,vector,name,fvcSurfCoeffVectorLaplacianSphericalTensor);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<sphericalTensor,vector> laplacianSphericalTensorVector;
+// defineTemplateTypeNameAndDebug(laplacianSphericalTensorVector,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,sphericalTensor,vector,name,fvcSurfCoeffVectorLaplacianSphericalTensor);
 
 typedef fvcSurfCoeffLaplacianFunctionPlugin<sphericalTensor,tensor> laplacianSphericalTensorTensor;
 defineTemplateTypeNameAndDebug(laplacianSphericalTensorTensor,0);
@@ -156,9 +156,9 @@ typedef fvcSurfCoeffLaplacianFunctionPlugin<sphericalTensor,symmTensor> laplacia
 defineTemplateTypeNameAndDebug(laplacianSphericalTensorSymmTensor,0);
 addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,sphericalTensor,symmTensor,name,fvcSurfCoeffSymmTensorLaplacianSphericalTensor);
 
-typedef fvcSurfCoeffLaplacianFunctionPlugin<sphericalTensor,sphericalTensor> laplacianSphericalTensorSphericalTensor;
-defineTemplateTypeNameAndDebug(laplacianSphericalTensorSphericalTensor,0);
-addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,sphericalTensor,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianSphericalTensor);
+// typedef fvcSurfCoeffLaplacianFunctionPlugin<sphericalTensor,sphericalTensor> laplacianSphericalTensorSphericalTensor;
+// defineTemplateTypeNameAndDebug(laplacianSphericalTensorSphericalTensor,0);
+// addNamedTemplate2ToRunTimeSelectionTable(FieldValuePluginFunction, fvcSurfCoeffLaplacianFunctionPlugin,sphericalTensor,sphericalTensor,name,fvcSurfCoeffSphericalTensorLaplacianSphericalTensor);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
