@@ -2203,3 +2203,10 @@ S_{expl} + S_{impl} T
      =steady= is =false= then relaxation has to be switched on using
      =relaxUnsteady=. For the last corrector iteration the equation
      is not relaxed unless the parameter =relaxLastIteration= is set.
+**** Full set of =laplacian=-operations in =internalField=-parser
+     The support of =laplacian= operations (especially with a
+     coefficient that is different from a scalar) was incomplete. Now
+     all possible coefficient types are supported.
+
+     Also in the =fvcSchemes=-plugin functions the set of
+     =laplacian=-operators was completed
