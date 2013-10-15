@@ -16,7 +16,7 @@ FoamFile
 
 solvers
 {
-    p 
+    p
     {
         solver PCG;
         preconditioner   DIC;
@@ -30,28 +30,28 @@ solvers
         tolerance        1e-06;
         relTol           0;
     };
-    U 
+    U
     {
         solver PBiCG;
         preconditioner   DILU;
         tolerance        1e-05;
         relTol           0;
     };
-    k 
+    k
     {
         solver PBiCG;
         preconditioner   DILU;
         tolerance        1e-05;
         relTol           0;
     };
-    B 
+    B
     {
         solver PBiCG;
         preconditioner   DILU;
         tolerance        1e-05;
         relTol           0;
     };
-    nuTilda 
+    nuTilda
     {
         solver PBiCG;
         preconditioner   DILU;
@@ -72,14 +72,14 @@ solvers
         tolerance        1e-06;
         relTol           0;
     };
-    residualTime 
+    "residualTime.*"
     {
         solver PBiCG;
         preconditioner   DILU;
         tolerance        1e-05;
         relTol           0;
     };
-    scalar 
+    scalar
     {
         solver PBiCG;
         preconditioner   DILU;
@@ -107,10 +107,15 @@ scalarTransportPDE
     $PISO;
 }
 
-residualTimeTransportPDE
+"residualTime.*TransportPDE"
 {
     $PISO;
     nNonOrthogonalCorrectors 3;
+}
+
+relaxationFactors
+{
+    "residualTimeRelax.*" 0.7;
 }
 
 // ************************************************************************* //

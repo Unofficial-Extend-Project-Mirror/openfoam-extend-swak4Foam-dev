@@ -2087,6 +2087,12 @@ S_{expl} + S_{impl} T
      dictionary constructor is used. Fixed
 **** For multiple times the option =addDummyPhi= makes =funkySetFields= crash
      Because the pointer is already set. Fixed
+**** =aliases= not constructed from dictionary
+     If the dictionary was read after the construction the aliases
+     are not read. Fixed by moving this reading to the tables reading
+     which is used in every time a dictionary is involved
+**** Gravity not correctly passed in =evolveXXCloud=
+     Passed a value where a reference would have been needed. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
@@ -2213,3 +2219,15 @@ S_{expl} + S_{impl} T
      options =writeDistributions= and =writeCsv=. Either
      - from the command line: this switches it on for *all* evaluations
      - one "per dictionary"-basis for each evaluation separately
+**** PDE-functionObjects now relax their equations
+     The PDE-functionObjects now honor the =relaxationFactors. If
+     =steady= is =false= then relaxation has to be switched on using
+     =relaxUnsteady=. For the last corrector iteration the equation
+     is not relaxed unless the parameter =relaxLastIteration= is set.
+**** Full set of =laplacian=-operations in =internalField=-parser
+     The support of =laplacian= operations (especially with a
+     coefficient that is different from a scalar) was incomplete. Now
+     all possible coefficient types are supported.
+
+     Also in the =fvcSchemes=-plugin functions the set of
+     =laplacian=-operators was completed

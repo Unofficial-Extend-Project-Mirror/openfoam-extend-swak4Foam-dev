@@ -889,12 +889,72 @@ vexp:   vector                                    { $$ = $1; }
         | TOKEN_position '(' ')'                   {
             $$ = driver.makePositionField().ptr();
           }
+        | TOKEN_laplacian '(' vexp ')'               {
+            $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3));
+            delete $3;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
         | TOKEN_laplacian '(' fsexp ',' vexp ')'   {
             $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
             delete $3; delete $5;
             $$->dimensions().reset(Foam::dimless);
             driver.setCalculatedPatches(*$$);
           }
+        // | TOKEN_laplacian '(' fvexp ',' vexp ')'   {
+        //     $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //     driver.setCalculatedPatches(*$$);
+        //   }
+        | TOKEN_laplacian '(' ftexp ',' vexp ')'   {
+            $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_laplacian '(' fyexp ',' vexp ')'   {
+            $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+            driver.setCalculatedPatches(*$$);
+          }
+        // | TOKEN_laplacian '(' fhexp ',' vexp ')'   {
+        //     $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //     driver.setCalculatedPatches(*$$);
+        //   }
+        | TOKEN_laplacian '(' exp ',' vexp ')'   {
+            $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+            driver.setCalculatedPatches(*$$);
+          }
+        // | TOKEN_laplacian '(' vexp ',' vexp ')'   {
+        //     $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //     driver.setCalculatedPatches(*$$);
+        //   }
+        | TOKEN_laplacian '(' texp ',' vexp ')'   {
+            $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+            driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_laplacian '(' yexp ',' vexp ')'   {
+            $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+            driver.setCalculatedPatches(*$$);
+          }
+        // | TOKEN_laplacian '(' hexp ',' vexp ')'   {
+        //     $$ = new Foam::volVectorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //     driver.setCalculatedPatches(*$$);
+        //   }
         | TOKEN_faceAverage '(' fvexp ')'          {
             $$ = new Foam::volVectorField(Foam::fvc::average(*$3));
             delete $3;
@@ -2146,12 +2206,60 @@ exp:    TOKEN_NUM                                   {
             driver.setCalculatedPatches(*$$);
             $$->dimensions().reset(Foam::dimless);
           }
+        // | TOKEN_laplacian '(' vexp ',' exp ')'       {
+        //     $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     driver.setCalculatedPatches(*$$);
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' texp ',' exp ')'       {
+            $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' yexp ',' exp ')'       {
+            $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' hexp ',' exp ')'       {
+        //     $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     driver.setCalculatedPatches(*$$);
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
         | TOKEN_laplacian '(' fsexp ',' exp ')'     {
             $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
             delete $3; delete $5;
             driver.setCalculatedPatches(*$$);
             $$->dimensions().reset(Foam::dimless);
           }
+        // | TOKEN_laplacian '(' fvexp ',' exp ')'     {
+        //     $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     driver.setCalculatedPatches(*$$);
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' ftexp ',' exp ')'     {
+            $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' fyexp ',' exp ')'     {
+            $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            driver.setCalculatedPatches(*$$);
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' fhexp ',' exp ')'     {
+        //     $$ = new Foam::volScalarField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     driver.setCalculatedPatches(*$$);
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
         | TOKEN_faceAverage '(' fsexp ')'           {
             $$ = new Foam::volScalarField(Foam::fvc::average(*$3));
             delete $3;
@@ -2781,11 +2889,61 @@ texp:   tensor                  { $$ = $1; }
             delete $1; delete $3; delete $5;
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_laplacian '(' texp ')'   {
+            $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3));
+            delete $3;;
+            $$->dimensions().reset(Foam::dimless);
+          }
         | TOKEN_laplacian '(' fsexp ',' texp ')'   {
             $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
             delete $3; delete $5;
             $$->dimensions().reset(Foam::dimless);
           }
+        // | TOKEN_laplacian '(' fvexp ',' texp ')'   {
+        //     $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' ftexp ',' texp ')'   {
+            $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' fyexp ',' texp ')'   {
+            $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' fhexp ',' texp ')'   {
+        //     $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' exp ',' texp ')'   {
+            $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' vexp ',' texp ')'   {
+        //     $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' texp ',' texp ')'   {
+            $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' yexp ',' texp ')'   {
+            $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' hexp ',' texp ')'   {
+        //     $$ = new Foam::volTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
         | TOKEN_faceAverage '(' ftexp ')'          {
             $$ = new Foam::volTensorField(Foam::fvc::average(*$3));
             delete $3;
@@ -3047,11 +3205,61 @@ yexp:   symmTensor                  { $$ = $1; }
             delete $1; delete $3; delete $5;
             driver.setCalculatedPatches(*$$);
           }
+        | TOKEN_laplacian '(' yexp ')'   {
+            $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3));
+            delete $3;
+            $$->dimensions().reset(Foam::dimless);
+          }
         | TOKEN_laplacian '(' fsexp ',' yexp ')'   {
             $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
             delete $3; delete $5;
             $$->dimensions().reset(Foam::dimless);
           }
+        // | TOKEN_laplacian '(' fvexp ',' yexp ')'   {
+        //     $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' ftexp ',' yexp ')'   {
+            $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' fyexp ',' yexp ')'   {
+            $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' fhexp ',' yexp ')'   {
+        //     $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' exp ',' yexp ')'   {
+            $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' vexp ',' yexp ')'   {
+        //     $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' texp ',' yexp ')'   {
+            $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' yexp ',' yexp ')'   {
+            $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' hexp ',' yexp ')'   {
+        //     $$ = new Foam::volSymmTensorField(Foam::fvc::laplacian(*$3,*$5));
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
         | TOKEN_faceAverage '(' fyexp ')'          {
             $$ = new Foam::volSymmTensorField(Foam::fvc::average(*$3));
             delete $3;
@@ -3252,6 +3460,13 @@ hexp:   sphericalTensor                  { $$ = $1; }
             ).ptr();
             delete $1; delete $3; delete $5;
             driver.setCalculatedPatches(*$$);}
+        | TOKEN_laplacian '(' hexp ')'   {
+            $$ = new Foam::volSphericalTensorField(
+                Foam::fvc::laplacian(*$3)
+            );
+            delete $3;
+            $$->dimensions().reset(Foam::dimless);
+          }
         | TOKEN_laplacian '(' fsexp ',' hexp ')'   {
             $$ = new Foam::volSphericalTensorField(
                 Foam::fvc::laplacian(*$3,*$5)
@@ -3259,6 +3474,69 @@ hexp:   sphericalTensor                  { $$ = $1; }
             delete $3; delete $5;
             $$->dimensions().reset(Foam::dimless);
           }
+        // | TOKEN_laplacian '(' fvexp ',' hexp ')'   {
+        //     $$ = new Foam::volSphericalTensorField(
+        //         Foam::fvc::laplacian(*$3,*$5)
+        //     );
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' ftexp ',' hexp ')'   {
+            $$ = new Foam::volSphericalTensorField(
+                Foam::fvc::laplacian(*$3,*$5)
+            );
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' fyexp ',' hexp ')'   {
+            $$ = new Foam::volSphericalTensorField(
+                Foam::fvc::laplacian(*$3,*$5)
+            );
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' fhexp ',' hexp ')'   {
+        //     $$ = new Foam::volSphericalTensorField(
+        //         Foam::fvc::laplacian(*$3,*$5)
+        //     );
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' exp ',' hexp ')'   {
+            $$ = new Foam::volSphericalTensorField(
+                Foam::fvc::laplacian(*$3,*$5)
+            );
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' vexp ',' hexp ')'   {
+        //     $$ = new Foam::volSphericalTensorField(
+        //         Foam::fvc::laplacian(*$3,*$5)
+        //     );
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
+        | TOKEN_laplacian '(' texp ',' hexp ')'   {
+            $$ = new Foam::volSphericalTensorField(
+                Foam::fvc::laplacian(*$3,*$5)
+            );
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        | TOKEN_laplacian '(' yexp ',' hexp ')'   {
+            $$ = new Foam::volSphericalTensorField(
+                Foam::fvc::laplacian(*$3,*$5)
+            );
+            delete $3; delete $5;
+            $$->dimensions().reset(Foam::dimless);
+          }
+        // | TOKEN_laplacian '(' hexp ',' hexp ')'   {
+        //     $$ = new Foam::volSphericalTensorField(
+        //         Foam::fvc::laplacian(*$3,*$5)
+        //     );
+        //     delete $3; delete $5;
+        //     $$->dimensions().reset(Foam::dimless);
+        //   }
         | TOKEN_faceAverage '(' fhexp ')'          {
             $$ = new Foam::volSphericalTensorField(Foam::fvc::average(*$3));
             delete $3;

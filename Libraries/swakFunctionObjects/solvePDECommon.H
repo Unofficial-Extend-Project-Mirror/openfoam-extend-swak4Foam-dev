@@ -89,6 +89,15 @@ protected:
     //- is this a steady calculation
     bool steady_;
 
+    //- should unsteady runs allow relaxation too
+    bool relaxUnsteady_;
+
+    //- the last iteration will also be relaxed
+    bool relaxLastIteration_;
+
+    //- should we relax?
+    bool doRelax(bool last);
+
 private:
     //- do the actual solving
     virtual void solve() = 0;

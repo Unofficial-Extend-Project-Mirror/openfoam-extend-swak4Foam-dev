@@ -145,20 +145,6 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     );
 
     readTables(dict);
-
-    if(dict.found("aliases")) {
-        dictionary aliasDict(dict.subDict("aliases"));
-        wordList toc(aliasDict.toc());
-        forAll(toc,i) {
-            aliases_.insert(
-                toc[i],
-                word(aliasDict[toc[i]])
-            );
-        }
-        if(debug) {
-            Info << "Reading aliases: " << aliases_ << endl;
-        }
-    }
 }
 
 CommonValueExpressionDriver::CommonValueExpressionDriver(
@@ -311,6 +297,20 @@ void CommonValueExpressionDriver::readTables(const dictionary &dict)
 
     if(dict.found("lookuptables")) {
         readTables(dict.lookup("lookuptables"),lookup_);
+    }
+
+    if(dict.found("aliases")) {
+        dictionary aliasDict(dict.subDict("aliases"));
+        wordList toc(aliasDict.toc());
+        forAll(toc,i) {
+            aliases_.insert(
+                toc[i],
+                word(aliasDict[toc[i]])
+            );
+        }
+        if(debug) {
+            Info << "Reading aliases: " << aliases_ << endl;
+        }
     }
 }
 
