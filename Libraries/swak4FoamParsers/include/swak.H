@@ -63,6 +63,11 @@ Contributors/Copyright:
 #define FOAM_SYMMTENSOR_WORKAROUND
 #endif
 
+// in 1.6-ext nextRelease a different Macro is used for the creation of certain patch types
+#ifdef FOAM_DEV
+#define FOAM_USE_MAKE_TEMPLATE_PATCH_TYPE
+#endif
+
 // Certain OpenFOAM-versions don't have all tensor operations defined
 #if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
 #define FOAM_INCOMPLETE_OPERATORS
