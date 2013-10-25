@@ -1,0 +1,8 @@
+[Basic]
+publish = port_2.0.x_release
+develop = port_2.0.x
+feature = feature/
+release = release/
+hotfix = hotfix/
+version_tag = 
+
