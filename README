@@ -2244,6 +2244,9 @@ S_{expl} + S_{impl} T
      which is used in every time a dictionary is involved
 **** Gravity not correctly passed in =evolveXXCloud=
      Passed a value where a reference would have been needed. Fixed
+**** =writeOften= writes all the time
+     Reason for this was a change of the interface of =outputTime= not
+     being propagated to this function-object. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
