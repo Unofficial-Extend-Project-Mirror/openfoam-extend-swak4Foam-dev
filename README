@@ -679,7 +679,7 @@ S_{expl} + S_{impl} T
 *** Distributed bug-tracking
     As an experimental feature distributed bug-tracking was introduced
     using the /Artemis/-extension for /Mercurial/ (see
-    =http://hg.mrzv.org/Artemis/=). An up-to-date version can be
+    [[http://hg.mrzv.org/Artemis/]]). An up-to-date version can be
     installed by
 : hg clone http://hg.mrzv.org/Artemis/
     somewhere and installing the plugin by editing =.hgrc=.
@@ -688,6 +688,17 @@ S_{expl} + S_{impl} T
     for keeping track of new features that are to be introduced to
     =swak4Foam= and may be discontinued if the experiment proves to be
     unsuccessful.
+*** Maintaining feature and hotfix-branches
+    The repository comes with a =.hgflow=-file that is set for the
+    =hgflow=-extension found at
+    [[https://bitbucket.org/yujiewu/hgflow/wiki/Home]] (there are multiple
+    branches of this extension. This *seems* to be the most up-to date
+    and still under active development)
+
+    The two main lines (=1.x= and =2.x=) have slightly different names
+    for the =master= and the =dvelopment=-branch. But apart from that
+    in the future this repository will try to stick to the model
+    described in [[http://nvie.com/posts/a-successful-git-branching-model/]]
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the
