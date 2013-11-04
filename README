@@ -2242,3 +2242,7 @@ S_{expl} + S_{impl} T
 
      Also in the =fvcSchemes=-plugin functions the set of
      =laplacian=-operators was completed
+**** Function object =swakExpression= now has optional =mask=
+     If the logical expression =mask= is set then only the results
+     from =expression= for which =mask= is =true= are used for
+     accumulations
