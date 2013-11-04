@@ -49,6 +49,7 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     CommonValueExpressionDriver &driver
 ):
     data_(data),
+    mask_(data_.size(),true),
     isPoint_(isPoint),
     driver_(driver),
     hasWeightSum_(false),
@@ -63,6 +64,38 @@ AccumulationCalculation<Type>::AccumulationCalculation(
 {
 }
 
+template <typename Type>
+AccumulationCalculation<Type>::AccumulationCalculation(
+    const Field<Type> &data,
+    bool isPoint,
+    CommonValueExpressionDriver &driver,
+    const Field<bool> &mask
+):
+    data_(data),
+    mask_(mask),
+    isPoint_(isPoint),
+    driver_(driver),
+    hasWeightSum_(false),
+    hasSize_(false),
+    hasMaximum_(false),
+    hasMinimum_(false),
+    hasAverage_(false),
+    hasWeightedAverage_(false),
+    hasSum_(false),
+    hasWeightedSum_(false),
+    hasSumMag_(false)
+{
+    if(data_.size()!=mask_.size()) {
+        FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
+            << "Sizes of data " << data_.size()
+                << " and specified maks " << mask_.size()
+                << " differ"
+                << endl
+                << exit(FatalError);
+
+    }
+}
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template <typename Type>
@@ -74,19 +107,71 @@ AccumulationCalculation<Type>::~AccumulationCalculation()
 
 
 template <typename Type>
+label AccumulationCalculation<Type>::maskSize() const
+{
+    label size=0;
+    forAll(mask_,i) {
+        if(mask_[i]) {
+            size++;
+        }
+    }
+    return size;
+}
+
+template <typename Type>
 const scalarField &AccumulationCalculation<Type>::weights()
 {
     if(!weights_.valid()) {
-        weights_.set(
-            new scalarField(
-                driver_.weights(
-                    data_.size(),
-                    isPoint_
-                )
+        scalarField rawWeight(
+            driver_.weights(
+                data_.size(),
+                isPoint_
             )
         );
+
+        weights_.set(
+            new scalarField(
+                maskSize(),
+                0
+            )
+        );
+
+        label cnt=0;
+        forAll(mask_,i) {
+            if(mask_[i]) {
+                weights_()[cnt]=rawWeight[i];
+                cnt++;
+            }
+        }
+
+        assert(cnt==maskSize());
     }
     return weights_();
+}
+
+template <typename Type>
+const Field<Type> &AccumulationCalculation<Type>::data()
+{
+    if(!usedData_.valid()) {
+        usedData_.set(
+            new Field<Type>(
+                maskSize(),
+                pTraits<Type>::zero
+            )
+        );
+
+        label cnt=0;
+        forAll(mask_,i) {
+            if(mask_[i]) {
+                usedData_()[cnt]=data_[i];
+                cnt++;
+            }
+        }
+
+        assert(cnt==maskSize());
+     }
+
+    return usedData_();
 }
 
 template <typename Type>
@@ -100,9 +185,9 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::distribution()
                 numberOfBins
             )
         );
-        Field<scalar> oneWeight(data_.size(),1);
+        Field<scalar> oneWeight(data().size(),1);
         distribution_().calcScalarWeight(
-            data_,
+            data(),
             oneWeight
         );
     }
@@ -122,7 +207,7 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::weightedDistribut
             )
         );
         weightedDistribution_().calcScalarWeight(
-            data_,
+            data(),
             this->weights()
         );
     }
@@ -144,7 +229,7 @@ template <typename Type>
 label AccumulationCalculation<Type>::size()
 {
     if(!hasSize_) {
-        size_=data_.size();
+        size_=data().size();
         reduce(size_,plusOp<label>());
         hasSize_=true;
     }
@@ -155,7 +240,7 @@ template <typename Type>
 Type AccumulationCalculation<Type>::maximum()
 {
     if(!hasMaximum_) {
-        maximum_=gMax(data_);
+        maximum_=gMax(data());
         hasMaximum_=true;
     }
     return maximum_;
@@ -165,7 +250,7 @@ template <typename Type>
 Type AccumulationCalculation<Type>::minimum()
 {
     if(!hasMinimum_) {
-        minimum_=gMin(data_);
+        minimum_=gMin(data());
         hasMinimum_=true;
     }
     return minimum_;
@@ -175,7 +260,7 @@ template <typename Type>
 Type AccumulationCalculation<Type>::average()
 {
     if(!hasAverage_) {
-        average_=gAverage(data_);
+        average_=gAverage(data());
         hasAverage_=true;
     }
     return average_;
@@ -186,7 +271,7 @@ Type AccumulationCalculation<Type>::weightedAverage()
 {
     if(!hasWeightedAverage_) {
         const scalar wSum=gSum(weights());
-        const Type tSum=gSum(weights()*data_);
+        const Type tSum=gSum(weights()*data());
 
         weightedAverage_=tSum/wSum;
         hasWeightedAverage_=true;
@@ -198,7 +283,7 @@ template <typename Type>
 Type AccumulationCalculation<Type>::sum()
 {
     if(!hasSum_) {
-        sum_=gSum(data_);
+        sum_=gSum(data());
         hasSum_=true;
     }
     return sum_;
@@ -208,7 +293,7 @@ template <typename Type>
 Type AccumulationCalculation<Type>::weightedSum()
 {
     if(!hasWeightedSum_) {
-        weightedSum_=gSum(data_*weights());
+        weightedSum_=gSum(data()*weights());
         hasWeightedSum_=true;
     }
     return weightedSum_;
@@ -219,7 +304,7 @@ Type AccumulationCalculation<Type>::sumMag()
 {
     if(!hasSumMag_) {
         for(direction i=0;i<pTraits<Type>::nComponents;i++) {
-            setComponent(sumMag_,i)=gSumMag(data_.component(i));
+            setComponent(sumMag_,i)=gSumMag(data().component(i));
         }
         hasSumMag_=true;
     }

@@ -1230,6 +1230,27 @@ functions
         fieldName testLineMaximum;
         expression "setValueMaximumVector(fromMinToMax,pos())";
     }
+    calcUZWhole {
+        type swakExpression;
+        valueType internalField;
+        expression "U.z";
+        verbose true;
+        accumulations (
+            size
+            weightSum
+            min
+            max
+            weightedMedian
+            median
+            weightedAverage
+            average
+        );
+    }
+    calcUZHalf {
+        $calcUZWhole;
+
+        mask "pos().z>0";
+    }
 };
 
 libs (

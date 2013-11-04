@@ -57,11 +57,72 @@ void swakExpressionFunctionObject::writeTheData(
 {
     Field<T> result=driver.getResult<T>();
 
-    AccumulationCalculation<T> calculator(
-        result,
-        driver.result().isPoint(),
-        driver
-    );
+    autoPtr<AccumulationCalculation<T> > pCalculator;
+
+    if(maskExpression_=="") {
+        pCalculator.set(
+            new AccumulationCalculation<T>(
+                result,
+                driver.result().isPoint(),
+                driver
+            )
+        );
+    } else {
+        bool isPoint=driver.result().isPoint();
+
+        driver.parse(maskExpression_);
+
+        autoPtr<Field<bool> > maskValues;
+        if(
+            driver.CommonValueExpressionDriver::getResultType()
+            ==
+            pTraits<bool>::typeName
+        ) {
+            maskValues.reset(
+                driver.getResult<bool>().ptr()
+            );
+        } else if(
+            driver.CommonValueExpressionDriver::getResultType()
+            ==
+            pTraits<scalar>::typeName
+        ) {
+            scalarField rawMask=driver.getResult<scalar>();
+            maskValues.reset(
+                new Field<bool>(rawMask.size(),false)
+            );
+            forAll(rawMask,i) {
+                if(rawMask[i]>SMALL) {
+                    maskValues()[i]=true;
+                }
+            }
+        } else {
+            FatalErrorIn("swakExpressionFunctionObject::writeTheData")
+                << "Don't know how to handle logical expressions of type "
+                    << driver.CommonValueExpressionDriver::getResultType()
+                    << " from " << maskExpression_
+                    << endl
+                    << exit(FatalError);
+        }
+        if(maskValues().size()!=result.size()) {
+            FatalErrorIn("swakExpressionFunctionObject::writeTheData")
+                << "Size of mask " << maskExpression_ << " not equal to "
+                    << expression_ << " (" << maskValues().size() << " vs "
+                    << result.size() << ")"
+                    << endl
+                    << exit(FatalError);
+        }
+
+        pCalculator.set(
+            new AccumulationCalculation<T>(
+                result,
+                isPoint,
+                driver,
+                maskValues
+            )
+        );
+    }
+
+    AccumulationCalculation<T> &calculator=pCalculator();
 
     Field<T> results(accumulations_.size());
 
