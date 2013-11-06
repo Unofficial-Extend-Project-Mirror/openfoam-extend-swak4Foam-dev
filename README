@@ -679,7 +679,7 @@ S_{expl} + S_{impl} T
 *** Distributed bug-tracking
     As an experimental feature distributed bug-tracking was introduced
     using the /Artemis/-extension for /Mercurial/ (see
-    =http://hg.mrzv.org/Artemis/=). An up-to-date version can be
+    [[http://hg.mrzv.org/Artemis/]]). An up-to-date version can be
     installed by
 : hg clone http://hg.mrzv.org/Artemis/
     somewhere and installing the plugin by editing =.hgrc=.
@@ -688,6 +688,17 @@ S_{expl} + S_{impl} T
     for keeping track of new features that are to be introduced to
     =swak4Foam= and may be discontinued if the experiment proves to be
     unsuccessful.
+*** Maintaining feature and hotfix-branches
+    The repository comes with a =.hgflow=-file that is set for the
+    =hgflow=-extension found at
+    [[https://bitbucket.org/yujiewu/hgflow/wiki/Home]] (there are multiple
+    branches of this extension. This *seems* to be the most up-to date
+    and still under active development)
+
+    The two main lines (=1.x= and =2.x=) have slightly different names
+    for the =master= and the =dvelopment=-branch. But apart from that
+    in the future this repository will try to stick to the model
+    described in [[http://nvie.com/posts/a-successful-git-branching-model/]]
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the
@@ -1996,6 +2007,12 @@ S_{expl} + S_{impl} T
                  executed. The nearest possible timestep is used
      - outputTime :: Executed whenever a regular output is scheduled
 ** Next release - version number : 0.2.5
+*** Incompatibilities to previous versions
+**** Support of /old/ =1.6-ext= lost
+     Due to certain differences this version only compiles with the
+     =nextRelease=-branch of 1.6-ext (from the =git=).Usually the
+     failing parts can be fixed b commenting out the appropriate
+     =#define= in =Libraries/swak4FoamParsers/include/swak.H=.
 *** Infrastructure
 **** Make error messages in =Allwmake= more verbose
      The error messages where already quite verbose. But people
@@ -2198,3 +2215,19 @@ S_{expl} + S_{impl} T
      options =writeDistributions= and =writeCsv=. Either
      - from the command line: this switches it on for *all* evaluations
      - one "per dictionary"-basis for each evaluation separately
+**** PDE-functionObjects now relax their equations
+     The PDE-functionObjects now honor the =relaxationFactors. If
+     =steady= is =false= then relaxation has to be switched on using
+     =relaxUnsteady=. For the last corrector iteration the equation
+     is not relaxed unless the parameter =relaxLastIteration= is set.
+**** Full set of =laplacian=-operations in =internalField=-parser
+     The support of =laplacian= operations (especially with a
+     coefficient that is different from a scalar) was incomplete. Now
+     all possible coefficient types are supported.
+
+     Also in the =fvcSchemes=-plugin functions the set of
+     =laplacian=-operators was completed
+**** Function object =swakExpression= now has optional =mask=
+     If the logical expression =mask= is set then only the results
+     from =expression= for which =mask= is =true= are used for
+     accumulations

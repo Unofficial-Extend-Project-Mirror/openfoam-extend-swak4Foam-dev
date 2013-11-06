@@ -1021,6 +1021,27 @@ namespace Foam {
                     Pout << "Found " << name << " in memory" << endl;
                 }
                 return true;
+            } else if(debug) {
+                Info << "No " << name << " of type " << T::typeName
+                    << " found in memory";
+                if(this->mesh().foundObject<IOobject>(name)) {
+                    Info<< " but of type "
+                        << this->mesh().lookupObject<IOobject>(name).headerClassName();
+                    if(
+                        this->mesh().lookupObject<IOobject>(name).headerClassName()
+                        ==
+                        T::typeName
+                    ) {
+                        // Info. This actually happens with clang 3.3
+                        Info << " - strange. Type names are the same";
+                        Info<< " Type fits: " << isA<T>(
+                            this->mesh().lookupObject<IOobject>(name)
+                        );
+                        // this should fail
+                        const T &f=this->mesh().lookupObject<T>(name);
+                    }
+                }
+                Info << endl;
             }
         }
 

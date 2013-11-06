@@ -1,8 +1,8 @@
-[Basic]
+[branchname]
 develop = develop
 feature = feature/
-version_tag = 
-publish = default
+version_tag =
+master = default
 release = release/
 hotfix = hotfix/
-
+support = support/

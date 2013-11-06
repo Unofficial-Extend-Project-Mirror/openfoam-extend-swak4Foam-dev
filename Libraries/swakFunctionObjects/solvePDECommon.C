@@ -61,7 +61,10 @@ Foam::solvePDECommon::solvePDECommon
 ):
     active_(true),
     obr_(obr),
-    name_(name)
+    name_(name),
+    steady_(false),
+    relaxUnsteady_(false),
+    relaxLastIteration_(false)
 {
     if (!isA<polyMesh>(obr))
     {
@@ -74,6 +77,14 @@ Foam::solvePDECommon::solvePDECommon
 
 Foam::solvePDECommon::~solvePDECommon()
 {}
+
+bool Foam::solvePDECommon::doRelax(bool last)
+{
+    return
+        (steady_ || relaxUnsteady_)
+        &&
+        (!last || relaxLastIteration_);
+}
 
 void Foam::solvePDECommon::read(const dictionary& dict)
 {
@@ -88,7 +99,31 @@ void Foam::solvePDECommon::read(const dictionary& dict)
         fieldName_=word(dict.lookup("fieldName"));
 
         steady_=readBool(dict.lookup("steady"));
-
+        if(steady_) {
+            relaxUnsteady_=false;
+        } else {
+            if(dict.found("relaxUnsteady")) {
+                relaxUnsteady_=readBool(dict.lookup("relaxUnsteady"));
+            } else {
+                WarningIn("solvePDECommon::read(const dictionary& dict)")
+                    << "If you want the unsteady run to use relaxation set "
+                        << "'relaxUnsteady true;' in " << dict.name()
+                        << endl;
+                relaxUnsteady_=false;
+            }
+        }
+        if(steady_ || relaxUnsteady_) {
+            if(dict.found("relaxLastIteration")) {
+                relaxLastIteration_=readBool(dict.lookup("relaxLastIteration"));
+            } else {
+                WarningIn("solvePDECommon::read(const dictionary& dict)")
+                    << "If in case of relaxation you want to relax the last "
+                        << "iteration as well set "
+                        << "'relaxLastIteration true;' in " << dict.name()
+                        << endl;
+                relaxLastIteration_=false;
+            }
+        }
         writeBeforeAfter_=dict.lookupOrDefault<bool>("writeBeforeAfter",false);
     }
 }
