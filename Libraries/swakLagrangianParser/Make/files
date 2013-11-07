@@ -8,4 +8,6 @@ CloudProxy.C
 
 makeCloudProxys.C
 
+ReaderParticle/ReaderParticleCloud.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakLagrangianParser
