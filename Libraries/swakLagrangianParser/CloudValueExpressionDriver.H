@@ -90,6 +90,11 @@ class CloudValueExpressionDriver
     //- the actual class dealing with the particle cloud
     autoPtr<CloudProxy> proxy_;
 
+    static const cloud& getCloud(
+        const dictionary &dict,
+        const fvMesh &mesh
+    );
+
     //- the interpolation schemes
     dictionary interpolationSchemes_;
 

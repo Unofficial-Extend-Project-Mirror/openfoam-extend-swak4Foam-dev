@@ -37,13 +37,10 @@ Contributors/Copyright:
 #include "CloudValueExpressionDriver.H"
 #include "CloudValuePluginFunction.H"
 #include "CloudProxy.H"
+#include "CloudRepository.H"
+#include "ReaderParticleCloud.H"
 
 #include "addToRunTimeSelectionTable.H"
-
-#include "Random.H"
-
-// #include "BasicReactingCloud.H"
-// #include "solidParticleCloud.H"
 
 namespace Foam {
 
@@ -75,8 +72,9 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
 :
     CommonValueExpressionDriver(dict),
     cloud_(
-        mesh.lookupObject<cloud>(
-            word(dict.lookup("cloudName"))
+        getCloud(
+            dict,
+            mesh
         )
     ),
     proxy_(
@@ -108,6 +106,47 @@ CloudValueExpressionDriver::~CloudValueExpressionDriver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+const cloud& CloudValueExpressionDriver::getCloud(
+    const dictionary &dict,
+    const fvMesh &mesh
+) {
+    const word name(dict.lookup("cloudName"));
+    if(!mesh.foundObject<cloud>(name)) {
+        IOobject reg
+        (
+            name,
+            mesh.time().timeName(),
+            cloud::prefix,
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        );
+        if(! exists(reg.objectPath() )) {
+            WarningIn("CloudValueExpressionDriver::getCloud")
+                << "No cloud " << name << " in " << mesh.name()
+                    << " and directory " << reg.objectPath()
+                    << " does not exist. Going on anyway"
+                    << endl;
+        }
+
+        autoPtr<cloud> theCloud(
+            new ReaderParticleCloud(
+                mesh,
+                name
+            )
+        );
+
+        CloudRepository::getRepository(mesh).addCloud(
+            theCloud
+        );
+    }
+
+    return mesh.lookupObject<cloud>(
+        name
+    );
+}
+
 
 void CloudValueExpressionDriver::parseInternal (int startToken)
 {

@@ -37,8 +37,9 @@ SourceFiles
     ReaderParticleCloud.C
 
 Contributors/Copyright:
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- ICE Revision: $Id:  $
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef ReaderParticleCloud_H
@@ -72,7 +73,7 @@ class ReaderParticleCloud
 public:
 
     //- Type of parcel the cloud was instantiated for
-    typedef ReaderParticle parcelType;
+    typedef ReaderParticle particleType;
 
     // Constructors
 
@@ -80,17 +81,17 @@ public:
         ReaderParticleCloud
         (
             const polyMesh&,
-            const word& cloudName = "defaultCloud",
+            const word& cloudName,
             bool readFields = true
         );
 
-        //- Construct from mesh, cloud name, and a list of particles
-        ReaderParticleCloud
-        (
-            const polyMesh& mesh,
-            const word& cloudName,
-            const IDLList<ReaderParticle>& particles
-        );
+        // //- Construct from mesh, cloud name, and a list of particles
+        // ReaderParticleCloud
+        // (
+        //     const polyMesh& mesh,
+        //     const word& cloudName,
+        //     const IDLList<ReaderParticle>& particles
+        // );
 };
 
 

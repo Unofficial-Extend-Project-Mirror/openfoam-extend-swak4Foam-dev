@@ -8,16 +8,16 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is based on OpenFOAM.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    OpenFOAM is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
 
     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -25,27 +25,30 @@ License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with OpenFOAM; if not, write to the Free Software Foundation,
+    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::ReaderParticle
+    Foam::CloudsRepository
 
 Description
+    Store clouds that nobody else wants
 
 SourceFiles
+    CloudRepository.C
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef ReaderParticle_H
-#define ReaderParticle_H
+#ifndef CloudRepository_H
+#define CloudRepository_H
 
-#include "Particle.H"
-#include "IOstream.H"
-#include "autoPtr.H"
+#include "PtrMap.H"
+#include "cloud.H"
+#include "objectRegistry.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,57 +56,52 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class ReaderParticle Declaration
+                           Class CloudRepository Declaration
 \*---------------------------------------------------------------------------*/
 
-class ReaderParticle
+class CloudRepository
 :
-    public Particle<ReaderParticle>
+    public regIOobject
 {
+    // Private data
+
+    //- the actual sets
+    HashPtrTable<cloud,word> clouds_;
+
+   // Constructors
+
+    //- Construct null
+    CloudRepository(const IOobject &);
+
+    //- The only instance of this repository
+    static CloudRepository *repositoryInstance;
 
 public:
+     //- Runtime type information
+    TypeName("CloudRepository");
 
-    // Constructors
+    //- Destructor
 
-        //- Construct from components
-        ReaderParticle
-        (
-            const Cloud<ReaderParticle>& c,
-            const vector& position,
-            const label celli
-        )
-        :
-            Particle<ReaderParticle>(c, position, celli)
-        {}
+    virtual ~CloudRepository();
 
-        //- Construct from Istream
-        ReaderParticle
-        (
-            const Cloud<ReaderParticle>& c,
-            Istream& is,
-            bool readFields = true
-        )
-        :
-            Particle<ReaderParticle>(c, is, readFields)
-        {}
+    //- Get the Singleton of this class
+    static CloudRepository &getRepository(const objectRegistry &mesh);
 
-        //- Construct as copy
-        ReaderParticle(const ReaderParticle& p)
-        :
-            Particle<ReaderParticle>(p)
-        {}
+    void addCloud(
+        autoPtr<cloud> c
+    );
 
-        //- Construct and return a clone
-        autoPtr<ReaderParticle> clone() const
-        {
-            return autoPtr<ReaderParticle>(new ReaderParticle(*this));
-        }
+    //- Make sure that this class is not abstract. Write sets
+    bool writeData(Ostream &) const;
+
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

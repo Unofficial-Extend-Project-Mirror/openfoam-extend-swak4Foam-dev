@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -27,53 +27,74 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Class
+    Foam::CloudProxyForReaderParticle
+
+Description
+
+SourceFiles
+    CloudProxyForReaderParticle.C
+
 Contributors/Copyright:
     2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#ifndef CloudProxyForReaderParticle_H
+#define CloudProxyForReaderParticle_H
+
+#include "CloudProxyForParticle.H"
+
 #include "ReaderParticleCloud.H"
+
+#include "HashPtrTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+/*---------------------------------------------------------------------------*\
+                       Class CloudProxyForReaderParticle Declaration
+\*---------------------------------------------------------------------------*/
 
-defineParticleTypeNameAndDebug(ReaderParticle, 0);
-defineTemplateTypeNameAndDebug(Cloud<ReaderParticle>, 0);
+class CloudProxyForReaderParticle
+:
+    public CloudProxyForParticle<ReaderParticleCloud>
+{
+    //- Disallow default bitwise assignment
+    void operator=(const CloudProxyForReaderParticle&);
+
+    //- Disallow copy construct
+    CloudProxyForReaderParticle(const CloudProxyForReaderParticle &);
+
+public:
+    TypeName("CloudProxyForReaderParticle");
+
+    // Constructors
+
+    //- Construct from components
+    CloudProxyForReaderParticle
+    (
+        const cloud &
+    );
+
+    // Destructor
+
+    virtual ~CloudProxyForReaderParticle();
 
 };
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::ReaderParticleCloud::ReaderParticleCloud
-(
-    const polyMesh& mesh,
-    const word& cloudName,
-    bool readFields
-)
-:
-    Cloud<ReaderParticle>(mesh, cloudName, false)
-{
-    if (readFields)
-    {
-        ReaderParticle::readFields(*this);
-    }
-}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+} // End namespace Foam
 
-// Foam::ReaderParticleCloud::ReaderParticleCloud
-// (
-//     const polyMesh& mesh,
-//     const word& cloudName,
-//     const IDLList<ReaderParticle>& particles
-// )
-// :
-//     Cloud<ReaderParticle>(mesh, cloudName, particles)
-// {}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //
