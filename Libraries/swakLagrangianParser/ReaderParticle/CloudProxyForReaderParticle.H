@@ -69,6 +69,11 @@ class CloudProxyForReaderParticle
     //- Disallow copy construct
     CloudProxyForReaderParticle(const CloudProxyForReaderParticle &);
 
+    const ReaderParticleCloud &readerCloud_;
+
+    template <typename T>
+    void internalAddFields(const wordList &);
+
 public:
     TypeName("CloudProxyForReaderParticle");
 
@@ -84,6 +89,10 @@ public:
 
     virtual ~CloudProxyForReaderParticle();
 
+    virtual tmp<Field<scalar> > getScalarField(
+        const word &name
+    ) const;
+
 };
 
 
@@ -92,6 +101,10 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "CloudProxyForReaderParticleI.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -69,6 +69,18 @@ class ReaderParticleCloud
         //- Disallow default bitwise assignment
         void operator=(const ReaderParticleCloud&);
 
+    HashTable<Field<scalar>,word> scalarData_;
+
+    template <typename T>
+    void addDataInternal(
+        const word &name,
+        const Field<T> &inData,
+        HashTable<Field<T>,word> &data
+    );
+
+protected:
+
+    void addScalarField(const word &name);
 
 public:
 
@@ -85,13 +97,16 @@ public:
             bool readFields = true
         );
 
-        // //- Construct from mesh, cloud name, and a list of particles
-        // ReaderParticleCloud
-        // (
-        //     const polyMesh& mesh,
-        //     const word& cloudName,
-        //     const IDLList<ReaderParticle>& particles
-        // );
+    friend class ReaderParticle;
+
+    wordList getScalarFieldNames() const { return scalarData_.toc(); }
+
+    const Field<scalar> &getScalarField(const word &name) const
+        { return scalarData_[name]; }
+
+    bool hasScalar(const word &name) const
+        { return scalarData_.found(name); }
+
 };
 
 
@@ -100,6 +115,10 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "ReaderParticleCloudI.H"
+#endif
 
 #endif
 

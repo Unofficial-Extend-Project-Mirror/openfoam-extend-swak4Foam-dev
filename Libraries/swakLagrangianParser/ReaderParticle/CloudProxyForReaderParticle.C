@@ -56,9 +56,12 @@ CloudProxyForReaderParticle::CloudProxyForReaderParticle
     const cloud& c
 )
 :
-    CloudProxyForParticle<ReaderParticleCloud>(c)
+    CloudProxyForParticle<ReaderParticleCloud>(c),
+    readerCloud_(
+        dynamicCast<const ReaderParticleCloud&>(c)
+    )
 {
-    typedef CloudProxyForParticle<ReaderParticle> baseType;
+    internalAddFields<scalar>(readerCloud_.getScalarFieldNames());
 }
 
 
@@ -68,6 +71,19 @@ CloudProxyForReaderParticle::~CloudProxyForReaderParticle()
 {}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+tmp<Field<scalar> > CloudProxyForReaderParticle::getScalarField(
+    const word &name
+) const
+{
+    if(readerCloud_.hasScalar(name)) {
+        return tmp<Field<scalar> >(
+            new Field<scalar>(readerCloud_.getScalarField(name))
+        );
+    }
+
+    return CloudProxyForParticle<ReaderParticleCloud>::getScalarField(name);
+}
 
 CloudProxy::addcloudConstructorToTable< CloudProxyForReaderParticle > add_lookup_CloudProxyForReaderParticlecloudConstructorToCloudProxyTable_("Cloud<ReaderParticle>");
 

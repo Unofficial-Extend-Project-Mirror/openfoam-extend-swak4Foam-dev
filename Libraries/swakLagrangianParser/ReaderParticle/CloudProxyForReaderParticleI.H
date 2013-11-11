@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2010 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -28,51 +28,30 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "ReaderParticleCloud.H"
+#include "CloudProxyForReaderParticle.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-defineParticleTypeNameAndDebug(ReaderParticle, 0);
-defineTemplateTypeNameAndDebug(Cloud<ReaderParticle>, 0);
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-ReaderParticleCloud::ReaderParticleCloud
-(
-    const polyMesh& mesh,
-    const word& cloudName,
-    bool readFields
-)
-:
-    Cloud<ReaderParticle>(mesh, cloudName, false)
+template <typename T>
+void CloudProxyForReaderParticle::internalAddFields(const wordList &names)
 {
-    if (readFields)
+    forAll(names,i)
     {
-        ReaderParticle::readFields(*this);
+	this->addField<T>(
+            names[i],
+            "Read from disk"
+        );
     }
 }
 
-void ReaderParticleCloud::addScalarField(const word &name)
-{
-    IOField<scalar> data(this->fieldIOobject(name,IOobject::MUST_READ));
-    this->checkFieldIOobject(*this,data);
-    addDataInternal(
-        name,
-        data,
-        scalarData_
-    );
-}
-
-};
+} // namespace end
 
 // ************************************************************************* //
