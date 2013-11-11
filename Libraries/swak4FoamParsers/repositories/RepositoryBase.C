@@ -34,99 +34,45 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "CloudRepository.H"
-#include "writer.H"
-
-#include "polyMesh.H"
-#include "meshSearch.H"
+#include "RepositoryBase.H"
 
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(CloudRepository, 0);
+defineTypeNameAndDebug(RepositoryBase, 0);
 
-CloudRepository *CloudRepository::repositoryInstance(NULL);
+DynamicList<RepositoryBase *> RepositoryBase::allRepos_;
 
-CloudRepository::CloudRepository(const IOobject &o)
+RepositoryBase::RepositoryBase(const IOobject &o)
     :
-    RepositoryBase(o)
+    regIOobject(o)
 {
+    Dbug << "Adding Repo " << getHex(this) << " to global chain" << endl;
+
+    allRepos_.append(this);
+    allRepos_.shrink();
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-CloudRepository::~CloudRepository()
+RepositoryBase::~RepositoryBase()
 {
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-CloudRepository &CloudRepository::getRepository(const objectRegistry &obr)
+void RepositoryBase::updateRepos()
 {
-    CloudRepository*  ptr=repositoryInstance;
+    Sbug << "Updating all repositories" << endl;
 
-    if(debug) {
-        Pout << "CloudRepository: asking for Singleton" << endl;
+    typedef DynamicList<RepositoryBase *> repoList;
+
+    forAllIter(repoList,allRepos_,it)
+    {
+	(*it)->updateRepo();
     }
-
-    if(ptr==NULL) {
-        Pout << "swak4Foam: Allocating new repository for sampledSets\n";
-
-        ptr=new CloudRepository(
-            IOobject(
-                "swakClouds",
-                obr.time().timeName(),
-                "cloudRepository",
-                obr.time(),
-                IOobject::NO_READ,
-                IOobject::AUTO_WRITE
-            )
-        );
-    }
-
-    repositoryInstance=ptr;
-
-    return *repositoryInstance;
-}
-
-bool CloudRepository::writeData(Ostream &f) const
-{
-    if(debug) {
-        Info << "CloudRepository::write()" << endl;
-    }
-
-    f << clouds_.toc();
-
-    return true;
-}
-
-void CloudRepository::addCloud(
-    autoPtr<cloud> c
-) {
-    const word &name=c->name();
-
-    if(clouds_.found(name)) {
-        WarningIn("CloudRepository::addCloud")
-            << "Repository of clouds already has an entry "
-                << name <<". Overwriting. Expect strange behaviour"
-                << endl;
-        clouds_.set(
-            name,
-            c.ptr()
-        );
-    } else {
-        clouds_.insert(
-            name,
-            c.ptr()
-        );
-    }
-}
-
-void CloudRepository::updateRepo()
-{
-    clouds_.clear();
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

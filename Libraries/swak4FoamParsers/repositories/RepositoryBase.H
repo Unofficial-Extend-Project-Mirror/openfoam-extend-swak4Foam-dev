@@ -29,14 +29,14 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::SetsRepository
+    Foam::RepositoryBase
 
 Description
+    Base for the repositories. Manly here to generate a list so that
+    all repositories can be updated in one go
 
 SourceFiles
-    SetsRepositoryI.H
-    SetsRepository.C
-    SetsRepositoryIO.C
+    RepositoryBase.C
 
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,12 +44,13 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SetsRepository_H
-#define SetsRepository_H
+#ifndef RepositoryBase_H
+#define RepositoryBase_H
 
-#include "PtrMap.H"
-#include "sampledSet.H"
-#include "RepositoryBase.H"
+#include "DynamicList.H"
+#include "objectRegistry.H"
+
+#include "DebugOStream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,64 +58,39 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class SetsRepository Declaration
+                           Class RepositoryBase Declaration
 \*---------------------------------------------------------------------------*/
 
-class SetsRepository
+class RepositoryBase
 :
-    public RepositoryBase
+    public regIOobject
 {
     // Private data
 
-    //- the actual sets
-    HashPtrTable<sampledSet,word> sets_;
-
-    //- names of the formats to be written
-    HashTable<word,word> formatNames_;
-
-    HashPtrTable<meshSearch,word> meshSearches_;
-
     // Constructors
 
+    //- List of the repositories
+    static DynamicList<RepositoryBase *> allRepos_;
+
+protected:
+
     //- Construct null
-    SetsRepository(const IOobject &);
-
-    //- The only instance of this repository
-    static SetsRepository *repositoryInstance;
-
-    //- get a meshSearch using the mesh (construct new if missing)
-    meshSearch &getSearch(
-        const polyMesh &mesh
-    );
+    RepositoryBase(const IOobject &);
 
 public:
      //- Runtime type information
-    TypeName("SetsRepository");
+    TypeName("RepositoryBase");
 
     //- Destructor
 
-    virtual ~SetsRepository();
+    virtual ~RepositoryBase();
 
-    //- Get the Singleton of this class
-    static SetsRepository &getRepository(const objectRegistry &mesh);
+    //- Update all the repositories
+    static void updateRepos();
 
-    //- get a set using a dictionary (set will be constructed if not existing)
-    sampledSet &getSet(
-        const dictionary &dict,
-        const polyMesh &mesh
-    );
+    //- method to update this repo for a new timestep
+    virtual void updateRepo() = 0;
 
-    //- get a set using its name (set must exist)
-    sampledSet &getSet(
-        const word &name,
-        const polyMesh &mesh
-    );
-
-    //- Make sure that this class is not abstract. Write sets
-    bool writeData(Ostream &) const;
-
-    //- update repo at the start of a time-step
-    void updateRepo();
 };
 
 

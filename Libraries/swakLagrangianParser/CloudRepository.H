@@ -48,7 +48,7 @@ Contributors/Copyright:
 
 #include "PtrMap.H"
 #include "cloud.H"
-#include "objectRegistry.H"
+#include "RepositoryBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,7 +61,7 @@ namespace Foam
 
 class CloudRepository
 :
-    public regIOobject
+    public RepositoryBase
 {
     // Private data
 
@@ -93,6 +93,9 @@ public:
 
     //- Make sure that this class is not abstract. Write sets
     bool writeData(Ostream &) const;
+
+    //- update repo at the start of a time-step
+    void updateRepo();
 
 };
 
