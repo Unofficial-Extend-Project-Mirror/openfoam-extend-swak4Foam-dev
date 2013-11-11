@@ -81,6 +81,18 @@ void ReaderParticle::readFields (ReaderParticleCloud &c) {
 
             if(className=="scalarField") {
                 c.addScalarField(name);
+            } else if(className=="labelField") {
+                c.addLabelField(name);
+            } else if(className=="vectorField") {
+                c.addVectorField(name);
+            } else if(className=="tensorField") {
+                c.addTensorField(name);
+            } else if(className=="symmTensorField") {
+                c.addSymmTensorField(name);
+            } else if(className=="sphericalTensorField") {
+                c.addSphericalTensorField(name);
+            // } else if(className=="boolField") {
+            //     c.addBoolField(name);
             } else {
                 WarningIn("ReaderParticle::readFields")
                     << "File " << header.objectPath() << " has unknown type "

@@ -70,6 +70,11 @@ class ReaderParticleCloud
         void operator=(const ReaderParticleCloud&);
 
     HashTable<Field<scalar>,word> scalarData_;
+    HashTable<Field<vector>,word> vectorData_;
+    HashTable<Field<tensor>,word> tensorData_;
+    HashTable<Field<symmTensor>,word> symmTensorData_;
+    HashTable<Field<sphericalTensor>,word> sphericalTensorData_;
+    //    HashTable<Field<bool>,word> boolData_;
 
     template <typename T>
     void addDataInternal(
@@ -81,6 +86,12 @@ class ReaderParticleCloud
 protected:
 
     void addScalarField(const word &name);
+    void addLabelField(const word &name);
+    void addVectorField(const word &name);
+    void addTensorField(const word &name);
+    void addSymmTensorField(const word &name);
+    void addSphericalTensorField(const word &name);
+    //    void addBoolField(const word &name);
 
 public:
 
@@ -106,6 +117,46 @@ public:
 
     bool hasScalar(const word &name) const
         { return scalarData_.found(name); }
+
+    wordList getVectorFieldNames() const { return vectorData_.toc(); }
+
+    const Field<vector> &getVectorField(const word &name) const
+        { return vectorData_[name]; }
+
+    bool hasVector(const word &name) const
+        { return vectorData_.found(name); }
+
+    wordList getTensorFieldNames() const { return tensorData_.toc(); }
+
+    const Field<tensor> &getTensorField(const word &name) const
+        { return tensorData_[name]; }
+
+    bool hasTensor(const word &name) const
+        { return tensorData_.found(name); }
+
+    wordList getSymmTensorFieldNames() const { return symmTensorData_.toc(); }
+
+    const Field<symmTensor> &getSymmTensorField(const word &name) const
+        { return symmTensorData_[name]; }
+
+    bool hasSymmTensor(const word &name) const
+        { return symmTensorData_.found(name); }
+
+    wordList getSphericalTensorFieldNames() const { return sphericalTensorData_.toc(); }
+
+    const Field<sphericalTensor> &getSphericalTensorField(const word &name) const
+        { return sphericalTensorData_[name]; }
+
+    bool hasSphericalTensor(const word &name) const
+        { return sphericalTensorData_.found(name); }
+
+    // wordList getBoolFieldNames() const { return boolData_.toc(); }
+
+    // const Field<bool> &getBoolField(const word &name) const
+    //     { return boolData_[name]; }
+
+    // bool hasBool(const word &name) const
+    //     { return boolData_.found(name); }
 
 };
 

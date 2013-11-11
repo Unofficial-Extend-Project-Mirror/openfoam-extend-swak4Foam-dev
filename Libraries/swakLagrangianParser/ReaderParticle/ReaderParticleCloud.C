@@ -73,6 +73,76 @@ void ReaderParticleCloud::addScalarField(const word &name)
     );
 }
 
+void ReaderParticleCloud::addLabelField(const word &name)
+{
+    IOField<label> data(this->fieldIOobject(name,IOobject::MUST_READ));
+    this->checkFieldIOobject(*this,data);
+    scalarField actualData(data.size());
+    forAll(data,i) {
+        actualData[i]=data[i];
+    }
+    addDataInternal(
+        name,
+        actualData,
+        scalarData_
+    );
+}
+
+void ReaderParticleCloud::addVectorField(const word &name)
+{
+    IOField<vector> data(this->fieldIOobject(name,IOobject::MUST_READ));
+    this->checkFieldIOobject(*this,data);
+    addDataInternal(
+        name,
+        data,
+        vectorData_
+    );
+}
+
+void ReaderParticleCloud::addTensorField(const word &name)
+{
+    IOField<tensor> data(this->fieldIOobject(name,IOobject::MUST_READ));
+    this->checkFieldIOobject(*this,data);
+    addDataInternal(
+        name,
+        data,
+        tensorData_
+    );
+}
+
+void ReaderParticleCloud::addSymmTensorField(const word &name)
+{
+    IOField<symmTensor> data(this->fieldIOobject(name,IOobject::MUST_READ));
+    this->checkFieldIOobject(*this,data);
+    addDataInternal(
+        name,
+        data,
+        symmTensorData_
+    );
+}
+
+void ReaderParticleCloud::addSphericalTensorField(const word &name)
+{
+    IOField<sphericalTensor> data(this->fieldIOobject(name,IOobject::MUST_READ));
+    this->checkFieldIOobject(*this,data);
+    addDataInternal(
+        name,
+        data,
+        sphericalTensorData_
+    );
+}
+
+// void ReaderParticleCloud::addBoolField(const word &name)
+// {
+//     IOField<bool> data(this->fieldIOobject(name,IOobject::MUST_READ));
+//     this->checkFieldIOobject(*this,data);
+//     addDataInternal(
+//         name,
+//         data,
+//         boolData_
+//     );
+// }
+
 };
 
 // ************************************************************************* //

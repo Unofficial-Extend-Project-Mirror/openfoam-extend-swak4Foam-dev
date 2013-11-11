@@ -62,6 +62,10 @@ CloudProxyForReaderParticle::CloudProxyForReaderParticle
     )
 {
     internalAddFields<scalar>(readerCloud_.getScalarFieldNames());
+    internalAddFields<vector>(readerCloud_.getVectorFieldNames());
+    internalAddFields<tensor>(readerCloud_.getTensorFieldNames());
+    internalAddFields<symmTensor>(readerCloud_.getSymmTensorFieldNames());
+    internalAddFields<sphericalTensor>(readerCloud_.getSphericalTensorFieldNames());
 }
 
 
@@ -83,6 +87,58 @@ tmp<Field<scalar> > CloudProxyForReaderParticle::getScalarField(
     }
 
     return CloudProxyForParticle<ReaderParticleCloud>::getScalarField(name);
+}
+
+tmp<Field<vector> > CloudProxyForReaderParticle::getVectorField(
+    const word &name
+) const
+{
+    if(readerCloud_.hasVector(name)) {
+        return tmp<Field<vector> >(
+            new Field<vector>(readerCloud_.getVectorField(name))
+        );
+    }
+
+    return CloudProxyForParticle<ReaderParticleCloud>::getVectorField(name);
+}
+
+tmp<Field<tensor> > CloudProxyForReaderParticle::getTensorField(
+    const word &name
+) const
+{
+    if(readerCloud_.hasTensor(name)) {
+        return tmp<Field<tensor> >(
+            new Field<tensor>(readerCloud_.getTensorField(name))
+        );
+    }
+
+    return CloudProxyForParticle<ReaderParticleCloud>::getTensorField(name);
+}
+
+tmp<Field<symmTensor> > CloudProxyForReaderParticle::getSymmTensorField(
+    const word &name
+) const
+{
+    if(readerCloud_.hasSymmTensor(name)) {
+        return tmp<Field<symmTensor> >(
+            new Field<symmTensor>(readerCloud_.getSymmTensorField(name))
+        );
+    }
+
+    return CloudProxyForParticle<ReaderParticleCloud>::getSymmTensorField(name);
+}
+
+tmp<Field<sphericalTensor> > CloudProxyForReaderParticle::getSphericalTensorField(
+    const word &name
+) const
+{
+    if(readerCloud_.hasSphericalTensor(name)) {
+        return tmp<Field<sphericalTensor> >(
+            new Field<sphericalTensor>(readerCloud_.getSphericalTensorField(name))
+        );
+    }
+
+    return CloudProxyForParticle<ReaderParticleCloud>::getSphericalTensorField(name);
 }
 
 CloudProxy::addcloudConstructorToTable< CloudProxyForReaderParticle > add_lookup_CloudProxyForReaderParticlecloudConstructorToCloudProxyTable_("Cloud<ReaderParticle>");

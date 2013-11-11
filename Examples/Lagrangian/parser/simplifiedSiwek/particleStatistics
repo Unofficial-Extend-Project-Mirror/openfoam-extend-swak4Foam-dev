@@ -35,4 +35,9 @@ temperature {
     expression "T";
 }
 
+turbulenceDifference {
+    $positions;
+    expression "mag(U-UTurb)";
+}
+
 // ************************************************************************* //

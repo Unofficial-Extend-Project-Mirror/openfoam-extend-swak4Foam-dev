@@ -93,6 +93,26 @@ public:
         const word &name
     ) const;
 
+    virtual tmp<Field<vector> > getVectorField(
+        const word &name
+    ) const;
+
+    virtual tmp<Field<tensor> > getTensorField(
+        const word &name
+    ) const;
+
+    virtual tmp<Field<symmTensor> > getSymmTensorField(
+        const word &name
+    ) const;
+
+    virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
+        const word &name
+    ) const;
+
+    // virtual tmp<Field<bool> > getBoolField(
+    //     const word &name
+    // ) const;
+
 };
 
 
