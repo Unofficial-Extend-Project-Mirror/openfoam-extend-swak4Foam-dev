@@ -100,6 +100,11 @@ class CloudValueExpressionDriver
 
     // Private Member Functions
 
+    void writeProxyInfo();
+
+    // used to make sure that the same cloud info is printed only once
+    static HashTable<string,word> cloudInfos_;
+
 protected:
 
     // Handling the scanner

@@ -51,6 +51,8 @@ defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, dictionary, cloud);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, idName, cloud);
 
+HashTable<string,word> CloudValueExpressionDriver::cloudInfos_;
+
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
@@ -87,16 +89,15 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
         dict.subOrEmptyDict("interpolationSchemes")
     )
 {
-    Info << endl << "'cloud'-driver in " << dict.name() << endl;
+    Dbug << endl << "'cloud'-driver in " << dict.name() << endl;
 
     Dbug << "Constructed from dictionary" << endl;
     Dbug << "Type of cloud: " << cloud_.type() << endl;
 
-    //    Dbug << "thermoReactingCloud - typename " << Cloud<BasicReactingParcel<gasThermoPhysics> >::typeName << endl;
-    // Dbug << "Is kinematicCloud? " << isA<kinematicCloud>(cloud_) << endl;
-    // Dbug << "Is solidParticleCloud? " << isA<solidParticleCloud>(cloud_) << endl;
+    //    Info << endl << "'cloud'-driver in " << dict.name() << endl;
+    //   Info << proxy_() << endl;
 
-    Info << proxy_() << endl;
+    writeProxyInfo();
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -106,6 +107,32 @@ CloudValueExpressionDriver::~CloudValueExpressionDriver()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void CloudValueExpressionDriver::writeProxyInfo()
+{
+    OStringStream os;
+    os << proxy_();
+    string description(os.str());
+
+    bool printDescr=true;
+
+    if(cloudInfos_.found(cloud_.name())) {
+        if(description==cloudInfos_[cloud_.name()]) {
+            printDescr=false;
+        } else {
+            cloudInfos_[cloud_.name()]=description;
+        }
+    } else {
+        cloudInfos_.insert(
+            cloud_.name(),
+            description
+        );
+    }
+
+    if(printDescr) {
+        Info << nl <<  description.c_str() << endl;
+    }
+}
 
 const cloud& CloudValueExpressionDriver::getCloud(
     const dictionary &dict,
