@@ -40,77 +40,55 @@ Contributors/Copyright:
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef ReaderParticle_H
-#define ReaderParticle_H
-
-#include "Particle.H"
-#include "IOstream.H"
-#include "autoPtr.H"
+#include "ReaderParticle.H"
+#include "ReaderParticleCloud.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-/*---------------------------------------------------------------------------*\
-                      Class ReaderParticle Declaration
-\*---------------------------------------------------------------------------*/
+void ReaderParticle::readFields (ReaderParticleCloud &c) {
+    Particle<ReaderParticle>::readFields(c);
 
-    class ReaderParticleCloud;
+    const objectRegistry &obr=c.parent();
 
-class ReaderParticle
-:
-    public Particle<ReaderParticle>
-{
+    fileNameList files(
+        readDir(c.objectPath())
+    );
 
-public:
-
-    // Constructors
-
-        //- Construct from components
-        ReaderParticle
-        (
-            const Cloud<ReaderParticle>& c,
-            const vector& position,
-            const label celli
-        )
-        :
-            Particle<ReaderParticle>(c, position, celli)
-        {}
-
-        //- Construct from Istream
-        ReaderParticle
-        (
-            const Cloud<ReaderParticle>& c,
-            Istream& is,
-            bool readFields = true
-        )
-        :
-            Particle<ReaderParticle>(c, is, readFields)
-        {}
-
-        //- Construct as copy
-        ReaderParticle(const ReaderParticle& p)
-        :
-            Particle<ReaderParticle>(p)
-        {}
-
-        //- Construct and return a clone
-        autoPtr<ReaderParticle> clone() const
-        {
-            return autoPtr<ReaderParticle>(new ReaderParticle(*this));
+    forAll(files,i){
+        const word name(files[i]);
+        if(
+            name=="positions"
+        ) {
+            continue;
         }
 
-        static void readFields (ReaderParticleCloud &c);
-};
+        IOobject header(
+            name,
+            obr.time().timeName(),
+            cloud::prefix/c.name(),
+            obr,
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
 
+        if(
+            header.headerOk()
+        ) {
+            Info << name << " = " << header.headerClassName() <<endl;
+        }
+
+    }
+
+
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#endif
 
 // ************************************************************************* //

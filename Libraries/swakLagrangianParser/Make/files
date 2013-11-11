@@ -8,6 +8,7 @@ CloudProxy.C
 
 makeCloudProxys.C
 
+ReaderParticle/ReaderParticle.C
 ReaderParticle/ReaderParticleCloud.C
 ReaderParticle/CloudProxyForReaderParticle.C
 
