@@ -40,4 +40,12 @@ turbulenceDifference {
     expression "mag(U-UTurb)";
 }
 
+gasDifference {
+    $positions;
+    expression "mag(U-fluidPhase(U))";
+    interpolationSchemes {
+        U cell;
+    }
+}
+
 // ************************************************************************* //
