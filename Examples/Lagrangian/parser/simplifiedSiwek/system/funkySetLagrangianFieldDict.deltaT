@@ -13,9 +13,9 @@ FoamFile
 }
 
 coalCloud1 {
-	   precalc (
-	   );
-	   expressions (
+	   createCloud false;
+
+	   expressions {
 	      deltaT {
 	      	     create true;
 		     field TDiff;
@@ -45,5 +45,8 @@ coalCloud1 {
 			 expression "THigh";
 			 condition "T>THigh";
 	      }
-	   );
+	   }
+}
+limestoneCloud1 {
+		$coalCloud1;
 }

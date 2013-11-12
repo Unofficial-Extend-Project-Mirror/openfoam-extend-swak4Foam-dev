@@ -379,6 +379,7 @@ int main(int argc, char *argv[])
                 debugParser
             );
 
+            Info << endl << "Writing " << cloudName << nl << endl;
             theCloud.write();
         } else {
             Info << " Using funkySetLagrangianFieldDict \n" << endl;
@@ -428,19 +429,22 @@ int main(int argc, char *argv[])
                 word cloudName((*cloudIter).keyword());
                 Info << "\n\nCloud: " << cloudName << endl;
 
-                PtrList<entry> precalc=cloudDict.lookup("precalc");
+                if(readBool(cloudDict.lookup("createCloud"))) {
+                    Info << "Creating from scratch" << endl;
+                    const dictionary &precalc=cloudDict.subDict("precalc");
+                }
 
                 ReaderParticleCloud theCloud(
                     mesh,
                     cloudName
                 );
 
-               PtrList<entry> parts=cloudDict.lookup("expressions");
+                const dictionary &parts=cloudDict.subDict("expressions");
 
-                forAll(parts,partI) {
-                    const dictionary &part=parts[partI].dict();
+                forAllConstIter(dictionary,parts,iter) {
+                    const dictionary &part=(*iter).dict();
 
-                    Info << "\n\nPart: " << parts[partI].keyword() << endl;
+                    Info << "\n\nPart: " << (*iter).keyword() << endl;
 
                     word field=part["field"];
 
@@ -485,6 +489,7 @@ int main(int argc, char *argv[])
                     );
                 }
 
+                Info << endl << "Writing " << cloudName << nl << endl;
                 theCloud.write();
              }
         }
