@@ -122,6 +122,27 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
     writeProxyInfo();
 }
 
+CloudValueExpressionDriver::CloudValueExpressionDriver(
+    const dictionary& dict,
+    const ReaderParticleCloud& c
+)
+    :
+    CommonValueExpressionDriver(dict),
+    cloud_(
+        c
+    ),
+    proxy_(
+        new CloudProxyForReaderParticle(
+            cloud_
+        )
+    ),
+    interpolationSchemes_(
+        dict.subOrEmptyDict("interpolationSchemes")
+    )
+{
+    writeProxyInfo();
+}
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 CloudValueExpressionDriver::~CloudValueExpressionDriver()

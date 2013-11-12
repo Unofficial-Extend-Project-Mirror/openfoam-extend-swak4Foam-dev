@@ -168,6 +168,12 @@ public:
         const word &defaultInterpolation
     );
 
+    //- Construct from a dictionary and cloud
+    CloudValueExpressionDriver(
+        const dictionary&,
+        const ReaderParticleCloud& c
+    );
+
     // Destructor
 
     ~CloudValueExpressionDriver();

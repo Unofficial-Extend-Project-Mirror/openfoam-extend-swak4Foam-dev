@@ -47,7 +47,7 @@ void ReaderParticleCloud::addDataInternal(
     HashTable<Field<T>,word> &data,
     bool overwrite
 ) {
-    if(data.found("name") && !overwrite) {
+    if(data.found(name) && !overwrite) {
         FatalErrorIn("ReaderParticleCloud::addDataInternal")
             << "Already got a field named " << name << " in the table for Field<"
                 << pTraits<T>::typeName << ">"
@@ -63,7 +63,7 @@ void ReaderParticleCloud::addDataInternal(
                 << endl
                 << exit(FatalError);
     }
-    if(data.found("name")) {
+    if(data.found(name)) {
         data.set(name,inData);
     } else {
         data.insert(name,inData);

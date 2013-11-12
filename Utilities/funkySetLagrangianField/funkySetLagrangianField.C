@@ -430,14 +430,19 @@ int main(int argc, char *argv[])
 
                 PtrList<entry> precalc=cloudDict.lookup("precalc");
 
-                PtrList<entry> parts=cloudDict.lookup("expressions");
+                ReaderParticleCloud theCloud(
+                    mesh,
+                    cloudName
+                );
+
+               PtrList<entry> parts=cloudDict.lookup("expressions");
 
                 forAll(parts,partI) {
                     const dictionary &part=parts[partI].dict();
 
                     Info << "\n\nPart: " << parts[partI].keyword() << endl;
 
-                    word field=cloudDict["field"];
+                    word field=part["field"];
 
                     string expression=part["expression"];
 
@@ -453,10 +458,35 @@ int main(int argc, char *argv[])
                     }
 
                     bool writeValueAsLabel=part.lookupOrDefault<bool>(
-                        "writeValueAsLabel",true
+                        "writeValueAsLabel",false
+                    );
+
+                    CloudValueExpressionDriver driver(
+                        part,
+                        theCloud
+                    );
+
+                    driver.setSearchBehaviour(
+                        true,
+                        true,
+                        true         // search on disc
+                    );
+
+                    doAnExpression(
+                        driver,
+                        theCloud,
+                        field,
+                        expression,
+                        condition,
+                        part,
+                        create,
+                        writeValueAsLabel,
+                        debugParser
                     );
                 }
-            }
+
+                theCloud.write();
+             }
         }
     }
 
