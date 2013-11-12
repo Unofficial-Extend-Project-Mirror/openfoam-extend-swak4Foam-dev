@@ -65,6 +65,17 @@ namespace Foam {
 
         typedef GeometricField< Type, fvPatchField, volMesh > volField;
 
+        word interpolationScheme("none");
+        if(
+            !interpolationSchemes_.found(name)
+            &&
+            interpolationSchemes_.found("default")
+        ) {
+            interpolationScheme=word(interpolationSchemes_["default"]);
+        } else if(interpolationSchemes_.found(name)) {
+            interpolationScheme=word(interpolationSchemes_[name]);
+        }
+
         if(
             this->searchInMemory()
             &&
@@ -72,8 +83,9 @@ namespace Foam {
         ) {
             const volField &f=this->mesh().lookupObject<volField>(name);
 
-            autoPtr<interpolation<Type> > inter=interpolation<Type>::New(
-                interpolationSchemes_,
+            autoPtr<interpolation<Type> > inter;
+            inter=interpolation<Type>::New(
+                interpolationScheme,
                 f
             );
             forAll(result,i) {
@@ -89,7 +101,7 @@ namespace Foam {
             );
 
             autoPtr<interpolation<Type> > inter=interpolation<Type>::New(
-                interpolationSchemes_,
+                interpolationScheme,
                 f
             );
             forAll(result,i) {

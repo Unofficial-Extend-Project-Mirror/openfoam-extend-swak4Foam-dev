@@ -139,6 +139,14 @@ public:
 
         virtual ~CloudProxy();
 
+    bool hasField(const word &name) const {
+        return fieldTypes_.found(name);
+    }
+
+    word fieldType(const word &name) const {
+        return fieldTypes_[name];
+    }
+
     bool isScalarField(const word &name) const;
     virtual tmp<Field<scalar> > getScalarField(
         const word &name

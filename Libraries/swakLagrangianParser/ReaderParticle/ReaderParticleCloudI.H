@@ -44,9 +44,10 @@ template <typename T>
 void ReaderParticleCloud::addDataInternal(
     const word &name,
     const Field<T> &inData,
-    HashTable<Field<T>,word> &data
+    HashTable<Field<T>,word> &data,
+    bool overwrite
 ) {
-    if(data.found("name")) {
+    if(data.found("name") && !overwrite) {
         FatalErrorIn("ReaderParticleCloud::addDataInternal")
             << "Already got a field named " << name << " in the table for Field<"
                 << pTraits<T>::typeName << ">"
@@ -62,7 +63,63 @@ void ReaderParticleCloud::addDataInternal(
                 << endl
                 << exit(FatalError);
     }
-    data.insert(name,inData);
+    if(data.found("name")) {
+        data.set(name,inData);
+    } else {
+        data.insert(name,inData);
+    }
+}
+
+template <typename T>
+void ReaderParticleCloud::setValues(
+    const word &name,
+    const Field<T> &values
+) {
+    const word typeName=pTraits<T>::typeName;
+    if(typeName==pTraits<scalar>::typeName) {
+        addDataInternal(name,values,scalarData_,true);
+    } else {
+        FatalErrorIn("ReaderParticleCloud::setValues")
+            << "Unsupported type " << typeName
+                << endl
+                << exit(FatalError);
+    }
+}
+
+template <typename T>
+const Field<T> &ReaderParticleCloud::getValues(
+    const word &name
+) {
+    const word typeName=pTraits<T>::typeName;
+    if(typeName==pTraits<scalar>::typeName) {
+        return scalarData_[name];
+    } else {
+        FatalErrorIn("ReaderParticleCloud::getValues")
+            << "Unsupported type " << typeName
+                << endl
+                << exit(FatalError);
+
+        Field<T> dummy;
+        return dummy;
+    }
+}
+
+template <typename T>
+void ReaderParticleCloud::writeData(
+    const HashTable<Field<T>,word> &data
+) const {
+    const wordList toc(data.toc());
+    forAll(toc,i)
+    {
+	IOField<T> v(
+            this->fieldIOobject(
+                toc[i],
+                IOobject::NO_READ
+            ),
+            data[toc[i]]
+        );
+        v.write();
+    }
 }
 
 }

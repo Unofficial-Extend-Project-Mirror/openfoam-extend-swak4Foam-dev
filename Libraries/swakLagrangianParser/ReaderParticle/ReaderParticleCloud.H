@@ -80,7 +80,8 @@ class ReaderParticleCloud
     void addDataInternal(
         const word &name,
         const Field<T> &inData,
-        HashTable<Field<T>,word> &data
+        HashTable<Field<T>,word> &data,
+        bool overwrite=false
     );
 
 protected:
@@ -93,6 +94,10 @@ protected:
     void addSphericalTensorField(const word &name);
     //    void addBoolField(const word &name);
 
+    template <typename T>
+    void writeData(
+        const HashTable<Field<T>,word> &data
+    ) const;
 public:
 
     //- Type of parcel the cloud was instantiated for
@@ -109,6 +114,17 @@ public:
         );
 
     friend class ReaderParticle;
+
+    template <typename T>
+    void setValues(
+        const word &name,
+        const Field<T> &values
+    );
+
+    template <typename T>
+    const Field<T> &getValues(
+        const word &name
+    );
 
     wordList getScalarFieldNames() const { return scalarData_.toc(); }
 

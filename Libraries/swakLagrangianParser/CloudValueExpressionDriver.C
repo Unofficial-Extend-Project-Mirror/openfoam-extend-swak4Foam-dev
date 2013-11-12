@@ -39,6 +39,7 @@ Contributors/Copyright:
 #include "CloudProxy.H"
 #include "CloudRepository.H"
 #include "ReaderParticleCloud.H"
+#include "CloudProxyForReaderParticle.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -96,6 +97,27 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
 
     //    Info << endl << "'cloud'-driver in " << dict.name() << endl;
     //   Info << proxy_() << endl;
+
+    writeProxyInfo();
+}
+
+CloudValueExpressionDriver::CloudValueExpressionDriver(
+    const ReaderParticleCloud& c,
+    const word &defaultInterpolation
+)
+    :
+    CommonValueExpressionDriver(),
+    cloud_(
+        c
+    ),
+    proxy_(
+        new CloudProxyForReaderParticle(
+            cloud_
+        )
+    )
+{
+
+    interpolationSchemes_.add("default",defaultInterpolation);
 
     writeProxyInfo();
 }

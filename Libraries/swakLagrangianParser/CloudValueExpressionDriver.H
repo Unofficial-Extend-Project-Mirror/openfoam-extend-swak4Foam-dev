@@ -73,6 +73,7 @@ namespace Foam
 {
 
 class CloudProxy;
+class ReaderParticleCloud;
 
 /*---------------------------------------------------------------------------*\
                            Class CloudValueExpressionDriver Declaration
@@ -161,6 +162,12 @@ public:
         const fvMesh&
     );
 
+    //- construct from a cloud
+    CloudValueExpressionDriver(
+        const ReaderParticleCloud& c,
+        const word &defaultInterpolation
+    );
+
     // Destructor
 
     ~CloudValueExpressionDriver();
@@ -170,6 +177,12 @@ public:
     tmp<vectorField> makePositionField() const;
 
     tmp<scalarField> makeIdField();
+
+    const CloudProxy &proxy() const
+        { return proxy_(); }
+
+    const cloud &theCloud() const
+        { return cloud_; }
 
 //     template<class Type>
 //     Field<Type> *getField(const string &name);

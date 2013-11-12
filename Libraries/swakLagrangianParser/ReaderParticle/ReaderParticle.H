@@ -102,6 +102,8 @@ public:
         }
 
         static void readFields (ReaderParticleCloud &c);
+
+        static void writeFields (const Cloud<ReaderParticle> &c);
 };
 
 

@@ -48,6 +48,16 @@ Contributors/Copyright:
 namespace Foam
 {
 
+void ReaderParticle::writeFields (const Cloud<ReaderParticle> &cGeneral) {
+    const ReaderParticleCloud &c(
+        dynamicCast<const ReaderParticleCloud>(cGeneral)
+    );
+
+    Particle<ReaderParticle>::writeFields(c);
+
+    c.writeData(c.scalarData_);
+}
+
 void ReaderParticle::readFields (ReaderParticleCloud &c) {
     Particle<ReaderParticle>::readFields(c);
 
