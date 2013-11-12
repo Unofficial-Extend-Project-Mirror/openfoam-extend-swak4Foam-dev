@@ -69,6 +69,7 @@ class ReaderParticleCloud
         //- Disallow default bitwise assignment
         void operator=(const ReaderParticleCloud&);
 
+    HashTable<Field<label>,word> labelData_;
     HashTable<Field<scalar>,word> scalarData_;
     HashTable<Field<vector>,word> vectorData_;
     HashTable<Field<tensor>,word> tensorData_;
@@ -133,6 +134,14 @@ public:
 
     bool hasScalar(const word &name) const
         { return scalarData_.found(name); }
+
+    wordList getLabelFieldNames() const { return labelData_.toc(); }
+
+    const Field<label> &getLabelField(const word &name) const
+        { return labelData_[name]; }
+
+    bool hasLabel(const word &name) const
+        { return labelData_.found(name); }
 
     wordList getVectorFieldNames() const { return vectorData_.toc(); }
 

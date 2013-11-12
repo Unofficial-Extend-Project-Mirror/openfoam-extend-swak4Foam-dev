@@ -177,8 +177,6 @@ void doAnExpression(
         writeValueAsLabel
         &&
         driver.getResultType()!="scalar"
-        &&
-        driver.getResultType()!="bool"
     ) {
         FatalErrorIn("doAnExpression")
             << "Only results of type 'scalar' and 'bool' can be written as 'label'"
@@ -188,6 +186,19 @@ void doAnExpression(
 
     if(driver.getResultType()=="scalar") {
         if(writeValueAsLabel) {
+            scalarField orig(driver.getResult<scalar>());
+            labelField data(orig.size());
+            forAll(orig,i)
+            {
+                data[i]=label(round(orig[i]));
+            }
+            writeResult(
+                theCloud,
+                field,
+                data,
+                conditionField,
+                create
+            );
         } else {
             writeResult(
                 theCloud,
@@ -197,6 +208,52 @@ void doAnExpression(
                 create
             );
         }
+    } else if(driver.getResultType()=="vector") {
+        writeResult(
+            theCloud,
+            field,
+            driver.getResult<vector>()(),
+            conditionField,
+            create
+        );
+    } else if(driver.getResultType()=="tensor") {
+        writeResult(
+            theCloud,
+            field,
+            driver.getResult<tensor>()(),
+            conditionField,
+            create
+        );
+    } else if(driver.getResultType()=="symmTensor") {
+        writeResult(
+            theCloud,
+            field,
+            driver.getResult<symmTensor>()(),
+            conditionField,
+            create
+        );
+    } else if(driver.getResultType()=="sphericalTensor") {
+        writeResult(
+            theCloud,
+            field,
+            driver.getResult<sphericalTensor>()(),
+            conditionField,
+            create
+        );
+    } else if(driver.getResultType()=="bool") {
+        Field<bool> orig(driver.getResult<bool>());
+        labelField data(orig.size());
+        forAll(orig,i)
+        {
+            data[i]=orig[i];
+        }
+        writeResult(
+            theCloud,
+            field,
+            data,
+            conditionField,
+            create
+        );
     } else {
         FatalErrorIn("doAnExpression")
             << "Results of type " << driver.getResultType()

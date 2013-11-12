@@ -109,10 +109,6 @@ public:
         const word &name
     ) const;
 
-    // virtual tmp<Field<bool> > getBoolField(
-    //     const word &name
-    // ) const;
-
 };
 
 

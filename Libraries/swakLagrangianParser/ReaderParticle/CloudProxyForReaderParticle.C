@@ -62,6 +62,7 @@ CloudProxyForReaderParticle::CloudProxyForReaderParticle
     )
 {
     internalAddFields<scalar>(readerCloud_.getScalarFieldNames());
+    internalAddFields<scalar>(readerCloud_.getLabelFieldNames());
     internalAddFields<vector>(readerCloud_.getVectorFieldNames());
     internalAddFields<tensor>(readerCloud_.getTensorFieldNames());
     internalAddFields<symmTensor>(readerCloud_.getSymmTensorFieldNames());
@@ -84,6 +85,15 @@ tmp<Field<scalar> > CloudProxyForReaderParticle::getScalarField(
         return tmp<Field<scalar> >(
             new Field<scalar>(readerCloud_.getScalarField(name))
         );
+    }
+    if(readerCloud_.hasLabel(name)) {
+        Field<label> orig(readerCloud_.getLabelField(name));
+        tmp<Field<scalar> > result(new Field<scalar>(orig.size()));
+        forAll(orig,i)
+        {
+            result()[i]=orig[i];
+        }
+        return result;
     }
 
     return CloudProxyForParticle<ReaderParticleCloud>::getScalarField(name);

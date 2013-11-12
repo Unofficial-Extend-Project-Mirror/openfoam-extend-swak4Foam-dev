@@ -70,20 +70,107 @@ void ReaderParticleCloud::addDataInternal(
     }
 }
 
+template <>
+inline void ReaderParticleCloud::setValues(
+    const word &name,
+    const Field<scalar> &values
+) {
+    addDataInternal(name,values,scalarData_,true);
+}
+
+template <>
+inline void ReaderParticleCloud::setValues(
+    const word &name,
+    const Field<label> &values
+) {
+    addDataInternal(name,values,labelData_,true);
+}
+
+template <>
+inline void ReaderParticleCloud::setValues(
+    const word &name,
+    const Field<vector> &values
+) {
+    addDataInternal(name,values,vectorData_,true);
+}
+
+template <>
+inline void ReaderParticleCloud::setValues(
+    const word &name,
+    const Field<tensor> &values
+) {
+    addDataInternal(name,values,tensorData_,true);
+}
+
+template <>
+inline void ReaderParticleCloud::setValues(
+    const word &name,
+    const Field<symmTensor> &values
+) {
+    addDataInternal(name,values,symmTensorData_,true);
+}
+
+template <>
+inline void ReaderParticleCloud::setValues(
+    const word &name,
+    const Field<sphericalTensor> &values
+) {
+    addDataInternal(name,values,sphericalTensorData_,true);
+}
+
 template <typename T>
 void ReaderParticleCloud::setValues(
     const word &name,
     const Field<T> &values
 ) {
     const word typeName=pTraits<T>::typeName;
-    if(typeName==pTraits<scalar>::typeName) {
-        addDataInternal(name,values,scalarData_,true);
-    } else {
-        FatalErrorIn("ReaderParticleCloud::setValues")
-            << "Unsupported type " << typeName
-                << endl
-                << exit(FatalError);
-    }
+
+    FatalErrorIn("ReaderParticleCloud::setValues")
+        << "Unsupported type " << typeName
+            << endl
+            << exit(FatalError);
+}
+
+template<>
+inline const Field<scalar> &ReaderParticleCloud::getValues(
+    const word &name
+) {
+    return scalarData_[name];
+}
+
+template<>
+inline const Field<label> &ReaderParticleCloud::getValues(
+    const word &name
+) {
+    return labelData_[name];
+}
+
+template<>
+inline const Field<vector> &ReaderParticleCloud::getValues(
+    const word &name
+) {
+    return vectorData_[name];
+}
+
+template<>
+inline const Field<tensor> &ReaderParticleCloud::getValues(
+    const word &name
+) {
+    return tensorData_[name];
+}
+
+template<>
+inline const Field<symmTensor> &ReaderParticleCloud::getValues(
+    const word &name
+) {
+    return symmTensorData_[name];
+}
+
+template<>
+inline const Field<sphericalTensor> &ReaderParticleCloud::getValues(
+    const word &name
+) {
+    return sphericalTensorData_[name];
 }
 
 template <typename T>
@@ -91,17 +178,14 @@ const Field<T> &ReaderParticleCloud::getValues(
     const word &name
 ) {
     const word typeName=pTraits<T>::typeName;
-    if(typeName==pTraits<scalar>::typeName) {
-        return scalarData_[name];
-    } else {
-        FatalErrorIn("ReaderParticleCloud::getValues")
-            << "Unsupported type " << typeName
-                << endl
-                << exit(FatalError);
 
-        Field<T> dummy;
-        return dummy;
-    }
+    FatalErrorIn("ReaderParticleCloud::getValues")
+        << "Unsupported type " << typeName
+            << endl
+            << exit(FatalError);
+
+    Field<T> dummy;
+    return dummy;
 }
 
 template <typename T>

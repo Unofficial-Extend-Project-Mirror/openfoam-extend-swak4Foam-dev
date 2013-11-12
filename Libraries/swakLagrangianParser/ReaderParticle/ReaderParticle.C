@@ -56,6 +56,11 @@ void ReaderParticle::writeFields (const Cloud<ReaderParticle> &cGeneral) {
     Particle<ReaderParticle>::writeFields(c);
 
     c.writeData(c.scalarData_);
+    c.writeData(c.labelData_);
+    c.writeData(c.vectorData_);
+    c.writeData(c.tensorData_);
+    c.writeData(c.symmTensorData_);
+    c.writeData(c.sphericalTensorData_);
 }
 
 void ReaderParticle::readFields (ReaderParticleCloud &c) {

@@ -75,16 +75,13 @@ void ReaderParticleCloud::addScalarField(const word &name)
 
 void ReaderParticleCloud::addLabelField(const word &name)
 {
+
     IOField<label> data(this->fieldIOobject(name,IOobject::MUST_READ));
     this->checkFieldIOobject(*this,data);
-    scalarField actualData(data.size());
-    forAll(data,i) {
-        actualData[i]=data[i];
-    }
     addDataInternal(
         name,
-        actualData,
-        scalarData_
+        data,
+        labelData_
     );
 }
 
