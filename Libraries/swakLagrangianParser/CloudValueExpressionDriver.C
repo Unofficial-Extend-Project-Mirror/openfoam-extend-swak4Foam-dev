@@ -386,16 +386,16 @@ bool CloudValueExpressionDriver::isScalarField(
     const word &name
 ) {
     return
-        proxy_->isScalarField(name)
+        proxy_->isScalarField(resolveAlias(name))
         ||
-        isVariable<scalar>(name);
+        isVariable<scalar>(resolveAlias(name));
 }
 
 tmp<Field<scalar> > CloudValueExpressionDriver::getScalarField(
     const word &name
 ) {
-    if(proxy_->isScalarField(name)) {
-        return proxy_->getScalarField(name);
+    if(proxy_->isScalarField(resolveAlias(name))) {
+        return proxy_->getScalarField(resolveAlias(name));
     } else {
         return getVariable<scalar>(name,size());
     }
@@ -405,16 +405,16 @@ bool CloudValueExpressionDriver::isVectorField(
     const word &name
 ) {
     return
-        proxy_->isVectorField(name)
+        proxy_->isVectorField(resolveAlias(name))
         ||
-        isVariable<vector>(name);
+        isVariable<vector>(resolveAlias(name));
 }
 
 tmp<Field<vector> > CloudValueExpressionDriver::getVectorField(
     const word &name
 ) {
-    if(proxy_->isVectorField(name)) {
-        return proxy_->getVectorField(name);
+    if(proxy_->isVectorField(resolveAlias(name))) {
+        return proxy_->getVectorField(resolveAlias(name));
     } else {
         return getVariable<vector>(name,size());
     }
@@ -424,16 +424,16 @@ bool CloudValueExpressionDriver::isTensorField(
     const word &name
 ) {
     return
-        proxy_->isTensorField(name)
+        proxy_->isTensorField(resolveAlias(name))
         ||
-        isVariable<tensor>(name);
+        isVariable<tensor>(resolveAlias(name));
 }
 
 tmp<Field<tensor> > CloudValueExpressionDriver::getTensorField(
     const word &name
 ) {
-    if(proxy_->isTensorField(name)) {
-        return proxy_->getTensorField(name);
+    if(proxy_->isTensorField(resolveAlias(name))) {
+        return proxy_->getTensorField(resolveAlias(name));
     } else {
         return getVariable<tensor>(name,size());
     }
@@ -443,16 +443,16 @@ bool CloudValueExpressionDriver::isSymmTensorField(
     const word &name
 ) {
     return
-        proxy_->isSymmTensorField(name)
+        proxy_->isSymmTensorField(resolveAlias(name))
         ||
-        isVariable<symmTensor>(name);
+        isVariable<symmTensor>(resolveAlias(name));
 }
 
 tmp<Field<symmTensor> > CloudValueExpressionDriver::getSymmTensorField(
     const word &name
 ) {
-    if(proxy_->isSymmTensorField(name)) {
-        return proxy_->getSymmTensorField(name);
+    if(proxy_->isSymmTensorField(resolveAlias(name))) {
+        return proxy_->getSymmTensorField(resolveAlias(name));
     } else {
         return getVariable<symmTensor>(name,size());
     }
@@ -462,16 +462,16 @@ bool CloudValueExpressionDriver::isSphericalTensorField(
     const word &name
 ) {
     return
-        proxy_->isSphericalTensorField(name)
+        proxy_->isSphericalTensorField(resolveAlias(name))
         ||
-        isVariable<sphericalTensor>(name);
+        isVariable<sphericalTensor>(resolveAlias(name));
 }
 
 tmp<Field<sphericalTensor> > CloudValueExpressionDriver::getSphericalTensorField(
     const word &name
 ) {
-    if(proxy_->isSphericalTensorField(name)) {
-        return proxy_->getSphericalTensorField(name);
+    if(proxy_->isSphericalTensorField(resolveAlias(name))) {
+        return proxy_->getSphericalTensorField(resolveAlias(name));
     } else {
         return getVariable<sphericalTensor>(name,size());
     }
@@ -481,16 +481,16 @@ bool CloudValueExpressionDriver::isBoolField(
     const word &name
 ) {
     return
-        proxy_->isBoolField(name)
+        proxy_->isBoolField(resolveAlias(name))
         ||
-        isVariable<bool>(name);
+        isVariable<bool>(resolveAlias(name));
 }
 
 tmp<Field<bool> > CloudValueExpressionDriver::getBoolField(
     const word &name
 ) {
-    if(proxy_->isBoolField(name)) {
-        return proxy_->getBoolField(name);
+    if(proxy_->isBoolField(resolveAlias(name))) {
+        return proxy_->getBoolField(resolveAlias(name));
     } else {
         return getVariable<bool>(name,size());
     }
