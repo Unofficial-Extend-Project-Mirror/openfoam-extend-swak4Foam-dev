@@ -51,6 +51,8 @@ Contributors/Copyright:
 
 #include "ReaderParticleCloud.H"
 
+#include "loadFieldFunction.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -431,7 +433,78 @@ int main(int argc, char *argv[])
 
                 if(readBool(cloudDict.lookup("createCloud"))) {
                     Info << "Creating from scratch" << endl;
-                    const dictionary &precalc=cloudDict.subDict("precalc");
+                    const dictionary &spec=cloudDict.subDict("creationSpec");
+
+                    if(!spec.found("libs")) {
+                        FatalErrorIn(args.executable())
+                            << "No entry 'libs' in " << spec.name()
+                                << endl
+                                << exit(FatalError);
+                    }
+                    dlLibraryTable::open(spec,"libs");
+
+                    wordList preloadFieldNames(spec.lookup("preloadFields"));
+
+                    if(!spec.found("functions")) {
+                        FatalErrorIn(args.executable())
+                            << "No entry 'functions' in " << spec.name()
+                                << endl
+                                << exit(FatalError);
+                    }
+
+                    Info << "Preloading fields" << endl;
+                    SLPtrList<volScalarField> scalarFieldsPre;
+                    SLPtrList<volVectorField> vectorFieldsPre;
+                    SLPtrList<volTensorField> tensorFieldsPre;
+                    SLPtrList<volSymmTensorField> symmTensorFieldsPre;
+                    SLPtrList<volSphericalTensorField> sphericalTensorFieldsPre;
+
+                    forAll(preloadFieldNames,fieldI) {
+                        word fName=preloadFieldNames[fieldI];
+
+                        if(
+                            !loadFieldFunction(mesh,fName,scalarFieldsPre)
+                            &&
+                            !loadFieldFunction(mesh,fName,vectorFieldsPre)
+                            &&
+                            !loadFieldFunction(mesh,fName,tensorFieldsPre)
+                            &&
+                            !loadFieldFunction(mesh,fName,symmTensorFieldsPre)
+                            &&
+                            !loadFieldFunction(mesh,fName,sphericalTensorFieldsPre)
+                        ) {
+                            Info << "Field " << fName << " not found " << endl;
+                        }
+                    }
+
+                    functionObjectList functions(
+                        mesh.time(),
+                        spec
+                    );
+
+                    wordList globalNameSpacesToUse(
+                        spec.lookup("globalNamespacesForData")
+                    );
+                    word positionVar(
+                        spec.lookup("positionVariable")
+                    );
+
+                    Info << "Function objects: start" << endl << endl;
+                    functions.start();
+                    Info << endl;
+                    Info << "Function objects: execute" << endl << endl;
+                    functions.execute();
+                    Info << endl;
+                    Info << "Creating Cloud" << endl;
+                    autoPtr<ReaderParticleCloud> cloud=
+                        ReaderParticleCloud::makeCloudFromVariables(
+                            mesh,
+                            cloudName,
+                            globalNameSpacesToUse,
+                            positionVar
+                        );
+                    Info << "Writing cloud" << endl;
+                    cloud->write();
                 }
 
                 ReaderParticleCloud theCloud(

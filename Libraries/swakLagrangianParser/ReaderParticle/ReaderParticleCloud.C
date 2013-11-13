@@ -35,6 +35,8 @@ Contributors/Copyright:
 
 #include "ReaderParticleCloud.H"
 
+#include "GlobalVariablesRepository.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -60,6 +62,218 @@ ReaderParticleCloud::ReaderParticleCloud
     {
         ReaderParticle::readFields(*this);
     }
+}
+
+template <typename T>
+tmp<Field<T> > filterValues(
+    const Field<T> &orig,
+    const boolList &mask,
+    label size
+) {
+    tmp<Field<T> > pResult(
+        new Field<T>(
+            size,
+            pTraits<T>::zero
+        )
+    );
+    Field<T> &result=pResult();
+    label cnt=0;
+    forAll(orig,i)
+    {
+	if(mask[i]) {
+            if(cnt>=size) {
+                FatalErrorIn("filterValues")
+                    << "Mask seems to have more elements than " << size
+                        << endl
+                        << exit(FatalError);
+            }
+            result[cnt]=orig[i];
+            cnt++;
+        }
+    }
+    if(cnt!=size) {
+        FatalErrorIn("filterValues")
+            << "Inconsistent amount of elements in mask " << cnt << nl
+                << "Need: " << size
+                << endl
+                << exit(FatalError);
+
+    }
+    return pResult;
+}
+
+
+autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
+    const polyMesh &mesh,
+    const word &cloudName,
+    const wordList & globalNameSpacesToUse,
+    const word &positionVar
+) {
+    GlobalVariablesRepository &repo=GlobalVariablesRepository::getGlobalVariables(
+        mesh
+    );
+    label minSize=pTraits<label>::max;
+    label maxSize=pTraits<label>::min;
+    bool foundPos=false;
+    vectorField positions;
+    DynamicList<word> varNames;
+
+    forAll(globalNameSpacesToUse,nsI)
+    {
+	const word &nsName=globalNameSpacesToUse[nsI];
+        GlobalVariablesRepository::ResultTable &ns=repo.getNamespace(nsName);
+        forAllIter(GlobalVariablesRepository::ResultTable,ns,iter) {
+            ExpressionResult &val=*(*iter);
+            const word &name=iter.key();
+            minSize=min(minSize,val.size());
+            maxSize=max(maxSize,val.size());
+            if(name==positionVar) {
+                foundPos=true;
+                positions=val.getResult<vector>();
+            } else {
+                varNames.append(name);
+            }
+        }
+    }
+
+    Info << "Variables to be added: " << varNames << endl;
+
+    if(!foundPos) {
+        FatalErrorIn("ReaderParticleCloud::makeCloudFromVariables")
+            << "No position variable " << positionVar << " found"
+                << endl
+                << exit(FatalError);
+
+    }
+    label globalMin=minSize;
+    label globalMax=maxSize;
+    reduce(globalMin,minOp<label>());
+    reduce(globalMax,maxOp<label>());
+    bool ok=(globalMin==minSize && globalMax==maxSize && minSize==maxSize);
+    reduce(ok,andOp<bool>());
+    if(!ok) {
+        Pout << "Minimum variable size: " << minSize << " maximum: "
+            << maxSize << endl;
+        FatalErrorIn("ReaderParticleCloud::makeCloudFromVariables")
+            << "Variable size should be the same on all processors"
+                << endl
+                << exit(FatalError);
+
+    }
+
+    Info << positions.size() << " particle positions found" << endl;
+
+    autoPtr<ReaderParticleCloud> pCloud(
+        new ReaderParticleCloud(
+            mesh,
+            cloudName
+        )
+    );
+    boolList usePos(positions.size(),false);
+    DynamicList<label> swakIDs;
+
+    ReaderParticleCloud &cloud=pCloud();
+    forAll(positions,i)
+    {
+	const vector &pos=positions[i];
+        const label cellI=mesh.findCell(pos);
+        usePos[i]=(cellI>=0);
+        if(usePos[i]) {
+            cloud.append(
+                new ReaderParticle(
+                    cloud,
+                    pos,
+                    cellI
+                )
+            );
+            swakIDs.append(i);
+       }
+    }
+    swakIDs.shrink();
+    label size=swakIDs.size();
+    Pout << size << " particle positions used" << endl;
+    reduce(size,plusOp<label>());
+    Info << "Total of " << size << " positions" << endl;
+
+    cloud.setValues("swakCreationsID",labelField(swakIDs));
+
+    forAll(globalNameSpacesToUse,nsI)
+    {
+	const word &nsName=globalNameSpacesToUse[nsI];
+        GlobalVariablesRepository::ResultTable &ns=repo.getNamespace(nsName);
+        forAllIter(GlobalVariablesRepository::ResultTable,ns,iter) {
+            ExpressionResult &val=*(*iter);
+            const word &name=iter.key();
+
+           if(name!=positionVar) {
+               word type=val.valueType();
+               Info << "Adding " << name << " of type " << type << endl;
+
+               if(type==pTraits<scalar>::typeName) {
+                   cloud.setValues(
+                       name,
+                       filterValues(
+                           val.getResult<scalar>()(),
+                           usePos,
+                           cloud.size()
+                       )()
+                   );
+               } else if(type==pTraits<label>::typeName) {
+                   cloud.setValues(
+                       name,
+                       filterValues(
+                           val.getResult<label>()(),
+                           usePos,
+                           cloud.size()
+                       )()
+                   );
+               } else if(type==pTraits<vector>::typeName) {
+                   cloud.setValues(
+                       name,
+                       filterValues(
+                           val.getResult<vector>()(),
+                           usePos,
+                           cloud.size()
+                       )()
+                   );
+               } else if(type==pTraits<tensor>::typeName) {
+                   cloud.setValues(
+                       name,
+                       filterValues(
+                           val.getResult<tensor>()(),
+                           usePos,
+                           cloud.size()
+                       )()
+                   );
+               } else if(type==pTraits<symmTensor>::typeName) {
+                   cloud.setValues(
+                       name,
+                       filterValues(
+                           val.getResult<symmTensor>()(),
+                           usePos,
+                           cloud.size()
+                       )()
+                   );
+               } else if(type==pTraits<sphericalTensor>::typeName) {
+                   cloud.setValues(
+                       name,
+                       filterValues(
+                           val.getResult<sphericalTensor>()(),
+                           usePos,
+                           cloud.size()
+                       )()
+                   );
+               } else {
+                   FatalErrorIn("ReaderParticleCloud::makeCloudFromVariables")
+                       << "Unhandled type " << type
+                           << endl
+                           << exit(FatalError);
+               }
+            }
+        }
+    }
+
+    return pCloud;
 }
 
 void ReaderParticleCloud::addScalarField(const word &name)

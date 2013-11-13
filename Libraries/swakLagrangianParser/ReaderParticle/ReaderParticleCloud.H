@@ -114,6 +114,13 @@ public:
             bool readFields = true
         );
 
+    static autoPtr<ReaderParticleCloud> makeCloudFromVariables(
+            const polyMesh &mesh,
+            const word &cloudName,
+            const wordList & globalNameSpacesToUse,
+            const word &positionVar
+    );
+
     friend class ReaderParticle;
 
     template <typename T>

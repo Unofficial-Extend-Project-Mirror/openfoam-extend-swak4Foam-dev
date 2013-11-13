@@ -1,0 +1,102 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+coalCloud1 {
+	   createCloud true;
+
+	   creationSpec {
+	       libs (
+	           "libswakFunctionObjects.so"
+	           "libswakPythonIntegration.so"
+	       );
+	       preloadFields (
+	       );
+	       functions {
+	          getGeometryExtent {
+		      type calculateGlobalVariables;
+		      verbose true;
+		      outputControl timeStep;
+		      outputInterval 1;
+		      valueType internalField;
+		      toGlobalNamespace geometryExtent;
+		      toGlobalVariables (
+		         minX maxX
+		         minY maxY
+		         minZ maxZ
+		      );
+		      variables (
+		         "minX=interpolateToCell(min(pts().x));"
+		         "maxX=interpolateToCell(max(pts().x));"
+		         "minY=interpolateToCell(min(pts().y));"
+		         "maxY=interpolateToCell(max(pts().y));"
+		         "minZ=interpolateToCell(min(pts().z));"
+		         "maxZ=interpolateToCell(max(pts().z));"
+		      );
+		  }
+		  calculateParticleData {
+		      type pythonIntegration;
+                      executeFile "$FOAM_CASE/system/calcCoalData.py";
+                      startFile $executeFile;
+                      writeCode "";
+                      endCode "";
+                      swakToPythonNamespaces (
+                           geometryExtent
+		      );
+		      interactiveAfterException true;
+		      useNumpy true;
+    		      useIPython true;
+//		      interactiveAfterExecute true;
+    		      parallelMasterOnly false;
+    		      isParallelized true;
+		      pythonToSwakNamespace coalData;
+		      pythonToSwakVariables (
+		         positions
+			 d
+			 YSolid
+			 YGas
+			 YLiquid
+		      );
+		  }
+	       }
+	       globalNamespacesForData (
+	           coalData
+	       );
+	       positionVariable positions;
+	   }
+
+	   expressions {
+	      deltaT {
+	      	     create true;
+		     field T;
+		     expression "fluidPhase(T)-20";
+		     interpolationSchemes {
+		     		   T cell;
+		     };
+	      }
+	   }
+}
+limestoneCloud1 {
+	   createCloud true;
+
+	   expressions {
+	      deltaT {
+	      	     create true;
+		     field T;
+		     expression "fluidPhase(T)+50";
+		     interpolationSchemes {
+		     		   T cell;
+		     };
+	      }
+	   }
+}
