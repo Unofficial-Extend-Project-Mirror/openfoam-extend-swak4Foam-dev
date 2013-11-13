@@ -10,3 +10,49 @@ massSources {
 	    );
 	    logscale true;
 }
+massSourceSum {
+	      theTitle "Sum of mass Sources";
+   	      expr "Expression coal(.+)Source :  min=%f% max=%f% weightedAverage=%f% weightedSum=(%f%)";
+	      type dynamic;
+	      idNr 1;
+	      titles (
+	      	     sum
+              );
+	      logscale true;
+}
+TDiff {
+      theTitle "Temperatur difference";
+      expr "Expression (.+)TDiff :  min=(%f%) max=(%f%) weightedAverage=(%f%) weightedMedian=(%f%) weightedQuantile0.05=(%f%) weightedQuantile0.95=(%f%)";
+      type dynamic;
+      idNr 1;
+      titles (
+         min
+         max
+	 average
+	 median
+	 "q 5%"
+	 "q 95%"
+      );
+}
+massPhaseChange {
+      expr "Mass transfer phase change      = (%f%)";
+      type slave;
+      master massSourceSum;
+      titles (
+      	     "Phase change"
+      );
+}
+massDevol {
+      expr "Mass transfer devolatilisation  = (%f%)";
+      type slave;
+      master massSourceSum;
+      titles (
+      	     Devolatilisation
+      );
+}
+speciesFractions {
+		 theTitle "Fractions of the species";
+		 expr "Expression coal(.+)Specie :  min=%f% max=%f% weightedAverage=(%f%) weightedRange0.9=%f%";
+		 type dynamic;
+		 idNr 1;
+}

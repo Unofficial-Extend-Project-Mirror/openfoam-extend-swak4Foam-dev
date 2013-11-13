@@ -67,6 +67,7 @@ functions {
             min
             max
             weightedAverage
+            weightedSum
         );
         expression "coalCloudVolumeFraction(limestoneCloud1)";
     }
@@ -85,6 +86,10 @@ functions {
     coalCarbonOxideSource {
         $limestoneFraction;
         expression "coalCloudSpeciesSource(coalCloud1,CO2)";
+    }
+    coalMethanSource {
+        $limestoneFraction;
+        expression "coalCloudSpeciesSource(coalCloud1,CH4)";
     }
     coalMassSource {
         $limestoneFraction;
@@ -106,6 +111,66 @@ functions {
         cloudName coalCloud1;
         //        alternateCloudType Cloud<basicKinematicParcel>;
     }
+    coalMass {
+        $coalPosition;
+        expression "mass";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedMedian
+            weightSum
+        );
+    }
+    coalTDiff {
+        $coalPosition;
+        expression "T-fluidPhase(T)";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedMedian
+            weightedQuantile0.05
+            weightedQuantile0.95
+        );
+        interpolationSchemes {
+            T cellPoint;
+        }
+    }
+    limeTDiff {
+        $coalTDiff;
+        cloudName limestoneCloud1;
+    }
+    coalWaterSpecie {
+        $coalPosition;
+        expression "YLiquid_H2O*Yliquid";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedRange0.9
+        );
+    }
+    coalAshSpecie{
+        $coalWaterSpecie;
+        expression "YSolid_ash*Ysolid";
+    };
+    coalCarbonSpecie{
+        $coalWaterSpecie;
+        expression "YSolid_C*Ysolid";
+    };
+    coalCO2Specie{
+        $coalWaterSpecie;
+        expression "YGas_CO2*Ygas";
+    };
+    coalH2Specie{
+        $coalWaterSpecie;
+        expression "YGas_H2*Ygas";
+    };
+    coalCH4Specie{
+        $coalWaterSpecie;
+        expression "YGas_CH4*Ygas";
+    };
 }
 
 // ************************************************************************* //
