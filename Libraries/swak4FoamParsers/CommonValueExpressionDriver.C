@@ -1662,7 +1662,7 @@ bool CommonValueExpressionDriver::hasAlias(const word &name) const
     return aliases_.found(name);
 }
 
-word CommonValueExpressionDriver::getAlias(const word &name) const
+const word &CommonValueExpressionDriver::getAlias(const word &name) const
 {
     if(!aliases_.found(name)){
         FatalErrorIn("CommonValueExpressionDriver::getAlias(const word &name) const")
@@ -1676,6 +1676,13 @@ word CommonValueExpressionDriver::getAlias(const word &name) const
     } else {
         return aliases_[name];
     }
+}
+
+const word &CommonValueExpressionDriver::resolveAlias(const word &name) const {
+    if(hasAlias(name)) {
+        return getAlias(name);
+    }
+    return name;
 }
 
 } // namespace
