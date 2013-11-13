@@ -56,3 +56,29 @@ speciesFractions {
 		 type dynamic;
 		 idNr 1;
 }
+massChange {
+	   theTitle "Change of coal particle masses";
+	   expr "Expression coalMassChange :  min=(%f%) max=(%f%) weightedAverage=(%f%) weightedMedian=(%f%) weightedQuantile0.05=(%f%) weightedQuantile0.95=(%f%)";
+      titles (
+         min
+         max
+	 average
+	 median
+	 "q 5%"
+	 "q 95%"
+      );
+      logscale true;
+}
+massRelativeChange {
+		   theTitle "Relative Change of coal particles";
+		   logscale false;
+		   expr "Expression coalMassRelativeChange :  min=(%f%) max=(%f%) weightedAverage=(%f%) weightedMedian=(%f%) weightedQuantile0.05=(%f%) weightedQuantile0.95=(%f%)";
+      titles (
+         min
+         max
+	 average
+	 median
+	 "q 5%"
+	 "q 95%"
+      );
+}

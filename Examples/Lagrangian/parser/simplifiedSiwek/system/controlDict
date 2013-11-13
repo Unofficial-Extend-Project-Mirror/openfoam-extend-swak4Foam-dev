@@ -171,6 +171,22 @@ functions {
         $coalWaterSpecie;
         expression "YGas_CH4*Ygas";
     };
+    coalMassChange {
+        $coalPosition;
+        expression "max(mass0-mass,1e-15)";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedMedian
+            weightedQuantile0.05
+            weightedQuantile0.95
+        );
+    }
+    coalMassRelativeChange {
+        $coalMassChange;
+        expression "(mass0-mass)/mass0";
+    }
 }
 
 // ************************************************************************* //
