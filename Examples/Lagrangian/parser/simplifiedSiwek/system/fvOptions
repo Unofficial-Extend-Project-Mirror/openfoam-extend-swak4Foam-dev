@@ -9,40 +9,25 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      mut;
+    class       dictionary;
+    location    "system";
+    object      fvOptions;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [1 -1 -1 0 0 0 0];
-
-internalField   uniform 0;
-
-boundaryField
+source1
 {
-    top
+    type            fixedTemperatureConstraint;
+    active          true;
+    timeStart       0.1;
+    duration        0.4;
+    selectionMode   cellSet;
+    cellSet         ignitionCells;
+
+    fixedTemperatureConstraintCoeffs
     {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    bottom
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    walls
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    symmetry
-    {
-        type            symmetryPlane;
-    }
-    frontAndBack
-    {
-        type            empty;
+        mode            uniform;
+        temperature     2000;
     }
 }
 

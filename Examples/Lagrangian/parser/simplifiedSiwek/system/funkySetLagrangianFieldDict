@@ -92,6 +92,29 @@ coalCloud1 {
             field tTurb;
             expression "1e-5";
         }
+        dTarget {
+            $deltaT;
+            field dTarget;
+            expression "0.5*d";
+        }
+	forces {
+            $deltaT;
+            field f;
+            expression "vector(0,0,0)";
+	}
+	momentum {
+	    $forces;
+	    field angularMomentum;
+	}
+	torque {
+	    $forces;
+	    field torque;
+	}
+        age {
+            $deltaT;
+            field age;
+            expression "0";
+        }
         UTurb {
             $deltaT;
             field UTurb;
@@ -99,7 +122,7 @@ coalCloud1 {
         }
         cp {
             $deltaT;
-            field cp;
+            field Cp;
             expression "1300";
         }
         active {
@@ -256,7 +279,7 @@ limestoneCloud1 {
         }
         cp {
             $deltaT;
-            field cp;
+            field Cp;
             expression "900";
         }
         rho {
@@ -268,6 +291,29 @@ limestoneCloud1 {
             $deltaT;
             field tTurb;
             expression "1e-5";
+        }
+        dTarget {
+            $deltaT;
+            field dTarget;
+            expression "0.5*d";
+        }
+	forces {
+            $deltaT;
+            field f;
+            expression "vector(0,0,0)";
+	}
+	momentum {
+	    $forces;
+	    field angularMomentum;
+	}
+	torque {
+	    $forces;
+	    field torque;
+	}
+        age {
+            $deltaT;
+            field age;
+            expression "0";
         }
         UTurb {
             $deltaT;

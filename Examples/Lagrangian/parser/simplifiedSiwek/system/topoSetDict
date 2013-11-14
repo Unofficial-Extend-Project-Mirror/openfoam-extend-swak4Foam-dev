@@ -9,42 +9,27 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      mut;
+    class       dictionary;
+    object      topoSetDict;
 }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [1 -1 -1 0 0 0 0];
+actions
+(
+    {
+        name ignitionCells;
+        type cellSet;
+        action new;
 
-internalField   uniform 0;
-
-boundaryField
-{
-    top
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
+        source sphereToCell;
+        sourceInfo
+        {
+            centre          ( 0.125 0.375 0.05 );
+            radius          0.005;
+        }
     }
-    bottom
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    walls
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    symmetry
-    {
-        type            symmetryPlane;
-    }
-    frontAndBack
-    {
-        type            empty;
-    }
-}
+);
 
 
 // ************************************************************************* //

@@ -9,41 +9,21 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      mut;
+    class       dictionary;
+    location    "constant";
+    object      combustionProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [1 -1 -1 0 0 0 0];
+combustionModel  PaSR<psiChemistryCombustion>;
 
-internalField   uniform 0;
+active  true;
 
-boundaryField
+
+PaSRCoeffs
 {
-    top
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    bottom
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    walls
-    {
-        type            mutkWallFunction;
-        value           uniform 0;
-    }
-    symmetry
-    {
-        type            symmetryPlane;
-    }
-    frontAndBack
-    {
-        type            empty;
-    }
+    Cmix                1.0;
+    turbulentReaction   on;
 }
 
 
