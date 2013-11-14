@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
                 << endl
                 << exit(FatalError);
     }
-    dlLibraryTable().open(spec,"libs");
+    dlLibraryTable table(spec,"libs");
 
     wordList preloadFieldNames(spec.lookup("preloadFields"));
 

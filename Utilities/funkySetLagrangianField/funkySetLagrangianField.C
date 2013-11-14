@@ -305,6 +305,9 @@ int main(int argc, char *argv[])
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();
     }
+
+    dlLibraryTable table;
+
     bool debugParser=args.options().found("debugParser");
 
     forAll(timeDirs, timeI)
@@ -441,7 +444,7 @@ int main(int argc, char *argv[])
                                 << endl
                                 << exit(FatalError);
                     }
-                    dlLibraryTable().open(spec,"libs");
+                    table.open(spec,"libs");
 
                     wordList preloadFieldNames(spec.lookup("preloadFields"));
 
