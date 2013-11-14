@@ -137,27 +137,27 @@ coalCloud1 {
         CH4 {
             $deltaT;
             field YCH4(g);
-            expression "0.604";
+            expression "0.604*Ygas";
         }
         H2 {
             $deltaT;
             field YH2(g);
-            expression "0.099";
+            expression "0.099*Ygas";
         }
         CO2 {
             $deltaT;
             field YCO2(g);
-            expression "0.297";
+            expression "0.297*Ygas";
         }
         H2O {
             $deltaT;
             field YH2O(l);
-            expression "1";
+            expression "1*Yliquid";
         }
         ash {
             $deltaT;
             field Yash(s);
-            expression "min(0.1/Ysolid,1)";
+            expression "min(0.1,Ysolid)";
         }
         C {
             $deltaT;
@@ -165,7 +165,7 @@ coalCloud1 {
             aliases {
                 ash Yash(s);
             }
-            expression "1-ash";
+            expression "Ysolid-ash";
         }
     }
 }

@@ -7,5 +7,7 @@ cp -r 0.orig 0
 
 blockMesh
 
+cellSet
+
 funkySetFields -time 0
 funkySetLagrangianField -time 0
