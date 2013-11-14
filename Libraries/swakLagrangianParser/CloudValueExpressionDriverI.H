@@ -52,8 +52,8 @@ namespace Foam {
         word const&name
     )
     {
-        Field<vector> positions=proxy_->getPositions();
-        Field<label> cells=proxy_->getCells();
+        Field<vector> positions(proxy_->getPositions());
+        Field<label> cells(proxy_->getCells());
 
         tmp<Field<Type> > pResult(
             new Field<Type>(
