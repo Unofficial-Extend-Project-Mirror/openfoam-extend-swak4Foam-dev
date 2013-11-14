@@ -39,6 +39,8 @@ Contributors/Copyright:
 
 #include "IOmanip.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
