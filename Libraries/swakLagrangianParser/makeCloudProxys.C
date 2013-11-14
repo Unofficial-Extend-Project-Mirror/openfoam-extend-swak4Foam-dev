@@ -50,7 +50,7 @@ namespace Foam
 
     addCloudProxyToTable(CloudProxyForKinematicParcel,basicKinematicCloud);
 
-    addCloudProxyToTable(CloudProxyForThermoParcel,fluidThermoCloud);
+    addCloudProxyToTable(CloudProxyForThermoParcel,swakFluidThermoCloudType);
 
     addCloudProxyToTable(CloudProxyForReactingParcel,basicReactingCloud);
 
