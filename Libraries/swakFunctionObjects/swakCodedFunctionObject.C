@@ -256,6 +256,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
 //         ""
 //     );
 
+#ifdef SWAK_FUNCTION_OBJECT_HAS_DATAPTR
     const entry* dataPtr = dict.lookupEntryPtr
     (
         "codeData",
@@ -273,6 +274,7 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
             dict.name()
         );
     }
+#endif
 
     const entry* readPtr = dict.lookupEntryPtr
     (

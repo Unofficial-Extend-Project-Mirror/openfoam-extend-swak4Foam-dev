@@ -96,6 +96,9 @@ Contributors/Copyright:
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
 
+// the coded function objects have an additional data entry
+#define SWAK_FUNCTION_OBJECT_HAS_DATAPTR
+
 #endif
 
 // this changed starting with 2.2
