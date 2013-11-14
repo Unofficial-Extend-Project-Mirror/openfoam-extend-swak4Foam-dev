@@ -211,7 +211,7 @@ const cloud& CloudValueExpressionDriver::getCloud(
     const dictionary &dict,
     const fvMesh &mesh
 ) {
-    getCloud(
+    return getCloud(
         word(dict.lookup("cloudName")),
         mesh
     );
