@@ -94,18 +94,58 @@ void ReaderParticle::readFields (ReaderParticleCloud &c) {
         ) {
             const word className(header.headerClassName());
 
+            word name2=name;
+            name2.replace("(","_open_");
+            name2.replace(")","_close_");
+
             if(className=="scalarField") {
                 c.addScalarField(name);
+                if(name!=name2) {
+                    c.setValues(
+                        name2,
+                        c.getValues<scalar>(name)
+                    );
+                }
             } else if(className=="labelField") {
                 c.addLabelField(name);
+                if(name!=name2) {
+                    c.setValues(
+                        name2,
+                        c.getValues<label>(name)
+                    );
+                }
             } else if(className=="vectorField") {
                 c.addVectorField(name);
+                if(name!=name2) {
+                    c.setValues(
+                        name2,
+                        c.getValues<vector>(name)
+                    );
+                }
             } else if(className=="tensorField") {
                 c.addTensorField(name);
+                if(name!=name2) {
+                    c.setValues(
+                        name2,
+                        c.getValues<tensor>(name)
+                    );
+                }
             } else if(className=="symmTensorField") {
                 c.addSymmTensorField(name);
+                if(name!=name2) {
+                    c.setValues(
+                        name2,
+                        c.getValues<symmTensor>(name)
+                    );
+                }
             } else if(className=="sphericalTensorField") {
                 c.addSphericalTensorField(name);
+                if(name!=name2) {
+                    c.setValues(
+                        name2,
+                        c.getValues<sphericalTensor>(name)
+                    );
+                }
             // } else if(className=="boolField") {
             //     c.addBoolField(name);
             } else {
