@@ -57,7 +57,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
 :
     CloudProxyForParticle<CloudType>(c)
 {
-    typedef CloudProxyForParticle<CloudType> baseType;
+    typedef CloudProxyForKinematicParcel<CloudType> baseType;
 
 #ifndef FOAM_KINEMTATIC_HAS_NO_ACTIVE_PROPERTY
     this->addBoolFunction(

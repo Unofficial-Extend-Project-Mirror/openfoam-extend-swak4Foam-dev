@@ -201,6 +201,7 @@ protected:
         virtual RType
         operator()(const particleType &p) const
             {
+                //                Info << ((p).*(fPtr_))() << " " << index_ << " " << endl;
                 return ((p).*(fPtr_))()[index_];
             }
     };

@@ -55,7 +55,7 @@ CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphas
 :
     CloudProxyForReactingParcel<CloudType>(cl)
 {
-    typedef CloudProxyForParticle<CloudType> baseType;
+    typedef CloudProxyForReactingMultiphaseParcel<CloudType> baseType;
 
     const CloudType &c=this->theCloud();
 

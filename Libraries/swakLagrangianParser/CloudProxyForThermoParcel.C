@@ -55,7 +55,7 @@ CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
 :
     CloudProxyForKinematicParcel<CloudType>(c)
 {
-    typedef CloudProxyForParticle<CloudType> baseType;
+    typedef CloudProxyForThermoParcel<CloudType> baseType;
 
     this->addScalarFunction(
         "T",
