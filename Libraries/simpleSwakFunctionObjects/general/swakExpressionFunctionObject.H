@@ -81,6 +81,9 @@ class swakExpressionFunctionObject
     //- the expression that is to be evaluated
     string expression_;
 
+    //- the mask expression
+    string maskExpression_;
+
     //- list with the accumulations of evaluated expression
     List<NumericAccumulationNamedEnum::accuSpecification> accumulations_;
 

@@ -1,0 +1,38 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 23 Aug 2013 12:26:06 +0200
+Subject: Re: Parser for lagrangian particles
+Message-Id: <f69cb962de2d74c2-e76ffb0c532c0a7c-artemis@bgs-cool-greybook.local>
+References: <f69cb962de2d74c2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <f69cb962de2d74c2-0-artemis@bgs-cool-greybook.local>
+
+Basic setup:
+
+CloudValueExpressionLexer/Parser - usual flex/bison-stuff.
+
+CloudValueExpressionDriver: usual driver class. Gets the cloud via the
+cloud name. Holds a pointer const reference to it. From the cloud typeName
+constructs a CloudProxy-subclass which it will query for field names
+and types. Also interpolates the volume-fields
+
+CloudProxy - Base class that gets values and names
+The New-function will create get the concrete subclass from the
+typeName of the cloud. If no fitting CloudProxy is found then it will
+look for a parameter 'actualCloudType' where the user must specify the
+cloud type this is equivalent to. Each CloudProxy hold its own
+ParticleClassProxy which it instantiates from particleType of the
+CloudType it is instantiated with
+
+ParticleClassProxy: Template class that knows how to get values from
+ParticleClass. Inheritance hierar<chy equivalent to
+ParticleClasses. First gets values from the own class then the
+superclass.
+weight-function: $1$ in the base class. Then the total mass of the parcel
+
+Further methods are
+-isScalarField, isVectorField to determine whether a name is a field
+-getScalarField, getVectorField etc to get Fields with the values for
+each particle
+
+
+Important: species Names in ReactingParcels need to be cleaned of
+characters like "(" to be usable in the parser

@@ -51,6 +51,8 @@ Contributors/Copyright:
 
 #include "printSwakVersion.H"
 
+#include "RepositoryBase.H"
+
 template<class T,template<class> class PField,class Mesh>
 void writeVolumeField(
     const string &name,
@@ -547,6 +549,8 @@ int main(int argc, char *argv[])
         runTime.setTime(timeDirs[timeI], timeI);
 
         Foam::Info<< "Time = " << runTime.timeName() << Foam::endl;
+
+        RepositoryBase::updateRepos();
 
         mesh.readUpdate();
 

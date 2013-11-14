@@ -332,6 +332,18 @@ S_{expl} + S_{impl} T
          /intermediate/ clouds)
     - swakVelocityFunctionPlugin :: Functions that work on the flow
          field (currently only the local Courant-number)
+**** lagrangianCloudAdaptors-directory
+     Because of the templating all plugin-functions have to be
+     reinstaniated for new particle classes. The libraries in this
+     directory
+     - reimplement the functions from
+       =swakLagrangianCloudSourcesFunctionPlugin=
+     - the =CloudProxy= for the =cloud= parser
+     for special particle classes. These are
+     - coalCloudAdaptor :: the library =libswakCoalCloudAdaptor= that
+          handels the =CoalParcel=-class
+     These libraries have to be included in the =libs=-entry to
+     be able to handle these libraries
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -592,18 +604,27 @@ S_{expl} + S_{impl} T
                        with an implicit source term with
                        =SwakImplicitSource=
 *** Lagrangian
-    Tests for the functionObjects that create and evolve a cloud of
-    particles (library =simpleLagrangianFunctionObjects=)
-**** hotStream
-     - Solver :: replayTransientBC
-     - Mesh preparation :: =prepareCase.sh=-script
-     - Demonstrates :: 3 clouds (kinematic, reacting,
-                       solidParticle). Loading of a thermophysical
-                       model with a functionObject. Plugin functions
-                       for information about the clouds
-**** angledDuctWithBalls
-     - Solver :: rhoPimpleFoam
-     - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
+    Stuff that has to do with lagrangian particles
+**** functionObjects
+     Tests for the functionObjects that create and evolve a cloud of
+     particles (library =simpleLagrangianFunctionObjects=)
+***** hotStream
+      - Solver :: replayTransientBC
+      - Mesh preparation :: =prepareCase.sh=-script
+      - Demonstrates :: 3 clouds (kinematic, reacting,
+                       	solidParticle). Loading of a thermophysical
+                       	model with a functionObject. Plugin functions
+                       	for information about the clouds
+***** angledDuctWithBalls
+      - Solver :: rhoPimpleFoam
+      - Demonstrates :: Thermo-cloud. Functions for lagrangian
+                        particles
+**** parser
+     Testing the =cloud=-parser for lagrangiant particles
+***** evaporationTestWithExpressions
+      - Solver :: reactingParcelFoam
+      - Demonstrates :: Adding evaluations on the cloud to a regular
+                        case
 *** SimpleSurface
     Examples for the use of the =simpleSearchableSurfaces=-library.
 **** twoMotorbikesAndAWall
@@ -733,7 +754,7 @@ S_{expl} + S_{impl} T
 *** Distributed bug-tracking
     As an experimental feature distributed bug-tracking was introduced
     using the /Artemis/-extension for /Mercurial/ (see
-    =http://hg.mrzv.org/Artemis/=). An up-to-date version can be
+    [[http://hg.mrzv.org/Artemis/]]). An up-to-date version can be
     installed by
 : hg clone http://hg.mrzv.org/Artemis/
     somewhere and installing the plugin by editing =.hgrc=.
@@ -742,6 +763,17 @@ S_{expl} + S_{impl} T
     for keeping track of new features that are to be introduced to
     =swak4Foam= and may be discontinued if the experiment proves to be
     unsuccessful.
+*** Maintaining feature and hotfix-branches
+    The repository comes with a =.hgflow=-file that is set for the
+    =hgflow=-extension found at
+    [[https://bitbucket.org/yujiewu/hgflow/wiki/Home]] (there are multiple
+    branches of this extension. This *seems* to be the most up-to date
+    and still under active development)
+
+    The two main lines (=1.x= and =2.x=) have slightly different names
+    for the =master= and the =dvelopment=-branch. But apart from that
+    in the future this repository will try to stick to the model
+    described in [[http://nvie.com/posts/a-successful-git-branching-model/]]
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the
@@ -2390,6 +2422,10 @@ S_{expl} + S_{impl} T
 
      Also in the =fvcSchemes=-plugin functions the set of
      =laplacian=-operators was completed
+**** Function object =swakExpression= now has optional =mask=
+     If the logical expression =mask= is set then only the results
+     from =expression= for which =mask= is =true= are used for
+     accumulations
 *** Examples
 **** Moved the OSCFD-examples to a different directory
      Started one new directory for all cases from presentations

@@ -65,14 +65,19 @@ lcsMassSourcePluginFunction::lcsMassSourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<lcsMassSourcePluginFunction::dimScalarField> lcsMassSourcePluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(dimScalarField,basicReactingCloud,reactingCloud,Srho());
+    tryCall(dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,Srho());
+
+    return autoPtr<dimScalarField>();
+}
+
 void lcsMassSourcePluginFunction::doEvaluation()
 {
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-    autoPtr<dimScalarField> pSrho;
 
-    // pick up the first fitting class
-    castAndCall(pSrho,dimScalarField,basicReactingCloud,reactingCloud,Srho());
-    castAndCall(pSrho,dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,Srho());
+    autoPtr<dimScalarField> pSrho=internalEvaluate();
 
     noCloudFound(pSrho);
 

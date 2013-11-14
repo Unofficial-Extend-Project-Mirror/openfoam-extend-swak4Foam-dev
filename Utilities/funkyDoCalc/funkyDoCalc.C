@@ -51,6 +51,8 @@ Contributors/Copyright:
 
 #include "AccumulationCalculation.H"
 
+#include "RepositoryBase.H"
+
 template <typename Type>
 Ostream& writeValue(
     Ostream &o,
@@ -225,6 +227,8 @@ int main(int argc, char *argv[])
         runTime.setTime(timeDirs[timeI], timeI);
 
         Foam::Info << "\nTime = " << runTime.timeName() << Foam::endl;
+
+        RepositoryBase::updateRepos();
 
         mesh.readUpdate();
 

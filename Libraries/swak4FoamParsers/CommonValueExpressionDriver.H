@@ -129,7 +129,7 @@ protected:
     bool hasAlias(const word &name) const;
 
     //- return the actual name for an alias
-    word getAlias(const word &name) const;
+    const word &getAlias(const word &name) const;
 
     const HashTable<word,word> &aliases() const
         {
@@ -139,6 +139,9 @@ protected:
     void setAliases(const HashTable<word,word> &orig) {
         aliases_=orig;
     }
+
+    const word &resolveAlias(const word &name) const;
+
 private:
     ExpressionResult result_;
 

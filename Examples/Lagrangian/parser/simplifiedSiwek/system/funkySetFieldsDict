@@ -1,0 +1,30 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+expressions (
+	    setT {
+	        field T;
+		keepPatches true;
+		variables (
+		    "TMin=350;"
+		    "TMax=450;"
+		    "miny=interpolateToCell(min(pts().y));"
+		    "maxy=interpolateToCell(max(pts().y));"
+		);
+		valuePatches (
+		    walls
+		);
+		expression "TMin+(TMax-TMin)*pos().y/(maxy-miny)";
+	    }
+);

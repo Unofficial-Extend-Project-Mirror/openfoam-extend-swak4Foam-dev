@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -36,7 +36,7 @@ Description
 Contributors/Copyright:
     2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
@@ -48,6 +48,8 @@ Contributors/Copyright:
 #include "OFstream.H"
 
 #include "printSwakVersion.H"
+
+#include "RepositoryBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -70,7 +72,7 @@ int main(int argc, char *argv[])
     if(args.options().found("dict")) {
         dictName=args.options()["dict"];
     }
-    
+
     bool cacheFields=args.options().found("cacheFields");
     if(cacheFields) {
         WarningIn("main()")
@@ -103,16 +105,18 @@ int main(int argc, char *argv[])
 
         Foam::Info<< "Time = " << runTime.timeName() << Foam::endl;
 
+        RepositoryBase::updateRepos();
+
         mesh.readUpdate();
 
         forAllIter(dictionary,funkyDict,it) {
             const dictionary &part=(*it).dict();
-        
+
             word fieldName=part["field"];
-            
-            Info << "\n\nPart: " << (*it).keyword() 
+
+            Info << "\n\nPart: " << (*it).keyword()
                 << " working on field " << fieldName << endl;
-            
+
             IOdictionary field(
                 IOobject
                 (
@@ -131,16 +135,16 @@ int main(int argc, char *argv[])
                 field.readHeader(inStream);
                 field.readData(inStream);
             }
-            
+
             List<dictionary> expressions(part.lookup("expressions"));
-    
+
             forAll(expressions,expressionI) {
                 const dictionary &expression=expressions[expressionI];
 
                 word target(expression["target"]);
                 word patchName(expression["patchName"]);
                 string expr(expression["expression"]);
-                Info << "Setting " << target << " on " << patchName 
+                Info << "Setting " << target << " on " << patchName
                     << " the expression " << expr << endl;
 
                 PatchValueExpressionDriver driver(expression,mesh);
@@ -165,7 +169,7 @@ int main(int argc, char *argv[])
                 }
                 OStringStream result;
                 string newEntry=driver.outputEntry();
-                patchDict.set(target,newEntry.c_str());                
+                patchDict.set(target,newEntry.c_str());
             }
 
             {

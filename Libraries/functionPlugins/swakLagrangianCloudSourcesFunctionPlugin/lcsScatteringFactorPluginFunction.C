@@ -67,14 +67,20 @@ lcsScatteringFactorPluginFunction::lcsScatteringFactorPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsScatteringFactorPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,sigmap());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsScatteringFactorPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> psigmap;
 
-    // pick up the first fitting class
-    castAndCall(psigmap,volScalarField,swakFluidThermoCloudType,thermoCloud,sigmap());
-    castAndCall(psigmap,volScalarField,basicReactingCloud,reactingCloud,sigmap());
-    castAndCall(psigmap,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+   autoPtr<volScalarField> psigmap=internalEvaluate();
 
     noCloudFound(psigmap);
 

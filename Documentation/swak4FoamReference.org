@@ -370,6 +370,23 @@ hide circle
             cell number for an =internalField=). This number is only
             unique on each processor
     - cpu :: The processor number an element on is for a parallel run
+    - weight :: The "natural" weight according to table
+                \ref{tab:naturalWeights} for the current parser
+    #+CAPTION: "Natural" weights for different parsers
+    #+LABEL: tab:naturalWeights
+    | Driver            | Definition                      |
+    |-------------------+---------------------------------|
+    | =internalField=   | the cell volume                 |
+    | =patch=           | the face area                   |
+    | =set=             | constant volume $1$             |
+    | =surface=         | area of the facets              |
+    | =cellZone=        | volume of the cell              |
+    | =cellSet=         | volume of the cell              |
+    | =faceZone=        | area of the face                |
+    | =faceSet=         | area of the face                |
+    | =internalFaField= | area of the face                |
+    | =faPatch=         | length of the edge              |
+    | =cloud=           | constant $1$ or total mass of the parcel |
 *** OpenFOAM-specific functions
     The following functions are not available in all parsers. In the
     description in brackets there will be a shorthand description of
@@ -1035,10 +1052,10 @@ hide circle
    these are based on distributions. If the =weighted= variant is
    chosen then the meaning is the more physical one (for =weighted=
    the 'natural' weight of the quantity is used. For instance for
-   cells the cell volume. Otherwise the weight $1$ is used). Some
-   of these accumulations need a single floating point number as a
-   parameter. This is simply added to the name. The added
-   accumulations are:
+   cells the cell volume . Otherwise the weight $1$ is used. See also
+   table \ref{tab:naturalWeights}). Some of these accumulations need a
+   single floating point number as a parameter. This is simply added
+   to the name. The added accumulations are:
    - min :: Minimum value
    - max :: Maximum value
    - sum :: Sum of the values
