@@ -102,6 +102,36 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
 }
 
 CloudValueExpressionDriver::CloudValueExpressionDriver(
+    const word& name,
+    const fvMesh& mesh
+)
+:
+    CommonValueExpressionDriver(),
+    cloud_(
+        getCloud(
+            name,
+            mesh
+        )
+    ),
+    proxy_(
+        CloudProxy::New(
+            cloud_
+        )
+    ),
+    interpolationSchemes_(
+        //        dict.subOrEmptyDict("interpolationSchemes")
+    )
+{
+    Dbug << "Constructed from name " << name << endl;
+    Dbug << "Type of cloud: " << cloud_.type() << endl;
+
+    //    Info << endl << "'cloud'-driver in " << dict.name() << endl;
+    //   Info << proxy_() << endl;
+
+    writeProxyInfo();
+}
+
+CloudValueExpressionDriver::CloudValueExpressionDriver(
     const ReaderParticleCloud& c,
     const word &defaultInterpolation
 )
@@ -181,7 +211,16 @@ const cloud& CloudValueExpressionDriver::getCloud(
     const dictionary &dict,
     const fvMesh &mesh
 ) {
-    const word name(dict.lookup("cloudName"));
+    getCloud(
+        word(dict.lookup("cloudName")),
+        mesh
+    );
+}
+
+const cloud& CloudValueExpressionDriver::getCloud(
+    const word &name,
+    const fvMesh &mesh
+) {
     if(!mesh.foundObject<cloud>(name)) {
         IOobject reg
         (
