@@ -96,6 +96,11 @@ class CloudValueExpressionDriver
         const fvMesh &mesh
     );
 
+    static const cloud& getCloud(
+        const word &name,
+        const fvMesh &mesh
+    );
+
     //- the interpolation schemes
     dictionary interpolationSchemes_;
 
