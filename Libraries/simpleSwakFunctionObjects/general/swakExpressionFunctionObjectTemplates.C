@@ -86,7 +86,7 @@ void swakExpressionFunctionObject::writeTheData(
             ==
             pTraits<scalar>::typeName
         ) {
-            scalarField rawMask=driver.getResult<scalar>();
+            scalarField rawMask(driver.getResult<scalar>());
             maskValues.reset(
                 new Field<bool>(rawMask.size(),false)
             );
