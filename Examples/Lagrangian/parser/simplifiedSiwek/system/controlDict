@@ -187,6 +187,38 @@ functions {
         $coalMassChange;
         expression "(mass0-mass)/mass0";
     }
+    coalCheckFractionSum{
+        $coalMassChange;
+        expression "Ysolid+Yliquid+Ygas";
+        accumulations (
+            min
+            max
+        );
+    }
+    coalCheckFractionSumGas {
+        $coalCheckFractionSum;
+        aliases {
+            CH4 YCH4(g);
+            CO2 YCO2(g);
+            H2  YH2(g);
+        }
+        expression "Ygas*(CH4+CO2+H2)";
+    }
+    coalCheckFractionSumSolid {
+        $coalCheckFractionSum;
+        aliases {
+            C   YC(s);
+            ash Yash(s);
+        }
+        expression "Ysolid*(C+ash)";
+    }
+    coalCheckFractionSumLiquid {
+        $coalCheckFractionSum;
+        aliases {
+            H2O   YH2O(l);
+        }
+        expression "Yliquid*H2O";
+    }
 }
 
 // ************************************************************************* //

@@ -2187,6 +2187,12 @@ S_{expl} + S_{impl} T
      - data entry can now be integrated. This allows using it for
        instance for the injection rate in lagrangian models
 ** Next release - version number : 0.2.5
+*** Incompatibilities to previous versions
+**** Support of /old/ =1.6-ext= lost
+     Due to certain differences this version only compiles with the
+     =nextRelease=-branch of 1.6-ext (from the =git=).Usually the
+     failing parts can be fixed b commenting out the appropriate
+     =#define= in =Libraries/swak4FoamParsers/include/swak.H=.
 *** Infrastructure
 **** Make error messages in =Allwmake= more verbose
      The error messages where already quite verbose. But people

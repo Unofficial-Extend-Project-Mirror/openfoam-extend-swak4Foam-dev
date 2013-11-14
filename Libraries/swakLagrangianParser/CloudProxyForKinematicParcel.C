@@ -37,6 +37,8 @@ Contributors/Copyright:
 
 #include "DebugOStream.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -55,8 +57,9 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
 :
     CloudProxyForParticle<CloudType>(c)
 {
-    typedef CloudProxyForParticle<CloudType> baseType;
+    typedef CloudProxyForKinematicParcel<CloudType> baseType;
 
+#ifndef FOAM_KINEMTATIC_HAS_NO_ACTIVE_PROPERTY
     this->addBoolFunction(
         "active",
         "Is this parcel active?",
@@ -64,6 +67,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::active
         )
     );
+#endif
     this->addScalarFunction(
         "typeId",
         "Type ID",
