@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.x-vectorN                         |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,19 +15,39 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-2
+5
 (
+    outlet
+    {
+        type            wall;
+        nFaces          25;
+        startFace       300;
+    }
+    inlet
+    {
+        type            wall;
+        nFaces          25;
+        startFace       325;
+    }
     walls
     {
         type            wall;
-        nFaces          80;
-        startFace       760;
+        nFaces          50;
+        startFace       350;
     }
-    frontAndBack
+    back
     {
-        type            empty;
-        nFaces          800;
-        startFace       840;
+        type            symmetryPlane;
+        inGroups        1(symmetryPlane);
+        nFaces          25;
+        startFace       400;
+    }
+    front
+    {
+        type            symmetryPlane;
+        inGroups        1(symmetryPlane);
+        nFaces          25;
+        startFace       425;
     }
 )
 

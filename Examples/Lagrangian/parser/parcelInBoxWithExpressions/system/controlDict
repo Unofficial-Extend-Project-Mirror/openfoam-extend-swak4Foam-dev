@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -17,7 +17,7 @@ FoamFile
 
 application     reactingParcelFoam;
 
-startFrom       startTime;
+startFoam       startTime;
 
 startTime       0;
 
@@ -25,11 +25,11 @@ stopAt          endTime;
 
 endTime         0.5;
 
-deltaT          1e-03;
+deltaT          1e-3;
 
 writeControl    adjustableRunTime;
 
-writeInterval   0.05;
+writeInterval   1e-1;
 
 purgeWrite      0;
 
@@ -37,19 +37,20 @@ writeFormat     ascii;
 
 writePrecision  10;
 
-writeCompression compressed;
+writeCompression off;
 
 timeFormat      general;
 
 timePrecision   6;
 
-runTimeModifiable yes;
+runTimeModifiable true;
 
 adjustTimeStep  yes;
 
-maxCo           0.3;
+maxCo           5;
 
-maxDeltaT       1e-03;
+maxDeltaT       1e-3;
+
 
 libs (
     "libsimpleSwakFunctionObjects.so"
@@ -95,7 +96,7 @@ functions {
     }
     cloudWaterMass {
         $cloudPosition;
-        expression "YH2O*mass";
+        expression "YLiquid_H2O*mass";
     }
     cloudRelativeMass {
         $cloudPosition;

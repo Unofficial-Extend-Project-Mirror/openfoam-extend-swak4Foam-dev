@@ -1,11 +1,8 @@
 species
 (
-    O2
+    air
     H2O
-    N2
-)
-;
+);
 
 reactions
-(
-);
+{}

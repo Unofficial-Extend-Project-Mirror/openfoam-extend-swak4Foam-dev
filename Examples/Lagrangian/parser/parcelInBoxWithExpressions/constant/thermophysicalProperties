@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,25 +15,39 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-thermoType      hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+thermoType
+{
+    type            heRhoThermo;
+    mixture         reactingMixture;
+    transport       polynomial;
+    thermo          hPolynomial;
+    energy          sensibleEnthalpy;
+    equationOfState icoPolynomial;
+    specie          specie;
+}
+
+dpdt no;
 
 chemistryReader foamChemistryReader;
 
-foamChemistryFile "$FOAM_CASE/chemkin/foam.inp";
+foamChemistryFile "$FOAM_CASE/constant/reactions";
 
-foamChemistryThermoFile "$FOAM_CASE/chemkin/foam.dat";
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.incompressiblePoly";
 
-liquidComponents
-(
+inertSpecie     air;
+
+liquids
+{
     H2O
-);
+    {
+        defaultCoeffs yes;
+    }
+}
 
-solidComponents
-();
-
-inertSpecie     N2;
-
-H2O             H2O defaultCoeffs;
+solids
+{
+    // none
+}
 
 
 // ************************************************************************* //
