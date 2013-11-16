@@ -88,3 +88,14 @@ parcelsInIgnition {
 		  idNr 1;
 		  type dynamic;
 }
+temperatures {
+	     theTitle "Temperatures";
+	     expr "Expression (.+)Temperature :  min=(%f%) max=(%f%) weightedAverage=(%f%)";
+	     idNr 1;
+	     type dynamic;
+	     titles (
+	           min
+		   max
+		   average
+	     );
+}
