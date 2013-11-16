@@ -287,6 +287,19 @@ protected:
         const word &name
     ) const;
 
+public:
+
+    bool isCellSet(const word &name);
+    bool isCellZone(const word &name);
+
+    bool isFaceSet(const word &name);
+    bool isFaceZone(const word &name);
+
+    bool isPointSet(const word &name);
+    bool isPointZone(const word &name);
+
+protected:
+
     template<class T,class Mesh>
     inline tmp<T> readAndRegister(
         const word &name,
