@@ -160,6 +160,8 @@ namespace Foam {
 %token <name>   TOKEN_FUNCTION_YID   "F_symmTensorID"
 %token <name>   TOKEN_FUNCTION_HID   "F_sphericalTensorID"
 %token <name>   TOKEN_FUNCTION_LID   "F_logicalID"
+%token <name> TOKEN_SETID "cellSetID"
+%token <name> TOKEN_ZONEID "cellZoneID"
 %token <val>    TOKEN_NUM   "value"
 %token <integer>    TOKEN_INT   "integer"
 %token <vec>    TOKEN_VEC   "vector"
@@ -297,6 +299,9 @@ namespace Foam {
 
 %token TOKEN_cpu
 %token TOKEN_weight
+
+%token TOKEN_set
+%token TOKEN_zone
 
 %left '?' ':'
 %left TOKEN_OR
@@ -1524,6 +1529,14 @@ evaluateSphericalTensorFunction: TOKEN_FUNCTION_HID '(' eatCharactersSwitch
 
 lexp: TOKEN_TRUE   { $$ = driver.makeField(true).ptr(); }
     | TOKEN_FALSE  { $$ = driver.makeField(false).ptr(); }
+    | TOKEN_set '(' TOKEN_SETID ')'    {
+        $$ = driver.makeCellSetField(*$3).ptr();
+        delete $3;
+      }
+    | TOKEN_zone '(' TOKEN_ZONEID ')'  {
+        $$ = driver.makeCellZoneField(*$3).ptr();
+        delete $3;
+      }
     | exp '<' exp  {
             sameSize($1,$3);
             $$ = driver.doCompare(*$1,std::less<Foam::scalar>(),*$3).ptr();

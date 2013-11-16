@@ -440,8 +440,12 @@ hide circle
      and identify cells, faces or points belonging to a certain
      group. Most of them take a name as an argument. The result is a
      boolean field:
-     - set(name) :: =True= for all cells in the cell-set =name=
-     - zone(name) :: =True= for all cells in the cell-zone =name=
+     - set(name) :: =True= for all cells in the cell-set =name=. For
+                    =cloud= this returns =True= if a particle is in
+                    a cell that is the set
+     - zone(name) :: =True= for all cells in the cell-zone =name=. For
+                    =cloud= this returns =True= if a particle is in
+                    a cell that is the zone
      - fset(name) :: =True= for all faces in the face-set =name=
      - fzone(name) :: =True= for all faces in the face-zone =name=
      - pset(name) :: =True= for all points in the point-set =name=
