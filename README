@@ -621,7 +621,7 @@ S_{expl} + S_{impl} T
                         particles
 **** parser
      Testing the =cloud=-parser for lagrangiant particles
-***** evaporationTestWithExpressions
+***** parcelInBoxWithExpressions
       - Solver :: reactingParcelFoam
       - Demonstrates :: Adding evaluations on the cloud to a regular
                         case
