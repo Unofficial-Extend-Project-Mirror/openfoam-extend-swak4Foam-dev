@@ -219,6 +219,40 @@ functions {
         }
         expression "Yliquid*H2O";
     }
+    coalInIgnitionZone {
+        $coalPosition;
+        expression "1";
+        mask "zone(ignitionCells)";
+        accumulations (
+            sum
+        );
+    }
+    limeInIgnitionZone {
+        $coalInIgnitionZone;
+        cloudName limestoneCloud1;
+    }
+    // coalInIgnitionSet {
+    //     $coalInIgnitionZone;
+    //     mask "zone(ignitionCells)";
+    // }
+    gasTemperature {
+        $limestoneFraction;
+        expression "T";
+        accumulations (
+            min
+            max
+            weightedAverage
+        );
+    }
+    coalTemperature {
+        $gasTemperature;
+        valueType cloud;
+        cloudName coalCloud1;
+    }
+    limeTemperature {
+        $coalTemperature;
+        cloudName limestoneCloud1;
+    }
 }
 
 // ************************************************************************* //

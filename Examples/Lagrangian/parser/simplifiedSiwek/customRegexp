@@ -82,3 +82,20 @@ massRelativeChange {
 	 "q 95%"
       );
 }
+parcelsInIgnition {
+		  theTitle "Number of parcels in the ignition zone";
+		  expr "Expression (.+)InIgnitionZone :  sum=(%f%)";
+		  idNr 1;
+		  type dynamic;
+}
+temperatures {
+	     theTitle "Temperatures";
+	     expr "Expression (.+)Temperature :  min=(%f%) max=(%f%) weightedAverage=(%f%)";
+	     idNr 1;
+	     type dynamic;
+	     titles (
+	           min
+		   max
+		   average
+	     );
+}

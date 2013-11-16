@@ -38,6 +38,7 @@ typedef parserCloud::CloudValueExpressionParser::semantic_type YYSTYPE;
 %}
 
 %s setname
+%s zonename
 %s vectorcomponent
 %s tensorcomponent
 %x fluidphase
@@ -80,10 +81,10 @@ float                      ((({fractional_constant}{exponent_part}?)|([[:digit:]
     }
 %}
 
-<INITIAL,setname,needsIntegerParameter,fluidphase>[ \t]+             yylloc->step ();
+<INITIAL,setname,zonename,needsIntegerParameter,fluidphase>[ \t]+             yylloc->step ();
 [\n]+                yylloc->lines (yyleng); yylloc->step ();
 
-<INITIAL,setname>[-+*/%(),&^<>!?:.]               return yytext[0];
+<INITIAL,setname,zonename>[-+*/%(),&^<>!?:.]               return yytext[0];
 
 <needsIntegerParameter,fluidphase>[(] return yytext[0];
 <needsIntegerParameter,fluidphase>[)] { BEGIN(INITIAL); return yytext[0]; }
@@ -191,6 +192,16 @@ dev2                   return token::TOKEN_dev2;
 eigenValues            return token::TOKEN_eigenValues;
 eigenVectors           return token::TOKEN_eigenVectors;
 
+set                   {
+    BEGIN(setname);
+    return token::TOKEN_set;
+                      }
+
+zone                  {
+    BEGIN(zonename);
+    return token::TOKEN_zone;
+                      }
+
 {float}                {
                        errno = 0;
                        yylval->val = atof(yytext);
@@ -276,6 +287,26 @@ eigenVectors           return token::TOKEN_eigenVectors;
         driver.error (*yylloc, "field "+*ptr+" not existing or of wrong type");
     }
                      }
+
+<setname>{setid}              {
+    Foam::word *ptr=new Foam::word (yytext);
+    BEGIN(INITIAL);
+    if(driver.isCellSet(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_SETID;
+    } else {
+        driver.error (*yylloc, "cellSet id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+<zonename>{setid}              {
+    Foam::word *ptr=new Foam::word (yytext);
+    BEGIN(INITIAL);
+    if(driver.isCellZone(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_ZONEID;
+    } else {
+        driver.error (*yylloc, "cellZone id "+*ptr+" not existing or of wrong type");
+    }
+                     }
+
 
 <parsedByOtherParser>. {
     numberOfFunctionChars--;
