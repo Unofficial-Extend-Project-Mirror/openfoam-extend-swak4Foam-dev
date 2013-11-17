@@ -111,6 +111,33 @@ functions {
         cloudName coalCloud1;
         //        alternateCloudType Cloud<basicKinematicParcel>;
     }
+    coalDiameter {
+        $coalPosition;
+        expression "d";
+    }
+    coalOnBoundary {
+        $coalPosition;
+        expression "1";
+        mask "onBoundary";
+        accumulations (
+            sum
+        );
+    }
+    limeOnBoundary {
+        $coalOnBoundary;
+        cloudName limestoneCloud1;
+    }
+    totalOnBoundary {
+        $coalPosition;
+        accumulations (
+            average
+        );
+        expression "nrLime+nrCoal";
+        variables (
+            "nrCoal=sum(onBoundary ? 1 : 0);"
+            "nrLime{cloud'limestoneCloud1}=sum(onBoundary ? 1 : 0);"
+        );
+    }
     coalMass {
         $coalPosition;
         expression "mass";

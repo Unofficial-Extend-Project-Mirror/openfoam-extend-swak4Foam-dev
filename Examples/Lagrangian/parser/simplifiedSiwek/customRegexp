@@ -99,3 +99,19 @@ temperatures {
 		   average
 	     );
 }
+parcelsOnBoundary {
+		  theTitle "Parcels (not particles) on the boundary";
+		  expr "Expression (.+)OnBoundary :  .+=(%f%)";
+		  type dynamic;
+		  idNr 1;
+}
+coalDiameter {
+	     theTitle "Diameter of coal parcels";
+	     expr "Expression coalDiameter :  min=(%f%) max=(%f%) average=%f% weightedAverage=(%f%)";
+	     titles (
+	     	    min
+		    max
+		    average
+	     );
+	     logscale true;
+}

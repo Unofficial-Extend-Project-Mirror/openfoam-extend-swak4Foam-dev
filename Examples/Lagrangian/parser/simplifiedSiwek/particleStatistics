@@ -19,7 +19,7 @@ FoamFile
 
 positions {
     valueType cloud;
-    cloudName limestoneCloud1;
+    cloudName coalCloud1;
     expression "pos()";
     //    expression "phiSq";
     accumulations (
@@ -46,6 +46,31 @@ gasDifference {
     interpolationSchemes {
         U cell;
     }
+}
+
+diameter {
+    $positions;
+    expression "d";
+}
+
+mass {
+    $positions;
+    expression "rho*4*pi/3*pow(d/2,3)";
+}
+
+gas {
+    $positions;
+    expression "Ygas";
+}
+
+liquid {
+    $positions;
+    expression "Yliquid";
+}
+
+solid {
+    $positions;
+    expression "Ysolid";
 }
 
 // ************************************************************************* //
