@@ -55,7 +55,7 @@ CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphas
 :
     CloudProxyForReactingParcel<CloudType>(cl)
 {
-    typedef CloudProxyForParticle<CloudType> baseType;
+    typedef CloudProxyForReactingMultiphaseParcel<CloudType> baseType;
 
     const CloudType &c=this->theCloud();
 
@@ -64,8 +64,16 @@ CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphas
     forAll(gasNames,i) {
         const word &name=gasNames[i];
         this->addScalarFunction(
-            "YGas_"+name,
+            "Y"+name+"(g)",
             "Mass fraction of "+name+" (gas)",
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::YGas,
+                i
+            )
+        );
+        this->addScalarFunction(
+            "YGas_"+name,
+            "Mass fraction of "+name+" (gas) - alias",
             new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
                 &CloudType::particleType::YGas,
                 i
@@ -78,8 +86,16 @@ CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphas
     forAll(liquidNames,i) {
         const word &name=liquidNames[i];
         this->addScalarFunction(
-            "YLiquid_"+name,
+            "Y"+name+"(l)",
             "Mass fraction of "+name+" (liquid)",
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::YLiquid,
+                i
+            )
+        );
+        this->addScalarFunction(
+            "YLiquid_"+name,
+            "Mass fraction of "+name+" (liquid) - alias",
             new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
                 &CloudType::particleType::YLiquid,
                 i
@@ -92,8 +108,16 @@ CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphas
     forAll(solidNames,i) {
         const word &name=solidNames[i];
         this->addScalarFunction(
-            "YSolid_"+name,
+            "Y"+name+"(s)",
             "Mass fraction of "+name+" (solid)",
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::YSolid,
+                i
+            )
+        );
+        this->addScalarFunction(
+            "YSolid_"+name,
+            "Mass fraction of "+name+" (solid) - alias",
             new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
                 &CloudType::particleType::YSolid,
                 i

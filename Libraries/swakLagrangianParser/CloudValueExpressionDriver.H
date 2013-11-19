@@ -196,6 +196,9 @@ public:
 
     tmp<scalarField> makeIdField();
 
+    tmp<Field<bool> > makeCellSetField(const word &name);
+    tmp<Field<bool> > makeCellZoneField(const word &name);
+
     const CloudProxy &proxy() const
         { return proxy_(); }
 

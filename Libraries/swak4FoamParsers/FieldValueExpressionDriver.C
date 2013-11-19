@@ -170,60 +170,6 @@ void FieldValueExpressionDriver::parseInternal(int startToken)
     parser.parse ();
 }
 
-bool FieldValueExpressionDriver::isCellSet(const word &name)
-{
-    if(getTypeOfSet(name)=="cellSet") {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool FieldValueExpressionDriver::isCellZone(const word &name)
-{
-    if(mesh_.cellZones().findZoneID(name)>=0) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool FieldValueExpressionDriver::isFaceSet(const word &name)
-{
-    if(getTypeOfSet(name)=="faceSet") {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool FieldValueExpressionDriver::isFaceZone(const word &name)
-{
-    if(mesh_.faceZones().findZoneID(name)>=0) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool FieldValueExpressionDriver::isPointSet(const word &name)
-{
-    if(getTypeOfSet(name)=="pointSet") {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool FieldValueExpressionDriver::isPointZone(const word &name)
-{
-    if(mesh_.pointZones().findZoneID(name)>=0) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 tmp<volScalarField> FieldValueExpressionDriver::makeModuloField(
     const volScalarField &a,
     const volScalarField &b)
@@ -788,6 +734,14 @@ tmp<volScalarField> FieldValueExpressionDriver::makeCellZoneField(const word &na
   tmp<volScalarField> f=makeConstantField<volScalarField>(0);
   label zoneID=mesh_.cellZones().findZoneID(name);
 
+  if(zoneID<0) {
+      FatalErrorIn("FieldValueExpressionDriver::makeCellZoneField")
+          << "No zone named " << name << "found. Present: "
+              << mesh_.cellZones().names()
+              << endl
+              << exit(FatalError);
+  }
+
   const cellZone &zone=mesh_.cellZones()[zoneID];
 
   forAll(zone,ind) {
@@ -804,6 +758,14 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceZoneField(const word
 {
   tmp<surfaceScalarField> f=makeConstantField<surfaceScalarField>(0);
   label zoneID=mesh_.faceZones().findZoneID(name);
+
+  if(zoneID<0) {
+      FatalErrorIn("FieldValueExpressionDriver::makeFaceZoneField")
+          << "No zone named " << name << "found. Present: "
+              << mesh_.faceZones().names()
+              << endl
+              << exit(FatalError);
+  }
 
   const faceZone &zone=mesh_.faceZones()[zoneID];
 
@@ -836,6 +798,14 @@ tmp<pointScalarField> FieldValueExpressionDriver::makePointZoneField(const word 
 {
   tmp<pointScalarField> f=makePointConstantField<pointScalarField>(0);
   label zoneID=mesh_.pointZones().findZoneID(name);
+
+  if(zoneID<0) {
+      FatalErrorIn("FieldValueExpressionDriver::makeFaceZoneField")
+          << "No zone named " << name << "found. Present: "
+              << mesh_.faceZones().names()
+              << endl
+              << exit(FatalError);
+  }
 
   const pointZone &zone=mesh_.pointZones()[zoneID];
 

@@ -187,6 +187,72 @@ functions {
         $coalMassChange;
         expression "(mass0-mass)/mass0";
     }
+    coalCheckFractionSum{
+        $coalMassChange;
+        expression "Ysolid+Yliquid+Ygas";
+        accumulations (
+            min
+            max
+        );
+    }
+    coalCheckFractionSumGas {
+        $coalCheckFractionSum;
+        aliases {
+            CH4 YCH4(g);
+            CO2 YCO2(g);
+            H2  YH2(g);
+        }
+        expression "Ygas*(CH4+CO2+H2)";
+    }
+    coalCheckFractionSumSolid {
+        $coalCheckFractionSum;
+        aliases {
+            C   YC(s);
+            ash Yash(s);
+        }
+        expression "Ysolid*(C+ash)";
+    }
+    coalCheckFractionSumLiquid {
+        $coalCheckFractionSum;
+        aliases {
+            H2O   YH2O(l);
+        }
+        expression "Yliquid*H2O";
+    }
+    coalInIgnitionZone {
+        $coalPosition;
+        expression "1";
+        mask "zone(ignitionCells)";
+        accumulations (
+            sum
+        );
+    }
+    limeInIgnitionZone {
+        $coalInIgnitionZone;
+        cloudName limestoneCloud1;
+    }
+    // coalInIgnitionSet {
+    //     $coalInIgnitionZone;
+    //     mask "zone(ignitionCells)";
+    // }
+    gasTemperature {
+        $limestoneFraction;
+        expression "T";
+        accumulations (
+            min
+            max
+            weightedAverage
+        );
+    }
+    coalTemperature {
+        $gasTemperature;
+        valueType cloud;
+        cloudName coalCloud1;
+    }
+    limeTemperature {
+        $coalTemperature;
+        cloudName limestoneCloud1;
+    }
 }
 
 // ************************************************************************* //

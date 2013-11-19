@@ -43,6 +43,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "cellSet.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -211,7 +213,7 @@ const cloud& CloudValueExpressionDriver::getCloud(
     const dictionary &dict,
     const fvMesh &mesh
 ) {
-    getCloud(
+    return getCloud(
         word(dict.lookup("cloudName")),
         mesh
     );
@@ -278,6 +280,79 @@ tmp<scalarField> CloudValueExpressionDriver::makeIdField()
         ids()[i]=i;
     }
     return ids;
+}
+
+tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
+{
+    tmp<Field<bool> > result(
+        new Field<bool>(this->size(),false)
+    );
+
+    IOobject head
+        (
+            name,
+            time(),
+            polyMesh::meshSubDir/"sets",
+            mesh(),
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        );
+
+    if(!head.headerOk()) {;
+        head=IOobject
+            (
+                name,
+                "constant",
+                polyMesh::meshSubDir/"sets",
+                mesh(),
+                IOobject::MUST_READ,
+                IOobject::NO_WRITE
+            );
+        head.headerOk();
+    }
+
+    cellSet cs(head);
+    labelList theCells(proxy_->getCells());
+
+    forAll(theCells,i)
+    {
+        label cellI=theCells[i];
+        if(cs.found(cellI)) {
+            result()[i]=true;
+        }
+    }
+
+    return result;
+}
+
+tmp<Field<bool> > CloudValueExpressionDriver::makeCellZoneField(const word &name)
+{
+    tmp<Field<bool> > result(
+        new Field<bool>(this->size(),false)
+    );
+
+    label zoneID=mesh().cellZones().findZoneID(name);
+
+    if(zoneID<0) {
+        FatalErrorIn("FieldValueExpressionDriver::makeCellZoneField")
+            << "No zone named " << name << "found. Present: "
+                << mesh().cellZones().names()
+                << endl
+                << exit(FatalError);
+    }
+
+    labelHashSet zone(mesh().cellZones()[zoneID]);
+    labelList theCells(proxy_->getCells());
+
+    forAll(theCells,i)
+    {
+        label cellI=theCells[i];
+        if(zone.found(cellI)) {
+            result()[i]=true;
+        }
+    }
+
+    return result;
 }
 
 tmp<vectorField> CloudValueExpressionDriver::makePositionField() const
