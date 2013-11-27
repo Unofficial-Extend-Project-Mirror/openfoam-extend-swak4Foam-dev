@@ -69,7 +69,7 @@ void ReaderParticle::readFields (ReaderParticleCloud &c) {
     const objectRegistry &obr=c.parent();
 
     fileNameList files(
-        readDir(c.objectPath())
+        readDir(c.path(obr.time().timeName(),c.local())/c.name())
     );
 
     forAll(files,i){
