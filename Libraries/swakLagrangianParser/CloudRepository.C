@@ -40,6 +40,8 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "meshSearch.H"
 
+#include "ReaderParticleCloud.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -97,15 +99,52 @@ bool CloudRepository::writeData(Ostream &f) const
         Info << "CloudRepository::write()" << endl;
     }
 
-    f << clouds_.toc();
+    f << "Non-updateable " << clouds_.toc() << endl;
+
+    f << "Updateable " << updateableClouds_.toc() << endl;
 
     return true;
+}
+
+void CloudRepository::addUpdateableCloud(
+    autoPtr<ReaderParticleCloud> c
+) {
+    const word &name=c->name();
+
+    if(clouds_.found(name)) {
+        FatalErrorIn("CloudRepository::addCloud")
+            << "There is already a cloud " << name
+                << " in the non-updateable clouds. I guess there is a mistake"
+                << endl
+                << exit(FatalError);
+    }
+
+    if(updateableClouds_.found(name)) {
+        FatalErrorIn("CloudRepository::addCloud")
+            << "Repository of updateable clouds already has an entry "
+                << name << ". This can't be right"
+                << endl
+                << exit(FatalError);
+    } else {
+        updateableClouds_.insert(
+            name,
+            c.ptr()
+        );
+    }
 }
 
 void CloudRepository::addCloud(
     autoPtr<cloud> c
 ) {
     const word &name=c->name();
+
+    if(updateableClouds_.found(name)) {
+        FatalErrorIn("CloudRepository::addCloud")
+            << "There is already a cloud " << name
+                << " in the updateable clouds. I guess there is a mistake"
+                << endl
+                << exit(FatalError);
+    }
 
     if(clouds_.found(name)) {
         WarningIn("CloudRepository::addCloud")
@@ -127,6 +166,17 @@ void CloudRepository::addCloud(
 void CloudRepository::updateRepo()
 {
     clouds_.clear();
+
+    typedef HashPtrTable<ReaderParticleCloud,word> updateTable;
+
+    forAllIter(updateTable,updateableClouds_,it)
+    {
+        //	(*it)->clear();
+        //        Info << "Updating " << it.key() << endl;
+        (*it)->clearData();
+        ReaderParticle::readFields(*(*it));
+    }
+
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

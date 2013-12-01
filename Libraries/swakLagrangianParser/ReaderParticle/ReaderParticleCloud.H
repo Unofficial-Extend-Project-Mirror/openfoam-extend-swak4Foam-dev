@@ -53,6 +53,8 @@ Contributors/Copyright:
 namespace Foam
 {
 
+    class CloudRepository;
+
 /*---------------------------------------------------------------------------*\
                    Class ReaderParticleCloud Declaration
 \*---------------------------------------------------------------------------*/
@@ -99,6 +101,9 @@ protected:
     void writeData(
         const HashTable<Field<T>,word> &data
     ) const;
+
+    void clearData();
+
 public:
 
     //- Type of parcel the cloud was instantiated for
@@ -190,6 +195,7 @@ public:
     // bool hasBool(const word &name) const
     //     { return boolData_.found(name); }
 
+    friend class CloudRepository;
 };
 
 

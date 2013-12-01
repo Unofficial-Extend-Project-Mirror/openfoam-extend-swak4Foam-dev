@@ -55,6 +55,8 @@ Contributors/Copyright:
 namespace Foam
 {
 
+    class ReaderParticleCloud;
+
 /*---------------------------------------------------------------------------*\
                            Class CloudRepository Declaration
 \*---------------------------------------------------------------------------*/
@@ -67,6 +69,9 @@ class CloudRepository
 
     //- the actual sets
     HashPtrTable<cloud,word> clouds_;
+
+    //- Clouds that can be updated
+    HashPtrTable<ReaderParticleCloud,word> updateableClouds_;
 
    // Constructors
 
@@ -89,6 +94,10 @@ public:
 
     void addCloud(
         autoPtr<cloud> c
+    );
+
+    void addUpdateableCloud(
+        autoPtr<ReaderParticleCloud> c
     );
 
     //- Make sure that this class is not abstract. Write sets
