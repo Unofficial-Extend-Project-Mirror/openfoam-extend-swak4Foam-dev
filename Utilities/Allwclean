@@ -15,3 +15,5 @@ wclean calcNonUniformOffsetsForMapped
 wclean fieldReport
 
 wclean funkyPythonPostproc
+
+wclean funkySetLagrangianField

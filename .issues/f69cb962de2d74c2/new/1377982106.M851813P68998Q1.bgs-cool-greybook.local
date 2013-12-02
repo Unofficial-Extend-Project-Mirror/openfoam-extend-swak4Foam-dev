@@ -1,0 +1,18 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 31 Aug 2013 22:44:06 +0200
+Subject: Re: Parser for lagrangian particles
+Message-Id: <f69cb962de2d74c2-df36bc4d7943199b-artemis@bgs-cool-greybook.local>
+References: <f69cb962de2d74c2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <f69cb962de2d74c2-0-artemis@bgs-cool-greybook.local>
+
+Change of plan: no ParticleClassProxy but templatisation of the
+CloudProxy.
+
+Also: no clean-up of species names. Instead let alias take care of it
+(TODO)
+
+TODO: Proxys for
+- solidParticle
+- DSMC
+- molecularDynamics
+- dieselSpray

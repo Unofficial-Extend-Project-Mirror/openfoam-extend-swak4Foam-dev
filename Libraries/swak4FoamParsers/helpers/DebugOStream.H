@@ -52,6 +52,8 @@ Contributors/Copyright:
 #ifndef DebugOStream_H
 #define DebugOStream_H
 
+#include "Pstream.H"
+
 #include "prefixOSstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -82,6 +84,8 @@ public:
 // to be used as "streams"
 #define Dbug if(debug && Pstream::master()) DebugOStream(cout,typeName,this)()
 #define Pbug if(debug) DebugOStream(cout,typeName,this,true)()
+    // for static methods
+#define Sbug if(debug) DebugOStream(cout,typeName,reinterpret_cast<const void *>(NULL),true)()
 
 //- get the value of the pointer as a word
 word getHex(const void *ptr);

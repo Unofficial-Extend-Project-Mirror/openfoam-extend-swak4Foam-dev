@@ -26,3 +26,5 @@ if [ "$FOAM_DEV" != "" ]
 then
     wmake libso swakFacSchemesFunctionPlugin
 fi
+
+(cd lagrangianCloudAdaptors; ./Allwmake )

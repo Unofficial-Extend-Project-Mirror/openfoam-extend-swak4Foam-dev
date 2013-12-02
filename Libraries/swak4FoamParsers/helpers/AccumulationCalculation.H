@@ -80,6 +80,12 @@ class AccumulationCalculation
     //- the data
     const Field<Type> &data_;
 
+    //- mask that selects what part of the data to use
+    const Field<bool> mask_;
+
+    //- the data that is actually used
+    autoPtr<Field<Type> > usedData_;
+
     //- is this point data?
     const bool isPoint_;
 
@@ -124,9 +130,13 @@ class AccumulationCalculation
 
     static const label numberOfBins=100;
 
+    label maskSize() const;
+
 protected:
 
     const scalarField &weights();
+
+    const Field<Type> &data();
 
 public:
      //- Runtime type information
@@ -137,6 +147,14 @@ public:
         const Field<Type> &data,
         bool isPoint,
         CommonValueExpressionDriver &driver
+    );
+
+     //- Constructor with a mask
+    AccumulationCalculation(
+        const Field<Type> &data,
+        bool isPoint,
+        CommonValueExpressionDriver &driver,
+        const Field<bool> &mask
     );
 
     //- Destructor

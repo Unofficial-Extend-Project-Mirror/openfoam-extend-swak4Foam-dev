@@ -67,15 +67,20 @@ lcsEnthalpySourcePluginFunction::lcsEnthalpySourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<lcsEnthalpySourcePluginFunction::dimScalarField>
+lcsEnthalpySourcePluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(dimScalarField,swakFluidThermoCloudType,thermoCloud,hsTrans());
+    tryCall(dimScalarField,basicReactingCloud,reactingCloud,hsTrans());
+    tryCall(dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,hsTrans());
+
+    return autoPtr<dimScalarField>();
+}
+
 void lcsEnthalpySourcePluginFunction::doEvaluation()
 {
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-    autoPtr<dimScalarField> pSh;
-
-    // pick up the first fitting class
-    castAndCall(pSh,dimScalarField,swakFluidThermoCloudType,thermoCloud,hsTrans());
-    castAndCall(pSh,dimScalarField,basicReactingCloud,reactingCloud,hsTrans());
-    castAndCall(pSh,dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,hsTrans());
+    autoPtr<dimScalarField> pSh=internalEvaluate();
 
     noCloudFound(pSh);
 

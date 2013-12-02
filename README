@@ -306,6 +306,8 @@ S_{expl} + S_{impl} T
 *** =fluFunctionObjectDriver=
     Driver for =functionObjects= that implemented entirely in =Python=
     using the =pythonFlu=-library
+*** =swakLagrangianParser=
+    Parser for calculating expressions on clouds of lagrangian particles
 *** =functionPlugins=
     Directory with a number of libraries with function-plugins:
     - swakFacSchemesFunctionPlugin :: functions with selectable
@@ -332,6 +334,18 @@ S_{expl} + S_{impl} T
          /intermediate/ clouds)
     - swakVelocityFunctionPlugin :: Functions that work on the flow
          field (currently only the local Courant-number)
+**** lagrangianCloudAdaptors-directory
+     Because of the templating all plugin-functions have to be
+     reinstaniated for new particle classes. The libraries in this
+     directory
+     - reimplement the functions from
+       =swakLagrangianCloudSourcesFunctionPlugin=
+     - the =CloudProxy= for the =cloud= parser
+     for special particle classes. These are
+     - coalCloudAdaptor :: the library =libswakCoalCloudAdaptor= that
+          handels the =CoalParcel=-class
+     These libraries have to be included in the =libs=-entry to
+     be able to handle these libraries
 ** Utilities
 *** =funkySetFields=
     Utility that allows creation and manipulation of files with
@@ -359,6 +373,17 @@ S_{expl} + S_{impl} T
     according to the specification in a dictionary. Only needed if you
     have mapped patches and the regular uniform offset is not enough
     for your purposes
+*** =fieldReport=
+    Utility that quickly does some quantitative analysis (minimum,
+    maximum, average etc ) on a field on the disc (internal field but
+    also patches, sets, zones, ...)
+*** =funkyPythonPostproc=
+    This utility loads specified fields into memory, executes a list
+    of user-specified function objects whose data is then passed to a
+    python script which does the user-specified analysis.
+*** =funkySetLagrangianField=
+    Utility to calculate fields for a lagrangian cloud (or setting it
+    up from scratch)
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -592,18 +617,35 @@ S_{expl} + S_{impl} T
                        with an implicit source term with
                        =SwakImplicitSource=
 *** Lagrangian
-    Tests for the functionObjects that create and evolve a cloud of
-    particles (library =simpleLagrangianFunctionObjects=)
-**** hotStream
-     - Solver :: replayTransientBC
-     - Mesh preparation :: =prepareCase.sh=-script
-     - Demonstrates :: 3 clouds (kinematic, reacting,
-                       solidParticle). Loading of a thermophysical
-                       model with a functionObject. Plugin functions
-                       for information about the clouds
-**** angledDuctWithBalls
-     - Solver :: rhoPimpleFoam
-     - Demonstrates :: Thermo-cloud. Functions for lagrangian particles
+    Stuff that has to do with lagrangian particles
+**** functionObjects
+     Tests for the functionObjects that create and evolve a cloud of
+     particles (library =simpleLagrangianFunctionObjects=)
+***** hotStream
+      - Solver :: replayTransientBC
+      - Mesh preparation :: =prepareCase.sh=-script
+      - Demonstrates :: 3 clouds (kinematic, reacting,
+                       	solidParticle). Loading of a thermophysical
+                       	model with a functionObject. Plugin functions
+                       	for information about the clouds
+***** angledDuctWithBalls
+      - Solver :: rhoPimpleFoam
+      - Demonstrates :: Thermo-cloud. Functions for lagrangian
+                        particles
+**** parser
+     Testing the =cloud=-parser for lagrangiant particles
+***** parcelInBoxWithExpressions
+      - Solver :: reactingParcelFoam
+      - Demonstrates :: Adding evaluations on the cloud to a regular
+                        case
+***** simplifiedSiwek
+      Variation of the tutorial case
+      - Solver :: coalChemistryFoam
+      - Demonstrates :: creating new clouds with
+                        =funkySetLagrangianField= and evaluations on
+                        clouds during the simulation
+      - Mesh preparation :: run the =prepareCase.sh= script to set up
+           the mesh and the fields
 *** SimpleSurface
     Examples for the use of the =simpleSearchableSurfaces=-library.
 **** twoMotorbikesAndAWall
@@ -733,7 +775,7 @@ S_{expl} + S_{impl} T
 *** Distributed bug-tracking
     As an experimental feature distributed bug-tracking was introduced
     using the /Artemis/-extension for /Mercurial/ (see
-    =http://hg.mrzv.org/Artemis/=). An up-to-date version can be
+    [[http://hg.mrzv.org/Artemis/]]). An up-to-date version can be
     installed by
 : hg clone http://hg.mrzv.org/Artemis/
     somewhere and installing the plugin by editing =.hgrc=.
@@ -742,6 +784,17 @@ S_{expl} + S_{impl} T
     for keeping track of new features that are to be introduced to
     =swak4Foam= and may be discontinued if the experiment proves to be
     unsuccessful.
+*** Maintaining feature and hotfix-branches
+    The repository comes with a =.hgflow=-file that is set for the
+    =hgflow=-extension found at
+    [[https://bitbucket.org/yujiewu/hgflow/wiki/Home]] (there are multiple
+    branches of this extension. This *seems* to be the most up-to date
+    and still under active development)
+
+    The two main lines (=1.x= and =2.x=) have slightly different names
+    for the =master= and the =dvelopment=-branch. But apart from that
+    in the future this repository will try to stick to the model
+    described in [[http://nvie.com/posts/a-successful-git-branching-model/]]
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the
@@ -2154,7 +2207,17 @@ S_{expl} + S_{impl} T
        data entry as a uniform value
      - data entry can now be integrated. This allows using it for
        instance for the injection rate in lagrangian models
-** Next release - version number : 0.2.5
+** Next release - version number : 0.3.0
+   The reason for the jump in the minor revision number is that with
+   the introduction of the parser for lagrangian particles (=cloud=)
+   the last white spot as far as major data structures in OpenFOAM is
+   "explored"
+*** Incompatibilities to previous versions
+**** Support of /old/ =1.6-ext= lost
+     Due to certain differences this version only compiles with the
+     =nextRelease=-branch of 1.6-ext (from the =git=).Usually the
+     failing parts can be fixed b commenting out the appropriate
+     =#define= in =Libraries/swak4FoamParsers/include/swak.H=.
 *** Infrastructure
 **** Make error messages in =Allwmake= more verbose
      The error messages where already quite verbose. But people
@@ -2247,6 +2310,10 @@ S_{expl} + S_{impl} T
 **** =writeOften= writes all the time
      Reason for this was a change of the interface of =outputTime= not
      being propagated to this function-object. Fixed
+**** Python-integration does not return single scalars as uniform
+     The Python-integration returned single scalars (and vectors) not
+     as a single value but as a field of length $1$. This caused
+     warnings that messed up the output. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
@@ -2297,7 +2364,49 @@ S_{expl} + S_{impl} T
      The idea is that the function objects pass data to the
      python-scripts via global variables and the python-scripts do
      whatever they like
+**** New utility =funkySetLagrangianParticle=
+     This utility allows setting new fields of a lagrangian
+     cloud. Like =funkySetFields= it has two modes:
+     - Setting one field over the command line. This is triggered by
+       the =-field=-option
+     - Using a dictionary to specify what is being set. In this mode
+       more than one field and more than one cloud can be set. In this
+       mode there is also the possibility to specify a *new*
+       cloud. This mode expects variables in global namespaces. On of
+       these variables is the position of the particles, for the other
+       variables fields of the same name will be created. All the
+       variables have to be of the same size. Data where corresponding
+       particle position is outside the mesh is discarded
 *** Enhancements
+**** Additional parser for lagrangian particles
+     There is now an additional parser to calculate expressions on
+     particles.
+
+     This parser is organized in a separate library
+     =libswakLagrangianParser= that has to be loaded to use this
+     parser.
+
+     Depending on whether the cloud in question is already in memory
+     or on disk the data is handled differently:
+     - if the data is on disc then the basic properties of the cloud
+       (particle positions etc) are used to initialize the class. Then
+       all files in the folder of the cloud are read and made
+       available as field names that are the same as the
+       file-names. Characters in the file names that are not
+       compatible with the parser are replaced and created as
+       aliases. In this mode =swak= has no idea about the data except
+       the name and the type
+     - if the cloud is in memory then a corresponding proxy object is
+       sought. This proxy object knows which data the cloud has, what
+       the type is and a short description. It makes the data
+       available as fields.
+
+       =swak= has by default proxy objects for most particle classes
+       that come with =OpenFOAM=. For unsupported classes and adaptor
+       library has to be written.
+     When a parser for a cloud is used for the first time a table of
+     all the available fields is printed to the screen with type and
+     description (if available)
 **** Function objects that calculate PDEs can use fields from memory
      If the field is found in memory this is used instead of a file
      read from disc.
@@ -2390,6 +2499,10 @@ S_{expl} + S_{impl} T
 
      Also in the =fvcSchemes=-plugin functions the set of
      =laplacian=-operators was completed
+**** Function object =swakExpression= now has optional =mask=
+     If the logical expression =mask= is set then only the results
+     from =expression= for which =mask= is =true= are used for
+     accumulations
 *** Examples
 **** Moved the OSCFD-examples to a different directory
      Started one new directory for all cases from presentations

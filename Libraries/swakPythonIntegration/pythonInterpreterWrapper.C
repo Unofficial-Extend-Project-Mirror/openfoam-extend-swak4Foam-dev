@@ -1079,7 +1079,7 @@ void pythonInterpreterWrapper::setGlobals()
 
             Dbug << name << " is " << result << endl;
 
-            eResult.setResult(result,1);
+            eResult.setSingleValue(result);
 
         } else if(PySequence_Check(pVar)) {
             Dbug << name << " is a sequence" << endl;
@@ -1225,7 +1225,7 @@ void pythonInterpreterWrapper::setGlobals()
                     }
                     Dbug << name << " is " << val << endl;
 
-                    eResult.setResult(val,1);
+                    eResult.setSingleValue(val);
                 } else {
                     FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                         << "Variable " << name << " is a tuple with the unknown size "

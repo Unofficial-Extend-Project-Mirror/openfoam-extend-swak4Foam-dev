@@ -68,15 +68,20 @@ lcsMassFractionPluginFunction::lcsMassFractionPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsMassFractionPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,alpha());
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,alpha());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsMassFractionPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> palpha;
-
-    // pick up the first fitting class
-    castAndCall(palpha,volScalarField,basicKinematicCloud,kinematicCloud,alpha());
-    castAndCall(palpha,volScalarField,swakFluidThermoCloudType,thermoCloud,alpha());
-    castAndCall(palpha,volScalarField,basicReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    autoPtr<volScalarField> palpha=internalEvaluate();
 
     noCloudFound(palpha);
 
