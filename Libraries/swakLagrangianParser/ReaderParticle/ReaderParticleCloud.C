@@ -64,6 +64,17 @@ ReaderParticleCloud::ReaderParticleCloud
     }
 }
 
+void ReaderParticleCloud::clearData()
+{
+    labelData_.clear();
+    //    boolData_.clear();
+    scalarData_.clear();
+    vectorData_.clear();
+    tensorData_.clear();
+    symmTensorData_.clear();
+    sphericalTensorData_.clear();
+}
+
 template <typename T>
 tmp<Field<T> > filterValues(
     const Field<T> &orig,

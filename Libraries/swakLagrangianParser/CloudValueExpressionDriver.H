@@ -93,12 +93,14 @@ class CloudValueExpressionDriver
 
     static const cloud& getCloud(
         const dictionary &dict,
-        const fvMesh &mesh
+        const fvMesh &mesh,
+        bool keep=true
     );
 
     static const cloud& getCloud(
         const word &name,
-        const fvMesh &mesh
+        const fvMesh &mesh,
+        bool keep=true
     );
 
     //- the interpolation schemes

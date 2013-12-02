@@ -211,17 +211,20 @@ void CloudValueExpressionDriver::writeProxyInfo()
 
 const cloud& CloudValueExpressionDriver::getCloud(
     const dictionary &dict,
-    const fvMesh &mesh
+    const fvMesh &mesh,
+    bool keep
 ) {
     return getCloud(
         word(dict.lookup("cloudName")),
-        mesh
+        mesh,
+        keep
     );
 }
 
 const cloud& CloudValueExpressionDriver::getCloud(
     const word &name,
-    const fvMesh &mesh
+    const fvMesh &mesh,
+    bool keep
 ) {
     if(!mesh.foundObject<cloud>(name)) {
         IOobject reg
@@ -241,16 +244,24 @@ const cloud& CloudValueExpressionDriver::getCloud(
                     << endl;
         }
 
-        autoPtr<cloud> theCloud(
+        autoPtr<ReaderParticleCloud> theCloud(
             new ReaderParticleCloud(
                 mesh,
                 name
             )
         );
 
-        CloudRepository::getRepository(mesh).addCloud(
-            theCloud
-        );
+        if(keep) {
+            CloudRepository::getRepository(mesh).addUpdateableCloud(
+                theCloud
+            );
+        } else {
+            CloudRepository::getRepository(mesh).addCloud(
+                autoPtr<cloud>(
+                    theCloud.ptr()
+                )
+            );
+        }
     }
 
     return mesh.lookupObject<cloud>(

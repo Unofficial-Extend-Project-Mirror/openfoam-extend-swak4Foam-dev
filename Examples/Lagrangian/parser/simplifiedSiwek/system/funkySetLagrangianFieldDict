@@ -141,8 +141,11 @@ coalCloud1 {
             field nParticle;
             expression "nParticle";
             variables (
+	        "totalMass=0.0001;"
+		"number=sum(1);"
                 "v=4*pi/3*pow(d/2,3);"
-                "parcelMass=5e-5;"
+//                "parcelMass=5e-7;"
+                "parcelMass=totalMass/number;"
                 "density=1000;"
                 "nParticle=parcelMass/(density*v);"
             );
@@ -271,8 +274,11 @@ limestoneCloud1 {
             field nParticle;
             expression "nParticle";
             variables (
+	        "totalMass=0.0001;"
+		"number=sum(1);"
                 "v=4*pi/3*pow(d/2,3);"
-                "parcelMass=1e-5;"
+//                "parcelMass=2e-7;"
+                "parcelMass=totalMass/number;"
                 "density=2500;"
                 "nParticle=parcelMass/(density*v);"
             );
