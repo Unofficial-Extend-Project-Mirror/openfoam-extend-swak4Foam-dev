@@ -1,0 +1,52 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+coalCloud1 {
+	   createCloud false;
+
+	   expressions {
+	      deltaT {
+	      	     create true;
+		     field TDiff;
+		     expression "T-fluidPhase(T)";
+		     interpolationSchemes {
+		     		   T cell;
+		     };
+	      }
+	      highDeltaT {
+	      		 create true;
+			 field highDifference;
+			 variables (
+			 	   "THigh=1;"
+			 );
+			 expression "mag(TDiff)>THigh";
+	      }
+	      limitedT {
+	      		    create true;
+			    field limitedT;
+			    expression "T";
+	      }
+	      limitT {
+	      	         field limitedT;
+			 variables (
+			 	   "THigh=400;"
+			 );
+			 expression "THigh";
+			 condition "T>THigh";
+	      }
+	   }
+}
+limestoneCloud1 {
+		$coalCloud1;
+}

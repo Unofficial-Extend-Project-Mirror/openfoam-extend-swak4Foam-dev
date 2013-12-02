@@ -65,6 +65,9 @@ class lcsVolumeFractionPluginFunction
 
     lcsVolumeFractionPluginFunction(const lcsVolumeFractionPluginFunction &);
 
+protected:
+    virtual autoPtr<volScalarField> internalEvaluate();
+
 public:
 
     lcsVolumeFractionPluginFunction(

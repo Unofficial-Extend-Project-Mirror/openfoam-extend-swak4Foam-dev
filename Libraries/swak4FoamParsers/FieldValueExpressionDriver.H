@@ -191,15 +191,6 @@ public:
     void scan_begin ();
     void scan_end ();
 
-    bool isCellSet(const word &name);
-    bool isCellZone(const word &name);
-
-    bool isFaceSet(const word &name);
-    bool isFaceZone(const word &name);
-
-    bool isPointSet(const word &name);
-    bool isPointZone(const word &name);
-
     // returning fields
     template<class T>
     tmp<T> getField(const word &name,bool getOldTime=false);

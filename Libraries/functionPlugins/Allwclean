@@ -23,3 +23,5 @@ wclean swakSurfacesAndSetsFunctionPlugin
 wclean swakLagrangianCloudSourcesFunctionPlugin
 
 wclean swakVelocityFunctionPlugin
+
+(cd lagrangianCloudAdaptors; ./Allwclean )

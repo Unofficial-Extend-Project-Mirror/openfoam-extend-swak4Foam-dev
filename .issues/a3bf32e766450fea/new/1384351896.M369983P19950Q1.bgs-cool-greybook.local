@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 13 Nov 2013 15:09:41 +0100
+State: new
+Subject: Python-integration should check for c-Contigous
+Message-Id: <a3bf32e766450fea-0-artemis@bgs-cool-greybook.local>
+
+When exporting more-dimensional variables like vektorFields the
+integration should check that the fields are actually c-contiuous
+because that is what OpenFOAM-assumes

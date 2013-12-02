@@ -67,19 +67,24 @@ lcsRhoEffPluginFunction::lcsRhoEffPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsRhoEffPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,rhoEff());
+    tryCall(volScalarField,basicThermoCloud,thermoCloud,rhoEff());
+    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,rhoEff());
+    tryCall(volScalarField,thermoReactingCloud,reactingCloud,rhoEff());
+    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,rhoEff());
+    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsRhoEffPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> prhoEff;
-
-    // pick up the first fitting class
-    castAndCall(prhoEff,volScalarField,basicKinematicCloud,kinematicCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,basicThermoCloud,thermoCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,constThermoReactingCloud,reactingCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,thermoReactingCloud,reactingCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+    autoPtr<volScalarField> prhoEff=internalEvaluate();
 
     noCloudFound(prhoEff);
 

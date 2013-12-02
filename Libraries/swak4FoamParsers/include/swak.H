@@ -83,6 +83,11 @@ Contributors/Copyright:
 #define FOAM_DEV_ADDITIONAL_TENSOR_TYPES
 #endif
 
+// The kineamticPArcel has no property active in 1.6-ext
+#ifdef FOAM_DEV
+#define FOAM_KINEMTATIC_HAS_NO_ACTIVE_PROPERTY
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

@@ -1,0 +1,20 @@
+TDiff {
+      theTitle "Difference T-particle/T-fluid";
+      expr "Expression cloudTemperatureDiff :  min=(%f%) max=(%f%) average=(%f%) weightedAverage=(%f%)";
+      titles (
+      	     min
+	     max
+	     average
+	     "weighted Average"
+      );
+}
+massChange {
+	   theTitle "Mass change";
+	   expr "Expression cloudRelativeMass :  min=(%f%) max=(%f%) average=(%f%) weightedAverage=(%f%)";
+	   titles (
+      	   	   min
+	   	   max
+	     	   average
+	     	   "weighted Average"
+           );
+}

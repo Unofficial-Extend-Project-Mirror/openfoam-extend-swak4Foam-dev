@@ -47,7 +47,7 @@ SurfacesRepository *SurfacesRepository::repositoryInstance(NULL);
 
 SurfacesRepository::SurfacesRepository(const IOobject &o)
     :
-    regIOobject(o)
+    RepositoryBase(o)
 {
 }
 
@@ -213,6 +213,10 @@ bool SurfacesRepository::writeData(Ostream &f) const
     }
 
     return true;
+}
+
+void SurfacesRepository::updateRepo()
+{
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

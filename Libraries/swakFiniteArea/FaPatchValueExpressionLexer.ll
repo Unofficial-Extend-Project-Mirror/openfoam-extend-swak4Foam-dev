@@ -165,6 +165,7 @@ normal                return token::TOKEN_normal;
 rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
+weight                return token::TOKEN_weight;
 randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
 randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
