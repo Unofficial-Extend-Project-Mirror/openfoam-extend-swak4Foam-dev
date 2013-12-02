@@ -65,6 +65,10 @@ class lcsMassSourcePluginFunction
 
     lcsMassSourcePluginFunction(const lcsMassSourcePluginFunction &);
 
+protected:
+    typedef DimensionedField<scalar,volMesh> dimScalarField;
+
+    virtual autoPtr<dimScalarField> internalEvaluate();
 public:
 
     lcsMassSourcePluginFunction(

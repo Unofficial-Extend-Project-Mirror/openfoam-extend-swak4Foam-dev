@@ -67,19 +67,24 @@ lcsMassFractionPluginFunction::lcsMassFractionPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsMassFractionPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,alpha());
+    tryCall(volScalarField,basicThermoCloud,thermoCloud,alpha());
+    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,thermoReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsMassFractionPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> palpha;
-
-    // pick up the first fitting class
-    castAndCall(palpha,volScalarField,basicKinematicCloud,kinematicCloud,alpha());
-    castAndCall(palpha,volScalarField,basicThermoCloud,thermoCloud,alpha());
-    castAndCall(palpha,volScalarField,constThermoReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,thermoReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
-    castAndCall(palpha,volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
-    castAndCall(palpha,volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    autoPtr<volScalarField> palpha=internalEvaluate();
 
     noCloudFound(palpha);
 

@@ -71,16 +71,23 @@ class LagrangianCloudSourcePluginFunction
 
     word cloudName_;
 
+    HashSet<word> supportedTypes_;
+
 protected:
     //    typedef CloudType cloudType;
 
     template<class LookupCloudType>
     bool hasCloudAs();
 
+    Ostream& listAvailableClouds(Ostream &o);
+
     template<class OtherCloudType,class LookupCloudType>
     const OtherCloudType &getCloudAs();
 
     const word &cloudName() const { return cloudName_; }
+
+    const HashSet<word> &supportedTypes() const
+        { return supportedTypes_; }
 
 public:
     LagrangianCloudSourcePluginFunction(
@@ -110,24 +117,27 @@ public:
 #   include "LagrangianCloudSourcePluginFunctionI.H"
 #endif
 
-// set a autoPtr to the needed cloud. This is required because
+// return a autoPtr to the needed field. This is required because
 // "similar" clouds don't really inherit (because of the template paramter)
-#define castAndCall(rVar,rType,neededType,usedType,theCall)    \
-    if(!rVar.valid() && hasCloudAs<neededType>()) { \
-        rVar.set( \
-            new rType( \
-                getCloudAs<neededType,usedType>().theCall \
-            ) \
-        );\
-    }\
+#define tryCall(rType,neededType,usedType,theCall)    \
+    if(hasCloudAs<neededType>()) {                             \
+        return autoPtr<rType> (                                \
+            new rType(                                         \
+                getCloudAs<neededType,usedType>().theCall      \
+            )                                                  \
+        );                                                     \
+    }
 
 // Fail if no cloud data was found
 #define noCloudFound(pVar) \
-    if(!pVar.valid()) { \
-    FatalErrorIn("Plugin function "+this->name()) \
-    << "No matching cloud " << this->cloudName() << "found" \
-        << endl \
-    << exit(FatalError); \
+    if(!pVar.valid()) {                                                 \
+        listAvailableClouds(Info);                                      \
+        FatalErrorIn("Plugin function "+this->name())                   \
+            << "No matching cloud " << this->cloudName() << " found"    \
+                << endl                                                 \
+                << "Supported cloud types (typeid): "                   \
+                << supportedTypes() << endl                             \
+                << exit(FatalError);                                    \
     }
 
 
