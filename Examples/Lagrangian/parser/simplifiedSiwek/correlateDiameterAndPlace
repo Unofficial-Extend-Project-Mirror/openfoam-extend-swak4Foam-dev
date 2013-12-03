@@ -61,8 +61,8 @@ functions {
         );
         variables (
             "velocity=U;"
-            //            "positions=pos().y;"
-            "positions=posy;"
+            "positions=pos().y;"
+            //            "positions=posy;"
             "diameter=d;"
         );
     }
@@ -74,8 +74,8 @@ functions {
         expression "d";
         weight "weight()";
         mask "true";
-        //        abscissa "pos().y";
-        abscissa "posy";
+        abscissa "pos().y";
+        //        abscissa "posy";
         valueType cloud;
         cloudName limestoneCloud1;
         binNumber 20;
