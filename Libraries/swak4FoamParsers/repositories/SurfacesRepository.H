@@ -49,6 +49,7 @@ Contributors/Copyright:
 
 #include "PtrMap.H"
 #include "sampledSurface.H"
+#include "RepositoryBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,7 +62,7 @@ namespace Foam
 
 class SurfacesRepository
 :
-    public regIOobject
+    public RepositoryBase
 {
     // Private data
 
@@ -104,6 +105,9 @@ public:
 
     //- Make sure that this class is not abstract
     bool writeData(Ostream &) const;
+
+    //- update repo at the start of a time-step
+    void updateRepo();
 
 };
 

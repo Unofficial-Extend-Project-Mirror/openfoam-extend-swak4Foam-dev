@@ -1,0 +1,91 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Test the python-postprocessing utility
+
+preloadFields (
+);
+
+python {
+    startFile "correlateDiameterAndPlaceStart.py";
+    executeFile "correlateDiameterAndPlaceExecute.py";
+    endFile "correlateDiameterAndPlaceEnd.py";
+
+    swakToPythonNamespaces (
+        fieldData
+    );
+
+    useNumpy true;
+    useIPython true;
+    //    useIPython false;
+
+    interactiveAfterExecute true;
+    interactiveAfterException true;
+
+    importLibs {
+        matplotlib;
+        stats scipy.stats;
+    }
+
+    parallelMasterOnly false;
+    isParallelized false;
+}
+
+functions {
+    toGlobalNamespace {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+
+        valueType cloud;
+        cloudName limestoneCloud1;
+        toGlobalNamespace fieldData;
+        toGlobalVariables (
+            positions
+            velocity
+            diameter
+        );
+        variables (
+            "velocity=U;"
+            //            "positions=pos().y;"
+            "positions=posy;"
+            "diameter=d;"
+        );
+    }
+    plotDistributions {
+        type swakExpressionAverageDistribution;
+        verbose true;
+        outputControlMode timeStep;
+        outputInterval 1;
+        expression "d";
+        weight "weight()";
+        mask "true";
+        //        abscissa "pos().y";
+        abscissa "posy";
+        valueType cloud;
+        cloudName limestoneCloud1;
+        binNumber 20;
+        valueIfZero 0;
+     }
+}
+
+libs (
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+// ************************************************************************* //

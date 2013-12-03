@@ -66,18 +66,23 @@ lcsScatteringFactorPluginFunction::lcsScatteringFactorPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsScatteringFactorPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,basicThermoCloud,thermoCloud,sigmap());
+    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,thermoReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsScatteringFactorPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> psigmap;
-
-    // pick up the first fitting class
-    castAndCall(psigmap,volScalarField,basicThermoCloud,thermoCloud,sigmap());
-    castAndCall(psigmap,volScalarField,constThermoReactingCloud,reactingCloud,sigmap());
-    castAndCall(psigmap,volScalarField,thermoReactingCloud,reactingCloud,sigmap());
-    castAndCall(psigmap,volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,sigmap());
-    castAndCall(psigmap,volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
-    castAndCall(psigmap,volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
-    castAndCall(psigmap,volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+    autoPtr<volScalarField> psigmap=internalEvaluate();
 
     noCloudFound(psigmap);
 

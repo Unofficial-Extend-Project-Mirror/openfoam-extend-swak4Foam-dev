@@ -113,9 +113,11 @@ SetSubset <|-- FaceSet
 Subset <|-- FaceZone
 Subset <|-- SampledSet
 Subset <|-- SampledSurface
+Common <|-- Cloud
 
 class Field << grammar >>
 class Patch << grammar >>
+class Cloud << grammar >>
 abstract class Subset << grammar >>
 abstract class SetSubset
 abstract class Common
@@ -155,6 +157,7 @@ hide circle
   | =cellSet=         | Set of cells                                    |
   | =set=             | Calculation on a =sampledSet=                   |
   | =surface=         | Calculation on a =sampledSurface=               |
+  | =cloud=           | Calculation on a cloud of lagrangian particles  |
   | =internalFaField= | Internal values of a FAM-field (=1.6-ext= only) |
   | =faPatch=         | Boundary patch of a FAM-field (=1.6-ext= only)  |
 
@@ -223,6 +226,7 @@ hide circle
    | =cellSet=         | Cell values             | none                           |
    | =set=             | Values on sample points | none                           |
    | =surface=         | Values on the facets    | vertices - not yet implemented |
+   | =cloud=           | Values on the particles | none                           |
    | =internalFaField= | Area (face) values      | Edge values                    |
    | =faPatch=         | Edge values             | Point values                   |
 
@@ -370,6 +374,23 @@ hide circle
             cell number for an =internalField=). This number is only
             unique on each processor
     - cpu :: The processor number an element on is for a parallel run
+    - weight :: The "natural" weight according to table
+                \ref{tab:naturalWeights} for the current parser
+    #+CAPTION: "Natural" weights for different parsers
+    #+LABEL: tab:naturalWeights
+    | Driver            | Definition                               |
+    |-------------------+------------------------------------------|
+    | =internalField=   | the cell volume                          |
+    | =patch=           | the face area                            |
+    | =set=             | constant volume $1$                      |
+    | =surface=         | area of the facets                       |
+    | =cellZone=        | volume of the cell                       |
+    | =cellSet=         | volume of the cell                       |
+    | =faceZone=        | area of the face                         |
+    | =faceSet=         | area of the face                         |
+    | =internalFaField= | area of the face                         |
+    | =faPatch=         | length of the edge                       |
+    | =cloud=           | constant $1$ or total mass of the parcel |
 *** OpenFOAM-specific functions
     The following functions are not available in all parsers. In the
     description in brackets there will be a shorthand description of
@@ -388,12 +409,13 @@ hide circle
     | =subset=          | S         |
     | =faInternalField= | FF        |
     | =faPatch=         | FP        |
+    | =cloud=           | C         |
 **** Information about the mesh
      These functions give information about the mesh and are used
      without arguments:
      - pos() :: Position of the native structures of the parser (for
                 instance cell centers for =internalField=) (F, P, S,
-                FF, FP)
+                FF, FP, C)
      - vol() :: Cell volumes (F, S)
      - area() :: Face area as a scalar (F, P, S, FF)
      - pts() :: Positions of the vertices (F, P, S, FP)
@@ -418,8 +440,12 @@ hide circle
      and identify cells, faces or points belonging to a certain
      group. Most of them take a name as an argument. The result is a
      boolean field:
-     - set(name) :: =True= for all cells in the cell-set =name=
-     - zone(name) :: =True= for all cells in the cell-zone =name=
+     - set(name) :: =True= for all cells in the cell-set =name=. For
+                    =cloud= this returns =True= if a particle is in
+                    a cell that is the set
+     - zone(name) :: =True= for all cells in the cell-zone =name=. For
+                    =cloud= this returns =True= if a particle is in
+                    a cell that is the zone
      - fset(name) :: =True= for all faces in the face-set =name=
      - fzone(name) :: =True= for all faces in the face-zone =name=
      - pset(name) :: =True= for all points in the point-set =name=
@@ -433,7 +459,8 @@ hide circle
                  consistent mass flows etc across these sets/zones
 **** Information about time
      Some special functions implemented in all parsers:
-     - oldTime(fieldName) :: value of a field at the last time
+     - oldTime(fieldName) :: value of a field at the last time. Not
+          available for =cloud=
      - deltaT() :: Scalar field with the current time-step size
      - time() :: Scalar field with the current time
 **** Differential operators
@@ -566,6 +593,13 @@ hide circle
      This mechanism does *not* allow the specification of an
      arbitrary expression on the other mesh. That would be possible
      with a (yet unwritten) plugin-function.
+**** Field values from the fluid phase
+     This is only available in the =cloud=-parser. The function
+     =fluidPhase= accepts a field name and returns the interpolated
+     values of the fluid field at the particle positions. The
+     interpolation scheme to be used for this field has to be
+     specified separately (if present the
+     =interpolationSchemes=-subdictionary is used)
 **** Types of variables
      Once a variable has been set for a parser subsequent evaluations
      can access its value. The variable can be set multiple times
@@ -973,6 +1007,13 @@ hide circle
      The =faPatch= driver adds a parameter to determine the name of
      the patch:
      - faPatchName :: the name of the patch
+**** Additional parameter for the =cloud=-parser
+     The additional parameter this parser needs is for the
+     interpolation of fields from the fluid phase:
+     - interpolationSchemes :: a dictionary with the interpolation
+          schemes that should be used to interpolate from the fluid
+          phase values to the particle position. Only required if
+          =fluidPhase= is used in an expression
 ** Information written for restarting
    Certain features of the parsers (especially stored and delayed
    variables) need to write information to allow an exact
@@ -1011,10 +1052,10 @@ hide circle
    these are based on distributions. If the =weighted= variant is
    chosen then the meaning is the more physical one (for =weighted=
    the 'natural' weight of the quantity is used. For instance for
-   cells the cell volume. Otherwise the weight $1$ is used). Some
-   of these accumulations need a single floating point number as a
-   parameter. This is simply added to the name. The added
-   accumulations are:
+   cells the cell volume . Otherwise the weight $1$ is used. See also
+   table \ref{tab:naturalWeights}). Some of these accumulations need a
+   single floating point number as a parameter. This is simply added
+   to the name. The added accumulations are:
    - min :: Minimum value
    - max :: Maximum value
    - sum :: Sum of the values

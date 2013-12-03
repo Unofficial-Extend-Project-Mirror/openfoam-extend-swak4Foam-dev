@@ -1,0 +1,18 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 14 Nov 2013 19:26:38 +0100
+Subject: Re: Parser for lagrangian particles
+Message-Id: <f69cb962de2d74c2-a96731217a2dcdcd-artemis@bgs-cool-greybook.local>
+References: <f69cb962de2d74c2-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <f69cb962de2d74c2-0-artemis@bgs-cool-greybook.local>
+
+The alias has been taken care of.
+
+Added a class ReaderParticle that is  basic particle that reads all
+the files it finds on the disk
+
+New utility funkySetLagrangianField based on this that is to be used
+for setting lagrangian fields on specific clouds
+
+Tested on 1.7.x and 2.2.x
+
+Compiles on 2.0.x,2.1.x and 1.6-ext-nextRelease

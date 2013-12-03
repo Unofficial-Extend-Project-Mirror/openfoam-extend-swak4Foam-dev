@@ -66,24 +66,22 @@ lcsSpeciesSourcePluginFunction::lcsSpeciesSourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-#define getSpeciesIndex(neededType,usedType)                                \
-    if(speciesList.size()==0 && hasCloudAs<neededType>()) {                 \
-        const speciesTable &spec=                                           \
-            getCloudAs<neededType,usedType>().mcCarrierThermo ().species(); \
-        speciesList=spec;                                                   \
-        if(spec.contains(speciesName_)) {                                   \
-            speciesIndex=spec[speciesName_];                                \
-        }                                                                   \
-    }
-
-void lcsSpeciesSourcePluginFunction::doEvaluation()
+autoPtr<lcsSpeciesSourcePluginFunction::dimScalarField>
+lcsSpeciesSourcePluginFunction::internalEvaluate(const label speciesIndex)
 {
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-    autoPtr<dimScalarField> pSrho;
+    // pick up the first fitting class
+    tryCall(dimScalarField,constThermoReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,thermoReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
 
-    label speciesIndex=-1;
-    wordList speciesList;
+    return autoPtr<dimScalarField>();
+}
 
+label lcsSpeciesSourcePluginFunction::getIndex(wordList &speciesList)
+{
     getSpeciesIndex(constThermoReactingCloud,reactingCloud);
     getSpeciesIndex(thermoReactingCloud,reactingCloud);
     getSpeciesIndex(icoPoly8ThermoReactingCloud,reactingCloud);
@@ -91,29 +89,37 @@ void lcsSpeciesSourcePluginFunction::doEvaluation()
     getSpeciesIndex(thermoReactingMultiphaseCloud,reactingMultiphaseCloud);
     getSpeciesIndex(icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud);
 
+    return -1;
+}
+
+void lcsSpeciesSourcePluginFunction::doEvaluation()
+{
+    wordList speciesList;
+    label speciesIndex=getIndex(speciesList);
+
     if(speciesList.size()==0) {
+        listAvailableClouds(Info);
         FatalErrorIn("lcsSpeciesSourcePluginFunction::doEvaluation()")
             << "No species list found (probably wrong cloud type)"
                 << endl
+                << "Supported cloud types (typeid): "                   \
+                << supportedTypes() << endl                             \
                 << exit(FatalError);
     }
 
     if(speciesIndex<0) {
+        listAvailableClouds(Info);
         FatalErrorIn("lcsSpeciesSourcePluginFunction::doEvaluation()")
             << "Species " << speciesName_ << " not found in gas composition "
                 << speciesList
                 << endl
+                << "Supported cloud types (typeid): "                   \
+                << supportedTypes() << endl                             \
                 << exit(FatalError);
 
     }
 
-    // pick up the first fitting class
-    castAndCall(pSrho,dimScalarField,constThermoReactingCloud,reactingCloud,Srho(speciesIndex));
-    castAndCall(pSrho,dimScalarField,thermoReactingCloud,reactingCloud,Srho(speciesIndex));
-    castAndCall(pSrho,dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Srho(speciesIndex));
-    castAndCall(pSrho,dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
-    castAndCall(pSrho,dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
-    castAndCall(pSrho,dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+    autoPtr<dimScalarField> pSrho=internalEvaluate(speciesIndex);;
 
     noCloudFound(pSrho);
 
