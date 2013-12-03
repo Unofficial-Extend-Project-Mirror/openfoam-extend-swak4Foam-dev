@@ -45,6 +45,9 @@ namespace Foam {
 template<class LookupCloudType>
 bool LagrangianCloudSourcePluginFunction::hasCloudAs()
 {
+    supportedTypes_.insert(typeid(LookupCloudType).name());
+    //    supportedTypes_.insert(LookupCloudType::typeName);
+
     return mesh().template foundObject<LookupCloudType>
         (
             cloudName()

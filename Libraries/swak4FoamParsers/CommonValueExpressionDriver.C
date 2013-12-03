@@ -1349,6 +1349,60 @@ word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
     }
 }
 
+bool CommonValueExpressionDriver::isCellSet(const word &name)
+{
+    if(getTypeOfSet(name)=="cellSet") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool CommonValueExpressionDriver::isCellZone(const word &name)
+{
+    if(mesh().cellZones().findZoneID(name)>=0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool CommonValueExpressionDriver::isFaceSet(const word &name)
+{
+    if(getTypeOfSet(name)=="faceSet") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool CommonValueExpressionDriver::isFaceZone(const word &name)
+{
+    if(mesh().faceZones().findZoneID(name)>=0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool CommonValueExpressionDriver::isPointSet(const word &name)
+{
+    if(getTypeOfSet(name)=="pointSet") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool CommonValueExpressionDriver::isPointZone(const word &name)
+{
+    if(mesh().pointZones().findZoneID(name)>=0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void CommonValueExpressionDriver::setTrace(
     bool scanning,
     bool parsing
@@ -1704,7 +1758,7 @@ bool CommonValueExpressionDriver::hasAlias(const word &name) const
     return aliases_.found(name);
 }
 
-word CommonValueExpressionDriver::getAlias(const word &name) const
+const word &CommonValueExpressionDriver::getAlias(const word &name) const
 {
     if(!aliases_.found(name)){
         FatalErrorIn("CommonValueExpressionDriver::getAlias(const word &name) const")
@@ -1718,6 +1772,13 @@ word CommonValueExpressionDriver::getAlias(const word &name) const
     } else {
         return aliases_[name];
     }
+}
+
+const word &CommonValueExpressionDriver::resolveAlias(const word &name) const {
+    if(hasAlias(name)) {
+        return getAlias(name);
+    }
+    return name;
 }
 
 } // namespace

@@ -65,6 +65,9 @@ class lcsScatteringFactorPluginFunction
 
     lcsScatteringFactorPluginFunction(const lcsScatteringFactorPluginFunction &);
 
+protected:
+    virtual autoPtr<volScalarField> internalEvaluate();
+
 public:
 
     lcsScatteringFactorPluginFunction(

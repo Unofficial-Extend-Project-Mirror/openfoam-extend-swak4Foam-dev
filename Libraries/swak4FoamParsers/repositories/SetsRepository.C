@@ -52,7 +52,7 @@ SetsRepository *SetsRepository::repositoryInstance(NULL);
 
 SetsRepository::SetsRepository(const IOobject &o)
     :
-    regIOobject(o)
+    RepositoryBase(o)
 {
 }
 
@@ -236,6 +236,10 @@ meshSearch &SetsRepository::getSearch(
 
         return *meshSearches_[name];
     }
+}
+
+void SetsRepository::updateRepo()
+{
 }
 
 bool SetsRepository::writeData(Ostream &f) const

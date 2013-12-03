@@ -65,6 +65,9 @@ class lcsRhoEffPluginFunction
 
     lcsRhoEffPluginFunction(const lcsRhoEffPluginFunction &);
 
+protected:
+    virtual autoPtr<volScalarField> internalEvaluate();
+
 public:
 
     lcsRhoEffPluginFunction(

@@ -68,16 +68,21 @@ lcsMomentumSourcePluginFunction::lcsMomentumSourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<lcsMomentumSourcePluginFunction::dimVectorField>
+lcsMomentumSourcePluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(dimVectorField,basicKinematicCloud,kinematicCloud,UTrans());
+    tryCall(dimVectorField,swakFluidThermoCloudType,thermoCloud,UTrans());
+    tryCall(dimVectorField,basicReactingCloud,reactingCloud,UTrans());
+    tryCall(dimVectorField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,UTrans());
+
+    return autoPtr<dimVectorField>();
+}
+
 void lcsMomentumSourcePluginFunction::doEvaluation()
 {
-    typedef DimensionedField<vector,volMesh> dimVectorField;
-    autoPtr<dimVectorField> pSU;
-
-    // pick up the first fitting class
-    castAndCall(pSU,dimVectorField,basicKinematicCloud,kinematicCloud,UTrans());
-    castAndCall(pSU,dimVectorField,swakFluidThermoCloudType,thermoCloud,UTrans());
-    castAndCall(pSU,dimVectorField,basicReactingCloud,reactingCloud,UTrans());
-    castAndCall(pSU,dimVectorField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,UTrans());
+    autoPtr<dimVectorField> pSU=internalEvaluate();
 
     noCloudFound(pSU);
 

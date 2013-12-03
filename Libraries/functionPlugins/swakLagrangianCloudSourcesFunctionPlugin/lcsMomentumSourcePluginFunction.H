@@ -65,6 +65,11 @@ class lcsMomentumSourcePluginFunction
 
     lcsMomentumSourcePluginFunction(const lcsMomentumSourcePluginFunction &);
 
+protected:
+    typedef DimensionedField<vector,volMesh> dimVectorField;
+
+    virtual autoPtr<dimVectorField> internalEvaluate();
+
 public:
 
     lcsMomentumSourcePluginFunction(

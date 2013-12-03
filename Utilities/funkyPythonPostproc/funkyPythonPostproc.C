@@ -49,6 +49,8 @@ Contributors/Copyright:
 
 #include "printSwakVersion.H"
 
+#include "RepositoryBase.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -90,7 +92,7 @@ int main(int argc, char *argv[])
                 << endl
                 << exit(FatalError);
     }
-    dlLibraryTable().open(spec,"libs");
+    dlLibraryTable table(spec,"libs");
 
     wordList preloadFieldNames(spec.lookup("preloadFields"));
 
@@ -174,6 +176,8 @@ int main(int argc, char *argv[])
         python.setRunTime(mesh.time());
 
         Foam::Info << "\nTime = " << runTime.timeName() << Foam::endl;
+
+        RepositoryBase::updateRepos();
 
         mesh.readUpdate();
         Info << "Reloading fields" << endl;

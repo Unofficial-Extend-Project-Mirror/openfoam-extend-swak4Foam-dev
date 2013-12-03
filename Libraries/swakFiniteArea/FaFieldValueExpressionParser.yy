@@ -285,6 +285,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_randFixed
 %token TOKEN_id
 %token TOKEN_cpu
+%token TOKEN_weight
 %token TOKEN_randNormal
 %token TOKEN_randNormalFixed
 %token TOKEN_position
@@ -1945,6 +1946,11 @@ exp:    TOKEN_NUM                                  {
         | TOKEN_cpu'(' ')'                         {
             $$ = driver.makeConstantField<Foam::areaScalarField>(
                 Foam::Pstream::myProcNo()
+            ).ptr();
+          }
+        | TOKEN_weight'(' ')'                          {
+            $$ = driver.makeField<Foam::areaScalarField>(
+                driver.weights(driver.size())
             ).ptr();
           }
         | TOKEN_deltaT '(' ')'                     {

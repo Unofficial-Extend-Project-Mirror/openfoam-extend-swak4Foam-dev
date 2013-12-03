@@ -111,6 +111,8 @@ if [[ $PARSERSOK != 0 ]]; then
     exit 42
 fi
 
+wmake libso swakLagrangianParser
+
 wmake libso groovyBC
 
 wmake libso swakFunctionObjects

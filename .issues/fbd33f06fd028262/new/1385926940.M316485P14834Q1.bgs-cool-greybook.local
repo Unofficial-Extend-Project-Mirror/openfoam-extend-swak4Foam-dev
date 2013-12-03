@@ -1,0 +1,13 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 01 Dec 2013 20:38:22 +0100
+State: new
+Subject: Add Proxys for special lagrangian classes
+Message-Id: <fbd33f06fd028262-0-artemis@bgs-cool-greybook.local>
+
+From f69cb962de2d74c2
+
+TODO: Proxys for
+- solidParticle
+- DSMC
+- molecularDynamics
+- dieselSpray

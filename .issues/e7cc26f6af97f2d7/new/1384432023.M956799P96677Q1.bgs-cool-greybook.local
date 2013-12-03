@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 14 Nov 2013 13:25:47 +0100
+State: new
+Subject: Go through intermediate 2.x lagrangian classes
+Message-Id: <e7cc26f6af97f2d7-0-artemis@bgs-cool-greybook.local>
+
+To check for new properties that were not present in 1.7

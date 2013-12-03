@@ -1,6 +1,6 @@
 .SUFFIXES: .ll
 
-lltoo = rm -f $*.C ; mkdir $$$$; cd $$$$; flex -f ../$$SOURCE ; mv *.c ../$*.C ; cd ..; rm -r $$$$; $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $*.C -o $@ 
+lltoo = rm -f $*.C ; mkdir $$$$; cd $$$$; flex -f ../$$SOURCE ; mv *.c ../$*.C ; cd ..; rm -r $$$$; if [ -z "$(SWAK_COMPILE_LEXER_OPTION)" ]; then echo -e "\n\nIf you use aggessive optimization (O3 or so) and experience strange crahes while running with grovvyBC etc set SWAK_COMPILE_LEXER_OPTION to something like -O1\n\n" ; fi; $(WM_SCHEDULER) $(CC) $(c++FLAGS)  $(SWAK_COMPILE_LEXER_OPTION) -c $*.C -o $@
 
 .ll.dep:
 	$(MAKE_DEP)

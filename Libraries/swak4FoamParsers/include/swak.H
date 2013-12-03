@@ -96,6 +96,9 @@ Contributors/Copyright:
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
 
+// the coded function objects have an additional data entry
+#define SWAK_FUNCTION_OBJECT_HAS_DATAPTR
+
 #endif
 
 // this changed starting with 2.2
@@ -142,6 +145,16 @@ Contributors/Copyright:
 // Certain OpenFOAM-versions don't have this method in fvMesh
 #if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
 #define FOAM_FV_MESH_HAS_NO_SOLVERDICT
+#endif
+
+// Additional tensor types in nextRelease
+#ifdef FOAM_DEV
+#define FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+#endif
+
+// The kineamticPArcel has no property active in 1.6-ext
+#ifdef FOAM_DEV
+#define FOAM_KINEMTATIC_HAS_NO_ACTIVE_PROPERTY
 #endif
 
 #include "swakVersion.H"
