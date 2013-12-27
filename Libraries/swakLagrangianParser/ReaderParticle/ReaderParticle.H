@@ -43,7 +43,14 @@ Contributors/Copyright:
 #ifndef ReaderParticle_H
 #define ReaderParticle_H
 
+#include "swak.H"
+
+#ifdef FOAM_PARTICLE_CLASS_IS_TEMPLATE
+#include "Particle.H"
+#else
 #include "particle.H"
+#endif
+
 #include "IOstream.H"
 #include "autoPtr.H"
 
@@ -58,9 +65,17 @@ namespace Foam
 
     class ReaderParticleCloud;
 
+#ifndef FOAM_PARTICLE_CLASS_IS_TEMPLATE
+    typedef particle ReaderParticleBaseClass;
+#else
+    class ReaderParticle;
+
+    typedef Particle<ReaderParticle> ReaderParticleBaseClass;
+#endif
+
 class ReaderParticle
 :
-    public particle
+    public ReaderParticleBaseClass
 {
 
 public:
@@ -69,6 +84,7 @@ public:
 
     // Constructors
 
+#ifndef FOAM_PARTICLE_CLASS_IS_TEMPLATE
         //- Construct from components
         ReaderParticle
         (
@@ -80,7 +96,7 @@ public:
 
         )
         :
-            particle(mesh, position, celli, tetFaceI, tetPtI)
+            ReaderParticleBaseClass(mesh, position, celli, tetFaceI, tetPtI)
         {}
 
         ReaderParticle
@@ -91,7 +107,7 @@ public:
             bool doCellFacePt = true
         )
         :
-            particle(mesh, position, cellI, doCellFacePt)
+            ReaderParticleBaseClass(mesh, position, cellI, doCellFacePt)
         {}
 
         //- Construct from Istream
@@ -102,19 +118,42 @@ public:
             bool readFields = true
         )
         :
-            particle(mesh, is, readFields)
+            ReaderParticleBaseClass(mesh, is, readFields)
         {}
+#else
+        //- Construct from components
+        ReaderParticle
+        (
+            const Cloud<ReaderParticle>& c,
+            const vector& position,
+            const label celli
+        )
+        :
+            Particle<ReaderParticle>(c, position, celli)
+        {}
+
+        //- Construct from Istream
+        ReaderParticle
+        (
+            const Cloud<ReaderParticle>& c,
+            Istream& is,
+            bool readFields = true
+        )
+        :
+            Particle<ReaderParticle>(c, is, readFields)
+        {}
+#endif
 
         //- Construct as copy
         ReaderParticle(const ReaderParticle& p)
         :
-            particle(p)
+            ReaderParticleBaseClass(p)
         {}
 
         //- Construct and return a clone
-        virtual autoPtr<particle> clone() const
+        virtual autoPtr<ReaderParticleBaseClass> clone() const
         {
-            return autoPtr<particle>(new ReaderParticle(*this));
+            return autoPtr<ReaderParticleBaseClass>(new ReaderParticle(*this));
         }
 
         static void readFields (ReaderParticleCloud &c);

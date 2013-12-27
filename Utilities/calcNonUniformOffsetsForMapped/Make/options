@@ -1,7 +1,10 @@
+include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
+
 EXE_INC = -I$(LIB_SRC)/cfdTools/lnInclude \
           -I$(LIB_SRC)/cfdTools/general/lnInclude \
 	  -I$(LIB_SRC)/finiteVolume/lnInclude \
 	  -I$(LIB_SRC)/meshTools/lnInclude \
+	  $(FOAM_DEV_OPTION) 	\
           -I../../Libraries/swak4FoamParsers/lnInclude/
 
 EXE_LIBS = -lfiniteVolume \

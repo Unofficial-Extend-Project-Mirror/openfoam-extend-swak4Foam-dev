@@ -40,14 +40,21 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef EvolveReactingMultiphaseCloudFunctionObject_H
 #define EvolveReactingMultiphaseCloudFunctionObject_H
 
 #include "EvolveCloudFunctionObject.H"
+
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,9 +65,16 @@ namespace Foam
                            Class EvolveReactingMultiphaseCloudFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+template <class CloudType>
+#endif
 class EvolveReactingMultiphaseCloudFunctionObject
 :
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    public EvolveCloudFunctionObject<CloudType>
+#else
     public EvolveCloudFunctionObject<basicReactingMultiphaseCloud>
+#endif
 {
     // Private Member Functions
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,8 +28,12 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+ ICE Revision: $Id$
 \*---------------------------------------------------------------------------*/
+
+#include "swak.H"
+
+#ifndef FOAM_HAS_NO_DATAENTRY_CLASS
 
 #include "swakDataEntry.H"
 
@@ -44,5 +48,7 @@ namespace Foam {
     makeDataEntryType(swakDataEntry,symmTensor);
 #endif
 }
+
+#endif
 
 // ************************************************************************* //

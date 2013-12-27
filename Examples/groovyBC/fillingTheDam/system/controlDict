@@ -296,6 +296,9 @@ functions
         expression "0";
         mask "alpha1<0.01";
     }
+    // whichFields {
+    //     type listRegisteredObjects;
+    // }
    doWithPython {
         type executeIfFunctionObjectPresent;
         functions {

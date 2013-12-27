@@ -118,6 +118,13 @@ public:
     //- Construct from an id
     FaFieldValueExpressionDriver(const word& id,const fvMesh&mesh);
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new FaFieldValueExpressionDriver(*this)
+            );
+        }
+
     virtual ~FaFieldValueExpressionDriver();
 
     // necessary to override Common

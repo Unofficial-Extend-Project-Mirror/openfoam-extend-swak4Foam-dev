@@ -68,7 +68,7 @@ fi
 
 of_version_major=`echo $WM_PROJECT_VERSION | sed -e 's=\([0-9]*\).*=\1='`
 of_version_minor=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.\([0-9]*\).*=\1='`
-of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1=' -e 's=x=-1='`
+of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1=' -e 's=[0-9]*\.[0-9]*=x=' -e 's=x=-1='`
 echo "OpenFOAM-version: Major $of_version_major Minor $of_version_minor Patch $of_version_patch (-1 == x)"
 
 versionFile=swak4FoamParsers/foamVersion4swak.H

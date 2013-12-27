@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
 
+#include "swak.H"
+
 #ifdef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "directMappedPatchBase.H"
 #include "interpolationCell.H"

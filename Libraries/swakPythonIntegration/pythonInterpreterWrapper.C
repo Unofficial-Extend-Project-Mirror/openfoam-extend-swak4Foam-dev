@@ -46,7 +46,9 @@ Contributors/Copyright:
 #include "symmTensor.H"
 #include "sphericalTensor.H"
 
+#ifdef FOAM_HAS_STRINGOPS
 #include "stringOps.H"
+#endif
 
 // #include <fcntl.h>
 
@@ -1326,7 +1328,9 @@ void pythonInterpreterWrapper::readCode(
             code="";
         }
     }
+#ifdef FOAM_HAS_STRINGOPS
     code=stringOps::trim(code);
+#endif
 }
 
 void pythonInterpreterWrapper::scatterGlobals()

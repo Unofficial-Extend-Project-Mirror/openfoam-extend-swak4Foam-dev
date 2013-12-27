@@ -34,6 +34,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
+#ifndef FOAM_NO_SLG_THERMOPHYSICS
+
 #include "loadSLGThermoModelFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -111,5 +115,7 @@ loadSLGThermoModelFunctionObject::loadSLGThermoModelFunctionObject
 
 
 } // namespace Foam
+
+#endif
 
 // ************************************************************************* //
