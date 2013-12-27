@@ -1,4 +1,10 @@
 
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
+ifdef FOAM_DEV
+ADDITIONALFILES_INC=-I../filesThatAreOnlyInSomeDistributions
+endif
+
 EXE_INC = \
     -I../simpleFunctionObjects/lnInclude \
     -I$(WM_PROJECT_USER_DIR)/Libraries/simpleFunctionObjects/lnInclude \
@@ -7,7 +13,8 @@ EXE_INC = \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/triSurface/lnInclude \
-    -I$(LIB_SRC)/lagrangian/basic/lnInclude 
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    $(ADDITIONALFILES_INC)
 
 
 LIB_LIBS = \
@@ -18,4 +25,4 @@ LIB_LIBS = \
     -lmeshTools \
     -lsampling \
     -ltriSurface \
-    -llagrangian 
+    -llagrangian
