@@ -54,7 +54,9 @@ Contributors/Copyright:
 #if ((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)) && !defined(FOAM_DEV)
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
-#else
+#endif
+
+#if !((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6))
 #define FOAM_OLDTIME_PROBLEM
 #endif
 
@@ -69,7 +71,7 @@ Contributors/Copyright:
 #endif
 
 // Certain OpenFOAM-versions don't have all tensor operations defined
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
+#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || defined(FOAM_DEV)
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 
@@ -78,7 +80,7 @@ Contributors/Copyright:
 #endif
 
 // Versions before 2.1
-#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MINOR<1 && FOAM_VERSION4SWAK_MAJOR==2)
+#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MINOR<1 && FOAM_VERSION4SWAK_MAJOR==2) || defined(FOAM_DEV)
 
 // what is later called mappedPatch is called directMappedPatch
 #define FOAM_MAPPED_IS_DIRECTMAPPED
@@ -91,7 +93,7 @@ Contributors/Copyright:
 #endif
 
 // this changed starting with 2.1
-#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR==2)
+#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR==2)) && !defined(FOAM_DEV)
 
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
@@ -104,26 +106,33 @@ Contributors/Copyright:
 // this changed starting with 2.2
 #if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=2 && FOAM_VERSION4SWAK_MAJOR==2)
 
-#if FOAM_VERSION4SWAK_MAJOR>2 || FOAM_VERSION4SWAK_MINOR>2 || FOAM_VERSION4SWAK_PATCH!=0
+#if (FOAM_VERSION4SWAK_MAJOR>2 || FOAM_VERSION4SWAK_MINOR>2 || FOAM_VERSION4SWAK_PATCH!=0) && !defined(FOAM_DEV)
 // this is NOT changed in 2.2.0 but in the earliest commits of 2.2.x
 // lookupClass returns a non-const list
 #define FOAM_LOOKUPCLASS_NO_CONST
 #endif
 
+#if !defined(FOAM_DEV)
 // meshSearch parameter for sampledSet-constructor is now const
 #define FOAM_MESHSEARCH_CONST_SAMPLEDSET
 #else
 #define FOAM_SAMPLEDSET_NEEDS_REFPOINT
 #endif
 
+#if !defined(FOAM_DEV)
 // interpolate-method for meshToMesh needs a reduce-operation
 #define FOAM_MESHTOMESH_INTERPOLATE_REDUCE
+#endif
 
+#if !defined(FOAM_DEV)
 // functionObject now needs at least dummy-implementations of updateMesh and movePoints
 #define FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+#endif
 
+#ifndef FOAM_DEV
 // new revised fluidThermo
 #define FOAM_HAS_FLUIDTHERMO
+#endif
 
 // RR from the chemistry does no longer return a complete field
 #define FOAM_RR_ONLY_DIMENSIONED_FIELD
@@ -134,19 +143,25 @@ Contributors/Copyright:
 // this version has fvOptions
 #define FOAM_HAS_FVOPTIONS
 
+#ifndef FOAM_DEV
 // movePoints now gets a polyMesh
 #define FOAM_MOVEPOINTS_GETS_POLYMESH
+#endif
 
+#ifndef FOAM_DEV
 // coordinates method of searchable surfaces uses a tmp as return
 #define FOAM_SEARCHABLE_SURF_USES_TMP
+#endif
 
+#ifndef FOAM_DEV
 // points method of searchable surfaces now part of interface
 #define FOAM_SEARCHABLE_SURF_HAS_POINTS
+#endif
 
 #endif // version starting with 2.2
 
 // Certain OpenFOAM-versions don't have this method in fvMesh
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
+#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || FOAM_DEV
 #define FOAM_FV_MESH_HAS_NO_SOLVERDICT
 #endif
 
@@ -185,6 +200,7 @@ Contributors/Copyright:
 #define FOAM_PARTICLE_CLASS_IS_TEMPLATE
 #endif
 
+#ifdef FOAM_DEV
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
 
