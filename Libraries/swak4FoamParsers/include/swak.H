@@ -188,6 +188,11 @@ Contributors/Copyright:
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
 
+#ifdef FOAM_DEV
+#define FOAM_HAS_NO_CODED_CLASS
+#endif
+
+#ifdef FOAM_DEV
 #define FOAM_JUMP_IS_JUMP_CYCLIC
 #endif
 
