@@ -155,6 +155,13 @@ public:
     //- Copy construct
     FaPatchValueExpressionDriver(const FaPatchValueExpressionDriver&);
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new FaPatchValueExpressionDriver(*this)
+            );
+        }
+
     // Destructor
 
     ~FaPatchValueExpressionDriver();
