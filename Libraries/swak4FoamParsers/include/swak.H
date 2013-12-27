@@ -190,6 +190,11 @@ Contributors/Copyright:
 #define FOAM_TOPOSETSOURCE_HAS_SETTYPE
 #endif
 
+#ifndef FOAM_DEV
+#define FOAM_HAS_STRINGOPS
+#endif
+
+#ifdef FOAM_DEV
 #define FOAM_DLLIBRARY_USES_STATIC_METHODS
 #endif
 
