@@ -40,8 +40,14 @@ Contributors/Copyright:
 
 #include "swakCloudTypes.H"
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "basicThermoCloud.H"
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -71,9 +77,19 @@ autoPtr<lcsEnthalpySourcePluginFunction::dimScalarField>
 lcsEnthalpySourcePluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(dimScalarField,basicThermoCloud,thermoCloud,Sh());
+    tryCall(dimScalarField,constThermoReactingCloud,reactingCloud,Sh());
+    tryCall(dimScalarField,thermoReactingCloud,reactingCloud,Sh());
+    tryCall(dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Sh());
+    tryCall(dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+    tryCall(dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+    tryCall(dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Sh());
+#else
     tryCall(dimScalarField,swakFluidThermoCloudType,thermoCloud,hsTrans());
     tryCall(dimScalarField,basicReactingCloud,reactingCloud,hsTrans());
     tryCall(dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,hsTrans());
+#endif
 
     return autoPtr<dimScalarField>();
 }
@@ -96,12 +112,20 @@ void lcsEnthalpySourcePluginFunction::doEvaluation()
                 IOobject::NO_WRITE
             ),
             mesh(),
+#ifdef FOAM_THERMOCLOUD_OLD_STYLE
+            Sh.dimensions(),
+#else
             Sh.dimensions()/(dimTime*dimVolume),
+#endif
             "zeroGradient"
         )
     );
 
+#ifdef FOAM_THERMOCLOUD_OLD_STYLE
+    pSource->internalField()=Sh.field();
+#else
     pSource->internalField()=Sh.field()/(mesh().V()*mesh().time().deltaT().value());
+#endif
 
     result().setObjectResult(pSource);
 }

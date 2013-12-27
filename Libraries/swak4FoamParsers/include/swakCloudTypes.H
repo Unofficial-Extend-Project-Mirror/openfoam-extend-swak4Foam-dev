@@ -64,6 +64,10 @@ namespace Foam {
 }
 #endif
 
+#ifdef FOAM_DEV
+#define FOAM_REACTINGCLOUD_TEMPLATED
+#endif
+
 
 #include "DebugOStream.H"
 

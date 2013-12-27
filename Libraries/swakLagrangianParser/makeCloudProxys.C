@@ -39,8 +39,14 @@ Contributors/Copyright:
 
 #include "swakCloudTypes.H"
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "BasicReactingMultiphaseCloud.H"
+#include "BasicReactingCloud.H"
+#else
 #include "basicReactingMultiphaseCloud.H"
 #include "basicReactingCloud.H"
+#endif
+
 #include "basicKinematicCloud.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -52,9 +58,19 @@ namespace Foam
 
     addCloudProxyToTable(CloudProxyForThermoParcel,swakFluidThermoCloudType);
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    addCloudProxyToTable(CloudProxyForReactingParcel,thermoReactingCloud);
+    addCloudProxyToTable(CloudProxyForReactingParcel,constThermoReactingCloud);
+    addCloudProxyToTable(CloudProxyForReactingParcel,icoPoly8ThermoReactingCloud);
+
+    addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,thermoReactingMultiphaseCloud);
+    addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,constThermoReactingMultiphaseCloud);
+    addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,icoPoly8ThermoReactingMultiphaseCloud);
+#else
     addCloudProxyToTable(CloudProxyForReactingParcel,basicReactingCloud);
 
     addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,basicReactingMultiphaseCloud);
+#endif
 
 } // namespace end
 
