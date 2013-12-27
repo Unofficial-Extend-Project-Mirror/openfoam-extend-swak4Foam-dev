@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef functionObjectListProxy_H
@@ -66,7 +66,7 @@ class functionObjectListProxy
 
     //- Disallow default bitwise copy construct
     functionObjectListProxy(const functionObjectListProxy&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const functionObjectListProxy&);
 
@@ -110,7 +110,7 @@ public:
     //- Called when Time::run() determines that the time-loop exits.
     //  By default it simply calls execute().
     virtual bool end();
-    
+
     //- Read and set the function object if its data have changed
     virtual bool read(const dictionary&);
 

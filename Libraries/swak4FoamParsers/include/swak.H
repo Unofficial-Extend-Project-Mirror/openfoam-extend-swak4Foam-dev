@@ -167,6 +167,10 @@ Contributors/Copyright:
 #endif
 
 #ifdef FOAM_DEV
+#define FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+#endif
+
+#ifdef FOAM_DEV
 #ifdef FOAM_DEV
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
