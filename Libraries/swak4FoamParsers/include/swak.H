@@ -51,7 +51,7 @@ Contributors/Copyright:
 #error "This swak4Foam-version is only used for the 2.x-versions of OpenFOAM. For lower versions there is a special branch"
 #endif
 
-#if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
+#if ((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)) && !defined(FOAM_DEV)
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
 #else
