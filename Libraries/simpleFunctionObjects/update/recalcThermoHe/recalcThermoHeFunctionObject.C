@@ -36,7 +36,9 @@ Contributors/Copyright:
 
 #include "foamVersion4swak.H"
 
-#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR>=2)
+#include "swak.H"
+
+#if FOAM_HAS_ENERGY_HE
 
 #include "recalcThermoHeFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"

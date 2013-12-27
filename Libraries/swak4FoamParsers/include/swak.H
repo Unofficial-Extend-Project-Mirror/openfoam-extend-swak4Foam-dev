@@ -147,6 +147,10 @@ Contributors/Copyright:
 #define FOAM_FV_MESH_HAS_NO_SOLVERDICT
 #endif
 
+#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR>=2)) && !defined(FOAM_DEV)
+#define FOAM_HAS_ENERGY_HE
+#endif
+
 // Additional tensor types in nextRelease
 #ifdef FOAM_DEV
 #define FOAM_DEV_ADDITIONAL_TENSOR_TYPES
