@@ -1,5 +1,7 @@
+
+include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
+
 ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV
 ADDITIONALFILES_INC=-I../../Libraries/filesThatAreOnlyInSomeDistributions
 endif
 

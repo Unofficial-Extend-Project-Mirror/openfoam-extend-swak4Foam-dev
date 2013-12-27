@@ -6,6 +6,7 @@ ADDITIONALFILES_INC=-I../filesThatAreOnlyInSomeDistributions
 endif
 
 EXE_INC = \
+    $(FOAM_DEV_OPTION) \
     -I../simpleFunctionObjects/lnInclude \
     -I$(WM_PROJECT_USER_DIR)/Libraries/simpleFunctionObjects/lnInclude \
     -I../swak4FoamParsers/lnInclude \
