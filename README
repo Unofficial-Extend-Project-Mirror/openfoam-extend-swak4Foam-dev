@@ -55,9 +55,7 @@
 * Installation/Compilation
 ** Requirements
    - Version 2.0, 2.1 or 2.2 of OpenFOAM (a version that works with 1.6,
-     1.6-ext and 1.7 is available separately)
-     - The =finiteArea=-stuff will probably work with version 2.0-ext
-       (once that is available)
+     1.6-ext and 1.7 is available separately) and version 3.0 of Foam
    - the compiler generators =bison= and =flex=
      - bison :: =swak4Foam= is known to work with =bison= version 2.4 and
        higher. Version 2.3 compiles but the plugin-functionality does
@@ -2224,6 +2222,11 @@ S_{expl} + S_{impl} T
      =nextRelease=-branch of 1.6-ext (from the =git=).Usually the
      failing parts can be fixed b commenting out the appropriate
      =#define= in =Libraries/swak4FoamParsers/include/swak.H=.
+*** New supported versions
+**** Added support for Foam 3.0
+     As this version is quite similar to 1.7 a lot of =#ifdefs= were
+     introduced by this port leading to a possible unification with
+     the 1.x-branch
 *** Infrastructure
 **** Make error messages in =Allwmake= more verbose
      The error messages where already quite verbose. But people
