@@ -181,6 +181,10 @@ Contributors/Copyright:
 #define FOAM_SURFACEWRITER_NOT_A_TEMPLATE
 #endif
 
+#ifdef FOAM_DEV
+#define FOAM_PARTICLE_CLASS_IS_TEMPLATE
+#endif
+
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
 
