@@ -166,6 +166,10 @@ Contributors/Copyright:
 #define FOAM_JUMP_IS_JUMP_CYCLIC
 #endif
 
+#ifdef FOAM_DEV
+#define FOAM_DLLIBRARY_USES_STATIC_METHODS
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
