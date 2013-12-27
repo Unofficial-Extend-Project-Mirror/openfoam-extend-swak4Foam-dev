@@ -162,6 +162,10 @@ Contributors/Copyright:
 #define FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
 #endif
 
+#ifdef FOAM_DEV
+#define FOAM_JUMP_IS_JUMP_CYCLIC
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCJumpFvPatchField.H"
@@ -146,6 +146,30 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+#ifdef FOAM_JUMP_IS_JUMP_CYCLIC
+template<class Type>
+tmp<Field<scalar> > groovyBCJumpFvPatchField<Type>::jump() const
+{
+    if(debug) {
+        Info << "groovyBCJumpFvPatchField<Type>::jump() with "
+            << jumpExpression_ << endl;
+    }
+
+    PatchValueExpressionDriver &driver=const_cast<PatchValueExpressionDriver &>(driver_);
+
+    driver.clearVariables();
+
+    tmp<Field<scalar> > tjf(
+        new Field<scalar>(this->size())
+    );
+    Field<scalar> &jf=tjf();
+
+    jf = driver.evaluate<scalar>(this->jumpExpression_);
+
+    return tjf;
+}
+#endif
+
 template<class Type>
 void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
 {
@@ -153,6 +177,10 @@ void groovyBCJumpFvPatchField<Type>::write(Ostream& os) const
         Info << "groovyBCJumpFvPatchField<Type>::write" << endl;
     }
     fixedJumpFvPatchField<Type>::write(os);
+#ifdef FOAM_JUMP_IS_JUMP_CYCLIC
+    os.writeKeyword("patchType") << "cyclic" << token::END_STATEMENT << nl;
+    os.writeKeyword("jumpValue") << jump() << token::END_STATEMENT << nl;
+#endif
     os.writeKeyword("jumpExpression")
         << jumpExpression_ << token::END_STATEMENT << nl;
 
