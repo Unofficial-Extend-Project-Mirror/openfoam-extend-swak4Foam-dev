@@ -167,6 +167,10 @@ Contributors/Copyright:
 #endif
 
 #ifdef FOAM_DEV
+#ifdef FOAM_DEV
+#define FOAM_NO_SLG_THERMOPHYSICS
+#endif
+
 #ifndef FOAM_DEV
 #define FOAM_TOPOSETSOURCE_HAS_SETTYPE
 #endif
