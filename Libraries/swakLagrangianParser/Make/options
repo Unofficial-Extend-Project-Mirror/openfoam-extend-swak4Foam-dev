@@ -43,5 +43,5 @@ LIB_LIBS = \
     -llagrangian \
     -llagrangianIntermediate \
     -lthermophysicalFunctions \
-    -lradiationModels \
+    $(RADIATION_LIB) \
     -lsolidParticle

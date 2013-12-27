@@ -1,3 +1,5 @@
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
 EXE_INC = \
     -I../swak4FoamParsers/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
@@ -33,5 +35,5 @@ LIB_LIBS = \
     -llagrangian \
     -llagrangianIntermediate \
     -lthermophysicalFunctions \
-    -lradiationModels \
+    $(RADIATION_LIB) \
     -lsolidParticle
