@@ -167,6 +167,10 @@ Contributors/Copyright:
 #endif
 
 #ifdef FOAM_DEV
+#ifdef FOAM_DEV
+#define FOAM_HAS_NO_DATAENTRY_CLASS
+#endif
+
 #define FOAM_JUMP_IS_JUMP_CYCLIC
 #endif
 
