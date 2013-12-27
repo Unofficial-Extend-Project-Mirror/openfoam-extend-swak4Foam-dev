@@ -167,6 +167,10 @@ Contributors/Copyright:
 #endif
 
 #ifdef FOAM_DEV
+#ifndef FOAM_DEV
+#define FOAM_TOPOSETSOURCE_HAS_SETTYPE
+#endif
+
 #define FOAM_DLLIBRARY_USES_STATIC_METHODS
 #endif
 

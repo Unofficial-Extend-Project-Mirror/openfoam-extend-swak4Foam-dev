@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "expressionToCell.H"
@@ -147,10 +147,12 @@ Foam::expressionToCell::~expressionToCell()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+#ifdef FOAM_TOPOSETSOURCE_HAS_SETTYPE
 Foam::topoSetSource::sourceType Foam::expressionToCell::setType() const
 {
     return CELLSETSOURCE;
 }
+#endif
 
 void Foam::expressionToCell::applyToSet
 (
@@ -162,7 +164,7 @@ void Foam::expressionToCell::applyToSet
     {
         Info<< "    Adding all elements of for which " << expression_ << " evaluates to true ..."
             << endl;
-        
+
         combine(set,true);
     }
     else if (action == topoSetSource::DELETE)

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "expressionToFace.H"
@@ -99,10 +99,10 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
 
     if(driver.resultIsTyp<volScalarField>(true)) {
         const volScalarField &condition=driver.getResult<volScalarField>();
-        
+
         const labelList &own=condition.mesh().faceOwner();
         const labelList &nei=condition.mesh().faceNeighbour();
-        
+
         Info << "    Expression " << expression_
             << " evaluates to cellValue: using boundary" << endl;
 
@@ -188,10 +188,12 @@ Foam::expressionToFace::~expressionToFace()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+#ifdef FOAM_TOPOSETSOURCE_HAS_SETTYPE
 Foam::topoSetSource::sourceType Foam::expressionToFace::setType() const
 {
     return FACESETSOURCE;
 }
+#endif
 
 void Foam::expressionToFace::applyToSet
 (
@@ -203,7 +205,7 @@ void Foam::expressionToFace::applyToSet
     {
         Info<< "    Adding all elements of for which " << expression_ << " evaluates to true ..."
             << endl;
-        
+
         combine(set,true);
     }
     else if (action == topoSetSource::DELETE)
