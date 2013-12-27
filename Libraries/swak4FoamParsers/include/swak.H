@@ -171,6 +171,9 @@ Contributors/Copyright:
 #endif
 
 #ifdef FOAM_DEV
+#define FOAM_ISTREAM_HAS_NO_STDSTREAM
+#endif
+
 #ifdef FOAM_DEV
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
