@@ -39,6 +39,12 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_SURFACEWRITER_NOT_A_TEMPLATE
+typedef surfaceWriter scalarSurfaceWriter;
+#else
+typedef surfaceWriter<scalar> scalarSurfaceWriter;
+#endif
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(SurfacesRepository, 0);
@@ -158,8 +164,8 @@ sampledSurface &SurfacesRepository::getSurface(
             word format(dict.lookup("surfaceFormat"));
 
             // Just to check whether the format actually exists
-            autoPtr<surfaceWriter > theWriter(
-                surfaceWriter::New(format)
+            autoPtr<scalarSurfaceWriter> theWriter(
+                scalarSurfaceWriter::New(format)
             );
 
             if(writeSurface) {
@@ -200,8 +206,8 @@ bool SurfacesRepository::writeData(Ostream &f) const
 
         const sampledSurface &surf=*surfaces_[name];
 
-        autoPtr<surfaceWriter > theWriter(
-            surfaceWriter::New(format)
+        autoPtr<scalarSurfaceWriter> theWriter(
+            scalarSurfaceWriter::New(format)
         );
 
         theWriter->write(

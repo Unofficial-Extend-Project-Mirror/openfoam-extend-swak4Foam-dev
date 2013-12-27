@@ -175,6 +175,9 @@ Contributors/Copyright:
 #endif
 
 #ifdef FOAM_DEV
+#define FOAM_SURFACEWRITER_NOT_A_TEMPLATE
+#endif
+
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
 
