@@ -38,7 +38,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#if FOAM_HAS_ENERGY_HE
+#ifdef FOAM_HAS_ENERGY_HE
 
 #include "recalcThermoHeFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
