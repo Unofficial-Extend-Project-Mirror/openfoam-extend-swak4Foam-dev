@@ -128,6 +128,7 @@ EvolveReactingCloudFunctionObject
 template <class CloudType>
 bool EvolveReactingCloudFunctionObject<CloudType>
 #else
+#define TEMPLATE
 bool EvolveReactingCloudFunctionObject
 #endif
 ::start()
