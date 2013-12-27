@@ -119,10 +119,12 @@ Foam::swakRegistryProxySet::swakRegistryProxySet
 Foam::swakRegistryProxySet::~swakRegistryProxySet()
 {}
 
-// Foam::point Foam::swakRegistryProxySet::getRefPoint (const List< point > &pl) const
-// {
-//     return realSet().getRefPoint(pl);
-// }
+#ifdef FOAM_SAMPLEDSET_NEEDS_REFPOINT
+Foam::point Foam::swakRegistryProxySet::getRefPoint (const List< point > &pl) const
+{
+    return realSet().getRefPoint(pl);
+}
+#endif
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

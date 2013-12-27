@@ -112,6 +112,9 @@ Contributors/Copyright:
 
 // meshSearch parameter for sampledSet-constructor is now const
 #define FOAM_MESHSEARCH_CONST_SAMPLEDSET
+#else
+#define FOAM_SAMPLEDSET_NEEDS_REFPOINT
+#endif
 
 // interpolate-method for meshToMesh needs a reduce-operation
 #define FOAM_MESHTOMESH_INTERPOLATE_REDUCE
