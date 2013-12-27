@@ -179,6 +179,9 @@ Contributors/Copyright:
 #endif
 
 #ifdef FOAM_DEV
+#define FOAM_OLD_THERMOPHYSICS
+#endif
+
 #ifdef FOAM_DEV
 #define FOAM_NO_SLG_THERMOPHYSICS
 #endif
