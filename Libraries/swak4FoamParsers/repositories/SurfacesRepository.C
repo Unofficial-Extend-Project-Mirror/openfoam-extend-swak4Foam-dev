@@ -34,6 +34,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
 #include "SurfacesRepository.H"
 #include "surfaceWriter.H"
 

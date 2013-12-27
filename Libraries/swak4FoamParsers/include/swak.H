@@ -192,7 +192,7 @@ Contributors/Copyright:
 #define FOAM_ISTREAM_HAS_NO_STDSTREAM
 #endif
 
-#ifdef FOAM_DEV
+#ifndef FOAM_DEV
 #define FOAM_SURFACEWRITER_NOT_A_TEMPLATE
 #endif
 
