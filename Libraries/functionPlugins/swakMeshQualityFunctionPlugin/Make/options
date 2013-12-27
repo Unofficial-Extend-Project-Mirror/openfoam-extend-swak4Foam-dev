@@ -1,3 +1,4 @@
+include $(OBJECTS_DIR)/../../../../rules/versionOptions
 
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV

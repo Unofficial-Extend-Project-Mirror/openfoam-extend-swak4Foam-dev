@@ -157,6 +157,11 @@ Contributors/Copyright:
 #define FOAM_KINEMTATIC_HAS_NO_ACTIVE_PROPERTY
 #endif
 
+// mathematical constants have no separate namespace
+#ifdef FOAM_DEV
+#define FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
