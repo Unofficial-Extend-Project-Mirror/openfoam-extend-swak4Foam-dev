@@ -80,7 +80,9 @@ class ReaderParticle
 
 public:
 
+#ifndef FOAM_PARTICLE_CLASS_IS_TEMPLATE
     TypeName("ReaderParticle");
+#endif
 
     // Constructors
 

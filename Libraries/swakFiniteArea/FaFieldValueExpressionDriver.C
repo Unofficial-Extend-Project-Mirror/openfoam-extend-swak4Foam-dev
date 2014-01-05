@@ -86,6 +86,20 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
 }
 
 FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
+    const FaFieldValueExpressionDriver &orig
+)
+    : FaCommonValueExpressionDriver(
+	 orig
+    ),
+      mesh_(orig.mesh_),
+      typ_(orig.typ_),
+      isLogical_(orig.isLogical_),
+      isSurfaceField_(orig.isSurfaceField_),
+      resultDimension_(orig.resultDimension_)
+{
+}
+
+FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
     const dictionary &dict,
     const fvMesh &mesh
 )
