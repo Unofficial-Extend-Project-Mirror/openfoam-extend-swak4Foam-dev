@@ -2331,6 +2331,8 @@ S_{expl} + S_{impl} T
      The Python-integration returned single scalars (and vectors) not
      as a single value but as a field of length $1$. This caused
      warnings that messed up the output. Fixed
+**** =basicSource= working again for OF 2.1
+     These were not compiled by accident. Fixed
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only
