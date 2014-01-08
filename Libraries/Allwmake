@@ -102,7 +102,12 @@ fi
 
 wmakeLnInclude simpleFunctionObjects
 
-wmake libso swak4FoamParsers
+if [[ $WM_NCOMPPROCS>3 ]]; then
+    echo "WM_NCOMPPROCS $WM_NCOMPPROCS will cause race conditions with the grammars. Resetting to 3 for this library"
+    ( export WM_NCOMPPROCS=3; wmake libso swak4FoamParsers )
+else
+    wmake libso swak4FoamParsers
+fi
 
 PARSERSOK=$?
 
@@ -111,7 +116,13 @@ if [[ $PARSERSOK != 0 ]]; then
     exit 42
 fi
 
-wmake libso swakLagrangianParser
+if [[ $WM_NCOMPPROCS>1 ]]; then
+    echo "WM_NCOMPPROCS $WM_NCOMPPROCS will cause race conditions with the grammars. Resetting to 1 for this library"
+    ( export WM_NCOMPPROCS=1; wmake libso swakLagrangianParser)
+else
+    wmake libso swakLagrangianParser
+fi
+
 
 wmake libso groovyBC
 
@@ -141,7 +152,12 @@ then
 	    ln -s $mysource $mytarget
 	fi
     done
-    wmake libso swakFiniteArea
+    if [[ $WM_NCOMPPROCS>2 ]]; then
+	echo "WM_NCOMPPROCS $WM_NCOMPPROCS will cause race conditions with the grammars. Resetting to 2 for this library"
+	(export WM_NCOMPPROCS=2;     wmake libso swakFiniteArea)
+    else
+	 wmake libso swakFiniteArea
+    fi
 fi
 
 wmake libso groovyStandardBCs
