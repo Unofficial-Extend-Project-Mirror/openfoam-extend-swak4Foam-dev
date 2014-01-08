@@ -2258,6 +2258,22 @@ S_{expl} + S_{impl} T
      for these compilers. For example:
 : export SWAK_COMPILE_LEXER_OPTION=-O0
      After that recompile
+**** Fixing race condition with big =WM_NCOMPPROCS=
+     For some machines race conditions with compiling the main library
+     has been reported. The reason seems to be that some source files
+     need headers generated while compiling the grammar. If due to the
+     large number of simultaneous compilation processes the headers
+     have not been generated when these files are compiled the
+     compilation fails.
+
+     This effect could not be reproduced on the development machine
+     (but that doesn't mean that this doesn't happen on some
+     machines). Nevertheless for the libraries where this might be the
+     case the number of compilation jobs is limited to the number
+     grammars in the library.
+
+     Better solution to let the =Allwmake=-script generate the headers
+     before the regular =wmake= starts.
 *** Documentation
     Important enhancements of the documentation in the
     =Documentations=-folder
