@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "initSwakFunctionObject.H"
@@ -89,6 +89,13 @@ bool initSwakFunctionObject::execute(const bool forceWrite)
 {
     return true;
 }
+
+#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+bool initSwakFunctionObject::execute()
+{
+    return execute(false);
+}
+#endif
 
 bool initSwakFunctionObject::read(const dictionary& dict)
 {

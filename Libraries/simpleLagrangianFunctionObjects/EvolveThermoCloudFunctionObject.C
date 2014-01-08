@@ -83,9 +83,15 @@ bool EvolveThermoCloudFunctionObject::start()
             getField<volScalarField>("rhoName"),
             getField<volVectorField>("UName"),
             g(),
+#ifdef FOAM_OLD_THERMOPHYSICS
+            const_cast<basicThermo &>(
+                getField<basicThermo>("thermoPhysicsName")
+            )
+#else
             const_cast<SLGThermo &>(
                 getField<SLGThermo>("SLGThermoName")
             )
+#endif
         )
     );
 

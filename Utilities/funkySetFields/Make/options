@@ -1,6 +1,5 @@
-ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV
-endif
+
+include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
 
 EXE_INC = -I$(OBJECTS_DIR) \
     $(FOAM_DEV_OPTION) 	\

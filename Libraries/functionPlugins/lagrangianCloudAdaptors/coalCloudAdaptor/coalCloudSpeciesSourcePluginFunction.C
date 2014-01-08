@@ -38,7 +38,13 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "CoalCloud.H"
+#else
 #include "coalCloud.H"
+#endif
 
 namespace Foam {
 
@@ -65,7 +71,13 @@ coalCloudSpeciesSourcePluginFunction::coalCloudSpeciesSourcePluginFunction(
 
 label coalCloudSpeciesSourcePluginFunction::getIndex(wordList &speciesList)
 {
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    getSpeciesIndex(constThermoCoalCloud,reactingMultiphaseCloud);
+    getSpeciesIndex(thermoCoalCloud,reactingMultiphaseCloud);
+    getSpeciesIndex(icoPoly8ThermoCoalCloud,reactingMultiphaseCloud);
+#else
     getSpeciesIndex(coalCloud,reactingMultiphaseCloud);
+#endif
 
     return lcsSpeciesSourcePluginFunction::getIndex(speciesList);
 }
@@ -74,7 +86,13 @@ autoPtr<lcsSpeciesSourcePluginFunction::dimScalarField>
 coalCloudSpeciesSourcePluginFunction::internalEvaluate(const label index)
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(dimScalarField,constThermoCoalCloud,reactingMultiphaseCloud,Srho(index));
+    tryCall(dimScalarField,thermoCoalCloud,reactingMultiphaseCloud,Srho(index));
+    tryCall(dimScalarField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,Srho(index));
+#else
     tryCall(dimScalarField,coalCloud,reactingMultiphaseCloud,Srho(index));
+#endif
 
     return lcsSpeciesSourcePluginFunction::internalEvaluate(index);
 }

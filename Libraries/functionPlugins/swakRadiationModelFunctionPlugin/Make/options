@@ -11,7 +11,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
-    -I$(LIB_SRC)/thermophysicalModels/radiationModels/lnInclude
+    $(RADIATION_INC)
 
 LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
@@ -19,4 +19,4 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     $(FLUIDTHERMO_LIB) \
-    -lradiationModels
+    $(RADIATION_LIB)

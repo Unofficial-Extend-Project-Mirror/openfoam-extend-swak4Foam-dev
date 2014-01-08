@@ -67,7 +67,7 @@ solvers
     }
 }
 
-PIMPLE
+PISO
 {
     momentumPredictor no;
     nCorrectors     3;
@@ -75,6 +75,7 @@ PIMPLE
     nAlphaCorr      1;
     nAlphaSubCycles 2;
     cAlpha          1;
+    nOuterCorrectors $nCorrectors;
 }
 
 PIMPLE {

@@ -23,33 +23,24 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "swak.H"
 
-#ifdef FOAM_HAS_BASICSOURCES
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-#include "SwakExplicitSource.H"
+template<class Type>
+inline const Type& Foam::Distribution<Type>::binWidth() const
+{
+    return binWidth_;
+}
+
+
+template<class Type>
+inline const
+Foam::List<Foam::label>& Foam::Distribution<Type>::listStarts() const
+{
+    return listStarts_;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-
-#ifdef FOAM_HAS_FVOPTIONS
-    namespace fv {
-#endif
-
-        makeSwakFvOption(SwakExplicitSource, scalar);
-        makeSwakFvOption(SwakExplicitSource, vector);
-        makeSwakFvOption(SwakExplicitSource, sphericalTensor);
-        makeSwakFvOption(SwakExplicitSource, symmTensor);
-        makeSwakFvOption(SwakExplicitSource, tensor);
-
-#ifdef FOAM_HAS_FVOPTIONS
-    }
-#endif
-
-}
-
-#endif
 
 // ************************************************************************* //

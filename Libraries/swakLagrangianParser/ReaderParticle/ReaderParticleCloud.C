@@ -44,7 +44,11 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+#ifdef FOAM_PARTICLE_CLASS_IS_TEMPLATE
+defineParticleTypeNameAndDebug(ReaderParticle, 0);
+#else
 defineTypeNameAndDebug(ReaderParticle, 0);
+#endif
 defineTemplateTypeNameAndDebug(Cloud<ReaderParticle>, 0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

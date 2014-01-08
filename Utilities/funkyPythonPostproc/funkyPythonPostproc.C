@@ -41,6 +41,8 @@ Contributors/Copyright:
 
 #include "fvCFD.H"
 
+#include "swak.H"
+
 #include "pythonInterpreterWrapper.H"
 
 #include "timeSelector.H"
@@ -92,7 +94,12 @@ int main(int argc, char *argv[])
                 << endl
                 << exit(FatalError);
     }
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+    dlLibraryTable::open(spec,"libs");
+#else
     dlLibraryTable table(spec,"libs");
+#endif
 
     wordList preloadFieldNames(spec.lookup("preloadFields"));
 

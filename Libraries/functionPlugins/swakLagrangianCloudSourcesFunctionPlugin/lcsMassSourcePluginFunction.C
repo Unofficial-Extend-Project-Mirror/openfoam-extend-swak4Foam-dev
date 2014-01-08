@@ -38,8 +38,15 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -68,8 +75,17 @@ lcsMassSourcePluginFunction::lcsMassSourcePluginFunction(
 autoPtr<lcsMassSourcePluginFunction::dimScalarField> lcsMassSourcePluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(dimScalarField,constThermoReactingCloud,reactingCloud,Srho());
+    tryCall(dimScalarField,thermoReactingCloud,reactingCloud,Srho());
+    tryCall(dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Srho());
+    tryCall(dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho());
+    tryCall(dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho());
+    tryCall(dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho());
+#else
     tryCall(dimScalarField,basicReactingCloud,reactingCloud,Srho());
     tryCall(dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,Srho());
+#endif
 
     return autoPtr<dimScalarField>();
 }

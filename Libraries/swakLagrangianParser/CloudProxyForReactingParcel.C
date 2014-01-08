@@ -37,6 +37,8 @@ Contributors/Copyright:
 
 #include "DebugOStream.H"
 
+#include "swakCloudTypes.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -104,13 +106,15 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             constProps.Tvap()
         )
     );
-    // this->addScalarFunction(
-    //     "Tbp",
-    //     "Boiling point (constant)",
-    //     new typename baseType::template ParticleMethodWrapperConstant<scalar>(
-    //         constProps.Tbp()
-    //     )
-    // );
+#ifdef FOAM_REACTINGCLOUD_OLD_STYLE
+    this->addScalarFunction(
+        "Tbp",
+        "Boiling point (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.Tbp()
+        )
+    );
+#endif
 }
 
 
