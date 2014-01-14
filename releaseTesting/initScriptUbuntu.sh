@@ -84,6 +84,28 @@ do
     apt-get install -y --force-yes "openfoam$v"
 done
 
+FOAM3PKG=https://downloads.sourceforge.net/project/openfoam-extend/foam-extend-3.0/foam-extend_3.0-1_amd64.precise.deb
+
+PKGDIR=/opt/vagrantDownloads
+
+mkdir $PKGDIR
+
+case "$boxName" in
+    precise)
+	pkgUrls=( "https://downloads.sourceforge.net/project/openfoam-extend/foam-extend-3.0/foam-extend_3.0-1_amd64.precise.deb" )
+	;;
+esac
+
+for v in "${pkgUrls[@]}"
+do
+    echo
+    echo "Getting Package $v"
+    echo
+    wget -c -P $PKGDIR $v
+done
+
+dpkg -i $PKGDIR/*.deb
+
 /vagrant/initScriptGeneral.sh
 
 echo
