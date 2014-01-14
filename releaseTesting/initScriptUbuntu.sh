@@ -105,6 +105,11 @@ do
 done
 
 dpkg -i $PKGDIR/*.deb
+if [ $? -gt 0 ]; then
+    # install missing stuff
+    apt-get -f --force-yes --yes install
+    dpkg -i $PKGDIR/*.deb
+fi
 
 /vagrant/initScriptGeneral.sh
 
