@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 09 Oct 2013 17:29:02 +0200
+Subject: Re: Relax PDEs in functionObject
+Message-Id: <81cd53fe478a9659-902069ddc6e7c709-artemis@bgs-cool-greybook.local>
+References: <81cd53fe478a9659-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <81cd53fe478a9659-0-artemis@bgs-cool-greybook.local>
+
+Implemented. Only for the equations

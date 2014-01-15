@@ -1,0 +1,117 @@
+massSources {
+	    theTitle "Mass sources";
+	    expr "Expression coal(.+)Source :  min=(%f%) max=(%f%) weightedAverage=(%f%)";
+	    type dynamic;
+	    idNr 1;
+	    titles (
+	    	   min
+		   max
+		   average
+	    );
+	    logscale true;
+}
+massSourceSum {
+	      theTitle "Sum of mass Sources";
+   	      expr "Expression coal(.+)Source :  min=%f% max=%f% weightedAverage=%f% weightedSum=(%f%)";
+	      type dynamic;
+	      idNr 1;
+	      titles (
+	      	     sum
+              );
+	      logscale true;
+}
+TDiff {
+      theTitle "Temperatur difference";
+      expr "Expression (.+)TDiff :  min=(%f%) max=(%f%) weightedAverage=(%f%) weightedMedian=(%f%) weightedQuantile0.05=(%f%) weightedQuantile0.95=(%f%)";
+      type dynamic;
+      idNr 1;
+      titles (
+         min
+         max
+	 average
+	 median
+	 "q 5%"
+	 "q 95%"
+      );
+}
+massPhaseChange {
+      expr "Mass transfer phase change      = (%f%)";
+      type slave;
+      master massSourceSum;
+      titles (
+      	     "Phase change"
+      );
+}
+massDevol {
+      expr "Mass transfer devolatilisation  = (%f%)";
+      type slave;
+      master massSourceSum;
+      titles (
+      	     Devolatilisation
+      );
+}
+speciesFractions {
+		 theTitle "Fractions of the species";
+		 expr "Expression coal(.+)Specie :  min=%f% max=%f% weightedAverage=(%f%) weightedRange0.9=%f%";
+		 type dynamic;
+		 idNr 1;
+}
+massChange {
+	   theTitle "Change of coal particle masses";
+	   expr "Expression coalMassChange :  min=(%f%) max=(%f%) weightedAverage=(%f%) weightedMedian=(%f%) weightedQuantile0.05=(%f%) weightedQuantile0.95=(%f%)";
+      titles (
+         min
+         max
+	 average
+	 median
+	 "q 5%"
+	 "q 95%"
+      );
+      logscale true;
+}
+massRelativeChange {
+		   theTitle "Relative Change of coal particles";
+		   logscale false;
+		   expr "Expression coalMassRelativeChange :  min=(%f%) max=(%f%) weightedAverage=(%f%) weightedMedian=(%f%) weightedQuantile0.05=(%f%) weightedQuantile0.95=(%f%)";
+      titles (
+         min
+         max
+	 average
+	 median
+	 "q 5%"
+	 "q 95%"
+      );
+}
+parcelsInIgnition {
+		  theTitle "Number of parcels in the ignition zone";
+		  expr "Expression (.+)InIgnitionZone :  sum=(%f%)";
+		  idNr 1;
+		  type dynamic;
+}
+temperatures {
+	     theTitle "Temperatures";
+	     expr "Expression (.+)Temperature :  min=(%f%) max=(%f%) weightedAverage=(%f%)";
+	     idNr 1;
+	     type dynamic;
+	     titles (
+	           min
+		   max
+		   average
+	     );
+}
+parcelsOnBoundary {
+		  theTitle "Parcels (not particles) on the boundary";
+		  expr "Expression (.+)OnBoundary :  .+=(%f%)";
+		  type dynamic;
+		  idNr 1;
+}
+coalDiameter {
+	     theTitle "Diameter of coal parcels";
+	     expr "Expression coalDiameter :  min=(%f%) max=(%f%) average=%f% weightedAverage=(%f%)";
+	     titles (
+	     	    min
+		    max
+		    average
+	     );
+	     logscale true;
+}

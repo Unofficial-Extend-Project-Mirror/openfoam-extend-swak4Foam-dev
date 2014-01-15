@@ -177,6 +177,7 @@ randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNo
 randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 cpu                   return token::TOKEN_cpu;
+weight                return token::TOKEN_weight;
 
 set                   {
     BEGIN(setname);

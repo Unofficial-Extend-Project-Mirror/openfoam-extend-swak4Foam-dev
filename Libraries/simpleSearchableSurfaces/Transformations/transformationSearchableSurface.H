@@ -50,6 +50,8 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#include "boundBox.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

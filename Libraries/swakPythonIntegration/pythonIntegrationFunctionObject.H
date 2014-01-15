@@ -126,6 +126,13 @@ public:
     //- execute is called at each ++ or += of the time-loop
     virtual bool execute(bool);
 
+#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+    bool execute()
+        {
+            return execute(false);
+        }
+#endif
+
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
 

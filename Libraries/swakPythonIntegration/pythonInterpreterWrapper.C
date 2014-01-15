@@ -46,7 +46,9 @@ Contributors/Copyright:
 #include "symmTensor.H"
 #include "sphericalTensor.H"
 
+#ifdef FOAM_HAS_STRINGOPS
 #include "stringOps.H"
+#endif
 
 // #include <fcntl.h>
 
@@ -68,6 +70,9 @@ void pythonInterpreterWrapper::initIPython() {
         triedIPython_=true;
 
         if(useIPython_) {
+    	    importLib("sys");
+	    PyRun_SimpleString("if 'argv' not in dir(sys): sys.argv=['OF-executable']");
+
             Dbug << "Attempting to import IPython" << endl;
 
             //            int fail=PyRun_SimpleString("import IPython");
@@ -780,11 +785,16 @@ void pythonInterpreterWrapper::interactiveLoop(
         if(oldIPython_) {
             cmdString=
                 "_ipshell=IPython.Shell.IPythonShellEmbed()\n"
-                "_ipshell(banner='"+banner+"')\n";
+                "_ipshell.set_banner('"+banner+"')\n"
+	        "IPython.completer.readline.parse_and_bind('tab: complete')\n"
+                "_ipshell()\n";
+            // this (parse and bind) currently has no effect in the embedded shell
         } else {
             cmdString=
                 "IPython.embed(header='"+banner+"')\n";
         }
+	Dbug << "Executing " << cmdString << " to start IPython" << endl;
+
         int fail=PyRun_SimpleString(cmdString.c_str());
         if(fail) {
             WarningIn("pythonInterpreterWrapper::interactiveLoop")
@@ -887,7 +897,8 @@ void pythonInterpreterWrapper::doAfterExecution(
     ) {
         FatalErrorIn("pythonInterpreterWrapper::doAfterExecution")
             << "Python exception raised by " << nl
-                << code
+	    << code << endl
+	    << "To debug set 'interactiveAfterException true;' in " << dict_.name()
                 << endl << exit(FatalError);
     }
 
@@ -1070,7 +1081,7 @@ void pythonInterpreterWrapper::setGlobals()
 
             Dbug << name << " is " << result << endl;
 
-            eResult.setResult(result,1);
+            eResult.setSingleValue(result);
 
         } else if(PySequence_Check(pVar)) {
             Dbug << name << " is a sequence" << endl;
@@ -1216,7 +1227,7 @@ void pythonInterpreterWrapper::setGlobals()
                     }
                     Dbug << name << " is " << val << endl;
 
-                    eResult.setResult(val,1);
+                    eResult.setSingleValue(val);
                 } else {
                     FatalErrorIn("pythonInterpreterWrapper::setGlobals()")
                         << "Variable " << name << " is a tuple with the unknown size "
@@ -1317,7 +1328,9 @@ void pythonInterpreterWrapper::readCode(
             code="";
         }
     }
+#ifdef FOAM_HAS_STRINGOPS
     code=stringOps::trim(code);
+#endif
 }
 
 void pythonInterpreterWrapper::scatterGlobals()

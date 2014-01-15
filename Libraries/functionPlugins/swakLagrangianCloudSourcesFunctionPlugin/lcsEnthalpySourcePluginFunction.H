@@ -65,6 +65,11 @@ class lcsEnthalpySourcePluginFunction
 
     lcsEnthalpySourcePluginFunction(const lcsEnthalpySourcePluginFunction &);
 
+protected:
+    typedef DimensionedField<scalar,volMesh> dimScalarField;
+
+    virtual autoPtr<dimScalarField> internalEvaluate();
+
 public:
 
     lcsEnthalpySourcePluginFunction(

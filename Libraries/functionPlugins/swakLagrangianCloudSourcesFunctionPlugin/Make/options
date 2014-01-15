@@ -1,3 +1,4 @@
+include $(OBJECTS_DIR)/../../../../rules/versionOptions
 
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV
@@ -40,5 +41,5 @@ LIB_LIBS = \
     -llagrangian \
     -llagrangianIntermediate \
     -lthermophysicalFunctions \
-    -lradiationModels \
+    $(RADIATION_LIB) \
     -lsolidParticle

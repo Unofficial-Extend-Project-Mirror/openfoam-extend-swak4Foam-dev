@@ -40,8 +40,14 @@ Contributors/Copyright:
 
 #include "swakCloudTypes.H"
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "basicThermoCloud.H"
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -67,14 +73,30 @@ lcsScatteringFactorPluginFunction::lcsScatteringFactorPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsScatteringFactorPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(volScalarField,basicThermoCloud,thermoCloud,sigmap());
+    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,thermoReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+#else
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,sigmap());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+#endif
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsScatteringFactorPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> psigmap;
 
-    // pick up the first fitting class
-    castAndCall(psigmap,volScalarField,swakFluidThermoCloudType,thermoCloud,sigmap());
-    castAndCall(psigmap,volScalarField,basicReactingCloud,reactingCloud,sigmap());
-    castAndCall(psigmap,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+   autoPtr<volScalarField> psigmap=internalEvaluate();
 
     noCloudFound(psigmap);
 

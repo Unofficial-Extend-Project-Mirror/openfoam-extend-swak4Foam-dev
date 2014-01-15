@@ -41,8 +41,14 @@ Contributors/Copyright:
 #include "swakCloudTypes.H"
 
 #include "basicKinematicCloud.H"
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "basicThermoCloud.H"
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -68,15 +74,30 @@ lcsVolumeFractionPluginFunction::lcsVolumeFractionPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsVolumeFractionPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,theta());
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(volScalarField,basicThermoCloud,thermoCloud,theta());
+    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,theta());
+    tryCall(volScalarField,thermoReactingCloud,reactingCloud,theta());
+    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,theta());
+    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+#else
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,theta());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,theta());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+#endif
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsVolumeFractionPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> ptheta;
-
-    // pick up the first fitting class
-    castAndCall(ptheta,volScalarField,basicKinematicCloud,kinematicCloud,theta());
-    castAndCall(ptheta,volScalarField,swakFluidThermoCloudType,thermoCloud,theta());
-    castAndCall(ptheta,volScalarField,basicReactingCloud,reactingCloud,theta());
-    castAndCall(ptheta,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,theta());
+    autoPtr<volScalarField> ptheta=internalEvaluate();
 
     noCloudFound(ptheta);
 

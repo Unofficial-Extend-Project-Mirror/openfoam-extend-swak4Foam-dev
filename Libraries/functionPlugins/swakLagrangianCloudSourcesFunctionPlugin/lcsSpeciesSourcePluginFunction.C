@@ -38,8 +38,15 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -66,46 +73,70 @@ lcsSpeciesSourcePluginFunction::lcsSpeciesSourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-#define getSpeciesIndex(neededType,usedType)                                \
-    if(speciesList.size()==0 && hasCloudAs<neededType>()) {                 \
-        const speciesTable &spec=                                           \
-            getCloudAs<neededType,usedType>().thermo().carrier().species(); \
-        speciesList=spec;                                                   \
-        if(spec.contains(speciesName_)) {                                   \
-            speciesIndex=spec[speciesName_];                                \
-        }                                                                   \
-    }
+autoPtr<lcsSpeciesSourcePluginFunction::dimScalarField>
+lcsSpeciesSourcePluginFunction::internalEvaluate(const label speciesIndex)
+{
+    // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(dimScalarField,constThermoReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,thermoReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+#else
+    tryCall(dimScalarField,basicReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+#endif
+
+    return autoPtr<dimScalarField>();
+}
+
+label lcsSpeciesSourcePluginFunction::getIndex(wordList &speciesList)
+{
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    getSpeciesIndex(constThermoReactingCloud,reactingCloud);
+    getSpeciesIndex(thermoReactingCloud,reactingCloud);
+    getSpeciesIndex(icoPoly8ThermoReactingCloud,reactingCloud);
+    getSpeciesIndex(constThermoReactingMultiphaseCloud,reactingMultiphaseCloud);
+    getSpeciesIndex(thermoReactingMultiphaseCloud,reactingMultiphaseCloud);
+    getSpeciesIndex(icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud);
+#else
+    getSpeciesIndex(basicReactingCloud,reactingCloud);
+    getSpeciesIndex(basicReactingMultiphaseCloud,reactingMultiphaseCloud);
+#endif
+
+    return -1;
+}
 
 void lcsSpeciesSourcePluginFunction::doEvaluation()
 {
-    typedef DimensionedField<scalar,volMesh> dimScalarField;
-    autoPtr<dimScalarField> pSrho;
-
-    label speciesIndex=-1;
     wordList speciesList;
-
-    getSpeciesIndex(basicReactingCloud,reactingCloud);
-    getSpeciesIndex(basicReactingMultiphaseCloud,reactingMultiphaseCloud);
+    label speciesIndex=getIndex(speciesList);
 
     if(speciesList.size()==0) {
+        listAvailableClouds(Info);
         FatalErrorIn("lcsSpeciesSourcePluginFunction::doEvaluation()")
             << "No species list found (probably wrong cloud type)"
                 << endl
+                << "Supported cloud types (typeid): "                   \
+                << supportedTypes() << endl                             \
                 << exit(FatalError);
     }
 
     if(speciesIndex<0) {
+        listAvailableClouds(Info);
         FatalErrorIn("lcsSpeciesSourcePluginFunction::doEvaluation()")
             << "Species " << speciesName_ << " not found in gas composition "
                 << speciesList
                 << endl
+                << "Supported cloud types (typeid): "                   \
+                << supportedTypes() << endl                             \
                 << exit(FatalError);
 
     }
 
-    // pick up the first fitting class
-    castAndCall(pSrho,dimScalarField,basicReactingCloud,reactingCloud,Srho(speciesIndex));
-    castAndCall(pSrho,dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+    autoPtr<dimScalarField> pSrho=internalEvaluate(speciesIndex);;
 
     noCloudFound(pSrho);
 

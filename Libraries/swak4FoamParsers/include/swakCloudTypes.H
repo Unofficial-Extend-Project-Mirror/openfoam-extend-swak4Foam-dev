@@ -64,6 +64,21 @@ namespace Foam {
 }
 #endif
 
+#ifdef FOAM_DEV
+#define FOAM_REACTINGCLOUD_TEMPLATED
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_KINEMATICCLOUD_OLD_STYLE
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_THERMOCLOUD_OLD_STYLE
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_REACTINGCLOUD_OLD_STYLE
+#endif
 
 #include "DebugOStream.H"
 

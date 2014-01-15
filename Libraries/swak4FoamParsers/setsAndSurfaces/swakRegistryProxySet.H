@@ -101,7 +101,10 @@ public:
 
 
     // Member Functions
-    //    virtual point getRefPoint (const List< point > &) const;
+#ifdef FOAM_SAMPLEDSET_NEEDS_REFPOINT
+    virtual point getRefPoint (const List< point > &) const;
+#endif
+
 };
 
 

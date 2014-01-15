@@ -65,6 +65,9 @@ class lcsMassFractionPluginFunction
 
     lcsMassFractionPluginFunction(const lcsMassFractionPluginFunction &);
 
+protected:
+    virtual autoPtr<volScalarField> internalEvaluate();
+
 public:
 
     lcsMassFractionPluginFunction(

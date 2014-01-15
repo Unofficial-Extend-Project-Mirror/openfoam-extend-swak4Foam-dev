@@ -41,8 +41,14 @@ Contributors/Copyright:
 #include "swakCloudTypes.H"
 
 #include "basicKinematicCloud.H"
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "basicThermoCloud.H"
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -68,16 +74,32 @@ lcsMomentumSourcePluginFunction::lcsMomentumSourcePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<lcsMomentumSourcePluginFunction::dimVectorField>
+lcsMomentumSourcePluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+#ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
+    tryCall(dimVectorField,basicKinematicCloud,kinematicCloud,SU());
+    tryCall(dimVectorField,basicThermoCloud,thermoCloud,SU());
+    tryCall(dimVectorField,constThermoReactingCloud,reactingCloud,SU());
+    tryCall(dimVectorField,thermoReactingCloud,reactingCloud,SU());
+    tryCall(dimVectorField,icoPoly8ThermoReactingCloud,reactingCloud,SU());
+    tryCall(dimVectorField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+    tryCall(dimVectorField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+    tryCall(dimVectorField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+#else
+    tryCall(dimVectorField,basicKinematicCloud,kinematicCloud,UTrans());
+    tryCall(dimVectorField,swakFluidThermoCloudType,thermoCloud,UTrans());
+    tryCall(dimVectorField,basicReactingCloud,reactingCloud,UTrans());
+    tryCall(dimVectorField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,UTrans());
+#endif
+
+    return autoPtr<dimVectorField>();
+}
+
 void lcsMomentumSourcePluginFunction::doEvaluation()
 {
-    typedef DimensionedField<vector,volMesh> dimVectorField;
-    autoPtr<dimVectorField> pSU;
-
-    // pick up the first fitting class
-    castAndCall(pSU,dimVectorField,basicKinematicCloud,kinematicCloud,UTrans());
-    castAndCall(pSU,dimVectorField,swakFluidThermoCloudType,thermoCloud,UTrans());
-    castAndCall(pSU,dimVectorField,basicReactingCloud,reactingCloud,UTrans());
-    castAndCall(pSU,dimVectorField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,UTrans());
+    autoPtr<dimVectorField> pSU=internalEvaluate();
 
     noCloudFound(pSU);
 
@@ -93,12 +115,20 @@ void lcsMomentumSourcePluginFunction::doEvaluation()
                 IOobject::NO_WRITE
             ),
             mesh(),
+#ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
+            SU.dimensions(),
+#else
             SU.dimensions()/(dimTime*dimVolume),
+#endif
             "zeroGradient"
         )
     );
 
+#ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
+    pSource->internalField()=SU.field();
+#else
     pSource->internalField()=SU.field()/(mesh().time().deltaT().value()*mesh().V());
+#endif
 
     result().setObjectResult(pSource);
 }

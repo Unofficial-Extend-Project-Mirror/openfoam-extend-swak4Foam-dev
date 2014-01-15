@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "EvolveReactingMultiphaseCloudFunctionObject.H"
@@ -46,6 +46,40 @@ Contributors/Copyright:
 namespace Foam
 {
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    addNamedTemplateToRunTimeSelectionTable
+    (
+        functionObject,
+        EvolveReactingMultiphaseCloudFunctionObject,
+        constThermoReactingMultiphaseCloud,
+        dictionary,
+        evolveConstReactingMultiphaseCloud
+    );
+
+    defineTemplateTypeNameAndDebug(EvolveReactingMultiphaseCloudFunctionObject<constThermoReactingMultiphaseCloud>, 0);
+
+    addNamedTemplateToRunTimeSelectionTable
+    (
+        functionObject,
+        EvolveReactingMultiphaseCloudFunctionObject,
+        thermoReactingMultiphaseCloud,
+        dictionary,
+        evolveThermoReactingMultiphaseCloud
+    );
+
+    defineTemplateTypeNameAndDebug(EvolveReactingMultiphaseCloudFunctionObject<thermoReactingMultiphaseCloud>, 0);
+
+    addNamedTemplateToRunTimeSelectionTable
+    (
+        functionObject,
+        EvolveReactingMultiphaseCloudFunctionObject,
+        icoPoly8ThermoReactingMultiphaseCloud,
+        dictionary,
+        evolveIcoPoly8ReactingMultiphaseCloud
+    );
+
+    defineTemplateTypeNameAndDebug(EvolveReactingMultiphaseCloudFunctionObject<icoPoly8ThermoReactingMultiphaseCloud>, 0);
+#else
     defineTypeNameAndDebug(EvolveReactingMultiphaseCloudFunctionObject, 0);
 
     addNamedToRunTimeSelectionTable
@@ -55,18 +89,30 @@ namespace Foam
         dictionary,
         evolveReactingMultiphaseCloud
     );
-
+#endif
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-EvolveReactingMultiphaseCloudFunctionObject::EvolveReactingMultiphaseCloudFunctionObject
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+template <class CloudType>
+EvolveReactingMultiphaseCloudFunctionObject<CloudType>
+#else
+EvolveReactingMultiphaseCloudFunctionObject
+#endif
+::EvolveReactingMultiphaseCloudFunctionObject
 (
     const word& name,
     const Time& t,
     const dictionary& dict
 )
 :
-    EvolveCloudFunctionObject<basicReactingMultiphaseCloud>(
+    EvolveCloudFunctionObject<
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    CloudType
+#else
+    basicReactingMultiphaseCloud
+#endif
+    >(
         name,
         t,
         dict
@@ -77,17 +123,35 @@ EvolveReactingMultiphaseCloudFunctionObject::EvolveReactingMultiphaseCloudFuncti
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool EvolveReactingMultiphaseCloudFunctionObject::start()
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#define TEMPLATE template
+template <class CloudType>
+bool EvolveReactingMultiphaseCloudFunctionObject<CloudType>
+#else
+#define TEMPLATE
+bool EvolveReactingMultiphaseCloudFunctionObject
+#endif
+::start()
 {
     this->cloud().set(
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+        new CloudType(
+#else
         new basicReactingMultiphaseCloud(
+#endif
             this->cloudName(),
-            this->getField<volScalarField>("rhoName"),
-            this->getField<volVectorField>("UName"),
+            this->TEMPLATE getField<volScalarField>("rhoName"),
+            this->TEMPLATE getField<volVectorField>("UName"),
             this->g(),
+#ifdef FOAM_OLD_THERMOPHYSICS
+            const_cast<basicThermo &>(
+                this->template getField<basicThermo>("thermoPhysicsName")
+            )
+#else
             const_cast<SLGThermo &>(
                 this->getField<SLGThermo>("SLGThermoPhysicsName")
             )
+#endif
         )
     );
 

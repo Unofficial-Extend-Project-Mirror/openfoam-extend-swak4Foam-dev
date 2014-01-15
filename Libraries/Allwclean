@@ -11,6 +11,8 @@ rm -f swak4FoamParsers/foamVersion4swak.H
 # otherwise the next compilation will have trouble finding the version-file
 find . -name lnInclude -exec rm -r {} \; -prune
 
+wclean swakLagrangianParser
+
 wclean groovyBC
 
 wclean swakFunctionObjects

@@ -164,6 +164,7 @@ randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFi
 randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }
 
 cpu                   return token::TOKEN_cpu;
+weight                return token::TOKEN_weight;
 
 grad                  return token::TOKEN_grad;
 lnGrad                return token::TOKEN_lnGrad;

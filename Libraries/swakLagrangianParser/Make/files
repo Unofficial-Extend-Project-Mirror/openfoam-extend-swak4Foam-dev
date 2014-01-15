@@ -1,0 +1,17 @@
+CloudValueExpressionParser.yy
+CloudValueExpressionLexer.ll
+CloudValueExpressionDriver.C
+
+CloudValuePluginFunction.C
+
+CloudProxy.C
+
+makeCloudProxys.C
+
+ReaderParticle/ReaderParticle.C
+ReaderParticle/ReaderParticleCloud.C
+ReaderParticle/CloudProxyForReaderParticle.C
+
+CloudRepository.H
+
+LIB = $(FOAM_USER_LIBBIN)/libswakLagrangianParser

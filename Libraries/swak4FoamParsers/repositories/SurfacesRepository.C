@@ -34,10 +34,18 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
 #include "SurfacesRepository.H"
 #include "surfaceWriter.H"
 
 namespace Foam {
+
+#ifdef FOAM_SURFACEWRITER_NOT_A_TEMPLATE
+typedef surfaceWriter scalarSurfaceWriter;
+#else
+typedef surfaceWriter<scalar> scalarSurfaceWriter;
+#endif
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -47,7 +55,7 @@ SurfacesRepository *SurfacesRepository::repositoryInstance(NULL);
 
 SurfacesRepository::SurfacesRepository(const IOobject &o)
     :
-    regIOobject(o)
+    RepositoryBase(o)
 {
 }
 
@@ -158,8 +166,8 @@ sampledSurface &SurfacesRepository::getSurface(
             word format(dict.lookup("surfaceFormat"));
 
             // Just to check whether the format actually exists
-            autoPtr<surfaceWriter > theWriter(
-                surfaceWriter::New(format)
+            autoPtr<scalarSurfaceWriter> theWriter(
+                scalarSurfaceWriter::New(format)
             );
 
             if(writeSurface) {
@@ -200,8 +208,8 @@ bool SurfacesRepository::writeData(Ostream &f) const
 
         const sampledSurface &surf=*surfaces_[name];
 
-        autoPtr<surfaceWriter > theWriter(
-            surfaceWriter::New(format)
+        autoPtr<scalarSurfaceWriter> theWriter(
+            scalarSurfaceWriter::New(format)
         );
 
         theWriter->write(
@@ -213,6 +221,10 @@ bool SurfacesRepository::writeData(Ostream &f) const
     }
 
     return true;
+}
+
+void SurfacesRepository::updateRepo()
+{
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

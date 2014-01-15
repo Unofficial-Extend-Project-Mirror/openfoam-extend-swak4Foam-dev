@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 16 Nov 2013 11:42:19 +0100
+State: new
+Subject: Unify handling of sets and make programs check for them in memory
+Message-Id: <c7fd2996eaeace91-0-artemis@bgs-cool-greybook.local>
+
+Currently cell/face/point-Sets are read by similar boilerplate code
+and always read from disk
+
+Solution: unify into one procedure and try to read from memory if
+possible (maybe it is possible to register the sets in a registry)

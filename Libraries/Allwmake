@@ -68,7 +68,7 @@ fi
 
 of_version_major=`echo $WM_PROJECT_VERSION | sed -e 's=\([0-9]*\).*=\1='`
 of_version_minor=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.\([0-9]*\).*=\1='`
-of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1=' -e 's=x=-1='`
+of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1=' -e 's=[0-9]*\.[0-9]*=x=' -e 's=x=-1='`
 echo "OpenFOAM-version: Major $of_version_major Minor $of_version_minor Patch $of_version_patch (-1 == x)"
 
 versionFile=swak4FoamParsers/foamVersion4swak.H
@@ -102,7 +102,12 @@ fi
 
 wmakeLnInclude simpleFunctionObjects
 
-wmake libso swak4FoamParsers
+if [[ $WM_NCOMPPROCS>3 ]]; then
+    echo "WM_NCOMPPROCS $WM_NCOMPPROCS will cause race conditions with the grammars. Resetting to 3 for this library"
+    ( export WM_NCOMPPROCS=3; wmake libso swak4FoamParsers )
+else
+    wmake libso swak4FoamParsers
+fi
 
 PARSERSOK=$?
 
@@ -110,6 +115,14 @@ if [[ $PARSERSOK != 0 ]]; then
     echo "Parser library did not compile OK. No sense continuing as everything else depends on it"
     exit 42
 fi
+
+if [[ $WM_NCOMPPROCS>1 ]]; then
+    echo "WM_NCOMPPROCS $WM_NCOMPPROCS will cause race conditions with the grammars. Resetting to 1 for this library"
+    ( export WM_NCOMPPROCS=1; wmake libso swakLagrangianParser)
+else
+    wmake libso swakLagrangianParser
+fi
+
 
 wmake libso groovyBC
 
@@ -143,7 +156,12 @@ then
 	    ln -s $mysource $mytarget
 	fi
     done
-    wmake libso swakFiniteArea
+    if [[ $WM_NCOMPPROCS>2 ]]; then
+	echo "WM_NCOMPPROCS $WM_NCOMPPROCS will cause race conditions with the grammars. Resetting to 2 for this library"
+	(export WM_NCOMPPROCS=2;     wmake libso swakFiniteArea)
+    else
+	 wmake libso swakFiniteArea
+    fi
 fi
 
 wmake libso groovyStandardBCs

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -41,13 +41,15 @@ SourceFiles
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionToFace_H
 #define expressionToFace_H
 
 #include "topoSetSource.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,10 +67,10 @@ class expressionToFace
 
     //- Add usage string
     static addToUsageTable usage_;
-    
+
     //- The logical expression to use
     string expression_;
-    
+
     //- dictionary with additional data
     autoPtr<dictionary> dict_;
 
@@ -119,7 +121,9 @@ public:
             topoSet&
         ) const;
 
+#ifdef FOAM_TOPOSETSOURCE_HAS_SETTYPE
         virtual sourceType setType() const;
+#endif
 
 };
 

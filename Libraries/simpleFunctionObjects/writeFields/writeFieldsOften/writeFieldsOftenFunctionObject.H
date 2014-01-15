@@ -32,14 +32,14 @@ Class
     writeFieldsOftenFunctionObject
 
 Description
-    Lets the user specify an additional set of fields that is to be written 
+    Lets the user specify an additional set of fields that is to be written
     more frequently than specified in the controlDict
 
-    writeControl accepts the same values 
+    writeControl accepts the same values
 
 Example usage: writes Temperature every third timestep after t=11
 
-functions 
+functions
 (
     writeT {
         functionObjectLibs ("libsimpleFunctionObjects.so");
@@ -57,7 +57,7 @@ SourceFiles
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeFieldsOftenFunctionObject_H
@@ -81,14 +81,14 @@ class writeFieldsOftenFunctionObject
 
     //- Disallow default bitwise copy construct
     writeFieldsOftenFunctionObject(const writeFieldsOftenFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const writeFieldsOftenFunctionObject&);
 
 protected:
 
     //- Overwrite the default output time
-    virtual bool outputTime();
+    virtual bool outputTime(const bool forceWrite);
 
     //- how writting is controlled
     Time::writeControls writeControl_;

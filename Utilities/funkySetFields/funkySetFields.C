@@ -47,6 +47,8 @@ Contributors/Copyright:
 
 #include "printSwakVersion.H"
 
+#include "RepositoryBase.H"
+
 template<class T,class Mesh>
 void setField
 (
@@ -784,6 +786,8 @@ int main(int argc, char *argv[])
 
         Foam::Info<< "\nTime = " << runTime.timeName() << Foam::endl;
 
+        RepositoryBase::updateRepos();
+
         mesh.readUpdate();
 
         if(otherHasSameTime) {
@@ -795,7 +799,11 @@ int main(int argc, char *argv[])
             Info << "Other mesh set to time " << time << endl;
         }
 
-        if(args.options().found("addDummyPhi")) {
+        if(
+            args.options().found("addDummyPhi")
+            &&
+            !dummyPhi.valid()
+        ) {
             Info << "Adding a dummy phi to make inletOutlet happy" << endl;
             dummyPhi.set(
                 new surfaceScalarField(

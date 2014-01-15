@@ -1,0 +1,330 @@
+//- -*- c++-mode -*-
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+coalCloud1 {
+    createCloud true;
+
+    creationSpec {
+        libs (
+            "libswakFunctionObjects.so"
+            "libswakPythonIntegration.so"
+        );
+        preloadFields (
+        );
+        functions {
+            getGeometryExtent {
+                type calculateGlobalVariables;
+                verbose true;
+                outputControl timeStep;
+                outputInterval 1;
+                valueType internalField;
+                toGlobalNamespace geometryExtent;
+                toGlobalVariables (
+                    minX maxX
+                    minY maxY
+                    minZ maxZ
+                );
+                variables (
+                    "minX=interpolateToCell(min(pts().x));"
+                    "maxX=interpolateToCell(max(pts().x));"
+                    "minY=interpolateToCell(min(pts().y));"
+                    "maxY=interpolateToCell(max(pts().y));"
+                    "minZ=interpolateToCell(min(pts().z));"
+                    "maxZ=interpolateToCell(max(pts().z));"
+                );
+            }
+            calculateParticleData {
+                type pythonIntegration;
+                executeFile "$FOAM_CASE/system/calcCoalData.py";
+                startFile $executeFile;
+                writeCode "";
+                endCode "";
+                swakToPythonNamespaces (
+                    geometryExtent
+                );
+                interactiveAfterException true;
+                useNumpy true;
+                useIPython true;
+                //		      interactiveAfterExecute true;
+                parallelMasterOnly false;
+                isParallelized true;
+                pythonToSwakNamespace coalData;
+                pythonToSwakVariables (
+                    positions
+                    d
+                    Ysolid
+                    Ygas
+                    Yliquid
+                    U
+                );
+            }
+        }
+        globalNamespacesForData (
+            coalData
+        );
+        positionVariable positions;
+    }
+
+    expressions {
+        deltaT {
+            create true;
+            field T;
+            expression "fluidPhase(T)-20";
+            interpolationSchemes {
+                T cell;
+                U cell;
+            };
+        }
+        tTurn {
+            $deltaT;
+            field tTurb;
+            expression "1e-5";
+        }
+        dTarget {
+            $deltaT;
+            field dTarget;
+            expression "0.5*d";
+        }
+	forces {
+            $deltaT;
+            field f;
+            expression "vector(0,0,0)";
+	}
+	momentum {
+	    $forces;
+	    field angularMomentum;
+	}
+	torque {
+	    $forces;
+	    field torque;
+	}
+        age {
+            $deltaT;
+            field age;
+            expression "0";
+        }
+        UTurb {
+            $deltaT;
+            field UTurb;
+            expression "fluidPhase(U)";
+        }
+        cp {
+            $deltaT;
+            field Cp;
+            expression "1300";
+        }
+        active {
+            $deltaT;
+            field active;
+            expression "1";
+            writeValueAsLabel true;
+        }
+        typeId {
+            $active;
+            field typeId;
+            expression "1";
+        }
+        nParticle {
+            $deltaT;
+            field nParticle;
+            expression "nParticle";
+            variables (
+	        "totalMass=0.0001;"
+		"number=sum(1);"
+                "v=4*pi/3*pow(d/2,3);"
+//                "parcelMass=5e-7;"
+                "parcelMass=totalMass/number;"
+                "density=1000;"
+                "nParticle=parcelMass/(density*v);"
+            );
+        }
+        rho {
+            $nParticle;
+            field rho;
+            expression "density";
+        }
+        mass0 {
+            $nParticle;
+            field mass0;
+            expression "density*v";
+        }
+        CH4 {
+            $deltaT;
+            field YCH4(g);
+            expression "0.604*Ygas";
+        }
+        H2 {
+            $deltaT;
+            field YH2(g);
+            expression "0.099*Ygas";
+        }
+        CO2 {
+            $deltaT;
+            field YCO2(g);
+            expression "0.297*Ygas";
+        }
+        H2O {
+            $deltaT;
+            field YH2O(l);
+            expression "1*Yliquid";
+        }
+        ash {
+            $deltaT;
+            field Yash(s);
+            expression "min(0.1,Ysolid)";
+        }
+        C {
+            $deltaT;
+            field YC(s);
+            aliases {
+                ash Yash(s);
+            }
+            expression "Ysolid-ash";
+        }
+    }
+}
+limestoneCloud1 {
+    createCloud true;
+
+    creationSpec {
+        libs (
+            "libswakFunctionObjects.so"
+            "libswakPythonIntegration.so"
+        );
+        preloadFields (
+        );
+        functions {
+            getCellCenters {
+                type calculateGlobalVariables;
+                verbose true;
+                outputControl timeStep;
+                outputInterval 1;
+                valueType internalField;
+                toGlobalNamespace cellCenters;
+                toGlobalVariables (
+                    centers
+                );
+                variables (
+                    "centers=pos();"
+                );
+            }
+            calculateParticleData {
+                type pythonIntegration;
+                executeFile "$FOAM_CASE/system/calcLimeData.py";
+                startFile $executeFile;
+                writeCode "";
+                endCode "";
+                swakToPythonNamespaces (
+                    cellCenters
+                );
+                interactiveAfterException true;
+                useNumpy true;
+                useIPython true;
+                //		      interactiveAfterExecute true;
+                parallelMasterOnly false;
+                isParallelized true;
+                pythonToSwakNamespace limeData;
+                pythonToSwakVariables (
+                    positions
+                    d
+                    U
+                );
+            }
+        }
+        globalNamespacesForData (
+            limeData
+        );
+        positionVariable positions;
+    }
+    expressions {
+        deltaT {
+            create true;
+            field T;
+            expression "fluidPhase(T)+50";
+            interpolationSchemes {
+                T cell;
+                U cell;
+            };
+        }
+        active {
+            $deltaT;
+            field active;
+            expression "1";
+            writeValueAsLabel true;
+        }
+        typeId {
+            $active;
+            field typeId;
+            expression "1";
+        }
+        nParticle {
+            $deltaT;
+            field nParticle;
+            expression "nParticle";
+            variables (
+	        "totalMass=0.0001;"
+		"number=sum(1);"
+                "v=4*pi/3*pow(d/2,3);"
+//                "parcelMass=2e-7;"
+                "parcelMass=totalMass/number;"
+                "density=2500;"
+                "nParticle=parcelMass/(density*v);"
+            );
+        }
+        cp {
+            $deltaT;
+            field Cp;
+            expression "900";
+        }
+        rho {
+            $nParticle;
+            field rho;
+            expression "density";
+        }
+        tTurn {
+            $deltaT;
+            field tTurb;
+            expression "1e-5";
+        }
+        dTarget {
+            $deltaT;
+            field dTarget;
+            expression "0.5*d";
+        }
+	forces {
+            $deltaT;
+            field f;
+            expression "vector(0,0,0)";
+	}
+	momentum {
+	    $forces;
+	    field angularMomentum;
+	}
+	torque {
+	    $forces;
+	    field torque;
+	}
+        age {
+            $deltaT;
+            field age;
+            expression "0";
+        }
+        UTurb {
+            $deltaT;
+            field UTurb;
+            expression "fluidPhase(U)";
+        }
+    }
+}

@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 09 Aug 2013 10:51:25 +0200
+State: new
+Subject: Compilation fails with CLang 3.3
+Message-Id: <caa428fb53b17d97-0-artemis@bgs-cool-greybook.local>
+
+Two things with scalarField. Let's see what we can do

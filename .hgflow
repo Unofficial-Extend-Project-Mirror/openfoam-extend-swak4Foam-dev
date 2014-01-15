@@ -1,8 +1,8 @@
-[Basic]
-develop = develop
+[branchname]
+master = port_2.0.x_release
+develop = port_2.0.x
 feature = feature/
-version_tag = 
-publish = default
 release = release/
 hotfix = hotfix/
-
+support = support/
+version_tag =

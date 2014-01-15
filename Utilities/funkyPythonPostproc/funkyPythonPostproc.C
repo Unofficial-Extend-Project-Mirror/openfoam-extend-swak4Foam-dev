@@ -41,6 +41,8 @@ Contributors/Copyright:
 
 #include "fvCFD.H"
 
+#include "swak.H"
+
 #include "pythonInterpreterWrapper.H"
 
 #include "timeSelector.H"
@@ -48,6 +50,8 @@ Contributors/Copyright:
 #include "IFstream.H"
 
 #include "printSwakVersion.H"
+
+#include "RepositoryBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -90,7 +94,12 @@ int main(int argc, char *argv[])
                 << endl
                 << exit(FatalError);
     }
-    dlLibraryTable().open(spec,"libs");
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+    dlLibraryTable::open(spec,"libs");
+#else
+    dlLibraryTable table(spec,"libs");
+#endif
 
     wordList preloadFieldNames(spec.lookup("preloadFields"));
 
@@ -174,6 +183,8 @@ int main(int argc, char *argv[])
         python.setRunTime(mesh.time());
 
         Foam::Info << "\nTime = " << runTime.timeName() << Foam::endl;
+
+        RepositoryBase::updateRepos();
 
         mesh.readUpdate();
         Info << "Reloading fields" << endl;

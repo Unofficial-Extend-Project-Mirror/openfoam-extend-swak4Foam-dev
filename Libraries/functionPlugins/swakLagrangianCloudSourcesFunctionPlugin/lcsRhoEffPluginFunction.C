@@ -41,8 +41,14 @@ Contributors/Copyright:
 #include "swakCloudTypes.H"
 
 #include "basicKinematicCloud.H"
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "basicThermoCloud.H"
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -68,15 +74,31 @@ lcsRhoEffPluginFunction::lcsRhoEffPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsRhoEffPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,rhoEff());
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(volScalarField,basicThermoCloud,thermoCloud,rhoEff());
+    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,rhoEff());
+    tryCall(volScalarField,thermoReactingCloud,reactingCloud,rhoEff());
+    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,rhoEff());
+    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+#else
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,rhoEff());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,rhoEff());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+#endif
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsRhoEffPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> prhoEff;
 
-    // pick up the first fitting class
-    castAndCall(prhoEff,volScalarField,basicKinematicCloud,kinematicCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,swakFluidThermoCloudType,thermoCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,basicReactingCloud,reactingCloud,rhoEff());
-    castAndCall(prhoEff,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,rhoEff());
+    autoPtr<volScalarField> prhoEff=internalEvaluate();
 
     noCloudFound(prhoEff);
 

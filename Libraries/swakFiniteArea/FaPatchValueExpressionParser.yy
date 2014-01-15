@@ -340,6 +340,7 @@ namespace Foam {
 %token TOKEN_eigenVectors
 
 %token TOKEN_cpu
+%token TOKEN_weight
 
 %left '?' ':'
 %left TOKEN_OR
@@ -1204,7 +1205,13 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             delete $1; delete $3; delete $5;
           }
         | TOKEN_pi {
-            $$ = driver.makeField(Foam::mathematicalConstant::pi).ptr();
+            $$ = driver.makeField(
+#ifdef FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+                Foam::mathematicalConstant::pi
+#else
+                Foam::constant::mathematical::pi
+#endif
+            ).ptr();
           }
         | TOKEN_id '(' ')'                         {
             $$ = driver.makeEdgeIdField().ptr();
@@ -1213,6 +1220,9 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             $$ = driver.makeField(
                 Foam::scalar(Foam::Pstream::myProcNo())
             ).ptr();
+          }
+        | TOKEN_weight'(' ')'                          {
+            $$ = driver.weights(driver.size()).ptr();
           }
         | TOKEN_rand '(' ')'        {
             $$ = driver.makeRandomField().ptr();

@@ -204,7 +204,7 @@ void swakExpressionDistributionFunctionObject::write()
         ==
         pTraits<scalar>::typeName
     ) {
-        scalarField rawMask=driver_->getResult<scalar>();
+        scalarField rawMask(driver_->getResult<scalar>());
         maskValues_.reset(
             new Field<bool>(rawMask.size(),false)
         );

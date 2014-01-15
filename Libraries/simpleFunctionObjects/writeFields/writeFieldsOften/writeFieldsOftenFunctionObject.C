@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "writeFieldsOftenFunctionObject.H"
@@ -99,12 +99,12 @@ bool writeFieldsOftenFunctionObject::start()
     writeInterval_ = readScalar(dict_.lookup("writeIntervall"));
     if(writeControl_ == Time::wcTimeStep && label(writeInterval_) <1) {
         WarningIn("bool writeFieldsOftenFunctionObject::start()")
-            << "writeInterval " << writeInterval_ 
+            << "writeInterval " << writeInterval_
                 << " < 1 for writeControl timeStep. Reseting to 1 "<< endl;
         writeInterval_=1;
     }
 
-    Info << "Additional fields " << fieldNames() << " will be written " 
+    Info << "Additional fields " << fieldNames() << " will be written "
         << "with writeControl " << wcName << " and intervall " << writeInterval_ << endl;
 
     if(writeControl_ == Time::wcAdjustableRunTime) {
@@ -118,8 +118,12 @@ bool writeFieldsOftenFunctionObject::start()
     return true;
 }
 
-bool writeFieldsOftenFunctionObject::outputTime()
+bool writeFieldsOftenFunctionObject::outputTime(const bool forceWrite)
 {
+    if(forceWrite) {
+        return true;
+    }
+
     if(time().time().value()<after()) {
         return false;
     }
@@ -131,13 +135,13 @@ bool writeFieldsOftenFunctionObject::outputTime()
         case Time::wcTimeStep:
             writeNow = !(time().timeIndex()%label(writeInterval_));
             break;
-            
+
         case Time::wcRunTime:
         case Time::wcAdjustableRunTime:
             {
                 label outputTimeIndex =
                     label(((time().time().value() - time().startTime().value()) + 0.5*time().deltaT().value())/writeInterval_);
-                
+
                 if (outputTimeIndex > outputTimeIndex_)
                 {
                     writeNow = true;
@@ -149,12 +153,12 @@ bool writeFieldsOftenFunctionObject::outputTime()
                 }
             }
         break;
-        
+
         case Time::wcCpuTime:
             {
                 label outputTimeIndex =
                     label(time().elapsedCpuTime()/writeInterval_);
-                
+
                 if (outputTimeIndex > outputTimeIndex_)
                 {
                     writeNow = true;
@@ -166,7 +170,7 @@ bool writeFieldsOftenFunctionObject::outputTime()
                 }
             }
         break;
-        
+
         case Time::wcClockTime:
             {
                 label outputTimeIndex = label(time().elapsedClockTime()/writeInterval_);

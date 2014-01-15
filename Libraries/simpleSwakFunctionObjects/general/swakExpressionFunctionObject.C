@@ -65,6 +65,7 @@ swakExpressionFunctionObject::swakExpressionFunctionObject
 :
     timelineFunctionObject(name,t,dict),
     expression_(dict.lookup("expression")),
+    maskExpression_(dict.lookupOrDefault<string>("mask","")),
     accumulations_(
         NumericAccumulationNamedEnum::readAccumulations(
             dict,"accumulations"

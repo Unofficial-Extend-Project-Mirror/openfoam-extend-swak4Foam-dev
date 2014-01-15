@@ -164,6 +164,7 @@ rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; 
 randFixed             { BEGIN(needsIntegerParameter); return token::TOKEN_randFixed; }
 id                    return token::TOKEN_id;
 cpu                   return token::TOKEN_cpu;
+weight                return token::TOKEN_weight;
 flip                  return token::TOKEN_flip;
 randNormal            { BEGIN(needsIntegerParameter); return token::TOKEN_randNormal; }
 randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNormalFixed; }

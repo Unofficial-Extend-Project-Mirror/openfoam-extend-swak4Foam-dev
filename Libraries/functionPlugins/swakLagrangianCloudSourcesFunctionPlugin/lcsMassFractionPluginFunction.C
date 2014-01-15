@@ -41,8 +41,14 @@ Contributors/Copyright:
 #include "swakCloudTypes.H"
 
 #include "basicKinematicCloud.H"
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "basicThermoCloud.H"
+#include "BasicReactingCloud.H"
+#include "BasicReactingMultiphaseCloud.H"
+#else
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -68,15 +74,30 @@ lcsMassFractionPluginFunction::lcsMassFractionPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+autoPtr<volScalarField> lcsMassFractionPluginFunction::internalEvaluate()
+{
+    // pick up the first fitting class
+    tryCall(volScalarField,basicKinematicCloud,kinematicCloud,alpha());
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+    tryCall(volScalarField,basicThermoCloud,thermoCloud,alpha());
+    tryCall(volScalarField,constThermoReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,thermoReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,icoPoly8ThermoReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+#else
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,alpha());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+#endif
+
+    return autoPtr<volScalarField>();
+}
+
 void lcsMassFractionPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> palpha;
-
-    // pick up the first fitting class
-    castAndCall(palpha,volScalarField,basicKinematicCloud,kinematicCloud,alpha());
-    castAndCall(palpha,volScalarField,swakFluidThermoCloudType,thermoCloud,alpha());
-    castAndCall(palpha,volScalarField,basicReactingCloud,reactingCloud,alpha());
-    castAndCall(palpha,volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+    autoPtr<volScalarField> palpha=internalEvaluate();
 
     noCloudFound(palpha);
 

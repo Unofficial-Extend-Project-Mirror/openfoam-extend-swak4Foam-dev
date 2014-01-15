@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 13 Nov 2013 15:21:42 +0100
+State: new
+Subject: Python-integration should export labelField
+Message-Id: <a1522d96bdbcf433-0-artemis@bgs-cool-greybook.local>
+
+Currently only works with fields based on scalar

@@ -285,6 +285,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_randFixed
 %token TOKEN_id
 %token TOKEN_cpu
+%token TOKEN_weight
 %token TOKEN_randNormal
 %token TOKEN_randNormalFixed
 %token TOKEN_position
@@ -1906,7 +1907,13 @@ exp:    TOKEN_NUM                                  {
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_pi                                 {
-            $$ = driver.makeConstantField<Foam::areaScalarField>(M_PI).ptr();
+            $$ = driver.makeConstantField<Foam::areaScalarField>(
+#ifdef FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+                Foam::mathematicalConstant::pi
+#else
+                Foam::constant::mathematical::pi
+#endif
+            ).ptr();
           }
         | TOKEN_rdist '(' vexp ')'                 {
             $$ = driver.makeRDistanceField(*$3).ptr();
@@ -1945,6 +1952,11 @@ exp:    TOKEN_NUM                                  {
         | TOKEN_cpu'(' ')'                         {
             $$ = driver.makeConstantField<Foam::areaScalarField>(
                 Foam::Pstream::myProcNo()
+            ).ptr();
+          }
+        | TOKEN_weight'(' ')'                          {
+            $$ = driver.makeField<Foam::areaScalarField>(
+                driver.weights(driver.size())
             ).ptr();
           }
         | TOKEN_deltaT '(' ')'                     {

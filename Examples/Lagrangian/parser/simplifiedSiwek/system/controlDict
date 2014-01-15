@@ -1,0 +1,285 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     coalChemistryFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.75;
+
+deltaT          0.0001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.0025;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  10;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.8;
+
+maxDeltaT       1;
+
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libswakLagrangianParser.so"
+    "libswakLagrangianCloudSourcesFunctionPlugin.so"
+    //    "libswakCoalCloudAdaptor.so"
+);
+
+functions {
+    limestoneFraction {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedSum
+        );
+        expression "lcsVolumeFraction(limestoneCloud1)";
+    }
+    coalFraction {
+        $limestoneFraction;
+        expression "lcsVolumeFraction(coalCloud1)";
+    }
+    coalWaterSource {
+        $limestoneFraction;
+        expression "lcsSpeciesSource(coalCloud1,H2O)";
+    }
+    coalOxygenSource {
+        $limestoneFraction;
+        expression "lcsSpeciesSource(coalCloud1,O2)";
+    }
+    coalCarbonOxideSource {
+        $limestoneFraction;
+        expression "lcsSpeciesSource(coalCloud1,CO2)";
+    }
+    coalMethanSource {
+        $limestoneFraction;
+        expression "lcsSpeciesSource(coalCloud1,CH4)";
+    }
+    coalMassSource {
+        $limestoneFraction;
+        expression "lcsMassSource(coalCloud1)";
+    }
+    coalPosition {
+        type swakExpression;
+        outputControlMode timeStep;
+        expression "pos()";
+        accumulations (
+            min
+            max
+            average
+            weightedAverage
+        );
+        verbose true;
+
+        valueType cloud;
+        cloudName coalCloud1;
+        //        alternateCloudType Cloud<basicKinematicParcel>;
+    }
+    coalDiameter {
+        $coalPosition;
+        expression "d";
+    }
+    coalOnBoundary {
+        $coalPosition;
+        expression "1";
+        mask "onBoundary";
+        accumulations (
+            sum
+        );
+    }
+    limeOnBoundary {
+        $coalOnBoundary;
+        cloudName limestoneCloud1;
+    }
+    totalOnBoundary {
+        $coalPosition;
+        accumulations (
+            average
+        );
+        expression "nrLime+nrCoal";
+        variables (
+            "nrCoal=sum(onBoundary ? 1 : 0);"
+            "nrLime{cloud'limestoneCloud1}=sum(onBoundary ? 1 : 0);"
+        );
+    }
+    coalMass {
+        $coalPosition;
+        expression "mass";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedMedian
+            weightSum
+        );
+    }
+    coalTDiff {
+        $coalPosition;
+        expression "T-fluidPhase(T)";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedMedian
+            weightedQuantile0.05
+            weightedQuantile0.95
+        );
+        interpolationSchemes {
+            T cellPoint;
+        }
+    }
+    limeTDiff {
+        $coalTDiff;
+        cloudName limestoneCloud1;
+    }
+    coalWaterSpecie {
+        $coalPosition;
+        expression "YLiquid_H2O*Yliquid";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedRange0.9
+        );
+    }
+    coalAshSpecie{
+        $coalWaterSpecie;
+        expression "YSolid_ash*Ysolid";
+    };
+    coalCarbonSpecie{
+        $coalWaterSpecie;
+        expression "YSolid_C*Ysolid";
+    };
+    coalCO2Specie{
+        $coalWaterSpecie;
+        expression "YGas_CO2*Ygas";
+    };
+    coalH2Specie{
+        $coalWaterSpecie;
+        expression "YGas_H2*Ygas";
+    };
+    coalCH4Specie{
+        $coalWaterSpecie;
+        expression "YGas_CH4*Ygas";
+    };
+    coalMassChange {
+        $coalPosition;
+        expression "max(mass0-mass,1e-15)";
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedMedian
+            weightedQuantile0.05
+            weightedQuantile0.95
+        );
+    }
+    coalMassRelativeChange {
+        $coalMassChange;
+        expression "(mass0-mass)/mass0";
+    }
+    coalCheckFractionSum{
+        $coalMassChange;
+        expression "Ysolid+Yliquid+Ygas";
+        accumulations (
+            min
+            max
+        );
+    }
+    coalCheckFractionSumGas {
+        $coalCheckFractionSum;
+        aliases {
+            CH4 YCH4(g);
+            CO2 YCO2(g);
+            H2  YH2(g);
+        }
+        expression "Ygas*(CH4+CO2+H2)";
+    }
+    coalCheckFractionSumSolid {
+        $coalCheckFractionSum;
+        aliases {
+            C   YC(s);
+            ash Yash(s);
+        }
+        expression "Ysolid*(C+ash)";
+    }
+    coalCheckFractionSumLiquid {
+        $coalCheckFractionSum;
+        aliases {
+            H2O   YH2O(l);
+        }
+        expression "Yliquid*H2O";
+    }
+    coalInIgnitionZone {
+        $coalPosition;
+        expression "1";
+        mask "zone(ignitionCells)";
+        accumulations (
+            sum
+        );
+    }
+    limeInIgnitionZone {
+        $coalInIgnitionZone;
+        cloudName limestoneCloud1;
+    }
+    // coalInIgnitionSet {
+    //     $coalInIgnitionZone;
+    //     mask "zone(ignitionCells)";
+    // }
+    gasTemperature {
+        $limestoneFraction;
+        expression "T";
+        accumulations (
+            min
+            max
+            weightedAverage
+        );
+    }
+    coalTemperature {
+        $gasTemperature;
+        valueType cloud;
+        cloudName coalCloud1;
+    }
+    limeTemperature {
+        $coalTemperature;
+        cloudName limestoneCloud1;
+    }
+}
+
+// ************************************************************************* //

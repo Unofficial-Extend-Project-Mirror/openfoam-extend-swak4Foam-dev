@@ -1,6 +1,10 @@
 
 include $(OBJECTS_DIR)/../../../rules/versionOptions
 
+ifdef FOAM_DEV
+ADDITIONALFILES_INC=-I../filesThatAreOnlyInSomeDistributions
+endif
+
 EXE_INC = \
     $(FOAM_DEV_OPTION) \
     -I../swak4FoamParsers/lnInclude \
@@ -20,8 +24,8 @@ EXE_INC = \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
     -I$(LIB_SRC)/turbulenceModels \
     -I$(LIB_SRC)/transportModels \
-    -I$(LIB_SRC)/lagrangian/basic/lnInclude
-
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    $(ADDITIONALFILES_INC)
 
 LIB_LIBS = \
     -lfiniteVolume \

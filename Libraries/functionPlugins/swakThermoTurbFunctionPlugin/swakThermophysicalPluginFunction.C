@@ -41,6 +41,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swak.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(swakThermophysicalPluginFunction,0);
@@ -116,7 +118,11 @@ const swakFluidThermoType &swakThermophysicalPluginFunction::thermoInternal(
                 usePsi=false;
             } else if(debug) {
                 Info << "No " << thermoTypeName << " in rhoThermo-types "
+#ifdef FOAM_HAS_SORTED_TOC
                     << swakRhoThermoType::fvMeshConstructorTablePtr_->sortedToc()
+#else
+                    << swakRhoThermoType::fvMeshConstructorTablePtr_->toc()
+#endif
                     << endl;
             }
             if(usePsi) {
@@ -131,7 +137,11 @@ const swakFluidThermoType &swakThermophysicalPluginFunction::thermoInternal(
                     }
                 } else if(debug) {
                     Info << "No " << thermoTypeName << " in psiThermo-types "
+#ifdef FOAM_HAS_SORTED_TOC
                     << swakPsiThermoType::fvMeshConstructorTablePtr_->sortedToc()
+#else
+                    << swakPsiThermoType::fvMeshConstructorTablePtr_->toc()
+#endif
                         << endl;
                 }
             }
