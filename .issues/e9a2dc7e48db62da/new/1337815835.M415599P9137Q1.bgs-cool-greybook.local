@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 24 May 2012 01:30:03 +0200
+Subject: Re: =readAndUpdateField=-functionObject
+Message-Id: <e9a2dc7e48db62da-ae7e6707311b8007-artemis@bgs-cool-greybook.local>
+References: <e9a2dc7e48db62da-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <e9a2dc7e48db62da-0-artemis@bgs-cool-greybook.local>
+
+Implemented and added to the simpleFunctionObjects

@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "timelineFunctionObject.H"
@@ -96,6 +105,14 @@ void timelineFunctionObject::flush()
     }
 }
 
+void timelineFunctionObject::closeAllFiles()
+{
+    forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
+    {
+        delete filePtrs_.remove(iter);
+    }
+}
+
 bool timelineFunctionObject::start()
 {
     simpleDataFunctionObject::start();
@@ -129,11 +146,11 @@ bool timelineFunctionObject::start()
             if (!filePtrs_.found(fldName))
             {
                 fileName theDir=dataDir();
-                
+
                 OFstream* sPtr = new OFstream(theDir/fldName+fileExtension_);
 
                 filePtrs_.insert(fldName, sPtr);
-               
+
                 OFstream &s=*sPtr;
 
                 if(

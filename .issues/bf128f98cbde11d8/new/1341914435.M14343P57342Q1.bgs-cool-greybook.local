@@ -1,0 +1,43 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 10 Jul 2012 11:58:57 +0200
+State: fixed
+Subject: Delayed Variables
+Message-Id: <bf128f98cbde11d8-0-artemis@bgs-cool-greybook.local>
+
+From the original request:
+https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=143
+
+Is it possible to have a patch react to the value of another patch,
+but only after a certain delay?
+
+For example see the geometry depicted in de picture attached.
+From the bottom of a mixing tank, fluid with a certain amount of
+contamination is (continuously) taken. This fluid is then processed,
+such that the contamination level changes. After about 30 seconds the
+fluid is be fed back into the tank.
+
+Doable. Main thing to worry about would be efficient appending and
+recalling of time-data
+
+Idea for the user interface would be that in variables it could be
+used like this (on patch inlet):
+
+"Cout{outlet}=average(C*area()/(sum(area));"
+"Cin=0.3*Cout;"
+
+The variable would have to be declared as delayed similar to storedVariables
+
+delayedVariable (
+  {
+     name Cout;
+     startupValue 0; // for the time when no data exists
+    delay 30;
+  }
+);
+
+Points of importance:
+- make sure that the variable is not declared as a stored variable as well
+- check what is easier: implement it for all data types or just scalars
+
+Note: delay could be an expression, but this would be a source of user
+mistakes (negative delays). So is it necessary

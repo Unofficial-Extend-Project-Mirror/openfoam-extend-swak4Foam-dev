@@ -1,0 +1,13 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 05 Jun 2012 11:03:02 +0200
+State: fixed
+Subject: =fset= crashes with faces from the boundary
+Message-Id: <bab71cb82a64af3b-0-artemis@bgs-cool-greybook.local>
+
+Seems like for surfaceFields only the internal faces are correctly
+handled. Probably changes necessary in 
+- FieldValueExpressionDriver::makeFaceSetField
+- the expressionToFace functionObject
+
+Calculations etc seem to be OK but check other methods in FVEDriver
+

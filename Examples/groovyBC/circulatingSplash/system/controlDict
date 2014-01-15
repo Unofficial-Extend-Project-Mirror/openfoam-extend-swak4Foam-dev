@@ -88,7 +88,7 @@ functions {
         accumulations (average );
         valueType patch;
         patchName atmosphere;
-        globalScopes ( inletPos );        
+        globalScopes ( inletPos );
     }
     printInletPosition {
         $printInletRadius;
@@ -109,7 +109,7 @@ functions {
         accumulations (average );
         valueType patch;
         patchName atmosphere;
-        globalScopes ( inletPos );        
+        globalScopes ( inletPos );
     }
     idealArea {
         $divergenceArea;
@@ -159,9 +159,9 @@ functions {
     }
 }
 
-libs ( 
-    "libOpenFOAM.so" 
-    "libgroovyBC.so" 
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
     "libswakFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
     "libfieldFunctionObjects.so"

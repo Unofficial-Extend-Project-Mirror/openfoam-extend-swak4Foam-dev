@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 27 Dec 2012 19:21:23 +0100
+Subject: Re: Allow non-uniform external variables
+Message-Id: <cd71f59c9cb24881-e5867c077be76eb9-artemis@bgs-cool-greybook.local>
+References: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+In-Reply-To: <cd71f59c9cb24881-0-artemis@bgs-Greybook.local>
+
+Problem in the example case was not a problem with mapping but with funkySetFields

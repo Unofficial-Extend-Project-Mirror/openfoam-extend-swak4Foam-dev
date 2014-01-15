@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,10 +28,15 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010 Marianne Mataln <mmataln@ice-sf>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "PatchValueExpressionDriver.H"
+#include "PatchValuePluginFunction.H"
 
 #include "FieldValueExpressionDriver.H"
 
@@ -43,11 +48,29 @@ License
 
 #include <nearWallDist.H>
 
+#if FOAM_VERSION4SWAK_MAJOR<2
+#include "directMappedFvPatch.H"
+
+#include "mapDistribute.H"
+
+namespace Foam {
+    // these typedefs should keep the difference between the 1.7 and the 2.1 code minimal
+    typedef directMappedFvPatch mappedFvPatch;
+    typedef directMappedPolyPatch mappedPolyPatch;
+}
+
+#else
+#include "mappedFvPatch.H"
+#endif
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+word PatchValueExpressionDriver::driverName_="patch";
+
 defineTypeNameAndDebug(PatchValueExpressionDriver, 0);
+
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, dictionary, patch);
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressionDriver, idName, patch);
 
@@ -57,29 +80,53 @@ addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, PatchValueExpressio
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const PatchValueExpressionDriver& orig)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const PatchValueExpressionDriver& orig
+)
 :
     CommonValueExpressionDriver(orig),
-    patch_(orig.patch_)
-{}
+    patch_(orig.patch_),
+    mappingInterpolationSchemes_(orig.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - copy constructor" << endl;
+    }
+}
 
 PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch)
 :
     CommonValueExpressionDriver(),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_()
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch constructor" << endl;
+    }
+}
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvPatch& patch)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvPatch& patch
+)
 :
     CommonValueExpressionDriver(dict),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+dict constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
+}
 
 label getPatchID(const fvMesh &mesh,const word &name)
 {
     label result=mesh.boundaryMesh().findPatchID(name);
     if(result<0) {
-        FatalErrorIn("getPatchID(const fvMesh &mesh,const string &name)")
+        FatalErrorIn("getPatchID(const fvMesh &mesh,const word &name)")
             << "The patch " << name << " was not found in "
                 << mesh.boundaryMesh().names()
                 << endl
@@ -89,7 +136,10 @@ label getPatchID(const fvMesh &mesh,const word &name)
     return result;
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,const fvMesh&mesh)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const dictionary& dict,
+    const fvMesh& mesh
+)
  :
     CommonValueExpressionDriver(dict),
     patch_(
@@ -109,11 +159,22 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const dictionary& dict,co
                 )
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_(dict.subOrEmptyDict("mappingInterpolation"))
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - dict+mesh constructor" << endl;
+    }
+    if(!dict.isDict("mappingInterpolation")) {
+        mappingInterpolationSchemes_.name()=
+            dict.name()+"::mappingInterpolation";
+    }
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMesh&mesh)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const word& id,
+    const fvMesh&mesh
+)
  :
     CommonValueExpressionDriver(),
     patch_(
@@ -123,69 +184,101 @@ PatchValueExpressionDriver::PatchValueExpressionDriver(const word& id,const fvMe
                 id
             )
         ]
-    )
+    ),
+    mappingInterpolationSchemes_()
 {
+    if(debug) {
+        Info << "PatchValueExpressionDriver - id+mesh constructor" << endl;
+    }
 }
 
-PatchValueExpressionDriver::PatchValueExpressionDriver(const fvPatch& patch,const PatchValueExpressionDriver& old)
+PatchValueExpressionDriver::PatchValueExpressionDriver(
+    const fvPatch& patch,
+    const PatchValueExpressionDriver& old
+)
 :
     CommonValueExpressionDriver(old),
-    patch_(patch)
-{}
+    patch_(patch),
+    mappingInterpolationSchemes_(old.mappingInterpolationSchemes_)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver - patch+driver constructor" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 PatchValueExpressionDriver::~PatchValueExpressionDriver()
-{}
+{
+    if(debug) {
+        Info << "~PatchValueExpressionDriver()" << endl;
+    }
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void PatchValueExpressionDriver::parse (const std::string& f)
+void PatchValueExpressionDriver::parseInternal (int startToken)
 {
-    content_ = f;
-    scan_begin ();
-    parserPatch::PatchValueExpressionParser parser (*this);
-    parser.set_debug_level (trace_parsing_);
+    parserPatch::PatchValueExpressionParser parser (
+        scanner_,
+        *this,
+        startToken,
+        0
+    );
+    parser.set_debug_level (traceParsing());
     parser.parse ();
-    scan_end ();
 }
 
-vectorField *PatchValueExpressionDriver::makePositionField()
+tmp<vectorField> PatchValueExpressionDriver::makePositionField()
 {
-    return new vectorField(patch_.Cf());
+    return tmp<vectorField>(
+        new vectorField(patch_.Cf())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makePointField()
+tmp<vectorField> PatchValueExpressionDriver::makePointField()
 {
-    return new vectorField(patch_.patch().localPoints());
+    return tmp<vectorField>(
+        new vectorField(patch_.patch().localPoints())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeFaceNormalField()
+tmp<vectorField> PatchValueExpressionDriver::makeFaceNormalField()
 {
-    return new vectorField(patch_.nf());
+    return tmp<vectorField>(
+        new vectorField(patch_.nf())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeFaceAreaField()
+tmp<vectorField> PatchValueExpressionDriver::makeFaceAreaField()
 {
-    return new vectorField(patch_.Sf());
+    return tmp<vectorField>(
+        new vectorField(patch_.Sf())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeCellNeighbourField()
+tmp<vectorField> PatchValueExpressionDriver::makeCellNeighbourField()
 {
-    return new vectorField(patch_.Cn());
+    return tmp<vectorField>(
+        new vectorField(patch_.Cn())
+    );
 }
 
-vectorField *PatchValueExpressionDriver::makeDeltaField()
+tmp<vectorField> PatchValueExpressionDriver::makeDeltaField()
 {
-    return new vectorField(patch_.delta());
+    return tmp<vectorField>(
+        new vectorField(patch_.delta())
+    );
 }
 
-scalarField *PatchValueExpressionDriver::makeWeightsField()
+tmp<scalarField> PatchValueExpressionDriver::makeWeightsField()
 {
-    return new scalarField(patch_.weights());
+    return tmp<scalarField>(
+        new scalarField(patch_.weights())
+    );
 }
 
 const fvMesh &PatchValueExpressionDriver::mesh() const
@@ -203,21 +296,353 @@ label PatchValueExpressionDriver::pointSize() const
     return patch_.patch().nPoints();
 }
 
-scalarField *PatchValueExpressionDriver::makeFaceIdField()
+tmp<scalarField> PatchValueExpressionDriver::makeFaceIdField()
 {
-    scalarField *result=new scalarField(patch_.size());
-    forAll(*result,i) {
-        (*result)[i]=i;
+    tmp<scalarField> result(
+        new scalarField(patch_.size())
+    );
+    forAll(result(),i) {
+        result()[i]=i;
     }
     return result;
 }
 
-scalarField *PatchValueExpressionDriver::makeNearDistField()
+tmp<scalarField> PatchValueExpressionDriver::makeNearDistField()
 {
-    scalarField *result=new scalarField(patch_.size());
+    tmp<scalarField> result(
+        new scalarField(patch_.size())
+    );
+
     nearWallDist dist(this->mesh());
-    (*result)=dist[patch_.index()];
+    result()=dist[patch_.index()];
     return result;
+}
+
+template<>
+PatchValueExpressionDriver::SymbolTable<PatchValueExpressionDriver>::SymbolTable()
+:
+StartupSymbols()
+{
+    // default value
+    insert("",parserPatch::PatchValueExpressionParser::token::START_DEFAULT);
+
+    insert(
+        "scalar_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_SCALAR_COMMA
+    );
+    insert(
+        "scalar_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_SCALAR_CLOSE
+    );
+    insert(
+        "point_scalar_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_SCALAR_COMMA
+    );
+    insert(
+        "point_scalar_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_SCALAR_CLOSE
+    );
+    insert(
+        "vector_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_VECTOR_COMMA
+    );
+    insert(
+        "vector_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_VECTOR_CLOSE
+    );
+    insert(
+        "point_vector_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_VECTOR_COMMA
+    );
+    insert(
+        "point_vector_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_VECTOR_CLOSE
+    );
+    insert(
+        "tensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_TENSOR_COMMA
+    );
+    insert(
+        "tensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_TENSOR_CLOSE
+    );
+    insert(
+        "point_tensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_TENSOR_COMMA
+    );
+    insert(
+        "point_tensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_TENSOR_CLOSE
+    );
+    insert(
+        "symmTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_YTENSOR_COMMA
+    );
+    insert(
+        "symmTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_YTENSOR_CLOSE
+    );
+    insert(
+        "point_symmTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_YTENSOR_COMMA
+    );
+    insert(
+        "point_symmTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_YTENSOR_CLOSE
+    );
+    insert(
+        "sphericalTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_HTENSOR_COMMA
+    );
+    insert(
+        "sphericalTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_HTENSOR_CLOSE
+    );
+    insert(
+        "point_sphericalTensor_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_HTENSOR_COMMA
+    );
+    insert(
+        "point_sphericalTensor_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_HTENSOR_CLOSE
+    );
+    insert(
+        "logical_SC",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_LOGICAL_COMMA
+    );
+    insert(
+        "logical_CL",
+        parserPatch::PatchValueExpressionParser::token::START_FACE_LOGICAL_CLOSE
+    );
+    insert(
+        "point_logical_SC",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_LOGICAL_COMMA
+    );
+    insert(
+        "point_logical_CL",
+        parserPatch::PatchValueExpressionParser::token::START_POINT_LOGICAL_CLOSE
+    );
+
+    insert(
+        "CL",
+        parserPatch::PatchValueExpressionParser::token::START_CLOSE_ONLY
+    );
+    insert(
+        "SC",
+        parserPatch::PatchValueExpressionParser::token::START_COMMA_ONLY
+    );
+}
+
+const PatchValueExpressionDriver::SymbolTable<PatchValueExpressionDriver> &PatchValueExpressionDriver::symbolTable()
+{
+    static SymbolTable<PatchValueExpressionDriver> actualTable;
+
+    return actualTable;
+}
+
+int PatchValueExpressionDriver::startupSymbol(const word &name) {
+    return symbolTable()[name];
+}
+
+
+autoPtr<CommonPluginFunction> PatchValueExpressionDriver::newPluginFunction(
+    const word &name
+) {
+    return autoPtr<CommonPluginFunction>(
+        PatchValuePluginFunction::New(
+            *this,
+            name
+        ).ptr()
+    );
+}
+
+bool PatchValueExpressionDriver::existsPluginFunction(
+    const word &name
+) {
+    return PatchValuePluginFunction::exists(
+        *this,
+        name
+    );
+}
+
+template<>
+HashPtrTable<interpolation<scalar> > &PatchValueExpressionDriver::interpolations<scalar>()
+{
+    return interpolationScalar_;
+}
+
+template<>
+HashPtrTable<interpolation<vector> > &PatchValueExpressionDriver::interpolations<vector>()
+{
+    return interpolationVector_;
+}
+
+template<>
+HashPtrTable<interpolation<tensor> > &PatchValueExpressionDriver::interpolations<tensor>()
+{
+    return interpolationTensor_;
+}
+
+template<>
+HashPtrTable<interpolation<symmTensor> > &PatchValueExpressionDriver::interpolations<symmTensor>()
+{
+    return interpolationSymmTensor_;
+}
+
+template<>
+HashPtrTable<interpolation<sphericalTensor> > &PatchValueExpressionDriver::interpolations<sphericalTensor>()
+{
+    return interpolationSphericalTensor_;
+}
+
+const word PatchValueExpressionDriver::getInterpolationScheme(const word &name)
+{
+    if(mappingInterpolationSchemes_.found(name)) {
+        return word(mappingInterpolationSchemes_.lookup(name));
+    } else if(mappingInterpolationSchemes_.found("default")) {
+        WarningIn("PatchValueExpressionDriver::getInterpolationScheme(const word &name)")
+            << "No entry for " << name << " in "
+                << mappingInterpolationSchemes_.name()
+                << ". Using 'default'"
+                << endl;
+
+        word scheme(word(mappingInterpolationSchemes_.lookup("default")));
+        mappingInterpolationSchemes_.add(name,scheme);
+
+        return scheme;
+    } else {
+        FatalErrorIn("PatchValueExpressionDriver::getInterpolationScheme(const word &name)")
+            << "No entry for " << name << " or 'default' in "
+                << mappingInterpolationSchemes_.name()
+                << endl
+                << exit(FatalError);
+    }
+
+    return word("nixDaGefunden");
+}
+
+autoPtr<ExpressionResult> PatchValueExpressionDriver::getRemoteResult(
+    CommonValueExpressionDriver &otherDriver
+)
+{
+    if(debug) {
+        Info << "PatchValueExpressionDriver::getRemoteResult" << endl;
+    }
+
+    if(
+        !isA<PatchValueExpressionDriver>(otherDriver)
+        ||
+        !isA<mappedFvPatch>(patch_)
+    ) {
+        if(debug) {
+            Info << "Not mapped or not remote-patch -> uniform" << endl;
+        }
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    //    const mappedPolyPatch &patch=dynamicCast<const mappedPolyPatch&>(
+    const mappedPolyPatch &patch=dynamic_cast<const mappedPolyPatch&>(
+        patch_.patch()
+    );
+    PatchValueExpressionDriver &driver=
+        //        dynamicCast<PatchValueExpressionDriver&>(otherDriver);
+        dynamic_cast<PatchValueExpressionDriver&>(otherDriver);
+
+    if(
+        patch.mode()!=mappedPatchBase::NEARESTPATCHFACE
+        ||
+        driver.patch().name()!=patch.samplePatch()
+        ||
+        driver.patch().boundaryMesh().mesh().name()!=patch.sampleRegion()
+    ) {
+        if(debug) {
+            Info << "Not correct circumstances for mapping -> uniform" << endl;
+        }
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    if(driver.result().isPoint()) {
+        WarningIn("PatchValueExpressionDriver::getRemoteResult")
+            << "Can not map point fields (though everyting else "
+                << "is OK for mapping"
+                << endl;
+        return CommonValueExpressionDriver::getRemoteResult(otherDriver);
+    }
+
+    if(debug) {
+        Info << "Mapping a result:" << driver.result() << endl;
+    }
+
+    if(driver.result().valueType()==pTraits<scalar>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<scalar>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<vector>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<vector>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<tensor>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<tensor>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<symmTensor>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<symmTensor>(false)
+                )()
+            )
+        );
+    } else if(driver.result().valueType()==pTraits<sphericalTensor>::typeName) {
+        return autoPtr<ExpressionResult>(
+            new ExpressionResult(
+                mapField(
+                    driver.result().getResult<sphericalTensor>(false)
+                )()
+            )
+        );
+    } else {
+        FatalErrorIn("")
+            << "Mapping for result type " << driver.result().valueType()
+                << " undefined"
+                << endl
+                << exit(FatalError);
+        return autoPtr<ExpressionResult>(); // this should never be reached
+    }
+}
+
+tmp<scalarField> PatchValueExpressionDriver::weightsNonPoint(
+    label size
+) const
+{
+    const label faceSize=this->size();
+    bool isFace=(size==faceSize);
+    reduce(isFace,andOp<bool>());
+
+    if(!isFace) {
+        Pout << "Expected size: " << size
+            << " Face size: " << faceSize << endl;
+
+        FatalErrorIn("PatchValueExpressionDriver::weightsNonPoint")
+            << "Can not construct weight field of the expected size. "
+                << " For sizes on the processors see above"
+                << endl
+                << exit(FatalError);
+    }
+
+    return tmp<scalarField>(new scalarField(patch().magSf()));
 }
 
 // ************************************************************************* //

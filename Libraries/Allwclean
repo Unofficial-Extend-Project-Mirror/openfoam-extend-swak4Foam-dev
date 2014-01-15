@@ -1,6 +1,6 @@
 #! /bin/sh
 
-if [ -d simpleFunctionObjects ]; then 
+if [ -d simpleFunctionObjects ]; then
     wclean simpleFunctionObjects
 fi
 
@@ -11,11 +11,17 @@ rm -f swak4FoamParsers/foamVersion4swak.H
 # otherwise the next compilation will have trouble finding the version-file
 find . -name lnInclude -exec rm -r {} \; -prune
 
+wclean swakLagrangianParser
+
 wclean groovyBC
 
 wclean swakFunctionObjects
 
 wclean simpleSwakFunctionObjects
+
+wclean simpleLagrangianFunctionObjects
+
+wclean simpleSearchableSurfaces
 
 wclean swakTopoSources
 
@@ -25,7 +31,20 @@ wclean swakFiniteArea
 
 wclean groovyStandardBCs
 
-wclean pythonIntegration
+wclean swakPythonIntegration
+
+(cd functionPlugins; ./Allwclean)
 
 # remove residual from bison
 rm -f */*.output
+
+if [ "$SWAK_USER_PLUGINS" != "" ]
+then
+    plugins=$(echo $SWAK_USER_PLUGINS | tr ";" "\n")
+
+    for plug in $plugins
+    do
+	echo "Clearing user function-plugin $plug"
+	wclean $plugins
+    done
+fi

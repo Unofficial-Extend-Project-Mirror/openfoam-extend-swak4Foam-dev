@@ -1,0 +1,22 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 16 Aug 2013 12:25:41 +0200
+State: new
+Subject: Plugin function to shift field
+Message-Id: <e0c5fb09c1562785-0-artemis@bgs-cool-greybook.local>
+
+Functions to map values on a different part of the field to the
+current place (shifting). Something like
+
+shiftField(expr,offset)
+
+to get the value of expr on a position relative offset to the current
+position and
+
+mapField(expr,position)
+
+to get the value of expr at the position.
+
+offset and position are volVectorField. expr could be anything. There
+would probably have to be a different function for every type. Both
+functions work by interpolation. Maybe specify a default value if
+interpolation occurs outside of the domain

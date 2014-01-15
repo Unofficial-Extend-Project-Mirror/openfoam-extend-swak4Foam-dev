@@ -1,0 +1,196 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+//startFrom       startTime;
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         5000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+// writeFormat     ascii;
+writeFormat     binary;;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libswakFunctionObjects.so"
+    "libswakPythonIntegration.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+functions {
+    addMinX {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+        valueType internalField;
+        toGlobalNamespace meshSize;
+        toGlobalVariables (
+            minX
+            maxX
+            nrPlanes
+        );
+        variables (
+            "minX=interpolateToCell(min(pts().x));"
+            "maxX=interpolateToCell(max(pts().x));"
+            "nrPlanes=10;"
+        );
+    }
+    every10Steps {
+        type executeIfPython;
+        readDuringConstruction true;
+        useNumpy false;
+        conditionCode "return (int(runTime) % 10)==0";
+        //        conditionCode "return True";
+        functions {
+            positionsToCollect {
+                type addGlobalVariable;
+                outputControl timeStep;
+                outputInterval 1;
+                resultType StackExpressionResult;
+
+                globalScope planeValues;
+                globalName positions;
+            }
+            pressuresToCollect {
+                $positionsToCollect;
+                globalName pressure;
+            }
+            makeSlice {
+                type dynamicFunctionObjectListProxy;
+                dictionaryProvider stdoutFromPythonScriptProvider;
+                readDuringConstruction true;
+
+                scriptFile "$FOAM_CASE/system/makeSlices.py";
+                useNumpy false; // this makes sure that only a single value is passed
+                swakToPythonNamespaces (
+                    meshSize
+                );
+            }
+            writePlanePositions {
+                type dumpSwakGlobalVariable;
+
+                globalName positions;
+                globalScope planeValues;
+            }
+            writePlanePressures {
+                $writePlanePositions;
+                globalName pressure;
+            }
+            getPressureAndPosition {
+                type calculateGlobalVariables;
+                outputControl timeStep;
+                outputInterval 1;
+                valueType internalField;
+                toGlobalNamespace rawData;
+                toGlobalVariables (
+                    allPressure
+                    allPositions
+                    allVolume
+                );
+                variables (
+                    "allPressure=p;"
+                    "allPositions=pos().x;"
+                    "allVolume=vol();"
+                );
+            }
+            calculatePressureBins {
+                type pythonIntegration;
+                startCode "";
+                writeCode "";
+                executeFile "$FOAM_CASE/system/calculatePressureInBins.py";
+                endCode "";
+                swakToPythonNamespaces (
+                    rawData
+                    planeValues
+                    meshSize
+                );
+                interactiveAfterException true;
+            }
+            removeLargeVariables {
+                type removeGlobalVariable;
+                outputControl timeStep;
+                outputInterval 1;
+                globalVariables (
+                    allPressure
+                    allPositions
+                    allVolume
+                );
+                globalScope rawData;
+            }
+        }
+    }
+    addPressureLine {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        resultType StoredStackExpressionResult;
+
+        globalScope pressureProbe;
+        globalName pressureMeasure;
+    }
+    addToPressureLine {
+         type calculateGlobalVariables;
+         outputControl timeStep;
+         outputInterval 1;
+         valueType set;
+         setName onePoint;
+         set {
+             type cloud;
+             axis distance;
+             points ((0.15 0 0));
+         }
+         toGlobalNamespace pressureProbe;
+         toGlobalVariables (
+             pressureMeasure
+         );
+         variables (
+             "pressureMeasure=average(p);"
+         );
+    }
+    stopIfSetUnchanged {
+        type setEndTimeWithPython;
+        endTimeFile "$FOAM_CASE/system/endIfPUnchanged.py";
+        swakToPythonNamespaces (
+            pressureProbe
+        );
+        interactiveAfterException true;
+    }
+};
+
+// ************************************************************************* //

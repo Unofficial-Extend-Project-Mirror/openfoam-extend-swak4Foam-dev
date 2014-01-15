@@ -1,0 +1,15 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 07 Jul 2012 12:59:34 +0200
+State: fixed
+Subject: functionObject that adds uncoupled lagrangian particles
+Message-Id: <ff4aa4979da85794-0-artemis@bgs-cool-greybook.local>
+
+Just add a cloud and track it uncoupled.
+
+This does not rely on the parsing functionality of swak, so it should
+either be
+- in simpleFunctionObjects
+- a new library simpleLagrangianFunctionObjects
+
+Make it templated so that users can create their own functionObjects
+for separate particle classes

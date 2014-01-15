@@ -1,0 +1,16 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 03 Sep 2012 20:35:05 +0200
+State: fixed
+Subject: Function objects to terminate a run
+Message-Id: <b581b5662cb023ae-0-artemis@bgs-cool-greybook.local>
+
+Investigate whether the mechanism described in
+http://www.openfoam.org/version2.1.0/runtime-control.php
+can be used and in which OF-versions. Possible function objects would
+be:
+
+- depending on field values (simpleFunctionObjects)
+- depending on a condition calculated in swakCoded
+- depending on a calculation in pythonIntegration
+
+PS: maybe this can be achived by manipulating the runTime-object

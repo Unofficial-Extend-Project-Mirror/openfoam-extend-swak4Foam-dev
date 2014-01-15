@@ -1,0 +1,42 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 24 Jul 2013 01:01:25 +0200
+State: fixed
+Subject: Parser for lagrangian particles
+Message-Id: <f69cb962de2d74c2-0-artemis@bgs-cool-greybook.local>
+
+This is the last parser missing.
+
+Organize into a separate library so that a change in the particle
+model doesn't break the compilation of swak as a whole.
+
+Idea on the grammar: simplified version of the Subset parser (no
+interpolation to point-values necessary)
+- regular field names: values of the properties of the particles
+- pos() gives the regular position of the particle (other properties
+that every particle has?)
+- continous(expr) : uses a field-parser to evaluate expr. Then
+interpolates this field to the particle positions - alternate name: gas
+
+valueType would be cloud
+
+Each OF-Cloud-type needs a special class (CloudProxy ?) that knows
+which symbols are available by the cloud and is run-time
+selectable. The inheritance hierarchy is similar to the original
+clouds (so each CloudProxy only needs to implement what is new
+here). Approximate interface of this:
+- constructor sets up a table of available symbols and types. This
+table is printed the first time this proxy is invoked like the table
+of plugin-functions. NOT when the first proxy of that type is invoked
+(this makes sure that clouds with properties that may differ - like
+the chemical composition - work alright). This method is used by the
+lexer to determine the type
+- for each basic type a virtual function getScalarValue(name) that
+returns a field and is called by the parser. If on one level no valid
+field is found the method from the superclass is called until a "not
+found" error is raised
+
+Have a table with the proxy for each cloud to allow reuse
+
+Either determine the proxyType needed automagically (via a static
+function that checks whether the type of the cloud fits the proxy) or
+get it from a dictionary value (that would be more robust)

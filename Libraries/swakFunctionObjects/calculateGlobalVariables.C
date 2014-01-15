@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "calculateGlobalVariables.H"
@@ -41,6 +50,7 @@ Foam::calculateGlobalVariables::calculateGlobalVariables
     const bool loadFromFiles
 )
     :
+    obr_(obr),
     driver_(
         CommonValueExpressionDriver::New(
             dict,
@@ -48,10 +58,18 @@ Foam::calculateGlobalVariables::calculateGlobalVariables
         )
     ),
     toGlobalNamespace_(dict.lookup("toGlobalNamespace")),
-    toGlobalVariables_(dict.lookup("toGlobalVariables"))
+    toGlobalVariables_(dict.lookup("toGlobalVariables")),
+    noReset_(dict.lookupOrDefault<bool>("noReset",false))
 {
     if(debug) {
         Info << "calculateGlobalVariables " << name << " created" << endl;
+    }
+
+    if(!dict.found("noReset")) {
+        WarningIn("calculateGlobalVariables::calculateGlobalVariables")
+            << "No entry 'noReset' in " << dict.name()
+                << ". Assumig 'false'"<< endl;
+
     }
 
     driver_->createWriterAndRead(name+"_"+type());
@@ -73,14 +91,25 @@ void Foam::calculateGlobalVariables::executeAndWriteToGlobal()
             Info << "Getting variable " << name << endl;
         }
 
-        GlobalVariablesRepository::getGlobalVariables().addValue(
+        ExpressionResult &res=GlobalVariablesRepository::getGlobalVariables(
+            obr_
+        ).addValue(
             name,
             toGlobalNamespace_,
-            driver_->variables()[name]
+            const_cast<const CommonValueExpressionDriver&>(
+                driver_()
+            ).variable(name)
         );
 
+        if(noReset_) {
+            res.noReset();
+        }
+
         if(debug) {
-            Info << "Has value " << driver_->variables()[name] << endl;
+            Pout << "Has value "
+                << const_cast<const CommonValueExpressionDriver&>(
+                    driver_()
+                ).variable(name) << endl;
         }
     }
 }
@@ -92,7 +121,7 @@ void Foam::calculateGlobalVariables::read(const dictionary& dict)
             << endl;
 }
 
-void Foam::calculateGlobalVariables::execute()
+void Foam::calculateGlobalVariables::write()
 {
     executeAndWriteToGlobal();
 
@@ -105,7 +134,7 @@ void Foam::calculateGlobalVariables::end()
 {
 }
 
-void Foam::calculateGlobalVariables::write()
+void Foam::calculateGlobalVariables::execute()
 {
 }
 

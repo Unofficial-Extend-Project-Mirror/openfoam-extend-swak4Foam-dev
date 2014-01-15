@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 25 Jan 2013 23:41:05 +0100
+Subject: Re: Add weighted average
+Message-Id: <cf0b98d9a30c7d81-94bf8b9809f3c458-artemis@bgs-cool-greybook.local>
+References: <cf0b98d9a30c7d81-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <cf0b98d9a30c7d81-0-artemis@bgs-cool-greybook.local>
+
+Now added as a general function to the driver and implemented in
+patchExpression

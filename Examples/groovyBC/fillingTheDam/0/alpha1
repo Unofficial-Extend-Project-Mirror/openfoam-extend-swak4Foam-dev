@@ -28,9 +28,18 @@ boundaryField
     rightWall
     {
         type groovyBC;
-        globalScopes ( "fillDamBC" );
+        globalScopes (
+            fillDam
+            fillDamBC
+        );
         valueExpression "1";
         fractionExpression "(pos().y < inHeight) ? 1 : 0";
+        variables (
+            "outerArea=(max(pts().y)-min(pts().y))*(max(pts().z)-min(pts().z));"
+            "totalArea=sum(area());"
+            "areaRatio=outerArea/totalArea;"
+        );
+
         value uniform 0;
     }
 

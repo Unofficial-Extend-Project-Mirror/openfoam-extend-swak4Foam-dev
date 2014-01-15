@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "solvePDECommonFiniteVolume.H"
@@ -67,13 +76,28 @@ Foam::solvePDECommonFiniteVolume::solvePDECommonFiniteVolume
 Foam::solvePDECommonFiniteVolume::~solvePDECommonFiniteVolume()
 {}
 
+Foam::volScalarField &Foam::solvePDECommonFiniteVolume::theField()
+{
+    // either the field was created by someone else ... then it should be
+    // in the registry. Or we created it.
+    if(theField_.valid()) {
+        return theField_();
+    } else {
+        return const_cast<volScalarField&>(
+            obr_.lookupObject<volScalarField>(
+                fieldName_
+            )
+        );
+    }
+}
+
 void Foam::solvePDECommonFiniteVolume::read(const dictionary& dict)
 {
     solvePDECommon::read(dict);
 
     if(active_) {
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
+
         if(
             theField_.valid()
             &&
@@ -86,18 +110,40 @@ void Foam::solvePDECommonFiniteVolume::read(const dictionary& dict)
             theField_.clear();
         }
         if(!theField_.valid()) {
-            theField_.set(
-                new volScalarField(
-                    IOobject (
-                        fieldName_,
-                        mesh.time().timeName(),
-                        mesh,
-                        IOobject::MUST_READ,
-                        IOobject::AUTO_WRITE
-                    ),
-                    mesh
-                )
-            );
+            if(obr_.foundObject<volScalarField>(fieldName_)) {
+                if(!dict.found("useFieldFromMemory")) {
+                    FatalErrorIn("Foam::solvePDECommonFiniteVolume::read(const dictionary& dict)")
+                        << "Field " << fieldName_ << " alread in memory. "
+                            << "Set 'useFieldFromMemory true;' to use it or "
+                            << "use different name"
+                            << endl
+                            << exit(FatalError);
+
+                }
+                bool useFieldFromMemory=readBool(
+                    dict.lookup("useFieldFromMemory")
+                );
+                if(!useFieldFromMemory) {
+                    FatalErrorIn("Foam::solvePDECommonFiniteVolume::read(const dictionary& dict)")
+                        << "Field " << fieldName_ << " alread in memory. "
+                            << "Use different name"
+                            << endl
+                            << exit(FatalError);
+                }
+            } else {
+                theField_.set(
+                    new volScalarField(
+                        IOobject (
+                            fieldName_,
+                            mesh.time().timeName(),
+                            mesh,
+                            IOobject::MUST_READ,
+                            IOobject::AUTO_WRITE
+                        ),
+                        mesh
+                    )
+                );
+            }
         }
 
         driver_.set(
@@ -110,18 +156,29 @@ void Foam::solvePDECommonFiniteVolume::read(const dictionary& dict)
                 false  // don't look up files on disc
             )
         );
-        
+
         driver_->readVariablesAndTables(dict);
-        
+
         driver_->createWriterAndRead(name_+"_"+fieldName_+"_"+type());
     }
 }
 
 void Foam::solvePDECommonFiniteVolume::writeData()
 {
-    theField_->write();
-    
+    theField().write();
+
     driver_->tryWrite();
+}
+
+void Foam::solvePDECommonFiniteVolume::writeNewField()
+{
+    theField().write();
+}
+
+void Foam::solvePDECommonFiniteVolume::writeOldField()
+{
+    volScalarField temp(fieldName_+".presolve",theField());
+    temp.write();
 }
 
 // ************************************************************************* //

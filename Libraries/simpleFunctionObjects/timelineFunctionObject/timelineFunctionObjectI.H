@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "timelineFunctionObject.H"
@@ -39,17 +48,25 @@ template<>
 inline void timelineFunctionObject::writeData(const word &name,const UList<string> &data) {
     Ostream &s=*filePtrs_[name];
     forAll(data,index) {
+        string d(data[index]);
+        d.replaceAll(" ","_");
         switch(outputFileMode_) {
             case ofmFoam:
             case ofmRaw:
-                s << setw(IOstream::defaultPrecision() + 7) << data[index].c_str();
+                s << setw
+                    (
+                        max(
+                            label(IOstream::defaultPrecision() + 7),
+                            label(d.size()+1)   // at least one space
+                        )
+                    ) << d.c_str();
                 break;
             case ofmCsv:
-                s << separator_.c_str() << data[index].c_str();
+                s << separator_.c_str() << d.c_str();
                 break;
             default:
                 FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
-                    << "Don't know how to write files of type " 
+                    << "Don't know how to write files of type "
                         << outputFileModeNames_[outputFileMode_] << endl
                         << exit(FatalError);
         }
@@ -70,7 +87,7 @@ inline void timelineFunctionObject::writeData(const word &name,const UList<scala
                 break;
             default:
                 FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
-                    << "Don't know how to write files of type " 
+                    << "Don't know how to write files of type "
                         << outputFileModeNames_[outputFileMode_] << endl
                         << exit(FatalError);
         }
@@ -94,7 +111,7 @@ void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
                         break;
                     default:
                         FatalErrorIn("timelineFunctionObject::write(const word &name,const UList<T> &data)")
-                            << "Don't know how to write files of type " 
+                            << "Don't know how to write files of type "
                                 << outputFileModeNames_[outputFileMode_] << endl
                                 << exit(FatalError);
                 }
@@ -116,7 +133,7 @@ void timelineFunctionObject::writeTime(const word &name,const T &time) {
             break;
         default:
             FatalErrorIn("timelineFunctionObject::writeTime(const word &name,const UList<T> &data)")
-                    << "Don't know how to write files of type " 
+                    << "Don't know how to write files of type "
                         << outputFileModeNames_[outputFileMode_] << endl
                         << exit(FatalError);
     }

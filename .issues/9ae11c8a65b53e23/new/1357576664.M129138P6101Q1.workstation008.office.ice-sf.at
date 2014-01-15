@@ -1,0 +1,10 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 07 Jan 2013 17:36:44 +0100
+Subject: Re: Variables on internalFields that give surfaceFields don't work
+Message-Id: <9ae11c8a65b53e23-b5b6a6ebb82c05e5-artemis@workstation008.office.ice-sf.at>
+References: <9ae11c8a65b53e23-0-artemis@workstation008.office.ice-sf.at>
+In-Reply-To: <9ae11c8a65b53e23-0-artemis@workstation008.office.ice-sf.at>
+
+In principle the problem seems solved. What is missing:
+- zeroGradient for volume-Fields
+- for pointField results the point=True is not propagated to the expression Result

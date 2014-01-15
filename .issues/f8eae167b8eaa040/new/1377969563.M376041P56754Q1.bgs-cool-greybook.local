@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 31 Aug 2013 19:17:54 +0200
+State: new
+Subject: Add function =scalar= (or similar) to convert logical variables to numbers
+Message-Id: <f8eae167b8eaa040-0-artemis@bgs-cool-greybook.local>
+
+scalar(true) would give 1

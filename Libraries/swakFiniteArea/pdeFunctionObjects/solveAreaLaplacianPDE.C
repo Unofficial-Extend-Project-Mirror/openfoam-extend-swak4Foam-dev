@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "solveAreaLaplacianPDE.H"
@@ -68,7 +77,7 @@ Foam::solveAreaLaplacianPDE::solveAreaLaplacianPDE
     read(dict);
 
     if(solveAt_==saStartup) {
-        solve();
+        solveWrapper();
     }
 }
 
@@ -86,8 +95,16 @@ void Foam::solveAreaLaplacianPDE::read(const dictionary& dict)
         dict.lookup("lambda") >> lambdaExpression_ >> lambdaDimension_;
         dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit") 
+            dict.lookup("sourceImplicit")
                 >> sourceImplicitExpression_ >> sourceImplicitDimension_;
+        } else {
+            if(sourceExpression_!="0") {
+                WarningIn("Foam::solveAreaLaplacianPDE::read(const dictionary& dict)")
+                    << "Source expression " << sourceExpression_ << " set. "
+                        << "Consider factoring out parts to 'sourceImplicit'\n"
+                        << endl;
+
+            }
         }
     }
 }
@@ -97,10 +114,22 @@ void Foam::solveAreaLaplacianPDE::solve()
     if(active_) {
         const faMesh& mesh = driver_->aMesh();
         dictionary sol=mesh.solutionDict().subDict(fieldName_+"LaplacianPDE");
-        
+
         FaFieldValueExpressionDriver &driver=driver_();
 
         int nCorr=sol.lookupOrDefault<int>("nCorrectors", 0);
+        if(
+            nCorr==0
+            &&
+            steady_
+        ) {
+            WarningIn("Foam::solveTransportPDE::solve()")
+                << name_ << " is steady. It is recommended to have in "
+                    << sol.name() << " a nCorrectors>0"
+                    << endl;
+
+        }
+
         for (int corr=0; corr<=nCorr; corr++) {
 
             driver.clearVariables();
@@ -127,7 +156,7 @@ void Foam::solveAreaLaplacianPDE::solve()
             areaScalarField sourceField(driver.getResult<areaScalarField>());
             sourceField.dimensions().reset(sourceDimension_);
 
-            areaScalarField &f=theField_();
+            areaScalarField &f=theField();
 
             faMatrix<scalar> eq(
                 -fam::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")
@@ -146,7 +175,7 @@ void Foam::solveAreaLaplacianPDE::solve()
 
                 areaScalarField rhoField(driver.getResult<areaScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
-            
+
                 faMatrix<scalar> ddtMatrix=fam::ddt(f);
                 if(
                     !ddtMatrix.diagonal()
@@ -172,8 +201,12 @@ void Foam::solveAreaLaplacianPDE::solve()
 
                 areaScalarField sourceImplicitField(driver.getResult<areaScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
-            
-                eq-=fam::SuSp(sourceImplicitField,f);
+
+                eq-=fam::Sp(sourceImplicitField,f);
+            }
+
+            if(doRelax(corr==nCorr)) {
+                eq.relax();
             }
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);

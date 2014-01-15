@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -27,11 +32,15 @@ Class
     manipulateField
 
 Description
-    Function object that generates a field
+    Function object that manipulates a field
 
 SourceFiles
     manipulateField.C
 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef manipulateField_H
@@ -57,7 +66,7 @@ class manipulateField
 {
     //- Disallow default bitwise copy construct
     manipulateField(const manipulateField&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const manipulateField&);
 
@@ -67,6 +76,9 @@ protected:
 
     //- are we working?
     bool active_;
+
+    //- re-write manipulated field
+    bool writeManipulated_;
 
     //- Name of the field
     word name_;
@@ -103,7 +115,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     manipulateField
@@ -129,20 +141,20 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
     virtual void movePoints(const pointField&)
         {}

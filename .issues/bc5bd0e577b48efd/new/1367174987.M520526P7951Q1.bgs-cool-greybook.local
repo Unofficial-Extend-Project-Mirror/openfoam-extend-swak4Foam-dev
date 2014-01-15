@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 28 Apr 2013 20:49:07 +0200
+Subject: Re: ExpressionResult not correctly read back when written in binaryMode
+Message-Id: <bc5bd0e577b48efd-ea681f27a801734e-artemis@bgs-cool-greybook.local>
+References: <bc5bd0e577b48efd-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <bc5bd0e577b48efd-0-artemis@bgs-cool-greybook.local>
+
+Added a little test-porogram to make sure that it gets read and
+written in ASCII and Binary

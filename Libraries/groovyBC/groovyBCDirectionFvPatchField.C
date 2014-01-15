@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCDirectionFvPatchField.H"
@@ -106,7 +109,11 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
 
     driver_.readVariablesAndTables(dict);
 
-    this->refValue() = pTraits<Type>::zero;
+    if (dict.found("refValue")) {
+        this->refValue() = Field<Type>("refValue", dict, p.size());
+    } else {
+        this->refValue() = pTraits<Type>::zero;
+    }
 
     if (dict.found("value"))
     {
@@ -131,12 +138,39 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
             << endl;
     }
 
-    this->refGrad() = pTraits<Type>::zero;
-    this->valueFraction() = I;
+    if (dict.found("refGradient")) {
+        this->refGrad() = Field<Type>("refGradient", dict, p.size());
+    } else {
+        this->refGrad() = pTraits<Type>::zero;
+    }
+
+    if (dict.found("valueFraction")) {
+        this->valueFraction() = Field<symmTensor>("valueFraction", dict, p.size());
+    } else {
+        this->valueFraction() = I;
+    }
 
     if(this->evaluateDuringConstruction()) {
         // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
         this->evaluate();
+    } else {
+        // emulate the evaluate of the parent-class
+        if (!this->updated())
+        {
+            this->directionMixedFvPatchField<Type>::updateCoeffs();
+        }
+
+        tmp<Field<Type> > normalValue = transform(this->valueFraction(), this->refValue());
+
+        tmp<Field<Type> > gradValue =
+            this->patchInternalField() + this->refGrad()/this->patch().deltaCoeffs();
+        
+        tmp<Field<Type> > transformGradValue =
+            transform(I - this->valueFraction(), gradValue);
+        
+        Field<Type>::operator=(normalValue + transformGradValue);
+        
+        transformFvPatchField<Type>::evaluate();
     }
 }
 

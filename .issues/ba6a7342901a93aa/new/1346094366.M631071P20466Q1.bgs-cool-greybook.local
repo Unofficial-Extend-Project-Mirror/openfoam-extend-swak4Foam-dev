@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 27 Aug 2012 21:04:32 +0200
+State: new
+Subject: Check existence of binary min/max
+Message-Id: <ba6a7342901a93aa-0-artemis@bgs-cool-greybook.local>
+
+Is it in all parsers or just in the Field-parser?

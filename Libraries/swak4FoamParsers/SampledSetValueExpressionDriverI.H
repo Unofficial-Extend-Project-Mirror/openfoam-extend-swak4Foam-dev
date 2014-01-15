@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -49,7 +52,7 @@ namespace Foam {
         << "sampledSets are a collection of points. So the 'cell' functionality should be used"
             << endl
             << exit(FatalError);
-        
+
         return 0;
     }
 
@@ -60,31 +63,36 @@ namespace Foam {
     }
 
     template<class Type,class volField,class surfField>
-    Field<Type> *SampledSetValueExpressionDriver::sampleOrInterpolateInternal(
+    tmp<Field<Type> >
+    SampledSetValueExpressionDriver::sampleOrInterpolateInternal(
         const word &name,
         bool oldTime
     )
     {
         if(debug) {
-            Pout << "Sampling set: " << name << " on set " 
-                << this->theSet_.name() << " with " << this->size() 
-                << " points" << endl; 
+            Pout << "Sampling set: " << name << " on set "
+                << this->theSet_.name() << " with " << this->size()
+                << " points" << endl;
             //            this->theSet_.write(Pout);
             Pout << "Search memory: " << this->searchInMemory()
                 << " Field there: " << this->mesh().foundObject<volField>(name)
-                << " Is variable: " << this->variables_.found(name)
+                << " Is variable: " << this->hasVariable(name)
                 << endl;
         }
-        if(this->variables_.found(name)) {
-            return this->variables_[name].getResult<Type>(true).ptr();
+        if(
+            this->hasVariable(name)
+            &&
+            this->variable(name).valueType()==pTraits<Type>::typeName
+        ) {
+            return this->variable(name).getResult<Type>(true);
         }
 
-        Field<Type> *result=NULL;
+        autoPtr<Field<Type> > result;
         const sampledSet& samples = this->theSet_;
 
         if(
-            this->searchInMemory() 
-            && 
+            this->searchInMemory()
+            &&
             this->mesh().foundObject<volField>(name)
         ) {
             if(interpolate_) {
@@ -98,29 +106,33 @@ namespace Foam {
                         )
                     )
                 );
-                
-                result=new Field<Type>(this->theSet_.size());
-                Field<Type> &values=*result;
+
+                result.set(
+                    new Field<Type>(this->theSet_.size())
+                );
+                Field<Type> &values=result();
 
                 forAll(samples, samplei)
                 {
                     const point& samplePt = samples[samplei];
                     label celli = samples.cells()[samplei];
                     label facei = samples.faces()[samplei];
-                    
+
                     values[samplei] = inter().interpolate
                         (
                             samplePt,
                             celli,
                             facei
                         );
-                }                
+                }
                 if(debug) {
                     Pout << "Interpolated values: " << values << endl;
                 }
             } else {
-                result=new Field<Type>(this->theSet_.size());
-                Field<Type> &values=*result;
+                result.set(
+                    new Field<Type>(this->theSet_.size())
+                );
+                Field<Type> &values=result();
                 const volField &field=this->mesh().lookupObject<volField>(name);
 
                 forAll(samples, samplei)
@@ -130,7 +142,7 @@ namespace Foam {
                     } else {
                         values[samplei] = field.oldTime()[samples.cells()[samplei]];
                     }
-                }                
+                }
                 if(debug) {
                     Pout << "Values: " << values << endl;
                 }
@@ -150,29 +162,33 @@ namespace Foam {
                             !oldTime ?
                             f() :
                             f->oldTime()
-                        ) 
+                        )
                     )
                 );
-                
-                result=new Field<Type>(this->theSet_.size());
-                Field<Type> &values=*result;
+
+                result.set(
+                    new Field<Type>(this->theSet_.size())
+                );
+                Field<Type> &values=result();
 
                 forAll(samples, samplei)
                 {
                     const point& samplePt = samples[samplei];
                     label celli = samples.cells()[samplei];
                     label facei = samples.faces()[samplei];
-                    
+
                     values[samplei] = inter().interpolate
                         (
                             samplePt,
                             celli,
                             facei
                         );
-                }                
+                }
             } else {
-                result=new Field<Type>(this->theSet_.size());
-                Field<Type> &values=*result;
+                result.set(
+                    new Field<Type>(this->theSet_.size())
+                );
+                Field<Type> &values=result();
                 const volField &field=f();
 
                 forAll(samples, samplei)
@@ -180,20 +196,23 @@ namespace Foam {
                     if(!oldTime) {
                         values[samplei] = field[samples.cells()[samplei]];
                     } else {
-                        values[samplei] = field.oldTime()[samples.cells()[samplei]];
+                        values[samplei] =
+                            field.oldTime()[samples.cells()[samplei]];
                     }
-                }                
+                }
             }
         }
 
-        if(result==NULL) {
+        if(!result.valid()) {
             FatalErrorIn("SampledSetValueExpressionDriver::sampleOrInterpolateInternal(const word &name)")
-                << "No valid result" 
+                << "No valid result"
                     << endl
                     << exit(FatalError);
         }
 
-        return result;
+        return tmp<Field<Type> >(
+            result.ptr()
+        );
     }
 
 }

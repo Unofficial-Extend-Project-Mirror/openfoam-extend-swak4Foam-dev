@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,7 +37,7 @@ Description
 
 Example usage: writes Enthalpy and viscosity after t=15
 
-functions 
+functions
 (
     writeEnthalpy {
         functionObjectLibs ("libsimpleFunctionObjects.so");
@@ -45,6 +50,10 @@ functions
 SourceFiles
     writeAdditionalFieldsFunctionObject.C
 
+Contributors/Copyright:
+    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeAdditionalFieldsFunctionObject_H
@@ -68,14 +77,14 @@ class writeAdditionalFieldsFunctionObject
 
     //- Disallow default bitwise copy construct
     writeAdditionalFieldsFunctionObject(const writeAdditionalFieldsFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const writeAdditionalFieldsFunctionObject&);
 
 protected:
 
-    //- Overwrite the default output time
-    virtual bool outputTime();
+    // //- Overwrite the default output time
+    // virtual bool outputTime();
 public:
 
     //- Runtime type information

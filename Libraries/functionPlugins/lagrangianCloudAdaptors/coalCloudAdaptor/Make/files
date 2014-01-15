@@ -1,0 +1,11 @@
+coalCloudEnthalpySourcePluginFunction.C
+coalCloudMassFractionPluginFunction.C
+coalCloudMassSourcePluginFunction.C
+coalCloudMomentumSourcePluginFunction.C
+coalCloudRhoEffPluginFunction.C
+coalCloudScatteringFactorPluginFunction.C
+coalCloudSpeciesSourcePluginFunction.C
+coalCloudVolumeFractionPluginFunction.C
+makeCoalCloudProxys.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakCoalCloudAdaptor

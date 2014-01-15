@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 14 Aug 2013 15:42:42 +0200
+Subject: Re: Post-processing utility with Python-integration
+Message-Id: <892b499519b6a554-b14c1a4ec17ed666-artemis@bgs-cool-greybook.local>
+References: <892b499519b6a554-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <892b499519b6a554-0-artemis@bgs-cool-greybook.local>
+
+Almost finished.
+
+Problem with hanging if a functionObject uses Python too

@@ -46,7 +46,7 @@ timePrecision   6;
 runTimeModifiable yes;
 
 libs (
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
 );
 
 functions (
@@ -56,7 +56,7 @@ functions (
         startFile "$FOAM_CASE/startFindPoint.py";
         executeFile "$FOAM_CASE/executeFindPoint.py";
         endFile "$FOAM_CASE/endFindPoint.py";
-        parallelMasterOnly false;  
+        parallelMasterOnly false;
         //        interactiveAfterExecute true;
         //        interactiveAfterException true;
     }

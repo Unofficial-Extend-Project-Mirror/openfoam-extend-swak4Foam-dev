@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,6 +37,10 @@ Description
 SourceFiles
     functionObjectListProxy.C
 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef functionObjectListProxy_H
@@ -61,6 +70,8 @@ class functionObjectListProxy
     //- Disallow default bitwise assignment
     void operator=(const functionObjectListProxy&);
 
+protected:
+
     //- the actual function Objects that this encapsulates
     autoPtr<functionObjectList> functions_;
 
@@ -68,7 +79,7 @@ class functionObjectListProxy
     functionObjectList &functions();
 
     //- initialize the function-objects
-    void initFunctions();
+    virtual void initFunctions();
 
 public:
 
@@ -83,7 +94,9 @@ public:
     (
         const word&,
         const Time&,
-        const dictionary&
+        const dictionary&,
+        // to switch off for FO that would require a virtual method
+        bool allowReadingDuringConstruction=true
     );
 
     // Member Functions

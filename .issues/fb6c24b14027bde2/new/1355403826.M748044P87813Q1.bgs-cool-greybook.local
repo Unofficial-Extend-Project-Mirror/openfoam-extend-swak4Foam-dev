@@ -1,0 +1,42 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 13 Dec 2012 11:37:29 +0100
+State: fixed
+Subject: Interpolation from other case
+Message-Id: <fb6c24b14027bde2-0-artemis@bgs-cool-greybook.local>
+
+This could be done using the meshToMesh-machinery that drivers
+mapFields.
+
+For a first implementation only support one time-step at a time (in
+the other mesh). Create a separate repository for "foreign" meshes so
+that they're not reloaded every time a functionObjects wants one.
+
+Specification would work somehow like this:
+
+otherCases {
+   refCase {
+        caseDir "$FOAM_CASE/../fineCase";
+	time 0.1;
+	region solid;
+   }
+   otherCase {
+   ....
+   }
+}
+
+Then in a field expression
+
+"p-refCase(p)"
+
+would calculate the difference to a mapped field on from other
+mesh. Currently more than field-names would be a bit hard (complete
+expressions)
+
+By specifying the same case someone can compare to other timesteps
+
+Simplified usage for funkySetFields would be something like
+
+funkySetFields -time 10 -otherCase ../fineCase -otherTime 1
+-otherRegion solid -expression "p-other(p)"
+
+(that would probably be the most common use-case anyway)

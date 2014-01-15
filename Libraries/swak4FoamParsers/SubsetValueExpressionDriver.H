@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,10 @@ SourceFiles
     SubsetValueExpressionDriverI.H
     SubsetValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SubsetValueExpressionDriver_H
@@ -86,39 +89,44 @@ class SubsetValueExpressionDriver
 
 protected:
 
-    // Handling the scanner 
+    // Handling the scanner
     void scan_begin();
     void scan_end();
 
     //- get the index from the container iterator
     template<class Iter>
-    inline label getIndexFromIterator(const Iter &it);
+    inline label getIndexFromIterator(const Iter &it) const;
 
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
-    Field<T> *getFieldInternal(
-        const string &name,
+    tmp<Field<T> > getFieldInternal(
+        const word &name,
         const Subset &sub,
         bool oldTime=false
     );
 
     //- General Method to get the values and interpolate
     template<class FieldType,class IFieldType,class Subset,class T>
-    Field<T> *getFieldInternalAndInterpolate(
-        const string &name,
+    tmp<Field<T> > getFieldInternalAndInterpolate(
+        const word &name,
         const Subset &sub,
         bool oldTime=false
     );
 
     //- General Method to get values from a field
     template<class Subset,class T>
-    Field<T> *getFromFieldInternal(const Field<T> &original,const Subset &sub);
+    tmp<Field<T> > getFromFieldInternal(
+        const Field<T> &original,const Subset &sub
+    ) const;
 
     //- set the state of the lexer to scanning vector components
     void startVectorComponent();
 
     //- set the state of the lexer to scanning tensor components
     void startTensorComponent();
+
+    //- set the state to "eat characters"
+    void startEatCharacters();
 
 public:
 
@@ -132,7 +140,7 @@ public:
         bool autoInterpolate=false,
         bool warnAutoInterpolate=true
     );
-    
+
     //- Copy construct
     SubsetValueExpressionDriver(const SubsetValueExpressionDriver&);
 
@@ -143,42 +151,74 @@ public:
 
     ~SubsetValueExpressionDriver();
 
+    void setAutoInterpolate(
+        bool autoInterpolate,
+        bool warnAutoInterpolate
+    );
 
     // Member Functions
 
-    virtual vectorField *makePositionField()=0;
+    virtual tmp<vectorField> makePositionField() const = 0;
 
-    virtual scalarField *makeFaceAreaMagField()=0;
+    virtual tmp<scalarField> makeFaceAreaMagField() const = 0;
 
-    virtual scalarField *makeCellVolumeField()=0;
+    virtual tmp<scalarField> makeCellVolumeField() const = 0;
 
-    //     virtual vectorField *makePointField()=0;
+    //     virtual tmp<vectorField> makePointField() const = 0;
 
-    virtual vectorField *makeFaceNormalField()=0;
+    virtual tmp<vectorField> makeFaceNormalField() const = 0;
 
-    virtual vectorField *makeFaceAreaField()=0;
+    virtual tmp<vectorField> makeFaceAreaField() const = 0;
 
-    virtual scalarField *makeFaceFlipField()=0;
+    virtual tmp<scalarField> makeFaceFlipField() const = 0;
 
     virtual bool isCell()=0;
 
-    scalarField *makeIdField();
+    tmp<scalarField> makeIdField();
 
 //     template<class Type>
 //     Field<Type> *getField(const string &name);
 
-    virtual Field<scalar> *getScalarField(const string &name,bool oldTime=false)=0;
+    virtual tmp<Field<scalar> > getScalarField(
+        const word &name,
+        bool oldTime=false
+    )=0;
 
-    virtual Field<vector> *getVectorField(const string &name,bool oldTime=false)=0;
+    virtual tmp<Field<vector> > getVectorField(
+        const word &name,
+        bool oldTime=false
+    )=0;
 
-    virtual Field<tensor> *getTensorField(const string &name,bool oldTime=false)=0;
+    virtual tmp<Field<tensor> > getTensorField(
+        const word &name,
+        bool oldTime=false
+    )=0;
 
-    virtual Field<symmTensor> *getSymmTensorField(const string &name,bool oldTime=false)=0;
+    virtual tmp<Field<symmTensor> > getSymmTensorField(
+        const word &name,
+        bool oldTime=false
+    )=0;
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name,bool oldTime=false)=0;
+    virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
+        const word &name,
+        bool oldTime=false
+    )=0;
 
     // Handling the parser
-    void parse(const std::string& f);
+    void parseInternal(int startToken);
+
+    //- execute a plugin-function
+    template<class T>
+    autoPtr<Field<T> > evaluatePluginFunction(
+        const word &name,
+        const parserSubset::location &loc,
+        int &scanned,
+        bool isPoint=false
+    );
+
+    static const SymbolTable<SubsetValueExpressionDriver> &symbolTable();
+
+    int startupSymbol(const word &name);
 
 //     template<class Type>
 //     virtual Field<Type> *toFace(const Field<Type> &)=0;

@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 06 Mar 2013 17:31:33 +0100
+Subject: Re: Function object to write sampledSurfaces as VTK
+Message-Id: <f9a62466ecdfab01-e37124fefba3ef4e-artemis@bgs-cool-greybook.local>
+References: <f9a62466ecdfab01-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <f9a62466ecdfab01-0-artemis@bgs-cool-greybook.local>
+
+An implementation of fd2b30bdc70a8de9 could make this obsolete

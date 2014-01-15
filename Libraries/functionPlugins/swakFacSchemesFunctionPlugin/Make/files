@@ -1,0 +1,10 @@
+facInterpolationFunctionPlugin.C
+facGradFunctionPlugin.C
+facLnGradFunctionPlugin.C
+facDivFunctionPlugin.C
+facConvectionDivFunctionPlugin.C
+facLaplacianFunctionPlugin.C
+facCoeffLaplacianFunctionPlugin.C
+facEdgeCoeffLaplacianFunctionPlugin.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakFacSchemesFunctionPlugin

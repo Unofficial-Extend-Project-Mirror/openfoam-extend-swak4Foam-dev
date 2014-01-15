@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 16 Sep 2012 22:08:11 +0200
+State: new
+Subject: Add possibility to disable dimension-checking to FieldParser
+Message-Id: <c1b3890e4b8f85d6-0-artemis@bgs-cool-greybook.local>
+
+funkySetFields does it anyway. But enable it in general

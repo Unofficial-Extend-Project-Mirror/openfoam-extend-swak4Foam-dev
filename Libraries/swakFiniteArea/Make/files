@@ -29,4 +29,7 @@ pdeFunctionObjects/solveAreaLaplacianPDEFunctionObject.C
 pdeFunctionObjects/solveAreaTransportPDE.C
 pdeFunctionObjects/solveAreaTransportPDEFunctionObject.C
 
+plugins/FaPatchValuePluginFunction.C
+plugins/FaFieldValuePluginFunction.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakFiniteArea

@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,6 +37,10 @@ Description
 SourceFiles
     timelineFunctionObject.C
 
+Contributors/Copyright:
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #ifndef timelineFunctionObject_H
@@ -57,7 +66,7 @@ class timelineFunctionObject
 
     //- Disallow default bitwise copy construct
     timelineFunctionObject(const timelineFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const timelineFunctionObject&);
 
@@ -110,6 +119,10 @@ protected:
 
     //- ends a dataset (usually by writing an endline)
     void endData(const word &name);
+
+    //- close all files to enable a new slate
+    void closeAllFiles();
+
 public:
 
     //- Runtime type information

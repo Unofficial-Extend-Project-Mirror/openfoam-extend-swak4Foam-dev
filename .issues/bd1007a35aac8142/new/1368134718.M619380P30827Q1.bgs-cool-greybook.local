@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 09 May 2013 23:24:20 +0200
+State: fixed
+Subject: Problem with restarting delayed variables
+Message-Id: <bd1007a35aac8142-0-artemis@bgs-cool-greybook.local>
+
+Problem manifests in the wobbler-case

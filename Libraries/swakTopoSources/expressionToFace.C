@@ -27,7 +27,10 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$ 
 \*---------------------------------------------------------------------------*/
 
 #include "expressionToFace.H"
@@ -115,6 +118,17 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
         forAll(condition,faceI) {
             if(condition[faceI]>0) {
                 addOrDelete(set, faceI, add);
+            }
+        }
+        forAll(condition.boundaryField(),patchI) {
+            const surfaceScalarField::PatchFieldType &patch=
+                condition.boundaryField()[patchI];
+            label start=condition.mesh().boundaryMesh()[patchI].start();
+
+            forAll(patch,i) {
+                if(patch[i]>0) {
+                    addOrDelete(set, i+start, add);
+                }
             }
         }
     } else {

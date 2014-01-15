@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
 
 #include "dumpSwakExpressionFunctionObject.H"
@@ -61,7 +70,7 @@ dumpSwakExpressionFunctionObject::dumpSwakExpressionFunctionObject
             dict,
             refCast<const fvMesh>(obr_)
         )
-    ) 
+    )
 {
     const string warnSwitch="IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData";
     if(!dict.lookupOrDefault<bool>(warnSwitch,false)) {
@@ -98,10 +107,10 @@ void dumpSwakExpressionFunctionObject::write()
     if(verbose()) {
         Info << "Expression " << name() << " : ";
     }
-    
+
     driver_->clearVariables();
     driver_->parse(expression_);
-    word rType=driver_->getResultType();
+    word rType=driver_->CommonValueExpressionDriver::getResultType();
 
     if(rType==pTraits<scalar>::typeName) {
         writeTheData<scalar>(driver_());
@@ -115,10 +124,10 @@ void dumpSwakExpressionFunctionObject::write()
         writeTheData<sphericalTensor>(driver_());
     } else {
         WarningIn("dumpSwakExpressionFunctionObject::write()")
-            << "Don't know how to handle type " << rType 
+            << "Don't know how to handle type " << rType
                 << endl;
     }
-    
+
     if(verbose()) {
         Info << endl;
     }

@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -32,6 +37,10 @@ Description
 SourceFiles
     solvePDECommonFiniteVolume.C
 
+Contributors/Copyright:
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef solvePDECommonFiniteVolume_H
@@ -51,20 +60,28 @@ class solvePDECommonFiniteVolume
 {
     //- Disallow default bitwise copy construct
     solvePDECommonFiniteVolume(const solvePDECommonFiniteVolume&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const solvePDECommonFiniteVolume&);
 
-protected:
-
     //- the actual field
     autoPtr<volScalarField> theField_;
+
+protected:
+
+    //- get the actual field
+    volScalarField &theField();
 
     //- the driver that calculates the coefficients
     autoPtr<FieldValueExpressionDriver> driver_;
 
     //- write specific data
     virtual void writeData();
+
+    virtual void writeOldField();
+
+    virtual void writeNewField();
+
 
 public:
 
@@ -73,7 +90,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     solvePDECommonFiniteVolume
@@ -93,7 +110,7 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

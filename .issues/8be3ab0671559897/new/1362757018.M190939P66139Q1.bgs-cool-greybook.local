@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 08 Mar 2013 16:35:35 +0100
+State: new
+Subject: Allow selection of patches by regular expression
+Message-Id: <8be3ab0671559897-0-artemis@bgs-cool-greybook.local>
+
+Mainly in the simpleFunctionObjects and for patchExpression

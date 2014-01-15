@@ -1,0 +1,27 @@
+#! /bin/sh
+
+wclean swakChemistryModelFunctionPlugin
+
+wclean swakRadiationModelFunctionPlugin
+
+wclean swakMeshQualityFunctionPlugin
+
+wclean swakLocalCalculationsFunctionPlugin
+
+wclean swakRandomFunctionPlugin
+
+wclean swakFvcSchemesFunctionPlugin
+
+wclean swakFacSchemesFunctionPlugin
+
+wclean swakThermoTurbFunctionPlugin
+
+wclean swakTransportTurbFunctionPlugin
+
+wclean swakSurfacesAndSetsFunctionPlugin
+
+wclean swakLagrangianCloudSourcesFunctionPlugin
+
+wclean swakVelocityFunctionPlugin
+
+(cd lagrangianCloudAdaptors; ./Allwclean )

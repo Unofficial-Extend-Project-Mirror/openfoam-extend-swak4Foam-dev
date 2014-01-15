@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 07 Mar 2013 00:09:17 +0100
+Subject: Re: Add missing tensor functionality (eigenvalues etc)
+Message-Id: <c7bb072968b37c39-f08a277880ec24f3-artemis@bgs-cool-greybook.local>
+References: <c7bb072968b37c39-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <c7bb072968b37c39-0-artemis@bgs-cool-greybook.local>
+
+Impleemnted for fields. For other data structures when time

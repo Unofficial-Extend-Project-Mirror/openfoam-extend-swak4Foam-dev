@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,7 +37,10 @@ SourceFiles
     FaceZoneValueExpressionDriverI.H
     FaceZoneValueExpressionDriver.C
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef FaceZoneValueExpressionDriver_H
@@ -62,15 +65,31 @@ class FaceZoneValueExpressionDriver
 :
     public SubsetValueExpressionDriver
 {
+    static word driverName_;
+
     // Private data
     const faceZone &faceZone_;
 
     // Private Member Functions
 
+protected:
+    //- weights of the entries if it is not a point field
+
+    //- parametert size is the expected size of the weight field and
+    //- will be used to determine whether this is correct.
+    virtual tmp<scalarField> weightsNonPoint(
+        label size
+    ) const;
+
 public:
 
      //- Runtime type information
     TypeName("FaceZoneValueExpressionDriver");
+
+    //- entity this driver operates on
+    typedef faceZone EntityType;
+
+    static const word &driverName() { return driverName_; }
 
    // Constructors
 
@@ -80,13 +99,13 @@ public:
         bool autoInterpolate=false,
         bool warnAutoInterpolate=true
     );
-    
+
     //- Construct from a dictionary
     FaceZoneValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
-    
+
     //- Construct from an id
     FaceZoneValueExpressionDriver(const word& id,const fvMesh&mesh);
-    
+
     //- Copy construct
     FaceZoneValueExpressionDriver(const faceZone &,const FaceZoneValueExpressionDriver&);
 
@@ -97,34 +116,44 @@ public:
 
     // Member Functions
 
-    virtual vectorField *makePositionField();
+    virtual tmp<vectorField> makePositionField() const;
 
-    virtual scalarField *makeFaceAreaMagField();
+    virtual tmp<scalarField> makeFaceAreaMagField() const;
 
-    virtual scalarField *makeCellVolumeField();
+    virtual tmp<scalarField> makeCellVolumeField() const;
 
-    //     virtual vectorField *makePointField()=0;
+    //     virtual tmp<vectorField> makePointField()=0;
 
-    virtual scalarField *makeFaceFlipField();
+    virtual tmp<scalarField> makeFaceFlipField() const;
 
-    virtual vectorField *makeFaceNormalField();
+    virtual tmp<vectorField> makeFaceNormalField() const;
 
-    virtual vectorField *makeFaceAreaField();
+    virtual tmp<vectorField> makeFaceAreaField() const;
 
 //     template<class Type>
-//     Field<Type> *getField(const string &name);
+//     tmp<Field<Type>> getField(const string &name);
 
     virtual bool isCell() { return false; }
 
-    virtual Field<scalar> *getScalarField(const string &name,bool oldTime=false);
+    virtual tmp<Field<scalar> > getScalarField(
+        const word &name,bool oldTime=false
+    );
 
-    virtual Field<vector> *getVectorField(const string &name,bool oldTime=false);
+    virtual tmp<Field<vector> > getVectorField(
+        const word &name,bool oldTime=false
+    );
 
-    virtual Field<tensor> *getTensorField(const string &name,bool oldTime=false);
+    virtual tmp<Field<tensor> > getTensorField(
+        const word &name,bool oldTime=false
+    );
 
-    virtual Field<symmTensor> *getSymmTensorField(const string &name,bool oldTime=false);
+    virtual tmp<Field<symmTensor> > getSymmTensorField(
+        const word &name,bool oldTime=false
+    );
 
-    virtual Field<sphericalTensor> *getSphericalTensorField(const string &name,bool oldTime=false);
+    virtual tmp<Field<sphericalTensor> > getSphericalTensorField(
+        const word &name,bool oldTime=false
+    );
 
     // Handling the parser
     //    void parse(const std::string& f);
@@ -136,10 +165,20 @@ public:
     inline virtual const fvMesh &mesh() const;
 
 //     template<class Type>
-//     virtual Field<Type> *toFace(const Field<Type> &)=0;
+//     virtual tmp<Field<Type> > toFace(const Field<Type> &)=0;
 
 //     template<class Type>
-//     virtual Field<Type> *toPoint(const Field<Type> &)=0;
+//     virtual tmp<Field<Type> > toPoint(const Field<Type> &)=0;
+
+    //- return a new plugin-function
+    virtual autoPtr<CommonPluginFunction> newPluginFunction(
+        const word &name
+    );
+
+    //- tests for a plugin-function
+    virtual bool existsPluginFunction(
+        const word &name
+    );
 };
 
 

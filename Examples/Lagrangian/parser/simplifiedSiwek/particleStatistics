@@ -1,0 +1,76 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// just for testing a problem with surfaceFields that become variables
+
+positions {
+    valueType cloud;
+    cloudName coalCloud1;
+    expression "pos()";
+    //    expression "phiSq";
+    accumulations (
+        min
+        max
+        average
+        median
+    );
+}
+
+temperature {
+    $positions;
+    expression "T";
+}
+
+turbulenceDifference {
+    $positions;
+    expression "mag(U-UTurb)";
+}
+
+gasDifference {
+    $positions;
+    expression "mag(U-fluidPhase(U))";
+    interpolationSchemes {
+        U cell;
+    }
+}
+
+diameter {
+    $positions;
+    expression "d";
+}
+
+mass {
+    $positions;
+    expression "rho*4*pi/3*pow(d/2,3)";
+}
+
+gas {
+    $positions;
+    expression "Ygas";
+}
+
+liquid {
+    $positions;
+    expression "Yliquid";
+}
+
+solid {
+    $positions;
+    expression "Ysolid";
+}
+
+// ************************************************************************* //

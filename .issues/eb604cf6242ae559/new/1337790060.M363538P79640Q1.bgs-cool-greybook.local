@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 23 May 2012 18:17:18 +0200
+State: fixed
+Subject: Plugin-system for creating pseudo-fields
+Message-Id: <eb604cf6242ae559-0-artemis@bgs-cool-greybook.local>
+
+The idea would be to for instance specify a library =meshInfo= that
+"defines" pseudoFields like =nonOrtho= to allow access to the
+non-orthogonality engine of =checkMesh=. Other applications would be
+accessing the turbulence-properties ...

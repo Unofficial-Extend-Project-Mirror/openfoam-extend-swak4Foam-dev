@@ -15,6 +15,8 @@ darwin*Debug
 
 lnInclude
 
+.vagrant
+
 GTAGS
 GPATH
 GRTAGS
@@ -30,5 +32,6 @@ debian/rules
 debian/control
 
 swakConfiguration
+foamVersionThisIsCompiledFor
 
 Libraries/swak4FoamParsers/foamVersion4swak.H

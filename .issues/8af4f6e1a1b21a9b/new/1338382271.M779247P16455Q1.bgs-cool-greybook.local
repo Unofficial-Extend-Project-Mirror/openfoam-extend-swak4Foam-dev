@@ -1,0 +1,21 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 30 May 2012 14:45:16 +0200
+State: fixed
+Subject: Indicator function for location of sampled surfaces
+Message-Id: <8af4f6e1a1b21a9b-0-artemis@bgs-cool-greybook.local>
+
+Function like 
+
+surface(surfName)
+
+that writes 1 into the cells touched by the surface surfName. Or 
+
+relativeSurface(surfName)
+
+that gives the surface divided by the cellVolume. Or (if there is a
+function for that in OF)
+
+surfaceDistance(surfName) that gives the distance to the surface
+
+Maybe implement them in a plugin when feature eb604cf6242ae559
+(Plugin-system for creating pseudo-fields) is being added

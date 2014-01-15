@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 28 Nov 2012 00:02:11 +0100
+Subject: Re: Unset value in ExpressionResult makes weird error messages
+Message-Id: <d2d1a5813f7c8ffd-baf908b0cddcd47b-artemis@bgs-cool-greybook.local>
+References: <d2d1a5813f7c8ffd-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <d2d1a5813f7c8ffd-0-artemis@bgs-cool-greybook.local>
+
+First part: making sure that a NULL-Ptr is never used to create a tmp

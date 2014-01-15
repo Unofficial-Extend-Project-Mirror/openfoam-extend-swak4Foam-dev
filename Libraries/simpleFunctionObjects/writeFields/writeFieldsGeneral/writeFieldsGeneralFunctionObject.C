@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "writeFieldsGeneralFunctionObject.H"
@@ -59,17 +68,19 @@ bool writeFieldsGeneralFunctionObject::start()
     return true;
 }
 
-bool writeFieldsGeneralFunctionObject::outputTime()
-{
-    return (
-        time().outputTime()
-        &&
-        time().time().value()>=after());
-}
+// bool writeFieldsGeneralFunctionObject::outputTime()
+// {
+//     return (
+//         time().outputTime()
+//         &&
+//         time().time().value()>=after());
+// }
 
 
 void writeFieldsGeneralFunctionObject::write()
 {
+    label totalCnt=0;
+
     forAll(fieldNames_,i) {
         const word &name=fieldNames_[i];
         label cnt=0;
@@ -88,14 +99,17 @@ void writeFieldsGeneralFunctionObject::write()
 
         if(cnt>1) {
             WarningIn("writeFieldsGeneralFunctionObject::write()")
-                << " More than one (" << cnt 
+                << " More than one (" << cnt
                     << ") fields are known by the name " << name << endl;
         } else if(cnt<0) {
             WarningIn("writeFieldsGeneralFunctionObject::write()")
                 << " No field with the name " << name
                     << " found" << endl;
-        }                
+        } else {
+            totalCnt++;
+        }
     }
+    Info << name() << " triggered writing of " << totalCnt << " fields" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

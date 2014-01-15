@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "swakExpressionFunctionObject.H"
@@ -56,13 +65,18 @@ swakExpressionFunctionObject::swakExpressionFunctionObject
 :
     timelineFunctionObject(name,t,dict),
     expression_(dict.lookup("expression")),
-    accumulations_(dict.lookup("accumulations")),
+    maskExpression_(dict.lookupOrDefault<string>("mask","")),
+    accumulations_(
+        NumericAccumulationNamedEnum::readAccumulations(
+            dict,"accumulations"
+        )
+    ),
     driver_(
         CommonValueExpressionDriver::New(
             dict,
             refCast<const fvMesh>(obr_)
         )
-    ) 
+    )
 {
     driver_->createWriterAndRead(name+"_"+type());
 }
@@ -84,7 +98,9 @@ stringList swakExpressionFunctionObject::columnNames()
     stringList result(accumulations_.size());
 
     forAll(accumulations_,i) {
-        result[i]=accumulations_[i];
+        result[i]=NumericAccumulationNamedEnum::toString(
+            accumulations_[i]
+        );
     }
 
     return result;
@@ -96,10 +112,10 @@ void swakExpressionFunctionObject::write()
     if(verbose()) {
         Info << "Expression " << name() << " : ";
     }
-    
+
     driver_->clearVariables();
     driver_->parse(expression_);
-    word rType=driver_->getResultType();
+    word rType=driver_->CommonValueExpressionDriver::getResultType();
 
     if(rType==pTraits<scalar>::typeName) {
         writeTheData<scalar>(driver_());
@@ -113,10 +129,10 @@ void swakExpressionFunctionObject::write()
         writeTheData<sphericalTensor>(driver_());
     } else {
         WarningIn("swakExpressionFunctionObject::write()")
-            << "Don't know how to handle type " << rType 
+            << "Don't know how to handle type " << rType
                 << endl;
     }
-    
+
     if(verbose()) {
         Info << endl;
     }

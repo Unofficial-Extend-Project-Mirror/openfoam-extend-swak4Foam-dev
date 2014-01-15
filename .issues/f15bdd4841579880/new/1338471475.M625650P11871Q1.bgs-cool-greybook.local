@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 31 May 2012 15:34:32 +0200
+State: fixed
+Subject: Incorporate in the usual sources present in 2.1
+Message-Id: <f15bdd4841579880-0-artemis@bgs-cool-greybook.local>
+
+Generate subclasses of =basicSource= that allow swak-expressions

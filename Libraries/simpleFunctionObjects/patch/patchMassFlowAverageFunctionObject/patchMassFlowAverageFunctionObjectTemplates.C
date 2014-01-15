@@ -22,6 +22,11 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2010 Oliver Borm (oli.borm@web.de)
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchMassFlowAverageFunctionObject.H"
@@ -69,12 +74,12 @@ Field<T> patchMassFlowAverageFunctionObject::average(const word& fieldName,T uns
     }
 
     if(verbose()) {
-        Info<< regionString() 
+        Info<< regionString()
             << " Mass-Flow-Weighted Averages of " << fieldName << " :";
 
         forAll(patchNames_, patchI)
         {
-            Info << "  " << patchNames_[patchI] << " = " 
+            Info << "  " << patchNames_[patchI] << " = "
                 << vals[patchI];
         }
 

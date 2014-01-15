@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -41,62 +44,55 @@ License
 #include <cassert>
 
 namespace Foam {
-    label SampledSurfaceValueExpressionDriver::size() const
-    {
-        return theSurface_.faces().size();
-    }
-
-    label SampledSurfaceValueExpressionDriver::pointSize() const
-    {
-        return theSurface_.points().size();
-    }
-
-    const fvMesh &SampledSurfaceValueExpressionDriver::mesh() const
-    {
-        //        return dynamicCast<const fvMesh&>(faceZone_.zoneMesh().mesh()); // doesn't work with gcc 4.2
-        return dynamic_cast<const fvMesh&>(theSurface_.mesh());
-    }
-
     template<class Type,class volField,class surfField>
-    Field<Type> *SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(
+    tmp<Field<Type> >
+    SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(
         const word &name,
         bool oldTime
     )
     {
-        if(this->variables_.found(name)) {
-            return this->variables_[name].getResult<Type>(true).ptr();
+        if(
+            this->hasVariable(name)
+            &&
+            this->variable(name).valueType()==pTraits<Type>::typeName
+        ) {
+            return this->variable(name).getResult<Type>(true);
         }
-        Field<Type> *result=NULL;
+        autoPtr<Field<Type> > result;
 
         if(
-            this->searchInMemory() 
-            && 
+            this->searchInMemory()
+            &&
             this->mesh().foundObject<volField>(name)
         ) {
             if(interpolate_) {
                 autoPtr<interpolation<Type> > inter(
                     interpolation<Type>::New(
                         interpolationType_,
-                        ( 
-                            !oldTime ?
-                            this->mesh().lookupObject<volField>(name) :
-                            this->mesh().lookupObject<volField>(name).oldTime()
-                        ) 
-                    )
-                );
-                
-                result=new Field<Type>(
-                    this->theSurface_.interpolate(
-                        inter()
-                    )
-                );
-            } else {
-                result=new Field<Type>(
-                    this->theSurface_.sample(
                         (
                             !oldTime ?
                             this->mesh().lookupObject<volField>(name) :
                             this->mesh().lookupObject<volField>(name).oldTime()
+                        )
+                    )
+                );
+
+                result.set(
+                    new Field<Type>(
+                        this->theSurface_.interpolate(
+                            inter()
+                        )
+                    )
+                );
+            } else {
+                result.set(
+                    new Field<Type>(
+                        this->theSurface_.sample(
+                            (
+                                !oldTime ?
+                                this->mesh().lookupObject<volField>(name) :
+                                this->mesh().lookupObject<volField>(name).oldTime()
+                            )
                         )
                     )
                 );
@@ -119,33 +115,46 @@ namespace Foam {
                         )
                     )
                 );
-                
-                result=new Field<Type>(
-                    this->theSurface_.interpolate(
-                        inter()
+
+                result.set(
+                    new Field<Type>(
+                        this->theSurface_.interpolate(
+                            inter()
+                        )
                     )
                 );
             } else {
-                result=new Field<Type>(
-                    this->theSurface_.sample(
-                        (
-                            !oldTime ?
-                            f() :
-                            f->oldTime()
+                result.set(
+                    new Field<Type>(
+                        this->theSurface_.sample(
+                            (
+                                !oldTime ?
+                                f() :
+                                f->oldTime()
+                            )
                         )
                     )
                 );
             }
         }
 
-        if(result==NULL) {
+        if(!result.valid()) {
             FatalErrorIn("SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal(const word &name)")
-                << "No valid result" 
+                << "No valid result"
                     << endl
                     << exit(FatalError);
         }
 
-        return result;
+        if(debug) {
+            Pout << "SampledSurfaceValueExpressionDriver::sampleOrInterpolateInternal()"
+                << "Type: " << pTraits<Type>::typeName
+                << " name: " << name
+                << " size: " << this->size() << " result: "
+                << result().size()
+                << endl;
+        }
+
+        return tmp<Field<Type> >(result.ptr());
     }
 
 }

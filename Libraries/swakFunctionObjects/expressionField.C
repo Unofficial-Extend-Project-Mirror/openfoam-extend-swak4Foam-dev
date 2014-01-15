@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id:  $ 
 \*---------------------------------------------------------------------------*/
 
 #include "expressionField.H"
@@ -53,7 +62,7 @@ Foam::expressionField::expressionField
                 << endl;
     }
     read(dict);
-    execute();
+    write();
 }
 
 Foam::expressionField::~expressionField()
@@ -79,7 +88,15 @@ void Foam::expressionField::storeField(
         );
     } else {
         //        dynamicCast<T &>(field_())==data; // doesn't work with gcc 4.2
-        dynamic_cast<T &>(field_())==data; 
+        dynamic_cast<T &>(field_())==data;
+    }
+
+    if(
+        this->autowrite_
+        &&
+        this->obr_.time().outputTime()
+    ) {
+        field_->write();
     }
 }
 
@@ -91,7 +108,7 @@ void Foam::expressionField::read(const dictionary& dict)
         autowrite_=Switch(dict.lookup("autowrite"));
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
+
         driver_.set(
             new FieldValueExpressionDriver(
                 mesh.time().timeName(),
@@ -110,14 +127,23 @@ void Foam::expressionField::read(const dictionary& dict)
     }
 }
 
-void Foam::expressionField::execute()
+void Foam::expressionField::write()
 {
     if(active_) {
+        Info << "Creating expression field " << name_ << " ..." << flush;
+
         FieldValueExpressionDriver &driver=driver_();
+
+        bool oldDimsetDebug=dimensionSet::debug;
+        dimensionSet::debug=false;
 
         driver.clearVariables();
 
         driver.parse(expression_);
+
+        dimensionSet::debug=oldDimsetDebug;
+
+        Info << " type:" << driver.getResultType() << endl;
 
         if(driver.resultIsTyp<volVectorField>()) {
             storeField(
@@ -181,7 +207,7 @@ void Foam::expressionField::execute()
             );
         } else {
             WarningIn("Foam::expressionField::execute()")
-                << "Expression '" << expression_ 
+                << "Expression '" << expression_
                     << "' evaluated to an unsupported type "
                     << driver.typ()
                     << endl;
@@ -194,9 +220,10 @@ void Foam::expressionField::execute()
 
 void Foam::expressionField::end()
 {
+    execute();
 }
 
-void Foam::expressionField::write()
+void Foam::expressionField::execute()
 {
 }
 

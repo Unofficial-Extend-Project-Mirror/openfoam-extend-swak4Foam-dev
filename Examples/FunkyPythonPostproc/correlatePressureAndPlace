@@ -1,0 +1,117 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Test the python-postprocessing utility
+
+preloadFields (
+    p
+    U
+);
+
+python {
+    startFile "correlatePressureAndPlaceStart.py";
+    executeFile "correlatePressureAndPlaceExecute.py";
+    endFile "correlatePressureAndPlaceEnd.py";
+    //    startCode "import sys;print sys.path";
+    //    startCode "print dir()";
+    //    startCode "import scipy.stats";
+    // endCode "import IPython;IPython.embed(header='OpenFOAM',config='pylab')";
+    // executeCode $endCode;
+    //    endCode "print positions.shape";
+    //     executeCode $endCode;
+
+    swakToPythonNamespaces (
+        fieldData
+    );
+
+    useNumpy true;
+    useIPython true;
+    //    useIPython false;
+
+    //    interactiveAfterExecute true;
+    interactiveAfterException true;
+
+    importLibs {
+        matplotlib;
+        stats scipy.stats;
+    }
+
+    parallelMasterOnly false;
+    isParallelized false;
+}
+
+functions {
+    gradField {
+        type expressionField;
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName gradP;
+        expression "grad(p)";
+        autowrite true;
+    }
+    toGlobalNamespace {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+
+        valueType internalField;
+        toGlobalNamespace fieldData;
+        toGlobalVariables (
+            positions
+            velocity
+            pressure
+            gradPressure
+        );
+        variables (
+            "velocity=U;"
+            "positions=pos();"
+            "pressure=p;"
+            "gradPressure=gradP;"
+        );
+    }
+    checkFields {
+        type volumeMinMax;
+        verbose true;
+        outputControlMode timeStep;
+        outputInterval 1;
+        fields (
+            p
+            U
+        );
+    }
+    testSecondPython {
+        type pythonIntegration;
+        //        startCode "print 'Start';import scipy.stats;print dir()";
+        startCode "print 'Start'";
+        executeCode $startCode;
+        endCode $startCode;
+        useNumpy false;
+        useIPython false;
+        interactiveAfterExecute false;
+        importLibs {
+            stats scipy.stats;
+        }
+        parallelMasterOnly false;
+        isParallelized false;
+    }
+}
+
+libs (
+    "libswakFunctionObjects.so"
+);
+
+// ************************************************************************* //

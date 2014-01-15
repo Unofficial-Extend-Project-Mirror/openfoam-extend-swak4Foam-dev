@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 05 Mar 2013 23:10:56 +0100
+State: new
+Subject: functionObject that reduces specifications for funkyDoCalc
+Message-Id: <fb8e7e362dd8b21f-0-artemis@bgs-cool-greybook.local>
+
+A function object that reads the specification of funkyDoCalc and does
+the same calculation. Should ease code-reuse

@@ -1,5 +1,10 @@
-//  OF-extend Revision: $Id$ 
 /*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
@@ -23,6 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Contributors/Copyright:
+    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchFunctionObject.H"
@@ -30,6 +39,8 @@ License
 
 #include "volFields.H"
 #include "OStringStream.H"
+#include "wordReList.H"
+#include "stringListOps.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -58,19 +69,35 @@ patchFunctionObject::patchFunctionObject
 
 bool patchFunctionObject::start()
 {
-    patchNames_ = wordList(dict_.lookup("patches"));
+    wordList oldPatchNames(patchNames_);
+    wordReList newPatches(dict_.lookup("patches"));
+    HashSet<word> patchNamesNew;
 
+    const fvMesh &mesh=refCast<const fvMesh>(obr_);
+    wordList allPatches(mesh.boundaryMesh().names());
+    forAll(newPatches,i) {
+        labelList IDs=findStrings(newPatches[i],allPatches);
+        forAll(IDs,j) {
+            patchNamesNew.insert(allPatches[IDs[j]]);
+        }
+    }
+
+    patchNames_=patchNamesNew.toc();
+
+    // the patches changed
+    if(patchNames_!=oldPatchNames) {
+        closeAllFiles();
+    }
     timelineFunctionObject::start();
 
     patchIndizes_.setSize(patchNames_.size());
 
-    const fvMesh &mesh=refCast<const fvMesh>(obr_);
     forAll(patchNames_,i) {
         const word &name=patchNames_[i];
         patchIndizes_[i]=mesh.boundaryMesh().findPatchID(name);
         if(patchIndizes_[i]<0) {
-            WarningIn("patchFunctionObject::start()") 
-                << " Patch " << name << " does not exist in patches: " 
+            WarningIn("patchFunctionObject::start()")
+                << " Patch " << name << " does not exist in patches: "
                     << mesh.boundaryMesh().names() << endl;
         }
     }

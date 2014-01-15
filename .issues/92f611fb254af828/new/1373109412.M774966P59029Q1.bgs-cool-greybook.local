@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 06 Jul 2013 13:16:02 +0200
+State: fixed
+Subject: Add implicit source term to the PDEs
+Message-Id: <92f611fb254af828-0-artemis@bgs-cool-greybook.local>
+
+That would allow f*(T-Tref) as a source

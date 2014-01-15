@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 10 Jan 2013 23:58:49 +0100
+State: fixed
+Subject: Add function objects that allow manipulation of Time
+Message-Id: <841d8d15d420b87e-0-artemis@bgs-cool-greybook.local>
+
+This would open the possibility to shoot yourself into the foot in
+many ways, but could make it possible to implement a time-step
+modification without changing the solver

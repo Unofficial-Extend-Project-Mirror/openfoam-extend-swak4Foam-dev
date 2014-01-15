@@ -1,0 +1,18 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 06 Mar 2013 17:20:24 +0100
+State: fixed
+Subject: Automatically writing surfaces from the registry
+Message-Id: <fd2b30bdc70a8de9-0-artemis@bgs-cool-greybook.local>
+
+Make the registry an regIOobject. Write method goes through the list
+and writes every surface that wants to be written.
+
+Surface is written if it specifies a flag =autoWrite= and a
+=surfaceFormat=
+
+Also add flag =writeAtCreation= to write surfaces before running
+starts
+
+This could obsolete issue f9a62466ecdfab01 (Function object to write sampledSurfaces as VTK)
+
+Same for sampled sets?

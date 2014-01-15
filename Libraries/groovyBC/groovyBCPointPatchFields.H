@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$ 
+Contributors/Copyright:
+    2010, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCPointPatchFields_H
@@ -53,6 +56,12 @@ namespace Foam
     typedef groovyBCPointPatchField<sphericalTensor> groovyBCPointPatchSphericalTensorField;
     typedef groovyBCPointPatchField<symmTensor> groovyBCPointPatchSymmTensorField;
     typedef groovyBCPointPatchField<tensor> groovyBCPointPatchTensorField;
+
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+    typedef groovyBCPointPatchField<symmTensor4thOrder> groovyBCPointPatchSymmTensor4thOrderField;
+    typedef groovyBCPointPatchField<diagTensor> groovyBCPointPatchDiagTensorField;
+#endif
+
 #else
 makePointPatchFieldTypedefs(groovyBC);
 #endif

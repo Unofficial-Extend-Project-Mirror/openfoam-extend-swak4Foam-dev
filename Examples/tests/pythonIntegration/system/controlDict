@@ -27,9 +27,9 @@ endTime         0.5;
 
 deltaT          0.005;
 
-writeControl    timeStep;
+writeControl    adjustableRunTime;
 
-writeInterval   20;
+writeInterval   0.1;
 
 purgeWrite      0;
 
@@ -45,16 +45,21 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-functions (
+functions {
     pythonSimple
     {
         type pythonIntegration;
+
+        //        debugPythonWrapper 1; // switching on
+
         startCode "print 'Starting';a=0; print dir()";
         executeCode "a+=1; print 'a:',a";
         endCode "print 'Never been here'";
         //        tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
+        useIPython true;
     }
     pythonOutput
     {
@@ -65,6 +70,8 @@ functions (
         endCode "print 'Never been here'";
         //        tolerateExceptions true;
         parallelMasterOnly true;
+        useNumpy false;
+        useIPython true;
     }
     pythonPaths
     {
@@ -75,6 +82,8 @@ functions (
 //        tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
+        useIPython true;
     }
     pythonPyFoam
     {
@@ -85,6 +94,8 @@ functions (
         endCode "print 'Never been here'";
         //        tolerateExceptions true;
         parallelMasterOnly true;
+        useNumpy false;
+        useIPython true;
     }
     pythonPythonFlu
     {
@@ -95,12 +106,16 @@ functions (
         tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
+        useIPython true;
     }
     onlyWithFlu {
         type executeIfPython;
         readDuringConstruction false;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
+        useIPython true;
 
         conditionFile "$FOAM_CASE/checkPythonFlu.py";
 
@@ -114,6 +129,7 @@ functions (
                 //        tolerateExceptions true;
                 parallelMasterOnly false;
                 isParallelized true;
+                useNumpy false;
             }
         }
     }
@@ -122,6 +138,8 @@ functions (
         readDuringConstruction false;
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
+        useIPython true;
 
         conditionFile "$FOAM_CASE/checkMpi4Py.py";
 
@@ -135,6 +153,7 @@ functions (
                 //        tolerateExceptions true;
                 parallelMasterOnly false;
                 isParallelized true;
+                useNumpy false;
             }
         }
     }
@@ -158,7 +177,6 @@ functions (
         valueType vector;
         value (1 2 3);
     }
-
     pythonGetGlobals
     {
         type pythonIntegration;
@@ -171,6 +189,21 @@ functions (
         pythonToSwakVariables (  newTime newVector );
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
+        useIPython true;
+    }
+    pythonGetGlobalsScatter
+    {
+        $pythonGetGlobals;
+        parallelMasterOnly true;
+        pythonToSwakNamespace testPythonScatter;
+    }
+    pythonGetGlobalsScatterNumpy
+    {
+        $pythonGetGlobals;
+        parallelMasterOnly true;
+        pythonToSwakNamespace testPythonScatterNumpy;
+        useNumpy true;
     }
     pythonGetPyFoamGlobals
     {
@@ -184,12 +217,105 @@ functions (
         pythonToSwakVariables ( foamVector );
         parallelMasterOnly false;
         isParallelized true;
+        useNumpy false;
+        useIPython true;
     }
-);
+    startupFacePositions {
+        $addVector;
+        name facePos;
+        value (0 0 0);
+    }
+    calcNonUniformValues {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+        valueType patch;
+        patchName fixedWalls;
+        toGlobalNamespace testPythonFields;
+        toGlobalVariables (
+            facePos
+            faceArea
+        );
+        variables (
+            "facePos=pos();"
+            "faceArea=area();"
+        );
+        noReset true;
+    }
+    pythonGetNonUniformGetGlobals
+    {
+        type pythonIntegration;
+        isParallelized true;
+        parallelMasterOnly false;
+        useNumpy true;
+        useIPython true;
+        swakToPythonNamespaces (
+            testPython
+            testPythonFields
+        );
+        startCode "print facePos;total=numpy.zeros(facePos.shape)";
+        executeCode "total=total+facePos;print 'Ratio:',total.max()/facePos.max();faceArea[::2]=-faceArea[::2];print faceArea.shape";
+        endCode "";
+        //        interactiveAfterExecute true;
+        pythonToSwakNamespace variablesFromNumpy;
+        pythonToSwakVariables (
+            total
+        );
+    }
+    pythonGetNonUniformSetGlobals
+    {
+        type pythonIntegration;
+        isParallelized true;
+        useNumpy true;
+        useIPython true;
+        parallelMasterOnly false;
+        swakToPythonNamespaces (
+            testPython
+            testPythonFields
+        );
+        executeCode "randomVector=apply(numpy.random.randn,facePos.shape);randomField=numpy.random.randn(facePos.shape[0]);normalVector=(1,2,3);normalScalar=42;print 'Mean facepos.x',facePos.x.mean();numpy.savetxt(dataFile('randomField'),randomField)";
+        startCode $executeCode;
+        endCode "";
+        writeCode "print 'Write';numpy.save(timeDataFile('randomVector'),randomVector)";
+
+        pythonToSwakNamespace variablesFromNumpy;
+        pythonToSwakVariables (
+            randomField
+            randomVector
+            normalVector
+            normalScalar
+        );
+        //        interactiveAfterExecute true;
+    }
+    pythonDeltaT {
+        type setDeltaTWithPython;
+        parallelMasterOnly true;
+        deltaTCode "import math;return 0.005*(1+0.5*math.sin(20*runTime))";
+    }
+    pythonEndTime {
+        type setEndTimeWithPython;
+        parallelMasterOnly false;
+        isParallelized true;
+        endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
+    }
+    pythonDynamic {
+        type dynamicFunctionObjectListProxy;
+        readDuringConstruction true;
+        dictionaryProvider stdoutFromPythonScriptProvider;
+        parallelMasterOnly true;
+        scriptFile "$FOAM_CASE/printFO.py";
+    }
+    pythonDynamic2 {
+        $pythonDynamic;
+        parallelMasterOnly false;
+        isParallelized true;
+    }
+}
 
 libs (
     "libgroovyBC.so"
-    "libpythonIntegration.so"
+    "libswakPythonIntegration.so"
+    "libswakPythonIntegrationCluster.so"
     "libswakFunctionObjects.so"
 );
 

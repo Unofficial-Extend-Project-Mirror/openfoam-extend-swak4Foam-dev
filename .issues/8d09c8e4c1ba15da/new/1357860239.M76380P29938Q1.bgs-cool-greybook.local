@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 11 Jan 2013 00:21:43 +0100
+State: new
+Subject: Boundary-condition that uses Python
+Message-Id: <8d09c8e4c1ba15da-0-artemis@bgs-cool-greybook.local>
+
+Write a boundary condition that uses a python-code to set values.
+
+The data to work with could be supplied by first evaluating variables
+and automatically injecting them into the Python-namespace
