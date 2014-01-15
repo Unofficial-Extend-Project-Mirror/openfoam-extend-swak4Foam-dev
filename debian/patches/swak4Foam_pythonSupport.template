@@ -1,7 +1,7 @@
 Description: add support for python
- If you like bureaucrcity then you'll love the Debian packaging system 
+ If you like bureaucracity then you'll love the Debian packaging system 
  .
- swak4foam-openfoam220 (0.2.3-1~ppa1~precise1) precise; urgency=low
+ swak4foam-%(ofpkg)s (%(fullvers)s) precise; urgency=low
  .
    * New package to test how it works
 Author: Bernhard F.W.Gschaider <bgschaid@ice-sf.at>
@@ -20,7 +20,7 @@ Reviewed-By: <name and email of someone who approved the patch>
 Last-Update: <YYYY-MM-DD>
 
 --- /dev/null
-+++ swak4foam-openfoam220-0.2.3/swakConfiguration
++++ swak4foam-%(ofpkg)s-%(vers)s/swakConfiguration
 @@ -0,0 +1,2 @@
-+export SWAK_PYTHON_INCLUDE="-I/usr/include/python2.7"
-+export SWAK_PYTHON_LINK="-lpython2.7"
++export SWAK_PYTHON_INCLUDE="-I/usr/include/python%(pythonver)s"
++export SWAK_PYTHON_LINK="-lpython%(pythonver)s"
