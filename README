@@ -2274,6 +2274,12 @@ S_{expl} + S_{impl} T
 
      Better solution to let the =Allwmake=-script generate the headers
      before the regular =wmake= starts.
+**** Updates to Debian-packaging
+     Several minor additions that should make packaging easier
+     - Package version now gets the correct distro name (at least on Ubuntu)
+     - Packaging picks up the correct python-version (2.7 or 2.6
+       ... does anyone use older?)
+     - Packaging process leaves the =swakVersion.H= alone
 *** Documentation
     Important enhancements of the documentation in the
     =Documentations=-folder

@@ -30,25 +30,55 @@ if vals["ofpkg"]=="":
 
 vals["ofproject"]=environ["WM_PROJECT_DIR"][1:]
 
+codeName="unknownDistro"
+
+with open("/etc/lsb-release") as f:
+    for l in f.readlines():
+        if l.find("DISTRIB_CODENAME")==0:
+            codeName=l[l.find("=")+1:].strip()
+
+vals["distro"]=codeName
+
 print "Preparing with vals",vals
 
-for f in ["control","rules","changelog","swak4foam-ofpkg.install","swak4foam-ofpkg.examples","swak4foam-ofpkg-dev.install"]:
-    print "Doing",f
-    inF=open(f+".template")
-    of=open(f.replace("ofpkg",vals["ofpkg"]),"w")
-    for l in inF.readlines():
-        of.write(l % vals)
+def updateTemplates(files,vals):
+    for f in files:
+        print "Doing",f
+        inF=open(f+".template")
+        of=open(f.replace("ofpkg",vals["ofpkg"]),"w")
+        for l in inF.readlines():
+            of.write(l % vals)
+
+pyVersion=None
+for pyVer in ["2.7","2.6"]:
+    if path.exists("/usr/include/python"+pyVer):
+        pyVersion=pyVer
+        break
+
+vals["pythonver"]=pyVersion
+
+updateTemplates(["control","rules","changelog",
+                 "swak4foam-ofpkg.install","swak4foam-ofpkg.examples",
+                 "swak4foam-ofpkg-dev.install"],
+                vals)
 
 ver=None
+fullver=None
 history=open("changelog")
-versline=re.compile("swak4foam-%(ofpkg)s\s+\((.+)-.+\).+" % vals)
+versline=re.compile("swak4foam-%(ofpkg)s\s+\(((.+)-.+)\).+" % vals)
 for l in history.readlines():
     m=versline.match(l)
     if m:
-        ver=m.group(1)
+        ver=m.group(2)
+        fullver=m.group(1)
         break
 
 vals["vers"]=ver
+vals["fullvers"]=fullver
+
+updateTemplates(["patches/swak4Foam_pythonSupport"],
+                vals)
+
 tarname=path.join(path.pardir,
                   path.pardir,
                   "swak4foam-%(ofpkg)s_%(vers)s.orig.tar.gz" % vals)

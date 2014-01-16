@@ -2,7 +2,7 @@ Source: swak4foam-%(ofpkg)s
 Priority: extra
 Maintainer: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 Build-Depends: debhelper (>= 7.0.50~), devscripts, cdbs,
-	 bison, flex, %(ofpkgdevComma)s binutils-dev,
+	 bison, flex, %(ofpkgdevComma)s binutils-dev, python-dev
 Standards-Version: 3.9.1
 Section: libs
 Homepage: http://openfoamwiki.net/index.php/Contrib/swak4Foam
