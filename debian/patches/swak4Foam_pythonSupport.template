@@ -1,0 +1,26 @@
+Description: add support for python
+ If you like bureaucracity then you'll love the Debian packaging system 
+ .
+ swak4foam-%(ofpkg)s (%(fullvers)s) precise; urgency=low
+ .
+   * New package to test how it works
+Author: Bernhard F.W.Gschaider <bgschaid@ice-sf.at>
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- /dev/null
++++ swak4foam-%(ofpkg)s-%(vers)s/swakConfiguration
+@@ -0,0 +1,2 @@
++export SWAK_PYTHON_INCLUDE="-I/usr/include/python%(pythonver)s"
++export SWAK_PYTHON_LINK="-lpython%(pythonver)s"

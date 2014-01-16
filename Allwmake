@@ -39,8 +39,12 @@ do
     fi
 done
 
-echo "Checking swak4Foam-version and generating file"
-./maintainanceScripts/makeSwakVersionFile.py
+if [ -z $SWAK_DO_NOT_GENERATE_NEW_VERSION_FILE ]; then
+    echo "Checking swak4Foam-version and generating file"
+    ./maintainanceScripts/makeSwakVersionFile.py
+else
+    echo "Not generating new version file because SWAK_DO_NOT_GENERATE_NEW_VERSION_FILE is set"
+fi
 
 (cd Libraries; wmake all )
 
