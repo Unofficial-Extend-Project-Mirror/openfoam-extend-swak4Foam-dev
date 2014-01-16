@@ -1,4 +1,4 @@
-swak4foam-%(ofpkg)s (0.3.0-1~ppa1~lucid1) lucid; urgency=low
+swak4foam-%(ofpkg)s (0.3.0-1~ppa1~%(distro)s1) %(distro)s; urgency=low
 
   * Packaging for next release
 

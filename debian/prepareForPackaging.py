@@ -30,6 +30,15 @@ if vals["ofpkg"]=="":
 
 vals["ofproject"]=environ["WM_PROJECT_DIR"][1:]
 
+codeName="unknownDistro"
+
+with open("/etc/lsb-release") as f:
+    for l in f.readlines():
+        if l.find("DISTRIB_CODENAME")==0:
+            codeName=l[l.find("=")+1:].strip()
+
+vals["distro"]=codeName
+
 print "Preparing with vals",vals
 
 def updateTemplates(files,vals):
