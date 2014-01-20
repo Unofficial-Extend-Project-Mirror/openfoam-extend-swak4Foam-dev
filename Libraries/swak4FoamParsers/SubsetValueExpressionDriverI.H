@@ -173,12 +173,27 @@ namespace Foam {
             label cnt=0;
 
             forAllConstIter(typename Subset,sub,iter) {
-                if(!oldTime) {
-                    result()[cnt]=f[getIndexFromIterator(iter)];
+                const label index=getIndexFromIterator(iter);
+                if(index<this->mesh().nInternalFaces()) {
+                    if(!oldTime) {
+                        result()[cnt]=f[index];
+                    } else {
+                        result()[cnt]=f.oldTime()[index];
+                    }
+                    cnt++;
                 } else {
-                    result()[cnt]=f.oldTime()[getIndexFromIterator(iter)];
+                    T value;
+                    bool use;
+                    if(!oldTime) {
+                        use=getBoundaryFaceValue(f,index,value);
+                    } else {
+                        use=getBoundaryFaceValue(f.oldTime(),index,value);
+                    }
+                    if(use) {
+                        result()[cnt]=value;
+                        cnt++;
+                    }
                 }
-                cnt++;
             }
 
             assert(cnt==this->size());
@@ -193,12 +208,27 @@ namespace Foam {
             if(f.valid()) {
                 label cnt=0;
                 forAllConstIter(typename Subset,sub,iter) {
-                    if(!oldTime) {
-                        result()[cnt]=f()[getIndexFromIterator(iter)];
+                    const label index=getIndexFromIterator(iter);
+                    if(index<this->mesh().nInternalFaces()) {
+                        if(!oldTime) {
+                            result()[cnt]=f()[index];
+                        } else {
+                            result()[cnt]=f->oldTime()[index];
+                        }
+                        cnt++;
                     } else {
-                        result()[cnt]=f->oldTime()[getIndexFromIterator(iter)];
+                        T value;
+                        bool use;
+                        if(!oldTime) {
+                            use=getBoundaryFaceValue(f(),index,value);
+                        } else {
+                            use=getBoundaryFaceValue(f->oldTime(),index,value);
+                        }
+                        if(use) {
+                            result()[cnt]=value;
+                            cnt++;
+                        }
                     }
-                    cnt++;
                 }
                 done=true;
             }
@@ -243,15 +273,20 @@ namespace Foam {
                                 +
                                 (1-weights[faceI])*f.oldTime()[nei[faceI]];
                         }
+                        cnt++;
                     } else {
-                        // OK. We could also try to get the value from the original face
+                        T value;
+                        bool use;
                         if(!oldTime) {
-                            result()[cnt]=f[own[faceI]];
+                            use=getBoundaryFaceValue(f,faceI,value);
                         } else {
-                            result()[cnt]=f.oldTime()[own[faceI]];
+                            use=getBoundaryFaceValue(f.oldTime(),faceI,value);
+                        }
+                        if(use) {
+                            result()[cnt]=value;
+                            cnt++;
                         }
                     }
-                    cnt++;
                 }
 
                 assert(cnt==this->size());
@@ -281,15 +316,20 @@ namespace Foam {
                                     +
                                     (1-weights[faceI])*f->oldTime()[nei[faceI]];
                             }
+                            cnt++;
                         } else {
-                            // OK. We could also try to get the value from the original face
+                            T value;
+                            bool use;
                             if(!oldTime) {
-                                result()[cnt]=f()[own[faceI]];
+                                use=getBoundaryFaceValue(f(),faceI,value);
                             } else {
-                                result()[cnt]=f->oldTime()[own[faceI]];
+                                use=getBoundaryFaceValue(f->oldTime(),faceI,value);
+                            }
+                            if(use) {
+                                result()[cnt]=value;
+                                cnt++;
                             }
                         }
-                        cnt++;
                     }
 
                     assert(cnt==this->size());
@@ -333,6 +373,15 @@ namespace Foam {
         return result;
     }
 
+    template<class FieldType,class T>
+    bool SubsetValueExpressionDriver::getBoundaryFaceValue(
+        const FieldType &field,
+        const label index,
+        T &value
+    ) {
+        value=pTraits<T>::zero;
+        return true;
+    }
 }
 
 

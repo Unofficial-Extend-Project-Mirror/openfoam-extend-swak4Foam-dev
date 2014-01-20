@@ -87,6 +87,13 @@ class SubsetValueExpressionDriver
 
     // Private Member Functions
 
+    //- get the value of a boundary face. Return false if the value should not be used
+    template<class FieldType,class T>
+    bool getBoundaryFaceValue(
+        const FieldType &field,
+        const label index,
+        T &value);
+
 protected:
 
     // Handling the scanner
