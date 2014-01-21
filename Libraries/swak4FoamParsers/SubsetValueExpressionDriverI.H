@@ -40,6 +40,7 @@ Contributors/Copyright:
 #include "fvsPatchField.H"
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
+#include "coupledPolyPatch.H"
 
 #include <cassert>
 
@@ -173,12 +174,27 @@ namespace Foam {
             label cnt=0;
 
             forAllConstIter(typename Subset,sub,iter) {
-                if(!oldTime) {
-                    result()[cnt]=f[getIndexFromIterator(iter)];
+                const label index=getIndexFromIterator(iter);
+                if(index<this->mesh().nInternalFaces()) {
+                    if(!oldTime) {
+                        result()[cnt]=f[index];
+                    } else {
+                        result()[cnt]=f.oldTime()[index];
+                    }
+                    cnt++;
                 } else {
-                    result()[cnt]=f.oldTime()[getIndexFromIterator(iter)];
+                    T value;
+                    bool use;
+                    if(!oldTime) {
+                        use=getBoundaryFaceValue(f,index,value);
+                    } else {
+                        use=getBoundaryFaceValue(f.oldTime(),index,value);
+                    }
+                    if(use) {
+                        result()[cnt]=value;
+                        cnt++;
+                    }
                 }
-                cnt++;
             }
 
             assert(cnt==this->size());
@@ -193,14 +209,31 @@ namespace Foam {
             if(f.valid()) {
                 label cnt=0;
                 forAllConstIter(typename Subset,sub,iter) {
-                    if(!oldTime) {
-                        result()[cnt]=f()[getIndexFromIterator(iter)];
+                    const label index=getIndexFromIterator(iter);
+                    if(index<this->mesh().nInternalFaces()) {
+                        if(!oldTime) {
+                            result()[cnt]=f()[index];
+                        } else {
+                            result()[cnt]=f->oldTime()[index];
+                        }
+                        cnt++;
                     } else {
-                        result()[cnt]=f->oldTime()[getIndexFromIterator(iter)];
+                        T value;
+                        bool use;
+                        if(!oldTime) {
+                            use=getBoundaryFaceValue(f(),index,value);
+                        } else {
+                            use=getBoundaryFaceValue(f->oldTime(),index,value);
+                        }
+                        if(use) {
+                            result()[cnt]=value;
+                            cnt++;
+                        }
                     }
-                    cnt++;
                 }
                 done=true;
+
+                assert(cnt==this->size());
             }
         }
 
@@ -243,15 +276,20 @@ namespace Foam {
                                 +
                                 (1-weights[faceI])*f.oldTime()[nei[faceI]];
                         }
+                        cnt++;
                     } else {
-                        // OK. We could also try to get the value from the original face
+                        T value;
+                        bool use;
                         if(!oldTime) {
-                            result()[cnt]=f[own[faceI]];
+                            use=getBoundaryFaceValue(f,faceI,value);
                         } else {
-                            result()[cnt]=f.oldTime()[own[faceI]];
+                            use=getBoundaryFaceValue(f.oldTime(),faceI,value);
+                        }
+                        if(use) {
+                            result()[cnt]=value;
+                            cnt++;
                         }
                     }
-                    cnt++;
                 }
 
                 assert(cnt==this->size());
@@ -281,15 +319,20 @@ namespace Foam {
                                     +
                                     (1-weights[faceI])*f->oldTime()[nei[faceI]];
                             }
+                            cnt++;
                         } else {
-                            // OK. We could also try to get the value from the original face
+                            T value;
+                            bool use;
                             if(!oldTime) {
-                                result()[cnt]=f()[own[faceI]];
+                                use=getBoundaryFaceValue(f(),faceI,value);
                             } else {
-                                result()[cnt]=f->oldTime()[own[faceI]];
+                                use=getBoundaryFaceValue(f->oldTime(),faceI,value);
+                            }
+                            if(use) {
+                                result()[cnt]=value;
+                                cnt++;
                             }
                         }
-                        cnt++;
                     }
 
                     assert(cnt==this->size());
@@ -333,6 +376,110 @@ namespace Foam {
         return result;
     }
 
+    template<class Subset,class T>
+    tmp<Field<T> > SubsetValueExpressionDriver::getFromSurfaceFieldInternal(
+        const GeometricField<T,fvsPatchField,surfaceMesh> &original,
+        const Subset &sub
+    ) const
+    {
+        tmp<Field<T> > result(new Field<T>(this->size()));
+        label cnt=0;
+
+        forAllConstIter(typename Subset,sub,iter) {
+            label faceI=getIndexFromIterator(iter);
+            if(faceI<this->mesh().nInternalFaces()) {
+                result()[cnt]=original[faceI];
+                cnt++;
+            } else {
+                T value;
+                bool use;
+                use=getBoundaryFaceValue(original,faceI,value);
+                if(use) {
+                    result()[cnt]=value;
+                    cnt++;
+                }
+            }
+        }
+
+        assert(cnt==this->size());
+
+        return result;
+    }
+
+    bool SubsetValueExpressionDriver::useFaceValue(
+        const label faceI
+    ) const
+    {
+        if(faceI<this->mesh().nInternalFaces()) {
+            return true;
+        } else {
+            label patchI=this->mesh().boundaryMesh().whichPatch(faceI);
+            if(patchI<0) {
+                FatalErrorIn("SubsetValueExpressionDriver::useFaceValue")
+                    << "Can't find the correct patch for face " << faceI
+                        << endl
+                        << exit(FatalError);
+            }
+            const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
+            if(!patch.coupled()) {
+                return true;
+            } else {
+                // in 2.x this works for coupled
+                if(isA<coupledPolyPatch>(patch)) {
+                    const coupledPolyPatch &pp=dynamicCast<const coupledPolyPatch&>(
+                        patch
+                    );
+                    return pp.owner();
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    template<class FieldType,class T>
+    bool SubsetValueExpressionDriver::getBoundaryFaceValue(
+        const FieldType &field,
+        const label index,
+        T &value
+    ) const
+    {
+        value=pTraits<T>::zero;
+
+        if(index<this->mesh().nInternalFaces()) {
+            FatalErrorIn("SubsetValueExpressionDriver::getBoundaryFaceValue")
+                << "Face with index " << index << " is an internal face (<"
+                    << this->mesh().nInternalFaces() << ")"
+                    << endl
+                    << exit(FatalError);
+        }
+        label patchI=this->mesh().boundaryMesh().whichPatch(index);
+
+        if(useFaceValue(index)) {
+            const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
+            const typename FieldType::PatchFieldType &bf=
+                field.boundaryField()[patchI];
+            value=bf[patch.whichFace(index)];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    template<class Subset>
+    label SubsetValueExpressionDriver::nrValidFaces(const Subset &sub) const
+    {
+        label cnt=0;
+
+        forAllConstIter(typename Subset,sub,iter) {
+            const label faceI=getIndexFromIterator(iter);
+            if(useFaceValue(faceI)) {
+                cnt++;
+            }
+        }
+
+        return cnt;
+    }
 }
 
 

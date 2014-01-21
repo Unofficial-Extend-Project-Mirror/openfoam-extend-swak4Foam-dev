@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 21 Jan 2014 21:12:37 +0100
+State: new
+Subject: Make =pointZone= and =pointSet= work correctly in parallel
+Message-Id: <eca26929af41805e-0-artemis@bgs-cool-greybook.local>
+
+The way it was done for the faces

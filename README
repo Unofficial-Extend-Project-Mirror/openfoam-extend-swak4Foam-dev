@@ -2355,6 +2355,17 @@ S_{expl} + S_{impl} T
      warnings that messed up the output. Fixed
 **** =basicSource= working again for OF 2.1
      These were not compiled by accident. Fixed
+**** =faceZone= and =faceSet= do not correctly work on parallel runs
+     As reported in
+     http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=190
+     if a face-set or zone has faces on a processor boundary incorrect
+     values were produced.
+
+     The reason was that boundary faces are treated like internal
+     faces. Also do these faces exist on both processors. This is now
+     fixed. If the face is on a regular boundary patch the value is
+     used. If on a processor patch the value is only used if it is on
+     the owner processor.
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only

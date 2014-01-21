@@ -1,0 +1,2 @@
+faceSet planeFacesParallel new zoneToFace planeFaces
+cellSet planeFacesParallelSlaveCells new expressionToCell "(pos().x<=-0.07)"

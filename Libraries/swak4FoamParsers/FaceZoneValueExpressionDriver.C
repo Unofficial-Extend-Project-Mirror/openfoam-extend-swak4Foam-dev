@@ -213,7 +213,7 @@ FaceZoneValueExpressionDriver::getSphericalTensorField(
 
 tmp<vectorField> FaceZoneValueExpressionDriver::makePositionField() const
 {
-    return getFromFieldInternal(this->mesh().Cf(),faceZone_);
+    return getFromSurfaceFieldInternal(this->mesh().Cf(),faceZone_);
 }
 
 tmp<scalarField> FaceZoneValueExpressionDriver::makeCellVolumeField() const
@@ -235,17 +235,25 @@ tmp<scalarField> FaceZoneValueExpressionDriver::makeCellVolumeField() const
 
 tmp<scalarField> FaceZoneValueExpressionDriver::makeFaceAreaMagField() const
 {
-    return getFromFieldInternal(this->mesh().magSf(),faceZone_);
+    return getFromSurfaceFieldInternal(this->mesh().magSf(),faceZone_);
 }
 
 tmp<scalarField> FaceZoneValueExpressionDriver::makeFaceFlipField() const
 {
-    tmp<scalarField> result(new scalarField(faceZone_.size()));
+    tmp<scalarField> result(new scalarField(this->size()));
     const boolList &flip=faceZone_.flipMap();
-    forAll(flip,i)
-    {
-        result()[i]= (flip[i] ? -1 : 1);
+
+    label cnt=0;
+
+    forAll(faceZone_,i) {
+        const label faceI=faceZone_[i];
+        if(useFaceValue(faceI)) {
+            result()[cnt]= (flip[i] ? -1 : 1);
+            cnt++;
+        }
     }
+
+    assert(cnt==result->size());
 
     return result;
 }
@@ -257,7 +265,7 @@ tmp<vectorField> FaceZoneValueExpressionDriver::makeFaceNormalField() const
 
 tmp<vectorField> FaceZoneValueExpressionDriver::makeFaceAreaField() const
 {
-    return getFromFieldInternal(this->mesh().Sf(),faceZone_);
+    return getFromSurfaceFieldInternal(this->mesh().Sf(),faceZone_);
 }
 
 autoPtr<CommonPluginFunction> FaceZoneValueExpressionDriver::newPluginFunction(
