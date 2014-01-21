@@ -40,6 +40,7 @@ Contributors/Copyright:
 #include "fvsPatchField.H"
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
+#include "processorPolyPatch.H"
 
 #include <cassert>
 
@@ -423,7 +424,15 @@ namespace Foam {
             if(!patch.coupled()) {
                 return true;
             } else {
-                return false;
+                // in 2.x this works for coupled
+                if(isA<processorPolyPatch>(patch)) {
+                    const processorPolyPatch &pp=dynamicCast<const processorPolyPatch&>(
+                        patch
+                    );
+                    return pp.owner();
+                } else {
+                    return false;
+                }
             }
         }
     }
