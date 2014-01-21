@@ -54,12 +54,12 @@ maxCo           1;
 functions
 {
 
-	planeFlow
+	planeSize
 	{
 		type swakExpression;
 		valueType faceZone;
 		zoneName planeFaces;
-		expression "phi*flip()";
+		expression "1";
 		accumulations (
 			sum
 		);
@@ -67,6 +67,26 @@ functions
 		outputControlMode timeStep;
 		outputInterval 1;
 	}
+        planeFlipSum
+        {
+            $planeSize;
+            expression "flip()";
+        }
+        planeArea
+        {
+            $planeSize;
+            expression "weight()";
+        }
+        planeArea2
+        {
+            $planeArea;
+            expression "area()";
+        }
+        planFlow
+        {
+            $planeSize;
+            expression "phi*flip()";
+        }
 };
 
 libs (

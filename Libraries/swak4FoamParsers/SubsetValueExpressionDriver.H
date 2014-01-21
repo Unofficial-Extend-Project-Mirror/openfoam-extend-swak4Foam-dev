@@ -92,9 +92,14 @@ class SubsetValueExpressionDriver
     bool getBoundaryFaceValue(
         const FieldType &field,
         const label index,
-        T &value);
+        T &value
+    ) const;
 
 protected:
+
+    inline bool useFaceValue(
+        const label index
+    ) const;
 
     // Handling the scanner
     void scan_begin();
@@ -127,6 +132,13 @@ protected:
     template<class Subset,class T>
     tmp<Field<T> > getFromFieldInternal(
         const Field<T> &original,const Subset &sub
+    ) const;
+
+    //- General Method to get values from a field
+    template<class Subset,class T>
+    tmp<Field<T> > getFromSurfaceFieldInternal(
+        const GeometricField<T,fvsPatchField,surfaceMesh> &original,
+        const Subset &sub
     ) const;
 
     //- set the state of the lexer to scanning vector components

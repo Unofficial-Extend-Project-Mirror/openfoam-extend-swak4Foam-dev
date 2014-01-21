@@ -220,7 +220,7 @@ FaceSetValueExpressionDriver::getSphericalTensorField(
 
 tmp<vectorField> FaceSetValueExpressionDriver::makePositionField() const
 {
-    return getFromFieldInternal(this->mesh().Cf(),faceSet_());
+    return getFromSurfaceFieldInternal(this->mesh().Cf(),faceSet_());
 }
 
 tmp<scalarField> FaceSetValueExpressionDriver::makeCellVolumeField() const
@@ -327,7 +327,7 @@ tmp<scalarField> FaceSetValueExpressionDriver::makeFaceFlipField() const
 
 tmp<scalarField> FaceSetValueExpressionDriver::makeFaceAreaMagField() const
 {
-    return getFromFieldInternal(this->mesh().magSf(),faceSet_());
+    return getFromSurfaceFieldInternal(this->mesh().magSf(),faceSet_());
 }
 
 tmp<vectorField> FaceSetValueExpressionDriver::makeFaceNormalField() const
@@ -337,7 +337,7 @@ tmp<vectorField> FaceSetValueExpressionDriver::makeFaceNormalField() const
 
 tmp<vectorField> FaceSetValueExpressionDriver::makeFaceAreaField() const
 {
-    return getFromFieldInternal(this->mesh().Sf(),faceSet_());
+    return getFromSurfaceFieldInternal(this->mesh().Sf(),faceSet_());
 }
 
 bool FaceSetValueExpressionDriver::update()

@@ -375,12 +375,66 @@ namespace Foam {
         return result;
     }
 
+    template<class Subset,class T>
+    tmp<Field<T> > SubsetValueExpressionDriver::getFromSurfaceFieldInternal(
+        const GeometricField<T,fvsPatchField,surfaceMesh> &original,
+        const Subset &sub
+    ) const
+    {
+        tmp<Field<T> > result(new Field<T>(this->size()));
+        label cnt=0;
+
+        forAllConstIter(typename Subset,sub,iter) {
+            label faceI=getIndexFromIterator(iter);
+            if(faceI<this->mesh().nInternalFaces()) {
+                result()[cnt]=original[faceI];
+                cnt++;
+            } else {
+                T value;
+                bool use;
+                use=getBoundaryFaceValue(original,faceI,value);
+                if(use) {
+                    result()[cnt]=value;
+                    cnt++;
+                }
+            }
+        }
+
+        assert(cnt==this->size());
+
+        return result;
+    }
+
+    bool SubsetValueExpressionDriver::useFaceValue(
+        const label faceI
+    ) const
+    {
+        if(faceI<this->mesh().nInternalFaces()) {
+            return true;
+        } else {
+            label patchI=this->mesh().boundaryMesh().whichPatch(faceI);
+            if(patchI<0) {
+                FatalErrorIn("SubsetValueExpressionDriver::useFaceValue")
+                    << "Can't find the correct patch for face " << faceI
+                        << endl
+                        << exit(FatalError);
+            }
+            const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
+            if(!patch.coupled()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     template<class FieldType,class T>
     bool SubsetValueExpressionDriver::getBoundaryFaceValue(
         const FieldType &field,
         const label index,
         T &value
-    ) {
+    ) const
+    {
         value=pTraits<T>::zero;
 
         if(index<this->mesh().nInternalFaces()) {
@@ -391,14 +445,9 @@ namespace Foam {
                     << exit(FatalError);
         }
         label patchI=this->mesh().boundaryMesh().whichPatch(index);
-        if(patchI<0) {
-            FatalErrorIn("SubsetValueExpressionDriver::getBoundaryFaceValue")
-                << "Can't find the correct patch for face " << index
-                    << endl
-                    << exit(FatalError);
-        }
-        const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
-        if(!patch.coupled()) {
+
+        if(useFaceValue(index)) {
+            const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
             const typename FieldType::PatchFieldType &bf=
                 field.boundaryField()[patchI];
             value=bf[patch.whichFace(index)];
@@ -415,15 +464,8 @@ namespace Foam {
 
         forAllConstIter(typename Subset,sub,iter) {
             const label faceI=getIndexFromIterator(iter);
-            if(faceI<this->mesh().nInternalFaces()) {
+            if(useFaceValue(faceI)) {
                 cnt++;
-            } else {
-                label patchI=this->mesh().boundaryMesh().whichPatch(faceI);
-                const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
-                if(!patch.coupled()) {
-                    cnt++;
-                } else {
-                }
             }
         }
 
