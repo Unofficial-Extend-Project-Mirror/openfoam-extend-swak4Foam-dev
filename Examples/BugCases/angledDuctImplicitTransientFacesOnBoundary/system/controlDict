@@ -67,9 +67,19 @@ functions
 		outputControlMode timeStep;
 		outputInterval 1;
 	}
+        planeSetSize {
+            $planeSize;
+            valueType faceSet;
+            setName planeFacesParallel;
+        }
         planeFlipSum
         {
             $planeSize;
+            expression "flip()";
+        }
+        planeSetFlipSum
+        {
+            $planeSetSize;
             expression "flip()";
         }
         planeArea
@@ -82,9 +92,24 @@ functions
             $planeArea;
             expression "area()";
         }
+        planeSetArea
+        {
+            $planeSetSize;
+            expression "weight()";
+        }
+        planeSetArea2
+        {
+            $planeSetSize;
+            expression "area()";
+        }
         planFlow
         {
             $planeSize;
+            expression "phi*flip()";
+        }
+        planSetFlow
+        {
+            $planeSetSize;
             expression "phi*flip()";
         }
 };
