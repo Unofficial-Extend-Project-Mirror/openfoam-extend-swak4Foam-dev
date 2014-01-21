@@ -1,0 +1,5 @@
+pressureChange {
+   expr "Expression planeFlow :  sum=(%f%)";
+   theTitle "volume flow through plane";
+   titles ( sum );
+}

@@ -1,0 +1,128 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     buoyantBoussinesqPimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.001;
+
+deltaT          1e-5;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1e-4;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+graphFormat     raw;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           1;
+
+functions
+{
+
+	planeSize
+	{
+		type swakExpression;
+		valueType faceZone;
+		zoneName planeFaces;
+		expression "1";
+		accumulations (
+			sum
+		);
+		verbose true;
+		outputControlMode timeStep;
+		outputInterval 1;
+	}
+        planeSetSize {
+            $planeSize;
+            valueType faceSet;
+            setName planeFacesParallel;
+        }
+        planeFlipSum
+        {
+            $planeSize;
+            expression "flip()";
+        }
+        planeSetFlipSum
+        {
+            $planeSetSize;
+            expression "flip()";
+        }
+        planeArea
+        {
+            $planeSize;
+            expression "weight()";
+        }
+        planeArea2
+        {
+            $planeArea;
+            expression "area()";
+        }
+        planeSetArea
+        {
+            $planeSetSize;
+            expression "weight()";
+        }
+        planeSetArea2
+        {
+            $planeSetSize;
+            expression "area()";
+        }
+        planFlow
+        {
+            $planeSize;
+            expression "phi*flip()";
+        }
+        planSetFlow
+        {
+            $planeSetSize;
+            expression "phi*flip()";
+        }
+};
+
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakTopoSources.so"
+    // Needed to decompose on 1.7
+    "libcompressibleRASModels.so"
+    "libswakPythonIntegration.so"
+) ;
+
+// ************************************************************************* //
