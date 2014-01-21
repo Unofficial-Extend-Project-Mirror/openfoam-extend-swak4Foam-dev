@@ -231,6 +231,8 @@ namespace Foam {
                     }
                 }
                 done=true;
+
+                assert(cnt==this->size());
             }
         }
 
@@ -380,7 +382,52 @@ namespace Foam {
         T &value
     ) {
         value=pTraits<T>::zero;
-        return true;
+
+        if(index<this->mesh().nInternalFaces()) {
+            FatalErrorIn("SubsetValueExpressionDriver::getBoundaryFaceValue")
+                << "Face with index " << index << " is an internal face (<"
+                    << this->mesh().nInternalFaces() << ")"
+                    << endl
+                    << exit(FatalError);
+        }
+        label patchI=this->mesh().boundaryMesh().whichPatch(index);
+        if(patchI<0) {
+            FatalErrorIn("SubsetValueExpressionDriver::getBoundaryFaceValue")
+                << "Can't find the correct patch for face " << index
+                    << endl
+                    << exit(FatalError);
+        }
+        const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
+        if(!patch.coupled()) {
+            const typename FieldType::PatchFieldType &bf=
+                field.boundaryField()[patchI];
+            value=bf[patch.whichFace(index)];
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    template<class Subset>
+    label SubsetValueExpressionDriver::nrValidFaces(const Subset &sub) const
+    {
+        label cnt=0;
+
+        forAllConstIter(typename Subset,sub,iter) {
+            const label faceI=getIndexFromIterator(iter);
+            if(faceI<this->mesh().nInternalFaces()) {
+                cnt++;
+            } else {
+                label patchI=this->mesh().boundaryMesh().whichPatch(faceI);
+                const polyPatch &patch=this->mesh().boundaryMesh()[patchI];
+                if(!patch.coupled()) {
+                    cnt++;
+                } else {
+                }
+            }
+        }
+
+        return cnt;
     }
 }
 

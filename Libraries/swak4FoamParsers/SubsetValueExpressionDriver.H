@@ -104,6 +104,9 @@ protected:
     template<class Iter>
     inline label getIndexFromIterator(const Iter &it) const;
 
+    template<class Subset>
+    label nrValidFaces(const Subset &sub) const;
+
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
     tmp<Field<T> > getFieldInternal(
