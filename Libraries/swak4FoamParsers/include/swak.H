@@ -232,6 +232,10 @@ Contributors/Copyright:
 #define FOAM_DLLIBRARY_USES_STATIC_METHODS
 #endif
 
+#ifndef FOAM_DEV
+#define FOAM_COUPLEDPOLYPATCH_HAS_OWNER
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
