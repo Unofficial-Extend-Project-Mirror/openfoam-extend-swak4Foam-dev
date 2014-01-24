@@ -32,21 +32,25 @@ Class
     None
 
 Description
-    print a little banner with the swak-version to ease support
+    Helper function that usually issues a notImplemented unless the user
+    decided to switch it off in the dictionary
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef PRINT_SWAK_VERSION_H
-#define PRINT_SWAK_VERSION_H
+#ifndef SWITCHABLE_NOT_IMPLEMENTED_H
+#define SWITCHABLE_NOT_IMPLEMENTED_H
 
-#include "Pstream.H"
+#include "error.H"
 
 namespace Foam {
-    void printSwakVersion();
+    void switchableNotImplemented(
+        const word &methodName,
+        const dictionary &dict
+    );
 }
 
 #endif

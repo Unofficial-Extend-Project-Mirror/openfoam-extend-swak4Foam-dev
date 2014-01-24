@@ -65,7 +65,8 @@ initSwakFunctionObject::initSwakFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(name)
+    functionObject(name),
+    dict_(dict)
 {
     word regionName=
         dict.lookupOrDefault<word>("region",polyMesh::defaultRegion);

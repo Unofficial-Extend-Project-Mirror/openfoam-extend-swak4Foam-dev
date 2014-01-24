@@ -55,6 +55,7 @@ Contributors/Copyright:
 #include "NamedEnum.H"
 
 #include "swak.H"
+#include "switchableNotImplemented.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -180,12 +181,18 @@ public:
 #ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
     // make functionObject happy but fail because this is not an implementation
     virtual void updateMesh(const mapPolyMesh&) {
-        notImplemented("simpleFunctionObject::updateMesh");
+        switchableNotImplemented(
+            "simpleFunctionObject::updateMesh",
+            dict()
+        );
     }
 
     // make functionObject happy but fail because this is not an implementation
     virtual void movePoints(const polyMesh&) {
-        notImplemented("simpleFunctionObject::movePoints");
+        switchableNotImplemented(
+            "simpleFunctionObject::movePoints",
+            dict()
+        );
     }
 #endif
 
