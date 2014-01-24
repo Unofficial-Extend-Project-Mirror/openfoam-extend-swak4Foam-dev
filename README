@@ -2366,6 +2366,17 @@ S_{expl} + S_{impl} T
      fixed. If the face is on a regular boundary patch the value is
      used. If on a processor patch the value is only used if it is on
      the owner processor.
+**** Allow user to override =notImplemented= in =movePoints= and =moveMesh= of function objects
+     This addresses
+     http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=190
+
+     Subclasses of =simpleFunction=-objects are not guaranteed to be
+     parallel-aware (for instance =swakExpression= can have problems
+     with stored variables if the number of cells/faces changes) so
+     the =notImplemented= can't be removed for good.
+
+     The workaround is a rather verbose error message and the
+     possibility to override =notImplemented= with a dictionary-switch
 *** New features
 **** Function object that executes if the OpenFOAM-version is right
      The functionObject =executeIfOpenFOAMVersionBiggerEqual= only

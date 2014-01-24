@@ -54,6 +54,7 @@ Contributors/Copyright:
 #include "volFields.H"
 
 #include "swak.H"
+#include "switchableNotImplemented.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -143,12 +144,18 @@ public:
 #ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
     // make functionObject happy but fail because this is not an implementation
     virtual void updateMesh(const mapPolyMesh&) {
-        notImplemented("EvolveCloudFunctionObject::updateMesh");
+        switchableNotImplemented(
+            "EvolveCloudFunctionObject::updateMesh",
+            dict_
+        );
     }
 
     // make functionObject happy but fail because this is not an implementation
     virtual void movePoints(const polyMesh&) {
-        notImplemented("EvolveCloudFunctionObject::movePoints");
+        switchableNotImplemented(
+            "EvolveCloudFunctionObject::movePoints",
+            dict
+        );
     }
 #endif
 
