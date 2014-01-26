@@ -2054,7 +2054,7 @@ S_{expl} + S_{impl} T
      - deltaT :: Approximately every =outputDeltaT= times it will be
                  executed. The nearest possible timestep is used
      - outputTime :: Executed whenever a regular output is scheduled
-** Next release - version number : 0.3.0
+** 2014-01-24 - version number : 0.3.0
    The reason for the jump in the minor revision number is that with
    the introduction of the parser for lagrangian particles (=cloud=)
    the last white spot as far as major data structures in OpenFOAM is
