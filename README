@@ -41,14 +41,14 @@
    According to the commits in the =mercurial=-repository (and
    the repositories of the projects from which swak emerged)
    contributors are (ordered by the year of their first contribution):
-   - 2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+   - 2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
    - 2008 Hannes Kroeger (hannes@kroegeronline.net)
    - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
    - 2010 Marianne Mataln <mmataln@ice-sf>
    - 2010 Oliver Borm (oli.borm@web.de)
    - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
-   - 2012 Bruno Santos <wyldckat@gmail.com>
+   - 2012-2013 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
@@ -2211,7 +2211,7 @@ S_{expl} + S_{impl} T
        data entry as a uniform value
      - data entry can now be integrated. This allows using it for
        instance for the injection rate in lagrangian models
-** Next release - version number : 0.3.0
+** 2014-01-24 - version number : 0.3.0
    The reason for the jump in the minor revision number is that with
    the introduction of the parser for lagrangian particles (=cloud=)
    the last white spot as far as major data structures in OpenFOAM is
