@@ -154,7 +154,7 @@ public:
     virtual void movePoints(const polyMesh&) {
         switchableNotImplemented(
             "EvolveCloudFunctionObject::movePoints",
-            dict
+            dict_
         );
     }
 #endif
