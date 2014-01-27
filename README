@@ -394,6 +394,12 @@ S_{expl} + S_{impl} T
 
    *Note*: All the cases here are strictly for demonstration purposes and
    resemble nothing from the 'real world'
+
+   *Note*: Due to various changes in the case syntax between OpenFOAM
+    2.0 and 2.2 (for instance =thermophysicalProperties=, wall
+    functions etc) not all of the examples work with all
+    OpenFOAM-installations "out of the box". Slight adaptions may be
+    necessary
 *** groovyBC
     The old =groovyBC=-Demos
 **** pulsedPitzDaily
