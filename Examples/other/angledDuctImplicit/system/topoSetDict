@@ -26,7 +26,7 @@ actions (
         source expressionToFace;
 
         sourceInfo {
-            expression "set(inlet)";
+            expression "zone(inlet)";
         }
     }
     {
@@ -39,7 +39,7 @@ actions (
         source expressionToFace;
 
         sourceInfo {
-            expression "set(outlet)";
+            expression "zone(outlet)";
         }
     }
     {
@@ -78,7 +78,7 @@ actions (
         source expressionToCell;
 
         sourceInfo {
-            expression "set(outlet)";
+            expression "zone(outlet)";
         }
     }
     {
@@ -117,7 +117,20 @@ actions (
         source expressionToCell;
 
         sourceInfo {
-            expression "set(inlet)";
+            expression "zone(inlet)";
+        }
+    }
+    {
+        type cellSet;
+
+        name porosity;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "zone(porosity)";
         }
     }
 );
