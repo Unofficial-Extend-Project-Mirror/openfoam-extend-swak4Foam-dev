@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -44,7 +44,11 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+#ifdef FOAM_PARTICLE_CLASS_IS_TEMPLATE
+defineParticleTypeNameAndDebug(ReaderParticle, 0);
+#else
 defineTypeNameAndDebug(ReaderParticle, 0);
+#endif
 defineTemplateTypeNameAndDebug(Cloud<ReaderParticle>, 0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -82,6 +82,20 @@ FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
       isLogical_(false),
       isSurfaceField_(false),
       resultDimension_(0,0,0,0,0,0,0)
+{
+}
+
+FaFieldValueExpressionDriver::FaFieldValueExpressionDriver (
+    const FaFieldValueExpressionDriver &orig
+)
+    : FaCommonValueExpressionDriver(
+	 orig
+    ),
+      mesh_(orig.mesh_),
+      typ_(orig.typ_),
+      isLogical_(orig.isLogical_),
+      isSurfaceField_(orig.isSurfaceField_),
+      resultDimension_(orig.resultDimension_)
 {
 }
 

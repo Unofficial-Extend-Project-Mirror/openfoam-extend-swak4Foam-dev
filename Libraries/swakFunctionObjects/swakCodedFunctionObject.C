@@ -23,6 +23,10 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
+#ifndef FOAM_HAS_NO_CODED_CLASS
+
 #include "swakCodedFunctionObject.H"
 #include "volFields.H"
 #include "dictionary.H"
@@ -339,5 +343,6 @@ bool Foam::swakCodedFunctionObject::read(const dictionary& dict)
     return redirectFunctionObject().read(dict);
 }
 
+#endif
 
 // ************************************************************************* //

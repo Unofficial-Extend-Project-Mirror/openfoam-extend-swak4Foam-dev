@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -220,7 +220,7 @@ FaceSetValueExpressionDriver::getSphericalTensorField(
 
 tmp<vectorField> FaceSetValueExpressionDriver::makePositionField() const
 {
-    return getFromFieldInternal(this->mesh().Cf(),faceSet_());
+    return getFromSurfaceFieldInternal(this->mesh().Cf(),faceSet_());
 }
 
 tmp<scalarField> FaceSetValueExpressionDriver::makeCellVolumeField() const
@@ -246,7 +246,7 @@ tmp<scalarField> FaceSetValueExpressionDriver::makeFaceFlipField() const
     // inspired by the setsToZones-utility
 
     tmp<scalarField> result(
-        new scalarField(faceSet_->size())
+        new scalarField(this->size())
     );
 
     word setName(faceSet_->name() + "SlaveCells");
@@ -266,15 +266,18 @@ tmp<scalarField> FaceSetValueExpressionDriver::makeFaceFlipField() const
     assert(origin!=INVALID);
 
     List<label> faceLabels(faceSet_->toc());
+    label cnt=0;
 
     forAll(faceLabels, i)
     {
         label faceI = faceLabels[i];
+        bool use=false;
 
         bool flip = false;
 
         if (mesh.isInternalFace(faceI))
         {
+            use=true;
             if
                 (
                     cells.found(mesh.faceOwner()[faceI])
@@ -309,25 +312,33 @@ tmp<scalarField> FaceSetValueExpressionDriver::makeFaceFlipField() const
         }
         else
         {
-            if (cells.found(mesh.faceOwner()[faceI]))
-            {
-                flip = false;
-            }
-            else
-            {
-                flip = true;
+            use=useFaceValue(faceI);
+            if(use) {
+                if (cells.found(mesh.faceOwner()[faceI]))
+                {
+                    flip = false;
+                }
+                else
+                {
+                    flip = true;
+                }
             }
         }
 
-        result()[i]= (flip ? -1 : 1 );
+        if(use) {
+            result()[cnt]= (flip ? -1 : 1 );
+            cnt++;
+        }
     }
+
+    assert(cnt==result->size());
 
     return result;
 }
 
 tmp<scalarField> FaceSetValueExpressionDriver::makeFaceAreaMagField() const
 {
-    return getFromFieldInternal(this->mesh().magSf(),faceSet_());
+    return getFromSurfaceFieldInternal(this->mesh().magSf(),faceSet_());
 }
 
 tmp<vectorField> FaceSetValueExpressionDriver::makeFaceNormalField() const
@@ -337,7 +348,7 @@ tmp<vectorField> FaceSetValueExpressionDriver::makeFaceNormalField() const
 
 tmp<vectorField> FaceSetValueExpressionDriver::makeFaceAreaField() const
 {
-    return getFromFieldInternal(this->mesh().Sf(),faceSet_());
+    return getFromSurfaceFieldInternal(this->mesh().Sf(),faceSet_());
 }
 
 bool FaceSetValueExpressionDriver::update()

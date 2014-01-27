@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -40,13 +40,20 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCJumpFvPatchField_H
 #define groovyBCJumpFvPatchField_H
 
+#include "swak.H"
+
+#ifdef FOAM_JUMP_IS_JUMP_CYCLIC
+#include "jumpCyclicFvPatchField.H"
+#define fixedJumpFvPatchField jumpCyclicFvPatchField
+#else
 #include "fixedJumpFvPatchField.H"
+#endif
 
 #include "PatchValueExpressionDriver.H"
 
@@ -140,20 +147,26 @@ public:
         }
 
 
+#ifdef FOAM_JUMP_IS_JUMP_CYCLIC
+    //- Return the "jump" across the patch as a "half" field
+    tmp<Field<scalar> > jump() const;
+#else
     // Evaluation functions
-    
+
     //- Update the coefficients associated with the patch field
     virtual void updateCoeffs();
-
+#endif
     // Member functions
 
     //- Write
     virtual void write(Ostream&) const;
 };
 
+#ifndef FOAM_JUMP_IS_JUMP_CYCLIC
 //- Specialisation of the jump-condition for the pressure
 template<>
 void groovyBCJumpFvPatchField<scalar>::updateCoeffs();
+#endif
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -48,6 +48,7 @@ namespace Foam
 
     makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpFvPatchScalarField);
 
+#ifndef FOAM_JUMP_IS_JUMP_CYCLIC
 template<>
 void Foam::groovyBCJumpFvPatchField<Foam::scalar>::updateCoeffs()
 {
@@ -62,7 +63,7 @@ void Foam::groovyBCJumpFvPatchField<Foam::scalar>::updateCoeffs()
 
     fixedJumpFvPatchField<scalar>::updateCoeffs();
 }
-
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -47,6 +47,8 @@ Contributors/Copyright:
 
 #include "LagrangianCloudSourcePluginFunction.H"
 
+#include "swakCloudTypes.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -90,6 +92,17 @@ public:
 
 };
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#define getSpeciesIndex(neededType,usedType)                                \
+    if(hasCloudAs<neededType>()) {                                      \
+        const speciesTable &spec=                                       \
+            getCloudAs<neededType,usedType>().mcCarrierThermo ().species(); \
+        speciesList=spec;                                               \
+        if(spec.contains(speciesName_)) {                               \
+            return spec[speciesName_];                                  \
+        }                                                               \
+    }
+#else
 #define getSpeciesIndex(neededType,usedType)                            \
     if(hasCloudAs<neededType>()) {                                      \
         const speciesTable &spec=                                       \
@@ -99,6 +112,7 @@ public:
             return spec[speciesName_];                                  \
         }                                                               \
     }
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

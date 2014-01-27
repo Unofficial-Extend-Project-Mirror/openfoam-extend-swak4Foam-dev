@@ -38,7 +38,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -51,10 +51,12 @@ Contributors/Copyright:
 #error "This swak4Foam-version is only used for the 2.x-versions of OpenFOAM. For lower versions there is a special branch"
 #endif
 
-#if (FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)
+#if ((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)) && !defined(FOAM_DEV)
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
-#else
+#endif
+
+#if !((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6))
 #define FOAM_OLDTIME_PROBLEM
 #endif
 
@@ -69,7 +71,7 @@ Contributors/Copyright:
 #endif
 
 // Certain OpenFOAM-versions don't have all tensor operations defined
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
+#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || defined(FOAM_DEV)
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 
@@ -78,7 +80,7 @@ Contributors/Copyright:
 #endif
 
 // Versions before 2.1
-#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MINOR<1 && FOAM_VERSION4SWAK_MAJOR==2)
+#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MINOR<1 && FOAM_VERSION4SWAK_MAJOR==2) || defined(FOAM_DEV)
 
 // what is later called mappedPatch is called directMappedPatch
 #define FOAM_MAPPED_IS_DIRECTMAPPED
@@ -91,7 +93,7 @@ Contributors/Copyright:
 #endif
 
 // this changed starting with 2.1
-#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR==2)
+#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR==2)) && !defined(FOAM_DEV)
 
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
@@ -104,23 +106,33 @@ Contributors/Copyright:
 // this changed starting with 2.2
 #if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=2 && FOAM_VERSION4SWAK_MAJOR==2)
 
-#if FOAM_VERSION4SWAK_MAJOR>2 || FOAM_VERSION4SWAK_MINOR>2 || FOAM_VERSION4SWAK_PATCH!=0
+#if (FOAM_VERSION4SWAK_MAJOR>2 || FOAM_VERSION4SWAK_MINOR>2 || FOAM_VERSION4SWAK_PATCH!=0) && !defined(FOAM_DEV)
 // this is NOT changed in 2.2.0 but in the earliest commits of 2.2.x
 // lookupClass returns a non-const list
 #define FOAM_LOOKUPCLASS_NO_CONST
 #endif
 
+#if !defined(FOAM_DEV)
 // meshSearch parameter for sampledSet-constructor is now const
 #define FOAM_MESHSEARCH_CONST_SAMPLEDSET
+#else
+#define FOAM_SAMPLEDSET_NEEDS_REFPOINT
+#endif
 
+#if !defined(FOAM_DEV)
 // interpolate-method for meshToMesh needs a reduce-operation
 #define FOAM_MESHTOMESH_INTERPOLATE_REDUCE
+#endif
 
+#if !defined(FOAM_DEV)
 // functionObject now needs at least dummy-implementations of updateMesh and movePoints
 #define FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+#endif
 
+#ifndef FOAM_DEV
 // new revised fluidThermo
 #define FOAM_HAS_FLUIDTHERMO
+#endif
 
 // RR from the chemistry does no longer return a complete field
 #define FOAM_RR_ONLY_DIMENSIONED_FIELD
@@ -131,20 +143,30 @@ Contributors/Copyright:
 // this version has fvOptions
 #define FOAM_HAS_FVOPTIONS
 
+#ifndef FOAM_DEV
 // movePoints now gets a polyMesh
 #define FOAM_MOVEPOINTS_GETS_POLYMESH
+#endif
 
+#ifndef FOAM_DEV
 // coordinates method of searchable surfaces uses a tmp as return
 #define FOAM_SEARCHABLE_SURF_USES_TMP
+#endif
 
+#ifndef FOAM_DEV
 // points method of searchable surfaces now part of interface
 #define FOAM_SEARCHABLE_SURF_HAS_POINTS
+#endif
 
 #endif // version starting with 2.2
 
 // Certain OpenFOAM-versions don't have this method in fvMesh
-#if FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7
+#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || FOAM_DEV
 #define FOAM_FV_MESH_HAS_NO_SOLVERDICT
+#endif
+
+#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR>=2)) && !defined(FOAM_DEV)
+#define FOAM_HAS_ENERGY_HE
 #endif
 
 // Additional tensor types in nextRelease
@@ -155,6 +177,63 @@ Contributors/Copyright:
 // The kineamticPArcel has no property active in 1.6-ext
 #ifdef FOAM_DEV
 #define FOAM_KINEMTATIC_HAS_NO_ACTIVE_PROPERTY
+#endif
+
+// mathematical constants have no separate namespace
+#ifdef FOAM_DEV
+#define FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_ISTREAM_HAS_NO_STDSTREAM
+#endif
+
+#ifndef FOAM_DEV
+#define FOAM_SURFACEWRITER_NOT_A_TEMPLATE
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_PARTICLE_CLASS_IS_TEMPLATE
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_HAS_NO_DATAENTRY_CLASS
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_HAS_NO_CODED_CLASS
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_JUMP_IS_JUMP_CYCLIC
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_OLD_THERMOPHYSICS
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_NO_SLG_THERMOPHYSICS
+#endif
+
+#ifndef FOAM_DEV
+#define FOAM_TOPOSETSOURCE_HAS_SETTYPE
+#endif
+
+#ifndef FOAM_DEV
+#define FOAM_HAS_STRINGOPS
+#endif
+
+#ifdef FOAM_DEV
+#define FOAM_DLLIBRARY_USES_STATIC_METHODS
+#endif
+
+#ifndef FOAM_DEV
+#define FOAM_COUPLEDPOLYPATCH_HAS_OWNER
 #endif
 
 #include "swakVersion.H"

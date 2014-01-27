@@ -23,6 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
 #ifdef FOAM_HAS_BASICSOURCES
 
 #include "SwakExplicitSource.H"

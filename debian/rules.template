@@ -17,6 +17,6 @@ build/swak4foam-%(ofpkg)s::
 		mkdir -p tmpbuild/lib; \
 		export FOAM_USER_APPBIN=$(CURDIR)/tmpbuild/bin; \
 		export FOAM_USER_LIBBIN=$(CURDIR)/tmpbuild/lib; \
-	wmake all
+	(export SWAK_DO_NOT_GENERATE_NEW_VERSION_FILE=1; wmake all)
 
 

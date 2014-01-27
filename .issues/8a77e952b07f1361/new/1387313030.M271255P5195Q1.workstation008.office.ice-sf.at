@@ -1,0 +1,8 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 17 Dec 2013 21:40:45 +0100
+State: new
+Subject: Write min and max with swakExpressionAverageDistribution
+Message-Id: <8a77e952b07f1361-0-artemis@workstation008.office.ice-sf.at>
+
+Check whether this can be done by extending the simpleDistribution to
+record min and max as well

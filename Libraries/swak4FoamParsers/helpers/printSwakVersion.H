@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -29,19 +29,24 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::SubsetValueExpressionDriver
+    None
 
 Description
     print a little banner with the swak-version to ease support
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
+
+#ifndef PRINT_SWAK_VERSION_H
+#define PRINT_SWAK_VERSION_H
 
 #include "Pstream.H"
 
 namespace Foam {
     void printSwakVersion();
 }
+
+#endif

@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "initSwakFunctionObject.H"
@@ -65,7 +65,8 @@ initSwakFunctionObject::initSwakFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(name)
+    functionObject(name),
+    dict_(dict)
 {
     word regionName=
         dict.lookupOrDefault<word>("region",polyMesh::defaultRegion);
@@ -89,6 +90,13 @@ bool initSwakFunctionObject::execute(const bool forceWrite)
 {
     return true;
 }
+
+#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+bool initSwakFunctionObject::execute()
+{
+    return execute(false);
+}
+#endif
 
 bool initSwakFunctionObject::read(const dictionary& dict)
 {

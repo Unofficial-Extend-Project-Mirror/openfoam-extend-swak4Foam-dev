@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -39,13 +39,15 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionToPoint_H
 #define expressionToPoint_H
 
 #include "topoSetSource.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -115,7 +117,9 @@ public:
             topoSet&
         ) const;
 
+#ifdef FOAM_TOPOSETSOURCE_HAS_SETTYPE
         virtual sourceType setType() const;
+#endif
 
 };
 

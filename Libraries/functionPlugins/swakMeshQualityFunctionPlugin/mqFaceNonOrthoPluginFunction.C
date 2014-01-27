@@ -39,6 +39,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swak.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(mqFaceNonOrthoPluginFunction,1);
@@ -106,7 +108,13 @@ void mqFaceNonOrthoPluginFunction::doEvaluation()
         // Info << d << s << dDotS << endl;
         // Info << ::acos(dDotS) << endl;
 
-        nonOrto[faceI]=::acos(dDotS)/constant::mathematical::pi*180.0;
+        nonOrto[faceI]=::acos(dDotS)/
+#ifdef FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+            Foam::mathematicalConstant::pi
+#else
+            constant::mathematical::pi
+#endif
+            *180.0;
     }
 
     result().setObjectResult(pNonOrto);

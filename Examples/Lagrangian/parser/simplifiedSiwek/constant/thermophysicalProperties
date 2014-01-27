@@ -50,12 +50,21 @@ solids
         // if  defaultCoeffs no properties should be :
         CCoeffs
         {
+	  // this works with 2.2.x
+
             rho             2010;
             Cp              710;
             K               0.04;
             Hf              0;
             emissivity      1.0;
         }
+
+	// for some reason 2.2.1 needs them here
+	rho             2010;
+	Cp              710;
+	K               0.04;
+	Hf              0;
+	emissivity      1.0;
     }
     ash
     {
