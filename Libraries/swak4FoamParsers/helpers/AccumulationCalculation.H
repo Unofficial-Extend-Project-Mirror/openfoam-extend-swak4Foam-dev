@@ -43,7 +43,7 @@ SourceFiles
     AccumulationCalculation.C
 
 Contributors/Copyright:
-    013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
