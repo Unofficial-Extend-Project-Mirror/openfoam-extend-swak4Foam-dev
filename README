@@ -2370,3 +2370,11 @@ S_{expl} + S_{impl} T
      If the logical expression =mask= is set then only the results
      from =expression= for which =mask= is =true= are used for
      accumulations
+** Next release - version number : 0.3.1
+*** Incompatibilities to previous versions
+*** Infrastructure
+*** Documentation
+*** Bug fixes
+*** New features
+*** Enhancements
+*** Examples
