@@ -2581,3 +2581,11 @@ S_{expl} + S_{impl} T
           Jedi" with =twoPhaseEulerFoam=
      - landspeedersInCanyon :: Simulating two landspeeders from "A new
           hope" with =simpleFoam=
+** Next release - version number : 0.3.1
+*** Incompatibilities to previous versions
+*** Infrastructure
+*** Documentation
+*** Bug fixes
+*** New features
+*** Enhancements
+*** Examples
