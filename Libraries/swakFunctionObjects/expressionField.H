@@ -53,6 +53,7 @@ Contributors/Copyright:
 #include "Switch.H"
 #include "autoPtr.H"
 #include "dictionary.H"
+#include "dimensionSet.H"
 
 #include "swak.H"
 
@@ -104,6 +105,10 @@ protected:
 
     autoPtr<FieldValueExpressionDriver> driver_;
 
+    dimensionSet dimensions_;
+
+    bool setDimensions_;
+
 public:
 
     //- Runtime type information
@@ -135,8 +140,8 @@ public:
             return name_;
         }
 
-    //- Called when time was set at the end of the Time::operator++ 
-    virtual void timeSet();         
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
 
     //- Read the forces data
     virtual void read(const dictionary&);

@@ -2588,4 +2588,7 @@ S_{expl} + S_{impl} T
 *** Bug fixes
 *** New features
 *** Enhancements
+**** =expressionField= now allows setting of dimensions
+     An optional entry =dimension= for the function object now allows
+     setting the dimension of the resulting field
 *** Examples
