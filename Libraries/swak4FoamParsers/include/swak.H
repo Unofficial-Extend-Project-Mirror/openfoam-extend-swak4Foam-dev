@@ -51,7 +51,19 @@ Contributors/Copyright:
 #error "This swak4Foam-version is only used for the 2.x-versions of OpenFOAM. For lower versions there is a special branch"
 #endif
 
-#if ((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)) && !defined(FOAM_DEV)
+#define VERSION_NR(major,minor,patch) (     \
+    10000 * major + \
+    100   * minor + \
+    patch )
+
+#define VERSION_NR2(major,minor) (     \
+    10000 * major + \
+    100   * minor + \
+    99 )
+
+#define FOAM_VERSION4SWAK VERSION_NR(FOAM_VERSION4SWAK_MAJOR,FOAM_VERSION4SWAK_MINOR,FOAM_VERSION4SWAK_PATCH_NUM)
+
+#if FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_DEV)
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
 #endif
@@ -71,7 +83,7 @@ Contributors/Copyright:
 #endif
 
 // Certain OpenFOAM-versions don't have all tensor operations defined
-#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || defined(FOAM_DEV)
+#if FOAM_VERSION4SWAK < VERSION_NR(1,7,0) || defined(FOAM_DEV)
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 
@@ -161,7 +173,7 @@ Contributors/Copyright:
 #endif // version starting with 2.2
 
 // Certain OpenFOAM-versions don't have this method in fvMesh
-#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || FOAM_DEV
+#if FOAM_VERSION4SWAK < VERSION_NR(1,7,0) || defined(FOAM_DEV)
 #define FOAM_FV_MESH_HAS_NO_SOLVERDICT
 #endif
 
