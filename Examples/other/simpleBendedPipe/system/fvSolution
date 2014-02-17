@@ -64,11 +64,24 @@ solvers
         tolerance       1e-05;
         relTol          0.1;
     }
+    distance
+    {
+        solver PCG;
+        preconditioner   DIC;
+        tolerance        1e-06;
+        relTol           0;
+    };
 }
 
 SIMPLE
 {
-    nNonOrthogonalCorrectors 0;
+    nNonOrthogonalCorrectors 1;
+}
+
+distanceLaplacianPDE
+{
+    $SIMPLE;
+    nCorrectors     2;
 }
 
 relaxationFactors

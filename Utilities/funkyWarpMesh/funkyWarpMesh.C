@@ -198,6 +198,9 @@ int main(int argc, char *argv[])
 
     Info << "End\n" << endl;
 
+    Info << nl << "Now run 'checkMesh' before you do anything else"
+        << nl << endl;
+
     return 0;
 }
 

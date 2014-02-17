@@ -48,6 +48,8 @@ laplacianSchemes
     laplacian(DepsilonEff,epsilon) Gauss linear corrected;
     laplacian(DREff,R) Gauss linear corrected;
     laplacian(DnuTildaEff,nuTilda) Gauss linear corrected;
+
+    laplacian(lambda,distance) Gauss linear uncorrected;
 }
 
 interpolationSchemes

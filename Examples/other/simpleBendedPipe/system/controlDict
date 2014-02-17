@@ -45,5 +45,57 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
+libs (
+    "libgroovyBC.so"
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+functions {
+    distance {
+        // should  be the distance from the inlet. Currently wrong
+        type solveLaplacianPDE;
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt startup;
+        fieldName distance;
+        steady true;
+        lambda "1" [0 0 0 0 0 0 0];
+        source "0" [0 -1 0 0 0 0 0];
+    }
+    pressureIn {
+        type patchExpression;
+        patches (
+            inlet
+        );
+        verbose true;
+        expression "p";
+        accumulations (
+            weightedAverage
+        );
+        outputControlMode timeStep;
+        outputInterval 1;
+    }
+    pressureLine {
+        type swakExpressionAverageDistribution;
+        outputControlMode outputTime;
+        valueType internalField;
+        expression "p";
+        weight "vol()";
+        mask "true";
+        abscissa "distance";
+        binNumber 100;
+        valueIfZero -1;
+    }
+    velocityLine {
+        $pressureLine;
+        expression "mag(U)";
+    }
+    velocityOutLine {
+        $velocityLine;
+        expression "(U & grad(distance))";
+    }
+}
 
 // ************************************************************************* //
