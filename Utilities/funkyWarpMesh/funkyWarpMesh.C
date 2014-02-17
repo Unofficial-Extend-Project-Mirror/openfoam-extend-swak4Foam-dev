@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
     argList::validOptions.insert("overwrite", "");
     argList::validOptions.insert("expression","expression to write");
+    argList::validOptions.insert("dictExt","Extension to the dictionary");
     argList::validOptions.insert("relative", "");
 
 #   include "setRootCase.H"
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
     const word oldInstance = mesh.pointsInstance();
 
     bool overwrite    = args.optionFound("overwrite");
-    bool relative     = args.optionFound("relative");
+    bool relative     = false;
 
     pointField newPoints;
 
@@ -78,23 +79,86 @@ int main(int argc, char *argv[])
         runTime++;
     }
 
-    string expression=args.options()["expression"];
-    FieldValueExpressionDriver driver(
-        runTime.timeName(),
-        runTime,
-        mesh
-    );
-    // no clearVariables needed here
-    driver.parse(expression);
-    if(!driver.resultIsTyp<pointVectorField>()) {
-        FatalErrorIn(args.executable())
-            << "Expression " << expression
-                << " does not evaluate to a pointVectorField but a "
-                << driver.typ()
-                << endl
-                << exit(FatalError);
+    if(args.optionFound("expression")) {
+        if(args.optionFound("dictExt")) {
+            FatalErrorIn(args.executable())
+                << "Can't specify 'dictExt' and 'expression' at the same time"
+                    << endl
+                    << exit(FatalError);
+
+        }
+        relative=args.optionFound("relative");
+        string expression=args.options()["expression"];
+        FieldValueExpressionDriver driver(
+            runTime.timeName(),
+            runTime,
+            mesh
+        );
+        // no clearVariables needed here
+        driver.parse(expression);
+        if(!driver.resultIsTyp<pointVectorField>()) {
+            FatalErrorIn(args.executable())
+                << "Expression " << expression
+                    << " does not evaluate to a pointVectorField but a "
+                    << driver.typ()
+                    << endl
+                    << exit(FatalError);
+        }
+        newPoints=driver.getResult<pointVectorField>().internalField();
+    } else {
+        Info << "Dictionary mode" << nl << endl;
+        if(args.optionFound("relative")) {
+            FatalErrorIn(args.executable())
+                << "Option 'relative' not allowed in dictionary-mode"
+                    << endl
+                    << exit(FatalError);
+        }
+        word dictName("funkyWarpMeshDict");
+        if(args.optionFound("dictExt")) {
+            dictName+="."+word(args.options()["dictExt"]);
+        }
+        IOdictionary warpDict
+            (
+                IOobject
+                (
+                    dictName,
+                    runTime.system(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                )
+            );
+        const word mode(warpDict.lookup("mode"));
+        if(mode=="set") {
+            relative=readBool(warpDict.lookup("relative"));
+            string expression(warpDict.lookup("expression"));
+            FieldValueExpressionDriver driver(
+                runTime.timeName(),
+                runTime,
+                mesh
+            );
+            driver.readVariablesAndTables(warpDict);
+            driver.clearVariables();
+
+            driver.parse(expression);
+            if(!driver.resultIsTyp<pointVectorField>()) {
+                FatalErrorIn(args.executable())
+                    << "Expression " << expression
+                        << " does not evaluate to a pointVectorField but a "
+                        << driver.typ()
+                        << endl
+                        << exit(FatalError);
+            }
+            newPoints=driver.getResult<pointVectorField>().internalField();
+        } else if (mode=="move") {
+            notImplemented(args.executable()+" mode: move");
+        } else {
+            FatalErrorIn(args.executable())
+                << "Possible values for 'mode' are 'set' or 'move'"
+                    << endl
+                    << exit(FatalError);
+        }
     }
-    newPoints=driver.getResult<pointVectorField>().internalField();
 
     if(relative) {
         newPoints += mesh.points();
