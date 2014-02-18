@@ -87,13 +87,12 @@ Contributors/Copyright:
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 
-#if FOAM_VERSION4SWAK_MAJOR<1 || FOAM_VERSION4SWAK_MINOR<2
+#if FOAM_VERSION4SWAK < VERSION_NR2(2,1)
 #define FOAM_DELTATCHEM_NOT_DIMENSIONED
 #endif
 
 // Versions before 2.1
-#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MINOR<1 && FOAM_VERSION4SWAK_MAJOR==2) || defined(FOAM_DEV)
-
+#if FOAM_VERSION4SWAK < VERSION_NR(2,1,0) || defined(FOAM_DEV)
 // what is later called mappedPatch is called directMappedPatch
 #define FOAM_MAPPED_IS_DIRECTMAPPED
 
@@ -105,7 +104,7 @@ Contributors/Copyright:
 #endif
 
 // this changed starting with 2.1
-#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR==2)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,1,0)) && !defined(FOAM_DEV)
 
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
@@ -116,9 +115,9 @@ Contributors/Copyright:
 #endif
 
 // this changed starting with 2.2
-#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=2 && FOAM_VERSION4SWAK_MAJOR==2)
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,1)
 
-#if (FOAM_VERSION4SWAK_MAJOR>2 || FOAM_VERSION4SWAK_MINOR>2 || FOAM_VERSION4SWAK_PATCH!=0) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR(2,2,0)) && !defined(FOAM_DEV)
 // this is NOT changed in 2.2.0 but in the earliest commits of 2.2.x
 // lookupClass returns a non-const list
 #define FOAM_LOOKUPCLASS_NO_CONST
@@ -177,7 +176,7 @@ Contributors/Copyright:
 #define FOAM_FV_MESH_HAS_NO_SOLVERDICT
 #endif
 
-#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR>=2)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,1)) && !defined(FOAM_DEV)
 #define FOAM_HAS_ENERGY_HE
 #endif
 
