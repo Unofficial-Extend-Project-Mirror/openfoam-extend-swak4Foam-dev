@@ -51,7 +51,19 @@ Contributors/Copyright:
 #error "This swak4Foam-version is only used for the 2.x-versions of OpenFOAM. For lower versions there is a special branch"
 #endif
 
-#if ((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6)) && !defined(FOAM_DEV)
+#define VERSION_NR(major,minor,patch) (     \
+    10000 * major + \
+    100   * minor + \
+    patch )
+
+#define VERSION_NR2(major,minor) (     \
+    10000 * major + \
+    100   * minor + \
+    99 )
+
+#define FOAM_VERSION4SWAK VERSION_NR(FOAM_VERSION4SWAK_MAJOR,FOAM_VERSION4SWAK_MINOR,FOAM_VERSION4SWAK_PATCH_NUM)
+
+#if FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_DEV)
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
 #endif
@@ -71,17 +83,16 @@ Contributors/Copyright:
 #endif
 
 // Certain OpenFOAM-versions don't have all tensor operations defined
-#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || defined(FOAM_DEV)
+#if FOAM_VERSION4SWAK < VERSION_NR(1,7,0) || defined(FOAM_DEV)
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 
-#if FOAM_VERSION4SWAK_MAJOR<1 || FOAM_VERSION4SWAK_MINOR<2
+#if FOAM_VERSION4SWAK < VERSION_NR2(2,1)
 #define FOAM_DELTATCHEM_NOT_DIMENSIONED
 #endif
 
 // Versions before 2.1
-#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MINOR<1 && FOAM_VERSION4SWAK_MAJOR==2) || defined(FOAM_DEV)
-
+#if FOAM_VERSION4SWAK < VERSION_NR(2,1,0) || defined(FOAM_DEV)
 // what is later called mappedPatch is called directMappedPatch
 #define FOAM_MAPPED_IS_DIRECTMAPPED
 
@@ -93,7 +104,7 @@ Contributors/Copyright:
 #endif
 
 // this changed starting with 2.1
-#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=1 && FOAM_VERSION4SWAK_MAJOR==2)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,1,0)) && !defined(FOAM_DEV)
 
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
@@ -104,9 +115,9 @@ Contributors/Copyright:
 #endif
 
 // this changed starting with 2.2
-#if FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MINOR>=2 && FOAM_VERSION4SWAK_MAJOR==2)
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,1)
 
-#if (FOAM_VERSION4SWAK_MAJOR>2 || FOAM_VERSION4SWAK_MINOR>2 || FOAM_VERSION4SWAK_PATCH!=0) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR(2,2,0)) && !defined(FOAM_DEV)
 // this is NOT changed in 2.2.0 but in the earliest commits of 2.2.x
 // lookupClass returns a non-const list
 #define FOAM_LOOKUPCLASS_NO_CONST
@@ -161,11 +172,11 @@ Contributors/Copyright:
 #endif // version starting with 2.2
 
 // Certain OpenFOAM-versions don't have this method in fvMesh
-#if (FOAM_VERSION4SWAK_MAJOR<2 &&  FOAM_VERSION4SWAK_MINOR<7) || FOAM_DEV
+#if FOAM_VERSION4SWAK < VERSION_NR(1,7,0) || defined(FOAM_DEV)
 #define FOAM_FV_MESH_HAS_NO_SOLVERDICT
 #endif
 
-#if (FOAM_VERSION4SWAK_MAJOR>2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR>=2)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,1)) && !defined(FOAM_DEV)
 #define FOAM_HAS_ENERGY_HE
 #endif
 
