@@ -2584,6 +2584,8 @@ S_{expl} + S_{impl} T
 ** Next release - version number : 0.3.1
 *** Incompatibilities to previous versions
 *** Infrastructure
+**** Improved macros for Foam versions
+     This should make =swak.H= more readable
 *** Documentation
 *** Bug fixes
 *** New features
