@@ -328,6 +328,7 @@ public:
     tmp<pointVectorField> makePointPositionField();
 
     tmp<volScalarField> makeDistanceField();
+    tmp<volScalarField> makeDistanceToPatchField(const word &name);
     tmp<volScalarField> makeNearDistanceField();
     tmp<volScalarField> makeRDistanceField(const volVectorField &r);
     tmp<volScalarField> makeVolumeField();
