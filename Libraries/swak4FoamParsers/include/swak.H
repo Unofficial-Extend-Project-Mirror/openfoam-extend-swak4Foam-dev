@@ -145,6 +145,10 @@ Contributors/Copyright:
 #define FOAM_HAS_FLUIDTHERMO
 #endif
 
+#if (FOAM_VERSION4SWAK < VERSION_NR(2,3,0)) && !defined(FOAM_DEV)
+#define FOAM_HAS_FLUIDTHERMO_CLOUD
+#endif
+
 // RR from the chemistry does no longer return a complete field
 #define FOAM_RR_ONLY_DIMENSIONED_FIELD
 
