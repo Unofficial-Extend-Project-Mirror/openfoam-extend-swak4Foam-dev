@@ -878,7 +878,7 @@ namespace Foam {
     tmp<T> CommonValueExpressionDriver::interpolateForeignField(
         const word &inMeshName,
         const word &inFieldName,
-        meshToMesh::order theOrder
+        meshToMeshOrder theOrder
     ) const
     {
         word meshName(inMeshName);
@@ -938,6 +938,12 @@ namespace Foam {
         if(debug) {
             Info << "Objects in mesh: " << theMesh.names() << endl;
         }
+#ifdef FOAM_NEW_MESH2MESH
+        return interpolation.mapSrcToTgt(
+            theMesh.lookupObject<T>(fieldName),
+            eqOp<typename T::value_type>()
+        );
+#else
         return interpolation.interpolate(
             theMesh.lookupObject<T>(fieldName),
             theOrder
@@ -945,6 +951,7 @@ namespace Foam {
             ,eqOp<typename T::value_type>()
 #endif
         );
+#endif
     }
 
 

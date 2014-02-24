@@ -247,6 +247,10 @@ Contributors/Copyright:
 #define FOAM_COUPLEDPOLYPATCH_HAS_OWNER
 #endif
 
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
+#define FOAM_NEW_MESH2MESH
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

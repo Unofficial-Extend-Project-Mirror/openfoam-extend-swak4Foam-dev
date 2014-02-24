@@ -11,5 +11,6 @@ EXE_INC = -I$(OBJECTS_DIR) \
 
 EXE_LIBS = -lfiniteVolume \
 	-lmeshTools \
+	-lsampling \
 	-L$(FOAM_USER_LIBBIN) \
 	-lswak4FoamParsers

@@ -631,7 +631,12 @@ public:
     tmp<T> interpolateForeignField(
         const word &meshName,
         const word &fieldName,
-        meshToMesh::order theOrder=meshToMesh::INTERPOLATE
+        meshToMeshOrder theOrder=
+#ifdef FOAM_NEW_MESH2MESH
+        meshToMesh::imCellVolumeWeight
+#else
+        meshToMesh::INTERPOLATE
+#endif
     ) const;
 
     //- read all the interpolation tables known to man
