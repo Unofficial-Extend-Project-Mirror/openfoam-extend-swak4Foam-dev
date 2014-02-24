@@ -251,6 +251,10 @@ Contributors/Copyright:
 #define FOAM_NEW_MESH2MESH
 #endif
 
+#if FOAM_VERSION4SWAK < VERSION_NR(2,3,0) || defined(FOAM_DEV)
+#define FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
