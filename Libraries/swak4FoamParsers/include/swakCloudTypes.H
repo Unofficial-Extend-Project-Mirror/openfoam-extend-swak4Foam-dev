@@ -47,7 +47,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#ifdef FOAM_HAS_FLUIDTHERMO
+#ifdef FOAM_HAS_FLUIDTHERMO_CLOUD
 
 #include "fluidThermoCloud.H"
 
@@ -78,6 +78,11 @@ namespace Foam {
 
 #ifdef FOAM_DEV
 #define FOAM_REACTINGCLOUD_OLD_STYLE
+#endif
+
+
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2)
+#define FOAM_PHASECHANGEMODEL_HAS_TVAP
 #endif
 
 #include "DebugOStream.H"

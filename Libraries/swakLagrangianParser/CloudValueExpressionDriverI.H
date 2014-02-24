@@ -40,6 +40,7 @@ Contributors/Copyright:
 #include "fvsPatchField.H"
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
+#include "interpolation.H"
 
 #include <cassert>
 
