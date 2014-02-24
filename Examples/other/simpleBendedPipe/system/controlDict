@@ -52,17 +52,20 @@ libs (
 );
 
 functions {
-    distance {
-        // should  be the distance from the inlet. Currently wrong
-        type solveLaplacianPDE;
-        outputControl   timeStep;
-        outputInterval  1;
-
-        solveAt startup;
-        fieldName distance;
-        steady true;
-        lambda "1" [0 0 0 0 0 0 0];
-        source "0" [0 -1 0 0 0 0 0];
+    onlyOnce {
+        type executeIfStartTime;
+        readDuringConstruction true;
+        runIfStartTime true;
+        functions {
+            distance {
+                type expressionField;
+                outputControl   timeStep;
+                outputInterval 1;
+                expression "distToPatch(inlet)";
+                fieldName distance;
+                autowrite true;
+            }
+        }
     }
     pressureIn {
         type patchExpression;

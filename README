@@ -2394,6 +2394,10 @@ S_{expl} + S_{impl} T
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows
      setting the dimension of the resulting field
+**** New function =distToPatch= in Field-parser
+     This function gives the distance in the mesh to a specified face.
+
+     Not yet working correctly
 *** Examples
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on
