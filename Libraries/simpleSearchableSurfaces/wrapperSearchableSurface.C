@@ -81,12 +81,12 @@ Foam::wrapperSearchableSurface::wrapperSearchableSurface
             << name() << " wraps " << delegate().name() << endl;
     }
     if(regions().size()!=size()) {
-        FatalErrorIn("wrapperSearchableSurface::wrapperSearchableSurface")
+        WarningIn("wrapperSearchableSurface::wrapperSearchableSurface")
             << "Number of regions " << regions().size() << " not equal to size "
                 << size() << nl << "Regions: " << regions()
                 << endl
-                << exit(FatalError);
-
+                << "in " << name() << " wraps " << delegate().name() << endl;
+        //                << exit(FatalError);
     }
 }
 

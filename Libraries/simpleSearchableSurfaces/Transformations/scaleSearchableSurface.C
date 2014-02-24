@@ -119,7 +119,10 @@ void Foam::scaleSearchableSurface::getNormal
 
     forAll(normal,i) {
         normal[i]=inverseTransform(iNormal[i]);
-        normal[i]/=mag(normal[i]);
+        scalar len=mag(normal[i]);
+        if(len>SMALL) {
+            normal[i]/=len;
+        }
     }
 }
 

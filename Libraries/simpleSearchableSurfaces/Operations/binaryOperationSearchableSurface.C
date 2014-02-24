@@ -623,7 +623,11 @@ void Foam::binaryOperationSearchableSurface::getNormal
     label cntA=0,cntB=0;
     forAll(who,i) {
         if(who[i]==BOTH || who[i]==HITSA || who[i]==NONE) {
-            normal[i]=normalA[cntA];
+            if(who[i]==BOTH || who[i]==HITSA) {
+                normal[i]=normalA[cntA];
+            } else {
+                normal[i]=vector::zero;
+            }
             if(revertNormalA(info[i])) {
                 normal[i]*=-1;
             }
