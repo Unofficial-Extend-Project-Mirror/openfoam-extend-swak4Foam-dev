@@ -220,4 +220,18 @@ bool Foam::wrapperSearchableSurface::overlaps(const boundBox& bb) const
     return false;
 }
 
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::wrapperSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    delegate().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+}
+#endif
+
 // ************************************************************************* //

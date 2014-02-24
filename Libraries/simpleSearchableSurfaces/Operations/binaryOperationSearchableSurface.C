@@ -969,4 +969,28 @@ void Foam::binaryOperationSearchableSurface::collectInfo(
     }
 }
 
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::binaryOperationSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    a().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+    pointField centresB;
+    scalarField radiusB;
+
+    b().boundingSpheres(
+        centresB,
+        radiusB
+    );
+
+    centres.append(centresB);
+    radiusSqr.append(radiusB);
+}
+#endif
+
 // ************************************************************************* //

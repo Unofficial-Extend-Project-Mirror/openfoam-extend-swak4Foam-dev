@@ -251,6 +251,10 @@ Contributors/Copyright:
 #define FOAM_NEW_MESH2MESH
 #endif
 
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
+#define FOAM_VOLUMETYPE_IS_TYPE
+#endif
+
 #if FOAM_VERSION4SWAK < VERSION_NR(2,3,0) || defined(FOAM_DEV)
 #define FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
 #endif
