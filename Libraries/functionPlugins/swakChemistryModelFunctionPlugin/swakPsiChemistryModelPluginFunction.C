@@ -42,6 +42,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swak.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction,0);

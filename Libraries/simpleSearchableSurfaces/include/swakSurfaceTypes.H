@@ -56,7 +56,7 @@ Contributors/Copyright:
 
 #endif
 
-#if FOAM_VERSION4SWAK > VERSION_NR2(2,2)
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
 #define FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
 #endif
 
