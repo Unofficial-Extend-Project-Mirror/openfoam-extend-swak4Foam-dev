@@ -43,7 +43,9 @@ namespace Foam {
 template<class Type>
 SimpleDistribution<Type>::SimpleDistribution()
 :
-    Distribution<Type>()
+    Distribution<Type>(),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
 }
 
@@ -52,7 +54,9 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 :
     Distribution<Type>(
         pTraits<Type>::one*binSize
-    )
+    ),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
     if(binSize<SMALL) {
         FatalErrorIn("SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)")
@@ -60,6 +64,13 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
                 << endl
                 << exit(FatalError);
     }
+}
+
+template<class Type>
+void SimpleDistribution<Type>::setInvalidValue(const Type &value)
+{
+    hasInvalidValue_=true;
+    invalidValue_=value;
 }
 
 template<class Type>
@@ -103,14 +114,18 @@ SimpleDistribution<Type>::SimpleDistribution(
                 )/scalar(pTraits<label>::max)
             )
         )
-    )
+    ),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
 }
 
 template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
 :
-    Distribution<Type>(o)
+    Distribution<Type>(o),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
     recalcLimits();
 }
@@ -118,7 +133,9 @@ SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
 template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const SimpleDistribution<Type> &o)
 :
-    Distribution<Type>(o)
+    Distribution<Type>(o),
+    hasInvalidValue_(o.hasInvalidValue_),
+    invalidValue_(o.invalidValue_)
 {
     recalcLimits();
 }
@@ -203,8 +220,14 @@ void SimpleDistribution<Type>::recalcLimits()
     {
         const List<scalar> &vals=(*this)[cmpt];
         Pair<label> &limits=validLimits_[cmpt];
+        const scalar invalid=component(invalidValue_,cmpt);
+
         forAll(vals,i) {
-            if(mag(vals[i])>VSMALL) {
+            if(
+                (!hasInvalidValue_ && mag(vals[i])>VSMALL)
+                ||
+                ( hasInvalidValue_ && mag(vals[i]-invalid)>VSMALL)
+            ) {
                 if (limits.first() == -1)
                 {
                     limits.first() = i;
@@ -330,6 +353,8 @@ void SimpleDistribution<Type>::divideByDistribution(
                 << exit(FatalError);
     }
 
+    setInvalidValue(valueIfZero);
+
     validLimits_=List<Pair<label> >(
         pTraits<Type>::nComponents,
         Pair<label>(-1,-1)
@@ -387,6 +412,9 @@ template<class Type>
 void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
 {
     Distribution<Type>::operator=(other);
+
+    invalidValue_=other.invalidValue_;
+    hasInvalidValue_=other.hasInvalidValue_;
 
     recalcLimits();
 }
@@ -656,6 +684,9 @@ void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
         const List< Pair<scalar> >& rawPairs = rawDistribution[cmpt];
 
         OFstream os(filePrefix + '_' + pTraits<Type>::componentNames[cmpt]);
+
+        Pair<label> limits = validLimits(cmpt);
+        Pair<label> limits2 = Distribution<Type>::validLimits(cmpt);
 
         os  << "# key raw" << endl;
 

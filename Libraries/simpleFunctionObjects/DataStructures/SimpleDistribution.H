@@ -94,6 +94,12 @@ class SimpleDistribution
 
     void recalcLimits();
 
+    bool hasInvalidValue_;
+
+    Type invalidValue_;
+
+    void setInvalidValue(const Type &val);
+
 protected:
     //- Returns the indices of the first and last non-zero entries
     Pair<label> validLimits(direction cmpt) const;

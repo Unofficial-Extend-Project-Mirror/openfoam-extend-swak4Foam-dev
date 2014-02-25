@@ -2382,6 +2382,10 @@ S_{expl} + S_{impl} T
      This should make =swak.H= more readable
 *** Documentation
 *** Bug fixes
+**** Invalid entries in distributions from =swakExpressionAverageDistribution=
+     The distribution data was not clipped to the range where actually
+     data was collected. This is now fixed by adding the notion of an
+     invalid value to =SimpleDistribution=
 *** New features
 **** New utility =funkyWarpMesh=
      Utility that calculates new point values for the mesh. In the
