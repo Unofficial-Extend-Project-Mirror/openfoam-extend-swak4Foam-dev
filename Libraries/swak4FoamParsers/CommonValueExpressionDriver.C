@@ -291,8 +291,9 @@ label CommonValueExpressionDriver::readForeignMeshInfo(
             region=word(info.lookup("region"));
         }
         const scalar time(readScalar(info.lookup("time")));
-        const MeshInterpolationOrder::value interpolationOrder
-            =MeshInterpolationOrder::names[
+        const meshToMeshOrder interpolationOrder
+            =
+            meshToMeshInterpolationNames[
                 word(info.lookup("interpolationOrder"))
             ];
 

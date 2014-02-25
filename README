@@ -2583,6 +2583,13 @@ S_{expl} + S_{impl} T
           hope" with =simpleFoam=
 ** Next release - version number : 0.3.1
 *** Incompatibilities to previous versions
+*** New supported versions
+**** Added support for OpenFOAM 2.3
+     This version adds support for OpenFOAM 2.3. The major changes
+     were due to changes in the API to
+     - =searchableSurface=
+     - =meshToMesh=
+     And several minor adaptions
 *** Infrastructure
 **** Improved macros for Foam versions
      This should make =swak.H= more readable

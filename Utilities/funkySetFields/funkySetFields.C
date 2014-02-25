@@ -748,7 +748,7 @@ int main(int argc, char *argv[])
         if(args.options().found("otherInterpolateOrder")) {
             MeshesRepository::getRepository().setInterpolationOrder(
                 "other",
-                MeshInterpolationOrder::names[
+                meshToMeshInterpolationNames[
                     args.options()["otherInterpolateOrder"]
                 ]
             );

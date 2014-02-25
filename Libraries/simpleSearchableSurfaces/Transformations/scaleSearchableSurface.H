@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef scaleSearchableSurface_H
@@ -112,6 +112,14 @@ public:
         const List<pointIndexHit>&,
         vectorField& normal
     ) const;
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+    virtual void boundingSpheres
+    (
+        pointField& centres,
+        scalarField& radiusSqr
+    ) const;
+#endif
 
 };
 

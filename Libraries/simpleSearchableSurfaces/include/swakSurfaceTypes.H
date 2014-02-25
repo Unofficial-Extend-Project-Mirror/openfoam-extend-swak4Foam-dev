@@ -28,48 +28,37 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+
+
+Description
+    Define types for searchableSurfaces that changed
+
+SourceFiles
+
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#ifndef SwakSurfaceTypesMacroHeader_H
+#define SwakSurfaceTypesMacroHeader_H
+
 #include "swak.H"
 
-#ifndef FOAM_NEW_MESH2MESH
+#ifdef FOAM_VOLUMETYPE_IS_TYPE
 
-#include "MeshInterpolationOrder.H"
+#define INSIDE volumeType::INSIDE
+#define OUTSIDE volumeType::OUTSIDE
+#define UNKNOWN volumeType::UNKNOWN
+#define MIXED volumeType::MIXED
 
-namespace Foam {
+#endif
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-template<>
-const char* NamedEnum
-<
-    MeshInterpolationOrder::value,
-    3
->::names[] =
-{
-    "map",
-    "interpolate",
-    "cell_point_interpolate"
-};
-
-const NamedEnum<MeshInterpolationOrder::value, 3>
-    MeshInterpolationOrder::names;
-
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
-
-} // namespace
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
+#define FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+#endif
 
 #endif
 

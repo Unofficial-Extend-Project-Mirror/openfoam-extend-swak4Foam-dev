@@ -71,7 +71,8 @@ of_version_minor=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.\([0-9]*\).*=\1='
 of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1=' -e 's=[0-9]*\.[0-9]*=x=' -e 's=x=-1='`
 
 if [[ $of_version_patch == -1  ]]; then
-    of_version_patch_num=99
+    # Needs to be 98 so that it is smaller than version macro with 99
+    of_version_patch_num=98
 else
     of_version_patch_num=$of_version_patch
 fi

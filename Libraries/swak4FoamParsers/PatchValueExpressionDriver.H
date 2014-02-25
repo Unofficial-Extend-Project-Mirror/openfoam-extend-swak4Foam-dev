@@ -54,6 +54,8 @@ Contributors/Copyright:
 
 #include "CommonValueExpressionDriver.H"
 
+#include "interpolation.H"
+
 namespace Foam {
     class PatchValueExpressionDriver;
 }

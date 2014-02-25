@@ -87,7 +87,7 @@ Contributors/Copyright:
 #define FOAM_INCOMPLETE_OPERATORS
 #endif
 
-#if FOAM_VERSION4SWAK < VERSION_NR2(2,1)
+#if FOAM_VERSION4SWAK <= VERSION_NR2(2,1) || defined(FOAM_DEV)
 #define FOAM_DELTATCHEM_NOT_DIMENSIONED
 #endif
 
@@ -143,6 +143,10 @@ Contributors/Copyright:
 #ifndef FOAM_DEV
 // new revised fluidThermo
 #define FOAM_HAS_FLUIDTHERMO
+#endif
+
+#if (FOAM_VERSION4SWAK < VERSION_NR(2,3,0)) && !defined(FOAM_DEV)
+#define FOAM_HAS_FLUIDTHERMO_CLOUD
 #endif
 
 // RR from the chemistry does no longer return a complete field
@@ -245,6 +249,18 @@ Contributors/Copyright:
 
 #ifndef FOAM_DEV
 #define FOAM_COUPLEDPOLYPATCH_HAS_OWNER
+#endif
+
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
+#define FOAM_NEW_MESH2MESH
+#endif
+
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
+#define FOAM_VOLUMETYPE_IS_TYPE
+#endif
+
+#if FOAM_VERSION4SWAK < VERSION_NR(2,3,0) || defined(FOAM_DEV)
+#define FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
 #endif
 
 #include "swakVersion.H"

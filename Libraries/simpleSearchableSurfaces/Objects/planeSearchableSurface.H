@@ -50,7 +50,7 @@ Contributors/Copyright:
 #include "treeBoundBox.H"
 #include "plane.H"
 
-#include "swak.H"
+#include "swakSurfaceTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -202,6 +202,13 @@ public:
                 List<volumeType>&
             ) const;
 
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+            virtual void boundingSpheres
+            (
+                pointField& centres,
+                scalarField& radiusSqr
+            ) const;
+#endif
 
         // regIOobject implementation
 

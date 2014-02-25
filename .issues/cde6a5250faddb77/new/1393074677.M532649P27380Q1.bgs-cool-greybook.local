@@ -1,0 +1,8 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 22 Feb 2014 14:09:23 +0100
+State: new
+Subject: Make cloudProxies access SubModels
+Message-Id: <cde6a5250faddb77-0-artemis@bgs-cool-greybook.local>
+
+If a submodel is available for a cloud access releavant functions from
+it. Example: Tvap which has been moved to PhaseChangeModel in OF 2.3

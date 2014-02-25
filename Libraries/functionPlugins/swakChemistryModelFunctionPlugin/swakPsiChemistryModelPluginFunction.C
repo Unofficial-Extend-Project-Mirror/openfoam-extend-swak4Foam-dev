@@ -42,6 +42,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swak.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction,0);
@@ -98,7 +100,9 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
             << endl;
 
         chemistry_[reg.name()]->solve(
+#ifdef FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
             reg.time().value(),
+#endif
             reg.time().deltaT().value()
         );
         //        chemistry_[reg.name()]->calculate();
@@ -112,7 +116,9 @@ void swakPsiChemistryModelPluginFunction::updateChemistry(const scalar dt)
     const_cast<psiChemistryModel&>(
         chemistry()
     ).solve(
+#ifdef FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
         mesh().time().value(),
+#endif
         dt
     );
 }
