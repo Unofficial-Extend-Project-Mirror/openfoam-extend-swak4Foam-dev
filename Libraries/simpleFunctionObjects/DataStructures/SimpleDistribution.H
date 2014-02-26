@@ -49,6 +49,8 @@ Contributors/Copyright:
 
 #include "Distribution.H"
 
+#include "Tuple2.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -111,6 +113,8 @@ protected:
     PtrList<List<scalar> > minimum_;
     //- maximum for distributions that can handle it
     PtrList<List<scalar> > maximum_;
+    //- number of samples for distributions that can handle it
+    PtrList<List<label> > nSamples_;
 
 public:
 
@@ -170,7 +174,8 @@ public:
     //- Return the distribution of the total bin weights - adapted to allow negative weights
     List< List < Pair<scalar> > > rawNegative() const;
 
-    List< List < Pair<scalar> > > rawField(const PtrList<List<scalar> > &f) const;
+    template<class FType>
+    List< List < Tuple2<scalar,FType> > > rawField(const PtrList<List<FType> > &f) const;
 
     Type mean() const { return Distribution<Type>::mean(); }
 

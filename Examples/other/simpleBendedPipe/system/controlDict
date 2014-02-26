@@ -89,15 +89,20 @@ functions {
         mask "true";
         abscissa "distance";
         binNumber 100;
-        valueIfZero -1;
+        valueIfZero -666;
     }
     velocityLine {
         $pressureLine;
         expression "mag(U)";
     }
-    velocityCompnentsLine {
+    velocityComponentsLine {
         $pressureLine;
         expression "U";
+    }
+    velocityComponentsPosition {
+        $velocityComponentsLine;
+        abscissa "pos()";
+        valueIfZero (-666 -666 -666);
     }
     velocityOutLine {
         $velocityLine;

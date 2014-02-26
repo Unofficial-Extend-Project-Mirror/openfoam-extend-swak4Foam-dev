@@ -136,10 +136,11 @@ SimpleDistribution<Type>::SimpleDistribution(const SimpleDistribution<Type> &o)
 :
     Distribution<Type>(o),
     hasInvalidValue_(o.hasInvalidValue_),
-    invalidValue_(o.invalidValue_)
+    invalidValue_(o.invalidValue_),
+    minimum_(o.minimum_),
+    maximum_(o.maximum_),
+    nSamples_(o.nSamples_)
 {
-    minimum_=o.minimum_;
-    maximum_=o.maximum_;
 
     recalcLimits();
 }
@@ -220,11 +221,13 @@ void SimpleDistribution<Type>::calcMinimumMaximum(
 ) {
     minimum_.resize(pTraits<Type>::nComponents);
     maximum_.resize(pTraits<Type>::nComponents);
+    nSamples_.resize(pTraits<Type>::nComponents);
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         minimum_.set(cmpt,new List<scalar>((*this)[cmpt].size(), HUGE));
         maximum_.set(cmpt,new List<scalar>((*this)[cmpt].size(),-HUGE));
+        nSamples_.set(cmpt,new List<label>((*this)[cmpt].size(), 0));
     }
 
     forAll(mask,i) {
@@ -246,6 +249,7 @@ void SimpleDistribution<Type>::calcMinimumMaximum(
 
                 minVal=Foam::min(minVal,wei);
                 maxVal=Foam::max(maxVal,wei);
+                nSamples_[cmpt][listIndex]++;
             }
         }
     }
@@ -477,6 +481,8 @@ void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
     minimum_=other.minimum_;
     maximum_.clear();
     maximum_=other.minimum_;
+    nSamples_.clear();
+    nSamples_=other.nSamples_;
 
     recalcLimits();
 }
@@ -692,8 +698,9 @@ Type SimpleDistribution<Type>::smaller(scalar value) const
 
 
 template<class Type>
-List< List < Pair<scalar> > > SimpleDistribution<Type>::rawField(
-    const PtrList<List<scalar> > &f
+template<class FType>
+List< List < Tuple2<scalar,FType> > > SimpleDistribution<Type>::rawField(
+    const PtrList<List<FType> > &f
 ) const
 {
     if(f.size()!=pTraits<Type>::nComponents) {
@@ -706,11 +713,11 @@ List< List < Pair<scalar> > > SimpleDistribution<Type>::rawField(
 
     const_cast<SimpleDistribution<Type>&>(*this).recalcLimits();
 
-    List< List < Pair<scalar> > > rawF(pTraits<Type>::nComponents);
+    List< List < Tuple2<scalar,FType> > > rawF(pTraits<Type>::nComponents);
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
-        const List<scalar>& cmptF = f[cmpt];
+        const List<FType>& cmptF = f[cmpt];
 
         if (cmptF.empty())
         {
@@ -718,7 +725,7 @@ List< List < Pair<scalar> > > SimpleDistribution<Type>::rawField(
         }
 
         List<label> cmptKeys = this->keys(cmpt);
-        List< Pair<scalar> >& rawDist = rawF[cmpt];
+        List< Tuple2<scalar,FType> >& rawDist = rawF[cmpt];
 
         Pair<label> limits = validLimits(cmpt);
 
@@ -801,12 +808,14 @@ template<class Type>
 void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 {
     List< List < Pair<scalar> > > rawDistribution = rawNegative();
-    List< List < Pair<scalar> > > rawMin;
-    List< List < Pair<scalar> > > rawMax;
+    List< List < Tuple2<scalar,scalar> > > rawMin;
+    List< List < Tuple2<scalar,scalar> > > rawMax;
+    List< List < Tuple2<scalar,label> > > rawnSamp;
 
     if(minimum_.size()>0 && maximum_.size()>0) {
         rawMin=rawField(minimum_);
         rawMax=rawField(maximum_);
+        rawnSamp=rawField(nSamples_);
     }
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
@@ -820,7 +829,7 @@ void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 
         os  << "# key raw";
         if(minimum_.size()>cmpt && maximum_.size()>cmpt) {
-            os << " min max";
+            os << " min max nSamples";
         }
         os << endl;
 
@@ -830,7 +839,8 @@ void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
                 << ' ' << rawPairs[i].second();
             if(minimum_.size()>cmpt && maximum_.size()>cmpt) {
                 os  << ' ' << rawMin[cmpt][i].second()
-                    << ' ' << rawMax[cmpt][i].second();
+                    << ' ' << rawMax[cmpt][i].second()
+                    << ' ' << rawnSamp[cmpt][i].second();
             }
             os  << nl;
         }
@@ -931,18 +941,23 @@ SimpleDistribution<Type> operator+
     if(doMinMax) {
         d.minimum_.resize(pTraits<Type>::nComponents);
         d.maximum_.resize(pTraits<Type>::nComponents);
+        d.nSamples_.resize(pTraits<Type>::nComponents);
 
         for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
         {
-            d.minimum_.set(cmpt,new List<scalar>(d[cmpt], HUGE));
-            d.maximum_.set(cmpt,new List<scalar>(d[cmpt],-HUGE));
+            d.minimum_.set(cmpt,new List<scalar>(d[cmpt].size(), HUGE));
+            d.maximum_.set(cmpt,new List<scalar>(d[cmpt].size(),-HUGE));
+            d.nSamples_.set(cmpt,new List<label>(d[cmpt].size(), 0));
         }
-        List< List< List < Pair<scalar> > > > rawMin(2);
-        List< List< List < Pair<scalar> > > > rawMax(2);
+        List< List< List < Tuple2<scalar,scalar> > > > rawMin(2);
+        List< List< List < Tuple2<scalar,scalar> > > > rawMax(2);
+        List< List< List < Tuple2<scalar,label> > > > rawSamples(2);
         rawMin[0] = d1.rawField(d1.minimum_);
         rawMin[1] = d2.rawField(d2.minimum_);
         rawMax[0] = d1.rawField(d1.maximum_);
         rawMax[1] = d2.rawField(d2.maximum_);
+        rawSamples[0] = d1.rawField(d1.nSamples_);
+        rawSamples[1] = d2.rawField(d2.nSamples_);
 
         forAll(rawDists, rDI)
         {
@@ -950,9 +965,11 @@ SimpleDistribution<Type> operator+
             {
                 List<scalar>& cmptMin = d.minimum_[cmpt];
                 List<scalar>& cmptMax = d.maximum_[cmpt];
+                List<label>& cmptSamples = d.nSamples_[cmpt];
 
-                const List < Pair<scalar> >& rMin = rawMin[rDI][cmpt];
-                const List < Pair<scalar> >& rMax = rawMax[rDI][cmpt];
+                const List < Tuple2<scalar,scalar> >& rMin = rawMin[rDI][cmpt];
+                const List < Tuple2<scalar,scalar> >& rMax = rawMax[rDI][cmpt];
+                const List < Tuple2<scalar,label> >& rSamples = rawSamples[rDI][cmpt];
 
                 forAll(rMin, rI)
                 {
@@ -977,6 +994,7 @@ SimpleDistribution<Type> operator+
 
                     cmptMin[listIndex] = min(cmptMin[listIndex],minToAdd);
                     cmptMax[listIndex] = max(cmptMax[listIndex],maxToAdd);
+                    cmptSamples[listIndex]+=rSamples[rI].second();
                 }
             }
         }
