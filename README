@@ -2402,6 +2402,10 @@ S_{expl} + S_{impl} T
      This function gives the distance in the mesh to a specified face.
 
      Not yet working correctly
+**** =swakExpressionAverageDistribution= records extremes and number of samples
+     In addition to the average now this Function object also records
+     the minimum and maximum value for each bin. Also the number of
+     samples used in the bin
 *** Examples
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on
