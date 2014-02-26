@@ -107,6 +107,11 @@ protected:
     //- round value down to the next nearst power of 10
     Type smaller10Power(const Type value);
 
+    //- minimum for distributions that can handle it
+    PtrList<List<scalar> > minimum_;
+    //- maximum for distributions that can handle it
+    PtrList<List<scalar> > maximum_;
+
 public:
 
     //- Construct null
@@ -146,6 +151,17 @@ public:
         const Field<bool> &mask
     );
 
+   void calcMinimumMaximum(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask
+    );
+
+   void calcMinimumMaximum(
+        const Field<Type> &values,
+        const Field<scalar> &weights
+    );
+
     void divideByDistribution(
         const SimpleDistribution<Type> &weightSum,
         const Type &valueIfZero
@@ -153,6 +169,8 @@ public:
 
     //- Return the distribution of the total bin weights - adapted to allow negative weights
     List< List < Pair<scalar> > > rawNegative() const;
+
+    List< List < Pair<scalar> > > rawField(const PtrList<List<scalar> > &f) const;
 
     Type mean() const { return Distribution<Type>::mean(); }
 

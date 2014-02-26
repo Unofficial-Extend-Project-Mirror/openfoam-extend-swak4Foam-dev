@@ -95,6 +95,10 @@ functions {
         $pressureLine;
         expression "mag(U)";
     }
+    velocityCompnentsLine {
+        $pressureLine;
+        expression "U";
+    }
     velocityOutLine {
         $velocityLine;
         expression "(U & grad(distance))";
