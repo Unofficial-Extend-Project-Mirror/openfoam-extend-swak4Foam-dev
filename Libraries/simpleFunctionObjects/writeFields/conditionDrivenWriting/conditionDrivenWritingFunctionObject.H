@@ -123,6 +123,8 @@ private:
 
     bool checkWrite();
 
+    bool checkCooldown();
+
 protected:
     //- should writing start now?
     virtual bool checkStartWriting() =0;

@@ -54,11 +54,22 @@ functions {
         type writeIfFieldOutside;
         outputControlMode timeStep;
         outputInterval 1;
-        writeControlMode timesteps;
-        cooldownMode timesteps;
+
+        // writeControlMode timesteps;
+        // cooldownMode timesteps;
+        //        writeControlMode untilSwitch;
+        //        writeControlMode always;
+        writeControlMode intervall;
+        //        cooldownMode timesteps;
+        //        cooldownMode no;
+        //        cooldownMode retrigger;
+        cooldownMode intervall;
         storeAndWritePreviousState false;
+
         writeTimesteps 3;
-        cooldownTimesteps 97;
+        cooldownTimesteps 17;
+        writeIntervall 2.5;
+        cooldownIntervall 16.5;
 
         fieldName U;
         minimum -1;
