@@ -58,14 +58,14 @@ functions {
         outputControlMode timeStep;
         outputInterval 1;
 
-        // writeControlMode timesteps;
+        writeControlMode timesteps;
         // cooldownMode timesteps;
-        writeControlMode untilSwitch;
+        //        writeControlMode untilSwitch;
         //        writeControlMode always;
         //        writeControlMode intervall;
-        //        cooldownMode timesteps;
+        cooldownMode timesteps;
         //        cooldownMode no;
-        cooldownMode retrigger;
+        //        cooldownMode retrigger;
         //        cooldownMode intervall;
         storeAndWritePreviousState false;
 
@@ -78,8 +78,20 @@ functions {
         minimum -1;
         maximum 10;
 
+        variables (
+            "count=(mag(U.x)>10) ? count+1 : count;"
+            "count=max(count);"
+        );
+
+        storedVariables (
+            {
+                name count;
+                initialValue "0";
+            }
+        );
+
         valueType internalField;
-        writeCondition "mag(U.x)>10";
+        writeCondition "mag(U.x)>10 && count<4";
         writeConditionAccumulation or;
 
         stopWritingCondition "(time() % 10)==5";
