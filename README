@@ -2407,6 +2407,10 @@ S_{expl} + S_{impl} T
      - writeIfFieldOutside :: writing is triggered if the minimum or
 	  the maximum of a field is outside a specified range. Part of
           the =simpleFunctionObjects=
+     - writeIfSwakExpression :: writing is triggered if a logical
+          expression evaluates to =true=. Stopping and retriggering is
+          also possible with logical expressions. Part of
+          the =simpleSwakFunctionObjects=
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows

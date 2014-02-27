@@ -29,27 +29,29 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    conditionDrivenWritingFunctionObject
+    writeIfSwakExpressionFunctionObject
 
 Description
-    General class for functionObjects that write timesteps if certain conditions
-    are met
+    Check whether a swak-condition is met. If yes start writting again. Also offers the
+    possibility to stop via an expression
 
 SourceFiles
-    conditionDrivenWritingFunctionObject.C
+    writeIfSwakExpressionFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id: conditionDrivenWritingFunctionObject.H,v 78b0d113b99b 2013-02-25 16:12:41Z bgschaid $
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef conditionDrivenWritingFunctionObject_H
-#define conditionDrivenWritingFunctionObject_H
+#ifndef writeIfSwakExpressionFunctionObject_H
+#define writeIfSwakExpressionFunctionObject_H
 
-#include "simpleFunctionObject.H"
+#include "conditionDrivenWritingFunctionObject.H"
 
-#include "NamedEnum.H"
+#include "CommonValueExpressionDriver.H"
+
+#include "LogicalAccumulationNamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,107 +59,77 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class conditionDrivenWritingFunctionObject Declaration
+                           Class writeIfSwakExpressionFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class conditionDrivenWritingFunctionObject
+class writeIfSwakExpressionFunctionObject
 :
-    public simpleFunctionObject
+    public conditionDrivenWritingFunctionObject
 {
-public:
-    enum writeControlModeType {
-        scmWriteAlways,
-        scmWriteNTimesteps,
-        scmWriteIntervall,
-        scmWriteUntilSwitch
-    };
-
-    enum cooldownModeType {
-        cdmNoCooldown,
-        cdmNTimesteps,
-        cdmIntervall,
-        cdmRetrigger
-    };
-
-private:
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    conditionDrivenWritingFunctionObject(const conditionDrivenWritingFunctionObject&);
+    writeIfSwakExpressionFunctionObject(const writeIfSwakExpressionFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const conditionDrivenWritingFunctionObject&);
+    void operator=(const writeIfSwakExpressionFunctionObject&);
 
-    enum theStateType {
-        stateWaiting,
-        stateWriting,
-        stateStartCooldown,
-        stateCooldown
-    };
+    //- the expression driver
+    autoPtr<CommonValueExpressionDriver> driver_;
 
-    static const NamedEnum<writeControlModeType,4> writeControlModeTypeNames_;
-    writeControlModeType writeControlMode_;
+    //- the logical expression
+    string writeExpression_;
 
-    static const NamedEnum<cooldownModeType,4> cooldownModeTypeNames_;
-    cooldownModeType cooldownMode_;
+    //- possible logical accumulations
+    LogicalAccumulationNamedEnum::value writeAccumulation_;
 
-    bool storeAndWritePreviousState_;
+    //- the logical expression
+    string stopWriteExpression_;
 
-    theStateType theState_;
+    //- possible logical accumulations
+    LogicalAccumulationNamedEnum::value stopWriteAccumulation_;
 
-    label writeTimesteps_;
-    scalar writeIntervall_;
-    label cooldownTimesteps_;
-    scalar cooldownIntervall_;
+    //- the logical expression
+    string stopCooldownExpression_;
 
-    label timestepForStateChange_;
-    scalar timeForStateChange_;
+    //- possible logical accumulations
+    LogicalAccumulationNamedEnum::value stopCooldownAccumulation_;
 
-    void storePreviousState();
+    void readParameters(const dictionary &);
 
-    void writePreviousState();
-
-    void writeNow();
-
-    bool alreadyWritten(word timename);
-
-    bool checkWrite();
-
-    bool checkCooldown();
+    bool evaluateCondition(
+        string expression,
+        LogicalAccumulationNamedEnum::value accumulation
+    );
 
 protected:
-    //- should writing start now?
-    virtual bool checkStartWriting() =0;
 
-    //- switch off writing? Does not have to be implemented
+    //- should writing start now?
+    virtual bool checkStartWriting();
+
+    //- switch off writing?
     virtual bool checkStopWriting();
 
-    //- switch off cooldown? Does not have to be implemented
+    //- switch off cooldown?
     virtual bool checkStopCooldown();
-
-    cooldownModeType cooldownMode() { return cooldownMode_; }
-
-    writeControlModeType writeControlMode() { return writeControlMode_; }
 
 public:
 
     //- Runtime type information
-    TypeName("conditionDrivenWriting");
+    TypeName("writeIfSwakExpression");
 
 
     // Constructors
 
     //- Construct from components
-    conditionDrivenWritingFunctionObject
+    writeIfSwakExpressionFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    bool start();
-
-    void write();
+    bool read(const dictionary &dict);
 };
 
 

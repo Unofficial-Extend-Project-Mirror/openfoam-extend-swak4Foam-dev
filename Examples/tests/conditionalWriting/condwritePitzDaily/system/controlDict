@@ -47,23 +47,26 @@ runTimeModifiable yes;
 
 libs (
     "libsimpleFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
 );
 
 functions {
     writeLargeU {
-        type writeIfFieldOutside;
+        //        type writeIfFieldOutside;
+        type writeIfSwakExpression;
+
         outputControlMode timeStep;
         outputInterval 1;
 
         // writeControlMode timesteps;
         // cooldownMode timesteps;
-        //        writeControlMode untilSwitch;
+        writeControlMode untilSwitch;
         //        writeControlMode always;
-        writeControlMode intervall;
+        //        writeControlMode intervall;
         //        cooldownMode timesteps;
         //        cooldownMode no;
-        //        cooldownMode retrigger;
-        cooldownMode intervall;
+        cooldownMode retrigger;
+        //        cooldownMode intervall;
         storeAndWritePreviousState false;
 
         writeTimesteps 3;
@@ -74,6 +77,16 @@ functions {
         fieldName U;
         minimum -1;
         maximum 10;
+
+        valueType internalField;
+        writeCondition "mag(U.x)>10";
+        writeConditionAccumulation or;
+
+        stopWritingCondition "(time() % 10)==5";
+        stopWritingConditionAccumulation and;
+
+        retriggerCondition "(time() % 20)==0";
+        retriggerConditionAccumulation or;
     }
 }
 
