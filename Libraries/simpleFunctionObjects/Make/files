@@ -31,6 +31,8 @@ writeFields/writeAdditionalFields/writeAdditionalFieldsFunctionObject.C
 writeFields/writeFieldsOften/writeFieldsOftenFunctionObject.C
 writeFields/writeFieldsGeneral/writeFieldsGeneralFunctionObject.C
 
+writeFields/conditionDrivenWriting/conditionDrivenWritingFunctionObject.C
+
 trackDictionary/trackDictionaryFunctionObject.C
 
 functionObjectProxy/functionObjectListProxy/functionObjectListProxy.C
