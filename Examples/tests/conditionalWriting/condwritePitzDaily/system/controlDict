@@ -1,0 +1,69 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   5000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libsimpleFunctionObjects.so"
+);
+
+functions {
+    writeLargeU {
+        type writeIfFieldOutside;
+        outputControlMode timeStep;
+        outputInterval 1;
+        writeControlMode timesteps;
+        cooldownMode timesteps;
+        storeAndWritePreviousState false;
+        writeTimesteps 3;
+        cooldownTimesteps 97;
+
+        fieldName U;
+        minimum -1;
+        maximum 10;
+    }
+}
+
+// ************************************************************************* //

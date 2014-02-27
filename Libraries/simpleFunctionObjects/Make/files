@@ -32,6 +32,7 @@ writeFields/writeFieldsOften/writeFieldsOftenFunctionObject.C
 writeFields/writeFieldsGeneral/writeFieldsGeneralFunctionObject.C
 
 writeFields/conditionDrivenWriting/conditionDrivenWritingFunctionObject.C
+writeFields/conditionDrivenWriting/writeIfFieldOutside/writeIfFieldOutsideFunctionObject.C
 
 trackDictionary/trackDictionaryFunctionObject.C
 

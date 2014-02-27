@@ -29,27 +29,25 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    conditionDrivenWritingFunctionObject
+    writeIfFieldOutsideFunctionObject
 
 Description
-    General class for functionObjects that write timesteps if certain conditions
-    are met
+    Checks whether a field exceeds given limits (min and max). Triggers write
+    if that is the case
 
 SourceFiles
-    conditionDrivenWritingFunctionObject.C
+    writeIfFieldOutsideFunctionObject.C
 
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id: conditionDrivenWritingFunctionObject.H,v 78b0d113b99b 2013-02-25 16:12:41Z bgschaid $
+ SWAK Revision: $Id: writeIfFieldOutsideFunctionObject.H,v 78b0d113b99b 2013-02-25 16:12:41Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
-#ifndef conditionDrivenWritingFunctionObject_H
-#define conditionDrivenWritingFunctionObject_H
+#ifndef writeIfFieldOutsideFunctionObject_H
+#define writeIfFieldOutsideFunctionObject_H
 
-#include "simpleFunctionObject.H"
-
-#include "NamedEnum.H"
+#include "conditionDrivenWritingFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,92 +55,52 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class conditionDrivenWritingFunctionObject Declaration
+                           Class writeIfFieldOutsideFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class conditionDrivenWritingFunctionObject
+class writeIfFieldOutsideFunctionObject
 :
-    public simpleFunctionObject
+    public conditionDrivenWritingFunctionObject
 {
-public:
-    enum writeControlModeType {
-        scmWriteAlways,
-        scmWriteNTimesteps,
-        scmWriteIntervall,
-        scmWriteUntilSwitch
-    };
-
-    enum cooldownModeType {
-        cdmNoCooldown,
-        cdmNTimesteps,
-        cdmIntervall,
-        cdmRetrigger
-    };
-
-private:
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    conditionDrivenWritingFunctionObject(const conditionDrivenWritingFunctionObject&);
+    writeIfFieldOutsideFunctionObject(const writeIfFieldOutsideFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const conditionDrivenWritingFunctionObject&);
+    void operator=(const writeIfFieldOutsideFunctionObject&);
 
-    enum theStateType {
-        stateWaiting,
-        stateWriting,
-        stateStartCooldown,
-        stateCooldown
-    };
+    //- Name of the field that is to be checked
+    word fieldName_;
 
-    static const NamedEnum<writeControlModeType,4> writeControlModeTypeNames_;
-    writeControlModeType writeControlMode_;
+    //- maximum value that is to be looked for
+    scalar maximum_;
 
-    static const NamedEnum<cooldownModeType,4> cooldownModeTypeNames_;
-    cooldownModeType cooldownMode_;
+    //- minimum value that is to be looked for
+    scalar minimum_;
 
-    bool storeAndWritePreviousState_;
+    //- do the actual checking
+    template <class T>
+    scalar getMin() const;
 
-    theStateType theState_;
+    //- do the actual checking
+    template <class T>
+    scalar getMax() const;
 
-    label writeTimesteps_;
-    scalar writeIntervall_;
-    label cooldownTimesteps_;
-    scalar cooldownIntervall_;
-
-    label timestepForStateChange_;
-    scalar timeForStateChange_;
-
-    void storePreviousState();
-
-    void writePreviousState();
-
-    void writeNow();
-
-    bool alreadyWritten(word timename);
-
-    bool checkWrite();
-
-protected:
-    //- should writing start now?
-    virtual bool checkStartWriting() =0;
-
-    //- switch off writing? Does not have to be implemented
-    virtual bool checkStopWriting();
-
-    //- switch off cooldown? Does not have to be implemented
-    virtual bool checkStopCooldown();
+    //- wrapper for the checking
+    template <class T>
+    bool check() const;
 
 public:
 
     //- Runtime type information
-    TypeName("conditionDrivenWriting");
+    TypeName("writeIfFieldOutside");
 
 
     // Constructors
 
     //- Construct from components
-    conditionDrivenWritingFunctionObject
+    writeIfFieldOutsideFunctionObject
     (
         const word&,
         const Time&,
@@ -151,13 +109,19 @@ public:
 
     bool start();
 
-    void write();
+protected:
+    //- should writing start now?
+    virtual bool checkStartWriting();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+#ifdef NoRepository
+#   include "writeIfFieldOutsideFunctionObjectTemplates.C"
+#endif
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

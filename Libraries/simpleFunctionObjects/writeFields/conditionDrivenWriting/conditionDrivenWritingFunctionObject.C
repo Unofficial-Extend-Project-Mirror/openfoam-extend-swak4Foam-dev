@@ -118,10 +118,10 @@ conditionDrivenWritingFunctionObject::conditionDrivenWritingFunctionObject
     }
     switch(cooldownMode_) {
         case cdmNTimesteps:
-            writeTimesteps_=readLabel(dict.lookup("cooldownTimesteps"));
+            cooldownTimesteps_=readLabel(dict.lookup("cooldownTimesteps"));
             break;
         case cdmIntervall:
-            writeIntervall_=readScalar(dict.lookup("cooldownIntervall"));
+            cooldownIntervall_=readScalar(dict.lookup("cooldownIntervall"));
             break;
         case cdmRetrigger:
             // to be implemented by subclass
@@ -172,14 +172,14 @@ void conditionDrivenWritingFunctionObject::writeNow()
 {
     Info << name() << " triggered writing of t=" << time().timeName() << endl;
     if(!alreadyWritten(time().timeName())) {
-        Info << "Writing ...." << endl;
+        Info << name() << ": Writing ...." << endl;
         bool result=const_cast<Time&>(time()).writeNow();
     } else {
-        Info << "Already written. Skipping" << endl;
+        Info << name() << ": Already written. Skipping" << endl;
     }
 
     if(storeAndWritePreviousState_) {
-        Info << "Attempt to write previous timestep" << endl;
+        Info << name() << ": Attempt to write previous timestep" << endl;
         writePreviousState();
     }
 }
@@ -205,40 +205,47 @@ bool conditionDrivenWritingFunctionObject::start()
     return true;
 }
 
+bool conditionDrivenWritingFunctionObject::checkWrite()
+{
+    if(checkStartWriting()) {
+        Info << name() << " starts writing" << endl;
+        theState_=stateWriting;
+        switch(writeControlMode_) {
+            case scmWriteAlways:
+                break;
+            case scmWriteNTimesteps:
+                Info << name() << ": Writing for " << writeTimesteps_
+                    << endl;
+                timestepForStateChange_=time().timeIndex()+writeTimesteps_-1;
+                break;
+            case scmWriteIntervall:
+                timeForStateChange_=time().value()+writeIntervall_;
+                Info << name() << ": Writing till " << timeForStateChange_
+                    << endl;
+                break;
+            case scmWriteUntilSwitch:
+                Info << name() << ": writing until switched off"
+                    << endl;
+                break;
+            default:
+                FatalErrorIn("conditionDrivenWritingFunctionObject::write")
+                    << "Unimplemented 'writeControlMode'"
+                        << endl
+                        << exit(FatalError);
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void conditionDrivenWritingFunctionObject::write()
 {
     bool doWrite=false;
 
     switch(theState_) {
         case stateWaiting:
-            if(checkStartWriting()) {
-                Info << name() << " starts writing" << endl;
-                doWrite=true;
-                theState_=stateWriting;
-                switch(writeControlMode_) {
-                    case scmWriteAlways:
-                        break;
-                    case scmWriteNTimesteps:
-                        Info << name() << ": Writing for " << writeTimesteps_
-                            << endl;
-                        timestepForStateChange_=time().timeIndex()+writeTimesteps_;
-                        break;
-                    case scmWriteIntervall:
-                        timeForStateChange_=time().value()+writeIntervall_;
-                        Info << name() << ": Writing till " << timeForStateChange_
-                            << endl;
-                        break;
-                    case scmWriteUntilSwitch:
-                        Info << name() << ": writing until switched off"
-                            << endl;
-                        break;
-                    default:
-                        FatalErrorIn("conditionDrivenWritingFunctionObject::write")
-                            << "Unimplemented 'writeControlMode'"
-                                << endl
-                                << exit(FatalError);
-                }
-            }
+            doWrite=checkWrite();
             break;
         case stateWriting:
             switch(writeControlMode_) {
@@ -254,13 +261,14 @@ void conditionDrivenWritingFunctionObject::write()
                 case scmWriteUntilSwitch:
                     doWrite=!checkStopWriting();
                     break;
-                define:
+                default:
                     FatalErrorIn("conditionDrivenWritingFunctionObject::write")
                         << "Unimplemented 'writeControlMode'"
                             << endl
                             << exit(FatalError);
             }
             if(!doWrite) {
+                Info << name() << ": Stopped writting. Starting cooldown" << endl;
                 theState_=stateStartCooldown;
             }
             break;
@@ -275,10 +283,10 @@ void conditionDrivenWritingFunctionObject::write()
                                 << exit(FatalError);
                         break;
                     case cdmNTimesteps:
-                        stopCooldown=(time().timeIndex()<=timestepForStateChange_);
+                        stopCooldown=(time().timeIndex()>=timestepForStateChange_);
                         break;
                     case cdmIntervall:
-                        stopCooldown=(time().value()<=timeForStateChange_);
+                        stopCooldown=(time().value()>timeForStateChange_);
                         break;
                     case cdmRetrigger:
                         stopCooldown=checkStopCooldown();
@@ -290,8 +298,9 @@ void conditionDrivenWritingFunctionObject::write()
                                 << exit(FatalError);
                 }
                 if(stopCooldown) {
-                    Info << name() << " cooldown ended. Writing possible at next timestep" << endl;
-                    theState_=stateStartCooldown;
+                    Info << name() << " cooldown ended. Writing possible" << endl;
+                    theState_=stateWaiting;
+                    doWrite=checkWrite();
                 }
             }
             break;
@@ -308,6 +317,7 @@ void conditionDrivenWritingFunctionObject::write()
     }
 
     if(theState_==stateStartCooldown) {
+        theState_=stateCooldown;
         switch(cooldownMode_) {
             case cdmNoCooldown:
                 theState_=stateWaiting;
