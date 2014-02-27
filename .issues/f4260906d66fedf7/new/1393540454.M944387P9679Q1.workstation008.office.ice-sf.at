@@ -1,0 +1,10 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 27 Feb 2014 23:32:07 +0100
+State: new
+Subject: Add accumulations for logical operations to parsers
+Message-Id: <f4260906d66fedf7-0-artemis@workstation008.office.ice-sf.at>
+
+Like =sum= add the possiblity to get *one* logical value.
+
+=or(expr)= return =true= if any of =expr= is =true=
+=and(expr)= return =true= if all of =expr= is =true=
