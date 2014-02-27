@@ -360,6 +360,7 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_area
 %token TOKEN_volume
 %token TOKEN_dist
+%token TOKEN_distToPatch
 %token TOKEN_nearDist
 %token TOKEN_rdist
 
@@ -2394,6 +2395,10 @@ exp:    TOKEN_NUM                                   {
           }
         | TOKEN_dist '(' ')'                        {
             $$ = driver.makeDistanceField().ptr();
+          }
+        | TOKEN_distToPatch '(' TOKEN_PATCHID ')'                        {
+            $$ = driver.makeDistanceToPatchField( *$3 ).ptr();
+            delete $3;
           }
         | TOKEN_nearDist '(' ')'                    {
             $$ = driver.makeNearDistanceField().ptr();

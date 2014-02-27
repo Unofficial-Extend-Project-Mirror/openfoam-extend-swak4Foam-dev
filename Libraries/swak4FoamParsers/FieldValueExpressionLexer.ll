@@ -168,6 +168,10 @@ face                  return token::TOKEN_face;
 area                  return token::TOKEN_area;
 vol                   return token::TOKEN_volume;
 dist                  return token::TOKEN_dist;
+distToPatch                  {
+    BEGIN(patchname);
+    return token::TOKEN_distToPatch;
+                      }
 nearDist              return token::TOKEN_nearDist;
 rdist                 return token::TOKEN_rdist;
 rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }

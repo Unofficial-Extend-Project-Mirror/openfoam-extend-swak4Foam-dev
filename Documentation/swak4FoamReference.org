@@ -427,6 +427,7 @@ hide circle
                  wall (using =wallDist=) (F, P)
      - nearDist() :: Scalar field that gives the distance to the
                      nearest wall (using =nearWallDist=)(F)
+     - distToPatch(name) :: Distance to patch =name= (F)
      - rdist() :: A field with the distances from a given vector
                   (shorthand for =mag(pos()-v)=) (F, P, FF)
      - length() :: Edge length (FF, FP)
