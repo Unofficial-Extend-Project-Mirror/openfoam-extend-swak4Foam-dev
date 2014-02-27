@@ -53,6 +53,7 @@ Contributors/Copyright:
 #include "Switch.H"
 #include "autoPtr.H"
 #include "dictionary.H"
+#include "dimensionSet.H"
 
 namespace Foam
 {
@@ -100,6 +101,10 @@ protected:
     );
 
     autoPtr<FieldValueExpressionDriver> driver_;
+
+    dimensionSet dimensions_;
+
+    bool setDimensions_;
 
 public:
 

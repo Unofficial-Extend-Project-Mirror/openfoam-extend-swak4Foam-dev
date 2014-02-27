@@ -1,0 +1,118 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libgroovyBC.so"
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+functions {
+    onlyOnce {
+        type executeIfStartTime;
+        readDuringConstruction true;
+        runIfStartTime true;
+        functions {
+            distance {
+                type expressionField;
+                outputControl   timeStep;
+                outputInterval 1;
+                expression "distToPatch(inlet)";
+                fieldName distance;
+                autowrite true;
+            }
+        }
+    }
+    pressureIn {
+        type patchExpression;
+        patches (
+            inlet
+        );
+        verbose true;
+        expression "p";
+        accumulations (
+            weightedAverage
+        );
+        outputControlMode timeStep;
+        outputInterval 1;
+    }
+    pressureLine {
+        type swakExpressionAverageDistribution;
+        outputControlMode outputTime;
+        valueType internalField;
+        expression "p";
+        weight "vol()";
+        mask "true";
+        abscissa "distance";
+        binNumber 100;
+        valueIfZero -666;
+    }
+    velocityLine {
+        $pressureLine;
+        expression "mag(U)";
+    }
+    velocityComponentsLine {
+        $pressureLine;
+        expression "U";
+    }
+    pressurePosition {
+        $pressureLine;
+        abscissa "pos()";
+        valueIfZero (-666 -666 -666);
+    }
+    velocityComponentsPosition {
+        $velocityComponentsLine;
+        abscissa "pos()";
+        valueIfZero (-666 -666 -666);
+    }
+    velocityOutLine {
+        $velocityLine;
+        expression "(U & grad(distance))";
+    }
+}
+
+// ************************************************************************* //
