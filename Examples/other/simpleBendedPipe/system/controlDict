@@ -99,6 +99,11 @@ functions {
         $pressureLine;
         expression "U";
     }
+    pressurePosition {
+        $pressureLine;
+        abscissa "pos()";
+        valueIfZero (-666 -666 -666);
+    }
     velocityComponentsPosition {
         $velocityComponentsLine;
         abscissa "pos()";

@@ -2386,6 +2386,8 @@ S_{expl} + S_{impl} T
      The distribution data was not clipped to the range where actually
      data was collected. This is now fixed by adding the notion of an
      invalid value to =SimpleDistribution=
+**** =swakExpressionAverageDistribution= not correctly working in parallel
+     This should now be fixed
 *** New features
 **** New utility =funkyWarpMesh=
      Utility that calculates new point values for the mesh. In the

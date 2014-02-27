@@ -129,6 +129,8 @@ swakExpressionAverageDistributionFunctionObject::setData(
             Info << "Dist: " << dist << endl
                 << "Weight: " << wDist << endl;
         }
+        reduce(dist,plusOp<SimpleDistribution<AType> >());
+        reduce(wDist,plusOp<SimpleDistribution<AType> >());
         dist.divideByDistribution(
             wDist,
             valueIfZero

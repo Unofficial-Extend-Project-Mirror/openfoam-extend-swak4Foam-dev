@@ -208,7 +208,7 @@ void SimpleDistribution<Type>::calcScalarWeight(
         );
     }
 
-    reduce(*this,plusOp<SimpleDistribution<Type> >());
+    //
 
     recalcLimits();
 }
@@ -225,9 +225,9 @@ void SimpleDistribution<Type>::calcMinimumMaximum(
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
-        minimum_.set(cmpt,new List<scalar>((*this)[cmpt].size(), HUGE));
-        maximum_.set(cmpt,new List<scalar>((*this)[cmpt].size(),-HUGE));
-        nSamples_.set(cmpt,new List<label>((*this)[cmpt].size(), 0));
+        minimum_[cmpt]=List<scalar>((*this)[cmpt].size(), HUGE);
+        maximum_[cmpt]=List<scalar>((*this)[cmpt].size(),-HUGE);
+        nSamples_[cmpt]=List<label>((*this)[cmpt].size(), 0);
     }
 
     forAll(mask,i) {
@@ -332,8 +332,6 @@ void SimpleDistribution<Type>::calcScalarWeight(
             );
         }
     }
-
-    reduce(*this,plusOp<SimpleDistribution<Type> >());
 
     recalcLimits();
 }
@@ -700,7 +698,7 @@ Type SimpleDistribution<Type>::smaller(scalar value) const
 template<class Type>
 template<class FType>
 List< List < Tuple2<scalar,FType> > > SimpleDistribution<Type>::rawField(
-    const PtrList<List<FType> > &f
+    const List<Field<FType> > &f
 ) const
 {
     if(f.size()!=pTraits<Type>::nComponents) {
@@ -854,6 +852,12 @@ Istream& operator>>
     SimpleDistribution<Type>& d
 ) {
     is  >>  static_cast<Distribution<Type> &>(d);
+    is  >>  d.hasInvalidValue_;
+    is  >>  d.invalidValue_;
+    is  >>  d.minimum_;
+    is  >>  d.maximum_;
+    is  >>  d.nSamples_;
+
     d.recalcLimits();
     return is;
 }
@@ -866,6 +870,12 @@ Ostream& operator<<
 )
 {
     os  <<  static_cast<const Distribution<Type> &>(d);
+    os  <<  d.hasInvalidValue_;
+    os  <<  d.invalidValue_;
+    os  <<  d.minimum_;
+    os  <<  d.maximum_;
+    os  <<  d.nSamples_;
+
     return os;
 }
 
@@ -897,6 +907,10 @@ SimpleDistribution<Type> operator+
         } else {
             FatalErrorIn("SimpleDistribution<Type> operator+")
                 << "Sizes of minimum and maximum in operand inconsitent"
+                    << " " << d1.minimum_.size()
+                    << " " << d1.maximum_.size()
+                    << " " << d2.minimum_.size()
+                    << " " << d2.maximum_.size()
                     << endl
                     << exit(FatalError);
         }
@@ -945,9 +959,9 @@ SimpleDistribution<Type> operator+
 
         for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
         {
-            d.minimum_.set(cmpt,new List<scalar>(d[cmpt].size(), HUGE));
-            d.maximum_.set(cmpt,new List<scalar>(d[cmpt].size(),-HUGE));
-            d.nSamples_.set(cmpt,new List<label>(d[cmpt].size(), 0));
+            d.minimum_[cmpt]=List<scalar>(d[cmpt].size(), HUGE);
+            d.maximum_[cmpt]=List<scalar>(d[cmpt].size(),-HUGE);
+            d.nSamples_[cmpt]=List<label>(d[cmpt].size(), 0);
         }
         List< List< List < Tuple2<scalar,scalar> > > > rawMin(2);
         List< List< List < Tuple2<scalar,scalar> > > > rawMax(2);

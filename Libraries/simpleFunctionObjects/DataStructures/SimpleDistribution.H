@@ -110,11 +110,11 @@ protected:
     Type smaller10Power(const Type value);
 
     //- minimum for distributions that can handle it
-    PtrList<List<scalar> > minimum_;
+    List<Field<scalar> > minimum_;
     //- maximum for distributions that can handle it
-    PtrList<List<scalar> > maximum_;
+    List<Field<scalar> > maximum_;
     //- number of samples for distributions that can handle it
-    PtrList<List<label> > nSamples_;
+    List<Field<label> > nSamples_;
 
 public:
 
@@ -175,7 +175,7 @@ public:
     List< List < Pair<scalar> > > rawNegative() const;
 
     template<class FType>
-    List< List < Tuple2<scalar,FType> > > rawField(const PtrList<List<FType> > &f) const;
+    List< List < Tuple2<scalar,FType> > > rawField(const List<Field<FType> > &f) const;
 
     Type mean() const { return Distribution<Type>::mean(); }
 
@@ -226,6 +226,9 @@ public:
         const SimpleDistribution<Type>& d2
     );
 };
+
+    //template <typename T>
+    //inline bool contiguous<SimpleDistribution<T> >() { return false; }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
