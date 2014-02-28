@@ -13,6 +13,17 @@ else
     echo $WM_PROJECT_VERSION >foamVersionThisIsCompiledFor
 fi
 
+swakDir=$(pwd)
+requirementsBin=$swakDir/privateRequirements/bin
+
+if [ -e $requirementsBin ];
+then
+    echo
+    echo "$requirementsBin existing. Prepending to PATH-variable (private version of Bison)"
+    echo
+    export PATH=$requirementsBin:$PATH
+fi
+
 if [ -e swakConfiguration ]; then
     echo "Reading variables from 'swakConfiguration'"
     source swakConfiguration

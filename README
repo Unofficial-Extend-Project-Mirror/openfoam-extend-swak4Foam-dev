@@ -2597,6 +2597,11 @@ S_{expl} + S_{impl} T
 *** Infrastructure
 **** Improved macros for Foam versions
      This should make =swak.H= more readable
+**** Support for private installation of bison
+     If a directory =privateRequirements/bin= is private in the
+     sources directory then the =bison= found there is used. A script
+     =maintainanceScripts/compileRequirements.sh= is provided that
+     fetches the bison sources, compiles them and installs them there
 *** Documentation
 *** Bug fixes
 **** Invalid entries in distributions from =swakExpressionAverageDistribution=

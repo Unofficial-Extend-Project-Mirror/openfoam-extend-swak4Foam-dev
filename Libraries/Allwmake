@@ -7,6 +7,7 @@ if [[ $NOBISON != 0 ]]; then
     echo
     echo "No 'bison' found. This is absolutely essential for swak4Foam. Can't go on"
     echo "Every Linux has a binary package that installs bison (http://www.gnu.org/software/bison/). Install it. Then go on"
+    echo "As an alternative you can install a local copy of bison by running ./maintainanceScripts/compileRequirements.sh from the installation directory"
     echo "BTW: it was listed as a requirement in the README. You read that, didn't you?"
     echo
     exit 42
@@ -31,6 +32,7 @@ echo "Bison is version $BISONVER"
 if [[ $BISONVER < 2.4 ]]; then
     echo "swak4Foam only confirmed to work with Bison >= 2.4"
     echo "Compiles with 2.3 but has offset-problems with locations which break the Plugin-functionality"
+    echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation"
     if [ -z $USE_OLD_BISON ]; then
 	echo "Set the environment variable USE_OLD_BISON if you want to continue anyway"
 	exit 42
@@ -43,6 +45,7 @@ fi
 
 if [[ $BISONVER > 2.999 ]]; then
     echo "swak4Foam only confirmed to work with Bison 2.x"
+    echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation"
     if [ -z $DEVELOPE_FOR_NEW_BISON ]; then
 	echo "Set the environment variable DEVELOPE_FOR_NEW_BISON if you want to continue anyway."
 	exit 42
