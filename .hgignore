@@ -33,5 +33,6 @@ debian/control
 
 swakConfiguration
 foamVersionThisIsCompiledFor
+privateRequirements
 
 Libraries/swak4FoamParsers/foamVersion4swak.H
