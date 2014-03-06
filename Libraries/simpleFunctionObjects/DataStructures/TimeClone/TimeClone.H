@@ -34,6 +34,8 @@ Description
     Object that on request creates a full copy of all fields etc and writes them on
     request
 
+    Only copies objectRegistries or objects that are auto-writeable
+
 SourceFiles
     TimeClone.C
 
@@ -72,6 +74,9 @@ class TimeClone
 
     //- Disallow default bitwise assignment
     void operator=(const TimeClone&);
+
+    //- Do the actual copying
+    label copyObjects(const objectRegistry &src,objectRegistry &dst);
 
 public:
 

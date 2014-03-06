@@ -36,10 +36,25 @@ Contributors/Copyright:
 #include "TimeClone.H"
 #include "DebugOStream.H"
 
+// Stuff we "know"
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "pointFields.H"
+
+#include"diagTensorIOField.H"
+#include"labelIOField.H"
+#include"pointIOField.H"
+#include"scalarIOField.H"
+#include"sphericalTensorIOField.H"
+#include"symmTensorIOField.H"
+#include"tensorIOField.H"
+#include"vector2DIOField.H"
+#include"vectorIOField.H"
+
 namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(TimeClone, 1);
+defineTypeNameAndDebug(TimeClone, 0);
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
@@ -73,6 +88,137 @@ TimeClone::~TimeClone()
 void TimeClone::copy(const Time &t)
 {
     Dbug << "copy: t=" << t.timeName() << endl;
+    if(storedTime_.valid()) {
+        Dbug << "currently holds data: Clearing" << endl;
+        storedTime_.clear();
+    }
+
+    storedTime_.set(
+        new Time(
+            t.rootPath(),
+            t.caseName()
+        )
+    );
+    Dbug << "Reset to new Time-instance" << endl;
+    Time &time=storedTime_();
+    time.setTime(t);
+    time.setDeltaT(t.deltaT());
+    Dbug << "Instances: src " << t.instance() << " Dst " << time.instance() << endl;
+    Dbug << "Objects" << t.names();
+
+    label nr=copyObjects(t,time);
+    Dbug << "Copyied " << nr << " objects" << endl;
+}
+
+label TimeClone::copyObjects(const objectRegistry &src,objectRegistry &dst)
+{
+    Dbug << "Copying stuff from " << src.name() << " to " << dst.name() << endl;
+    Dbug << "t=" << src.time().timeName() << endl;
+    Dbug << "Dst AUTO_WRITE: " << (dst.writeOpt()==IOobject::AUTO_WRITE) << endl;
+
+    label cnt=0;
+
+    forAllConstIter(objectRegistry,src,it) {
+	const word &name=it.key();
+        const regIOobject &obj=*(*it);
+
+        Dbug << name << " is class " << obj.headerClassName() << endl;
+
+        if(isA<objectRegistry>(obj)) {
+            Dbug << name << " is objectRegistry. Creating new and cloning" << endl;
+            const objectRegistry &orig=dynamicCast<const objectRegistry>(obj);
+            if(&src==&orig) {
+                Dbug << name << "==" << src.name() << " -> Skipping" << endl;
+            } else {
+                autoPtr<objectRegistry> newSubp(
+                    new objectRegistry(
+                        IOobject(
+                            orig.name(),
+                            src.time().timeName(),
+                            dst
+                        )
+                    )
+                );
+                objectRegistry &newSub=newSubp();
+                Dbug << "AUTO_WRITE: " << (newSub.writeOpt()==IOobject::AUTO_WRITE) << endl;
+                Dbug << newSub.objectPath() << endl;
+                Dbug << "Created registry owned by parent: " << newSub.ownedByRegistry() << endl;
+                cnt+=copyObjects(orig,newSub);
+                dst.store(newSubp.ptr());
+                Dbug << "New registry owned by parent: " << newSub.ownedByRegistry() << endl;
+            }
+        } else if(obj.writeOpt()==IOobject::AUTO_WRITE) {
+            Dbug << name << " set to AUTO_WRITE. Creating copy" << endl;
+            autoPtr<regIOobject> newObjP;
+
+            // work around because there is no virtual clone method in IObobject
+
+#define tryClone(Type)                                                  \
+            if(!newObjP.valid() && isA<Type>(obj)) {                    \
+                newObjP.set(                                            \
+                    new Type(                                           \
+                        IOobject(                                       \
+                            obj.name(),                                 \
+                            src.time().timeName(),                      \
+                            dst                                         \
+                        ),                                              \
+                        dynamicCast<const Type>(obj)));                 \
+            }
+
+            tryClone(volScalarField);
+            tryClone(volVectorField);
+            tryClone(volTensorField);
+            tryClone(volSymmTensorField);
+            tryClone(volSphericalTensorField);
+
+            tryClone(surfaceScalarField);
+            tryClone(surfaceVectorField);
+            tryClone(surfaceTensorField);
+            tryClone(surfaceSymmTensorField);
+            tryClone(surfaceSphericalTensorField);
+
+            tryClone(pointScalarField);
+            tryClone(pointVectorField);
+            tryClone(pointTensorField);
+            tryClone(pointSymmTensorField);
+            tryClone(pointSphericalTensorField);
+
+            tryClone(diagTensorIOField);
+            tryClone(labelIOField);
+            tryClone(pointIOField);
+            tryClone(scalarIOField);
+            tryClone(sphericalTensorIOField);
+            tryClone(symmTensorIOField);
+            tryClone(tensorIOField);
+            tryClone(vector2DIOField);
+            tryClone(vectorIOField);
+
+#undef tryClone
+
+            if(newObjP.valid()) {
+                regIOobject &newObj=dynamicCast<regIOobject&>(newObjP());
+                Dbug << "Adding " << name << " to registry " << dst.name()
+                    << " Class: " << newObj.headerClassName() << endl;
+                Dbug << "Owned by old Registry: " << newObj.ownedByRegistry() << endl;
+                Dbug << "AUTO_WRITE: " << (newObj.writeOpt()==IOobject::AUTO_WRITE) << endl;
+                Dbug << newObj.objectPath() << endl;
+                newObj.writeOpt()=IOobject::AUTO_WRITE;
+                regIOobject *ptr=static_cast<regIOobject*>(newObjP.ptr());
+                dst.store(ptr);
+                Dbug << "Owned by new Registry: " << newObj.ownedByRegistry() << endl;
+                cnt++;
+            } else {
+                Dbug << "No fitting type found for " << name << endl;
+            }
+        } else {
+            Dbug << name << " not copied" << endl;
+        }
+    }
+
+    Dbug << "Copying to " << dst.name() << " ended " << cnt << endl;
+    Dbug << dst.names() << endl;
+
+    return cnt;
 }
 
 bool TimeClone::write(const bool force)
@@ -82,6 +228,29 @@ bool TimeClone::write(const bool force)
         Dbug << "Nothing stored -> nothing written" << endl;
         return false;
     }
+    Time &time=storedTime_();
+    Dbug << "Write t=" << time.timeName() << " to " << time.timePath() << endl;
+    if(exists(time.timePath())) {
+        if(!force) {
+            WarningIn("TimeClone::write(const bool force)")
+                << time.timePath() << " already existing. Skipping because no 'force' set"
+                    << endl;
+            Dbug << "Clearing and exiting" << endl;
+            storedTime_.clear();
+            return false;
+        } else {
+            WarningIn("TimeClone::write(const bool force)")
+                << time.timePath() << " already existing. Writing because 'force' is set"
+                    << endl;
+        }
+    }
+    //    objectRegistry::debug=1;
+
+    bool result=time.writeNow();
+
+    Dbug << "written: " << result << " Releasing time" << endl;
+    //     objectRegistry::debug=0;
+    storedTime_.clear();
 
     return true;
 }

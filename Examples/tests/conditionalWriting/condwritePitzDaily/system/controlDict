@@ -48,9 +48,18 @@ runTimeModifiable yes;
 libs (
     "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
 );
 
 functions {
+    nowTimeField {
+        type expressionField;
+        autowrite true;
+        expression "time()";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName nowTime;
+    }
     writeLargeU {
         //        type writeIfFieldOutside;
         type writeIfSwakExpression;
