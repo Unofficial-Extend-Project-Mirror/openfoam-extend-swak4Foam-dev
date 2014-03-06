@@ -160,12 +160,12 @@ bool conditionDrivenWritingFunctionObject::alreadyWritten(word timename)
 
 void conditionDrivenWritingFunctionObject::storePreviousState()
 {
-    notImplemented("conditionDrivenWritingFunctionObject::storePreviousState");
+    lastTime_.copy(time());
 }
 
 void conditionDrivenWritingFunctionObject::writePreviousState()
 {
-    notImplemented("conditionDrivenWritingFunctionObject::writePreviousState");
+    lastTime_.write();
 }
 
 void conditionDrivenWritingFunctionObject::writeNow()

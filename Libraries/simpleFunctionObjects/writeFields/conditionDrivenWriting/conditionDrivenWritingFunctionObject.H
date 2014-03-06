@@ -51,6 +51,8 @@ Contributors/Copyright:
 
 #include "NamedEnum.H"
 
+#include "TimeClone.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -124,6 +126,8 @@ private:
     bool checkWrite();
 
     bool checkCooldown();
+
+    TimeClone lastTime_;
 
 protected:
     //- should writing start now?

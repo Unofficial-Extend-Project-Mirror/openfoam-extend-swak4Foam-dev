@@ -67,7 +67,9 @@ functions {
         //        cooldownMode no;
         //        cooldownMode retrigger;
         //        cooldownMode intervall;
-        storeAndWritePreviousState false;
+
+        //        storeAndWritePreviousState false;
+        storeAndWritePreviousState true;
 
         writeTimesteps 3;
         cooldownTimesteps 17;
