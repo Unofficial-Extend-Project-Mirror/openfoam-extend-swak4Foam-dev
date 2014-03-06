@@ -81,6 +81,7 @@ functions {
 
         //        storeAndWritePreviousState false;
         storeAndWritePreviousState true;
+        numberOfTimestepsToStore 3;
 
         writeTimesteps 3;
         cooldownTimesteps 17;

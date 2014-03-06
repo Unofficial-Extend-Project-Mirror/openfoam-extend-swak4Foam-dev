@@ -51,7 +51,7 @@ Contributors/Copyright:
 
 #include "NamedEnum.H"
 
-#include "TimeClone.H"
+#include "TimeCloneList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -127,7 +127,7 @@ private:
 
     bool checkCooldown();
 
-    TimeClone lastTime_;
+    autoPtr<TimeCloneList> lastTimes_;
 
 protected:
     //- should writing start now?

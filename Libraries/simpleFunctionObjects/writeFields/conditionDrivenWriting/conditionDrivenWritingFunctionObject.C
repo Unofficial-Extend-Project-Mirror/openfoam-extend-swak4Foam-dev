@@ -130,6 +130,13 @@ conditionDrivenWritingFunctionObject::conditionDrivenWritingFunctionObject
             // do nothing
             break;
     }
+    if(storeAndWritePreviousState_) {
+        lastTimes_.set(
+            new TimeCloneList(
+                dict
+            )
+        );
+    }
 }
 
 bool conditionDrivenWritingFunctionObject::checkStopWriting()
@@ -160,12 +167,24 @@ bool conditionDrivenWritingFunctionObject::alreadyWritten(word timename)
 
 void conditionDrivenWritingFunctionObject::storePreviousState()
 {
-    lastTime_.copy(time());
+    if(lastTimes_.valid()) {
+        lastTimes_->copy(time());
+    } else {
+        WarningIn("conditionDrivenWritingFunctionObject::storePreviousState")
+            << "Logic error"
+                << endl;
+    }
 }
 
 void conditionDrivenWritingFunctionObject::writePreviousState()
 {
-    lastTime_.write();
+    if(lastTimes_.valid()) {
+        lastTimes_->write();
+    } else {
+        WarningIn("conditionDrivenWritingFunctionObject::writePreviousState")
+            << "Logic error"
+                << endl;
+    }
 }
 
 void conditionDrivenWritingFunctionObject::writeNow()
