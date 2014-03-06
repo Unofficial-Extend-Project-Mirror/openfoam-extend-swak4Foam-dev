@@ -130,10 +130,14 @@ label TimeClone::copyObjects(const objectRegistry &src,objectRegistry &dst)
             if(&src==&orig) {
                 Dbug << name << "==" << src.name() << " -> Skipping" << endl;
             } else {
+                word dbName=orig.name();
+                if(dbName==polyMesh::defaultRegion) {
+                    dbName="";
+                }
                 autoPtr<objectRegistry> newSubp(
                     new objectRegistry(
                         IOobject(
-                            orig.name(),
+                            dbName,
                             src.time().timeName(),
                             dst
                         )
