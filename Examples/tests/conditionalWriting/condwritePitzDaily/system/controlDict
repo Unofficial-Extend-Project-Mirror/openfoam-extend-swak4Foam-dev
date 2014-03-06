@@ -49,6 +49,8 @@ libs (
     "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
+    "libincompressibleTurbulenceModel.so"
+    "libincompressibleRASModels.so"
 );
 
 functions {

@@ -229,7 +229,9 @@ bool TimeClone::write(const bool force)
         return false;
     }
     Time &time=storedTime_();
-    Dbug << "Write t=" << time.timeName() << " to " << time.timePath() << endl;
+
+    Pout << "Write t=" << time.timeName() << " to " << time.timePath() << endl;
+
     if(exists(time.timePath())) {
         if(!force) {
             WarningIn("TimeClone::write(const bool force)")
