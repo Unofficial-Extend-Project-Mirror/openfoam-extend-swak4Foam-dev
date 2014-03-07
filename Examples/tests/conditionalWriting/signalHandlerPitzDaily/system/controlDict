@@ -72,6 +72,15 @@ functions {
         sigINT true;
         //        sigQUIT true;
     }
+    // panicDumpTime {
+    //     type panicDump;
+    //     fieldName nowTime;
+    //     minimum -1;
+    //     maximum 10;
+
+    //     storeAndWritePreviousState true;
+    //     numberOfTimestepsToStore 2;
+    // }
     // sigHandler2 {
     //     $sigHandler;
     // }

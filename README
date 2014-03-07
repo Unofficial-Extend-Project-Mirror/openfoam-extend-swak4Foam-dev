@@ -2430,6 +2430,10 @@ S_{expl} + S_{impl} T
      This function gives the distance in the mesh to a specified face.
 
      Not yet working correctly
+**** =panicDump= now allows storing old values
+     With the switch =storeAndWritePreviousState= this functionObject
+     now can cache a number of timesteps and write these results in
+     addition to the current timestep
 **** =swakExpressionAverageDistribution= records extremes and number of samples
      In addition to the average now this Function object also records
      the minimum and maximum value for each bin. Also the number of
