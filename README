@@ -2411,6 +2411,17 @@ S_{expl} + S_{impl} T
           expression evaluates to =true=. Stopping and retriggering is
           also possible with logical expressions. Part of
           the =simpleSwakFunctionObjects=
+
+     Allows saving and writing a specifiable number of timesteps
+     *before* the condition is met (this allows finding out what lead
+     to this)
+**** Function object =writeOldTimesOnSignal= with new signal handlers
+     This function object installs a new signal handler for specified
+     signals.
+
+     The function object itself saves the last $N$-timesteps, the
+     signal handler (when called) writes these steps to disk and then
+     calls the regular OpenFOAM signal handler
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows
