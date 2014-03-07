@@ -93,8 +93,19 @@ void TimeClone::copy(const Time &t)
         storedTime_.clear();
     }
 
+    dictionary settings;
+    if(t.writeCompression()==IOstream::COMPRESSED) {
+        settings.add("writeCompression","compressed");
+    }
+    if(t.writeFormat()==IOstream::BINARY) {
+        settings.add("writeFormat","binary");
+    }
+    settings.add("deltaT",t.deltaT().value());
+    settings.add("writeInterval",1);
+
     storedTime_.set(
         new Time(
+            settings,
             t.rootPath(),
             t.caseName()
         )
