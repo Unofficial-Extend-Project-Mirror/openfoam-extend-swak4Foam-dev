@@ -41,6 +41,8 @@ namespace Foam {
 
 defineTypeNameAndDebug(TimeCloneList, 0);
 
+label TimeCloneList::count_=0;
+
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
 
@@ -63,6 +65,24 @@ TimeCloneList::TimeCloneList(const dictionary &dict)
                 << exit(FatalError);
     }
     storedTimes_.resize(nrSteps,NULL);
+    if(count_>0) {
+        bool ok=dict.lookupOrDefault<bool>(
+            "moreThanOneInstanceOfTimeCloneListIsOK",
+            false
+        );
+        if(!ok) {
+            FatalErrorIn("TimeCloneList::TimeCloneList(const dictionary &dict)")
+                << "There are already " << count_ << " other instances of "
+                    << "TimeCloneList. " << nl
+                    << "As this data structure potentially uses a lot of "
+                    << "memory you must confirm with the option "
+                    << "'moreThanOneInstanceOfTimeCloneListIsOK' in "
+                    << dict.name() << " that you want one more instance"
+                    << endl
+                    << exit(FatalError);
+        }
+    }
+    count_++;
 }
 
 

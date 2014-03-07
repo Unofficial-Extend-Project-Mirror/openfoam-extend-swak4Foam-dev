@@ -80,6 +80,7 @@ functions {
 
     //     storeAndWritePreviousState true;
     //     numberOfTimestepsToStore 2;
+    //     moreThanOneInstanceOfTimeCloneListIsOK true;
     // }
     // sigHandler2 {
     //     $sigHandler;

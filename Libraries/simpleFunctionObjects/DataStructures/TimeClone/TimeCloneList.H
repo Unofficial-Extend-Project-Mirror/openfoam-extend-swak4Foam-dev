@@ -75,6 +75,8 @@ class TimeCloneList
 
     void clear();
 
+    static label count_;
+
 public:
 
     // Static data members
