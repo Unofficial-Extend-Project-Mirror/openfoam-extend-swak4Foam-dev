@@ -111,6 +111,13 @@ class writeOldTimesOnSignalFunctionObject
 
     DynamicList<SignalHandlerInfo> handlers_;
 
+    bool writeCurrent_;
+
+    bool sigFPE_;
+    bool sigSEGV_;
+    bool sigINT_;
+    bool sigQUIT_;
+
 public:
 
     //- Runtime type information

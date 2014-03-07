@@ -63,8 +63,21 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
 :
     functionObject(name),
     times_(dict),
-    theTime_(t)
+    theTime_(t),
+    writeCurrent_(
+        readBool(dict.lookup("writeCurrent"))
+    ),
+    sigFPE_(dict.lookupOrDefault<bool>("sigFPE",true)),
+    sigSEGV_(dict.lookupOrDefault<bool>("sigSEGV",true)),
+    sigINT_(dict.lookupOrDefault<bool>("sigINT",false)),
+    sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false))
 {
+    if(writeCurrent_) {
+        WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
+            << "'writeCurrent' was set. This may lead to uncaught segmentation faults"
+                << endl;
+    }
+
     if(singleton_!=NULL) {
         FatalErrorIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
             << "Only one instance of 'writeOldTimesOnSignal' may be used in one simulation"
@@ -90,7 +103,18 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
 
         Pout << "Writing old times:" << endl;
         sh.times_.write();
-        const_cast<Time&>(sh.theTime_).writeNow();
+        if(sh.writeCurrent_) {
+            Pout << "Writing current time" << endl;
+            WarningIn("writeOldTimesOnSignalFunctionObject::sigHandler(int sig)")
+                << "This action may end in a segmentation fault" << endl
+                    << "Set 'writeCurrent false;' to avoid this"
+                    << endl;
+
+            const_cast<Time&>(sh.theTime_).writeNow();
+        } else {
+            Pout << "Current time not written."
+                << "Set 'writeCurrent true' if you want that (but it may cause segfaults)" << endl;
+        }
     } else {
         Pout << endl << "Problem: No instance of "
             << "'writeOldTimesOnSignalFunctionObject'." << endl
@@ -104,30 +128,45 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
 
 bool writeOldTimesOnSignalFunctionObject::start()
 {
-    handlers_.append(
-        SignalHandlerInfo(
-            "SIGFPE",
-            SIGFPE
-        )
-    );
-    handlers_.append(
-        SignalHandlerInfo(
-            "SIGSEGV",
-            SIGSEGV
-        )
-    );
-    handlers_.append(
-        SignalHandlerInfo(
-            "SIGINT",
-            SIGINT
-        )
-    );
-    handlers_.append(
-        SignalHandlerInfo(
-            "SIGQUIT",
-            SIGQUIT
-        )
-    );
+    if(sigFPE_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGFPE",
+                SIGFPE
+            )
+        );
+        Info << "To switch this off set 'sigFPE false;'" << endl;
+    }
+    if(sigSEGV_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGSEGV",
+                SIGSEGV
+            )
+        );
+        Info << "To switch this off set 'sigSEGV false;'" << endl;
+    }
+    if(sigINT_){
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGINT",
+                SIGINT
+            )
+        );
+    } else {
+        Info << "To catch Ctrl-C set 'sigINT true;'" << endl;
+    }
+    if(sigQUIT_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGQUIT",
+                SIGQUIT
+            )
+        );
+    } else {
+        Info << "To catch the QUIT-signal set 'sigQUIT true;'" << endl;
+    }
+
     handlers_.shrink();
     Info << handlers_.size() << " signal handlers installed" << endl;
     return true;
