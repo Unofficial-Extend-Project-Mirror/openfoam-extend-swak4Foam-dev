@@ -2411,6 +2411,10 @@ S_{expl} + S_{impl} T
           expression evaluates to =true=. Stopping and retriggering is
           also possible with logical expressions. Part of
           the =simpleSwakFunctionObjects=
+     - writeIfPython :: writing is triggered by a Python-snipplet that
+                        either returns =True= or =False=. Stopping and
+                        retriggering are also possible. Part of
+                        =swakPythonIntegration=
 
      Allows saving and writing a specifiable number of timesteps
      *before* the condition is met (this allows finding out what lead

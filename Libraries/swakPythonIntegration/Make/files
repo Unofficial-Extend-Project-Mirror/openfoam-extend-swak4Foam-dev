@@ -4,6 +4,7 @@ pythonFluIntegrationFunctionObject.C
 executeIfPythonFunctionObject.C
 stdoutFromPythonScriptProvider.C
 writeAndEndPythonFunctionObject.C
+writeIfPythonFunctionObject.C
 timeManipulationWithPythonFunctionObject.C
 setDeltaTWithPythonFunctionObject.C
 setEndTimeWithPythonFunctionObject.C

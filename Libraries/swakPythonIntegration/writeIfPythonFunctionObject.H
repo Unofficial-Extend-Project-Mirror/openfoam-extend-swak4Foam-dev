@@ -29,31 +29,28 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    writeIfSwakExpressionFunctionObject
+    writeIfPythonFunctionObject
 
 Description
 
-    Check whether a swak-condition is met. If yes start writing
-    again. Also offers the possibility to stop writing via an
-    expression
+    Check whether a python code evaluates to true. If yes write
+    timesteps
 
 SourceFiles
-    writeIfSwakExpressionFunctionObject.C
+    writeIfPythonFunctionObject.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef writeIfSwakExpressionFunctionObject_H
-#define writeIfSwakExpressionFunctionObject_H
+#ifndef writeIfPythonFunctionObject_H
+#define writeIfPythonFunctionObject_H
 
 #include "conditionDrivenWritingFunctionObject.H"
 
-#include "CommonValueExpressionDriver.H"
-
-#include "LogicalAccumulationNamedEnum.H"
+#include "pythonInterpreterWrapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,49 +58,37 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class writeIfSwakExpressionFunctionObject Declaration
+                           Class writeIfPythonFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class writeIfSwakExpressionFunctionObject
+class writeIfPythonFunctionObject
 :
-    public conditionDrivenWritingFunctionObject
+    public conditionDrivenWritingFunctionObject,
+    public pythonInterpreterWrapper
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    writeIfSwakExpressionFunctionObject(const writeIfSwakExpressionFunctionObject&);
+    writeIfPythonFunctionObject(const writeIfPythonFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const writeIfSwakExpressionFunctionObject&);
+    void operator=(const writeIfPythonFunctionObject&);
 
-    //- the expression driver
-    autoPtr<CommonValueExpressionDriver> driver_;
+    //- code to be evaluated during construction
+    string initCode_;
 
-    //- the logical expression
-    string writeExpression_;
-
-    //- possible logical accumulations
-    LogicalAccumulationNamedEnum::value writeAccumulation_;
+    //- the code that should be evaluated
+    string writeCode_;
 
     //- the logical expression
-    string stopWriteExpression_;
-
-    //- possible logical accumulations
-    LogicalAccumulationNamedEnum::value stopWriteAccumulation_;
+    string stopWriteCode_;
 
     //- the logical expression
-    string stopCooldownExpression_;
-
-    //- possible logical accumulations
-    LogicalAccumulationNamedEnum::value stopCooldownAccumulation_;
+    string stopCooldownCode_;
 
     void readParameters(const dictionary &);
 
-    bool evaluateCondition(
-        string expression,
-        LogicalAccumulationNamedEnum::value accumulation
-    );
-
+    bool executeCode(const string code);
 protected:
 
     //- should writing start now?
@@ -118,13 +103,13 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("writeIfSwakExpression");
+    TypeName("writeIfPython");
 
 
     // Constructors
 
     //- Construct from components
-    writeIfSwakExpressionFunctionObject
+    writeIfPythonFunctionObject
     (
         const word&,
         const Time&,
