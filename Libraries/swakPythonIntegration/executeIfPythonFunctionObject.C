@@ -112,7 +112,13 @@ bool executeIfPythonFunctionObject::read(const dictionary& dict)
 
 void executeIfPythonFunctionObject::readParameters(const dictionary &dict)
 {
+    readCode(dict,"init",initCode_);
     readCode(dict,"condition",conditionCode_);
+
+    pythonInterpreterWrapper::executeCode(
+        initCode_,
+        false
+    );
 }
 
 } // namespace Foam

@@ -2377,6 +2377,9 @@ S_{expl} + S_{impl} T
      accumulations
 ** Next release - version number : 0.3.1
 *** Incompatibilities to previous versions
+**** Additional required code snipplet for some Python-functionObjects
+     There is now a new code-snipplet required for a number of these
+     function objects. It can be left empty but has to be specified
 *** Infrastructure
 **** Improved macros for Foam versions
      This should make =swak.H= more readable
@@ -2442,6 +2445,13 @@ S_{expl} + S_{impl} T
      In addition to the average now this Function object also records
      the minimum and maximum value for each bin. Also the number of
      samples used in the bin
+**** Python-function objects that return a boolean now have a initialization-snipplet
+     The function objects =executeIfPython=, =setDeltaTWithPython=,
+     =setEntTimeWithPython= and =writeAndEndWithPython= now expect
+     code snipplet named =init=. This is executed in the beginning and
+     can be used to set up global variables if these snipplets need
+     some kind of state. The variables have to be declared =global= in
+     the snipplets that do the actual decision (for technical reason)
 *** Examples
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on
