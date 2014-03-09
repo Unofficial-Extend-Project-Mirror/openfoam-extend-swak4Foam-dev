@@ -150,13 +150,15 @@ label TimeClone::copyObjects(const objectRegistry &src,objectRegistry &dst)
                         IOobject(
                             dbName,
                             src.time().timeName(),
+                            src.local(),
                             dst
                         )
                     )
                 );
                 objectRegistry &newSub=newSubp();
                 Dbug << "AUTO_WRITE: " << (newSub.writeOpt()==IOobject::AUTO_WRITE) << endl;
-                Dbug << newSub.objectPath() << endl;
+                Dbug << "old path: " << obj.objectPath() << endl;
+                Dbug << "new Path: " << newSub.objectPath() << endl;
                 Dbug << "Created registry owned by parent: " << newSub.ownedByRegistry() << endl;
                 cnt+=copyObjects(orig,newSub);
                 dst.store(newSubp.ptr());
@@ -175,6 +177,7 @@ label TimeClone::copyObjects(const objectRegistry &src,objectRegistry &dst)
                         IOobject(                                       \
                             obj.name(),                                 \
                             src.time().timeName(),                      \
+                            obj.local(),               \
                             dst                                         \
                         ),                                              \
                         dynamicCast<const Type>(obj)));                 \
@@ -207,6 +210,7 @@ label TimeClone::copyObjects(const objectRegistry &src,objectRegistry &dst)
             tryClone(tensorIOField);
             tryClone(vector2DIOField);
             tryClone(vectorIOField);
+            //            tryClone(polyBoundaryMesh);
 
 #undef tryClone
 
@@ -216,7 +220,9 @@ label TimeClone::copyObjects(const objectRegistry &src,objectRegistry &dst)
                     << " Class: " << newObj.headerClassName() << endl;
                 Dbug << "Owned by old Registry: " << newObj.ownedByRegistry() << endl;
                 Dbug << "AUTO_WRITE: " << (newObj.writeOpt()==IOobject::AUTO_WRITE) << endl;
-                Dbug << newObj.objectPath() << endl;
+                Dbug << "Old Path: " << obj.objectPath() << endl;
+                Dbug << "New Path: " << newObj.objectPath() << endl;
+                Dbug << "Local: " << obj.local() << " -> " << newObj.local() << endl;
                 newObj.writeOpt()=IOobject::AUTO_WRITE;
                 regIOobject *ptr=static_cast<regIOobject*>(newObjP.ptr());
                 dst.store(ptr);
