@@ -48,9 +48,20 @@ runTimeModifiable yes;
 libs (
     "libsimpleFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libincompressibleTurbulenceModel.so"
+    "libincompressibleRASModels.so"
 );
 
 functions {
+    nowTimeField {
+        type expressionField;
+        autowrite true;
+        expression "time()";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName nowTime;
+    }
     writeLargeU {
         //        type writeIfFieldOutside;
         type writeIfSwakExpression;
@@ -67,7 +78,10 @@ functions {
         //        cooldownMode no;
         //        cooldownMode retrigger;
         //        cooldownMode intervall;
-        storeAndWritePreviousState false;
+
+        //        storeAndWritePreviousState false;
+        storeAndWritePreviousState true;
+        numberOfTimestepsToStore 3;
 
         writeTimesteps 3;
         cooldownTimesteps 17;

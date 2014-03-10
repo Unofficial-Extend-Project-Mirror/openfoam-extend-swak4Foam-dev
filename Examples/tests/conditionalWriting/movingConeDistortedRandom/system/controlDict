@@ -1,0 +1,221 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application icoFoamAutoMotion;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.02;
+
+deltaT          5e-06;
+
+writeControl    timeStep;
+
+writeInterval   400000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  no;
+
+maxCo           0.2;
+
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakPythonIntegration.so"
+) ;
+
+functions
+(
+    planeAverage
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName middlePlane;
+        surface {
+            type plane;
+            basePoint       (0 0.00125 0);
+            normalVector    (0 1 0);
+            interpolate false;
+        }
+        verbose true;
+        expression "sum(pos().x*area())/sum(area())";
+        accumulations (
+            average
+        );
+    }
+    flowThrough
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName middlePlane;
+        verbose true;
+        expression "U & Sf()";
+        accumulations (
+            sum
+        );
+    }
+    flowThroughAlternate
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName middlePlane;
+        verbose true;
+        expression "U.y * area()";
+        accumulations (
+            sum
+        );
+    }
+    yExtreme
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control1;
+        surface {
+            type plane;
+            basePoint       (-0.005 0 0);
+            normalVector    (1 0 0);
+            interpolate false;
+        }
+        verbose true;
+        expression "pos().y";
+        accumulations (
+            min
+            max
+        );
+    }
+    yFlow1
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control1;
+        verbose true;
+        expression "U & Sf()";
+        accumulations (
+            sum
+        );
+    }
+    yFlow2
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control2;
+        verbose true;
+        expression "U & Sf()";
+        surface {
+            type plane;
+            basePoint       (-0.007 0 0);
+            normalVector    (1 0 0);
+            interpolate false;
+        }
+        accumulations (
+            sum
+        );
+    }
+    yFlow3
+    {
+        type swakExpression;
+        valueType surface;
+        surfaceName control3;
+        surface {
+            type plane;
+            basePoint       (-0.002 0 0);
+            normalVector    (1 0 0);
+            interpolate false;
+        }
+        verbose true;
+        expression "U & Sf()";
+        accumulations (
+            sum
+        );
+    }
+    cutTotal
+    {
+        type surfaces;
+        outputControl outputTime;
+        fields ( U );
+        surfaceFormat vtk;
+        surfaces (
+            cuttingPlane {
+                type cuttingPlane;
+                planeType pointAndNormal;
+                pointAndNormalDict {
+                    basePoint       (0 0.00125 0);
+                    normalVector    (0 1 0);
+                }
+                interpolate false;
+            }
+            normalPlane {
+                type plane;
+                basePoint       (0 0.00125 0);
+                normalVector    (0 1 0);
+                interpolate false;
+            }
+        );
+    }
+    meshMovement
+    {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        expression "(meshPhi(U)-phi)/area()";
+        accumulations (
+            min
+            max
+            sum
+        );
+    }
+    periodicWrite {
+        type writeIfPython;
+
+        outputControlMode timeStep;
+        outputInterval 1;
+
+        writeControlMode untilSwitch;
+        cooldownMode retrigger;
+        storeAndWritePreviousState true;
+        numberOfTimestepsToStore 3;
+
+        valueType internalField;
+
+        initVariablesFile "$FOAM_CASE/system/initVariables.py";
+        startWriteFile "$FOAM_CASE/system/startWriting.py";
+        stopWriteFile "$FOAM_CASE/system/stopWriting.py";
+        stopCooldownFile "$FOAM_CASE/system/stopCooldown.py";
+
+        interactiveAfterException true;
+    }
+);
+
+// ************************************************************************* //

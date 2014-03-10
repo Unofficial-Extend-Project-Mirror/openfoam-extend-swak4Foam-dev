@@ -69,6 +69,9 @@ class setEndTimeWithPythonFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const setEndTimeWithPythonFunctionObject&);
 
+    //- the code that should be evaluated in the beginning
+    string initCode_;
+
     //- the code that should be evaluated
     string endTimeCode_;
 

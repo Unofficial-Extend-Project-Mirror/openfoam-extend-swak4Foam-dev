@@ -73,6 +73,9 @@ class executeIfPythonFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const executeIfPythonFunctionObject&);
 
+    //- the code that should be evaluated when the function object starts
+    string initCode_;
+
     //- the code that should be evaluated
     string conditionCode_;
 

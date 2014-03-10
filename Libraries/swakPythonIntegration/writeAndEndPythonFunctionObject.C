@@ -86,7 +86,13 @@ bool writeAndEndPythonFunctionObject::read(const dictionary& dict)
 
 void writeAndEndPythonFunctionObject::readParameters(const dictionary &dict)
 {
+    readCode(dict,"init",initCode_);
     readCode(dict,"condition",conditionCode_);
+
+    pythonInterpreterWrapper::executeCode(
+        initCode_,
+        false
+    );
 }
 
 bool writeAndEndPythonFunctionObject::endRunNow()

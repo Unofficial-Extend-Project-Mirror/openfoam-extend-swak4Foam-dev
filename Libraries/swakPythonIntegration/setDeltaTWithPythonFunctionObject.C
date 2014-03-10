@@ -79,7 +79,13 @@ bool setDeltaTWithPythonFunctionObject::read(const dictionary& dict)
 
 void setDeltaTWithPythonFunctionObject::readParameters(const dictionary &dict)
 {
+    readCode(dict,"init",initCode_);
     readCode(dict,"deltaT",deltaTCode_);
+
+    pythonInterpreterWrapper::executeCode(
+        initCode_,
+        false
+    );
 }
 
 scalar setDeltaTWithPythonFunctionObject::deltaT()
