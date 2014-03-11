@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -193,6 +195,7 @@ void conditionDrivenWritingFunctionObject::writeNow()
     if(!alreadyWritten(time().timeName())) {
         Info << name() << ": Writing ...." << endl;
         bool result=const_cast<Time&>(time()).writeNow();
+        Dbug << "Write now " << result << endl;
     } else {
         Info << name() << ": Already written. Skipping" << endl;
     }
@@ -210,11 +213,13 @@ bool conditionDrivenWritingFunctionObject::start()
     if(cooldownMode_==cdmRetrigger) {
         // provoke 'not implemented'
         bool result=checkStopCooldown();
+        Dbug << "Stop cooldown: " << result << endl;
     }
 
     if(writeControlMode_==scmWriteUntilSwitch) {
         // provoke 'not implemented'
         bool result=checkStopWriting();
+        Dbug << "Stop writing: " << result << endl;
     }
 
     if(storeAndWritePreviousState_) {
