@@ -216,6 +216,8 @@ functions
     periodicWrite {
         type writeIfPython;
 
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+
         outputControlMode timeStep;
         outputInterval 1;
 

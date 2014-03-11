@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
