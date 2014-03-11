@@ -63,11 +63,7 @@ writeIfSwakExpressionFunctionObject::writeIfSwakExpressionFunctionObject
     const dictionary& dict
 )
 :
-    conditionDrivenWritingFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
+    conditionDrivenWritingFunctionObject(name,t,dict)
 {
     readParameters(dict);
 }
