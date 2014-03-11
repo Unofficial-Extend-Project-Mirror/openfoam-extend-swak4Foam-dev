@@ -130,6 +130,13 @@ conditionDrivenWritingFunctionObject::conditionDrivenWritingFunctionObject
             // do nothing
             break;
     }
+    if(storeAndWritePreviousState_) {
+        lastTimes_.set(
+            new TimeCloneList(
+                dict
+            )
+        );
+    }
 }
 
 bool conditionDrivenWritingFunctionObject::checkStopWriting()
@@ -160,12 +167,24 @@ bool conditionDrivenWritingFunctionObject::alreadyWritten(word timename)
 
 void conditionDrivenWritingFunctionObject::storePreviousState()
 {
-    notImplemented("conditionDrivenWritingFunctionObject::storePreviousState");
+    if(lastTimes_.valid()) {
+        lastTimes_->copy(time());
+    } else {
+        WarningIn("conditionDrivenWritingFunctionObject::storePreviousState")
+            << "Logic error"
+                << endl;
+    }
 }
 
 void conditionDrivenWritingFunctionObject::writePreviousState()
 {
-    notImplemented("conditionDrivenWritingFunctionObject::writePreviousState");
+    if(lastTimes_.valid()) {
+        lastTimes_->write();
+    } else {
+        WarningIn("conditionDrivenWritingFunctionObject::writePreviousState")
+            << "Logic error"
+                << endl;
+    }
 }
 
 void conditionDrivenWritingFunctionObject::writeNow()
@@ -174,6 +193,7 @@ void conditionDrivenWritingFunctionObject::writeNow()
     if(!alreadyWritten(time().timeName())) {
         Info << name() << ": Writing ...." << endl;
         bool result=const_cast<Time&>(time()).writeNow();
+        Dbug << "Write now " << result << endl;
     } else {
         Info << name() << ": Already written. Skipping" << endl;
     }
@@ -191,11 +211,13 @@ bool conditionDrivenWritingFunctionObject::start()
     if(cooldownMode_==cdmRetrigger) {
         // provoke 'not implemented'
         bool result=checkStopCooldown();
+        Dbug << "Stop cooldown: " << result << endl;
     }
 
     if(writeControlMode_==scmWriteUntilSwitch) {
         // provoke 'not implemented'
         bool result=checkStopWriting();
+        Dbug << "Stop writing: " << result << endl;
     }
 
     if(storeAndWritePreviousState_) {

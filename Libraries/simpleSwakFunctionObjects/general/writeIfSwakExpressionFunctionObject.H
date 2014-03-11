@@ -32,8 +32,10 @@ Class
     writeIfSwakExpressionFunctionObject
 
 Description
-    Check whether a swak-condition is met. If yes start writting again. Also offers the
-    possibility to stop via an expression
+
+    Check whether a swak-condition is met. If yes start writing
+    again. Also offers the possibility to stop writing via an
+    expression
 
 SourceFiles
     writeIfSwakExpressionFunctionObject.C
