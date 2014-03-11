@@ -2377,9 +2377,17 @@ S_{expl} + S_{impl} T
      accumulations
 ** Next release - version number : 0.3.1
 *** Incompatibilities to previous versions
+**** Additional required code snipplet for some Python-functionObjects
+     There is now a new code-snipplet required for a number of these
+     function objects. It can be left empty but has to be specified
 *** Infrastructure
 **** Improved macros for Foam versions
      This should make =swak.H= more readable
+**** Support for private installation of bison
+     If a directory =privateRequirements/bin= is private in the
+     sources directory then the =bison= found there is used. A script
+     =maintainanceScripts/compileRequirements.sh= is provided that
+     fetches the bison sources, compiles them and installs them there
 *** Documentation
 *** Bug fixes
 **** Invalid entries in distributions from =swakExpressionAverageDistribution=
@@ -2396,6 +2404,36 @@ S_{expl} + S_{impl} T
      dictionary which allows more control. If =-relative= is specified
      points are moved by the result of the expression. The result of
      the expression must be a =pointVectorField=
+**** Function objects that write additional writes depending on the flow conditions
+     A hierarchy of function objects that trigger additional
+     writes. Once a condition is fulfilled data is either written for
+     a specified interval or as long as the condition is
+     fulfilled. After that a cooldown period is possible. During this
+     period nothing is written.
+
+     The concrete function objects are
+     - writeIfFieldOutside :: writing is triggered if the minimum or
+	  the maximum of a field is outside a specified range. Part of
+          the =simpleFunctionObjects=
+     - writeIfSwakExpression :: writing is triggered if a logical
+          expression evaluates to =true=. Stopping and retriggering is
+          also possible with logical expressions. Part of
+          the =simpleSwakFunctionObjects=
+     - writeIfPython :: writing is triggered by a Python-snipplet that
+                        either returns =True= or =False=. Stopping and
+                        retriggering are also possible. Part of
+                        =swakPythonIntegration=
+
+     Allows saving and writing a specifiable number of timesteps
+     *before* the condition is met (this allows finding out what lead
+     to this)
+**** Function object =writeOldTimesOnSignal= with new signal handlers
+     This function object installs a new signal handler for specified
+     signals.
+
+     The function object itself saves the last $N$-timesteps, the
+     signal handler (when called) writes these steps to disk and then
+     calls the regular OpenFOAM signal handler
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows
@@ -2404,10 +2442,21 @@ S_{expl} + S_{impl} T
      This function gives the distance in the mesh to a specified face.
 
      Not yet working correctly
+**** =panicDump= now allows storing old values
+     With the switch =storeAndWritePreviousState= this functionObject
+     now can cache a number of timesteps and write these results in
+     addition to the current timestep
 **** =swakExpressionAverageDistribution= records extremes and number of samples
      In addition to the average now this Function object also records
      the minimum and maximum value for each bin. Also the number of
      samples used in the bin
+**** Python-function objects that return a boolean now have a initialization-snipplet
+     The function objects =executeIfPython=, =setDeltaTWithPython=,
+     =setEntTimeWithPython= and =writeAndEndWithPython= now expect
+     code snipplet named =init=. This is executed in the beginning and
+     can be used to set up global variables if these snipplets need
+     some kind of state. The variables have to be declared =global= in
+     the snipplets that do the actual decision (for technical reason)
 *** Examples
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on

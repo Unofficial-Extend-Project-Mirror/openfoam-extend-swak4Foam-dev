@@ -69,6 +69,9 @@ class setDeltaTWithPythonFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const setDeltaTWithPythonFunctionObject&);
 
+    //- the code that should be evaluated in the beginning
+    string initCode_;
+
     //- the code that should be evaluated
     string deltaTCode_;
 
