@@ -76,6 +76,9 @@ class writeAndEndPythonFunctionObject
     //- the code that should be evaluated
     string conditionCode_;
 
+    //- code that is evaluated when starting
+    string initCode_;
+
     void readParameters(const dictionary &);
 
 protected:

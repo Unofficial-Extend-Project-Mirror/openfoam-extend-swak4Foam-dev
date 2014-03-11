@@ -79,7 +79,13 @@ bool setEndTimeWithPythonFunctionObject::read(const dictionary& dict)
 
 void setEndTimeWithPythonFunctionObject::readParameters(const dictionary &dict)
 {
+    readCode(dict,"init",initCode_);
     readCode(dict,"endTime",endTimeCode_);
+
+    pythonInterpreterWrapper::executeCode(
+        initCode_,
+        false
+    );
 }
 
 scalar setEndTimeWithPythonFunctionObject::endTime()
