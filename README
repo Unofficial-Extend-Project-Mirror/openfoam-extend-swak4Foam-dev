@@ -493,6 +493,13 @@ S_{expl} + S_{impl} T
                  =swakSurfactantFoam=
      - Demonstrates :: FAM-specific =swakExpressions= and =groovyBC=
                        (as well as the =expressionSource=)
+*** FvOptions
+    Cases that demonstrate =swakSourceFields=
+**** angleDuctWithSources
+     - Solver :: rhoPimpleFoam
+     - Mesh preparation :: Execute =prepareCase.sh=
+     - Demonstrates :: Simple expression sources (adds a /heat source/
+                       to the solid)
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
