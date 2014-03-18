@@ -114,9 +114,14 @@ bool SwakSetValue<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
 
     const volScalarField &cond=this->driver().
         FieldValueExpressionDriver::getResult<volScalarField>();
+    volScalarField usedCond(0*cond);
+    forAll(this->cells_,i) {
+        label cellI=this->cells_[i];
+        usedCond[cellI]=cond[cellI];
+    }
 
-    forAll(cond,cellI) {
-        if(cond[cellI]!=0) {
+    forAll(usedCond,cellI) {
+        if(usedCond[cellI]!=0) {
             cellIDs.append(cellI);
         }
     }

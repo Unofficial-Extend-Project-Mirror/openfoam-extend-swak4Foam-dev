@@ -2628,6 +2628,10 @@ S_{expl} + S_{impl} T
 **** =fvOptions= in =swakSourceFields= now actually working
      Because of the missing dimensions until now =swakExplicitSource=
      and =swakImplicitSource= were not actually working
+**** =fvOptions= did not honor the =selectionMode=-entry
+     Always set source etc for whole region. Now the =selectionMode=
+     is honored (for instance only in =cellZone= the source term will
+     be applied.)
 *** New features
 **** New utility =funkyWarpMesh=
      Utility that calculates new point values for the mesh. In the

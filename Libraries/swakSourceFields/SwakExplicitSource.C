@@ -117,8 +117,12 @@ void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
         FieldValueExpressionDriver::getResult<typename SwakExplicitSource<T>::resultField>()
     );
     result.dimensions().reset(this->dimensions_[fieldI]);
-
-    eqn+=result;
+    typename SwakExplicitSource<T>::resultField usedResult(result*0);
+    forAll(this->cells_,i) {
+        label cellI=this->cells_[i];
+        usedResult[cellI]=result[cellI];
+    }
+    eqn+=usedResult;
 }
 
 } // end namespace

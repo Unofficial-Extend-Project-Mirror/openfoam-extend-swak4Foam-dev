@@ -123,11 +123,16 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
         FieldValueExpressionDriver::getResult<volScalarField>()
     );
     result.dimensions().reset(this->dimensions_[fieldI]);
+    volScalarField usedResult(result*0);
+    forAll(this->cells_,i) {
+        label cellI=this->cells_[i];
+        usedResult[cellI]=result[cellI];
+    }
 
     if(switchExplicitImplicit_) {
-        eqn+=fvm::SuSp(result,eqn.psi());
+        eqn+=fvm::SuSp(usedResult,eqn.psi());
     } else {
-        eqn+=fvm::Sp(result,eqn.psi());
+        eqn+=fvm::Sp(usedResult,eqn.psi());
     }
 }
 
