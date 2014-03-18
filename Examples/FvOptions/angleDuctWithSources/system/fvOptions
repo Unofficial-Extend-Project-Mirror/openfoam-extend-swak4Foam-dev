@@ -53,8 +53,27 @@ heatSource {
     cellZone porosity;
 
     scalarSwakExplicitSourceCoeffs {
+        variables (
+            "htCoeff=1e6;"
+        );
         expressions {
-            h "400-T";
+            h "pos().z<0 ? htCoeff*(400-T): 0" [1 -1 -3 0 0 0 0];
+        }
+    }
+}
+
+velFix {
+    type vectorSwakSetValue;
+    active false;
+    selectionMode cellZone;
+    cellZone porosity;
+
+    vectorSwakSetValueCoeffs {
+        useMaskExpression true;
+        maskExpression "pos().z<0";
+
+        expressions {
+            U "vector(0,0,0)" [0 1 -1 0 0 0 0];
         }
     }
 }

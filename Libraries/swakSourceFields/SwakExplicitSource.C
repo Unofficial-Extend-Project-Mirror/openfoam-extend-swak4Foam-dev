@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SwakExplicitSource.H"
@@ -116,6 +116,7 @@ void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
         this->driver().
         FieldValueExpressionDriver::getResult<typename SwakExplicitSource<T>::resultField>()
     );
+    result.dimensions().reset(this->dimensions_[fieldI]);
 
     eqn+=result;
 }

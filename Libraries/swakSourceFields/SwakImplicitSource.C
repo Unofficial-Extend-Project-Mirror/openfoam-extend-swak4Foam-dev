@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SwakImplicitSource.H"
@@ -122,6 +122,7 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
         this->driver().
         FieldValueExpressionDriver::getResult<volScalarField>()
     );
+    result.dimensions().reset(this->dimensions_[fieldI]);
 
     if(switchExplicitImplicit_) {
         eqn+=fvm::SuSp(result,eqn.psi());

@@ -2597,6 +2597,11 @@ S_{expl} + S_{impl} T
 **** Additional required code snipplet for some Python-functionObjects
      There is now a new code-snipplet required for a number of these
      function objects. It can be left empty but has to be specified
+**** Dimension required for stuff in =swakSourceFields=
+     The expressions used with =swakExplicitSource=,
+     =swakImplicitSource= and =swakSetValue= now also need a
+     dimension. This dimension is used to make sure that the user
+     "knows" the actual dimensions of his source terms
 *** New supported versions
 **** Added support for OpenFOAM 2.3
      This version adds support for OpenFOAM 2.3. The major changes
@@ -2620,6 +2625,9 @@ S_{expl} + S_{impl} T
      invalid value to =SimpleDistribution=
 **** =swakExpressionAverageDistribution= not correctly working in parallel
      This should now be fixed
+**** =fvOptions= in =swakSourceFields= now actually working
+     Because of the missing dimensions until now =swakExplicitSource=
+     and =swakImplicitSource= were not actually working
 *** New features
 **** New utility =funkyWarpMesh=
      Utility that calculates new point values for the mesh. In the
