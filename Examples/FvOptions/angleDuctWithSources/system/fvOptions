@@ -78,4 +78,46 @@ velFix {
     }
 }
 
+reportStuff {
+    type executeFunctionObjectsFvOption;
+    active true;
+    selectionMode all;
+
+    executeFunctionObjectsFvOptionCoeffs {
+        fieldNames (
+            U
+            p
+            k
+            h
+            epsilon
+            phi
+            T
+        );
+
+        verbose true;
+        doCorrect true;
+        doAddSup true;
+        doSetValue true;
+        doMakeRelative true;
+        doMakeAbsolute true;
+
+        functions {
+            values {
+                type volumeMinMax;
+                verbose true;
+                outputControlMode timeStep;
+                outputInterval 1;
+
+                fields (
+                    p
+                    U
+                    k
+                    epsilon
+                    T
+                );
+            }
+        }
+    }
+}
+
 //************************************************************************* //

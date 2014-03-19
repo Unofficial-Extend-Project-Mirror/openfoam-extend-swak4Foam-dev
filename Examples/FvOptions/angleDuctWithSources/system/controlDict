@@ -54,6 +54,7 @@ maxDeltaT       1;
 libs (
     "libswakSourceFields.so"
     "libsimpleSwakFunctionObjects.so"
+    "libswakFvOptions.so"
 );
 
 functions {
