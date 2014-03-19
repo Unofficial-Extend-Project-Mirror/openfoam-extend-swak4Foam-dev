@@ -275,7 +275,8 @@ S_{expl} + S_{impl} T
          right hand side of the equation
     - SwakImplicitSource :: Uses a calculated scalar-field to add an
          implicit source term (source is *without* the actual field)
-
+*** =swakFvOptions=
+    Starting from OpenFOAM 2.2 this library has additional =fvOptions=
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities
@@ -2670,6 +2671,15 @@ S_{expl} + S_{impl} T
      The function object itself saves the last $N$-timesteps, the
      signal handler (when called) writes these steps to disk and then
      calls the regular OpenFOAM signal handler
+**** New library with =fvOptions=
+     Starting with OpenFOAM 2.2 (where the concept of =fvOptions= was
+     introduced) there is an additional library =swakFvOptions= with
+     special =fvOptions= (in addition to those in =swakSourceFields=):
+     - executeFunctionObjectsFvOption :: this one does not manipulate
+          the fields (as expected) but "only" runs a list of function
+          objects. Application is for instance to get information
+          during the time-step for algorithms that have multiple
+          iterations in a time-step
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows

@@ -125,7 +125,7 @@ void Foam::fv::executeFunctionObjectsFvOption::executeFunctionObjects(
 void Foam::fv::executeFunctionObjectsFvOption::correct(volVectorField& U)
 {
     if(doCorrect_) {
-        executeFunctionObjects("correct(volVectorField&)");
+        executeFunctionObjects("correct(volVectorField& "+U.name()+")");
     }
 }
 
@@ -137,7 +137,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 )
 {
     if(doAddSup_) {
-        executeFunctionObjects("addSup(fvMatrix<vector>&)");
+        executeFunctionObjects("addSup(fvMatrix<vector>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
@@ -145,18 +145,18 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
     fvMatrix<vector>& eqn,
-    const label
+    const label fieldI
 )
 {
     if(doSetValue_) {
-        executeFunctionObjects("setValue(fvMatrix<vector>&)");
+        executeFunctionObjects("setValue(fvMatrix<vector>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
 void Foam::fv::executeFunctionObjectsFvOption::correct(volScalarField& U)
 {
     if(doCorrect_) {
-        executeFunctionObjects("correct(volScalarField&)");
+        executeFunctionObjects("correct(volScalarField& "+U.name()+")");
     }
 }
 
@@ -168,7 +168,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 )
 {
     if(doAddSup_) {
-        executeFunctionObjects("addSup(fvMatrix<scalar>&)");
+        executeFunctionObjects("addSup(fvMatrix<scalar>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
@@ -176,18 +176,18 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
     fvMatrix<scalar>& eqn,
-    const label
+    const label fieldI
 )
 {
     if(doSetValue_) {
-        executeFunctionObjects("setValue(fvMatrix<scalar>&)");
+        executeFunctionObjects("setValue(fvMatrix<scalar>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
 void Foam::fv::executeFunctionObjectsFvOption::correct(volTensorField& U)
 {
     if(doCorrect_) {
-        executeFunctionObjects("correct(volTensorField&)");
+        executeFunctionObjects("correct(volTensorField& "+U.name()+")");
     }
 }
 
@@ -199,7 +199,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 )
 {
     if(doAddSup_) {
-        executeFunctionObjects("addSup(fvMatrix<tensor>&)");
+        executeFunctionObjects("addSup(fvMatrix<tensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
@@ -207,18 +207,18 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
     fvMatrix<tensor>& eqn,
-    const label
+    const label fieldI
 )
 {
     if(doSetValue_) {
-        executeFunctionObjects("setValue(fvMatrix<tensor>&)");
+        executeFunctionObjects("setValue(fvMatrix<tensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
 void Foam::fv::executeFunctionObjectsFvOption::correct(volSymmTensorField& U)
 {
     if(doCorrect_) {
-        executeFunctionObjects("correct(volSymmTensorField&)");
+        executeFunctionObjects("correct(volSymmTensorField& "+U.name()+")");
     }
 }
 
@@ -230,7 +230,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 )
 {
     if(doAddSup_) {
-        executeFunctionObjects("addSup(fvMatrix<symmTensor>&)");
+        executeFunctionObjects("addSup(fvMatrix<symmTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
@@ -238,18 +238,18 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
     fvMatrix<symmTensor>& eqn,
-    const label
+    const label fieldI
 )
 {
     if(doSetValue_) {
-        executeFunctionObjects("setValue(fvMatrix<symmTensor>&)");
+        executeFunctionObjects("setValue(fvMatrix<symmTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
 void Foam::fv::executeFunctionObjectsFvOption::correct(volSphericalTensorField& U)
 {
     if(doCorrect_) {
-        executeFunctionObjects("correct(volSphericalTensorField&)");
+        executeFunctionObjects("correct(volSphericalTensorField& "+U.name()+")");
     }
 }
 
@@ -261,7 +261,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 )
 {
     if(doAddSup_) {
-        executeFunctionObjects("addSup(fvMatrix<sphericalTensor>&)");
+        executeFunctionObjects("addSup(fvMatrix<sphericalTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
@@ -269,11 +269,11 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
     fvMatrix<sphericalTensor>& eqn,
-    const label
+    const label fieldI
 )
 {
     if(doSetValue_) {
-        executeFunctionObjects("setValue(fvMatrix<sphericalTensor>&)");
+        executeFunctionObjects("setValue(fvMatrix<sphericalTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
 }
 
@@ -283,7 +283,7 @@ void Foam::fv::executeFunctionObjectsFvOption::makeRelative(
 {
     if(doCorrect_) {
         const_cast<executeFunctionObjectsFvOption&>(*this).
-            executeFunctionObjects("makeRelative(surfaceScalarField&)");
+            executeFunctionObjects("makeRelative(surfaceScalarField& "+phi.name()+")");
     }
 }
 
@@ -294,7 +294,7 @@ void Foam::fv::executeFunctionObjectsFvOption::makeRelative(
 {
     if(doCorrect_) {
         const_cast<executeFunctionObjectsFvOption&>(*this).
-            executeFunctionObjects("makeRelative(const surfaceScalarField&,surfaceScalarField&)");
+            executeFunctionObjects("makeRelative(const surfaceScalarField& "+rho.name()+",surfaceScalarField& "+phi.name()+")");
     }
 }
 
@@ -315,7 +315,7 @@ void Foam::fv::executeFunctionObjectsFvOption::makeAbsolute(
 {
     if(doCorrect_) {
         const_cast<executeFunctionObjectsFvOption&>(*this).
-            executeFunctionObjects("makeAbsolute(surfaceScalarField&)");
+            executeFunctionObjects("makeAbsolute(surfaceScalarField& "+phi.name()+")");
     }
 }
 
@@ -326,7 +326,7 @@ void Foam::fv::executeFunctionObjectsFvOption::makeAbsolute(
 {
     if(doCorrect_) {
         const_cast<executeFunctionObjectsFvOption&>(*this).
-            executeFunctionObjects("makeAbsolute(const surfaceScalarField&,surfaceScalarField&)");
+            executeFunctionObjects("makeAbsolute(const surfaceScalarField& "+rho.name()+",surfaceScalarField& "+phi.name()+")");
     }
 }
 
