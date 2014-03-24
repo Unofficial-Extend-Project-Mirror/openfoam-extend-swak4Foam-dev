@@ -156,8 +156,9 @@ else
   wmake libso swakSourceFields
 fi
 
-if [[ $WM_PROJECT_VERSION >=2.2 && "$FOAM_DEV" == "" ]]
+if [[ $WM_PROJECT_VERSION > 2.2 && "$FOAM_DEV" == "" ]]
 then
+    echo "Compiling swakFvOptions"
     wmake libso swakFvOptions
 fi
 
