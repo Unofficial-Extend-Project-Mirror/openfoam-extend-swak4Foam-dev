@@ -126,18 +126,11 @@ void Foam::groovyFixedNormalSlipPointPatchField<Type>::evaluate
 {
     driver_.clearVariables();
 
-    tmp<Field<vector> > n=driver_.evaluate<vector>(this->normalExpression_,true);
-    tmp<Field<Type> > tvalues;
+    Field<vector> n(driver_.evaluate<vector>(this->normalExpression_,true));
+    n/=mag(n); // normalize
+    Field<Type> val(driver_.evaluate<Type>(this->fixedValueExpression_,true));
 
-    if(this->fixedValueExpression_!="") {
-        tmp<Field<Type> > val=driver_.evaluate<Type>(this->fixedValueExpression_,true);
-
-        tvalues =
-            transform(I - n*n, val);
-    } else {
-        tvalues =
-            transform(I - n*n, this->patchInternalField());
-    }
+    tmp<Field<Type> > tvalues=transform(I - n*n, this->patchInternalField())+transform(n*n,val);
 
     // Get internal field to insert values into
     Field<Type>& iF = const_cast<Field<Type>&>(this->internalField());
@@ -155,6 +148,18 @@ void Foam::groovyFixedNormalSlipPointPatchField<Type>::write(Ostream& os) const
 
     os.writeKeyword("normalExpression")
         << normalExpression_ << token::END_STATEMENT << nl;
+
+    os.writeKeyword("value")
+        << this->patchInternalField() << token::END_STATEMENT << nl;
+
+    if(this->fixedValueExpression_!="") {
+        os.writeKeyword("fixedValue")
+            << const_cast<PatchValueExpressionDriver&>(driver_).evaluate<Type>(this->fixedValueExpression_,true)
+                << token::END_STATEMENT << nl;
+    }
+    os.writeKeyword("normal")
+        << const_cast<PatchValueExpressionDriver&>(driver_).evaluate<Type>(this->normalExpression_,true)
+            << token::END_STATEMENT << nl;
 
     driver_.writeCommon(os,debug);
 }
