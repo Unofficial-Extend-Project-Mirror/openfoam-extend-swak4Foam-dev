@@ -72,6 +72,8 @@ protected:
 
     List<string> expressions_;
 
+    HashTable<dimensionSet,label> dimensions_;
+
     bool verbose_;
 
     FieldValueExpressionDriver &driver() { return driver_; }

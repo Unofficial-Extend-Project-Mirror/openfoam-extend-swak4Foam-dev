@@ -83,7 +83,11 @@ void SwakBasicSourceCommon<T>::setFieldData(const dictionary& dict)
     forAllConstIter(dictionary, dict, iter)
     {
         fieldNames_[i] = iter().keyword();
-        dict.lookup(iter().keyword()) >> expressions_[i];
+        dimensionSet dimension(dimless);
+
+        dict.lookup(iter().keyword()) >> expressions_[i] >> dimension;
+        dimensions_.set(i,dimension);
+
         i++;
     }
 }

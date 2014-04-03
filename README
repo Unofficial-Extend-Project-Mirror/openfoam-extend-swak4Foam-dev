@@ -275,7 +275,8 @@ S_{expl} + S_{impl} T
          right hand side of the equation
     - SwakImplicitSource :: Uses a calculated scalar-field to add an
          implicit source term (source is *without* the actual field)
-
+*** =swakFvOptions=
+    Starting from OpenFOAM 2.2 this library has additional =fvOptions=
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities
@@ -493,6 +494,13 @@ S_{expl} + S_{impl} T
                  =swakSurfactantFoam=
      - Demonstrates :: FAM-specific =swakExpressions= and =groovyBC=
                        (as well as the =expressionSource=)
+*** FvOptions
+    Cases that demonstrate =swakSourceFields=
+**** angleDuctWithSources
+     - Solver :: rhoPimpleFoam
+     - Mesh preparation :: Execute =prepareCase.sh=
+     - Demonstrates :: Simple expression sources (adds a /heat source/
+                       to the solid)
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
@@ -2590,6 +2598,11 @@ S_{expl} + S_{impl} T
 **** Additional required code snipplet for some Python-functionObjects
      There is now a new code-snipplet required for a number of these
      function objects. It can be left empty but has to be specified
+**** Dimension required for stuff in =swakSourceFields=
+     The expressions used with =swakExplicitSource=,
+     =swakImplicitSource= and =swakSetValue= now also need a
+     dimension. This dimension is used to make sure that the user
+     "knows" the actual dimensions of his source terms
 *** New supported versions
 **** Added support for OpenFOAM 2.3
      This version adds support for OpenFOAM 2.3. The major changes
@@ -2613,6 +2626,13 @@ S_{expl} + S_{impl} T
      invalid value to =SimpleDistribution=
 **** =swakExpressionAverageDistribution= not correctly working in parallel
      This should now be fixed
+**** =fvOptions= in =swakSourceFields= now actually working
+     Because of the missing dimensions until now =swakExplicitSource=
+     and =swakImplicitSource= were not actually working
+**** =fvOptions= did not honor the =selectionMode=-entry
+     Always set source etc for whole region. Now the =selectionMode=
+     is honored (for instance only in =cellZone= the source term will
+     be applied.)
 *** New features
 **** New utility =funkyWarpMesh=
      Utility that calculates new point values for the mesh. In the
@@ -2651,6 +2671,15 @@ S_{expl} + S_{impl} T
      The function object itself saves the last $N$-timesteps, the
      signal handler (when called) writes these steps to disk and then
      calls the regular OpenFOAM signal handler
+**** New library with =fvOptions=
+     Starting with OpenFOAM 2.2 (where the concept of =fvOptions= was
+     introduced) there is an additional library =swakFvOptions= with
+     special =fvOptions= (in addition to those in =swakSourceFields=):
+     - executeFunctionObjectsFvOption :: this one does not manipulate
+          the fields (as expected) but "only" runs a list of function
+          objects. Application is for instance to get information
+          during the time-step for algorithms that have multiple
+          iterations in a time-step
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows
