@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SwakSetValue.H"
@@ -114,9 +114,14 @@ bool SwakSetValue<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
 
     const volScalarField &cond=this->driver().
         FieldValueExpressionDriver::getResult<volScalarField>();
+    volScalarField usedCond(0*cond);
+    forAll(this->cells_,i) {
+        label cellI=this->cells_[i];
+        usedCond[cellI]=cond[cellI];
+    }
 
-    forAll(cond,cellI) {
-        if(cond[cellI]!=0) {
+    forAll(usedCond,cellI) {
+        if(usedCond[cellI]!=0) {
             cellIDs.append(cellI);
         }
     }
@@ -163,6 +168,15 @@ void SwakSetValue<T>::setValue
         this->driver().
         FieldValueExpressionDriver::getResult<typename SwakSetValue<T>::resultField>()
     );
+
+    if(this->dimensions_[fieldI]!=eqn.psi().dimensions()) {
+        FatalErrorIn("SwakSetValue<T>::setValue")
+            << "Dimension " << this->dimensions_[fieldI] << " for field "
+                << eqn.psi().name() << " in " << this->name()
+                << " is not the required " << eqn.psi().dimensions()
+                << endl
+                << exit(FatalError);
+    };
 
     DynamicList<label> cellIDs;
 

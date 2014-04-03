@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.3.x                                 |
+|  \\    /   O peration     | Version:  2.3.0                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -9,35 +9,43 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       polyBoundaryMesh;
-    location    "constant/polyMesh";
-    object      boundary;
+    class       volScalarField;
+    object      p;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-3
-(
-    box
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 1.0e5;
+
+boundaryField
+{
+    front
     {
-        type            wall;
-        inGroups        1(wall);
-        nFaces          12000;
-        startFace       352272;
+        type            zeroGradient;
     }
-    withHole
+    back
     {
-        type            wall;
-        inGroups        1(wall);
-        nFaces          3485;
-        startFace       364272;
+        type            zeroGradient;
     }
-    withBump
+    walls
     {
-        type            wall;
-        inGroups        1(wall);
-        nFaces          6869;
-        startFace       367757;
+        type            zeroGradient;
     }
-)
+    porosityWall
+    {
+        type            zeroGradient;
+    }
+
+    inlet
+    {
+        type            zeroGradient;
+    }
+    outlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+}
 
 // ************************************************************************* //
