@@ -68,6 +68,7 @@ Foam::groovyFixedNormalSlipFvPatchField<Type>::groovyFixedNormalSlipFvPatchField
     fixedValueExpression_(dict.lookup("fixedValueExpression")),
     driver_(dict,this->patch())
 {
+    this->evaluate();
 }
 
 
