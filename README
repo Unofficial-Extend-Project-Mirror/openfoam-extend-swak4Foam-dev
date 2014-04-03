@@ -2397,6 +2397,12 @@ S_{expl} + S_{impl} T
 **** =swakExpressionAverageDistribution= not correctly working in parallel
      This should now be fixed
 *** New features
+**** Boundary condition =groovyFixedNormalSlip= in =groovyStandardBCs=
+     These boundary conditions allow specifying a value in normal
+     direction to the patch while in tangential direction the regular
+     slip condition is applied. This is implemented for =fvPatch= and
+     =pointPatch=. For the =pointPatch= the normal direction has to be
+     specified by the user
 **** New utility =funkyWarpMesh=
      Utility that calculates new point values for the mesh. In the
      simplest form the expression is specified on the command line. If
