@@ -28,109 +28,33 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-Class
-    Foam::groovyBCCommon
-
-Description
-    Foam::groovyBCCommon
-
-SourceFiles
-    groovyBCCommon.C
-
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009-2010, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef groovyBCCommon_H
-#define groovyBCCommon_H
+#ifndef groovyFixedNormalSlipFvPatchFields_H
+#define groovyFixedNormalSlipFvPatchFields_H
+
+#include "groovyFixedNormalSlipFvPatchField.H"
+#include "fieldTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "dictionary.H"
 
 namespace Foam
 {
 
-    class pointPatch;
-    class fvPatch;
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-/*---------------------------------------------------------------------------*\
-                     Class groovyBCFvPatch Declaration
-\*---------------------------------------------------------------------------*/
+makePatchTypeFieldTypedefs(groovyFixedNormalSlip)
 
-template<class Type>
-class groovyBCCommon
-{
-
-    bool evaluateDuringConstruction_;
-
-protected:
-
-    // Protected data
-
-    bool debug_;
-    bool hasGradient_;
-
-    // the expressions
-    string valueExpression_;
-    string gradientExpression_;
-    string fractionExpression_;
-
-    bool evaluateDuringConstruction() const
-        { return evaluateDuringConstruction_; }
-
-public:
-
-    static string nullValue();
-
-    static const fvPatch &getFvPatch(const pointPatch &pp);
-
-    // Constructors
-
-    //- Construct from nothing
-    groovyBCCommon
-    (
-        bool hasGradient,
-        bool isPoint=false,
-        string fractionExpression="1"
-    );
-
-    //- Construct from dictionary
-    groovyBCCommon
-    (
-        const dictionary&,
-        bool hasGradient,
-        bool isPoint=false,
-        string fractionExpression="1"
-    );
-
-    //- Copy constructor
-    groovyBCCommon
-    (
-        const groovyBCCommon<Type> &
-    );
-
-    // Member functions
-
-    //- Write
-    void write(Ostream&) const;
-};
-
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    #ifdef NoRepository
-    #   include "groovyBCCommon.C"
-    #endif
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-    #endif
+#endif
 
 // ************************************************************************* //
