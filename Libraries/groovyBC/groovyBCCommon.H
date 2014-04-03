@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCCommon_H
@@ -52,6 +52,9 @@ Contributors/Copyright:
 
 namespace Foam
 {
+
+    class pointPatch;
+    class fvPatch;
 
 /*---------------------------------------------------------------------------*\
                      Class groovyBCFvPatch Declaration
@@ -75,12 +78,14 @@ protected:
     string gradientExpression_;
     string fractionExpression_;
 
-    string nullValue();
-
-    bool evaluateDuringConstruction() const 
+    bool evaluateDuringConstruction() const
         { return evaluateDuringConstruction_; }
 
 public:
+
+    static string nullValue();
+
+    static const fvPatch &getFvPatch(const pointPatch &pp);
 
     // Constructors
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,12 +31,15 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCCommon.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "fvMesh.H"
+#include "pointMesh.H"
 
 namespace Foam
 {
@@ -62,6 +65,20 @@ string groovyBCCommon<Type>::nullValue()
 }
 
 template<class Type>
+const fvPatch &groovyBCCommon<Type>::getFvPatch(const pointPatch &pp) {
+    if(!isA<fvMesh>(pp.boundaryMesh().mesh().db())) {
+        FatalErrorIn("getFvPatch(const pointPatch &pp)")
+            << " This will only work if I can find a fvMesh, but I only found a "
+                << typeid(pp.boundaryMesh().mesh().db()).name()
+                << endl
+                << exit(FatalError);
+    }
+    const fvMesh &fv=dynamic_cast<const fvMesh &>(pp.boundaryMesh().mesh().db());
+    return fv.boundary()[pp.index()];
+}
+
+
+template<class Type>
 groovyBCCommon<Type>::groovyBCCommon
 (
     bool hasGradient,
@@ -69,7 +86,7 @@ groovyBCCommon<Type>::groovyBCCommon
     string fractionExpression
 )
 :
-    evaluateDuringConstruction_(false),  
+    evaluateDuringConstruction_(false),
     debug_(false),
     hasGradient_(hasGradient),
     fractionExpression_(isPoint ? "toPoint("+fractionExpression+")" : fractionExpression)
@@ -87,7 +104,7 @@ groovyBCCommon<Type>::groovyBCCommon
     const groovyBCCommon<Type>& ptf
 )
 :
-    evaluateDuringConstruction_(ptf.evaluateDuringConstruction_),  
+    evaluateDuringConstruction_(ptf.evaluateDuringConstruction_),
     debug_(ptf.debug_),
     hasGradient_(ptf.hasGradient_),
     valueExpression_(ptf.valueExpression_),
@@ -108,7 +125,7 @@ groovyBCCommon<Type>::groovyBCCommon
 :
     evaluateDuringConstruction_(
         dict.lookupOrDefault<bool>("evaluateDuringConstruction",false)
-    ),  
+    ),
     debug_(dict.lookupOrDefault<bool>("debug",false)),
     hasGradient_(hasGradient),
     fractionExpression_(dict.lookupOrDefault(
