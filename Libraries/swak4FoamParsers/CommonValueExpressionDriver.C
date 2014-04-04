@@ -57,6 +57,9 @@ bool CommonValueExpressionDriver::cacheSets_=true;
 
 dictionary CommonValueExpressionDriver::emptyData_("noDictionary");
 
+    // this should be sufficient
+const label CommonValueExpressionDriver::maxVariableRecursionDepth_=100;
+
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 
@@ -414,25 +417,47 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 stringList CommonValueExpressionDriver::readVariableStrings(
-    const dictionary &dict
+    const dictionary &dict,
+    const word &name,
+    const label recursionDepth
 )
 {
-    if(!dict.found("variables")) {
+    if(!dict.found(name)) {
         return stringList();
     }
-    ITstream data(dict.lookup("variables"));
+
+    if(recursionDepth>maxVariableRecursionDepth_) {
+        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings")
+            << "While reading variable list " << name << " in "
+                << dict.name() << "the maximum recursion depth "
+                << maxVariableRecursionDepth_ << " was exceeded." << nl
+                << "Probable cause is that variable lists are referencing "
+                << "each other in a circular fashion"
+                << endl
+                << exit(FatalError);
+    }
+
+    ITstream data(dict.lookup(name));
     token nextToken;
     data.read(nextToken);
     if(nextToken.isString()) {
         data.rewind();
-        return stringList(1,string(data));
+        return expandIncludeStringList(
+            stringList(1,string(data)),
+            dict,
+            recursionDepth+1
+        );
     } else if(
         nextToken.type()==token::PUNCTUATION
         &&
         nextToken.pToken()==token::BEGIN_LIST
     ) {
         data.rewind();
-        return stringList(data);
+        return expandIncludeStringList(
+            stringList(data),
+            dict,
+            recursionDepth+1
+        );
     } if(nextToken.isLabel()) {
         token anotherToken;
         data.read(anotherToken);
@@ -442,16 +467,195 @@ stringList CommonValueExpressionDriver::readVariableStrings(
             anotherToken.pToken()==token::BEGIN_LIST
         ) {
             data.rewind();
-            return stringList(data);
+            return expandIncludeStringList(
+                stringList(data),
+                dict,
+                recursionDepth+1
+            );
         }
     }
 
     FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
-        << " Entry 'variables' must either be a string or a list of strings"
+        << " Entry '"<< name << "' must in dictionary "
+            << dict.name() << " either be a string or a list of strings"
             << endl
             << exit(FatalError);
 
     return stringList();
+}
+
+stringList CommonValueExpressionDriver::expandIncludeStringList(
+    const stringList &orig,
+    const dictionary &dict,
+    const label recursionDepth
+) {
+    DynamicList<string> strings;
+
+    forAll(orig,i) {
+	string o=orig[i];
+        o.removeTrailing(' ');
+
+        std::string::size_type start=0;
+        std::string::size_type end=0;
+        while(start<o.length()) {
+            end=o.find(';',start);
+            if(end==std::string::npos) {
+            FatalErrorIn("CommonValueExpressionDriver::expandIncludeStringList")
+                << "No terminating ';' found in expression '"
+                    << o.substr(start) << "' of dictionary "
+                    << dict.name() << "\n"
+                    << endl
+                    << exit(FatalError);
+            }
+            string sub=o.substr(start,end+1);
+            if(sub[0]=='#') {
+                std::string::size_type semiPos=sub.find(';');
+                assert(semiPos!=std::string::npos);
+
+                stringList expansion(
+                    readVariableStrings(
+                        dict,
+                        sub.substr(1,semiPos),
+                        recursionDepth
+                    )
+                );
+
+                forAll(expansion,k){
+                    strings.append(
+                        expandDictVariables(
+                            expansion[k],
+                            dict)
+                    );
+                }
+            } else {
+                strings.append(
+                    expandDictVariables(
+                        sub,
+                        dict
+                    )
+                );
+            }
+        }
+    }
+
+    strings.shrink();
+    return stringList(strings);
+}
+
+inline bool is_valid(char c)
+{
+    return (isalpha(c) || isdigit(c) || (c == '_'));
+}
+
+string getEntryString(
+    const dictionary &dict,
+    const string &replace
+) {
+    const entry &e=dict.lookupEntry(
+        replace,
+        true, // recursive
+        false // no pattern matching
+    );
+    if(e.isDict()) {
+        FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+            << "Entry " << replace << " found in dictionary "
+                << dict.name() << " but is a dictionary"
+                << endl
+                << exit(FatalError);
+    }
+    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
+    OStringStream o;
+
+    for (label i=0; i<pe.size(); i++) {
+        o << pe[i];
+
+        if (i < pe.size()-1){
+            o << token::SPACE;
+        }
+    }
+    return o.str();
+}
+
+string CommonValueExpressionDriver::expandDictVariables(
+    const string &orig,
+    const dictionary &dict
+) {
+    string result=orig;
+
+    while(result.find('$')!=std::string::npos) {
+        std::string::size_type dollarPos=result.find('$');
+        if(dollarPos+1>=result.size()) {
+            FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                << "'$' found at end in " << result << "(originally "
+                    << orig << ")"
+                    << endl
+                    << exit(FatalError);
+        }
+        std::string::size_type endPos=std::string::npos;
+
+        if(result[dollarPos+1]=='[') {
+            // "protected pattern"
+            endPos=result.find(']',dollarPos+1);
+            if(endPos==std::string::npos) {
+                FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                    << "No correct terminating ']' found in " << result
+                        << " (originally " << orig << ")"
+                        << endl
+                        << exit(FatalError);
+            }
+        } else {
+            // 'pure' name ... word
+            endPos=dollarPos;
+            while(
+                endPos+1<result.size()
+                &&
+                is_valid(result[endPos+1])
+            ) {
+                endPos++;
+            }
+            if(endPos==dollarPos) {
+                FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                    << "Not a valid character after the $ in " <<result
+                        << "(originally " << orig << ")"
+                        << endl
+                        << exit(FatalError);
+            }
+        }
+
+        string replace=result.substr(dollarPos+1,endPos-dollarPos-1);
+        string replacement="";
+
+        if(replace[0]=='[') {
+        } else {
+            replacement=getEntryString(
+                dict,
+                replace
+            );
+        }
+    }
+    return result;
+}
+
+string CommonValueExpressionDriver::readExpression(
+    const word &name,
+    const dictionary &dict
+) {
+    string result=dict.lookup(name);
+
+    return expandDictVariables(
+        result,
+        dict
+    );
+}
+
+
+string CommonValueExpressionDriver::readExpression(
+    const word &name
+) {
+    return readExpression(
+        name,
+        dict()
+    );
 }
 
 void CommonValueExpressionDriver::setVariableStrings(const dictionary &dict)

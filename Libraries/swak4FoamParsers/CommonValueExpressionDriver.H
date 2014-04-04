@@ -85,6 +85,9 @@ class CommonValueExpressionDriver
     //- empty dictionary for constructors that don't get a dictionary
     static dictionary emptyData_;
 
+    //- maximum depth to search for other dictionaries
+    static const label maxVariableRecursionDepth_;
+
     //- variables from a dictionary
     stringList variableStrings_;
 
@@ -381,6 +384,17 @@ protected:
     //    inline  HashTable<ExpressionResult,word> &variables();
     ExpressionResult &variable(const word &name);
 
+    //- expand string list to include other lists reference with #
+    static stringList expandIncludeStringList(
+        const stringList &orig,
+        const dictionary &dict,
+        const label recursionDepth
+    );
+
+    static string expandDictVariables(
+        const string &orig,
+        const dictionary &dict
+    );
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -483,7 +497,22 @@ public:
     static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
 
    //- read the list of variable strings (or initialize with a single string)
-    static stringList readVariableStrings(const dictionary &dict);
+    static stringList readVariableStrings(
+        const dictionary &dict,
+        const word &name="variables",
+        const label recursionDepth=0
+    );
+
+    //- read an expression string and also do substitution
+    static string readExpression(
+        const word &name,
+        const dictionary &dict
+    );
+
+    //- read an expression string and also do substitution
+    string readExpression(
+        const word &name
+    );
 
     //- read the list of variable strings (or initialize with a single string)
     void setVariableStrings(const dictionary &dict);
