@@ -79,6 +79,12 @@ class CommonValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const CommonValueExpressionDriver&);
 
+    //- dictionary with all the data
+    const dictionary &dict_;
+
+    //- empty dictionary for constructors that don't get a dictionary
+    static dictionary emptyData_;
+
     //- variables from a dictionary
     stringList variableStrings_;
 
@@ -136,6 +142,9 @@ protected:
     }
 
     const word &resolveAlias(const word &name) const;
+
+    const dictionary &dict() const
+        { return dict_; }
 
 private:
     ExpressionResult result_;

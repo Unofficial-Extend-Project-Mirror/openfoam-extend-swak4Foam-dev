@@ -55,6 +55,8 @@ defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
     // Currently not working
 bool CommonValueExpressionDriver::cacheSets_=true;
 
+dictionary CommonValueExpressionDriver::emptyData_("noDictionary");
+
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 
@@ -65,6 +67,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const CommonValueExpressionDriver& orig
 )
 :
+    dict_(orig.dict_),
     variableStrings_(orig.variableStrings_),
     contextString_(orig.contextString_),
     aliases_(orig.aliases_),
@@ -97,6 +100,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const dictionary& dict
 )
 :
+    dict_(dict),
     variableStrings_(readVariableStrings(dict)),
     contextString_("- From dictionary: "+dict.name()),
     specialVariablesIndex_(-1),
@@ -153,6 +157,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool searchOnDisc
 )
 :
+    dict_(emptyData_),
     variableStrings_(),
     contextString_("- Driver constructed from scratch"),
     specialVariablesIndex_(-1),
