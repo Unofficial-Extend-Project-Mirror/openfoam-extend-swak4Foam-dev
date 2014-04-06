@@ -25,7 +25,7 @@ boundaryField
         //        type            groovyBC;
         type            groovyBCFixedValue;
 
-        //        debugCommonDriver 0;
+        //        debugCommonDriver 1;
 
         //        variableNameIdenticalToField true;
 

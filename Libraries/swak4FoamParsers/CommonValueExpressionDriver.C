@@ -422,6 +422,9 @@ stringList CommonValueExpressionDriver::readVariableStrings(
     const label recursionDepth
 )
 {
+    Sbug << "::readVariableStrings " << name
+        << " depth " << recursionDepth << endl;
+
     if(!dict.found(name)) {
         return stringList();
     }
@@ -441,6 +444,7 @@ stringList CommonValueExpressionDriver::readVariableStrings(
     token nextToken;
     data.read(nextToken);
     if(nextToken.isString()) {
+        Sbug << name << " is a single string" << endl;
         data.rewind();
         return expandIncludeStringList(
             stringList(1,string(data)),
@@ -452,13 +456,15 @@ stringList CommonValueExpressionDriver::readVariableStrings(
         &&
         nextToken.pToken()==token::BEGIN_LIST
     ) {
+        Sbug << name << " is a list of strings" << endl;
         data.rewind();
         return expandIncludeStringList(
             stringList(data),
             dict,
             recursionDepth+1
         );
-    } if(nextToken.isLabel()) {
+    } else if(nextToken.isLabel()) {
+        Sbug << name << " is a list of strings with prefix" << endl;
         token anotherToken;
         data.read(anotherToken);
         if(
@@ -489,10 +495,14 @@ stringList CommonValueExpressionDriver::expandIncludeStringList(
     const dictionary &dict,
     const label recursionDepth
 ) {
+    Sbug << "::expandIncludeStringList " << orig << endl;
+
     DynamicList<string> strings;
 
     forAll(orig,i) {
 	string o=orig[i];
+        Sbug << "Checking " << o << endl;
+
         o.removeTrailing(' ');
 
         std::string::size_type start=0;
@@ -508,18 +518,23 @@ stringList CommonValueExpressionDriver::expandIncludeStringList(
                     << exit(FatalError);
             }
             string sub=o.substr(start,end+1);
+
+            Sbug << "Found: " << sub << endl;
+
             if(sub[0]=='#') {
                 std::string::size_type semiPos=sub.find(';');
                 assert(semiPos!=std::string::npos);
-
+                string inList=sub.substr(1,semiPos-1);
+                Sbug << "Include " << inList << endl;
                 stringList expansion(
                     readVariableStrings(
                         dict,
-                        sub.substr(1,semiPos),
+                        inList,
                         recursionDepth
                     )
                 );
-
+                Sbug << "Got expansion from " << inList << ": "
+                    << expansion << endl;
                 forAll(expansion,k){
                     strings.append(
                         expandDictVariables(
@@ -535,6 +550,7 @@ stringList CommonValueExpressionDriver::expandIncludeStringList(
                     )
                 );
             }
+            start=end+1;
         }
     }
 
@@ -580,6 +596,8 @@ string CommonValueExpressionDriver::expandDictVariables(
     const string &orig,
     const dictionary &dict
 ) {
+    Sbug << "::expandDictVariables " << orig << endl;
+
     string result=orig;
 
     while(result.find('$')!=std::string::npos) {
@@ -633,6 +651,9 @@ string CommonValueExpressionDriver::expandDictVariables(
             );
         }
     }
+
+    Sbug << orig << " expanded to " << result << endl;
+
     return result;
 }
 
@@ -640,6 +661,8 @@ string CommonValueExpressionDriver::readExpression(
     const word &name,
     const dictionary &dict
 ) {
+    Sbug << "::readExpression " << name << endl;
+
     string result=dict.lookup(name);
 
     return expandDictVariables(
@@ -652,6 +675,8 @@ string CommonValueExpressionDriver::readExpression(
 string CommonValueExpressionDriver::readExpression(
     const word &name
 ) {
+    Dbug << "::readExpression " << name << endl;
+
     return readExpression(
         name,
         dict()
@@ -1584,15 +1609,21 @@ label CommonValueExpressionDriver::parse(
     const word &start
 )
 {
+    Dbug << "::parse() - expr: " << f << " start: " << start << endl;
+
     int start_token=startupSymbol(start);
 
     parserLastPos()=-1;
 
     content_ = f;
     scan_begin ();
+
+    Dbug << "Start parsing" << endl;
     parseInternal(start_token);
-    //     Info << "Prsed to " << parserLastPos() << " of " << label(f.size()) << endl;
+    Dbug << "Parsed to " << parserLastPos() << " of " << label(f.size()) << endl;
+
     scan_end ();
+    Dbug << "Ended at position " << parserLastPos() << endl;
 
     return parserLastPos();
 }
