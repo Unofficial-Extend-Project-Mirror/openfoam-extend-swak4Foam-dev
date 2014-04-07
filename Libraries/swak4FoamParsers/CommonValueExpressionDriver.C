@@ -42,6 +42,8 @@ Contributors/Copyright:
 
 #include "Random.H"
 
+#include "entryToExpression.H"
+
 namespace Foam {
 
 
@@ -586,26 +588,16 @@ string getEntryString(
     const entry &e=dict.lookupEntry(
         replace,
         true, // recursive
-        false // no pattern matching
+        true //  pattern matching
     );
     if(e.isDict()) {
-        FatalErrorIn("CommonValueExpressionDriver::getEntryString")
+        FatalErrorIn("getEntryString")
             << "Entry " << replace << " found in dictionary "
                 << dict.name() << " but is a dictionary"
                 << endl
                 << exit(FatalError);
     }
-    const primitiveEntry &pe=dynamicCast<const primitiveEntry&>(e);
-    OStringStream o;
-
-    for (label i=0; i<pe.size(); i++) {
-        o << pe[i];
-
-        if (i < pe.size()-1){
-            o << token::SPACE;
-        }
-    }
-    return o.str();
+    return entryToExpression::fromEntry(e);
 }
 
 exprString CommonValueExpressionDriver::expandDictVariables(
@@ -662,6 +654,32 @@ exprString CommonValueExpressionDriver::expandDictVariables(
         string replacement="";
 
         if(replace[0]=='[') {
+            string castTo="";
+            string entryName="";
+            if(replace[1]=='(') {
+                std::string::size_type closePos=replace.find(')');
+                if(closePos==std::string::npos) {
+                    FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                        << "No closing ')' found in " << replace
+                            << " (" << orig << ")"
+                            << endl
+                            << exit(FatalError);
+                }
+                castTo=replace.substr(2,closePos-2);
+                entryName=replace.substr(closePos+1,replace.length()-closePos-2);
+            } else {
+                entryName=replace.substr(1,replace.length()-2);
+            }
+            if(castTo=="") {
+                replacement=getEntryString(
+                    dict,
+                    entryName
+                );
+            } else {
+                autoPtr<entryToExpression> e2e=entryToExpression::New(castTo);
+                const entry &e=dict.lookupEntry(entryName,true,true);
+                replacement=e2e->toExpr(e);
+            }
         } else {
             replacement=getEntryString(
                 dict,

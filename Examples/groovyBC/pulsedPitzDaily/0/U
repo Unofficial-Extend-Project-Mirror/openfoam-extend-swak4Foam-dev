@@ -40,9 +40,9 @@ boundaryField
           "para=-(maxY-pos().y)*(pos().y-minY)/(0.25*pow(maxY-minY,2))*normal();"
       );
 
-      amplitude 10;
+      amplitude a [0 1 -1 0 0 0 0] 10;
 
-      valueExpression "$amplitude*(1+0.5*sin(500*time()))*para";
+      valueExpression "$[(dimensionedScalar)amplitude]*(1+0.5*sin(500*time()))*para";
 
       value           uniform (10 0 0);
     }

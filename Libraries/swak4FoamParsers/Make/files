@@ -3,6 +3,9 @@ helpers/exprString.C
 helpers/switchableNotImplemented.C
 helpers/DebugOStream.C
 
+entryToExpression/entryToExpression.C
+entryToExpression/dimensionedScalarEntryToExpression.C
+
 repositories/RepositoryBase.C
 repositories/SurfacesRepository.C
 repositories/MeshesRepository.C
