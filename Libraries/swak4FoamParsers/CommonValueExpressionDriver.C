@@ -656,7 +656,9 @@ exprString CommonValueExpressionDriver::expandDictVariables(
             }
         }
 
-        string replace=result.substr(dollarPos+1,endPos-dollarPos-1);
+        Sbug << "DollarPos: " << label(dollarPos)
+            << " endPos " << label(endPos) << endl;
+        string replace=result.substr(dollarPos+1,endPos-dollarPos);
         string replacement="";
 
         if(replace[0]=='[') {
@@ -666,14 +668,23 @@ exprString CommonValueExpressionDriver::expandDictVariables(
                 replace
             );
         }
+        Sbug << replace << " -> " << replacement << endl;
+
+        string pre=result.substr(0,dollarPos);
+        string post=result.substr(endPos+1);
+
+        Sbug << "Pre: " << pre << " Post: " << post << endl;
+        result= pre
+            + replacement
+            + post;
+        Sbug << "Resulting: " << result << endl;
     }
 
     Sbug << orig << " expanded to " << result << endl;
 
-    return exprString(
-        result,
-        dict
-    );
+    exprString ret(result.c_str());
+
+    return ret;
 }
 
 exprString CommonValueExpressionDriver::readExpression(
