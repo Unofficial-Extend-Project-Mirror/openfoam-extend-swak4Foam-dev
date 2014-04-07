@@ -44,20 +44,20 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-string groovyBCCommon<Type>::nullValue()
+exprString groovyBCCommon<Type>::nullValue()
 {
     if(string(pTraits<Type>::typeName)==string("vector")) {
-        return string("vector(0,0,0)");
+        return exprString("vector(0,0,0)");
     } else if(string(pTraits<Type>::typeName)==string("tensor")) {
-        return string("tensor(0,0,0,0,0,0,0,0,0)");
+        return exprString("tensor(0,0,0,0,0,0,0,0,0)");
     } else if(string(pTraits<Type>::typeName)==string("symmTensor")) {
-        return string("symmTensor(0,0,0,0,0,0)");
+        return exprString("symmTensor(0,0,0,0,0,0)");
     } else if(string(pTraits<Type>::typeName)==string("sphericalTensor")) {
-        return string("sphericalTensor(0)");
+        return exprString("sphericalTensor(0)");
     } else {
         OStringStream tmp;
         tmp << pTraits<Type>::zero;
-        return tmp.str();
+        return exprString(tmp.str().c_str());
     }
 }
 
@@ -66,13 +66,16 @@ groovyBCCommon<Type>::groovyBCCommon
 (
     bool hasGradient,
     bool isPoint,
-    string fractionExpression
+    exprString fractionExpression
 )
 :
     evaluateDuringConstruction_(false),
     debug_(false),
     hasGradient_(hasGradient),
-    fractionExpression_(isPoint ? "toPoint("+fractionExpression+")" : fractionExpression)
+    fractionExpression_(
+        isPoint ? "toPoint("+fractionExpression+")" : fractionExpression,
+        dictionary::null
+    )
 {
     valueExpression_ = nullValue();
     if(hasGradient_) {
@@ -103,7 +106,7 @@ groovyBCCommon<Type>::groovyBCCommon
     const dictionary& dict,
     bool hasGradient,
     bool isPoint,
-    string fractionExpression
+    exprString fractionExpression
 )
 :
     evaluateDuringConstruction_(
@@ -111,20 +114,28 @@ groovyBCCommon<Type>::groovyBCCommon
     ),
     debug_(dict.lookupOrDefault<bool>("debug",false)),
     hasGradient_(hasGradient),
-    fractionExpression_(dict.lookupOrDefault(
-                            "fractionExpression",
-                            isPoint ? string("toPoint("+fractionExpression+")") : string(fractionExpression))
+    fractionExpression_(
+        dict.lookupOrDefault(
+            "fractionExpression",
+            isPoint ? string("toPoint("+fractionExpression+")") : string(fractionExpression)),
+        dict
     )
 {
     if (dict.found("valueExpression"))
     {
-        dict.lookup("valueExpression") >> valueExpression_;
+        valueExpression_=exprString(
+            dict.lookup("valueExpression"),
+            dict
+        );
     } else {
         valueExpression_ = nullValue();
     }
     if (dict.found("gradientExpression") && hasGradient)
     {
-        dict.lookup("gradientExpression") >> gradientExpression_;
+        gradientExpression_=exprString(
+            dict.lookup("gradientExpression"),
+            dict
+        );
     } else {
         gradientExpression_ = nullValue();
     }

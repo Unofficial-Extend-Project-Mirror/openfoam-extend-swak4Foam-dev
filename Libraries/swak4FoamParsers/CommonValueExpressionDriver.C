@@ -416,7 +416,7 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-stringList CommonValueExpressionDriver::readVariableStrings(
+List<exprString> CommonValueExpressionDriver::readVariableStrings(
     const dictionary &dict,
     const word &name,
     const label recursionDepth
@@ -426,7 +426,7 @@ stringList CommonValueExpressionDriver::readVariableStrings(
         << " depth " << recursionDepth << endl;
 
     if(!dict.found(name)) {
-        return stringList();
+        return List<exprString>();
     }
 
     if(recursionDepth>maxVariableRecursionDepth_) {
@@ -443,11 +443,14 @@ stringList CommonValueExpressionDriver::readVariableStrings(
     ITstream data(dict.lookup(name));
     token nextToken;
     data.read(nextToken);
+
+    List<string> result;
+
     if(nextToken.isString()) {
         Sbug << name << " is a single string" << endl;
         data.rewind();
-        return expandIncludeStringList(
-            stringList(1,string(data)),
+        result=expandIncludeStringList(
+            List<string>(1,string(data)),
             dict,
             recursionDepth+1
         );
@@ -458,8 +461,8 @@ stringList CommonValueExpressionDriver::readVariableStrings(
     ) {
         Sbug << name << " is a list of strings" << endl;
         data.rewind();
-        return expandIncludeStringList(
-            stringList(data),
+        result=expandIncludeStringList(
+            List<string>(data),
             dict,
             recursionDepth+1
         );
@@ -473,25 +476,36 @@ stringList CommonValueExpressionDriver::readVariableStrings(
             anotherToken.pToken()==token::BEGIN_LIST
         ) {
             data.rewind();
-            return expandIncludeStringList(
-                stringList(data),
+            result=expandIncludeStringList(
+                List<string>(data),
                 dict,
                 recursionDepth+1
             );
         }
+    } else {
+        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
+            << " Entry '"<< name << "' must in dictionary "
+                << dict.name() << " either be a string or a list of strings"
+                << endl
+                << exit(FatalError);
+
+        return List<exprString>();
     }
 
-    FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
-        << " Entry '"<< name << "' must in dictionary "
-            << dict.name() << " either be a string or a list of strings"
-            << endl
-            << exit(FatalError);
+    List<exprString> toReturn(result.size());
 
-    return stringList();
+    forAll(result,i) {
+        toReturn[i]=exprString(
+            result[i],
+            dict
+        );
+    }
+
+    return toReturn;
 }
 
-stringList CommonValueExpressionDriver::expandIncludeStringList(
-    const stringList &orig,
+List<string> CommonValueExpressionDriver::expandIncludeStringList(
+    const List<string> &orig,
     const dictionary &dict,
     const label recursionDepth
 ) {
@@ -526,7 +540,8 @@ stringList CommonValueExpressionDriver::expandIncludeStringList(
                 assert(semiPos!=std::string::npos);
                 string inList=sub.substr(1,semiPos-1);
                 Sbug << "Include " << inList << endl;
-                stringList expansion(
+                List<exprString> expansion(
+                    // expansion shoujld happen implicitly here
                     readVariableStrings(
                         dict,
                         inList,
@@ -536,11 +551,12 @@ stringList CommonValueExpressionDriver::expandIncludeStringList(
                 Sbug << "Got expansion from " << inList << ": "
                     << expansion << endl;
                 forAll(expansion,k){
-                    strings.append(
-                        expandDictVariables(
-                            expansion[k],
-                            dict)
-                    );
+                    // strings.append(
+                    //     expandDictVariables(
+                    //         expansion[k],
+                    //         dict)
+                    // );
+                    strings.append(expansion[k]);
                 }
             } else {
                 strings.append(
@@ -555,7 +571,7 @@ stringList CommonValueExpressionDriver::expandIncludeStringList(
     }
 
     strings.shrink();
-    return stringList(strings);
+    return List<string>(strings);
 }
 
 inline bool is_valid(char c)
@@ -573,7 +589,7 @@ string getEntryString(
         false // no pattern matching
     );
     if(e.isDict()) {
-        FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+        FatalErrorIn("CommonValueExpressionDriver::getEntryString")
             << "Entry " << replace << " found in dictionary "
                 << dict.name() << " but is a dictionary"
                 << endl
@@ -592,7 +608,7 @@ string getEntryString(
     return o.str();
 }
 
-string CommonValueExpressionDriver::expandDictVariables(
+exprString CommonValueExpressionDriver::expandDictVariables(
     const string &orig,
     const dictionary &dict
 ) {
@@ -654,10 +670,13 @@ string CommonValueExpressionDriver::expandDictVariables(
 
     Sbug << orig << " expanded to " << result << endl;
 
-    return result;
+    return exprString(
+        result,
+        dict
+    );
 }
 
-string CommonValueExpressionDriver::readExpression(
+exprString CommonValueExpressionDriver::readExpression(
     const word &name,
     const dictionary &dict
 ) {
@@ -672,7 +691,7 @@ string CommonValueExpressionDriver::readExpression(
 }
 
 
-string CommonValueExpressionDriver::readExpression(
+exprString CommonValueExpressionDriver::readExpression(
     const word &name
 ) {
     Dbug << "::readExpression " << name << endl;
@@ -691,7 +710,7 @@ void CommonValueExpressionDriver::setVariableStrings(const dictionary &dict)
 Ostream &CommonValueExpressionDriver::writeVariableStrings(Ostream &out) const
 {
     if(variableStrings_.size()==0) {
-        out << string("");
+        out << exprString("");
     } else if(variableStrings_.size()==1) {
         out << variableStrings_[0];
     } else {
@@ -1112,7 +1131,7 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
             Pout << "Updating delayed variable " << iter().name() << endl;
         }
         if(!iter().updateReadValue(mesh().time().value())) {
-            const string &expr=iter().startupValueExpression();
+            const exprString &expr=iter().startupValueExpression();
             if(debug) {
                 Pout << "Evaluate: " << expr << endl;
             }
@@ -1158,7 +1177,7 @@ void CommonValueExpressionDriver::clearVariables()
 
 void CommonValueExpressionDriver::evaluateVariable(
     const word &name,
-    const string &expr
+    const exprString &expr
 )
 {
     if(
@@ -1201,9 +1220,9 @@ void CommonValueExpressionDriver::evaluateVariable(
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(
-    const string &remoteExpr,
+    const exprString &remoteExpr,
     const word &name,
-    const string &expr
+    const exprString &expr
 )
 {
     if(debug) {
@@ -1211,7 +1230,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
             << " : " << expr << " -> " << name << endl;
     }
 
-    string remote=remoteExpr;
+    exprString remote=remoteExpr;
     word regionName="";
     word id="";
     word type="patch";
@@ -1308,7 +1327,7 @@ autoPtr<ExpressionResult> CommonValueExpressionDriver::getRemoteResult(
 }
 
 void CommonValueExpressionDriver::addVariables(
-    const stringList &exprList,
+    const List<exprString> &exprList,
     bool clear
 )
 {
@@ -1321,11 +1340,11 @@ void CommonValueExpressionDriver::addVariables(
 }
 
 void CommonValueExpressionDriver::addVariables(
-    const string &exprListIn,
+    const exprString &exprListIn,
     bool clear
 )
 {
-    string exprList(exprListIn);
+    exprString exprList(exprListIn);
     exprList.removeTrailing(' ');
 
     if(clear) {
@@ -1354,7 +1373,11 @@ void CommonValueExpressionDriver::addVariables(
                     << endl
                     << exit(FatalError);
         }
-        string expr(exprList.substr(eqPos+1,end-eqPos-1));
+        exprString expr(
+            exprString::toExpr(
+                exprList.substr(eqPos+1,end-eqPos-1)
+            )
+        );
 
         std::string::size_type  startPos=exprList.find('{',start);
         if(startPos!=std::string::npos && startPos<eqPos) {
@@ -1372,7 +1395,11 @@ void CommonValueExpressionDriver::addVariables(
                     exprList.substr(start,startPos-start)
                 )
             );
-            string remoteExpr(exprList.substr(startPos+1,endPos-startPos-1));
+            exprString remoteExpr(
+                exprString::toExpr(
+                    exprList.substr(startPos+1,endPos-startPos-1)
+                )
+            );
             evaluateVariableRemote(remoteExpr,name,expr);
         } else {
             word name(exprList.substr(start,eqPos-start));
@@ -1605,7 +1632,7 @@ void CommonValueExpressionDriver::setTrace(
 }
 
 label CommonValueExpressionDriver::parse(
-    const std::string &f,
+    const exprString &f,
     const word &start
 )
 {

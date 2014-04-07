@@ -8,7 +8,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright  held by original author
+    \\  /    A nd           | Copyright (C) 1991-2008 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -29,25 +29,26 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    patchExpressionDistributionFunctionObject
+    Foam::exprString
 
 Description
-    Distribution of an expression on a patch
+    Subclass of the regular strings. Basically there to make sure
+    that dictionary variables get expanded
 
 SourceFiles
-    patchExpressionDistributionFunctionObject.C
+    exprString.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef patchExpressionDistributionFunctionObject_H
-#define patchExpressionDistributionFunctionObject_H
+#ifndef exprString_H
+#define exprString_H
 
-#include "distributionFunctionObject.H"
-#include "PatchValueExpressionDriver.H"
+#include "string.H"
+#include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,63 +56,53 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class patchExpressionDistributionFunctionObject Declaration
+                           Class exprString Declaration
 \*---------------------------------------------------------------------------*/
 
-class patchExpressionDistributionFunctionObject
+class CommonValueExpressionDriver;
+class CommonPluginFunction;
+
+class exprString
 :
-    public distributionFunctionObject
+    public string
 {
+    // Private data
 
-    // Private Member Functions
+    bool isValid();
 
-    //- Disallow default bitwise copy construct
-    patchExpressionDistributionFunctionObject(const patchExpressionDistributionFunctionObject&);
+    // do not implement to make sure that exprString are explicitly constructed
+    //    exprString(const string &);
+    //    exprString(const std::string &);
 
-    //- Disallow default bitwise assignment
-    void operator=(const patchExpressionDistributionFunctionObject&);
-
-    wordList patchNames_;
-
-    labelList patchIDs_;
-
-    template <typename T>
-    void getDistributionInternal(autoPtr<SimpleDistribution<T> > &dist);
 protected:
 
-    word dirName();
-
-    virtual word baseName();
-
-    virtual void getDistribution();
-
-    //- the expression that is to be evaluated
-    exprString expression_;
-
-    //- the specification
-    dictionary data_;
-
-    PtrList<PatchValueExpressionDriver> drivers_;
+    // this is to avoid to only let people convert this that know what they're doing
+   static exprString toExpr(const string &);
 
 public:
 
-    //- Runtime type information
-    TypeName("patchExpressionDistribution");
+    exprString();
 
+    exprString(const exprString &);
 
-    // Constructors
+    exprString(const char *);
 
-    //- Construct from components
-    patchExpressionDistributionFunctionObject
-    (
-        const word&,
-        const Time&,
-        const dictionary&
+    exprString(
+        Istream &,
+        const dictionary &dict
     );
 
-    bool start();
+    exprString(
+        const string &,
+        const dictionary &
+    );
 
-    void write();
+   ~exprString();
+
+    exprString &operator=(const string &s);
+
+    friend class CommonValueExpressionDriver;
+    friend class CommonPluginFunction;
 };
 
 
@@ -119,9 +110,7 @@ public:
 
 } // End namespace Foam
 
-#ifdef NoRepository
-#   include "patchExpressionDistributionFunctionObjectTemplates.C"
-#endif
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -79,6 +79,23 @@ Foam::solvePDECommon::solvePDECommon
 Foam::solvePDECommon::~solvePDECommon()
 {}
 
+void Foam::solvePDECommon::readExpressionAndDimension(
+    const dictionary &dict,
+    const word &name,
+    exprString &expr,
+    dimensionSet &dim
+)
+{
+    ITstream in(dict.lookup(name));
+
+    expr=exprString(
+        in,
+        dict
+    );
+
+    in >> dim;
+}
+
 bool Foam::solvePDECommon::doRelax(bool last)
 {
     return
