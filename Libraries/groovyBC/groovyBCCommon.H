@@ -79,14 +79,12 @@ protected:
     exprString gradientExpression_;
     exprString fractionExpression_;
 
-    exprString nullValue();
-
     bool evaluateDuringConstruction() const
         { return evaluateDuringConstruction_; }
 
 public:
 
-    static string nullValue();
+    static exprString nullValue();
 
     static const fvPatch &getFvPatch(const pointPatch &pp);
 
