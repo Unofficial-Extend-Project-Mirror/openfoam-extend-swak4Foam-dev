@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "writeAndEndSwakExpressionFunctionObject.H"
@@ -74,14 +74,19 @@ bool writeAndEndSwakExpressionFunctionObject::read(const dictionary& dict)
     return writeAndEndFunctionObject::read(dict);
 }
 
-void writeAndEndSwakExpressionFunctionObject::readParameters(const dictionary &dict)
+void writeAndEndSwakExpressionFunctionObject::readParameters(
+    const dictionary &dict
+)
 {
     driver_=CommonValueExpressionDriver::New(
         dict,
         refCast<const fvMesh>(obr_)
     );
 
-    logicalExpression_=dict.lookup("logicalExpression");
+    logicalExpression_=exprString(
+        dict.lookup("logicalExpression"),
+        dict
+    );
 
     logicalAccumulation_=LogicalAccumulationNamedEnum::names[
         dict.lookup("logicalAccumulation")

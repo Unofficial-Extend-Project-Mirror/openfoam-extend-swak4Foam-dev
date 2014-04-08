@@ -1292,7 +1292,7 @@ void pythonInterpreterWrapper::readCode(
     ) {
         FatalErrorIn("pythonInterpreterWrapper::readCode")
             << "Neither " << prefix+"Code" << " nor "
-                << prefix+"File" << " specified" << endl
+                << prefix+"File" << " specified in " << dict.name() << endl
                 << exit(FatalError);
     }
     if(dict.found(prefix+"Code")) {

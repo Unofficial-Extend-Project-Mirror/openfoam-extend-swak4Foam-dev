@@ -49,6 +49,7 @@ Contributors/Copyright:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "dictionary.H"
+#include "exprString.H"
 
 namespace Foam
 {
@@ -74,9 +75,11 @@ protected:
     bool hasGradient_;
 
     // the expressions
-    string valueExpression_;
-    string gradientExpression_;
-    string fractionExpression_;
+    exprString valueExpression_;
+    exprString gradientExpression_;
+    exprString fractionExpression_;
+
+    exprString nullValue();
 
     bool evaluateDuringConstruction() const
         { return evaluateDuringConstruction_; }
@@ -94,7 +97,7 @@ public:
     (
         bool hasGradient,
         bool isPoint=false,
-        string fractionExpression="1"
+        exprString fractionExpression="1"
     );
 
     //- Construct from dictionary
@@ -103,7 +106,7 @@ public:
         const dictionary&,
         bool hasGradient,
         bool isPoint=false,
-        string fractionExpression="1"
+        exprString fractionExpression="1"
     );
 
     //- Copy constructor

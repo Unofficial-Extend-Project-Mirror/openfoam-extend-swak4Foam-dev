@@ -66,8 +66,14 @@ Foam::groovyFixedNormalSlipPointPatchField<Type>::groovyFixedNormalSlipPointPatc
 )
 :
     slipPointPatchField<Type>(p, iF),
-    fixedValueExpression_(dict.lookup("fixedValueExpression")),
-    normalExpression_(dict.lookup("normalExpression")),
+    fixedValueExpression_(
+	dict.lookup("fixedValueExpression"),
+	dict
+    ),
+    normalExpression_(
+	dict.lookup("normalExpression"),
+	dict
+    ),
     driver_(dict,groovyBCCommon<Type>::getFvPatch(this->patch()))
 {
 }

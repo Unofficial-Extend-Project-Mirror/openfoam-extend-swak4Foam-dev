@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyFlowRateInletVelocityFvPatchVectorField.H"
@@ -81,7 +81,10 @@ groovyFlowRateInletVelocityFvPatchVectorField
 )
 :
     flowRateInletVelocityFvPatchVectorField(p, iF, dict),
-    flowRateExpression_(dict.lookup("flowRateExpression")),
+    flowRateExpression_(
+        dict.lookup("flowRateExpression"),
+        dict
+    ),
     driver_(dict,this->patch())
 {
 }
@@ -126,7 +129,7 @@ void Foam::groovyFlowRateInletVelocityFvPatchVectorField::updateCoeffs()
     driver_.clearVariables();
 
     flowRate()=driver_.evaluateUniform<scalar>(this->flowRateExpression_);
-    
+
     flowRateInletVelocityFvPatchVectorField::updateCoeffs();
 }
 
@@ -137,7 +140,7 @@ void Foam::groovyFlowRateInletVelocityFvPatchVectorField::write(Ostream& os) con
 
     os.writeKeyword("flowRateExpression")
         << flowRateExpression_ << token::END_STATEMENT << nl;
-    
+
     driver_.writeCommon(os,debug);
 }
 

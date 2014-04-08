@@ -80,19 +80,19 @@ class writeIfSwakExpressionFunctionObject
     autoPtr<CommonValueExpressionDriver> driver_;
 
     //- the logical expression
-    string writeExpression_;
+    exprString writeExpression_;
 
     //- possible logical accumulations
     LogicalAccumulationNamedEnum::value writeAccumulation_;
 
     //- the logical expression
-    string stopWriteExpression_;
+    exprString stopWriteExpression_;
 
     //- possible logical accumulations
     LogicalAccumulationNamedEnum::value stopWriteAccumulation_;
 
     //- the logical expression
-    string stopCooldownExpression_;
+    exprString stopCooldownExpression_;
 
     //- possible logical accumulations
     LogicalAccumulationNamedEnum::value stopCooldownAccumulation_;
@@ -100,7 +100,7 @@ class writeIfSwakExpressionFunctionObject
     void readParameters(const dictionary &);
 
     bool evaluateCondition(
-        string expression,
+        exprString expression,
         LogicalAccumulationNamedEnum::value accumulation
     );
 

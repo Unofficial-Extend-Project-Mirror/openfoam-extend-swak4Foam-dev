@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCJumpFvPatchField_H
@@ -71,7 +71,7 @@ protected:
 
     PatchValueExpressionDriver driver_;
 
-    string jumpExpression_;
+    exprString jumpExpression_;
 
 public:
 
@@ -142,7 +142,7 @@ public:
 
     // Member functions
 
-    //- Return the "jump" across the patch as a "half" field 
+    //- Return the "jump" across the patch as a "half" field
     tmp<Field<scalar> > jump() const;
 
     //- Write

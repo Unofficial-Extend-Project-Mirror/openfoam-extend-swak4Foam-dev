@@ -1,6 +1,21 @@
 helpers/printSwakVersion.C
+helpers/exprString.C
 helpers/switchableNotImplemented.C
 helpers/DebugOStream.C
+
+entryToExpression/entryToExpression.C
+entryToExpression/directEntryToExpression.C
+entryToExpression/stringEntryToExpression.C
+entryToExpression/boolEntryToExpression.C
+entryToExpression/vectorEntryToExpression.C
+entryToExpression/tensorEntryToExpression.C
+entryToExpression/symmTensorEntryToExpression.C
+entryToExpression/sphericalTensorEntryToExpression.C
+entryToExpression/dimensionedScalarEntryToExpression.C
+entryToExpression/dimensionedVectorEntryToExpression.C
+entryToExpression/dimensionedTensorEntryToExpression.C
+entryToExpression/dimensionedSymmTensorEntryToExpression.C
+entryToExpression/dimensionedSphericalTensorEntryToExpression.C
 
 repositories/RepositoryBase.C
 repositories/SurfacesRepository.C

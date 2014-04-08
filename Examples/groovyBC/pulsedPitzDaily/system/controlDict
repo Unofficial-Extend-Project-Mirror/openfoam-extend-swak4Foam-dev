@@ -499,6 +499,7 @@ functions
                 }
                 readDuringConstruction true;
                 conditionFile "$FOAM_CASE/system/checkForNumpy.py";
+                initCode "";
             }
         }
         readDuringConstruction true;
