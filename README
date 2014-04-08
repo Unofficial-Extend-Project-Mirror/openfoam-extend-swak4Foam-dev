@@ -2389,6 +2389,8 @@ S_{expl} + S_{impl} T
      =maintainanceScripts/compileRequirements.sh= is provided that
      fetches the bison sources, compiles them and installs them there
 *** Documentation
+**** Information about macro-expansion added
+     A section about thus new feature is added
 *** Bug fixes
 **** Invalid entries in distributions from =swakExpressionAverageDistribution=
      The distribution data was not clipped to the range where actually
@@ -2434,6 +2436,34 @@ S_{expl} + S_{impl} T
      The function object itself saves the last $N$-timesteps, the
      signal handler (when called) writes these steps to disk and then
      calls the regular OpenFOAM signal handler
+**** Macro expansion
+     For expressions and variable lists there is now the possibility
+     to expand values from the dictionary during reading. The two
+     characters that trigger this are
+     - $ :: like the regular variable lookup in OpenFOAM.In its most
+            complex form it looks like this =$[(type)spec]= where
+            =spec= specifies where to look for the value (including
+            scoping if the OpenFOAM-version supports it). The optional
+            =type= specifies how the entry should be interpreted
+     - # :: in variable lists: =#otherList;= includes the variable
+            list =otherList= instead of this entry
+     These expansions allow the construction of reusable snipplets
+     that include information from other parts of the case. For
+     instance (this is only part of the specification)
+: #include "$FOAM_CASE/constant/g"
+: vecName U;
+: downComponent (
+:     "grav=$[(dimensionedVector)g];"
+:     "down=($vecName & grav)/mag(grav);"
+: );
+: variables (
+:     "#downComponent;"
+:     "maxDown=max(mag(down));"
+: );
+     would calculate the component of a vector field that points in
+     the direction of the gravity (as specified in the =g=-file).
+
+     This expansion is done during the expression.
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows
