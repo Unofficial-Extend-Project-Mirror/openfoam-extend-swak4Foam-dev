@@ -64,7 +64,10 @@ Foam::groovyPartialSlipFvPatchField<Type>::groovyPartialSlipFvPatchField
 )
 :
     partialSlipFvPatchField<Type>(p, iF),
-    valueFractionExpression_(dict.lookup("fractionExpression")),
+    valueFractionExpression_(
+        dict.lookup("fractionExpression"),
+        dict
+    ),
     driver_(dict,this->patch())
 {
 }

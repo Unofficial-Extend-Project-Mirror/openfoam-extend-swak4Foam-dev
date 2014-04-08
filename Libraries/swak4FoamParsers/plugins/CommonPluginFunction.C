@@ -158,7 +158,10 @@ label CommonPluginFunction::readArgument(
     if(debug || parentDriver_.traceParsing()) {
         Info << "Using start symbol " << startSymbol << endl;
     }
-    driver.parse(content,startSymbol);
+    driver.parse(
+        exprString::toExpr(content),
+        startSymbol
+    );
     if(driver.getResultType()!=argumentTypes_[index]) {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Result type " << driver.getResultType()
@@ -318,7 +321,10 @@ label CommonPluginFunction::scanEmpty(
         parentDriver_.traceParsing()
     );
 
-    return driver().parse(content,sym);
+    return driver().parse(
+        exprString::toExpr(content),
+        sym
+    );
 }
 
 void CommonPluginFunction::evaluateInternal(

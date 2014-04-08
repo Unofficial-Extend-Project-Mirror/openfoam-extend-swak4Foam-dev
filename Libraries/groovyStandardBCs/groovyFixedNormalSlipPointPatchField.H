@@ -65,9 +65,9 @@ class groovyFixedNormalSlipPointPatchField
 {
     // Private data
 
-    string fixedValueExpression_;
+    exprString fixedValueExpression_;
 
-    string normalExpression_;
+    exprString normalExpression_;
 
     PatchValueExpressionDriver driver_;
 

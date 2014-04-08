@@ -54,6 +54,8 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#include "exprString.H"
+
 namespace Foam
 {
 // Forward declaration of classes
@@ -101,6 +103,14 @@ protected:
 
     //- should we relax?
     bool doRelax(bool last);
+
+    //- read expression and dimension
+    void readExpressionAndDimension(
+        const dictionary &dict,
+        const word &name,
+        exprString &expr,
+        dimensionSet &dim
+    );
 
 private:
     //- do the actual solving

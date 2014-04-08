@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "dumpSwakExpressionFunctionObject.H"
@@ -64,7 +64,10 @@ dumpSwakExpressionFunctionObject::dumpSwakExpressionFunctionObject
 )
 :
     timelineFunctionObject(name,t,dict),
-    expression_(dict.lookup("expression")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
     driver_(
         CommonValueExpressionDriver::New(
             dict,

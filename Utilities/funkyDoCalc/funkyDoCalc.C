@@ -286,7 +286,11 @@ int main(int argc, char *argv[])
             );
 
             driver->clearVariables();
-            driver->parse(string(dict.lookup("expression")));
+            driver->parse(
+                exprString(
+                    dict.lookup("expression"),
+                    dict)
+            );
             word rType=driver->CommonValueExpressionDriver::getResultType();
 
             if(rType==pTraits<scalar>::typeName) {

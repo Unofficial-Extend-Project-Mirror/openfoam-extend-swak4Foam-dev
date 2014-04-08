@@ -86,7 +86,7 @@ protected:
     virtual void getDistribution();
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the specification
     dictionary data_;

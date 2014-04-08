@@ -45,7 +45,10 @@ Foam::swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary
 
     data_.read(is);
 
-    expression_=string(data_.lookup("expression"));
+    expression_=exprString(
+        data_.lookup("expression"),
+        data_
+    );
     independentVariableName_=word(data_.lookup("independentVariableName"));
 }
 
