@@ -34,8 +34,10 @@ boundaryField
           "maxY=max(yp);"
       );
 
+      getPoints "pts().y";
+
       variables (
-          "yp=pts().y;"
+          "yp=$[(string)getPoints];"
           "#minMaxPoint;"
           "para=-(maxY-pos().y)*(pos().y-minY)/(0.25*pow(maxY-minY,2))*normal();"
       );
@@ -50,7 +52,10 @@ boundaryField
     outlet
     {
       type            groovyBC;
-      valueExpression "vector(0,0,0)";
+
+      defaultVelocity v [0 1 -1 0 0 0 0] (0 0 0);
+
+      valueExpression "$[(dimensionedVector)defaultVelocity]";
       gradientExpression "vector(0,0,0)";
       fractionExpression "(phi > 0) ? 0 : 1";
 

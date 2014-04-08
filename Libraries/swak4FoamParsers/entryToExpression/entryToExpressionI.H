@@ -44,83 +44,41 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef entryToExpression_H
-#define entryToExpression_H
+#ifndef entryToExpressionI_H
+#define entryToExpressionI_H
 
-#include "swak.H"
+#include "entryToExpression.H"
 
-#include "entry.H"
-
-#include "runTimeSelectionTables.H"
+#include "OStringStream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-/*---------------------------------------------------------------------------*\
-                           Class entryToExpression Declaration
-\*---------------------------------------------------------------------------*/
-
-class entryToExpression
+template<class Type>
+string entryToExpression::toStr(
+    const Type &data,
+    const word &prefix
+)
 {
-    // Private data
+    OStringStream o;
 
-    //- Construct as copy
-    entryToExpression(const entryToExpression&);
+    o << prefix << "(";
+    for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+        if(i!=0) {
+            o << ",";
+        }
+        o << component(data,i);
+    }
+    o << ")";
 
-    void operator=(const entryToExpression&);
-
-protected:
-
-    template<class Type>
-    string toStr(
-        const Type &data,
-        const word &prefix
-    );
-
-public:
-    //- Runtime type information
-    TypeName("entryToExpression");
-
-    declareRunTimeSelectionTable
-    (
-        autoPtr,
-        entryToExpression,
-        nothing,
-        (
-        ),
-        ()
-    );
-
-    // Constructors
-
-    //- Construct null
-    entryToExpression();
-
-   //- Return a reference to the selected value driver
-    static autoPtr<entryToExpression> New
-    (
-        const word& name
-    );
-
-    // Destructor
-
-    virtual ~entryToExpression();
-
-    virtual string toExpr(const entry &) = 0;
-
-    static string fromEntry(const entry &);
-};
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    return o.str();
+}
 
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "entryToExpressionI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

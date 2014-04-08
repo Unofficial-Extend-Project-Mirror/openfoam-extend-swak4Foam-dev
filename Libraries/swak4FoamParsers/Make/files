@@ -4,7 +4,10 @@ helpers/switchableNotImplemented.C
 helpers/DebugOStream.C
 
 entryToExpression/entryToExpression.C
+entryToExpression/directEntryToExpression.C
+entryToExpression/stringEntryToExpression.C
 entryToExpression/dimensionedScalarEntryToExpression.C
+entryToExpression/dimensionedVectorEntryToExpression.C
 
 repositories/RepositoryBase.C
 repositories/SurfacesRepository.C

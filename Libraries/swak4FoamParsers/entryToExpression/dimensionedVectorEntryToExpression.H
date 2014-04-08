@@ -29,14 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::entryToExpression
+    Foam::dimensionedVectorEntryToExpression
 
 Description
-    Helper class that gets an entry and converts it into a valid
-    swak-expression
+    Creates an expression from a dimensioned vector
 
 SourceFiles
-    entryToExpression.C
+    dimensionedVectorEntryToExpression.C
 
 Contributors/Copyright:
     2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,14 +43,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef entryToExpression_H
-#define entryToExpression_H
+#ifndef dimensionedVectorEntryToExpression_H
+#define dimensionedVectorEntryToExpression_H
 
-#include "swak.H"
-
-#include "entry.H"
-
-#include "runTimeSelectionTables.H"
+#include "entryToExpression.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,58 +54,34 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class entryToExpression Declaration
+                           Class dimensionedVectorEntryToExpression Declaration
 \*---------------------------------------------------------------------------*/
 
-class entryToExpression
+class dimensionedVectorEntryToExpression
+:
+    public entryToExpression
 {
     // Private data
 
     //- Construct as copy
-    entryToExpression(const entryToExpression&);
+    dimensionedVectorEntryToExpression(const dimensionedVectorEntryToExpression&);
 
-    void operator=(const entryToExpression&);
-
-protected:
-
-    template<class Type>
-    string toStr(
-        const Type &data,
-        const word &prefix
-    );
+    void operator=(const dimensionedVectorEntryToExpression&);
 
 public:
     //- Runtime type information
-    TypeName("entryToExpression");
-
-    declareRunTimeSelectionTable
-    (
-        autoPtr,
-        entryToExpression,
-        nothing,
-        (
-        ),
-        ()
-    );
+    TypeName("dimensionedVectorEntryToExpression");
 
     // Constructors
 
     //- Construct null
-    entryToExpression();
-
-   //- Return a reference to the selected value driver
-    static autoPtr<entryToExpression> New
-    (
-        const word& name
-    );
+    dimensionedVectorEntryToExpression();
 
     // Destructor
 
-    virtual ~entryToExpression();
+    virtual ~dimensionedVectorEntryToExpression();
 
-    virtual string toExpr(const entry &) = 0;
-
-    static string fromEntry(const entry &);
+    virtual string toExpr(const entry &);
 };
 
 
@@ -119,8 +90,6 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#include "entryToExpressionI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
