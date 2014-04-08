@@ -49,6 +49,8 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#include "exprString.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -68,7 +70,7 @@ class expressionToCell
         static addToUsageTable usage_;
 
         //- The logical expression to use
-        string expression_;
+        exprString expression_;
 
         //- dictionary with additional data
         autoPtr<dictionary> dict_;
@@ -86,7 +88,7 @@ public:
         expressionToCell
         (
             const polyMesh& mesh,
-            const string& expression
+            const exprString& expression
         );
 
         //- Construct from dictionary

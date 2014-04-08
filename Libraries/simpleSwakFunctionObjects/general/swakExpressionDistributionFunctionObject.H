@@ -74,13 +74,13 @@ class swakExpressionDistributionFunctionObject
 
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the expression for the weight
-    string weightExpression_;
+    exprString weightExpression_;
 
     //- the expression for the mask
-    string maskExpression_;
+    exprString maskExpression_;
 
     //- the expression driver
     autoPtr<CommonValueExpressionDriver> driver_;

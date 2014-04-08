@@ -182,7 +182,12 @@ void reportValues(
     );
 
     Field<Type> result(
-        driver.evaluate<Type>(fieldName)
+        driver.evaluate<Type>(
+            exprString(
+                fieldName,
+                dictionary::null
+            )
+        )
     );
 
     AccumulationCalculation<Type> calculator(

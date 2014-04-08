@@ -64,9 +64,12 @@ SwakSetValue<T>::SwakSetValue
     maskExpression_(
         useMaskExpression_
         ?
-        string(this->coeffs().lookup("maskExpression"))
+        exprString(
+	    this->coeffs().lookup("maskExpression"),
+	    this->coeffs()
+	)
         :
-        string("")
+        exprString("")
     )
 {
     this->read(dict);
