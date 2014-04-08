@@ -493,7 +493,29 @@ List<exprString> CommonValueExpressionDriver::readVariableStrings(
                 << exit(FatalError);
     }
 
-    ITstream data(dict.lookup(name));
+#ifdef FOAM_HAS_SCOPED_LOOKUP
+    const entry *pe=dict.lookupScopedEntryPtr(
+        name,
+        true, // recursive
+        true //  pattern matching
+    );
+    if(pe==NULL) {
+        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings")
+            << "Entry " << name << " not found in "
+                << dict.name()
+                << endl
+                << exit(FatalError);
+    }
+    const entry &e=*pe;
+#else
+    const entry &e=dict.lookupEntry(
+        name,
+        true, // recursive
+        true //  pattern matching
+    );
+#endif
+
+    ITstream data(e.stream());
     token nextToken;
     data.read(nextToken);
 
@@ -553,7 +575,7 @@ List<exprString> CommonValueExpressionDriver::readVariableStrings(
             dict
         );
     }
-
+    Info << toReturn;
     return toReturn;
 }
 
@@ -636,11 +658,27 @@ string getEntryString(
     const dictionary &dict,
     const string &replace
 ) {
+#ifdef FOAM_HAS_SCOPED_LOOKUP
+    const entry *pe=dict.lookupScopedEntryPtr(
+        replace,
+        true, // recursive
+        true //  pattern matching
+    );
+    if(pe==NULL) {
+        FatalErrorIn("CommonValueExpressionDriver::getEntryString")
+            << "Entry " << replace << " not found in "
+                << dict.name()
+                << endl
+                << exit(FatalError);
+    }
+    const entry &e=*pe;
+#else
     const entry &e=dict.lookupEntry(
         replace,
         true, // recursive
         true //  pattern matching
     );
+#endif
     if(e.isDict()) {
         FatalErrorIn("getEntryString")
             << "Entry " << replace << " found in dictionary "
@@ -728,7 +766,27 @@ exprString CommonValueExpressionDriver::expandDictVariables(
                 );
             } else {
                 autoPtr<entryToExpression> e2e=entryToExpression::New(castTo);
-                const entry &e=dict.lookupEntry(entryName,true,true);
+#ifdef FOAM_HAS_SCOPED_LOOKUP
+                const entry *pe=dict.lookupScopedEntryPtr(
+                    entryName,
+                    true, // recursive
+                    true //  pattern matching
+                );
+                if(pe==NULL) {
+                    FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                        << "Entry " << entryName << " not found in "
+                            << dict.name()
+                            << endl
+                            << exit(FatalError);
+                }
+                const entry &e=*pe;
+#else
+                const entry &e=dict.lookupEntry(
+                    entryName,
+                    true,
+                    true
+                );
+#endif
                 replacement=e2e->toExpr(e);
             }
         } else {
