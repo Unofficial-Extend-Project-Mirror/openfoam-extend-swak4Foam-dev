@@ -575,7 +575,7 @@ List<exprString> CommonValueExpressionDriver::readVariableStrings(
             dict
         );
     }
-    Info << toReturn;
+    Sbug << "Returns: " << toReturn;
     return toReturn;
 }
 
@@ -606,7 +606,7 @@ List<string> CommonValueExpressionDriver::expandIncludeStringList(
                     << endl
                     << exit(FatalError);
             }
-            string sub=o.substr(start,end+1);
+            string sub=o.substr(start,end-start+1);
 
             Sbug << "Found: " << sub << endl;
 
