@@ -57,6 +57,8 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#include "exprString.H"
+
 namespace Foam
 {
 // Forward declaration of classes
@@ -87,7 +89,7 @@ protected:
     word name_;
 
     //- Expression
-    string expression_;
+    exprString expression_;
 
     //- should the file be autowrite
     Switch autowrite_;

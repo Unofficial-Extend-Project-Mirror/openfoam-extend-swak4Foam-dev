@@ -106,7 +106,7 @@ void Foam::expressionToPoint::combine(topoSet& set, const bool add) const
 Foam::expressionToPoint::expressionToPoint
 (
     const polyMesh& mesh,
-    const string& expression
+    const exprString& expression
 )
 :
     topoSetSource(mesh),
@@ -122,7 +122,10 @@ Foam::expressionToPoint::expressionToPoint
 )
 :
     topoSetSource(mesh),
-    expression_(dict.lookup("expression")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
     dict_(new dictionary(dict))
 {}
 
@@ -135,7 +138,10 @@ Foam::expressionToPoint::expressionToPoint
 )
 :
     topoSetSource(mesh),
-    expression_(checkIs(is))
+    expression_(
+        checkIs(is),
+        dictionary::null
+    )
 {}
 
 

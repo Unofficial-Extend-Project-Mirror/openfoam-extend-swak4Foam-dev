@@ -92,13 +92,32 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
 
     if(active_) {
         if(!steady_) {
-            dict.lookup("rho") >> rhoExpression_ >> rhoDimension_;
+            readExpressionAndDimension(
+                dict,
+                "rho",
+                rhoExpression_,
+                rhoDimension_
+            );
         }
-        dict.lookup("lambda") >> lambdaExpression_ >> lambdaDimension_;
-        dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
+        readExpressionAndDimension(
+            dict,
+            "lambda",
+            lambdaExpression_,
+            lambdaDimension_
+        );
+        readExpressionAndDimension(
+            dict,
+            "source",
+            sourceExpression_,
+            sourceDimension_
+        );
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit")
-                >> sourceImplicitExpression_ >> sourceImplicitDimension_;
+            readExpressionAndDimension(
+                dict,
+                "sourceImplicit",
+                sourceImplicitExpression_,
+                sourceImplicitDimension_
+            );
         } else {
             if(sourceExpression_!="0") {
                 WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")

@@ -65,7 +65,7 @@ class groovyPartialSlipFvPatchField
 {
     // Private data
 
-    string valueFractionExpression_;
+    exprString valueFractionExpression_;
 
     PatchValueExpressionDriver driver_;
 

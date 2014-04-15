@@ -39,7 +39,7 @@ SourceFiles
 Contributors/Copyright:
     2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef SwakSetValue_H
@@ -65,9 +65,9 @@ class SwakSetValue
 
     SwakSetValue(const SwakSetValue&);
 
-     bool useMaskExpression_;
+    bool useMaskExpression_;
 
-    string maskExpression_;
+    exprString maskExpression_;
 
     bool getMask(DynamicList<label> &,const word &psi);
 

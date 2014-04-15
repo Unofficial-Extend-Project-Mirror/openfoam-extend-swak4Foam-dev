@@ -74,7 +74,10 @@ StoredExpressionResult::StoredExpressionResult(const dictionary &dict)
 :
     ExpressionResult(dict.subOrEmptyDict("value")),
     name_(dict.lookup("name")),
-    initialValueExpression_(dict.lookup("initialValue"))
+    initialValueExpression_(
+        dict.lookup("initialValue"),
+        dict
+    )
 {
 }
 

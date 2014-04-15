@@ -45,6 +45,7 @@ SourceFiles
 #include "foamVersion4swak.H"
 
 #include "CommonValueExpressionDriver.H"
+#include "exprString.H"
 
 #include "DataEntry.H"
 
@@ -77,7 +78,7 @@ class swakDataEntry
     autoPtr<CommonValueExpressionDriver> driver_;
 
     //- the expression that should be evaluated
-    string expression_;
+    exprString expression_;
 
     //- name of the independent variable
     word independentVariableName_;

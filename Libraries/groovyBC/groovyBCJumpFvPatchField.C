@@ -89,7 +89,10 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
 :
     fixedJumpFvPatchField<Type>(p, iF),
     driver_(dict,this->patch()),
-    jumpExpression_(dict.lookup("jumpExpression"))
+    jumpExpression_(
+        dict.lookup("jumpExpression"),
+        dict
+    )
 {
     if(debug) {
         Info << "groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField 3" << endl;

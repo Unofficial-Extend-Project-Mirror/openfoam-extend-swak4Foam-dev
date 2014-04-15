@@ -32,7 +32,7 @@ Contributors/Copyright:
     2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2013 Bruno Santos <wyldckat@gmail.com>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "manipulateField.H"
@@ -154,8 +154,14 @@ void Foam::manipulateField::read(const dictionary& dict)
 {
     if(active_) {
         name_=word(dict.lookup("fieldName"));
-        expression_=string(dict.lookup("expression"));
-        maskExpression_=string(dict.lookup("mask"));
+        expression_=exprString(
+            dict.lookup("expression"),
+            dict
+        );
+        maskExpression_=exprString(
+            dict.lookup("mask"),
+            dict
+        );
         writeManipulated_=dict.lookupOrDefault<bool>("writeManipulated",false);
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);

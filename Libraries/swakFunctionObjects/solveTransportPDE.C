@@ -93,13 +93,32 @@ void Foam::solveTransportPDE::read(const dictionary& dict)
 
     if(active_) {
         if(!steady_) {
-            dict.lookup("rho") >> rhoExpression_ >> rhoDimension_;
+            readExpressionAndDimension(
+                dict,
+                "rho",
+                rhoExpression_,
+                rhoDimension_
+            );
         }
-        dict.lookup("diffusion") >> diffusionExpression_ >> diffusionDimension_;
-        dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
+        readExpressionAndDimension(
+            dict,
+            "diffusion",
+            diffusionExpression_,
+            diffusionDimension_
+        );
+        readExpressionAndDimension(
+            dict,
+            "source",
+            sourceExpression_,
+            sourceDimension_
+        );
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit")
-                >> sourceImplicitExpression_ >> sourceImplicitDimension_;
+            readExpressionAndDimension(
+                dict,
+                "sourceImplicit",
+                sourceImplicitExpression_,
+                sourceImplicitDimension_
+            );
         } else {
             if(sourceExpression_!="0") {
                 WarningIn("Foam::solveTransportPDE::read(const dictionary& dict)")
@@ -109,7 +128,12 @@ void Foam::solveTransportPDE::read(const dictionary& dict)
 
             }
         }
-        dict.lookup("phi") >> phiExpression_ >> phiDimension_;
+        readExpressionAndDimension(
+            dict,
+            "phi",
+            phiExpression_,
+            phiDimension_
+        );
     }
 }
 

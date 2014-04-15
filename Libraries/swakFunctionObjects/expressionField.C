@@ -118,7 +118,10 @@ void Foam::expressionField::read(const dictionary& dict)
 {
     if(active_) {
         name_=word(dict.lookup("fieldName"));
-        expression_=string(dict.lookup("expression"));
+        expression_=exprString(
+            dict.lookup("expression"),
+            dict
+        );
         autowrite_=Switch(dict.lookup("autowrite"));
         if(dict.found("dimension")) {
             dimensions_.reset(dict.lookup("dimension"));

@@ -263,6 +263,10 @@ Contributors/Copyright:
 #define FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
 #endif
 
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,1)) && !defined(FOAM_DEV)
+#define FOAM_HAS_SCOPED_LOOKUP
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
