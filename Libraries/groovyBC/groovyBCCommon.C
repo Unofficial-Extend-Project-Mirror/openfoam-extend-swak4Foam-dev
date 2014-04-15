@@ -156,6 +156,19 @@ groovyBCCommon<Type>::groovyBCCommon
     } else {
         gradientExpression_ = nullValue();
     }
+    if(
+        Pstream::parRun()
+        &&
+        Pstream::defaultCommsType == Pstream::blocking
+    ) {
+        WarningIn("groovyBCCommon<Type>::groovyBCCommon")
+            << "The commsType is set to 'blocking'. This might cause the run to"
+                << " fail for groovyBC (or similar) like " << dict.name() << nl
+                << "If you experience a MPI-related failure of this run go to "
+                << "the file '$WM_PROJECT_DIR/etc/controlDict' and change the "
+                << "setting 'commsType' to something different than 'blocking'"
+                << endl;
+    }
 }
 
 

@@ -873,6 +873,13 @@ S_{expl} + S_{impl} T
    The tab-completion does not work except for up-to-date versions of
    IPython. This seems to be a problem with the =readline=-library
    inside an embedded Python. Low priority
+** Failure of =groovyBC= for =commsType= =blocking=
+   If the =commsType= is set to =blocking= then the MPI-communications
+   of =groovyBC= cause problems in MPI and a fatal error.
+
+   Currently the only workaround is to edit
+   =$WM_PROJECT_DIR/etc/controlDict= so that a different =commsType=
+   is used (=nonBlocking= or =scheduled=)
 * History
 ** 2010-09-13 - version number : 0.1
    First Release

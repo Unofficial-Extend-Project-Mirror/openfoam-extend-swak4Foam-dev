@@ -45,7 +45,16 @@ Contributors/Copyright:
 #ifndef groovyFixedNormalSlipPointPatchField_H
 #define groovyFixedNormalSlipPointPatchField_H
 
+#ifdef FOAM_DEV
+
+#include "SlipPointPatchField.H"
+#define SlipPointPatchFieldType SlipPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,Type>
+#define pointPatchFieldMapper PointPatchFieldMapper
+
+#else
 #include "slipPointPatchField.H"
+#define SlipPointPatchFieldType slipPointPatchField<Type>
+#endif
 
 #include "PatchValueExpressionDriver.H"
 
@@ -61,7 +70,7 @@ namespace Foam
 template<class Type>
 class groovyFixedNormalSlipPointPatchField
 :
-    public slipPointPatchField<Type>
+    public SlipPointPatchFieldType
 {
     // Private data
 
