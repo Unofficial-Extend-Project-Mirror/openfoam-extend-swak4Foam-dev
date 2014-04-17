@@ -105,7 +105,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 )
 {
     report(
-        "addSup(fvMatrix<vector>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "addSup(fvMatrix<vector>& "+eqn.psi().name()+")"
     );
 }
 
@@ -117,7 +117,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 )
 {
     report(
-        "setValue(fvMatrix<vector>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "setValue(fvMatrix<vector>& "+eqn.psi().name()+")"
     );
 }
 
@@ -134,7 +134,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 )
 {
     report(
-        "addSup(fvMatrix<scalar>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "addSup(fvMatrix<scalar>& "+eqn.psi().name()+")"
     );
 }
 
@@ -146,7 +146,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 )
 {
     report(
-        "setValue(fvMatrix<scalar>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "setValue(fvMatrix<scalar>& "+eqn.psi().name()+")"
     );
 }
 
@@ -163,7 +163,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 )
 {
     report(
-        "addSup(fvMatrix<tensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "addSup(fvMatrix<tensor>& "+eqn.psi().name()+")"
     );
 }
 
@@ -175,7 +175,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 )
 {
     report(
-        "setValue(fvMatrix<tensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "setValue(fvMatrix<tensor>& "+eqn.psi().name()+")"
     );
 }
 
@@ -192,7 +192,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 )
 {
     report(
-        "addSup(fvMatrix<symmTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "addSup(fvMatrix<symmTensor>& "+eqn.psi().name()+")"
     );
 }
 
@@ -204,7 +204,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 )
 {
     report(
-        "setValue(fvMatrix<symmTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "setValue(fvMatrix<symmTensor>& "+eqn.psi().name()+")"
     );
 }
 
@@ -221,7 +221,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 )
 {
     report(
-        "addSup(fvMatrix<sphericalTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "addSup(fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
     );
 }
 
@@ -233,7 +233,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 )
 {
     report(
-        "setValue(fvMatrix<sphericalTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")"
+        "setValue(fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
     );
 }
 
