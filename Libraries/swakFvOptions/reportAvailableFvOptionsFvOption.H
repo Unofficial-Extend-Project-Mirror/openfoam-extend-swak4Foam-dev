@@ -31,11 +31,8 @@ Class
     Foam::fv::reportAvailableFvOptionsFvOption
 
 Description
-    This fvOption does not contribute to the equation but executes a list
-    of function objects
-
-    One application is getting output in inner iterations (if the equations
-    use fvOptions)
+    This fvOption does not contribute to the equation but only reports
+    for *every* possible call that the call was done
 
 SourceFiles
     reportAvailableFvOptionsFvOption.C
