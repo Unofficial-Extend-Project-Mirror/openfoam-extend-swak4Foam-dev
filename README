@@ -2700,6 +2700,8 @@ S_{expl} + S_{impl} T
           called. Application: find out which =fvOption=-calls are
           used by a solver in which order without going through the
           sources
+     - reportMatrix :: Does not manipulate the matrix but prints a
+                       number of metrics
 **** Macro expansion
      For expressions and variable lists there is now the possibility
      to expand values from the dictionary during reading. The two

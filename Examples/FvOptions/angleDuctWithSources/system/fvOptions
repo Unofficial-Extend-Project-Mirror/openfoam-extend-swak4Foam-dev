@@ -15,6 +15,23 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+matrixBefore {
+    type reportMatrix;
+    active          true;
+    selectionMode   all;
+
+    reportMatrixCoeffs {
+        fieldNames (
+            U
+            p
+            h
+        );
+
+       doAddSup true;
+        doSetValue true;
+   }
+}
+
 porosity1
 {
     type            explicitPorositySource;
@@ -78,6 +95,18 @@ velFix {
     }
 }
 
+showFvOptions {
+    type reportAvailableFvOptions;
+    active true;
+    selectionMode all;
+    reportAvailableFvOptionsCoeffs {
+    }
+}
+
+matrixAfter {
+    $matrixBefore;
+}
+
 reportStuff {
     type executeFunctionObjectsFvOption;
     active true;
@@ -119,12 +148,4 @@ reportStuff {
         }
     }
 }
-showFvOptions {
-    type reportAvailableFvOptions;
-    active true;
-    selectionMode all;
-    reportAvailableFvOptionsCoeffs {
-    }
-}
-
 //************************************************************************* //
