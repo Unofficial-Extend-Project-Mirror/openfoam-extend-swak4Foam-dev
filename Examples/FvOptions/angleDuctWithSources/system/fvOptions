@@ -119,5 +119,12 @@ reportStuff {
         }
     }
 }
+showFvOptions {
+    type reportAvailableFvOptions;
+    active true;
+    selectionMode all;
+    reportAvailableFvOptionsCoeffs {
+    }
+}
 
 //************************************************************************* //

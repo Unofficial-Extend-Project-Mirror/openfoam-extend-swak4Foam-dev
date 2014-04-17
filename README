@@ -2695,6 +2695,11 @@ S_{expl} + S_{impl} T
           objects. Application is for instance to get information
           during the time-step for algorithms that have multiple
           iterations in a time-step
+     - reportAvailableFvOptions :: Does no manipulation of the
+          solution/equations. Simply reports that a callback has been
+          called. Application: find out which =fvOption=-calls are
+          used by a solver in which order without going through the
+          sources
 **** Macro expansion
      For expressions and variable lists there is now the possibility
      to expand values from the dictionary during reading. The two
