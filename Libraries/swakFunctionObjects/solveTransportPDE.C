@@ -199,6 +199,9 @@ void Foam::solveTransportPDE::solve()
                 -fvm::laplacian(diffusionField,f,"laplacian(diffusion,"+f.name()+")")
                 ==
                 sourceField
+#ifdef FOAM_HAS_FVOPTIONS
+                + fvOptions()(f)
+#endif
             );
 
             if(!steady_) {
@@ -244,11 +247,19 @@ void Foam::solveTransportPDE::solve()
                 eq.relax();
             }
 
+#ifdef FOAM_HAS_FVOPTIONS
+            fvOptions().constrain(eq);
+#endif
+
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
             for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
             {
                 eq.solve();
             }
+
+#ifdef FOAM_HAS_FVOPTIONS
+            fvOptions().correct(f);
+#endif
         }
     }
 }

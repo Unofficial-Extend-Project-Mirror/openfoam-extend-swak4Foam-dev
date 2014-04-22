@@ -46,7 +46,13 @@ solvers
         tolerance       1e-05;
         relTol          0;
     }
-
+    "poroTime.*"
+    {
+        solver PBiCG;
+        preconditioner   DILU;
+        tolerance        1e-05;
+        relTol           0;
+    };
 }
 
 PIMPLE
@@ -69,6 +75,12 @@ PIMPLE
     }
 
     turbOnFinalIterOnly off;
+}
+
+"poroTime.*TransportPDE"
+{
+    nCorrectors     1;
+    nNonOrthogonalCorrectors 3;
 }
 
 relaxationFactors

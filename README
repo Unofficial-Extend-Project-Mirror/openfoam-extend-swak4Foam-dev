@@ -2753,6 +2753,10 @@ S_{expl} + S_{impl} T
      can be used to set up global variables if these snipplets need
      some kind of state. The variables have to be declared =global= in
      the snipplets that do the actual decision (for technical reason)
+**** =fvOptions=-support in PDE-function objects
+     The function objects =solveTransportPDE= and =solveLaplacianPDE=
+     now call the regular =fvOptions=-callbacks (this allows modifying
+     the solution in the same way it can be modified for solvers)
 *** Examples
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on

@@ -25,6 +25,8 @@ matrixBefore {
             U
             p
             h
+            poroTime
+            poroTime2
         );
 
        doAddSup true;
@@ -100,6 +102,36 @@ showFvOptions {
     active true;
     selectionMode all;
     reportAvailableFvOptionsCoeffs {
+    }
+}
+
+poroTimeSource {
+    type scalarSwakExplicitSource;
+    active true;
+    selectionMode cellZone;
+    cellZone porosity;
+
+    scalarSwakExplicitSourceCoeffs {
+         expressions {
+            poroTime "1" [0 0 0 0 0 0 0];
+        }
+   }
+}
+
+poroTimeClear {
+    type scalarSwakSetValue;
+    active false;
+    selectionMode cellZone;
+    cellZone inlet;
+
+    scalarSwakSetValueCoeffs {
+        useMaskExpression true;
+
+        maskExpression "pos().y<15e-3";
+        expressions {
+            poroTime "1" [0 0 1 0 0 0 0];
+            poroTime2 $poroTime;
+        }
     }
 }
 
