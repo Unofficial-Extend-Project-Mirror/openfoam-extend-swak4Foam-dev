@@ -208,8 +208,7 @@ void SimpleDistribution<Type>::calcScalarWeight(
         );
     }
 
-    //
-
+    // TODO: This does not properly work for weights that are 0
     recalcLimits();
 }
 
