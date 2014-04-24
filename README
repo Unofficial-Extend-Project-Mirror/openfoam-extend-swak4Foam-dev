@@ -2642,6 +2642,9 @@ S_{expl} + S_{impl} T
      Always set source etc for whole region. Now the =selectionMode=
      is honored (for instance only in =cellZone= the source term will
      be applied.)
+**** =funkyPythonPostproc= not executing function objects
+     In newer version the =execute()=-method of function objects
+     needs a parameter =force=. Fixed
 *** New features
 **** Boundary condition =groovyFixedNormalSlip= in =groovyStandardBCs=
      These boundary conditions allow specifying a value in normal
