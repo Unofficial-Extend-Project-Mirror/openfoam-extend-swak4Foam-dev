@@ -477,7 +477,7 @@ void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
     minimum_.clear();
     minimum_=other.minimum_;
     maximum_.clear();
-    maximum_=other.minimum_;
+    maximum_=other.maximum_;
     nSamples_.clear();
     nSamples_=other.nSamples_;
 
