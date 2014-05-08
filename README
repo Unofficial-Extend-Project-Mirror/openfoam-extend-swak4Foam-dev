@@ -2647,6 +2647,9 @@ S_{expl} + S_{impl} T
      the indexing might be inconsistent on the different
      processors. Fix: coupled boundaries are ignored by default (have
      to be switched on)
+**** =funkyPythonPostproc= not executing function objects
+     In newer version the =execute()=-method of function objects
+     needs a parameter =force=. Fixed
 *** New features
 **** Boundary condition =groovyFixedNormalSlip= in =groovyStandardBCs=
      These boundary conditions allow specifying a value in normal
