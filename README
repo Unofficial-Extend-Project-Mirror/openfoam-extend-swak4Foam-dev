@@ -2405,6 +2405,11 @@ S_{expl} + S_{impl} T
      invalid value to =SimpleDistribution=
 **** =swakExpressionAverageDistribution= not correctly working in parallel
      This should now be fixed
+**** =patchFunctionObject= fails for some parallel runs
+     Problem is that when the processor boundaries are used too that
+     the indexing might be inconsistent on the different
+     processors. Fix: coupled boundaries are ignored by default (have
+     to be switched on)
 *** New features
 **** Boundary condition =groovyFixedNormalSlip= in =groovyStandardBCs=
      These boundary conditions allow specifying a value in normal
