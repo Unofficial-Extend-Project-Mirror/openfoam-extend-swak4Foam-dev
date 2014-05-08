@@ -56,6 +56,10 @@ Contributors/Copyright:
 
 #include "exprString.H"
 
+#ifdef FOAM_HAS_FVOPTIONS
+#include "fvIOoptionList.H"
+#endif
+
 namespace Foam
 {
 // Forward declaration of classes
@@ -71,6 +75,13 @@ class solvePDECommon
 
     //- Disallow default bitwise assignment
     void operator=(const solvePDECommon&);
+
+#ifdef FOAM_HAS_FVOPTIONS
+    //- standin if the solver did not define an option list
+    fv::optionList dummyOptionList_;
+
+    bool warnedAboutMissingOptionList_;
+#endif
 
 public:
     enum solveAt {
@@ -111,6 +122,10 @@ protected:
         exprString &expr,
         dimensionSet &dim
     );
+
+#ifdef FOAM_HAS_FVOPTIONS
+    fv::optionList &fvOptions() const;
+#endif
 
 private:
     //- do the actual solving
@@ -158,8 +173,8 @@ public:
 
     // Member Functions
 
-    //- Called when time was set at the end of the Time::operator++ 
-    virtual void timeSet();         
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
 
     //- Read the forces data
     virtual void read(const dictionary&);

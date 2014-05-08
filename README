@@ -2705,6 +2705,8 @@ S_{expl} + S_{impl} T
           called. Application: find out which =fvOption=-calls are
           used by a solver in which order without going through the
           sources
+     - reportMatrix :: Does not manipulate the matrix but prints a
+                       number of metrics
 **** Macro expansion
      For expressions and variable lists there is now the possibility
      to expand values from the dictionary during reading. The two
@@ -2756,6 +2758,10 @@ S_{expl} + S_{impl} T
      can be used to set up global variables if these snipplets need
      some kind of state. The variables have to be declared =global= in
      the snipplets that do the actual decision (for technical reason)
+**** =fvOptions=-support in PDE-function objects
+     The function objects =solveTransportPDE= and =solveLaplacianPDE=
+     now call the regular =fvOptions=-callbacks (this allows modifying
+     the solution in the same way it can be modified for solvers)
 *** Examples
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on
