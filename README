@@ -36,6 +36,9 @@
      - Compilation with Intel compiler and Mingw
      - Rewrite of =mybison= and =myflex= to allow parallel compilation
        with =WM_COMPPROCS=
+     - Generation of dependencies for files that need Bison generated
+       tab.hh files. This allows not having race conditions during
+       parallel compilation
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -48,7 +51,7 @@
    - 2010 Oliver Borm (oli.borm@web.de)
    - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
-   - 2012-2013 Bruno Santos <wyldckat@gmail.com>
+   - 2012-2014 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
@@ -114,6 +117,9 @@
          uninitialized memory and crashes. This variable can be used
          to switch off the optimization (usually this fixes the
          problems)
+    - SWAK_TEST_RACE_CONDITIONS :: Meant to be used only by developers,
+         for performing a verification on whether race conditions occur
+         during parallel compilation, regarding the grammar parsers.
 *** Possible compilation failure with old 2.0.x-versions
     With older versions of 2.0.x (or 2.0 or 2.0.1) it is possible that
     the compilation of  =swakCodedFunctionObject= will fail. In that
