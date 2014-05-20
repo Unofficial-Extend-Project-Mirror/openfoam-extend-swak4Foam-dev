@@ -28,7 +28,7 @@ wmake Make/$WM_OPTIONS/dependencies
 # WARNING: This assumes that the file names ending in "Parser" are the ones that
 # generate the tab.hh files!
 
-find . -name "*.dep" | xargs grep --no-filename "tab.hh"  | grep -v "Parser.dep" | \
+find . -name "*.dep" | sort -u | xargs grep --no-filename "tab.hh"  | grep -v "Parser.dep" | \
   while read line; do
 
     targetName="${line%%.dep*}.o"
