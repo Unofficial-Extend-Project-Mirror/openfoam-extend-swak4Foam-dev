@@ -12,6 +12,7 @@ export SWAKLIBS=(groovyBC \
     swakLagrangianParser \
     swakPythonIntegration* \
     swak*FunctionPlugin \
+    swak*CloudAdaptor \
     swakFvOptions \
     swakFunctionObjects)
 
@@ -23,6 +24,7 @@ fi
 export SWAKUTILS=(funkySetBoundaryField \
     funkySetFields \
     funkyDoCalc \
+    funkyWarpMesh \
     calcNonUniformOffsetsForMapped \
     fieldReport \
     funkyPythonPostproc \
