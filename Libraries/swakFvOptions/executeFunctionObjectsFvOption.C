@@ -103,7 +103,7 @@ Foam::fv::executeFunctionObjectsFvOption::executeFunctionObjectsFvOption
 Foam::fv::executeFunctionObjectsFvOption::~executeFunctionObjectsFvOption()
 {
     if(verbose_) {
-        Info << name() << " Stoping functions" << endl;
+        Info << name() << " Stopping functions" << endl;
     }
     functions_.end();
 }

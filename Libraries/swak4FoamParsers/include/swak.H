@@ -155,8 +155,10 @@ Contributors/Copyright:
 // there is no mixed-BC for point patches
 #define FOAM_NO_MIXED_POINT_PATCH
 
+#ifndef FOAM_DEV
 // this version has fvOptions
 #define FOAM_HAS_FVOPTIONS
+#endif
 
 #ifndef FOAM_DEV
 // movePoints now gets a polyMesh

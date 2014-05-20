@@ -55,6 +55,7 @@ libs (
     "libswakSourceFields.so"
     "libsimpleSwakFunctionObjects.so"
     "libswakFvOptions.so"
+    "libswakFunctionObjects.so"
 );
 
 functions {
@@ -75,6 +76,26 @@ functions {
         $temperature;
         valueType cellZone;
         zoneName porosity;
+    }
+    poroTime {
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName poroTime;
+        steady true;
+
+        diffusion "1e-4" [0 2 -1 0 0 0 0];
+        source "0" [0 0 0 0 0 0 0];
+
+        phi "phi" [0 3 -1 0 0];
+    }
+    poroTime2 {
+        $poroTime;
+        fieldName poroTime2;
+        source "zone(porosity) ? 1 : 0" [0 0 0 0 0 0 0];
     }
 }
 
