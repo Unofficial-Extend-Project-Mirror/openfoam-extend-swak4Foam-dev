@@ -2623,6 +2623,9 @@ S_{expl} + S_{impl} T
      - =searchableSurface=
      - =meshToMesh=
      And several minor adaptions
+**** Added support for Foam-Extend 3.1
+     No major changes required. Runtime-selection tables are now
+     sorted too
 *** Infrastructure
 **** Improved macros for Foam versions
      This should make =swak.H= more readable

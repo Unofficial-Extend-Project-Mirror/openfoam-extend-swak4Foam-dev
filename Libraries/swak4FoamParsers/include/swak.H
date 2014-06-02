@@ -63,7 +63,7 @@ Contributors/Copyright:
 
 #define FOAM_VERSION4SWAK VERSION_NR(FOAM_VERSION4SWAK_MAJOR,FOAM_VERSION4SWAK_MINOR,FOAM_VERSION4SWAK_PATCH_NUM)
 
-#if FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_DEV)
+    #if (FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_DEV)) || (FOAM_VERSION4SWAK > VERSION_NR2(3,0))
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
 #endif
