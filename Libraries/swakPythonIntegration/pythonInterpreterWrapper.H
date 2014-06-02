@@ -47,6 +47,7 @@ Contributors/Copyright:
 #define pythonInterpreterWrapper_H
 
 #include "dictionary.H"
+#include "objectRegistry.H"
 #include "Time.H"
 
 #include "Python.h"

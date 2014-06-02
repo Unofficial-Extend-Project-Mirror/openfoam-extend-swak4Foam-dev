@@ -34,6 +34,8 @@ Contributors/Copyright:
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
+#include "objectRegistry.H"
+
 #include "faCFD.H"
 
 #include "volFromFaField.H"
