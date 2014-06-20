@@ -1,3 +1,9 @@
+swak4foam-%(ofpkg)s (0.3.1-1~ppa1~%(distro)s1) %(distro)s; urgency=low
+
+  * Packaging for Zagreb-stick
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  We, 20 Jun 2014 11:55:29 +0200
+
 swak4foam-%(ofpkg)s (0.3.0-1~ppa1~%(distro)s1) %(distro)s; urgency=low
 
   * Packaging for next release
