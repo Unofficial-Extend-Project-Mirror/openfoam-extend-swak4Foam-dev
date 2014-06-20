@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   5000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libsimpleFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libgroovyBC.so"
+    "libincompressibleTurbulenceModel.so"
+    "libincompressibleRASModels.so"
+);
+
+functions {
+    nowTimeField {
+        type expressionField;
+        autowrite true;
+        expression "time()";
+        outputControl timeStep;
+        outputInterval 1;
+        fieldName nowTime;
+    }
+    sigHandler {
+        type writeOldTimesOnSignal;
+        numberOfTimestepsToStore 3;
+        writeCurrent false;
+        // sigFPE false;
+        // sigSEGV false;
+        sigINT true;
+        //        sigQUIT true;
+    }
+    // panicDumpTime {
+    //     type panicDump;
+    //     fieldName nowTime;
+    //     minimum -1;
+    //     maximum 10;
+
+    //     storeAndWritePreviousState true;
+    //     numberOfTimestepsToStore 2;
+    //     moreThanOneInstanceOfTimeCloneListIsOK true;
+    // }
+    // sigHandler2 {
+    //     $sigHandler;
+    // }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,15 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 13 Apr 2014 19:30:54 +0200
+State: new
+Subject: Failure of =groovyBC= for =commsType= =blocking=
+Message-Id: <9dd6e6b58841a73d-0-artemis@bgs-cool-greybook.local>
+
+If the =commsType= is set to =blocking= then the MPI-communications of
+=groovyBC= cause problems in MPI and a fatal error.
+
+Currently the only workaround is to edit
+=$WM_PROJECT_DIR/etc/controlDict= so that a different =commsType= is
+used (=nonBlocking= or =scheduled=)
+
+Information is that =reduce= must happen before =evaluate= or
+=initEvaluate=. Unsure whether this is possible

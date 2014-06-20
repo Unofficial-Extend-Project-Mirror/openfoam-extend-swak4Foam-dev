@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 24 Feb 2014 23:50:21 +0100
+State: new
+Subject: Implement searchableSurfaceFeatures
+Message-Id: <bd571b8955522e32-0-artemis@bgs-cool-greybook.local>
+
+New in 2.3 to make simpleSurfaces usable with foamyHexMesh

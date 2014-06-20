@@ -29,9 +29,10 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bruno Santos <wyldckat@gmail.com>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "expressionField.H"
@@ -52,7 +53,9 @@ Foam::expressionField::expressionField
 :
     active_(true),
     obr_(obr),
-    dict_(dict)
+    dict_(dict),
+    dimensions_(dimless),
+    setDimensions_(false)
 {
     if (!isA<fvMesh>(obr_))
     {
@@ -87,8 +90,14 @@ void Foam::expressionField::storeField(
             )
         );
     } else {
-        //        dynamicCast<T &>(field_())==data; // doesn't work with gcc 4.2
+        if(setDimensions_) {
+            dynamic_cast<T &>(field_()).dimensions().reset(data.dimensions());
+        }
         dynamic_cast<T &>(field_())==data;
+    }
+
+    if(setDimensions_) {
+        dynamic_cast<T &>(field_()).dimensions().reset(dimensions_);
     }
 
     if(
@@ -109,8 +118,22 @@ void Foam::expressionField::read(const dictionary& dict)
 {
     if(active_) {
         name_=word(dict.lookup("fieldName"));
-        expression_=string(dict.lookup("expression"));
+        expression_=exprString(
+            dict.lookup("expression"),
+            dict
+        );
         autowrite_=Switch(dict.lookup("autowrite"));
+        if(dict.found("dimension")) {
+            dimensions_.reset(dict.lookup("dimension"));
+            setDimensions_=true;
+        } else {
+            WarningIn("Foam::expressionField::read(const dictionary& dict)")
+                << "No entry 'dimension' in " << dict.name() << " for field " << name_ << endl
+                    << "Not resetting the dimensions of the field" << nl
+                    << endl;
+            dimensions_.reset(dimless);
+            setDimensions_=false;
+        }
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
 

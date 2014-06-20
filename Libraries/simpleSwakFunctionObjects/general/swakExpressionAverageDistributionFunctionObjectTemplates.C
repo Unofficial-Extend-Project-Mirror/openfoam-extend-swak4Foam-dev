@@ -121,13 +121,18 @@ swakExpressionAverageDistributionFunctionObject::setData(
             )
         );
         SimpleDistribution<AType> &wDist=wDists[i];
-        dist.calcScalarWeight(xValues,values.component(i)*weights,mask);
+        // addition of 2*VSMALL is a workaround for weights that are
+        // equal to 0. Needs proper rewrite in SimpleDistribution
+        dist.calcScalarWeight(xValues,values.component(i)*weights+2*VSMALL,mask);
+        dist.calcMinimumMaximum(xValues,values.component(i),mask);
         wDist.calcScalarWeight(xValues,weights,mask);
 
         if(debug>1) {
             Info << "Dist: " << dist << endl
                 << "Weight: " << wDist << endl;
         }
+        reduce(dist,plusOp<SimpleDistribution<AType> >());
+        reduce(wDist,plusOp<SimpleDistribution<AType> >());
         dist.divideByDistribution(
             wDist,
             valueIfZero

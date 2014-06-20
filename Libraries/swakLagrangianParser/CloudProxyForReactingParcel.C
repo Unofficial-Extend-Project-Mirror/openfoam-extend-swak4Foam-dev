@@ -99,6 +99,11 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             constProps.pMin()
         )
     );
+#ifdef FOAM_PHASECHANGEMODEL_HAS_TVAP
+
+    // TODO: Reimplement. But use a general solution that calls sub-models
+
+#else
     this->addScalarFunction(
         "Tvap",
         "Vaporisation temperature (constant)",
@@ -114,6 +119,7 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             constProps.Tbp()
         )
     );
+#endif
 #endif
 }
 

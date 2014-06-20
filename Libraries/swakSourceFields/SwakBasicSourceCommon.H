@@ -70,7 +70,9 @@ class SwakBasicSourceCommon
 
 protected:
 
-    List<string> expressions_;
+    List<exprString> expressions_;
+
+    HashTable<dimensionSet,label> dimensions_;
 
     bool verbose_;
 

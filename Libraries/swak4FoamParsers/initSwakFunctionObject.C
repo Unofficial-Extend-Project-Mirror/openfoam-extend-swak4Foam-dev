@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -65,7 +65,8 @@ initSwakFunctionObject::initSwakFunctionObject
     const dictionary& dict
 )
 :
-    functionObject(name)
+    functionObject(name),
+    dict_(dict)
 {
     word regionName=
         dict.lookupOrDefault<word>("region",polyMesh::defaultRegion);

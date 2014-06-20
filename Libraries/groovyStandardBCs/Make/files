@@ -1,5 +1,7 @@
 groovyTotalPressureFvPatchScalarField.C
 groovyFlowRateInletVelocityFvPatchVectorField.C
 groovyPartialSlipFvPatchFields.C
+groovyFixedNormalSlipFvPatchFields.C
+groovyFixedNormalSlipPointPatchFields.C
 
 LIB = $(FOAM_USER_LIBBIN)/libgroovyStandardBCs

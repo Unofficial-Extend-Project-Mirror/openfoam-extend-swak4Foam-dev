@@ -427,6 +427,7 @@ hide circle
                  wall (using =wallDist=) (F, P)
      - nearDist() :: Scalar field that gives the distance to the
                      nearest wall (using =nearWallDist=)(F)
+     - distToPatch(name) :: Distance to patch =name= (F)
      - rdist() :: A field with the distances from a given vector
                   (shorthand for =mag(pos()-v)=) (F, P, FF)
      - length() :: Edge length (FF, FP)
@@ -702,6 +703,61 @@ hide circle
     this expression will be given. Also the location in the
     expression that called the plugin-function (in fact the whole
     stack if this expression is part of another plugin-function call)
+*** Macro expansion
+    Before expression and variable strings are stored in memory they are
+    expanded with a simple mechanism that is based on the corresponding
+    mechanism in OpenFOAM and therefor relies on the capabilities of
+    the OpenFOAM-version (these differ between versions). It should be
+    noted that
+    - this happens after OpenFOAM has read the dictionary-file (and
+      done its own expansion)
+    - relies on the correct methods being used for reading the
+      expressions (this is the responsibility of the developer)
+    - happens only once during reading and only the expanded form is
+      stored in memory
+    - this also means that if the expression is written then the
+      expanded form is written
+    - expansion is done until no =$= is present in the string anymore
+    - base for the lookup is usually the directory that the expression
+      or the variable list is part of
+
+    Expansion is triggered by two characters that are not part of
+    the usual grammar: =$= and =#=
+
+    =$= works like it does for OpenFOAM-files in general: the name
+    is replaced with a dictionary entry of that name. In the simple
+    form =$name= in the dictionary that the string is specified in
+    the entry =name= is looked for and the textual representation is
+    inserted. This only works if =name= is a name that consists of
+    only letters, digits and =_=. No interpretation of the text is
+    done (it has to be interpretable by a parser. So it can be words,
+    numbers or even complete sub-expressions)
+
+    The more complicated form is =$[spec]= (it is assumed that in
+    =spec= no =]= is found). =spec= can have two forms: if the first
+    character after =[= is *no* =(= then the simple form is used:
+    =spec= is passed to the macro-expansion mechanism of OpenFOAM
+    (the =$= is added automatically). This means that it can be a
+    simple name but also a more complex expression including scoping
+    (if the OpenFOAM-version supports it).
+
+    If the dictionary entry is of a form that will not be correctly
+    parsed then the last form can be used: =$[(type)spec]=. =spec=
+    is used for lookup as in the above form. =type= tells swak how
+    to interpret this input. swak will then convert it into a string
+    that the parser can interpret. =type= is implemented for the
+    most common basic types (dimensioned and undimensioned). For
+    instance =$[(dimensionedVector)grav]= looks for an entry =grav=
+    interprets it as dimensioned vector end returns a string with the
+    value that is interpretable by a parser (something like
+    =vector(0,0,-9.81)=).
+
+    The character =#= is only interpreted when reading variable lists
+    =variables=. If one element of the list is =#spec;= then the
+    value =spec= is searched in the dictionary, interpreted as a
+    variable list and inserted at that place into the variable
+    list. During this process other lists are recursively inserted and
+    macros are expanded (with =$=).
 ** Parameters
    Usually parsers are getting their configuration parameters from an
    OpenFOAM dictionary (the only exceptions that a non-programming

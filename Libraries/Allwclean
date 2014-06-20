@@ -33,6 +33,8 @@ wclean groovyStandardBCs
 
 wclean swakPythonIntegration
 
+wclean swakFvOptions
+
 (cd functionPlugins; ./Allwclean)
 
 # remove residual from bison

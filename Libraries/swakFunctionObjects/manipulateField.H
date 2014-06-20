@@ -38,7 +38,8 @@ SourceFiles
     manipulateField.C
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -54,6 +55,8 @@ Contributors/Copyright:
 #include "dictionary.H"
 
 #include "swak.H"
+
+#include "exprString.H"
 
 namespace Foam
 {
@@ -87,10 +90,10 @@ protected:
     word name_;
 
     //- Expression
-    string expression_;
+    exprString expression_;
 
     //- Expression that says which cells are to be changed
-    string maskExpression_;
+    exprString maskExpression_;
 
     const objectRegistry& obr_;
 

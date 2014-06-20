@@ -2,6 +2,7 @@ include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
 
 include $(OBJECTS_DIR)/../mybison
 include $(OBJECTS_DIR)/../myflex
+sinclude $(OBJECTS_DIR)/../mydependencies
 
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV

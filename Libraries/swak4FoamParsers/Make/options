@@ -1,5 +1,6 @@
 include $(OBJECTS_DIR)/../mybison
 include $(OBJECTS_DIR)/../myflex
+sinclude $(OBJECTS_DIR)/../mydependencies
 
 include $(OBJECTS_DIR)/../../../rules/versionOptions
 

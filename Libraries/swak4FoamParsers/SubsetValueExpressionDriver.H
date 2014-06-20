@@ -38,7 +38,7 @@ SourceFiles
     SubsetValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -87,7 +87,19 @@ class SubsetValueExpressionDriver
 
     // Private Member Functions
 
+    //- get the value of a boundary face. Return false if the value should not be used
+    template<class FieldType,class T>
+    bool getBoundaryFaceValue(
+        const FieldType &field,
+        const label index,
+        T &value
+    ) const;
+
 protected:
+
+    inline bool useFaceValue(
+        const label index
+    ) const;
 
     // Handling the scanner
     void scan_begin();
@@ -96,6 +108,9 @@ protected:
     //- get the index from the container iterator
     template<class Iter>
     inline label getIndexFromIterator(const Iter &it) const;
+
+    template<class Subset>
+    label nrValidFaces(const Subset &sub) const;
 
     //- General Method to get the values
     template<class FieldType,class Subset,class T>
@@ -117,6 +132,13 @@ protected:
     template<class Subset,class T>
     tmp<Field<T> > getFromFieldInternal(
         const Field<T> &original,const Subset &sub
+    ) const;
+
+    //- General Method to get values from a field
+    template<class Subset,class T>
+    tmp<Field<T> > getFromSurfaceFieldInternal(
+        const GeometricField<T,fvsPatchField,surfaceMesh> &original,
+        const Subset &sub
     ) const;
 
     //- set the state of the lexer to scanning vector components

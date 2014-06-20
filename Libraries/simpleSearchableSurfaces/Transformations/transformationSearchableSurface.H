@@ -48,7 +48,7 @@ Contributors/Copyright:
 
 #include "searchableSurface.H"
 
-#include "swak.H"
+#include "swakSurfaceTypes.H"
 
 #include "boundBox.H"
 

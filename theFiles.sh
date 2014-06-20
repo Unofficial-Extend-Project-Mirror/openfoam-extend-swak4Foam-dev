@@ -12,6 +12,8 @@ export SWAKLIBS=(groovyBC \
     swakLagrangianParser \
     swakPythonIntegration* \
     swak*FunctionPlugin \
+    swak*CloudAdaptor \
+    swakFvOptions \
     swakFunctionObjects)
 
 if [ "$FOAM_DEV" != "" ]
@@ -22,6 +24,7 @@ fi
 export SWAKUTILS=(funkySetBoundaryField \
     funkySetFields \
     funkyDoCalc \
+    funkyWarpMesh \
     calcNonUniformOffsetsForMapped \
     fieldReport \
     funkyPythonPostproc \

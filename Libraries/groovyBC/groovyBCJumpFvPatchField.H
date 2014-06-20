@@ -78,7 +78,7 @@ protected:
 
     PatchValueExpressionDriver driver_;
 
-    string jumpExpression_;
+    exprString jumpExpression_;
 
 public:
 

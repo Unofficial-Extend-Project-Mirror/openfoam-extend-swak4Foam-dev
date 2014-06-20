@@ -66,10 +66,22 @@ swakExpressionAverageDistributionFunctionObject::swakExpressionAverageDistributi
 )
 :
     timelineFunctionObject(name,t,dict),
-    expression_(dict.lookup("expression")),
-    weightExpression_(dict.lookup("weight")),
-    maskExpression_(dict.lookup("mask")),
-    abscissaExpression_(dict.lookup("abscissa")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
+    weightExpression_(
+        dict.lookup("weight"),
+        dict
+    ),
+    maskExpression_(
+        dict.lookup("mask"),
+        dict
+    ),
+    abscissaExpression_(
+        dict.lookup("abscissa"),
+        dict
+    ),
     driver_(
         CommonValueExpressionDriver::New(
             dict,

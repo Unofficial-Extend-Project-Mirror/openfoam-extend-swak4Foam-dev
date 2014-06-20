@@ -38,7 +38,7 @@ SourceFiles
     initSwakFunctionObject.C
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -54,6 +54,7 @@ Contributors/Copyright:
 #include "Field.H"
 
 #include "swak.H"
+#include "switchableNotImplemented.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -79,6 +80,8 @@ class initSwakFunctionObject
     void operator=(const initSwakFunctionObject&);
 
     // Private data
+
+    dictionary dict_;
 
 public:
 
@@ -116,12 +119,18 @@ public:
 #ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
     // make functionObject happy but fail because this is not an implementation
     virtual void updateMesh(const mapPolyMesh&) {
-        notImplemented("initSwakFunctionObject::updateMesh");
+        switchableNotImplemented(
+            "initSwakFunctionObject::updateMesh",
+            dict_
+        );
     }
 
     // make functionObject happy but fail because this is not an implementation
     virtual void movePoints(const polyMesh&) {
-        notImplemented("initSwakFunctionObject::movePoints");
+        switchableNotImplemented(
+            "initSwakFunctionObject::movePoints",
+            dict_
+        );
     }
 #endif
 

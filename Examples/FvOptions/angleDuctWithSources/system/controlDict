@@ -1,0 +1,102 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rhoPimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10;
+
+deltaT          1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  no;
+
+maxCo           10;
+
+maxDeltaT       1;
+
+libs (
+    "libswakSourceFields.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFvOptions.so"
+    "libswakFunctionObjects.so"
+);
+
+functions {
+    temperature {
+        type swakExpression;
+        valueType internalField;
+        accumulations (
+            min
+            max
+            weightedAverage
+            weightedQuantile0.5
+            weightedQuantile0.95
+        );
+        expression "T";
+        verbose true;
+    }
+    temperatureSolid {
+        $temperature;
+        valueType cellZone;
+        zoneName porosity;
+    }
+    poroTime {
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName poroTime;
+        steady true;
+
+        diffusion "1e-4" [0 2 -1 0 0 0 0];
+        source "0" [0 0 0 0 0 0 0];
+
+        phi "phi" [0 3 -1 0 0];
+    }
+    poroTime2 {
+        $poroTime;
+        fieldName poroTime2;
+        source "zone(porosity) ? 1 : 0" [0 0 0 0 0 0 0];
+    }
+}
+
+// ************************************************************************* //

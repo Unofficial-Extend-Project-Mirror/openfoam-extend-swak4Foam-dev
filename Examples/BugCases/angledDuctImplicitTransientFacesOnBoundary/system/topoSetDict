@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      faceSetDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions (
+    {
+        name    planeFacesSlaveCells;
+        type    cellSet;
+        action  new;
+        source expressionToCell;
+        sourceInfo
+        {
+            expression "(pos().x<=-0.07)";
+        }
+    }
+    {
+        name    planeFaces;
+        type    faceSet;
+        action  new;
+        source  expressionToFace;
+        sourceInfo
+        {
+            expression "(pos().x<=-0.07)";
+        }
+    }
+);
+//
+//// ************************************************************************* //

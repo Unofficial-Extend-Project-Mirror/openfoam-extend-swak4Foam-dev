@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.0.0                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -29,7 +29,7 @@ solvers
         mergeLevels     1;
     }
 
-    h
+    "(e|h)"
     {
         solver          PBiCG;
         preconditioner  DILU;
@@ -56,10 +56,9 @@ SIMPLE
 
     residualControl
     {
-        // Low limits to make the case "not converge" (for comparison with baseline)
-        p               1e-8;
-        U               1e-9;
-        T               1e-8;
+        p               1e-3;
+        U               1e-4;
+        e               1e-3;
 
         // possibly check turbulence fields
         "(k|epsilon|omega)" 1e-3;
@@ -68,11 +67,17 @@ SIMPLE
 
 relaxationFactors
 {
-    p               0.3;
-    rho             1;
-    U               0.7;
-    "(k|epsilon)"   0.9;
-    h               0.9;
+    fields
+    {
+        p               0.3;
+        rho             1;
+    }
+    equations
+    {
+        U               0.7;
+        "(k|epsilon)"   0.9;
+        e               0.9;
+    }
 }
 
 

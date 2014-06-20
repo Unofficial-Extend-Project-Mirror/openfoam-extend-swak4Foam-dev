@@ -38,7 +38,8 @@ SourceFiles
     expressionField.C
 
 Contributors/Copyright:
-    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -52,8 +53,11 @@ Contributors/Copyright:
 #include "Switch.H"
 #include "autoPtr.H"
 #include "dictionary.H"
+#include "dimensionSet.H"
 
 #include "swak.H"
+
+#include "exprString.H"
 
 namespace Foam
 {
@@ -85,7 +89,7 @@ protected:
     word name_;
 
     //- Expression
-    string expression_;
+    exprString expression_;
 
     //- should the file be autowrite
     Switch autowrite_;
@@ -102,6 +106,10 @@ protected:
     );
 
     autoPtr<FieldValueExpressionDriver> driver_;
+
+    dimensionSet dimensions_;
+
+    bool setDimensions_;
 
 public:
 
@@ -134,8 +142,8 @@ public:
             return name_;
         }
 
-    //- Called when time was set at the end of the Time::operator++ 
-    virtual void timeSet();         
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
 
     //- Read the forces data
     virtual void read(const dictionary&);

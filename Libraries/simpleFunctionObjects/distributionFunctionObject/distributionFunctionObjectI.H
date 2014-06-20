@@ -36,6 +36,7 @@ Contributors/Copyright:
 
 #include "distributionFunctionObject.H"
 #include "IOmanip.H"
+#include "objectRegistry.H"
 #include "Time.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

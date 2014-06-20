@@ -1,5 +1,8 @@
 SolverInfo/SolverInfo.C
 
+DataStructures/TimeClone/TimeClone.C
+DataStructures/TimeClone/TimeCloneList.C
+
 simpleFunctionObject/simpleFunctionObject.C
 simpleDataFunctionObject/simpleDataFunctionObject.C
 timelineFunctionObject/timelineFunctionObject.C
@@ -26,10 +29,14 @@ misc/listRegisteredObjects/listRegisteredObjectsFunctionObject.C
 misc/readGravitation/readGravitationFunctionObject.C
 misc/readAndUpdateFields/readAndUpdateFields.C
 misc/readAndUpdateFields/readAndUpdateFieldsFunctionObject.C
+misc/writeOldTimesOnSignal/writeOldTimesOnSignal.C
 
 writeFields/writeAdditionalFields/writeAdditionalFieldsFunctionObject.C
 writeFields/writeFieldsOften/writeFieldsOftenFunctionObject.C
 writeFields/writeFieldsGeneral/writeFieldsGeneralFunctionObject.C
+
+writeFields/conditionDrivenWriting/conditionDrivenWritingFunctionObject.C
+writeFields/conditionDrivenWriting/writeIfFieldOutside/writeIfFieldOutsideFunctionObject.C
 
 trackDictionary/trackDictionaryFunctionObject.C
 

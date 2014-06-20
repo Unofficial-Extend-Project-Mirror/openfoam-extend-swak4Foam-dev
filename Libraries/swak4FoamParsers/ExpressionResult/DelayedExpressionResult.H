@@ -50,6 +50,8 @@ Contributors/Copyright:
 #include "ExpressionResult.H"
 #include "Tuple2.H"
 
+#include "exprString.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -67,7 +69,7 @@ class DelayedExpressionResult
 
     word name_;
 
-    string startupValueExpression_;
+    exprString startupValueExpression_;
 
     //- the result that is going to be set
     ExpressionResult settingResult_;
@@ -119,7 +121,7 @@ public:
 
     const word name() const { return name_; }
 
-    const string &startupValueExpression() const
+    const exprString &startupValueExpression() const
         {
             return startupValueExpression_;
         }

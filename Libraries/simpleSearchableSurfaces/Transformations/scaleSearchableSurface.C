@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "scaleSearchableSurface.H"
@@ -108,7 +108,7 @@ void Foam::scaleSearchableSurface::getNormal
 ) const
 {
     vectorField iNormal;
-    
+
     transformationSearchableSurface::getNormal
         (
             info,
@@ -119,8 +119,35 @@ void Foam::scaleSearchableSurface::getNormal
 
     forAll(normal,i) {
         normal[i]=inverseTransform(iNormal[i]);
-        normal[i]/=mag(normal[i]);
+        scalar len=mag(normal[i]);
+        if(len>SMALL) {
+            normal[i]/=len;
+        }
     }
 }
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::scaleSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    delegate().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+    scalar maxScale=mag(scale_.x());
+    if(mag(scale_.y())>maxScale) {
+        maxScale=mag(scale_.y());
+    }
+    if(mag(scale_.z())>maxScale) {
+        maxScale=mag(scale_.z());
+    }
+    forAll(centres,i) {
+        radiusSqr[i]=radiusSqr[i]*maxScale*maxScale;
+    }
+}
+#endif
 
 // ************************************************************************* //
