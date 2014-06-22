@@ -2130,7 +2130,7 @@ const word &CommonValueExpressionDriver::getAlias(const word &name) const
                 << "Available aliases are " << aliases_.toc()
                 << endl
                 << exit(FatalError);
-        return word();
+        return word::null;
 
     } else {
         return aliases_[name];
