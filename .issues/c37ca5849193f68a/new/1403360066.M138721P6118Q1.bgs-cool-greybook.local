@@ -1,0 +1,9 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 21 Jun 2014 16:12:07 +0200
+State: new
+Subject: Driver type =none=
+Message-Id: <c37ca5849193f68a-0-artemis@bgs-cool-greybook.local>
+
+The =valueType= =none= should be associated with no specific
+entity. Purpose of this would be to work for instance with
+=Stacked=-Values. Should be possible as subclass of the Subset-Driver
