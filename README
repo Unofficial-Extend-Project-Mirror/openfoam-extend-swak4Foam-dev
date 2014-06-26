@@ -17,6 +17,11 @@
    Please don't try to "beautify" it with any other text editor as
    this will surly mess up the markup (and keeping the file
    /org-compatible/ outside of the =org-mode= is a pain in the neck.
+
+   The Markdown-variant =README.md= is only there to be displayed in a
+   human-readable form by the web-interface to =mercurial= at
+   =sourceforge.net=. It is generated from =REAME= and only updated
+   during releases. *Don't edit it*.
 * Contributors etc
 ** Original Author
    Bernhard Gschaider (bgschaid@ice-sf.at)
