@@ -31,6 +31,7 @@ License
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2012 Bruno Santos <wyldckat@gmail.com>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

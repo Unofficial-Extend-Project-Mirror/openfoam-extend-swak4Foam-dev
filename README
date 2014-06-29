@@ -39,6 +39,7 @@
      - Generation of dependencies for files that need Bison generated
        tab.hh files. This allows not having race conditions during
        parallel compilation
+   - Hrvoje Jasak :: Fixes to compile on Intel and CLang
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -53,6 +54,7 @@
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
    - 2012-2014 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
+   - 2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation

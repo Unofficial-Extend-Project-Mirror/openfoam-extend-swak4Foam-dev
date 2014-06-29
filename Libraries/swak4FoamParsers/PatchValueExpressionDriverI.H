@@ -30,6 +30,7 @@ License
 
 Contributors/Copyright:
     2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -832,7 +833,7 @@ namespace Foam {
                     FatalErrorIn
                         (
                             "tmp<Field<T> > PatchValueExpressionDriver::mapField"
-                        )<< "Unknown sampling mode: " << mpp.mode()
+                        )<< "Unknown sampling mode: " << label(mpp.mode())
                             << nl << abort(FatalError);
                 }
         }
