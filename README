@@ -2387,7 +2387,7 @@ S_{expl} + S_{impl} T
      If the logical expression =mask= is set then only the results
      from =expression= for which =mask= is =true= are used for
      accumulations
-** Next release - version number : 0.3.1
+** 2014-07-11 - version number : 0.3.1
 *** Incompatibilities to previous versions
 **** Additional required code snipplet for some Python-functionObjects
      There is now a new code-snipplet required for a number of these
