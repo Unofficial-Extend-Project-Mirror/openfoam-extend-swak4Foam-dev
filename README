@@ -2514,3 +2514,11 @@ S_{expl} + S_{impl} T
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on
      bended geometries
+** Next release - version number : 0.3.2
+*** Incompatibilities
+*** Bug fixes
+*** Infrastructure
+*** Documentation
+*** New features
+*** Enhancements
+*** Examples
