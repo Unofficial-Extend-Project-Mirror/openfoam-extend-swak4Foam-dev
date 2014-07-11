@@ -5,4 +5,4 @@ feature = feature_2.0.x/
 release = release_2.0.x/
 hotfix = hotfix_2.0.x/
 support = support_2.0.x/
-version_tag =
+version_tag = version2.x_
