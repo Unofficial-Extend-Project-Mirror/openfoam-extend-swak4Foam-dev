@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -70,7 +70,10 @@ patchExpressionDistributionFunctionObject::patchExpressionDistributionFunctionOb
 )
 :
     distributionFunctionObject(name,t,dict),
-    expression_(dict.lookup("expression")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
     data_(dict)
 {
     const fvMesh &mesh=refCast<const fvMesh>(obr_);

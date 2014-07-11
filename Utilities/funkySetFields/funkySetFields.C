@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -162,8 +162,8 @@ void doAnExpression
 (
     const fvMesh &mesh,
     const word &field,
-    const string &expression,
-    const string &condition,
+    const exprString &expression,
+    const exprString &condition,
     const Time& runTime,
     bool doDebug,
     bool create,
@@ -748,7 +748,7 @@ int main(int argc, char *argv[])
         if(args.options().found("otherInterpolateOrder")) {
             MeshesRepository::getRepository().setInterpolationOrder(
                 "other",
-                MeshInterpolationOrder::names[
+                meshToMeshInterpolationNames[
                     args.options()["otherInterpolateOrder"]
                 ]
             );
@@ -830,9 +830,12 @@ int main(int argc, char *argv[])
 
             word field=args.options()["field"];
 
-            string expression=args.options()["expression"];
+            exprString expression(
+                args.options()["expression"],
+                dictionary::null
+            );
 
-            string condition="true";
+            exprString condition="true";
             if (args.options().found("condition")) {
                 condition=args.options()["condition"];
             }
@@ -998,12 +1001,18 @@ int main(int argc, char *argv[])
 
                 word field=part["field"];
 
-                string expression=part["expression"];
+                exprString expression(
+                    part["expression"],
+                    part
+                );
 
-                string condition="true";
+                exprString condition="true";
 
                 if (part.found("condition")) {
-                    condition=part["condition"];
+                    condition=exprString(
+                        part["condition"],
+                        part
+                    );
                 }
 
                 dimensionSet dim(0,0,0,0,0);

@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -338,6 +338,7 @@ public:
     tmp<pointVectorField> makePointPositionField();
 
     tmp<volScalarField> makeDistanceField();
+    tmp<volScalarField> makeDistanceToPatchField(const word &name);
     tmp<volScalarField> makeNearDistanceField();
     tmp<volScalarField> makeRDistanceField(const volVectorField &r);
     tmp<volScalarField> makeVolumeField();

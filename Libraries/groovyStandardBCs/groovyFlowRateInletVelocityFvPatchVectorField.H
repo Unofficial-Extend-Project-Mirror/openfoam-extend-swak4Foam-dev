@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,14 +31,14 @@ Class
     Foam::groovyFlowRateInletVelocityFvPatchVectorField
 
 Description
-    
+
 SourceFiles
     groovyFlowRateInletVelocityFvPatchVectorField.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyFlowRateInletVelocityFvPatchVectorField_H
@@ -74,7 +74,7 @@ class groovyFlowRateInletVelocityFvPatchVectorField
         word rhoName_;
 #endif
 
-    string flowRateExpression_;
+    exprString flowRateExpression_;
 
     PatchValueExpressionDriver driver_;
 

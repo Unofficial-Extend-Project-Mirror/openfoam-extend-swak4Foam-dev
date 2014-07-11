@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2013 Georg Reiss <georg.reiss@ice-sf.at>
 
  SWAK Revision: $Id$
@@ -74,7 +74,10 @@ StoredExpressionResult::StoredExpressionResult(const dictionary &dict)
 :
     ExpressionResult(dict.subOrEmptyDict("value")),
     name_(dict.lookup("name")),
-    initialValueExpression_(dict.lookup("initialValue"))
+    initialValueExpression_(
+        dict.lookup("initialValue"),
+        dict
+    )
 {
 }
 

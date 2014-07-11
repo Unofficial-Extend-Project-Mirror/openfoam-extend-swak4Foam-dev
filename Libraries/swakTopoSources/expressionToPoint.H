@@ -37,7 +37,7 @@ SourceFiles
     expressionToPoint.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,6 +48,8 @@ Contributors/Copyright:
 #include "topoSetSource.H"
 
 #include "swak.H"
+
+#include "exprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,7 +70,7 @@ class expressionToPoint
         static addToUsageTable usage_;
 
         //- The logical expression to use
-        string expression_;
+        exprString expression_;
 
         //- dictionary with additional data
         autoPtr<dictionary> dict_;
@@ -86,7 +88,7 @@ public:
         expressionToPoint
         (
             const polyMesh& mesh,
-            const string& expression
+            const exprString& expression
         );
 
         //- Construct from dictionary

@@ -1,0 +1,19 @@
+flows
+{
+	expr "Expression (yFlow.+) :  sum=(%f%)";
+	theTitle "Flows through control surfaces";
+	type dynamic;
+	idNr 1;
+}
+extremes
+{
+	expr "Expression yExtreme :  min=(%f%) max=(%f%)";
+	theTitle "Coordinates of a plane";
+	titles (min max);
+}
+average
+{
+	expr "Expression planeAverage :  average=(%f%)";
+	theTitle "Average x for a plane";
+	progress "avg $0";
+}

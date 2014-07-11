@@ -39,7 +39,7 @@ SourceFiles
     SimpleDistribution.C
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,6 +48,8 @@ Contributors/Copyright:
 #define SimpleDistribution_H
 
 #include "Distribution.H"
+
+#include "Tuple2.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -94,12 +96,25 @@ class SimpleDistribution
 
     void recalcLimits();
 
+    bool hasInvalidValue_;
+
+    Type invalidValue_;
+
+    void setInvalidValue(const Type &val);
+
 protected:
     //- Returns the indices of the first and last non-zero entries
     Pair<label> validLimits(direction cmpt) const;
 
     //- round value down to the next nearst power of 10
     Type smaller10Power(const Type value);
+
+    //- minimum for distributions that can handle it
+    List<Field<scalar> > minimum_;
+    //- maximum for distributions that can handle it
+    List<Field<scalar> > maximum_;
+    //- number of samples for distributions that can handle it
+    List<Field<label> > nSamples_;
 
 public:
 
@@ -140,6 +155,17 @@ public:
         const Field<bool> &mask
     );
 
+   void calcMinimumMaximum(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask
+    );
+
+   void calcMinimumMaximum(
+        const Field<Type> &values,
+        const Field<scalar> &weights
+    );
+
     void divideByDistribution(
         const SimpleDistribution<Type> &weightSum,
         const Type &valueIfZero
@@ -147,6 +173,9 @@ public:
 
     //- Return the distribution of the total bin weights - adapted to allow negative weights
     List< List < Pair<scalar> > > rawNegative() const;
+
+    template<class FType>
+    List< List < Tuple2<scalar,FType> > > rawField(const List<Field<FType> > &f) const;
 
     Type mean() const { return Distribution<Type>::mean(); }
 
@@ -197,6 +226,9 @@ public:
         const SimpleDistribution<Type>& d2
     );
 };
+
+    //template <typename T>
+    //inline bool contiguous<SimpleDistribution<T> >() { return false; }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

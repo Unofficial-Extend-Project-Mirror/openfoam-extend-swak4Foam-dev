@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,9 +37,9 @@ SourceFiles
     groovyTotalPressureFvPatchScalarField.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyTotalPressureFvPatchScalarField_H
@@ -64,7 +64,7 @@ class groovyTotalPressureFvPatchScalarField
 {
     // Private data
 
-    string p0Expression_;
+    exprString p0Expression_;
 
     PatchValueExpressionDriver driver_;
 

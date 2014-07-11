@@ -29,10 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
+
+#include "objectRegistry.H"
 
 #include "faCFD.H"
 
@@ -98,7 +100,7 @@ void Foam::volFromFaField::makeVolField(
     }
 
     volSurfaceMapping mapper(data.mesh());
-    
+
     mapper.mapToVolume(data,  dynamic_cast<VF &>(field_()).boundaryField());
 }
 
@@ -109,7 +111,7 @@ void Foam::volFromFaField::read(const dictionary& dict)
         autowrite_=Switch(dict.lookup("autowrite"));
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
+
         driver_.set(
             new FaFieldValueExpressionDriver(
                 mesh,
@@ -118,7 +120,7 @@ void Foam::volFromFaField::read(const dictionary& dict)
                 false  // don't look up files in memory
             )
         );
-        
+
         // not needed
         // driver_->readVariablesAndTables(dict_);
     }
@@ -131,7 +133,7 @@ void Foam::volFromFaField::execute()
 
         driver.clearVariables();
 
-        driver.parse(name_);
+        driver.parse(exprString(name_.c_str()));
 
         if(driver.resultIsTyp<areaVectorField>()) {
             makeVolField(
@@ -155,7 +157,7 @@ void Foam::volFromFaField::execute()
             );
         } else {
             WarningIn("Foam::volFromFaField::execute()")
-                << "Field '" << name_ 
+                << "Field '" << name_
                     << "' is of an unsupported type (scalar or vector)"
                     << endl;
         }

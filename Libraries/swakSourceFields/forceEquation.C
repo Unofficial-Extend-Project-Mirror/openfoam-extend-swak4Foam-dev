@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,9 +28,9 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "forceEquation.H"
@@ -57,16 +57,22 @@ forceEquation<T>::forceEquation
 )
 :
     FieldValueExpressionDriver(dict,mesh),
-    valueExpression_(dict.lookup("valueExpression")),
-    maskExpression_(dict.lookup("maskExpression")),
+    valueExpression_(
+        dict.lookup("valueExpression"),
+        dict
+    ),
+    maskExpression_(
+        dict.lookup("maskExpression"),
+        dict
+    ),
     verbose_(dict.lookupOrDefault<bool>("verbose",true))
 {
     createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
 
     if(verbose_) {
-        WarningIn(string("forceEquation<") + pTraits<T>::typeName + ">::forceEquation") 
-            << "Fixing to the values " << valueExpression_ 
-                << " with the mask " << maskExpression_ 
+        WarningIn(string("forceEquation<") + pTraits<T>::typeName + ">::forceEquation")
+            << "Fixing to the values " << valueExpression_
+                << " with the mask " << maskExpression_
                 << " will be verbose. To switch this off set the parameter 'verbose'"
                 << "to false" << endl;
     }

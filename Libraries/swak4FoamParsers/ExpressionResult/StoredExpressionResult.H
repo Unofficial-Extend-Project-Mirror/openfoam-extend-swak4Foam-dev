@@ -39,7 +39,7 @@ SourceFiles
     StoredExpressionResultIO.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,6 +48,7 @@ Contributors/Copyright:
 #define StoredExpressionResult_H
 
 #include "ExpressionResult.H"
+#include "exprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +67,7 @@ class StoredExpressionResult
 
     word name_;
 
-    string initialValueExpression_;
+    exprString initialValueExpression_;
 
 public:
 
@@ -100,7 +101,7 @@ public:
 
     const word name() const { return name_; }
 
-    const string initialValueExpression() const
+    const exprString &initialValueExpression() const
         {
             return initialValueExpression_;
         }

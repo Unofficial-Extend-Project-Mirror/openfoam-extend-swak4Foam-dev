@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -58,7 +58,7 @@ namespace Foam {
 
     template<class Type>
     tmp<Field<Type> > CommonValueExpressionDriver::evaluate(
-        const string &expr,
+        const exprString &expr,
         bool qPoint
     )
     {
@@ -69,7 +69,7 @@ namespace Foam {
 
     template<class Type>
     Type CommonValueExpressionDriver::evaluateUniform(
-        const string &expr,
+        const exprString &expr,
         bool qPoint
     )
     {
@@ -678,6 +678,7 @@ namespace Foam {
 
             f.set(
                 new T(
+                    name+"_copyBySwak4Foam",    // make sure that the original object is not shadowed
                     this->mesh().lookupObject<T>(name)
                 )
             );
@@ -878,7 +879,7 @@ namespace Foam {
     tmp<T> CommonValueExpressionDriver::interpolateForeignField(
         const word &inMeshName,
         const word &inFieldName,
-        meshToMesh::order theOrder
+        meshToMeshOrder theOrder
     ) const
     {
         word meshName(inMeshName);
@@ -938,6 +939,12 @@ namespace Foam {
         if(debug) {
             Info << "Objects in mesh: " << theMesh.names() << endl;
         }
+#ifdef FOAM_NEW_MESH2MESH
+        return interpolation.mapSrcToTgt(
+            theMesh.lookupObject<T>(fieldName),
+            eqOp<typename T::value_type>()
+        );
+#else
         return interpolation.interpolate(
             theMesh.lookupObject<T>(fieldName),
             theOrder
@@ -945,6 +952,7 @@ namespace Foam {
             ,eqOp<typename T::value_type>()
 #endif
         );
+#endif
     }
 
 

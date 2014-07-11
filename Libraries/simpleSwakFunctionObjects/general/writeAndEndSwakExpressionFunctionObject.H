@@ -39,9 +39,9 @@ SourceFiles
     writeAndEndSwakExpressionFunctionObject.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeAndEndSwakExpressionFunctionObject_H
@@ -78,7 +78,7 @@ class writeAndEndSwakExpressionFunctionObject
     autoPtr<CommonValueExpressionDriver> driver_;
 
     //- the logical expression
-    string logicalExpression_;
+    exprString logicalExpression_;
 
     void readParameters(const dictionary &);
 

@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -35,11 +35,13 @@ Contributors/Copyright:
 
 #include <Random.H>
 #include <wallDist.H>
+#include "patchWave.H"
 #include <nearWallDist.H>
 #include <dimensionedVector.H>
 #include "cellSet.H"
 #include "faceSet.H"
 #include "pointSet.H"
+#include "emptyFvPatchFields.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -478,6 +480,52 @@ tmp<volScalarField> FieldValueExpressionDriver::makeVolumeField()
     }
 
     f->correctBoundaryConditions();
+
+    return f;
+}
+
+tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
+    const word &name
+) {
+    label patchI=mesh().boundaryMesh().findPatchID(name);
+    if(patchI<0) {
+        FatalErrorIn("FieldValueExpressionDriver::makeDistanceToPatchField(const word &name)")
+            << "Patch name " << name << " not in valid names"
+                << mesh().boundaryMesh().names()
+                << endl
+                << exit(FatalError);
+    }
+    labelHashSet patchIDs;
+    patchIDs.insert(patchI);
+
+    patchWave wave(mesh(), patchIDs, false);
+
+    tmp<volScalarField> f(
+        new volScalarField(
+            IOobject
+            (
+                "distToPatch_"+name,
+                time(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false // don't register
+            ),
+            mesh_,
+            0.,
+            "fixedValue"
+        )
+    );
+    f->internalField()=wave.distance();
+    forAll(f->boundaryField(), patchI)
+    {
+        if (!isA<emptyFvPatchScalarField>(f->boundaryField()[patchI]))
+        {
+            scalarField& waveFld = wave.patchDistance()[patchI];
+
+            f->boundaryField()[patchI].transfer(waveFld);
+        }
+    }
 
     return f;
 }

@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "panicDumpFunctionObject.H"
@@ -66,7 +66,8 @@ panicDumpFunctionObject::panicDumpFunctionObject
     simpleFunctionObject(name,t,dict),
     fieldName_(""),
     maximum_(HUGE),
-    minimum_(-HUGE)
+    minimum_(-HUGE),
+    storeAndWritePreviousState_(false)
 {
 }
 
@@ -77,9 +78,29 @@ bool panicDumpFunctionObject::start()
     fieldName_=word(dict_.lookup("fieldName"));
     minimum_=readScalar(dict_.lookup("minimum"));
     maximum_=readScalar(dict_.lookup("maximum"));
-    
-    Info << "Checking for field " << fieldName_ << " in range [ " << minimum_ 
+
+    Info << "Checking for field " << fieldName_ << " in range [ " << minimum_
         << " , " << maximum_ << " ] " << endl;
+
+    if(dict_.found("storeAndWritePreviousState")) {
+        storeAndWritePreviousState_=readBool(
+            dict_.lookup("storeAndWritePreviousState")
+        );
+        if(storeAndWritePreviousState_) {
+            Info << name() << " stores the previous time-steps" << endl;
+            lastTimes_.set(
+                new TimeCloneList(
+                    dict_
+                )
+            );
+        }
+    } else {
+        WarningIn("panicDumpFunctionObject::start()")
+            << "storeAndWritePreviousState not set in" << dict_.name() << endl
+                << "Assuming 'false'"
+                << endl;
+
+    }
 
     return true;
 }
@@ -91,6 +112,10 @@ void panicDumpFunctionObject::write()
     check<volSphericalTensorField>();
     check<volSymmTensorField>();
     check<volTensorField>();
+
+    if(lastTimes_.valid()) {
+        lastTimes_->copy(time());
+    }
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

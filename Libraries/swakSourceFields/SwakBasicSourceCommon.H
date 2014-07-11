@@ -37,7 +37,7 @@ SourceFiles
     expressionSource.C
 
 Contributors/Copyright:
-    2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010, 2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -70,7 +70,9 @@ class SwakBasicSourceCommon
 
 protected:
 
-    List<string> expressions_;
+    List<exprString> expressions_;
+
+    HashTable<dimensionSet,label> dimensions_;
 
     bool verbose_;
 

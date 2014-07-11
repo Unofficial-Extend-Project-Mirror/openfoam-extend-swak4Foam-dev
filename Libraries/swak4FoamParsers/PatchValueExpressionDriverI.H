@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -832,7 +833,7 @@ namespace Foam {
                     FatalErrorIn
                         (
                             "tmp<Field<T> > PatchValueExpressionDriver::mapField"
-                        )<< "Unknown sampling mode: " << mpp.mode()
+                        )<< "Unknown sampling mode: " << label(mpp.mode())
                             << nl << abort(FatalError);
                 }
         }

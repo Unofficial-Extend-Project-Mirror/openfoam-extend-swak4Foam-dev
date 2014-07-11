@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -83,7 +83,18 @@ void SwakBasicSourceCommon<T>::setFieldData(const dictionary& dict)
     forAllConstIter(dictionary, dict, iter)
     {
         fieldNames_[i] = iter().keyword();
-        dict.lookup(iter().keyword()) >> expressions_[i];
+        dimensionSet dimension(dimless);
+
+        ITstream in(dict.lookup(iter().keyword()));
+
+        expressions_[i]=exprString(
+            in,
+            dict
+        );
+        in >> dimension;
+
+        dimensions_.set(i,dimension);
+
         i++;
     }
 }

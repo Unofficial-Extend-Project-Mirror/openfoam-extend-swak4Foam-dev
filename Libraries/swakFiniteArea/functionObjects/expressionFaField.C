@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "expressionFaField.H"
@@ -96,11 +96,14 @@ void Foam::expressionFaField::read(const dictionary& dict)
 {
     if(active_) {
         name_=word(dict.lookup("fieldName"));
-        expression_=string(dict.lookup("expression"));
+        expression_=exprString(
+            dict.lookup("expression"),
+            dict
+        );
         autowrite_=Switch(dict.lookup("autowrite"));
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
+
         driver_.set(
             new FaFieldValueExpressionDriver(
                 mesh,
@@ -109,7 +112,7 @@ void Foam::expressionFaField::read(const dictionary& dict)
                 false  // don't look up files in memory
             )
         );
-        
+
         driver_->readVariablesAndTables(dict_);
 
         driver_->createWriterAndRead(name_+"_"+type());
@@ -167,7 +170,7 @@ void Foam::expressionFaField::execute()
             );
         } else {
             WarningIn("Foam::expressionFaField::execute()")
-                << "Expression '" << expression_ 
+                << "Expression '" << expression_
                     << "' evaluated to an unsupported type"
                     << driver.typ()
                     << endl;

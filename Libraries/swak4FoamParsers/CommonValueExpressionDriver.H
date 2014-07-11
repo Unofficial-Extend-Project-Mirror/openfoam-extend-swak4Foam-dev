@@ -38,7 +38,7 @@ SourceFiles
     CommonValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -52,6 +52,8 @@ Contributors/Copyright:
 #include "runTimeSelectionTables.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "exprString.H"
 
 #include "ExpressionResult.H"
 #include "StoredExpressionResult.H"
@@ -81,8 +83,17 @@ class CommonValueExpressionDriver
     //- Disallow default bitwise assignment
     void operator=(const CommonValueExpressionDriver&);
 
+    //- dictionary with all the data
+    const dictionary &dict_;
+
+    //- empty dictionary for constructors that don't get a dictionary
+    static dictionary emptyData_;
+
+    //- maximum depth to search for other dictionaries
+    static const label maxVariableRecursionDepth_;
+
     //- variables from a dictionary
-    stringList variableStrings_;
+    List<exprString> variableStrings_;
 
     //- this one is in charge for writing and restoring
 
@@ -142,6 +153,9 @@ protected:
 
     const word &resolveAlias(const word &name) const;
 
+    const dictionary &dict() const
+        { return dict_; }
+
 private:
     ExpressionResult result_;
 
@@ -159,7 +173,7 @@ private:
 
     HashTable<interpolationTable<scalar>,word> lookup_;
 
-    Foam::string content_;
+    exprString content_;
 
     bool trace_scanning_;
 
@@ -199,7 +213,7 @@ public:
 
     const ExpressionResult &result() const { return result_; }
 
-    const string &content() const { return content_; }
+    const exprString &content() const { return content_; }
 
     //- actual size of the field
     virtual label size() const = 0;
@@ -386,6 +400,17 @@ protected:
     //    inline  HashTable<ExpressionResult,word> &variables();
     ExpressionResult &variable(const word &name);
 
+    //- expand string list to include other lists reference with #
+    static List<string> expandIncludeStringList(
+        const List<string> &orig,
+        const dictionary &dict,
+        const label recursionDepth
+    );
+
+    static exprString expandDictVariables(
+        const string &orig,
+        const dictionary &dict
+    );
 public:
     //- Runtime type information
     TypeName("CommonValueExpressionDriver");
@@ -475,17 +500,17 @@ public:
     );
 
     template<class Type>
-    tmp<Field<Type> > evaluate(const string &expr,bool qPoint=false);
+    tmp<Field<Type> > evaluate(const exprString &expr,bool qPoint=false);
 
     template<class Type>
-    Type evaluateUniform(const string &expr,bool qPoint=false);
+    Type evaluateUniform(const exprString &expr,bool qPoint=false);
 
-    void evaluateVariable(const word &name,const string &expr);
+    void evaluateVariable(const word &name,const exprString &expr);
 
     void evaluateVariableRemote(
-        const string &remoteExpr,
+        const exprString &remoteExpr,
         const word &name,
-        const string &expr
+        const exprString &expr
     );
 
     //- allows adding uniform variables from outside
@@ -503,7 +528,22 @@ public:
     static label readForeignMeshInfo(const dictionary &dict,bool verbose=true);
 
    //- read the list of variable strings (or initialize with a single string)
-    static stringList readVariableStrings(const dictionary &dict);
+    static List<exprString> readVariableStrings(
+        const dictionary &dict,
+        const word &name="variables",
+        const label recursionDepth=0
+    );
+
+    //- read an expression string and also do substitution
+    static exprString readExpression(
+        const word &name,
+        const dictionary &dict
+    );
+
+    //- read an expression string and also do substitution
+    exprString readExpression(
+        const word &name
+    );
 
     //- read the list of variable strings (or initialize with a single string)
     void setVariableStrings(const dictionary &dict);
@@ -512,9 +552,9 @@ public:
 
     Ostream &writeCommon(Ostream &out,bool debug=false) const;
 
-    void addVariables(const string &exprList,bool clear=true);
+    void addVariables(const exprString &exprList,bool clear=true);
 
-    void addVariables(const stringList &exprList,bool clear=true);
+    void addVariables(const List<exprString> &exprList,bool clear=true);
 
     template<class Type>
     void setResult(Field<Type> *,bool isPoint=false);
@@ -631,7 +671,12 @@ public:
     tmp<T> interpolateForeignField(
         const word &meshName,
         const word &fieldName,
-        meshToMesh::order theOrder=meshToMesh::INTERPOLATE
+        meshToMeshOrder theOrder=
+#ifdef FOAM_NEW_MESH2MESH
+        meshToMesh::imCellVolumeWeight
+#else
+        meshToMesh::INTERPOLATE
+#endif
     ) const;
 
     //- read all the interpolation tables known to man
@@ -696,7 +741,7 @@ public:
     void error (const std::string& m);
 
     //- Handling the parser
-    label parse(const std::string& f,const word &start="");
+    label parse(const exprString& f,const word &start="");
 
     // Handling temporary variables
     void clearVariables();
@@ -736,6 +781,7 @@ public:
     friend class initSwakFunctionObject;
 
     friend class CommonPluginFunction;
+    friend class exprString;
 };
 
 

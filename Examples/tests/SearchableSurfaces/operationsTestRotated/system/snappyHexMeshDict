@@ -337,6 +337,8 @@ addLayersControls
     // Expansion factor for layer mesh
     expansionRatio 1.0;
 
+    firstLayerThickness 0.001;
+
     //- Wanted thickness of final added cell layer. If multiple layers
     //  is the
     //  thickness of the layer furthest away from the wall.

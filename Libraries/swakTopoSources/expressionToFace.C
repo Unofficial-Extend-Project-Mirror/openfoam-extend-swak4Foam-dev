@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -147,7 +147,7 @@ void Foam::expressionToFace::combine(topoSet& set, const bool add) const
 Foam::expressionToFace::expressionToFace
 (
     const polyMesh& mesh,
-    const string& expression
+    const exprString& expression
 )
 :
     topoSetSource(mesh),
@@ -163,7 +163,10 @@ Foam::expressionToFace::expressionToFace
 )
 :
     topoSetSource(mesh),
-    expression_(dict.lookup("expression")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
     dict_(new dictionary(dict))
 {}
 
@@ -176,7 +179,10 @@ Foam::expressionToFace::expressionToFace
 )
 :
     topoSetSource(mesh),
-    expression_(checkIs(is))
+    expression_(
+        checkIs(is),
+        dictionary::null
+    )
 {}
 
 

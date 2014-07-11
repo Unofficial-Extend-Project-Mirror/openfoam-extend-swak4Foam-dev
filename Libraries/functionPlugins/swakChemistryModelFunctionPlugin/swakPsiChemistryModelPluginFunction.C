@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "swakThermoTypes.H"
 
 #include "addToRunTimeSelectionTable.H"
+
+#include "swak.H"
 
 namespace Foam {
 
@@ -98,7 +100,9 @@ const psiChemistryModel &swakPsiChemistryModelPluginFunction::chemistryInternal(
             << endl;
 
         chemistry_[reg.name()]->solve(
+#ifdef FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
             reg.time().value(),
+#endif
             reg.time().deltaT().value()
         );
         //        chemistry_[reg.name()]->calculate();
@@ -112,7 +116,9 @@ void swakPsiChemistryModelPluginFunction::updateChemistry(const scalar dt)
     const_cast<psiChemistryModel&>(
         chemistry()
     ).solve(
+#ifdef FOAM_CHEMISTRYMODEL_SOLVE_NEEDS_TIME
         mesh().time().value(),
+#endif
         dt
     );
 }

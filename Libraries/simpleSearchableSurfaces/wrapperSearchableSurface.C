@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -81,12 +81,12 @@ Foam::wrapperSearchableSurface::wrapperSearchableSurface
             << name() << " wraps " << delegate().name() << endl;
     }
     if(regions().size()!=size()) {
-        FatalErrorIn("wrapperSearchableSurface::wrapperSearchableSurface")
+        WarningIn("wrapperSearchableSurface::wrapperSearchableSurface")
             << "Number of regions " << regions().size() << " not equal to size "
                 << size() << nl << "Regions: " << regions()
                 << endl
-                << exit(FatalError);
-
+                << "in " << name() << " wraps " << delegate().name() << endl;
+        //                << exit(FatalError);
     }
 }
 
@@ -219,5 +219,19 @@ bool Foam::wrapperSearchableSurface::overlaps(const boundBox& bb) const
 
     return false;
 }
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::wrapperSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    delegate().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+}
+#endif
 
 // ************************************************************************* //

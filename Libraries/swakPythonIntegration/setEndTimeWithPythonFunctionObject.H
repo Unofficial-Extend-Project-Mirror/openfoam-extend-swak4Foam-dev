@@ -38,7 +38,7 @@ SourceFiles
     setEndTimeWithPythonFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -68,6 +68,9 @@ class setEndTimeWithPythonFunctionObject
 
     //- Disallow default bitwise assignment
     void operator=(const setEndTimeWithPythonFunctionObject&);
+
+    //- the code that should be evaluated in the beginning
+    string initCode_;
 
     //- the code that should be evaluated
     string endTimeCode_;

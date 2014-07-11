@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "manipulateFaField.H"
@@ -106,11 +106,17 @@ void Foam::manipulateFaField::read(const dictionary& dict)
 {
     if(active_) {
         name_=word(dict.lookup("fieldName"));
-        expression_=string(dict.lookup("expression"));
-        maskExpression_=string(dict.lookup("mask"));
+        expression_=exprString(
+            dict.lookup("expression"),
+            dict
+        );
+        maskExpression_=exprString(
+            dict.lookup("mask"),
+            dict
+        );
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
-        
+
         driver_.set(
             new FaFieldValueExpressionDriver(
                 mesh,
@@ -141,7 +147,7 @@ void Foam::manipulateFaField::execute()
                     << endl
                     << exit(FatalError);
         }
-        
+
         if(driver.resultIsTyp<areaScalarField>(true)) {
             areaScalarField conditionField(driver.getResult<areaScalarField>());
 
@@ -174,7 +180,7 @@ void Foam::manipulateFaField::execute()
                 );
             } else {
                 WarningIn("Foam::manipulateFaField::execute()")
-                    << "Expression '" << expression_ 
+                    << "Expression '" << expression_
                         << "' evaluated to an unsupported type"
                         << driver.typ() << " that is incompatible with a mask defined on areas"
                         << endl;
@@ -211,7 +217,7 @@ void Foam::manipulateFaField::execute()
                 );
             } else {
                 WarningIn("Foam::manipulateFaField::execute()")
-                    << "Expression '" << expression_ 
+                    << "Expression '" << expression_
                         << "' evaluated to an unsupported type"
                         << driver.typ() << " that is incompatible with a mask defined on edges"
                         << endl;

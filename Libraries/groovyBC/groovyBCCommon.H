@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -38,9 +38,9 @@ SourceFiles
     groovyBCCommon.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef groovyBCCommon_H
@@ -49,9 +49,13 @@ Contributors/Copyright:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "dictionary.H"
+#include "exprString.H"
 
 namespace Foam
 {
+
+    class pointPatch;
+    class fvPatch;
 
 /*---------------------------------------------------------------------------*\
                      Class groovyBCFvPatch Declaration
@@ -71,16 +75,18 @@ protected:
     bool hasGradient_;
 
     // the expressions
-    string valueExpression_;
-    string gradientExpression_;
-    string fractionExpression_;
+    exprString valueExpression_;
+    exprString gradientExpression_;
+    exprString fractionExpression_;
 
-    string nullValue();
-
-    bool evaluateDuringConstruction() const 
+    bool evaluateDuringConstruction() const
         { return evaluateDuringConstruction_; }
 
 public:
+
+    static exprString nullValue();
+
+    static const fvPatch &getFvPatch(const pointPatch &pp);
 
     // Constructors
 
@@ -89,7 +95,7 @@ public:
     (
         bool hasGradient,
         bool isPoint=false,
-        string fractionExpression="1"
+        exprString fractionExpression="1"
     );
 
     //- Construct from dictionary
@@ -98,7 +104,7 @@ public:
         const dictionary&,
         bool hasGradient,
         bool isPoint=false,
-        string fractionExpression="1"
+        exprString fractionExpression="1"
     );
 
     //- Copy constructor

@@ -17,6 +17,11 @@
    Please don't try to "beautify" it with any other text editor as
    this will surly mess up the markup (and keeping the file
    /org-compatible/ outside of the =org-mode= is a pain in the neck.
+
+   The Markdown-variant =README.md= is only there to be displayed in a
+   human-readable form by the web-interface to =mercurial= at
+   =sourceforge.net=. It is generated from =REAME= and only updated
+   during releases. *Don't edit it*.
 * Contributors etc
 ** Original Author
    Bernhard Gschaider (bgschaid@ice-sf.at)
@@ -36,6 +41,10 @@
      - Compilation with Intel compiler and Mingw
      - Rewrite of =mybison= and =myflex= to allow parallel compilation
        with =WM_COMPPROCS=
+     - Generation of dependencies for files that need Bison generated
+       tab.hh files. This allows not having race conditions during
+       parallel compilation
+   - Hrvoje Jasak :: Fixes to compile on Intel and CLang
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -48,8 +57,9 @@
    - 2010 Oliver Borm (oli.borm@web.de)
    - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
-   - 2012-2013 Bruno Santos <wyldckat@gmail.com>
+   - 2012-2014 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
+   - 2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -114,6 +124,9 @@
          uninitialized memory and crashes. This variable can be used
          to switch off the optimization (usually this fixes the
          problems)
+    - SWAK_TEST_RACE_CONDITIONS :: Meant to be used only by developers,
+         for performing a verification on whether race conditions occur
+         during parallel compilation, regarding the grammar parsers.
 *** Possible compilation failure with old 2.0.x-versions
     With older versions of 2.0.x (or 2.0 or 2.0.1) it is possible that
     the compilation of  =swakCodedFunctionObject= will fail. In that
@@ -275,7 +288,8 @@ S_{expl} + S_{impl} T
          right hand side of the equation
     - SwakImplicitSource :: Uses a calculated scalar-field to add an
          implicit source term (source is *without* the actual field)
-
+*** =swakFvOptions=
+    Starting from OpenFOAM 2.2 this library has additional =fvOptions=
 *** =swakTopoSources=
     =topoSources= for =cellSet= and =faceSet=. Can be used with the
     =cellSet= and =faceSet=-utilities
@@ -493,6 +507,13 @@ S_{expl} + S_{impl} T
                  =swakSurfactantFoam=
      - Demonstrates :: FAM-specific =swakExpressions= and =groovyBC=
                        (as well as the =expressionSource=)
+*** FvOptions
+    Cases that demonstrate =swakSourceFields=
+**** angleDuctWithSources
+     - Solver :: rhoPimpleFoam
+     - Mesh preparation :: Execute =prepareCase.sh=
+     - Demonstrates :: Simple expression sources (adds a /heat source/
+                       to the solid)
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
@@ -534,6 +555,11 @@ S_{expl} + S_{impl} T
           time before running the case
      - Demonstrates :: Demonstrates setting calculated initial
                        conditions with functionObjects
+**** =simpleBendedPipe=
+     Demonstrates the use of =funkyWarpMesh= and post-processing on
+     bended pip geometries
+     - Solver :: simpleFoam
+     - Case preparation :: Run =prepare.sh=
 *** FromPresentations
     Cases that were shown in some presentations
 **** OSCFD_cleaningTank3D
@@ -860,6 +886,13 @@ S_{expl} + S_{impl} T
    The tab-completion does not work except for up-to-date versions of
    IPython. This seems to be a problem with the =readline=-library
    inside an embedded Python. Low priority
+** Failure of =groovyBC= for =commsType= =blocking=
+   If the =commsType= is set to =blocking= then the MPI-communications
+   of =groovyBC= cause problems in MPI and a fatal error.
+
+   Currently the only workaround is to edit
+   =$WM_PROJECT_DIR/etc/controlDict= so that a different =commsType=
+   is used (=nonBlocking= or =scheduled=)
 * History
 ** 2010-09-13 - version number : 0.1
    First Release
@@ -1781,7 +1814,6 @@ S_{expl} + S_{impl} T
 **** =valuePatches= did not work for mapped patches
      This kind of patch was not identified as something that could
      have the value fixed
-<<<<<<< variant A
 **** Recent versions of 2.1.x break compilation of =CommonValueExpressionDriver.C=
      The definition of the operator =lessOp= clashed with another
      definition. Renamed.
@@ -2581,11 +2613,180 @@ S_{expl} + S_{impl} T
           Jedi" with =twoPhaseEulerFoam=
      - landspeedersInCanyon :: Simulating two landspeeders from "A new
           hope" with =simpleFoam=
-** Next release - version number : 0.3.1
+** 2014-07-11 - version number : 0.3.1
 *** Incompatibilities to previous versions
+**** Additional required code snipplet for some Python-functionObjects
+     There is now a new code-snipplet required for a number of these
+     function objects. It can be left empty but has to be specified
+**** Dimension required for stuff in =swakSourceFields=
+     The expressions used with =swakExplicitSource=,
+     =swakImplicitSource= and =swakSetValue= now also need a
+     dimension. This dimension is used to make sure that the user
+     "knows" the actual dimensions of his source terms
+*** New supported versions
+**** Added support for OpenFOAM 2.3
+     This version adds support for OpenFOAM 2.3. The major changes
+     were due to changes in the API to
+     - =searchableSurface=
+     - =meshToMesh=
+     And several minor adaptions
+**** Added support for Foam-Extend 3.1
+     No major changes required. Runtime-selection tables are now
+     sorted too
 *** Infrastructure
+**** Improved macros for Foam versions
+     This should make =swak.H= more readable
+**** Support for private installation of bison
+     If a directory =privateRequirements/bin= is private in the
+     sources directory then the =bison= found there is used. A script
+     =maintainanceScripts/compileRequirements.sh= is provided that
+     fetches the bison sources, compiles them and installs them there
 *** Documentation
+**** Information about macro-expansion added
+     A section about thus new feature is added
 *** Bug fixes
+**** Invalid entries in distributions from =swakExpressionAverageDistribution=
+     The distribution data was not clipped to the range where actually
+     data was collected. This is now fixed by adding the notion of an
+     invalid value to =SimpleDistribution=
+**** =swakExpressionAverageDistribution= not correctly working in parallel
+     This should now be fixed
+**** =fvOptions= in =swakSourceFields= now actually working
+     Because of the missing dimensions until now =swakExplicitSource=
+     and =swakImplicitSource= were not actually working
+**** =fvOptions= did not honor the =selectionMode=-entry
+     Always set source etc for whole region. Now the =selectionMode=
+     is honored (for instance only in =cellZone= the source term will
+     be applied.)
+**** =patchFunctionObject= fails for some parallel runs
+     Problem is that when the processor boundaries are used too that
+     the indexing might be inconsistent on the different
+     processors. Fix: coupled boundaries are ignored by default (have
+     to be switched on)
+**** =funkyPythonPostproc= not executing function objects
+     In newer version the =execute()=-method of function objects
+     needs a parameter =force=. Fixed
+**** Temporary fields shadow 'real' fields in =foam-extend-3.1=
+     Due to a small semantic difference in the copy constructor of
+     =GeometricField= a temporary object of the same name shadows the
+     real field and prohibits that it is written. Fixed by giving the
+     copy a unique name
 *** New features
+**** Boundary condition =groovyFixedNormalSlip= in =groovyStandardBCs=
+     These boundary conditions allow specifying a value in normal
+     direction to the patch while in tangential direction the regular
+     slip condition is applied. This is implemented for =fvPatch= and
+     =pointPatch=. For the =pointPatch= the normal direction has to be
+     specified by the user
+**** New utility =funkyWarpMesh=
+     Utility that calculates new point values for the mesh. In the
+     simplest form the expression is specified on the command line. If
+     the option =-expression= is missing the program looks for a
+     dictionary which allows more control. If =-relative= is specified
+     points are moved by the result of the expression. The result of
+     the expression must be a =pointVectorField=
+**** Function objects that write additional writes depending on the flow conditions
+     A hierarchy of function objects that trigger additional
+     writes. Once a condition is fulfilled data is either written for
+     a specified interval or as long as the condition is
+     fulfilled. After that a cooldown period is possible. During this
+     period nothing is written.
+
+     The concrete function objects are
+     - writeIfFieldOutside :: writing is triggered if the minimum or
+	  the maximum of a field is outside a specified range. Part of
+          the =simpleFunctionObjects=
+     - writeIfSwakExpression :: writing is triggered if a logical
+          expression evaluates to =true=. Stopping and retriggering is
+          also possible with logical expressions. Part of
+          the =simpleSwakFunctionObjects=
+     - writeIfPython :: writing is triggered by a Python-snipplet that
+                        either returns =True= or =False=. Stopping and
+                        retriggering are also possible. Part of
+                        =swakPythonIntegration=
+
+     Allows saving and writing a specifiable number of timesteps
+     *before* the condition is met (this allows finding out what lead
+     to this)
+**** Function object =writeOldTimesOnSignal= with new signal handlers
+     This function object installs a new signal handler for specified
+     signals.
+
+     The function object itself saves the last $N$-timesteps, the
+     signal handler (when called) writes these steps to disk and then
+     calls the regular OpenFOAM signal handler
+**** New library with =fvOptions=
+     Starting with OpenFOAM 2.2 (where the concept of =fvOptions= was
+     introduced) there is an additional library =swakFvOptions= with
+     special =fvOptions= (in addition to those in =swakSourceFields=):
+     - executeFunctionObjectsFvOption :: this one does not manipulate
+          the fields (as expected) but "only" runs a list of function
+          objects. Application is for instance to get information
+          during the time-step for algorithms that have multiple
+          iterations in a time-step
+     - reportAvailableFvOptions :: Does no manipulation of the
+          solution/equations. Simply reports that a callback has been
+          called. Application: find out which =fvOption=-calls are
+          used by a solver in which order without going through the
+          sources
+     - reportMatrix :: Does not manipulate the matrix but prints a
+                       number of metrics
+**** Macro expansion
+     For expressions and variable lists there is now the possibility
+     to expand values from the dictionary during reading. The two
+     characters that trigger this are
+     - $ :: like the regular variable lookup in OpenFOAM.In its most
+            complex form it looks like this =$[(type)spec]= where
+            =spec= specifies where to look for the value (including
+            scoping if the OpenFOAM-version supports it). The optional
+            =type= specifies how the entry should be interpreted
+     - # :: in variable lists: =#otherList;= includes the variable
+            list =otherList= instead of this entry
+     These expansions allow the construction of reusable snipplets
+     that include information from other parts of the case. For
+     instance (this is only part of the specification)
+: #include "$FOAM_CASE/constant/g"
+: vecName U;
+: downComponent (
+:     "grav=$[(dimensionedVector)g];"
+:     "down=($vecName & grav)/mag(grav);"
+: );
+: variables (
+:     "#downComponent;"
+:     "maxDown=max(mag(down));"
+: );
+     would calculate the component of a vector field that points in
+     the direction of the gravity (as specified in the =g=-file).
+
+     This expansion is done during the expression.
 *** Enhancements
+**** =expressionField= now allows setting of dimensions
+     An optional entry =dimension= for the function object now allows
+     setting the dimension of the resulting field
+**** New function =distToPatch= in Field-parser
+     This function gives the distance in the mesh to a specified face.
+
+     Not yet working correctly
+**** =panicDump= now allows storing old values
+     With the switch =storeAndWritePreviousState= this functionObject
+     now can cache a number of timesteps and write these results in
+     addition to the current timestep
+**** =swakExpressionAverageDistribution= records extremes and number of samples
+     In addition to the average now this Function object also records
+     the minimum and maximum value for each bin. Also the number of
+     samples used in the bin
+**** Python-function objects that return a boolean now have a initialization-snipplet
+     The function objects =executeIfPython=, =setDeltaTWithPython=,
+     =setEntTimeWithPython= and =writeAndEndWithPython= now expect
+     code snipplet named =init=. This is executed in the beginning and
+     can be used to set up global variables if these snipplets need
+     some kind of state. The variables have to be declared =global= in
+     the snipplets that do the actual decision (for technical reason)
+**** =fvOptions=-support in PDE-function objects
+     The function objects =solveTransportPDE= and =solveLaplacianPDE=
+     now call the regular =fvOptions=-callbacks (this allows modifying
+     the solution in the same way it can be modified for solvers)
 *** Examples
+**** =other/simpleBendedPipe=
+     Example to demonstrate =funkyWarpMesh= and post-processing on
+     bended geometries

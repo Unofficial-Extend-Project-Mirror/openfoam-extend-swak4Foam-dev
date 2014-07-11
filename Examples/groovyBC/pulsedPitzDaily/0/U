@@ -18,44 +18,46 @@ dimensions      [0 1 -1 0 0 0 0];
 
 internalField   uniform (0 0 0);
 
+frequency 500;
+
 boundaryField
 {
     inlet
     {
-//         type            turbulentInlet;
-//         referenceField  uniform (10 0 0);
-//         fluctuationScale (0.02 0.01 0.01);
-
         //        type            groovyBC;
         type            groovyBCFixedValue;
 
-        //        debugCommonDriver 0;
+        //        debugCommonDriver 1;
 
         //        variableNameIdenticalToField true;
 
+        minMaxPoint (
+            "minY=min(yp);"
+            "maxY=max(yp);"
+        );
+
+      getPoints "pts().y";
+
       variables (
-          "yp=pts().y;"
-          "minY=min(yp);"
-          "maxY=max(yp);"
+          "yp=$[(string)getPoints];"
+          "#minMaxPoint;"
           "para=-(maxY-pos().y)*(pos().y-minY)/(0.25*pow(maxY-minY,2))*normal();"
       );
-      valueExpression "10*(1+0.5*sin(500*time()))*para";
-      //      valueExpression   "vector(10,0,0)+sin(100*time())*vector(1,0,0)+vector(pos().y-p*1e-10,0,0)";
-      //      valueExpression   "1e5*vector((pos().y-min(pos().y))*(max(pos().y)-pos().y),0,0)";
-      //      valueExpression   "((pos().y-min(pos().y))>(0.25*(max(pos().y)-min(pos().y)))) && ((max(pos().y)-pos().y)>(0.25*(max(pos().y)-min(pos().y)))) ? vector(10,0,0) : vector(0,0,0)";
-      // valueExpression   "10*(1+0.5*sin(500*time()))*vector((pos().y-min(pos().y))*(max(pos().y)-pos().y),0,0)/(0.25*pow(max(pos().y)-min(pos().y),2))";
-      // valueExpression   "((pos().y-min(pos().y))>(0.25*(max(pos().y)-min(pos().y)))) && ((max(pos().y)-pos().y)>(0.25*(max(pos().y)-min(pos().y)))) ? vector(10,0,0) : vector(0,0,0)";
-      //      valueExpression   "((pos().y-min(pos().y))>(0.25*(max(pos().y)-min(pos().y)))) && ((max(pos().y)-pos().y)>(0.25*(max(pos().y)-min(pos().y)))) ? vector(10,0,0) : vector(0,0,0)";
-      // valueExpression "-10*normal()";
-      //      valueExpression "(randNormal()-1e1)*normal()";
 
-        value           uniform (10 0 0);
+      amplitude a [0 1 -1 0 0 0 0] 10;
+
+      valueExpression "$[(dimensionedScalar)amplitude]*(1+0.5*sin($[:frequency]*time()))*para";
+
+      value           uniform (10 0 0);
     }
 
     outlet
     {
       type            groovyBC;
-      valueExpression "vector(0,0,0)";
+
+      defaultVelocity v [0 1 -1 0 0 0 0] (0 0 0);
+
+      valueExpression "$[(dimensionedVector)defaultVelocity]";
       gradientExpression "vector(0,0,0)";
       fractionExpression "(phi > 0) ? 0 : 1";
 

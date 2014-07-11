@@ -38,7 +38,7 @@ SourceFiles
     wrapperSearchableSurface.C
 
 Contributors/Copyright:
-    2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,7 +48,7 @@ Contributors/Copyright:
 
 #include "searchableSurface.H"
 
-#include "swak.H"
+#include "swakSurfaceTypes.H"
 
 #include "boundBox.H"
 
@@ -197,6 +197,13 @@ public:
 
         virtual bool overlaps(const boundBox &) const;
 
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+    virtual void boundingSpheres
+    (
+        pointField& centres,
+        scalarField& radiusSqr
+    ) const;
+#endif
 
 };
 

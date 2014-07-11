@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -64,8 +64,14 @@ swakExpressionFunctionObject::swakExpressionFunctionObject
 )
 :
     timelineFunctionObject(name,t,dict),
-    expression_(dict.lookup("expression")),
-    maskExpression_(dict.lookupOrDefault<string>("mask","")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
+    maskExpression_(
+        dict.lookupOrDefault<string>("mask",""),
+        dict
+    ),
     accumulations_(
         NumericAccumulationNamedEnum::readAccumulations(
             dict,"accumulations"

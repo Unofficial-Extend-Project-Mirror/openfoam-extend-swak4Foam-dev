@@ -25,8 +25,9 @@ Description
 
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2013 Georg Reiss <georg.reiss@ice-sf.at>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -41,6 +42,8 @@ Contributors/Copyright:
 %pure-parser
 
 %{
+#include <uLabel.H>
+#include <label.H>
 #include <volFields.H>
 #include <surfaceFields.H>
 #include <fvcGrad.H>
@@ -360,6 +363,7 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_area
 %token TOKEN_volume
 %token TOKEN_dist
+%token TOKEN_distToPatch
 %token TOKEN_nearDist
 %token TOKEN_rdist
 
@@ -2394,6 +2398,10 @@ exp:    TOKEN_NUM                                   {
           }
         | TOKEN_dist '(' ')'                        {
             $$ = driver.makeDistanceField().ptr();
+          }
+        | TOKEN_distToPatch '(' TOKEN_PATCHID ')'                        {
+            $$ = driver.makeDistanceToPatchField( *$3 ).ptr();
+            delete $3;
           }
         | TOKEN_nearDist '(' ')'                    {
             $$ = driver.makeNearDistanceField().ptr();

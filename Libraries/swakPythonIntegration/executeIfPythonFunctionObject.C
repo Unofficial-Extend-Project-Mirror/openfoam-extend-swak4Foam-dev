@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -112,7 +112,13 @@ bool executeIfPythonFunctionObject::read(const dictionary& dict)
 
 void executeIfPythonFunctionObject::readParameters(const dictionary &dict)
 {
+    readCode(dict,"init",initCode_);
     readCode(dict,"condition",conditionCode_);
+
+    pythonInterpreterWrapper::executeCode(
+        initCode_,
+        false
+    );
 }
 
 } // namespace Foam

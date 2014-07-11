@@ -39,7 +39,7 @@ SourceFiles
     MeshesRepositoryIO.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -72,7 +72,7 @@ class MeshesRepository
 
     HashPtrTable<meshToMesh,word> meshInterpolations_;
 
-    HashTable<meshToMesh::order,word> interpolationOrder_;
+    HashTable<meshToMeshOrder,word> interpolationOrder_;
 
     // Constructors
 
@@ -140,11 +140,11 @@ public:
     //- set interpolation order for a mesh
     void setInterpolationOrder(
         const word &name,
-        meshToMesh::order val
+        meshToMeshOrder val
     );
 
     //- get interpolation order
-    meshToMesh::order getInterpolationOrder(
+    meshToMeshOrder getInterpolationOrder(
         const word &name
     );
 };

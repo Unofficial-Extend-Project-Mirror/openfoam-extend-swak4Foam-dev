@@ -38,7 +38,7 @@ SourceFiles
     patchExpressionFunctionObject.C
 
 Contributors/Copyright:
-    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -79,7 +79,7 @@ class patchExpressionFunctionObject
     Field<T> evaluate(const word& fieldName,T preset) const;
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the specification
     dictionary data_;

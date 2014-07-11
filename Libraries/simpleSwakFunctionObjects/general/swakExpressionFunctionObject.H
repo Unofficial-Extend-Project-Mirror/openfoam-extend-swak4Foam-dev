@@ -38,7 +38,7 @@ SourceFiles
     swakExpressionFunctionObject.C
 
 Contributors/Copyright:
-    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -79,10 +79,10 @@ class swakExpressionFunctionObject
     Field<T> evaluate(const word& fieldName,T preset) const;
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the mask expression
-    string maskExpression_;
+    exprString maskExpression_;
 
     //- list with the accumulations of evaluated expression
     List<NumericAccumulationNamedEnum::accuSpecification> accumulations_;

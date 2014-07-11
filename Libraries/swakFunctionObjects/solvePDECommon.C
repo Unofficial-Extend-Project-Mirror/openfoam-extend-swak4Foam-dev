@@ -60,6 +60,14 @@ Foam::solvePDECommon::solvePDECommon
     const dictionary& dict,
     const bool loadFromFiles
 ):
+#ifdef FOAM_HAS_FVOPTIONS
+    dummyOptionList_(
+       dynamicCast<const fvMesh&>(obr)
+    ),
+    warnedAboutMissingOptionList_(
+       false
+    ),
+#endif
     active_(true),
     obr_(obr),
     name_(name),
@@ -79,9 +87,45 @@ Foam::solvePDECommon::solvePDECommon
 Foam::solvePDECommon::~solvePDECommon()
 {}
 
+#ifdef FOAM_HAS_FVOPTIONS
+Foam::fv::optionList &Foam::solvePDECommon::fvOptions() const
+{
+    if(obr_.foundObject<fv::optionList>("fvOptions")) {
+        return const_cast<fv::optionList&>(
+            obr_.lookupObject<fv::optionList>("fvOptions")
+        );
+    } else {
+        if(!warnedAboutMissingOptionList_) {
+            const_cast<solvePDECommon&>(*this).warnedAboutMissingOptionList_=true;
+            WarningIn("Foam::solvePDECommon::fvOptions()")
+                 << "No 'fvOptions' found. Returning dummy (no further warnings"
+                 << endl;
+        }
+        return const_cast<solvePDECommon&>(*this).dummyOptionList_;
+    }
+}
+#endif
+
 void Foam::solvePDECommon::timeSet()
 {
     // Do nothing
+}
+
+void Foam::solvePDECommon::readExpressionAndDimension(
+    const dictionary &dict,
+    const word &name,
+    exprString &expr,
+    dimensionSet &dim
+)
+{
+    ITstream in(dict.lookup(name));
+
+    expr=exprString(
+        in,
+        dict
+    );
+
+    in >> dim;
 }
 
 bool Foam::solvePDECommon::doRelax(bool last)

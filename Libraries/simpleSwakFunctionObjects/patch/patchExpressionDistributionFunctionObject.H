@@ -38,7 +38,7 @@ SourceFiles
     patchExpressionDistributionFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -86,7 +86,7 @@ protected:
     virtual void getDistribution();
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the specification
     dictionary data_;

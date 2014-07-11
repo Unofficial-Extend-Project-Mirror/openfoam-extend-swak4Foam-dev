@@ -1,0 +1,12 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 08 Mar 2014 16:38:21 +0100
+State: new
+Subject: Make global variables available in pythonIntegration functionObjects
+Message-Id: <d3e01ddefa3eef0a-0-artemis@bgs-cool-greybook.local>
+
+Currently for python-integration that builds a function the global
+variables are not available out of the box and must be declared with
+globals
+
+Find a way to make them available anyway as this is most annoying for
+the user

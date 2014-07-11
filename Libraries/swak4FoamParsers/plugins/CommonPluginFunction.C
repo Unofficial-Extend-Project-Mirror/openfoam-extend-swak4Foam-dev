@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -158,7 +158,10 @@ label CommonPluginFunction::readArgument(
     if(debug || parentDriver_.traceParsing()) {
         Info << "Using start symbol " << startSymbol << endl;
     }
-    driver.parse(content,startSymbol);
+    driver.parse(
+        exprString::toExpr(content),
+        startSymbol
+    );
     if(driver.getResultType()!=argumentTypes_[index]) {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Result type " << driver.getResultType()
@@ -318,7 +321,10 @@ label CommonPluginFunction::scanEmpty(
         parentDriver_.traceParsing()
     );
 
-    return driver().parse(content,sym);
+    return driver().parse(
+        exprString::toExpr(content),
+        sym
+    );
 }
 
 void CommonPluginFunction::evaluateInternal(

@@ -38,9 +38,9 @@ SourceFiles
     manipulateFaField.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef manipulateFaField_H
@@ -51,6 +51,8 @@ Contributors/Copyright:
 #include "pointFieldFwd.H"
 #include "Switch.H"
 #include "autoPtr.H"
+
+#include "exprString.H"
 
 namespace Foam
 {
@@ -65,7 +67,7 @@ class manipulateFaField
 {
     //- Disallow default bitwise copy construct
     manipulateFaField(const manipulateFaField&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const manipulateFaField&);
 
@@ -80,10 +82,10 @@ protected:
     word name_;
 
     //- Expression
-    string expression_;
+    exprString expression_;
 
     //- Expression that says which cells are to be changed
-    string maskExpression_;
+    exprString maskExpression_;
 
     const objectRegistry& obr_;
 
@@ -110,7 +112,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     manipulateFaField
@@ -136,20 +138,20 @@ public:
 
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
     virtual void movePoints(const pointField&)
         {}

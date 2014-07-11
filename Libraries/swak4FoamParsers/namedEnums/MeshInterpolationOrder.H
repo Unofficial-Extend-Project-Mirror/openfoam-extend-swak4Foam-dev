@@ -37,13 +37,15 @@ SourceFiles
     MeshInterpolationOrder.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef MeshInterpolationOrder_H
 #define MeshInterpolationOrder_H
+
+#include "swak.H"
 
 #include "meshToMesh.H"
 
@@ -53,6 +55,8 @@ Contributors/Copyright:
 
 namespace Foam
 {
+
+#ifndef FOAM_NEW_MESH2MESH
 
 /*---------------------------------------------------------------------------*\
                            Class MeshInterpolationOrder Declaration
@@ -71,8 +75,17 @@ public:
 
 };
 
+typedef meshToMesh::order meshToMeshOrder;
+#define meshToMeshInterpolationNames MeshInterpolationOrder::names
+
+#else
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+typedef meshToMesh::interpolationMethod meshToMeshOrder;
+#define meshToMeshInterpolationNames meshToMesh::interpolationMethodNames_
+
+#endif
 
 } // End namespace Foam
 

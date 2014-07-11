@@ -32,22 +32,25 @@ Class
     panicDumpFunctionObject
 
 Description
-    Checks whether a field exceeds given limits (min and max). If the 
+    Checks whether a field exceeds given limits (min and max). If the
     limits are exceeded everything is written to disk and the run is aborted
 
 SourceFiles
     panicDumpFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef panicDumpFunctionObject_H
 #define panicDumpFunctionObject_H
 
 #include "simpleFunctionObject.H"
+
+#include "TimeCloneList.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -65,7 +68,7 @@ class panicDumpFunctionObject
 
     //- Disallow default bitwise copy construct
     panicDumpFunctionObject(const panicDumpFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const panicDumpFunctionObject&);
 
@@ -90,7 +93,12 @@ class panicDumpFunctionObject
     template <class T>
     bool check() const;
 
-public:
+    //- should old states be saved?
+    bool storeAndWritePreviousState_;
+
+    autoPtr<TimeCloneList> lastTimes_;
+
+ public:
 
     //- Runtime type information
     TypeName("panicDump");

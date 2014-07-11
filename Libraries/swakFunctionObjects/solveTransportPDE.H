@@ -38,9 +38,9 @@ SourceFiles
     solveTransportPDE.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef solveTransportPDE_H
@@ -57,30 +57,30 @@ class solveTransportPDE
 {
     //- Disallow default bitwise copy construct
     solveTransportPDE(const solveTransportPDE&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const solveTransportPDE&);
 
 protected:
 
     //- the coefficent for the time-derivative
-    string rhoExpression_;
+    exprString rhoExpression_;
     dimensionSet rhoDimension_;
 
     //- the coefficient for the laplacian term
-    string diffusionExpression_;
+    exprString diffusionExpression_;
     dimensionSet diffusionDimension_;
 
-    //- the name of the phi-field. 
-    string phiExpression_;
+    //- the name of the phi-field.
+    exprString phiExpression_;
     dimensionSet phiDimension_;
 
     //- the right hand side
-    string sourceExpression_;
+    exprString sourceExpression_;
     dimensionSet sourceDimension_;
 
     //- the right hand side
-    string sourceImplicitExpression_;
+    exprString sourceImplicitExpression_;
     dimensionSet sourceImplicitDimension_;
 
     //- do the actual solving
@@ -93,7 +93,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     solveTransportPDE

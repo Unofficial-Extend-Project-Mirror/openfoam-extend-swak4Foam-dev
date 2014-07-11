@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "volumeFieldFunctionObject.H"
@@ -51,7 +51,7 @@ template<>
 scalar panicDumpFunctionObject::getMin<volScalarField>() const
 {
     const volScalarField &fld=obr_.lookupObject<volScalarField>(fieldName_);
-    
+
     return min(fld).value();
 }
 
@@ -59,7 +59,7 @@ template<>
 scalar panicDumpFunctionObject::getMax<volScalarField>() const
 {
     const volScalarField &fld=obr_.lookupObject<volScalarField>(fieldName_);
-    
+
     return max(fld).value();
 }
 
@@ -67,7 +67,7 @@ template<class T>
 scalar panicDumpFunctionObject::getMin() const
 {
     const T &fld=obr_.lookupObject<T>(fieldName_);
-    
+
     return min(mag(fld)).value();
 }
 
@@ -75,7 +75,7 @@ template<class T>
 scalar panicDumpFunctionObject::getMax() const
 {
     const T &fld=obr_.lookupObject<T>(fieldName_);
-    
+
     return max(mag(fld)).value();
 }
 
@@ -85,20 +85,28 @@ bool panicDumpFunctionObject::check() const
     if(obr_.foundObject<T>(fieldName_)) {
         scalar mini=getMin<T>();
         scalar maxi=getMax<T>();
-        
+
         if(mini<minimum_ || maxi>maximum_) {
+            Info << name() << " -> panicDump" << endl;
             // make sure this field gets written, even if its not set to AUTO_WRITE
             obr_.lookupObject<T>(fieldName_).write();
-            
+
+
             bool result=const_cast<Time&>(time()).writeNow();
-            
+
             // makes sure that all processes finished writing before dumping
             reduce(result,andOp<bool>());
 
+            if(lastTimes_.valid()) {
+                Pout << "Writing last timesteps" << endl;
+                const_cast<panicDumpFunctionObject&>(*this).
+                    lastTimes_->write();
+            }
+
             FatalErrorIn("panicDumpFunctionObject")
-                << " Finishing run, because the field " << fieldName_ 
-                    << " exceeds the valid limits [ " << minimum_ << " , " 
-                    << maximum_ << " ] with the current limits [ " 
+                << " Finishing run, because the field " << fieldName_
+                    << " exceeds the valid limits [ " << minimum_ << " , "
+                    << maximum_ << " ] with the current limits [ "
                     << mini << " , " << maxi << " ]\n" << endl
                     << exit(FatalError);
         }

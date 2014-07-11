@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -623,7 +623,11 @@ void Foam::binaryOperationSearchableSurface::getNormal
     label cntA=0,cntB=0;
     forAll(who,i) {
         if(who[i]==BOTH || who[i]==HITSA || who[i]==NONE) {
-            normal[i]=normalA[cntA];
+            if(who[i]==BOTH || who[i]==HITSA) {
+                normal[i]=normalA[cntA];
+            } else {
+                normal[i]=vector::zero;
+            }
             if(revertNormalA(info[i])) {
                 normal[i]*=-1;
             }
@@ -968,5 +972,29 @@ void Foam::binaryOperationSearchableSurface::collectInfo(
         }
     }
 }
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::binaryOperationSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    a().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+    pointField centresB;
+    scalarField radiusB;
+
+    b().boundingSpheres(
+        centresB,
+        radiusB
+    );
+
+    centres.append(centresB);
+    radiusSqr.append(radiusB);
+}
+#endif
 
 // ************************************************************************* //

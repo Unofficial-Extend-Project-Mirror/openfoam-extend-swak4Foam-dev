@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sat, 21 Jun 2014 23:32:46 +0200
+State: new
+Subject: ExpressionResult subclass =ReferenceResult=
+Message-Id: <82fa0e9be39d15b8-0-artemis@bgs-cool-greybook.local>
+
+Instead of having its only field this references a field held by
+OpenFOAM. For instance the =internalField= of a field. Or the
+=patchField=. One application for this would passing these into
+Python-integration to modify it there and avoid copying via global variables

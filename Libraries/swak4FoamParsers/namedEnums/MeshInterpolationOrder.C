@@ -29,10 +29,14 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
+
+#include "swak.H"
+
+#ifndef FOAM_NEW_MESH2MESH
 
 #include "MeshInterpolationOrder.H"
 
@@ -66,5 +70,7 @@ const NamedEnum<MeshInterpolationOrder::value, 3>
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 } // namespace
+
+#endif
 
 // ************************************************************************* //

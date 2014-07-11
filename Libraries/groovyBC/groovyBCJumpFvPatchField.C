@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -89,7 +89,10 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
 :
     fixedJumpFvPatchField<Type>(p, iF),
     driver_(dict,this->patch()),
-    jumpExpression_(dict.lookup("jumpExpression"))
+    jumpExpression_(
+        dict.lookup("jumpExpression"),
+        dict
+    )
 {
     if(debug) {
         Info << "groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField 3" << endl;

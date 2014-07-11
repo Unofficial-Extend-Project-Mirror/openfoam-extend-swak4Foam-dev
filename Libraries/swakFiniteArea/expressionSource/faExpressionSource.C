@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -28,9 +28,9 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "faExpressionSource.H"
@@ -56,7 +56,10 @@ faExpressionSource<T>::faExpressionSource
 )
 :
     FaFieldValueExpressionDriver(dict,mesh),
-    expression_(dict.lookup("expression"))
+    expression_(
+        dict.lookup("expression"),
+        dict
+    )
 {
     createWriterAndRead(dict.name().name()+"_"+this->type()+"<"+pTraits<T>::typeName+">");
 }
@@ -84,7 +87,7 @@ tmp<typename faExpressionSource<T>::resultField> faExpressionSource<T>::operator
     }
 
     tmp<resultField> result(new resultField(getResult<resultField>()));
-    
+
     return result;
 }
 

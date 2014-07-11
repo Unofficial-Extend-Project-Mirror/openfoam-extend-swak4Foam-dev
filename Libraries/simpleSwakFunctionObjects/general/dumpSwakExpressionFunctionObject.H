@@ -38,9 +38,9 @@ SourceFiles
     dumpSwakExpressionFunctionObject.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef dumpSwakExpressionFunctionObject_H
@@ -68,7 +68,7 @@ class dumpSwakExpressionFunctionObject
 
     //- Disallow default bitwise copy construct
     dumpSwakExpressionFunctionObject(const dumpSwakExpressionFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const dumpSwakExpressionFunctionObject&);
 
@@ -79,8 +79,8 @@ class dumpSwakExpressionFunctionObject
     template<class Type>
     static void writeValue(Ostream &o,const Type &val,unsigned int &w);
 
-    //- the expression that is to be evaluated 
-    string expression_;
+    //- the expression that is to be evaluated
+    exprString expression_;
 
     //- the expression driver
     autoPtr<CommonValueExpressionDriver> driver_;

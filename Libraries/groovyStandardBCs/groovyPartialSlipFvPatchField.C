@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -64,7 +64,10 @@ Foam::groovyPartialSlipFvPatchField<Type>::groovyPartialSlipFvPatchField
 )
 :
     partialSlipFvPatchField<Type>(p, iF),
-    valueFractionExpression_(dict.lookup("fractionExpression")),
+    valueFractionExpression_(
+        dict.lookup("fractionExpression"),
+        dict
+    ),
     driver_(dict,this->patch())
 {
 }

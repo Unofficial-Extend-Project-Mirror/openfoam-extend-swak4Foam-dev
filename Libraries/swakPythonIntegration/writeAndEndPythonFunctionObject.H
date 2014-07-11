@@ -39,7 +39,7 @@ SourceFiles
     writeAndEndPythonFunctionObject.C
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -75,6 +75,9 @@ class writeAndEndPythonFunctionObject
 
     //- the code that should be evaluated
     string conditionCode_;
+
+    //- code that is evaluated when starting
+    string initCode_;
 
     void readParameters(const dictionary &);
 

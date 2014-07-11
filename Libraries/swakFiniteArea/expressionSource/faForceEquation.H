@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,9 +37,9 @@ SourceFiles
     faForceEquation.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef faForceEquation_H
@@ -69,9 +69,9 @@ class faForceEquation
 
     faForceEquation(const faForceEquation&);
 
-    string valueExpression_;
+    exprString valueExpression_;
 
-    string maskExpression_;
+    exprString maskExpression_;
 
     bool verbose_;
 
@@ -85,7 +85,7 @@ public:
         faForceEquation
         (
             const dictionary& ,
-            const fvMesh& 
+            const fvMesh&
         );
 
     // Destructor
@@ -97,7 +97,7 @@ public:
 
     //- where are the equations fixed
     tmp<areaScalarField> getMask();
-    
+
 };
 
 

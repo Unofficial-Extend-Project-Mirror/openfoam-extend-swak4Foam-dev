@@ -29,12 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SimpleDistribution.H"
+#include <cassert>
 
 namespace Foam {
 
@@ -43,7 +44,9 @@ namespace Foam {
 template<class Type>
 SimpleDistribution<Type>::SimpleDistribution()
 :
-    Distribution<Type>()
+    Distribution<Type>(),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
 }
 
@@ -52,7 +55,9 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
 :
     Distribution<Type>(
         pTraits<Type>::one*binSize
-    )
+    ),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
     if(binSize<SMALL) {
         FatalErrorIn("SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)")
@@ -60,6 +65,13 @@ SimpleDistribution<Type>::SimpleDistribution(const scalar binSize)
                 << endl
                 << exit(FatalError);
     }
+}
+
+template<class Type>
+void SimpleDistribution<Type>::setInvalidValue(const Type &value)
+{
+    hasInvalidValue_=true;
+    invalidValue_=value;
 }
 
 template<class Type>
@@ -103,14 +115,18 @@ SimpleDistribution<Type>::SimpleDistribution(
                 )/scalar(pTraits<label>::max)
             )
         )
-    )
+    ),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
 }
 
 template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
 :
-    Distribution<Type>(o)
+    Distribution<Type>(o),
+    hasInvalidValue_(false),
+    invalidValue_(-GREAT*pTraits<Type>::one)
 {
     recalcLimits();
 }
@@ -118,8 +134,14 @@ SimpleDistribution<Type>::SimpleDistribution(const Distribution<Type> &o)
 template<class Type>
 SimpleDistribution<Type>::SimpleDistribution(const SimpleDistribution<Type> &o)
 :
-    Distribution<Type>(o)
+    Distribution<Type>(o),
+    hasInvalidValue_(o.hasInvalidValue_),
+    invalidValue_(o.invalidValue_),
+    minimum_(o.minimum_),
+    maximum_(o.maximum_),
+    nSamples_(o.nSamples_)
 {
+
     recalcLimits();
 }
 
@@ -186,9 +208,64 @@ void SimpleDistribution<Type>::calcScalarWeight(
         );
     }
 
-    reduce(*this,plusOp<SimpleDistribution<Type> >());
-
+    // TODO: This does not properly work for weights that are 0
     recalcLimits();
+}
+
+template <typename Type>
+void SimpleDistribution<Type>::calcMinimumMaximum(
+        const Field<Type> &values,
+        const Field<scalar> &weights,
+        const Field<bool> &mask
+) {
+    minimum_.resize(pTraits<Type>::nComponents);
+    maximum_.resize(pTraits<Type>::nComponents);
+    nSamples_.resize(pTraits<Type>::nComponents);
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        minimum_[cmpt]=List<scalar>((*this)[cmpt].size(), HUGE);
+        maximum_[cmpt]=List<scalar>((*this)[cmpt].size(),-HUGE);
+        nSamples_[cmpt]=List<label>((*this)[cmpt].size(), 0);
+    }
+
+    forAll(mask,i) {
+        if(mask[i]) {
+            const Type &val=values[i];
+            const scalar &wei=weights[i];
+
+            for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+            {
+                scalar binWidth=component(this->binWidth(), cmpt);
+                label n =
+                    label(component(val, cmpt)/binWidth)
+                    - label(neg(component(val, cmpt)/binWidth));
+
+                label listIndex = this->index(cmpt, n);
+
+                scalar &minVal=minimum_[cmpt][listIndex];
+                scalar &maxVal=maximum_[cmpt][listIndex];
+
+                minVal=Foam::min(minVal,wei);
+                maxVal=Foam::max(maxVal,wei);
+                nSamples_[cmpt][listIndex]++;
+            }
+        }
+    }
+}
+
+template <typename Type>
+void SimpleDistribution<Type>::calcMinimumMaximum(
+    const Field<Type> &values,
+    const Field<scalar> &weights
+) {
+    Field<bool> mask(values.size(),true);
+
+    calcMinimumMaximum(
+        values,
+        weights,
+        mask
+    );
 }
 
 template <typename Type>
@@ -203,8 +280,14 @@ void SimpleDistribution<Type>::recalcLimits()
     {
         const List<scalar> &vals=(*this)[cmpt];
         Pair<label> &limits=validLimits_[cmpt];
+        const scalar invalid=component(invalidValue_,cmpt);
+
         forAll(vals,i) {
-            if(mag(vals[i])>VSMALL) {
+            if(
+                (!hasInvalidValue_ && mag(vals[i])>VSMALL)
+                ||
+                ( hasInvalidValue_ && mag(vals[i]-invalid)>VSMALL)
+            ) {
                 if (limits.first() == -1)
                 {
                     limits.first() = i;
@@ -248,8 +331,6 @@ void SimpleDistribution<Type>::calcScalarWeight(
             );
         }
     }
-
-    reduce(*this,plusOp<SimpleDistribution<Type> >());
 
     recalcLimits();
 }
@@ -330,6 +411,8 @@ void SimpleDistribution<Type>::divideByDistribution(
                 << exit(FatalError);
     }
 
+    setInvalidValue(valueIfZero);
+
     validLimits_=List<Pair<label> >(
         pTraits<Type>::nComponents,
         Pair<label>(-1,-1)
@@ -387,6 +470,16 @@ template<class Type>
 void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
 {
     Distribution<Type>::operator=(other);
+
+    invalidValue_=other.invalidValue_;
+    hasInvalidValue_=other.hasInvalidValue_;
+
+    minimum_.clear();
+    minimum_=other.minimum_;
+    maximum_.clear();
+    maximum_=other.maximum_;
+    nSamples_.clear();
+    nSamples_=other.nSamples_;
 
     recalcLimits();
 }
@@ -602,6 +695,68 @@ Type SimpleDistribution<Type>::smaller(scalar value) const
 
 
 template<class Type>
+template<class FType>
+List< List < Tuple2<scalar,FType> > > SimpleDistribution<Type>::rawField(
+    const List<Field<FType> > &f
+) const
+{
+    if(f.size()!=pTraits<Type>::nComponents) {
+        FatalErrorIn("SimpleDistribution::rawField")
+            << "Field size" << f.size() << " does not fit number of components "
+                << pTraits<Type>::nComponents
+                << endl
+                << exit(FatalError);
+    }
+
+    const_cast<SimpleDistribution<Type>&>(*this).recalcLimits();
+
+    List< List < Tuple2<scalar,FType> > > rawF(pTraits<Type>::nComponents);
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+    {
+        const List<FType>& cmptF = f[cmpt];
+
+        if (cmptF.empty())
+        {
+            continue;
+        }
+
+        List<label> cmptKeys = this->keys(cmpt);
+        List< Tuple2<scalar,FType> >& rawDist = rawF[cmpt];
+
+        Pair<label> limits = validLimits(cmpt);
+
+        rawDist.setSize(limits.second() - limits.first() + 1);
+        // if(rawDist.size()!=cmptF.size()) {
+        //     FatalErrorIn("SimpleDistribution::rawField")
+        //         << "For component " << cmpt << " the field size "
+        //             << cmptF.size() << " does not fit the distribution size "
+        //             << rawDist.size()
+        //             << endl
+        //             << exit(FatalError);
+        // }
+
+        for
+        (
+            label k = limits.first(), i = 0;
+            k <= limits.second();
+            k++, i++
+        )
+        {
+            label key = cmptKeys[k];
+
+            rawDist[i].first() = (0.5 + scalar(key))*component(
+                this->binWidth(), cmpt
+            );
+
+            rawDist[i].second() = cmptF[k];
+        }
+    }
+
+    return rawF;
+}
+
+template<class Type>
 List< List < Pair<scalar> > > SimpleDistribution<Type>::rawNegative() const
 {
     const_cast<SimpleDistribution<Type>&>(*this).recalcLimits();
@@ -650,6 +805,15 @@ template<class Type>
 void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 {
     List< List < Pair<scalar> > > rawDistribution = rawNegative();
+    List< List < Tuple2<scalar,scalar> > > rawMin;
+    List< List < Tuple2<scalar,scalar> > > rawMax;
+    List< List < Tuple2<scalar,label> > > rawnSamp;
+
+    if(minimum_.size()>0 && maximum_.size()>0) {
+        rawMin=rawField(minimum_);
+        rawMax=rawField(maximum_);
+        rawnSamp=rawField(nSamples_);
+    }
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
@@ -657,13 +821,25 @@ void SimpleDistribution<Type>::writeRaw(const fileName& filePrefix) const
 
         OFstream os(filePrefix + '_' + pTraits<Type>::componentNames[cmpt]);
 
-        os  << "# key raw" << endl;
+        Pair<label> limits = validLimits(cmpt);
+        Pair<label> limits2 = Distribution<Type>::validLimits(cmpt);
+
+        os  << "# key raw";
+        if(minimum_.size()>cmpt && maximum_.size()>cmpt) {
+            os << " min max nSamples";
+        }
+        os << endl;
 
         forAll(rawPairs, i)
         {
             os  << rawPairs[i].first()
-                << ' ' << rawPairs[i].second()
-                << nl;
+                << ' ' << rawPairs[i].second();
+            if(minimum_.size()>cmpt && maximum_.size()>cmpt) {
+                os  << ' ' << rawMin[cmpt][i].second()
+                    << ' ' << rawMax[cmpt][i].second()
+                    << ' ' << rawnSamp[cmpt][i].second();
+            }
+            os  << nl;
         }
     }
 }
@@ -675,6 +851,12 @@ Istream& operator>>
     SimpleDistribution<Type>& d
 ) {
     is  >>  static_cast<Distribution<Type> &>(d);
+    is  >>  d.hasInvalidValue_;
+    is  >>  d.invalidValue_;
+    is  >>  d.minimum_;
+    is  >>  d.maximum_;
+    is  >>  d.nSamples_;
+
     d.recalcLimits();
     return is;
 }
@@ -687,6 +869,12 @@ Ostream& operator<<
 )
 {
     os  <<  static_cast<const Distribution<Type> &>(d);
+    os  <<  d.hasInvalidValue_;
+    os  <<  d.invalidValue_;
+    os  <<  d.minimum_;
+    os  <<  d.maximum_;
+    os  <<  d.nSamples_;
+
     return os;
 }
 
@@ -700,8 +888,32 @@ SimpleDistribution<Type> operator+
 {
     // The coarsest binWidth is the sensible choice
     SimpleDistribution<Type> d(max(d1.binWidth(), d2.binWidth()));
-
     List< List< List < Pair<scalar> > > > rawDists(2);
+    bool doMinMax=false;
+    if(
+        d1.minimum_.size()>0 || d1.maximum_.size()>0
+        ||
+        d2.minimum_.size()>0 || d2.maximum_.size()>0
+    ) {
+        const label nComp=pTraits<Type>::nComponents;
+
+        if(
+            d1.minimum_.size()==nComp && d1.maximum_.size()==nComp
+            &&
+            d2.minimum_.size()==nComp && d2.maximum_.size()==nComp
+        ) {
+            doMinMax=true;
+        } else {
+            FatalErrorIn("SimpleDistribution<Type> operator+")
+                << "Sizes of minimum and maximum in operand inconsitent"
+                    << " " << d1.minimum_.size()
+                    << " " << d1.maximum_.size()
+                    << " " << d2.minimum_.size()
+                    << " " << d2.maximum_.size()
+                    << endl
+                    << exit(FatalError);
+        }
+    }
 
     // the changed lines
     rawDists[0] = d1.rawNegative();
@@ -735,6 +947,68 @@ SimpleDistribution<Type> operator+
                 label listIndex = d.index(cmpt, n);
 
                 cmptSimpleDistribution[listIndex] += cmptWeight;
+            }
+        }
+    }
+
+    if(doMinMax) {
+        d.minimum_.resize(pTraits<Type>::nComponents);
+        d.maximum_.resize(pTraits<Type>::nComponents);
+        d.nSamples_.resize(pTraits<Type>::nComponents);
+
+        for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+        {
+            d.minimum_[cmpt]=List<scalar>(d[cmpt].size(), HUGE);
+            d.maximum_[cmpt]=List<scalar>(d[cmpt].size(),-HUGE);
+            d.nSamples_[cmpt]=List<label>(d[cmpt].size(), 0);
+        }
+        List< List< List < Tuple2<scalar,scalar> > > > rawMin(2);
+        List< List< List < Tuple2<scalar,scalar> > > > rawMax(2);
+        List< List< List < Tuple2<scalar,label> > > > rawSamples(2);
+        rawMin[0] = d1.rawField(d1.minimum_);
+        rawMin[1] = d2.rawField(d2.minimum_);
+        rawMax[0] = d1.rawField(d1.maximum_);
+        rawMax[1] = d2.rawField(d2.maximum_);
+        rawSamples[0] = d1.rawField(d1.nSamples_);
+        rawSamples[1] = d2.rawField(d2.nSamples_);
+
+        forAll(rawDists, rDI)
+        {
+            for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+            {
+                List<scalar>& cmptMin = d.minimum_[cmpt];
+                List<scalar>& cmptMax = d.maximum_[cmpt];
+                List<label>& cmptSamples = d.nSamples_[cmpt];
+
+                const List < Tuple2<scalar,scalar> >& rMin = rawMin[rDI][cmpt];
+                const List < Tuple2<scalar,scalar> >& rMax = rawMax[rDI][cmpt];
+                const List < Tuple2<scalar,label> >& rSamples = rawSamples[rDI][cmpt];
+
+                forAll(rMin, rI)
+                {
+                    scalar valueToAdd = rMin[rI].first();
+                    scalar minToAdd = rMin[rI].second();
+                    scalar maxToAdd = rMax[rI].second();
+                    assert(valueToAdd==rMax[rI].first());
+
+                    label n =
+                        label
+                        (
+                            component(valueToAdd, cmpt)
+                            /component(d.binWidth(), cmpt)
+                        )
+                        - label
+                        (
+                            neg(component(valueToAdd, cmpt)
+                            /component(d.binWidth(), cmpt))
+                        );
+
+                    label listIndex = d.index(cmpt, n);
+
+                    cmptMin[listIndex] = min(cmptMin[listIndex],minToAdd);
+                    cmptMax[listIndex] = max(cmptMax[listIndex],maxToAdd);
+                    cmptSamples[listIndex]+=rSamples[rI].second();
+                }
             }
         }
     }

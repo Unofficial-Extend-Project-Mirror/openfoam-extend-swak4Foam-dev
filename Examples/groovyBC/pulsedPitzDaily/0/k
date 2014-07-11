@@ -22,9 +22,11 @@ boundaryField
 {
     inlet
     {
+        #include "$FOAM_CASE/constant/transportProperties"
+
         type            groovyBC;
         variables "kAvg{}=sum(theKFieldItself*vol())/sum(vol());";
-        valueExpression "0.5*(kAvg+2e-5)";
+        valueExpression "0.5*(kAvg+2*$[(dimensionedScalar)nu])";
         aliases  {
             // just for testing
             theKFieldItself k;

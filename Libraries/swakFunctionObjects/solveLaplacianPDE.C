@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -92,13 +92,32 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
 
     if(active_) {
         if(!steady_) {
-            dict.lookup("rho") >> rhoExpression_ >> rhoDimension_;
+            readExpressionAndDimension(
+                dict,
+                "rho",
+                rhoExpression_,
+                rhoDimension_
+            );
         }
-        dict.lookup("lambda") >> lambdaExpression_ >> lambdaDimension_;
-        dict.lookup("source") >> sourceExpression_ >> sourceDimension_;
+        readExpressionAndDimension(
+            dict,
+            "lambda",
+            lambdaExpression_,
+            lambdaDimension_
+        );
+        readExpressionAndDimension(
+            dict,
+            "source",
+            sourceExpression_,
+            sourceDimension_
+        );
         if(dict.found("sourceImplicit")) {
-            dict.lookup("sourceImplicit")
-                >> sourceImplicitExpression_ >> sourceImplicitDimension_;
+            readExpressionAndDimension(
+                dict,
+                "sourceImplicit",
+                sourceImplicitExpression_,
+                sourceImplicitDimension_
+            );
         } else {
             if(sourceExpression_!="0") {
                 WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")
@@ -162,6 +181,9 @@ void Foam::solveLaplacianPDE::solve()
                 -fvm::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")
                 ==
                 sourceField
+#ifdef FOAM_HAS_FVOPTIONS
+                + fvOptions()(f)
+#endif
             );
 
             if(!steady_) {
@@ -207,11 +229,19 @@ void Foam::solveLaplacianPDE::solve()
                 eq.relax();
             }
 
+#ifdef FOAM_HAS_FVOPTIONS
+            fvOptions().constrain(eq);
+#endif
+
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
             for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
             {
                 eq.solve();
             }
+
+#ifdef FOAM_HAS_FVOPTIONS
+            fvOptions().correct(f);
+#endif
         }
     }
 }

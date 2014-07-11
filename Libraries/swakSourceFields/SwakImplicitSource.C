@@ -28,9 +28,9 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "SwakImplicitSource.H"
@@ -122,11 +122,17 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
         this->driver().
         FieldValueExpressionDriver::getResult<volScalarField>()
     );
+    result.dimensions().reset(this->dimensions_[fieldI]);
+    volScalarField usedResult(result*0);
+    forAll(this->cells_,i) {
+        label cellI=this->cells_[i];
+        usedResult[cellI]=result[cellI];
+    }
 
     if(switchExplicitImplicit_) {
-        eqn+=fvm::SuSp(result,eqn.psi());
+        eqn+=fvm::SuSp(usedResult,eqn.psi());
     } else {
-        eqn+=fvm::Sp(result,eqn.psi());
+        eqn+=fvm::Sp(usedResult,eqn.psi());
     }
 }
 

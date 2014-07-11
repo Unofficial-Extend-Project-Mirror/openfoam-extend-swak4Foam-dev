@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -86,7 +86,10 @@ DelayedExpressionResult::DelayedExpressionResult(const dictionary &dict)
 :
     ExpressionResult(dict.subOrEmptyDict("value")),
     name_(dict.lookup("name")),
-    startupValueExpression_(dict.lookup("startupValue")),
+    startupValueExpression_(
+        dict.lookup("startupValue"),
+        dict
+    ),
     storeInterval_(readScalar(dict.lookup("storeInterval"))),
     delay_(readScalar(dict.lookup("delay")))
 {

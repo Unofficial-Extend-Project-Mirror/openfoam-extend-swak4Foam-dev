@@ -39,7 +39,7 @@ SourceFiles
     executeIfPythonFunctionObject.C
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -72,6 +72,9 @@ class executeIfPythonFunctionObject
 
     //- Disallow default bitwise assignment
     void operator=(const executeIfPythonFunctionObject&);
+
+    //- the code that should be evaluated when the function object starts
+    string initCode_;
 
     //- the code that should be evaluated
     string conditionCode_;

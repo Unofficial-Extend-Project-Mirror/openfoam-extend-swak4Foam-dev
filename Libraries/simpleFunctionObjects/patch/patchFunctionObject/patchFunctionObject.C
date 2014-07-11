@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -72,13 +72,29 @@ bool patchFunctionObject::start()
     wordList oldPatchNames(patchNames_);
     wordReList newPatches(dict_.lookup("patches"));
     HashSet<word> patchNamesNew;
+    bool allowCoupled(dict_.lookupOrDefault<bool>("allowCoupled",false));
 
     const fvMesh &mesh=refCast<const fvMesh>(obr_);
     wordList allPatches(mesh.boundaryMesh().names());
     forAll(newPatches,i) {
         labelList IDs=findStrings(newPatches[i],allPatches);
         forAll(IDs,j) {
-            patchNamesNew.insert(allPatches[IDs[j]]);
+            const word &name=allPatches[IDs[j]];
+            bool add=true;
+            if(!allowCoupled) {
+                label patchI=mesh.boundaryMesh().findPatchID(name);
+                const polyPatch &thePatch=mesh.boundaryMesh()[patchI];
+                if(thePatch.coupled()) {
+                    WarningIn("patchFunctionObject::start()")
+                        << "Patch " << name << " in " << dict_.name() << " is coupled." << nl
+                            << "Disabling. If you want it enabled set 'allowCoupled true;'"
+                            << endl;
+                    add=false;
+                }
+            }
+            if(add) {
+                patchNamesNew.insert(name);
+            }
         }
     }
 
@@ -100,6 +116,10 @@ bool patchFunctionObject::start()
                 << " Patch " << name << " does not exist in patches: "
                     << mesh.boundaryMesh().names() << endl;
         }
+    }
+    if(debug>1) {
+        Pout << "Patch names: " << patchNames_ << nl
+            << " Index: " << patchIndizes_ << endl;
     }
 
     if (Pstream::master())

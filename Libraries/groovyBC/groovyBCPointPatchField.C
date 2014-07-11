@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -47,19 +47,6 @@ Contributors/Copyright:
 namespace Foam
 {
 
-const fvPatch &getFvPatch(const pointPatch &pp) {
-    if(!isA<fvMesh>(pp.boundaryMesh().mesh().db())) {
-        FatalErrorIn("getFvPatch(const pointPatch &pp)")
-            << " This will only work if I can find a fvMesh, but I only found a "
-                << typeid(pp.boundaryMesh().mesh().db()).name()
-                << endl
-                << exit(FatalError);
-    }
-    const fvMesh &fv=dynamic_cast<const fvMesh &>(pp.boundaryMesh().mesh().db());
-    return fv.boundary()[pp.index()];
-}
-
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
@@ -71,7 +58,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 :
     mixedPointPatchFieldType(p, iF),
     groovyBCCommon<Type>(false,true),
-    driver_(getFvPatch(this->patch()))
+    driver_(groovyBCCommon<Type>::getFvPatch(this->patch()))
 {
 #ifndef FOAM_NO_MIXED_POINT_PATCH
     this->refValue() = pTraits<Type>::zero;
@@ -90,7 +77,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 :
     mixedPointPatchFieldType(p, iF),
     groovyBCCommon<Type>(dict,false,true),
-    driver_(dict,getFvPatch(this->patch()))
+    driver_(dict,groovyBCCommon<Type>::getFvPatch(this->patch()))
 {
     driver_.readVariablesAndTables(dict);
 
@@ -166,7 +153,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
         mapper
     ),
     groovyBCCommon<Type>(ptf),
-    driver_(getFvPatch(this->patch()),ptf.driver_)
+    driver_(groovyBCCommon<Type>::getFvPatch(this->patch()),ptf.driver_)
 {
 }
 
@@ -180,7 +167,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 :
     mixedPointPatchFieldType(ptf, iF),
     groovyBCCommon<Type>(ptf),
-    driver_(getFvPatch(this->patch()),ptf.driver_)
+    driver_(groovyBCCommon<Type>::getFvPatch(this->patch()),ptf.driver_)
 {
 }
 

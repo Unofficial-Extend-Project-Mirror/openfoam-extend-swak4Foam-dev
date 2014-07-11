@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -286,7 +286,11 @@ int main(int argc, char *argv[])
             );
 
             driver->clearVariables();
-            driver->parse(string(dict.lookup("expression")));
+            driver->parse(
+                exprString(
+                    dict.lookup("expression"),
+                    dict)
+            );
             word rType=driver->CommonValueExpressionDriver::getResultType();
 
             if(rType==pTraits<scalar>::typeName) {

@@ -38,9 +38,9 @@ SourceFiles
     solveAreaLaplacianPDE.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef solveAreaLaplacianPDE_H
@@ -57,26 +57,26 @@ class solveAreaLaplacianPDE
 {
     //- Disallow default bitwise copy construct
     solveAreaLaplacianPDE(const solveAreaLaplacianPDE&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const solveAreaLaplacianPDE&);
 
 protected:
 
     //- the coefficent for the time-derivative
-    string rhoExpression_;
+    exprString rhoExpression_;
     dimensionSet rhoDimension_;
 
     //- the coefficient for the laplacian term
-    string lambdaExpression_;
+    exprString lambdaExpression_;
     dimensionSet lambdaDimension_;
 
     //- the right hand side
-    string sourceExpression_;
+    exprString sourceExpression_;
     dimensionSet sourceDimension_;
 
     //- the right hand side
-    string sourceImplicitExpression_;
+    exprString sourceImplicitExpression_;
     dimensionSet sourceImplicitDimension_;
 
     //- do the actual solving
@@ -89,7 +89,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     solveAreaLaplacianPDE

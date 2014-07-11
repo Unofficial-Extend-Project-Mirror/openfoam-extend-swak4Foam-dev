@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -37,9 +37,9 @@ SourceFiles
     expressionSource.C
 
 Contributors/Copyright:
-    2010, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionSource_H
@@ -65,7 +65,7 @@ class expressionSource
 
     expressionSource(const expressionSource&);
 
-    string expression_;
+    exprString expression_;
 
 public:
 
@@ -75,7 +75,7 @@ public:
         expressionSource
         (
             const dictionary& ,
-            const fvMesh& 
+            const fvMesh&
         );
 
     // Destructor
@@ -86,7 +86,7 @@ public:
 
     //- give back a Field
     tmp<resultField> operator()();
-    
+
 };
 
 

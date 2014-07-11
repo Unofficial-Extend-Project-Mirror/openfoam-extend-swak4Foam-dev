@@ -38,7 +38,7 @@ SourceFiles
     PatchValueExpressionDriver.C
 
 Contributors/Copyright:
-    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -53,6 +53,8 @@ Contributors/Copyright:
 #include "ExpressionResult.H"
 
 #include "CommonValueExpressionDriver.H"
+
+#include "interpolation.H"
 
 namespace Foam {
     class PatchValueExpressionDriver;

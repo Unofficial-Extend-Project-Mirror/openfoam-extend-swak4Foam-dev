@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -182,7 +182,12 @@ void reportValues(
     );
 
     Field<Type> result(
-        driver.evaluate<Type>(fieldName)
+        driver.evaluate<Type>(
+            exprString(
+                fieldName,
+                dictionary::null
+            )
+        )
     );
 
     AccumulationCalculation<Type> calculator(

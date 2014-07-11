@@ -38,7 +38,7 @@ SourceFiles
     swakExpressionAverageDistributionFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -81,22 +81,22 @@ class swakExpressionAverageDistributionFunctionObject
 
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the expression for the weight
-    string weightExpression_;
+    exprString weightExpression_;
 
     //- the weight values
     autoPtr<Field<scalar> > weightValues_;
 
     //- the expression for the mask
-    string maskExpression_;
+    exprString maskExpression_;
 
     //- the mask values
     autoPtr<Field<bool> > maskValues_;
 
     //- the expression for the abscissa
-    string abscissaExpression_;
+    exprString abscissaExpression_;
 
     //- the expression driver
     autoPtr<CommonValueExpressionDriver> driver_;

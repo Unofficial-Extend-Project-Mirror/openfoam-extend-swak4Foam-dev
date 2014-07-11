@@ -56,6 +56,8 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#include "exprString.H"
+
 namespace Foam
 {
 // Forward declaration of classes
@@ -91,10 +93,10 @@ protected:
     word patchName_;
 
     //- Expression
-    string expression_;
+    exprString expression_;
 
     //- Expression that says which cells are to be changed
-    string maskExpression_;
+    exprString maskExpression_;
 
     const objectRegistry& obr_;
 
