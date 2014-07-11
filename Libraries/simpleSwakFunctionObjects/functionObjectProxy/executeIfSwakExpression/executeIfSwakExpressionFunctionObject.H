@@ -69,7 +69,7 @@ class executeIfSwakExpressionFunctionObject
     autoPtr<CommonValueExpressionDriver> driver_;
 
     //- the logical expression
-    string logicalExpression_;
+    exprString logicalExpression_;
 
     void readParameters(const dictionary &);
 

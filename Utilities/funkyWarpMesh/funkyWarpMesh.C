@@ -88,7 +88,10 @@ int main(int argc, char *argv[])
 
         }
         relative=args.optionFound("relative");
-        string expression=args.options()["expression"];
+        exprString expression(
+            args.options()["expression"],
+            dictionary::null
+        );
         FieldValueExpressionDriver driver(
             runTime.timeName(),
             runTime,
@@ -131,7 +134,10 @@ int main(int argc, char *argv[])
         const word mode(warpDict.lookup("mode"));
         if(mode=="set") {
             relative=readBool(warpDict.lookup("relative"));
-            string expression(warpDict.lookup("expression"));
+            exprString expression(
+                warpDict.lookup("expression"),
+                warpDict
+            );
             FieldValueExpressionDriver driver(
                 runTime.timeName(),
                 runTime,

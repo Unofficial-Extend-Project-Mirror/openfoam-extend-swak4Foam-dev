@@ -48,6 +48,7 @@ Contributors/Copyright:
 #define StoredExpressionResult_H
 
 #include "ExpressionResult.H"
+#include "exprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +67,7 @@ class StoredExpressionResult
 
     word name_;
 
-    string initialValueExpression_;
+    exprString initialValueExpression_;
 
 public:
 
@@ -100,7 +101,7 @@ public:
 
     const word name() const { return name_; }
 
-    const string initialValueExpression() const
+    const exprString &initialValueExpression() const
         {
             return initialValueExpression_;
         }

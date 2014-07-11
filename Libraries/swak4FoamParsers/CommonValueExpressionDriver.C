@@ -42,6 +42,8 @@ Contributors/Copyright:
 
 #include "Random.H"
 
+#include "entryToExpression.H"
+
 namespace Foam {
 
 
@@ -55,6 +57,11 @@ defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
     // Currently not working
 bool CommonValueExpressionDriver::cacheSets_=true;
 
+dictionary CommonValueExpressionDriver::emptyData_("noDictionary");
+
+    // this should be sufficient
+const label CommonValueExpressionDriver::maxVariableRecursionDepth_=100;
+
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 
@@ -65,6 +72,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const CommonValueExpressionDriver& orig
 )
 :
+    dict_(orig.dict_),
     variableStrings_(orig.variableStrings_),
     contextString_(orig.contextString_),
     aliases_(orig.aliases_),
@@ -97,6 +105,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     const dictionary& dict
 )
 :
+    dict_(dict),
     variableStrings_(readVariableStrings(dict)),
     contextString_("- From dictionary: "+dict.name()),
     specialVariablesIndex_(-1),
@@ -153,6 +162,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool searchOnDisc
 )
 :
+    dict_(emptyData_),
     variableStrings_(),
     contextString_("- Driver constructed from scratch"),
     specialVariablesIndex_(-1),
@@ -408,27 +418,58 @@ CommonValueExpressionDriver::~CommonValueExpressionDriver()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-stringList CommonValueExpressionDriver::readVariableStrings(
-    const dictionary &dict
+List<exprString> CommonValueExpressionDriver::readVariableStrings(
+    const dictionary &dict,
+    const word &name,
+    const label recursionDepth
 )
 {
-    if(!dict.found("variables")) {
-        return stringList();
+    Sbug << "::readVariableStrings " << name
+        << " depth " << recursionDepth << endl;
+
+    if(!dict.found(name)) {
+        return List<exprString>();
     }
-    ITstream data(dict.lookup("variables"));
+
+    if(recursionDepth>maxVariableRecursionDepth_) {
+        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings")
+            << "While reading variable list " << name << " in "
+                << dict.name() << "the maximum recursion depth "
+                << maxVariableRecursionDepth_ << " was exceeded." << nl
+                << "Probable cause is that variable lists are referencing "
+                << "each other in a circular fashion"
+                << endl
+                << exit(FatalError);
+    }
+
+    ITstream data(dict.lookup(name));
     token nextToken;
     data.read(nextToken);
+
+    List<string> result;
+
     if(nextToken.isString()) {
+        Sbug << name << " is a single string" << endl;
         data.rewind();
-        return stringList(1,string(data));
+        result=expandIncludeStringList(
+            List<string>(1,string(data)),
+            dict,
+            recursionDepth+1
+        );
     } else if(
         nextToken.type()==token::PUNCTUATION
         &&
         nextToken.pToken()==token::BEGIN_LIST
     ) {
+        Sbug << name << " is a list of strings" << endl;
         data.rewind();
-        return stringList(data);
-    } if(nextToken.isLabel()) {
+        result=expandIncludeStringList(
+            List<string>(data),
+            dict,
+            recursionDepth+1
+        );
+    } else if(nextToken.isLabel()) {
+        Sbug << name << " is a list of strings with prefix" << endl;
         token anotherToken;
         data.read(anotherToken);
         if(
@@ -437,16 +478,257 @@ stringList CommonValueExpressionDriver::readVariableStrings(
             anotherToken.pToken()==token::BEGIN_LIST
         ) {
             data.rewind();
-            return stringList(data);
+            result=expandIncludeStringList(
+                List<string>(data),
+                dict,
+                recursionDepth+1
+            );
+        }
+    } else {
+        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
+            << " Entry '"<< name << "' must in dictionary "
+                << dict.name() << " either be a string or a list of strings"
+                << endl
+                << exit(FatalError);
+
+        return List<exprString>();
+    }
+
+    List<exprString> toReturn(result.size());
+
+    forAll(result,i) {
+        toReturn[i]=exprString(
+            result[i],
+            dict
+        );
+    }
+    Sbug << "Returns: " << toReturn;
+    return toReturn;
+}
+
+List<string> CommonValueExpressionDriver::expandIncludeStringList(
+    const List<string> &orig,
+    const dictionary &dict,
+    const label recursionDepth
+) {
+    Sbug << "::expandIncludeStringList " << orig << endl;
+
+    DynamicList<string> strings;
+
+    forAll(orig,i) {
+	string o=orig[i];
+        Sbug << "Checking " << o << endl;
+
+        o.removeTrailing(' ');
+
+        std::string::size_type start=0;
+        std::string::size_type end=0;
+        while(start<o.length()) {
+            end=o.find(';',start);
+            if(end==std::string::npos) {
+            FatalErrorIn("CommonValueExpressionDriver::expandIncludeStringList")
+                << "No terminating ';' found in expression '"
+                    << o.substr(start) << "' of dictionary "
+                    << dict.name() << "\n"
+                    << endl
+                    << exit(FatalError);
+            }
+            string sub=o.substr(start,end-start+1);
+
+            Sbug << "Found: " << sub << endl;
+
+            if(sub[0]=='#') {
+                std::string::size_type semiPos=sub.find(';');
+                assert(semiPos!=std::string::npos);
+                string inList=sub.substr(1,semiPos-1);
+                Sbug << "Include " << inList << endl;
+                List<exprString> expansion(
+                    // expansion shoujld happen implicitly here
+                    readVariableStrings(
+                        dict,
+                        inList,
+                        recursionDepth
+                    )
+                );
+                Sbug << "Got expansion from " << inList << ": "
+                    << expansion << endl;
+                forAll(expansion,k){
+                    // strings.append(
+                    //     expandDictVariables(
+                    //         expansion[k],
+                    //         dict)
+                    // );
+                    strings.append(expansion[k]);
+                }
+            } else {
+                strings.append(
+                    expandDictVariables(
+                        sub,
+                        dict
+                    )
+                );
+            }
+            start=end+1;
         }
     }
 
-    FatalErrorIn("CommonValueExpressionDriver::readVariableStrings(const dictionary &dict)")
-        << " Entry 'variables' must either be a string or a list of strings"
-            << endl
-            << exit(FatalError);
+    strings.shrink();
+    return List<string>(strings);
+}
 
-    return stringList();
+inline bool is_valid(char c)
+{
+    return (isalpha(c) || isdigit(c) || (c == '_'));
+}
+
+string getEntryString(
+    const dictionary &dict,
+    const string &replace
+) {
+    const entry &e=dict.lookupEntry(
+        replace,
+        true, // recursive
+        true //  pattern matching
+    );
+    if(e.isDict()) {
+        FatalErrorIn("getEntryString")
+            << "Entry " << replace << " found in dictionary "
+                << dict.name() << " but is a dictionary"
+                << endl
+                << exit(FatalError);
+    }
+    return entryToExpression::fromEntry(e);
+}
+
+exprString CommonValueExpressionDriver::expandDictVariables(
+    const string &orig,
+    const dictionary &dict
+) {
+    Sbug << "::expandDictVariables " << orig << endl;
+
+    string result=orig;
+
+    while(result.find('$')!=std::string::npos) {
+        std::string::size_type dollarPos=result.find('$');
+        if(dollarPos+1>=result.size()) {
+            FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                << "'$' found at end in " << result << "(originally "
+                    << orig << ")"
+                    << endl
+                    << exit(FatalError);
+        }
+        std::string::size_type endPos=std::string::npos;
+
+        if(result[dollarPos+1]=='[') {
+            // "protected pattern"
+            endPos=result.find(']',dollarPos+1);
+            if(endPos==std::string::npos) {
+                FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                    << "No correct terminating ']' found in " << result
+                        << " (originally " << orig << ")"
+                        << endl
+                        << exit(FatalError);
+            }
+        } else {
+            // 'pure' name ... word
+            endPos=dollarPos;
+            while(
+                endPos+1<result.size()
+                &&
+                is_valid(result[endPos+1])
+            ) {
+                endPos++;
+            }
+            if(endPos==dollarPos) {
+                FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                    << "Not a valid character after the $ in " <<result
+                        << "(originally " << orig << ")"
+                        << endl
+                        << exit(FatalError);
+            }
+        }
+
+        Sbug << "DollarPos: " << label(dollarPos)
+            << " endPos " << label(endPos) << endl;
+        string replace=result.substr(dollarPos+1,endPos-dollarPos);
+        string replacement="";
+
+        if(replace[0]=='[') {
+            string castTo="";
+            string entryName="";
+            if(replace[1]=='(') {
+                std::string::size_type closePos=replace.find(')');
+                if(closePos==std::string::npos) {
+                    FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                        << "No closing ')' found in " << replace
+                            << " (" << orig << ")"
+                            << endl
+                            << exit(FatalError);
+                }
+                castTo=replace.substr(2,closePos-2);
+                entryName=replace.substr(closePos+1,replace.length()-closePos-2);
+            } else {
+                entryName=replace.substr(1,replace.length()-2);
+            }
+            if(castTo=="") {
+                replacement=getEntryString(
+                    dict,
+                    entryName
+                );
+            } else {
+                autoPtr<entryToExpression> e2e=entryToExpression::New(castTo);
+                const entry &e=dict.lookupEntry(entryName,true,true);
+                replacement=e2e->toExpr(e);
+            }
+        } else {
+            replacement=getEntryString(
+                dict,
+                replace
+            );
+        }
+        Sbug << replace << " -> " << replacement << endl;
+
+        string pre=result.substr(0,dollarPos);
+        string post=result.substr(endPos+1);
+
+        Sbug << "Pre: " << pre << " Post: " << post << endl;
+        result= pre
+            + replacement
+            + post;
+        Sbug << "Resulting: " << result << endl;
+    }
+
+    Sbug << orig << " expanded to " << result << endl;
+
+    exprString ret(result.c_str());
+
+    return ret;
+}
+
+exprString CommonValueExpressionDriver::readExpression(
+    const word &name,
+    const dictionary &dict
+) {
+    Sbug << "::readExpression " << name << endl;
+
+    string result=dict.lookup(name);
+
+    return expandDictVariables(
+        result,
+        dict
+    );
+}
+
+
+exprString CommonValueExpressionDriver::readExpression(
+    const word &name
+) {
+    Dbug << "::readExpression " << name << endl;
+
+    return readExpression(
+        name,
+        dict()
+    );
 }
 
 void CommonValueExpressionDriver::setVariableStrings(const dictionary &dict)
@@ -457,7 +739,7 @@ void CommonValueExpressionDriver::setVariableStrings(const dictionary &dict)
 Ostream &CommonValueExpressionDriver::writeVariableStrings(Ostream &out) const
 {
     if(variableStrings_.size()==0) {
-        out << string("");
+        out << exprString("");
     } else if(variableStrings_.size()==1) {
         out << variableStrings_[0];
     } else {
@@ -878,7 +1160,7 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
             Pout << "Updating delayed variable " << iter().name() << endl;
         }
         if(!iter().updateReadValue(mesh().time().value())) {
-            const string &expr=iter().startupValueExpression();
+            const exprString &expr=iter().startupValueExpression();
             if(debug) {
                 Pout << "Evaluate: " << expr << endl;
             }
@@ -924,7 +1206,7 @@ void CommonValueExpressionDriver::clearVariables()
 
 void CommonValueExpressionDriver::evaluateVariable(
     const word &name,
-    const string &expr
+    const exprString &expr
 )
 {
     if(
@@ -967,9 +1249,9 @@ void CommonValueExpressionDriver::evaluateVariable(
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(
-    const string &remoteExpr,
+    const exprString &remoteExpr,
     const word &name,
-    const string &expr
+    const exprString &expr
 )
 {
     if(debug) {
@@ -977,7 +1259,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
             << " : " << expr << " -> " << name << endl;
     }
 
-    string remote=remoteExpr;
+    exprString remote=remoteExpr;
     word regionName="";
     word id="";
     word type="patch";
@@ -1074,7 +1356,7 @@ autoPtr<ExpressionResult> CommonValueExpressionDriver::getRemoteResult(
 }
 
 void CommonValueExpressionDriver::addVariables(
-    const stringList &exprList,
+    const List<exprString> &exprList,
     bool clear
 )
 {
@@ -1087,11 +1369,11 @@ void CommonValueExpressionDriver::addVariables(
 }
 
 void CommonValueExpressionDriver::addVariables(
-    const string &exprListIn,
+    const exprString &exprListIn,
     bool clear
 )
 {
-    string exprList(exprListIn);
+    exprString exprList(exprListIn);
     exprList.removeTrailing(' ');
 
     if(clear) {
@@ -1120,7 +1402,11 @@ void CommonValueExpressionDriver::addVariables(
                     << endl
                     << exit(FatalError);
         }
-        string expr(exprList.substr(eqPos+1,end-eqPos-1));
+        exprString expr(
+            exprString::toExpr(
+                exprList.substr(eqPos+1,end-eqPos-1)
+            )
+        );
 
         std::string::size_type  startPos=exprList.find('{',start);
         if(startPos!=std::string::npos && startPos<eqPos) {
@@ -1138,7 +1424,11 @@ void CommonValueExpressionDriver::addVariables(
                     exprList.substr(start,startPos-start)
                 )
             );
-            string remoteExpr(exprList.substr(startPos+1,endPos-startPos-1));
+            exprString remoteExpr(
+                exprString::toExpr(
+                    exprList.substr(startPos+1,endPos-startPos-1)
+                )
+            );
             evaluateVariableRemote(remoteExpr,name,expr);
         } else {
             word name(exprList.substr(start,eqPos-start));
@@ -1371,19 +1661,25 @@ void CommonValueExpressionDriver::setTrace(
 }
 
 label CommonValueExpressionDriver::parse(
-    const std::string &f,
+    const exprString &f,
     const word &start
 )
 {
+    Dbug << "::parse() - expr: " << f << " start: " << start << endl;
+
     int start_token=startupSymbol(start);
 
     parserLastPos()=-1;
 
     content_ = f;
     scan_begin ();
+
+    Dbug << "Start parsing" << endl;
     parseInternal(start_token);
-    //     Info << "Prsed to " << parserLastPos() << " of " << label(f.size()) << endl;
+    Dbug << "Parsed to " << parserLastPos() << " of " << label(f.size()) << endl;
+
     scan_end ();
+    Dbug << "Ended at position " << parserLastPos() << endl;
 
     return parserLastPos();
 }

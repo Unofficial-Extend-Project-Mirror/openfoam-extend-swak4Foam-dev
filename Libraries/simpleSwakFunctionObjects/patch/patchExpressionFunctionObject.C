@@ -64,7 +64,10 @@ patchExpressionFunctionObject::patchExpressionFunctionObject
 )
 :
     patchFunctionObject(name,t,dict),
-    expression_(dict.lookup("expression")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
     data_(dict),
     accumulations_(
         NumericAccumulationNamedEnum::readAccumulations(

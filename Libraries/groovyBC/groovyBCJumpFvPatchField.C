@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCJumpFvPatchField.H"
@@ -89,7 +89,10 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
 :
     jumpCyclicFvPatchField<Type>(p, iF),
     driver_(dict,this->patch()),
-    jumpExpression_(dict.lookup("jumpExpression"))
+    jumpExpression_(
+        dict.lookup("jumpExpression"),
+        dict
+    )
 {
     if(debug) {
         Info << "groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField 3" << endl;

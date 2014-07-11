@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -30,7 +30,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "expressionToPoint.H"
@@ -106,7 +106,7 @@ void Foam::expressionToPoint::combine(topoSet& set, const bool add) const
 Foam::expressionToPoint::expressionToPoint
 (
     const polyMesh& mesh,
-    const string& expression
+    const exprString& expression
 )
 :
     topoSetSource(mesh),
@@ -122,7 +122,10 @@ Foam::expressionToPoint::expressionToPoint
 )
 :
     topoSetSource(mesh),
-    expression_(dict.lookup("expression")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
     dict_(new dictionary(dict))
 {}
 
@@ -135,7 +138,10 @@ Foam::expressionToPoint::expressionToPoint
 )
 :
     topoSetSource(mesh),
-    expression_(checkIs(is))
+    expression_(
+        checkIs(is),
+        dictionary::null
+    )
 {}
 
 
@@ -157,7 +163,7 @@ void Foam::expressionToPoint::applyToSet
     {
         Info<< "    Adding all elements of for which " << expression_ << " evaluates to true ..."
             << endl;
-        
+
         combine(set,true);
     }
     else if (action == topoSetSource::DELETE)

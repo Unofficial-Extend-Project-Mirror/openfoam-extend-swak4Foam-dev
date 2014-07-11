@@ -81,21 +81,30 @@ void writeIfSwakExpressionFunctionObject::readParameters(const dictionary &dict)
         refCast<const fvMesh>(obr_)
     );
 
-    writeExpression_=dict.lookup("writeCondition");
+    writeExpression_=exprString(
+        dict.lookup("writeCondition"),
+        dict
+    );
 
     writeAccumulation_=LogicalAccumulationNamedEnum::names[
         dict.lookup("writeConditionAccumulation")
     ];
 
     if(cooldownMode()==cdmRetrigger) {
-        stopCooldownExpression_=dict.lookup("retriggerCondition");
+        stopCooldownExpression_=exprString(
+            dict.lookup("retriggerCondition"),
+            dict
+        );
 
         stopCooldownAccumulation_=LogicalAccumulationNamedEnum::names[
             dict.lookup("retriggerConditionAccumulation")
         ];
     }
     if(writeControlMode()==scmWriteUntilSwitch) {
-        stopWriteExpression_=dict.lookup("stopWritingCondition");
+        stopWriteExpression_=exprString(
+            dict.lookup("stopWritingCondition"),
+            dict
+        );
 
         stopWriteAccumulation_=LogicalAccumulationNamedEnum::names[
             dict.lookup("stopWritingConditionAccumulation")
@@ -123,7 +132,7 @@ bool writeIfSwakExpressionFunctionObject::checkStopCooldown() {
 
 
 bool writeIfSwakExpressionFunctionObject::evaluateCondition(
-        string expression,
+        exprString expression,
         LogicalAccumulationNamedEnum::value accumulation
 ) {
     driver_->clearVariables();
