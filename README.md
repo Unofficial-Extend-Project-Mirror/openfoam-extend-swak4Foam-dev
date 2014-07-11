@@ -683,7 +683,7 @@
 </li>
 </ul>
 </li>
-<li><a href="#sec-9-14">9.14. Next release - version number : 0.3.1</a>
+<li><a href="#sec-9-14">9.14. 2014-07-11 - version number : 0.3.1</a>
 <ul>
 <li><a href="#sec-9-14-1">9.14.1. Incompatibilities to previous versions</a>
 <ul>
@@ -741,19 +741,19 @@
 
 
 
-# Description
+# Description<a id="sec-1" name="sec-1"></a>
 
 A collection of libraries and tools that let the user handle
 OpenFOAM-data based on expressions
 
-# About this document
+# About this document<a id="sec-2" name="sec-2"></a>
 
-## Scope
+## Scope<a id="sec-2-1" name="sec-2-1"></a>
 
 This file gives an overview of `swak4Foam` and a history of the
 features. It is not a canonical documentation.
 
-## Technical
+## Technical<a id="sec-2-2" name="sec-2-2"></a>
 
 This file is written in the mighty `org-mode` (see
 <http://orgmode.org/>) a markup/outline-mode for (X)Emacs. Using this
@@ -769,17 +769,17 @@ human-readable form by the web-interface to `mercurial` at
 `sourceforge.net`. It is generated from `REAME` and only updated
 during releases. **Don't edit it**.
 
-# Contributors etc
+# Contributors etc<a id="sec-3" name="sec-3"></a>
 
-## Original Author
-
-Bernhard Gschaider (bgschaid@ice-sf.at)
-
-## Current Maintainer
+## Original Author<a id="sec-3-1" name="sec-3-1"></a>
 
 Bernhard Gschaider (bgschaid@ice-sf.at)
 
-## Contributors
+## Current Maintainer<a id="sec-3-2" name="sec-3-2"></a>
+
+Bernhard Gschaider (bgschaid@ice-sf.at)
+
+## Contributors<a id="sec-3-3" name="sec-3-3"></a>
 
 In alphabetical order of the surname
 -   **Martin Beaudoin:** `trackDictionary` in `simpleFunctionObjects`
@@ -810,13 +810,13 @@ contributors are (ordered by the year of their first contribution):
 -   2012-2013 Bruno Santos <wyldckat@gmail.com>
 -   2013 Georg Reiss <georg.reiss@ice-sf.at>
 
-## Documentation
+## Documentation<a id="sec-3-4" name="sec-3-4"></a>
 
 See: <http://openfoamwiki.net/index.php/contrib/swak4Foam>
 
-# Installation/Compilation
+# Installation/Compilation<a id="sec-4" name="sec-4"></a>
 
-## Requirements
+## Requirements<a id="sec-4-1" name="sec-4-1"></a>
 
 -   Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
     -   The `finiteArea`-stuff will only work with version 1.6-ext
@@ -846,7 +846,7 @@ The version of flex with
 
     flex -V
 
-## Building
+## Building<a id="sec-4-2" name="sec-4-2"></a>
 
     wmake all
 
@@ -857,7 +857,7 @@ Rerun the command to make sure that there was no problem with the
 compilation (this should be quite fast and only report libraries
 being created and some administrative stuff)
 
-### Additional configuration
+### Additional configuration<a id="sec-4-2-1" name="sec-4-2-1"></a>
 
 Some features (currently only the `Python`-integration may need
 third party software. The paths to these packages can be configured
@@ -888,7 +888,7 @@ Environment variables that can be set in this file are:
     to switch off the optimization (usually this fixes the
     problems)
 
-### Special versions of the python integration
+### Special versions of the python integration<a id="sec-4-2-2" name="sec-4-2-2"></a>
 
 **Note**: This section is very special and won't be needed by most
 people
@@ -926,7 +926,7 @@ the other one will provide the python-functionObjects.
 Note: the special libraries won't be updated automatically on the
 target system. Doing so is the responsibility of the user.
 
-## Global installation
+## Global installation<a id="sec-4-3" name="sec-4-3"></a>
 
 If the libraries and utilities are considered stable and the should
 be available to everyone (without having to recompile them) the
@@ -949,9 +949,9 @@ for with `-L` a global installation might break the
 compilation. **If you don't know what this means: don't attempt a
 global installation**
 
-## Packaging
+## Packaging<a id="sec-4-4" name="sec-4-4"></a>
 
-### Debian
+### Debian<a id="sec-4-4-1" name="sec-4-4-1"></a>
 
 The command `build dpkg` builds a Debian/Ubuntu package for
 the **currently enabled** OpenFOAM-package. Note:
@@ -970,20 +970,20 @@ Packaging for OpenFOAM 2.x should be done in the branch
 it might be necessary to deinstall a previously installed package
 to successfully build a new package
 
-# Contents
+# Contents<a id="sec-5" name="sec-5"></a>
 
-## Libraries
+## Libraries<a id="sec-5-1" name="sec-5-1"></a>
 
 Collection of Libraries
 
-### `swak4FoamParsers`
+### `swak4FoamParsers`<a id="sec-5-1-1" name="sec-5-1-1"></a>
 
 The basis of `swak4Foam`: the expression parsers with the logic to
 access the *OpenFOAM* data-structures.
 
 None of the other software pieces compile without it
 
-### `simpleFunctionObjects`
+### `simpleFunctionObjects`<a id="sec-5-1-2" name="sec-5-1-2"></a>
 
 A collection of function objects that was previously separately
 available at
@@ -992,12 +992,12 @@ available at
 Provides consistent output of values (on patches and fields) and
 more.
 
-### `groovyBC`
+### `groovyBC`<a id="sec-5-1-3" name="sec-5-1-3"></a>
 
 Implements the infamous `groovyBC`. A boundary condition that
 allows arbitrary expressions in the field-file
 
-### `swakFunctionObjects`
+### `swakFunctionObjects`<a id="sec-5-1-4" name="sec-5-1-4"></a>
 
 Function objects that have no additional requirements. Mainly used
 for manipulating and creating fields with expressions
@@ -1038,14 +1038,14 @@ specified. Plus the name of the field \(\phi\)
     meshes whose time is set to the current time of the running
     case
 
-### `simpleSwakFunctionObjects`
+### `simpleSwakFunctionObjects`<a id="sec-5-1-5" name="sec-5-1-5"></a>
 
 Function objects based on the `simpleFunctionObjects`-library
 (which is a prerequisite for compiling it).
 
 Evaluate expressions and output the results
 
-### `swakSourceFields`
+### `swakSourceFields`<a id="sec-5-1-6" name="sec-5-1-6"></a>
 
 These classes allow to manipulate the solution. To use these the
 solver has to be modified.
@@ -1067,18 +1067,18 @@ the 2.x version):
 -   **SwakImplicitSource:** Uses a calculated scalar-field to add an
     implicit source term (source is **without** the actual field)
 
-### `swakTopoSources`
+### `swakTopoSources`<a id="sec-5-1-7" name="sec-5-1-7"></a>
 
 `topoSources` for `cellSet` and `faceSet`. Can be used with the
 `cellSet` and `faceSet`-utilities
 
-### `swakFiniteArea`
+### `swakFiniteArea`<a id="sec-5-1-8" name="sec-5-1-8"></a>
 
 Implements parsers for the `finiteArea`-stuff in 1.6-ext. Also
 implements `groovyBC` for `areaField` and `expressionField` and
 other function objects
 
-### `groovyStandardBCs`
+### `groovyStandardBCs`<a id="sec-5-1-9" name="sec-5-1-9"></a>
 
 Collection of boundary conditions that give standard boundary
 conditions the possibility to use expression for the coefficients
@@ -1087,7 +1087,7 @@ Contributions to this library are explicitly encouraged. Please
 use the Mercurial-branch `groovyStandardBCs` to *groovyify*
 standard boundary conditions.
 
-### `pythonIntegration`
+### `pythonIntegration`<a id="sec-5-1-10" name="sec-5-1-10"></a>
 
 Embeds a `Python`-interpreter.
 -   **`pythonIntegrationFunctionObject`:** Executes `Python`-code
@@ -1097,28 +1097,28 @@ Embeds a `Python`-interpreter.
 This library is only compiled if the paths to the Python-Headers
 are configured in the `swakConfiguration`-file (see above)
 
-### `simpleLagrangianFunctionObjects`
+### `simpleLagrangianFunctionObjects`<a id="sec-5-1-11" name="sec-5-1-11"></a>
 
 Function objects that allow the easy addition of lagrangian
 clouds to a case. No other libraries from `swak4Foam` are needed
 for this
 
-### `simpleSearchableSurfaces`
+### `simpleSearchableSurfaces`<a id="sec-5-1-12" name="sec-5-1-12"></a>
 
 Additional `searchableSurfaces` (for use in `snappyHexMesh`)
 which include boolean operations for other surfaces and
 coordinate transformations
 
-### `fluFunctionObjectDriver`
+### `fluFunctionObjectDriver`<a id="sec-5-1-13" name="sec-5-1-13"></a>
 
 Driver for `functionObjects` that implemented entirely in `Python`
 using the `pythonFlu`-library
 
-### `swakLagrangianParser`
+### `swakLagrangianParser`<a id="sec-5-1-14" name="sec-5-1-14"></a>
 
 Parser for calculating expressions on clouds of lagrangian particles
 
-### `functionPlugins`
+### `functionPlugins`<a id="sec-5-1-15" name="sec-5-1-15"></a>
 
 Directory with a number of libraries with function-plugins:
 -   **swakFacSchemesFunctionPlugin:** functions with selectable
@@ -1146,7 +1146,7 @@ Directory with a number of libraries with function-plugins:
 -   **swakVelocityFunctionPlugin:** Functions that work on the flow
     field (currently only the local Courant-number)
 
-#### lagrangianCloudAdaptors-directory
+#### lagrangianCloudAdaptors-directory<a id="sec-5-1-15-1" name="sec-5-1-15-1"></a>
 
 Because of the templating all plugin-functions have to be
 reinstaniated for new particle classes. The libraries in this
@@ -1163,26 +1163,26 @@ for special particle classes. These are
 These libraries have to be included in the `libs`-entry to
 be able to handle these libraries
 
-## Utilities
+## Utilities<a id="sec-5-2" name="sec-5-2"></a>
 
-### `funkySetFields`
+### `funkySetFields`<a id="sec-5-2-1" name="sec-5-2-1"></a>
 
 Utility that allows creation and manipulation of files with
 expressions
 
-### `funkySetAreaFields`
+### `funkySetAreaFields`<a id="sec-5-2-2" name="sec-5-2-2"></a>
 
 Utility like `funkySetFields` for `areaFields` (only works with
 1.6-ext)
 
-### `funkySetBoundaryField`
+### `funkySetBoundaryField`<a id="sec-5-2-3" name="sec-5-2-3"></a>
 
 Sets any field on a boundary to a non-uniform value based on an
 expression.
 
 Acts without deeper understanding of the underlying boundary condition
 
-### `replayTransientBC`
+### `replayTransientBC`<a id="sec-5-2-4" name="sec-5-2-4"></a>
 
 Utility to quickly test whether a groovyBC gives the expected
 results. Writes the specified fields with the applied boundary
@@ -1190,37 +1190,37 @@ condition but doesn't do anything else.
 
 Can be used for other BCs as well
 
-### `funkyDoCalc`
+### `funkyDoCalc`<a id="sec-5-2-5" name="sec-5-2-5"></a>
 
 Evaluates expressions that are listed in a dictionary using data
 that is found on the disc and prints summarized data (min, max,
 average, sum) to the screen
 
-### `calcNonUniformOffsetsForMapped`
+### `calcNonUniformOffsetsForMapped`<a id="sec-5-2-6" name="sec-5-2-6"></a>
 
 Calculates the `offsets`-entry in the `polyMesh/boundary`-file
 according to the specification in a dictionary. Only needed if you
 have mapped patches and the regular uniform offset is not enough
 for your purposes
 
-### `fieldReport`
+### `fieldReport`<a id="sec-5-2-7" name="sec-5-2-7"></a>
 
 Utility that quickly does some quantitative analysis (minimum,
 maximum, average etc ) on a field on the disc (internal field but
 also patches, sets, zones, &#x2026;)
 
-### `funkyPythonPostproc`
+### `funkyPythonPostproc`<a id="sec-5-2-8" name="sec-5-2-8"></a>
 
 This utility loads specified fields into memory, executes a list
 of user-specified function objects whose data is then passed to a
 python script which does the user-specified analysis.
 
-### `funkySetLagrangianField`
+### `funkySetLagrangianField`<a id="sec-5-2-9" name="sec-5-2-9"></a>
 
 Utility to calculate fields for a lagrangian cloud (or setting it
 up from scratch)
 
-## Examples
+## Examples<a id="sec-5-3" name="sec-5-3"></a>
 
 If not otherwise noted cases are prepared by a simple
 `blockMesh`-call.
@@ -1228,11 +1228,11 @@ If not otherwise noted cases are prepared by a simple
 **Note**: All the cases here are strictly for demonstration purposes and
 resemble nothing from the 'real world'
 
-### groovyBC
+### groovyBC<a id="sec-5-3-1" name="sec-5-3-1"></a>
 
 The old `groovyBC`-Demos
 
-#### pulsedPitzDaily
+#### pulsedPitzDaily<a id="sec-5-3-1-1" name="sec-5-3-1-1"></a>
 
 -   **Solver:** pisoFoam
 -   **Also demonstrates:** `manipulateField`, `expressionField` and
@@ -1242,31 +1242,31 @@ The old `groovyBC`-Demos
     `solveTransportPDE` for solving equations,
     `pythonIntegration` with calculations using `numpy`
 
-#### wobbler
+#### wobbler<a id="sec-5-3-1-2" name="sec-5-3-1-2"></a>
 
 -   **Solver:** solidDisplacementFoam
 
-#### circulatingSplash
+#### circulatingSplash<a id="sec-5-3-1-3" name="sec-5-3-1-3"></a>
 
 -   **Solver:** interDyMFoam
 
-#### movingConeDistorted
+#### movingConeDistorted<a id="sec-5-3-1-4" name="sec-5-3-1-4"></a>
 
 -   **Solver:** pimpleDyMFoam
 -   **Also demonstrates:** `swakExpression` with `surface`. Due to a
     problem described below this currently doesn't work
 
-#### average-t-junction
+#### average-t-junction<a id="sec-5-3-1-5" name="sec-5-3-1-5"></a>
 
 -   **Solver:** pimpleFoam
 
-#### delayed-t-junction
+#### delayed-t-junction<a id="sec-5-3-1-6" name="sec-5-3-1-6"></a>
 
 -   **Solver:** pimpleFoam
 -   **Demonstrates:** Delayed variables to simulate an inflow that
     depends on the value of the outflow
 
-#### multiRegionHeaterFeedback
+#### multiRegionHeaterFeedback<a id="sec-5-3-1-7" name="sec-5-3-1-7"></a>
 
 -   **Solver:** chtMultiRegionFoam
 -   **Mesh preparation:** Execute the script `prepare.sh` in that
@@ -1274,7 +1274,7 @@ The old `groovyBC`-Demos
 -   **Also demonstrated:** `patchExpression` and `swakExpression` from
     `simpleSwakFunctionObjects`.
 
-#### fillingTheDam
+#### fillingTheDam<a id="sec-5-3-1-8" name="sec-5-3-1-8"></a>
 
 -   **Solver:** interFoam
 -   **Also demonstrates:** Usage of a `sampledSet` defined in the
@@ -1282,33 +1282,33 @@ The old `groovyBC`-Demos
     stored variables for not switching back once the criterion
     is reached. Global variables defined by a function object
 
-#### sprinklingInlet
+#### sprinklingInlet<a id="sec-5-3-1-9" name="sec-5-3-1-9"></a>
 
 -   **Solver:** interFoam
 -   **Description:** Winner of the `swak4Foam`-competition at the 6th
     OpenFOAM-Workshop (2011). By Peter Keller
 
-#### potentialPitzDaily
+#### potentialPitzDaily<a id="sec-5-3-1-10" name="sec-5-3-1-10"></a>
 
 -   **Solver:** potentialFoam
 -   **Description:** Demonstrates the use of `groovyB` with
     `potentialFoam` (also a problem connected with
     that). Provided by Martin Backer
 
-### FunkyDoCalc
+### FunkyDoCalc<a id="sec-5-3-2" name="sec-5-3-2"></a>
 
 Example dictionaries for `funkyDoCalc`
 
-### FunkySetFields
+### FunkySetFields<a id="sec-5-3-3" name="sec-5-3-3"></a>
 
 Example dictionary for `funkySetFields`
 
-### FunkySetBoundaryFields
+### FunkySetBoundaryFields<a id="sec-5-3-4" name="sec-5-3-4"></a>
 
 Example dictionary for `funkySetBoundaryFields`. Sets nonsense
 boundary conditions for the world famous `damBreak`-case
 
-### InterFoamWithSources
+### InterFoamWithSources<a id="sec-5-3-5" name="sec-5-3-5"></a>
 
 Demonstrates usage of `expressionSource`
 
@@ -1319,7 +1319,7 @@ work on certain OpenFOAM-versions (most specifically
 The only modifications to the original solver are found at the end
 of `createFields.H` and in `UEqn.H` (the added source terms).
 
-### InterFoamWithFixed
+### InterFoamWithFixed<a id="sec-5-3-6" name="sec-5-3-6"></a>
 
 Demonstrates usage of `forceEquation`
 
@@ -1330,26 +1330,26 @@ work on certain OpenFOAM-versions (most specifically
 The only modifications to the original solver are found at the end
 of `createFields.H` and in `UEqn.H` (the fixing of the velocities).
 
-#### `interFoamWithSources`
+#### `interFoamWithSources`<a id="sec-5-3-6-1" name="sec-5-3-6-1"></a>
 
 Slightly modified version of `interFoam`. Adds a source term to
 the momentum equation. The source term is an expression that is
 defined at run-time
 
-#### `mixingThing`
+#### `mixingThing`<a id="sec-5-3-6-2" name="sec-5-3-6-2"></a>
 
 Demonstration case for it.
 -   **Preparation:** Run the script `prepare.sh` to prepare the case
 
-### FiniteArea
+### FiniteArea<a id="sec-5-3-7" name="sec-5-3-7"></a>
 
 Demonstration of the `finiteArea`-stuff that works with 1.6-ext
 
-#### `swakSurfactantFoam`
+#### `swakSurfactantFoam`<a id="sec-5-3-7-1" name="sec-5-3-7-1"></a>
 
 Variation of `surfactantFoam` that adds an `expressionSource`
 
-#### `planeTransport`
+#### `planeTransport`<a id="sec-5-3-7-2" name="sec-5-3-7-2"></a>
 
 Demonstration case
 -   **Preparation:** Use `blockMesh` and `makeFaMesh`
@@ -1358,11 +1358,11 @@ Demonstration case
 -   **Demonstrates:** FAM-specific `swakExpressions` and `groovyBC`
                            (as well as the `expressionSource`)
 
-### other
+### other<a id="sec-5-3-8" name="sec-5-3-8"></a>
 
 Cases that don't have a `groovyBC`
 
-#### `angledDuctImplicit`
+#### `angledDuctImplicit`<a id="sec-5-3-8-1" name="sec-5-3-8-1"></a>
 
 -   **Solver:** rhoPorousSimpleFoam
 -   **Mesh preparation:** Execute the `makeMesh.sh`-script in that
@@ -1375,7 +1375,7 @@ Cases that don't have a `groovyBC`
     that demonstrates the use of `funkyDoCalc`. Demonstrates
     "live" comparing to another case using *foreign meshes*
 
-#### `angledDuctImplicitTransient`
+#### `angledDuctImplicitTransient`<a id="sec-5-3-8-2" name="sec-5-3-8-2"></a>
 
 -   **Solver:** rhoPorousMRFPimpleFoam
 -   **Mesh preparation:** Execute the `makeMesh.sh`-script in that
@@ -1385,14 +1385,14 @@ Cases that don't have a `groovyBC`
 -   **Demonstrates:** The same as `angledDuctImplicit` but also the
     output of temporal changes
 
-#### `capillaryRise`
+#### `capillaryRise`<a id="sec-5-3-8-3" name="sec-5-3-8-3"></a>
 
 -   **Solver:** interFoam
 -   **Case preparation:** run the supplied script `prepareCase.sh`
 -   **Demonstrates:** Usage of a sampled surface to track the
     interface in a VOF-simulation
 
-#### `mixingDam`
+#### `mixingDam`<a id="sec-5-3-8-4" name="sec-5-3-8-4"></a>
 
 -   **Solver:** interFoam
 -   **Case preparation:** run the supplied script `prepareCase.sh`
@@ -1400,7 +1400,7 @@ Cases that don't have a `groovyBC`
     `manipulateField`-functionObject to recalculate
     `gh` and `ghf`
 
-#### `counterFlowFlame2DInitialized`
+#### `counterFlowFlame2DInitialized`<a id="sec-5-3-8-5" name="sec-5-3-8-5"></a>
 
 Demonstrates initializing a case with initial conditions that
 approximate the real flow.
@@ -1411,19 +1411,19 @@ approximate the real flow.
 -   **Demonstrates:** Demonstrates setting calculated initial
     conditions with functionObjects
 
-#### `simpleBendedPipe`
+#### `simpleBendedPipe`<a id="sec-5-3-8-6" name="sec-5-3-8-6"></a>
 
 Demonstrates the use of `funkyWarpMesh` and post-processing on
 bended pip geometries
 -   **Solver:** simpleFoam
 -   **Case preparation:** Run `prepare.sh`
 
-### PythonIntegration
+### PythonIntegration<a id="sec-5-3-9" name="sec-5-3-9"></a>
 
 Demonstrate the integration of `Python`. Mostly using `PyFoam` but
 also with `pythonFlu`
 
-#### `manipulatedPitzDaily`
+#### `manipulatedPitzDaily`<a id="sec-5-3-9-1" name="sec-5-3-9-1"></a>
 
 -   **Solver:** simpleFoam
 -   **Demonstrates:** Usage of `PyFoam` to manipulate the
@@ -1432,7 +1432,7 @@ also with `pythonFlu`
     cause the run to fail during startup with
     "normal" relaxation values)
 
-#### `findPointPitzDaily`
+#### `findPointPitzDaily`<a id="sec-5-3-9-2" name="sec-5-3-9-2"></a>
 
 -   **Solver:** simpleFoam
 -   **Demonstrates:** Usage of the `pythonFlu`-integration to find
@@ -1440,7 +1440,7 @@ also with `pythonFlu`
     step ends. Also tries to plot the result using
     the `matplotlib`-library
 
-#### `bed2OfPisa`
+#### `bed2OfPisa`<a id="sec-5-3-9-3" name="sec-5-3-9-3"></a>
 
 -   **Solver:** twoPhaseEulerFoam
 -   **Demonstrates:** Usage of `PyFoam` to read the direction of
@@ -1448,13 +1448,13 @@ also with `pythonFlu`
     global variables
 -   **Case preparation:** Just call `funkySetFields -time 0`
 
-#### `multiRegionHeaterBuildFunctionObjects`
+#### `multiRegionHeaterBuildFunctionObjects`<a id="sec-5-3-9-4" name="sec-5-3-9-4"></a>
 
 -   **Solver:** chtMultiRegionFoam
 -   **Demonstrates:** Building the specification of function objects
     at run-time via a Python-script
 
-#### `slicedPitzDaily`
+#### `slicedPitzDaily`<a id="sec-5-3-9-5" name="sec-5-3-9-5"></a>
 
 -   **Solver:** simpleFoam
 -   **Demonstrates:** Using a python-script to dynamically generate
@@ -1465,12 +1465,12 @@ also with `pythonFlu`
     point and stop the run if the pressure didn't
     change there for the last 50 iterations
 
-### solvePDE
+### solvePDE<a id="sec-5-3-10" name="sec-5-3-10"></a>
 
 Examples for the `functionObjects` that can solve *Partial
 Differential equations*
 
-#### flangeWithPDE
+#### flangeWithPDE<a id="sec-5-3-10-1" name="sec-5-3-10-1"></a>
 
 -   **Solver:** laplacianFoam
 -   **Demonstrates:** The usage of the `functionObject` that solves
@@ -1479,38 +1479,38 @@ Differential equations*
     native solver
 -   **Case preparation:** `Allrun`-script is provided
 
-#### pitzDailyWithPDE
+#### pitzDailyWithPDE<a id="sec-5-3-10-2" name="sec-5-3-10-2"></a>
 
 -   **Solver:** scalarTransportFoam
 -   **Demonstrates:** Solving additional transport equations
 
-### BasicSourceSubclasses
+### BasicSourceSubclasses<a id="sec-5-3-11" name="sec-5-3-11"></a>
 
 These examples test the source terms based on `basicSource`. They
 only work with OpenFOAM 2.x and all use the `simpleFoam`-solver
 
-#### pitzDailyWithSwirl
+#### pitzDailyWithSwirl<a id="sec-5-3-11-1" name="sec-5-3-11-1"></a>
 
 -   **Demonstrates:** Fixing the values of the velocity in a region
     with `SwakSetValues`
 
-#### pitzDailyWithExplicitPoroPlug
+#### pitzDailyWithExplicitPoroPlug<a id="sec-5-3-11-2" name="sec-5-3-11-2"></a>
 
 -   **Demonstrates:** Implementing a simple porous plug by adding the
     Darcy-term as a source term with
     `SwakExplicitSource`
 
-#### pitzDailyWithImplicitPoroPlug
+#### pitzDailyWithImplicitPoroPlug<a id="sec-5-3-11-3" name="sec-5-3-11-3"></a>
 
 -   **Demonstrates:** Same as `pitzDailyWithExplicitPoroPlug` but
     with an implicit source term with
     `SwakImplicitSource`
 
-### Lagrangian
+### Lagrangian<a id="sec-5-3-12" name="sec-5-3-12"></a>
 
 Stuff that has to do with lagrangian particles
 
-#### functionObjects
+#### functionObjects<a id="sec-5-3-12-1" name="sec-5-3-12-1"></a>
 
 Tests for the functionObjects that create and evolve a cloud of
 particles (library `simpleLagrangianFunctionObjects`)
@@ -1530,7 +1530,7 @@ particles (library `simpleLagrangianFunctionObjects`)
     -   **Demonstrates:** Thermo-cloud. Functions for lagrangian
         particles
 
-#### parser
+#### parser<a id="sec-5-3-12-2" name="sec-5-3-12-2"></a>
 
 Testing the `cloud`-parser for lagrangiant particles
 
@@ -1550,11 +1550,11 @@ Testing the `cloud`-parser for lagrangiant particles
     -   **Mesh preparation:** run the `prepareCase.sh` script to set up
         the mesh and the fields
 
-### SimpleSurface
+### SimpleSurface<a id="sec-5-3-13" name="sec-5-3-13"></a>
 
 Examples for the use of the `simpleSearchableSurfaces`-library.
 
-#### twoMotorbikesAndAWall
+#### twoMotorbikesAndAWall<a id="sec-5-3-13-1" name="sec-5-3-13-1"></a>
 
 -   **Solver:** simpleFoam (alternatively use the
     `caseRun.sh`-script)
@@ -1565,13 +1565,13 @@ Examples for the use of the `simpleSearchableSurfaces`-library.
     case are more than questionable as the frame
     of reference for both motorbikes is wrong
 
-#### littleVolcano
+#### littleVolcano<a id="sec-5-3-13-2" name="sec-5-3-13-2"></a>
 
 -   **Solver:** interFoam
 -   **Case preparation:** Script `caseSetup.sh` is provided
 -   **Demonstrates:** Boolean operations on STL-files
 
-#### chargedPlates
+#### chargedPlates<a id="sec-5-3-13-3" name="sec-5-3-13-3"></a>
 
 -   **Solver:** electrostaticFoam
 -   **Case preparation:** Script `caseSetup.sh` is provided
@@ -1579,7 +1579,7 @@ Examples for the use of the `simpleSearchableSurfaces`-library.
 
 Physics of the case not as expected (charge-distribution)
 
-### tests
+### tests<a id="sec-5-3-14" name="sec-5-3-14"></a>
 
 Simple test cases for specific features. The names of the
 directories should give you a hint what is tested there. Most of
@@ -1589,22 +1589,22 @@ them don't need a real solver but `replayTransientBC` or
 **Note**: for some features these cases are the only example there
  is. Sorry
 
-#### `randomCavity`
+#### `randomCavity`<a id="sec-5-3-14-1" name="sec-5-3-14-1"></a>
 
 Testing of different seeds for the `rand`-function. Also tests
 the `randFixed`-function
 
-### BugCases
+### BugCases<a id="sec-5-3-15" name="sec-5-3-15"></a>
 
 These are cases provided by users to demonstrate bugs. Not
 maintained nor documented and may be removed at any time
 
-## `maintainanceScripts`
+## `maintainanceScripts`<a id="sec-5-4" name="sec-5-4"></a>
 
 Undocumented scripts used for maintaining `swak4Foam`. **If you
 don't understand them, don't use them**
 
-## Documentation
+## Documentation<a id="sec-5-5" name="sec-5-5"></a>
 
 Additional documentation. Most written in `org-mode`
 
@@ -1613,21 +1613,21 @@ Current contents:
 -   **swak4FoamReference:** Reference manual of swak4Foam. Especially
     concepts like expression syntax and parameters
 
-## releaseTesting
+## releaseTesting<a id="sec-5-6" name="sec-5-6"></a>
 
 Scripts and configuration to test for a release in a virtual
 machine using `vagrant`. Also to be used for packaging
 
-# Bug reporting and Development
+# Bug reporting and Development<a id="sec-6" name="sec-6"></a>
 
-## Bug reports
+## Bug reports<a id="sec-6-1" name="sec-6-1"></a>
 
 The preferred place for bug reports is
 <http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90>
 
 A sourceforge-account is required for reporting
 
-### Things to do before reporting bug
+### Things to do before reporting bug<a id="sec-6-1-1" name="sec-6-1-1"></a>
 
 If you're reporting a bug about the compilation please run
 `Allwmake` **twice** and only report the messages from the second
@@ -1637,7 +1637,7 @@ commands will be reported.
 If the problem seems to be a missing library rerun the compilation
 to make sure that there wasn't a problem with that.
 
-## Development
+## Development<a id="sec-6-2" name="sec-6-2"></a>
 
 Contributions to to `swak4Foam` are most welcome. If you want to
 contribute clone the Mercurial archive of the sources
@@ -1682,7 +1682,7 @@ Only if you got through Mercurial it can be ensured that your
 contribution is recognized (if you want to stay anonymous send
 patches).
 
-### Suggest reading
+### Suggest reading<a id="sec-6-2-1" name="sec-6-2-1"></a>
 
 These topics may be "new" for the average OF-developer:
 -   **Mercurial:** A short tutorial on this can be found at
@@ -1702,7 +1702,7 @@ These topics may be "new" for the average OF-developer:
 
     hg diff -c 8604e865cce6
 
-### Special branches
+### Special branches<a id="sec-6-2-2" name="sec-6-2-2"></a>
 
 Currently the main branches are:
 -   **default:** The **main** branch. This is the brancht that the
@@ -1718,7 +1718,7 @@ Currently the main branches are:
     `1.6-ext`) is developed. Usually gets merged back
     into the `default`-branch once a feature is completed
 
-### Distributed bug-tracking
+### Distributed bug-tracking<a id="sec-6-2-3" name="sec-6-2-3"></a>
 
 As an experimental feature distributed bug-tracking was introduced
 using the *Artemis*-extension for *Mercurial* (see
@@ -1734,7 +1734,7 @@ for keeping track of new features that are to be introduced to
 `swak4Foam` and may be discontinued if the experiment proves to be
 unsuccessful.
 
-### Maintaining feature and hotfix-branches
+### Maintaining feature and hotfix-branches<a id="sec-6-2-4" name="sec-6-2-4"></a>
 
 The repository comes with a `.hgflow`-file that is set for the
 `hgflow`-extension found at
@@ -1747,7 +1747,7 @@ for the `master` and the `dvelopment`-branch. But apart from that
 in the future this repository will try to stick to the model
 described in <http://nvie.com/posts/a-successful-git-branching-model/>
 
-# Copyright
+# Copyright<a id="sec-7" name="sec-7"></a>
 
 `swak4Foam` is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -1756,7 +1756,7 @@ option) any later version.  See the file COPYING in this directory,
 for a description of the GNU General Public License terms under which
 you can copy the files.
 
-# Known bugs
+# Known bugs<a id="sec-8" name="sec-8"></a>
 
 The following list is not complete. If the Artemis extension (see
 above) is installed then
@@ -1765,33 +1765,33 @@ above) is installed then
 
 gives a more up-to-date list
 
-## Moving meshes and `sampledSurfaces`
+## Moving meshes and `sampledSurfaces`<a id="sec-8-1" name="sec-8-1"></a>
 
 It seems that with moving meshes `sampledSurfaces` don't get
 updated. This seems to be a problem with OpenFOAM itself (the
 regular `surfaces`-functionObject doesn't get updated. This is
 currently investigated
 
-## Missing support for interpolation and point-Fields
+## Missing support for interpolation and point-Fields<a id="sec-8-2" name="sec-8-2"></a>
 
 Apart from patches and internal fields the support for
 interpolation from cells to faces (and vice versa) is incomplete as
 well as point fields (although they are supported in the grammar)
 
-## Caching of loaded fields not working
+## Caching of loaded fields not working<a id="sec-8-3" name="sec-8-3"></a>
 
 This is especially evident for the `funkyDoCalc`-example
 
-## Possible enhancements of the code
+## Possible enhancements of the code<a id="sec-8-4" name="sec-8-4"></a>
 
 Not really bugs, but stuff that bugs me
 
-### Pointers in the driver code
+### Pointers in the driver code<a id="sec-8-4-1" name="sec-8-4-1"></a>
 
 This is necessary because of `bison`. Investigate possibilities to
 replace these by `tmp` and `autoPtr`
 
-## Possible memory loss
+## Possible memory loss<a id="sec-8-5" name="sec-8-5"></a>
 
 `valgrind` reports some lost memory for stuff that is not directly
 allocated by `swak4Foam` (in OpenFOAM-sources)
@@ -1806,20 +1806,20 @@ Currenly problematice parts seem to be:
 -   Python interpreter (but no calls in swak were found in the
     stack-trace that could be responsible)
 
-## No point-vector construction for Subsets
+## No point-vector construction for Subsets<a id="sec-8-6" name="sec-8-6"></a>
 
 The same problem that was mentioned in
 <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130>
 is also true for subsets. But as the interpolation is not
 implemented for most subsets this will be postponed
 
-## No tab-completion for regular Python-shell and old IPython-versions
+## No tab-completion for regular Python-shell and old IPython-versions<a id="sec-8-7" name="sec-8-7"></a>
 
 The tab-completion does not work except for up-to-date versions of
 IPython. This seems to be a problem with the `readline`-library
 inside an embedded Python. Low priority
 
-## Failure of `groovyBC` for `commsType` `blocking`
+## Failure of `groovyBC` for `commsType` `blocking`<a id="sec-8-8" name="sec-8-8"></a>
 
 If the `commsType` is set to `blocking` then the MPI-communications
 of `groovyBC` cause problems in MPI and a fatal error.
@@ -1828,31 +1828,31 @@ Currently the only workaround is to edit
 `$WM_PROJECT_DIR/etc/controlDict` so that a different `commsType`
 is used (`nonBlocking` or `scheduled`)
 
-# History
+# History<a id="sec-9" name="sec-9"></a>
 
-## 2010-09-13 - version number : 0.1
+## 2010-09-13 - version number : 0.1<a id="sec-9-1" name="sec-9-1"></a>
 
 First Release
 
-## 2010-12-18 - version number : 0.1.1
+## 2010-12-18 - version number : 0.1.1<a id="sec-9-2" name="sec-9-2"></a>
 
 New release
 Most important changes
 
-### Parser for `sampledSurfaces`
+### Parser for `sampledSurfaces`<a id="sec-9-2-1" name="sec-9-2-1"></a>
 
 Now expressions for the field on a sampled surface can be
 evaluated. All `sampledSurfaces` offered by OpenFOAM now can be
 used
 
-### Multiline `variables`
+### Multiline `variables`<a id="sec-9-2-2" name="sec-9-2-2"></a>
 
 The `variables` entry (most notably used in `groovyBC` and
 `swakExpression`) now can be a list of strings. This allows some
 kind of "formatting" (one expression per line) and should improve
 readability
 
-### Two maintainance-scripts were added
+### Two maintainance-scripts were added<a id="sec-9-2-3" name="sec-9-2-3"></a>
 
 These can copy the libraries and utilities to the global
 installation (for those who think that the swak4Foam-stuff is
@@ -1861,7 +1861,7 @@ it). Note that any local installation still takes precedence
 (because `$FOAM_USER_APPBIN` is before `$FOAM_APPBIN` in the
 `$PATH`
 
-### Parsers using 'external variables' are now run-time selectable
+### Parsers using 'external variables' are now run-time selectable<a id="sec-9-2-4" name="sec-9-2-4"></a>
 
 This allows the inclusion of other parsers with the regular
 `swak4Foam` parsers and include them seamlessly with the
@@ -1870,9 +1870,9 @@ your own parser in a separate library without having to change
 anything about the overall `swak4Foam`, but it behaves as if it
 was part of it)
 
-## 2011-01-30 - version number : 0.1.2
+## 2011-01-30 - version number : 0.1.2<a id="sec-9-3" name="sec-9-3"></a>
 
-### Support for *Finite Area*-stuff
+### Support for *Finite Area*-stuff<a id="sec-9-3-1" name="sec-9-3-1"></a>
 
 Now there is support for the `finiteArea`-library found in
 1.6-dev. The support is found in a separate library
@@ -1885,71 +1885,71 @@ Now there is support for the `finiteArea`-library found in
     `expressionField` and `manipulateField`. These work the same as
     their `volField`-counterparts
 
-### Bugfix for compiling in single precision
+### Bugfix for compiling in single precision<a id="sec-9-3-2" name="sec-9-3-2"></a>
 
 See <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=49>
 
-### New function `nearDist`
+### New function `nearDist`<a id="sec-9-3-3" name="sec-9-3-3"></a>
 
 See <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=44>
 
-## 2011-04-20 - version number : 0.1.3
+## 2011-04-20 - version number : 0.1.3<a id="sec-9-4" name="sec-9-4"></a>
 
 New features and changes are (this list is not complete):
 
-### New utility `funkySetAreaField`
+### New utility `funkySetAreaField`<a id="sec-9-4-1" name="sec-9-4-1"></a>
 
 Like `funkySetFields` for *finiteArea*. Also writes out a volume
 field for easier post-processing
 
-### Refactoring of `groovyBC` and groovified boundary conditions
+### Refactoring of `groovyBC` and groovified boundary conditions<a id="sec-9-4-2" name="sec-9-4-2"></a>
 
 Makes it easier to use the `groovyBC`-machinery for other boundary
 conditions. Two standard boundary conditions were
 *groovified*. Others may follow
 
-### Easier deployment
+### Easier deployment<a id="sec-9-4-3" name="sec-9-4-3"></a>
 
 If no `simpleFunctionObjects` are present they can be downloaded
 by a script.
 Also scripts to handle global installations of `swak4Foam`
 
-### Force equations
+### Force equations<a id="sec-9-4-4" name="sec-9-4-4"></a>
 
 A class to force equations to certain values according to
 expressions
 
-### New utility `funkyDoCalc`
+### New utility `funkyDoCalc`<a id="sec-9-4-5" name="sec-9-4-5"></a>
 
 Utility does calculations on saved results and outputs single
 numbers (min, max, sum, average) to the terminal. Can be used for
 reporting or validity checks
 
-### Debian packaging
+### Debian packaging<a id="sec-9-4-6" name="sec-9-4-6"></a>
 
 Crude packaging for Debian
 
-### Lookup-tables
+### Lookup-tables<a id="sec-9-4-7" name="sec-9-4-7"></a>
 
 A single-argument function can be specified as a piecewise linear
 function. Basically works like timelines but the argument can be
 something else (not only the time)
 
-### Stored variables
+### Stored variables<a id="sec-9-4-8" name="sec-9-4-8"></a>
 
 Variables that store their values between time-steps. Applications
 are statistics or switches
 
-### Sampled sets
+### Sampled sets<a id="sec-9-4-9" name="sec-9-4-9"></a>
 
 Sampled sets can now also be used as en entity on which
 calculation is possible.
 
-## 2011-07-26 - version number : 0.1.4
+## 2011-07-26 - version number : 0.1.4<a id="sec-9-5" name="sec-9-5"></a>
 
-### New features:
+### New features:<a id="sec-9-5-1" name="sec-9-5-1"></a>
 
-#### Rewrite of `rand` and `randNormal`
+#### Rewrite of `rand` and `randNormal`<a id="sec-9-5-1-1" name="sec-9-5-1-1"></a>
 
 -   These two functions now can receive an integer seed that
     determines the pseudo-randooom sequence generated by  these functions
@@ -1958,65 +1958,65 @@ calculation is possible.
     result at every time-steps for these functions the pseudo-random
     sequence is determined **only** by the seed (not by the timestep)
 
-#### Binary `min` and `max`
+#### Binary `min` and `max`<a id="sec-9-5-1-2" name="sec-9-5-1-2"></a>
 
 Take the bigger/smaller of two fields. Helps avoid `?:`-operations
 
-#### Allow writing of only volume-fields in `funkySetAreaFields`
+#### Allow writing of only volume-fields in `funkySetAreaFields`<a id="sec-9-5-1-3" name="sec-9-5-1-3"></a>
 
 Application: If the results of the calculation are only needed in
 ParaView
 
-#### Internal changes
+#### Internal changes<a id="sec-9-5-1-4" name="sec-9-5-1-4"></a>
 
 -   Use `autoPtr` for sets
 -   Update sets that change in memory or on disc
 
-### Bug-fixes
+### Bug-fixes<a id="sec-9-5-2" name="sec-9-5-2"></a>
 
-#### `funkySetAreaFields` did not check for the correct fields
+#### `funkySetAreaFields` did not check for the correct fields<a id="sec-9-5-2-1" name="sec-9-5-2-1"></a>
 
 Fixed by Petr Vita
 
-#### `surfaceProxy` uses the wrong geometric data
+#### `surfaceProxy` uses the wrong geometric data<a id="sec-9-5-2-2" name="sec-9-5-2-2"></a>
 
-#### Avoid floating point exceptions with division of fields
+#### Avoid floating point exceptions with division of fields<a id="sec-9-5-2-3" name="sec-9-5-2-3"></a>
 
 Calculated boundaries were \(0\) and caused a division by zero
 
-### Packaging
+### Packaging<a id="sec-9-5-3" name="sec-9-5-3"></a>
 
-#### Update Debian packaging
+#### Update Debian packaging<a id="sec-9-5-3-1" name="sec-9-5-3-1"></a>
 
 -   Packaging information for the currently used OF-version is
     generated (allows a separate `swak`-package for every OF-version
 -   Submission to launchpad added
 
-#### Deployment scripts
+#### Deployment scripts<a id="sec-9-5-3-2" name="sec-9-5-3-2"></a>
 
 Now install to `FOAM_SITE_APPBIN/LIBBIN`
 
-## 2011-10-03 - version number : 0.1.5
+## 2011-10-03 - version number : 0.1.5<a id="sec-9-6" name="sec-9-6"></a>
 
-### New features
+### New features<a id="sec-9-6-1" name="sec-9-6-1"></a>
 
-#### `replayTransientBC` now supports multiple regions
+#### `replayTransientBC` now supports multiple regions<a id="sec-9-6-1-1" name="sec-9-6-1-1"></a>
 
 Uses the usual `-region`-option. Looks for a separate dictionary
 in the `system`-directory of that region
 
-#### `replayTransientBC` allows execution of functionObjects
+#### `replayTransientBC` allows execution of functionObjects<a id="sec-9-6-1-2" name="sec-9-6-1-2"></a>
 
 This can be switched on using the `allowFunctionObjects`-option
 
-#### `Python`-embedding
+#### `Python`-embedding<a id="sec-9-6-1-3" name="sec-9-6-1-3"></a>
 
 Allows the execution of Python-Code in a functionObject
 
 This feature is still experimental and the organization of the
 libraries is subject to change
 
-#### Global variables
+#### Global variables<a id="sec-9-6-1-4" name="sec-9-6-1-4"></a>
 
 It is now possible to define variables that are 'global': They
 can be read in any entity.
@@ -2028,13 +2028,13 @@ have a `wordList` named `globalScopes`. The scopes are searched
 in that order for the names of global variables. Having scopes
 allows some kind of separation of the variables
 
-#### Simplified boundary condition `groovyBCFixedValue`
+#### Simplified boundary condition `groovyBCFixedValue`<a id="sec-9-6-1-5" name="sec-9-6-1-5"></a>
 
 Added a boundary condition than allows to only fix the
 values. This should help to avoid problems with cases that don't
 like `mixed` (on which the regular `groovyBC` is based)
 
-#### Function objects to solve PDEs
+#### Function objects to solve PDEs<a id="sec-9-6-1-6" name="sec-9-6-1-6"></a>
 
 Two function objects that solve *Partial Differential Equations*
 during a run have been added:
@@ -2044,9 +2044,9 @@ during a run have been added:
 The relevant coefficients (including explicit and implicit source
 terms) can be specified using expressions
 
-### Administrative and packaging
+### Administrative and packaging<a id="sec-9-6-2" name="sec-9-6-2"></a>
 
-#### Inject `swak4Foam` into a distro
+#### Inject `swak4Foam` into a distro<a id="sec-9-6-2-1" name="sec-9-6-2-1"></a>
 
 Added a script that takes the current sources, copies them into
 the appropriate places of a `OpenFOAM`-installation and slightly
@@ -2054,38 +2054,38 @@ rewrites them to compile in this place. What happens then
 (committing them into the repository or just plain compilation)
 is up to the maintainer
 
-#### Absorb `simpleFunctionObjects`
+#### Absorb `simpleFunctionObjects`<a id="sec-9-6-2-2" name="sec-9-6-2-2"></a>
 
 As many parts of `swak4Foam` depend on it the
 `simpleFunctionObjects` have now been absorbed into
 `swak4Foam`. They can still be compiled on their own
 
-### Bugfixes
+### Bugfixes<a id="sec-9-6-3" name="sec-9-6-3"></a>
 
-#### Variables not working for parallel computations
+#### Variables not working for parallel computations<a id="sec-9-6-3-1" name="sec-9-6-3-1"></a>
 
 If a variable is defined and the patch which it is defined on
 doesn't have any faces the variable is reported on that processor
 as *not existing* and the whole run fails
 
-## 2012-01-04 - version number : 0.1.6
+## 2012-01-04 - version number : 0.1.6<a id="sec-9-7" name="sec-9-7"></a>
 
-### Cases changed
+### Cases changed<a id="sec-9-7-1" name="sec-9-7-1"></a>
 
-#### `circulatingSplash`
+#### `circulatingSplash`<a id="sec-9-7-1-1" name="sec-9-7-1-1"></a>
 
 Fixed according to a suggestion by Andreas Otto. Now runs again
 (used to crash some time-steps into the beginning)
 
-### Infrastructure
+### Infrastructure<a id="sec-9-7-2" name="sec-9-7-2"></a>
 
-#### Check for correct `bison`-version
+#### Check for correct `bison`-version<a id="sec-9-7-2-1" name="sec-9-7-2-1"></a>
 
 The `Allwmake`-script now checks for the correct bison-version
 (and the existence of `bison`) and fails if it doesn't seem to be
 the right one
 
-#### Supply a header with preprocessor-symbols about the used OF-version
+#### Supply a header with preprocessor-symbols about the used OF-version<a id="sec-9-7-2-2" name="sec-9-7-2-2"></a>
 
 To allow distinguishing different OF-versions as discussed in the
 bug report
@@ -2095,20 +2095,20 @@ the `Allwmake`-script now generates a header file
 `FOAM_VERSION4SWAK_MAJOR`, `FOAM_VERSION4SWAK_MINOR` and
 `FOAM_VERSION4SWAK_PATCH`
 
-### Technical
+### Technical<a id="sec-9-7-3" name="sec-9-7-3"></a>
 
-#### Refactoring of the FieldDriver
+#### Refactoring of the FieldDriver<a id="sec-9-7-3-1" name="sec-9-7-3-1"></a>
 
 -   now can also produce surfaceFields
 -   full support of `tensor`, `symmTensor` and `sphericalTensor`
 
-#### Refactoring of the FaFieldDriver
+#### Refactoring of the FaFieldDriver<a id="sec-9-7-3-2" name="sec-9-7-3-2"></a>
 
 -   now can also produce edgeFields
 
 No support for tensors yet
 
-#### Writing of `storedVariables`
+#### Writing of `storedVariables`<a id="sec-9-7-3-3" name="sec-9-7-3-3"></a>
 
 If necessary (for instance `swakExpression`-functionObject) the
 `storedVariables` are written to disc (into a subdirectory
@@ -2116,35 +2116,35 @@ If necessary (for instance `swakExpression`-functionObject) the
 allows consistent restarts (for instance if a flow was summed
 using the variable) **if the expressions stay the same**.
 
-#### `simpleFunctionObjects` now write vectors and tensors without brackets
+#### `simpleFunctionObjects` now write vectors and tensors without brackets<a id="sec-9-7-3-4" name="sec-9-7-3-4"></a>
 
 Data files can now be written without brackets but each component on
 its own. The number of entries in the header is not adjusted
 
-### New features
+### New features<a id="sec-9-7-4" name="sec-9-7-4"></a>
 
-#### General `phi` in `solveTransportPDE`
+#### General `phi` in `solveTransportPDE`<a id="sec-9-7-4-1" name="sec-9-7-4-1"></a>
 
 Due to the refactoring of the `FieldDriver` now `phi` can be
 specified by a general expression (instead of 'only' a
 field-name)
 
-#### `funkySetFields` now also writes surfaceFields
+#### `funkySetFields` now also writes surfaceFields<a id="sec-9-7-4-2" name="sec-9-7-4-2"></a>
 
 Can write `surfaceVector` and `surfaceScalar`-Fields. Condition
 has to be consistent
 
-#### Function objects now `surfaceField`-aware
+#### Function objects now `surfaceField`-aware<a id="sec-9-7-4-3" name="sec-9-7-4-3"></a>
 
 `expressionField` and `manipulateField` now can create or modify
 `surfaceFields`
 
-#### `funkySetFields` and function objects support tensors
+#### `funkySetFields` and function objects support tensors<a id="sec-9-7-4-4" name="sec-9-7-4-4"></a>
 
 `funkySetFields` and the function objects `expressionField` and
 `manipulateField`  now also work with the three tensor-types
 
-#### Extension of the `expressionToFace` `topoSet`
+#### Extension of the `expressionToFace` `topoSet`<a id="sec-9-7-4-5" name="sec-9-7-4-5"></a>
 
 If the expression evaluates to a `surfaceField` then this is used
 as a flag whether or not the face is in the `faceSet`. If the
@@ -2154,45 +2154,45 @@ is `false`).
 
 This only works for internal faces
 
-#### `addGlobalVariable` allows setting more than one value
+#### `addGlobalVariable` allows setting more than one value<a id="sec-9-7-4-6" name="sec-9-7-4-6"></a>
 
 If there is an entry `globalVariables` then this dictionary is
 used to set the variables
 
-#### Function object `calculateGlobalVariables`
+#### Function object `calculateGlobalVariables`<a id="sec-9-7-4-7" name="sec-9-7-4-7"></a>
 
 Calculates variables and then pushes them to a global namespace
 
-#### Generate a dummy `phi` in `replayTransientBC`
+#### Generate a dummy `phi` in `replayTransientBC`<a id="sec-9-7-4-8" name="sec-9-7-4-8"></a>
 
 New option added that generates a `phi` field with value \(0\) to
 keep boundary conditions like `inletOutlet` happy
 
-#### Function object to dump expression results
+#### Function object to dump expression results<a id="sec-9-7-4-9" name="sec-9-7-4-9"></a>
 
 The functionObject `dumpSwakExpression` dumps the complete
 results of a swakExpression to file at each timestep. This
 produces huge files and is therefor not endorsed
 
-#### Additional options for `funkySetFields`
+#### Additional options for `funkySetFields`<a id="sec-9-7-4-10" name="sec-9-7-4-10"></a>
 
 Add the options `allowFunctionObjects` and `addDummyPhi` to
 execute functionObjects and add a `phi`-field (for fields that
 require these)
 
-#### `simpleFunctionObjects` write CSV-files
+#### `simpleFunctionObjects` write CSV-files<a id="sec-9-7-4-11" name="sec-9-7-4-11"></a>
 
 Setting the option `outputFileMode` to `csv` writes
 CSV-files. The option-value `foam` is the default (old style). The
 option-value `raw` writes the values delimited by spaces (no
 brackets for vectors and tensors)
 
-#### Submeshes automatically read if `searchOnDisc` specified
+#### Submeshes automatically read if `searchOnDisc` specified<a id="sec-9-7-4-12" name="sec-9-7-4-12"></a>
 
 If a submesh is not yet in memory and the option `searchOnDisc`
 is set, the mesh is automatically read into memory and kept there
 
-#### Conditional `functionObjects`
+#### Conditional `functionObjects`<a id="sec-9-7-4-13" name="sec-9-7-4-13"></a>
 
 The `simpleFunctionObjects`-library now has a number of
 functionObjects that allow the conditional execution of a list of
@@ -2225,7 +2225,7 @@ The `pythonIntegration`-library has
     returns a value. If this value is "true" in Pythons
     standards then the functionObjects are executed
 
-#### `functionObject` that reads gravitation
+#### `functionObject` that reads gravitation<a id="sec-9-7-4-14" name="sec-9-7-4-14"></a>
 
 `simpleFunctionObjects` has an additional function object that
 reads the direction of gravitation. The purpose is to assist
@@ -2233,38 +2233,38 @@ boundary conditions like `buoyantPressure` that rely on it to
 work. Best used together with conditional function objects ("If
 `g` is missing &#x2026;.")
 
-#### PDE-functionObjects for `finiteArea`
+#### PDE-functionObjects for `finiteArea`<a id="sec-9-7-4-15" name="sec-9-7-4-15"></a>
 
 Solve transport and laplacian equation
 
-#### `funkySetAreaField` now also writes edgeFields
+#### `funkySetAreaField` now also writes edgeFields<a id="sec-9-7-4-16" name="sec-9-7-4-16"></a>
 
 Similar to the `surfaceFields` in `funkySetFields`
 
-### Bug fixes
+### Bug fixes<a id="sec-9-7-5" name="sec-9-7-5"></a>
 
-#### Compilation with Intel-Compiler possible
+#### Compilation with Intel-Compiler possible<a id="sec-9-7-5-1" name="sec-9-7-5-1"></a>
 
 The `Utilities` failed with the Intel-compiler. Compilation now
 falls back to good old `g++`
 
-#### Access to tensor-components not working
+#### Access to tensor-components not working<a id="sec-9-7-5-2" name="sec-9-7-5-2"></a>
 
 Because the tokens were not defined in the `flex`-files getting
 tensor components with `tensor.xx` did not work. Fixed
 
-#### Constants for surfaceFields not working
+#### Constants for surfaceFields not working<a id="sec-9-7-5-3" name="sec-9-7-5-3"></a>
 
 Because surfaceFields know no `zeroGradient` the template
 `makeConstant` did not work
 
-#### `snGrad` does not work for patches if the file is on disc
+#### `snGrad` does not work for patches if the file is on disc<a id="sec-9-7-5-4" name="sec-9-7-5-4"></a>
 
 Change so that the field gets temporarily loaded to calculate the
 gradient on the patch. Same for `internalField` and
 `neighbourField`
 
-#### `potentialFoam` does not correctly use a `groovyBC`
+#### `potentialFoam` does not correctly use a `groovyBC`<a id="sec-9-7-5-5" name="sec-9-7-5-5"></a>
 
 The reason is that `groovyBC` usually doesn't get evaluated
 during construction. The reason is that it is hard to tell
@@ -2272,18 +2272,18 @@ whether all required fields are already in memory. The current
 fix is a workaround: setting `evaluateDuringConstruction` to
 `true` forces the BC to be evaluated during construction
 
-#### Extra evaluation of boundary conditions causes failure
+#### Extra evaluation of boundary conditions causes failure<a id="sec-9-7-5-6" name="sec-9-7-5-6"></a>
 
 Extra evaluation of boundary condition that should fix the
 problem with `calculated` patches causes `funkySetFields` to fail
 with stock boundary conditions if not all fields are present in
 memory
 
-## 2012-04-13 - version number : 0.2.0 Friday the 13th
+## 2012-04-13 - version number : 0.2.0 Friday the 13th<a id="sec-9-8" name="sec-9-8"></a>
 
-### New features
+### New features<a id="sec-9-8-1" name="sec-9-8-1"></a>
 
-#### Region name in `simpleFunctionObject`.outputs
+#### Region name in `simpleFunctionObject`.outputs<a id="sec-9-8-1-1" name="sec-9-8-1-1"></a>
 
 To distinguish the output of various instances of
 `functionObjects` from the `simpleFunctionObjects`-library in
@@ -2292,7 +2292,7 @@ name. For the default region nothing changes. Directory names
 stay the same as they are unambiguous anyway (they contain the
 name of the functionObject)
 
-#### Temporal operators `ddt` and `oldTime`
+#### Temporal operators `ddt` and `oldTime`<a id="sec-9-8-1-2" name="sec-9-8-1-2"></a>
 
 For fields (not expressions!) the value at a previous timestep
 can be gotten via `oldTime(field)` if that information exists
@@ -2317,7 +2317,7 @@ If there is no old time value stored and in the parser dictionary
 the parameter `prevIterIsOldTime` is set, then the previous
 iteration value is used as the old time.
 
-#### Boundary condition `groovcBCDirection`
+#### Boundary condition `groovcBCDirection`<a id="sec-9-8-1-3" name="sec-9-8-1-3"></a>
 
 Based on the `directionMixed` boundary condition this allows to
 set a boundary condition as a Dirichlet-condition only in certain
@@ -2327,7 +2327,7 @@ gradient-condition
 **Note**: this should have been in the last release but was
  forgotten to merge into the default branch
 
-#### Boundary condition `groovyBCJump`
+#### Boundary condition `groovyBCJump`<a id="sec-9-8-1-4" name="sec-9-8-1-4"></a>
 
 Boundary condition that imposes a jump in the value on a cyclic
 boundary condition pair (based on `jumpCyclic`). Only works for
@@ -2336,14 +2336,14 @@ scalar values
 **Note**: this should have been in the last release but was
  forgotten to merge into the default branch
 
-#### Function to return the position of minimum and maximum
+#### Function to return the position of minimum and maximum<a id="sec-9-8-1-5" name="sec-9-8-1-5"></a>
 
 The functions `minPosition` and `maxPosition` return the position
 of the minimum or the maximum of a scalar field
 
 This is implemented for all field types
 
-#### Support for `pointFields` in the field-parsers
+#### Support for `pointFields` in the field-parsers<a id="sec-9-8-1-6" name="sec-9-8-1-6"></a>
 
 Now can read and generate pointFields.
 
@@ -2364,7 +2364,7 @@ Utilities and functionObjects affected by this are
 -   new topoSource `expressionToPoint`
 -   `expressionField` and `manipulateField` now can deal with pointFields
 
-#### Support for tensors in the `finiteArea`-field parser
+#### Support for tensors in the `finiteArea`-field parser<a id="sec-9-8-1-7" name="sec-9-8-1-7"></a>
 
 The `faField`-parser now supports tensors, symmetric tensors and
 spherical tensors.
@@ -2372,7 +2372,7 @@ spherical tensors.
 Not all operators are supported because the are not instantiated
 in 1.6-ext
 
-#### New convenience-variables for the Python-Integration
+#### New convenience-variables for the Python-Integration<a id="sec-9-8-1-8" name="sec-9-8-1-8"></a>
 
 These variables are added in the namespace to ease the writing of
 Python-code whose output is consistent with OF
@@ -2381,7 +2381,7 @@ Python-code whose output is consistent with OF
 -   **outputTime:** Boolean that indicates whether this is a timestep
     where OpenFOAM will write output
 
-#### Additional operators from the `fvc`-namespace
+#### Additional operators from the `fvc`-namespace<a id="sec-9-8-1-9" name="sec-9-8-1-9"></a>
 
 The missing operators from the `fvc`-namespace have been added to
 the Field-parser. These are
@@ -2397,15 +2397,15 @@ The only missing operators from the `fvc`-namespace are
 `volumeIntegrate=/=domainIntegrate`. These have been omitted as
 they are trivial to implement using other functions
 
-### Infrastructure
+### Infrastructure<a id="sec-9-8-2" name="sec-9-8-2"></a>
 
-#### Full parallel compilation
+#### Full parallel compilation<a id="sec-9-8-2-1" name="sec-9-8-2-1"></a>
 
 Thanks to patches supplied by Bruno Santos (see
 <http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=105>)
 compilation of the libraries is now possible in parallel
 
-#### Version numbers and version number reporting
+#### Version numbers and version number reporting<a id="sec-9-8-2-2" name="sec-9-8-2-2"></a>
 
 Releases up to now got a version number. Utilities now report the
 version number. This should make it easier to find out whether
@@ -2414,16 +2414,16 @@ problems are due to an old version
 Still looking for a way to do that for the libraries (so that
 they will report it if dynamically loaded)
 
-### Packaging
+### Packaging<a id="sec-9-8-3" name="sec-9-8-3"></a>
 
-#### Update of the Debian-Packaging
+#### Update of the Debian-Packaging<a id="sec-9-8-3-1" name="sec-9-8-3-1"></a>
 
 `make dpkg` now genrates also a valid package if the current
 OpenFOAM-installation is **not** installed using the `dpkg`.
 
-### Changes in the behavior
+### Changes in the behavior<a id="sec-9-8-4" name="sec-9-8-4"></a>
 
-#### Directory variables in Python-integration
+#### Directory variables in Python-integration<a id="sec-9-8-4-1" name="sec-9-8-4-1"></a>
 
 For parallel runs the content of the `caseDir`-variable changed
 and a few variables have been added
@@ -2438,7 +2438,7 @@ and a few variables have been added
 -   **timeDir:** Directory where data would be written to at the
     current time (processor dependent)
 
-#### User must acknowledge parallelization in Python-integration
+#### User must acknowledge parallelization in Python-integration<a id="sec-9-8-4-2" name="sec-9-8-4-2"></a>
 
 In parallel runs the user must set the `isParallelized` to `true`
 if the `parallelMasterOnly` is set to `false`.
@@ -2447,9 +2447,9 @@ With that he indicates that in his opinion the Python-code has no
 bad side-effects in parallel runs and that he doesn't blame
 swak4Foam if anyting bad happens
 
-### Bug fixes
+### Bug fixes<a id="sec-9-8-5" name="sec-9-8-5"></a>
 
-#### Field itself can not be used in `funkySetBoundaryField`
+#### Field itself can not be used in `funkySetBoundaryField`<a id="sec-9-8-5-1" name="sec-9-8-5-1"></a>
 
 Bug reported:
 <http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=124>
@@ -2462,12 +2462,12 @@ load/register another `U`.
 Has been fixed by de-registering the dictionary `U` immediately
 after loading.
 
-#### No gradient for vectors in FieldParser
+#### No gradient for vectors in FieldParser<a id="sec-9-8-5-2" name="sec-9-8-5-2"></a>
 
 The gradient for a vector field (result: a tensor field) was not
 calculated. It is now part of the grammar
 
-#### Some operators for tensors not working in 1.6-ext
+#### Some operators for tensors not working in 1.6-ext<a id="sec-9-8-5-3" name="sec-9-8-5-3"></a>
 
 `tr`, `inv` and `det` were not working for some tensort types in
 1.6-ext. The parser now fails if such a combination is
@@ -2476,7 +2476,7 @@ used. Works OK for other OF-versions
 Also introduced a workaround for certain operators not being
 properly defined for pointFields (by using the internal fields)
 
-#### `x`, `y`, `z` and `xy` etc not available as field names
+#### `x`, `y`, `z` and `xy` etc not available as field names<a id="sec-9-8-5-4" name="sec-9-8-5-4"></a>
 
 These symbols could not be used as field names because they were
 used for the components of vectors and tensors
@@ -2489,56 +2489,56 @@ component. This is implemented for these parsers
 -   SubsetValues (all Zones, sets and samples)
 -   finiteArea-Parsers: faPatch and faField
 
-#### Missing tensor components for point-Fields in some parsers
+#### Missing tensor components for point-Fields in some parsers<a id="sec-9-8-5-5" name="sec-9-8-5-5"></a>
 
 All parsers except the field-parser were missing the access to
 tensor components in the grammar
 
-#### No vector construction possible for point-vectors (and tensors) in PatchField
+#### No vector construction possible for point-vectors (and tensors) in PatchField<a id="sec-9-8-5-6" name="sec-9-8-5-6"></a>
 
 As mentioned in
 <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=130>
 it was not possible to construct a point-vector field using
 `vector(toPoint(1),toPoint(1),toPoint(1))`. Same for tensors
 
-#### Incomprehensible error message in `funkySetFields` if the field is missing
+#### Incomprehensible error message in `funkySetFields` if the field is missing<a id="sec-9-8-5-7" name="sec-9-8-5-7"></a>
 
 The error message in `funkySetFields` that was issued when a
 field is supposed to be created was not very helpful (something
 about the field currently being an `IOobject`)
 
-#### Missing `magSqr` in parsers
+#### Missing `magSqr` in parsers<a id="sec-9-8-5-8" name="sec-9-8-5-8"></a>
 
 This function was reported missing on the message board
 
-#### Wrong size when composing vectors and tensors for point-fields
+#### Wrong size when composing vectors and tensors for point-fields<a id="sec-9-8-5-9" name="sec-9-8-5-9"></a>
 
 The composed objects got their size from the current parser, not
 the components. This resulted in a segmentation-fault for
 pointFields
 
-#### `icc` does not compile `executeIfExecutableFitsFunctionObject` on Linux
+#### `icc` does not compile `executeIfExecutableFitsFunctionObject` on Linux<a id="sec-9-8-5-10" name="sec-9-8-5-10"></a>
 
 Preprocessor symbol `linux` unknown. Replaced with `__linux__`
 
-#### Enhancement to the `trackDictionary`-functionObject
+#### Enhancement to the `trackDictionary`-functionObject<a id="sec-9-8-5-11" name="sec-9-8-5-11"></a>
 
 Now handles bad or non-existent filenames for dictionaries to
 track
 
 Fix provided by Martin Beaudoin
 
-## 2012-10-18 - version number : 0.2.1
+## 2012-10-18 - version number : 0.2.1<a id="sec-9-9" name="sec-9-9"></a>
 
-### Requirements
+### Requirements<a id="sec-9-9-1" name="sec-9-9-1"></a>
 
-#### `flex 2.5.35`
+#### `flex 2.5.35`<a id="sec-9-9-1-1" name="sec-9-9-1-1"></a>
 
 This version is needed for the reentrant parsers. `2.5.33` **may**
 work but is untested. Version `2.5.4` which is on some old
 systems definitely does not work
 
-#### `bison 2.4`
+#### `bison 2.4`<a id="sec-9-9-1-2" name="sec-9-9-1-2"></a>
 
 Version 2.3 compiles but there is an offset-problem with the
 locations that breaks the Plugin-functionality
@@ -2546,34 +2546,34 @@ locations that breaks the Plugin-functionality
 Mac-users will have to install `bison` from another source (for
 instance `MacPorts`)
 
-### Bug fixes
+### Bug fixes<a id="sec-9-9-2" name="sec-9-9-2"></a>
 
-#### Make sure that `Allwmake` always uses the `bash`
+#### Make sure that `Allwmake` always uses the `bash`<a id="sec-9-9-2-1" name="sec-9-9-2-1"></a>
 
 On Ubuntu `/bin/sh` is something else and the scripts fail.
 Hardcode to `/bin/bash`
 
-#### `downloadSimpleFunctionObjects.sh` still in Makefile
+#### `downloadSimpleFunctionObjects.sh` still in Makefile<a id="sec-9-9-2-2" name="sec-9-9-2-2"></a>
 
 This script (which was removed long ago) was still referenced in
 the `Makefile`.
 
-#### `grad` in fields added dimensions
+#### `grad` in fields added dimensions<a id="sec-9-9-2-3" name="sec-9-9-2-3"></a>
 
 `grad` and other operators from `fvc` added dimensions to values
 that were supposed to be dimensionless. This has been fixed
 
-#### Default `condition` for surface fields wrong size in `funkySetFields`
+#### Default `condition` for surface fields wrong size in `funkySetFields`<a id="sec-9-9-2-4" name="sec-9-9-2-4"></a>
 
 Due to a typo the constructed condition field was too short for
 surface-fields (too long for volume-fields, but that didn't matter)
 
-#### `flip()` for `faceSet` not correctly calculated
+#### `flip()` for `faceSet` not correctly calculated<a id="sec-9-9-2-5" name="sec-9-9-2-5"></a>
 
 A `SortableList` was used which meant that the vector with the
 flip values was not in the correct order
 
-#### `fset()` crashes when `faceSet` has boundary faces
+#### `fset()` crashes when `faceSet` has boundary faces<a id="sec-9-9-2-6" name="sec-9-9-2-6"></a>
 
 This problem was due to a non-special treatment of faces on the
 boundary. Fixed (for `faceZone` as well).
@@ -2582,7 +2582,7 @@ Also boundary faces are now honored in `expressionToFace` if the
 expression is a surface-field (for the volume-field logic
 boundary faces will never work)
 
-#### `groovyBC` produced incorrect results with `wallHeatFlux` etc
+#### `groovyBC` produced incorrect results with `wallHeatFlux` etc<a id="sec-9-9-2-7" name="sec-9-9-2-7"></a>
 
 The reason was that during construction `refGradient`, `refValue`
 etc were not read correctly (if present).
@@ -2590,19 +2590,19 @@ etc were not read correctly (if present).
 This is now fixed in `groovyBC` and the other BCs (`groovyBC` for
 pointFields and `groovyBCDirection`)
 
-#### Global variables not found in `faField`
+#### Global variables not found in `faField`<a id="sec-9-9-2-8" name="sec-9-9-2-8"></a>
 
 The Lexer correctly identified the variable but the `getField`
 method did not know how to get it.
 
 Fixed
 
-#### Wrong type of condition field in `funkySetAreaFields`
+#### Wrong type of condition field in `funkySetAreaFields`<a id="sec-9-9-2-9" name="sec-9-9-2-9"></a>
 
 If no condition was evaluated the utility generated a
 pseudo-field of the wrong length
 
-#### `calculated`-patches \(0\) for some operations
+#### `calculated`-patches \(0\) for some operations<a id="sec-9-9-2-10" name="sec-9-9-2-10"></a>
 
 For some operations in the `Field`-driver the
 `calculated`-patches had the value \(0\) instead of the number of
@@ -2614,7 +2614,7 @@ all.
 
 This is fixed
 
-#### `sqr` of a `vector` should produce a `symmTensor`
+#### `sqr` of a `vector` should produce a `symmTensor`<a id="sec-9-9-2-11" name="sec-9-9-2-11"></a>
 
 Reported in
 <http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=150>
@@ -2622,24 +2622,24 @@ Reported in
 Added the `sqr` at the right place to the grammars. Also some
 other missing tensor operations (`dev` and `symm`).
 
-#### `funkySetFields` produced wrong values on processor patches
+#### `funkySetFields` produced wrong values on processor patches<a id="sec-9-9-2-12" name="sec-9-9-2-12"></a>
 
 Patch fields were not copied any no `correctBoundaryField` was
 called for technical reasons.
 
 Fix: values copied by hand
 
-#### `sortedToc` does not exist for `1.6-ext`
+#### `sortedToc` does not exist for `1.6-ext`<a id="sec-9-9-2-13" name="sec-9-9-2-13"></a>
 
 Introduced a preprocessor symbol that allows using sortedToc on
 newer versions
 
-#### Wrong `size()` and `pointSize()` reported for `FaField`-driver
+#### Wrong `size()` and `pointSize()` reported for `FaField`-driver<a id="sec-9-9-2-14" name="sec-9-9-2-14"></a>
 
 This was due to a strange () (still don't know what happened
 there)
 
-#### Memory leak in the field drivers
+#### Memory leak in the field drivers<a id="sec-9-9-2-15" name="sec-9-9-2-15"></a>
 
 The strings of parsed IDs were not properly deleted. Funnily this
 was done correctly in the Patch and the Subset-driver. Also for
@@ -2648,7 +2648,7 @@ timelines-
 Also fixed a leak with the labels of plugin-functions that was
 present with all drivers
 
-#### Maintenance scripts not working with non-=bash= `/bin/sh`
+#### Maintenance scripts not working with non-=bash= `/bin/sh`<a id="sec-9-9-2-16" name="sec-9-9-2-16"></a>
 
 Reported by Oliver Krueger that on systems where `/bin/sh` is not
 a `bash` anymore (newer Ubuntu and SuSE) the sourcing of
@@ -2656,21 +2656,21 @@ a `bash` anymore (newer Ubuntu and SuSE) the sourcing of
 
 Fixed and moved all the files to the `maintainanceScripts`-folder
 
-#### `cof` and `diag` undefined
+#### `cof` and `diag` undefined<a id="sec-9-9-2-17" name="sec-9-9-2-17"></a>
 
 Added. Diag had to be reprogrammed as it is not implemented for
 fields (probably for performance reasons).
 
 Also some tensor operators were missing (probably lost during copy/paste)
 
-#### No new file created if number of patches for patchAverage changes
+#### No new file created if number of patches for patchAverage changes<a id="sec-9-9-2-18" name="sec-9-9-2-18"></a>
 
 Reported in
 <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=153>
 
 Fixed by removing all file pointers if the number of patches changes
 
-#### `variables` intolerant on spaces
+#### `variables` intolerant on spaces<a id="sec-9-9-2-19" name="sec-9-9-2-19"></a>
 
 Spaces in the list of variables made the reading
 fail because words can't contain spaces. For instance
@@ -2686,7 +2686,7 @@ making
 the same as the above expression. But it is unlikely that the
 call will be used in this way
 
-#### Missing `div`-operations
+#### Missing `div`-operations<a id="sec-9-9-2-20" name="sec-9-9-2-20"></a>
 
 These valid `div`-operations were missing from the grammar:
 -   Divergence of a volume-tensor (all three kinds) producing a
@@ -2694,7 +2694,7 @@ These valid `div`-operations were missing from the grammar:
 -   Divergence of a surface-tensor (all three kinds) producing a
     volume-tensor
 
-#### Fields created by `expressionField` written too late
+#### Fields created by `expressionField` written too late<a id="sec-9-9-2-21" name="sec-9-9-2-21"></a>
 
 Fields created by that function object were written with the
 value from the timestep before because the regular write occurs
@@ -2702,12 +2702,12 @@ before the execution of the function objects.
 
 Fixed
 
-#### `storedVariables` did not require a `initialValue`
+#### `storedVariables` did not require a `initialValue`<a id="sec-9-9-2-22" name="sec-9-9-2-22"></a>
 
 Now an initial value is required (instead of the default empty
 string which caused parser failure)
 
-#### Dimension checking makes `expressionField` fail
+#### Dimension checking makes `expressionField` fail<a id="sec-9-9-2-23" name="sec-9-9-2-23"></a>
 
 Reason is that during the calculation of the variables dimensions
 are checked.
@@ -2715,39 +2715,39 @@ are checked.
 Now the functionObject switches the checking off. But a more
 general solution is desirable
 
-#### `expressionField` at last timestep not written
+#### `expressionField` at last timestep not written<a id="sec-9-9-2-24" name="sec-9-9-2-24"></a>
 
 The functionObject does not write (and calculate) the field at
 the last timestep.
 
 Fixed with an one-liner
 
-#### `groovyBC` makes `interFoam`-runs fail unpredictably
+#### `groovyBC` makes `interFoam`-runs fail unpredictably<a id="sec-9-9-2-25" name="sec-9-9-2-25"></a>
 
 Reason was an uninitialized `valueFraction` which sometimes has
 values that cause a floating point exception. Fixed
 
-#### Global variables of different sizes break parallel runs
+#### Global variables of different sizes break parallel runs<a id="sec-9-9-2-26" name="sec-9-9-2-26"></a>
 
 Because `size()` was equal to the expected size on some
 processors. Not on all. Now the branch is taken if the size is
 equal on **all** processors
 
-#### Fields treated with `readAndUpdateFields` were written one timestep too late
+#### Fields treated with `readAndUpdateFields` were written one timestep too late<a id="sec-9-9-2-27" name="sec-9-9-2-27"></a>
 
 Fields were not written after the boundary condition was
 updated. Now they are
 
-### Enhancements
+### Enhancements<a id="sec-9-9-3" name="sec-9-9-3"></a>
 
-#### Topology-operators now support `variables` etc
+#### Topology-operators now support `variables` etc<a id="sec-9-9-3-1" name="sec-9-9-3-1"></a>
 
 The topology operators `expressionToCell`, `expressionToFace` and
 `expressionToPoint` now support `variables` and the other
 supporting keywords if being constructed with a dictionary (for
 instance from the `topoSet`-utility)
 
-#### Fields touched by `manipulateField` being written
+#### Fields touched by `manipulateField` being written<a id="sec-9-9-3-2" name="sec-9-9-3-2"></a>
 
 Usually the manipulated version of the fields is not written as
 the manipulation happens **after** writing. The option
@@ -2755,7 +2755,7 @@ the manipulation happens **after** writing. The option
 
 Writing is not the default behavior to avoid side-effects
 
-#### Indicator functions `onPatch` and `internalFace` added to field-expressions
+#### Indicator functions `onPatch` and `internalFace` added to field-expressions<a id="sec-9-9-3-3" name="sec-9-9-3-3"></a>
 
 The function `onPatch(name)` returns a surface-field that is \(1\)
 on all faces that belong to patch `name`.
@@ -2763,44 +2763,44 @@ on all faces that belong to patch `name`.
 The function `internalFace()` is \(1\) on all internal faces and
 \(0\) on all patches
 
-#### Non-uniform second argument for `pow`
+#### Non-uniform second argument for `pow`<a id="sec-9-9-3-4" name="sec-9-9-3-4"></a>
 
 Now the second argument to the `pow`-function can be a
 non-constant
 
-#### Added transpose to the tensors
+#### Added transpose to the tensors<a id="sec-9-9-3-5" name="sec-9-9-3-5"></a>
 
 The expression `A.T()` transposes the tensor `A` (for symmetrical
 and spherical tensors it leaves them untouched)
 
-#### Added unit tensor `I` to parsers
+#### Added unit tensor `I` to parsers<a id="sec-9-9-3-6" name="sec-9-9-3-6"></a>
 
 If no field `I` is defined then this is used as the unit-tensor
 
-#### Added the *Hodge dual* operator
+#### Added the *Hodge dual* operator<a id="sec-9-9-3-7" name="sec-9-9-3-7"></a>
 
 The unary operator `*` calculates for tensors and symmetrical
 tensors the hodge dual
 
-#### `replayTransientBC` can now switch on function-objects via dictionary
+#### `replayTransientBC` can now switch on function-objects via dictionary<a id="sec-9-9-3-8" name="sec-9-9-3-8"></a>
 
 The optional entry `useFunctionObjects` switches on the execution
 of function objects during the calculation
 
-#### `replayTransientBC` can now create a `phi`-field via dictionary
+#### `replayTransientBC` can now create a `phi`-field via dictionary<a id="sec-9-9-3-9" name="sec-9-9-3-9"></a>
 
 The optional entry `addDummyPhi` creates a `phi`-field
 
-#### `expressionField` now allows the specification of a dimension
+#### `expressionField` now allows the specification of a dimension<a id="sec-9-9-3-10" name="sec-9-9-3-10"></a>
 
 The `dimensions`-entry is now read at the same time the variables
 are read (this should work for all programs/functionObjects where
 the parser is not constructed using a dictionary but the
 dictionary is later searched for the `variables`-entry)
 
-### New features
+### New features<a id="sec-9-9-4" name="sec-9-9-4"></a>
 
-#### Allow dynamically loaded plugins that add new functions to parsers
+#### Allow dynamically loaded plugins that add new functions to parsers<a id="sec-9-9-4-1" name="sec-9-9-4-1"></a>
 
 This allows easy extension of the functionality of `swak4Foam`
 without modifying the grammar files.
@@ -2849,7 +2849,7 @@ It has been tried to make the names unique instead of
 short. Usually function names from one library are prefixed with
 the same short string.
 
-#### Dynamically generated lists of `functionObjects`
+#### Dynamically generated lists of `functionObjects`<a id="sec-9-9-4-2" name="sec-9-9-4-2"></a>
 
 The new `dynamicFunctionObjectListProxy` in the
 `simpleFunctionObjects` can generate a `functionObjectList` from
@@ -2870,7 +2870,7 @@ The string must be in the format o a regular OpenFOAM-dictionary
 with an entry `functions` from which the functionObjects are
 generated
 
-#### Function object `readAndUpdateFields`
+#### Function object `readAndUpdateFields`<a id="sec-9-9-4-3" name="sec-9-9-4-3"></a>
 
 This FO in the `simpleFunctionObjects` reads a number of fields
 and updates their boundary conditions at every timestep.
@@ -2885,7 +2885,7 @@ Example of the usage in the `angledDuctImplicit`-case (the
 results are of limited value because of the temperature boundary
 condition)
 
-#### Source terms based on `basicSource`
+#### Source terms based on `basicSource`<a id="sec-9-9-4-4" name="sec-9-9-4-4"></a>
 
 Three source terms were added. These source terms are in the
 `swakSourceFields`-library and can be used with solvers that use
@@ -2901,7 +2901,7 @@ These fields are only implemented in the 2.x-version of `swak`
 because the interface of `basicSource` is very different in 1.7
 and a backport was unnecessary
 
-#### Function objects that stop a run gracefully
+#### Function objects that stop a run gracefully<a id="sec-9-9-4-5" name="sec-9-9-4-5"></a>
 
 `simpleFunctionObjects` now has a function object
 `writeAndEndFieldRange` that stops a run (and writes the last
@@ -2917,14 +2917,14 @@ Note: after the run is written one more timestep is calculated
 start of a timestep). Also there are issues if the next timestep
 is a scheduled write-time
 
-#### Function-objects to load thermophysical and turbulence models
+#### Function-objects to load thermophysical and turbulence models<a id="sec-9-9-4-6" name="sec-9-9-4-6"></a>
 
 New function objects in the `simpleFunctionObjects` allow the
 loading of such models for solvers/utilities that don't have such
 models but where some functionObject (for instance) needs such a
 model to be in memory
 
-#### Function-objects that create and evolve clouds of lagrangian particles
+#### Function-objects that create and evolve clouds of lagrangian particles<a id="sec-9-9-4-7" name="sec-9-9-4-7"></a>
 
 Added as part of the `simpleFunctionObjects` some functionObjects
 that create a cloud of particles and evolve them at every
@@ -2933,13 +2933,13 @@ timestep.
 The appropriate fields needed by every cloud have to be present
 (either supplied by the solver or via a `functionObject`)
 
-#### Function-object `manipulatePatchField` to manipulate the field on patches
+#### Function-object `manipulatePatchField` to manipulate the field on patches<a id="sec-9-9-4-8" name="sec-9-9-4-8"></a>
 
 This function objects allows the manipulation of patch fields
 like `manipulateField` allows the manipulation of the internal
 field. Only use if desperate
 
-#### Delayed variables to simulate responses
+#### Delayed variables to simulate responses<a id="sec-9-9-4-9" name="sec-9-9-4-9"></a>
 
 If a variable is declared in the `delayedVariables`-list then its
 behavior changes: when a value is assigned to that variable then
@@ -2951,35 +2951,35 @@ value of the expression `startupValue` is used.
 This feature allows the modeling of boundary conditions that
 react with a delay to flow conditions
 
-#### Allow preloading of fields in `funkySetFields`
+#### Allow preloading of fields in `funkySetFields`<a id="sec-9-9-4-10" name="sec-9-9-4-10"></a>
 
 To satisfy the requirements of certain boundary conditions
 `funkySetFields` now allows the preloading of fields. This is
 only available in dictionary mode with the `preloadFields`-entry
 (for each entry in the `expressions`-list separately)
 
-### Infrastructure
+### Infrastructure<a id="sec-9-9-5" name="sec-9-9-5"></a>
 
-#### `Allwmake` creates symbolic links in `swakFiniteArea`
+#### `Allwmake` creates symbolic links in `swakFiniteArea`<a id="sec-9-9-5-1" name="sec-9-9-5-1"></a>
 
 The links to `mybison` and `myflex` are missing when the sources
 are downloaded as a tarball. The `Allwmake`-script now creates
 these links if they are missing
 
-#### Reformatting of the parser sources
+#### Reformatting of the parser sources<a id="sec-9-9-5-2" name="sec-9-9-5-2"></a>
 
 Sources of the parsers have been completely reformatted to make
 them more readable and maintainable
 
-#### Move non-parser sources in `swak4FoamParsers` into sub-directories
+#### Move non-parser sources in `swak4FoamParsers` into sub-directories<a id="sec-9-9-5-3" name="sec-9-9-5-3"></a>
 
 Make the directory a little bit cleaner
 
-## 2013-02-28 - version number : 0.2.2
+## 2013-02-28 - version number : 0.2.2<a id="sec-9-10" name="sec-9-10"></a>
 
-### Incompatibilities to previous versions
+### Incompatibilities to previous versions<a id="sec-9-10-1" name="sec-9-10-1"></a>
 
-#### Python-integration library renamed
+#### Python-integration library renamed<a id="sec-9-10-1-1" name="sec-9-10-1-1"></a>
 
 To avoid clashes with other similar efforts (not that I know of
 any) the library `libpythonIntegration.so` has been renamed to
@@ -2989,14 +2989,14 @@ Usually only the `libs`-entry in the controlDict has to be
 changed (if the library is used at all). Names of the function
 objects stay the same
 
-#### Change in write behaviour of `expressionField` and `manipulateField`
+#### Change in write behaviour of `expressionField` and `manipulateField`<a id="sec-9-10-1-2" name="sec-9-10-1-2"></a>
 
 Now the `outputControl`-entry is honored. If set wrong the field
 is **no longer** calculated/manipulated at every time-step
 
-### Bug fixes
+### Bug fixes<a id="sec-9-10-2" name="sec-9-10-2"></a>
 
-#### `groovyBC`: `value` reset to \(0\) during construction
+#### `groovyBC`: `value` reset to \(0\) during construction<a id="sec-9-10-2-1" name="sec-9-10-2-1"></a>
 
 If no `refValue` is given during construction then a value of \(0\)
 is assumed for this and during a preliminary update the value is
@@ -3005,62 +3005,62 @@ reset to this value.
 Fixed by using the `value` as the `refValue` if no `refValue` is
 specified
 
-#### Unspecified `value` in `addGlobalVariables` produces obscure error message
+#### Unspecified `value` in `addGlobalVariables` produces obscure error message<a id="sec-9-10-2-2" name="sec-9-10-2-2"></a>
 
 The error message occured much later when a `tmp` tried to copy a
 `NULL`-pointer and was not obvious at all for the general
 user. Fixed
 
-#### Did not compile on `1.6-ext`
+#### Did not compile on `1.6-ext`<a id="sec-9-10-2-3" name="sec-9-10-2-3"></a>
 
 1.6-ext does not consider the product of two symmetrical tensors
 to be symmetrical. Fixed
 
-#### Python integration did not get global variables
+#### Python integration did not get global variables<a id="sec-9-10-2-4" name="sec-9-10-2-4"></a>
 
 Change in the interface of the `ExpressionResult`-class
 broke the access of global variables from a
 Python-functionObject. Fixed
 
-#### `maintainanceScripts/makeSwakVersionFile.py` failed when no Mercurial is installed
+#### `maintainanceScripts/makeSwakVersionFile.py` failed when no Mercurial is installed<a id="sec-9-10-2-5" name="sec-9-10-2-5"></a>
 
 This didn't influence the compilation (as there is already a
 current version file there) but confused people.
 
-#### Non-uniform variables for `internalField` only worked correctly for volume fields
+#### Non-uniform variables for `internalField` only worked correctly for volume fields<a id="sec-9-10-2-6" name="sec-9-10-2-6"></a>
 
 Face and point fields did not propagate the information correctly
 and were treated as non-uniform volume fields of the wrong
 size. This should now be fixed
 
-#### Division of `faceFields` causes division by zero
+#### Division of `faceFields` causes division by zero<a id="sec-9-10-2-7" name="sec-9-10-2-7"></a>
 
 The reason was that the patches of the divisor had a value of
 zero. This has been fixed by only dividing the
 `internalFields()`. Same for `pointFields`.
 
-#### `valuePatches` did not work for mapped patches
+#### `valuePatches` did not work for mapped patches<a id="sec-9-10-2-8" name="sec-9-10-2-8"></a>
 
 This kind of patch was not identified as something that could
 have the value fixed
 
-#### `expressionField` and `manipulateField` did not honor the `outputControl`-entry
+#### `expressionField` and `manipulateField` did not honor the `outputControl`-entry<a id="sec-9-10-2-9" name="sec-9-10-2-9"></a>
 
 `expressionFields` were calculated at every time-step, even if
 the computational cost was high. Now if `outputControl` is
 `outputTime` the field is only calculated if it is going to be
 written
 
-#### Double `namespace Foam` makes compilation of `groovyJump` fail with `icc`
+#### Double `namespace Foam` makes compilation of `groovyJump` fail with `icc`<a id="sec-9-10-2-10" name="sec-9-10-2-10"></a>
 
 Seems like this one was overlooked because `gcc` is more
 tolerant towards stupidity.
 
 Reported by Edo Frederix
 
-### New features
+### New features<a id="sec-9-10-3" name="sec-9-10-3"></a>
 
-#### Access fields from different cases
+#### Access fields from different cases<a id="sec-9-10-3-1" name="sec-9-10-3-1"></a>
 
 It is now possible for expression on `internalFields` to access
 fields from different cases. These fields are always read from
@@ -3078,7 +3078,7 @@ to the current mesh.
 Certain function objects and parser instances allow specifying
 foreign meshes in a subdictionary `foreignMeshes`.
 
-#### Patch-expressions now support mapped-patches
+#### Patch-expressions now support mapped-patches<a id="sec-9-10-3-2" name="sec-9-10-3-2"></a>
 
 This is the long asked for feature to "get non-uniform values
 from other patches". It only works if the patches are specified
@@ -3102,7 +3102,7 @@ To allow non-uniform `offsets` in the specification of mapped
 patches in `polyMesh/boundary` a utility
 `calcNonUniformOffsetsForMapped` was developed.
 
-#### Function objects that manipulate time
+#### Function objects that manipulate time<a id="sec-9-10-3-3" name="sec-9-10-3-3"></a>
 
 The framework for function objects that manipulate the `runTime`
 were added. The concrete implementations are
@@ -3112,7 +3112,7 @@ were added. The concrete implementations are
 -   **setEndTimeWithPython:** set the end time from the evaluation of
     a Python-snipplet
 
-#### Plugin-functions for chemical model
+#### Plugin-functions for chemical model<a id="sec-9-10-3-4" name="sec-9-10-3-4"></a>
 
 The library `libswakChemistryModelFunctionPlugin` adds the
 possibility to calculate properties of the chemistry like
@@ -3134,7 +3134,7 @@ Two additional functions that sum up all the reaction rates (this
 **should** be \(0\)) and sum up only positive reaction rates (giving
 an impression on what is going on)
 
-#### Plugin-functions for radiation model
+#### Plugin-functions for radiation model<a id="sec-9-10-3-5" name="sec-9-10-3-5"></a>
 
 The library `libswakRadiationModelFunctionPlugin` adds the
 possibility to calculate properties of the radiation like
@@ -3145,9 +3145,9 @@ If there is no radiation model in memory it will be loaded and
 the reaction rates are calculated. Assumes the presence of a
 temperature field called `T`.
 
-### Enhancements
+### Enhancements<a id="sec-9-10-4" name="sec-9-10-4"></a>
 
-#### Python-Integration now supports numpy-arrays
+#### Python-Integration now supports numpy-arrays<a id="sec-9-10-4-1" name="sec-9-10-4-1"></a>
 
 If the `numpy`-library is found then global variables which are
 fields are being transformed to `numpy`-arrays. These arrays can
@@ -3168,12 +3168,12 @@ vectors are transformed to `scalarField`. Arrays with 3 columns
 to `vectorField`, 9 columns to `tensorField` and 6 columns to
 `symmTensorField`. Different column-numbers produce errors
 
-#### Optional parameter `writeCode=/=writeFile` for `pythonIntegrationFunctionObject`
+#### Optional parameter `writeCode=/=writeFile` for `pythonIntegrationFunctionObject`<a id="sec-9-10-4-2" name="sec-9-10-4-2"></a>
 
 If this is set then this Python-code is executed every time a
 time-step was written to disk
 
-#### Python-integration has convenience-functions to create data files
+#### Python-integration has convenience-functions to create data files<a id="sec-9-10-4-3" name="sec-9-10-4-3"></a>
 
 Python-integration now has two convenience-functions that return
 a filename with the full path and create the directories if
@@ -3189,13 +3189,13 @@ The functions are (`name` is the name of the function object)
     `<case>/<time>/<name>_data`. Should only be used for data
     that is written only at write-time
 
-#### Switch off dimension checking in `funkyDoCalc`
+#### Switch off dimension checking in `funkyDoCalc`<a id="sec-9-10-4-4" name="sec-9-10-4-4"></a>
 
 A command lione switch `-noDimensionChecking` is added that
 allows switching off the checking of dimensions if this makes
 expressions fail
 
-#### `funkySetFields` allows accessing fields from another mesh
+#### `funkySetFields` allows accessing fields from another mesh<a id="sec-9-10-4-5" name="sec-9-10-4-5"></a>
 
 If another case (with time and region) is specified via command
 line options (no dictionary) then in the expressions the other
@@ -3207,12 +3207,12 @@ comparing different timesteps of the same case with each other).
 Used time is either fixed or set to the currently used (this can
 be selected via the command line)
 
-#### `funkyDoCalc` allows specifying foreign meshes
+#### `funkyDoCalc` allows specifying foreign meshes<a id="sec-9-10-4-6" name="sec-9-10-4-6"></a>
 
 Each expression can specify foreign meshes with a
 `foreignMeshes`-subdict
 
-#### Function objects to load and update foreign meshes
+#### Function objects to load and update foreign meshes<a id="sec-9-10-4-7" name="sec-9-10-4-7"></a>
 
 There are two new function objects:
 -   **addForeignMeshes:** this allows specifying new foreign
@@ -3222,11 +3222,11 @@ There are two new function objects:
     meshes whose time is set to the current time of the running
     case
 
-#### `replaxTransientBC` outputs timestep
+#### `replaxTransientBC` outputs timestep<a id="sec-9-10-4-8" name="sec-9-10-4-8"></a>
 
 This helps debugging timestepping-strategies
 
-#### New accumulation `weightedAverage`
+#### New accumulation `weightedAverage`<a id="sec-9-10-4-9" name="sec-9-10-4-9"></a>
 
 A new possible entry for the `accumulations` calculates an
 average that is weighted by a facetor that depends on the entity:
@@ -3235,23 +3235,23 @@ average that is weighted by a facetor that depends on the entity:
 -   \(1\) if there is no appropriate weight (usually values defined
     on points). The result is equivalent to `average`.
 
-#### `expressionField` reports name and type of the created field
+#### `expressionField` reports name and type of the created field<a id="sec-9-10-4-10" name="sec-9-10-4-10"></a>
 
 The title says it all. Should give the user additional feedback
 about what is happening
 
-#### New boundary condition `groovyPartialSlip` in `groovyStandardBCs`
+#### New boundary condition `groovyPartialSlip` in `groovyStandardBCs`<a id="sec-9-10-4-11" name="sec-9-10-4-11"></a>
 
 This boundary allows specifying the partial slip fraction of the
 regular `partialSlip`-BC with an expression.
 
-#### `funkySetFields` allows switching off the correction of BCs
+#### `funkySetFields` allows switching off the correction of BCs<a id="sec-9-10-4-12" name="sec-9-10-4-12"></a>
 
 This is sometimes necessary to allow calculations with fields
 where the boundary conditions have a lot of dependencies
 (turbulence model, other mesh etc)
 
-#### Allow selection of additional regions in `funkySetFields`
+#### Allow selection of additional regions in `funkySetFields`<a id="sec-9-10-4-13" name="sec-9-10-4-13"></a>
 
 The option `-additionalRegions` allows selecting additional mesh
 regions for boundary conditions that require it (usually used
@@ -3260,23 +3260,23 @@ together with `-preloadFields`).
 For the other case there is an additional option
 `-otherAdditionalRegions`.
 
-#### Adding a `-preloadFields`-option to `funkySetFields`
+#### Adding a `-preloadFields`-option to `funkySetFields`<a id="sec-9-10-4-14" name="sec-9-10-4-14"></a>
 
 This option allows specifying additional field names to be
 preloaded in command line mode. If multiple mesh regions are
 specified (including another mesh)it will try to preload the
 field there too
 
-#### `replayTransientBC` now supports all volume types
+#### `replayTransientBC` now supports all volume types<a id="sec-9-10-4-15" name="sec-9-10-4-15"></a>
 
 Support for tensor-types has been added
 
-#### `replayTransientBC` preloads fields
+#### `replayTransientBC` preloads fields<a id="sec-9-10-4-16" name="sec-9-10-4-16"></a>
 
 For boundary conditions that require other fields these can be
 loaded into memory
 
-#### `replayTransientBC` allows selection of time-steps
+#### `replayTransientBC` allows selection of time-steps<a id="sec-9-10-4-17" name="sec-9-10-4-17"></a>
 
 The utility now allows the selection of timesteps. In that case
 it acts fundamentally different: instead of doing a timeloop it
@@ -3284,73 +3284,73 @@ jumps to those times, calculates the boundary conditions and
 writes. The purpose of this mode is generating boundary fields
 for postprocessing.
 
-### Infrastructure
+### Infrastructure<a id="sec-9-10-5" name="sec-9-10-5"></a>
 
-#### `Allwmake` stops if building of `swak4FoamParsers` fails
+#### `Allwmake` stops if building of `swak4FoamParsers` fails<a id="sec-9-10-5-1" name="sec-9-10-5-1"></a>
 
 As the majority of installation problems were actually problems
 with the compilation of the library `swak4FoamParsers` and as
 this library is central for all other things in `swak4Foam` the
 compilation terminates if this library is not built
 
-#### Header `swak.H` with version information and macros
+#### Header `swak.H` with version information and macros<a id="sec-9-10-5-2" name="sec-9-10-5-2"></a>
 
 This new header includes information about the
 `swak4Foam`-version, the `OpenFOAM`-version and macros for
 workarounds that depend on the OpenFOAM-version
 
-#### `accumulations`-entries converted to `NamedEnums`
+#### `accumulations`-entries converted to `NamedEnums`<a id="sec-9-10-5-3" name="sec-9-10-5-3"></a>
 
 This forces the entries to be checked while being read. Allowing
 more consistent treatment
 
-#### Additional maintenance script for special python-versions
+#### Additional maintenance script for special python-versions<a id="sec-9-10-5-4" name="sec-9-10-5-4"></a>
 
 This script allows compiling additional versions of
 `swakPythonIntegration` for cases where the version on the
 development machine is different from the version on the
 simulation machine (see installation chapter)
 
-### Cosmetics
+### Cosmetics<a id="sec-9-10-6" name="sec-9-10-6"></a>
 
 Changes without consequences for the user
 
-#### Change type of `name` in parsers to `word`
+#### Change type of `name` in parsers to `word`<a id="sec-9-10-6-1" name="sec-9-10-6-1"></a>
 
 The valid characters for an identifier were the same as in `word`
 (was `string` before)
 
-#### Updated contributor lists in `README` and sources
+#### Updated contributor lists in `README` and sources<a id="sec-9-10-6-2" name="sec-9-10-6-2"></a>
 
 The list of contributors to each file have been added (mostly by
 script with the information from the repository)
 
-#### Rewritten methods that return pointers
+#### Rewritten methods that return pointers<a id="sec-9-10-6-3" name="sec-9-10-6-3"></a>
 
 This abomination from the early days of `funkySetFields` has been
 cleaned
 
-### Documentation
+### Documentation<a id="sec-9-10-7" name="sec-9-10-7"></a>
 
 Changes to the documentation
 
-#### Start of the reference-manual
+#### Start of the reference-manual<a id="sec-9-10-7-1" name="sec-9-10-7-1"></a>
 
 A first version of a reference manual is added. Only the first
 part about expressions and parameters is written.
 
-## 2013-03-18 - version number : 0.2.3
+## 2013-03-18 - version number : 0.2.3<a id="sec-9-11" name="sec-9-11"></a>
 
-### Bug fixes
+### Bug fixes<a id="sec-9-11-1" name="sec-9-11-1"></a>
 
-#### Compiles on `1.6-ext` again
+#### Compiles on `1.6-ext` again<a id="sec-9-11-1-1" name="sec-9-11-1-1"></a>
 
 The last release (0.2.2) did not compile on `1.6-ext`. This is
 fixed
 
-### New features
+### New features<a id="sec-9-11-2" name="sec-9-11-2"></a>
 
-#### Writing of sampled surfaces and sampled sets
+#### Writing of sampled surfaces and sampled sets<a id="sec-9-11-2-1" name="sec-9-11-2-1"></a>
 
 With the options `autoWriteSurface` and `autoWriteSets` sampled
 surfaces and sets are automatically written at each write
@@ -3358,30 +3358,30 @@ time. With `writeSurfaceOnConstruction` and
 `writeSetOnConstruction` both are written when they are
 created. A format has to be specified. No values are written.
 
-### Enhancements
+### Enhancements<a id="sec-9-11-3" name="sec-9-11-3"></a>
 
-#### Parsers now support `eigenValues` and `eigenVectors`
+#### Parsers now support `eigenValues` and `eigenVectors`<a id="sec-9-11-3-1" name="sec-9-11-3-1"></a>
 
 These function and some other minor ones (`sph`, `dev2`,
 `twoSymm`) are now supported by the parsers
 
-#### Extract rows from tensors with component operator
+#### Extract rows from tensors with component operator<a id="sec-9-11-3-2" name="sec-9-11-3-2"></a>
 
 The component operators `.x`, `.y` and `.z` now extract the rows
 from a tensor
 
-#### Variable names that are identical to fields trigger a Warning
+#### Variable names that are identical to fields trigger a Warning<a id="sec-9-11-3-3" name="sec-9-11-3-3"></a>
 
 As this situation (like a variable named `p` for the position
 that shadows the pressure field `p`) leads to weird errors a
 warning is given. The warning can be switched of with the option
 `variableNameIdenticalToField`.
 
-## 2013-05-24 - version number : 0.2.4
+## 2013-05-24 - version number : 0.2.4<a id="sec-9-12" name="sec-9-12"></a>
 
-### Incompatibilities to previous versions
+### Incompatibilities to previous versions<a id="sec-9-12-1" name="sec-9-12-1"></a>
 
-#### Data directories now generated in folder `postProcessing` instead of case folder
+#### Data directories now generated in folder `postProcessing` instead of case folder<a id="sec-9-12-1-1" name="sec-9-12-1-1"></a>
 
 According to the convention introduced in OpenFOAM 2.2 now the
 data directories generated by functionObjects based on
@@ -3392,16 +3392,16 @@ data directories generated by functionObjects based on
 
 Scripts that rely on the location of these files will have to be adapted
 
-#### `ExpressionResult` from old versions are not correctly read
+#### `ExpressionResult` from old versions are not correctly read<a id="sec-9-12-1-2" name="sec-9-12-1-2"></a>
 
 This is due to a fix that now allows reading/writing these in
 binary mode. Only occurs if reading old data that either
 -   uses a delayed variable
 -   has global variables written in timesteps
 
-### Infrastructure
+### Infrastructure<a id="sec-9-12-2" name="sec-9-12-2"></a>
 
-#### Additional flags for the compilation of the parsers
+#### Additional flags for the compilation of the parsers<a id="sec-9-12-2-1" name="sec-9-12-2-1"></a>
 
 The C-files generated by `bison` become very big and some
 compilers need quite long when aggressive optimization is
@@ -3412,61 +3412,61 @@ additional compiler switches (like `-O1`) that will appear
 the compiler. Set in `swakConfiguration` if you want to set this
 permanently
 
-#### Use `bash` instead of `sh` in maintainance scripts
+#### Use `bash` instead of `sh` in maintainance scripts<a id="sec-9-12-2-2" name="sec-9-12-2-2"></a>
 
 Some distributions don't use good old `bash` as the default
 shell. This breaks some scripts in subtle and not so subtle ways
 
-#### Build-script prints swak-version in the beginning
+#### Build-script prints swak-version in the beginning<a id="sec-9-12-2-3" name="sec-9-12-2-3"></a>
 
 To filter bug-reports with outdated versions
 
-### Cosmetics
+### Cosmetics<a id="sec-9-12-3" name="sec-9-12-3"></a>
 
 Changes without consequences for the user
 
-#### Methods use `word` for names instead of `string`
+#### Methods use `word` for names instead of `string`<a id="sec-9-12-3-1" name="sec-9-12-3-1"></a>
 
 Methods that look for fields now use the appropriate data type
 
-### Bug fixes
+### Bug fixes<a id="sec-9-12-4" name="sec-9-12-4"></a>
 
-#### Compilation on Fujitsu (and probably Intel) compilers
+#### Compilation on Fujitsu (and probably Intel) compilers<a id="sec-9-12-4-1" name="sec-9-12-4-1"></a>
 
 There were template specializations for `pTraits` in
 `ExpressionResult.C` that had to be moved to `ExpressionResult.H`
 to allow compilation on these non-=gcc=-compilers
 
-#### `executeIf`-function objects are executed if `readDuringConstruction` is set to `true`
+#### `executeIf`-function objects are executed if `readDuringConstruction` is set to `true`<a id="sec-9-12-4-2" name="sec-9-12-4-2"></a>
 
 Even if the condition evaluates to `false` the function objects
 in the list are executed. This makes the run fail if the purpose
 of the condition was to guard from such a situation. Fixed
 
-#### Expression results are not correctly read from binary file
+#### Expression results are not correctly read from binary file<a id="sec-9-12-4-3" name="sec-9-12-4-3"></a>
 
 This was fixed by writing the fields properly with
 `writeValue`. This may introduce a little incompatibility when
 reading files written by old versions
 
-#### Generated fields like `vol()` were registered
+#### Generated fields like `vol()` were registered<a id="sec-9-12-4-4" name="sec-9-12-4-4"></a>
 
 These fields were registered with the mesh which might have
 disturbed similar named *real* fields. Also did the fields
 generated for variables get registered
 
-#### Missing files in `potentialPitzDaily`-case
+#### Missing files in `potentialPitzDaily`-case<a id="sec-9-12-4-5" name="sec-9-12-4-5"></a>
 
 Missing initial conditions made this case a bit pointless
 
-#### `log(vol())` gives floating point exception
+#### `log(vol())` gives floating point exception<a id="sec-9-12-4-6" name="sec-9-12-4-6"></a>
 
 This was due to the boundaries being set to 0. Fixed. Also for
 the `dist()` function
 
-### New features
+### New features<a id="sec-9-12-5" name="sec-9-12-5"></a>
 
-#### Library with additional `searchableSurfaces`
+#### Library with additional `searchableSurfaces`<a id="sec-9-12-5-1" name="sec-9-12-5-1"></a>
 
 The library `simpleSearchableSurfaces` adds more searchable
 surfaces to be used in `snappyHexMesh`. Types of surfaces in
@@ -3482,7 +3482,7 @@ that library are
 -   Some wrappers that manipulate the regions of a surface: rename
     them, collect them into one region
 
-#### New variable type `StackedExpressionResult`
+#### New variable type `StackedExpressionResult`<a id="sec-9-12-5-2" name="sec-9-12-5-2"></a>
 
 This type is used to collect multiple values. If it is assigned
 a value then the **uniform** value of the right hand side is
@@ -3492,15 +3492,15 @@ for output.
 Variant `StoredStackExpresionResult` keeps the values between
 timesteps and allows the collection of timeline data
 
-#### Function object `dumpGlobalVariable`
+#### Function object `dumpGlobalVariable`<a id="sec-9-12-5-3" name="sec-9-12-5-3"></a>
 
 Dumps the value of a global variable into a line of a file
 
-#### Function object `removeGlobalVariable`
+#### Function object `removeGlobalVariable`<a id="sec-9-12-5-4" name="sec-9-12-5-4"></a>
 
 Removes a global variable (mainly used to preserve memory)
 
-#### Optional entry `aliases` for parser specifications
+#### Optional entry `aliases` for parser specifications<a id="sec-9-12-5-5" name="sec-9-12-5-5"></a>
 
 This dictionary allows the specification of alias names and
 their real names. If an alias name is found in an expression
@@ -3510,20 +3510,20 @@ characters in field names that are not valid in swak-names and
 would break the grammar if they were (for instance `-` or
 `:`). By setting an alias such fields can still be accessed.
 
-#### Function object to dump registered objects
+#### Function object to dump registered objects<a id="sec-9-12-5-6" name="sec-9-12-5-6"></a>
 
 The function object `listRegisteredObjects` in the
 `simpleFunctionObjects` lists all the objects currently
 registered with the mesh. Mainly used for debugging ("Which
 fields are currently available?")
 
-#### Function object that only executes its children if the run is serial/parallel
+#### Function object that only executes its children if the run is serial/parallel<a id="sec-9-12-5-7" name="sec-9-12-5-7"></a>
 
 The new functionObject `executeIfParallelSerial` allows
 specifying if a list of function objects should only be run if
 the simulation is running in serial or parallel.
 
-#### Function objects to calculate distributions
+#### Function objects to calculate distributions<a id="sec-9-12-5-8" name="sec-9-12-5-8"></a>
 
 There are now four function objects that calculate distributions
 of fields. Distributions are calculated based on the
@@ -3557,31 +3557,31 @@ In `swakSimpleFunctionObjects` the two functionObjects are:
 -   **patchExpressionDistribution:** distribution of `expression` on
     a number of patches. As the weight the face-area is used
 
-### Enhancements
+### Enhancements<a id="sec-9-12-6" name="sec-9-12-6"></a>
 
-#### Global variables now can be subclasses of `ExpressionResult`
+#### Global variables now can be subclasses of `ExpressionResult`<a id="sec-9-12-6-1" name="sec-9-12-6-1"></a>
 
 This allows other variable types like stored variables to be
 inserted there. They are also now saved for restarting
 
-#### `endTime` now added to Python-wrapper
+#### `endTime` now added to Python-wrapper<a id="sec-9-12-6-2" name="sec-9-12-6-2"></a>
 
 All classes using the python interpreter now have a variable
 `endTime` with the current end-time value
 
-#### Force write if `endTime` set by time-manipulation is reached
+#### Force write if `endTime` set by time-manipulation is reached<a id="sec-9-12-6-3" name="sec-9-12-6-3"></a>
 
 If one of the functionObjects for time-manipulation set the
 end-time and it is reached and this is no time for output a
 complete output of the fields is forced
 
-#### Function-objects based on `patch` from the `simpleFunctionObjects` now accept regular expression
+#### Function-objects based on `patch` from the `simpleFunctionObjects` now accept regular expression<a id="sec-9-12-6-4" name="sec-9-12-6-4"></a>
 
 This includes the `patchExpression`-functionObject. The supplied
 list is now interpreted as a list of regular expressions and all
 patches that match are included and processed
 
-#### More flexible output control for functionObjects based on `simpleFunctionObjects`
+#### More flexible output control for functionObjects based on `simpleFunctionObjects`<a id="sec-9-12-6-5" name="sec-9-12-6-5"></a>
 
 An optional parameter `outputControlMode` now allows control on
 when the function object will be executed. Possible values are:
@@ -3592,43 +3592,43 @@ when the function object will be executed. Possible values are:
     executed. The nearest possible timestep is used
 -   **outputTime:** Executed whenever a regular output is scheduled
 
-## 2014-01-24 - version number : 0.3.0
+## 2014-01-24 - version number : 0.3.0<a id="sec-9-13" name="sec-9-13"></a>
 
 The reason for the jump in the minor revision number is that with
 the introduction of the parser for lagrangian particles (`cloud`)
 the last white spot as far as major data structures in OpenFOAM is
 "explored"
 
-### Incompatibilities to previous versions
+### Incompatibilities to previous versions<a id="sec-9-13-1" name="sec-9-13-1"></a>
 
-#### Support of *old* `1.6-ext` lost
+#### Support of *old* `1.6-ext` lost<a id="sec-9-13-1-1" name="sec-9-13-1-1"></a>
 
 Due to certain differences this version only compiles with the
 `nextRelease`-branch of 1.6-ext (from the `git`).Usually the
 failing parts can be fixed b commenting out the appropriate
 `#define` in `Libraries/swak4FoamParsers/include/swak.H`.
 
-### Infrastructure
+### Infrastructure<a id="sec-9-13-2" name="sec-9-13-2"></a>
 
-#### Make error messages in `Allwmake` more verbose
+#### Make error messages in `Allwmake` more verbose<a id="sec-9-13-2-1" name="sec-9-13-2-1"></a>
 
 The error messages where already quite verbose. But people
 didn't understand them and asked the same questions over and
 over &#x2026;
 
-#### `simpleFunctionObjects` no longer considered an independent project
+#### `simpleFunctionObjects` no longer considered an independent project<a id="sec-9-13-2-2" name="sec-9-13-2-2"></a>
 
 As there are going to be more cross-dependencies the
 `simpleFunctionObjects` now have to be part of swak. Changes to
 the compile-scripts reflect this.
 
-#### `Allwmake` makes sure that swak is compiled for the same installation
+#### `Allwmake` makes sure that swak is compiled for the same installation<a id="sec-9-13-2-3" name="sec-9-13-2-3"></a>
 
 The script writes the version it is used with to disk and at
 later compiles that this is the same (this makes sure that not a
 wrong version is used inadvertently to compile)
 
-#### Additional macros for Debugging output
+#### Additional macros for Debugging output<a id="sec-9-13-2-4" name="sec-9-13-2-4"></a>
 
 There are two macros defined that inside an object write the name
 of the class and the address of the object (if debug is
@@ -3641,7 +3641,7 @@ output from other classes/objects. The two macros are:
 Both macros are to be used like regular streams and don't have
 to be enclosed in `if(debug){}` (this is part of the macro)
 
-#### Separate option for compiling the output of `flex`
+#### Separate option for compiling the output of `flex`<a id="sec-9-13-2-5" name="sec-9-13-2-5"></a>
 
 With some compilers (Intel) and aggressive optimization the
 lexers (whose code is generated by `flex`) have uninitialized
@@ -3653,7 +3653,7 @@ for these compilers. For example:
 
 After that recompile
 
-#### Fixing race condition with big `WM_NCOMPPROCS`
+#### Fixing race condition with big `WM_NCOMPPROCS`<a id="sec-9-13-2-6" name="sec-9-13-2-6"></a>
 
 For some machines race conditions with compiling the main library
 has been reported. The reason seems to be that some source files
@@ -3671,7 +3671,7 @@ grammars in the library.
 Better solution to let the `Allwmake`-script generate the headers
 before the regular `wmake` starts.
 
-#### Updates to Debian-packaging
+#### Updates to Debian-packaging<a id="sec-9-13-2-7" name="sec-9-13-2-7"></a>
 
 Several minor additions that should make packaging easier
 -   Package version now gets the correct distro name (at least on Ubuntu)
@@ -3679,38 +3679,38 @@ Several minor additions that should make packaging easier
     &#x2026; does anyone use older?)
 -   Packaging process leaves the `swakVersion.H` alone
 
-### Documentation
+### Documentation<a id="sec-9-13-3" name="sec-9-13-3"></a>
 
 Important enhancements of the documentation in the
 `Documentations`-folder
 
-#### Documentation of `accumulations`
+#### Documentation of `accumulations`<a id="sec-9-13-3-1" name="sec-9-13-3-1"></a>
 
 The possible values of the common `accumulations`-lists are
 documented
 
-#### General documentation of the Python-embedding
+#### General documentation of the Python-embedding<a id="sec-9-13-3-2" name="sec-9-13-3-2"></a>
 
 The general options and the behavior of the Python-embedding are
 described
 
-### Incompatibilities to previous versions
+### Incompatibilities to previous versions<a id="sec-9-13-4" name="sec-9-13-4"></a>
 
-#### `outputControlMode` `timestep` renamed to `timeStep`
+#### `outputControlMode` `timestep` renamed to `timeStep`<a id="sec-9-13-4-1" name="sec-9-13-4-1"></a>
 
 Because of report
 <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=177>
 to be consistent with the nomenclature in the 'regular'
 function-objects.
 
-### Bug fixes
+### Bug fixes<a id="sec-9-13-5" name="sec-9-13-5"></a>
 
-#### `sourceImplicit` unstable
+#### `sourceImplicit` unstable<a id="sec-9-13-5-1" name="sec-9-13-5-1"></a>
 
 For some reason using `SuSp` gave unstable results for the
 PDE-functionObjects. Changed to `Sp`
 
-#### No logical variables found by most parsers
+#### No logical variables found by most parsers<a id="sec-9-13-5-2" name="sec-9-13-5-2"></a>
 
 Reported as
 <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=172>
@@ -3721,7 +3721,7 @@ reason why this part was commented out is that there is no such
 thing as a `volBoolField` and that is what the regular mechanism
 expected)
 
-#### `sampledSurface` not correctly updated at time of write
+#### `sampledSurface` not correctly updated at time of write<a id="sec-9-13-5-3" name="sec-9-13-5-3"></a>
 
 Reported as
 <https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=176>
@@ -3730,43 +3730,43 @@ In that case the driver was written before the surface was
 updated thus generating fields of size \(0\). Now `update` is
 called at various places (to make sure it is called in any instance)
 
-#### `sumMag`-accumulation now working
+#### `sumMag`-accumulation now working<a id="sec-9-13-5-4" name="sec-9-13-5-4"></a>
 
 This accumulation was available but not implemented. Now implemented.
 
 For non-scalar types it is calculated separately for each component
 
-#### Calculation of weight fields failed if size on one processor was \(0\)
+#### Calculation of weight fields failed if size on one processor was \(0\)<a id="sec-9-13-5-5" name="sec-9-13-5-5"></a>
 
 This was due to a logical error that was propagated through
 mindless copy/paste (only the Field-driver got it right). Fixed
 
-#### `groovyTotalPressure` does not read `value`
+#### `groovyTotalPressure` does not read `value`<a id="sec-9-13-5-6" name="sec-9-13-5-6"></a>
 
 Because it is not initialized from the superclass when the
 dictionary constructor is used. Fixed
 
-#### For multiple times the option `addDummyPhi` makes `funkySetFields` crash
+#### For multiple times the option `addDummyPhi` makes `funkySetFields` crash<a id="sec-9-13-5-7" name="sec-9-13-5-7"></a>
 
 Because the pointer is already set. Fixed
 
-#### `aliases` not constructed from dictionary
+#### `aliases` not constructed from dictionary<a id="sec-9-13-5-8" name="sec-9-13-5-8"></a>
 
 If the dictionary was read after the construction the aliases
 are not read. Fixed by moving this reading to the tables reading
 which is used in every time a dictionary is involved
 
-#### Gravity not correctly passed in `evolveXXCloud`
+#### Gravity not correctly passed in `evolveXXCloud`<a id="sec-9-13-5-9" name="sec-9-13-5-9"></a>
 
 Passed a value where a reference would have been needed. Fixed
 
-#### Python-integration does not return single scalars as uniform
+#### Python-integration does not return single scalars as uniform<a id="sec-9-13-5-10" name="sec-9-13-5-10"></a>
 
 The Python-integration returned single scalars (and vectors) not
 as a single value but as a field of length \(1\). This caused
 warnings that messed up the output. Fixed
 
-#### `faceZone` and `faceSet` do not correctly work on parallel runs
+#### `faceZone` and `faceSet` do not correctly work on parallel runs<a id="sec-9-13-5-11" name="sec-9-13-5-11"></a>
 
 As reported in
 <http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=190>
@@ -3779,9 +3779,9 @@ fixed. If the face is on a regular boundary patch the value is
 used. If on a processor patch the value is only used if it is on
 the owner processor.
 
-### New features
+### New features<a id="sec-9-13-6" name="sec-9-13-6"></a>
 
-#### Function object that executes if the OpenFOAM-version is right
+#### Function object that executes if the OpenFOAM-version is right<a id="sec-9-13-6-1" name="sec-9-13-6-1"></a>
 
 The functionObject `executeIfOpenFOAMVersionBiggerEqual` only
 executes if the OpenFOAM-version is bigger or equal to a
@@ -3790,34 +3790,34 @@ specified version. The arguments `majorVersion` and
 it will match any version. A `git` version (`.x`) will match any
 patch-version
 
-#### Function object that is only executed if the current time is the `startTime`
+#### Function object that is only executed if the current time is the `startTime`<a id="sec-9-13-6-2" name="sec-9-13-6-2"></a>
 
 The function object `executeIfStartTime` executes its children
 if the current time is the `startTime` from the `controlDict`
 (which isn't necessarily the first time step in a restarted case)
 
-#### Function object that calculates the potential flow
+#### Function object that calculates the potential flow<a id="sec-9-13-6-3" name="sec-9-13-6-3"></a>
 
 To be used on an existing field to set reasonable initial
 conditions
 
-#### Function object that forces a recalculation of `phi`
+#### Function object that forces a recalculation of `phi`<a id="sec-9-13-6-4" name="sec-9-13-6-4"></a>
 
 Named `recalcPhi` in the simpleFunctionObjects. Usually needed
 when some other functionObject manipulates velocity or density
 
-#### Function object that corrects thermophysical model
+#### Function object that corrects thermophysical model<a id="sec-9-13-6-5" name="sec-9-13-6-5"></a>
 
 Name `correctThermo`. Recalculates the thermophysical
 model. To be used after manipulating temperature etc
 
-#### Function objects that recalculate the energy of a thermophysical model
+#### Function objects that recalculate the energy of a thermophysical model<a id="sec-9-13-6-6" name="sec-9-13-6-6"></a>
 
 Recalculate enthalpy, sensible enthalpy or internal energy
 according to the current temperature. This allows making this
 consistent if the temperature has been manipulated
 
-#### Function object that calculates the average of one variable as a function of another
+#### Function object that calculates the average of one variable as a function of another<a id="sec-9-13-6-7" name="sec-9-13-6-7"></a>
 
 The function object `swakExpressionAverageDistribution`
 calculates the average of one function (the `expression`) as a
@@ -3827,14 +3827,14 @@ the average pressure in x-direction with `abscissa` being
 being `vol()`. The weight has to be a scalar. All other
 expressions can be any data-type
 
-#### New utility `fieldReport`
+#### New utility `fieldReport`<a id="sec-9-13-6-8" name="sec-9-13-6-8"></a>
 
 This utility prints some quantitative statistics about a
 specified field. Optionally these statistics can also be printed
 for patches, sets and zones. The data can be written to a
 CSV-file. Also the distributions of the field can be written.
 
-#### New utility `funkyPythonPostproc`
+#### New utility `funkyPythonPostproc`<a id="sec-9-13-6-9" name="sec-9-13-6-9"></a>
 
 This utility needs a dictionary and a specification of
 times. For each time it
@@ -3846,7 +3846,7 @@ The idea is that the function objects pass data to the
 python-scripts via global variables and the python-scripts do
 whatever they like
 
-#### New utility `funkySetLagrangianParticle`
+#### New utility `funkySetLagrangianParticle`<a id="sec-9-13-6-10" name="sec-9-13-6-10"></a>
 
 This utility allows setting new fields of a lagrangian
 cloud. Like `funkySetFields` it has two modes:
@@ -3861,9 +3861,9 @@ cloud. Like `funkySetFields` it has two modes:
     variables have to be of the same size. Data where corresponding
     particle position is outside the mesh is discarded
 
-### Enhancements
+### Enhancements<a id="sec-9-13-7" name="sec-9-13-7"></a>
 
-#### Additional parser for lagrangian particles
+#### Additional parser for lagrangian particles<a id="sec-9-13-7-1" name="sec-9-13-7-1"></a>
 
 There is now an additional parser to calculate expressions on
 particles.
@@ -3896,39 +3896,39 @@ When a parser for a cloud is used for the first time a table of
 all the available fields is printed to the screen with type and
 description (if available)
 
-#### Function objects that calculate PDEs can use fields from memory
+#### Function objects that calculate PDEs can use fields from memory<a id="sec-9-13-7-2" name="sec-9-13-7-2"></a>
 
 If the field is found in memory this is used instead of a file
 read from disc.
 
-#### Function objects that calculate PDEs can write fields before solving
+#### Function objects that calculate PDEs can write fields before solving<a id="sec-9-13-7-3" name="sec-9-13-7-3"></a>
 
 An additional switch `writeBeforeAfter` allows writing the field
 before and after solving
 
-#### simpleFunctionObjects have addition `outputControlMode`
+#### simpleFunctionObjects have addition `outputControlMode`<a id="sec-9-13-7-4" name="sec-9-13-7-4"></a>
 
 Mode `startup` executes the FO only during construction
 
-#### Conditional functionObjects now have optional `else`
+#### Conditional functionObjects now have optional `else`<a id="sec-9-13-7-5" name="sec-9-13-7-5"></a>
 
 It is now possible to add a sub-dictionary `else` that is used
 to initialize a `functionObjectProxy` that is executed if the
 condition is **not** fulfilled. The sub-dictionary inherits all
 settings that are not set from the parent-dictionary
 
-#### Parsers in `swakFiniteArea` no also have complete tensor-operations
+#### Parsers in `swakFiniteArea` no also have complete tensor-operations<a id="sec-9-13-7-6" name="sec-9-13-7-6"></a>
 
 The two parsers in that library now also support the complete
 set of tensor operations (like `eigenValues` etc)
 
-#### `swakExpressionDistribution` now allows non-scalar weights
+#### `swakExpressionDistribution` now allows non-scalar weights<a id="sec-9-13-7-7" name="sec-9-13-7-7"></a>
 
 For expressions whose results is not a scalar now the weight
 function can either be a scalar or of the same type as the
 expression (so every component can have a separate weight)
 
-#### More options for `accumulations`
+#### More options for `accumulations`<a id="sec-9-13-7-8" name="sec-9-13-7-8"></a>
 
 A number of possible accumulations have been added. Most of
 these are based on distributions. If the `weighted` variant is
@@ -3958,19 +3958,19 @@ accumulations are:
 -   **weightSum:** Sum of the weights of the underlying
     entity. Usually the volume oder the area of it.
 
-#### Python code files are now searched more flexible
+#### Python code files are now searched more flexible<a id="sec-9-13-7-9" name="sec-9-13-7-9"></a>
 
 If a file specified with an option like `startFile` in a
 Python-functionObject (or similar) is not found in the current
 directory the path of the dictionary it is specified in is
 prepended and the file is searched there
 
-#### Python integration now uses `IPython` if possible
+#### Python integration now uses `IPython` if possible<a id="sec-9-13-7-10" name="sec-9-13-7-10"></a>
 
 The interactive shell of the python integration now uses
 `IPython` if it is installed. This improves tab-completion etc
 
-#### Preload libraries in the Python integration
+#### Preload libraries in the Python integration<a id="sec-9-13-7-11" name="sec-9-13-7-11"></a>
 
 As problematic libraries could hand during importing these
 libraries can be imported in a safe way using the optional
@@ -3978,14 +3978,14 @@ libraries can be imported in a safe way using the optional
 under which the imports will appear in the Python-namespace. The
 value is optional and the name of the actual library
 
-#### Added standard function `weight()`
+#### Added standard function `weight()`<a id="sec-9-13-7-12" name="sec-9-13-7-12"></a>
 
 All parsers now implement a function `weight()` that returns the
 "natural" weight that is used for instance in the weighted
 average (for internal fields that would be for instance the cell
 volume)
 
-#### `funkyDoCalc` now writes files
+#### `funkyDoCalc` now writes files<a id="sec-9-13-7-13" name="sec-9-13-7-13"></a>
 
 Two kinds of files are optionally written
 -   CSV-files with the values of an evaluation (each evaluation
@@ -4000,14 +4000,14 @@ options `writeDistributions` and `writeCsv`. Either
 -   from the command line: this switches it on for **all** evaluations
 -   one "per dictionary"-basis for each evaluation separately
 
-#### PDE-functionObjects now relax their equations
+#### PDE-functionObjects now relax their equations<a id="sec-9-13-7-14" name="sec-9-13-7-14"></a>
 
 The PDE-functionObjects now honor the `relaxationFactors. If
      =steady` is `false` then relaxation has to be switched on using
 `relaxUnsteady`. For the last corrector iteration the equation
 is not relaxed unless the parameter `relaxLastIteration` is set.
 
-#### Full set of `laplacian`-operations in `internalField`-parser
+#### Full set of `laplacian`-operations in `internalField`-parser<a id="sec-9-13-7-15" name="sec-9-13-7-15"></a>
 
 The support of `laplacian` operations (especially with a
 coefficient that is different from a scalar) was incomplete. Now
@@ -4016,62 +4016,62 @@ all possible coefficient types are supported.
 Also in the `fvcSchemes`-plugin functions the set of
 `laplacian`-operators was completed
 
-#### Function object `swakExpression` now has optional `mask`
+#### Function object `swakExpression` now has optional `mask`<a id="sec-9-13-7-16" name="sec-9-13-7-16"></a>
 
 If the logical expression `mask` is set then only the results
 from `expression` for which `mask` is `true` are used for
 accumulations
 
-## Next release - version number : 0.3.1
+## 2014-07-11 - version number : 0.3.1<a id="sec-9-14" name="sec-9-14"></a>
 
-### Incompatibilities to previous versions
+### Incompatibilities to previous versions<a id="sec-9-14-1" name="sec-9-14-1"></a>
 
-#### Additional required code snipplet for some Python-functionObjects
+#### Additional required code snipplet for some Python-functionObjects<a id="sec-9-14-1-1" name="sec-9-14-1-1"></a>
 
 There is now a new code-snipplet required for a number of these
 function objects. It can be left empty but has to be specified
 
-### Infrastructure
+### Infrastructure<a id="sec-9-14-2" name="sec-9-14-2"></a>
 
-#### Improved macros for Foam versions
+#### Improved macros for Foam versions<a id="sec-9-14-2-1" name="sec-9-14-2-1"></a>
 
 This should make `swak.H` more readable
 
-#### Support for private installation of bison
+#### Support for private installation of bison<a id="sec-9-14-2-2" name="sec-9-14-2-2"></a>
 
 If a directory `privateRequirements/bin` is private in the
 sources directory then the `bison` found there is used. A script
 `maintainanceScripts/compileRequirements.sh` is provided that
 fetches the bison sources, compiles them and installs them there
 
-### Documentation
+### Documentation<a id="sec-9-14-3" name="sec-9-14-3"></a>
 
-#### Information about macro-expansion added
+#### Information about macro-expansion added<a id="sec-9-14-3-1" name="sec-9-14-3-1"></a>
 
 A section about thus new feature is added
 
-### Bug fixes
+### Bug fixes<a id="sec-9-14-4" name="sec-9-14-4"></a>
 
-#### Invalid entries in distributions from `swakExpressionAverageDistribution`
+#### Invalid entries in distributions from `swakExpressionAverageDistribution`<a id="sec-9-14-4-1" name="sec-9-14-4-1"></a>
 
 The distribution data was not clipped to the range where actually
 data was collected. This is now fixed by adding the notion of an
 invalid value to `SimpleDistribution`
 
-#### `swakExpressionAverageDistribution` not correctly working in parallel
+#### `swakExpressionAverageDistribution` not correctly working in parallel<a id="sec-9-14-4-2" name="sec-9-14-4-2"></a>
 
 This should now be fixed
 
-#### `patchFunctionObject` fails for some parallel runs
+#### `patchFunctionObject` fails for some parallel runs<a id="sec-9-14-4-3" name="sec-9-14-4-3"></a>
 
 Problem is that when the processor boundaries are used too that
 the indexing might be inconsistent on the different
 processors. Fix: coupled boundaries are ignored by default (have
 to be switched on)
 
-### New features
+### New features<a id="sec-9-14-5" name="sec-9-14-5"></a>
 
-#### Boundary condition `groovyFixedNormalSlip` in `groovyStandardBCs`
+#### Boundary condition `groovyFixedNormalSlip` in `groovyStandardBCs`<a id="sec-9-14-5-1" name="sec-9-14-5-1"></a>
 
 These boundary conditions allow specifying a value in normal
 direction to the patch while in tangential direction the regular
@@ -4079,7 +4079,7 @@ slip condition is applied. This is implemented for `fvPatch` and
 `pointPatch`. For the `pointPatch` the normal direction has to be
 specified by the user
 
-#### New utility `funkyWarpMesh`
+#### New utility `funkyWarpMesh`<a id="sec-9-14-5-2" name="sec-9-14-5-2"></a>
 
 Utility that calculates new point values for the mesh. In the
 simplest form the expression is specified on the command line. If
@@ -4088,7 +4088,7 @@ dictionary which allows more control. If `-relative` is specified
 points are moved by the result of the expression. The result of
 the expression must be a `pointVectorField`
 
-#### Function objects that write additional writes depending on the flow conditions
+#### Function objects that write additional writes depending on the flow conditions<a id="sec-9-14-5-3" name="sec-9-14-5-3"></a>
 
 A hierarchy of function objects that trigger additional
 writes. Once a condition is fulfilled data is either written for
@@ -4114,7 +4114,7 @@ Allows saving and writing a specifiable number of timesteps
 **before** the condition is met (this allows finding out what lead
 to this)
 
-#### Function object `writeOldTimesOnSignal` with new signal handlers
+#### Function object `writeOldTimesOnSignal` with new signal handlers<a id="sec-9-14-5-4" name="sec-9-14-5-4"></a>
 
 This function object installs a new signal handler for specified
 signals.
@@ -4123,7 +4123,7 @@ The function object itself saves the last \(N\)-timesteps, the
 signal handler (when called) writes these steps to disk and then
 calls the regular OpenFOAM signal handler
 
-#### Macro expansion
+#### Macro expansion<a id="sec-9-14-5-5" name="sec-9-14-5-5"></a>
 
 For expressions and variable lists there is now the possibility
 to expand values from the dictionary during reading. The two
@@ -4156,32 +4156,32 @@ the direction of the gravity (as specified in the `g`-file).
 
 This expansion is done during the expression.
 
-### Enhancements
+### Enhancements<a id="sec-9-14-6" name="sec-9-14-6"></a>
 
-#### `expressionField` now allows setting of dimensions
+#### `expressionField` now allows setting of dimensions<a id="sec-9-14-6-1" name="sec-9-14-6-1"></a>
 
 An optional entry `dimension` for the function object now allows
 setting the dimension of the resulting field
 
-#### New function `distToPatch` in Field-parser
+#### New function `distToPatch` in Field-parser<a id="sec-9-14-6-2" name="sec-9-14-6-2"></a>
 
 This function gives the distance in the mesh to a specified face.
 
 Not yet working correctly
 
-#### `panicDump` now allows storing old values
+#### `panicDump` now allows storing old values<a id="sec-9-14-6-3" name="sec-9-14-6-3"></a>
 
 With the switch `storeAndWritePreviousState` this functionObject
 now can cache a number of timesteps and write these results in
 addition to the current timestep
 
-#### `swakExpressionAverageDistribution` records extremes and number of samples
+#### `swakExpressionAverageDistribution` records extremes and number of samples<a id="sec-9-14-6-4" name="sec-9-14-6-4"></a>
 
 In addition to the average now this Function object also records
 the minimum and maximum value for each bin. Also the number of
 samples used in the bin
 
-#### Python-function objects that return a boolean now have a initialization-snipplet
+#### Python-function objects that return a boolean now have a initialization-snipplet<a id="sec-9-14-6-5" name="sec-9-14-6-5"></a>
 
 The function objects `executeIfPython`, `setDeltaTWithPython`,
 `setEntTimeWithPython` and `writeAndEndWithPython` now expect
@@ -4190,9 +4190,9 @@ can be used to set up global variables if these snipplets need
 some kind of state. The variables have to be declared `global` in
 the snipplets that do the actual decision (for technical reason)
 
-### Examples
+### Examples<a id="sec-9-14-7" name="sec-9-14-7"></a>
 
-#### `other/simpleBendedPipe`
+#### `other/simpleBendedPipe`<a id="sec-9-14-7-1" name="sec-9-14-7-1"></a>
 
 Example to demonstrate `funkyWarpMesh` and post-processing on
 bended geometries
