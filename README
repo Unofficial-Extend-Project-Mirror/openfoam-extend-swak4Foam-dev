@@ -2793,6 +2793,9 @@ S_{expl} + S_{impl} T
 ** Next release - version number : 0.3.2
 *** Incompatibilities
 *** Bug fixes
+**** =swakExpressionAverageDistribution= fails for small spans
+     If the span of the =abscissa= is too small (almost $0$) there
+     were numeric problems. In this case the bin-width is now extended to $1$
 *** Infrastructure
 *** Documentation
 *** New features
