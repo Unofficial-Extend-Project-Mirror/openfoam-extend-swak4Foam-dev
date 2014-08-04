@@ -81,22 +81,22 @@ class swakExpressionAverageDistributionFunctionObject
 
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the expression for the weight
-    string weightExpression_;
+    exprString weightExpression_;
 
     //- the weight values
     autoPtr<Field<scalar> > weightValues_;
 
     //- the expression for the mask
-    string maskExpression_;
+    exprString maskExpression_;
 
     //- the mask values
     autoPtr<Field<bool> > maskValues_;
 
     //- the expression for the abscissa
-    string abscissaExpression_;
+    exprString abscissaExpression_;
 
     //- the expression driver
     autoPtr<CommonValueExpressionDriver> driver_;

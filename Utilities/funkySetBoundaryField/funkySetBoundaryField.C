@@ -143,7 +143,10 @@ int main(int argc, char *argv[])
 
                 word target(expression["target"]);
                 word patchName(expression["patchName"]);
-                string expr(expression["expression"]);
+                exprString expr(
+                    expression["expression"],
+                    expression
+                );
                 Info << "Setting " << target << " on " << patchName
                     << " the expression " << expr << endl;
 

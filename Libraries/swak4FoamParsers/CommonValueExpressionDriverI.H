@@ -58,7 +58,7 @@ namespace Foam {
 
     template<class Type>
     tmp<Field<Type> > CommonValueExpressionDriver::evaluate(
-        const string &expr,
+        const exprString &expr,
         bool qPoint
     )
     {
@@ -69,7 +69,7 @@ namespace Foam {
 
     template<class Type>
     Type CommonValueExpressionDriver::evaluateUniform(
-        const string &expr,
+        const exprString &expr,
         bool qPoint
     )
     {

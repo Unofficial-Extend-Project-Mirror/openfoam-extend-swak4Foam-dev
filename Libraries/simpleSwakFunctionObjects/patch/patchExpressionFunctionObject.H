@@ -79,7 +79,7 @@ class patchExpressionFunctionObject
     Field<T> evaluate(const word& fieldName,T preset) const;
 
     //- the expression that is to be evaluated
-    string expression_;
+    exprString expression_;
 
     //- the specification
     dictionary data_;

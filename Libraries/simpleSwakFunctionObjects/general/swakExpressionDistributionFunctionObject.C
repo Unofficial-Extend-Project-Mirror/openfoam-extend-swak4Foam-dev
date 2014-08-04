@@ -66,9 +66,18 @@ swakExpressionDistributionFunctionObject::swakExpressionDistributionFunctionObje
 )
 :
     distributionFunctionObject(name,t,dict),
-    expression_(dict.lookup("expression")),
-    weightExpression_(dict.lookup("weight")),
-    maskExpression_(dict.lookup("mask")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
+    weightExpression_(
+        dict.lookup("weight"),
+        dict
+    ),
+    maskExpression_(
+        dict.lookup("mask"),
+        dict
+    ),
     driver_(
         CommonValueExpressionDriver::New(
             dict,

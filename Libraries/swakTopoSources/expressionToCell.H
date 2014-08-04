@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -39,13 +39,15 @@ SourceFiles
 Contributors/Copyright:
     2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef expressionToCell_H
 #define expressionToCell_H
 
 #include "topoSetSource.H"
+
+#include "exprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +68,7 @@ class expressionToCell
         static addToUsageTable usage_;
 
         //- The logical expression to use
-        string expression_;
+        exprString expression_;
 
         //- dictionary with additional data
         autoPtr<dictionary> dict_;
@@ -84,7 +86,7 @@ public:
         expressionToCell
         (
             const polyMesh& mesh,
-            const string& expression
+            const exprString& expression
         );
 
         //- Construct from dictionary

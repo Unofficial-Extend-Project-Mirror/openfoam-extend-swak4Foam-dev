@@ -70,7 +70,10 @@ patchExpressionDistributionFunctionObject::patchExpressionDistributionFunctionOb
 )
 :
     distributionFunctionObject(name,t,dict),
-    expression_(dict.lookup("expression")),
+    expression_(
+        dict.lookup("expression"),
+        dict
+    ),
     data_(dict)
 {
     const fvMesh &mesh=refCast<const fvMesh>(obr_);

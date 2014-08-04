@@ -122,7 +122,10 @@ void executeIfSwakExpressionFunctionObject::readParameters(const dictionary &dic
         refCast<const fvMesh>(obr_)
     );
 
-    logicalExpression_=dict.lookup("logicalExpression");
+    logicalExpression_=exprString(
+        dict.lookup("logicalExpression"),
+        dict
+    );
 
     logicalAccumulation_=LogicalAccumulationNamedEnum::names[dict.lookup("logicalAccumulation")];
 }
