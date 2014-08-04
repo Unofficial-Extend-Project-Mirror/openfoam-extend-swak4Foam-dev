@@ -2650,6 +2650,11 @@ S_{expl} + S_{impl} T
 **** =funkyPythonPostproc= not executing function objects
      In newer version the =execute()=-method of function objects
      needs a parameter =force=. Fixed
+**** Temporary fields shadow 'real' fields in =foam-extend-3.1=
+     Due to a small semantic difference in the copy constructor of
+     =GeometricField= a temporary object of the same name shadows the
+     real field and prohibits that it is written. Fixed by giving the
+     copy a unique name
 *** New features
 **** Boundary condition =groovyFixedNormalSlip= in =groovyStandardBCs=
      These boundary conditions allow specifying a value in normal
