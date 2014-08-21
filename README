@@ -2795,7 +2795,12 @@ S_{expl} + S_{impl} T
 *** Bug fixes
 **** =swakExpressionAverageDistribution= fails for small spans
      If the span of the =abscissa= is too small (almost $0$) there
-     were numeric problems. In this case the bin-width is now extended to $1$
+     were numeric problems. In this case the bin-width is now extended
+     to $1$
+**** Quantile calculations (including =median=) not correctly working in parallel
+     Reason was that =SimpleDistribution.calcScalarWeight= did not
+     =reduce=. This is now fixed (and a special switch is introduced
+     for one situation where this isn't desirable)
 *** Infrastructure
 *** Documentation
 *** New features

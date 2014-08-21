@@ -45,7 +45,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(swakExpressionAverageDistributionFunctionObject, 1);
+    defineTypeNameAndDebug(swakExpressionAverageDistributionFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
