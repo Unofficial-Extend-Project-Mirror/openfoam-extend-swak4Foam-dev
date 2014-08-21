@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -487,7 +487,7 @@ void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
     minimum_.clear();
     minimum_=other.minimum_;
     maximum_.clear();
-    maximum_=other.minimum_;
+    maximum_=other.maximum_;
     nSamples_.clear();
     nSamples_=other.nSamples_;
 

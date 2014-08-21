@@ -1,0 +1,9 @@
+From: Bernhard Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 24 Apr 2014 16:16:37 +0200
+State: new
+Subject: Properly rewrite recalcLimits in SimpleDistribution
+Message-Id: <ff6d0943ee55c2da-0-artemis@workstation008.office.ice-sf.at>
+
+When called from calcScalarWeights and weights are 0 this does not
+work properly. Currently there is a workaround in the only method that
+needs this but it should be rewritten properly
