@@ -88,10 +88,11 @@ swakExpressionAverageDistributionFunctionObject::setData(
     AType span=gMax(xValues)-gMin(xValues);
     AType binSize=pTraits<AType>::zero;
     for(direction i=0;i<pTraits<AType>::nComponents;i++) {
-        setComponent(binSize,i)=max(
-            SMALL*1e5,
-            component(span,i)/(binNr+1)
-        );
+        scalar sz=component(span,i)/(binNr+1);
+        if(sz<SMALL*1e5) {
+            sz=1;
+        }
+        setComponent(binSize,i)=sz;
     }
 
     if(debug) {
