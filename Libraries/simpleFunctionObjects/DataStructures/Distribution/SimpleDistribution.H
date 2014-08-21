@@ -146,13 +146,15 @@ public:
 
    void calcScalarWeight(
         const Field<Type> &values,
-        const Field<scalar> &weights
+        const Field<scalar> &weights,
+        bool doReduce=true
     );
 
    void calcScalarWeight(
         const Field<Type> &values,
         const Field<scalar> &weights,
-        const Field<bool> &mask
+        const Field<bool> &mask,
+        bool doReduce=true
     );
 
    void calcMinimumMaximum(
