@@ -189,7 +189,8 @@ Type SimpleDistribution<Type>::max() const
 template<class Type>
 void SimpleDistribution<Type>::calcScalarWeight(
     const Field<Type> &values,
-    const Field<scalar> &weights
+    const Field<scalar> &weights,
+    bool doReduce
 )
 {
     if(values.size()!=weights.size()) {
@@ -208,8 +209,11 @@ void SimpleDistribution<Type>::calcScalarWeight(
         );
     }
 
-    //
+    if(doReduce) {
+        reduce(*this,plusOp<SimpleDistribution<Type> >());
+    }
 
+    // TODO: This does not properly work for weights that are 0
     recalcLimits();
 }
 
@@ -307,7 +311,8 @@ template<class Type>
 void SimpleDistribution<Type>::calcScalarWeight(
     const Field<Type> &values,
     const Field<scalar> &weights,
-    const Field<bool> &mask
+    const Field<bool> &mask,
+    bool doReduce
 )
 {
     if(
@@ -331,6 +336,10 @@ void SimpleDistribution<Type>::calcScalarWeight(
                 pTraits<Type>::one*weights[i]
             );
         }
+    }
+
+    if(doReduce) {
+        reduce(*this,plusOp<SimpleDistribution<Type> >());
     }
 
     recalcLimits();
