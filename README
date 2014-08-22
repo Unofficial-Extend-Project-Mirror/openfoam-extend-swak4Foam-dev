@@ -2516,6 +2516,12 @@ S_{expl} + S_{impl} T
      bended geometries
 ** Next release - version number : 0.3.2
 *** Incompatibilities
+**** Changed behavior of =groovyBC= during initialization
+     If =value= is unset then during initialization the value of the
+     internal field next to the patch is used. Previous behavior was
+     to set the patch to $0$.
+
+     In most cases the new behavior should be better.
 *** Bug fixes
 **** =swakExpressionAverageDistribution= fails for small spans
      If the span of the =abscissa= is too small (almost $0$) there
@@ -2529,4 +2535,15 @@ S_{expl} + S_{impl} T
 *** Documentation
 *** New features
 *** Enhancements
+**** =groovyBC= now has a better initialization if =value= is unset
+     Until no if =value= was not set =groovyBC= automatically
+     initialized the boundary to $0$ until the actual expressions were
+     evaluated for the first time. This raised problems when people
+     for instance didn't initialize =T= to $0$ and the density
+     calculation produced a /division by zero/.
+
+     Now if =value= is unset then the value of the patch is
+     initialized from the value of the internal field next to the
+     patch. This doesn't protect from the internal field being
+     inconsistently set, but at least it sets the boundary consistently.
 *** Examples

@@ -106,7 +106,7 @@ groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
     }
     else
     {
-        (*this)==pTraits<Type>::zero;
+        (*this)==this->patchInternalField();
 
         WarningIn(
             "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField"
@@ -117,7 +117,7 @@ groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore would be undefined "
-            << pTraits<Type>::zero
+            << "and set to the internal field next to the patch"
             << endl;
     }
 

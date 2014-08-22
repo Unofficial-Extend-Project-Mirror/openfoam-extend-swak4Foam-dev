@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCDirectionFvPatchField.H"
@@ -112,7 +112,7 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
     if (dict.found("refValue")) {
         this->refValue() = Field<Type>("refValue", dict, p.size());
     } else {
-        this->refValue() = pTraits<Type>::zero;
+        this->refValue() = this->patchInternalField();
     }
 
     if (dict.found("value"))
@@ -134,7 +134,7 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore using "
-            << this->refValue()
+            << "the internal field next to the patch"
             << endl;
     }
 
@@ -164,12 +164,12 @@ groovyBCDirectionFvPatchField<Type>::groovyBCDirectionFvPatchField
 
         tmp<Field<Type> > gradValue =
             this->patchInternalField() + this->refGrad()/this->patch().deltaCoeffs();
-        
+
         tmp<Field<Type> > transformGradValue =
             transform(I - this->valueFraction(), gradValue);
-        
+
         Field<Type>::operator=(normalValue + transformGradValue);
-        
+
         transformFvPatchField<Type>::evaluate();
     }
 }
@@ -235,7 +235,7 @@ void groovyBCDirectionFvPatchField<Type>::updateCoeffs()
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
     this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
     this->valueFraction() = driver_.evaluate<symmTensor>(this->fractionExpression_);
-    
+
     directionMixedFvPatchField<Type>::updateCoeffs();
 }
 

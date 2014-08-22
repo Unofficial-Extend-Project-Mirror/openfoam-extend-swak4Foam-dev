@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id: groovyBCPointPatchField.C,v ae970b62c3e4 2013-01-13 23:09:18Z bgschaid $ 
+ SWAK Revision: $Id: groovyBCPointPatchField.C,v ae970b62c3e4 2013-01-13 23:09:18Z bgschaid $
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCPointPatchField.H"
@@ -82,7 +82,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     if (dict.found("refValue")) {
         this->refValue() = Field<Type>("refValue", dict, p.size());
     } else {
-        this->refValue() = pTraits<Type>::zero;
+        this->refValue() = this->patchInternalField();
     }
 
     if (dict.found("value"))
@@ -104,7 +104,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore using "
-            << this->refValue()
+            << "the internal field next to the patch"
             << endl;
     }
 
@@ -167,7 +167,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 template<class Type>
 void groovyBCPointPatchField<Type>::updateCoeffs()
 {
-    if(debug) 
+    if(debug)
     {
         Info << "groovyBCFvPatchField<Type>::updateCoeffs" << endl;
         Info << "Value: " << this->valueExpression_ << endl;
@@ -186,7 +186,7 @@ void groovyBCPointPatchField<Type>::updateCoeffs()
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_,true);
     //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);
     this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_,true);
-    
+
     mixedPointPatchFieldType::updateCoeffs();
 }
 
@@ -202,7 +202,7 @@ void groovyBCPointPatchField<Type>::write(Ostream& os) const
 
     driver_.writeCommon(os,this->debug_ || debug);
 }
-    
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
