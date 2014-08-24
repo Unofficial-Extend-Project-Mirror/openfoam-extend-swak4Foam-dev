@@ -83,7 +83,7 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
 
     driver_.readVariablesAndTables(dict);
 
-    this->refValue() = pTraits<Type>::zero;
+    this->refValue() = this->patchInternalField();
 
     if (dict.found("value"))
     {
@@ -104,7 +104,7 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore using "
-            << this->refValue()
+            << "the internal field next to the patch"
             << endl;
     }
 
@@ -162,7 +162,7 @@ void groovyBCFaPatchField<Type>::updateCoeffs()
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_);
     this->refGrad() = driver_.evaluate<Type>(this->gradientExpression_);
     this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_);
-    
+
     mixedFaPatchField<Type>::updateCoeffs();
 }
 
