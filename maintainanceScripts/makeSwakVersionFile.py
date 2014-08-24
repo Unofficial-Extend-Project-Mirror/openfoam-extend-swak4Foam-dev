@@ -4,9 +4,65 @@ import sys
 from os import path
 import re
 
+# This part is lifted from six.py (https://pythonhosted.org/six/) to
+# make sure that this script runs with Python 2 and Python 3
+
+# True if we are running on Python 3.
+PY3 = sys.version_info[0] == 3
+
+if PY3:
+    import builtins
+    print_ = getattr(builtins, "print")
+    del builtins
+else:
+    def print_(*args, **kwargs):
+        """The new-style print function."""
+        fp = kwargs.pop("file", sys.stdout)
+        if fp is None:
+            return
+        def write(data):
+            if not isinstance(data, basestring):
+                data = str(data)
+            fp.write(data)
+        want_unicode = False
+        sep = kwargs.pop("sep", None)
+        if sep is not None:
+            if isinstance(sep, unicode):
+                want_unicode = True
+            elif not isinstance(sep, str):
+                raise TypeError("sep must be None or a string")
+        end = kwargs.pop("end", None)
+        if end is not None:
+            if isinstance(end, unicode):
+                want_unicode = True
+            elif not isinstance(end, str):
+                raise TypeError("end must be None or a string")
+        if kwargs:
+            raise TypeError("invalid keyword arguments to print()")
+        if not want_unicode:
+            for arg in args:
+                if isinstance(arg, unicode):
+                    want_unicode = True
+                    break
+        if want_unicode:
+            newline = unicode("\n")
+            space = unicode(" ")
+        else:
+            newline = "\n"
+            space = " "
+        if sep is None:
+            sep = space
+        if end is None:
+            end = newline
+        for i, arg in enumerate(args):
+            if i:
+                write(sep)
+            write(arg)
+        write(end)
+
 from subprocess import Popen,PIPE
 try:
-    output = Popen(["hg", "branch"], stdout=PIPE).communicate()[0]
+    output = str(Popen(["hg", "branch"], stdout=PIPE).communicate()[0])
     isPackage = (output.find("debian")==0)
 except OSError:
     # there is no mercurial
@@ -24,7 +80,7 @@ for l in readme.readlines():
     m=verline.match(l)
     if m:
         if isPackage and m.group(1).find("Next")==0:
-            print "Keeping the last real version number",verstring
+            print_("Keeping the last real version number",verstring)
             continue
         reldate=m.group(1)
         grp=m.group(2).split()
@@ -33,7 +89,7 @@ for l in readme.readlines():
 
 vmajor,vminor,vpatch=verstring.split(".")
 
-print "Swak version is %s.%s.%s" % (vmajor,vminor,vpatch)
+print_("Swak version is %s.%s.%s" % (vmajor,vminor,vpatch))
 
 versionH=path.join(path.dirname(sys.argv[0]),
                    "..",
@@ -56,5 +112,5 @@ if extension!="":
 newContent="\n".join(new)+"\n"
 
 if newContent!=oldContent:
-    print "Contents of",versionH,"differ ... writing"
+    print_("Contents of",versionH,"differ ... writing")
     open(versionH,"w").write(newContent)

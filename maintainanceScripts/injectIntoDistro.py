@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 
+# this utility only supports python 2
+
 from os import path,remove,mkdir,listdir
 from os import environ as e
 from shutil import rmtree
@@ -19,13 +21,13 @@ tarFile="/tmp/swak4FoamRepository.tar"
 if path.exists(tarFile):
     print "Removing",tarFile
     remove(tarFile)
-    
+
 print "Creating tar of this repository at",tarFile
 status=call(["hg","archive",tarFile])
 if status!=0:
     print "Problem while creating tar"
     sys.exit(-1)
-    
+
 destTuples=[ ("Libraries", srcDir),
              ("Utilities", appDir),
              ("Examples", tutDir) ]
@@ -86,7 +88,7 @@ def findAndProcessMake(main):
                                  ("-I../","-I$(LIB_SRC)/swak4Foam/")])
             else:
                 findAndProcessMake(f)
-                
+
 for d in [srcDir,appDir,tutDir]:
     print "Processing Make-directories in",d
     findAndProcessMake(d)
