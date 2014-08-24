@@ -41,6 +41,9 @@
      - Compilation with Intel compiler and Mingw
      - Rewrite of =mybison= and =myflex= to allow parallel compilation
        with =WM_COMPPROCS=
+     - Generation of dependencies for files that need Bison generated
+       tab.hh files. This allows not having race conditions during
+       parallel compilation
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -119,6 +122,9 @@
          uninitialized memory and crashes. This variable can be used
          to switch off the optimization (usually this fixes the
          problems)
+    - SWAK_TEST_RACE_CONDITIONS :: Meant to be used only by developers,
+         for performing a verification on whether race conditions occur
+         during parallel compilation, regarding the grammar parsers.
 *** Special versions of the python integration
     *Note*: This section is very special and won't be needed by most
     people
@@ -2531,6 +2537,12 @@ S_{expl} + S_{impl} T
      Reason was that =SimpleDistribution.calcScalarWeight= did not
      =reduce=. This is now fixed (and a special switch is introduced
      for one situation where this isn't desirable)
+**** Some =maintainanceScripts= do not work under Python 3
+     The scripts
+     - =makeSwakVersionFile.py=
+     - =makeCopyrightEntries.py=
+     have been adapted so that they now work with Python 2.x as well
+     as Python 3
 *** Infrastructure
 *** Documentation
 *** New features
