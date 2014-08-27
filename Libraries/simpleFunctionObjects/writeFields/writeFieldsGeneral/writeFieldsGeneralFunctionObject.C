@@ -40,10 +40,23 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "basicKinematicCloud.H"
+#include "basicKinematicCollidingCloud.H"
+#include "basicKinematicMPPICCloud.H"
+#include "basicReactingCloud.H"
+#include "basicReactingMultiphaseCloud.H"
+#include "basicThermoCloud.H"
+
+#include "cloud.H"
+// #include "const_iterator.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -55,7 +68,8 @@ writeFieldsGeneralFunctionObject::writeFieldsGeneralFunctionObject
 )
 :
     simpleFunctionObject(name,t,dict),
-    fieldNames_(0)
+    fieldNames_(0),
+    cloudNames_(0)
 {
 }
 
@@ -64,6 +78,7 @@ bool writeFieldsGeneralFunctionObject::start()
     simpleFunctionObject::start();
 
     fieldNames_=wordList(dict_.lookup("fieldNames"));
+    cloudNames_=wordList(dict_.lookup("cloudNames"));
 
     return true;
 }
@@ -109,7 +124,39 @@ void writeFieldsGeneralFunctionObject::write()
             totalCnt++;
         }
     }
+
     Info << name() << " triggered writing of " << totalCnt << " fields" << endl;
+
+
+    totalCnt=0;
+    forAll(cloudNames_,i) {
+
+        const word &name=cloudNames_[i];
+        label cnt=0;
+
+        cnt += writeCloud<basicKinematicCloud>(name);
+        cnt+=writeCloud<basicKinematicCollidingCloud>(name); 
+        cnt+=writeCloud<basicKinematicMPPICCloud>(name);
+        cnt+=writeCloud<basicThermoCloud>(name);
+        cnt+=writeCloud<basicReactingCloud>(name);
+        cnt+=writeCloud<basicReactingMultiphaseCloud>(name);;
+
+        if(cnt>1) {
+            WarningIn("writeFieldsGeneralFunctionObject::write()")
+                << " More than one (" << cnt
+                    << ") clouds are known by the name " << name << endl;
+        } else if(cnt<0) {
+            WarningIn("writeFieldsGeneralFunctionObject::write()")
+                << " No clouds with the name " << name
+                    << " found" << endl;
+        } else {
+            totalCnt++;
+        }
+    }
+
+    Info << name() << " triggered writing of " << totalCnt << " clouds" << endl;
+
+    
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
