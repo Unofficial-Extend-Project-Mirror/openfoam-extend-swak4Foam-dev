@@ -89,8 +89,16 @@ bool writeFieldsGeneralFunctionObject::start()
     simpleFunctionObject::start();
 
     fieldNames_=wordList(dict_.lookup("fieldNames"));
-    cloudNames_=wordList(dict_.lookup("cloudNames"));
-
+    if(dict_.found("cloudNames")) {
+        cloudNames_=wordList(dict_.lookup("cloudNames"));
+    } else {
+        WarningIn("writeFieldsGeneralFunctionObject::writeFieldsGeneralFunctionObject")
+            << "No list of clouds to be written specified in "
+                << dict_.name() << nl
+                << "If you want to write lagrangian particles add a "
+                << "parameter 'cloudNames' with the names of the clouds"
+                << endl;
+    }
     return true;
 }
 

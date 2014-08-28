@@ -44,6 +44,6 @@ LIB_LIBS = \
     -lincompressibleTurbulenceModel \
     -lspecie \
     -llagrangian \
-    -lradiation \
+    $(RADIATION_LIB) \
     -lthermophysicalFunctions \
     -llagrangianIntermediate
