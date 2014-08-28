@@ -1,0 +1,173 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermoCloud1Properties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution {
+    active          yes;
+    coupled         true;
+    transient       true;
+    cellValueSourceCorrection on;
+
+    interpolationSchemes
+    {
+        rho             cell;
+        thermo:mu       cell;
+        kappa           cell;
+        U               cellPoint;
+        T               cell;
+        Cp              cell;
+    }
+
+    sourceTerms
+    {
+        schemes
+        {
+            rho             explicit 1;
+            U               explicit 1;
+            Yi              explicit 1;
+            h               explicit 1;
+        }
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+        T               analytical;
+    }
+}
+
+
+constantProperties
+{
+    parcelTypeId    1;
+
+    rhoMin           1e-15;
+    TMin             200;
+    minParticleMass  1.0e-25;
+    rho0             2500;
+    T0               300; // initial temperature
+    Cp0              900;
+    epsilon0         1;
+    f0               0.5;
+    Pr               0.7;
+
+    pMin  1e4;
+    constantVolume 1;
+    Tvap   450;
+    Tbp   370;
+
+    youngsModulus   1e9;
+    poissonsRatio   0.35;
+}
+
+subModels {
+    particleForces
+    {
+        gravity         off;
+        sphereDrag;
+    }
+
+    injectionModel  patchInjection;
+
+    dispersionModel none; //stochasticDispersionRAS;
+
+    stochasticCollisionModel none;
+
+    /*
+    patchInteractionModel standardWallInteraction;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+    }
+    */
+
+    patchInteractionModel localInteraction;
+
+    localInteractionCoeffs
+    {
+        patches
+        (
+            "(back|front|inlet|porosityWall|wall)"
+            {
+                type rebound;
+                e    1;
+                mu   0;
+            }
+            outlet
+            {
+                type escape;
+            }
+        );
+    }
+
+    heatTransferModel RanzMarshall;
+
+    RanzMarshallCoeffs
+    {
+        BirdCorrection  off;
+    }
+
+    radiation       off;
+
+    injectionModels
+    {
+        first
+        {
+            type            patchInjection;
+            patchName       inlet;
+            U0              ( 1 0 0 ); 
+            flowRateProfile constant  0.1;
+            massTotal        1.0e-12;
+            SOI              0;
+            parcelBasisType mass;
+            duration 10;
+            parcelsPerSecond 500;
+            sizeDistribution
+            {
+                type fixedValue;
+                fixedValueDistribution
+                {
+                    value 1e-6;
+                }
+            }
+        }
+
+    }
+
+    surfaceFilmModel none;
+}
+
+cloudFunctions
+{
+    first {
+        type patchPostProcessing;
+        maxStoredParcels 10000;
+        patches (
+            outlet
+        );
+    }
+
+    second {
+        type particleTracks;
+        trackInterval 1;
+        maxSamples 10000000;
+        resetOnWrite false;
+    }
+}
+
+
+// ************************************************************************* //
