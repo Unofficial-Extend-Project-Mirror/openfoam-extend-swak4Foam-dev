@@ -40,11 +40,22 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "swakCloudTypes.H"
+
 #include "basicKinematicCloud.H"
+#ifdef FOAM_HAS_COLLIDING_CLOUD
 #include "basicKinematicCollidingCloud.H"
+#endif
+#ifdef FOAM_HAS_MPICC_CLOUD
 #include "basicKinematicMPPICCloud.H"
-#include "basicReactingCloud.H"
+#endif
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "BasicReactingMultiphaseCloud.H"
+#include "BasicReactingCloud.H"
+#else
 #include "basicReactingMultiphaseCloud.H"
+#include "basicReactingCloud.H"
+#endif
 #include "basicThermoCloud.H"
 
 #include "cloud.H"
@@ -135,12 +146,24 @@ void writeFieldsGeneralFunctionObject::write()
         label cnt=0;
 
         cnt += writeCloud<basicKinematicCloud>(name);
-        cnt+=writeCloud<basicKinematicCollidingCloud>(name); 
+#ifdef FOAM_HAS_COLLIDING_CLOUD
+        cnt+=writeCloud<basicKinematicCollidingCloud>(name);
+#endif
+#ifdef FOAM_HAS_MPICC_CLOUD
         cnt+=writeCloud<basicKinematicMPPICCloud>(name);
+#endif
         cnt+=writeCloud<basicThermoCloud>(name);
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+        cnt+=writeCloud<constThermoReactingCloud>(name);
+        cnt+=writeCloud<thermoReactingCloud>(name);
+        cnt+=writeCloud<icoPoly8ThermoReactingCloud>(name);
+        cnt+=writeCloud<constThermoReactingMultiphaseCloud>(name);
+        cnt+=writeCloud<thermoReactingMultiphaseCloud>(name);
+        cnt+=writeCloud<icoPoly8ThermoReactingMultiphaseCloud>(name);
+#else
         cnt+=writeCloud<basicReactingCloud>(name);
         cnt+=writeCloud<basicReactingMultiphaseCloud>(name);;
-
+#endif
         if(cnt>1) {
             WarningIn("writeFieldsGeneralFunctionObject::write()")
                 << " More than one (" << cnt
@@ -156,7 +179,7 @@ void writeFieldsGeneralFunctionObject::write()
 
     Info << name() << " triggered writing of " << totalCnt << " clouds" << endl;
 
-    
+
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

@@ -85,6 +85,14 @@ namespace Foam {
 #define FOAM_PHASECHANGEMODEL_HAS_TVAP
 #endif
 
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_DEV)
+#define FOAM_HAS_COLLIDING_CLOUD
+#endif
+
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)
+#define FOAM_HAS_MPICC_CLOUD
+#endif
+
 #include "DebugOStream.H"
 
 #endif
