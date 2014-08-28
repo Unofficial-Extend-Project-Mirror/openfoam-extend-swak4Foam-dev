@@ -20,11 +20,17 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/liquids/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/liquidMixture/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/solids/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/solidMixture/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
     -I$(LIB_SRC)/turbulenceModels \
     -I$(LIB_SRC)/transportModels \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    -I$(LIB_SRC)/lagrangian/intermediate/lnInclude \
     $(ADDITIONALFILES_INC)
 
 LIB_LIBS = \
@@ -37,4 +43,7 @@ LIB_LIBS = \
     -lcompressibleTurbulenceModel \
     -lincompressibleTurbulenceModel \
     -lspecie \
-    -llagrangian
+    -llagrangian \
+    $(RADIATION_LIB) \
+    -lthermophysicalFunctions \
+    -llagrangianIntermediate

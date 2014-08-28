@@ -45,6 +45,7 @@
        tab.hh files. This allows not having race conditions during
        parallel compilation
    - Hrvoje Jasak :: Fixes to compile on Intel and CLang
+   - E.David Huckaby :: Add the writing of particles to =writeFieldsOften=
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -2807,13 +2808,13 @@ S_{expl} + S_{impl} T
      Reason was that =SimpleDistribution.calcScalarWeight= did not
      =reduce=. This is now fixed (and a special switch is introduced
      for one situation where this isn't desirable)
+*** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
      - =makeSwakVersionFile.py=
      - =makeCopyrightEntries.py=
      have been adapted so that they now work with Python 2.x as well
      as Python 3
-*** Infrastructure
 *** Documentation
 *** New features
 *** Enhancements
@@ -2827,5 +2828,11 @@ S_{expl} + S_{impl} T
      Now if =value= is unset then the value of the patch is
      initialized from the value of the internal field next to the
      patch. This doesn't protect from the internal field being
-     inconsistently set, but at least it sets the boundary consistently.
+     inconsistently set, but at least it sets the boundary
+     consistently.
+**** Function objects =writeFieldsOften= and =writeAditionalFields= now write Lagrangian clouds
+     With an additional optional argument =cloudNames= a list of
+     clouds to be written can be specified like the fields.
+
+     This feature was implemented by E. David Huckaby
 *** Examples

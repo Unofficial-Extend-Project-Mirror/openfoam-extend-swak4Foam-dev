@@ -58,7 +58,7 @@ constantProperties
     TMin             200;
     minParticleMass  1.0e-25;
     rho0             2500;
-    T0               1000; // initial temperature
+    T0               300; // initial temperature
     Cp0              900;
     epsilon0         1;
     f0               0.5;
@@ -141,7 +141,7 @@ subModels {
                 type fixedValue;
                 fixedValueDistribution
                 {
-                    value 2e-6;
+                    value 1e-6;
                 }
             }
         }
