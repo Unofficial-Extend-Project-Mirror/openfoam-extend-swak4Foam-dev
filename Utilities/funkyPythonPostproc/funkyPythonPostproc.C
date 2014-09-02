@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -135,8 +135,9 @@ int main(int argc, char *argv[])
 
     const dictionary &pySpec=spec.subDict("python");
 
-    Info << "Function objects: start" << endl << endl;
+    Info << "Function objects: start" << endl;
     functions.start();
+    Info << functions.size() << " function objects read" << endl;
     Info << endl;
 
     pythonInterpreterWrapper python(
@@ -191,7 +192,7 @@ int main(int argc, char *argv[])
 
         Info << endl << endl;
 
-        Info << "Function objects: execute" << endl << endl;
+        Info << "Function objects: execute " << functions.size() << " function objects" << endl;
         functions.execute();
         Info << endl;
 
@@ -207,7 +208,7 @@ int main(int argc, char *argv[])
         Info << endl;
     }
 
-    Info << "Function objects: end" << endl << endl;
+    Info << "Function objects: end " << functions.size() << " function objects" << endl << endl;
     functions.end();
     Info << endl;
 

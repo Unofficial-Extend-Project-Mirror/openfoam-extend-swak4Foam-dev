@@ -5,6 +5,7 @@ endif
 
 include $(OBJECTS_DIR)/../mybison
 include $(OBJECTS_DIR)/../myflex
+sinclude $(OBJECTS_DIR)/../mydependencies
 
 EXE_INC = -I$(OBJECTS_DIR) \
 	$(FOAM_DEV_OPTION) 	\

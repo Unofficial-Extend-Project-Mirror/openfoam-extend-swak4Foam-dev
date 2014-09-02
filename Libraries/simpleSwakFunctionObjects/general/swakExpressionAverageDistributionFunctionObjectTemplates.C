@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -88,10 +88,11 @@ swakExpressionAverageDistributionFunctionObject::setData(
     AType span=gMax(xValues)-gMin(xValues);
     AType binSize=pTraits<AType>::zero;
     for(direction i=0;i<pTraits<AType>::nComponents;i++) {
-        setComponent(binSize,i)=max(
-            SMALL*1e5,
-            component(span,i)/(binNr+1)
-        );
+        scalar sz=component(span,i)/(binNr+1);
+        if(sz<SMALL*1e5) {
+            sz=1;
+        }
+        setComponent(binSize,i)=sz;
     }
 
     if(debug) {
@@ -121,9 +122,21 @@ swakExpressionAverageDistributionFunctionObject::setData(
             )
         );
         SimpleDistribution<AType> &wDist=wDists[i];
-        dist.calcScalarWeight(xValues,values.component(i)*weights,mask);
+        // addition of 2*VSMALL is a workaround for weights that are
+        // equal to 0. Needs proper rewrite in SimpleDistribution
+        dist.calcScalarWeight(
+            xValues,
+            values.component(i)*weights+2*VSMALL,
+            mask,
+            false // do not reduce yet
+        );
         dist.calcMinimumMaximum(xValues,values.component(i),mask);
-        wDist.calcScalarWeight(xValues,weights,mask);
+        wDist.calcScalarWeight(
+            xValues,
+            weights,
+            mask,
+            false // do not reduce yet
+        );
 
         if(debug>1) {
             Info << "Dist: " << dist << endl

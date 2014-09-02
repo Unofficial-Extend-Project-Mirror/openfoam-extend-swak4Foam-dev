@@ -1,0 +1,16 @@
+$(OBJECTS_DIR)/FaFieldValueExpressionDriver.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/FaFieldValueExpressionLexer.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/FaPatchValueExpressionDriver.o: $(OBJECTS_DIR)/FaPatchValueExpressionParser.o
+$(OBJECTS_DIR)/FaPatchValueExpressionLexer.o: $(OBJECTS_DIR)/FaPatchValueExpressionParser.o
+$(OBJECTS_DIR)/groovyBCFaPatchFields.o: $(OBJECTS_DIR)/FaPatchValueExpressionParser.o
+$(OBJECTS_DIR)/faExpressionSource.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/faForceEquation.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/clearExpressionFaField.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/expressionFaField.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/manipulateFaField.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/volFromFaField.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/solveAreaLaplacianPDE.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/solveAreaTransportPDE.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/solvePDECommonFiniteArea.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/FaFieldValuePluginFunction.o: $(OBJECTS_DIR)/FaFieldValueExpressionParser.o
+$(OBJECTS_DIR)/FaPatchValuePluginFunction.o: $(OBJECTS_DIR)/FaPatchValueExpressionParser.o

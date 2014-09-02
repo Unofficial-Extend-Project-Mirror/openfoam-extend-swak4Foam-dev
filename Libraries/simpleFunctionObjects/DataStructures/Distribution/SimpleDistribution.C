@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -189,7 +189,8 @@ Type SimpleDistribution<Type>::max() const
 template<class Type>
 void SimpleDistribution<Type>::calcScalarWeight(
     const Field<Type> &values,
-    const Field<scalar> &weights
+    const Field<scalar> &weights,
+    bool doReduce
 )
 {
     if(values.size()!=weights.size()) {
@@ -208,8 +209,11 @@ void SimpleDistribution<Type>::calcScalarWeight(
         );
     }
 
-    //
+    if(doReduce) {
+        reduce(*this,plusOp<SimpleDistribution<Type> >());
+    }
 
+    // TODO: This does not properly work for weights that are 0
     recalcLimits();
 }
 
@@ -307,7 +311,8 @@ template<class Type>
 void SimpleDistribution<Type>::calcScalarWeight(
     const Field<Type> &values,
     const Field<scalar> &weights,
-    const Field<bool> &mask
+    const Field<bool> &mask,
+    bool doReduce
 )
 {
     if(
@@ -331,6 +336,10 @@ void SimpleDistribution<Type>::calcScalarWeight(
                 pTraits<Type>::one*weights[i]
             );
         }
+    }
+
+    if(doReduce) {
+        reduce(*this,plusOp<SimpleDistribution<Type> >());
     }
 
     recalcLimits();
@@ -478,7 +487,7 @@ void SimpleDistribution<Type>::operator=(const SimpleDistribution<Type>&other)
     minimum_.clear();
     minimum_=other.minimum_;
     maximum_.clear();
-    maximum_=other.minimum_;
+    maximum_=other.maximum_;
     nSamples_.clear();
     nSamples_=other.nSamples_;
 

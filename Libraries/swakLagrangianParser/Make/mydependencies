@@ -1,0 +1,3 @@
+$(OBJECTS_DIR)/CloudValueExpressionDriver.o: $(OBJECTS_DIR)/CloudValueExpressionParser.o
+$(OBJECTS_DIR)/CloudValueExpressionLexer.o: $(OBJECTS_DIR)/CloudValueExpressionParser.o
+$(OBJECTS_DIR)/CloudValuePluginFunction.o: $(OBJECTS_DIR)/CloudValueExpressionParser.o

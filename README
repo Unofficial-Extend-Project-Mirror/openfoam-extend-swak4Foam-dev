@@ -17,6 +17,11 @@
    Please don't try to "beautify" it with any other text editor as
    this will surly mess up the markup (and keeping the file
    /org-compatible/ outside of the =org-mode= is a pain in the neck.
+
+   The Markdown-variant =README.md= is only there to be displayed in a
+   human-readable form by the web-interface to =mercurial= at
+   =sourceforge.net=. It is generated from =REAME= and only updated
+   during releases. *Don't edit it*.
 * Contributors etc
 ** Original Author
    Bernhard Gschaider (bgschaid@ice-sf.at)
@@ -36,6 +41,9 @@
      - Compilation with Intel compiler and Mingw
      - Rewrite of =mybison= and =myflex= to allow parallel compilation
        with =WM_COMPPROCS=
+     - Generation of dependencies for files that need Bison generated
+       tab.hh files. This allows not having race conditions during
+       parallel compilation
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -48,7 +56,7 @@
    - 2010 Oliver Borm (oli.borm@web.de)
    - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
-   - 2012-2013 Bruno Santos <wyldckat@gmail.com>
+   - 2012-2014 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
@@ -114,6 +122,9 @@
          uninitialized memory and crashes. This variable can be used
          to switch off the optimization (usually this fixes the
          problems)
+    - SWAK_TEST_RACE_CONDITIONS :: Meant to be used only by developers,
+         for performing a verification on whether race conditions occur
+         during parallel compilation, regarding the grammar parsers.
 *** Special versions of the python integration
     *Note*: This section is very special and won't be needed by most
     people
@@ -2389,7 +2400,7 @@ S_{expl} + S_{impl} T
      If the logical expression =mask= is set then only the results
      from =expression= for which =mask= is =true= are used for
      accumulations
-** Next release - version number : 0.3.1
+** 2014-07-11 - version number : 0.3.1
 *** Incompatibilities to previous versions
 **** Additional required code snipplet for some Python-functionObjects
      There is now a new code-snipplet required for a number of these
@@ -2412,6 +2423,11 @@ S_{expl} + S_{impl} T
      invalid value to =SimpleDistribution=
 **** =swakExpressionAverageDistribution= not correctly working in parallel
      This should now be fixed
+**** =patchFunctionObject= fails for some parallel runs
+     Problem is that when the processor boundaries are used too that
+     the indexing might be inconsistent on the different
+     processors. Fix: coupled boundaries are ignored by default (have
+     to be switched on)
 *** New features
 **** Boundary condition =groovyFixedNormalSlip= in =groovyStandardBCs=
      These boundary conditions allow specifying a value in normal
@@ -2484,22 +2500,14 @@ S_{expl} + S_{impl} T
      the direction of the gravity (as specified in the =g=-file).
 
      This expansion is done during the expression.
-**** New function-plugin =swakMeshWaveFunctionPlugin= for mesh related distances etc
-     This library collects functions that are similar to
-     =distFromPath=: they use the =MeshWave=-algorithm to calculate
-     distances and connectivity of the mesh.
-
-     Functions in this plugin are:
-     - meshLayersFromPatch :: Calculates for each cell how many mesh
-          layers it is away from a patch
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows
      setting the dimension of the resulting field
 **** New function =distToPatch= in Field-parser
-     This function for the field parser gives the distance in the mesh
-     to a specified patch. /Distance/ is defined as minimial sum of
-     cell-to-face distances needed to reach this cell from the named patch
+     This function gives the distance in the mesh to a specified face.
+
+     Not yet working correctly
 **** =panicDump= now allows storing old values
      With the switch =storeAndWritePreviousState= this functionObject
      now can cache a number of timesteps and write these results in
@@ -2519,3 +2527,54 @@ S_{expl} + S_{impl} T
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on
      bended geometries
+** Next release - version number : 0.3.2
+*** Incompatibilities
+**** Changed behavior of =groovyBC= during initialization
+     If =value= is unset then during initialization the value of the
+     internal field next to the patch is used. Previous behavior was
+     to set the patch to $0$.
+
+     In most cases the new behavior should be better.
+*** Bug fixes
+**** =swakExpressionAverageDistribution= fails for small spans
+     If the span of the =abscissa= is too small (almost $0$) there
+     were numeric problems. In this case the bin-width is now extended
+     to $1$
+**** Quantile calculations (including =median=) not correctly working in parallel
+     Reason was that =SimpleDistribution.calcScalarWeight= did not
+     =reduce=. This is now fixed (and a special switch is introduced
+     for one situation where this isn't desirable)
+**** Some =maintainanceScripts= do not work under Python 3
+     The scripts
+     - =makeSwakVersionFile.py=
+     - =makeCopyrightEntries.py=
+     have been adapted so that they now work with Python 2.x as well
+     as Python 3
+**** Function =distToPatch= now working
+     This function for the field parser gives the distance in the mesh
+     to a specified patch. /Distance/ is defined as minimial sum of
+     cell-to-face distances needed to reach this cell from the named patch
+*** Infrastructure
+*** Documentation
+*** New features
+**** New function-plugin =swakMeshWaveFunctionPlugin= for mesh related distances etc
+     This library collects functions that are similar to
+     =distFromPath=: they use the =MeshWave=-algorithm to calculate
+     distances and connectivity of the mesh.
+
+     Functions in this plugin are:
+     - meshLayersFromPatch :: Calculates for each cell how many mesh
+          layers it is away from a patch
+*** Enhancements
+**** =groovyBC= now has a better initialization if =value= is unset
+     Until no if =value= was not set =groovyBC= automatically
+     initialized the boundary to $0$ until the actual expressions were
+     evaluated for the first time. This raised problems when people
+     for instance didn't initialize =T= to $0$ and the density
+     calculation produced a /division by zero/.
+
+     Now if =value= is unset then the value of the patch is
+     initialized from the value of the internal field next to the
+     patch. This doesn't protect from the internal field being
+     inconsistently set, but at least it sets the boundary consistently.
+*** Examples
