@@ -2584,4 +2584,9 @@ S_{expl} + S_{impl} T
      the =libs=-entry in the =controlDict=). It is assumed that the
      name of the library starts with =libswak= and ends with
      =FunctionPlugin.so=.
+**** Optional parameter =functionPlugins= for parsers created with a dictionary
+     If a list of words named =functionPlugins= is found then the
+     string =libswak= is added in front and =FunctionPlugin.so= is
+     added at the end and a library of that name is loaded to add the
+     functions provided there
 *** Examples

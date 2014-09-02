@@ -968,6 +968,13 @@ hide circle
      parser can be specified. Otherwise the used region is
      context-dependent (usually the default mesh is used):
      - region :: Name of the mesh to be used
+**** Loading additional function plugins
+     It is possible to load additional function plugin libraries
+     through an optional entry:
+     - functionPlugins :: if present this is a list of words. To each
+          of theses words the string =libswak= is prepended and
+          =FunctionPlugin.so= is appended and a library of that name
+          is loaded
 *** Parser-specific parameters
     Certain drivers/parsers have additional parameters.
 **** Additional parameters of the field-parser
