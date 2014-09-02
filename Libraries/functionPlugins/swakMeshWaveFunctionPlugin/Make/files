@@ -1,0 +1,3 @@
+meshLayersFromPatchPluginFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakMeshWaveFunctionPlugin

@@ -325,6 +325,9 @@ S_{expl} + S_{impl} T
          chemistry properties (reaction rates etc)
     - swakRadiationModelFunctionPlugin :: Functions that calculate
          properties of the radiation model
+    - swakMeshWaveFunctionPlugin :: Functions that use the
+         =MeshWave=-algorithm to calculate grid-dependent properties
+         like number of mesh layers
 **** lagrangianCloudAdaptors-directory
      Because of the templating all plugin-functions have to be
      reinstaniated for new particle classes. The libraries in this
@@ -2481,6 +2484,14 @@ S_{expl} + S_{impl} T
      the direction of the gravity (as specified in the =g=-file).
 
      This expansion is done during the expression.
+**** New function-plugin =swakMeshWaveFunctionPlugin= for mesh related distances etc
+     This library collects functions that are similar to
+     =distFromPath=: they use the =MeshWave=-algorithm to calculate
+     distances and connectivity of the mesh.
+
+     Functions in this plugin are:
+     - meshLayersFromPatch :: Calculates for each cell how many mesh
+          layers it is away from a patch
 *** Enhancements
 **** =expressionField= now allows setting of dimensions
      An optional entry =dimension= for the function object now allows
