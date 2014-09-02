@@ -49,6 +49,8 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
+#include "dlLibraryTable.H"
+
 template<class T,class Mesh>
 void setField
 (
@@ -610,6 +612,8 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("field","field to overwrite");
     argList::validOptions.insert("expression","expression to write");
     argList::validOptions.insert("condition","logical condition");
@@ -652,6 +656,8 @@ int main(int argc, char *argv[])
     autoPtr<surfaceScalarField> dummyPhi;
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     DynamicList<fvMesh*> allMeshes;
     allMeshes.append(&mesh);

@@ -53,6 +53,8 @@ Contributors/Copyright:
 
 #include "loadFieldFunction.H"
 
+#include "dlLibraryTable.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -271,6 +273,8 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("field","field to overwrite");
     argList::validOptions.insert("cloud","name of the cloud to work on");
     argList::validOptions.insert("expression","expression to write");
@@ -301,6 +305,8 @@ int main(int argc, char *argv[])
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();

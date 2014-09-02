@@ -2576,5 +2576,12 @@ S_{expl} + S_{impl} T
      Now if =value= is unset then the value of the patch is
      initialized from the value of the internal field next to the
      patch. This doesn't protect from the internal field being
-     inconsistently set, but at least it sets the boundary consistently.
+     inconsistently set, but at least it sets the boundary
+     consistently.
+**** Added option =-functionPlugins= to =funkySetFields= and other utilities
+     For utilities for which this is appropriate this allows loading
+     function plugins from the command line (without adding them to
+     the =libs=-entry in the =controlDict=). It is assumed that the
+     name of the library starts with =libswak= and ends with
+     =FunctionPlugin.so=.
 *** Examples

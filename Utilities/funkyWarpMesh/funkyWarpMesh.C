@@ -46,12 +46,17 @@ Contributors/Copyright:
 
 #include "printSwakVersion.H"
 
+#include "dlLibraryTable.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
 int main(int argc, char *argv[])
 {
 #   include "addRegionOption.H"
+
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("overwrite", "");
     argList::validOptions.insert("expression","expression to write");
     argList::validOptions.insert("dictExt","Extension to the dictionary");
@@ -67,6 +72,9 @@ int main(int argc, char *argv[])
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
+
     const word oldInstance = mesh.pointsInstance();
 
     bool overwrite    = args.optionFound("overwrite");

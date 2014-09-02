@@ -53,6 +53,8 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
+#include "dlLibraryTable.H"
+
 template<class T,template<class> class PField,class Mesh>
 void writeVolumeField(
     const string &name,
@@ -509,6 +511,8 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("field","<field to overwrite>");
     argList::validOptions.insert("expression","<expression to write>");
     argList::validOptions.insert("condition","<logical condition>");
@@ -540,6 +544,8 @@ int main(int argc, char *argv[])
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     faMesh aMesh(mesh);
     aMesh.edgeCentres(); // to force the creation of a field that enables the areaMesh to be found
