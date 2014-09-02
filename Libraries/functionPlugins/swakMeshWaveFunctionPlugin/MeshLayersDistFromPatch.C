@@ -40,7 +40,7 @@ namespace Foam {
 
     MeshLayersDistFromPatch::MeshLayersDistFromPatch()
         :
-        dist_(-1)
+        dist_(-2)
         {}
 
     MeshLayersDistFromPatch::MeshLayersDistFromPatch(label d)
