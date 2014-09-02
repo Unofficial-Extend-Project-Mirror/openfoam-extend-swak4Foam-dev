@@ -2482,9 +2482,9 @@ S_{expl} + S_{impl} T
      An optional entry =dimension= for the function object now allows
      setting the dimension of the resulting field
 **** New function =distToPatch= in Field-parser
-     This function gives the distance in the mesh to a specified face.
-
-     Not yet working correctly
+     This function for the field parser gives the distance in the mesh
+     to a specified patch. /Distance/ is defined as minimial sum of
+     cell-to-face distances needed to reach this cell from the named patch
 **** =panicDump= now allows storing old values
      With the switch =storeAndWritePreviousState= this functionObject
      now can cache a number of timesteps and write these results in

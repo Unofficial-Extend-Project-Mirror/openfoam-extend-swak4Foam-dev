@@ -35,7 +35,7 @@ Contributors/Copyright:
 
 #include <Random.H>
 #include <wallDist.H>
-// #include "patchWave.H"
+#include "MeshDistFromPatch.H"
 #include "FaceCellWave.H"
 #include <nearWallDist.H>
 #include <dimensionedVector.H>
@@ -472,164 +472,6 @@ tmp<volScalarField> FieldValueExpressionDriver::makeVolumeField()
     return f;
 }
 
-class MeshDistFromPatch {
-    scalar dist_;
-public:
-    MeshDistFromPatch()
-        :
-        dist_(-1)
-        {}
-    MeshDistFromPatch(scalar d)
-        :
-        dist_(d)
-        {}
-
-    scalar dist() const
-        { return dist_; }
-
-    bool valid() const
-        { return dist_>=0; }
-
-    void leaveDomain
-    (
-        const polyMesh&,
-        const polyPatch& patch,
-        const label patchFaceI,
-        const point& faceCentre
-    )
-        {
-            //            Pout << "leaveDomain" << endl;
-        }
-
-    void transform
-    (
-        const polyMesh&,
-        const tensor& rotTensor
-    )
-        {
-            //            Pout << "transform" << endl;
-        }
-
-    void enterDomain
-    (
-        const polyMesh&,
-        const polyPatch& patch,
-        const label patchFaceI,
-        const point& faceCentre
-    )
-        {
-            //            Pout << "enterDomain" << endl;
-        }
-
-    bool sameGeometry
-    (
-        const polyMesh&,
-        const MeshDistFromPatch&,
-        const scalar
-    ) const
-        {
-            //            Pout << "sameGeometry" << endl;
-            return true;
-        }
-
-    bool updateCell
-    (
-        const polyMesh& mesh,
-        const label thisCellI,
-        const label neighbourFaceI,
-        const MeshDistFromPatch& neighbourInfo,
-        const scalar tol
-    )
-        {
-            //            Info << "updateCell" << thisCellI << " " << neighbourFaceI << " " << neighbourInfo << endl;
-            const scalar d=mag(mesh.cellCentres()[thisCellI]-mesh.faceCentres()[neighbourFaceI]);
-            //            Info << "  dist: " << d << endl;
-            if(!valid()) {
-                dist_=d+neighbourInfo.dist();
-                return true;
-            } else {
-                const scalar nd=d+neighbourInfo.dist();
-                if(nd<dist_) {
-                    dist_=nd;
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-    bool updateFace
-    (
-        const polyMesh& mesh,
-        const label thisFaceI,
-        const label neighbourCellI,
-        const MeshDistFromPatch& neighbourInfo,
-        const scalar tol
-    )
-        {
-            //            Info << "updateFace 1 " << thisFaceI << " " << neighbourCellI << " " << neighbourInfo << endl;
-            const scalar d=mag(mesh.cellCentres()[neighbourCellI]-mesh.faceCentres()[thisFaceI]);
-            //            Info << "  dist: " << d << endl;
-            if(!valid()) {
-                dist_=d+neighbourInfo.dist();
-                return true;
-            } else {
-                const scalar nd=d+neighbourInfo.dist();
-                if(nd<dist_) {
-                    dist_=nd;
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-    bool updateFace
-    (
-        const polyMesh&,
-        const label thisFaceI,
-        const MeshDistFromPatch& neighbourInfo,
-        const scalar tol
-    )
-        {
-            //            Pout << "updateFace 2 " << thisFaceI  << " " << neighbourInfo << endl;
-            if(!valid()) {
-                dist_=neighbourInfo.dist();
-                return true;
-            } else {
-                if(dist()>neighbourInfo.dist()) {
-                    dist_=neighbourInfo.dist();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-    bool operator!=(const MeshDistFromPatch &rhs) {
-        return dist_<0 || dist_ != rhs.dist();
-    }
-
-    friend Ostream& operator<<(Ostream&, const MeshDistFromPatch&);
-    friend Istream& operator>>(Istream&, MeshDistFromPatch&);
-
-};
-
-Ostream& operator<<
-(
-    Ostream& os,
-    const MeshDistFromPatch& wDist
-)
-{
-    return os << wDist.dist_;
-}
-
-
-Istream& operator>>(Istream& is, MeshDistFromPatch& wDist)
-{
-    return is >> wDist.dist_;
-}
-
 tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
     const word &name
 ) {
@@ -641,10 +483,6 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
                 << endl
                 << exit(FatalError);
     }
-    // labelHashSet patchIDs;
-    // patchIDs.insert(patchI);
-
-    // patchWave wave(mesh(), patchIDs, false);
 
     List<MeshDistFromPatch> cellValues(mesh().C().size());
     List<MeshDistFromPatch> faceValues(mesh().nFaces());
@@ -691,23 +529,12 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
         if (!isA<emptyFvPatchScalarField>(f->boundaryField()[patchI]))
         {
             for(label i=0;i<f->boundaryField()[patchI].size();i++) {
-                label faceI=mesh().boundaryMesh()[patchI].start()+1;
+                label faceI=mesh().boundaryMesh()[patchI].start()+i;
 
                 f->boundaryField()[patchI][i]=faceValues[faceI].dist();
             }
         }
     }
-
-    // f->internalField()=wave.distance();
-    // forAll(f->boundaryField(), patchI)
-    // {
-    //     if (!isA<emptyFvPatchScalarField>(f->boundaryField()[patchI]))
-    //     {
-    //         scalarField& waveFld = wave.patchDistance()[patchI];
-
-    //         f->boundaryField()[patchI].transfer(waveFld);
-    //     }
-    // }
 
     return f;
 }
