@@ -321,6 +321,10 @@ S_{expl} + S_{impl} T
          /intermediate/ clouds)
     - swakVelocityFunctionPlugin :: Functions that work on the flow
          field (currently only the local Courant-number)
+    - swakChemistryModelFunctionPlugin :: Functions that calculate
+         chemistry properties (reaction rates etc)
+    - swakRadiationModelFunctionPlugin :: Functions that calculate
+         properties of the radiation model
 **** lagrangianCloudAdaptors-directory
      Because of the templating all plugin-functions have to be
      reinstaniated for new particle classes. The libraries in this
