@@ -2535,6 +2535,19 @@ S_{expl} + S_{impl} T
      to set the patch to $0$.
 
      In most cases the new behavior should be better.
+**** Changed semantics for boolean values in =internalField=
+     As OpenFOAM does not support geometric fields of type boolean
+     swak uses scalar fields for storing truth values (only in the
+     =internalField=-parser). The semantics was that a value of =0=
+     means =false=. Everything else =true=. Logical operators set
+     =true= to $1$ and =false= to $0$. As the test for equality to $0$
+     may sometimes fail this semantics is changed slightly: values
+     $>\frac{1}{2}$ are interpreted as =true=. All others as =false=.
+
+     If operators were used properly this should not matter, but
+     expressions that assume for instance that =0.1= is =true= will
+     now fail. Overall this change improves the stability of logival
+     expressions
 *** Bug fixes
 **** =swakExpressionAverageDistribution= fails for small spans
      If the span of the =abscissa= is too small (almost $0$) there

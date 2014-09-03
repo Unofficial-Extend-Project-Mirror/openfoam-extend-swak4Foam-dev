@@ -742,7 +742,7 @@ void FieldValueExpressionDriver::setLogicalResult(
 
     Field<bool> yesOrNo(result.internalField().size());
     forAll(yesOrNo,i) {
-        yesOrNo[i]=mag(result.internalField()[i])>SMALL;
+        yesOrNo[i]=toBool(result.internalField()[i]);
     }
 
     this->result().setResult(yesOrNo,isPointField);

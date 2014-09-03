@@ -186,11 +186,14 @@ hide circle
                    $a_{ij}=a_{ji}$)
    - sphericalTensor :: Spherical tensor
    - boolean :: results of logical operations (can only be =true= or
-                =false=). Certain parsers implement them with scalars
+                =false=). Certain parsers (=internalField= and
+                =faInternalField=) implement them with scalars
                 being $0$ or $1$. If values other then $0$ or $1$ are
                 found (which can happen for instance due to
-                interpolation) they are interpreted as =true= (only
-                exactly $0$ is interpreted as =false=)
+                interpolation) and they are $>\frac{1}{2}$ they are
+                interpreted as =true= (otherwise =false=). This
+                behavior differs from older versions where only
+                exactly $0$ was =false=.
 
    If the type of subexpressions for a certain operator/function is
    incompatible (for instance when trying to add a vector to a scalar)
