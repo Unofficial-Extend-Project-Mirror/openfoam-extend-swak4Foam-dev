@@ -40,12 +40,14 @@ namespace Foam {
 
     MeshLayersDistFromPatch::MeshLayersDistFromPatch()
         :
-        dist_(-2)
+        dist_(-2),
+        blocked_(false)
         {}
 
-    MeshLayersDistFromPatch::MeshLayersDistFromPatch(label d)
+    MeshLayersDistFromPatch::MeshLayersDistFromPatch(label d,bool blocked)
         :
-        dist_(d)
+        dist_(d),
+        blocked_(blocked)
         {}
 
     label MeshLayersDistFromPatch::dist() const
@@ -53,6 +55,9 @@ namespace Foam {
 
     bool MeshLayersDistFromPatch::valid() const
         { return dist_>=0; }
+
+    bool MeshLayersDistFromPatch::blocked() const
+        { return blocked_; }
 
     bool MeshLayersDistFromPatch::updateCell
     (
@@ -64,8 +69,12 @@ namespace Foam {
     )
         {
             if(!valid()) {
-                dist_=1+neighbourInfo.dist();
-                return true;
+                if(!blocked()) {
+                    dist_=1+neighbourInfo.dist();
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 const label nd=1+neighbourInfo.dist();
                 if(nd<dist_) {
@@ -87,8 +96,12 @@ namespace Foam {
     )
         {
             if(!valid()) {
-                dist_=1+neighbourInfo.dist();
-                return true;
+                if(!blocked()) {
+                    dist_=1+neighbourInfo.dist();
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 const scalar nd=1+neighbourInfo.dist();
                 if(nd<dist_) {
@@ -109,8 +122,12 @@ namespace Foam {
     )
         {
             if(!valid()) {
-                dist_=neighbourInfo.dist();
-                return true;
+                if(!blocked()) {
+                    dist_=neighbourInfo.dist();
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 if(dist()>neighbourInfo.dist()) {
                     dist_=neighbourInfo.dist();
@@ -131,13 +148,13 @@ namespace Foam {
         const MeshLayersDistFromPatch& wDist
     )
     {
-        return os << wDist.dist_;
+        return os << wDist.dist_ << token::SPACE << wDist.blocked_;
     }
 
 
     Istream& operator>>(Istream& is, MeshLayersDistFromPatch& wDist)
     {
-        return is >> wDist.dist_;
+        return is >> wDist.dist_ >> wDist.blocked_;
     }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

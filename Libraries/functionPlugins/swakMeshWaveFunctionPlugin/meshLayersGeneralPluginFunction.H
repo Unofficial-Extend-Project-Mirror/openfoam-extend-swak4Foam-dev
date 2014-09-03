@@ -29,12 +29,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::meshLayersFromPatchPluginFunction
+    Foam::meshLayersGeneralPluginFunction
 
 Description
 
 SourceFiles
-    meshLayersFromPatchPluginFunction.C
+    meshLayersGeneralPluginFunction.C
 
 Contributors/Copyright:
     2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -42,10 +42,12 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef meshLayersFromPatchPluginFunction_H
-#define meshLayersFromPatchPluginFunction_H
+#ifndef meshLayersGeneralPluginFunction_H
+#define meshLayersGeneralPluginFunction_H
 
-#include "meshLayersGeneralPluginFunction.H"
+#include "FieldValuePluginFunction.H"
+
+#include "MeshLayersDistFromPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,37 +55,39 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class meshLayersFromPatchPluginFunction Declaration
+                           Class meshLayersGeneralPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
-class meshLayersFromPatchPluginFunction
+class meshLayersGeneralPluginFunction
 :
-    public meshLayersGeneralPluginFunction
+    public FieldValuePluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const meshLayersFromPatchPluginFunction &);
+    void operator=(const meshLayersGeneralPluginFunction &);
 
-    meshLayersFromPatchPluginFunction(const meshLayersFromPatchPluginFunction &);
-
-    word patchName_;
+    meshLayersGeneralPluginFunction(const meshLayersGeneralPluginFunction &);
 
 protected:
 
-    virtual void setArgument(
-        label index,
-        const word &patchName
-    );
+    // this data has to be initialized by initFacesAndCells
+    List<MeshLayersDistFromPatch> cellValues_;
+    List<MeshLayersDistFromPatch> faceValues_;
+    labelList startFaces_;
+    List<MeshLayersDistFromPatch> startValues_;
 
-    virtual void initFacesAndCells();
+    void doEvaluation();
+
+    virtual void initFacesAndCells() = 0;
 
 public:
-    meshLayersFromPatchPluginFunction(
+    meshLayersGeneralPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
-        const word &name
+        const word &name,
+        const string &description
     );
 
-    virtual ~meshLayersFromPatchPluginFunction() {}
+    virtual ~meshLayersGeneralPluginFunction() {}
 
-    TypeName("meshLayersFromPatchPluginFunction");
+    TypeName("meshLayersGeneralPluginFunction");
 
 };
 

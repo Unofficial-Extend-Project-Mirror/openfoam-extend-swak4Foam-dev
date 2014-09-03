@@ -63,15 +63,19 @@ class MeshLayersDistFromPatch
     public FaceCellWaveData
 {
     label dist_;
+
+    bool blocked_;
 public:
 
     inline MeshLayersDistFromPatch();
 
-    inline MeshLayersDistFromPatch(label d);
+    inline MeshLayersDistFromPatch(label d,bool blocked=false);
 
     inline label dist() const;
 
     inline bool valid() const;
+
+    inline bool blocked() const;
 
     inline bool updateCell
     (

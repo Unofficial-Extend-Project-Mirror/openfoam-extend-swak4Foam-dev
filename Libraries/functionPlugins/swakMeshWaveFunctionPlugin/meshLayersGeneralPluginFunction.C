@@ -34,28 +34,35 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "meshLayersFromPatchPluginFunction.H"
+#include "meshLayersGeneralPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "FaceCellWave.H"
+
+#include "emptyFvPatchFields.H"
+
 namespace Foam {
 
-defineTypeNameAndDebug(meshLayersFromPatchPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, meshLayersFromPatchPluginFunction , name, meshLayersFromPatch);
+defineTypeNameAndDebug(meshLayersGeneralPluginFunction,1);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-meshLayersFromPatchPluginFunction::meshLayersFromPatchPluginFunction(
+meshLayersGeneralPluginFunction::meshLayersGeneralPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
-    const word &name
+    const word &name,
+    const string &description
 ):
-    meshLayersGeneralPluginFunction(
+    FieldValuePluginFunction(
         parentDriver,
         name,
-        string("patchName primitive word")
-    )
+        word("volScalarField"),
+        description
+    ),
+    cellValues_(mesh().C().size()),
+    faceValues_(mesh().nFaces())
 {
 }
 
@@ -64,34 +71,53 @@ meshLayersFromPatchPluginFunction::meshLayersFromPatchPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void meshLayersFromPatchPluginFunction::setArgument(
-    label index,
-    const word &patchName
-) {
-    assert(index==0);
-
-    patchName_=patchName;
-}
-
-void meshLayersFromPatchPluginFunction::initFacesAndCells()
+void meshLayersGeneralPluginFunction::doEvaluation()
 {
-    label patchI=mesh().boundaryMesh().findPatchID(patchName_);
-    if(patchI<0) {
-        FatalErrorIn("meshLayersFromPatchPluginFunction::initFacesAndCells()")
-            << "Patch name " << patchName_ << " not in valid names"
-                << mesh().boundaryMesh().names()
-                << endl
-                << exit(FatalError);
+    this->initFacesAndCells();
+
+    FaceCellWave<MeshLayersDistFromPatch> distToPatch(
+        mesh(),
+        startFaces_,
+        startValues_,
+        faceValues_,
+        cellValues_,
+        mesh().C().size()
+    );
+
+    autoPtr<volScalarField> pLayers(
+        new volScalarField(
+            IOobject(
+                "layers",
+                mesh().time().timeName(),
+                mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh(),
+            dimensionedScalar("nLayers",dimless,0),
+            "fixedValue"
+        )
+    );
+    volScalarField &layers=pLayers();
+
+    forAll(cellValues_,cellI) {
+        layers.internalField()[cellI]=cellValues_[cellI].dist()/2;
+    }
+    forAll(layers.boundaryField(), patchI)
+    {
+        if (!isA<emptyFvPatchScalarField>(layers.boundaryField()[patchI]))
+        {
+            for(label i=0;i<layers.boundaryField()[patchI].size();i++) {
+                label faceI=mesh().boundaryMesh()[patchI].start()+i;
+
+                layers.boundaryField()[patchI][i]=faceValues_[faceI].dist()/2;
+            }
+        }
     }
 
-    startFaces_=labelList(mesh().boundaryMesh()[patchI].size());
-    for(label i=0;i<mesh().boundaryMesh()[patchI].size();i++) {
-        startFaces_[i]=mesh().boundaryMesh()[patchI].start()+i;
-    }
-    startValues_=List<MeshLayersDistFromPatch>(
-        mesh().boundaryMesh()[patchI].size(),
-        MeshLayersDistFromPatch(1)
-    );
+    layers.correctBoundaryConditions();
+
+    result().setObjectResult(pLayers);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
