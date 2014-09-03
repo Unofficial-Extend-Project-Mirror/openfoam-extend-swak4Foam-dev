@@ -368,7 +368,11 @@ void doAnExpression
                     << driver.typ()
             << exit(FatalError);
     } else {
-        if(driver.typ()==pTraits<volScalarField>::typeName) {
+        if(
+            driver.typ()==pTraits<volScalarField>::typeName
+            ||
+            driver.typ()=="volLogicalField"
+        ) {
             setField(
                 field,
                 mesh,
@@ -428,7 +432,11 @@ void doAnExpression
                 keepPatches,
                 valuePatches
             );
-        } else if(driver.typ()==pTraits<surfaceScalarField>::typeName) {
+        } else if(
+            driver.typ()==pTraits<surfaceScalarField>::typeName
+            ||
+            driver.typ()=="surfaceLogicalField"
+        ) {
             setField(
                 field,
                 mesh,
@@ -488,7 +496,11 @@ void doAnExpression
                 keepPatches,
                 valuePatches
             );
-        } else if(driver.typ()==pTraits<pointScalarField>::typeName) {
+        } else if(
+            driver.typ()==pTraits<pointScalarField>::typeName
+            ||
+            driver.typ()=="pointLogicalField"
+        ) {
             setField(
                 field,
                 mesh,

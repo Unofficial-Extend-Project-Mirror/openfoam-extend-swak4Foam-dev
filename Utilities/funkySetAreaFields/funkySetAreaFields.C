@@ -351,7 +351,11 @@ void doAnExpression
                     << driver.typ()
             << exit(FatalError);
     } else {
-        if(driver.typ()==pTraits<areaScalarField>::typeName) {
+        if(
+            driver.typ()==pTraits<areaScalarField>::typeName
+            ||
+            driver.typ()=="areaLogicalField"
+        ) {
             setField(
                 field,
                 driver.aMesh(),
@@ -421,7 +425,11 @@ void doAnExpression
                 createVolumeField,
                 noWrite
             );
-        } else if(driver.typ()==pTraits<edgeScalarField>::typeName) {
+        } else if(
+            driver.typ()==pTraits<edgeScalarField>::typeName
+            ||
+            driver.typ()=="edgeLogicalField"
+        ) {
             setField(
                 field,
                 driver.aMesh(),
