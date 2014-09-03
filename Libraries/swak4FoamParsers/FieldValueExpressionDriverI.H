@@ -738,7 +738,20 @@ void FieldValueExpressionDriver::setLogicalResult(
         result.dimensions().reset(resultDimension_);
     }
 
-    typ_=pTraits<bool>::typeName;
+    //
+    typ_=pTraits<T>::typeName;
+    if(typ_.find("Field",1)==(typ_.length()-string("Field").length())) {
+        if(typ_.find("Scalar")==std::string::npos) {
+            FatalErrorIn("FieldValueExpressionDriver::setLogicalResult")
+                << "Field of typ " << typ_ << " is not a scalar and "
+                    << "can't be interepreted as a boolean" << endl
+                    << abort(FatalError);
+        }
+        typ_=typ_.substr(0,typ_.find("Scalar"))+"LogicalField";
+    } else {
+        // this is not a GeomtricField. Fall back to old behaviour
+        typ_=pTraits<bool>::typeName;
+    }
 
     Field<bool> yesOrNo(result.internalField().size());
     forAll(yesOrNo,i) {

@@ -2548,6 +2548,14 @@ S_{expl} + S_{impl} T
      expressions that assume for instance that =0.1= is =true= will
      now fail. Overall this change improves the stability of logival
      expressions
+*** Internals (for developers)
+**** Type of booleans changed for =internalField=
+     Results that were booleans used to report =bool= as their type
+     for the =internalField=-parser. Now they report
+     =volLogicalField=, =surfaceLogicalField= or
+     =pointLogicalField=. This makes them consistent with the
+     possibility of requesting these start symbols and specifying
+     logical fields in the parameters of a plugin function
 *** Bug fixes
 **** =swakExpressionAverageDistribution= fails for small spans
      If the span of the =abscissa= is too small (almost $0$) there
