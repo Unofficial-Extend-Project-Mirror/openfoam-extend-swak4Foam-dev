@@ -2586,6 +2586,8 @@ S_{expl} + S_{impl} T
      Functions in this plugin are:
      - meshLayersFromPatch :: Calculates for each cell how many mesh
           layers it is away from a patch
+     - meshLayersFromCells :: Calculates the number of layers from a
+          set of cells selected by a logical expression
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically

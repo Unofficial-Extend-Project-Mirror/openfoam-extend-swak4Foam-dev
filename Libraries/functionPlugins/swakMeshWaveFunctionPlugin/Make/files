@@ -1,4 +1,5 @@
 meshLayersGeneralPluginFunction.C
 meshLayersFromPatchPluginFunction.C
+meshLayersFromCellsPluginFunction.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakMeshWaveFunctionPlugin
