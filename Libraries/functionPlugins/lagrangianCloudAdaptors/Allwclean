@@ -1,3 +1,6 @@
 #! /bin/bash
 
-wclean coalCloudAdaptor
+for d in `ls | grep CloudAdaptor`
+do
+    wclean $d
+done
