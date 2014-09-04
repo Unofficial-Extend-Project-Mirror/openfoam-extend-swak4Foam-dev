@@ -49,6 +49,7 @@ libs (
     "libgroovyBC.so"
     "libswakFunctionObjects.so"
     "libsimpleSwakFunctionObjects.so"
+    "libswakMeshWaveFunctionPlugin.so"
 );
 
 functions {
@@ -63,6 +64,22 @@ functions {
                 outputInterval 1;
                 expression "distToPatch(inlet)";
                 fieldName distance;
+                autowrite true;
+            }
+            layersFromInlet {
+                type expressionField;
+                outputControl   timeStep;
+                outputInterval 1;
+                expression "meshLayersFromPatch(inlet)";
+                fieldName layersFromInlet;
+                autowrite true;
+            }
+            layersFromWall {
+                type expressionField;
+                outputControl   timeStep;
+                outputInterval 1;
+                expression "min(meshLayersFromPatch(lowerWall),meshLayersFromPatch(upperWall))";
+                fieldName layersFromWall;
                 autowrite true;
             }
         }

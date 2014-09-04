@@ -35,7 +35,8 @@ Contributors/Copyright:
 
 #include <Random.H>
 #include <wallDist.H>
-#include "patchWave.H"
+#include "MeshDistFromPatch.H"
+#include "FaceCellWave.H"
 #include <nearWallDist.H>
 #include <dimensionedVector.H>
 #include "cellSet.H"
@@ -495,10 +496,26 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
                 << endl
                 << exit(FatalError);
     }
-    labelHashSet patchIDs;
-    patchIDs.insert(patchI);
 
-    patchWave wave(mesh(), patchIDs, false);
+    List<MeshDistFromPatch> cellValues(mesh().C().size());
+    List<MeshDistFromPatch> faceValues(mesh().nFaces());
+    labelList startFaces(mesh().boundaryMesh()[patchI].size());
+    for(label i=0;i<mesh().boundaryMesh()[patchI].size();i++) {
+        startFaces[i]=mesh().boundaryMesh()[patchI].start()+i;
+    }
+    List<MeshDistFromPatch> startValues(
+        mesh().boundaryMesh()[patchI].size(),
+        MeshDistFromPatch(0)
+    );
+
+    FaceCellWave<MeshDistFromPatch> distToPatch(
+        mesh(),
+        startFaces,
+        startValues,
+        faceValues,
+        cellValues,
+        mesh().C().size()
+    );
 
     tmp<volScalarField> f(
         new volScalarField(
@@ -516,14 +533,19 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
             "fixedValue"
         )
     );
-    f->internalField()=wave.distance();
+
+    forAll(cellValues,cellI) {
+        f->internalField()[cellI]=cellValues[cellI].dist();
+    }
     forAll(f->boundaryField(), patchI)
     {
         if (!isA<emptyFvPatchScalarField>(f->boundaryField()[patchI]))
         {
-            scalarField& waveFld = wave.patchDistance()[patchI];
+            for(label i=0;i<f->boundaryField()[patchI].size();i++) {
+                label faceI=mesh().boundaryMesh()[patchI].start()+i;
 
-            f->boundaryField()[patchI].transfer(waveFld);
+                f->boundaryField()[patchI][i]=faceValues[faceI].dist();
+            }
         }
     }
 

@@ -45,6 +45,8 @@ Contributors/Copyright:
 
 #include "entryToExpression.H"
 
+#include "dlLibraryTable.H"
+
 namespace Foam {
 
 
@@ -159,6 +161,19 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
     if(debug) {
         Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
+    }
+
+    if(dict.found("functionPlugins")) {
+        wordList pluginNames(dict["functionPlugins"]);
+        forAll(pluginNames,i) {
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+            dlLibraryTable::open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#else
+            dlLibraryTable table;
+            table.open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#endif
+        }
     }
 
     if(dict.found("storedVariables")) {

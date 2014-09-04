@@ -353,6 +353,13 @@ S_{expl} + S_{impl} T
          /intermediate/ clouds)
     - swakVelocityFunctionPlugin :: Functions that work on the flow
          field (currently only the local Courant-number)
+    - swakChemistryModelFunctionPlugin :: Functions that calculate
+         chemistry properties (reaction rates etc)
+    - swakRadiationModelFunctionPlugin :: Functions that calculate
+         properties of the radiation model
+    - swakMeshWaveFunctionPlugin :: Functions that use the
+         =MeshWave=-algorithm to calculate grid-dependent properties
+         like number of mesh layers
 **** lagrangianCloudAdaptors-directory
      Because of the templating all plugin-functions have to be
      reinstaniated for new particle classes. The libraries in this
@@ -2799,6 +2806,27 @@ S_{expl} + S_{impl} T
      to set the patch to $0$.
 
      In most cases the new behavior should be better.
+**** Changed semantics for boolean values in =internalField=
+     As OpenFOAM does not support geometric fields of type boolean
+     swak uses scalar fields for storing truth values (only in the
+     =internalField=-parser). The semantics was that a value of =0=
+     means =false=. Everything else =true=. Logical operators set
+     =true= to $1$ and =false= to $0$. As the test for equality to $0$
+     may sometimes fail this semantics is changed slightly: values
+     $>\frac{1}{2}$ are interpreted as =true=. All others as =false=.
+
+     If operators were used properly this should not matter, but
+     expressions that assume for instance that =0.1= is =true= will
+     now fail. Overall this change improves the stability of logival
+     expressions
+*** Internals (for developers)
+**** Type of booleans changed for =internalField=
+     Results that were booleans used to report =bool= as their type
+     for the =internalField=-parser. Now they report
+     =volLogicalField=, =surfaceLogicalField= or
+     =pointLogicalField=. This makes them consistent with the
+     possibility of requesting these start symbols and specifying
+     logical fields in the parameters of a plugin function
 *** Bug fixes
 **** =swakExpressionAverageDistribution= fails for small spans
      If the span of the =abscissa= is too small (almost $0$) there
@@ -2815,8 +2843,29 @@ S_{expl} + S_{impl} T
      - =makeCopyrightEntries.py=
      have been adapted so that they now work with Python 2.x as well
      as Python 3
+**** Function =distToPatch= now working
+     This function for the field parser gives the distance in the mesh
+     to a specified patch. /Distance/ is defined as minimial sum of
+     cell-to-face distances needed to reach this cell from the named patch
+*** Infrastructure
 *** Documentation
 *** New features
+**** New function-plugin =swakMeshWaveFunctionPlugin= for mesh related distances etc
+     This library collects functions that are similar to
+     =distFromPath=: they use the =MeshWave=-algorithm to calculate
+     distances and connectivity of the mesh.
+
+     Functions in this plugin are:
+     - meshLayersFromPatch :: Calculates for each cell how many mesh
+          layers it is away from a patch
+     - meshLayersFromCells :: Calculates the number of layers from a
+          set of cells selected by a logical expression
+     - meshLayersFromFaces :: Calculates the number of layers from a
+          set of faces selected by a logical expression
+     - floodFillFromCells :: Number connected regions. Cells selected
+          by a logical expression separate these regions
+     - floodFillFromFaces :: Number connected regions. Faces selected
+          by a logical expression separate these regions
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
@@ -2828,11 +2877,20 @@ S_{expl} + S_{impl} T
      Now if =value= is unset then the value of the patch is
      initialized from the value of the internal field next to the
      patch. This doesn't protect from the internal field being
-     inconsistently set, but at least it sets the boundary
-     consistently.
 **** Function objects =writeFieldsOften= and =writeAditionalFields= now write Lagrangian clouds
      With an additional optional argument =cloudNames= a list of
      clouds to be written can be specified like the fields.
 
      This feature was implemented by E. David Huckaby
+**** Added option =-functionPlugins= to =funkySetFields= and other utilities
+     For utilities for which this is appropriate this allows loading
+     function plugins from the command line (without adding them to
+     the =libs=-entry in the =controlDict=). It is assumed that the
+     name of the library starts with =libswak= and ends with
+     =FunctionPlugin.so=.
+**** Optional parameter =functionPlugins= for parsers created with a dictionary
+     If a list of words named =functionPlugins= is found then the
+     string =libswak= is added in front and =FunctionPlugin.so= is
+     added at the end and a library of that name is loaded to add the
+     functions provided there
 *** Examples
