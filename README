@@ -2578,6 +2578,15 @@ S_{expl} + S_{impl} T
 *** Infrastructure
 *** Documentation
 *** New features
+**** Additional distance-functions in field-parser
+     Similar to =distToPatch= there are now two additional built-in
+     functions:
+     - distToCells :: A logical field is provided. The distance to the
+                      cells for which this field is =true= is
+                      calculated
+     - distToFaces :: Same as =distToCells= but with a logical
+                      function for the faces
+     Both functions return cell-values
 **** New function-plugin =swakMeshWaveFunctionPlugin= for mesh related distances etc
      This library collects functions that are similar to
      =distFromPath=: they use the =MeshWave=-algorithm to calculate

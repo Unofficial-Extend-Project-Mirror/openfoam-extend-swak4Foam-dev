@@ -172,6 +172,9 @@ distToPatch                  {
     BEGIN(patchname);
     return token::TOKEN_distToPatch;
                       }
+distToCells           return token::TOKEN_distToCells;
+distToFaces           return token::TOKEN_distToFaces;
+
 nearDist              return token::TOKEN_nearDist;
 rdist                 return token::TOKEN_rdist;
 rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }
