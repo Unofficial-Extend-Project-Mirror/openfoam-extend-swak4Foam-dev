@@ -2610,6 +2610,18 @@ S_{expl} + S_{impl} T
                         a face" not an edge. Therefor it may look at
                         the surface like there are cells with the same
                         color
+**** Additional function in =swakMeshQualityFunctionPlugin=
+     Additional functions:
+     - mqCellFaceNr :: Number of faces for each cell
+     - mqCellShape :: Field with numbers describing the cell
+                      shape. Values are:
+       - 1 :: Hex
+       - 2 :: Prism
+       - 3 :: Wedge
+       - 4 :: Pyramid
+       - 5 :: Tetraeder wedge
+       - 6 :: Tetraeder
+       - 0 :: no classification. Polygon
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
