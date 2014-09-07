@@ -171,7 +171,7 @@ namespace Foam {
         {
             (*this)=neighbourInfo;
 
-            return false;
+            return true;
         }
 
     bool CellColouringData::operator!=(const CellColouringData &rhs) {

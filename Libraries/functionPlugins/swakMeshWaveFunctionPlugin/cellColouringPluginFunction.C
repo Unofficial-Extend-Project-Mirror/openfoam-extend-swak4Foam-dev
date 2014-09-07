@@ -81,6 +81,8 @@ void cellColouringPluginFunction::doEvaluation()
     }
     List<CellColouringData> faceValues(mesh().nFaces());;
 
+    label cnt=0;
+
     while(true) {
         label startCell=-1;
 
@@ -104,6 +106,7 @@ void cellColouringPluginFunction::doEvaluation()
         if(cpuToDoIt==pTraits<label>::max) {
             break;
         }
+        cnt++;
         labelList startFaces;
         List<CellColouringData> startValues;
         if(cpuToDoIt==Pstream::myProcNo()) {
@@ -141,7 +144,7 @@ void cellColouringPluginFunction::doEvaluation()
             mesh().C().size()
         );
     }
-
+    Dbug << cnt << " restarts needed" << endl;
     autoPtr<volScalarField> pRegions(
         new volScalarField(
             IOobject(
@@ -166,6 +169,8 @@ void cellColouringPluginFunction::doEvaluation()
 
     // #define CHECK_FOR_CHECKERBOARD
 #ifdef CHECK_FOR_CHECKERBOARD
+    Info << "Starting check" << endl;
+
     const cellList &cells=mesh().cells();
     const labelList &own=mesh().faceOwner();
     const labelList &nei=mesh().faceNeighbour();
@@ -210,7 +215,8 @@ void cellColouringPluginFunction::doEvaluation()
             }
         }
     }
-#endif<
+    Info << "Ending check" << endl;
+#endif
 
     result().setObjectResult(pRegions);
 }
