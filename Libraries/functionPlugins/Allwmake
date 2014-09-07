@@ -1,26 +1,12 @@
 #! /bin/bash
 
-wmake libso swakMeshQualityFunctionPlugin
-
-wmake libso swakLocalCalculationsFunctionPlugin
-
-wmake libso swakRandomFunctionPlugin
-
-wmake libso swakFvcSchemesFunctionPlugin
-
-wmake libso swakThermoTurbFunctionPlugin
-
-wmake libso swakTransportTurbFunctionPlugin
-
-wmake libso swakSurfacesAndSetsFunctionPlugin
-
-wmake libso swakLagrangianCloudSourcesFunctionPlugin
-
-wmake libso swakVelocityFunctionPlugin
-
-wmake libso swakChemistryModelFunctionPlugin
-
-wmake libso swakRadiationModelFunctionPlugin
+for d in `ls | grep swak | grep FunctionPlugin`
+do
+    if [ "$d" != "swakFacSchemesFunctionPlugin" ]
+    then
+	wmake libso $d
+    fi
+done
 
 if [ "$FOAM_DEV" != "" ]
 then

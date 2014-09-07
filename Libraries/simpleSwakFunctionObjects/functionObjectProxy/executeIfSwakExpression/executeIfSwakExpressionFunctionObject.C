@@ -74,7 +74,11 @@ bool executeIfSwakExpressionFunctionObject::condition()
     driver_->clearVariables();
     driver_->parse(logicalExpression_);
 
-    if(driver_->CommonValueExpressionDriver::getResultType()!=pTraits<bool>::typeName) {
+    if(
+        driver_->CommonValueExpressionDriver::getResultType()
+        !=
+        pTraits<bool>::typeName
+    ) {
         FatalErrorIn("executeIfSwakExpressionFunctionObject::condition()")
             << "Logical Expression " << logicalExpression_
                 << " evaluates to type " << driver_->CommonValueExpressionDriver::getResultType()

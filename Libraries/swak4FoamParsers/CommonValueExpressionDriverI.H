@@ -1203,6 +1203,9 @@ namespace Foam {
         return tSum/wSum;
     }
 
+    bool CommonValueExpressionDriver::toBool(const scalar f) {
+        return f>=0.5;
+    }
 }
 
 
