@@ -165,7 +165,7 @@ label CommonPluginFunction::readArgument(
     if(driver.getResultType()!=argumentTypes_[index]) {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Result type " << driver.getResultType()
-                << "differs from expected type " << argumentTypes_[index]
+                << " differs from expected type " << argumentTypes_[index]
                 << endl
                 << exit(FatalError);
     }

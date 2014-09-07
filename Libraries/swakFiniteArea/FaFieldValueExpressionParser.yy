@@ -2014,10 +2014,14 @@ evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
 ;
 
 lexp: TOKEN_TRUE                       {
-            $$ = driver.makeConstantField<Foam::areaScalarField>(1).ptr();
+            $$ = driver.makeConstantField<Foam::areaScalarField>(
+                driver.TRUE_Value
+            ).ptr();
           }
     | TOKEN_FALSE                      {
-            $$ = driver.makeConstantField<Foam::areaScalarField>(0).ptr();
+            $$ = driver.makeConstantField<Foam::areaScalarField>(
+                driver.FALSE_Value
+            ).ptr();
           }
     | exp '<' exp                      {
             sameSize($1,$3);
@@ -2111,10 +2115,14 @@ evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
 ;
 
 flexp: TOKEN_surf '(' TOKEN_TRUE ')'  {
-            $$ = driver.makeConstantField<Foam::edgeScalarField>(1).ptr();
+            $$ = driver.makeConstantField<Foam::edgeScalarField>(
+                driver.TRUE_Value
+            ).ptr();
           }
     | TOKEN_surf '(' TOKEN_FALSE ')'  {
-            $$ = driver.makeConstantField<Foam::edgeScalarField>(0).ptr();
+            $$ = driver.makeConstantField<Foam::edgeScalarField>(
+                driver.FALSE_Value
+            ).ptr();
           }
     | fsexp '<' fsexp                 {
             sameSize($1,$3);

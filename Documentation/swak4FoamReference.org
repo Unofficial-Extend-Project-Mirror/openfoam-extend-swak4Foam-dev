@@ -186,11 +186,14 @@ hide circle
                    $a_{ij}=a_{ji}$)
    - sphericalTensor :: Spherical tensor
    - boolean :: results of logical operations (can only be =true= or
-                =false=). Certain parsers implement them with scalars
+                =false=). Certain parsers (=internalField= and
+                =faInternalField=) implement them with scalars
                 being $0$ or $1$. If values other then $0$ or $1$ are
                 found (which can happen for instance due to
-                interpolation) they are interpreted as =true= (only
-                exactly $0$ is interpreted as =false=)
+                interpolation) and they are $>\frac{1}{2}$ they are
+                interpreted as =true= (otherwise =false=). This
+                behavior differs from older versions where only
+                exactly $0$ was =false=.
 
    If the type of subexpressions for a certain operator/function is
    incompatible (for instance when trying to add a vector to a scalar)
@@ -428,6 +431,10 @@ hide circle
      - nearDist() :: Scalar field that gives the distance to the
                      nearest wall (using =nearWallDist=)(F)
      - distToPatch(name) :: Distance to patch =name= (F)
+     - distToCells(expr) :: Distance to the cells for which the
+          expression is =true= (F)
+     - distToFaces(fexpr) :: Distance to the faces for which the
+          expression is =true= (F)
      - rdist() :: A field with the distances from a given vector
                   (shorthand for =mag(pos()-v)=) (F, P, FF)
      - length() :: Edge length (FF, FP)
@@ -968,6 +975,13 @@ hide circle
      parser can be specified. Otherwise the used region is
      context-dependent (usually the default mesh is used):
      - region :: Name of the mesh to be used
+**** Loading additional function plugins
+     It is possible to load additional function plugin libraries
+     through an optional entry:
+     - functionPlugins :: if present this is a list of words. To each
+          of theses words the string =libswak= is prepended and
+          =FunctionPlugin.so= is appended and a library of that name
+          is loaded
 *** Parser-specific parameters
     Certain drivers/parsers have additional parameters.
 **** Additional parameters of the field-parser

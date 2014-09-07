@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Wed, 11 Jun 2014 23:17:20 +0200
+State: new
+Subject: Make expressions in funkySetFieldsDict a dictionary
+Message-Id: <f18e2be4fa8980e4-0-artemis@bgs-cool-greybook.local>
+
+This would allow $ to work.
+
+For backward-compatibility allow expression being a list too (the way
+functions does)

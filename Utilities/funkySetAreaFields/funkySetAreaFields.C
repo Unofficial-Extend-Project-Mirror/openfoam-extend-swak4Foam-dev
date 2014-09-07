@@ -53,6 +53,8 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
+#include "dlLibraryTable.H"
+
 template<class T,template<class> class PField,class Mesh>
 void writeVolumeField(
     const string &name,
@@ -349,7 +351,11 @@ void doAnExpression
                     << driver.typ()
             << exit(FatalError);
     } else {
-        if(driver.typ()==pTraits<areaScalarField>::typeName) {
+        if(
+            driver.typ()==pTraits<areaScalarField>::typeName
+            ||
+            driver.typ()=="areaLogicalField"
+        ) {
             setField(
                 field,
                 driver.aMesh(),
@@ -419,7 +425,11 @@ void doAnExpression
                 createVolumeField,
                 noWrite
             );
-        } else if(driver.typ()==pTraits<edgeScalarField>::typeName) {
+        } else if(
+            driver.typ()==pTraits<edgeScalarField>::typeName
+            ||
+            driver.typ()=="edgeLogicalField"
+        ) {
             setField(
                 field,
                 driver.aMesh(),
@@ -509,6 +519,8 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("field","<field to overwrite>");
     argList::validOptions.insert("expression","<expression to write>");
     argList::validOptions.insert("condition","<logical condition>");
@@ -540,6 +552,8 @@ int main(int argc, char *argv[])
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     faMesh aMesh(mesh);
     aMesh.edgeCentres(); // to force the creation of a field that enables the areaMesh to be found
