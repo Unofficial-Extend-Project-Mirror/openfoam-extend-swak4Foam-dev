@@ -431,6 +431,10 @@ hide circle
      - nearDist() :: Scalar field that gives the distance to the
                      nearest wall (using =nearWallDist=)(F)
      - distToPatch(name) :: Distance to patch =name= (F)
+     - distToCells(expr) :: Distance to the cells for which the
+          expression is =true= (F)
+     - distToFaces(fexpr) :: Distance to the faces for which the
+          expression is =true= (F)
      - rdist() :: A field with the distances from a given vector
                   (shorthand for =mag(pos()-v)=) (F, P, FF)
      - length() :: Edge length (FF, FP)

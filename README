@@ -2850,6 +2850,15 @@ S_{expl} + S_{impl} T
 *** Infrastructure
 *** Documentation
 *** New features
+**** Additional distance-functions in field-parser
+     Similar to =distToPatch= there are now two additional built-in
+     functions:
+     - distToCells :: A logical field is provided. The distance to the
+                      cells for which this field is =true= is
+                      calculated
+     - distToFaces :: Same as =distToCells= but with a logical
+                      function for the faces
+     Both functions return cell-values
 **** New function-plugin =swakMeshWaveFunctionPlugin= for mesh related distances etc
      This library collects functions that are similar to
      =distFromPath=: they use the =MeshWave=-algorithm to calculate
@@ -2866,6 +2875,25 @@ S_{expl} + S_{impl} T
           by a logical expression separate these regions
      - floodFillFromFaces :: Number connected regions. Faces selected
           by a logical expression separate these regions
+     - cellColouring :: "Colors" the cells in such a way that no two
+                        neighboring cells have the same number. Mainly
+                        for visualizing the mesh
+                        structure. "Neighboring" means "cells sharing
+                        a face" not an edge. Therefor it may look at
+                        the surface like there are cells with the same
+                        color
+**** Additional function in =swakMeshQualityFunctionPlugin=
+     Additional functions:
+     - mqCellFaceNr :: Number of faces for each cell
+     - mqCellShape :: Field with numbers describing the cell
+                      shape. Values are:
+       - 1 :: Hex
+       - 2 :: Prism
+       - 3 :: Wedge
+       - 4 :: Pyramid
+       - 5 :: Tetraeder wedge
+       - 6 :: Tetraeder
+       - 0 :: no classification. Polygon
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically

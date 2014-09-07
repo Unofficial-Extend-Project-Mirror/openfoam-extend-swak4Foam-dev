@@ -34,20 +34,20 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "mqCellAspectRatioPluginFunction.H"
+#include "mqCellFaceNrPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(mqCellAspectRatioPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, mqCellAspectRatioPluginFunction , name, mqCellAspectRatio);
+defineTypeNameAndDebug(mqCellFaceNrPluginFunction,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, mqCellFaceNrPluginFunction , name, mqCellFaceNr);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-mqCellAspectRatioPluginFunction::mqCellAspectRatioPluginFunction(
+mqCellFaceNrPluginFunction::mqCellFaceNrPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -65,12 +65,12 @@ mqCellAspectRatioPluginFunction::mqCellAspectRatioPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void mqCellAspectRatioPluginFunction::doEvaluation()
+void mqCellFaceNrPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pAspectRatio(
+    autoPtr<volScalarField> pFaceNr(
         new volScalarField(
             IOobject(
-                "cellAspectRatio",
+                "cellFaceNr",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
@@ -82,65 +82,14 @@ void mqCellAspectRatioPluginFunction::doEvaluation()
         )
     );
 
-    volScalarField &aspectRatio=pAspectRatio();
+    volScalarField &faceNr=pFaceNr();
 
-    Vector<label> meshD=mesh().geometricD();
-
-    vectorField sumMagClosed(mesh().nCells(), vector::zero);
-    const labelList& own = mesh().faceOwner();
-    const labelList& nei = mesh().faceNeighbour();
-    const vectorField& areas = mesh().faceAreas();
-
-    forAll (own, faceI)
-    {
-        sumMagClosed[own[faceI]] += cmptMag(areas[faceI]);
+    forAll(mesh().cells(),cellI) {
+        faceNr[cellI]=mesh().cells()[cellI].size();
     }
+    faceNr.correctBoundaryConditions();
 
-    forAll (nei, faceI)
-    {
-        sumMagClosed[nei[faceI]] += cmptMag(areas[faceI]);
-    }
-
-    const scalarField& vols = mesh().cellVolumes();
-
-    label nDims = 0;
-    for (direction dir = 0; dir < vector::nComponents; dir++)
-    {
-        if (meshD[dir] == 1)
-        {
-            nDims++;
-        }
-    }
-
-    // Check the sums
-    forAll(aspectRatio, cellI)
-    {
-        // Calculate the aspect ration as the maximum of Cartesian component
-        // aspect ratio to the total area hydraulic area aspect ratio
-        scalar minCmpt = VGREAT;
-        scalar maxCmpt = -VGREAT;
-        for (direction dir = 0; dir < vector::nComponents; dir++)
-        {
-            if (meshD[dir] == 1)
-            {
-                minCmpt = min(minCmpt, sumMagClosed[cellI][dir]);
-                maxCmpt = max(maxCmpt, sumMagClosed[cellI][dir]);
-            }
-        }
-
-        aspectRatio[cellI] = maxCmpt/(minCmpt + VSMALL);
-        if (nDims == 3)
-        {
-            aspectRatio[cellI] = max
-            (
-                aspectRatio[cellI],
-                1.0/6.0*cmptSum(sumMagClosed[cellI])/pow(vols[cellI], 2.0/3.0)
-            );
-        }
-    }
-    aspectRatio.correctBoundaryConditions();
-
-    result().setObjectResult(pAspectRatio);
+    result().setObjectResult(pFaceNr);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

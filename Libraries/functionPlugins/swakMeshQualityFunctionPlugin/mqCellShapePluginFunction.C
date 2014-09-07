@@ -34,20 +34,27 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "mqCellAspectRatioPluginFunction.H"
+#include "mqCellShapePluginFunction.H"
 #include "FieldValueExpressionDriver.H"
+
+#include "hexMatcher.H"
+#include "wedgeMatcher.H"
+#include "prismMatcher.H"
+#include "pyrMatcher.H"
+#include "tetWedgeMatcher.H"
+#include "tetMatcher.H"
 
 #include "addToRunTimeSelectionTable.H"
 
 namespace Foam {
 
-defineTypeNameAndDebug(mqCellAspectRatioPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, mqCellAspectRatioPluginFunction , name, mqCellAspectRatio);
+defineTypeNameAndDebug(mqCellShapePluginFunction,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, mqCellShapePluginFunction , name, mqCellShape);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-mqCellAspectRatioPluginFunction::mqCellAspectRatioPluginFunction(
+mqCellShapePluginFunction::mqCellShapePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -65,12 +72,12 @@ mqCellAspectRatioPluginFunction::mqCellAspectRatioPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void mqCellAspectRatioPluginFunction::doEvaluation()
+void mqCellShapePluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pAspectRatio(
+    autoPtr<volScalarField> pShape(
         new volScalarField(
             IOobject(
-                "cellAspectRatio",
+                "cellShape",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
@@ -82,65 +89,37 @@ void mqCellAspectRatioPluginFunction::doEvaluation()
         )
     );
 
-    volScalarField &aspectRatio=pAspectRatio();
+    volScalarField &shape=pShape();
 
-    Vector<label> meshD=mesh().geometricD();
+    // Construct shape recognizers
+    hexMatcher hex;
+    prismMatcher prism;
+    wedgeMatcher wedge;
+    pyrMatcher pyr;
+    tetWedgeMatcher tetWedge;
+    tetMatcher tet;
 
-    vectorField sumMagClosed(mesh().nCells(), vector::zero);
-    const labelList& own = mesh().faceOwner();
-    const labelList& nei = mesh().faceNeighbour();
-    const vectorField& areas = mesh().faceAreas();
-
-    forAll (own, faceI)
-    {
-        sumMagClosed[own[faceI]] += cmptMag(areas[faceI]);
-    }
-
-    forAll (nei, faceI)
-    {
-        sumMagClosed[nei[faceI]] += cmptMag(areas[faceI]);
-    }
-
-    const scalarField& vols = mesh().cellVolumes();
-
-    label nDims = 0;
-    for (direction dir = 0; dir < vector::nComponents; dir++)
-    {
-        if (meshD[dir] == 1)
-        {
-            nDims++;
+    forAll(shape,cellI) {
+        if(hex.isA(mesh(),cellI)) {
+            shape[cellI]=1;
+        } else if(prism.isA(mesh(),cellI)) {
+            shape[cellI]=2;
+        } else if(wedge.isA(mesh(),cellI)) {
+            shape[cellI]=3;
+        } else if(pyr.isA(mesh(),cellI)) {
+            shape[cellI]=4;
+        } else if(tetWedge.isA(mesh(),cellI)) {
+            shape[cellI]=5;
+        } else if(tet.isA(mesh(),cellI)) {
+            shape[cellI]=6;
+        } else {
+            shape[cellI]=0;
         }
     }
 
-    // Check the sums
-    forAll(aspectRatio, cellI)
-    {
-        // Calculate the aspect ration as the maximum of Cartesian component
-        // aspect ratio to the total area hydraulic area aspect ratio
-        scalar minCmpt = VGREAT;
-        scalar maxCmpt = -VGREAT;
-        for (direction dir = 0; dir < vector::nComponents; dir++)
-        {
-            if (meshD[dir] == 1)
-            {
-                minCmpt = min(minCmpt, sumMagClosed[cellI][dir]);
-                maxCmpt = max(maxCmpt, sumMagClosed[cellI][dir]);
-            }
-        }
+    shape.correctBoundaryConditions();
 
-        aspectRatio[cellI] = maxCmpt/(minCmpt + VSMALL);
-        if (nDims == 3)
-        {
-            aspectRatio[cellI] = max
-            (
-                aspectRatio[cellI],
-                1.0/6.0*cmptSum(sumMagClosed[cellI])/pow(vols[cellI], 2.0/3.0)
-            );
-        }
-    }
-    aspectRatio.correctBoundaryConditions();
-
-    result().setObjectResult(pAspectRatio);
+    result().setObjectResult(pShape);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

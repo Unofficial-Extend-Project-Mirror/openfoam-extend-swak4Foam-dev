@@ -7,4 +7,6 @@ floodFillGeneralPluginFunction.C
 floodFillFromCellsPluginFunction.C
 floodFillFromFacesPluginFunction.C
 
+cellColouringPluginFunction.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakMeshWaveFunctionPlugin
