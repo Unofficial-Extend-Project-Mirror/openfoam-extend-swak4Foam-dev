@@ -62,7 +62,6 @@ if(args.options().found("functionPlugins")) {
 #ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
         dlLibraryTable::open(theLib);
 #else
-        dlLibraryTable table;
         table.open(theLib);
 #endif
     }
