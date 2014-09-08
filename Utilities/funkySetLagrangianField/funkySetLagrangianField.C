@@ -312,8 +312,6 @@ int main(int argc, char *argv[])
         runTime.functionObjects().off();
     }
 
-    dlLibraryTable table;
-
     bool debugParser=args.options().found("debugParser");
 
     forAll(timeDirs, timeI)
