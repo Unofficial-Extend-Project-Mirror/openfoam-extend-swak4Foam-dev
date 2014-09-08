@@ -269,6 +269,10 @@ Contributors/Copyright:
 #define FOAM_HAS_SCOPED_LOOKUP
 #endif
 
+#if !defined(FOAM_DEV)
+#define FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

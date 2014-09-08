@@ -138,6 +138,7 @@ void mqCellAspectRatioPluginFunction::doEvaluation()
             );
         }
     }
+    aspectRatio.correctBoundaryConditions();
 
     result().setObjectResult(pAspectRatio);
 }
