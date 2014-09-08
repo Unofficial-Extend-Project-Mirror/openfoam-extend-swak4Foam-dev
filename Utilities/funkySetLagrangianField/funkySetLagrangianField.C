@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -52,6 +52,8 @@ Contributors/Copyright:
 #include "ReaderParticleCloud.H"
 
 #include "loadFieldFunction.H"
+
+#include "dlLibraryTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -271,6 +273,8 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("field","field to overwrite");
     argList::validOptions.insert("cloud","name of the cloud to work on");
     argList::validOptions.insert("expression","expression to write");
@@ -301,6 +305,8 @@ int main(int argc, char *argv[])
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();

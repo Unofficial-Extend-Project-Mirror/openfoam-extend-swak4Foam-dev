@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -165,7 +165,7 @@ label CommonPluginFunction::readArgument(
     if(driver.getResultType()!=argumentTypes_[index]) {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Result type " << driver.getResultType()
-                << "differs from expected type " << argumentTypes_[index]
+                << " differs from expected type " << argumentTypes_[index]
                 << endl
                 << exit(FatalError);
     }

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.1.x                                 |
+|  \\    /   O peration     | Version:  2.3.x                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -24,21 +24,33 @@ boundaryField
     front
     {
         type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
         value           uniform 0;
     }
     back
     {
         type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
         value           uniform 0;
     }
     wall
     {
         type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
         value           uniform 0;
     }
     porosityWall
     {
         type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
         value           uniform 0;
     }
     inlet

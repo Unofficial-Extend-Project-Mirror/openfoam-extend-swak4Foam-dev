@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -56,6 +56,8 @@ namespace parserField {
 #include "CommonValueExpressionDriver.H"
 
 namespace Foam {
+
+class MeshDistFromPatch;
 
 class FieldValueExpressionDriver
 :
@@ -338,7 +340,17 @@ public:
     tmp<pointVectorField> makePointPositionField();
 
     tmp<volScalarField> makeDistanceField();
+private:
+    tmp<volScalarField> makeDistanceToField(
+        labelList &startFaces,
+        List<MeshDistFromPatch> &startValues,
+        List<MeshDistFromPatch> &faceValues,
+        List<MeshDistFromPatch> &cellValues
+    );
+public:
     tmp<volScalarField> makeDistanceToPatchField(const word &name);
+    tmp<volScalarField> makeDistanceToCellsField(const volScalarField &f);
+    tmp<volScalarField> makeDistanceToFacesField(const surfaceScalarField &f);
     tmp<volScalarField> makeNearDistanceField();
     tmp<volScalarField> makeRDistanceField(const volVectorField &r);
     tmp<volScalarField> makeVolumeField();

@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2010, 2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010, 2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -51,6 +51,8 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
+#include "dlLibraryTable.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -60,6 +62,8 @@ int main(int argc, char *argv[])
     Foam::timeSelector::addOptions(false);
 
 #   include "addRegionOption.H"
+
+#   include "addLoadFunctionPlugins.H"
 
     argList::validOptions.insert("dict","<dictionary to use>");
     argList::validOptions.insert("cacheFields","");
@@ -86,6 +90,8 @@ int main(int argc, char *argv[])
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     IOdictionary funkyDict
         (

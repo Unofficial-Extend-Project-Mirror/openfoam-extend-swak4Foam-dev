@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -85,7 +85,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     if (dict.found("refValue")) {
         this->refValue() = Field<Type>("refValue", dict, p.size());
     } else {
-        this->refValue() = pTraits<Type>::zero;
+        this->refValue() = this->patchInternalField();
     }
 #endif
 
@@ -112,7 +112,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore using "
 #ifndef FOAM_NO_MIXED_POINT_PATCH
-            << this->refValue()
+            << "the internal field next to the patch"
 #endif
             << endl;
     }

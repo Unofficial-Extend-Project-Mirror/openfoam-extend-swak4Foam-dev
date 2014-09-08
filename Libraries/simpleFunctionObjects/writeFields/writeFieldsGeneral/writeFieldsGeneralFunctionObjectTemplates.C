@@ -40,11 +40,13 @@ Contributors/Copyright:
 #include "fvMesh.H"
 #include "fvCFD.H"
 
+#include "basicKinematicCloud.H"
+#include "objectRegistryUtility.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class T>
@@ -52,7 +54,18 @@ bool writeFieldsGeneralFunctionObject::writeField(const word &name) const
 {
     if(obr_.foundObject<T>(name)) {
         obr_.lookupObject<T>(name).write();
+        return true;
+    } else {
+        return false;
+    }
+}
 
+template<class Type>
+bool writeFieldsGeneralFunctionObject::writeCloud(const word &name) const
+{
+    if(obr_.foundObject<Type>(name)) {
+        Info << "\twriting Cloud: " << name << endl;
+        lookupObject<Type>(obr_,name).write();
         return true;
     } else {
         return false;

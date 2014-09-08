@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -172,6 +172,9 @@ distToPatch                  {
     BEGIN(patchname);
     return token::TOKEN_distToPatch;
                       }
+distToCells           return token::TOKEN_distToCells;
+distToFaces           return token::TOKEN_distToFaces;
+
 nearDist              return token::TOKEN_nearDist;
 rdist                 return token::TOKEN_rdist;
 rand                  { BEGIN(needsIntegerParameter); return token::TOKEN_rand; }

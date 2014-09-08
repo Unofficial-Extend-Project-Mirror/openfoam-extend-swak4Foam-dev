@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -52,6 +52,8 @@ Contributors/Copyright:
 #include "AccumulationCalculation.H"
 
 #include "RepositoryBase.H"
+
+#include "dlLibraryTable.H"
 
 template <typename Type>
 Ostream& writeValue(
@@ -171,7 +173,11 @@ int main(int argc, char *argv[])
 
     Foam::timeSelector::addOptions(false);
     Foam::argList::validArgs.append("expressionDict");
+
 #   include "addRegionOption.H"
+
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("noDimensionChecking","");
     argList::validOptions.insert("foreignMeshesThatFollowTime",
                                   "<list of mesh names>");
@@ -214,6 +220,8 @@ int main(int argc, char *argv[])
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     forAllConstIter(IDLList<entry>, theExpressions, iter)
     {

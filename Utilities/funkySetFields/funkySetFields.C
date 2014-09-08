@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2006-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,6 +48,8 @@ Contributors/Copyright:
 #include "printSwakVersion.H"
 
 #include "RepositoryBase.H"
+
+#include "dlLibraryTable.H"
 
 template<class T,class Mesh>
 void setField
@@ -366,7 +368,11 @@ void doAnExpression
                     << driver.typ()
             << exit(FatalError);
     } else {
-        if(driver.typ()==pTraits<volScalarField>::typeName) {
+        if(
+            driver.typ()==pTraits<volScalarField>::typeName
+            ||
+            driver.typ()=="volLogicalField"
+        ) {
             setField(
                 field,
                 mesh,
@@ -426,7 +432,11 @@ void doAnExpression
                 keepPatches,
                 valuePatches
             );
-        } else if(driver.typ()==pTraits<surfaceScalarField>::typeName) {
+        } else if(
+            driver.typ()==pTraits<surfaceScalarField>::typeName
+            ||
+            driver.typ()=="surfaceLogicalField"
+        ) {
             setField(
                 field,
                 mesh,
@@ -486,7 +496,11 @@ void doAnExpression
                 keepPatches,
                 valuePatches
             );
-        } else if(driver.typ()==pTraits<pointScalarField>::typeName) {
+        } else if(
+            driver.typ()==pTraits<pointScalarField>::typeName
+            ||
+            driver.typ()=="pointLogicalField"
+        ) {
             setField(
                 field,
                 mesh,
@@ -610,6 +624,8 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("field","field to overwrite");
     argList::validOptions.insert("expression","expression to write");
     argList::validOptions.insert("condition","logical condition");
@@ -652,6 +668,8 @@ int main(int argc, char *argv[])
     autoPtr<surfaceScalarField> dummyPhi;
 
 #   include "createNamedMesh.H"
+
+#   include "loadFunctionPlugins.H"
 
     DynamicList<fvMesh*> allMeshes;
     allMeshes.append(&mesh);

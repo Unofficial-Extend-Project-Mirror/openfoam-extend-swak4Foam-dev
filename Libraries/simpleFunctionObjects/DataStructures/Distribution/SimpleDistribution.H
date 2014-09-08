@@ -39,7 +39,7 @@ SourceFiles
     SimpleDistribution.C
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -146,13 +146,15 @@ public:
 
    void calcScalarWeight(
         const Field<Type> &values,
-        const Field<scalar> &weights
+        const Field<scalar> &weights,
+        bool doReduce=true
     );
 
    void calcScalarWeight(
         const Field<Type> &values,
         const Field<scalar> &weights,
-        const Field<bool> &mask
+        const Field<bool> &mask,
+        bool doReduce=true
     );
 
    void calcMinimumMaximum(

@@ -1,27 +1,8 @@
 #! /bin/sh
 
-wclean swakChemistryModelFunctionPlugin
-
-wclean swakRadiationModelFunctionPlugin
-
-wclean swakMeshQualityFunctionPlugin
-
-wclean swakLocalCalculationsFunctionPlugin
-
-wclean swakRandomFunctionPlugin
-
-wclean swakFvcSchemesFunctionPlugin
-
-wclean swakFacSchemesFunctionPlugin
-
-wclean swakThermoTurbFunctionPlugin
-
-wclean swakTransportTurbFunctionPlugin
-
-wclean swakSurfacesAndSetsFunctionPlugin
-
-wclean swakLagrangianCloudSourcesFunctionPlugin
-
-wclean swakVelocityFunctionPlugin
+for d in `ls | grep swak | grep FunctionPlugin`
+do
+    wclean $d
+done
 
 (cd lagrangianCloudAdaptors; ./Allwclean )

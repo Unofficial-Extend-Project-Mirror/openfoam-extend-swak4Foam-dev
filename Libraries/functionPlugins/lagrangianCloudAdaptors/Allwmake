@@ -1,3 +1,6 @@
 #! /bin/bash
 
-wmake libso coalCloudAdaptor
+for d in `ls | grep CloudAdaptor`
+do
+    wmake libso $d
+done

@@ -48,6 +48,7 @@ Contributors/Copyright:
 #ifndef TimeClone_H
 #define TimeClone_H
 
+#include "objectRegistry.H"
 #include "Time.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

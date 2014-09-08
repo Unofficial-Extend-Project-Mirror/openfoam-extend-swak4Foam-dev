@@ -15,7 +15,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-thermoType      hPsiThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>;
+//thermoType      hePsiThermo<pureMixture<sutherlandTransport<hConstThermo<perfectGas>>,sensibleEnthalpy>>>;
+thermoType      hePsiThermo<pureMixture<sutherland<hConst<perfectGas<specie>>,sensibleEnthalpy>>>;
 
 mixture
 {

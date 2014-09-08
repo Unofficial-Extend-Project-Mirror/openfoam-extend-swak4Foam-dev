@@ -29,8 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2012 Bruno Santos <wyldckat@gmail.com>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -43,6 +44,8 @@ Contributors/Copyright:
 #include "Random.H"
 
 #include "entryToExpression.H"
+
+#include "dlLibraryTable.H"
 
 namespace Foam {
 
@@ -160,6 +163,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
+    readPluginLibraries(dict);
+
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
             dict.lookup("storedVariables")
@@ -191,6 +196,23 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     readTables(dict);
 }
 
+void CommonValueExpressionDriver::readPluginLibraries(const dictionary &dict)
+{
+    if(dict.found("functionPlugins")) {
+        wordList pluginNames(dict["functionPlugins"]);
+
+        forAll(pluginNames,i) {
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+            dlLibraryTable::open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#else
+            dlLibraryTable table;
+            libraries_.open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#endif
+        }
+    }
+}
+
 CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool cacheReadFields,
     bool searchInMemory,
@@ -219,6 +241,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+
+    readPluginLibraries(dict);
 
     if(dict.found("globalScopes")) {
         setGlobalScopes(wordList(dict.lookup("globalScopes")));
@@ -2130,7 +2154,7 @@ const word &CommonValueExpressionDriver::getAlias(const word &name) const
                 << "Available aliases are " << aliases_.toc()
                 << endl
                 << exit(FatalError);
-        return word();
+        return word::null;
 
     } else {
         return aliases_[name];

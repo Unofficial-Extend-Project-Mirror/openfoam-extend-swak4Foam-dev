@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.1.x                                 |
+|  \\    /   O peration     | Version:  2.3.x                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -25,26 +25,40 @@ boundaryField
     {
         type            compressible::epsilonWallFunction;
         value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
     }
     back
     {
         type            compressible::epsilonWallFunction;
         value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
     }
     wall
     {
         type            compressible::epsilonWallFunction;
         value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
     }
     porosityWall
     {
         type            compressible::epsilonWallFunction;
         value           uniform 200;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
     }
     inlet
     {
         type            compressible::turbulentMixingLengthDissipationRateInlet;
         mixingLength    0.005;
+        phi             phi;
+        k               k;
         value           uniform 200;
     }
     outlet

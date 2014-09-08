@@ -104,7 +104,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
     if (dict.found("refValue")) {
         this->refValue() = Field<Type>("refValue", dict, p.size());
     } else {
-        this->refValue() = pTraits<Type>::zero;
+        this->refValue() = this->patchInternalField();
     }
 
     if (dict.found("value"))
@@ -130,7 +130,7 @@ groovyBCFvPatchField<Type>::groovyBCFvPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore using "
-            << this->refValue()
+            << "the internal field next to the patch"
             << endl;
     }
 

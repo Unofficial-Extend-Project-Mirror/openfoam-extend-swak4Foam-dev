@@ -63,7 +63,7 @@ Contributors/Copyright:
 
 #define FOAM_VERSION4SWAK VERSION_NR(FOAM_VERSION4SWAK_MAJOR,FOAM_VERSION4SWAK_MINOR,FOAM_VERSION4SWAK_PATCH_NUM)
 
-#if FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_DEV)
+    #if (FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_DEV)) || (FOAM_VERSION4SWAK > VERSION_NR2(3,0))
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
 #endif
@@ -155,8 +155,10 @@ Contributors/Copyright:
 // there is no mixed-BC for point patches
 #define FOAM_NO_MIXED_POINT_PATCH
 
+#ifndef FOAM_DEV
 // this version has fvOptions
 #define FOAM_HAS_FVOPTIONS
+#endif
 
 #ifndef FOAM_DEV
 // movePoints now gets a polyMesh
@@ -265,6 +267,10 @@ Contributors/Copyright:
 
 #if (FOAM_VERSION4SWAK > VERSION_NR2(2,1)) && !defined(FOAM_DEV)
 #define FOAM_HAS_SCOPED_LOOKUP
+#endif
+
+#if !defined(FOAM_DEV)
+#define FOAM_FACECELLWAVE_HAS_TRACKINGDATA
 #endif
 
 #include "swakVersion.H"
