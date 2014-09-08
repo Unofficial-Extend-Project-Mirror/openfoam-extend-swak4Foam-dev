@@ -163,18 +163,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
-    if(dict.found("functionPlugins")) {
-        wordList pluginNames(dict["functionPlugins"]);
-        forAll(pluginNames,i) {
-
-#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
-            dlLibraryTable::open("libswak"+pluginNames[i]+"FunctionPlugin.so");
-#else
-            dlLibraryTable table;
-            table.open("libswak"+pluginNames[i]+"FunctionPlugin.so");
-#endif
-        }
-    }
+    readPluginLibraries(dict);
 
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
@@ -207,6 +196,23 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     readTables(dict);
 }
 
+void CommonValueExpressionDriver::readPluginLibraries(const dictionary &dict)
+{
+    if(dict.found("functionPlugins")) {
+        wordList pluginNames(dict["functionPlugins"]);
+
+        forAll(pluginNames,i) {
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+            dlLibraryTable::open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#else
+            dlLibraryTable table;
+            libraries_.open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#endif
+        }
+    }
+}
+
 CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool cacheReadFields,
     bool searchInMemory,
@@ -235,6 +241,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+
+    readPluginLibraries(dict);
 
     if(dict.found("globalScopes")) {
         setGlobalScopes(wordList(dict.lookup("globalScopes")));

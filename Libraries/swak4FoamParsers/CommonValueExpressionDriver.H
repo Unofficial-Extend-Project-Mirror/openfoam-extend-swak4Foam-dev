@@ -181,6 +181,12 @@ private:
 
     bool variableNameIdenticalToField_;
 
+#ifndef FOAM_DLLIBRARY_USES_STATIC_METHODS
+    dlLibraryTable libraries_;
+#endif
+
+    void readPluginLibraries(const dictionary &dict);
+
 protected:
     const ExpressionResult &lookupGlobal(const word &name) const;
 
