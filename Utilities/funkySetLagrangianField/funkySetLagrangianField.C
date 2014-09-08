@@ -451,7 +451,11 @@ int main(int argc, char *argv[])
                                 << endl
                                 << exit(FatalError);
                     }
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+                    dlLibraryTable::open(spec,"libs");
+#else
                     table.open(spec,"libs");
+#endif
 
                     wordList preloadFieldNames(spec.lookup("preloadFields"));
 
