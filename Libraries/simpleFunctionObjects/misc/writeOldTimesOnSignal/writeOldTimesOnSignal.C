@@ -70,6 +70,7 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     sigFPE_(dict.lookupOrDefault<bool>("sigFPE",true)),
     sigSEGV_(dict.lookupOrDefault<bool>("sigSEGV",true)),
     sigINT_(dict.lookupOrDefault<bool>("sigINT",false)),
+    sigTERM_(dict.lookupOrDefault<bool>("sigTERM",false)),
     sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false))
 {
     if(writeCurrent_) {
@@ -155,6 +156,14 @@ bool writeOldTimesOnSignalFunctionObject::start()
         );
     } else {
         Info << "To catch Ctrl-C set 'sigINT true;'" << endl;
+    }
+    if(sigTERM_){
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGTERM",
+                SIGTERM
+            )
+        );
     }
     if(sigQUIT_) {
         handlers_.append(

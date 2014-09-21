@@ -628,6 +628,9 @@ functions
     //     type provokeSignal;
 
     //     signalToRaise FPE;
+    //     //        signalToRaise SEGV;
+    //     //        signalToRaise TERM;
+
     //     timeToRaise 7e-05;
     //     processorsToRaiseSignal (
     //         0
@@ -636,6 +639,8 @@ functions
     // }
     // writeStuff {
     //     type writeOldTimesOnSignal;
+
+    //     sigTERM true;
 
     //     writeCurrent true;
     //     numberOfTimestepsToStore 2;
