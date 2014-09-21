@@ -624,6 +624,22 @@ functions
             ".+Wall"
         );
     }
+    // raiseFloatingPointException {
+    //     type provokeSignal;
+
+    //     signalToRaise FPE;
+    //     timeToRaise 7e-05;
+    //     processorsToRaiseSignal (
+    //         0
+    //         2
+    //     );
+    // }
+    // writeStuff {
+    //     type writeOldTimesOnSignal;
+
+    //     writeCurrent true;
+    //     numberOfTimestepsToStore 2;
+    // }
 };
 
 libs (

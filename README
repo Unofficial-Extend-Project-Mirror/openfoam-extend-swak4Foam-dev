@@ -2622,6 +2622,13 @@ S_{expl} + S_{impl} T
        - 5 :: Tetraeder wedge
        - 6 :: Tetraeder
        - 0 :: no classification. Polygon
+**** Function object for developers that raises a signal at the defined time
+     The function object =provokeSignal= can be used to debug signal
+     handling. No other possible use is know.
+
+     The function object allows defining the signal, the time and - in
+     case of parallel runs - the processors on which the signal should
+     be raised
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
