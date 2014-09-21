@@ -628,6 +628,7 @@ functions
     //     type provokeSignal;
 
     //     signalToRaise FPE;
+    //     //         signalToRaise INT;
     //     //        signalToRaise SEGV;
     //     //        signalToRaise TERM;
 
@@ -641,6 +642,7 @@ functions
     //     type writeOldTimesOnSignal;
 
     //     sigTERM true;
+    //     sigINT true;
 
     //     writeCurrent true;
     //     numberOfTimestepsToStore 2;
