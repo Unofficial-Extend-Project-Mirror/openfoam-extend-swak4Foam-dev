@@ -40,7 +40,6 @@ Contributors/Copyright:
 #include "Time.H"
 
 #include <signal.h>
-#include <unistd.h>
 
 #include "HashSet.H"
 
@@ -124,20 +123,18 @@ void provokeSignalFunctionObject::write()
             << endl;
 
 
-        pid_t myPid=getpid();
-
-        switch(signalToRaise_) {
+       switch(signalToRaise_) {
             case sigFPE:
-                kill(myPid,SIGFPE);
+                raise(SIGFPE);
                 break;
             case sigSEGV:
-                kill(myPid,SIGSEGV);
+                raise(SIGSEGV);
                 break;
             case sigINT:
-                kill(myPid,SIGINT);
+                raise(SIGINT);
                 break;
             case sigQUIT:
-                kill(myPid,SIGQUIT);
+                raise(SIGQUIT);
                 break;
             default:
                 FatalErrorIn("provokeSignalFunctionObject::write()")
