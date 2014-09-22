@@ -29,14 +29,17 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    writeOldTimesOnSignalFunctionObject
+    provokeSignalFunctionObject
 
 Description
-    This function object tries to record old fields and writes them in
-    case of a Signal
+    Raises a specified signal at a specified time. For parallel runs also
+    the processors on which to raise the signal can be specified.
+
+    The only purpose of this function object is the testing of the error
+    handling
 
 SourceFiles
-    writeOldTimesOnSignalFunctionObject.C
+    provokeSignalFunctionObject.C
 
 Contributors/Copyright:
     2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,15 +47,12 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef writeOldTimesOnSignalFunctionObject_H
-#define writeOldTimesOnSignalFunctionObject_H
+#ifndef provokeSignalFunctionObject_H
+#define provokeSignalFunctionObject_H
 
-#include "functionObject.H"
-#include "dictionary.H"
-#include "TimeCloneList.H"
-#include "DynamicList.H"
+#include "simpleFunctionObject.H"
 
-#include <signal.h>
+#include "NamedEnum.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,95 +60,60 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class writeOldTimesOnSignalFunctionObject Declaration
+                           Class provokeSignalFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-    class objectRegistry;
-
-class writeOldTimesOnSignalFunctionObject
+class provokeSignalFunctionObject
 :
-    public functionObject
+    public simpleFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    writeOldTimesOnSignalFunctionObject(const writeOldTimesOnSignalFunctionObject&);
+    provokeSignalFunctionObject(const provokeSignalFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const writeOldTimesOnSignalFunctionObject&);
+    void operator=(const provokeSignalFunctionObject&);
 
-    TimeCloneList times_;
+public:
 
-    const Time &theTime_;
-
-    class SignalHandlerInfo {
-    protected:
-        struct sigaction oldAction_;
-        word name_;
-        int sig_;
-        bool set_;
-    public:
-        SignalHandlerInfo(
-            word name,
-            int sig
-        );
-
-        SignalHandlerInfo()
-            :
-            name_("nix"),
-            sig_(-1),
-            set_(false)
-            {}
-
-        void resetHandler();
-
-        ~SignalHandlerInfo() {};
+    enum possibleSignals {
+        sigFPE,
+        sigSEGV,
+        sigINT,
+        sigTERM,
+        sigQUIT,
+        sigUSR1,
+        sigUSR2
     };
 
-    static void sigHandler(int);
+private:
 
-    static writeOldTimesOnSignalFunctionObject *singleton_;
+    possibleSignals signalToRaise_;
 
-    DynamicList<SignalHandlerInfo> handlers_;
+    scalar timeToRaise_;
 
-    bool writeCurrent_;
+    bool raiseOnThisProc_;
 
-    bool sigFPE_;
-    bool sigSEGV_;
-    bool sigINT_;
-    bool sigTERM_;
-    bool sigQUIT_;
-    bool sigUSR1_;
-    bool sigUSR2_;
+    static const NamedEnum<possibleSignals,7> possibleSignalsNames_;
 
 public:
 
     //- Runtime type information
-    TypeName("writeOldTimesOnSignal");
+    TypeName("provokeSignal");
 
 
     // Constructors
 
     //- Construct from components
-    writeOldTimesOnSignalFunctionObject
+    provokeSignalFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-
-    // Member Functions
-
-    //- start is called at the start of the time-loop
-    virtual bool start();
-
-    //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
-
-    //- Read and set the function object if it's data has changed
-    virtual bool read(const dictionary& dict);
-
+    void write();
 };
 
 

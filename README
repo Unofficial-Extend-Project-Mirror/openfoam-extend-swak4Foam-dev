@@ -2574,7 +2574,17 @@ S_{expl} + S_{impl} T
 **** Function =distToPatch= now working
      This function for the field parser gives the distance in the mesh
      to a specified patch. /Distance/ is defined as minimial sum of
-     cell-to-face distances needed to reach this cell from the named patch
+     cell-to-face distances needed to reach this cell from the named
+     patch
+**** Not all =processorX= written in =writeTimesOnSignal=
+     If a =SIGSEGV= or =SIGFPE= were encountered only on some
+     processors then on the others no data was written because these
+     signals do not propagate to other processors
+
+     Now the signal handler raises a =SIGTERM= which is propagated to
+     the other processors. For parallel runs a signal handler for
+     =SIGTERM= is automatically set up to make sure that on all
+     remaining processors data is written
 *** Infrastructure
 *** Documentation
 *** New features
@@ -2622,6 +2632,13 @@ S_{expl} + S_{impl} T
        - 5 :: Tetraeder wedge
        - 6 :: Tetraeder
        - 0 :: no classification. Polygon
+**** Function object for developers that raises a signal at the defined time
+     The function object =provokeSignal= can be used to debug signal
+     handling. No other possible use is know.
+
+     The function object allows defining the signal, the time and - in
+     case of parallel runs - the processors on which the signal should
+     be raised
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
@@ -2646,4 +2663,7 @@ S_{expl} + S_{impl} T
      string =libswak= is added in front and =FunctionPlugin.so= is
      added at the end and a library of that name is loaded to add the
      functions provided there
+**** Additional signals added to =writeTimesOnSignal=
+     Now it is possible to handle =SIGUSR1=, =SIGUSR2= and
+     =SIGTERM=. Only needed for testing
 *** Examples
