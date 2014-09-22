@@ -37,6 +37,8 @@ Contributors/Copyright:
 #include "writeOldTimesOnSignal.H"
 #include "addToRunTimeSelectionTable.H"
 
+#include "Pstream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -124,6 +126,18 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
             << "This can't be" << endl;
     }
 
+    if(
+        Pstream::parRun()
+        &&
+        (
+            sig==SIGFPE
+            ||
+            sig==SIGSEGV
+        )
+    ) {
+        Pout << "Raising SIGTERM so that other processes will dump too" << endl;
+        raise(SIGTERM);
+    }
     Pout << "Reraising original signal" << endl;
 
     raise(sig);
@@ -159,13 +173,17 @@ bool writeOldTimesOnSignalFunctionObject::start()
     } else {
         Info << "To catch Ctrl-C set 'sigINT true;'" << endl;
     }
-    if(sigTERM_){
+    if(sigTERM_ || Pstream::parRun()){
         handlers_.append(
             SignalHandlerInfo(
                 "SIGTERM",
                 SIGTERM
             )
         );
+        if(!sigTERM_) {
+            Info << "Automatically setting sigTERM because this is propagated "
+                << "to other processors" << endl;
+        }
     } else {
         Info << "To catch the TERM-signal set 'sigTERM true;'" << endl;
     }

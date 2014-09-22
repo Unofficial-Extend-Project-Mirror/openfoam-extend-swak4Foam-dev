@@ -635,18 +635,18 @@ functions
 
     //     timeToRaise 7e-05;
     //     processorsToRaiseSignal (
-    //         0
+    //         1
     //         2
     //     );
     // }
     // writeStuff {
     //     type writeOldTimesOnSignal;
 
-    //     sigTERM true;
-    //     sigINT true;
+    //     // sigTERM true;
+    //     // sigINT true;
     //     sigFPE true;
-    //     sigUSR1 true;
-    //     sigUSR2 true;
+    //     // sigUSR1 true;
+    //     // sigUSR2 true;
 
     //     writeCurrent true;
     //     numberOfTimestepsToStore 1;
