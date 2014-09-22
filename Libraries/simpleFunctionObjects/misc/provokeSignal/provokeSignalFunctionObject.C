@@ -57,15 +57,17 @@ namespace Foam
     );
 
     template<>
-    const char* NamedEnum<Foam::provokeSignalFunctionObject::possibleSignals,5>::names[]=
+    const char* NamedEnum<Foam::provokeSignalFunctionObject::possibleSignals,7>::names[]=
     {
         "FPE",
         "SEGV",
         "INT",
         "TERM",
-        "QUIT"
+        "QUIT",
+        "USR1",
+        "USR2"
     };
-    const NamedEnum<provokeSignalFunctionObject::possibleSignals,5> provokeSignalFunctionObject::possibleSignalsNames_;
+    const NamedEnum<provokeSignalFunctionObject::possibleSignals,7> provokeSignalFunctionObject::possibleSignalsNames_;
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -139,6 +141,12 @@ void provokeSignalFunctionObject::write()
                 break;
             case sigQUIT:
                 raise(SIGQUIT);
+                break;
+            case sigUSR1:
+                raise(SIGUSR1);
+                break;
+            case sigUSR2:
+                raise(SIGUSR2);
                 break;
             default:
                 FatalErrorIn("provokeSignalFunctionObject::write()")

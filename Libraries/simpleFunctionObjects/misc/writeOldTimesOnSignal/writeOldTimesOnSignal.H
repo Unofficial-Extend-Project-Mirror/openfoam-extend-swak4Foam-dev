@@ -118,6 +118,8 @@ class writeOldTimesOnSignalFunctionObject
     bool sigINT_;
     bool sigTERM_;
     bool sigQUIT_;
+    bool sigUSR1_;
+    bool sigUSR2_;
 
 public:
 

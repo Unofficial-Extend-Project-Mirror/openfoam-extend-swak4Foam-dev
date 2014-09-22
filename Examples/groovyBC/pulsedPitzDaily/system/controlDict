@@ -627,8 +627,9 @@ functions
     // raiseFloatingPointException {
     //     type provokeSignal;
 
+    //     //        signalToRaise USR1;
     //     signalToRaise FPE;
-    //     //         signalToRaise INT;
+    //     //        signalToRaise INT;
     //     //        signalToRaise SEGV;
     //     //        signalToRaise TERM;
 
@@ -643,9 +644,12 @@ functions
 
     //     sigTERM true;
     //     sigINT true;
+    //     sigFPE true;
+    //     sigUSR1 true;
+    //     sigUSR2 true;
 
     //     writeCurrent true;
-    //     numberOfTimestepsToStore 2;
+    //     numberOfTimestepsToStore 1;
     // }
 };
 

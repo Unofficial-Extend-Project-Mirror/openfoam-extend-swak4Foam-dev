@@ -71,7 +71,9 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     sigSEGV_(dict.lookupOrDefault<bool>("sigSEGV",true)),
     sigINT_(dict.lookupOrDefault<bool>("sigINT",false)),
     sigTERM_(dict.lookupOrDefault<bool>("sigTERM",false)),
-    sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false))
+    sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false)),
+    sigUSR1_(dict.lookupOrDefault<bool>("sigUSR1",false)),
+    sigUSR2_(dict.lookupOrDefault<bool>("sigUSR2",false))
 {
     if(writeCurrent_) {
         WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
@@ -164,6 +166,8 @@ bool writeOldTimesOnSignalFunctionObject::start()
                 SIGTERM
             )
         );
+    } else {
+        Info << "To catch the TERM-signal set 'sigTERM true;'" << endl;
     }
     if(sigQUIT_) {
         handlers_.append(
@@ -174,6 +178,26 @@ bool writeOldTimesOnSignalFunctionObject::start()
         );
     } else {
         Info << "To catch the QUIT-signal set 'sigQUIT true;'" << endl;
+    }
+    if(sigUSR1_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGUSR1",
+                SIGUSR1
+            )
+        );
+    } else {
+        Info << "To catch the USR1-signal set 'sigUSR1 true;'" << endl;
+    }
+    if(sigUSR2_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGUSR2",
+                SIGUSR2
+            )
+        );
+    } else {
+        Info << "To catch the USR2-signal set 'sigUSR2 true;'" << endl;
     }
 
     handlers_.shrink();
