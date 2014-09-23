@@ -39,8 +39,8 @@ divSchemes
     div(B)          Gauss linear;
     div((nuEff*dev(T(grad(U))))) Gauss linear;
 
-    "div\(phi,residualTime.*\)"      Gauss linear;
-    div(phi,scalar)      Gauss linear;
+    "div\(.*,residualTime.*\)"      Gauss linear;
+    "div\(.*,scalar\)"      Gauss linear;
 }
 
 laplacianSchemes
