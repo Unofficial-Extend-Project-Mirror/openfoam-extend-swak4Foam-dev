@@ -30,6 +30,7 @@ misc/readGravitation/readGravitationFunctionObject.C
 misc/readAndUpdateFields/readAndUpdateFields.C
 misc/readAndUpdateFields/readAndUpdateFieldsFunctionObject.C
 misc/writeOldTimesOnSignal/writeOldTimesOnSignal.C
+misc/provokeSignal/provokeSignalFunctionObject.C
 
 writeFields/writeAdditionalFields/writeAdditionalFieldsFunctionObject.C
 writeFields/writeFieldsOften/writeFieldsOftenFunctionObject.C

@@ -37,6 +37,8 @@ Contributors/Copyright:
 #include "writeOldTimesOnSignal.H"
 #include "addToRunTimeSelectionTable.H"
 
+#include "Pstream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -70,7 +72,10 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     sigFPE_(dict.lookupOrDefault<bool>("sigFPE",true)),
     sigSEGV_(dict.lookupOrDefault<bool>("sigSEGV",true)),
     sigINT_(dict.lookupOrDefault<bool>("sigINT",false)),
-    sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false))
+    sigTERM_(dict.lookupOrDefault<bool>("sigTERM",false)),
+    sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false)),
+    sigUSR1_(dict.lookupOrDefault<bool>("sigUSR1",false)),
+    sigUSR2_(dict.lookupOrDefault<bool>("sigUSR2",false))
 {
     if(writeCurrent_) {
         WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
@@ -121,6 +126,18 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
             << "This can't be" << endl;
     }
 
+    if(
+        Pstream::parRun()
+        &&
+        (
+            sig==SIGFPE
+            ||
+            sig==SIGSEGV
+        )
+    ) {
+        Pout << "Raising SIGTERM so that other processes will dump too" << endl;
+        raise(SIGTERM);
+    }
     Pout << "Reraising original signal" << endl;
 
     raise(sig);
@@ -156,6 +173,20 @@ bool writeOldTimesOnSignalFunctionObject::start()
     } else {
         Info << "To catch Ctrl-C set 'sigINT true;'" << endl;
     }
+    if(sigTERM_ || Pstream::parRun()){
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGTERM",
+                SIGTERM
+            )
+        );
+        if(!sigTERM_) {
+            Info << "Automatically setting sigTERM because this is propagated "
+                << "to other processors" << endl;
+        }
+    } else {
+        Info << "To catch the TERM-signal set 'sigTERM true;'" << endl;
+    }
     if(sigQUIT_) {
         handlers_.append(
             SignalHandlerInfo(
@@ -165,6 +196,26 @@ bool writeOldTimesOnSignalFunctionObject::start()
         );
     } else {
         Info << "To catch the QUIT-signal set 'sigQUIT true;'" << endl;
+    }
+    if(sigUSR1_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGUSR1",
+                SIGUSR1
+            )
+        );
+    } else {
+        Info << "To catch the USR1-signal set 'sigUSR1 true;'" << endl;
+    }
+    if(sigUSR2_) {
+        handlers_.append(
+            SignalHandlerInfo(
+                "SIGUSR2",
+                SIGUSR2
+            )
+        );
+    } else {
+        Info << "To catch the USR2-signal set 'sigUSR2 true;'" << endl;
     }
 
     handlers_.shrink();

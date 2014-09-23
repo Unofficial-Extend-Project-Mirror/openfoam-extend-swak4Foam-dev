@@ -35,6 +35,7 @@ Contributors/Copyright:
 
 #include "TimeCloneList.H"
 #include "DebugOStream.H"
+#include "PstreamReduceOps.H"
 
 namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -113,7 +114,10 @@ void TimeCloneList::clear()
 
 void TimeCloneList::copy(const Time &t)
 {
-    Dbug << "copy: t=" << t.timeName() << endl;
+    Pbug << "Waiting for other processors" << endl;
+    bool dummy=true;
+    reduce(dummy,andOp<bool>());
+    Pbug << "copy: t=" << t.timeName() << endl;
     const label last=storedTimes_.size()-1;
     if(storedTimes_[last]!=0) {
         Dbug << "Removing last entry" << endl;
