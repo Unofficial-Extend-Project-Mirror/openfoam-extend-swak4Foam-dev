@@ -2836,6 +2836,13 @@ S_{expl} + S_{impl} T
      Reason was that =SimpleDistribution.calcScalarWeight= did not
      =reduce=. This is now fixed (and a special switch is introduced
      for one situation where this isn't desirable)
+**** =PDE=-function objects broken because of =fvOptions=
+     On OpenFOAM-versions with =fvOptions= these were broken because
+     of inconsistent dimensions.
+
+     This is fixed: now if a =fvOption= is defined the
+     function-objects also needs =rho= and this is passed to the call
+     of =fvOption= when generating the source term
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
