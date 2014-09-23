@@ -105,6 +105,13 @@ class writeOldTimesOnSignalFunctionObject
         void resetHandler();
 
         ~SignalHandlerInfo() {};
+
+        int sig() const
+           { return sig_; }
+
+        bool set() const
+           { return set_; }
+
     };
 
     static void sigHandler(int);
@@ -122,6 +129,8 @@ class writeOldTimesOnSignalFunctionObject
     bool sigQUIT_;
     bool sigUSR1_;
     bool sigUSR2_;
+
+    bool alreadyDumped_;
 
 public:
 
