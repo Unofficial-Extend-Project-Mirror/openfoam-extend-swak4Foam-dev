@@ -2836,6 +2836,14 @@ S_{expl} + S_{impl} T
      Reason was that =SimpleDistribution.calcScalarWeight= did not
      =reduce=. This is now fixed (and a special switch is introduced
      for one situation where this isn't desirable)
+**** Restart in =binary= not working (with global variables)
+     As reported in
+     https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/225/
+
+     Problem seems to be that the =HashPtrTable= is not correctly read
+     in =binary=-mode. Workaround is to switch to =ascii= before
+     writing and reading that table and then switch back to the
+     original mode
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts

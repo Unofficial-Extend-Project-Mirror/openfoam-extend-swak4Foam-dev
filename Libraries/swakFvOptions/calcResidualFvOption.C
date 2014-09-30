@@ -101,25 +101,27 @@ void Foam::fv::calcResidualFvOption::calcResidual(
     Field<Type> mult((mat & mat.psi())().internalField());
 
     Type normFactor=pTraits<Type>::one;
-    for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++) {
-        setComponent(
-            normFactor,
-            cmpt
-        ) =
-            gSum(
-                mag(mult.component(cmpt))
-                +
-                mag(mat.source().component(cmpt))
-            )
-            +
-            SolverPerformance<Type>::small_;
-    }
+    // for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++) {
+    //     setComponent(
+    //         normFactor,
+    //         cmpt
+    //     ) =
+    //         gSum(
+    //             mag(mult.component(cmpt))
+    //             +
+    //             mag(mat.source().component(cmpt))
+    //         )
+    //         +
+    //         SolverPerformance<Type>::small_;
+    // }
 
     Type residual=cmptDivide(gSumCmptMag(res), normFactor);
+    Type residual2=cmptDivide(gSumCmptMag(mult), normFactor);
 
     if(verbose_) {
         Info << name() << ": "
             << prefix << "-Residual for " << fName << ": " << residual
+            << " " << residual2
             << "Norm factor: " << normFactor
             << endl;
     }
