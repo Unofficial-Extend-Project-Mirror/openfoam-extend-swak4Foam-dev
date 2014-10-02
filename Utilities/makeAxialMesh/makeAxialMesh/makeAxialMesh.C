@@ -229,8 +229,12 @@ void changeCoordinates(
 
   Info << "Radius to axis: min = " << minRadius << " max = " << maxRadius << endl;
 
+  // needed because 2.3.x does not clear it automatically
+  mesh.clearGeom();
+
   //  mesh.movePoints(oldPoints);
   mesh.movePoints(newPoints);
+
 }
 
 // Split the wedge-patch into two patches
