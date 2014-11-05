@@ -2931,6 +2931,9 @@ S_{expl} + S_{impl} T
      disk. *Attention*: if no set of that name is found on disk then
      it is searched at every time-step. This is a potential
      performance problem (it is not a problem if the set is there)
+**** New function object =executeIfPatch= that only executes if patches are present
+     This function object executes a lost of function objects if
+     a list of patches is present.
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
