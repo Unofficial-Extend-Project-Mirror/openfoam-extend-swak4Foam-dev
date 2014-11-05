@@ -2913,11 +2913,27 @@ S_{expl} + S_{impl} T
        - 0 :: no classification. Polygon
 **** Function object for developers that raises a signal at the defined time
      The function object =provokeSignal= can be used to debug signal
-     handling. No other possible use is know.
+     handling. No other possible use is known.
 
      The function object allows defining the signal, the time and - in
      case of parallel runs - the processors on which the signal should
      be raised
+**** New function-object =executeIfSetOrZone= that only executes if sets or zones are present
+     This function object executes a lost of function objects if
+     face/cell/point sets or zones are present. The required zones and
+     sets are specified in a dictionary =setsAndZones=: keys are the
+     names of the entities the values are the types (like
+     =faceZone=). Only if *all* objects specified there are present
+     the function objects are executed.
+
+     As a side effect if =loadAndCacheMissingSets= is =true= than sets
+     that are not yet found in memory are loaded from
+     disk. *Attention*: if no set of that name is found on disk then
+     it is searched at every time-step. This is a potential
+     performance problem (it is not a problem if the set is there)
+**** New function object =executeIfPatch= that only executes if patches are present
+     This function object executes a lost of function objects if
+     a list of patches is present.
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
