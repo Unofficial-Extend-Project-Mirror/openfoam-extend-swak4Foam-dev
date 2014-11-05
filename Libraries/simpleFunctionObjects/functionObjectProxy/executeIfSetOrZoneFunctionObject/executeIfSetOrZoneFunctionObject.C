@@ -159,6 +159,7 @@ bool executeIfSetOrZoneFunctionObject::condition()
 	} else {
 	    FatalErrorIn("executeIfSetOrZoneFunctionObject::condition()")
 	        << "Unimplemented type " << typ << " for " << name << endl
+                    << "Implemented are faceZone, faceSet, cellZone, cellSet, pointZone, pointSet" << endl
 	        << abort(FatalError);
 	}
     }
