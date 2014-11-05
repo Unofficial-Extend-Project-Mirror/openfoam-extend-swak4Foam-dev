@@ -41,7 +41,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef executeIfSetOrZoneFunctionObject_H
@@ -66,7 +66,7 @@ class executeIfSetOrZoneFunctionObject
 
     //- Disallow default bitwise copy construct
     executeIfSetOrZoneFunctionObject(const executeIfSetOrZoneFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const executeIfSetOrZoneFunctionObject&);
 
@@ -78,8 +78,14 @@ class executeIfSetOrZoneFunctionObject
 
     const polyMesh &mesh_;
 
+    // check if set is there and load if missing
+    template<class T>
+    bool hasSet(const word &name);
+
+    bool loadAndCacheMissingSets_;
+
 protected:
-    
+
     //- the actual conition that determines whether the FO should be executed
     virtual bool condition();
 

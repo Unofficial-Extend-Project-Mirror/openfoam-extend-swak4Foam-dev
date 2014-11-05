@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "executeIfSetOrZoneFunctionObject.H"
@@ -75,6 +75,9 @@ executeIfSetOrZoneFunctionObject::executeIfSetOrZoneFunctionObject
     ),
     mesh_(
 	dynamicCast<const polyMesh&>(obr())
+    ),
+    loadAndCacheMissingSets_(
+        readBool(dict.lookup("loadAndCacheMissingSets"))
     )
 {
     // do it here to avoid the superclass-read being read twice
@@ -84,24 +87,75 @@ executeIfSetOrZoneFunctionObject::executeIfSetOrZoneFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+template<class T>
+bool executeIfSetOrZoneFunctionObject::hasSet(const word &name)
+{
+    if(mesh_.foundObject<T>(name)) {
+        Dbug << name << " of type " << T::typeName << " already in memory" << endl;
+        return true;
+    } else {
+        Dbug << name << " of type " << T::typeName << " not in memory" << endl;
+        if(loadAndCacheMissingSets_) {
+            Dbug << "Loading " << name << endl;
+            autoPtr<T> s(
+                new T(
+                    mesh_,
+                    name,
+                    IOobject::READ_IF_PRESENT
+                )
+            );
+
+            if(s->headerOk()) {
+                Dbug << "Storing " << name << " in mesh" << endl;
+                s->store(s);
+                return true;
+            } else {
+                Dbug << "No valid " << name << endl;
+            }
+        }
+        return false;
+    }
+}
+
 bool executeIfSetOrZoneFunctionObject::condition()
 {
     forAllConstIter(dictionary,setsAndZones_,it) {
         const entry &e=*it;
 	const word &name=e.keyword();
 	word typ(e.stream());
+
+        Dbug << "Typ: " << typ << " Name: " << name << endl;
+
 	if(typ=="cellZone") {
 	    if(mesh_.cellZones().findIndex(name)<0) {
+                Dbug << "No " << name << " of type " << typ << endl;
 	        return false;
-	    } 
+	    }
 	} else if(typ=="faceZone") {
 	    if(mesh_.faceZones().findIndex(name)<0) {
+                Dbug << "No " << name << " of type " << typ << endl;
 	        return false;
-	    } 
+	    }
 	} else if(typ=="pointZone") {
 	    if(mesh_.pointZones().findIndex(name)<0) {
+                Dbug << "No " << name << " of type " << typ << endl;
 	        return false;
-	    } 
+	    }
+	} else if(typ=="cellSet") {
+	    if(!this->hasSet<cellSet>(name)) {
+                Dbug << "No " << name << " of type " << typ << endl;
+	        return false;
+	    }
+	} else if(typ=="faceSet") {
+	    if(!this->hasSet<faceSet>(name)) {
+                Dbug << "No " << name << " of type " << typ << endl;
+	        return false;
+	    }
+	} else if(typ=="pointSet") {
+	    if(!this->hasSet<pointSet>(name)) {
+                Dbug << "No " << name << " of type " << typ << endl;
+	        return false;
+	    }
 	} else {
 	    FatalErrorIn("executeIfSetOrZoneFunctionObject::condition()")
 	        << "Unimplemented type " << typ << " for " << name << endl
@@ -114,6 +168,8 @@ bool executeIfSetOrZoneFunctionObject::condition()
 void executeIfSetOrZoneFunctionObject::readSetsAndZones(const dictionary& dict)
 {
     setsAndZones_=dict.subDict("setsAndZones");
+    loadAndCacheMissingSets_=
+        readBool(dict.lookup("loadAndCacheMissingSets"));
 }
 
 bool executeIfSetOrZoneFunctionObject::read(const dictionary& dict)
