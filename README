@@ -2819,6 +2819,11 @@ S_{expl} + S_{impl} T
      expressions that assume for instance that =0.1= is =true= will
      now fail. Overall this change improves the stability of logival
      expressions
+**** Better detection of single values
+     The improved detection of single values might break some
+     expressions. Especially for the Python-integration as values that
+     were previously passed as arrays are now being passed as single
+     values
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type
@@ -2844,6 +2849,10 @@ S_{expl} + S_{impl} T
      in =binary=-mode. Workaround is to switch to =ascii= before
      writing and reading that table and then switch back to the
      original mode
+**** Single values were passed as arrays
+     Single values like =min(expr)= were passed as arrays instead of a
+     single value. This is now fixed. The problem is that now
+     expressions that rely on the old behavior might break
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts

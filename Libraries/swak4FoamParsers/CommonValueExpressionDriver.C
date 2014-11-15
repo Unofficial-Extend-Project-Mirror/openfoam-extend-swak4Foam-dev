@@ -1362,6 +1362,7 @@ void CommonValueExpressionDriver::evaluateVariable(
     }
 
     parse(expr);
+    result_.calcIsSingleValue();
 
     if(debug) {
         Pout << "Evaluating: " << expr << " -> " << name << endl;
@@ -1461,6 +1462,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     otherDriver->parse(expr);
 
     autoPtr<ExpressionResult> otherResult(this->getRemoteResult(otherDriver()));
+    otherResult->calcIsSingleValue();
 
     if(debug) {
         Pout << "Remote result: "

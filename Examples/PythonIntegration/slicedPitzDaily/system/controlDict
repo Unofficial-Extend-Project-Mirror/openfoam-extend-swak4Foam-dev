@@ -76,6 +76,7 @@ functions {
         readDuringConstruction true;
         useNumpy false;
         conditionCode "return (int(runTime) % 10)==0";
+        initCode "";
         //        conditionCode "return True";
         functions {
             positionsToCollect {
@@ -185,6 +186,7 @@ functions {
     }
     stopIfSetUnchanged {
         type setEndTimeWithPython;
+        initCode "";
         endTimeFile "$FOAM_CASE/system/endIfPUnchanged.py";
         swakToPythonNamespaces (
             pressureProbe
