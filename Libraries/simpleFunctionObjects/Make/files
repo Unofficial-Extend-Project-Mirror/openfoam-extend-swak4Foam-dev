@@ -26,6 +26,7 @@ volume/volumeMinMaxFunctionObject/volumeMinMaxFunctionObject.C
 
 misc/panicDump/panicDumpFunctionObject.C
 misc/listRegisteredObjects/listRegisteredObjectsFunctionObject.C
+misc/listMeshData/listMeshDataFunctionObject.C
 misc/readGravitation/readGravitationFunctionObject.C
 misc/readAndUpdateFields/readAndUpdateFields.C
 misc/readAndUpdateFields/readAndUpdateFieldsFunctionObject.C

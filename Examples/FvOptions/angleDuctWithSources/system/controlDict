@@ -59,6 +59,9 @@ libs (
 );
 
 functions {
+    showMeshData {
+        type listMeshData;
+    }
     temperature {
         type swakExpression;
         valueType internalField;
