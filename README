@@ -2913,7 +2913,22 @@ S_{expl} + S_{impl} T
        - 0 :: no classification. Polygon
 **** Function object =listMeshData= displays data stored in mesh
      This function object shows data that is stored in the
-     mesh. Mostly =solverPerformance= with the residuals of the linear solvers
+     mesh. Mostly =solverPerformance= with the residuals of the linear
+     solvers
+**** Function object =solverPerformanceToGlobalVariables=
+     This function object gets a list of =fieldNames= and gets the
+     information about their solver performances. The three quantities
+     that it gets are
+     - =nIterations= :: the number of iterations
+     - =initialResidual= :: residual before iterating
+     - =finalResidual= :: residual after iterating
+     For each value three variables are created (assuming the field is
+     named =foo=):
+     - =foo_nIterations= :: array with all the values. This is usually
+          only usable in the Python-integration
+     - =foo_nIterations_first= :: value of the first solver
+          performance
+     - =foo_nIterations_last= :: value of the first solver performance
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically

@@ -19,6 +19,8 @@ swakCodedFunctionObject.C
 
 calculateGlobalVariables.C
 calculateGlobalVariablesFunctionObject.C
+solverPerformanceToGlobalVariables.C
+solverPerformanceToGlobalVariablesFunctionObject.C
 addForeignMeshes.C
 addForeignMeshesFunctionObject.C
 foreignMeshesFollowTime.C
