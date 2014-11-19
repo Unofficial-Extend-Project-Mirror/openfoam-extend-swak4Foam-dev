@@ -2941,4 +2941,8 @@ S_{expl} + S_{impl} T
      string =libswak= is added in front and =FunctionPlugin.so= is
      added at the end and a library of that name is loaded to add the
      functions provided there
+**** =pythonIntegration= does nothing if no code is present
+     If a code is a string of the length $0$ nothing is done. This is
+     especially important as no global namespaces are read (which
+     *may* not be created at the time. Especially during initialization)
 *** Examples
