@@ -1073,6 +1073,7 @@ functions
                 parallelMasterOnly false;
                 isParallelized true;
 
+		initCode "";
                 conditionCode "return abs(runTime % 3)<1e-5";
                 //                conditionFile "$FOAM_CASE/test.py"
 
