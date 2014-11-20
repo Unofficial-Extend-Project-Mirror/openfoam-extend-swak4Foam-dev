@@ -112,6 +112,9 @@ class ExpressionResult
     template <typename T>
     inline void setObjectResultInternal(autoPtr<T> o);
 
+    template <typename T>
+    inline void calcIsSingleValueInternal();
+
     // whether or not the variable will be reset
     bool noReset_;
 
@@ -257,6 +260,8 @@ public:
     inline bool isPoint() const;
 
     inline bool isSingleValue() const;
+
+    void calcIsSingleValue();
 
     bool hasValue() const;
 

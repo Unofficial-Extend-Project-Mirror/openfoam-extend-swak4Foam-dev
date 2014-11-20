@@ -206,6 +206,24 @@ namespace Foam {
     }
 
     template<class Type>
+    void ExpressionResult::calcIsSingleValueInternal()
+    {
+        const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
+
+        Type minVal;
+        Type maxVal;
+
+        minVal=gMin(vals);
+        maxVal=gMax(vals);
+
+        if(mag(minVal-maxVal)>SMALL) {
+            isSingleValue_=false;
+        } else {
+            isSingleValue_=true;
+        }
+    }
+
+    template<class Type>
     void ExpressionResult::setSingleValueInternal(Type val)
     {
         Pbug << "setSingleValueInternal(Type val)" << endl;
@@ -336,6 +354,7 @@ namespace Foam {
             }
         }
         result.setResult(avg,size);
+        //        result.setSingleValue(avg);
         return result;
     }
 

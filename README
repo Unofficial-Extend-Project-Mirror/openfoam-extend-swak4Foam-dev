@@ -2819,6 +2819,11 @@ S_{expl} + S_{impl} T
      expressions that assume for instance that =0.1= is =true= will
      now fail. Overall this change improves the stability of logival
      expressions
+**** Better detection of single values
+     The improved detection of single values might break some
+     expressions. Especially for the Python-integration as values that
+     were previously passed as arrays are now being passed as single
+     values
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type
@@ -2843,6 +2848,18 @@ S_{expl} + S_{impl} T
      This is fixed: now if a =fvOption= is defined the
      function-objects also needs =rho= and this is passed to the call
      of =fvOption= when generating the source term
+**** Restart in =binary= not working (with global variables)
+     As reported in
+     https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/225/
+
+     Problem seems to be that the =HashPtrTable= is not correctly read
+     in =binary=-mode. Workaround is to switch to =ascii= before
+     writing and reading that table and then switch back to the
+     original mode
+**** Single values were passed as arrays
+     Single values like =min(expr)= were passed as arrays instead of a
+     single value. This is now fixed. The problem is that now
+     expressions that rely on the old behavior might break
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
@@ -2934,6 +2951,24 @@ S_{expl} + S_{impl} T
 **** New function object =executeIfPatch= that only executes if patches are present
      This function object executes a lost of function objects if
      a list of patches is present.
+**** Function object =listMeshData= displays data stored in mesh
+     This function object shows data that is stored in the
+     mesh. Mostly =solverPerformance= with the residuals of the linear
+     solvers
+**** Function object =solverPerformanceToGlobalVariables=
+     This function object gets a list of =fieldNames= and gets the
+     information about their solver performances. The three quantities
+     that it gets are
+     - =nIterations= :: the number of iterations
+     - =initialResidual= :: residual before iterating
+     - =finalResidual= :: residual after iterating
+     For each value three variables are created (assuming the field is
+     named =foo=):
+     - =foo_nIterations= :: array with all the values. This is usually
+          only usable in the Python-integration
+     - =foo_nIterations_first= :: value of the first solver
+          performance
+     - =foo_nIterations_last= :: value of the first solver performance
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
@@ -2964,4 +2999,8 @@ S_{expl} + S_{impl} T
 **** Additional signals added to =writeTimesOnSignal=
      Now it is possible to handle =SIGUSR1=, =SIGUSR2= and
      =SIGTERM=. Only needed for testing
+**** =pythonIntegration= does nothing if no code is present
+     If a code is a string of the length $0$ nothing is done. This is
+     especially important as no global namespaces are read (which
+     *may* not be created at the time. Especially during initialization)
 *** Examples

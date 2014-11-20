@@ -273,6 +273,10 @@ Contributors/Copyright:
 #define FOAM_FACECELLWAVE_HAS_TRACKINGDATA
 #endif
 
+#if !defined(FOAM_DEV)
+#define FOAM_FVMESH_IS_DATAOBJECT
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

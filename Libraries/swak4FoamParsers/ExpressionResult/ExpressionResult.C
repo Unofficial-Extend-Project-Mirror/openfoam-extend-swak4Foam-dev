@@ -356,6 +356,35 @@ ExpressionResult ExpressionResult::getUniform(
     }
 }
 
+void ExpressionResult::calcIsSingleValue()
+{
+    if(valPtr_) {
+        if(valType_==pTraits<scalar>::typeName) {
+            calcIsSingleValueInternal<scalar>();
+        } else if(valType_==vector::typeName) {
+            calcIsSingleValueInternal<vector>();
+        } else if(valType_==tensor::typeName) {
+            calcIsSingleValueInternal<tensor>();
+        } else if(valType_==symmTensor::typeName) {
+            calcIsSingleValueInternal<symmTensor>();
+        } else if(valType_==sphericalTensor::typeName) {
+            calcIsSingleValueInternal<sphericalTensor>();
+        } else if(valType_==pTraits<bool>::typeName) {
+            FatalErrorIn("ExpressionResult::calcIsSingleValueInternal<bool>()")
+                << "This specialisation is not implemented"
+                    << endl << exit(FatalError);
+        } else {
+            FatalErrorIn("ExpressionResult::calcIsSingleValue()")
+                << "Unknown type " << valType_ << endl
+                    << exit(FatalError);
+        }
+    } else {
+        FatalErrorIn("ExpressionResult::calcIsSingleValue()")
+            << "Not set. Can't determine if unifor," << endl
+                << exit(FatalError);
+   }
+}
+
 label ExpressionResult::size() const {
     if(valPtr_) {
         if(valType_==pTraits<scalar>::typeName) {

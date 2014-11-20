@@ -1,4 +1,4 @@
-bins=numpy.linspace(min(minX),max(maxX),min(nrPlanes)+1)
+bins=numpy.linspace(minX,maxX,nrPlanes+1)
 vol,edges=numpy.histogram(allPositions,bins=bins,weights=allVolume)
 pBin,edges=numpy.histogram(allPositions,bins=bins,weights=allVolume*allPressure)
 
