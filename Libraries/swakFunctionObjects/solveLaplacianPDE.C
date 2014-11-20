@@ -91,7 +91,7 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
     solvePDECommonFiniteVolume::read(dict);
 
     if(active_) {
-      if(needsRhoField()) {
+      if(needsRhoField(true)) {
             readExpressionAndDimension(
                 dict,
                 "rho",

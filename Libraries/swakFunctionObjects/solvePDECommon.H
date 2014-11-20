@@ -127,7 +127,7 @@ protected:
     fv::optionList &fvOptions() const;
 #endif
 
-    bool needsRhoField() const;
+    bool needsRhoField(bool warnIfSteady=false) const;
 
 private:
     //- do the actual solving

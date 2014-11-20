@@ -60,9 +60,9 @@ libs (
 );
 
 functions {
-    showMeshData {
-        type listMeshData;
-    }
+    // showMeshData {
+    //     type listMeshData;
+    // }
     getPerformances {
         type solverPerformanceToGlobalVariables;
         fieldNames (
@@ -79,7 +79,7 @@ functions {
         startCode "";
         writeCode "";
         executeFile "$FOAM_CASE/system/printPerformances.py";
-        endCode "";
+        endFile $executeFile;
         swakToPythonNamespaces (
             solverPerformance
         );
@@ -112,6 +112,8 @@ functions {
         solveAt timestep;
         fieldName poroTime;
         steady true;
+
+        rho "1" [0 0 0 0 0 0 0];
 
         diffusion "1e-4" [0 2 -1 0 0 0 0];
         source "0" [0 0 0 0 0 0 0];
