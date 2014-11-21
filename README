@@ -2808,6 +2808,13 @@ S_{expl} + S_{impl} T
 
      Starting with this release the =port_2.x=-branch will become the
      =default= branch and the =1.x= will become =legacy=
+**** Fixing examples
+     Due to the umber of different supported Foam-versions not all the
+     examples run on all versions and it is not possible to fix them
+     in such a way that they work on all versions. In the next version
+     they will by adapted to use the =pyFoamPrepareCase.py= utility as
+     this supports having different Foam versions in one case. As a
+     consequence most cases won't run without an installed =PyFoam=
 *** Incompatibilities
 **** Changed behavior of =groovyBC= during initialization
      If =value= is unset then during initialization the value of the
