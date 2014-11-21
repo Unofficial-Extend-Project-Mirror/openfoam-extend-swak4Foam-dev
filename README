@@ -2799,6 +2799,15 @@ S_{expl} + S_{impl} T
      Example to demonstrate =funkyWarpMesh= and post-processing on
      bended geometries
 ** Next release - version number : 0.3.2
+*** Future changes
+    These are things that will happen in the *next* release and will
+    break backwards-compatibility
+**** Discontinuation of the =1.x=-branch
+     As version =1.7= is several years old this release will be the
+     last release that supports it.
+
+     Starting with this release the =port_2.x=-branch will become the
+     =default= branch and the =1.x= will become =legacy=
 *** Incompatibilities
 **** Changed behavior of =groovyBC= during initialization
      If =value= is unset then during initialization the value of the
