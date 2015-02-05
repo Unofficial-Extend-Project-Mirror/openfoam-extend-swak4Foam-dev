@@ -128,7 +128,9 @@ class AccumulationCalculation
     bool hasSumMag_;
     Type sumMag_;
 
-    static const label numberOfBins=100;
+    static const label defaultNumberOfBins_=100;
+
+    label numberOfBins_;
 
     label maskSize() const;
 
@@ -195,6 +197,11 @@ public:
 
     //- do an accumulation according to a specification
     Type operator()(const NumericAccumulationNamedEnum::accuSpecification &);
+
+    void resetNumberOfBins(
+        const label newNumberOfBins,
+        const scalar binWidth
+    );
 };
 
 

@@ -3012,4 +3012,10 @@ S_{expl} + S_{impl} T
      If a dictionary specifies the entries =mask= and =weight= then
      these are evaluated and used to mask and weight the data
      specified in =expression=
+**** =funkyDoCalc= allows setting bin width and number
+     If specified in the sub-dictionary the entries
+     =distributionMaxBinNr= and =distributionBinWidth= allow setting
+     the number of bins. These values are not used exactly but give
+     the distribution class a hint. =distributionMaxBinNr= takes
+     precedence
 *** Examples

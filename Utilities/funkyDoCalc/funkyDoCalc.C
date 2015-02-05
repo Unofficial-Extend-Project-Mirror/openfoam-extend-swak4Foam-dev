@@ -210,6 +210,17 @@ void writeData(
 
     AccumulationCalculation<T> calculator=pCalculator();
 
+    if(
+        dict.found("distributionMaxBinNr")
+        ||
+        dict.found("distributionBinWidth")
+    ) {
+        calculator.resetNumberOfBins(
+            dict.lookupOrDefault<label>("distributionMaxBinNr",-1),
+            dict.lookupOrDefault<scalar>("distributionBinWidth",-1)
+        );
+    }
+
     forAll(accumulations,i) {
         const NumericAccumulationNamedEnum::accuSpecification accu=
             accumulations[i];

@@ -60,7 +60,8 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasWeightedAverage_(false),
     hasSum_(false),
     hasWeightedSum_(false),
-    hasSumMag_(false)
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
 {
 }
 
@@ -83,7 +84,8 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasWeightedAverage_(false),
     hasSum_(false),
     hasWeightedSum_(false),
-    hasSumMag_(false)
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
 {
     if(data_.size()!=mask_.size()) {
         FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
@@ -115,7 +117,8 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasWeightedAverage_(false),
     hasSum_(false),
     hasWeightedSum_(false),
-    hasSumMag_(false)
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
 {
     if(data_.size()!=weights_().size()) {
         FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
@@ -147,7 +150,8 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasWeightedAverage_(false),
     hasSum_(false),
     hasWeightedSum_(false),
-    hasSumMag_(false)
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
 {
     if(data_.size()!=mask_.size()) {
         FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
@@ -263,6 +267,37 @@ const Field<Type> &AccumulationCalculation<Type>::data()
 }
 
 template <typename Type>
+void AccumulationCalculation<Type>::resetNumberOfBins(
+    const label newNumberOfBins,
+    const scalar binWidth
+)
+{
+    if(binWidth<0) {
+        if(newNumberOfBins>0) {
+            numberOfBins_=newNumberOfBins;
+        }
+    } else {
+        Type newBins=(this->maximum()-this->minimum())/binWidth;
+        numberOfBins_=1;
+        for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+            label v=component(newBins,i);
+            if(v>numberOfBins_) {
+                numberOfBins_=v;
+            }
+        }
+        if(
+            newNumberOfBins>0
+            &&
+            numberOfBins_>newNumberOfBins
+        ) {
+            numberOfBins_=newNumberOfBins;
+        }
+    }
+
+    distribution_.reset();
+}
+
+template <typename Type>
 const SimpleDistribution<Type> &AccumulationCalculation<Type>::distribution()
 {
     if(!distribution_.valid()) {
@@ -270,7 +305,7 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::distribution()
             new SimpleDistribution<Type>(
                 this->minimum(),
                 this->maximum(),
-                numberOfBins
+                numberOfBins_
             )
         );
         Field<scalar> oneWeight(data().size(),1);
@@ -291,7 +326,7 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::weightedDistribut
             new SimpleDistribution<Type>(
                 this->minimum(),
                 this->maximum(),
-                numberOfBins
+                this->numberOfBins_
             )
         );
         weightedDistribution_().calcScalarWeight(
