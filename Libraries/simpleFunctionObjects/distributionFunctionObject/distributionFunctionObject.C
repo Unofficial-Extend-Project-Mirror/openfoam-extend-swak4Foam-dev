@@ -129,35 +129,35 @@ void distributionFunctionObject::write() {
     if(
         distScalar_.valid()
         &&
-        distScalar_->maxNrBins()<=0
+        distScalar_->maxNrBins() < 0
     ) {
         zeroDistribution=true;
     }
     if(
         distVector_.valid()
         &&
-        distVector_->maxNrBins()<=0
+        distVector_->maxNrBins() < 0
     ) {
         zeroDistribution=true;
     }
     if(
         distTensor_.valid()
         &&
-        distTensor_->maxNrBins()<=0
+        distTensor_->maxNrBins() < 0
     ) {
         zeroDistribution=true;
     }
     if(
         distSymmTensor_.valid()
         &&
-        distSymmTensor_->maxNrBins()<=0
+        distSymmTensor_->maxNrBins() < 0
     ) {
         zeroDistribution=true;
     }
     if(
         distSphericalTensor_.valid()
         &&
-        distSphericalTensor_->maxNrBins()<=0
+        distSphericalTensor_->maxNrBins() < 0
     ) {
         zeroDistribution=true;
     }

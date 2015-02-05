@@ -2860,6 +2860,11 @@ S_{expl} + S_{impl} T
      Single values like =min(expr)= were passed as arrays instead of a
      single value. This is now fixed. The problem is that now
      expressions that rely on the old behavior might break
+**** Distributions not written if there is only a single bin
+     If all data falls into one bin of the distribution then the
+     distribution was not written. This is now fixed
+**** =weightedAverage= for =AccumulationCalculation= fails for zero-size fields
+     Fixed
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
@@ -3003,4 +3008,14 @@ S_{expl} + S_{impl} T
      If a code is a string of the length $0$ nothing is done. This is
      especially important as no global namespaces are read (which
      *may* not be created at the time. Especially during initialization)
+**** =funkyDoCalc= uses =weight= and =mask=
+     If a dictionary specifies the entries =mask= and =weight= then
+     these are evaluated and used to mask and weight the data
+     specified in =expression=
+**** =funkyDoCalc= allows setting bin width and number
+     If specified in the sub-dictionary the entries
+     =distributionMaxBinNr= and =distributionBinWidth= allow setting
+     the number of bins. These values are not used exactly but give
+     the distribution class a hint. =distributionMaxBinNr= takes
+     precedence
 *** Examples
