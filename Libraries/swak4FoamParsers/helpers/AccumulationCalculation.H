@@ -157,6 +157,23 @@ public:
         const Field<bool> &mask
     );
 
+    //- Constructor with weights
+    AccumulationCalculation(
+        const Field<Type> &data,
+        bool isPoint,
+        CommonValueExpressionDriver &driver,
+        const Field<scalar> &weight
+    );
+
+    //- Constructor with a mask and weights
+    AccumulationCalculation(
+        const Field<Type> &data,
+        bool isPoint,
+        CommonValueExpressionDriver &driver,
+        const Field<bool> &mask,
+        const Field<scalar> &weight
+    );
+
     //- Destructor
 
     ~AccumulationCalculation();

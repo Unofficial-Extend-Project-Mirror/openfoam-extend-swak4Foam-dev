@@ -3006,4 +3006,8 @@ S_{expl} + S_{impl} T
      If a code is a string of the length $0$ nothing is done. This is
      especially important as no global namespaces are read (which
      *may* not be created at the time. Especially during initialization)
+**** =funkyDoCalc= uses =weight= and =mask=
+     If a dictionary specifies the entries =mask= and =weight= then
+     these are evaluated and used to mask and weight the data
+     specified in =expression=
 *** Examples

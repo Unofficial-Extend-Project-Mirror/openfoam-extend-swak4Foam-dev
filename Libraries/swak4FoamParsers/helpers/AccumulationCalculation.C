@@ -92,8 +92,96 @@ AccumulationCalculation<Type>::AccumulationCalculation(
                 << " differ"
                 << endl
                 << exit(FatalError);
-
     }
+}
+
+template <typename Type>
+AccumulationCalculation<Type>::AccumulationCalculation(
+    const Field<Type> &data,
+    bool isPoint,
+    CommonValueExpressionDriver &driver,
+    const Field<scalar> &weight
+):
+    data_(data),
+    mask_(data_.size(),true),
+    isPoint_(isPoint),
+    driver_(driver),
+    weights_(new Field<scalar>(weight)),
+    hasWeightSum_(false),
+    hasSize_(false),
+    hasMaximum_(false),
+    hasMinimum_(false),
+    hasAverage_(false),
+    hasWeightedAverage_(false),
+    hasSum_(false),
+    hasWeightedSum_(false),
+    hasSumMag_(false)
+{
+    if(data_.size()!=weights_().size()) {
+        FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
+            << "Sizes of data " << data_.size()
+                << " and specified weights " << weights_().size()
+                << " differ"
+                << endl
+                << exit(FatalError);
+    }
+}
+
+template <typename Type>
+AccumulationCalculation<Type>::AccumulationCalculation(
+    const Field<Type> &data,
+    bool isPoint,
+    CommonValueExpressionDriver &driver,
+    const Field<bool> &mask,
+    const Field<scalar> &weight
+):
+    data_(data),
+    mask_(mask),
+    isPoint_(isPoint),
+    driver_(driver),
+    hasWeightSum_(false),
+    hasSize_(false),
+    hasMaximum_(false),
+    hasMinimum_(false),
+    hasAverage_(false),
+    hasWeightedAverage_(false),
+    hasSum_(false),
+    hasWeightedSum_(false),
+    hasSumMag_(false)
+{
+    if(data_.size()!=mask_.size()) {
+        FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
+            << "Sizes of data " << data_.size()
+                << " and specified maks " << mask_.size()
+                << " differ"
+                << endl
+                << exit(FatalError);
+    }
+    if(data_.size()!=weight.size()) {
+        FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
+            << "Sizes of data " << data_.size()
+                << " and specified weights " << weight.size()
+                << " differ"
+                << endl
+                << exit(FatalError);
+    }
+
+    weights_.set(
+        new scalarField(
+            maskSize(),
+            0
+        )
+    );
+
+    label cnt=0;
+    forAll(mask_,i) {
+        if(mask_[i]) {
+            weights_()[cnt]=weight[i];
+            cnt++;
+        }
+    }
+
+    assert(cnt==maskSize());
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

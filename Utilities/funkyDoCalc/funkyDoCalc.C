@@ -76,13 +76,30 @@ CsvFiles csvFiles;
 template <class T>
 void writeData(
     CommonValueExpressionDriver &driver,
-    const List<NumericAccumulationNamedEnum::accuSpecification> &accumulations,
+    const dictionary &dict,
     const Time &time,
     const word &name,
-    const bool writeCsv,
-    const bool writeDistributions
+    const bool globalWriteCsv,
+    const bool globalWriteDistributions
 )
 {
+    bool writeCsv=
+        globalWriteCsv
+        ||
+        dict.lookupOrDefault<bool>("writeCsv",false);
+    bool writeDistributions=
+        globalWriteDistributions
+        ||
+        dict.lookupOrDefault<bool>("writeDistributions",false);
+
+    wordList accumulationNames(dict.lookup("accumulations"));
+    List<NumericAccumulationNamedEnum::accuSpecification> accumulations(
+        NumericAccumulationNamedEnum::readAccumulations(
+            accumulationNames,
+            dict.name()
+        )
+    );
+
     if(
         ( writeCsv || writeDistributions)
         &&
@@ -113,11 +130,86 @@ void writeData(
 
     Field<T> result(driver.getResult<T>(isPoint));
 
-    AccumulationCalculation<T> calculator(
-        result,
-        isPoint,
-        driver
-    );
+    autoPtr<Field<bool> > mask;
+    autoPtr<Field<scalar> > weight;
+
+    if(dict.found("mask")) {
+        Info << " with mask " << flush;
+
+        driver.parse(
+            exprString(
+                dict.lookup("mask"),
+                dict
+            )
+        );
+        mask.set(
+            new Field<bool>(
+                driver.getResult<bool>(isPoint)
+            )
+        );
+    }
+    if(dict.found("weight")) {
+        Info << " with weight " << flush;
+
+        driver.parse(
+            exprString(
+                dict.lookup("weight"),
+                dict
+            )
+        );
+        weight.set(
+            new Field<scalar>(
+                driver.getResult<scalar>(isPoint)
+            )
+        );
+    }
+
+    autoPtr<AccumulationCalculation<T> > pCalculator;
+
+    if(mask.valid()) {
+        if(weight.valid()) {
+            pCalculator.set(
+                new AccumulationCalculation<T>(
+                    result,
+                    isPoint,
+                    driver,
+                    mask,
+                    weight
+                )
+            );
+        } else {
+            pCalculator.set(
+                new AccumulationCalculation<T>(
+                    result,
+                    isPoint,
+                    driver,
+                    mask
+                )
+            );
+        }
+    } else {
+        if(weight.valid()) {
+            pCalculator.set(
+                new AccumulationCalculation<T>(
+                    result,
+                    isPoint,
+                    driver,
+                    weight
+                )
+            );
+        } else {
+            pCalculator.set(
+                new AccumulationCalculation<T>(
+                    result,
+                    isPoint,
+                    driver
+                )
+            );
+        }
+    }
+
+    AccumulationCalculation<T> calculator=pCalculator();
+
     forAll(accumulations,i) {
         const NumericAccumulationNamedEnum::accuSpecification accu=
             accumulations[i];
@@ -264,28 +356,12 @@ int main(int argc, char *argv[])
         {
             const word name=iter().keyword();
 
-           Info << name << " : " << flush;
+            Info << name << " : " << flush;
 
             const dictionary &dict=iter().dict();
 
-            bool writeCsv=
-                globalWriteCsv
-                ||
-                dict.lookupOrDefault<bool>("writeCsv",false);
-            bool writeDistributions=
-                globalWriteDistributions
-                ||
-                dict.lookupOrDefault<bool>("writeDistributions",false);
-
             autoPtr<CommonValueExpressionDriver> driver=
                 CommonValueExpressionDriver::New(dict,mesh);
-            wordList accumulationNames(dict.lookup("accumulations"));
-            List<NumericAccumulationNamedEnum::accuSpecification> accumulations(
-                NumericAccumulationNamedEnum::readAccumulations(
-                    accumulationNames,
-                    dict.name()
-                )
-            );
 
             driver->setSearchBehaviour(
                 true,
@@ -302,20 +378,20 @@ int main(int argc, char *argv[])
             word rType=driver->CommonValueExpressionDriver::getResultType();
 
             if(rType==pTraits<scalar>::typeName) {
-                writeData<scalar>(driver(),accumulations,runTime,
-                                  name,writeCsv,writeDistributions);
+                writeData<scalar>(driver(),dict,runTime,
+                                  name,globalWriteCsv,globalWriteDistributions);
             } else if(rType==pTraits<vector>::typeName) {
-                writeData<vector>(driver(),accumulations,runTime,
-                                  name,writeCsv,writeDistributions);
+                writeData<vector>(driver(),dict,runTime,
+                                  name,globalWriteCsv,globalWriteDistributions);
             } else if(rType==pTraits<tensor>::typeName) {
-                writeData<tensor>(driver(),accumulations,runTime,
-                                  name,writeCsv,writeDistributions);
+                writeData<tensor>(driver(),dict,runTime,
+                                  name,globalWriteCsv,globalWriteDistributions);
             } else if(rType==pTraits<symmTensor>::typeName) {
-                writeData<symmTensor>(driver(),accumulations,runTime,
-                                  name,writeCsv,writeDistributions);
+                writeData<symmTensor>(driver(),dict,runTime,
+                                  name,globalWriteCsv,globalWriteDistributions);
             } else if(rType==pTraits<sphericalTensor>::typeName) {
-                writeData<sphericalTensor>(driver(),accumulations,runTime,
-                                  name,writeCsv,writeDistributions);
+                writeData<sphericalTensor>(driver(),dict,runTime,
+                                  name,globalWriteCsv,globalWriteDistributions);
             } else {
                 WarningIn(args.executable())
                     << "Don't know how to handle type " << rType
