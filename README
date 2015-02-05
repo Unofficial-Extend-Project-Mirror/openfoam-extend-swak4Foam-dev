@@ -2863,6 +2863,8 @@ S_{expl} + S_{impl} T
 **** Distributions not written if there is only a single bin
      If all data falls into one bin of the distribution then the
      distribution was not written. This is now fixed
+**** =weightedAverage= for =AccumulationCalculation= fails for zero-size fields
+     Fixed
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts

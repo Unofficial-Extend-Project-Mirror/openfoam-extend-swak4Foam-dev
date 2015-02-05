@@ -361,7 +361,11 @@ Type AccumulationCalculation<Type>::weightedAverage()
         const scalar wSum=gSum(weights());
         const Type tSum=gSum(weights()*data());
 
-        weightedAverage_=tSum/wSum;
+        if(mag(wSum)>SMALL) {
+            weightedAverage_=tSum/wSum;
+        } else {
+            weightedAverage_=pTraits<Type>::one*HUGE;
+        }
         hasWeightedAverage_=true;
     }
     return weightedAverage_;
