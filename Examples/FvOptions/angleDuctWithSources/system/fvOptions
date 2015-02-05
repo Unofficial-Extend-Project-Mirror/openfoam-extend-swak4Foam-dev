@@ -15,6 +15,25 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+residualStart {
+    type calcResidual;
+    active true;
+    selectionMode   all;
+
+    calcResidualCoeffs {
+        verbose true;
+        doAddSup true;
+        doSetValue true;
+        fieldNames (
+            U
+            p
+            h
+            poroTime
+            poroTime2
+        );
+    }
+}
+
 matrixBefore {
     type reportMatrix;
     active          true;
@@ -180,4 +199,9 @@ reportStuff {
         }
     }
 }
+
+residualEnd {
+    $residualStart;
+}
+
 //************************************************************************* //

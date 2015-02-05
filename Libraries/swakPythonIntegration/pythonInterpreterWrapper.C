@@ -532,6 +532,10 @@ bool pythonInterpreterWrapper::executeCode(
 )
 {
     Pbug << "ExecuteCode: " << code << endl;
+    if(code.size()==0) {
+        Pbug << "No code. Exiting" << endl;
+        return true;
+    }
     syncParallel();
 
     int fail=0;

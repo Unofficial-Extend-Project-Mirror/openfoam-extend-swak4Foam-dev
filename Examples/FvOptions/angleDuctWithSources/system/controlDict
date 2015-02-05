@@ -56,10 +56,36 @@ libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakFvOptions.so"
     "libswakFunctionObjects.so"
+    "libswakPythonIntegration.so"
 );
 
 functions {
-    temperature {
+    showMeshData {
+        type listMeshData;
+    }
+    getPerformances {
+        type solverPerformanceToGlobalVariables;
+        fieldNames (
+            U
+            p
+            rho
+        );
+        toGlobalNamespace solverPerformance;
+        outputControl timeStep;
+        outputInterval 1;
+    }
+    printPerformance {
+        type pythonIntegration;
+        startCode "";
+        writeCode "";
+        executeFile "$FOAM_CASE/system/printPerformances.py";
+        endCode "";
+        swakToPythonNamespaces (
+            solverPerformance
+        );
+        interactiveAfterException true;
+   }
+   temperature {
         type swakExpression;
         valueType internalField;
         accumulations (

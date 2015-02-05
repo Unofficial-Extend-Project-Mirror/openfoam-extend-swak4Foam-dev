@@ -89,7 +89,12 @@ bool GlobalVariablesRepository::writeData(Ostream &os) const
     Pbug << "GlobalVariablesRepository at " << objectPath()
             << " writing" << endl;
 
+    // enforce ASCII because of a problem with HashTable written in BINARY
+    IOstream::streamFormat old=os.format(IOstream::ASCII);
+
     os << globalVariables_;
+
+    os.format(old);
 
     return os.good();
 }
@@ -99,7 +104,12 @@ bool GlobalVariablesRepository::readData(Istream &is)
     Pbug << "GlobalVariablesRepository at " << objectPath()
         << " reading" << endl;
 
+    // enforce ASCII because of a problem with HashTable written in BINARY
+    IOstream::streamFormat old=is.format(IOstream::ASCII);
+
     is >> globalVariables_;
+
+    is.format(old);
 
     Pbug << "GlobalVariablesRepository reading finished" << endl;
 
