@@ -676,6 +676,9 @@ S_{expl} + S_{impl} T
       - Solver :: rhoPimpleFoam
       - Demonstrates :: Thermo-cloud. Functions for lagrangian
                         particles
+***** icoFoamCavityWithParcel
+      - Solver :: icoFoam
+      - Demonstrates :: Simplest way to add particles to a case
 **** parser
      Testing the =cloud=-parser for lagrangiant particles
 ***** parcelInBoxWithExpressions
@@ -3023,3 +3026,6 @@ S_{expl} + S_{impl} T
      the distribution class a hint. =distributionMaxBinNr= takes
      precedence
 *** Examples
+**** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
+     This case demonstrates how to add lagrangian particles to the
+     simplest tutorial-case
