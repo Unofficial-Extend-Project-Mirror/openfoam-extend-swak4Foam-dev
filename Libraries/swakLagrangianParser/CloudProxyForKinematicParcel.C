@@ -37,7 +37,7 @@ Contributors/Copyright:
 
 #include "DebugOStream.H"
 
-#include "swak.H"
+#include "swakCloudTypes.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -166,6 +166,16 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             constProps.rho0()
         )
     );
+
+#ifdef FOAM_KINEMATIC_PARCEL_HAS_MINPARCELMASS
+    this->addScalarFunction(
+        "minParcelMass",
+        "Minimum parcel mass (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.minParcelMass()
+        )
+    );
+#else
     this->addScalarFunction(
         "minParticleMass",
         "Minimum particle mass (constant)",
@@ -173,6 +183,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             constProps.minParticleMass()
         )
     );
+#endif
 }
 
 

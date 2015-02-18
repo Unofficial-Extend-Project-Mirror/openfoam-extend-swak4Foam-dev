@@ -93,6 +93,10 @@ namespace Foam {
 #define FOAM_HAS_MPICC_CLOUD
 #endif
 
+#if (FOAM_VERSION4SWAK > VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
+#define FOAM_KINEMATIC_PARCEL_HAS_MINPARCELMASS
+#endif
+
 #include "DebugOStream.H"
 
 #endif

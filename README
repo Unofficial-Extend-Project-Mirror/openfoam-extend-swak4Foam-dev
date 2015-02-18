@@ -2824,6 +2824,10 @@ S_{expl} + S_{impl} T
      expressions. Especially for the Python-integration as values that
      were previously passed as arrays are now being passed as single
      values
+**** Parser for kinematic parcels replaces =minParticleMass= with =minParcelMass=
+     This reflects a change in the API of the kinematic lagrangian
+     parcels. The old function has been discontinued to avoid
+     confusions with changed semantics
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type
