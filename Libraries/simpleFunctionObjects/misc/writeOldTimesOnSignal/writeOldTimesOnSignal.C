@@ -101,49 +101,49 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
     Pout << "Signal " << sig << " encountered" << endl;
 
     bool toReraise=(
-	Pstream::parRun()
-	&&
-	(
-	    sig==SIGFPE
-	    ||
-	    sig==SIGSEGV
-	)
+        Pstream::parRun()
+        &&
+        (
+            sig==SIGFPE
+            ||
+            sig==SIGSEGV
+        )
     );
 
     if(singleton_!=NULL) {
         writeOldTimesOnSignalFunctionObject &sh=*singleton_;
         Pout << "Resetting old handlers (just in case)" << endl;
         forAll(sh.handlers_,i){
- 	    if(sh.handlers_[i].set()) {
-	        if(
-		    !toReraise
-		    ||
-		    sh.handlers_[i].sig()!=SIGTERM
-		) {
-		   sh.handlers_[i].resetHandler();
-		}
-	    }
+             if(sh.handlers_[i].set()) {
+                if(
+                    !toReraise
+                    ||
+                    sh.handlers_[i].sig()!=SIGTERM
+                ) {
+                   sh.handlers_[i].resetHandler();
+                }
+            }
         }
 
-	if(sh.alreadyDumped_) {
-  	    Pout << "Other handler dumped already. Exiting" << endl;
-	} else {
-	    Pout << "Writing old times:" << endl;
-	    sh.times_.write();
-	    if(sh.writeCurrent_) {
-	        Pout << "Writing current time" << endl;
-		WarningIn("writeOldTimesOnSignalFunctionObject::sigHandler(int sig)")
-		  << "This action may end in a segmentation fault" << endl
-		  << "Set 'writeCurrent false;' to avoid this"
-		  << endl;
+        if(sh.alreadyDumped_) {
+              Pout << "Other handler dumped already. Exiting" << endl;
+        } else {
+            Pout << "Writing old times:" << endl;
+            sh.times_.write();
+            if(sh.writeCurrent_) {
+                Pout << "Writing current time " << sh.theTime_.value() << endl;
+                WarningIn("writeOldTimesOnSignalFunctionObject::sigHandler(int sig)")
+                  << "This action may end in a segmentation fault" << endl
+                  << "Set 'writeCurrent false;' to avoid this"
+                  << endl;
 
-		const_cast<Time&>(sh.theTime_).writeNow();
-	    } else {
-	        Pout << "Current time not written."
-		     << "Set 'writeCurrent true' if you want that (but it may cause segfaults)" << endl;
-	    }
-	    sh.alreadyDumped_=true;
-	}
+                const_cast<Time&>(sh.theTime_).writeNow();
+            } else {
+                Pout << "Current time not written."
+                     << "Set 'writeCurrent true' if you want that (but it may cause segfaults)" << endl;
+            }
+            sh.alreadyDumped_=true;
+        }
     } else {
         Pout << endl << "Problem: No instance of "
             << "'writeOldTimesOnSignalFunctionObject'." << endl
@@ -152,7 +152,7 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
 
     if(toReraise) {
         Pout << "Printstack:" << endl << endl;
-	error::printStack(Perr);
+        error::printStack(Perr);
         Pout << endl << endl;
         Pout << "Raising SIGTERM so that other processes will dump too" << endl;
         raise(SIGTERM);
