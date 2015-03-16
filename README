@@ -2824,6 +2824,9 @@ S_{expl} + S_{impl} T
      expressions. Especially for the Python-integration as values that
      were previously passed as arrays are now being passed as single
      values
+**** =SIGTERM= automatically switched on for parallel runs in =writeOldTimesOnSignal=
+     For parallel runs this signal is now automatically switched in so
+     that other signals are propagated to other processors
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type
@@ -2865,6 +2868,10 @@ S_{expl} + S_{impl} T
      distribution was not written. This is now fixed
 **** =weightedAverage= for =AccumulationCalculation= fails for zero-size fields
      Fixed
+**** =writeOldTimesOnSignal= fails with =writeCurrent=
+     If the current time was already written (because it is part of
+     the stored times) a segmentation fault occurred. This has been
+     fixed by checking whether the current time is already stored
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
@@ -3018,4 +3025,9 @@ S_{expl} + S_{impl} T
      the number of bins. These values are not used exactly but give
      the distribution class a hint. =distributionMaxBinNr= takes
      precedence
+**** Timeout in =writeOldTimesOnSignal= to allow other processes to finish writing
+     For parallel runs the process that initiates the writing of data
+     waits for the other processes to write their data. This time can
+     be specified with a parameter =sleepSecondsBeforeReraising= that
+     has a default value 60
 *** Examples
