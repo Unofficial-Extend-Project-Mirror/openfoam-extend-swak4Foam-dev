@@ -3030,4 +3030,9 @@ S_{expl} + S_{impl} T
      waits for the other processes to write their data. This time can
      be specified with a parameter =sleepSecondsBeforeReraising= that
      has a default value 60
+**** =writeAndEnd=-function objects now allow storing and writing previous time-steps
+     The function objects based on =writeAndEnd= now have an optional
+     switch =storeAndWritePreviousState=. If this is set then a number
+     of old time-steps can be stored and will be written when the run
+     is terminated.
 *** Examples
