@@ -99,6 +99,11 @@ provokeSignalFunctionObject::provokeSignalFunctionObject
             Pstream::myProcNo()
         );
     } else {
+        if(!dict.found("processorsToRaiseSignal")) {
+            WarningIn("provokeSignalFunctionObject::provokeSignalFunctionObject")
+                << "No entry 'processorsToRaiseSignal' in " << dict.name()
+                << nl << "Not needed now but needed in parallel runs" << endl;
+        }
         raiseOnThisProc_=true;
     }
 
