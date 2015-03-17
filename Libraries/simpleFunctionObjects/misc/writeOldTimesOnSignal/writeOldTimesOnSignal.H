@@ -122,6 +122,8 @@ class writeOldTimesOnSignalFunctionObject
 
     bool writeCurrent_;
 
+    scalar sleepSecondsBeforeReraising_;
+
     bool sigFPE_;
     bool sigSEGV_;
     bool sigINT_;
@@ -131,6 +133,8 @@ class writeOldTimesOnSignalFunctionObject
     bool sigUSR2_;
 
     bool alreadyDumped_;
+
+    bool itWasMeWhoReraised_;
 
 public:
 

@@ -69,6 +69,7 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     writeCurrent_(
         readBool(dict.lookup("writeCurrent"))
     ),
+    sleepSecondsBeforeReraising_(dict.lookupOrDefault<scalar>("sleepSecondsBeforeReraising",60)),
     sigFPE_(dict.lookupOrDefault<bool>("sigFPE",true)),
     sigSEGV_(dict.lookupOrDefault<bool>("sigSEGV",true)),
     sigINT_(dict.lookupOrDefault<bool>("sigINT",false)),
@@ -76,7 +77,8 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     sigQUIT_(dict.lookupOrDefault<bool>("sigQUIT",false)),
     sigUSR1_(dict.lookupOrDefault<bool>("sigUSR1",false)),
     sigUSR2_(dict.lookupOrDefault<bool>("sigUSR2",false)),
-    alreadyDumped_(false)
+    alreadyDumped_(false),
+    itWasMeWhoReraised_(false)
 {
     if(writeCurrent_) {
         WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
@@ -92,6 +94,20 @@ writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject
     } else {
         singleton_=this;
     }
+    if(
+        Pstream::parRun()
+        &&
+        !dict.found("sigTERM")
+        &&
+        !sigTERM_
+    ) {
+        sigTERM_=true;
+        WarningIn("writeOldTimesOnSignalFunctionObject::writeOldTimesOnSignalFunctionObject")
+            << "sigTERM unset. Setting it to true so that signal is propagated to other processors"
+                << nl << "If this is undesired explicitly set 'sigTERM false;' in "
+                << dict.name()
+                << endl;
+    }
 }
 
 
@@ -101,49 +117,60 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
     Pout << "Signal " << sig << " encountered" << endl;
 
     bool toReraise=(
-	Pstream::parRun()
-	&&
-	(
-	    sig==SIGFPE
-	    ||
-	    sig==SIGSEGV
-	)
+        Pstream::parRun()
+        &&
+        (
+            sig==SIGFPE
+            ||
+            sig==SIGSEGV
+        )
     );
 
+    if(toReraise) {
+        Pout << "Going to reraise SIGTERM after writting" << endl;
+    }
     if(singleton_!=NULL) {
         writeOldTimesOnSignalFunctionObject &sh=*singleton_;
         Pout << "Resetting old handlers (just in case)" << endl;
         forAll(sh.handlers_,i){
- 	    if(sh.handlers_[i].set()) {
-	        if(
-		    !toReraise
-		    ||
-		    sh.handlers_[i].sig()!=SIGTERM
-		) {
-		   sh.handlers_[i].resetHandler();
-		}
-	    }
+             if(sh.handlers_[i].set()) {
+                if(
+                    !toReraise
+                    ||
+                    sh.handlers_[i].sig()!=SIGTERM
+                ) {
+                   sh.handlers_[i].resetHandler();
+                }
+            }
         }
 
-	if(sh.alreadyDumped_) {
-  	    Pout << "Other handler dumped already. Exiting" << endl;
-	} else {
-	    Pout << "Writing old times:" << endl;
-	    sh.times_.write();
-	    if(sh.writeCurrent_) {
-	        Pout << "Writing current time" << endl;
-		WarningIn("writeOldTimesOnSignalFunctionObject::sigHandler(int sig)")
-		  << "This action may end in a segmentation fault" << endl
-		  << "Set 'writeCurrent false;' to avoid this"
-		  << endl;
+        if(sh.alreadyDumped_) {
+              Pout << "Other handler dumped already. Exiting" << endl;
+        } else {
+            if(
+                sh.writeCurrent_
+                &&
+                sh.times_.has(sh.theTime_)
+            ) {
+                Pout << "Current time in old times. Not writing separately" << endl;
+                sh.writeCurrent_=false;
+            }
+            Pout << "Writing old times:" << endl;
+            sh.times_.write();
+            if(sh.writeCurrent_) {
+                Pout << "Writing current time " << sh.theTime_.value() << endl;
+                WarningIn("writeOldTimesOnSignalFunctionObject::sigHandler(int sig)")
+                  << "This action may end in a segmentation fault" << endl
+                  << "Set 'writeCurrent false;' to avoid this"
+                  << endl;
 
-		const_cast<Time&>(sh.theTime_).writeNow();
-	    } else {
-	        Pout << "Current time not written."
-		     << "Set 'writeCurrent true' if you want that (but it may cause segfaults)" << endl;
-	    }
-	    sh.alreadyDumped_=true;
-	}
+                const_cast<Time&>(sh.theTime_).writeNow();
+            } else {
+                Pout << "Current time not written."
+                     << "Set 'writeCurrent true' if you want that (but it may cause segfaults)" << endl;
+            }
+            sh.alreadyDumped_=true;
+        }
     } else {
         Pout << endl << "Problem: No instance of "
             << "'writeOldTimesOnSignalFunctionObject'." << endl
@@ -152,13 +179,24 @@ void writeOldTimesOnSignalFunctionObject::sigHandler(int sig) {
 
     if(toReraise) {
         Pout << "Printstack:" << endl << endl;
-	error::printStack(Perr);
+        error::printStack(Perr);
         Pout << endl << endl;
+        singleton_->itWasMeWhoReraised_=true;
         Pout << "Raising SIGTERM so that other processes will dump too" << endl;
         raise(SIGTERM);
     }
+    if(
+        sig==SIGTERM
+        &&
+        singleton_->sleepSecondsBeforeReraising_>0
+        &&
+        singleton_->itWasMeWhoReraised_
+    ) {
+        Pout << "Sleeping " << singleton_->sleepSecondsBeforeReraising_ << " before reraising SIGTERM "
+            << "to allow other processes to write" << endl;
+        sleep(singleton_->sleepSecondsBeforeReraising_);
+    }
     Pout << "Reraising original signal" << endl;
-
     raise(sig);
 }
 

@@ -102,6 +102,7 @@ public:
 
     // Member Functions
 
+    bool has(const Time& other);
 };
 
 

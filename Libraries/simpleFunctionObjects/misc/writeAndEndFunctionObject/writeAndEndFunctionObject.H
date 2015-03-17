@@ -40,13 +40,15 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef writeAndEndFunctionObject_H
 #define writeAndEndFunctionObject_H
 
 #include "simpleFunctionObject.H"
+#include "TimeCloneList.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -70,6 +72,10 @@ class writeAndEndFunctionObject
 
     //- flag if the run is already stopped
     bool isStopped_;
+
+    autoPtr<TimeCloneList> lastTimes_;
+
+    bool storeAndWritePreviousState_;
 
 protected:
 

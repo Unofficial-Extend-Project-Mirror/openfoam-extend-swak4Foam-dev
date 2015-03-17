@@ -101,6 +101,11 @@ public:
     //- Destructor
     virtual ~TimeClone();
 
+    bool ok() const {
+        return storedTime_.valid();
+    }
+
+    const Time &operator()() const;
 
     // Member Functions
 
