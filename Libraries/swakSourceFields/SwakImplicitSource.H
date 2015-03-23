@@ -89,9 +89,28 @@ public:
 
         // Evaluation
 
-            //- Add implicit contribution to equation
-            virtual void addSup(fvMatrix<T>& eqn, const label fieldI);
+    //- Add explicit contribution to equation
+    virtual void addSup(
+        fvMatrix<T>& eqn,
+        const label fieldI
+    );
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+    // Add explicit and implicit contributions to compressible equations
+    virtual void addSup(
+        const volScalarField& rho,
+        fvMatrix<T>& eqn,
+        const label fieldI
+    );
+
+    // Add explicit and implicit contributions to phase equations
+    virtual void addSup(
+        const volScalarField& alpha,
+        const volScalarField& rho,
+        fvMatrix<T>& eqn,
+        const label fieldI
+    );
+#endif
 
 };
 

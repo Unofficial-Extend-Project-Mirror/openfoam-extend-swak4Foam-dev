@@ -90,7 +90,10 @@ SwakExplicitSource<T>::~SwakExplicitSource()
 
 //- Add explicit contribution to equation
 template<class T>
-void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
+void SwakExplicitSource<T>::addSup(
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
 {
     if (debug)
     {
@@ -124,6 +127,29 @@ void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
     }
     eqn+=usedResult;
 }
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+template<class T>
+void SwakExplicitSource<T>::addSup(
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+
+template<class T>
+void SwakExplicitSource<T>::addSup(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+#endif
 
 } // end namespace
 
