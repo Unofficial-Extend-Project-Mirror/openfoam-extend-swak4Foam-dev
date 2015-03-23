@@ -128,6 +128,7 @@ void SwakExplicitSource<T>::addSup(
     eqn+=usedResult;
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 template<class T>
 void SwakExplicitSource<T>::addSup(
     const volScalarField& rho,
@@ -148,6 +149,7 @@ void SwakExplicitSource<T>::addSup(
 {
     this->addSup(eqn,fieldI);
 }
+#endif
 
 } // end namespace
 

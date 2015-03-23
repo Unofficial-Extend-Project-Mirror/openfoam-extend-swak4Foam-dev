@@ -109,6 +109,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
@@ -137,6 +138,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<vector>& "+eqn.psi().name()+")"
     );
 }
+#endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -166,6 +168,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
     const volScalarField& rho,
@@ -193,6 +196,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<scalar>& "+eqn.psi().name()+")"
     );
 }
+#endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -222,6 +226,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
@@ -250,6 +255,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<tensor>& "+eqn.psi().name()+")"
     );
 }
+#endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -279,6 +285,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
@@ -307,6 +314,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<symmTensor>& "+eqn.psi().name()+")"
     );
 }
+#endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -336,6 +344,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
     const volScalarField& rho,
@@ -363,6 +372,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
     );
 }
+#endif
 
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue

@@ -54,6 +54,8 @@ Contributors/Copyright:
 #include "fvOption.H"
 #include "functionObjectList.H"
 
+#include "swakFvOption.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -151,6 +153,7 @@ public:
         const label fieldI
     );
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
     // Add explicit and implicit contributions to compressible equations
 
     //- Scalar
@@ -239,6 +242,7 @@ public:
         fvMatrix<tensor>& eqn,
         const label fieldI
     );
+#endif
 
     // Set values directly
 

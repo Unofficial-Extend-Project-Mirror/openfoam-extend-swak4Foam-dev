@@ -164,6 +164,7 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportMatrixFvOption::addSup
 (
     const volScalarField& rho,
@@ -197,6 +198,7 @@ void Foam::fv::reportMatrixFvOption::addSup
         );
     }
 }
+#endif
 
 
 void Foam::fv::reportMatrixFvOption::setValue
@@ -227,6 +229,7 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportMatrixFvOption::addSup
 (
     const volScalarField& rho,
@@ -260,6 +263,7 @@ void Foam::fv::reportMatrixFvOption::addSup
         );
     }
 }
+#endif
 
 
 void Foam::fv::reportMatrixFvOption::setValue
@@ -290,6 +294,7 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportMatrixFvOption::addSup
 (
     const volScalarField& rho,
@@ -323,6 +328,7 @@ void Foam::fv::reportMatrixFvOption::addSup
         );
     }
 }
+#endif
 
 
 void Foam::fv::reportMatrixFvOption::setValue
@@ -353,6 +359,7 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportMatrixFvOption::addSup
 (
     const volScalarField& rho,
@@ -386,6 +393,7 @@ void Foam::fv::reportMatrixFvOption::addSup
         );
     }
 }
+#endif
 
 
 void Foam::fv::reportMatrixFvOption::setValue
@@ -416,6 +424,7 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportMatrixFvOption::addSup
 (
     const volScalarField& rho,
@@ -449,6 +458,7 @@ void Foam::fv::reportMatrixFvOption::addSup
         );
     }
 }
+#endif
 
 
 void Foam::fv::reportMatrixFvOption::setValue

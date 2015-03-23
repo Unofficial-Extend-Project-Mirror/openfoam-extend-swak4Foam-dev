@@ -141,6 +141,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::executeFunctionObjectsFvOption::addSup
 (
     const volScalarField &rho,
@@ -161,6 +162,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::executeFunctionObjectsFvOption::setValue
@@ -193,6 +195,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::executeFunctionObjectsFvOption::addSup
 (
     const volScalarField &rho,
@@ -213,6 +216,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::executeFunctionObjectsFvOption::setValue
@@ -245,6 +249,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::executeFunctionObjectsFvOption::addSup
 (
@@ -266,6 +271,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
@@ -297,6 +303,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::executeFunctionObjectsFvOption::addSup
 (
     const volScalarField &rho,
@@ -317,6 +324,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::executeFunctionObjectsFvOption::setValue
@@ -349,6 +357,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::executeFunctionObjectsFvOption::addSup
 (
     const volScalarField &rho,
@@ -369,6 +378,7 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::executeFunctionObjectsFvOption::setValue

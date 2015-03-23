@@ -93,6 +93,7 @@ public:
             const label fieldI
         );
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
         // Add explicit and implicit contributions to compressible equations
         virtual void addSup(
             const volScalarField& rho,
@@ -107,6 +108,7 @@ public:
             fvMatrix<T>& eqn,
             const label fieldI
         );
+#endif
 
 };
 

@@ -3035,4 +3035,9 @@ S_{expl} + S_{impl} T
      switch =storeAndWritePreviousState=. If this is set then a number
      of old time-steps can be stored and will be written when the run
      is terminated.
+**** =fvOption=-subclasses now support additional forms of =addSup=
+     In 2.3.1 two new forms of =addSup= where added to =fvOption= (one
+     for compressible equations. The other one for multi-phase
+     solvers). Both new forms are supported by all
+     =fvOption=-subclasses in =swakSourceFields= and =swakFvOptions=
 *** Examples

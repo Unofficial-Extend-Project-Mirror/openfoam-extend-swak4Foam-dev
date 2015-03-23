@@ -139,6 +139,7 @@ void Foam::fv::calcResidualFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::calcResidualFvOption::addSup
 (
@@ -160,6 +161,7 @@ void Foam::fv::calcResidualFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::calcResidualFvOption::setValue
@@ -173,7 +175,6 @@ void Foam::fv::calcResidualFvOption::setValue
     }
 }
 
-
 void Foam::fv::calcResidualFvOption::addSup
 (
     fvMatrix<scalar>& eqn,
@@ -185,6 +186,7 @@ void Foam::fv::calcResidualFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::calcResidualFvOption::addSup
 (
     const volScalarField& rho,
@@ -205,6 +207,7 @@ void Foam::fv::calcResidualFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::calcResidualFvOption::setValue
@@ -230,6 +233,7 @@ void Foam::fv::calcResidualFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::calcResidualFvOption::addSup
 (
     const volScalarField& rho,
@@ -250,6 +254,7 @@ void Foam::fv::calcResidualFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::calcResidualFvOption::setValue
@@ -274,6 +279,7 @@ void Foam::fv::calcResidualFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::calcResidualFvOption::addSup
 (
     const volScalarField& rho,
@@ -294,6 +300,7 @@ void Foam::fv::calcResidualFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::calcResidualFvOption::setValue
@@ -319,6 +326,7 @@ void Foam::fv::calcResidualFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::calcResidualFvOption::addSup
 (
     const volScalarField& rho,
@@ -339,6 +347,7 @@ void Foam::fv::calcResidualFvOption::addSup
 {
     addSup(eqn,fieldI);
 }
+#endif
 
 
 void Foam::fv::calcResidualFvOption::setValue
