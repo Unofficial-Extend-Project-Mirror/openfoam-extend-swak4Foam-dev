@@ -8,16 +8,16 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright held by original author
+    \\  /    A nd           | Copyright  held by original author
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is based on OpenFOAM.
 
-    OpenFOAM is free software: you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    OpenFOAM is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
 
     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -25,31 +25,29 @@ License
     for more details.
 
     You should have received a copy of the GNU General Public License
-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+    along with OpenFOAM; if not, write to the Free Software Foundation,
+    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    TimeClone
+    executeIfPatchFunctionObject
 
 Description
-    Object that on request creates a full copy of all fields etc and writes them on
-    request
-
-    Only copies objectRegistries or objects that are auto-writeable
+    This proxy-functionObject only executes its childrens if the sets and zones
+    listed in a dictionary exist
 
 SourceFiles
-    TimeClone.C
+    executeIfPatchFunctionObject.C
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef TimeClone_H
-#define TimeClone_H
+#ifndef executeIfPatchFunctionObject_H
+#define executeIfPatchFunctionObject_H
 
-#include "objectRegistry.H"
-#include "Time.H"
+#include "conditionalFunctionObjectListProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,57 +55,51 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                          Class TimeClone Declaration
+                           Class executeIfPatchFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class TimeClone
+class executeIfPatchFunctionObject
+:
+    public conditionalFunctionObjectListProxy
 {
-    // Private data
-
-    //- the actual time-thing
-    autoPtr<Time> storedTime_;
-
-
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    TimeClone(const TimeClone&);
+    executeIfPatchFunctionObject(const executeIfPatchFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const TimeClone&);
+    void operator=(const executeIfPatchFunctionObject&);
 
-    //- Do the actual copying
-    label copyObjects(const objectRegistry &src,objectRegistry &dst);
+    //- the dictionary with the sets and zones
+    wordList patchNames_;
+
+    //- reread the regular expression
+    void readPatches(const dictionary& dict);
+
+    const polyMesh &mesh_;
+
+protected:
+
+    //- the actual conition that determines whether the FO should be executed
+    virtual bool condition();
 
 public:
 
-    // Static data members
+    //- Runtime type information
+    TypeName("executeIfPatch");
 
-    TypeName("TimeClone");
 
     // Constructors
 
-    //- Construct null
-    TimeClone();
+    //- Construct from components
+    executeIfPatchFunctionObject
+    (
+        const word&,
+        const Time&,
+        const dictionary&
+    );
 
-    // Selectors
-
-    //- Make a copy
-    void copy(const Time &);
-
-    //- Write the time-directory
-    bool write(const bool force=false);
-
-    //- Destructor
-    virtual ~TimeClone();
-
-    bool ok() const {
-        return storedTime_.valid();
-    }
-
-    const Time &operator()() const;
-
-    // Member Functions
+    bool read(const dictionary& dict);
 
 };
 
@@ -116,7 +108,6 @@ public:
 
 } // End namespace Foam
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

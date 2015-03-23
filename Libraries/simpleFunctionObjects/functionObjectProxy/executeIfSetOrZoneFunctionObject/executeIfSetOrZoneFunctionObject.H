@@ -29,25 +29,25 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    writeAndEndFunctionObject
+    executeIfSetOrZoneFunctionObject
 
 Description
-    General function object for ending a run according to a condition
+    This proxy-functionObject only executes its childrens if the sets and zones
+    listed in a dictionary exist
 
 SourceFiles
-    writeAndEndFunctionObject.C
+    executeIfSetOrZoneFunctionObject.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef writeAndEndFunctionObject_H
-#define writeAndEndFunctionObject_H
+#ifndef executeIfSetOrZoneFunctionObject_H
+#define executeIfSetOrZoneFunctionObject_H
 
-#include "simpleFunctionObject.H"
-#include "TimeCloneList.H"
+#include "conditionalFunctionObjectListProxy.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,60 +55,65 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class writeAndEndFunctionObject Declaration
+                           Class executeIfSetOrZoneFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class writeAndEndFunctionObject
+class executeIfSetOrZoneFunctionObject
 :
-    public simpleFunctionObject
+    public conditionalFunctionObjectListProxy
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    writeAndEndFunctionObject(const writeAndEndFunctionObject&);
+    executeIfSetOrZoneFunctionObject(const executeIfSetOrZoneFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const writeAndEndFunctionObject&);
+    void operator=(const executeIfSetOrZoneFunctionObject&);
 
-    //- flag if the run is already stopped
-    bool isStopped_;
+    //- the dictionary with the sets and zones
+    dictionary setsAndZones_;
 
-    autoPtr<TimeCloneList> lastTimes_;
+    //- reread the regular expression
+    void readSetsAndZones(const dictionary& dict);
 
-    bool storeAndWritePreviousState_;
+    const polyMesh &mesh_;
+
+    // check if set is there and load if missing
+    template<class T>
+    bool hasSet(const word &name);
+
+    bool loadAndCacheMissingSets_;
 
 protected:
 
-    //- do the actual checking
-    virtual bool endRunNow() = 0;
-
-    bool isStopped() const { return isStopped_; }
+    //- the actual conition that determines whether the FO should be executed
+    virtual bool condition();
 
 public:
 
     //- Runtime type information
-    TypeName("writeAndEnd");
+    TypeName("executeIfSetOrZone");
 
 
     // Constructors
 
     //- Construct from components
-    writeAndEndFunctionObject
+    executeIfSetOrZoneFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    bool start();
+    bool read(const dictionary& dict);
 
-    void write();
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

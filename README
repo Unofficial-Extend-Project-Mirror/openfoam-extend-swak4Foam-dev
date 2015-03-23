@@ -2824,6 +2824,9 @@ S_{expl} + S_{impl} T
      expressions. Especially for the Python-integration as values that
      were previously passed as arrays are now being passed as single
      values
+**** =SIGTERM= automatically switched on for parallel runs in =writeOldTimesOnSignal=
+     For parallel runs this signal is now automatically switched in so
+     that other signals are propagated to other processors
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type
@@ -2841,6 +2844,13 @@ S_{expl} + S_{impl} T
      Reason was that =SimpleDistribution.calcScalarWeight= did not
      =reduce=. This is now fixed (and a special switch is introduced
      for one situation where this isn't desirable)
+**** =PDE=-function objects broken because of =fvOptions=
+     On OpenFOAM-versions with =fvOptions= these were broken because
+     of inconsistent dimensions.
+
+     This is fixed: now if a =fvOption= is defined the
+     function-objects also needs =rho= and this is passed to the call
+     of =fvOption= when generating the source term
 **** Restart in =binary= not working (with global variables)
      As reported in
      https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/225/
@@ -2853,6 +2863,15 @@ S_{expl} + S_{impl} T
      Single values like =min(expr)= were passed as arrays instead of a
      single value. This is now fixed. The problem is that now
      expressions that rely on the old behavior might break
+**** Distributions not written if there is only a single bin
+     If all data falls into one bin of the distribution then the
+     distribution was not written. This is now fixed
+**** =weightedAverage= for =AccumulationCalculation= fails for zero-size fields
+     Fixed
+**** =writeOldTimesOnSignal= fails with =writeCurrent=
+     If the current time was already written (because it is part of
+     the stored times) a segmentation fault occurred. This has been
+     fixed by checking whether the current time is already stored
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
@@ -2863,7 +2882,17 @@ S_{expl} + S_{impl} T
 **** Function =distToPatch= now working
      This function for the field parser gives the distance in the mesh
      to a specified patch. /Distance/ is defined as minimial sum of
-     cell-to-face distances needed to reach this cell from the named patch
+     cell-to-face distances needed to reach this cell from the named
+     patch
+**** Not all =processorX= written in =writeTimesOnSignal=
+     If a =SIGSEGV= or =SIGFPE= were encountered only on some
+     processors then on the others no data was written because these
+     signals do not propagate to other processors
+
+     Now the signal handler raises a =SIGTERM= which is propagated to
+     the other processors. For parallel runs a signal handler for
+     =SIGTERM= is automatically set up to make sure that on all
+     remaining processors data is written
 *** Infrastructure
 *** Documentation
 *** New features
@@ -2911,6 +2940,29 @@ S_{expl} + S_{impl} T
        - 5 :: Tetraeder wedge
        - 6 :: Tetraeder
        - 0 :: no classification. Polygon
+**** Function object for developers that raises a signal at the defined time
+     The function object =provokeSignal= can be used to debug signal
+     handling. No other possible use is known.
+
+     The function object allows defining the signal, the time and - in
+     case of parallel runs - the processors on which the signal should
+     be raised
+**** New function-object =executeIfSetOrZone= that only executes if sets or zones are present
+     This function object executes a lost of function objects if
+     face/cell/point sets or zones are present. The required zones and
+     sets are specified in a dictionary =setsAndZones=: keys are the
+     names of the entities the values are the types (like
+     =faceZone=). Only if *all* objects specified there are present
+     the function objects are executed.
+
+     As a side effect if =loadAndCacheMissingSets= is =true= than sets
+     that are not yet found in memory are loaded from
+     disk. *Attention*: if no set of that name is found on disk then
+     it is searched at every time-step. This is a potential
+     performance problem (it is not a problem if the set is there)
+**** New function object =executeIfPatch= that only executes if patches are present
+     This function object executes a lost of function objects if
+     a list of patches is present.
 **** Function object =listMeshData= displays data stored in mesh
      This function object shows data that is stored in the
      mesh. Mostly =solverPerformance= with the residuals of the linear
@@ -2956,8 +3008,31 @@ S_{expl} + S_{impl} T
      string =libswak= is added in front and =FunctionPlugin.so= is
      added at the end and a library of that name is loaded to add the
      functions provided there
+**** Additional signals added to =writeTimesOnSignal=
+     Now it is possible to handle =SIGUSR1=, =SIGUSR2= and
+     =SIGTERM=. Only needed for testing
 **** =pythonIntegration= does nothing if no code is present
      If a code is a string of the length $0$ nothing is done. This is
      especially important as no global namespaces are read (which
      *may* not be created at the time. Especially during initialization)
+**** =funkyDoCalc= uses =weight= and =mask=
+     If a dictionary specifies the entries =mask= and =weight= then
+     these are evaluated and used to mask and weight the data
+     specified in =expression=
+**** =funkyDoCalc= allows setting bin width and number
+     If specified in the sub-dictionary the entries
+     =distributionMaxBinNr= and =distributionBinWidth= allow setting
+     the number of bins. These values are not used exactly but give
+     the distribution class a hint. =distributionMaxBinNr= takes
+     precedence
+**** Timeout in =writeOldTimesOnSignal= to allow other processes to finish writing
+     For parallel runs the process that initiates the writing of data
+     waits for the other processes to write their data. This time can
+     be specified with a parameter =sleepSecondsBeforeReraising= that
+     has a default value 60
+**** =writeAndEnd=-function objects now allow storing and writing previous time-steps
+     The function objects based on =writeAndEnd= now have an optional
+     switch =storeAndWritePreviousState=. If this is set then a number
+     of old time-steps can be stored and will be written when the run
+     is terminated.
 *** Examples
