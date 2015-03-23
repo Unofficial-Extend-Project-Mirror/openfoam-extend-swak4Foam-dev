@@ -164,6 +164,42 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+rho.name()+
+            ",fvMatrix<vector>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+alpha.name()+
+            ",const volScalarField &"+rho.name()+
+            ",fvMatrix<vector>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+#endif
+
 
 void Foam::fv::reportMatrixFvOption::setValue
 (
@@ -192,6 +228,42 @@ void Foam::fv::reportMatrixFvOption::addSup
         );
     }
 }
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+rho.name()+
+            ",fvMatrix<scalar>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+alpha.name()+
+            ",const volScalarField &"+rho.name()+
+            ",fvMatrix<scalar>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+#endif
 
 
 void Foam::fv::reportMatrixFvOption::setValue
@@ -222,6 +294,42 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+rho.name()+
+            ",fvMatrix<tensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+alpha.name()+
+            ",const volScalarField &"+rho.name()+
+            ",fvMatrix<tensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+#endif
+
 
 void Foam::fv::reportMatrixFvOption::setValue
 (
@@ -251,6 +359,42 @@ void Foam::fv::reportMatrixFvOption::addSup
     }
 }
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+rho.name()+
+            ",fvMatrix<symmTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+alpha.name()+
+            ",const volScalarField &"+rho.name()+
+            ",fvMatrix<symmTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+#endif
+
 
 void Foam::fv::reportMatrixFvOption::setValue
 (
@@ -279,6 +423,42 @@ void Foam::fv::reportMatrixFvOption::addSup
         );
     }
 }
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+rho.name()+
+            ",fvMatrix<sphericalTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+
+void Foam::fv::reportMatrixFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAddSup_) {
+        reportMatrix(
+            "addSup(const volScalarField &"+alpha.name()+
+            ",const volScalarField &"+rho.name()+
+            ",fvMatrix<sphericalTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")",
+            eqn
+        );
+    }
+}
+#endif
 
 
 void Foam::fv::reportMatrixFvOption::setValue
