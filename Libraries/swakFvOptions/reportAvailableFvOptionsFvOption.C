@@ -110,6 +110,34 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 }
 
 
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+rho.name()+
+        ",fvMatrix<vector>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+alpha.name()+
+        ",const volScalarField& "+rho.name()+
+        ",fvMatrix<vector>& "+eqn.psi().name()+")"
+    );
+}
+
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
     fvMatrix<vector>& eqn,
@@ -138,6 +166,33 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+rho.name()+
+        ",fvMatrix<scalar>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+alpha.name()+
+        ",const volScalarField& "+rho.name()+
+        ",fvMatrix<scalar>& "+eqn.psi().name()+")"
+    );
+}
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -168,6 +223,34 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 }
 
 
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+rho.name()+
+        ",fvMatrix<tensor>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+alpha.name()+
+        ",const volScalarField& "+rho.name()+
+        ",fvMatrix<tensor>& "+eqn.psi().name()+")"
+    );
+}
+
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
     fvMatrix<tensor>& eqn,
@@ -197,6 +280,34 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 }
 
 
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+rho.name()+
+        ",fvMatrix<symmTensor>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+alpha.name()+
+        ",const volScalarField& "+rho.name()+
+        ",fvMatrix<symmTensor>& "+eqn.psi().name()+")"
+    );
+}
+
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
     fvMatrix<symmTensor>& eqn,
@@ -222,6 +333,34 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 {
     report(
         "addSup(fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+rho.name()+
+        ",fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "addSup(const volScalarField& "+alpha.name()+
+        ",const volScalarField& "+rho.name()+
+        ",fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
     );
 }
 

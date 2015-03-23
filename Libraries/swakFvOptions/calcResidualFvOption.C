@@ -140,6 +140,28 @@ void Foam::fv::calcResidualFvOption::addSup
 }
 
 
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+
 void Foam::fv::calcResidualFvOption::setValue
 (
     fvMatrix<vector>& eqn,
@@ -163,6 +185,27 @@ void Foam::fv::calcResidualFvOption::addSup
     }
 }
 
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
 
 void Foam::fv::calcResidualFvOption::setValue
 (
@@ -187,6 +230,27 @@ void Foam::fv::calcResidualFvOption::addSup
     }
 }
 
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
 
 void Foam::fv::calcResidualFvOption::setValue
 (
@@ -208,6 +272,27 @@ void Foam::fv::calcResidualFvOption::addSup
     if(doAddSup_) {
         calcResidual("addSup",eqn);
     }
+}
+
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
 }
 
 
@@ -232,6 +317,27 @@ void Foam::fv::calcResidualFvOption::addSup
     if(doAddSup_) {
         calcResidual("addSup",eqn);
     }
+}
+
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::calcResidualFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
 }
 
 

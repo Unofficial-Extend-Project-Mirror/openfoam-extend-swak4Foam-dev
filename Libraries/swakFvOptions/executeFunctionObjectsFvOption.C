@@ -141,6 +141,27 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     }
 }
 
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &alpha,
+    const volScalarField &rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
 
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
@@ -170,6 +191,27 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     if(doAddSup_) {
         executeFunctionObjects("addSup(fvMatrix<scalar>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &alpha,
+    const volScalarField &rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
 }
 
 
@@ -204,6 +246,27 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
 }
 
 
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &alpha,
+    const volScalarField &rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
 void Foam::fv::executeFunctionObjectsFvOption::setValue
 (
     fvMatrix<tensor>& eqn,
@@ -232,6 +295,27 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     if(doAddSup_) {
         executeFunctionObjects("addSup(fvMatrix<symmTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &alpha,
+    const volScalarField &rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
 }
 
 
@@ -263,6 +347,27 @@ void Foam::fv::executeFunctionObjectsFvOption::addSup
     if(doAddSup_) {
         executeFunctionObjects("addSup(fvMatrix<sphericalTensor>& "+eqn.psi().name()+"/"+fieldNames_[fieldI]+")");
     }
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
+}
+
+void Foam::fv::executeFunctionObjectsFvOption::addSup
+(
+    const volScalarField &alpha,
+    const volScalarField &rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    addSup(eqn,fieldI);
 }
 
 

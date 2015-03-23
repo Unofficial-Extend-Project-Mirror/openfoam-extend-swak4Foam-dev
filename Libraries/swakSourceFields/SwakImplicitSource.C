@@ -136,6 +136,28 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
     }
 }
 
+template<class T>
+void SwakImplicitSource<T>::addSup(
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+
+template<class T>
+void SwakImplicitSource<T>::addSup(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+
+
 } // end namespace
 
 // ************************************************************************* //
