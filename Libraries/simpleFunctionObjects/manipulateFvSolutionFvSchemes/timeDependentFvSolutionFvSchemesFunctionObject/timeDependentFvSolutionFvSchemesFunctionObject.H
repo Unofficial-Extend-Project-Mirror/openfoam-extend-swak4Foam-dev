@@ -36,6 +36,7 @@ Description
 
     The entries to be set are in sub-dictionaries of the original files
 
+    The special name 'reset' resets to the original state
 SourceFiles
     timeDependentFvSolutionFvSchemesFunctionObject.C
 

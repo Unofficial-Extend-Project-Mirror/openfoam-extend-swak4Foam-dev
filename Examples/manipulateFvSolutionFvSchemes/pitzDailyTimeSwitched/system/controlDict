@@ -58,9 +58,11 @@ functions
         outputInterval 1;
         solutionTriggers (
             (0 PCGSolver)
+            (20 reset)
         );
         schemesTriggers (
-            (10 linearDiv)
+            (50 linearDiv)
+            (100 reset)
         );
         resetBeforeTrigger true;
     }

@@ -120,7 +120,12 @@ void timeDependentFvSolutionFvSchemesFunctionObject::checkTriggerList(
                         << exit(FatalError);
             }
         }
-        if(!dict.isDict(triggers[i].second())) {
+        word name(triggers[i].second());
+        if(
+            name != "reset"
+            &&
+            !dict.isDict(name)
+        ){
             FatalErrorIn("timeDependentFvSolutionFvSchemesFunctionObject::checkTriggerList")
                 << "No subdictionary " << triggers[i].second()
                     << " in " << dict.name()
@@ -146,20 +151,30 @@ void timeDependentFvSolutionFvSchemesFunctionObject::triggerTrigger(
             // have not reached this trigger
             break;
         }
-        Info << "Reached trigger " << triggers[i].second()
+        word name(triggers[i].second());
+        Info << "Reached trigger " << name
             << " for t=" << triggers[i].first()
             << " of " << dict.name() << endl;
-        if(resetBeforeTrigger_) {
+        if(
+            resetBeforeTrigger_
+            &&
+            name != "reset"
+        ) {
             Info << "First resetting " << dict.name() << endl;
             resetDict(dict);
         }
-        dictionary newVals(dict.subDict(triggers[i].second()));
         if(debug) {
             Info << dict.name() << " before:\n" << dict << endl;
         }
-        Info << "Merging into " << dict.name() << ":" << endl
-            << newVals << endl;
-        dict.merge(newVals);
+        if(name!="reset") {
+            dictionary newVals(dict.subDict(triggers[i].second()));
+            Info << "Merging into " << dict.name() << ":" << endl
+                << newVals << endl;
+            dict.merge(newVals);
+        } else {
+            Info << "Resetting " << dict.name() << endl;
+            resetDict(dict);
+        }
         if(debug) {
             Info << dict.name() << " after:\n" << dict << endl;
         }
