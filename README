@@ -676,6 +676,9 @@ S_{expl} + S_{impl} T
       - Solver :: rhoPimpleFoam
       - Demonstrates :: Thermo-cloud. Functions for lagrangian
                         particles
+***** icoFoamCavityWithParcel
+      - Solver :: icoFoam
+      - Demonstrates :: Simplest way to add particles to a case
 **** parser
      Testing the =cloud=-parser for lagrangiant particles
 ***** parcelInBoxWithExpressions
@@ -2824,6 +2827,10 @@ S_{expl} + S_{impl} T
      expressions. Especially for the Python-integration as values that
      were previously passed as arrays are now being passed as single
      values
+**** Parser for kinematic parcels replaces =minParticleMass= with =minParcelMass=
+     This reflects a change in the API of the kinematic lagrangian
+     parcels. The old function has been discontinued to avoid
+     confusions with changed semantics
 **** =SIGTERM= automatically switched on for parallel runs in =writeOldTimesOnSignal=
      For parallel runs this signal is now automatically switched in so
      that other signals are propagated to other processors
@@ -3041,3 +3048,6 @@ S_{expl} + S_{impl} T
      solvers). Both new forms are supported by all
      =fvOption=-subclasses in =swakSourceFields= and =swakFvOptions=
 *** Examples
+**** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
+     This case demonstrates how to add lagrangian particles to the
+     simplest tutorial-case
