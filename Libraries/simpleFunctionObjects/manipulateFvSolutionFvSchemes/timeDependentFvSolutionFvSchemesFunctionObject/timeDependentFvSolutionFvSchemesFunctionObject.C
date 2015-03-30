@@ -85,24 +85,24 @@ timeDependentFvSolutionFvSchemesFunctionObject::timeDependentFvSolutionFvSchemes
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool timeDependentFvSolutionFvSchemesFunctionObject::manipulate(const Time &t)
+bool timeDependentFvSolutionFvSchemesFunctionObject::manipulateFvSolution(const Time &t)
 {
-    bool triggered=triggerTrigger(
+    return triggerTrigger(
         t,
         solutionTriggers_,
         fvSolutionDict(),
         currentSolutionTrigger_
     );
-    triggered = triggered
-        ||
-        triggerTrigger(
+}
+
+bool timeDependentFvSolutionFvSchemesFunctionObject::manipulateFvSchemes(const Time &t)
+{
+    return triggerTrigger(
         t,
         schemesTriggers_,
         fvSchemesDict(),
         currentSchemesTrigger_
     );
-
-    return triggered;
 }
 
 void timeDependentFvSolutionFvSchemesFunctionObject::checkTriggerList(

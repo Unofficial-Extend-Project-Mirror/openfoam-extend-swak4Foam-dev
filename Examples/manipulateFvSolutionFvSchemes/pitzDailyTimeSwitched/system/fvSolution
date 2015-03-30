@@ -72,6 +72,7 @@ PCGSolver {
     solvers {
         p {
             solver PCG;
+            preconditioner DIC;
         }
     }
 }

@@ -112,7 +112,9 @@ public:
         const dictionary&
     );
 
-    bool manipulate(const Time &t);
+    bool manipulateFvSolution(const Time &t);
+
+    bool manipulateFvSchemes(const Time &t);
 
 };
 

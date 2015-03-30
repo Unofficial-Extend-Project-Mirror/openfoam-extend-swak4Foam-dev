@@ -83,6 +83,10 @@ class manipulateFvSolutionFvSchemesFunctionObject
 
     dictionary fvSchemesBackup_;
 
+    void rereadFvSolution();
+
+    void rereadFvSchemes();
+
 protected:
 
     void resetFvSolution();
@@ -115,7 +119,10 @@ public:
 
     void write();
 
-    virtual bool manipulate(const Time &) = 0;
+    virtual bool manipulateFvSolution(const Time &) = 0;
+
+    virtual bool manipulateFvSchemes(const Time &) = 0;
+
 };
 
 
