@@ -90,7 +90,7 @@ class timeDependentFvSolutionFvSchemesFunctionObject
         const dictionary &dict
     );
 
-    void triggerTrigger(
+    bool triggerTrigger(
         const Time &t,
         const List<TriggerTimeName> &triggers,
         dictionary &dict,

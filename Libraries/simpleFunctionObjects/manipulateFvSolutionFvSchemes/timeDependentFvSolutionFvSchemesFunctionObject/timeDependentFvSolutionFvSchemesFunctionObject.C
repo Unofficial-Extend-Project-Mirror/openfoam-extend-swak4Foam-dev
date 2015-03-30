@@ -87,19 +87,22 @@ timeDependentFvSolutionFvSchemesFunctionObject::timeDependentFvSolutionFvSchemes
 
 bool timeDependentFvSolutionFvSchemesFunctionObject::manipulate(const Time &t)
 {
-    triggerTrigger(
+    bool triggered=triggerTrigger(
         t,
         solutionTriggers_,
         fvSolutionDict(),
         currentSolutionTrigger_
     );
-    triggerTrigger(
+    triggered = triggered
+        ||
+        triggerTrigger(
         t,
         schemesTriggers_,
         fvSchemesDict(),
         currentSchemesTrigger_
     );
-    return true;
+
+    return triggered;
 }
 
 void timeDependentFvSolutionFvSchemesFunctionObject::checkTriggerList(
@@ -135,13 +138,15 @@ void timeDependentFvSolutionFvSchemesFunctionObject::checkTriggerList(
     }
 }
 
-void timeDependentFvSolutionFvSchemesFunctionObject::triggerTrigger(
+bool timeDependentFvSolutionFvSchemesFunctionObject::triggerTrigger(
     const Time &t,
     const List<TriggerTimeName> &triggers,
     dictionary &dict,
     label &current
 )
 {
+    bool triggered=false;
+
     forAll(triggers,i) {
         if(current>=i) {
             // already triggered this
@@ -155,6 +160,9 @@ void timeDependentFvSolutionFvSchemesFunctionObject::triggerTrigger(
         Info << "Reached trigger " << name
             << " for t=" << triggers[i].first()
             << " of " << dict.name() << endl;
+
+        triggered=true;
+
         if(
             resetBeforeTrigger_
             &&
@@ -180,6 +188,8 @@ void timeDependentFvSolutionFvSchemesFunctionObject::triggerTrigger(
         }
         current=i;
     }
+
+    return triggered;
 }
 
 } // namespace Foam

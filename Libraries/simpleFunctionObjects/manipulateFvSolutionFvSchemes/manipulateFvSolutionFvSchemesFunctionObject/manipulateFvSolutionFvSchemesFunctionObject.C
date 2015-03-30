@@ -119,14 +119,20 @@ bool manipulateFvSolutionFvSchemesFunctionObject::start()
 {
     simpleFunctionObject::start();
 
-    this->manipulate(obr().time());
+    if(this->manipulate(obr().time())) {
+        fvSolution_.read();
+        fvSchemes_.read();
+    }
 
     return true;
 }
 
 void manipulateFvSolutionFvSchemesFunctionObject::write()
 {
-    this->manipulate(obr().time());
+    if(this->manipulate(obr().time())) {
+        fvSolution_.read();
+        fvSchemes_.read();
+    }
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

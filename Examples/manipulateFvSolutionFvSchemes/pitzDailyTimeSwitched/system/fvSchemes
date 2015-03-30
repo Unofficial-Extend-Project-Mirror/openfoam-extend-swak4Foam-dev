@@ -61,7 +61,6 @@ fluxRequired
 linearDiv {
     divSchemes
     {
-        default         none;
         div(phi,U)      bounded Gauss linear;
         div(phi,k)      bounded Gauss linear;
         div(phi,epsilon) bounded Gauss linear;
