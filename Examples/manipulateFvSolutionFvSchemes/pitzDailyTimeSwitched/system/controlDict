@@ -57,12 +57,13 @@ functions
         outputControlMode timeStep;
         outputInterval 1;
         solutionTriggers (
-            (0 PCGSolver)
-            (20 reset)
+            //            (10 PCGSolver)
+            (200 higherRelax)
         );
         schemesTriggers (
-            (50 linearDiv)
+            // (0 linearDiv)
             (100 reset)
+            //(300 linearDiv)
         );
         resetBeforeTrigger true;
     }

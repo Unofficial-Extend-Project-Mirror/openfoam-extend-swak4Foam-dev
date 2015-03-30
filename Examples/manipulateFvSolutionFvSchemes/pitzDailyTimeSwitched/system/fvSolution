@@ -76,4 +76,17 @@ PCGSolver {
         }
     }
 }
+
+higherRelax {
+    relaxationFactors
+    {
+        fields
+        {
+            p               0.4;
+        }
+        equations
+        {
+            U               0.8;
+        }
+}
 // ************************************************************************* //

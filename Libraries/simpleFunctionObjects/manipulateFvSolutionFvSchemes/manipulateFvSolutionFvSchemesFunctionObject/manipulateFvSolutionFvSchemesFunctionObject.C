@@ -45,7 +45,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(manipulateFvSolutionFvSchemesFunctionObject, 1);
+    defineTypeNameAndDebug(manipulateFvSolutionFvSchemesFunctionObject, 0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -141,51 +141,6 @@ void manipulateFvSolutionFvSchemesFunctionObject::write()
     }
 }
 
-    // recipie for accessing private methods found at
-    // http://bloglitb.blogspot.co.at/2010/07/access-to-private-members-thats-easy.html
-    // don't try this at home
-
-    template<typename Tag>
-    struct resultPrivate {
-        /* export it ... */
-        typedef typename Tag::type type;
-        static type ptr;
-    };
-
-    template<typename Tag>
-    typename resultPrivate<Tag>::type resultPrivate<Tag>::ptr;
-
-    template<typename Tag, typename Tag::type p>
-    struct robPrivate {
-        /* fill it ... */
-        robPrivate() { resultPrivate<Tag>::ptr = p; }
-        static robPrivate robPrivate_obj;
-    };
-
-    template<typename Tag, typename Tag::type p>
-    robPrivate<Tag, p> robPrivate<Tag, p>::robPrivate_obj;
-
-    struct ReadFvSolution { typedef void(solution::*type)(const dictionary &); };
-    template struct robPrivate<ReadFvSolution, &solution::read>;
-
-void manipulateFvSolutionFvSchemesFunctionObject::rereadFvSolution()
-{
-    if(debug) {
-        Info << "Rereading " << fvSolution_.name() << endl;
-    }
-    (fvSolution_.*resultPrivate<ReadFvSolution>::ptr)(fvSolutionDict());
-}
-
-struct ReadFvSchemes { typedef void(fvSchemes::*type)(const dictionary &); };
-template struct robPrivate<ReadFvSchemes, &fvSchemes::read>;
-
-void manipulateFvSolutionFvSchemesFunctionObject::rereadFvSchemes()
-{
-    if(debug) {
-        Info << "Rereading " << fvSchemes_.name() << endl;
-    }
-    (fvSchemes_.*resultPrivate<ReadFvSchemes>::ptr)(fvSchemesDict());
-}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

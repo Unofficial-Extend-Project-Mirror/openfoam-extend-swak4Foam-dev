@@ -45,7 +45,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(timeDependentFvSolutionFvSchemesFunctionObject, 1);
+    defineTypeNameAndDebug(timeDependentFvSolutionFvSchemesFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
