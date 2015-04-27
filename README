@@ -2834,6 +2834,10 @@ S_{expl} + S_{impl} T
 **** =SIGTERM= automatically switched on for parallel runs in =writeOldTimesOnSignal=
      For parallel runs this signal is now automatically switched in so
      that other signals are propagated to other processors
+**** Changed bin-with in =swakExpressionAverageDistribution=
+     Due to a different calculation automatically calculated
+     bin-widths in this function object might slightly differ from
+     previous calculations
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type
@@ -3047,6 +3051,12 @@ S_{expl} + S_{impl} T
      for compressible equations. The other one for multi-phase
      solvers). Both new forms are supported by all
      =fvOption=-subclasses in =swakSourceFields= and =swakFvOptions=
+**** =swakExpressionAverageDistribution= allows specifying the limits
+     When the switch =dynamicExtremesAbscissa= is =false= then the
+     limits of the distribution can be set with =minAbscissa= and
+     =maxAbscissa=. This mainly influences the bin-width. If values
+     fall outside this range then the distribution is extended to
+     accommodate these values
 *** Examples
 **** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
      This case demonstrates how to add lagrangian particles to the
