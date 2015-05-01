@@ -44,6 +44,10 @@
      - Generation of dependencies for files that need Bison generated
        tab.hh files. This allows not having race conditions during
        parallel compilation
+   - Alexey Matveichev ::
+     - release generation script.
+     - Automatic =swakConfiguration=
+
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -2586,6 +2590,16 @@ S_{expl} + S_{impl} T
      =SIGTERM= is automatically set up to make sure that on all
      remaining processors data is written
 *** Infrastructure
+**** Script for generating releases
+     Provided by Alexey Matveichev
+
+     The script =maintainanceScripts/make-releases.sh= rolls a release
+     and puts it into the directory =releases=
+**** Automatic =swakConfiguration=
+     Provided by Alexey Matveichev
+
+     Automatically finds the linking options for Python with
+     =python-config=
 *** Documentation
 *** New features
 **** Additional distance-functions in field-parser
