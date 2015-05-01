@@ -100,9 +100,12 @@
    being created and some administrative stuff)
 *** Additional configuration
     Some features (currently only the =Python=-integration may need
-    third party software. The paths to these packages can be configured
-    in a file =swakConfiguration= (an example file
-    =swakConfiguration.example= is provided). If that file is not
+    third party software. The paths to these packages can be
+    configured in a file =swakConfiguration= (an example file
+    =swakConfiguration.example= is provided. There is also a file
+    =swakConfiguration.automatic= that tries to automatically
+    determine the location of Python. It does not work on all systems
+    and therefor is not enabled by default). If that file is not
     present these unconfigured features will not be compiled.
 
     Environment variables that can be set in this file are:
