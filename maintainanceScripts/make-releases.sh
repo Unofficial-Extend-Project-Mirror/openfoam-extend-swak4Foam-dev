@@ -53,6 +53,7 @@ main () {
         outFile="$output_path/swak4Foam-${t}.tbz2"
         hg archive -r "$t" $exclude "$outFile" > /dev/null 2>&1
         echo -n ". "
+        openssl dgst -md5 -out "$outFile.MD5" "$outFile"
         [ $? ] && echo "OK" || echo "Fail"
     done
 
