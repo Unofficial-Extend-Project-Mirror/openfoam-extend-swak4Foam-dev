@@ -50,9 +50,8 @@ main () {
     echo "Creating"
     for t in $tags; do
         echo -n "  release with tag $t ."
-        hg checkout "$t" > /dev/null 2>&1
-        echo -n "."
-        hg archive $exclude "$output_path/swak4Foam-${t}.tbz2" > /dev/null 2>&1
+        outFile="$output_path/swak4Foam-${t}.tbz2"
+        hg archive -r "$t" $exclude "$outFile" > /dev/null 2>&1
         echo -n ". "
         [ $? ] && echo "OK" || echo "Fail"
     done
