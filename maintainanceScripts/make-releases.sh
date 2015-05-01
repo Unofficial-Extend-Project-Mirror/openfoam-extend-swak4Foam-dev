@@ -22,7 +22,7 @@ make_exclude_flag () {
 
 # Generate archives
 main () {
-    local output_path="."
+    local output_path="./releases"
     local tag_regex="version_"
 
     # Parse command line options
