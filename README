@@ -2843,6 +2843,8 @@ S_{expl} + S_{impl} T
      This is fixed: now if a =fvOption= is defined the
      function-objects also needs =rho= and this is passed to the call
      of =fvOption= when generating the source term
+**** Turbulence plugin-functions did not correct the boundary field
+     This has been fixed
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
