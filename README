@@ -2883,6 +2883,8 @@ S_{expl} + S_{impl} T
      If the current time was already written (because it is part of
      the stored times) a segmentation fault occurred. This has been
      fixed by checking whether the current time is already stored
+**** Turbulence plugin-functions did not correct the boundary field
+     This has been fixed
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
