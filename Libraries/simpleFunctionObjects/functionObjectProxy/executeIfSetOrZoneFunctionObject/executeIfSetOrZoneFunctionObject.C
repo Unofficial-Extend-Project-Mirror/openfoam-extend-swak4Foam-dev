@@ -127,17 +127,29 @@ bool executeIfSetOrZoneFunctionObject::condition()
         Dbug << "Typ: " << typ << " Name: " << name << endl;
 
 	if(typ=="cellZone") {
+#ifdef FOAM_ZONEMESH_HAS_NO_FINDINDEX
+	    if(mesh_.cellZones().findZoneID(name)<0) {
+#else
 	    if(mesh_.cellZones().findIndex(name)<0) {
+#endif
                 Dbug << "No " << name << " of type " << typ << endl;
 	        return false;
 	    }
 	} else if(typ=="faceZone") {
-	    if(mesh_.faceZones().findIndex(name)<0) {
+#ifdef FOAM_ZONEMESH_HAS_NO_FINDINDEX
+            if(mesh_.faceZones().findZoneID(name)<0) {
+#else
+            if(mesh_.faceZones().findIndex(name)<0) {
+#endif
                 Dbug << "No " << name << " of type " << typ << endl;
 	        return false;
 	    }
 	} else if(typ=="pointZone") {
+#ifdef FOAM_ZONEMESH_HAS_NO_FINDINDEX
+            if(mesh_.pointZones().findZoneID(name)<0) {
+#else
 	    if(mesh_.pointZones().findIndex(name)<0) {
+#endif
                 Dbug << "No " << name << " of type " << typ << endl;
 	        return false;
 	    }

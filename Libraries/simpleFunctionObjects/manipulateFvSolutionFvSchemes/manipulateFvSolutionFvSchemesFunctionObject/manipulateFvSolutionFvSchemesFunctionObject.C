@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -78,6 +80,18 @@ manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFuncti
         fvSchemes_
     )
 {
+#ifndef FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
+    FatalErrorIn("manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFunctionObject")
+        << "This Foam-version does not have the facilities to overwrite fvSolution in memory."
+            << endl
+            << exit(FatalError);
+#endif
+#ifndef FOAM_SCHEMES_HAS_NO_READ_WITH_DICT
+    FatalErrorIn("manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFunctionObject")
+        << "This Foam-version does not have the facilities to overwrite fvSchemes in memory."
+            << endl
+            << exit(FatalError);
+#endif
 }
 
 void  manipulateFvSolutionFvSchemesFunctionObject::resetFvSolution()

@@ -95,13 +95,18 @@ namespace Foam
     template<typename Tag, typename Tag::type p>
     robPrivate<Tag, p> robPrivate<Tag, p>::robPrivate_obj;
 
+#ifndef FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
+
 #ifndef __clang__
     struct ReadFvSolution { typedef void(solution::*type)(const dictionary &); };
     template struct robPrivate<ReadFvSolution, &solution::read>;
 #endif
 
+#endif
+
 void manipulateFvSolutionFvSchemesFunctionObject::rereadFvSolution()
 {
+#ifndef FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
     if(debug) {
         Info << "Rereading " << fvSolution_.name() << endl;
     }
@@ -110,17 +115,25 @@ void manipulateFvSolutionFvSchemesFunctionObject::rereadFvSolution()
 #else
     (fvSolution_.*resultPrivate<ReadFvSolution>::ptr)(fvSolutionDict());
 #endif
+
+#endif
 }
+
+#ifndef FOAM_SCHEMES_HAS_NO_READ_WITH_DICT
 
 struct ReadFvSchemes { typedef void(fvSchemes::*type)(const dictionary &); };
 template struct robPrivate<ReadFvSchemes, &fvSchemes::read>;
 
+#endif
+
 void manipulateFvSolutionFvSchemesFunctionObject::rereadFvSchemes()
 {
+#ifndef FOAM_SCHEMES_HAS_NO_READ_WITH_DICT
     if(debug) {
         Info << "Rereading " << fvSchemes_.name() << endl;
     }
     (fvSchemes_.*resultPrivate<ReadFvSchemes>::ptr)(fvSchemesDict());
+#endif
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
