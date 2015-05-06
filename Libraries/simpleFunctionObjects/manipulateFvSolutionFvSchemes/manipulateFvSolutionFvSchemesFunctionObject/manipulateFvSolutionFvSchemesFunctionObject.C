@@ -51,6 +51,12 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+    template<class T>
+    T &desparate(T &i) {
+        Info << "Ho" << endl;
+        return i;
+    }
+
 manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFunctionObject
 (
     const word &name,
@@ -60,18 +66,34 @@ manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFuncti
 :
     simpleFunctionObject(name,t,dict),
     fvSolution_(
+#ifdef FOAM_FVMESH_NOT_CHILD_OF_FVSCHEMES_SOLUTION
+        const_cast<surfaceInterpolation&>(
+            dynamic_cast<const surfaceInterpolation&>(
+                obr()
+            )
+        ).solutionDict()
+#else
         const_cast<fvSolution&>(
             dynamic_cast<const fvSolution&>(
                 obr()
             )
         )
+#endif
     ),
     fvSchemes_(
+#ifdef FOAM_FVMESH_NOT_CHILD_OF_FVSCHEMES_SOLUTION
+        const_cast<surfaceInterpolation&>(
+            dynamic_cast<const surfaceInterpolation&>(
+                obr()
+            )
+        ).schemesDict()
+#else
         const_cast<fvSchemes&>(
             dynamic_cast<const fvSchemes&>(
                 obr()
             )
         )
+#endif
     ),
     fvSolutionBackup_(
         fvSolution_
@@ -80,13 +102,13 @@ manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFuncti
         fvSchemes_
     )
 {
-#ifndef FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
+#ifdef FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
     FatalErrorIn("manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFunctionObject")
         << "This Foam-version does not have the facilities to overwrite fvSolution in memory."
             << endl
             << exit(FatalError);
 #endif
-#ifndef FOAM_SCHEMES_HAS_NO_READ_WITH_DICT
+#ifdef FOAM_SCHEMES_HAS_NO_READ_WITH_DICT
     FatalErrorIn("manipulateFvSolutionFvSchemesFunctionObject::manipulateFvSolutionFvSchemesFunctionObject")
         << "This Foam-version does not have the facilities to overwrite fvSchemes in memory."
             << endl
