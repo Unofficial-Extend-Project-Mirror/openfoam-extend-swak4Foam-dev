@@ -6,21 +6,32 @@ echo
 echo "Init script for $boxName"
 echo
 
-rpm -Uhv http://fedora.aau.at/epel/6/x86_64/epel-release-6-8.noarch.rpm
+echo "Install the EPEL-repository for additional software"
 
-# yum install mercurial
-rpm -Uhv http://pkgs.repoforge.org/mercurial/mercurial-2.2.2-1.el6.rfx.x86_64.rpm
+if [ "$boxName" == "centos70" ]
+then
+    echo "Centos 7"
+    rpm -Uhv http://mirror.digitalnova.at/epel/7/x86_64/e/epel-release-7-2.noarch.rpm
+else
+    echo "Centos 6"
+    rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+fi
+
 # Don't want to add too many repositories
 
 # minimal is OK. But man should be there
 yum install -y man man-pages
 
-# this should add the iberty-library
-yum install -y binutils-devel
+neededPackages=(gcc-c++ gcc-gfortran mercurial git flex bison make ccache rpm-build wget zlib-devel binutils-devel libXt-devel cmake)
+bonusPackages=(emacs csh tcsh zsh)
 
-yum install -y bison
-yum install -y flex
-yum install -y ccache
+for p in ${neededPackages[@]}; do
+    yum install -y $p
+done
+
+for p in ${bonusPackages[@]}; do
+    yum install -y $p
+done
 
 # needed by CentFOAM
 yum install -y libXt-devel mesa-libOSMesa tcl tix  tk
@@ -30,6 +41,12 @@ yum install -y emacs
 
 # stuff for testing python
 yum install -y ipython scipy python-matplotlib
+
+if [ "$boxName" == "centos6" ]
+then
+    echo "Update mercurial to a more recent version"
+    rpm -Uhv http://pkgs.repoforge.org/mercurial/mercurial-2.2.2-1.el6.rfx.x86_64.rpm
+fi
 
 cd /home/vagrant/
 
