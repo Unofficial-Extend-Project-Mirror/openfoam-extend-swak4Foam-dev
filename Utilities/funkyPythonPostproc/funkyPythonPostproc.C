@@ -53,6 +53,8 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
+#include "simpleDataFunctionObject.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -66,6 +68,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
     argList::validOptions.insert("interactive","");
     argList::validOptions.insert("debugOnException","");
+    argList::validOptions.insert("postProcDir","dirname");
 
 #   include "setRootCase.H"
 
@@ -73,6 +76,16 @@ int main(int argc, char *argv[])
 
     IFstream theFile(args.args()[1]);
     dictionary spec(theFile);
+
+    if(args.options().found("postProcDir")) {
+        simpleDataFunctionObject::setPostProcDir(
+            word(args.options()["postProcDir"])
+        );
+    } else {
+        simpleDataFunctionObject::setPostProcDir(
+            fileName(args.args()[1]).name(false)+"Output"
+        );
+    }
     bool interactive(args.options().found("interactive"));
     bool failOnException(!args.options().found("debugOnException"));
 

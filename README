@@ -2860,6 +2860,15 @@ S_{expl} + S_{impl} T
      Due to a different calculation automatically calculated
      bin-widths in this function object might slightly differ from
      previous calculations
+**** =funkyPythonPostproc= writes function object data to a different directory
+     For the swak-function objects the data is now written to a
+     directory whose name is based on the input dictionary instead of
+     =postProcessing=.
+
+     This might break scripts and other post-processing procedures
+     that rely on the data being in =postProcessing=.
+
+     Data generated during the run-time of the solver is unaffected
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type
@@ -3091,6 +3100,21 @@ S_{expl} + S_{impl} T
      =maxAbscissa=. This mainly influences the bin-width. If values
      fall outside this range then the distribution is extended to
      accommodate these values
+**** Function objects derived from =simpleDataFunctionObject= now can write to a different directory than =postProcessing=
+     This involves almost all function objects in swak that write data
+     to =postProcessing=. The library now allows setting a different
+     default. This value can also be set with an optional entry
+     =postProcDir= on a per-function-object basis.
+
+     This change is used in the =funkyPythonPostProc=-utility to set a
+     directory name that is based on the name of the input dictionary
+     (or set with an option). Now if there are function objects used
+     they will write their data to this directory instead of
+     =postProcessing= (leaving data generated during the running of
+     the solver alone)
+
+     *Note:* This only works for function objects from swak. "Regular"
+      function objects will still write to =postProcessing=
 *** Examples
 **** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
      This case demonstrates how to add lagrangian particles to the
