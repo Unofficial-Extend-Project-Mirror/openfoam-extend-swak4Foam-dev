@@ -54,6 +54,8 @@ Contributors/Copyright:
 namespace Foam
 {
 
+    class polyMesh;
+
 /*---------------------------------------------------------------------------*\
                            Class executeIfSetOrZoneFunctionObject Declaration
 \*---------------------------------------------------------------------------*/

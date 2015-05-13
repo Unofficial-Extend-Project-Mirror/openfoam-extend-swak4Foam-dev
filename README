@@ -46,6 +46,9 @@
        parallel compilation
    - Hrvoje Jasak :: Fixes to compile on Intel and CLang
    - E.David Huckaby :: Add the writing of particles to =writeFieldsOften=
+   - Alexey Matveichev ::
+     - release generation script.
+     - Automatic =swakConfiguration=
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -99,9 +102,12 @@
    being created and some administrative stuff)
 *** Additional configuration
     Some features (currently only the =Python=-integration may need
-    third party software. The paths to these packages can be configured
-    in a file =swakConfiguration= (an example file
-    =swakConfiguration.example= is provided). If that file is not
+    third party software. The paths to these packages can be
+    configured in a file =swakConfiguration= (an example file
+    =swakConfiguration.example= is provided. There is also a file
+    =swakConfiguration.automatic= that tries to automatically
+    determine the location of Python. It does not work on all systems
+    and therefor is not enabled by default). If that file is not
     present these unconfigured features will not be compiled.
 
     Environment variables that can be set in this file are:
@@ -2802,6 +2808,22 @@ S_{expl} + S_{impl} T
      Example to demonstrate =funkyWarpMesh= and post-processing on
      bended geometries
 ** Next release - version number : 0.3.2
+*** Future changes
+    These are things that will happen in the *next* release and will
+    break backwards-compatibility
+**** Discontinuation of the =1.x=-branch
+     As version =1.7= is several years old this release will be the
+     last release that supports it.
+
+     Starting with this release the =port_2.x=-branch will become the
+     =default= branch and the =1.x= will become =legacy=
+**** Fixing examples
+     Due to the umber of different supported Foam-versions not all the
+     examples run on all versions and it is not possible to fix them
+     in such a way that they work on all versions. In the next version
+     they will by adapted to use the =pyFoamPrepareCase.py= utility as
+     this supports having different Foam versions in one case. As a
+     consequence most cases won't run without an installed =PyFoam=
 *** Incompatibilities
 **** Changed behavior of =groovyBC= during initialization
      If =value= is unset then during initialization the value of the
@@ -2883,6 +2905,8 @@ S_{expl} + S_{impl} T
      If the current time was already written (because it is part of
      the stored times) a segmentation fault occurred. This has been
      fixed by checking whether the current time is already stored
+**** Turbulence plugin-functions did not correct the boundary field
+     This has been fixed
 *** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
@@ -2905,6 +2929,16 @@ S_{expl} + S_{impl} T
      =SIGTERM= is automatically set up to make sure that on all
      remaining processors data is written
 *** Infrastructure
+**** Script for generating releases
+     Provided by Alexey Matveichev
+
+     The script =maintainanceScripts/make-releases.sh= rolls a release
+     and puts it into the directory =releases=
+**** Automatic =swakConfiguration=
+     Provided by Alexey Matveichev
+
+     Automatically finds the linking options for Python with
+     =python-config=
 *** Documentation
 *** New features
 **** Additional distance-functions in field-parser

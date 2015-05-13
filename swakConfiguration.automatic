@@ -1,0 +1,20 @@
+export SWAK_PYTHON_INCLUDE="$(python-config --cflags)"
+export SWAK_PYTHON_LINK="$(python-config --ldflags)"
+
+# List separated by : with directories to user plugins
+# export SWAK_USER_PLUGINS=../Examples/UserPlugins/swakTestFunctionPlugins
+
+# Compile the parsers with a lower optimization use only if the
+# compilation of the grammar takes too long (possibly due to memory
+# restrictions on the machine)
+
+export SWAK_COMPILE_GRAMMAR_OPTION="-O1"
+
+if [ "$WM_USE_HOMEBREW" -eq "1" ]
+then
+    export SWAK_BISON=/usr/local/opt/bison27/bin/bison
+fi
+
+# If enabled, uses a 30 delay for building Bison generated files.
+# Useful only for checking if there are any race conditions.
+# export SWAK_TEST_RACE_CONDITIONS=1

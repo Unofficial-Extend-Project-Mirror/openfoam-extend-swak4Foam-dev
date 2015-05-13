@@ -277,6 +277,16 @@ Contributors/Copyright:
 #define FOAM_FVMESH_IS_DATAOBJECT
 #endif
 
+#if defined(FOAM_DEV)
+#define FOAM_ZONEMESH_HAS_NO_FINDINDEX
+#endif
+
+#if defined(FOAM_DEV)
+#define FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
+#define FOAM_SCHEMES_HAS_NO_READ_WITH_DICT
+#define FOAM_FVMESH_NOT_CHILD_OF_FVSCHEMES_SOLUTION
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

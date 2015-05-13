@@ -241,8 +241,23 @@ void Foam::solvePDECommon::write()
     }
 }
 
-bool Foam::solvePDECommon::needsRhoField() const
+bool Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const
 {
+#ifdef FOAM_HAS_FVOPTIONS
+    if(
+        warnIfSteady
+	&&
+	steady_
+	&&
+	fvOptions().size()>0
+    ) {
+        WarningIn("Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const")
+	  << "There are " << fvOptions().size() << " fvOptions defined." << nl
+	  << "For technical reason a 'rho' entry is needed in " << name_ 
+	  << endl;
+    }
+#endif
+
     return 
       !steady_
 #ifdef FOAM_HAS_FVOPTIONS

@@ -29,79 +29,99 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    executeIfPatchFunctionObject
+    manipulateFvSolutionFvSchemesFunctionObject
 
 Description
-    This proxy-functionObject only executes its childrens if the sets and zones
-    listed in a dictionary exist
+    Basis for functionObjects that manipulate the data from
+    - fvScheme
+    - fvSolution
+    in memory. Provides a framework and utility methods but the actual
+    logic is in the subclasses
 
 SourceFiles
-    executeIfPatchFunctionObject.C
+    manipulateFvSolutionFvSchemesFunctionObject.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef executeIfPatchFunctionObject_H
-#define executeIfPatchFunctionObject_H
+#ifndef manipulateFvSolutionFvSchemesFunctionObject_H
+#define manipulateFvSolutionFvSchemesFunctionObject_H
 
-#include "conditionalFunctionObjectListProxy.H"
-
+#include "simpleFunctionObject.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-    class polyMesh;
+    class fvSolution;
+    class fvSchemes;
 
 /*---------------------------------------------------------------------------*\
-                           Class executeIfPatchFunctionObject Declaration
+                           Class manipulateFvSolutionFvSchemesFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class executeIfPatchFunctionObject
+class manipulateFvSolutionFvSchemesFunctionObject
 :
-    public conditionalFunctionObjectListProxy
+    public simpleFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    executeIfPatchFunctionObject(const executeIfPatchFunctionObject&);
+    manipulateFvSolutionFvSchemesFunctionObject(const manipulateFvSolutionFvSchemesFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const executeIfPatchFunctionObject&);
+    void operator=(const manipulateFvSolutionFvSchemesFunctionObject&);
 
-    //- the dictionary with the sets and zones
-    wordList patchNames_;
+    fvSolution &fvSolution_;
 
-    //- reread the regular expression
-    void readPatches(const dictionary& dict);
+    fvSchemes &fvSchemes_;
 
-    const polyMesh &mesh_;
+    dictionary fvSolutionBackup_;
+
+    dictionary fvSchemesBackup_;
+
+    void rereadFvSolution();
+
+    void rereadFvSchemes();
 
 protected:
 
-    //- the actual conition that determines whether the FO should be executed
-    virtual bool condition();
+    void resetFvSolution();
+
+    void resetFvSchemes();
+
+    void resetDict(dictionary &dict);
+
+    dictionary &fvSolutionDict();
+
+    dictionary &fvSchemesDict();
 
 public:
 
     //- Runtime type information
-    TypeName("executeIfPatch");
+    TypeName("manipulateFvSolutionFvSchemes");
 
 
     // Constructors
 
     //- Construct from components
-    executeIfPatchFunctionObject
+    manipulateFvSolutionFvSchemesFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    bool read(const dictionary& dict);
+    bool start();
+
+    void write();
+
+    virtual bool manipulateFvSolution(const Time &) = 0;
+
+    virtual bool manipulateFvSchemes(const Time &) = 0;
 
 };
 
@@ -109,7 +129,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

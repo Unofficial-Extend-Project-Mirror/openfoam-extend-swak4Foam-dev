@@ -29,79 +29,92 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    executeIfPatchFunctionObject
+    timeDependentFvSolutionFvSchemesFunctionObject
 
 Description
-    This proxy-functionObject only executes its childrens if the sets and zones
-    listed in a dictionary exist
+    Set the fvSolution and fvSchemes depending on the simulation time
 
+    The entries to be set are in sub-dictionaries of the original files
+
+    The special name 'reset' resets to the original state
 SourceFiles
-    executeIfPatchFunctionObject.C
+    timeDependentFvSolutionFvSchemesFunctionObject.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef executeIfPatchFunctionObject_H
-#define executeIfPatchFunctionObject_H
+#ifndef timeDependentFvSolutionFvSchemesFunctionObject_H
+#define timeDependentFvSolutionFvSchemesFunctionObject_H
 
-#include "conditionalFunctionObjectListProxy.H"
+#include "manipulateFvSolutionFvSchemesFunctionObject.H"
+
+#include "Tuple2.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-    class polyMesh;
-
 /*---------------------------------------------------------------------------*\
-                           Class executeIfPatchFunctionObject Declaration
+                           Class timeDependentFvSolutionFvSchemesFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class executeIfPatchFunctionObject
+
+class timeDependentFvSolutionFvSchemesFunctionObject
 :
-    public conditionalFunctionObjectListProxy
+    public manipulateFvSolutionFvSchemesFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    executeIfPatchFunctionObject(const executeIfPatchFunctionObject&);
+    timeDependentFvSolutionFvSchemesFunctionObject(const timeDependentFvSolutionFvSchemesFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const executeIfPatchFunctionObject&);
+    void operator=(const timeDependentFvSolutionFvSchemesFunctionObject&);
 
-    //- the dictionary with the sets and zones
-    wordList patchNames_;
+    typedef Tuple2<scalar,word> TriggerTimeName;
 
-    //- reread the regular expression
-    void readPatches(const dictionary& dict);
+    List<TriggerTimeName> solutionTriggers_;
+    label currentSolutionTrigger_;
 
-    const polyMesh &mesh_;
+    List<TriggerTimeName> schemesTriggers_;
+    label currentSchemesTrigger_;
 
-protected:
+    bool resetBeforeTrigger_;
 
-    //- the actual conition that determines whether the FO should be executed
-    virtual bool condition();
+    void checkTriggerList(
+        const List<TriggerTimeName> &triggers,
+        const dictionary &dict
+    );
 
+    bool triggerTrigger(
+        const Time &t,
+        const List<TriggerTimeName> &triggers,
+        dictionary &dict,
+        label &current
+    );
 public:
 
     //- Runtime type information
-    TypeName("executeIfPatch");
+    TypeName("timeDependentFvSolutionFvSchemes");
 
 
     // Constructors
 
     //- Construct from components
-    executeIfPatchFunctionObject
+    timeDependentFvSolutionFvSchemesFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    bool read(const dictionary& dict);
+    bool manipulateFvSolution(const Time &t);
+
+    bool manipulateFvSchemes(const Time &t);
 
 };
 
@@ -109,7 +122,6 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
