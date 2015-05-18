@@ -83,7 +83,8 @@ int main(int argc, char *argv[])
         );
     } else {
         simpleDataFunctionObject::setPostProcDir(
-            fileName(args.args()[1]).name(false)+"Output"
+            // a bit clumsy because some foam-versions have no fileName.name(bool)
+            fileName(fileName(args.args()[1]).name()).lessExt()+"Output"
         );
     }
     bool interactive(args.options().found("interactive"));
