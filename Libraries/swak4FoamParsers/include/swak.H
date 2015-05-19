@@ -291,6 +291,10 @@ Contributors/Copyright:
 #define FOAM_FVMESH_NOT_CHILD_OF_FVSCHEMES_SOLUTION
 #endif
 
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_DEV)
+#define FOAM_HAS_LOCAL_DEBUGSWITCHES
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
