@@ -184,7 +184,11 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     syncParallel();
 
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug);
+#endif
 
     if(!dict.found("useNumpy")) {
         WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")

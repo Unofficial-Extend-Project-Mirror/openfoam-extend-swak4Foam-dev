@@ -157,7 +157,11 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     scanner_(NULL),
     prevIterIsOldTime_(dict.lookupOrDefault("prevIterIsOldTime",false))
 {
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+#endif
 
     if(debug) {
         Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
@@ -240,7 +244,11 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+#endif
 
     readPluginLibraries(dict);
 
