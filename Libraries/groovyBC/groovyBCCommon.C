@@ -40,6 +40,7 @@ Contributors/Copyright:
 
 #include "fvMesh.H"
 #include "pointMesh.H"
+#include "swak.H"
 
 namespace Foam
 {
@@ -159,7 +160,13 @@ groovyBCCommon<Type>::groovyBCCommon
     if(
         Pstream::parRun()
         &&
-        Pstream::defaultCommsType == Pstream::blocking
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+        Pstream::defaultCommsType()
+#else
+        Pstream::defaultCommsType
+#endif
+        ==
+        Pstream::blocking
     ) {
         WarningIn("groovyBCCommon<Type>::groovyBCCommon")
             << "The commsType is set to 'blocking'. This might cause the run to"

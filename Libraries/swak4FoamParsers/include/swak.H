@@ -103,6 +103,10 @@ Contributors/Copyright:
 
 #endif
 
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_DEV)
+#define FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+#endif
+
 // this changed starting with 2.1
 #if (FOAM_VERSION4SWAK >= VERSION_NR(2,1,0)) && !defined(FOAM_DEV)
 
