@@ -1,3 +1,9 @@
+swak4foam-%(ofpkg)s (0.3.2-2~ppa1~%(distro)s1) %(distro)s; urgency=low
+
+  * First Debian package for "official" OpenFOAM 2.4.0
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Sat, 23 May 2015 12:23:00 +0200
+
 swak4foam-%(ofpkg)s (0.3.2-1~ppa1~%(distro)s1) %(distro)s; urgency=low
 
   * Testing packaging for the forthcoming release

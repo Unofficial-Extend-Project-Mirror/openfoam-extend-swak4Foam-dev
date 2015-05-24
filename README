@@ -2873,6 +2873,8 @@ S_{expl} + S_{impl} T
 *** New supported versions
 **** Added support for Foam-Extend 3.2
      Only minor adaptions. Mainly to accommodate the new debug switches
+**** Added support for OpenFOAM 2.4.0
+     Compiles with OpenFOAM 2.4.0 (and 2.4.x)
 *** Internals (for developers)
 **** Type of booleans changed for =internalField=
      Results that were booleans used to report =bool= as their type

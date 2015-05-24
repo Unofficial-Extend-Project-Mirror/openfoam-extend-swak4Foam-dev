@@ -75,7 +75,7 @@ case "$boxName" in
 	ofPackages=( "221" "211" "220" )
 	;;
     trusty)
-	ofPackages=( "231" )
+	ofPackages=( "231" "240" )
 	;;
 esac
 
