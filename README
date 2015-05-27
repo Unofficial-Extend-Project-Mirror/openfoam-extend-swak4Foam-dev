@@ -3121,6 +3121,12 @@ S_{expl} + S_{impl} T
 
      *Note:* This only works for function objects from swak. "Regular"
       function objects will still write to =postProcessing=
+**** =funkySetFields= allows correcting the boundary conditions afterwards
+     An additional option =-correctResultBoundaryFields= corrects the
+     boundary conditions before writing to disk. In dictionary mode
+     there is also an option =correctResultBoundaryFields=.
+
+     This is only needed in rare cases.
 *** Examples
 **** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
      This case demonstrates how to add lagrangian particles to the
