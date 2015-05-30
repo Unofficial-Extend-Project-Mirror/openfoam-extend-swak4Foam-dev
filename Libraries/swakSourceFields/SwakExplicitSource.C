@@ -42,6 +42,10 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -106,7 +110,7 @@ void SwakExplicitSource<T>::addSup(
 
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<typename SwakExplicitSource<T>::resultField>()
+        FieldValueExpressionDriver::template resultIsTyp<typename SwakExplicitSource<T>::resultField>()
     ) {
         FatalErrorIn("SwakExplicitSource<"+word(pTraits<T>::typeName)+">::addSup()")
             << "Result of " << this->expressions_[fieldI] << " is not a "
@@ -117,7 +121,7 @@ void SwakExplicitSource<T>::addSup(
 
     typename SwakExplicitSource<T>::resultField result(
         this->driver().
-        FieldValueExpressionDriver::getResult<typename SwakExplicitSource<T>::resultField>()
+        FieldValueExpressionDriver::template getResult<typename SwakExplicitSource<T>::resultField>()
     );
     result.dimensions().reset(this->dimensions_[fieldI]);
     typename SwakExplicitSource<T>::resultField usedResult(result*0);
@@ -149,6 +153,10 @@ void SwakExplicitSource<T>::addSup(
 {
     this->addSup(eqn,fieldI);
 }
+#endif
+
+#ifdef FOAM_HAS_FVOPTIONS
+    }
 #endif
 
 } // end namespace

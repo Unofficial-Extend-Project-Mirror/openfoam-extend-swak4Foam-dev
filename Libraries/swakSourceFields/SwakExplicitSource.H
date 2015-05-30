@@ -52,6 +52,10 @@ Contributors/Copyright:
 namespace Foam
 {
 
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
+
 /*---------------------------------------------------------------------------*\
                            Class SwakExplicitSource Declaration
 \*---------------------------------------------------------------------------*/
@@ -114,6 +118,9 @@ public:
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
 
 } // End namespace Foam
 

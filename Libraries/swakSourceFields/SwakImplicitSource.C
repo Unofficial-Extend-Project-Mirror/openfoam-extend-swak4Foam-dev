@@ -43,6 +43,10 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -109,7 +113,7 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<volScalarField>()
+        FieldValueExpressionDriver::template resultIsTyp<volScalarField>()
     ) {
         FatalErrorIn("SwakImplicitSource<"+word(pTraits<T>::typeName)+">::addSup()")
             << "Result of " << this->expressions_[fieldI] << " is not a "
@@ -120,7 +124,7 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 
     volScalarField result(
         this->driver().
-        FieldValueExpressionDriver::getResult<volScalarField>()
+        FieldValueExpressionDriver::template getResult<volScalarField>()
     );
     result.dimensions().reset(this->dimensions_[fieldI]);
     volScalarField usedResult(result*0);
@@ -159,6 +163,9 @@ void SwakImplicitSource<T>::addSup(
 }
 #endif
 
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
 
 } // end namespace
 

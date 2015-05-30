@@ -56,6 +56,10 @@ namespace Foam
                            Class SwakSetValue Declaration
 \*---------------------------------------------------------------------------*/
 
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
+
 template<class T>
 class SwakSetValue
 :
@@ -101,6 +105,9 @@ public:
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
 
 } // End namespace Foam
 
