@@ -93,6 +93,18 @@ void Foam::fv::calcResidualFvOption::calcResidual(
 ) {
     const word &fName=mat.psi().name();
 
+    if(!mat.hasDiag()) {
+        WarningIn("Foam::fv::calcResidualFvOption::calcResidual")
+            << "Matrix for " << fName << " has no diagonal"
+                << endl;
+        return;
+    }
+    if(!mat.hasLower() && !mat.hasUpper()) {
+        WarningIn("Foam::fv::calcResidualFvOption::calcResidual")
+            << "Matrix for " << fName << " has no upper and no lower part"
+                << endl;
+        return;
+    }
     tmp<Field<Type> > pRes(mat.residual());
     Field<Type> &res=pRes();
 
