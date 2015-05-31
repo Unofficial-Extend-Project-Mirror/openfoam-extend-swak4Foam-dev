@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2012 Bruno Santos <wyldckat@gmail.com>
     2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 

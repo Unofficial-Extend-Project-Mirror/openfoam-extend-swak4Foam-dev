@@ -38,7 +38,7 @@ SourceFiles
     TimeCloneList.C
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
