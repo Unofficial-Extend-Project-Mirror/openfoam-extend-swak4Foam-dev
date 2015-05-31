@@ -1,5 +1,5 @@
-export SWAK_PYTHON_INCLUDE=$(python-config --cflags)
-export SWAK_PYTHON_LINK=$(python-config --ldflags)
+export SWAK_PYTHON_INCLUDE="$(python-config --cflags)"
+export SWAK_PYTHON_LINK="$(python-config --ldflags)"
 
 # List separated by : with directories to user plugins
 # export SWAK_USER_PLUGINS=../Examples/UserPlugins/swakTestFunctionPlugins

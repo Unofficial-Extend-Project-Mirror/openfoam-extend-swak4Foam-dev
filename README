@@ -44,12 +44,16 @@
      - Generation of dependencies for files that need Bison generated
        tab.hh files. This allows not having race conditions during
        parallel compilation
+   - Alexey Matveichev ::
+     - release generation script.
+     - Automatic =swakConfiguration=
+
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
    the repositories of the projects from which swak emerged)
    contributors are (ordered by the year of their first contribution):
-   - 2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+   - 2006-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
    - 2008 Hannes Kroeger (hannes@kroegeronline.net)
    - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
    - 2010 Marianne Mataln <mmataln@ice-sf>
@@ -58,6 +62,7 @@
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
    - 2012-2014 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
+   - 2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -96,9 +101,12 @@
    being created and some administrative stuff)
 *** Additional configuration
     Some features (currently only the =Python=-integration may need
-    third party software. The paths to these packages can be configured
-    in a file =swakConfiguration= (an example file
-    =swakConfiguration.example= is provided). If that file is not
+    third party software. The paths to these packages can be
+    configured in a file =swakConfiguration= (an example file
+    =swakConfiguration.example= is provided. There is also a file
+    =swakConfiguration.automatic= that tries to automatically
+    determine the location of Python. It does not work on all systems
+    and therefor is not enabled by default). If that file is not
     present these unconfigured features will not be compiled.
 
     Environment variables that can be set in this file are:
@@ -2528,6 +2536,7 @@ S_{expl} + S_{impl} T
      Example to demonstrate =funkyWarpMesh= and post-processing on
      bended geometries
 ** Next release - version number : 0.3.2
+   This is the last release to support OpenFOAM 1.7.x and older
 *** Future changes
     These are things that will happen in the *next* release and will
     break backwards-compatibility
@@ -2583,8 +2592,28 @@ S_{expl} + S_{impl} T
 **** Function =distToPatch= now working
      This function for the field parser gives the distance in the mesh
      to a specified patch. /Distance/ is defined as minimial sum of
-     cell-to-face distances needed to reach this cell from the named patch
+     cell-to-face distances needed to reach this cell from the named
+     patch
+**** Not all =processorX= written in =writeTimesOnSignal=
+     If a =SIGSEGV= or =SIGFPE= were encountered only on some
+     processors then on the others no data was written because these
+     signals do not propagate to other processors
+
+     Now the signal handler raises a =SIGTERM= which is propagated to
+     the other processors. For parallel runs a signal handler for
+     =SIGTERM= is automatically set up to make sure that on all
+     remaining processors data is written
 *** Infrastructure
+**** Script for generating releases
+     Provided by Alexey Matveichev
+
+     The script =maintainanceScripts/make-releases.sh= rolls a release
+     and puts it into the directory =releases=
+**** Automatic =swakConfiguration=
+     Provided by Alexey Matveichev
+
+     Automatically finds the linking options for Python with
+     =python-config=
 *** Documentation
 *** New features
 **** Additional distance-functions in field-parser
@@ -2631,6 +2660,13 @@ S_{expl} + S_{impl} T
        - 5 :: Tetraeder wedge
        - 6 :: Tetraeder
        - 0 :: no classification. Polygon
+**** Function object for developers that raises a signal at the defined time
+     The function object =provokeSignal= can be used to debug signal
+     handling. No other possible use is know.
+
+     The function object allows defining the signal, the time and - in
+     case of parallel runs - the processors on which the signal should
+     be raised
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
@@ -2655,4 +2691,7 @@ S_{expl} + S_{impl} T
      string =libswak= is added in front and =FunctionPlugin.so= is
      added at the end and a library of that name is loaded to add the
      functions provided there
+**** Additional signals added to =writeTimesOnSignal=
+     Now it is possible to handle =SIGUSR1=, =SIGUSR2= and
+     =SIGTERM=. Only needed for testing
 *** Examples
