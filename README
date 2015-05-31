@@ -720,6 +720,12 @@ S_{expl} + S_{impl} T
      - Case preparation :: Script =caseSetup.sh= is provided
      - Demonstrates :: Boolean operations with regular surfaces
      Physics of the case not as expected (charge-distribution)
+*** manipulateFvSolutionFvSchemes
+    Demonstrates the use of function objects that change the numerics
+    during the run
+**** pitzDailyTimeSwitched
+     The regular =simpleFoam=-tutorial. Modified so that it switches
+     to higher relaxation factors during the run
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -3041,6 +3047,26 @@ S_{expl} + S_{impl} T
      - =foo_nIterations_first= :: value of the first solver
           performance
      - =foo_nIterations_last= :: value of the first solver performance
+**** Function objects for manipulating =fvSchemes= and =fvSolution=
+     =simpleFunctionObjects= now has a base class that allows
+     manipulating =fvSolution= and =fvSchemes= in-memory but the
+     solver behaves as if the file changed on disk. Application for
+     this is changing parameters like relaxation or discretization
+     schemes during the simulation. This can be used for instance to
+     start the simulation with 'safe' settings and switch to faster
+     convergence later.
+
+     There is currently only one function object
+     =timeDependentFvSolutionFvSchemes= that implements this (more are
+     planned). It allows switching to different subdictionaries at
+     specified time. An example can be found at
+     =Examples/manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched=.
+     This function object gets a list of times and
+     sub-dictionaries. At the specified time the values from the
+     sub-dictionary overrides the values in the original dictionary
+     (Values not present in the sub-dictionary are left untouched). If
+     =reset= is specified as the name for the sub-dictionary then the
+     dictionary is set back to the original state.
 *** Enhancements
 **** =groovyBC= now has a better initialization if =value= is unset
      Until no if =value= was not set =groovyBC= automatically
