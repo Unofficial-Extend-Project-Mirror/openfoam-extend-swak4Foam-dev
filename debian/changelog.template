@@ -1,3 +1,9 @@
+swak4foam-%(ofpkg)s (0.3.2-3~ppa1~%(distro)s1) %(distro)s; urgency=low
+
+  * Debian Packages of the real 0.3.2 release
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Son, 31 May 2015 20:53:00 +0200
+
 swak4foam-%(ofpkg)s (0.3.2-2~ppa1~%(distro)s1) %(distro)s; urgency=low
 
   * First Debian package for "official" OpenFOAM 2.4.0
@@ -84,7 +90,7 @@ swak4foam-%(ofpkg)s (0.1-5) lucid; urgency=low
 
 swak4foam-%(ofpkg)s (0.1-4) unstable; urgency=low
 
-  * New releases 
+  * New releases
 
  -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Tue, 12 Apr 2011 12:58:29 +0200
 

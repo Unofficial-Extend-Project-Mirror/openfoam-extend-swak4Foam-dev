@@ -72,7 +72,7 @@ parser.add_argument('--extensions', dest='extensions', type=str, action='append'
                     default=["py","C","sh","H","ll","yy"],
                     help="Valid extension to investigate. Add to default list: %(default)s")
 parser.add_argument('--ignore-files', dest='ignoreList', type=str, action='append',
-                    default=["lnInclude"],
+                    default=["lnInclude","Make"],
                     help="Directories and files that should not be handled. Add to default list: %(default)s")
 parser.add_argument('--special-file', dest='special', type=str, action='append',
                     default=["Allwmake","Allwclean","files","options"],
