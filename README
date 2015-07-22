@@ -2535,7 +2535,7 @@ S_{expl} + S_{impl} T
 **** =other/simpleBendedPipe=
      Example to demonstrate =funkyWarpMesh= and post-processing on
      bended geometries
-** Next release - version number : 0.3.2
+** 2015-05-31 - version number : 0.3.2
    This is the last release to support OpenFOAM 1.7.x and older
 *** Future changes
     These are things that will happen in the *next* release and will

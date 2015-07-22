@@ -1,8 +1,8 @@
 [branchname]
-develop = develop
-feature = feature/
-version_tag =
-master = default
-release = release/
-hotfix = hotfix/
-support = support/
+develop = develop_1.x_legacy
+feature = feature_1.x_legacy/
+version_tag = legacy_1.x
+master = master_1.x_legacy
+release = release_1.x_legacy/
+hotfix = hotfix_1.x_legacy/
+support = support_1.x_legacy/
