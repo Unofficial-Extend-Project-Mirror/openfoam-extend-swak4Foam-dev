@@ -29,8 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
+    2015 Dominik Christ <d.christ@wikki.co.uk>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -699,7 +700,14 @@ namespace Foam {
 #ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 mapDistribute::distribute
                             (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+                                static_cast<Pstream::commsTypes>
+                                (
+                                    Pstream::defaultCommsType()
+                                ),
+#else
                                 Pstream::defaultCommsType,
+#endif
                                 distMap.schedule(),
                                 distMap.constructSize(),
                                 distMap.subMap(),
@@ -754,7 +762,14 @@ namespace Foam {
                 const mapDistribute& distMap = mpp.map();
                 mapDistribute::distribute
                             (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+                                static_cast<Pstream::commsTypes>
+                                (
+                                    Pstream::defaultCommsType()
+                                ),
+#else
                                 Pstream::defaultCommsType,
+#endif
                                 distMap.schedule(),
                                 distMap.constructSize(),
                                 distMap.subMap(),
@@ -814,7 +829,14 @@ namespace Foam {
 #ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 mapDistribute::distribute
                             (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+                                static_cast<Pstream::commsTypes>
+                                (
+                                    Pstream::defaultCommsType()
+                                ),
+#else
                                 Pstream::defaultCommsType,
+#endif
                                 distMap.schedule(),
                                 distMap.constructSize(),
                                 distMap.subMap(),
@@ -904,7 +926,14 @@ namespace Foam {
         const mapDistribute& distMap = mpp.map();
         mapDistribute::distribute
         (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+            static_cast<Pstream::commsTypes>
+            (
+                Pstream::defaultCommsType()
+            ),
+#else
             Pstream::defaultCommsType,
+#endif
             distMap.schedule(),
             distMap.constructSize(),
             distMap.subMap(),

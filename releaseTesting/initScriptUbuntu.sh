@@ -6,10 +6,10 @@ echo
 echo "Init script for $boxName"
 echo
 
-if [ "$boxName" == "lucid" ]
+if [[ "$boxName" == "lucid" || "$boxName" == "trusty" ]]
 then
     echo
-    echo "Additional PYthon-Repository"
+    echo "Additional Python-Repository"
     echo
 
     # needed for add-appt-repository
@@ -74,6 +74,9 @@ case "$boxName" in
     precise)
 	ofPackages=( "221" "211" "220" )
 	;;
+    trusty)
+	ofPackages=( "231" "240" )
+	;;
 esac
 
 for v in "${ofPackages[@]}"
@@ -93,6 +96,9 @@ mkdir $PKGDIR
 case "$boxName" in
     precise)
 	pkgUrls=( "https://downloads.sourceforge.net/project/openfoam-extend/foam-extend-3.0/foam-extend_3.0-1_amd64.precise.deb" )
+	;;
+    trusty)
+	pkgUrls=( "https://downloads.sourceforge.net/project/openfoam-extend/foam-extend-3.1/3.1.1/Ubuntu_14.04/foam-extend-3.1_3.1.1-1_amd64.deb" )
 	;;
 esac
 

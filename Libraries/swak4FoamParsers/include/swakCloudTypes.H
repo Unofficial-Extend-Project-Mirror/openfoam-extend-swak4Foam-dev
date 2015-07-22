@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -83,6 +83,18 @@ namespace Foam {
 
 #if FOAM_VERSION4SWAK > VERSION_NR2(2,2)
 #define FOAM_PHASECHANGEMODEL_HAS_TVAP
+#endif
+
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_DEV)
+#define FOAM_HAS_COLLIDING_CLOUD
+#endif
+
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)
+#define FOAM_HAS_MPICC_CLOUD
+#endif
+
+#if (FOAM_VERSION4SWAK > VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
+#define FOAM_KINEMATIC_PARCEL_HAS_MINPARCELMASS
 #endif
 
 #include "DebugOStream.H"

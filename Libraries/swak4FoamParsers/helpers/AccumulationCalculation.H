@@ -43,7 +43,7 @@ SourceFiles
     AccumulationCalculation.C
 
 Contributors/Copyright:
-    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -128,7 +128,9 @@ class AccumulationCalculation
     bool hasSumMag_;
     Type sumMag_;
 
-    static const label numberOfBins=100;
+    static const label defaultNumberOfBins_=100;
+
+    label numberOfBins_;
 
     label maskSize() const;
 
@@ -157,6 +159,23 @@ public:
         const Field<bool> &mask
     );
 
+    //- Constructor with weights
+    AccumulationCalculation(
+        const Field<Type> &data,
+        bool isPoint,
+        CommonValueExpressionDriver &driver,
+        const Field<scalar> &weight
+    );
+
+    //- Constructor with a mask and weights
+    AccumulationCalculation(
+        const Field<Type> &data,
+        bool isPoint,
+        CommonValueExpressionDriver &driver,
+        const Field<bool> &mask,
+        const Field<scalar> &weight
+    );
+
     //- Destructor
 
     ~AccumulationCalculation();
@@ -178,6 +197,11 @@ public:
 
     //- do an accumulation according to a specification
     Type operator()(const NumericAccumulationNamedEnum::accuSpecification &);
+
+    void resetNumberOfBins(
+        const label newNumberOfBins,
+        const scalar binWidth
+    );
 };
 
 

@@ -38,7 +38,7 @@ SourceFiles
     swakExpressionAverageDistributionFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -109,6 +109,9 @@ class swakExpressionAverageDistributionFunctionObject
 
     template <typename T>
     void reportADistribution(const PtrList<SimpleDistribution<T> > &dist);
+
+    //- calculate extremes in the distribution from the current abscissa
+    bool dynamicExtremesAbscissa_;
 
 protected:
 

@@ -127,6 +127,8 @@ protected:
     fv::optionList &fvOptions() const;
 #endif
 
+    bool needsRhoField(bool warnIfSteady=false) const;
+
 private:
     //- do the actual solving
     virtual void solve() = 0;

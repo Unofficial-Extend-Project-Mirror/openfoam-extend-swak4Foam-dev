@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2009-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -106,7 +106,7 @@ groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
     }
     else
     {
-        (*this)==pTraits<Type>::zero;
+        (*this)==this->patchInternalField();
 
         WarningIn(
             "groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField"
@@ -117,7 +117,7 @@ groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore would be undefined "
-            << pTraits<Type>::zero
+            << "and set to the internal field next to the patch"
             << endl;
     }
 

@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -148,15 +148,18 @@ SimpleDistribution<Type>::SimpleDistribution(const SimpleDistribution<Type> &o)
 template <typename Type>
 label SimpleDistribution<Type>::maxNrBins() const
 {
-    label maxBin=0;
+    const label invalid=pTraits<label>::min;
+
+    label maxBin=invalid;
     for(direction i=0;i<pTraits<Type>::nComponents;i++) {
         Pair<label> lim=this->validLimits(i);
-        label spread=lim.second()-lim.first();
-        if(spread>maxBin) {
-            maxBin=spread;
+        if(lim.first()!=invalid) {
+            label spread=lim.second()-lim.first();
+            if(spread>maxBin) {
+                maxBin=spread;
+            }
         }
     }
-
     return maxBin;
 }
 
@@ -276,9 +279,11 @@ void SimpleDistribution<Type>::calcMinimumMaximum(
 template <typename Type>
 void SimpleDistribution<Type>::recalcLimits()
 {
+    const label invalidValue=pTraits<label>::min;
+
     validLimits_=List<Pair<label> >(
         pTraits<Type>::nComponents,
-        Pair<label>(-1,-1)
+        Pair<label>(invalidValue,invalidValue)
     );
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
@@ -293,7 +298,7 @@ void SimpleDistribution<Type>::recalcLimits()
                 ||
                 ( hasInvalidValue_ && mag(vals[i]-invalid)>VSMALL)
             ) {
-                if (limits.first() == -1)
+                if (limits.first() == invalidValue)
                 {
                     limits.first() = i;
                     limits.second() = i;
@@ -413,6 +418,8 @@ void SimpleDistribution<Type>::divideByDistribution(
     const Type &valueIfZero
 )
 {
+    const label invalid=pTraits<label>::min;
+
     if(this->size()!=weightSum.size()) {
         FatalErrorIn("SimpleDistribution<Type>::divideByDistribution")
             << "Number of components " << this->size() << " differs from "
@@ -425,7 +432,7 @@ void SimpleDistribution<Type>::divideByDistribution(
 
     validLimits_=List<Pair<label> >(
         pTraits<Type>::nComponents,
-        Pair<label>(-1,-1)
+        Pair<label>(invalid,invalid)
     );
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
@@ -449,7 +456,7 @@ void SimpleDistribution<Type>::divideByDistribution(
                 vals[i]=zero;
             } else {
                 vals[i]/=weights[i];
-                if (limits.first() == -1)
+                if (limits.first() == invalid)
                 {
                     limits.first() = i;
                     limits.second() = i;

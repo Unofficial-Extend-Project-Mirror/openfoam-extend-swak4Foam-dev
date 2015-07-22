@@ -98,7 +98,7 @@ Foam::fv::optionList &Foam::solvePDECommon::fvOptions() const
         if(!warnedAboutMissingOptionList_) {
             const_cast<solvePDECommon&>(*this).warnedAboutMissingOptionList_=true;
             WarningIn("Foam::solvePDECommon::fvOptions()")
-                 << "No 'fvOptions' found. Returning dummy (no further warnings"
+                 << "No 'fvOptions' found. Returning dummy (no further warnings)"
                  << endl;
         }
         return const_cast<solvePDECommon&>(*this).dummyOptionList_;
@@ -239,6 +239,32 @@ void Foam::solvePDECommon::write()
 
         writeData();
     }
+}
+
+bool Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const
+{
+#ifdef FOAM_HAS_FVOPTIONS
+    if(
+        warnIfSteady
+	&&
+	steady_
+	&&
+	fvOptions().size()>0
+    ) {
+        WarningIn("Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const")
+	  << "There are " << fvOptions().size() << " fvOptions defined." << nl
+	  << "For technical reason a 'rho' entry is needed in " << name_ 
+	  << endl;
+    }
+#endif
+
+    return 
+      !steady_
+#ifdef FOAM_HAS_FVOPTIONS
+      ||
+      fvOptions().size()>0
+#endif
+      ;
 }
 
 // ************************************************************************* //

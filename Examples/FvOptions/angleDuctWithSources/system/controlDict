@@ -56,10 +56,36 @@ libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakFvOptions.so"
     "libswakFunctionObjects.so"
+    "libswakPythonIntegration.so"
 );
 
 functions {
-    temperature {
+    // showMeshData {
+    //     type listMeshData;
+    // }
+    getPerformances {
+        type solverPerformanceToGlobalVariables;
+        fieldNames (
+            U
+            p
+            rho
+        );
+        toGlobalNamespace solverPerformance;
+        outputControl timeStep;
+        outputInterval 1;
+    }
+    printPerformance {
+        type pythonIntegration;
+        startCode "";
+        writeCode "";
+        executeFile "$FOAM_CASE/system/printPerformances.py";
+        endFile $executeFile;
+        swakToPythonNamespaces (
+            solverPerformance
+        );
+        interactiveAfterException true;
+   }
+   temperature {
         type swakExpression;
         valueType internalField;
         accumulations (
@@ -86,6 +112,8 @@ functions {
         solveAt timestep;
         fieldName poroTime;
         steady true;
+
+        rho "1" [0 0 0 0 0 0 0];
 
         diffusion "1e-4" [0 2 -1 0 0 0 0];
         source "0" [0 0 0 0 0 0 0];

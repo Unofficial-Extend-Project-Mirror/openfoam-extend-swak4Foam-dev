@@ -17,15 +17,15 @@ FoamFile
 
 application     rhoPimpleFoam;
 
-startFrom       startTime;
+startFrom       latestTime; //startTime;
 
 startTime       0;
 
 stopAt          endTime;
 
-endTime         10;
+endTime         10.0;
 
-deltaT          1;
+deltaT          0.01;
 
 writeControl    adjustableRunTime;
 
@@ -56,28 +56,58 @@ libs (
     "libsimpleLagrangianFunctionObjects.so"
     "libswakLagrangianCloudSourcesFunctionPlugin.so"
     "libswakFunctionObjects.so"
+    "libIOh5Write.so"
 );
 
+//secondaryWriteControl timeStep;
+
+//secondaryWriteFrequency 10;
+
 functions {
+
     getSLGThermoForParcels {
         type loadSLGThermoModel;
         correctModel false;
-        allowReload false;
+        allowReload true; //false;
         thermoName thermophysicalProperties;
+        outputControlMode timeStep;
+        outputInterval 0;
     }
+
+
+    writeClouds {
+        type writeAdditionalFields;
+        fieldNames ();
+        cloudNames (hotParticleCloud coldParticleCloud);
+        outputControlMode timeStep;
+        outputInterval 1;
+    }
+
+    coldParticle {
+        type evolveKinematicCloud;
+        cloudName coldParticleCloud;
+        g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
+        rhoName rho;
+        muName thermo:mu;
+        UName U;
+        SLGThermoName SLGThermo;
+        autowrite false;
+    }
+
     hotParticle {
-        //        type evolveKinematicCloud;
         type evolveThermoCloud;
         //        type evolveConstReactingCloud;
         cloudName hotParticleCloud;
         g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
         rhoName rho;
-        //        muName mu;
+        muName mu;
         UName U;
         SLGThermoName SLGThermo;
+        autowrite true;
     }
+
     momentumSourceKinematic {
-        //        enabled false;
+        enabled false;
 
         type expressionField;
         autowrite true;
@@ -86,8 +116,9 @@ functions {
         outputInterval 1;
         fieldName hotParticleCloudMomentumSource;
     }
+
     enthalpySourceKinematic {
-        //        enabled false;
+        enabled false;
 
         type expressionField;
         autowrite true;
@@ -97,6 +128,5 @@ functions {
         fieldName hotParticleCloudEnthalpySource;
     }
 }
-
 
 // ************************************************************************* //

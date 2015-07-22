@@ -29,6 +29,7 @@ if [ -e swakConfiguration ]; then
     source swakConfiguration
 else
     echo "No file 'swakConfiguration'. Python etc won't work. See README for details"
+    echo "Try 'ln -s swakConfiguration.automatic swakConfiguration' for automatic configuration. BEWARE: this does not work on some systems"
 fi
 
 . theFiles.sh

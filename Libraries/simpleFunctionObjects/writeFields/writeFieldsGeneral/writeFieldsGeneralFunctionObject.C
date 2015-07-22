@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -40,10 +41,34 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "Time.H"
 
+#include "swakCloudTypes.H"
+
+#include "basicKinematicCloud.H"
+#ifdef FOAM_HAS_COLLIDING_CLOUD
+#include "basicKinematicCollidingCloud.H"
+#endif
+#ifdef FOAM_HAS_MPICC_CLOUD
+#include "basicKinematicMPPICCloud.H"
+#endif
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+#include "BasicReactingMultiphaseCloud.H"
+#include "BasicReactingCloud.H"
+#else
+#include "basicReactingMultiphaseCloud.H"
+#include "basicReactingCloud.H"
+#endif
+#include "basicThermoCloud.H"
+
+#include "cloud.H"
+// #include "const_iterator.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -55,7 +80,8 @@ writeFieldsGeneralFunctionObject::writeFieldsGeneralFunctionObject
 )
 :
     simpleFunctionObject(name,t,dict),
-    fieldNames_(0)
+    fieldNames_(0),
+    cloudNames_(0)
 {
 }
 
@@ -64,7 +90,16 @@ bool writeFieldsGeneralFunctionObject::start()
     simpleFunctionObject::start();
 
     fieldNames_=wordList(dict_.lookup("fieldNames"));
-
+    if(dict_.found("cloudNames")) {
+        cloudNames_=wordList(dict_.lookup("cloudNames"));
+    } else {
+        WarningIn("writeFieldsGeneralFunctionObject::writeFieldsGeneralFunctionObject")
+            << "No list of clouds to be written specified in "
+                << dict_.name() << nl
+                << "If you want to write lagrangian particles add a "
+                << "parameter 'cloudNames' with the names of the clouds"
+                << endl;
+    }
     return true;
 }
 
@@ -109,7 +144,51 @@ void writeFieldsGeneralFunctionObject::write()
             totalCnt++;
         }
     }
+
     Info << name() << " triggered writing of " << totalCnt << " fields" << endl;
+
+
+    totalCnt=0;
+    forAll(cloudNames_,i) {
+
+        const word &name=cloudNames_[i];
+        label cnt=0;
+
+        cnt += writeCloud<basicKinematicCloud>(name);
+#ifdef FOAM_HAS_COLLIDING_CLOUD
+        cnt+=writeCloud<basicKinematicCollidingCloud>(name);
+#endif
+#ifdef FOAM_HAS_MPICC_CLOUD
+        cnt+=writeCloud<basicKinematicMPPICCloud>(name);
+#endif
+        cnt+=writeCloud<basicThermoCloud>(name);
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
+        cnt+=writeCloud<constThermoReactingCloud>(name);
+        cnt+=writeCloud<thermoReactingCloud>(name);
+        cnt+=writeCloud<icoPoly8ThermoReactingCloud>(name);
+        cnt+=writeCloud<constThermoReactingMultiphaseCloud>(name);
+        cnt+=writeCloud<thermoReactingMultiphaseCloud>(name);
+        cnt+=writeCloud<icoPoly8ThermoReactingMultiphaseCloud>(name);
+#else
+        cnt+=writeCloud<basicReactingCloud>(name);
+        cnt+=writeCloud<basicReactingMultiphaseCloud>(name);;
+#endif
+        if(cnt>1) {
+            WarningIn("writeFieldsGeneralFunctionObject::write()")
+                << " More than one (" << cnt
+                    << ") clouds are known by the name " << name << endl;
+        } else if(cnt<0) {
+            WarningIn("writeFieldsGeneralFunctionObject::write()")
+                << " No clouds with the name " << name
+                    << " found" << endl;
+        } else {
+            totalCnt++;
+        }
+    }
+
+    Info << name() << " triggered writing of " << totalCnt << " clouds" << endl;
+
+
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

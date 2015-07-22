@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -41,7 +41,7 @@ FaFieldValueExpressionDriver::makeLogicalField<areaScalarField>(
     scalar val
 )
 {
-    return makeConstantField<areaScalarField>(val);
+    return makeConstantField<areaScalarField>(toBool(val));
 }
 
 template<>
@@ -50,7 +50,7 @@ FaFieldValueExpressionDriver::makeLogicalField<edgeScalarField>(
     scalar val
 )
 {
-    return makeConstantField<edgeScalarField>(val);
+    return makeConstantField<edgeScalarField>(toBool(val));
 }
 
 #define getFaceValue(ding) (ding.boundaryField()[pI][fI])
@@ -67,18 +67,18 @@ FaFieldValueExpressionDriver::doCompare(
 
     forAll(res(),cellI) {
         if( op(a[cellI],b[cellI]) ) {
-            res()[cellI]=1;
+            res()[cellI]=TRUE_Value;
         } else {
-            res()[cellI]=0;
+            res()[cellI]=FALSE_Value;
         }
     }
 
     forAll(res->boundaryField(),pI) {
         forAll(res->boundaryField()[pI],fI) {
             if( op(getFaceValue(a),getFaceValue(b)) ) {
-                getFaceValue(res())=1;
+                getFaceValue(res())=TRUE_Value;
             } else {
-                getFaceValue(res())=0;
+                getFaceValue(res())=FALSE_Value;
             }
         }
     }
@@ -96,24 +96,24 @@ tmp<Field> FaFieldValueExpressionDriver::doLogicalOp(
     tmp<Field> res=makeLogicalField<Field>(0.);
 
     forAll(res(),cellI) {
-        bool av= a[cellI] ? true : false;
-        bool bv= b[cellI] ? true : false;
+        bool av= toBool(a[cellI]);
+        bool bv= toBool(b[cellI]);
 
         if( op(av,bv) ) {
-            res()[cellI]=1;
+            res()[cellI]=TRUE_Value;
         } else {
-            res()[cellI]=0;
+            res()[cellI]=FALSE_Value;
         }
     }
 
     forAll(res->boundaryField(),pI) {
         forAll(res->boundaryField()[pI],fI) {
-            bool av= getFaceValue(a) ? true : false;
-            bool bv= getFaceValue(b) ? true : false;
+            bool av= toBool(getFaceValue(a));
+            bool bv= toBool(getFaceValue(b));
             if( op(av,bv) ) {
-                getFaceValue(res())=1;
+                getFaceValue(res())=TRUE_Value;
             } else {
-                getFaceValue(res())=0;
+                getFaceValue(res())=FALSE_Value;
             }
         }
     }
@@ -133,7 +133,7 @@ tmp<T>  FaFieldValueExpressionDriver::doConditional(
     );
 
     forAll(result(),cellI) {
-        bool c= cond[cellI] ? true : false;
+        bool c= toBool(cond[cellI]);
         if(c) {
             result()[cellI]=yes[cellI];
         } else {
@@ -143,7 +143,7 @@ tmp<T>  FaFieldValueExpressionDriver::doConditional(
 
     forAll(result->boundaryField(),pI) {
         forAll(result->boundaryField()[pI],fI) {
-            bool c= getFaceValue(cond) ? true : false;
+            bool c= toBool(getFaceValue(cond));
             if(c) {
                 getFaceValue(result())=getFaceValue(yes);
             } else {
@@ -161,22 +161,22 @@ tmp<Field> FaFieldValueExpressionDriver::doLogicalNot(const Field &a)
     tmp<Field> res=makeLogicalField<Field>(0.);
 
     forAll(res(),cellI) {
-        bool av= a[cellI] ? true : false;
+        bool av= toBool(a[cellI]);
 
         if( !av ) {
-            res()[cellI]=1;
+            res()[cellI]=TRUE_Value;
         } else {
-            res()[cellI]=0;
+            res()[cellI]=FALSE_Value;
         }
     }
 
     forAll(res->boundaryField(),pI) {
         forAll(res->boundaryField()[pI],fI) {
-            bool av= getFaceValue(a) ? true : false;
+            bool av= toBool(getFaceValue(a));
             if( !av ) {
-                getFaceValue(res())=1;
+                getFaceValue(res())=TRUE_Value;
             } else {
-                getFaceValue(res())=0;
+                getFaceValue(res())=FALSE_Value;
             }
         }
     }

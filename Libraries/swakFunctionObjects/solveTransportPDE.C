@@ -92,7 +92,7 @@ void Foam::solveTransportPDE::read(const dictionary& dict)
     solvePDECommonFiniteVolume::read(dict);
 
     if(active_) {
-        if(!steady_) {
+        if(needsRhoField(true)) {
             readExpressionAndDimension(
                 dict,
                 "rho",
@@ -199,10 +199,30 @@ void Foam::solveTransportPDE::solve()
                 -fvm::laplacian(diffusionField,f,"laplacian(diffusion,"+f.name()+")")
                 ==
                 sourceField
-#ifdef FOAM_HAS_FVOPTIONS
-                + fvOptions()(f)
-#endif
             );
+
+	    autoPtr<volScalarField> rhoField;
+	    if(needsRhoField()) {
+	      driver.parse(rhoExpression_);
+	      if(!driver.resultIsTyp<volScalarField>()) {
+		FatalErrorIn("Foam::solveLaplacianPDE::solve()")
+		  << rhoExpression_ << " does not evaluate to a scalar"
+		  << endl
+		  << exit(FatalError);
+	      }
+	      rhoField.set(
+		  new volScalarField(
+		      driver.getResult<volScalarField>()
+		  )
+	      );
+	      rhoField().dimensions().reset(rhoDimension_);
+	    }
+
+#ifdef FOAM_HAS_FVOPTIONS
+	    if(needsRhoField()) {
+ 	       eq-=fvOptions()(rhoField(),f);
+	    }
+#endif
 
             if(!steady_) {
                 driver.parse(rhoExpression_);

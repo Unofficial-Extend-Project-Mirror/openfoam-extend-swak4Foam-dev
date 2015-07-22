@@ -26,6 +26,10 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   config.vm.synced_folder "..", "/swakSources"
 
+  if ENV["PYFOAM_DEV_DIR"]
+    config.vm.synced_folder ENV["PYFOAM_DEV_DIR"], "/PyFoamDev"
+  end
+
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
@@ -123,6 +127,7 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  # old LTS 12.04
   config.vm.define :precise do |precise|
     precise.vm.box = "precise64"
     precise.vm.box_url = "http://files.vagrantup.com/precise64.box"
@@ -132,11 +137,30 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  #  LTS 14.04
+  config.vm.define :trusty do |trusty|
+    trusty.vm.box = "ubuntu/trusty64"
+    trusty.vm.box_check_update = true
+    trusty.vm.provision :shell do |s|
+      s.args   = "trusty"
+      s.path   = "initScriptUbuntu.sh"
+    end
+  end
+
   config.vm.define :centos6 do |centos6|
     centos6.vm.box = "centos64_64"
     centos6.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130427.box"
     centos6.vm.provision :shell do |s|
       s.args   = "centos6"
+      s.path   = "initScriptCentOS.sh"
+    end
+  end
+
+  config.vm.define :centos70 do |centos70|
+    centos70.vm.box = "matyunin/centos7"
+    centos70.vm.box_check_update = true
+    centos70.vm.provision :shell do |s|
+      s.args   = "centos70"
       s.path   = "initScriptCentOS.sh"
     end
   end

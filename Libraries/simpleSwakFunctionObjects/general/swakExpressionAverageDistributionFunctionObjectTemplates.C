@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -85,10 +85,29 @@ swakExpressionAverageDistributionFunctionObject::setData(
         "valueIfZero",
         pTraits<AType>::zero
     );
-    AType span=gMax(xValues)-gMin(xValues);
+
+    AType xMin;
+    AType xMax;
+    if(dynamicExtremesAbscissa_) {
+        xMin=gMin(xValues);
+        xMax=gMax(xValues);
+    } else {
+        xMin=dict().lookupOrDefault(
+            "minAbscissa",
+            pTraits<AType>::zero
+        );
+        xMax=dict().lookupOrDefault(
+            "maxAbscissa",
+            pTraits<AType>::zero
+        );
+    }
+    Dbug << "Min xValues " << xMin
+        << " Max xValues " << xMax << endl;
+
+    AType span=xMax-xMin;
     AType binSize=pTraits<AType>::zero;
     for(direction i=0;i<pTraits<AType>::nComponents;i++) {
-        scalar sz=component(span,i)/(binNr+1);
+        scalar sz=component(span,i)/(binNr);
         if(sz<SMALL*1e5) {
             sz=1;
         }

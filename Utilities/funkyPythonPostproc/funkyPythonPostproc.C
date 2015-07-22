@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -53,6 +53,8 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
+#include "simpleDataFunctionObject.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -66,6 +68,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
     argList::validOptions.insert("interactive","");
     argList::validOptions.insert("debugOnException","");
+    argList::validOptions.insert("postProcDir","dirname");
 
 #   include "setRootCase.H"
 
@@ -73,6 +76,17 @@ int main(int argc, char *argv[])
 
     IFstream theFile(args.args()[1]);
     dictionary spec(theFile);
+
+    if(args.options().found("postProcDir")) {
+        simpleDataFunctionObject::setPostProcDir(
+            word(args.options()["postProcDir"])
+        );
+    } else {
+        simpleDataFunctionObject::setPostProcDir(
+            // a bit clumsy because some foam-versions have no fileName.name(bool)
+            fileName(fileName(args.args()[1]).name()).lessExt()+"Output"
+        );
+    }
     bool interactive(args.options().found("interactive"));
     bool failOnException(!args.options().found("debugOnException"));
 

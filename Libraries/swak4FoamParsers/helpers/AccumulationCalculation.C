@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2013, 2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -60,7 +60,8 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasWeightedAverage_(false),
     hasSum_(false),
     hasWeightedSum_(false),
-    hasSumMag_(false)
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
 {
 }
 
@@ -83,7 +84,8 @@ AccumulationCalculation<Type>::AccumulationCalculation(
     hasWeightedAverage_(false),
     hasSum_(false),
     hasWeightedSum_(false),
-    hasSumMag_(false)
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
 {
     if(data_.size()!=mask_.size()) {
         FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
@@ -92,8 +94,98 @@ AccumulationCalculation<Type>::AccumulationCalculation(
                 << " differ"
                 << endl
                 << exit(FatalError);
-
     }
+}
+
+template <typename Type>
+AccumulationCalculation<Type>::AccumulationCalculation(
+    const Field<Type> &data,
+    bool isPoint,
+    CommonValueExpressionDriver &driver,
+    const Field<scalar> &weight
+):
+    data_(data),
+    mask_(data_.size(),true),
+    isPoint_(isPoint),
+    driver_(driver),
+    weights_(new Field<scalar>(weight)),
+    hasWeightSum_(false),
+    hasSize_(false),
+    hasMaximum_(false),
+    hasMinimum_(false),
+    hasAverage_(false),
+    hasWeightedAverage_(false),
+    hasSum_(false),
+    hasWeightedSum_(false),
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
+{
+    if(data_.size()!=weights_().size()) {
+        FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
+            << "Sizes of data " << data_.size()
+                << " and specified weights " << weights_().size()
+                << " differ"
+                << endl
+                << exit(FatalError);
+    }
+}
+
+template <typename Type>
+AccumulationCalculation<Type>::AccumulationCalculation(
+    const Field<Type> &data,
+    bool isPoint,
+    CommonValueExpressionDriver &driver,
+    const Field<bool> &mask,
+    const Field<scalar> &weight
+):
+    data_(data),
+    mask_(mask),
+    isPoint_(isPoint),
+    driver_(driver),
+    hasWeightSum_(false),
+    hasSize_(false),
+    hasMaximum_(false),
+    hasMinimum_(false),
+    hasAverage_(false),
+    hasWeightedAverage_(false),
+    hasSum_(false),
+    hasWeightedSum_(false),
+    hasSumMag_(false),
+    numberOfBins_(defaultNumberOfBins_)
+{
+    if(data_.size()!=mask_.size()) {
+        FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
+            << "Sizes of data " << data_.size()
+                << " and specified maks " << mask_.size()
+                << " differ"
+                << endl
+                << exit(FatalError);
+    }
+    if(data_.size()!=weight.size()) {
+        FatalErrorIn("AccumulationCalculation<Type>::AccumulationCalculation")
+            << "Sizes of data " << data_.size()
+                << " and specified weights " << weight.size()
+                << " differ"
+                << endl
+                << exit(FatalError);
+    }
+
+    weights_.set(
+        new scalarField(
+            maskSize(),
+            0
+        )
+    );
+
+    label cnt=0;
+    forAll(mask_,i) {
+        if(mask_[i]) {
+            weights_()[cnt]=weight[i];
+            cnt++;
+        }
+    }
+
+    assert(cnt==maskSize());
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -175,6 +267,37 @@ const Field<Type> &AccumulationCalculation<Type>::data()
 }
 
 template <typename Type>
+void AccumulationCalculation<Type>::resetNumberOfBins(
+    const label newNumberOfBins,
+    const scalar binWidth
+)
+{
+    if(binWidth<0) {
+        if(newNumberOfBins>0) {
+            numberOfBins_=newNumberOfBins;
+        }
+    } else {
+        Type newBins=(this->maximum()-this->minimum())/binWidth;
+        numberOfBins_=1;
+        for(direction i=0;i<pTraits<Type>::nComponents;i++) {
+            label v=component(newBins,i);
+            if(v>numberOfBins_) {
+                numberOfBins_=v;
+            }
+        }
+        if(
+            newNumberOfBins>0
+            &&
+            numberOfBins_>newNumberOfBins
+        ) {
+            numberOfBins_=newNumberOfBins;
+        }
+    }
+
+    distribution_.reset();
+}
+
+template <typename Type>
 const SimpleDistribution<Type> &AccumulationCalculation<Type>::distribution()
 {
     if(!distribution_.valid()) {
@@ -182,7 +305,7 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::distribution()
             new SimpleDistribution<Type>(
                 this->minimum(),
                 this->maximum(),
-                numberOfBins
+                numberOfBins_
             )
         );
         Field<scalar> oneWeight(data().size(),1);
@@ -203,7 +326,7 @@ const SimpleDistribution<Type> &AccumulationCalculation<Type>::weightedDistribut
             new SimpleDistribution<Type>(
                 this->minimum(),
                 this->maximum(),
-                numberOfBins
+                this->numberOfBins_
             )
         );
         weightedDistribution_().calcScalarWeight(
@@ -273,7 +396,11 @@ Type AccumulationCalculation<Type>::weightedAverage()
         const scalar wSum=gSum(weights());
         const Type tSum=gSum(weights()*data());
 
-        weightedAverage_=tSum/wSum;
+        if(mag(wSum)>SMALL) {
+            weightedAverage_=tSum/wSum;
+        } else {
+            weightedAverage_=pTraits<Type>::one*HUGE;
+        }
         hasWeightedAverage_=true;
     }
     return weightedAverage_;

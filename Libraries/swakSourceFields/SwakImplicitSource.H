@@ -37,7 +37,7 @@ SourceFiles
     SwakImplicitSource.C
 
 Contributors/Copyright:
-    2010, 2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010, 2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -51,6 +51,10 @@ Contributors/Copyright:
 
 namespace Foam
 {
+
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
 
 /*---------------------------------------------------------------------------*\
                            Class SwakImplicitSource Declaration
@@ -89,14 +93,36 @@ public:
 
         // Evaluation
 
-            //- Add implicit contribution to equation
-            virtual void addSup(fvMatrix<T>& eqn, const label fieldI);
+    //- Add explicit contribution to equation
+    virtual void addSup(
+        fvMatrix<T>& eqn,
+        const label fieldI
+    );
 
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+    // Add explicit and implicit contributions to compressible equations
+    virtual void addSup(
+        const volScalarField& rho,
+        fvMatrix<T>& eqn,
+        const label fieldI
+    );
+
+    // Add explicit and implicit contributions to phase equations
+    virtual void addSup(
+        const volScalarField& alpha,
+        const volScalarField& rho,
+        fvMatrix<T>& eqn,
+        const label fieldI
+    );
+#endif
 
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
 
 } // End namespace Foam
 

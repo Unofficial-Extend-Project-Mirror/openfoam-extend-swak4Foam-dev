@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -40,6 +40,7 @@ Contributors/Copyright:
 
 #include "fvMesh.H"
 #include "pointMesh.H"
+#include "swak.H"
 
 namespace Foam
 {
@@ -159,7 +160,13 @@ groovyBCCommon<Type>::groovyBCCommon
     if(
         Pstream::parRun()
         &&
-        Pstream::defaultCommsType == Pstream::blocking
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+        Pstream::defaultCommsType()
+#else
+        Pstream::defaultCommsType
+#endif
+        ==
+        Pstream::blocking
     ) {
         WarningIn("groovyBCCommon<Type>::groovyBCCommon")
             << "The commsType is set to 'blocking'. This might cause the run to"

@@ -18,13 +18,14 @@ FoamFile
 solution {
     active          yes;
     coupled         true;
-    transient true;
+    transient       true;
     cellValueSourceCorrection on;
 
     interpolationSchemes
     {
         rho             cell;
-        mu              cell;
+        thermo:mu       cell;
+        kappa           cell;
         U               cellPoint;
         T               cell;
         Cp              cell;
@@ -37,7 +38,7 @@ solution {
             rho             explicit 1;
             U               explicit 1;
             Yi              explicit 1;
-            hs              explicit 1;
+            h               explicit 1;
         }
     }
 
@@ -55,9 +56,9 @@ constantProperties
 
     rhoMin           1e-15;
     TMin             200;
-    minParticleMass  1e-15;
+    minParticleMass  1.0e-25;
     rho0             2500;
-    T0               500;
+    T0               1000; // initial temperature
     Cp0              900;
     epsilon0         1;
     f0               0.5;
@@ -75,71 +76,76 @@ constantProperties
 subModels {
     particleForces
     {
-        gravity         on;
+        gravity         off;
         sphereDrag;
     }
 
     injectionModel  patchInjection;
 
-    dispersionModel stochasticDispersionRAS;
+    dispersionModel none; //stochasticDispersionRAS;
 
+    stochasticCollisionModel none;
+
+    /*
     patchInteractionModel standardWallInteraction;
-
-    heatTransferModel RanzMarshall;
-
-    radiation       off;
-
-    patchInjectionCoeffs
-    {
-        SOI             0;
-        massTotal        0.001;
-        parcelBasisType mass;
-        patchName inlet;
-        duration 10;
-        parcelsPerSecond 500;
-        U0              ( 1 0 0 );
-        flowRateProfile constant  1e-1;
-        sizeDistribution
-        {
-            type         RosinRammler;
-            RosinRammlerDistribution
-            {
-                minValue        5e-04;
-                maxValue        0.005;
-                d               5e-05;
-                n               0.5;
-            }
-        }
-    }
-
-    ManualInjectionCoeffs
-    {
-        massTotal        0.0001;
-        parcelBasisType mass;
-        SOI             0;
-        positionsFile   "thermoCloud1Positions";
-        U0              ( 0 0 0 );
-        parcelPDF
-        {
-            pdfType         RosinRammler;
-            RosinRammlerPDF
-            {
-                minValue        5e-06;
-                maxValue        0.0005;
-                d               5e-05;
-                n               0.5;
-            }
-        }
-    }
 
     standardWallInteractionCoeffs
     {
         type            rebound;
     }
+    */
+
+    patchInteractionModel localInteraction;
+
+    localInteractionCoeffs
+    {
+        patches
+        (
+            "(back|front|inlet|porosityWall|wall)"
+            {
+                type rebound;
+                e    1;
+                mu   0;
+            }
+            outlet
+            {
+                type escape;
+            }
+        );
+    }
+
+    heatTransferModel RanzMarshall;
 
     RanzMarshallCoeffs
     {
         BirdCorrection  off;
+    }
+
+    radiation       off;
+
+    injectionModels
+    {
+        first
+        {
+            type            patchInjection;
+            patchName       inlet;
+            U0              ( 1 0 0 ); 
+            flowRateProfile constant  0.1;
+            massTotal        1.0e-12;
+            SOI              0;
+            parcelBasisType mass;
+            duration 10;
+            parcelsPerSecond 500;
+            sizeDistribution
+            {
+                type fixedValue;
+                fixedValueDistribution
+                {
+                    value 2e-6;
+                }
+            }
+        }
+
     }
 
     surfaceFilmModel none;
@@ -147,11 +153,19 @@ subModels {
 
 cloudFunctions
 {
-    patchPostProcessing {
+    first {
+        type patchPostProcessing;
         maxStoredParcels 10000;
         patches (
             outlet
         );
+    }
+
+    second {
+        type particleTracks;
+        trackInterval 1;
+        maxSamples 10000000;
+        resetOnWrite false;
     }
 }
 

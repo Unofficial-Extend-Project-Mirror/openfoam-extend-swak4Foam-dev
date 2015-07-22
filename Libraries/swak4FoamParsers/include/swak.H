@@ -38,7 +38,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -101,6 +101,10 @@ Contributors/Copyright:
 // has basicSources
 #define FOAM_HAS_BASICSOURCES
 
+#endif
+
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_DEV)
+#define FOAM_DEFAULTCOMMSTYPE_IS_METHOD
 #endif
 
 // this changed starting with 2.1
@@ -267,6 +271,28 @@ Contributors/Copyright:
 
 #if (FOAM_VERSION4SWAK > VERSION_NR2(2,1)) && !defined(FOAM_DEV)
 #define FOAM_HAS_SCOPED_LOOKUP
+#endif
+
+#if !defined(FOAM_DEV)
+#define FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+#endif
+
+#if !defined(FOAM_DEV)
+#define FOAM_FVMESH_IS_DATAOBJECT
+#endif
+
+#if defined(FOAM_DEV)
+#define FOAM_ZONEMESH_HAS_NO_FINDINDEX
+#endif
+
+#if defined(FOAM_DEV)
+#define FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
+#define FOAM_SCHEMES_HAS_NO_READ_WITH_DICT
+#define FOAM_FVMESH_NOT_CHILD_OF_FVSCHEMES_SOLUTION
+#endif
+
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_DEV)
+#define FOAM_HAS_LOCAL_DEBUGSWITCHES
 #endif
 
 #include "swakVersion.H"

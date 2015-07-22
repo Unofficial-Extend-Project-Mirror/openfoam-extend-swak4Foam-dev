@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -244,9 +244,9 @@ label TimeClone::copyObjects(const objectRegistry &src,objectRegistry &dst)
 
 bool TimeClone::write(const bool force)
 {
-    Dbug << "write. Force: " << force << endl;
+    Pbug << "write. Force: " << force << endl;
     if(!storedTime_.valid()) {
-        Dbug << "Nothing stored -> nothing written" << endl;
+        Pbug << "Nothing stored -> nothing written" << endl;
         return false;
     }
     Time &time=storedTime_();
@@ -258,7 +258,7 @@ bool TimeClone::write(const bool force)
             WarningIn("TimeClone::write(const bool force)")
                 << time.timePath() << " already existing. Skipping because no 'force' set"
                     << endl;
-            Dbug << "Clearing and exiting" << endl;
+            Pbug << "Clearing and exiting" << endl;
             storedTime_.clear();
             return false;
         } else {
@@ -271,7 +271,7 @@ bool TimeClone::write(const bool force)
 
     bool result=time.writeNow();
 
-    Dbug << "written: " << result << " Releasing time" << endl;
+    Pbug << "written: " << result << " Releasing time" << endl;
     //     objectRegistry::debug=0;
     storedTime_.clear();
 
@@ -279,6 +279,18 @@ bool TimeClone::write(const bool force)
 }
 
 // * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * * //
+
+const Time &TimeClone::operator()() const {
+    if(this->ok()) {
+        return storedTime_();
+    }
+    FatalErrorIn("TimeClone::operator()() const")
+        << "No stored time. Should not call this"
+            << endl
+            << exit(FatalError);
+
+    return *static_cast<const Time *>(NULL);
+}
 
 // * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * * //
 

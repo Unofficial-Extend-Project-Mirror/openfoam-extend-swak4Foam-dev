@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013, 2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -47,6 +47,15 @@ namespace Foam
 {
     defineTypeNameAndDebug(simpleDataFunctionObject, 0);
 
+fileName simpleDataFunctionObject::defaultPostProcDir_("postProcessing");
+
+void simpleDataFunctionObject::setPostProcDir(const fileName &f)
+{
+    Info << "Setting output directory name for simpleFunctionObjects to "
+        << f << endl;
+    defaultPostProcDir_=f;
+}
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 simpleDataFunctionObject::simpleDataFunctionObject
@@ -56,8 +65,16 @@ simpleDataFunctionObject::simpleDataFunctionObject
     const dictionary& dict
 )
 :
-    simpleFunctionObject(name,t,dict)
+    simpleFunctionObject(name,t,dict),
+    postProcDir_(defaultPostProcDir_)
 {
+    if(dict.found("postProcDir")) {
+        postProcDir_=fileName(
+            dict.lookup("postProcDir")
+        );
+        Info << name << " writes to " << postProcDir_
+            << " instead of " << defaultPostProcDir_ << endl;
+    }
 }
 
 fileName simpleDataFunctionObject::dataDir()
@@ -77,14 +94,14 @@ fileName simpleDataFunctionObject::baseDir()
         theDir =
             obr_.time().path()
             /".."
-            /"postProcessing"
+            /postProcDir_
             /dir;
     }
     else
     {
         theDir =
             obr_.time().path()
-            /"postProcessing"
+            /postProcDir_
             /dir;
     }
 

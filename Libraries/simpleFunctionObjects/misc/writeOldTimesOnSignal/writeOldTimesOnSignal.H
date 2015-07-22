@@ -39,7 +39,7 @@ SourceFiles
     writeOldTimesOnSignalFunctionObject.C
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -105,6 +105,13 @@ class writeOldTimesOnSignalFunctionObject
         void resetHandler();
 
         ~SignalHandlerInfo() {};
+
+        int sig() const
+           { return sig_; }
+
+        bool set() const
+           { return set_; }
+
     };
 
     static void sigHandler(int);
@@ -115,10 +122,19 @@ class writeOldTimesOnSignalFunctionObject
 
     bool writeCurrent_;
 
+    scalar sleepSecondsBeforeReraising_;
+
     bool sigFPE_;
     bool sigSEGV_;
     bool sigINT_;
+    bool sigTERM_;
     bool sigQUIT_;
+    bool sigUSR1_;
+    bool sigUSR2_;
+
+    bool alreadyDumped_;
+
+    bool itWasMeWhoReraised_;
 
 public:
 

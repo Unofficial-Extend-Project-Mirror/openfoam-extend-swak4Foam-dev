@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -122,24 +122,26 @@ class swakIncompressibleTurbulencePluginFunction_ ## funcName      \
 {                                                                  \
 public:                                                            \
     TypeName("swakIncompressibleTurbulencePluginFunction_" #funcName);       \
-    swakIncompressibleTurbulencePluginFunction_ ## funcName (      \
-        const FieldValueExpressionDriver &parentDriver,            \
-        const word &name                                           \
-    ): swakIncompressibleTurbulencePluginFunction(                 \
-        parentDriver,                                              \
-        name,                                                      \
-        #resultType                                                \
-    ) {}                                                           \
-    void doEvaluation() {                                          \
-        result().setObjectResult(                                  \
-            autoPtr<resultType>(                                   \
-                new resultType(                                    \
-                    turb().funcName()                              \
-                )                                                  \
-            )                                                      \
-        );                                                         \
-    }                                                              \
-};                                                                 \
+    swakIncompressibleTurbulencePluginFunction_ ## funcName (           \
+        const FieldValueExpressionDriver &parentDriver,                 \
+        const word &name                                                \
+    ): swakIncompressibleTurbulencePluginFunction(                      \
+        parentDriver,                                                   \
+        name,                                                           \
+        #resultType                                                     \
+    ) {}                                                                \
+        void doEvaluation() {                                           \
+        autoPtr<resultType> rField(                                     \
+            new resultType(                                             \
+                turb().funcName()                                       \
+            )                                                           \
+        );                                                              \
+        rField->correctBoundaryConditions();                            \
+        result().setObjectResult(                                       \
+            rField                                                      \
+        );                                                              \
+    }                                                                   \
+};                                                                      \
 defineTypeNameAndDebug(swakIncompressibleTurbulencePluginFunction_ ## funcName,0);  \
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakIncompressibleTurbulencePluginFunction_ ## funcName,name,turb_ ## funcName);
 

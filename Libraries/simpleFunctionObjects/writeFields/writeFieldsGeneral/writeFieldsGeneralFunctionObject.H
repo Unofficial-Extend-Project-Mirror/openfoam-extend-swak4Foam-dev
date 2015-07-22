@@ -38,7 +38,8 @@ SourceFiles
     writeFieldsGeneralFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013, 2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -71,9 +72,16 @@ class writeFieldsGeneralFunctionObject
     //- Name of the fields that are to be written
     wordList fieldNames_;
 
-    //- wrapper for the writting
+    //- Name of the fields that are to be written
+    wordList cloudNames_;
+
+    //- wrapper for the writing
     template <class T>
     bool writeField(const word &name) const;
+
+    //- wrapper for writing clouds
+    template <class T>
+    bool writeCloud(const word &name) const;
 
 protected:
     // //- Overwrite the default output time
@@ -95,6 +103,8 @@ public:
     void write();
 
     const wordList &fieldNames() const { return fieldNames_; }
+
+    const wordList &cloudNames() const { return cloudNames_; }
 };
 
 

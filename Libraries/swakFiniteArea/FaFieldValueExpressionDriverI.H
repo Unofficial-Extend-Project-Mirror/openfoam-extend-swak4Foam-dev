@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -555,11 +555,23 @@ void FaFieldValueExpressionDriver::setLogicalResult(T *r,bool isSurfaceField)
         result.dimensions().reset(resultDimension_);
     }
 
-    typ_=pTraits<bool>::typeName;
+    typ_=pTraits<T>::typeName;
+    if(typ_.find("Field",1)==(typ_.length()-string("Field").length())) {
+        if(typ_.find("Scalar")==std::string::npos) {
+            FatalErrorIn("FieldValueExpressionDriver::setLogicalResult")
+                << "Field of typ " << typ_ << " is not a scalar and "
+                    << "can't be interepreted as a boolean" << endl
+                    << abort(FatalError);
+        }
+        typ_=typ_.substr(0,typ_.find("Scalar"))+"LogicalField";
+    } else {
+        // this is not a GeomtricField. Fall back to old behaviour
+        typ_=pTraits<bool>::typeName;
+    }
 
     Field<bool> yesOrNo(result.internalField().size());
     forAll(yesOrNo,i) {
-        yesOrNo[i]=mag(result.internalField()[i])>SMALL;
+        yesOrNo[i]=toBool(result.internalField()[i]);
     }
 
     this->result().setResult(yesOrNo);

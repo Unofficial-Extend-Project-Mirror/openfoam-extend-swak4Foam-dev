@@ -6,6 +6,62 @@ import argparse
 from subprocess import Popen,PIPE,STDOUT
 from collections import defaultdict
 
+# This part is lifted from six.py (https://pythonhosted.org/six/) to
+# make sure that this script runs with Python 2 and Python 3
+
+# True if we are running on Python 3.
+PY3 = sys.version_info[0] == 3
+
+if PY3:
+    import builtins
+    print_ = getattr(builtins, "print")
+    del builtins
+else:
+    def print_(*args, **kwargs):
+        """The new-style print function."""
+        fp = kwargs.pop("file", sys.stdout)
+        if fp is None:
+            return
+        def write(data):
+            if not isinstance(data, basestring):
+                data = str(data)
+            fp.write(data)
+        want_unicode = False
+        sep = kwargs.pop("sep", None)
+        if sep is not None:
+            if isinstance(sep, unicode):
+                want_unicode = True
+            elif not isinstance(sep, str):
+                raise TypeError("sep must be None or a string")
+        end = kwargs.pop("end", None)
+        if end is not None:
+            if isinstance(end, unicode):
+                want_unicode = True
+            elif not isinstance(end, str):
+                raise TypeError("end must be None or a string")
+        if kwargs:
+            raise TypeError("invalid keyword arguments to print()")
+        if not want_unicode:
+            for arg in args:
+                if isinstance(arg, unicode):
+                    want_unicode = True
+                    break
+        if want_unicode:
+            newline = unicode("\n")
+            space = unicode(" ")
+        else:
+            newline = "\n"
+            space = " "
+        if sep is None:
+            sep = space
+        if end is None:
+            end = newline
+        for i, arg in enumerate(args):
+            if i:
+                write(sep)
+            write(arg)
+        write(end)
+
 parser = argparse.ArgumentParser(description='Check repository for contributors and add them to the initial comment')
 parser.add_argument('files', metavar='file/dir', type=str, nargs='+',
                     help='files or directories to be treated')
@@ -16,7 +72,7 @@ parser.add_argument('--extensions', dest='extensions', type=str, action='append'
                     default=["py","C","sh","H","ll","yy"],
                     help="Valid extension to investigate. Add to default list: %(default)s")
 parser.add_argument('--ignore-files', dest='ignoreList', type=str, action='append',
-                    default=["lnInclude"],
+                    default=["lnInclude","Make"],
                     help="Directories and files that should not be handled. Add to default list: %(default)s")
 parser.add_argument('--special-file', dest='special', type=str, action='append',
                     default=["Allwmake","Allwclean","files","options"],
@@ -34,14 +90,15 @@ exts=["."+e for e in args.extensions]
 
 def runHg(*args):
     proc=Popen(("hg",)+args,stdout=PIPE,stderr=STDOUT)
-    out=proc.communicate()[0]
+    out=proc.communicate()[0].decode()
     if proc.returncode:
-        print "Problem with: hg "+" ".join(args)
-        print out
+        print_("Problem with: hg "+" ".join(args))
+        print_(out)
         sys.exit(0)
     return out
 
 root=runHg("root").strip()
+print_(root)
 aliases={}
 allLines=defaultdict(lambda:0)
 
@@ -85,7 +142,7 @@ def getContributorsFromLine(line):
                     assert yearString[0:2]==", "
                     yearString=yearString[2:]
             else:
-                print "Unparsable year-string",m.groupdict()["years"],"Chocking at",yearString
+                print_("Unparsable year-string",m.groupdict()["years"],"Chocking at",yearString)
             assert start<=end
             for year in range(start,end+1):
                 result.add((user,year))
@@ -124,7 +181,7 @@ def processFile(f,data):
     for c in args.addContrib:
         l=c.split(",")
         if len(l)!=2:
-            print "Entry",c,"is not of the required form <year>,<name>"
+            print_("Entry",c,"is not of the required form <year>,<name>")
             sys.exit(-1)
         user=l[1]
         if user in aliases:
@@ -162,14 +219,14 @@ def processFile(f,data):
 
     if contrStart!=None:
         if swakLine==None:
-            print "No finishing '"+swakRevision+"' found. No contributors added"
+            print_("No finishing '"+swakRevision+"' found. No contributors added")
             return
         users=list(set([u for u,y in localContrib]))
         cLines=[]
         for u in users:
             cLines.append(buildContributorLine(u,localContrib))
         cLines.sort()
-        print "Adding",len(cLines),"contributor lines to",f
+        print_("Adding",len(cLines),"contributor lines to",f)
         if not args.dryRun:
             f=open(f,"w")
             f.writelines(lines[:contrStart+1])
@@ -183,14 +240,14 @@ def handleFiles(files):
         if path.basename(f) in args.ignoreList:
             continue
         if not path.exists(f):
-            print "WARNING: File",f,"does not exist. Don't try this again with me"
+            print_("WARNING: File",f,"does not exist. Don't try this again with me")
         elif path.isdir(f):
-            print "Going into directory",f
+            print_("Going into directory",f)
             handleFiles([path.join(f,g) for g in listdir(f)])
         else:
             if args.allFiles or path.basename(f) in args.special or path.splitext(f)[1] in exts:
                 if runHg("status","-A",f)[0] not in ["?","I"]:
-                    print "File",f
+                    print_("File",f)
                     data=runHg("--config",
                                "extensions.swak="+path.join(root,"maintainanceScripts/lib/swak_mercurial.py"),
                                "churn","-t","'{author} {date|year}'","-q",
@@ -200,34 +257,34 @@ def handleFiles(files):
 handleFiles(args.files)
 
 print
-print "Summary: Lines"
+print_("Summary: Lines")
 nameLen=max([len(n) for n in allLines.keys()])
 tabFormat="%"+str(nameLen)+"s : %s"
-print tabFormat %("Name","Nr")
-print "-"*(nameLen+12)
-for it in allLines.iteritems():
-    print tabFormat % it
+print_(tabFormat %("Name","Nr"))
+print_("-"*(nameLen+12))
+for k in allLines:
+    print_(tabFormat % (k,allLines[k]))
 
 if len(modifiedFiles)>0:
     print
-    print len(modifiedFiles),"files modified"
+    print_(len(modifiedFiles),"files modified")
     print
 
-print "Years - Contributors"
-print "--------------------"
+print_("Years - Contributors")
+print_("--------------------")
 years=list(set([y for u,y in allContrib]))
 years.sort()
 for y in years:
-    print y,":",
+    print_(y,":",)
     contributors=set([u for u,yr in allContrib if y==yr])
-    print ", ".join(contributors)
+    print_(", ".join(contributors))
     print
 
 users=list(set([u for u,y in allContrib]))
-print "Contributor lines"
-print "-----------------"
+print_("Contributor lines")
+print_("-----------------")
 clines=[]
 for u in users:
     clines.append(buildContributorLine(u,allContrib))
 clines.sort()
-print "\n".join(clines)
+print_("\n".join(clines))

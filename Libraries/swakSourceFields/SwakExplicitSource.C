@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -41,6 +41,10 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 namespace Foam {
+
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -90,7 +94,10 @@ SwakExplicitSource<T>::~SwakExplicitSource()
 
 //- Add explicit contribution to equation
 template<class T>
-void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
+void SwakExplicitSource<T>::addSup(
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
 {
     if (debug)
     {
@@ -103,7 +110,7 @@ void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<typename SwakExplicitSource<T>::resultField>()
+        FieldValueExpressionDriver::template resultIsTyp<typename SwakExplicitSource<T>::resultField>()
     ) {
         FatalErrorIn("SwakExplicitSource<"+word(pTraits<T>::typeName)+">::addSup()")
             << "Result of " << this->expressions_[fieldI] << " is not a "
@@ -114,7 +121,7 @@ void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 
     typename SwakExplicitSource<T>::resultField result(
         this->driver().
-        FieldValueExpressionDriver::getResult<typename SwakExplicitSource<T>::resultField>()
+        FieldValueExpressionDriver::template getResult<typename SwakExplicitSource<T>::resultField>()
     );
     result.dimensions().reset(this->dimensions_[fieldI]);
     typename SwakExplicitSource<T>::resultField usedResult(result*0);
@@ -124,6 +131,33 @@ void SwakExplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
     }
     eqn+=usedResult;
 }
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+template<class T>
+void SwakExplicitSource<T>::addSup(
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+
+template<class T>
+void SwakExplicitSource<T>::addSup(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+#endif
+
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
 
 } // end namespace
 

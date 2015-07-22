@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -354,6 +354,35 @@ ExpressionResult ExpressionResult::getUniform(
 
         return ExpressionResult(); // makes warnings go away
     }
+}
+
+void ExpressionResult::calcIsSingleValue()
+{
+    if(valPtr_) {
+        if(valType_==pTraits<scalar>::typeName) {
+            calcIsSingleValueInternal<scalar>();
+        } else if(valType_==vector::typeName) {
+            calcIsSingleValueInternal<vector>();
+        } else if(valType_==tensor::typeName) {
+            calcIsSingleValueInternal<tensor>();
+        } else if(valType_==symmTensor::typeName) {
+            calcIsSingleValueInternal<symmTensor>();
+        } else if(valType_==sphericalTensor::typeName) {
+            calcIsSingleValueInternal<sphericalTensor>();
+        } else if(valType_==pTraits<bool>::typeName) {
+            FatalErrorIn("ExpressionResult::calcIsSingleValueInternal<bool>()")
+                << "This specialisation is not implemented"
+                    << endl << exit(FatalError);
+        } else {
+            FatalErrorIn("ExpressionResult::calcIsSingleValue()")
+                << "Unknown type " << valType_ << endl
+                    << exit(FatalError);
+        }
+    } else {
+        FatalErrorIn("ExpressionResult::calcIsSingleValue()")
+            << "Not set. Can't determine if unifor," << endl
+                << exit(FatalError);
+   }
 }
 
 label ExpressionResult::size() const {

@@ -1223,6 +1223,10 @@ namespace Foam {
         e.setSingleValue(val);
         variables_.set(name,e);
     }
+
+    bool CommonValueExpressionDriver::toBool(const scalar f) {
+        return f>=0.5;
+    }
 }
 
 

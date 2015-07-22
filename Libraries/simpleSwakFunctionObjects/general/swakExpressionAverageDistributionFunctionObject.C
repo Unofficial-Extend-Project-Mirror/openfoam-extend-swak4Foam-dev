@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -87,8 +87,37 @@ swakExpressionAverageDistributionFunctionObject::swakExpressionAverageDistributi
             dict,
             refCast<const fvMesh>(obr_)
         )
+    ),
+    dynamicExtremesAbscissa_(
+        dict.lookupOrDefault<bool>(
+            "dynamicExtremesAbscissa",
+            true
+        )
     )
 {
+    if(!dict.found("dynamicExtremesAbscissa")) {
+        WarningIn("swakExpressionAverageDistributionFunctionObject::swakExpressionAverageDistributionFunctionObject")
+            << "No entry 'dynamicExtremesAbscissa' found in " << dict.name() << nl
+                << "Assuming 'true' (Extremes of distribution are dynamically calculated from 'abscissa' expression)"
+                << endl;
+    }
+    if(
+        !dynamicExtremesAbscissa_
+        &&
+        (
+            !dict.found("minAbscissa")
+            ||
+            !dict.found("maxAbscissa")
+        )
+    ) {
+        FatalErrorIn("swakExpressionAverageDistributionFunctionObject::swakExpressionAverageDistributionFunctionObject")
+            << "When specifying 'dynamicExtremesAbscissa false;' in "
+                << dict.name()
+                << " 'minAbscissa' and 'maxAbscissa' have to be specified as well"
+                << endl
+                << exit(FatalError);
+
+    }
     driver_->createWriterAndRead(name+"_"+type());
 }
 

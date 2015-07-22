@@ -91,7 +91,7 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
     solvePDECommonFiniteVolume::read(dict);
 
     if(active_) {
-        if(!steady_) {
+      if(needsRhoField(true)) {
             readExpressionAndDimension(
                 dict,
                 "rho",
@@ -148,7 +148,6 @@ void Foam::solveLaplacianPDE::solve()
                 << name_ << " is steady. It is recommended to have in "
                     << sol.name() << " a nCorrectors>0"
                     << endl;
-
         }
 
         for (int corr=0; corr<=nCorr; corr++) {
@@ -181,22 +180,31 @@ void Foam::solveLaplacianPDE::solve()
                 -fvm::laplacian(lambdaField,f,"laplacian(lambda,"+f.name()+")")
                 ==
                 sourceField
-#ifdef FOAM_HAS_FVOPTIONS
-                + fvOptions()(f)
-#endif
             );
 
-            if(!steady_) {
-                driver.parse(rhoExpression_);
-                if(!driver.resultIsTyp<volScalarField>()) {
-                    FatalErrorIn("Foam::solveLaplacianPDE::solve()")
-                        << rhoExpression_ << " does not evaluate to a scalar"
-                            << endl
-                            << exit(FatalError);
-                }
-                volScalarField rhoField(driver.getResult<volScalarField>());
-                rhoField.dimensions().reset(rhoDimension_);
+	    autoPtr<volScalarField> rhoField;
+	    if(needsRhoField()) {
+	      driver.parse(rhoExpression_);
+	      if(!driver.resultIsTyp<volScalarField>()) {
+		FatalErrorIn("Foam::solveLaplacianPDE::solve()")
+		  << rhoExpression_ << " does not evaluate to a scalar"
+		  << endl
+		  << exit(FatalError);
+	      }
+	      rhoField.set(
+		  new volScalarField(
+		      driver.getResult<volScalarField>()
+		  )
+	      );
+	      rhoField().dimensions().reset(rhoDimension_);
+	    }
 
+#ifdef FOAM_HAS_FVOPTIONS
+	    if(needsRhoField()) {
+	      eq-=fvOptions()(rhoField(),f);
+	    }
+#endif
+            if(!steady_) {
                 fvMatrix<scalar> ddtMatrix(fvm::ddt(f));
                 if(
                     !ddtMatrix.diagonal()
@@ -207,7 +215,7 @@ void Foam::solveLaplacianPDE::solve()
                 ) {
                     // Adding would fail
                 } else {
-                    eq+=rhoField*ddtMatrix;
+  		   eq+=rhoField()*ddtMatrix;
                 }
             }
 

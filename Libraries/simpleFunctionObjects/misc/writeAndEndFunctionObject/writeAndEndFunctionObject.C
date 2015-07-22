@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013, 2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "writeAndEndFunctionObject.H"
@@ -57,8 +57,22 @@ writeAndEndFunctionObject::writeAndEndFunctionObject
 )
 :
     simpleFunctionObject(name,t,dict),
-    isStopped_(false)
+    isStopped_(false),
+    storeAndWritePreviousState_(
+        dict.lookupOrDefault<bool>("storeAndWritePreviousState",false)
+    )
 {
+    if(storeAndWritePreviousState_) {
+        lastTimes_.set(
+            new TimeCloneList(
+                dict
+            )
+        );
+    } else if(!dict.found("storeAndWritePreviousState")){
+        WarningIn("writeAndEndFunctionObject::writeAndEndFunctionObject")
+            << "'storeAndWritePreviousState' unset in " << dict.name()
+                << endl;
+    }
 }
 
 bool writeAndEndFunctionObject::start()
@@ -96,7 +110,16 @@ void writeAndEndFunctionObject::write()
         isStopped_=true;
 
         Info << "Ending run because of functionObject " << this->name() << endl;
+        Info << "Writing current state" << endl;
         const_cast<Time &>(time()).writeAndEnd();
+        if(lastTimes_.valid()) {
+            Pout << "Writing old times" << endl;
+            lastTimes_->write();
+        }
+    }
+    if(lastTimes_.valid()) {
+        Dbug << "Storing current time" << endl;
+        lastTimes_->copy(time());
     }
     if(debug) {
         Info << name() << "::write() - Leaving" << endl;

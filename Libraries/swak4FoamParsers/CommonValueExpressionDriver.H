@@ -181,6 +181,12 @@ private:
 
     bool variableNameIdenticalToField_;
 
+#ifndef FOAM_DLLIBRARY_USES_STATIC_METHODS
+    dlLibraryTable libraries_;
+#endif
+
+    void readPluginLibraries(const dictionary &dict);
+
 protected:
     const ExpressionResult &lookupGlobal(const word &name) const;
 
@@ -581,6 +587,15 @@ public:
         Op op,
         const Field<Type> &b
     );
+
+    // this method makes sure that the interpretation of floats as logical values is consistent
+    static inline bool toBool(const scalar f);
+
+    // use these constants instead of literal 0 and 1
+    enum BoolValues {
+        FALSE_Value = 0,
+        TRUE_Value = 1
+    };
 
     template <class Op>
     tmp<Field<bool> > doLogicalOp(

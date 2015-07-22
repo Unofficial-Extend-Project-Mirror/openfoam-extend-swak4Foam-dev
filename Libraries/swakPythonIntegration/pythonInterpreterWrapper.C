@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -184,7 +184,11 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     syncParallel();
 
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug);
+#endif
 
     if(!dict.found("useNumpy")) {
         WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
@@ -532,6 +536,10 @@ bool pythonInterpreterWrapper::executeCode(
 )
 {
     Pbug << "ExecuteCode: " << code << endl;
+    if(code.size()==0) {
+        Pbug << "No code. Exiting" << endl;
+        return true;
+    }
     syncParallel();
 
     int fail=0;

@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -57,6 +57,10 @@ namespace Foam {
 }
 
 #define makeSwakFvOption makeFvOption
+
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
+#define FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+#endif
 
 #else
 

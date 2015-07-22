@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -41,6 +41,10 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 namespace Foam {
+
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -107,7 +111,7 @@ bool SwakSetValue<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
     this->driver().parse(maskExpression_);
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<volScalarField>(true)
+        FieldValueExpressionDriver::template resultIsTyp<volScalarField>(true)
     ) {
         FatalErrorIn("SwakSetValue<scalar>::getMask")
             << "Result of " << maskExpression_ << " is not a logical expression"
@@ -116,7 +120,7 @@ bool SwakSetValue<T>::getMask(DynamicList<label> &cellIDs,const word &psi)
     }
 
     const volScalarField &cond=this->driver().
-        FieldValueExpressionDriver::getResult<volScalarField>();
+        FieldValueExpressionDriver::template getResult<volScalarField>();
     volScalarField usedCond(0*cond);
     forAll(this->cells_,i) {
         label cellI=this->cells_[i];
@@ -158,7 +162,7 @@ void SwakSetValue<T>::setValue
     this->driver().parse(this->expressions_[fieldI]);
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<typename SwakSetValue<T>::resultField>()
+        FieldValueExpressionDriver::template resultIsTyp<typename SwakSetValue<T>::resultField>()
     ) {
         FatalErrorIn("SwakSetValue<"+word(pTraits<T>::typeName)+">::setValue()")
             << "Result of " << this->expressions_[fieldI] << " is not a "
@@ -169,7 +173,7 @@ void SwakSetValue<T>::setValue
 
     typename SwakSetValue<T>::resultField result(
         this->driver().
-        FieldValueExpressionDriver::getResult<typename SwakSetValue<T>::resultField>()
+        FieldValueExpressionDriver::template getResult<typename SwakSetValue<T>::resultField>()
     );
 
     if(this->dimensions_[fieldI]!=eqn.psi().dimensions()) {
@@ -196,13 +200,17 @@ void SwakSetValue<T>::setValue
     //    UIndirectList<Type>(values, cells_) = injectionRate_[fieldI];
     forAll(cellIDs,i)
     {
-	label cellI=cellIDs[i];
+        label cellI=cellIDs[i];
 
         values[i]=result[cellI];
     }
 
     eqn.setValues(cellIDs, values);
 }
+
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
 
 } // end namespace
 

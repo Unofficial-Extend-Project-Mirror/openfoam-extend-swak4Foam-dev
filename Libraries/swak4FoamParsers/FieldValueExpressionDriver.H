@@ -57,6 +57,8 @@ namespace parserField {
 
 namespace Foam {
 
+class MeshDistFromPatch;
+
 class FieldValueExpressionDriver
 :
     public CommonValueExpressionDriver
@@ -338,7 +340,17 @@ public:
     tmp<pointVectorField> makePointPositionField();
 
     tmp<volScalarField> makeDistanceField();
+private:
+    tmp<volScalarField> makeDistanceToField(
+        labelList &startFaces,
+        List<MeshDistFromPatch> &startValues,
+        List<MeshDistFromPatch> &faceValues,
+        List<MeshDistFromPatch> &cellValues
+    );
+public:
     tmp<volScalarField> makeDistanceToPatchField(const word &name);
+    tmp<volScalarField> makeDistanceToCellsField(const volScalarField &f);
+    tmp<volScalarField> makeDistanceToFacesField(const surfaceScalarField &f);
     tmp<volScalarField> makeNearDistanceField();
     tmp<volScalarField> makeRDistanceField(const volVectorField &r);
     tmp<volScalarField> makeVolumeField();

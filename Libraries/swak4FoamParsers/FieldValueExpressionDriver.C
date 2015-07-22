@@ -35,7 +35,8 @@ Contributors/Copyright:
 
 #include <Random.H>
 #include <wallDist.H>
-#include "patchWave.H"
+#include "MeshDistFromPatch.H"
+#include "FaceCellWave.H"
 #include <nearWallDist.H>
 #include <dimensionedVector.H>
 #include "cellSet.H"
@@ -495,16 +496,134 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
                 << endl
                 << exit(FatalError);
     }
-    labelHashSet patchIDs;
-    patchIDs.insert(patchI);
 
-    patchWave wave(mesh(), patchIDs, false);
+    List<MeshDistFromPatch> cellValues(mesh().C().size());
+    List<MeshDistFromPatch> faceValues(mesh().nFaces());
+    labelList startFaces(mesh().boundaryMesh()[patchI].size());
+    for(label i=0;i<mesh().boundaryMesh()[patchI].size();i++) {
+        startFaces[i]=mesh().boundaryMesh()[patchI].start()+i;
+    }
+    List<MeshDistFromPatch> startValues(
+        mesh().boundaryMesh()[patchI].size(),
+        MeshDistFromPatch(0)
+    );
+
+    return makeDistanceToField(
+        startFaces,
+        startValues,
+        faceValues,
+        cellValues
+    );
+}
+
+tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToFacesField(
+    const surfaceScalarField &blocked
+) {
+    List<MeshDistFromPatch> cellValues(mesh().C().size());
+    List<MeshDistFromPatch> faceValues(mesh().nFaces());
+
+    labelHashSet facesBlocked;
+    const cellList &cells=mesh().cells();
+
+    forAll(blocked,faceI) {
+        if(toBool(blocked[faceI])) {
+            facesBlocked.insert(faceI);
+        }
+    }
+    forAll(blocked.boundaryField(),patchI) {
+        const fvsPatchField<scalar> &p=blocked.boundaryField()[patchI];
+        forAll(p,i) {
+            if(toBool(p[i])) {
+                facesBlocked.insert(i+p.patch().patch().start());
+            }
+        }
+    }
+    forAll(cells,cellI) {
+        bool allBlocked=true;
+        forAll(cells[cellI],i) {
+            if(!facesBlocked.found(cells[cellI][i])) {
+                allBlocked=false;
+                break;
+            }
+        }
+        if(allBlocked) {
+            cellValues[cellI]=MeshDistFromPatch(0);
+        }
+    }
+
+    labelList startFaces(facesBlocked.toc());
+    forAll(startFaces,i) {
+        faceValues[startFaces[i]]=MeshDistFromPatch(0);
+    }
+    List<MeshDistFromPatch> startValues(
+        startFaces.size(),
+        MeshDistFromPatch(0)
+    );
+
+    return makeDistanceToField(
+        startFaces,
+        startValues,
+        faceValues,
+        cellValues
+    );
+}
+
+tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToCellsField(
+    const volScalarField &blocked
+) {
+
+    List<MeshDistFromPatch> cellValues(mesh().C().size());
+    List<MeshDistFromPatch> faceValues(mesh().nFaces());
+
+    labelHashSet facesBlocked;
+    const cellList &cells=mesh().cells();
+
+    forAll(blocked,cellI) {
+        if(toBool(blocked[cellI])) {
+            cellValues[cellI]=MeshDistFromPatch(0);
+            const cell &c=cells[cellI];
+            forAll(c,i) {
+                facesBlocked.insert(c[i]);
+            }
+        }
+    }
+    labelList startFaces(facesBlocked.toc());
+    forAll(startFaces,i) {
+        faceValues[startFaces[i]]=MeshDistFromPatch(0);
+    }
+    List<MeshDistFromPatch> startValues(
+        startFaces.size(),
+        MeshDistFromPatch(0)
+    );
+
+    return makeDistanceToField(
+        startFaces,
+        startValues,
+        faceValues,
+        cellValues
+    );
+}
+
+tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToField(
+        labelList &startFaces,
+        List<MeshDistFromPatch> &startValues,
+        List<MeshDistFromPatch> &faceValues,
+        List<MeshDistFromPatch> &cellValues
+) {
+    FaceCellWave<MeshDistFromPatch> distToPatch(
+        mesh(),
+        startFaces,
+        startValues,
+        faceValues,
+        cellValues,
+        mesh().C().size()
+    );
 
     tmp<volScalarField> f(
         new volScalarField(
             IOobject
             (
-                "distToPatch_"+name,
+                "distToPatch",
                 time(),
                 mesh_,
                 IOobject::NO_READ,
@@ -516,14 +635,19 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToPatchField(
             "fixedValue"
         )
     );
-    f->internalField()=wave.distance();
+
+    forAll(cellValues,cellI) {
+        f->internalField()[cellI]=cellValues[cellI].dist();
+    }
     forAll(f->boundaryField(), patchI)
     {
         if (!isA<emptyFvPatchScalarField>(f->boundaryField()[patchI]))
         {
-            scalarField& waveFld = wave.patchDistance()[patchI];
+            for(label i=0;i<f->boundaryField()[patchI].size();i++) {
+                label faceI=mesh().boundaryMesh()[patchI].start()+i;
 
-            f->boundaryField()[patchI].transfer(waveFld);
+                f->boundaryField()[patchI][i]=faceValues[faceI].dist();
+            }
         }
     }
 

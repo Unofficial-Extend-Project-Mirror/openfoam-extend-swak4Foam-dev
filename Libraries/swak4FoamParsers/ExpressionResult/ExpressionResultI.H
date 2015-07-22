@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -206,6 +206,24 @@ namespace Foam {
     }
 
     template<class Type>
+    void ExpressionResult::calcIsSingleValueInternal()
+    {
+        const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
+
+        Type minVal;
+        Type maxVal;
+
+        minVal=gMin(vals);
+        maxVal=gMax(vals);
+
+        if(mag(minVal-maxVal)>SMALL) {
+            isSingleValue_=false;
+        } else {
+            isSingleValue_=true;
+        }
+    }
+
+    template<class Type>
     void ExpressionResult::setSingleValueInternal(Type val)
     {
         Pbug << "setSingleValueInternal(Type val)" << endl;
@@ -336,6 +354,7 @@ namespace Foam {
             }
         }
         result.setResult(avg,size);
+        //        result.setSingleValue(avg);
         return result;
     }
 

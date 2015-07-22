@@ -364,6 +364,8 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_volume
 %token TOKEN_dist
 %token TOKEN_distToPatch
+%token TOKEN_distToFaces
+%token TOKEN_distToCells
 %token TOKEN_nearDist
 %token TOKEN_rdist
 
@@ -2403,6 +2405,14 @@ exp:    TOKEN_NUM                                   {
             $$ = driver.makeDistanceToPatchField( *$3 ).ptr();
             delete $3;
           }
+        | TOKEN_distToCells '(' lexp ')'                        {
+            $$ = driver.makeDistanceToCellsField( *$3 ).ptr();
+            delete $3;
+          }
+        | TOKEN_distToFaces '(' flexp ')'                        {
+            $$ = driver.makeDistanceToFacesField( *$3 ).ptr();
+            delete $3;
+          }
         | TOKEN_nearDist '(' ')'                    {
             $$ = driver.makeNearDistanceField().ptr();
           }
@@ -2526,10 +2536,14 @@ evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch
 ;
 
 lexp: TOKEN_TRUE                        {
-            $$ = driver.makeConstantField<Foam::volScalarField>(1).ptr();
+            $$ = driver.makeConstantField<Foam::volScalarField>(
+                driver.TRUE_Value
+            ).ptr();
           }
     | TOKEN_FALSE                       {
-            $$ = driver.makeConstantField<Foam::volScalarField>(0).ptr();
+            $$ = driver.makeConstantField<Foam::volScalarField>(
+                driver.FALSE_Value
+            ).ptr();
           }
     | TOKEN_set '(' TOKEN_SETID ')'    {
         $$ = driver.makeCellSetField(*$3).ptr();
@@ -2624,10 +2638,14 @@ evaluateLogicalFunction: TOKEN_FUNCTION_LID '(' eatCharactersSwitch
 
 
 flexp: TOKEN_surf '(' TOKEN_TRUE ')'   {
-            $$ = driver.makeConstantField<Foam::surfaceScalarField>(1).ptr();
+            $$ = driver.makeConstantField<Foam::surfaceScalarField>(
+                driver.TRUE_Value
+            ).ptr();
           }
     | TOKEN_surf '(' TOKEN_FALSE ')'   {
-            $$ = driver.makeConstantField<Foam::surfaceScalarField>(0).ptr();
+            $$ = driver.makeConstantField<Foam::surfaceScalarField>(
+                driver.FALSE_Value
+            ).ptr();
           }
     | TOKEN_fset '(' TOKEN_FSETID ')'    {
         $$ = driver.makeFaceSetField(*$3).ptr();
@@ -5737,10 +5755,14 @@ evaluatePointSphericalTensorFunction: TOKEN_FUNCTION_PHID '(' eatCharactersSwitc
 ;
 
 plexp: TOKEN_point '(' TOKEN_TRUE ')'   {
-            $$ = driver.makePointConstantField<Foam::pointScalarField>(1).ptr();
+            $$ = driver.makePointConstantField<Foam::pointScalarField>(
+                driver.TRUE_Value
+            ).ptr();
           }
     | TOKEN_point '(' TOKEN_FALSE ')'   {
-            $$ = driver.makePointConstantField<Foam::pointScalarField>(0).ptr();
+            $$ = driver.makePointConstantField<Foam::pointScalarField>(
+                driver.FALSE_Value
+            ).ptr();
           }
     | TOKEN_pset '(' TOKEN_PSETID ')'    {
         $$ = driver.makePointSetField(*$3).ptr();

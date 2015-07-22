@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -42,6 +42,10 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 namespace Foam {
+
+#ifdef FOAM_HAS_FVOPTIONS
+    namespace fv {
+#endif
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -109,7 +113,7 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 
     if(
         !this->driver().
-        FieldValueExpressionDriver::resultIsTyp<volScalarField>()
+        FieldValueExpressionDriver::template resultIsTyp<volScalarField>()
     ) {
         FatalErrorIn("SwakImplicitSource<"+word(pTraits<T>::typeName)+">::addSup()")
             << "Result of " << this->expressions_[fieldI] << " is not a "
@@ -120,7 +124,7 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
 
     volScalarField result(
         this->driver().
-        FieldValueExpressionDriver::getResult<volScalarField>()
+        FieldValueExpressionDriver::template getResult<volScalarField>()
     );
     result.dimensions().reset(this->dimensions_[fieldI]);
     volScalarField usedResult(result*0);
@@ -135,6 +139,33 @@ void SwakImplicitSource<T>::addSup(fvMatrix<T>& eqn, const label fieldI)
         eqn+=fvm::Sp(usedResult,eqn.psi());
     }
 }
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+template<class T>
+void SwakImplicitSource<T>::addSup(
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+
+template<class T>
+void SwakImplicitSource<T>::addSup(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<T>& eqn,
+    const label fieldI
+)
+{
+    this->addSup(eqn,fieldI);
+}
+#endif
+
+#ifdef FOAM_HAS_FVOPTIONS
+    }
+#endif
 
 } // end namespace
 

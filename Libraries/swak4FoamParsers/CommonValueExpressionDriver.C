@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2012 Bruno Santos <wyldckat@gmail.com>
     2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
@@ -44,6 +44,8 @@ Contributors/Copyright:
 #include "Random.H"
 
 #include "entryToExpression.H"
+
+#include "dlLibraryTable.H"
 
 namespace Foam {
 
@@ -155,11 +157,17 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     scanner_(NULL),
     prevIterIsOldTime_(dict.lookupOrDefault("prevIterIsOldTime",false))
 {
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+#endif
 
     if(debug) {
         Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
+
+    readPluginLibraries(dict);
 
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
@@ -192,6 +200,23 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     readTables(dict);
 }
 
+void CommonValueExpressionDriver::readPluginLibraries(const dictionary &dict)
+{
+    if(dict.found("functionPlugins")) {
+        wordList pluginNames(dict["functionPlugins"]);
+
+        forAll(pluginNames,i) {
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+            dlLibraryTable::open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#else
+            dlLibraryTable table;
+            libraries_.open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#endif
+        }
+    }
+}
+
 CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool cacheReadFields,
     bool searchInMemory,
@@ -219,7 +244,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+#endif
+
+    readPluginLibraries(dict);
 
     if(dict.found("globalScopes")) {
         setGlobalScopes(wordList(dict.lookup("globalScopes")));
@@ -1339,6 +1370,7 @@ void CommonValueExpressionDriver::evaluateVariable(
     }
 
     parse(expr);
+    result_.calcIsSingleValue();
 
     if(debug) {
         Pout << "Evaluating: " << expr << " -> " << name << endl;
@@ -1438,6 +1470,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     otherDriver->parse(expr);
 
     autoPtr<ExpressionResult> otherResult(this->getRemoteResult(otherDriver()));
+    otherResult->calcIsSingleValue();
 
     if(debug) {
         Pout << "Remote result: "

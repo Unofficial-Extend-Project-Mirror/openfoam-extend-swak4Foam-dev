@@ -1,8 +1,26 @@
+swak4foam-%(ofpkg)s (0.3.2-3~ppa1~%(distro)s1) %(distro)s; urgency=low
+
+  * Debian Packages of the real 0.3.2 release
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Son, 31 May 2015 20:53:00 +0200
+
+swak4foam-%(ofpkg)s (0.3.2-2~ppa1~%(distro)s1) %(distro)s; urgency=low
+
+  * First Debian package for "official" OpenFOAM 2.4.0
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Sat, 23 May 2015 12:23:00 +0200
+
+swak4foam-%(ofpkg)s (0.3.2-1~ppa1~%(distro)s1) %(distro)s; urgency=low
+
+  * Testing packaging for the forthcoming release
+
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Wed, 06 Apr 2015 21:31:29 +0200
+
 swak4foam-%(ofpkg)s (0.3.0-1~ppa1~%(distro)s1) %(distro)s; urgency=low
 
   * Packaging for next release
 
- -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  We, 15 Jan 2014 13:25:29 +0200
+ -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Wed, 15 Jan 2014 13:25:29 +0200
 
 swak4foam-%(ofpkg)s (0.2.4-2~ppa1~precise1) precise; urgency=low
 
@@ -72,7 +90,7 @@ swak4foam-%(ofpkg)s (0.1-5) lucid; urgency=low
 
 swak4foam-%(ofpkg)s (0.1-4) unstable; urgency=low
 
-  * New releases 
+  * New releases
 
  -- Bernhard F.W. Gschaider <bgschaid@ice-sf.at>  Tue, 12 Apr 2011 12:58:29 +0200
 

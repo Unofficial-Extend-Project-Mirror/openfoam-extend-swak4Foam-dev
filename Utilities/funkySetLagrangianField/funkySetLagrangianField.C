@@ -53,6 +53,8 @@ Contributors/Copyright:
 
 #include "loadFieldFunction.H"
 
+#include "dlLibraryTable.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
 
@@ -271,6 +273,8 @@ int main(int argc, char *argv[])
 
 #   include "addRegionOption.H"
 
+#   include "addLoadFunctionPlugins.H"
+
     argList::validOptions.insert("field","field to overwrite");
     argList::validOptions.insert("cloud","name of the cloud to work on");
     argList::validOptions.insert("expression","expression to write");
@@ -302,11 +306,11 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+#   include "loadFunctionPlugins.H"
+
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();
     }
-
-    dlLibraryTable table;
 
     bool debugParser=args.options().found("debugParser");
 
@@ -447,7 +451,11 @@ int main(int argc, char *argv[])
                                 << endl
                                 << exit(FatalError);
                     }
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+                    dlLibraryTable::open(spec,"libs");
+#else
                     table.open(spec,"libs");
+#endif
 
                     wordList preloadFieldNames(spec.lookup("preloadFields"));
 

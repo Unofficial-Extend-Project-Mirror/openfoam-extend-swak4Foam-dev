@@ -28,13 +28,14 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "TimeCloneList.H"
 #include "DebugOStream.H"
+#include "PstreamReduceOps.H"
 
 namespace Foam {
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -113,7 +114,10 @@ void TimeCloneList::clear()
 
 void TimeCloneList::copy(const Time &t)
 {
-    Dbug << "copy: t=" << t.timeName() << endl;
+    Pbug << "Waiting for other processors" << endl;
+    bool dummy=true;
+    reduce(dummy,andOp<bool>());
+    Pbug << "copy: t=" << t.timeName() << endl;
     const label last=storedTimes_.size()-1;
     if(storedTimes_[last]!=0) {
         Dbug << "Removing last entry" << endl;
@@ -133,6 +137,7 @@ void TimeCloneList::copy(const Time &t)
 
 bool TimeCloneList::write(const bool force)
 {
+    Pout << storedTimes_.size() << " times to write" << endl;
     Dbug << "write. Force: " << force << endl;
 
     forAll(storedTimes_,i) {
@@ -148,6 +153,22 @@ bool TimeCloneList::write(const bool force)
     return true;
 }
 
+bool TimeCloneList::has(const Time& other)
+{
+    forAll(storedTimes_,i) {
+        const TimeClone *clone=storedTimes_[i];
+        if(
+            clone!=NULL
+            &&
+            clone->ok()
+        ) {
+            if((*clone)().value()==other.value()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 // * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * * //
