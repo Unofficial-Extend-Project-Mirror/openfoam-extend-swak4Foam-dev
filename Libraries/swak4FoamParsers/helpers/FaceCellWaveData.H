@@ -48,6 +48,8 @@ Contributors/Copyright:
 
 #include "Ostream.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -61,33 +63,57 @@ class FaceCellWaveData {
 
 public:
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline void leaveDomain
     (
         const polyMesh&,
         const polyPatch& patch,
         const label patchFaceI,
         const point& faceCentre
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline void transform
     (
         const polyMesh&,
         const tensor& rotTensor
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline void enterDomain
     (
         const polyMesh&,
         const polyPatch& patch,
         const label patchFaceI,
         const point& faceCentre
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool sameGeometry
     (
         const polyMesh&,
         const FaceCellWaveData&,
         const scalar
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     ) const;
 
 };

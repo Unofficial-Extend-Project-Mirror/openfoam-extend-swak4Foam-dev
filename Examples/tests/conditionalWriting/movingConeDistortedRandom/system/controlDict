@@ -74,6 +74,8 @@ functions
         accumulations (
             average
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     flowThrough
     {
@@ -85,6 +87,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     flowThroughAlternate
     {
@@ -96,6 +100,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yExtreme
     {
@@ -114,6 +120,8 @@ functions
             min
             max
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yFlow1
     {
@@ -125,6 +133,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yFlow2
     {
@@ -142,6 +152,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yFlow3
     {
@@ -159,6 +171,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     cutTotal
     {
@@ -183,6 +197,7 @@ functions
                 interpolate false;
             }
         );
+        interpolationScheme nix;
     }
     meshMovement
     {
@@ -195,9 +210,13 @@ functions
             max
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     periodicWrite {
         type writeIfPython;
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
 
         outputControlMode timeStep;
         outputInterval 1;

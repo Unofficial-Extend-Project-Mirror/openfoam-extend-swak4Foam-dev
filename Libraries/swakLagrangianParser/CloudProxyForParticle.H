@@ -46,6 +46,8 @@ Contributors/Copyright:
 
 #include "CloudProxy.H"
 
+#include "HashPtrTable.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -87,6 +89,7 @@ protected:
             {}
 
         virtual RType operator()(const particleType &) const = 0;
+
         RType operator()(const particleType *p) const
             { return operator()(*p); }
     };

@@ -33,14 +33,16 @@ boundaryField
 
     inner
     {
-        //        type            fixedValue;
+        //         type            fixedValue;
         type groovyPartialSlip;
+        //         type partialSlip;
         value           uniform (0 0 0);
         // switch from slip to fixedValue
         variables (
             "minX=min(pts().x);"
             "maxX=max(pts().x);"
         );
+        valueFraction uniform 0.5;
         fractionExpression "(pos().x-minX)/(maxX-minX)";
     }
     outer

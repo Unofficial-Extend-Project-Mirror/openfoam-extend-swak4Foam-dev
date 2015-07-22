@@ -8,16 +8,10 @@
 
 FoamFile
 {
-    version         2.0;
-    format          ascii;
-
-    root            "/home/penfold/mattijs/foam/mattijs2.1/run/icoFoam";
-    case            "cavity";
-    instance        "system";
-    local           "";
-
-    class           dictionary;
-    object          autoHexMeshDict;
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -36,47 +30,7 @@ addLayers       false;
 // - to 'snap' the mesh boundary to the surface
 geometry
 {
-    fridgeA
-    {
-        type translate;	
-        translation (0 0 1);
-        surface {
-            type searchableBox;
-            min (2 2 0);
-            max (3 3 2);
-        }
-    }
-
-    fridgeB
-    {
-        type translate;
-        translation (3.9 3.4 0);
-        surface {
-            type rotate;
-            rotateFrom (0 0 1);
-            rotateTo   (0.3 0.3 1);
-            surface {
-                type searchableBox;
-                min (-0.4 -0.4 0);
-                max ( 0.4  0.4 1.8);
-            }
-        }
-    }
-
-    igloo
-    {
-        type translate;
-        translation (3 3 0);
-        surface {
-            type scale;
-            scale (-1 1.1 0.75);
-            surface {
-                type searchableSphere;
-                centre (0 0 0);
-                radius 4;
-            }
-        }
-    }
+    #include "geometryDict"
 };
 
 
@@ -195,6 +149,8 @@ castellatedMeshControls
     // NOTE: This point should never be on a face, always inside a cell, even
     // after refinement.
     locationInMesh (3 0.28 0.43);
+
+    allowFreeStandingZoneFaces true;
 }
 
 
@@ -217,6 +173,19 @@ snapControls
     //- Maximum number of snapping relaxation iterations. Should stop
     //  before upon reaching a correct mesh.
     nRelaxIter 5;
+
+
+    // Feature snapping
+
+        //- Number of feature edge snapping iterations.
+        //  Leave out altogether to disable.
+        nFeatureSnapIter 10;
+
+        //- Detect (geometric) features by sampling the surface (default=false)
+        implicitFeatureSnap true;
+
+        //- Use castellatedMeshControls::features (default = true)
+        explicitFeatureSnap false;
 }
 
 
@@ -224,6 +193,10 @@ snapControls
 // Settings for the layer addition.
 addLayersControls
 {
+    // Are the thickness parameters below relative to the undistorted
+    // size of the refined cell outside layer (true) or absolute sizes (false).
+    relativeSizes true;
+
     // Per final patch (so not geometry!) the layer information
     layers
     {
@@ -244,11 +217,13 @@ addLayersControls
     // Expansion factor for layer mesh
     expansionRatio 1.0;
 
+    firstLayerThickness 0.001;
+
     //- Wanted thickness of final added cell layer. If multiple layers
     //  is the
     //  thickness of the layer furthest away from the wall.
     //  Relative to undistorted size of cell outside layer.
-    finalLayerRatio 0.5; 
+    finalLayerRatio 0.5;
 
     //- Minimum thickness of cell layer. If for any reason layer
     //  cannot be above minThickness do not add layer.
@@ -271,27 +246,34 @@ addLayersControls
     //  before upon reaching a correct mesh.
     nRelaxIter 5;
 
-    // Number of smoothing iterations of surface normals 
+    // Number of smoothing iterations of surface normals
     nSmoothSurfaceNormals 1;
 
-    // Number of smoothing iterations of interior mesh movement direction  
+    // Number of smoothing iterations of interior mesh movement direction
     nSmoothNormals 3;
 
     // Smooth layer thickness over surface patches
     nSmoothThickness 10;
 
-    // Stop layer growth on highly warped cells 
+    // Stop layer growth on highly warped cells
     maxFaceThicknessRatio 0.5;
 
-    // Reduce layer growth where ratio thickness to medial 
-    // distance is large 
+    // Reduce layer growth where ratio thickness to medial
+    // distance is large
     maxThicknessToMedialRatio 0.3;
 
     // Angle used to pick up medial axis points
-    minMedianAxisAngle 130;
+    // Note: changed(corrected) w.r.t 16x! 90 degrees corresponds to 130 in 16x.
+    minMedianAxisAngle 90;
 
     // Create buffer region for new layer terminations
     nBufferCellsNoExtrude 0;
+
+
+    // Overall max number of layer addition iterations. The mesher will exit
+    // if it reaches this number of iterations; possibly with an illegal
+    // mesh.
+    nLayerIter 50;
 }
 
 
@@ -300,52 +282,7 @@ addLayersControls
 // where to undo.
 meshQualityControls
 {
-    //- Maximum non-orthogonality allowed. Set to 180 to disable.
-    maxNonOrtho 65;
-
-    //- Max skewness allowed. Set to <0 to disable.
-    maxBoundarySkewness 20;
-    maxInternalSkewness 4;
-
-    //- Max concaveness allowed. Is angle (in degrees) below which concavity
-    //  is allowed. 0 is straight face, <0 would be convex face.
-    //  Set to 180 to disable.
-    maxConcave 80;
-
-    //- Minimum projected area v.s. actual area. Set to -1 to disable.
-    minFlatness 0.5;
-
-    //- Minimum pyramid volume. Is absolute volume of cell pyramid.
-    //  Set to very negative number (e.g. -1E30) to disable.
-    minVol 1e-13;
-
-    //- Minimum face area. Set to <0 to disable.
-    minArea -1;
-
-    //- Minimum face twist. Set to <-1 to disable. dot product of face normal
-    //- and face centre triangles normal
-    minTwist 0.05;
-
-    //- minimum normalised cell determinant
-    //- 1 = hex, <= 0 = folded or flattened illegal cell
-    minDeterminant 0.001;
-
-    //- minFaceWeight (0 -> 0.5) 
-    minFaceWeight 0.05;
-
-    //- minVolRatio (0 -> 1)
-    minVolRatio 0.01;
-
-    //must be >0 for Fluent compatibility
-    minTriangleTwist -1;
-
-
-    // Advanced
-
-    //- Number of error distribution iterations
-    nSmoothScale 4;
-    //- amount to scale back displacement at error points
-    errorReduction 0.75;
+    #include "meshQualityDict"
 }
 
 

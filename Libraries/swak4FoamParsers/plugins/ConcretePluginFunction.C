@@ -70,11 +70,13 @@ autoPtr<ConcretePluginFunction<DriverType> > ConcretePluginFunction<DriverType>:
 {
     if(debug) {
         Info << "ConcretePluginFunction::New looking for "
+            << name << " in "
 #ifdef FOAM_HAS_SORTED_TOC
-            << name << " in " << nameConstructorTablePtr_->sortedToc() << endl;
+            << nameConstructorTablePtr_->sortedToc()
 #else
-            << name << " in " << nameConstructorTablePtr_->toc() << endl;
+            << nameConstructorTablePtr_->toc()
 #endif
+            << endl;
     }
     if(nameConstructorTablePtr_==NULL) {
         FatalErrorIn("ConcretePluginFunction<DriverType>::New")
@@ -125,11 +127,13 @@ bool ConcretePluginFunction<DriverType>::exists (
         if(nameConstructorTablePtr_->size()>0) {
             Info<< endl << "Loaded plugin functions for '"+
                 DriverType::typeName+"':" << endl;
+            wordList names(
 #ifdef FOAM_HAS_SORTED_TOC
-            wordList names(nameConstructorTablePtr_->sortedToc());
+                nameConstructorTablePtr_->sortedToc()
 #else
-            wordList names(nameConstructorTablePtr_->toc());
+                nameConstructorTablePtr_->toc()
 #endif
+            );
             forAll(names,nameI)
             {
                 const word &theName=names[nameI];

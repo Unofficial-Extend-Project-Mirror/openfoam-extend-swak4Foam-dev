@@ -29,4 +29,8 @@ diffusivity  uniform;
 // diffusivity  quadratic inverseDistance 1(movingWall);
 // diffusivity  exponential 2000 inverseDistance 1(movingWall);
 
+velocityLaplacianCoeffs {
+    diffusivity  uniform;
+}
+
 // ************************************************************************* //

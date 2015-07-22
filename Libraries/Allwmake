@@ -71,14 +71,16 @@ fi
 
 of_version_major=`echo $WM_PROJECT_VERSION | sed -e 's=\([0-9]*\).*=\1='`
 of_version_minor=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.\([0-9]*\).*=\1='`
-of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1='`
-if [[ $of_version_patch == "x"  ]]; then
-    of_version_patch_num=99
+of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1=' -e 's=[0-9]*\.[0-9]*=x=' -e 's=x=-1='`
+
+if [[ $of_version_patch == -1  ]]; then
+    # Needs to be 98 so that it is smaller than version macro with 99
+    of_version_patch_num=98
 else
     of_version_patch_num=$of_version_patch
 fi
 
-echo "OpenFOAM-version: Major $of_version_major Minor $of_version_minor Patch $of_version_patch ($of_version_patch_num)"
+echo "OpenFOAM-version: Major $of_version_major Minor $of_version_minor Patch $of_version_patch (-1 == x / $of_version_patch_num)"
 
 versionFile=swak4FoamParsers/foamVersion4swak.H
 
@@ -137,7 +139,17 @@ wmake libso simpleSwakFunctionObjects
 
 wmake libso swakTopoSources
 
-wmake libso swakSourceFields
+if [ $of_version_major -ge 2 -a $of_version_minor -eq 0 ]; then
+  wmake libso swakSourceFields Make.20
+else
+  wmake libso swakSourceFields
+fi
+
+if [[ $WM_PROJECT_VERSION > 2.2 && "$FOAM_DEV" == "" ]]
+then
+    echo "Compiling swakFvOptions"
+    wmake libso swakFvOptions
+fi
 
 if [ "$FOAM_DEV" != "" ]
 then

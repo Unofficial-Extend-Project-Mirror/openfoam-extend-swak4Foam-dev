@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,166 +15,186 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-active          true;
-
-// InjectionModel  ManualInjection;
-InjectionModel  none;
-
-DragModel       SphereDrag;
-
-DispersionModel StochasticDispersionRAS;
-
-PatchInteractionModel StandardWallInteraction;
-
-HeatTransferModel RanzMarshall;
-
-CompositionModel SingleMixtureFraction;
-
-PhaseChangeModel LiquidEvaporation;
-
-DevolatilisationModel ConstantRateDevolatilisation;
-
-SurfaceReactionModel COxidationKineticDiffusionLimitedRate; // COxidationDiffusionLimitedRate;
-
-PostProcessingModel none;
-
-radiation       on;
-
-coupled         true;
-
-cellValueSourceCorrection on;
-
-parcelTypeId    1;
-
-constantProperties
+solution
 {
-    rhoMin          rhoMin [ 1 -3 0 0 0 ] 1e-15;
-    TMin            TMin [ 0 0 0 1 0 ] 200;
-    pMin            pMin [ 1 -1 2 0 0 ] 1000;
-    minParticleMass minParticleMass [ 1 0 0 0 0 ] 1e-15;
-    rho0            rho0 [ 1 -3 0 0 0 ] 1000;
-    T0              T0 [ 0 0 0 1 0 ] 300;
-    cp0             cp0 [ 0 2 -2 -1 0 ] 4187;
-    epsilon0        epsilon0 [ 0 0 0 0 0 ] 1;
-    f0              f0 [ 0 0 0 0 0 ] 0.5;
-    Pr              Pr [ 0 0 0 0 0 ] 0.7;
-    Tvap            Tvap [ 0 0 0 1 0 ] 400;
-    Tbp             Tvap [ 0 0 0 1 0 ] 400;
-    LDevol          LDevol [ 0 0 0 0 0 ] 0;
-    hRetentionCoeff hRetentionCoeff [ 0 0 0 0 0 ] 1;
-    constantVolume  true;
-}
+    active          true;
+    transient       yes;
+    coupled         true;
+    cellValueSourceCorrection on;
 
-interpolationSchemes
-{
-    rho             cell;
-    U               cellPointFace;
-    mu              cell;
-    T               cell;
-    Cp              cell;
-    p               cell;
-}
-
-integrationSchemes
-{
-    U               Euler;
-    T               Analytical;
-}
-
-particleForces
-{
-    gravity         on;
-    virtualMass     off;
-    pressureGradient off;
-}
-
-ManualInjectionCoeffs
-{
-    massTotal       massTotal [ 1 0 0 0 0 ] 0.0001;
-    parcelBasisType mass;
-    SOI             0;
-    positionsFile   "coalCloud1Positions";
-    U0              ( 0 -10 0 );
-    parcelPDF
+    sourceTerms
     {
-        pdfType         RosinRammler;
-        RosinRammlerPDF
+        schemes
         {
-            minValue        5e-06;
-            maxValue        0.0005;
-            d               5e-05;
-            n               0.5;
+            rho             semiImplicit 1;
+            U               semiImplicit 1;
+            Yi              semiImplicit 1;
+            h               semiImplicit 1;
+            radiation       semiImplicit 1;
         }
+    }
+
+    interpolationSchemes
+    {
+        rho             cell;
+        U               cellPoint;
+        thermo:mu       cell;
+        T               cell;
+        Cp              cell;
+        kappa           cell;
+        p               cell;
+        G               cell;
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+        T               analytical;
     }
 }
 
-StandardWallInteractionCoeffs
+constantProperties
 {
-    type            rebound;
-    e               1; // optional
-    mu              0; // optional
+    rho0            1000;
+    T0              300;
+    Cp0             4187;
+
+    youngsModulus   2e9;
+    poissonsRatio   0.35;
+
+    epsilon0        1;
+    f0              0.5;
+
+    Pr              0.7;
+    Tvap            400;
+    Tbp             400;
+    LDevol          0;
+    hRetentionCoeff 1;
+
+    constantVolume  true;
 }
 
-RanzMarshallCoeffs
+subModels
 {
-    // thermal shielding
-    BirdCorrection  true;
-}
+    particleForces
+    {
+        sphereDrag;
+        gravity;
+    }
 
-SingleMixtureFractionCoeffs
-{
-    phases
-    (
-        gas
+    injectionModels
+    {
+        model1
         {
-            CH4 0.604;
-            H2 0.099;
-            CO2 0.297;
+            //            type            manualInjection;
+            type            none;
+            massTotal       0.0001;
+            parcelBasisType mass;
+            SOI             0;
+            positionsFile   "coalCloud1Positions";
+            U0              ( 0 -10 0 );
+            sizeDistribution
+            {
+                type        RosinRammler;
+                RosinRammlerDistribution
+                {
+                    minValue        5e-06;
+                    maxValue        0.0005;
+                    d               5e-05;
+                    n               0.5;
+                }
+            }
         }
-        liquid
-        {
-            H2O 1;
-        }
-        solid
-        {
-            ash 0.136304;
-            C 0.863696;
-        }
-    );
-    YGasTot0        0.211;
-    YLiquidTot0     0.026;
-    YSolidTot0      0.763;
+    }
+
+    dispersionModel stochasticDispersionRAS;
+
+    patchInteractionModel standardWallInteraction;
+
+    heatTransferModel RanzMarshall;
+
+    compositionModel singleMixtureFraction;
+
+    phaseChangeModel liquidEvaporation;
+
+    devolatilisationModel constantRateDevolatilisation;
+
+    surfaceReactionModel COxidationKineticDiffusionLimitedRate;
+
+    surfaceFilmModel none;
+
+    radiation       on;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+        e               1;
+        mu              0;
+    }
+
+    RanzMarshallCoeffs
+    {
+        BirdCorrection  true;
+    }
+
+    singleMixtureFractionCoeffs
+    {
+        phases
+        (
+            gas
+            {
+                CH4             0.604;
+                H2              0.099;
+                CO2             0.297;
+            }
+            liquid
+            {
+                H2O             1;
+            }
+            solid
+            {
+                ash             0.136304;
+                C               0.863696;
+            }
+        );
+        YGasTot0        0.211;
+        YLiquidTot0     0.026;
+        YSolidTot0      0.763;
+    }
+
+    liquidEvaporationCoeffs
+    {
+        enthalpyTransfer enthalpyDifference;
+
+        activeLiquids
+        (
+            H2O
+        );
+    }
+
+    constantRateDevolatilisationCoeffs
+    {
+        volatileData
+        (
+            (CH4            12)
+            (H2             12)
+            (CO2            12)
+        );
+        residualCoeff   0.001;
+    }
+
+    COxidationKineticDiffusionLimitedRateCoeffs
+    {
+        Sb              1;
+        C1              5.0E-12;
+        C2              0.002;
+        E               7.9E+07;
+    }
 }
 
-LiquidEvaporationCoeffs
-{
-    enthalpyTransfer enthalpyDifference;
 
-    activeLiquids
-    (
-        H2O
-    );
-}
-
-ConstantRateDevolatilisationCoeffs
-{
-    A0              A0 [ 0 0 -1 0 0 ] 12;
-    volatileResidualCoeff 0.001;
-}
-
-COxidationDiffusionLimitedRateCoeffs
-{
-    Sb              Sb [ 0 0 0 0 0 ] 2.667;
-    D               D [ 0 2 -1 0 0 ] 1.5e-05;
-}
-
-COxidationKineticDiffusionLimitedRateCoeffs
-{
-    Sb              Sb [ 0 0 0 0 0 ] 2.667;
-    C1              C1 [ 0 0 0 0 0] 5.0E-12;
-    C2              C2 [ 0 0 0 0 0] 0.002;
-    E               E  [ 0 0 0 0 0] 7.9E+07;
-}
+cloudFunctions
+{}
 
 
 // ************************************************************************* //

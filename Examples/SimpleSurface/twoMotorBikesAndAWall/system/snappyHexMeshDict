@@ -24,7 +24,8 @@ bike1Move (0 -2 0);
 bike2Move (5 2 2.5);
 
 bikeStl {
-    rename motorBike.stl;
+    //    rename motorBike.stl;
+    rename motorBike.obj;
     type triSurfaceMesh;
     name motorBike;
 }
@@ -74,18 +75,24 @@ geometry
     }
 
     bike2 {
-        type translate;
-        translation $bike2Move;
+        // oneRegion seems to be necessary because triSurface seems to be a bit weird about coordinates()
+        type oneRegion;
+        regionName bikeAndRider;
 
-        surface
-        {
-            type rotate;
+        surface {
+            type translate;
+            translation $bike2Move;
 
-            rotateFrom (0 0 1);
-            rotateTo   (0.35 0 0.7);
-            surface {
-                $bikeStl;
-                name motorBikeJump;
+            surface
+            {
+                type rotate;
+
+                rotateFrom (0 0 1);
+                rotateTo   (0.35 0 0.7);
+                surface {
+                    $bikeStl;
+                    name motorBikeJump;
+                }
             }
         }
     }
@@ -210,11 +217,23 @@ castellatedMeshControls
         {
             // Surface-wise min and max refinement level
             level (5 6);
+
+            patchInfo
+            {
+                type wall;
+                inGroups (motorBike1);
+            }
         }
         bike2
         {
             // Surface-wise min and max refinement level
             level (5 6);
+
+            patchInfo
+            {
+                type wall;
+                inGroups (motorBike2);
+            }
         }
         enterWall
         {
@@ -271,6 +290,12 @@ castellatedMeshControls
     // NOTE: This point should never be on a face, always inside a cell, even
     // after refinement.
     locationInMesh (3 3 0.43);
+
+
+    // Whether any faceZones (as specified in the refinementSurfaces)
+    // are only on the boundary of corresponding cellZones or also allow
+    // free-standing zone faces. Not used if there are no faceZones.
+    allowFreeStandingZoneFaces true;
 }
 
 
@@ -293,6 +318,22 @@ snapControls
     //- Maximum number of snapping relaxation iterations. Should stop
     //  before upon reaching a correct mesh.
     nRelaxIter 5;
+
+    // Feature snapping
+
+        //- Number of feature edge snapping iterations.
+        //  Leave out altogether to disable.
+        nFeatureSnapIter 10;
+
+        //- Detect (geometric only) features by sampling the surface
+        //  (default=false).
+        implicitFeatureSnap true;
+
+        //- Use castellatedMeshControls::features (default = true)
+        explicitFeatureSnap false;
+
+        //- Detect points on multiple surfaces (only for explicitFeatureSnap)
+        multiRegionFeatureSnap false;
 }
 
 
@@ -608,7 +649,11 @@ addLayersControls
 
     //- When not to extrude surface. 0 is flat surface, 90 is when two faces
     //  make straight angle.
-    featureAngle 30;
+    featureAngle 60;
+
+    // At non-patched sides allow mesh to slip if extrusion direction makes
+    // angle larger than slipFeatureAngle.
+    slipFeatureAngle 30;
 
     //- Maximum number of snapping relaxation iterations. Should stop
     //  before upon reaching a correct mesh.
@@ -631,7 +676,7 @@ addLayersControls
     maxThicknessToMedialRatio 0.3;
 
     // Angle used to pick up medial axis points
-    minMedianAxisAngle 130;
+    minMedianAxisAngle 90;
 
     // Create buffer region for new layer terminations
     nBufferCellsNoExtrude 0;
@@ -665,6 +710,16 @@ meshQualityControls
     //  Set to a sensible fraction of the smallest cell volume expected.
     //  Set to very negative number (e.g. -1E30) to disable.
     minVol 1e-13;
+
+    //- Minimum quality of the tet formed by the face-centre
+    //  and variable base point minimum decomposition triangles and
+    //  the cell centre. This has to be a positive number for tracking
+    //  to work. Set to very negative number (e.g. -1E30) to
+    //  disable.
+    //     <0 = inside out tet,
+    //      0 = flat tet
+    //      1 = regular tet
+    minTetQuality 1e-30;
 
     //- Minimum face area. Set to <0 to disable.
     minArea -1;
@@ -708,7 +763,7 @@ debug 0;
 
 // Merge tolerance. Is fraction of overall bounding box of initial mesh.
 // Note: the write tolerance needs to be higher than this.
-mergeTolerance 1E-6;
+mergeTolerance 1e-6;
 
 
 // ************************************************************************* //

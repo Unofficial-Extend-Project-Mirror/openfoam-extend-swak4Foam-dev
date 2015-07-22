@@ -72,7 +72,7 @@ class MeshesRepository
 
     HashPtrTable<meshToMesh,word> meshInterpolations_;
 
-    HashTable<meshToMesh::order,word> interpolationOrder_;
+    HashTable<meshToMeshOrder,word> interpolationOrder_;
 
     // Constructors
 
@@ -140,11 +140,11 @@ public:
     //- set interpolation order for a mesh
     void setInterpolationOrder(
         const word &name,
-        meshToMesh::order val
+        meshToMeshOrder val
     );
 
     //- get interpolation order
-    meshToMesh::order getInterpolationOrder(
+    meshToMeshOrder getInterpolationOrder(
         const word &name
     );
 };

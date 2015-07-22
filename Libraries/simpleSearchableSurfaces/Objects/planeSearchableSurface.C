@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "planeSearchableSurface.H"
@@ -236,9 +236,48 @@ void Foam::planeSearchableSurface::getVolumeType
     }
 }
 
-Foam::pointField Foam::planeSearchableSurface::coordinates() const
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::planeSearchableSurface::coordinates() const
 {
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(1,plane_.refPoint()));
+#else
     return pointField(1,plane_.refPoint());
+#endif
 }
+
+Foam::tmp<Foam::pointField> Foam::planeSearchableSurface::points() const
+{
+    return coordinates();
+}
+
+bool Foam::planeSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::planeSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
+}
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::planeSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    centres.setSize(1);
+    centres[0] = plane_.refPoint();
+
+    radiusSqr.setSize(1);
+    radiusSqr[0] = Foam::sqr(GREAT);
+}
+#endif
 
 // ************************************************************************* //

@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchExpressionFunctionObject.H"
@@ -53,7 +53,7 @@ namespace Foam
 template <class T>
 void patchExpressionFunctionObject::writeTheData(const word &pName,PatchValueExpressionDriver &driver)
 {
-    Field<T> result=driver.getResult<T>();
+    Field<T> result(driver.getResult<T>());
 
     AccumulationCalculation<T> calculator(
         result,

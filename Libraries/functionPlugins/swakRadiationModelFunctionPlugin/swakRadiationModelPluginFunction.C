@@ -38,8 +38,8 @@ Contributors/Copyright:
 #include "FieldValueExpressionDriver.H"
 
 #include "HashPtrTable.H"
-#include "basicPsiThermo.H"
-#include "basicRhoThermo.H"
+
+#include "swakThermoTypes.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -156,8 +156,7 @@ public:
     ) {}
 
     void doEvaluation() {
-        // to change in 2.x
-        const scalarField &ruRad=radiation().Ru();
+        const DimensionedField<scalar,volMesh> &ruRad=radiation().Ru();
 
         autoPtr<volScalarField> val(
             new volScalarField(
@@ -169,11 +168,11 @@ public:
                     IOobject::NO_WRITE
                 ),
                 mesh(),
-                dimensionedScalar("Ru",dimless,0),
+                dimensionedScalar("Ru",ruRad.dimensions(),0),
                 "zeroGradient"
             )
         );
-        val->internalField()=ruRad;
+        val->dimensionedInternalField()=ruRad;
 
         result().setObjectResult(
             val
@@ -198,8 +197,10 @@ public:
     ) {}
 
     void doEvaluation() {
-        const volScalarField T4 = pow4(
-            mesh().lookupObject<volScalarField>("T")
+        const volScalarField T4(
+            pow4(
+                mesh().lookupObject<volScalarField>("T")
+            )
         );
 
         autoPtr<volScalarField> val(

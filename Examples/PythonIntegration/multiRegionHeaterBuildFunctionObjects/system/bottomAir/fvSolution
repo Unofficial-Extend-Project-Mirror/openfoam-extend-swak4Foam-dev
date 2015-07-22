@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -18,8 +18,15 @@ solvers
 {
     rho
     {
-        solver          PCG
+        solver          PCG;
         preconditioner  DIC;
+        tolerance       1e-7;
+        relTol          0.1;
+    }
+
+    rhoFinal
+    {
+        $rho;
         tolerance       1e-7;
         relTol          0;
     }
@@ -32,7 +39,7 @@ solvers
 
         smoother         GaussSeidel;
 
-        cacheAgglomeration true;
+        cacheAgglomeration  true;
         nCellsInCoarsestLevel 10;
         agglomerator     faceAreaPair;
         mergeLevels      1;
@@ -40,27 +47,12 @@ solvers
 
     p_rghFinal
     {
-        solver           GAMG;
-        tolerance        1e-7;
-        relTol           0;
-
-        smoother         GaussSeidel;
-
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 10;
-        agglomerator     faceAreaPair;
-        mergeLevels      1;
-    }
-
-    U
-    {
-        solver           PBiCG;
-        preconditioner   DILU;
+        $p_rgh;
         tolerance        1e-7;
         relTol           0;
     }
 
-    h
+    "(U|h|k|epsilon|R)"
     {
         solver           PBiCG;
         preconditioner   DILU;
@@ -68,34 +60,9 @@ solvers
         relTol           0.1;
     }
 
-    hFinal
+    "(U|h|k|epsilon|R)Final"
     {
-        solver           PBiCG;
-        preconditioner   DILU;
-        tolerance        1e-7;
-        relTol           0;
-    }
-
-    k
-    {
-        solver           PBiCG;
-        preconditioner   DILU;
-        tolerance        1e-7;
-        relTol           0;
-    }
-
-    epsilon
-    {
-        solver           PBiCG;
-        preconditioner   DILU;
-        tolerance        1e-7;
-        relTol           0;
-    }
-
-    R
-    {
-        solver           PBiCG;
-        preconditioner   DILU;
+        $U;
         tolerance        1e-7;
         relTol           0;
     }
@@ -103,15 +70,21 @@ solvers
 
 PIMPLE
 {
-    momentumPredictor   on;
-    nCorrectors         2;
+    momentumPredictor on;
+    nCorrectors      2;
     nNonOrthogonalCorrectors 0;
 }
 
 relaxationFactors
 {
-    h               1;
-    U               1;
+    fields
+    {
+    }
+    equations
+    {
+        "h.*"           1;
+        "U.*"           1;
+    }
 }
 
 // ************************************************************************* //

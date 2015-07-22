@@ -32,7 +32,7 @@ Class
     createSampledSurface
 
 Description
-    Function object creates a sampledSurface and puts it into a repository 
+    Function object creates a sampledSurface and puts it into a repository
     to be used by others
 
 SourceFiles
@@ -42,7 +42,7 @@ Contributors/Copyright:
     2010, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2013 Bruno Santos <wyldckat@gmail.com>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef createSampledSurface_H
@@ -51,18 +51,21 @@ Contributors/Copyright:
 #include "primitiveFieldsFwd.H"
 #include "pointFieldFwd.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class createSampledSurface
 {
     //- Disallow default bitwise copy construct
     createSampledSurface(const createSampledSurface&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const createSampledSurface&);
 
@@ -81,7 +84,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     createSampledSurface
@@ -99,24 +102,31 @@ public:
 
     // Member Functions
 
+    //- Called when time was set at the end of the Time::operator++ 
+    virtual void timeSet();         
+
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
     virtual void write();
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 
     //- Clear all data

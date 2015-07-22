@@ -48,6 +48,8 @@ Contributors/Copyright:
 
 #include "searchableCylinder.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -106,7 +108,11 @@ public:
 
     // Member Functions
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    virtual tmp<pointField>  coordinates() const;
+#else
     virtual pointField coordinates() const;
+#endif
 
     virtual const wordList& regions() const;
 

@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -19,48 +19,22 @@ solvers
 {
     p
     {
-        solver          PCG;
-        preconditioner  DIC;
+        solver          GAMG;
         tolerance       1e-06;
-        relTol          0.01;
-    }
-
-    U
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-05;
         relTol          0.1;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        cacheAgglomeration on;
+        agglomerator    faceAreaPair;
+        nCellsInCoarsestLevel 10;
+        mergeLevels     1;
     }
 
-    k
+    "(U|k|epsilon|R|nuTilda)"
     {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0.1;
-    }
-
-    epsilon
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0.1;
-    }
-
-    R
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0.1;
-    }
-
-    nuTilda
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
         tolerance       1e-05;
         relTol          0.1;
     }
@@ -69,16 +43,29 @@ solvers
 SIMPLE
 {
     nNonOrthogonalCorrectors 0;
+
+    residualControl
+    {
+        p               1e-2;
+        U               1e-3;
+        "(k|epsilon|omega)" 1e-3;
+    }
 }
 
 relaxationFactors
 {
-    p               0.3;
-    U               0.7;
-    k               0.7;
-    epsilon         0.7;
-    R               0.7;
-    nuTilda         0.7;
+    fields
+    {
+        p               0.3;
+    }
+    equations
+    {
+        U               0.7;
+        k               0.7;
+        epsilon         0.7;
+        R               0.7;
+        nuTilda         0.7;
+    }
 }
 
 

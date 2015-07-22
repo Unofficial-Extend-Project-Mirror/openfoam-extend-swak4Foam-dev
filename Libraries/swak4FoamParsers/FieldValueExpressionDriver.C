@@ -98,6 +98,19 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
       resultDimension_(0,0,0,0,0,0,0)
 {
 }
+FieldValueExpressionDriver::FieldValueExpressionDriver (
+    const FieldValueExpressionDriver &orig
+)
+    : CommonValueExpressionDriver(orig),
+      time_(orig.time_),
+      mesh_(orig.mesh_),
+      runTime_(orig.runTime_),
+      typ_(orig.typ_),
+      isLogical_(orig.isLogical_),
+      isSurfaceField_(orig.isSurfaceField_),
+      resultDimension_(orig.resultDimension_)
+{
+}
 
 FieldValueExpressionDriver::FieldValueExpressionDriver (
     const fvMesh &mesh,

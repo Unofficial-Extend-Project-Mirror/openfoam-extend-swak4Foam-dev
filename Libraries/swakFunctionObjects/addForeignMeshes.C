@@ -58,6 +58,11 @@ Foam::addForeignMeshes::addForeignMeshes
 Foam::addForeignMeshes::~addForeignMeshes()
 {}
 
+void Foam::addForeignMeshes::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::addForeignMeshes::read(const dictionary& dict)
 {
     CommonValueExpressionDriver::readForeignMeshInfo(dict,true);

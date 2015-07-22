@@ -22,14 +22,16 @@ boundaryField
 {
     floor
     {
-        type            buoyantPressure;
+      //        type            buoyantPressure;
+        type            fixedFluxPressure;
         value           uniform 0;
     }
 
     sides       
     {
         //        type            totalPressure;
-        type            buoyantPressure;
+      //        type            buoyantPressure;
+        type            fixedFluxPressure;
         value           uniform 0;
 //         type            inletOutlet;
 //         inletValue      uniform 0;

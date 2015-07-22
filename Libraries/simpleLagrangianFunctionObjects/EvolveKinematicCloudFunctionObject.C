@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "EvolveKinematicCloudFunctionObject.H"
@@ -77,6 +77,9 @@ EvolveKinematicCloudFunctionObject::EvolveKinematicCloudFunctionObject
 
 bool EvolveKinematicCloudFunctionObject::start()
 {
+    Info << "Cloud " << cloudName() << " FunctionObject " << name()
+        << " uses graviation " << g() << endl;
+
     cloud().set(
         new basicKinematicCloud(
             cloudName(),

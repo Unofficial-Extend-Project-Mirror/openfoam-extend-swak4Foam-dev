@@ -1,6 +1,6 @@
 {
-    volScalarField rAU = 1.0/UEqn.A();
-    surfaceScalarField rAUf = fvc::interpolate(rAU);
+    volScalarField rAU(1.0/UEqn.A());
+    surfaceScalarField rAUf(fvc::interpolate(rAU));
 
     U = rAU*UEqn.H();
     surfaceScalarField phiU
@@ -18,7 +18,7 @@
       - ghf*fvc::snGrad(rho)
     )*rAUf*mesh.magSf();
 
-    for(int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
+    while (pimple.correctNonOrthogonal())
     {
         fvScalarMatrix p_rghEqn
         (
@@ -27,15 +27,9 @@
 
         p_rghEqn.setReference(pRefCell, getRefCellValue(p_rgh, pRefCell));
 
-        p_rghEqn.solve
-        (
-            mesh.solver
-            (
-                p_rgh.select(corr == nCorr-1 && nonOrth == nNonOrthCorr)
-            )
-        );
+        p_rghEqn.solve(mesh.solver(p_rgh.select(pimple.finalInnerIter())));
 
-        if (nonOrth == nNonOrthCorr)
+        if (pimple.finalNonOrthogonalIter())
         {
             phi -= p_rghEqn.flux();
         }

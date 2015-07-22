@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -22,21 +22,49 @@ solvers
         solver          PCG;
         preconditioner  DIC;
         tolerance       1e-05;
+        relTol          0.1;
+    }
+
+   "(rho|G)Final"
+    {
+        $rho;
+        tolerance       1e-05;
         relTol          0;
     }
 
     p
     {
-        solver          PBiCG;
-        preconditioner  DILU;
+        solver          GAMG;
+        tolerance       1e-06;
+        relTol          0.01;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        nFinestSweeps   2;
+        cacheAgglomeration false;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+
+    pFinal
+    {
+        $p;
         tolerance       1e-06;
         relTol          0;
     }
 
-    "(U|hs|R|k|epsilon)"
+    "(U|h|R|k|epsilon)"
     {
         solver          PBiCG;
         preconditioner  DILU;
+        tolerance       1e-05;
+        relTol          0.1;
+    }
+
+    "(U|h|R|k|epsilon)Final"
+    {
+        $U;
         tolerance       1e-05;
         relTol          0;
     }
@@ -46,17 +74,37 @@ solvers
         solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-06;
+        relTol          0.1;
+    }
+
+    "(Yi|CO2|O2|N2|CH4|H2|H2O|CO)Final"
+    {
+        $Yi;
+        preconditioner  DILU;
+        tolerance       1e-06;
         relTol          0;
     }
 }
 
-PISO
+PIMPLE
 {
     transonic       yes;
-    nCorrectors     2;
+    nCorrectors     3;
     nNonOrthogonalCorrectors 0;
     momentumPredictor yes;
 }
 
+
+relaxationFactors
+{
+    fields
+    {
+        ".*"            1;
+    }
+    equations
+    {
+        ".*"            1;
+    }
+}
 
 // ************************************************************************* //

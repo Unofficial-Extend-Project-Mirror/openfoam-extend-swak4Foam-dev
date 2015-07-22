@@ -46,12 +46,12 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-makePatchTypeField
+makeTemplatePatchTypeField
 (
     fvPatchVectorField,
     groovyFixedNormalSlipFvPatchVectorField
 );
-makePatchTypeField
+makeTemplatePatchTypeField
 (
     fvPatchTensorField,
     groovyFixedNormalSlipFvPatchTensorField

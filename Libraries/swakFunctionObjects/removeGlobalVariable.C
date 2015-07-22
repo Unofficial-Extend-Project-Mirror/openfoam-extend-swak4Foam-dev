@@ -60,6 +60,11 @@ Foam::removeGlobalVariable::removeGlobalVariable
 Foam::removeGlobalVariable::~removeGlobalVariable()
 {}
 
+void Foam::removeGlobalVariable::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::removeGlobalVariable::read(const dictionary& dict)
 {
     names_=wordList(dict.lookup("globalVariables"));

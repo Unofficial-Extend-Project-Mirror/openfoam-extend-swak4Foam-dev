@@ -59,7 +59,11 @@ if(args.options().found("functionPlugins")) {
         fileName theLib("libswak"+name+"FunctionPlugin.so");
         Info << "  Loading " << theLib << endl;
 
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
         dlLibraryTable::open(theLib);
+#else
+        table.open(theLib);
+#endif
     }
 
 }

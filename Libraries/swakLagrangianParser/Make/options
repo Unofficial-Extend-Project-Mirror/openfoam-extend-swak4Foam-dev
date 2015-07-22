@@ -1,9 +1,20 @@
+include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
+
 include $(OBJECTS_DIR)/../mybison
 include $(OBJECTS_DIR)/../myflex
 sinclude $(OBJECTS_DIR)/../mydependencies
 
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV
+else
+LAGRANGIAN_ADDITIONAL_INCLUDES = \
+    -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/SLGThermo/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/solidMixtureProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude
 endif
 
 EXE_INC = \
@@ -22,6 +33,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/solidMixture/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude \
+    $(LAGRANGIAN_ADDITIONAL_INCLUDES) \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
     -I$(LIB_SRC)/lagrangian/intermediate/lnInclude \
     -I$(LIB_SRC)/lagrangian/solidParticle/lnInclude
@@ -37,5 +49,5 @@ LIB_LIBS = \
     -llagrangian \
     -llagrangianIntermediate \
     -lthermophysicalFunctions \
-    -lradiation \
+    $(RADIATION_LIB) \
     -lsolidParticle

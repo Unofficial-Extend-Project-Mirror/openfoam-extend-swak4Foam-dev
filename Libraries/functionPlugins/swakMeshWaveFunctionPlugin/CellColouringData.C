@@ -38,6 +38,12 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+#define TRACKDATA td
+#else
+#define TRACKDATA
+#endif
+
     CellColouringData::CellColouringData()
         :
         colour_(-1),
@@ -57,7 +63,14 @@ namespace Foam {
     bool CellColouringData::goOn() const
         { return goOn_; }
 
-    bool CellColouringData::valid() const
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
+    bool CellColouringData::valid(
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        TrackingData &
+#endif
+) const
         { return colour_>=0; }
 
     void CellColouringData::setColour(label col,bool goOn)
@@ -94,6 +107,9 @@ namespace Foam {
         return -1;
     }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool CellColouringData::updateCell
     (
         const polyMesh& mesh,
@@ -101,6 +117,9 @@ namespace Foam {
         const label neighbourFaceI,
         const CellColouringData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
             const cell &c=mesh.cells()[thisCellI];
@@ -133,6 +152,9 @@ namespace Foam {
             }
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool CellColouringData::updateFace
     (
         const polyMesh& mesh,
@@ -140,6 +162,9 @@ namespace Foam {
         const label neighbourCellI,
         const CellColouringData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
             if(neighbourInfo.colour()<0) {
@@ -161,12 +186,18 @@ namespace Foam {
             return true;
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool CellColouringData::updateFace
     (
         const polyMesh&,
         const label thisFaceI,
         const CellColouringData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
             (*this)=neighbourInfo;
@@ -174,7 +205,7 @@ namespace Foam {
             return true;
         }
 
-    bool CellColouringData::operator!=(const CellColouringData &rhs) {
+    bool CellColouringData::operator!=(const CellColouringData &rhs) const{
         return colour_<0 || colour_ != rhs.colour();
     }
 
@@ -196,15 +227,18 @@ namespace Foam {
             >> wDist.goOn_;
     }
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+    bool CellColouringData::equal(
+        const CellColouringData &rhs,
+        TrackingData &td
+    ) const
+    {
+        return !(operator!=(rhs));
+    }
+#endif
 
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+#undef TRACKDATA
 
 } // namespace
 

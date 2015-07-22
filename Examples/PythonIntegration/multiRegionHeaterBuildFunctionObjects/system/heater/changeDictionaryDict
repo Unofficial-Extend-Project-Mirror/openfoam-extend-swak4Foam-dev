@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -47,7 +47,8 @@ dictionaryReplacement
             {
                 type            compressible::turbulentTemperatureCoupledBaffleMixed;
                 neighbourFieldName T;
-                K               K;
+                K               solidThermo;
+                KName           none;
                 value           uniform 300;
             }
             minY
@@ -58,47 +59,36 @@ dictionaryReplacement
         }
     }
 
-    rho
+    Ypmma
     {
-        internalField   uniform 8000;
+        internalField   uniform 0.5;
+
 
         boundaryField
         {
             ".*"
             {
                 type            calculated;
-                value           uniform 8000;
+                value           uniform 0.5;
             }
         }
+
     }
 
-    K
+    Ychar
     {
-        internalField   uniform 80;
+        internalField   uniform 0.5;
 
         boundaryField
         {
             ".*"
             {
-                type            zeroGradient;
-                value           uniform 80;
+                type            calculated;
+                value           uniform 0.5;
             }
         }
     }
 
-    cp
-    {
-        internalField   uniform 450;
-
-        boundaryField
-        {
-            ".*"
-            {
-                type            zeroGradient;
-                value           uniform 450;
-            }
-        }
-    }
 }
 
 // ************************************************************************* //

@@ -54,6 +54,8 @@ Contributors/Copyright:
 
 #include "CommonValueExpressionDriver.H"
 
+#include "interpolation.H"
+
 namespace Foam {
     class PatchValueExpressionDriver;
 }
@@ -190,6 +192,13 @@ public:
 
     //- Copy construct
     PatchValueExpressionDriver(const PatchValueExpressionDriver&);
+
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new PatchValueExpressionDriver(*this)
+            );
+        }
 
     // Destructor
 

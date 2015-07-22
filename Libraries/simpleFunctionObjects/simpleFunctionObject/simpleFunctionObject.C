@@ -143,7 +143,7 @@ bool simpleFunctionObject::start()
     return true;
 }
 
-bool simpleFunctionObject::outputTime()
+bool simpleFunctionObject::outputTime(const bool forceWrite)
 {
     if(time_.time().value()<after_) {
         return false;
@@ -186,10 +186,10 @@ bool simpleFunctionObject::outputTime()
                     << endl
                     << exit(FatalError);
     }
-    return doOutput;
+    return doOutput || forceWrite;
 }
 
-bool simpleFunctionObject::execute()
+bool simpleFunctionObject::execute(const bool forceWrite)
 {
     if(debug) {
         Info << name() << "::execute() - Entering" << endl;
@@ -203,7 +203,7 @@ bool simpleFunctionObject::execute()
 
     timeSteps_++;
 
-    if(this->outputTime()) {
+    if(this->outputTime(forceWrite)) {
         if(debug) {
             Info << name() << "::execute() - outputTime" << endl;
         }

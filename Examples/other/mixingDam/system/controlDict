@@ -87,13 +87,13 @@ functions (
         expression "interpolate(gDirection) & fpos()";
         mask "surf(true)";
     }
-    writeGH {
-        type writeAdditionalFields;
-        fieldNames (
-            gh
-            ghf
-        );
-    }
+//     writeGH {
+//         type writeAdditionalFields;
+//         fieldNames (
+//             gh
+//             ghf
+//         );
+//     }
 );
 
 // ************************************************************************* //

@@ -48,6 +48,8 @@ Contributors/Copyright:
 
 #include "searchableBox.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

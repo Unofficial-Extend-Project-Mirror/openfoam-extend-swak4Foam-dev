@@ -1,6 +1,6 @@
 ---
 options: 'H:4'
-title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
+title: '`README` for `swak4Foam` - Version for OpenFOAM 2.x'
 ...
 
 -   Description
@@ -16,6 +16,7 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
     -   Requirements
     -   Building
         -   Additional configuration
+        -   Possible compilation failure with old 2.0.x-versions
         -   Special versions of the python integration
     -   Global installation
     -   Packaging
@@ -28,6 +29,7 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
         -   =swakFunctionObjects=
         -   =simpleSwakFunctionObjects=
         -   =swakSourceFields=
+        -   =swakFvOptions=
         -   =swakTopoSources=
         -   =swakFiniteArea=
         -   =groovyStandardBCs=
@@ -55,12 +57,16 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
         -   InterFoamWithSources
         -   InterFoamWithFixed
         -   FiniteArea
+        -   FvOptions
         -   other
+        -   FromPresentations
         -   PythonIntegration
+        -   =CodeStream=
         -   solvePDE
         -   BasicSourceSubclasses
         -   Lagrangian
         -   SimpleSurface
+        -   manipulateFvSolutionFvSchemes
         -   tests
         -   BugCases
     -   =maintainanceScripts=
@@ -82,6 +88,7 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
     -   Possible enhancements of the code
         -   Pointers in the driver code
     -   Possible memory loss
+    -   Non-treatment of the inner product `&` of symmetric tensors
     -   No point-vector construction for Subsets
     -   No tab-completion for regular Python-shell and old
         IPython-versions
@@ -109,6 +116,7 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
         -   Stored variables
         -   Sampled sets
     -   2011-07-26 - version number : 0.1.4
+        -   Port to OpenFOAM 2.0
         -   New features:
         -   Bug-fixes
         -   Packaging
@@ -122,6 +130,7 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
         -   Technical
         -   New features
         -   Bug fixes
+        -   Discontinued features
     -   2012-04-13 - version number : 0.2.0 Friday the 13th
         -   New features
         -   Infrastructure
@@ -137,12 +146,15 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
     -   2013-02-28 - version number : 0.2.2
         -   Incompatibilities to previous versions
         -   Bug fixes
+        -   New Examples
         -   New features
         -   Enhancements
         -   Infrastructure
         -   Cosmetics
         -   Documentation
     -   2013-03-18 - version number : 0.2.3
+        -   Supports OpenFOAM 2.2
+        -   Incompatibilities to previous versions
         -   Bug fixes
         -   New features
         -   Enhancements
@@ -155,14 +167,17 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
         -   Enhancements
     -   2014-01-24 - version number : 0.3.0
         -   Incompatibilities to previous versions
+        -   New supported versions
         -   Infrastructure
         -   Documentation
         -   Incompatibilities to previous versions
         -   Bug fixes
         -   New features
         -   Enhancements
+        -   Examples
     -   2014-07-11 - version number : 0.3.1
         -   Incompatibilities to previous versions
+        -   New supported versions
         -   Infrastructure
         -   Documentation
         -   Bug fixes
@@ -170,9 +185,12 @@ title: '`README` for `swak4Foam` - Version for OpenFOAM 1.x'
         -   Enhancements
         -   Examples
     -   2015-05-31 - version number : 0.3.2
+        -   Future changes
         -   Incompatibilities
+        -   New supported versions
         -   Internals (for developers)
         -   Bug fixes
+        -   Infrastructure
         -   Infrastructure
         -   Documentation
         -   New features
@@ -252,6 +270,10 @@ Bruno
         tab.hh files. This allows not having race conditions during
         parallel compilation
 
+Hrvoje
+:   Fixes to compile on Intel and CLang
+E
+:   Add the writing of particles to `writeFieldsOften`
 Alexey
 :   -   release generation script.
     -   Automatic `swakConfiguration`
@@ -272,7 +294,9 @@ repositories of the projects from which swak emerged) contributors are
 -   2011 Petr Vita \<petr.vita@unileoben.ac.at\>
 -   2012-2014 Bruno Santos \<wyldckat@gmail.com\>
 -   2013 Georg Reiss \<georg.reiss@ice-sf.at\>
+-   2014 Hrvoje Jasak \<h.jasak@wikki.co.uk\>
 -   2014 David Huckaby \<e.david.huckaby@netl.doe.gov\>
+-   2015 Domink Christ \<d.christ@wikki.co.uk\>
 
 Documentation
 -------------
@@ -285,9 +309,8 @@ Installation/Compilation
 Requirements
 ------------
 
--   Version 1.7 or 1.6-ext of OpenFOAM (1.6 should work, too)
-
-    -   The `finiteArea`-stuff will only work with version 1.6-ext
+-   Version 2.0, 2.1 or 2.2 of OpenFOAM (a version that works with 1.6,
+    1.6-ext and 1.7 is available separately) and version 3.0 of Foam
 -   the compiler generators `bison` and `flex`
 
     bison
@@ -371,6 +394,13 @@ SWAK
 :   Meant to be used only by developers, for performing a verification
     on whether race conditions occur during parallel compilation,
     regarding the grammar parsers.
+
+### Possible compilation failure with old 2.0.x-versions
+
+With older versions of 2.0.x (or 2.0 or 2.0.1) it is possible that the
+compilation of `swakCodedFunctionObject` will fail. In that case remove
+the last parameter to the `codedFunctionObject`-constructor in
+`swakCodedFunctionObject.C` (it is clearly marked by a comment)
 
 ### Special versions of the python integration
 
@@ -466,7 +496,11 @@ Collection of Libraries
 The basis of `swak4Foam`: the expression parsers with the logic to
 access the *OpenFOAM* data-structures.
 
-None of the other software pieces compile without it
+None of the other software pieces compile without it.
+
+Also defines a subclass to `DataEntry` that uses `swak`-expressions and
+a function object `initSwakFunctionObject` that might be used if this
+fails
 
 ### =simpleFunctionObjects=
 
@@ -502,6 +536,12 @@ createSampledSet
 createSampledSurface
 :   Create a sampled surface that can be used by other swak-entities
     (mainly boundary conditions)
+swakCoded
+:   Child of the `coded`-functionObject that can read and write global
+    variables from and to swak-namespaces
+
+    Assumes that the `SWAK4FOAM_SRC` environment variable is set to the
+    `Libraries`-directory of the `swak4Foam`-sources
 solveLaplacianPDE
 :   Solve the Poisson equation
 
@@ -562,6 +602,10 @@ SwakExplicitSource
 SwakImplicitSource
 :   Uses a calculated scalar-field to add an implicit source term
     (source is **without** the actual field)
+
+### =swakFvOptions=
+
+Starting from OpenFOAM 2.2 this library has additional `fvOptions`
 
 ### =swakTopoSources=
 
@@ -735,6 +779,11 @@ If not otherwise noted cases are prepared by a simple `blockMesh`-call.
 **Note**: All the cases here are strictly for demonstration purposes and
 resemble nothing from the 'real world'
 
+**Note**: Due to various changes in the case syntax between OpenFOAM 2.0
+and 2.2 (for instance `thermophysicalProperties`, wall functions etc)
+not all of the examples work with all OpenFOAM-installations "out of the
+box". Slight adaptions may be necessary
+
 ### groovyBC
 
 The old `groovyBC`-Demos
@@ -772,6 +821,10 @@ Also
 
 Solver
 :   pimpleFoam
+Mesh
+:   Execute the script `prepare.sh` in that directory (requires PyFoam:
+    if not installed change in the `boundary`-file the type of the
+    `defaultFaces` to `wall`)
 
 #### delayed-t-junction
 
@@ -835,7 +888,9 @@ conditions for the world famous `damBreak`-case
 Demonstrates usage of `expressionSource`
 
 Due to differences in the original `interFoam`-solver this doesn't work
-on certain OpenFOAM-versions (most specifically `1.6-ext`).
+on certain OpenFOAM-versions (most specifically `1.6-ext`). The current
+solver works with 2.1. For older OF-versions use the sources labeled
+`_pre2.1`.
 
 The only modifications to the original solver are found at the end of
 `createFields.H` and in `UEqn.H` (the added source terms).
@@ -845,7 +900,9 @@ The only modifications to the original solver are found at the end of
 Demonstrates usage of `forceEquation`
 
 Due to differences in the original `interFoam`-solver this doesn't work
-on certain OpenFOAM-versions (most specifically `1.6-ext`).
+on certain OpenFOAM-versions (most specifically `1.6-ext`). The current
+solver works with 2.1. For older OF-versions use the sources labeled
+`_pre2.1`.
 
 The only modifications to the original solver are found at the end of
 `createFields.H` and in `UEqn.H` (the fixing of the velocities).
@@ -883,6 +940,19 @@ Demonstrates
 :   FAM-specific `swakExpressions` and `groovyBC` (as well as the
     `expressionSource`)
 
+### FvOptions
+
+Cases that demonstrate `swakSourceFields`
+
+#### angleDuctWithSources
+
+Solver
+:   rhoPimpleFoam
+Mesh
+:   Execute `prepareCase.sh`
+Demonstrates
+:   Simple expression sources (adds a *heat source* to the solid)
+
 ### other
 
 Cases that don't have a `groovyBC`
@@ -890,7 +960,7 @@ Cases that don't have a `groovyBC`
 #### =angledDuctImplicit=
 
 Solver
-:   rhoPorousSimpleFoam
+:   rhoPorousMRFSimpleFoam
 Mesh
 :   Execute the `makeMesh.sh`-script in that directory. If you want to
     run in parallel call the `decomposeMesh.sh`-script with the number
@@ -957,6 +1027,52 @@ Solver
 Case
 :   Run `prepare.sh`
 
+### FromPresentations
+
+Cases that were shown in some presentations
+
+#### OSCFD~cleaningTank3D~
+
+Solver
+:   interFoam
+Case
+:   run the `prepareCase.sh`-script
+Description
+:   The case described on the slides of the talk about `swak4Foam` at
+    the OSCFD-conference 2012 in London
+Demonstrates
+:   Boundary conditions, function objects, global variables and delayed
+    variables
+
+#### OSCFD~cleaningTank2D~
+
+A 2D-variant of the above case
+
+#### OFW8~sandPitOfCarcoon~
+
+Solver
+:   twoPhaseEulerFoam
+Case
+:   run the `prepareCase.sh`-script
+Description
+:   Simulate a sand-monster from the StarWars-movie "Return of the Jedi"
+Demonstrates
+:   Use of `funkySetFields`, `groovyBC` and functionObjects for
+    lagrangian particles
+
+#### OFW8~landspeedersInCanyon~
+
+solver
+:   simpleFoam
+Case
+:   run the `prepareCase.sh`-script
+Description
+:   Simulates two landSpeeders (as seen in the StarWars-movie "A New
+    Hope")
+Demonstrates
+:   Advanced searchableSurfaces (for `snappyHexMesh`), functionObject
+    for passive scalar, functionObject to calculate distributions
+
 ### PythonIntegration
 
 Demonstrate the integration of `Python`. Mostly using `PyFoam` but also
@@ -1008,6 +1124,10 @@ Demonstrates
     results and write them. Using a stored stack-variable to monitor the
     pressure at a point and stop the run if the pressure didn't change
     there for the last 50 iterations
+
+### =CodeStream=
+
+Demonstrates working together with the `coded`-stuff in OpenFOAM 2.0
 
 ### solvePDE
 
@@ -1081,11 +1201,18 @@ Solver
 Demonstrates
 :   Thermo-cloud. Functions for lagrangian particles
 
+##### icoFoamCavityWithParcel
+
+Solver
+:   icoFoam
+Demonstrates
+:   Simplest way to add particles to a case
+
 #### parser
 
 Testing the `cloud`-parser for lagrangiant particles
 
-##### evaporationTestWithExpressions
+##### parcelInBoxWithExpressions
 
 Solver
 :   reactingParcelFoam
@@ -1139,6 +1266,16 @@ Demonstrates
 :   Boolean operations with regular surfaces
 
 Physics of the case not as expected (charge-distribution)
+
+### manipulateFvSolutionFvSchemes
+
+Demonstrates the use of function objects that change the numerics during
+the run
+
+#### pitzDailyTimeSwitched
+
+The regular `simpleFoam`-tutorial. Modified so that it switches to
+higher relaxation factors during the run
 
 ### tests
 
@@ -1393,6 +1530,14 @@ Currenly problematice parts seem to be:
 -   Python interpreter (but no calls in swak were found in the
     stack-trace that could be responsible)
 
+Non-treatment of the inner product `&` of symmetric tensors
+-----------------------------------------------------------
+
+Before OpenFOAM 2.1 the inner product of two symmetric tensors was a
+symmetric tensor. Since 2.1 it is a general tensor. As the general
+treatment in the grammar would be confusing currently the this product
+was removed from the grammar and therefor will not be correctly parsed
+
 No point-vector construction for Subsets
 ----------------------------------------
 
@@ -1538,6 +1683,13 @@ possible.
 2011-07-26 - version number : 0.1.4
 -----------------------------------
 
+### Port to OpenFOAM 2.0
+
+This is the first release that officially supports OpenFOAM 2.0
+
+Also it is the first release that incorporates the
+`simpleFunctionObjects`-library
+
 ### New features:
 
 #### Rewrite of `rand` and `randNormal`
@@ -1619,6 +1771,11 @@ To access global variables the specification-dictionary has to have a
 `wordList` named `globalScopes`. The scopes are searched in that order
 for the names of global variables. Having scopes allows some kind of
 separation of the variables
+
+#### Using OF 2.0 codeStreams
+
+Adds a functionObject `swakCoded` that extends the
+`coded`-functionObject to read and write global variables
 
 #### Simplified boundary condition `groovyBCFixedValue`
 
@@ -1712,6 +1869,15 @@ expressions stay the same**.
 Data files can now be written without brackets but each component on its
 own. The number of entries in the header is not adjusted
 
+#### A *default mesh* for the drivers exists
+
+For drivers that don't have access to a `fvMesh` a default mesh exists.
+This default mesh is defined by the first `fvMesh` that is used during
+the construction of **any** driver.
+
+Definition of the default mesh can be forced using the
+`initSwakFunctionObject` (see the test case `flowRateAngledDuct`)
+
 ### New features
 
 #### General `phi` in `solveTransportPDE`
@@ -1767,6 +1933,17 @@ therefor not endorsed
 
 Add the options `allowFunctionObjects` and `addDummyPhi` to execute
 functionObjects and add a `phi`-field (for fields that require these)
+
+#### Boundary condition `groovcBCDirection`
+
+Based on the `directionMixed` boundary condition this allows to set a
+boundary condition as a Dirichlet-condition only in certain directions
+while in the other directions it is a gradient-condition
+
+#### Boundary condition `groovyBCJump`
+
+Boundary condition that imposes a jump in the value on a cyclic boundary
+condition pair (based on `jumpCyclic`). Only works for scalar values
 
 #### =simpleFunctionObjects= write CSV-files
 
@@ -1826,6 +2003,14 @@ conditional function objects ("If `g` is missing ....")
 
 Solve transport and laplacian equation
 
+#### Subclass to `DataEntry` that uses *swak*-expressions
+
+This is defined in the `swak4FoamParsers`-library. The class needs a
+default mesh defined to construct the driver. Definition of the default
+mesh (if no other driver was constructed in some function-object or by a
+`groovyBC`) can be forced using the `initSwakFunctionObject` (see the
+test case `flowRateAngledDuct`)
+
 #### =funkySetAreaField= now also writes edgeFields
 
 Similar to the `surfaceFields` in `funkySetFields`
@@ -1865,6 +2050,14 @@ during construction
 Extra evaluation of boundary condition that should fix the problem with
 `calculated` patches causes `funkySetFields` to fail with stock boundary
 conditions if not all fields are present in memory
+
+### Discontinued features
+
+#### =groovyFlowRateInletVelocity=
+
+This boundary condition will be removed in future releases because the
+base class now supports the more general `DataEntry`-class for which a
+`swak`-subclass exists
 
 2012-04-13 - version number : 0.2.0 Friday the 13th
 ---------------------------------------------------
@@ -2051,6 +2244,23 @@ anyting bad happens
 
 ### Bug fixes
 
+#### =interFoam=-based example solvers do not compile on 2.1
+
+As reported in
+<https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=119>
+due to a change the way the PISO-loop is treated the
+`interFoamWithSources` and `interFoamWithFixed` don't compile with 2.1
+anymore.
+
+To avoid `#ifdef` in the solver sources there is now a separate set of
+sources (labeled `pre2.1`) for older versions. The regular sources work
+with 2.1 (and hopefully the following)
+
+#### =-allowFunctionObjects=-option not working for `replayTransientBC`
+
+Function-objects only work with the `while(runTime.loop())`-construct in
+2.1. The utility now uses this.
+
 #### Field itself can not be used in `funkySetBoundaryField`
 
 Bug reported:
@@ -2168,6 +2378,11 @@ were supposed to be dimensionless. This has been fixed
 
 Due to a typo the constructed condition field was too short for
 surface-fields (too long for volume-fields, but that didn't matter)
+
+#### =mappedFvPatch= not treated like regular patches
+
+The field-driver created patch fields there as `calcuated` when
+`zeroGradient` would have been more appropriate
 
 #### =flip()= for `faceSet` not correctly calculated
 
@@ -2511,7 +2726,8 @@ true. `writeAndEndPython` does the same in `pythonIntegration`.
 Note: after the run is written one more timestep is calculated (this
 seems to be due to the fact that FOs are calculated at the start of a
 timestep). Also there are issues if the next timestep is a scheduled
-write-time
+write-time (this only seem to be an issue with 1.7.x. It all works fine
+on 2.1.x)
 
 #### Function-objects to load thermophysical and turbulence models
 
@@ -2554,6 +2770,14 @@ entry in the `expressions`-list separately)
 
 ### Infrastructure
 
+#### Compilation script checks `SWAK4FOAM_SRC`
+
+The environment variable `SWAK4FOAM_SRC` is needed for the
+`swakCoded`-functionObject. The `Allwmake`-script now checks whether
+this variable exists and prints a message with the correct value if it
+doesn't. It also checks whether the value is correct and warns if it
+isn't
+
 #### =Allwmake= creates symbolic links in `swakFiniteArea`
 
 The links to `mybison` and `myflex` are missing when the sources are
@@ -2589,6 +2813,13 @@ Now the `outputControl`-entry is honored. If set wrong the field is **no
 longer** calculated/manipulated at every time-step
 
 ### Bug fixes
+
+#### 2.x-branch did not compile on 2.0
+
+Branch only compiled on 2.1, but not on 2.0 due to changes in the
+OpenFOAM-API
+
+Fix provided by Bruno Santos
 
 #### =groovyBC=: `value` reset to $0$ during construction
 
@@ -2636,6 +2867,13 @@ has been fixed by only dividing the `internalFields()`. Same for
 This kind of patch was not identified as something that could have the
 value fixed
 
+#### Recent versions of 2.1.x break compilation of `CommonValueExpressionDriver.C`
+
+The definition of the operator `lessOp` clashed with another definition.
+Renamed.
+
+Fix provided by Bruno Santos
+
 #### =expressionField= and `manipulateField` did not honor the `outputControl`-entry
 
 `expressionFields` were calculated at every time-step, even if the
@@ -2648,6 +2886,12 @@ Seems like this one was overlooked because `gcc` is more tolerant
 towards stupidity.
 
 Reported by Edo Frederix
+
+### New Examples
+
+#### Cases from the *OSCFD12* Conference in London
+
+On the slides the case files were promised
 
 ### New features
 
@@ -2928,11 +3172,37 @@ about expressions and parameters is written.
 2013-03-18 - version number : 0.2.3
 -----------------------------------
 
+### Supports OpenFOAM 2.2
+
+This is the first version to compile with OpenFOAM 2.2
+
+Due to changes in OpenFOAM it requires several `#ifdef` (something that
+is usually avoided in the OpenFOAM-world) and other prepocessor
+definitions)
+
+### Incompatibilities to previous versions
+
+#### =simpleFunctionObjects= and `simpleLagrangianFunctionObjects` no longer independent from rest
+
+Due to incompatibilities between OpenFOAM 2.2 and previous versions
+there are compatibility headers included from the rest of swak4Foam.
+
+Theoretically both libraries can be easily made independent again.
+
 ### Bug fixes
 
 #### Compiles on `1.6-ext` again
 
 The last release (0.2.2) did not compile on `1.6-ext`. This is fixed
+
+#### Missing field files for the OSCFD2012-cases
+
+Due to a stupid `.hgignore` the `0.orig`-directories were missing.
+Nobody complained though
+
+#### Did not compile on `2.0.x`
+
+This has been fixed
 
 ### New features
 
@@ -2985,6 +3255,10 @@ mode. Only occurs if reading old data that either
 
 -   uses a delayed variable
 -   has global variables written in timesteps
+
+#### Adaption of cases to 2.2
+
+This may break them for previous versions of OpenFOAM
 
 ### Infrastructure
 
@@ -3180,6 +3454,16 @@ deltaT
 outputTime
 :   Executed whenever a regular output is scheduled
 
+#### =swakDataEntry= improved
+
+Two enhancements
+
+-   the name of the independent variable no can be specified. This
+    variable holds the value that is passed to the data entry as a
+    uniform value
+-   data entry can now be integrated. This allows using it for instance
+    for the injection rate in lagrangian models
+
 2014-01-24 - version number : 0.3.0
 -----------------------------------
 
@@ -3195,6 +3479,14 @@ Due to certain differences this version only compiles with the
 `nextRelease`-branch of 1.6-ext (from the `git`).Usually the failing
 parts can be fixed b commenting out the appropriate `#define` in
 `Libraries/swak4FoamParsers/include/swak.H`.
+
+### New supported versions
+
+#### Added support for Foam 3.0
+
+As this version is quite similar to 1.7 a lot of `#ifdefs` were
+introduced by this port leading to a possible unification with the
+1.x-branch
 
 ### Infrastructure
 
@@ -3296,10 +3588,29 @@ function-objects.
 
 ### Bug fixes
 
+#### Missing `timeSet` in function-objects
+
+This method has been added in 2.2.x and breaks the compilation of
+several function-objects
+
+Fix developed by Bruno Santos
+
 #### =sourceImplicit= unstable
 
 For some reason using `SuSp` gave unstable results for the
 PDE-functionObjects. Changed to `Sp`
+
+#### Fixed bug were only one `swakCoded` worked at a time
+
+Bug originally reported
+<https://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=179>
+in. Reason was that the variable describing the type was not correctly
+set.
+
+#### Incorrectly read entries in `swakCoded`
+
+The entries `codeEnd` and `codeExecute` were not correctly read but
+instead the entry `codeRead` was read. Fixed
 
 #### No logical variables found by most parsers
 
@@ -3350,11 +3661,20 @@ in every time a dictionary is involved
 
 Passed a value where a reference would have been needed. Fixed
 
+#### =writeOften= writes all the time
+
+Reason for this was a change of the interface of `outputTime` not being
+propagated to this function-object. Fixed
+
 #### Python-integration does not return single scalars as uniform
 
 The Python-integration returned single scalars (and vectors) not as a
 single value but as a field of length $1$. This caused warnings that
 messed up the output. Fixed
+
+#### =basicSource= working again for OF 2.1
+
+These were not compiled by accident. Fixed
 
 #### =faceZone= and `faceSet` do not correctly work on parallel runs
 
@@ -3367,6 +3687,19 @@ The reason was that boundary faces are treated like internal faces. Also
 do these faces exist on both processors. This is now fixed. If the face
 is on a regular boundary patch the value is used. If on a processor
 patch the value is only used if it is on the owner processor.
+
+#### Allow user to override `notImplemented` in `movePoints` and `moveMesh` of function objects
+
+This addresses
+<http://sourceforge.net/apps/mantisbt/openfoam-extend/view.php?id=190>
+
+Subclasses of `simpleFunction`-objects are not guaranteed to be
+parallel-aware (for instance `swakExpression` can have problems with
+stored variables if the number of cells/faces changes) so the
+`notImplemented` can't be removed for good.
+
+The workaround is a rather verbose error message and the possibility to
+override `notImplemented` with a dictionary-switch
 
 ### New features
 
@@ -3402,7 +3735,10 @@ after manipulating temperature etc
 
 Recalculate enthalpy, sensible enthalpy or internal energy according to
 the current temperature. This allows making this consistent if the
-temperature has been manipulated
+temperature has been manipulated.
+
+For OpenFOAM after 2.2 these are replaced by one that recalculates the
+energy or enthalpy
 
 #### Function object that calculates the average of one variable as a function of another
 
@@ -3500,6 +3836,10 @@ It is now possible to add a sub-dictionary `else` that is used to
 initialize a `functionObjectProxy` that is executed if the condition is
 **not** fulfilled. The sub-dictionary inherits all settings that are not
 set from the parent-dictionary
+
+#### =swakCoded= now allows addition of data to functionObject
+
+The entry `codeData` is now read and inserted into the functionObject
 
 #### Parsers in `swakFiniteArea` no also have complete tensor-operations
 
@@ -3610,6 +3950,22 @@ Also in the `fvcSchemes`-plugin functions the set of
 If the logical expression `mask` is set then only the results from
 `expression` for which `mask` is `true` are used for accumulations
 
+### Examples
+
+#### Moved the OSCFD-examples to a different directory
+
+Started one new directory for all cases from presentations
+
+#### Added examples from the swak-training at the 8th Workshop
+
+Two new examples
+
+sandPitsOfCarcoon
+:   Reenacting a scene from "Return of the Jedi" with
+    `twoPhaseEulerFoam`
+landspeedersInCanyon
+:   Simulating two landspeeders from "A new hope" with `simpleFoam`
+
 2014-07-11 - version number : 0.3.1
 -----------------------------------
 
@@ -3619,6 +3975,28 @@ If the logical expression `mask` is set then only the results from
 
 There is now a new code-snipplet required for a number of these function
 objects. It can be left empty but has to be specified
+
+#### Dimension required for stuff in `swakSourceFields`
+
+The expressions used with `swakExplicitSource`, `swakImplicitSource` and
+`swakSetValue` now also need a dimension. This dimension is used to make
+sure that the user "knows" the actual dimensions of his source terms
+
+### New supported versions
+
+#### Added support for OpenFOAM 2.3
+
+This version adds support for OpenFOAM 2.3. The major changes were due
+to changes in the API to
+
+-   `searchableSurface`
+-   `meshToMesh`
+
+And several minor adaptions
+
+#### Added support for Foam-Extend 3.1
+
+No major changes required. Runtime-selection tables are now sorted too
 
 ### Infrastructure
 
@@ -3651,11 +4029,34 @@ value to `SimpleDistribution`
 
 This should now be fixed
 
+#### =fvOptions= in `swakSourceFields` now actually working
+
+Because of the missing dimensions until now `swakExplicitSource` and
+`swakImplicitSource` were not actually working
+
+#### =fvOptions= did not honor the `selectionMode`-entry
+
+Always set source etc for whole region. Now the `selectionMode` is
+honored (for instance only in `cellZone` the source term will be
+applied.)
+
 #### =patchFunctionObject= fails for some parallel runs
 
 Problem is that when the processor boundaries are used too that the
 indexing might be inconsistent on the different processors. Fix: coupled
 boundaries are ignored by default (have to be switched on)
+
+#### =funkyPythonPostproc= not executing function objects
+
+In newer version the `execute()`-method of function objects needs a
+parameter `force`. Fixed
+
+#### Temporary fields shadow 'real' fields in `foam-extend-3.1`
+
+Due to a small semantic difference in the copy constructor of
+`GeometricField` a temporary object of the same name shadows the real
+field and prohibits that it is written. Fixed by giving the copy a
+unique name
 
 ### New features
 
@@ -3707,6 +4108,25 @@ signals.
 The function object itself saves the last $N$-timesteps, the signal
 handler (when called) writes these steps to disk and then calls the
 regular OpenFOAM signal handler
+
+#### New library with `fvOptions`
+
+Starting with OpenFOAM 2.2 (where the concept of `fvOptions` was
+introduced) there is an additional library `swakFvOptions` with special
+`fvOptions` (in addition to those in `swakSourceFields`):
+
+executeFunctionObjectsFvOption
+:   this one does not manipulate the fields (as expected) but "only"
+    runs a list of function objects. Application is for instance to get
+    information during the time-step for algorithms that have multiple
+    iterations in a time-step
+reportAvailableFvOptions
+:   Does no manipulation of the solution/equations. Simply reports that
+    a callback has been called. Application: find out which
+    `fvOption`-calls are used by a solver in which order without going
+    through the sources
+reportMatrix
+:   Does not manipulate the matrix but prints a number of metrics
 
 #### Macro expansion
 
@@ -3780,6 +4200,12 @@ to set up global variables if these snipplets need some kind of state.
 The variables have to be declared `global` in the snipplets that do the
 actual decision (for technical reason)
 
+#### =fvOptions=-support in PDE-function objects
+
+The function objects `solveTransportPDE` and `solveLaplacianPDE` now
+call the regular `fvOptions`-callbacks (this allows modifying the
+solution in the same way it can be modified for solvers)
+
 ### Examples
 
 #### =other/simpleBendedPipe=
@@ -3791,6 +4217,28 @@ geometries
 -----------------------------------
 
 This is the last release to support OpenFOAM 1.7.x and older
+
+### Future changes
+
+These are things that will happen in the **next** release and will break
+backwards-compatibility
+
+#### Discontinuation of the `1.x`-branch
+
+As version `1.7` is several years old this release will be the last
+release that supports it.
+
+Starting with this release the `port_2.x`-branch will become the
+`default` branch and the `1.x` will become `legacy`
+
+#### Fixing examples
+
+Due to the umber of different supported Foam-versions not all the
+examples run on all versions and it is not possible to fix them in such
+a way that they work on all versions. In the next version they will by
+adapted to use the `pyFoamPrepareCase.py` utility as this supports
+having different Foam versions in one case. As a consequence most cases
+won't run without an installed `PyFoam`
 
 ### Incompatibilities
 
@@ -3816,6 +4264,48 @@ If operators were used properly this should not matter, but expressions
 that assume for instance that `0.1` is `true` will now fail. Overall
 this change improves the stability of logival expressions
 
+#### Better detection of single values
+
+The improved detection of single values might break some expressions.
+Especially for the Python-integration as values that were previously
+passed as arrays are now being passed as single values
+
+#### Parser for kinematic parcels replaces `minParticleMass` with `minParcelMass`
+
+This reflects a change in the API of the kinematic lagrangian parcels.
+The old function has been discontinued to avoid confusions with changed
+semantics
+
+#### =SIGTERM= automatically switched on for parallel runs in `writeOldTimesOnSignal`
+
+For parallel runs this signal is now automatically switched in so that
+other signals are propagated to other processors
+
+#### Changed bin-with in `swakExpressionAverageDistribution`
+
+Due to a different calculation automatically calculated bin-widths in
+this function object might slightly differ from previous calculations
+
+#### =funkyPythonPostproc= writes function object data to a different directory
+
+For the swak-function objects the data is now written to a directory
+whose name is based on the input dictionary instead of `postProcessing`.
+
+This might break scripts and other post-processing procedures that rely
+on the data being in `postProcessing`.
+
+Data generated during the run-time of the solver is unaffected
+
+### New supported versions
+
+#### Added support for Foam-Extend 3.2
+
+Only minor adaptions. Mainly to accommodate the new debug switches
+
+#### Added support for OpenFOAM 2.4.0
+
+Compiles with OpenFOAM 2.4.0 (and 2.4.x)
+
 ### Internals (for developers)
 
 #### Type of booleans changed for `internalField`
@@ -3838,6 +4328,51 @@ numeric problems. In this case the bin-width is now extended to $1$
 Reason was that `SimpleDistribution.calcScalarWeight` did not `reduce`.
 This is now fixed (and a special switch is introduced for one situation
 where this isn't desirable)
+
+#### =PDE=-function objects broken because of `fvOptions`
+
+On OpenFOAM-versions with `fvOptions` these were broken because of
+inconsistent dimensions.
+
+This is fixed: now if a `fvOption` is defined the function-objects also
+needs `rho` and this is passed to the call of `fvOption` when generating
+the source term
+
+#### Restart in `binary` not working (with global variables)
+
+As reported in
+<https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/225/>
+
+Problem seems to be that the `HashPtrTable` is not correctly read in
+`binary`-mode. Workaround is to switch to `ascii` before writing and
+reading that table and then switch back to the original mode
+
+#### Single values were passed as arrays
+
+Single values like `min(expr)` were passed as arrays instead of a single
+value. This is now fixed. The problem is that now expressions that rely
+on the old behavior might break
+
+#### Distributions not written if there is only a single bin
+
+If all data falls into one bin of the distribution then the distribution
+was not written. This is now fixed
+
+#### =weightedAverage= for `AccumulationCalculation` fails for zero-size fields
+
+Fixed
+
+#### =writeOldTimesOnSignal= fails with `writeCurrent`
+
+If the current time was already written (because it is part of the
+stored times) a segmentation fault occurred. This has been fixed by
+checking whether the current time is already stored
+
+#### Turbulence plugin-functions did not correct the boundary field
+
+This has been fixed
+
+### Infrastructure
 
 #### Some `maintainanceScripts` do not work under Python 3
 
@@ -3954,10 +4489,78 @@ mqCellShape
 #### Function object for developers that raises a signal at the defined time
 
 The function object `provokeSignal` can be used to debug signal
-handling. No other possible use is know.
+handling. No other possible use is known.
 
 The function object allows defining the signal, the time and - in case
 of parallel runs - the processors on which the signal should be raised
+
+#### New function-object `executeIfSetOrZone` that only executes if sets or zones are present
+
+This function object executes a lost of function objects if
+face/cell/point sets or zones are present. The required zones and sets
+are specified in a dictionary `setsAndZones`: keys are the names of the
+entities the values are the types (like `faceZone`). Only if **all**
+objects specified there are present the function objects are executed.
+
+As a side effect if `loadAndCacheMissingSets` is `true` than sets that
+are not yet found in memory are loaded from disk. **Attention**: if no
+set of that name is found on disk then it is searched at every
+time-step. This is a potential performance problem (it is not a problem
+if the set is there)
+
+#### New function object `executeIfPatch` that only executes if patches are present
+
+This function object executes a lost of function objects if a list of
+patches is present.
+
+#### Function object `listMeshData` displays data stored in mesh
+
+This function object shows data that is stored in the mesh. Mostly
+`solverPerformance` with the residuals of the linear solvers
+
+#### Function object `solverPerformanceToGlobalVariables`
+
+This function object gets a list of `fieldNames` and gets the
+information about their solver performances. The three quantities that
+it gets are
+
+`nIterations`
+:   the number of iterations
+`initialResidual`
+:   residual before iterating
+`finalResidual`
+:   residual after iterating
+
+For each value three variables are created (assuming the field is named
+`foo`):
+
+`foo_nIterations`
+:   array with all the values. This is usually only usable in the
+    Python-integration
+`foo_nIterations_first`
+:   value of the first solver performance
+`foo_nIterations_last`
+:   value of the first solver performance
+
+#### Function objects for manipulating `fvSchemes` and `fvSolution`
+
+`simpleFunctionObjects` now has a base class that allows manipulating
+`fvSolution` and `fvSchemes` in-memory but the solver behaves as if the
+file changed on disk. Application for this is changing parameters like
+relaxation or discretization schemes during the simulation. This can be
+used for instance to start the simulation with 'safe' settings and
+switch to faster convergence later.
+
+There is currently only one function object
+`timeDependentFvSolutionFvSchemes` that implements this (more are
+planned). It allows switching to different subdictionaries at specified
+time. An example can be found at
+`Examples/manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched`. This
+function object gets a list of times and sub-dictionaries. At the
+specified time the values from the sub-dictionary overrides the values
+in the original dictionary (Values not present in the sub-dictionary are
+left untouched). If `reset` is specified as the name for the
+sub-dictionary then the dictionary is set back to the original state.
 
 ### Enhancements
 
@@ -3971,8 +4574,14 @@ by zero*.
 
 Now if `value` is unset then the value of the patch is initialized from
 the value of the internal field next to the patch. This doesn't protect
-from the internal field being inconsistently set, but at least it sets
-the boundary consistently.
+from the internal field being
+
+#### Function objects `writeFieldsOften` and `writeAditionalFields` now write Lagrangian clouds
+
+With an additional optional argument `cloudNames` a list of clouds to be
+written can be specified like the fields.
+
+This feature was implemented by E. David Huckaby
 
 #### Added option `-functionPlugins` to `funkySetFields` and other utilities
 
@@ -3992,4 +4601,78 @@ and a library of that name is loaded to add the functions provided there
 Now it is possible to handle `SIGUSR1`, `SIGUSR2` and `SIGTERM`. Only
 needed for testing
 
+#### =pythonIntegration= does nothing if no code is present
+
+If a code is a string of the length $0$ nothing is done. This is
+especially important as no global namespaces are read (which **may** not
+be created at the time. Especially during initialization)
+
+#### =funkyDoCalc= uses `weight` and `mask`
+
+If a dictionary specifies the entries `mask` and `weight` then these are
+evaluated and used to mask and weight the data specified in `expression`
+
+#### =funkyDoCalc= allows setting bin width and number
+
+If specified in the sub-dictionary the entries `distributionMaxBinNr`
+and `distributionBinWidth` allow setting the number of bins. These
+values are not used exactly but give the distribution class a hint.
+`distributionMaxBinNr` takes precedence
+
+#### Timeout in `writeOldTimesOnSignal` to allow other processes to finish writing
+
+For parallel runs the process that initiates the writing of data waits
+for the other processes to write their data. This time can be specified
+with a parameter `sleepSecondsBeforeReraising` that has a default value
+60
+
+#### =writeAndEnd=-function objects now allow storing and writing previous time-steps
+
+The function objects based on `writeAndEnd` now have an optional switch
+`storeAndWritePreviousState`. If this is set then a number of old
+time-steps can be stored and will be written when the run is terminated.
+
+#### =fvOption=-subclasses now support additional forms of `addSup`
+
+In 2.3.1 two new forms of `addSup` where added to `fvOption` (one for
+compressible equations. The other one for multi-phase solvers). Both new
+forms are supported by all `fvOption`-subclasses in `swakSourceFields`
+and `swakFvOptions`
+
+#### =swakExpressionAverageDistribution= allows specifying the limits
+
+When the switch `dynamicExtremesAbscissa` is `false` then the limits of
+the distribution can be set with `minAbscissa` and `maxAbscissa`. This
+mainly influences the bin-width. If values fall outside this range then
+the distribution is extended to accommodate these values
+
+#### Function objects derived from `simpleDataFunctionObject` now can write to a different directory than `postProcessing`
+
+This involves almost all function objects in swak that write data to
+`postProcessing`. The library now allows setting a different default.
+This value can also be set with an optional entry `postProcDir` on a
+per-function-object basis.
+
+This change is used in the `funkyPythonPostProc`-utility to set a
+directory name that is based on the name of the input dictionary (or set
+with an option). Now if there are function objects used they will write
+their data to this directory instead of `postProcessing` (leaving data
+generated during the running of the solver alone)
+
+**Note:** This only works for function objects from swak. "Regular"
+function objects will still write to `postProcessing`
+
+#### =funkySetFields= allows correcting the boundary conditions afterwards
+
+An additional option `-correctResultBoundaryFields` corrects the
+boundary conditions before writing to disk. In dictionary mode there is
+also an option `correctResultBoundaryFields`.
+
+This is only needed in rare cases.
+
 ### Examples
+
+#### =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
+
+This case demonstrates how to add lagrangian particles to the simplest
+tutorial-case

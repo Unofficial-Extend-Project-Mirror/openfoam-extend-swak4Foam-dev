@@ -60,6 +60,11 @@ Foam::addGlobalVariable::addGlobalVariable
 Foam::addGlobalVariable::~addGlobalVariable()
 {}
 
+void Foam::addGlobalVariable::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::addGlobalVariable::read(const dictionary& dict)
 {
     if(dict.found("globalVariables")) {

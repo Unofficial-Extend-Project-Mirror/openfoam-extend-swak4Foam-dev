@@ -45,7 +45,11 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+#ifdef FOAM_DEV
+    makePointPatchFields(groovyFixedNormalSlip,pointPatch,PointPatch);
+#else
 makePointPatchFields(groovyFixedNormalSlip);
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

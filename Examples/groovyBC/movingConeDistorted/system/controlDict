@@ -48,11 +48,11 @@ adjustTimeStep  no;
 
 maxCo           0.2;
 
-libs ( 
-    "libOpenFOAM.so" 
+libs (
+    "libOpenFOAM.so"
     "libgroovyBC.so"
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
 ) ;
 
 functions
@@ -73,6 +73,8 @@ functions
         accumulations (
             average
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     flowThrough
     {
@@ -84,6 +86,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     flowThroughAlternate
     {
@@ -95,6 +99,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yExtreme
     {
@@ -113,6 +119,8 @@ functions
             min
             max
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yFlow1
     {
@@ -124,6 +132,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yFlow2
     {
@@ -141,6 +151,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     yFlow3
     {
@@ -158,6 +170,8 @@ functions
         accumulations (
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
     cutTotal
     {
@@ -182,7 +196,8 @@ functions
                 interpolate false;
             }
         );
-    } 
+        interpolationScheme nix;
+    }
     meshMovement
     {
         type swakExpression;
@@ -194,6 +209,8 @@ functions
             max
             sum
         );
+
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
 );
 

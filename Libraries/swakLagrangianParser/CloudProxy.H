@@ -195,6 +195,12 @@ public:
     add##ProxyType##CloudType##cloudConstructorToCloudProxyTable(       \
         Cloud<CloudType::particleType>::typeName)
 
+#define addCloudProxyToTable2(ProxyType,CloudType,ParcelType)              \
+    CloudProxy::addcloudConstructorToTable                              \
+    <ProxyType<CloudType> >                                             \
+    add##ProxyType##CloudType##cloudConstructorToCloudProxyTable(       \
+        Cloud<ParcelType>::typeName)
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

@@ -46,38 +46,60 @@ edges
 (
 );
 
-patches
+boundary
 (
-    patch inlet1
-    (
-        (1 5 4 0)
-    )
-    patch inlet2
-    (
-        (9 13 12 8)
-    )
-    patch outlet1
-    (
-        (3 7 6 2)
-    )
-    patch outlet2
-    (
-        (11 15 14 10)
-    )
-    wall walls
-    (
-        (0 4 7 3)
-        (2 6 5 1)
-        (8 12 15 11)
-        (10 14 13 9)
-    )
-    empty frontAndBack
-    (
-        (0 3 2 1)
-        (4 5 6 7)
-        (8 11 10 9)
-        (12 13 14 15)
-    )
+    inlet1
+    {
+        type            patch;
+        faces (
+            (1 5 4 0)
+        );
+    }
+    inlet2
+    {
+        type            mappedPatch;
+        offset          ( -0.2 0.5 0 );
+        sampleRegion    region0;
+        sampleMode      nearestPatchFace;
+        samplePatch     outlet1;
+        faces (
+            (9 13 12 8)
+        );
+    }
+    outlet1
+    {
+        type patch;
+        faces (
+            (3 7 6 2)
+        );
+    }
+    outlet2
+    {
+        type patch;
+        faces (
+            (11 15 14 10)
+        );
+    }
+    walls
+    {
+        type wall;
+        faces (
+            (0 4 7 3)
+            (2 6 5 1)
+            (8 12 15 11)
+            (10 14 13 9)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces (
+            (0 3 2 1)
+            (4 5 6 7)
+            (8 11 10 9)
+            (12 13 14 15)
+        );
+    }
 );
 
 mergePatchPairs

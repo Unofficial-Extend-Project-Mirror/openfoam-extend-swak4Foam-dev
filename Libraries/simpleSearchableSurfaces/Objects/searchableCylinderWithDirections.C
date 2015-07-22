@@ -123,7 +123,12 @@ const Foam::wordList& Foam::searchableCylinderWithDirections::regions() const
     return regions_;
 }
 
-Foam::pointField Foam::searchableCylinderWithDirections::coordinates() const
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::searchableCylinderWithDirections::coordinates() const
 {
     pointField result(3);
 
@@ -131,7 +136,11 @@ Foam::pointField Foam::searchableCylinderWithDirections::coordinates() const
     result[1]=point2_;
     result[2]=0.5*(point1_+point2_);
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(result));
+#else
     return result;
+#endif
 }
 
 

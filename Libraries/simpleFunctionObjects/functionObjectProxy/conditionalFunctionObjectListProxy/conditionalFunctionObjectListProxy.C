@@ -114,7 +114,7 @@ void conditionalFunctionObjectListProxy::readElse(const dictionary &dict)
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool conditionalFunctionObjectListProxy::execute()
+bool conditionalFunctionObjectListProxy::execute(const bool forceWrite)
 {
     if(writeDebug() || debug) {
         Info << this->name() << " condition::execute() condition: "
@@ -122,10 +122,10 @@ bool conditionalFunctionObjectListProxy::execute()
     }
 
     if(condition()) {
-        return functionObjectListProxy::execute();
+        return functionObjectListProxy::execute(forceWrite);
     } else {
         if(else_.valid()) {
-            return else_->execute();
+            return else_->execute(forceWrite);
         } else {
             return true;
         }

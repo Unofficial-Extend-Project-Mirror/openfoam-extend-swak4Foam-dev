@@ -55,7 +55,7 @@ libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakLagrangianParser.so"
     "libswakLagrangianCloudSourcesFunctionPlugin.so"
-    "libswakCoalCloudAdaptor.so"
+    //    "libswakCoalCloudAdaptor.so"
 );
 
 functions {
@@ -69,31 +69,31 @@ functions {
             weightedAverage
             weightedSum
         );
-        expression "coalCloudVolumeFraction(limestoneCloud1)";
+        expression "lcsVolumeFraction(limestoneCloud1)";
     }
     coalFraction {
         $limestoneFraction;
-        expression "coalCloudVolumeFraction(coalCloud1)";
+        expression "lcsVolumeFraction(coalCloud1)";
     }
     coalWaterSource {
         $limestoneFraction;
-        expression "coalCloudSpeciesSource(coalCloud1,H2O)";
+        expression "lcsSpeciesSource(coalCloud1,H2O)";
     }
     coalOxygenSource {
         $limestoneFraction;
-        expression "coalCloudSpeciesSource(coalCloud1,O2)";
+        expression "lcsSpeciesSource(coalCloud1,O2)";
     }
     coalCarbonOxideSource {
         $limestoneFraction;
-        expression "coalCloudSpeciesSource(coalCloud1,CO2)";
+        expression "lcsSpeciesSource(coalCloud1,CO2)";
     }
     coalMethanSource {
         $limestoneFraction;
-        expression "coalCloudSpeciesSource(coalCloud1,CH4)";
+        expression "lcsSpeciesSource(coalCloud1,CH4)";
     }
     coalMassSource {
         $limestoneFraction;
-        expression "coalCloudMassSource(coalCloud1)";
+        expression "lcsMassSource(coalCloud1)";
     }
     coalPosition {
         type swakExpression;

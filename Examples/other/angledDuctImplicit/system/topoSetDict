@@ -1,0 +1,138 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      faceSetDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions (
+    {
+        type faceSet;
+
+        name beforeFilter;
+
+        action new;
+
+        source expressionToFace;
+
+        sourceInfo {
+            expression "zone(inlet)";
+        }
+    }
+    {
+        type faceSet;
+
+        name afterFilter;
+
+        action new;
+
+        source expressionToFace;
+
+        sourceInfo {
+            expression "zone(outlet)";
+        }
+    }
+    {
+        type faceSet;
+
+        name inletPatch;
+
+        action new;
+
+        source expressionToFace;
+
+        sourceInfo {
+            expression "onPatch(inlet)";
+        }
+    }
+    {
+        type faceSet;
+
+        name halfInlet;
+
+        action new;
+
+        source expressionToFace;
+
+        sourceInfo {
+            expression "fset(inletPatch) && fpos().z>interpolate(0)";
+        }
+    }
+    {
+        type cellSet;
+
+        name afterFilterSlaveCells;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "zone(outlet)";
+        }
+    }
+    {
+        type cellSet;
+
+        name inletPatchSlaveCells;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "false";
+        }
+    }
+    {
+        type cellSet;
+
+        name halfInletSlaveCells;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "false";
+        }
+    }
+    {
+        type cellSet;
+
+        name beforeFilterSlaveCells;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "zone(inlet)";
+        }
+    }
+    {
+        type cellSet;
+
+        name porosity;
+
+        action new;
+
+        source expressionToCell;
+
+        sourceInfo {
+            expression "zone(porosity)";
+        }
+    }
+);
+
+// ************************************************************************* //

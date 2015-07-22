@@ -38,7 +38,13 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "CoalCloud.H"
+#else
+#include "coalCloud.H"
+#endif
 
 namespace Foam {
 
@@ -66,9 +72,13 @@ coalCloudMassFractionPluginFunction::coalCloudMassFractionPluginFunction(
 autoPtr<volScalarField> coalCloudMassFractionPluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     tryCall(volScalarField,constThermoCoalCloud,reactingMultiphaseCloud,alpha());
     tryCall(volScalarField,thermoCoalCloud,reactingMultiphaseCloud,alpha());
     tryCall(volScalarField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,alpha());
+#else
+    tryCall(volScalarField,coalCloud,reactingMultiphaseCloud,alpha());
+#endif
 
     return lcsMassFractionPluginFunction::internalEvaluate();
 }

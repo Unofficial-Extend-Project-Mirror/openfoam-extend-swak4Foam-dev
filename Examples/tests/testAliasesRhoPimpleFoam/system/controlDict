@@ -64,8 +64,7 @@ functions {
         patches ( ".+Wall.*" );
         verbose true;
         aliases {
-            //            alpha thermo:alpha;
-            al alpha;
+            al thermo:alpha;
                 }
         expression"(al+alphat)*area()*snGrad(h)";
         accumulations (sum);

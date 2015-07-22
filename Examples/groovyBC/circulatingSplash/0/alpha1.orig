@@ -10,7 +10,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      alpha;
+    object      alpha1;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -20,12 +20,12 @@ internalField   uniform 0;
 
 boundaryField
 {
-    floor        
+    floor
     {
         type            zeroGradient;
     }
 
-    sides       
+    sides
     {
         type            zeroGradient;
         //        type            inletOutlet;
@@ -33,7 +33,7 @@ boundaryField
         value           uniform 0;
     }
 
-    spill       
+    spill
     {
         //        type            zeroGradient;
 
@@ -42,10 +42,10 @@ boundaryField
         value           uniform 0;
     }
 
-    atmosphere      
+    atmosphere
     {
         type            groovyBC;
-        globalScopes ( inletPos inletPosInit );        
+        globalScopes ( inletPos inletPosInit );
 //         variables "r1=0.25*(max(pts().x)-min(pts().x));r2=r1*0.2*(1-0.5*cos(54*time()));";
 //         valueExpression "(sqrt(pow(pos().x-r1*sin(10*time()),2)+pow(pos().z-r1*cos(15*time()),2))<r2) ? 1 : 0";
         valueExpression "mag(pos()-inletCenter)<inletRadius ? 1 : 0";

@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -30,13 +30,13 @@ gradSchemes
 divSchemes
 {
     default         none;
-    div(phi,U)      Gauss upwind;
-    div(phi,k)      Gauss upwind;
-    div(phi,epsilon) Gauss upwind;
-    div(phi,R)      Gauss upwind;
+    div(phi,U)      bounded Gauss upwind;
+    div(phi,k)      bounded Gauss upwind;
+    div(phi,epsilon) bounded Gauss upwind;
+    div(phi,R)      bounded Gauss upwind;
     div(R)          Gauss linear;
-    div(phi,nuTilda) Gauss upwind;
-    div((nuEff*dev(grad(U).T()))) Gauss linear;
+    div(phi,nuTilda) bounded Gauss upwind;
+    div((nuEff*dev(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -48,8 +48,6 @@ laplacianSchemes
     laplacian(DepsilonEff,epsilon) Gauss linear corrected;
     laplacian(DREff,R) Gauss linear corrected;
     laplacian(DnuTildaEff,nuTilda) Gauss linear corrected;
-
-    laplacian(lambda,distance) Gauss linear uncorrected;
 }
 
 interpolationSchemes

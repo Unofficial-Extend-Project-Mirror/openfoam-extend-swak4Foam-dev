@@ -1,0 +1,319 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     simpleFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         500;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   50;
+
+purgeWrite      0;
+
+
+//- Have regular restart files
+secondaryWriteControl    cpuTime;
+secondaryWriteInterval   900;
+secondaryPurgeWrite      1;
+
+
+// writeFormat     binary;
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+#include "readFields"
+#include "streamLines"
+#include "wallBoundedStreamLines"
+#include "cuttingPlane"
+#include "forceCoeffs"
+
+  velocityMagnitude {
+    type expressionField;
+    fieldName magU;
+    expression "mag(U)";
+    autowrite false;
+  }
+  stopHighVel {
+    type panicDump;
+    fieldName mag(U);
+    minimum -1;
+    maximum 1000;
+  }
+  velocityExtreme {
+    type volumeMinMax;
+    outputControl   timeStep;
+    outputInterval 1;
+    fields (
+	    U
+	    p
+	    k
+	    omega
+	    nut
+	    );
+    verbose true;
+  }
+  velocityChangeField {
+    type expressionField;
+    fieldName changeU;
+    autowrite true;
+    expression "changeOfU";
+    variables (
+	       "changeOfU=U-oldU;"
+	       "oldU=U;"
+	       );
+    storedVariables (
+		     {
+		       name oldU;
+		       initialValue "vector(80,0,0)";
+		     }
+		     );
+  }
+  velocityChange {
+    type swakExpression;
+    verbose true;
+    valueType internalField;
+    expression "mag(changeU)";
+    accumulations (
+		   min
+		   max
+		   weightedAverage
+		   );
+  }
+  velocityChangePos {
+    $velocityChange;
+    expression "maxPosition(mag(changeU))";
+    accumulations (
+		   max
+		   );
+  }
+  velocityChangeDistribution {
+    type swakExpressionDistribution;
+    outputControlMode deltaT;
+    outputDeltaT 10;
+    valueType internalField;
+    verbose true;
+    expression "changeU";
+    weight "vol()";
+    mask "true";
+    writeTimeline true;
+    writeDistribution true;
+    distributionBinWidth 0.1;
+  }
+  velocityChangeDistributionCell {
+    $velocityChangeDistribution;
+    weight "1";
+  }
+  velChangeCellSize {
+    $velocityChangeDistribution;
+    expression "log10(vol())";
+    weight "1";
+    mask "mag(changeU)>5";
+  }
+  totalCellSize {
+    $velChangeCellSize;
+    mask "true";
+  }
+  velChangeAspectRatio {
+    $velChangeCellSize;
+    distributionBinWidth 0.005;
+    expression "mqCellAspectRatio()";
+  }
+  totalAspectRatio {
+    $velChangeAspectRatio;
+    mask "true";
+  }
+  velChangeNonOrth {
+    $velChangeAspectRatio;
+    expression "lcFaceMaximum(mqFaceNonOrtho())";
+  }
+  totalNonOrth {
+    $velChangeNonOrth;
+    mask "true";
+  }
+  velChangeSkewness {
+    $velChangeAspectRatio;
+    expression "lcFaceMaximum(mqFaceSkewness())";
+  }
+  totalSkewness {
+    $velChangeSkewness;
+    mask "true";
+  }
+  drag {
+    type wallShearStress;
+    outputControl outputTime;
+  }
+  exhaustTransport {
+    type solveTransportPDE;
+    solveAt timestep;
+    fieldName exhaust;
+    steady true;
+    diffusion "turb_nuEff()" [0 2 -1 0 0 0 0];
+    //       diffusion "0.01" [0 2 -1 0 0 0 0];
+    source "0" [0 0 -1 0 0 0 0];
+    phi "phi" [0 3 -1 0 0 0 0];
+  }
+  // dumpVariables {
+  //     type listRegisteredObjects;
+  // }
+  startLater {
+    type executeIfSwakExpression;
+    readDuringConstruction true;
+    valueType patch;
+    patchName inlet;
+    logicalExpression "time()>=10";
+    logicalAccumulation and;
+    functions {
+      exhaustDistribution {
+	type swakExpression;
+	verbose true;
+	valueType internalField;
+	expression "exhaust";
+	accumulations (
+		       min
+		       max
+		       weightedAverage
+		       );
+      }
+      exhaustMeasure {
+        type patchExpression;
+        patches (
+		 "landSpeeder.*_inlet"
+		 outlet
+		 );
+        expression "sum(area())*exhaust/sum(area())";
+        verbose true;
+        accumulations ( average );
+      }
+    }
+  }
+  doWithPython {
+    type executeIfFunctionObjectPresent;
+    functions {
+      addMinX {
+	type calculateGlobalVariables;
+	outputControl timeStep;
+	outputInterval 1;
+	valueType internalField;
+	toGlobalNamespace meshSize;
+	toGlobalVariables (
+			   minX
+			   maxX
+			   nrPlanes
+			   );
+	variables (
+		   "minX=interpolateToCell(min(pts().x));"
+		   "maxX=interpolateToCell(max(pts().x));"
+		   "nrPlanes=50;"
+		   );
+      }
+      every10Steps {
+	type executeIfPython;
+	readDuringConstruction true;
+	useNumpy false;
+	conditionCode "return (int(runTime) % 10)==0";
+	//        conditionCode "return True";
+	functions {
+	  positionsToCollect {
+	    type addGlobalVariable;
+	    outputControl timeStep;
+	    outputInterval 1;
+	    resultType StackExpressionResult;
+
+	    globalScope planeValues;
+	    globalName positions;
+	  }
+	  exhaustAverageToCollect {
+	    $positionsToCollect;
+	    globalName exhaustAverage;
+	  }
+	  exhaustHeightToCollect {
+	    $positionsToCollect;
+	    globalName exhaustHeight;
+	  }
+	  exhaustHeight2ToCollect {
+	    $positionsToCollect;
+	    globalName exhaustHeight2;
+	  }
+	  makeSlice {
+	    type dynamicFunctionObjectListProxy;
+	    dictionaryProvider stdoutFromPythonScriptProvider;
+	    readDuringConstruction true;
+
+	    scriptFile "$FOAM_CASE/system/makeSlices.py";
+	    useNumpy false; // this makes sure that only a single value is passed
+	    swakToPythonNamespaces (
+				    meshSize
+				    );
+	  }
+	  writePlanePositions {
+	    type dumpSwakGlobalVariable;
+
+	    globalName positions;
+	    globalScope planeValues;
+	  }
+	  writePlaneExhaustAverages {
+	    $writePlanePositions;
+	    globalName exhaustAverage;
+	  }
+	  writePlaneExhaustHeight {
+	    $writePlanePositions;
+	    globalName exhaustHeight;
+	  }
+	  writePlaneExhaustHeight2 {
+	    $writePlanePositions;
+	    globalName exhaustHeight2;
+	  }
+	}
+      }
+    }
+    readDuringConstruction true;
+    functionObjectName executeIfPython;
+  }
+}
+
+libs (
+      "libsimpleSearchableSurfaces.so"
+      "libgroovyBC.so"
+      "libsimpleFunctionObjects.so"
+      "libsimpleSwakFunctionObjects.so"
+      "libswakFunctionObjects.so"
+      "libswakTransportTurbFunctionPlugin.so"
+      "libswakPythonIntegration.so"
+      "libswakMeshQualityFunctionPlugin.so"
+      "libswakLocalCalculationsFunctionPlugin.so"
+      );
+
+// ************************************************************************* //

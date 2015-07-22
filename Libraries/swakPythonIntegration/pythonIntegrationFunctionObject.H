@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef pythonIntegrationFunctionObject_H
@@ -54,6 +54,8 @@ Contributors/Copyright:
 #include "Field.H"
 
 #include "pythonInterpreterWrapper.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -122,7 +124,14 @@ public:
     virtual bool start();
 
     //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
+    virtual bool execute(bool);
+
+#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+    bool execute()
+        {
+            return execute(false);
+        }
+#endif
 
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
@@ -130,6 +139,13 @@ public:
     //- Execute in the end
     virtual bool end();
 
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+    virtual void updateMesh(const mapPolyMesh&) {
+    }
+
+    virtual void movePoints(const polyMesh&) {
+    }
+#endif
 };
 
 

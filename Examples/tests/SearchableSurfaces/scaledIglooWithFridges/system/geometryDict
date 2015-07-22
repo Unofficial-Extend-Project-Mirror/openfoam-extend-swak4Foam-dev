@@ -1,0 +1,61 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.0                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+    fridgeA
+    {
+        type translate;
+        translation (0 0 1);
+        surface {
+            type searchableBox;
+            min (2 2 0);
+            max (3 3 2);
+        }
+    }
+
+    fridgeB
+    {
+        type translate;
+        translation (3.9 3.4 0);
+        surface {
+            type rotate;
+            rotateFrom (0 0 1);
+            rotateTo   (0.3 0.3 1);
+            surface {
+                type searchableBox;
+                min (-0.4 -0.4 0);
+                max ( 0.4  0.4 1.8);
+            }
+        }
+    }
+
+    igloo
+    {
+        type translate;
+        translation (3 3 0);
+        surface {
+            type scale;
+            scale (-1 1.1 0.75);
+            surface {
+                type searchableSphere;
+                centre (0 0 0);
+                radius 4;
+            }
+        }
+    }
+
+// ************************************************************************* //

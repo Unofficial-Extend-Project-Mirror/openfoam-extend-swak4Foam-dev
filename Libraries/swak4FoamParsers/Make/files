@@ -38,6 +38,7 @@ ExpressionResult/StoredStackExpressionResult.C
 setsAndSurfaces/swakRegistryProxySurface.C
 setsAndSurfaces/swakRegistryProxySet.C
 
+makeSwakDataEntry.C
 FieldValueExpressionParser.yy
 PatchValueExpressionParser.yy
 SubsetValueExpressionParser.yy
@@ -62,6 +63,8 @@ FaceZoneValueExpressionDriver.C
 
 SampledSurfaceValueExpressionDriver.C
 SampledSetValueExpressionDriver.C
+
+initSwakFunctionObject.C
 
 plugins/CommonPluginFunction.C
 plugins/FieldValuePluginFunction.C

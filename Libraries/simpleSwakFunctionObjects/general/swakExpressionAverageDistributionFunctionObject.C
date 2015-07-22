@@ -87,8 +87,37 @@ swakExpressionAverageDistributionFunctionObject::swakExpressionAverageDistributi
             dict,
             refCast<const fvMesh>(obr_)
         )
+    ),
+    dynamicExtremesAbscissa_(
+        dict.lookupOrDefault<bool>(
+            "dynamicExtremesAbscissa",
+            true
+        )
     )
 {
+    if(!dict.found("dynamicExtremesAbscissa")) {
+        WarningIn("swakExpressionAverageDistributionFunctionObject::swakExpressionAverageDistributionFunctionObject")
+            << "No entry 'dynamicExtremesAbscissa' found in " << dict.name() << nl
+                << "Assuming 'true' (Extremes of distribution are dynamically calculated from 'abscissa' expression)"
+                << endl;
+    }
+    if(
+        !dynamicExtremesAbscissa_
+        &&
+        (
+            !dict.found("minAbscissa")
+            ||
+            !dict.found("maxAbscissa")
+        )
+    ) {
+        FatalErrorIn("swakExpressionAverageDistributionFunctionObject::swakExpressionAverageDistributionFunctionObject")
+            << "When specifying 'dynamicExtremesAbscissa false;' in "
+                << dict.name()
+                << " 'minAbscissa' and 'maxAbscissa' have to be specified as well"
+                << endl
+                << exit(FatalError);
+
+    }
     driver_->createWriterAndRead(name+"_"+type());
 }
 
@@ -173,7 +202,7 @@ void swakExpressionAverageDistributionFunctionObject::write()
         ==
         pTraits<scalar>::typeName
     ) {
-        scalarField rawMask=driver_->getResult<scalar>();
+        scalarField rawMask(driver_->getResult<scalar>());
         maskValues_.reset(
             new Field<bool>(rawMask.size(),false)
         );

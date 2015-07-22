@@ -38,4 +38,13 @@ expressions
 		keepPatches true;
 		condition "pos().x>0.35";
 	}
+	color
+	{
+		field cellColour;
+		expression "cellColouring()";
+		functionPlugins (
+		   MeshWave
+		);
+		create true;
+	}
 );

@@ -68,6 +68,10 @@ class simpleDataFunctionObject
     //- Disallow default bitwise assignment
     void operator=(const simpleDataFunctionObject&);
 
+    static fileName defaultPostProcDir_;
+
+    fileName postProcDir_;
+
 protected:
 
     //- Get the path to the data directory
@@ -96,6 +100,8 @@ public:
     );
 
     bool start();
+
+    static void setPostProcDir(const fileName &);
 
 };
 

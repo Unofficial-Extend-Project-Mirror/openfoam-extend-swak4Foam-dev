@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "transformationSearchableSurface.H"
@@ -126,15 +126,29 @@ const Foam::wordList& Foam::transformationSearchableSurface::regions() const
     return delegate().regions();
 }
 
-Foam::pointField Foam::transformationSearchableSurface::coordinates() const
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::transformationSearchableSurface::coordinates() const
 {
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    tmp<pointField> tResult(new pointField(delegate().coordinates()));
+    pointField &result=tResult();
+#else
     pointField result(delegate().coordinates());
+#endif
 
     forAll(result,i) {
         result[i]=transform(result[i]);
     }
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tResult;
+#else
     return result;
+#endif
 }
 
 // Foam::pointIndexHit Foam::transformationSearchableSurface::findNearest
@@ -395,6 +409,30 @@ void Foam::transformationSearchableSurface::getVolumeType
             iPoints,
             volType
         );
+}
+
+
+#ifdef FOAM_SEARCHABLE_SURF_HAS_POINTS
+Foam::tmp<Foam::pointField> Foam::transformationSearchableSurface::points() const
+{
+    pointField result(delegate().points());
+
+    forAll(result,i) {
+        result[i]=transform(result[i]);
+    }
+
+    return result;
+}
+#endif
+
+bool Foam::transformationSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::transformationSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
 }
 
 

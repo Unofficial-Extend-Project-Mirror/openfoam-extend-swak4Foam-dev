@@ -108,6 +108,13 @@ public:
         const cellZone &,const CellZoneValueExpressionDriver&
     );
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new CellZoneValueExpressionDriver(cellZone_,*this)
+            );
+        }
+
     // Destructor
 
     ~CellZoneValueExpressionDriver();

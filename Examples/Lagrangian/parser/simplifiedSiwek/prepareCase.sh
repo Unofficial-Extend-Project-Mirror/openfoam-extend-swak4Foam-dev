@@ -7,7 +7,7 @@ cp -r 0.orig 0
 
 blockMesh
 
-cellSet
+topoSet
 setsToZones
 
 funkySetFields -time 0

@@ -47,7 +47,24 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#ifdef FOAM_DEV
+    // Rebuilds the call
+    // makePointPatchFieldTypedefs(groovyFixedNormalSlip);
+
+    typedef groovyFixedNormalSlipPointPatchField<scalar> groovyFixedNormalSlipPointPatchScalarField;
+    typedef groovyFixedNormalSlipPointPatchField<vector> groovyFixedNormalSlipPointPatchVectorField;
+    typedef groovyFixedNormalSlipPointPatchField<sphericalTensor> groovyFixedNormalSlipPointPatchSphericalTensorField;
+    typedef groovyFixedNormalSlipPointPatchField<symmTensor> groovyFixedNormalSlipPointPatchSymmTensorField;
+    typedef groovyFixedNormalSlipPointPatchField<tensor> groovyFixedNormalSlipPointPatchTensorField;
+
+#ifdef FOAM_DEV_ADDITIONAL_TENSOR_TYPES
+    typedef groovyFixedNormalSlipPointPatchField<symmTensor4thOrder> groovyFixedNormalSlipPointPatchSymmTensor4thOrderField;
+    typedef groovyFixedNormalSlipPointPatchField<diagTensor> groovyFixedNormalSlipPointPatchDiagTensorField;
+#endif
+
+#else
     makePointPatchFieldTypedefs(groovyFixedNormalSlip);
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

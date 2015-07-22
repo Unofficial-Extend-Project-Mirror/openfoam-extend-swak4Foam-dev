@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.5                                   |
-|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -10,6 +10,7 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
+    location    "system";
     object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -18,43 +19,61 @@ solvers
 {
     pcorr
     {
-        solver PCG;
-        preconditioner   DIC;
-        tolerance        1e-02;
-        relTol           0;
-    };
+        solver          GAMG;
+        tolerance       0.02;
+        relTol          0;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        cacheAgglomeration no;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
 
-    p 
+    p
     {
-        solver PCG;
-        preconditioner   DIC;
-        tolerance        1e-06;
-        relTol           0.05;
-    };
+        solver          GAMG;
+        tolerance       0;
+        relTol          0.01;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        cacheAgglomeration no;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
 
-    pFinal 
+    pFinal
     {
-        solver PCG;
-        preconditioner   DIC;
-        tolerance        1e-06;
-        relTol           0;
-    };
+        $p;
+        tolerance       1e-06;
+        relTol          0;
+    }
 
-    U 
+    U
     {
-        solver PBiCG;
-        preconditioner   DILU;
-        tolerance        1e-05;
-        relTol           0;
-    };
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-05;
+        relTol          0.1;
+    }
 
-    cellMotionUx 
+    UFinal
     {
-        solver PCG;
-        preconditioner   DIC;
-        tolerance        1e-08;
-        relTol           0;
-    };
+        $U;
+        tolerance       1e-05;
+        relTol          0;
+    }
+
+    cellMotionUx
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-08;
+        relTol          0;
+    }
     cellMotionU {
         $cellMotionUx;
     }
@@ -62,9 +81,21 @@ solvers
 
 PIMPLE
 {
+    correctPhi          yes;
     nOuterCorrectors    2;
-    nCorrectors     2;
-    nNonOrthogonalCorrectors 2;
+    nCorrectors         1;
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    fields
+    {
+    }
+    equations
+    {
+        "U.*"           1;
+    }
 }
 
 // ************************************************************************* //

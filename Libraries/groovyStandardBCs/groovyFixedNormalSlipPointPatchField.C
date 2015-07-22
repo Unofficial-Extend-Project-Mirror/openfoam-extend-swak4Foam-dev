@@ -35,11 +35,16 @@ Contributors/Copyright:
 
 #include "groovyFixedNormalSlipPointPatchField.H"
 #include "addToRunTimeSelectionTable.H"
-#include "pointPatchFieldMapper.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 
 #include "groovyBCCommon.H"
+
+#ifdef FOAM_DEV
+#include "PointPatchFieldMapper.H"
+#else
+#include "pointPatchFieldMapper.H"
+#endif
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -50,7 +55,7 @@ Foam::groovyFixedNormalSlipPointPatchField<Type>::groovyFixedNormalSlipPointPatc
     const DimensionedField<Type, pointMesh>& iF
 )
 :
-    slipPointPatchField<Type>(p, iF),
+    SlipPointPatchFieldType(p, iF),
     fixedValueExpression_(""),
     normalExpression_("toPoint(normal())"),
     driver_(groovyBCCommon<Type>::getFvPatch(this->patch()))
@@ -65,7 +70,7 @@ Foam::groovyFixedNormalSlipPointPatchField<Type>::groovyFixedNormalSlipPointPatc
     const dictionary& dict
 )
 :
-    slipPointPatchField<Type>(p, iF),
+    SlipPointPatchFieldType(p, iF),
     fixedValueExpression_(
 	dict.lookup("fixedValueExpression"),
 	dict
@@ -88,7 +93,7 @@ Foam::groovyFixedNormalSlipPointPatchField<Type>::groovyFixedNormalSlipPointPatc
     const pointPatchFieldMapper& mapper
 )
 :
-    slipPointPatchField<Type>(ptf, p, iF, mapper),
+    SlipPointPatchFieldType(ptf, p, iF, mapper),
     fixedValueExpression_(ptf.fixedValueExpression_),
     normalExpression_(ptf.normalExpression_),
     driver_(groovyBCCommon<Type>::getFvPatch(this->patch()),ptf.driver_)
@@ -101,7 +106,7 @@ Foam::groovyFixedNormalSlipPointPatchField<Type>::groovyFixedNormalSlipPointPatc
     const groovyFixedNormalSlipPointPatchField& tppsf
 )
 :
-    slipPointPatchField<Type>(tppsf),
+    SlipPointPatchFieldType(tppsf),
     fixedValueExpression_(tppsf.fixedValueExpression_),
     normalExpression_(tppsf.normalExpression_),
     driver_(groovyBCCommon<Type>::getFvPatch(this->patch()),tppsf.driver_)
@@ -115,7 +120,7 @@ Foam::groovyFixedNormalSlipPointPatchField<Type>::groovyFixedNormalSlipPointPatc
     const DimensionedField<Type, pointMesh>& iF
 )
 :
-    slipPointPatchField<Type>(tppsf, iF),
+    SlipPointPatchFieldType(tppsf, iF),
     fixedValueExpression_(tppsf.fixedValueExpression_),
     normalExpression_(tppsf.normalExpression_),
     driver_(groovyBCCommon<Type>::getFvPatch(this->patch()),tppsf.driver_)
@@ -147,7 +152,7 @@ void Foam::groovyFixedNormalSlipPointPatchField<Type>::evaluate
 template<class Type>
 void Foam::groovyFixedNormalSlipPointPatchField<Type>::write(Ostream& os) const
 {
-    slipPointPatchField<Type>::write(os);
+    SlipPointPatchFieldType::write(os);
 
     os.writeKeyword("fixedValueExpression")
         << fixedValueExpression_ << token::END_STATEMENT << nl;

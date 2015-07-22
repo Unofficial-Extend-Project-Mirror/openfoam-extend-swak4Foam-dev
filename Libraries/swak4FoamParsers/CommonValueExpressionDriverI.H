@@ -678,6 +678,7 @@ namespace Foam {
 
             f.set(
                 new T(
+                    name+"_copyBySwak4Foam",    // make sure that the original object is not shadowed
                     this->mesh().lookupObject<T>(name)
                 )
             );
@@ -878,7 +879,7 @@ namespace Foam {
     tmp<T> CommonValueExpressionDriver::interpolateForeignField(
         const word &inMeshName,
         const word &inFieldName,
-        meshToMesh::order theOrder
+        meshToMeshOrder theOrder
     ) const
     {
         word meshName(inMeshName);
@@ -938,10 +939,20 @@ namespace Foam {
         if(debug) {
             Info << "Objects in mesh: " << theMesh.names() << endl;
         }
+#ifdef FOAM_NEW_MESH2MESH
+        return interpolation.mapSrcToTgt(
+            theMesh.lookupObject<T>(fieldName),
+            eqOp<typename T::value_type>()
+        );
+#else
         return interpolation.interpolate(
             theMesh.lookupObject<T>(fieldName),
             theOrder
+#ifdef FOAM_MESHTOMESH_INTERPOLATE_REDUCE
+            ,eqOp<typename T::value_type>()
+#endif
         );
+#endif
     }
 
 
@@ -1175,7 +1186,7 @@ namespace Foam {
             //            place+=" ";
         }
 
-        Foam::FatalErrorIn("parsingValue")
+        FatalErrorIn("parsingValue")
             //        << Foam::args.executable()
             << " Parser Error for driver " << type() << " at "
                 << buff.str() << " :"  << m << Foam::endl
@@ -1201,6 +1212,16 @@ namespace Foam {
         const scalar wSum=gSum(weights);
         const Type tSum=gSum(weights*result);
         return tSum/wSum;
+    }
+
+    template<class T>
+    void CommonValueExpressionDriver::addUniformVariable(
+        const word &name,
+        const T &val
+    ) {
+        ExpressionResult e;
+        e.setSingleValue(val);
+        variables_.set(name,e);
     }
 
     bool CommonValueExpressionDriver::toBool(const scalar f) {

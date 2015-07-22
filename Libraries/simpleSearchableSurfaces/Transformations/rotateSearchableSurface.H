@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef rotateSearchableSurface_H
@@ -114,6 +114,13 @@ public:
         vectorField& normal
     ) const;
 
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+    virtual void boundingSpheres
+    (
+        pointField& centres,
+        scalarField& radiusSqr
+    ) const;
+#endif
 };
 
 

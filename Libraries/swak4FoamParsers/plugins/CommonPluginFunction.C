@@ -175,7 +175,7 @@ label CommonPluginFunction::readArgument(
     return driver.parserLastPos();
 }
 
-    // Workaround because steam() is protected
+    // Workaround because stdStream() is protected
 class IStringStreamWithPos
 :
     public IStringStream
@@ -188,7 +188,11 @@ public:
 
     label pos()
         {
+#ifdef FOAM_ISTREAM_HAS_NO_STDSTREAM
             return label(stream().tellg());
+#else
+            return label(stdStream().tellg());
+#endif
         }
 };
 

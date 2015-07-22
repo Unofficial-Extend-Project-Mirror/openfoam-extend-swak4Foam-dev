@@ -85,10 +85,29 @@ swakExpressionAverageDistributionFunctionObject::setData(
         "valueIfZero",
         pTraits<AType>::zero
     );
-    AType span=gMax(xValues)-gMin(xValues);
+
+    AType xMin;
+    AType xMax;
+    if(dynamicExtremesAbscissa_) {
+        xMin=gMin(xValues);
+        xMax=gMax(xValues);
+    } else {
+        xMin=dict().lookupOrDefault(
+            "minAbscissa",
+            pTraits<AType>::zero
+        );
+        xMax=dict().lookupOrDefault(
+            "maxAbscissa",
+            pTraits<AType>::zero
+        );
+    }
+    Dbug << "Min xValues " << xMin
+        << " Max xValues " << xMax << endl;
+
+    AType span=xMax-xMin;
     AType binSize=pTraits<AType>::zero;
     for(direction i=0;i<pTraits<AType>::nComponents;i++) {
-        scalar sz=component(span,i)/(binNr+1);
+        scalar sz=component(span,i)/(binNr);
         if(sz<SMALL*1e5) {
             sz=1;
         }

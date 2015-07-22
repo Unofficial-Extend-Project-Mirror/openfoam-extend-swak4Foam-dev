@@ -37,10 +37,10 @@ divSchemes
     div(phi,nuTilda) Gauss limitedLinear 1;
 
     div(B)          Gauss linear;
-    div((nuEff*dev(grad(U).T()))) Gauss linear;
+    div((nuEff*dev(T(grad(U))))) Gauss linear;
 
-    "div\(phi,residualTime.*\)"      Gauss linear;
-    div(phi,scalar)      Gauss linear;
+    "div\(.*,residualTime.*\)"      Gauss linear;
+    "div\(.*,scalar\)"      Gauss linear;
 }
 
 laplacianSchemes

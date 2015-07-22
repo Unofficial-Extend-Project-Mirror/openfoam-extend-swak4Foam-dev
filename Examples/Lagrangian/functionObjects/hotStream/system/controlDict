@@ -60,6 +60,12 @@ functions {
         //        correctModel true;
         allowReload false;
     }
+    getSLGThermoForParcels {
+        type loadSLGThermoModel;
+        correctModel false;
+        allowReload false;
+        thermoName thermophysicalProperties;
+    }
     // loadThermoForParcels2 {
     //     type loadPsiThermoModel;
     //     correctModel false;
@@ -137,12 +143,12 @@ functions {
         fieldName injectFromTopRhoEff;
     }
     reactingParticle {
-        type evolveThermoReactingCloud;
+        type evolveReactingCloud;
         cloudName injectFromLeft;
         g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
         rhoName rhoPseudo;
         UName U;
-        thermoPhysicsName thermophysicalProperties;
+        SLGThermoPhysicsName SLGThermo;
     }
     massSourceAccmulated {
         type expressionField;

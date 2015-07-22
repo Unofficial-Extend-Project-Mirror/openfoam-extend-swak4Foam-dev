@@ -53,12 +53,15 @@ Contributors/Copyright:
 
 #include "CommonValueExpressionDriver.H"
 
+#include "swak.H"
+
 namespace Foam
 {
 // Forward declaration of classes
 class dictionary;
 class objectRegistry;
 class mapPolyMesh;
+class polyMesh;
 
 class calculateGlobalVariables
 {
@@ -111,6 +114,9 @@ public:
 
     // Member Functions
 
+    //- Called when time was set at the end of the Time::operator++ 
+    virtual void timeSet();         
+
     //- Read the forces data
     virtual void read(const dictionary&);
 
@@ -128,7 +134,11 @@ public:
         {}
 
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 
     //- Clear all data

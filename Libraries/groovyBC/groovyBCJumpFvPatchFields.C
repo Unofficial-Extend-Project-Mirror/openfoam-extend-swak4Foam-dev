@@ -46,11 +46,23 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-#ifdef FOAM_USE_MAKE_TEMPLATE_PATCH_TYPE
-    // this only works for the nextRelease-branch
     makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpFvPatchScalarField);
-#else
-    makePatchTypeField(fvPatchScalarField, groovyBCJumpFvPatchScalarField);
+
+#ifndef FOAM_JUMP_IS_JUMP_CYCLIC
+template<>
+void Foam::groovyBCJumpFvPatchField<Foam::scalar>::updateCoeffs()
+{
+    if(debug) {
+        Info << "groovyBCJumpFvPatchField<Type>::jump() with "
+            << jumpExpression_ << endl;
+    }
+
+    driver_.clearVariables();
+
+    jump_ = driver_.evaluate<scalar>(this->jumpExpression_);
+
+    fixedJumpFvPatchField<scalar>::updateCoeffs();
+}
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

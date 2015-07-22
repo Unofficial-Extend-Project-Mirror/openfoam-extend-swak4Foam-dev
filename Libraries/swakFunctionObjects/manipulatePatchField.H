@@ -41,7 +41,7 @@ Contributors/Copyright:
     2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2013 Bruno Santos <wyldckat@gmail.com>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef manipulatePatchField_H
@@ -54,6 +54,8 @@ Contributors/Copyright:
 #include "autoPtr.H"
 #include "dictionary.H"
 
+#include "swak.H"
+
 #include "exprString.H"
 
 namespace Foam
@@ -62,6 +64,7 @@ namespace Foam
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class PatchValueExpressionDriver;
 
@@ -150,6 +153,9 @@ public:
             return name_;
         }
 
+    //- Called when time was set at the end of the Time::operator++ 
+    virtual void timeSet();         
+        
     //- Read the forces data
     virtual void read(const dictionary&);
 
@@ -167,7 +173,11 @@ public:
         {}
 
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 };
 

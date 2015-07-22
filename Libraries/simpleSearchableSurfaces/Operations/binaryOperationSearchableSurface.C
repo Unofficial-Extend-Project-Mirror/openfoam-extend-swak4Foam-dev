@@ -172,7 +172,17 @@ const Foam::wordList& Foam::binaryOperationSearchableSurface::regions() const
     return regions_;
 }
 
-Foam::pointField Foam::binaryOperationSearchableSurface::coordinates() const
+Foam::tmp<Foam::pointField> Foam::binaryOperationSearchableSurface::points() const
+{
+    return coordinates();
+}
+
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::binaryOperationSearchableSurface::coordinates() const
 {
     if(debug) {
         Info << "Foam::binaryOperationSearchableSurface::coordinates " << name() << endl;
@@ -202,7 +212,22 @@ Foam::pointField Foam::binaryOperationSearchableSurface::coordinates() const
     //         //                << exit(FatalError);
 
     // }
+
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(result));
+#else
     return result;
+#endif
+}
+
+bool Foam::binaryOperationSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::binaryOperationSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
 }
 
 void Foam::binaryOperationSearchableSurface::findNearest
@@ -222,7 +247,6 @@ void Foam::binaryOperationSearchableSurface::findNearest
     List<pointIndexHit> hitB;
     if(debug) {
         Info << "Doing A" << endl;
-        Info << samples << nearestDistSqr;
     }
     a().findNearest(samples,nearestDistSqr,hitA);
     if(debug) {
@@ -599,7 +623,11 @@ void Foam::binaryOperationSearchableSurface::getNormal
     label cntA=0,cntB=0;
     forAll(who,i) {
         if(who[i]==BOTH || who[i]==HITSA || who[i]==NONE) {
-            normal[i]=normalA[cntA];
+            if(who[i]==BOTH || who[i]==HITSA) {
+                normal[i]=normalA[cntA];
+            } else {
+                normal[i]=vector::zero;
+            }
             if(revertNormalA(info[i])) {
                 normal[i]*=-1;
             }
@@ -944,5 +972,29 @@ void Foam::binaryOperationSearchableSurface::collectInfo(
         }
     }
 }
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::binaryOperationSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    a().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+    pointField centresB;
+    scalarField radiusB;
+
+    b().boundingSpheres(
+        centresB,
+        radiusB
+    );
+
+    centres.append(centresB);
+    radiusSqr.append(radiusB);
+}
+#endif
 
 // ************************************************************************* //

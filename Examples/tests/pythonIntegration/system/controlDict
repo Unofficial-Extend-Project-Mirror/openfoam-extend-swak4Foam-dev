@@ -45,7 +45,7 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-functions {
+functions { 
     pythonSimple
     {
         type pythonIntegration;
@@ -67,7 +67,7 @@ functions {
 
         startCode "";
         executeCode "print 'timeName :',timeName,'outputTime:',outputTime";
-        endCode "print 'Never been here'";
+        endCode "print 'timeName :',timeName,'outputTime:',outputTime";
         //        tolerateExceptions true;
         parallelMasterOnly true;
         useNumpy false;

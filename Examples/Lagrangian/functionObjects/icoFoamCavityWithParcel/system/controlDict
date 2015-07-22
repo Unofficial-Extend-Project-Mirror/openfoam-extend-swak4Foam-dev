@@ -1,0 +1,77 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         20;
+
+deltaT          0.005;
+
+writeControl    timeStep;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+libs (
+    "libsimpleLagrangianFunctionObjects.so"
+    "libswakFunctionObjects.so"
+);
+
+functions {
+    rhoField {
+        type expressionField;
+        fieldName pseudoRho;
+        expression "1";
+        autowrite false;
+    }
+    muield {
+        type expressionField;
+        fieldName pseudoMu;
+        expression "1";
+        autowrite false;
+    }
+    coldParticle {
+        type evolveKinematicCloud;
+        cloudName coldParticleCloud;
+        g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
+        rhoName pseudoRho;
+        muName pseudoMu;
+        UName U;
+        //   SLGThermoName SLGThermo;
+        autowrite false;
+    }
+}
+// ************************************************************************* //

@@ -97,11 +97,12 @@ public:
     bool write(const bool force=false);
 
     //- Destructor
-    ~TimeCloneList();
+    virtual ~TimeCloneList();
 
 
     // Member Functions
 
+    bool has(const Time& other);
 };
 
 

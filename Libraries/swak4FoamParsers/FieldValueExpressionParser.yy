@@ -27,6 +27,7 @@ Description
 Contributors/Copyright:
     2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2013 Georg Reiss <georg.reiss@ice-sf.at>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -41,6 +42,8 @@ Contributors/Copyright:
 %pure-parser
 
 %{
+#include <uLabel.H>
+#include <label.H>
 #include <volFields.H>
 #include <surfaceFields.H>
 #include <fvcGrad.H>
@@ -2388,8 +2391,12 @@ exp:    TOKEN_NUM                                   {
             driver.setCalculatedPatches(*$$);}
         | TOKEN_pi                                  {
             $$ = driver.makeConstantField<Foam::volScalarField>(
+#ifdef FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
                 Foam::mathematicalConstant::pi
-            ).ptr();
+#else
+                Foam::constant::mathematical::pi
+#endif
+	    ).ptr();
           }
         | TOKEN_dist '(' ')'                        {
             $$ = driver.makeDistanceField().ptr();
@@ -5385,18 +5392,18 @@ pyexp:   psymmTensor                  { $$ = $1; }
             delete $1; delete $3;
             driver.setCalculatedPatches(*$$);
           }
-        | pyexp '&' pyexp 	   	          {
-            sameSize($1,$3);
-#ifndef FOAM_SYMMTENSOR_WORKAROUND
-            $$ = new Foam::pointSymmTensorField(*$1 & *$3);
-#else
-            $$ = new Foam::pointSymmTensorField(
-                symm(*$1 & *$3)
-            );
-#endif
-            delete $1; delete $3;
-            driver.setCalculatedPatches(*$$);
-          }
+//         | pyexp '&' pyexp 	   	          {
+//             sameSize($1,$3);
+// #ifndef FOAM_SYMMTENSOR_WORKAROUND
+//             $$ = new Foam::pointSymmTensorField(*$1 & *$3);
+// #else
+//             $$ = new Foam::pointSymmTensorField(
+//                 symm(*$1 & *$3)
+//             );
+// #endif
+//             delete $1; delete $3;
+//             driver.setCalculatedPatches(*$$);
+//           }
         | phexp '&' pyexp 	   	          {
             sameSize($1,$3);
             $$ = new Foam::pointSymmTensorField(*$1 & *$3);

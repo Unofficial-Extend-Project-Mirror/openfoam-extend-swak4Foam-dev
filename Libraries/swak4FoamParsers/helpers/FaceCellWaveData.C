@@ -38,44 +38,67 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     void FaceCellWaveData::leaveDomain
     (
         const polyMesh&,
         const polyPatch& patch,
         const label patchFaceI,
         const point& faceCentre
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     )
         {
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     void FaceCellWaveData::transform
     (
         const polyMesh&,
         const tensor& rotTensor
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     )
         {
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     void FaceCellWaveData::enterDomain
     (
         const polyMesh&,
         const polyPatch& patch,
         const label patchFaceI,
         const point& faceCentre
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     )
         {
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool FaceCellWaveData::sameGeometry
     (
         const polyMesh&,
         const FaceCellWaveData&,
         const scalar
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     ) const
         {
             return true;
         }
-
 
 } // namespace
 

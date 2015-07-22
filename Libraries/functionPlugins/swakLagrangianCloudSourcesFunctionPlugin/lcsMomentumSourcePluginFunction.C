@@ -38,10 +38,17 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
 #include "basicKinematicCloud.H"
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "basicThermoCloud.H"
 #include "BasicReactingCloud.H"
 #include "BasicReactingMultiphaseCloud.H"
+#else
+#include "basicReactingCloud.H"
+#include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -71,6 +78,7 @@ autoPtr<lcsMomentumSourcePluginFunction::dimVectorField>
 lcsMomentumSourcePluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
+#ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
     tryCall(dimVectorField,basicKinematicCloud,kinematicCloud,SU());
     tryCall(dimVectorField,basicThermoCloud,thermoCloud,SU());
     tryCall(dimVectorField,constThermoReactingCloud,reactingCloud,SU());
@@ -79,6 +87,12 @@ lcsMomentumSourcePluginFunction::internalEvaluate()
     tryCall(dimVectorField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
     tryCall(dimVectorField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
     tryCall(dimVectorField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,SU());
+#else
+    tryCall(dimVectorField,basicKinematicCloud,kinematicCloud,UTrans());
+    tryCall(dimVectorField,swakFluidThermoCloudType,thermoCloud,UTrans());
+    tryCall(dimVectorField,basicReactingCloud,reactingCloud,UTrans());
+    tryCall(dimVectorField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,UTrans());
+#endif
 
     return autoPtr<dimVectorField>();
 }
@@ -101,12 +115,20 @@ void lcsMomentumSourcePluginFunction::doEvaluation()
                 IOobject::NO_WRITE
             ),
             mesh(),
+#ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
             SU.dimensions(),
+#else
+            SU.dimensions()/(dimTime*dimVolume),
+#endif
             "zeroGradient"
         )
     );
 
+#ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
     pSource->internalField()=SU.field();
+#else
+    pSource->internalField()=SU.field()/(mesh().time().deltaT().value()*mesh().V());
+#endif
 
     result().setObjectResult(pSource);
 }

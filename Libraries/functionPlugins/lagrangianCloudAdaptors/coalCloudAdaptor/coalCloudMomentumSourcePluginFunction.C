@@ -38,7 +38,13 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "CoalCloud.H"
+#else
+#include "coalCloud.H"
+#endif
 
 namespace Foam {
 
@@ -67,9 +73,13 @@ autoPtr<lcsMomentumSourcePluginFunction::dimVectorField>
 coalCloudMomentumSourcePluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     tryCall(dimVectorField,constThermoCoalCloud,reactingMultiphaseCloud,SU());
     tryCall(dimVectorField,thermoCoalCloud,reactingMultiphaseCloud,SU());
     tryCall(dimVectorField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,SU());
+#else
+    tryCall(dimVectorField,coalCloud,reactingMultiphaseCloud,UTrans());
+#endif
 
     return lcsMomentumSourcePluginFunction::internalEvaluate();
 }

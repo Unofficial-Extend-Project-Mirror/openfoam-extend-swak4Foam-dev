@@ -1,6 +1,5 @@
-ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV
-endif
+
+include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
 
 EXE_INC = -I$(OBJECTS_DIR) \
     $(FOAM_DEV_OPTION) 	\
@@ -12,5 +11,6 @@ EXE_INC = -I$(OBJECTS_DIR) \
 
 EXE_LIBS = -lfiniteVolume \
 	-lmeshTools \
+	-lsampling \
 	-L$(FOAM_USER_LIBBIN) \
 	-lswak4FoamParsers

@@ -110,6 +110,9 @@ class swakExpressionAverageDistributionFunctionObject
     template <typename T>
     void reportADistribution(const PtrList<SimpleDistribution<T> > &dist);
 
+    //- calculate extremes in the distribution from the current abscissa
+    bool dynamicExtremesAbscissa_;
+
 protected:
 
     word dirName();

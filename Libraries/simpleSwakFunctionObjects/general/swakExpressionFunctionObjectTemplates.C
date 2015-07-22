@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "swakExpressionFunctionObject.H"
@@ -55,7 +55,7 @@ void swakExpressionFunctionObject::writeTheData(
     CommonValueExpressionDriver &driver
 )
 {
-    Field<T> result=driver.getResult<T>();
+    Field<T> result(driver.getResult<T>());
 
     autoPtr<AccumulationCalculation<T> > pCalculator;
 

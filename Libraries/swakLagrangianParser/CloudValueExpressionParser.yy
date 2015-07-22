@@ -1026,7 +1026,13 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             delete $1; delete $3; delete $5;
           }
         | TOKEN_pi {
-            $$ = driver.makeField(Foam::mathematicalConstant::pi).ptr();
+	  $$ = driver.makeField(
+#ifdef FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+              Foam::mathematicalConstant::pi
+#else
+              Foam::constant::mathematical::pi
+#endif
+          ).ptr();
           }
         | TOKEN_id '(' ')'                         {
             $$ = driver.makeIdField().ptr();

@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id: groovyBCPointPatchField.C,v ae970b62c3e4 2013-01-13 23:09:18Z bgschaid $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCPointPatchField.H"
@@ -60,8 +60,10 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     groovyBCCommon<Type>(false,true),
     driver_(groovyBCCommon<Type>::getFvPatch(this->patch()))
 {
+#ifndef FOAM_NO_MIXED_POINT_PATCH
     this->refValue() = pTraits<Type>::zero;
     this->valueFraction() = 0.0;
+#endif
 }
 
 
@@ -79,11 +81,13 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
 {
     driver_.readVariablesAndTables(dict);
 
+#ifndef FOAM_NO_MIXED_POINT_PATCH
     if (dict.found("refValue")) {
         this->refValue() = Field<Type>("refValue", dict, p.size());
     } else {
         this->refValue() = this->patchInternalField();
     }
+#endif
 
     if (dict.found("value"))
     {
@@ -94,7 +98,10 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
     }
     else
     {
+#ifndef FOAM_NO_MIXED_POINT_PATCH
         Field<Type>::operator=(this->refValue());
+#endif
+
         WarningIn(
             "groovyBCPointPatchField<Type>::groovyBCPointPatchField"
             "("
@@ -104,16 +111,21 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
             ")"
         ) << "No value defined for " << this->dimensionedInternalField().name()
             << " on " << this->patch().name() << " therefore using "
+#ifndef FOAM_NO_MIXED_POINT_PATCH
             << "the internal field next to the patch"
+#endif
             << endl;
     }
 
     //    this->refGrad() = pTraits<Type>::zero;
+
+#ifndef FOAM_NO_MIXED_POINT_PATCH
     if (dict.found("valueFraction")) {
         this->valueFraction() = Field<scalar>("valueFraction", dict, p.size());
     } else {
         this->valueFraction() = 1;
     }
+#endif
 
     if(this->evaluateDuringConstruction()) {
         // make sure that this works with potentialFoam or other solvers that don't evaluate the BCs
@@ -183,11 +195,18 @@ void groovyBCPointPatchField<Type>::updateCoeffs()
 
     driver_.clearVariables();
 
+#ifndef FOAM_NO_MIXED_POINT_PATCH
     this->refValue() = driver_.evaluate<Type>(this->valueExpression_,true);
-    //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);
     this->valueFraction() = driver_.evaluate<scalar>(this->fractionExpression_,true);
+    //    this->refGrad() = driver_.evaluate<Type>(gradientExpression_,true);
+#else
+    Field<Type>::operator=
+        (
+            driver_.evaluate<Type>(this->valueExpression_,true)
+        );
+#endif
 
-    mixedPointPatchFieldType::updateCoeffs();
+   mixedPointPatchFieldType::updateCoeffs();
 }
 
 

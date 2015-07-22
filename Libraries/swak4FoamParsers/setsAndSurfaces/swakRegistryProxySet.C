@@ -88,7 +88,11 @@ Foam::swakRegistryProxySet::swakRegistryProxySet
 (
     const word& name,
     const polyMesh& mesh,
+#ifdef FOAM_MESHSEARCH_CONST_SAMPLEDSET
+    const meshSearch& search,
+#else
     meshSearch& search,
+#endif
     const dictionary& dict
 )
 :
@@ -115,10 +119,12 @@ Foam::swakRegistryProxySet::swakRegistryProxySet
 Foam::swakRegistryProxySet::~swakRegistryProxySet()
 {}
 
+#ifdef FOAM_SAMPLEDSET_NEEDS_REFPOINT
 Foam::point Foam::swakRegistryProxySet::getRefPoint (const List< point > &pl) const
 {
     return realSet().getRefPoint(pl);
 }
+#endif
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

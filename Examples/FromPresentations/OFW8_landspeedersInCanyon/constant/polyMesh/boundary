@@ -1,0 +1,346 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+47
+(
+    canyonWall
+    {
+        type            wall;
+        nFaces          4345;
+        startFace       1327119;
+    }
+    inlet
+    {
+        type            patch;
+        nFaces          200;
+        startFace       1331464;
+    }
+    outlet
+    {
+        type            patch;
+        nFaces          320;
+        startFace       1331664;
+    }
+    canyonFloor
+    {
+        type            wall;
+        nFaces          4654;
+        startFace       1331984;
+    }
+    sky
+    {
+        type            patch;
+        nFaces          1000;
+        startFace       1336638;
+    }
+    landSpeederLuke_main_body_xMin
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1337638;
+    }
+    landSpeederLuke_main_body_xMax
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1337638;
+    }
+    landSpeederLuke_main_body_yMin
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1337638;
+    }
+    landSpeederLuke_main_body_yMax
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1337638;
+    }
+    landSpeederLuke_main_body_zMin
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          3802;
+        startFace       1337638;
+    }
+    landSpeederLuke_main_body_zMax
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          4482;
+        startFace       1341440;
+    }
+    landSpeederLuke_main_body_front
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          1141;
+        startFace       1345922;
+    }
+    landSpeederLuke_main_body_side
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          4022;
+        startFace       1347063;
+    }
+    landSpeederLuke_main_B_shield
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          3768;
+        startFace       1351085;
+    }
+    landSpeederLuke_propulsion_backJet_inlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1354853;
+    }
+    landSpeederLuke_propulsion_backJet_outlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1354953;
+    }
+    landSpeederLuke_propulsion_backJet_hull
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          1000;
+        startFace       1355053;
+    }
+    landSpeederLuke_propulsion_backJet_mount
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          936;
+        startFace       1356053;
+    }
+    landSpeederLuke_propulsion_sides_rightJet_inlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1356989;
+    }
+    landSpeederLuke_propulsion_sides_rightJet_outlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1357089;
+    }
+    landSpeederLuke_propulsion_sides_rightJet_hull
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          988;
+        startFace       1357189;
+    }
+    landSpeederLuke_propulsion_sides_rightJet_mount
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          1060;
+        startFace       1358177;
+    }
+    landSpeederLuke_propulsion_sides_leftJet_inlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1359237;
+    }
+    landSpeederLuke_propulsion_sides_leftJet_outlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1359337;
+    }
+    landSpeederLuke_propulsion_sides_leftJet_hull
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          988;
+        startFace       1359437;
+    }
+    landSpeederLuke_propulsion_sides_leftJet_mount
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          1068;
+        startFace       1360425;
+    }
+    landSpeederBiggs_main_body_xMin
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1361493;
+    }
+    landSpeederBiggs_main_body_xMax
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1361493;
+    }
+    landSpeederBiggs_main_body_yMin
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1361493;
+    }
+    landSpeederBiggs_main_body_yMax
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          0;
+        startFace       1361493;
+    }
+    landSpeederBiggs_main_body_zMin
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          3772;
+        startFace       1361493;
+    }
+    landSpeederBiggs_main_body_zMax
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          4460;
+        startFace       1365265;
+    }
+    landSpeederBiggs_main_body_front
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          1152;
+        startFace       1369725;
+    }
+    landSpeederBiggs_main_body_side
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          3802;
+        startFace       1370877;
+    }
+    landSpeederBiggs_main_B_shield
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          3728;
+        startFace       1374679;
+    }
+    landSpeederBiggs_propulsion_backJet_inlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1378407;
+    }
+    landSpeederBiggs_propulsion_backJet_outlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1378507;
+    }
+    landSpeederBiggs_propulsion_backJet_hull
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          880;
+        startFace       1378607;
+    }
+    landSpeederBiggs_propulsion_backJet_mount
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          928;
+        startFace       1379487;
+    }
+    landSpeederBiggs_propulsion_sides_rightJet_inlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1380415;
+    }
+    landSpeederBiggs_propulsion_sides_rightJet_outlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1380515;
+    }
+    landSpeederBiggs_propulsion_sides_rightJet_hull
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          948;
+        startFace       1380615;
+    }
+    landSpeederBiggs_propulsion_sides_rightJet_mount
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          1038;
+        startFace       1381563;
+    }
+    landSpeederBiggs_propulsion_sides_leftJet_inlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1382601;
+    }
+    landSpeederBiggs_propulsion_sides_leftJet_outlet
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          100;
+        startFace       1382701;
+    }
+    landSpeederBiggs_propulsion_sides_leftJet_hull
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          948;
+        startFace       1382801;
+    }
+    landSpeederBiggs_propulsion_sides_leftJet_mount
+    {
+        type            wall;
+        inGroups        1(speeders);
+        nFaces          1040;
+        startFace       1383749;
+    }
+)
+
+// ************************************************************************* //

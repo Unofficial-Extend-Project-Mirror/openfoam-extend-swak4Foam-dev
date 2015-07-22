@@ -68,7 +68,7 @@ class SampledSurfaceValueExpressionDriver
     static word driverName_;
 
     // Private data
-    sampledSurface &theSurface_;
+    const sampledSurface &theSurface_;
 
     // Private Member Functions
 
@@ -127,7 +127,14 @@ public:
     );
 
 //     //- Copy construct
-//     SampledSurfaceValueExpressionDriver(const sampledSurface &,const SampledSurfaceValueExpressionDriver&);
+    SampledSurfaceValueExpressionDriver(const sampledSurface &,const SampledSurfaceValueExpressionDriver&);
+
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new SampledSurfaceValueExpressionDriver(theSurface_,*this)
+            );
+        }
 
     // Destructor
 
