@@ -37,6 +37,8 @@ Contributors/Copyright:
 
 #include "DebugOStream.H"
 
+#include "swakCloudTypes.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -68,7 +70,11 @@ CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
         "cp",
         "Specific heat capacity",
         new typename baseType::template ParticleMethodWrapperValue<scalar>(
+#ifdef FOAM_THERMOCLOUD_OLD_STYLE
             &CloudType::particleType::cp
+#else
+            &CloudType::parcelType::Cp
+#endif
         )
     );
 
@@ -94,7 +100,11 @@ CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
         "cp0",
         "Specific heat capacity (constant)",
         new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+#ifdef FOAM_THERMOCLOUD_OLD_STYLE
             constProps.cp0()
+#else
+            constProps.Cp0()
+#endif
         )
     );
     this->addScalarFunction(
@@ -111,6 +121,7 @@ CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
             constProps.f0()
         )
     );
+#ifdef FOAM_THERMOCLOUD_OLD_STYLE
     this->addScalarFunction(
         "Pr",
         "Default carrier Prandtl number (constant)",
@@ -118,6 +129,7 @@ CloudProxyForThermoParcel<CloudType>::CloudProxyForThermoParcel
             constProps.Pr()
         )
     );
+#endif
 
 }
 

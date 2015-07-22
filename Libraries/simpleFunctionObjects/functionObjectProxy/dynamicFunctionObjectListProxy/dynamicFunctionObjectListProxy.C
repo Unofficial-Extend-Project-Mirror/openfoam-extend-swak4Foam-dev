@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "dynamicFunctionObjectListProxy.H"
@@ -53,7 +53,9 @@ namespace Foam
         dictionary
     );
 
-    defineTypeNameAndDebug(dynamicFunctionObjectListProxy::dynamicDictionaryProvider, 0);
+    typedef dynamicFunctionObjectListProxy::dynamicDictionaryProvider dynProvider;
+
+    defineTypeNameAndDebug(dynProvider, 0);
     defineRunTimeSelectionTable(dynamicFunctionObjectListProxy::dynamicDictionaryProvider,dictionary);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -104,7 +106,7 @@ void dynamicFunctionObjectListProxy::initFunctions()
         Pstream::scatter(text);
         if(text!=localText) {
             Pout << "WARNING: In dynamicFunctionObjectListProxy::initFunctions() "
-                << "for " << name() 
+                << "for " << name()
                 << " the text of the dictionary is different from the master"
                 << endl
                 << " Overwritten local version with master";

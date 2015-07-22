@@ -34,6 +34,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "foamVersion4swak.H"
+
+#if FOAM_VERSION4SWAK_MAJOR<2 || (FOAM_VERSION4SWAK_MAJOR==2 && FOAM_VERSION4SWAK_MINOR<2)
+
 #include "recalcThermoHFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -123,5 +127,7 @@ void recalcThermoHFunctionObject::recalc()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 } // namespace Foam
+
+#endif
 
 // ************************************************************************* //

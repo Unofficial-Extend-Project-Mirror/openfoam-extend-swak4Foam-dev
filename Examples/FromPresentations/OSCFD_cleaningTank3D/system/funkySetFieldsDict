@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+expressions (
+    setWaves
+    {
+        field alpha1;
+        keepPatches true;
+        expression "1";
+        condition "pos().y<0.15+0.005*(sin(20*pos().z)+cos(20*pos().x))";
+    }
+    buildTrap
+    {
+        field trap;
+        create true;
+        expression "pos().x<0 ? 0 : 1";
+        //        expression "pos().y>0.2 ? 1 : 0";
+    }
+);
+
+// ************************************************************************* //

@@ -39,7 +39,7 @@ SourceFiles
     ExpressionResultIO.C
 
 Contributors/Copyright:
-    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,6 +48,10 @@ Contributors/Copyright:
 #define ExpressionResult_H
 
 #include "swak.H"
+
+#if (FOAM_VERSION4SWAK_MAJOR < 2)
+#error "This swak4Foam-version is only used for the 2.x-versions of OpenFOAM. For lower versions there is a special branch"
+#endif
 
 #include "Field.H"
 #include "dimensionedType.H"
@@ -107,6 +111,9 @@ class ExpressionResult
 
     template <typename T>
     inline void setObjectResultInternal(autoPtr<T> o);
+
+    template <typename T>
+    inline void calcIsSingleValueInternal();
 
     // whether or not the variable will be reset
     bool noReset_;
@@ -253,6 +260,8 @@ public:
     inline bool isPoint() const;
 
     inline bool isSingleValue() const;
+
+    void calcIsSingleValue();
 
     bool hasValue() const;
 

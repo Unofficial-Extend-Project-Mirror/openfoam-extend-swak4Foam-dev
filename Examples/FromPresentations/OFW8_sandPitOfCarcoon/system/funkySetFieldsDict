@@ -1,0 +1,35 @@
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/.automount/werner/Werner/bgschaid/bgschaid-foamStuff/DepositionTests";
+    case            "neutralTest";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          funkySetFieldsDict;
+}
+
+expressions
+(
+	init
+	{
+		field alpha1;
+		expression "0.6";
+		condition "pos().z<min(idealHeight,levelHeight)";
+		keepPatches true;
+		variables (
+		   "minX=interpolateToCell(min(pts().x));"
+		   "maxX=interpolateToCell(max(pts().x));"
+		   "minZ=interpolateToCell(min(pts().z));"
+		   "maxZ=interpolateToCell(max(pts().z));"
+		   "levelHeight=0.75*(maxZ-minZ)+minZ;"
+		   "lowerHeight=levelHeight-0.25*(maxZ-minZ);"
+		   "width=min(2*(levelHeight-lowerHeight),maxX-minX);"
+		   "middle=0.5*(minX+maxX);"
+		   "idealHeight=pow((pos().x-middle)/(width*0.5),2)*(levelHeight-lowerHeight)+lowerHeight;"
+		);
+	}
+);

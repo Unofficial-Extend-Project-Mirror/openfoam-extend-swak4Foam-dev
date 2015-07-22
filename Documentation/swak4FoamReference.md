@@ -37,6 +37,7 @@
 <li><a href="#sec-3-2">3.2. Boundary conditions</a></li>
 <li><a href="#sec-3-3">3.3. Function objects</a></li>
 <li><a href="#sec-3-4">3.4. Function plugins</a></li>
+<li><a href="#sec-3-5">3.5. Data entry</a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4. Programming</a>
@@ -1570,6 +1571,37 @@ deleted before restart.
 ## Function objects<a id="sec-3-3" name="sec-3-3"></a>
 
 ## Function plugins<a id="sec-3-4" name="sec-3-4"></a>
+
+## Data entry<a id="sec-3-5" name="sec-3-5"></a>
+
+The main library introduces a subtype of `DataEntry` that is
+selected under the name `swak` wherever data entries lie
+`constant`, `polynomial` etc are used. After that a dictionary with
+additional parameters is required. An example entry would look
+like this:
+
+    flowRateProfile swak {
+        expression "exp(-t)";
+        independentVariableName t;
+        valueType patch;
+        patchName top;
+        integrationIntervalls 100;
+    };
+
+Required entries in the dictionary are
+
+-   **expression:** the expression to be evaluated
+-   **independentVariableName:** the name of the independent variable
+    that was passed during evaluation (usually this is the time)
+-   **valueType:** this determines the type of parser that is
+    used. Additional parameters for the initialization
+    may be needed and the usual entries like
+    `variables` are of course possible
+
+Only for integrations an additional parameter is needed
+
+-   **integrationIntervalls:** number of intervals the integration
+    range is divided into.
 
 # Programming<a id="sec-4" name="sec-4"></a>
 

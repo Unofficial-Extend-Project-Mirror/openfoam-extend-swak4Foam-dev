@@ -44,7 +44,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef executeIfOpenFOAMVersionBiggerEqualFunctionObject_H
@@ -89,7 +89,7 @@ class executeIfOpenFOAMVersionBiggerEqualFunctionObject
     label toLabel(const string &v);
 
 protected:
-    
+
     //- the actual conition that determines whether the FO should be executed
     virtual bool condition();
 

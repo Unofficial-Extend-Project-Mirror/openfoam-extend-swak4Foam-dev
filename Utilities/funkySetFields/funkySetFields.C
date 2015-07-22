@@ -51,6 +51,48 @@ Contributors/Copyright:
 
 #include "dlLibraryTable.H"
 
+// template<typename T,typename PF,typename M>
+template<typename F>
+void doCorrectBoundaryConditions(
+    bool correctBoundaryField,
+    //    typename GeometricField<T,PF,M> &field
+    F &field
+)
+{
+    if(correctBoundaryField) {
+        Info << "Correcting boundary conditions" << endl;
+        field.correctBoundaryConditions();
+    }
+}
+
+// template<class T,class PF>
+// template<>
+// void doCorrectBoundaryConditions<typename GeometricField<T,PF,surfaceMesh> >(
+//     bool correctBoundaryField,
+//     typename GeometricField<T,PF,surfaceMesh> &field
+// )
+// {
+//     // no correctBoundaryConditions for surface-fields
+// }
+
+// this is embarassing. But I can't get the above specialization to work
+
+#define NO_CORRECT_SPEC(FType) template<> \
+    void doCorrectBoundaryConditions(     \
+        bool correctBoundaryField,        \
+        FType &field                      \
+    )                                     \
+    {                                     \
+    }
+
+NO_CORRECT_SPEC(surfaceScalarField)
+NO_CORRECT_SPEC(surfaceVectorField)
+NO_CORRECT_SPEC(surfaceTensorField)
+NO_CORRECT_SPEC(surfaceSymmTensorField)
+NO_CORRECT_SPEC(surfaceSphericalTensorField)
+
+#undef NO_CORRECT_SPEC
+
 template<class T,class Mesh>
 void setField
 (
@@ -62,6 +104,7 @@ void setField
     const scalarField &cond,
     bool create,
     const dimensionSet &dim,
+    bool correctBoundaryField,
     bool keepPatches,
     const wordList &valuePatches
 ) {
@@ -104,7 +147,7 @@ void setField
 
     forAll(*pTemp,cellI) {
         if(cond[cellI]!=0) {
-	  (*pTemp)[cellI]=result[cellI];
+            (*pTemp)[cellI]=result[cellI];
             setCells++;
         }
     }
@@ -126,6 +169,8 @@ void setField
 
     Info << " Setting " << setCells << " of " << totalCells << " cells" << endl;
 
+    doCorrectBoundaryConditions(correctBoundaryField,*pTemp);
+
     Info << " Writing to " << name << endl;
 
     pTemp->write();
@@ -143,6 +188,7 @@ void setField
     const scalarField &cond,
     bool create,
     const dimensionSet &dim,
+    bool correctBoundaryField,
     bool keepPatches,
     const wordList &valuePatches
 ) {
@@ -155,6 +201,7 @@ void setField
         cond,
         create,
         dim,
+        correctBoundaryField,
         keepPatches,
         valuePatches
     );
@@ -172,6 +219,7 @@ void doAnExpression
     bool cacheVariables,
     const dictionary &dict,
     const dimensionSet &dim,
+    bool correctBoundaryField,
     bool keepPatches,
     const wordList &valuePatches,
     const bool correctPatches
@@ -381,6 +429,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -393,6 +442,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -405,6 +455,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -417,6 +468,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -429,6 +481,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -445,6 +498,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -457,6 +511,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -469,6 +524,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -481,6 +537,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -493,6 +550,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -510,6 +568,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -523,6 +582,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -536,6 +596,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -549,6 +610,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -562,6 +624,7 @@ void doAnExpression
                 conditionField,
                 create,
                 dim,
+                correctBoundaryField,
                 keepPatches,
                 valuePatches
             );
@@ -647,6 +710,7 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("otherInterpolateOrder","order");
     argList::validOptions.insert("preloadFields","List of fields to preload");
     argList::validOptions.insert("noCorrectPatches","");
+    argList::validOptions.insert("correctResultBoundaryFields","");
 
 #   include "setRootCase.H"
 
@@ -681,6 +745,8 @@ int main(int argc, char *argv[])
     if (args.options().found("noCorrectPatches")) {
         correctPatches=false;
     }
+
+    bool correctResultBoundaryFields=args.options().found("correctResultBoundaryFields");
 
     if (args.options().found("additionalRegions")) {
         string regionsString(args.options()["additionalRegions"]);
@@ -766,7 +832,7 @@ int main(int argc, char *argv[])
         if(args.options().found("otherInterpolateOrder")) {
             MeshesRepository::getRepository().setInterpolationOrder(
                 "other",
-                MeshInterpolationOrder::names[
+                meshToMeshInterpolationNames[
                     args.options()["otherInterpolateOrder"]
                 ]
             );
@@ -934,6 +1000,7 @@ int main(int argc, char *argv[])
                 !args.options().found("noCacheVariables"),
                 dummyDict,
                 dim,
+                correctResultBoundaryFields,
                 keepPatches,
                 valuePatches,
                 correctPatches
@@ -1054,7 +1121,12 @@ int main(int argc, char *argv[])
                                 << exit(FatalError);
                     }
                 }
-
+                bool correctResultBoundaryFieldsLocal=correctResultBoundaryFields;
+                if(part.found("correctResultBoundaryFields")) {
+                    correctResultBoundaryFieldsLocal=readBool(
+                        part["correctResultBoundaryFields"]
+                    );
+                }
                 wordList valuePatches;
                 if (part.found("valuePatches")) {
                     valuePatches=wordList(part.lookup("valuePatches"));
@@ -1070,6 +1142,7 @@ int main(int argc, char *argv[])
                     !args.options().found("noCacheVariables"),
                     part,
                     dim,
+                    correctResultBoundaryFieldsLocal,
                     keepPatches,
                     valuePatches,
                     correctPatches

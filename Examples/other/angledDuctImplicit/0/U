@@ -44,6 +44,7 @@ boundaryField
     {
         type            flowRateInletVelocity;
         flowRate        0.1;
+        massFlowRate    $flowRate;
         value           uniform (0 0 0);
     }
     outlet

@@ -53,6 +53,10 @@ boundaryField
         type            groovyBC;
         value uniform 0;
         valueExpression "mapped(T)";
+        mappingInterpolation {
+            //            default cell;
+            T cellPointFace;
+        }
     }
     walls
     {

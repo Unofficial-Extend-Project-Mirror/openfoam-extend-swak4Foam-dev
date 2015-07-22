@@ -54,6 +54,8 @@ Contributors/Copyright:
 
 #include <signal.h>
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -120,6 +122,8 @@ class writeOldTimesOnSignalFunctionObject
 
     bool writeCurrent_;
 
+    scalar sleepSecondsBeforeReraising_;
+
     bool sigFPE_;
     bool sigSEGV_;
     bool sigINT_;
@@ -129,6 +133,8 @@ class writeOldTimesOnSignalFunctionObject
     bool sigUSR2_;
 
     bool alreadyDumped_;
+
+    bool itWasMeWhoReraised_;
 
 public:
 
@@ -153,10 +159,23 @@ public:
     virtual bool start();
 
     //- execute is called at each ++ or += of the time-loop
+#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
     virtual bool execute();
+#else
+    virtual bool execute(const bool forceWrite);
+#endif
 
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
+
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+
+    virtual void updateMesh(const mapPolyMesh&) {
+    }
+
+    virtual void movePoints(const polyMesh&) {
+    }
+#endif
 
 };
 

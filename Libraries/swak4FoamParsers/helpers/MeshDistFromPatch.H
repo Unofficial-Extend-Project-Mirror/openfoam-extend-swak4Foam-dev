@@ -48,6 +48,8 @@ Contributors/Copyright:
 
 #include "FaceCellWaveData.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -71,8 +73,18 @@ public:
 
     inline scalar dist() const;
 
-    inline bool valid() const;
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
+    inline bool valid(
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        TrackingData &
+#endif
+    ) const;
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateCell
     (
         const polyMesh& mesh,
@@ -80,8 +92,14 @@ public:
         const label neighbourFaceI,
         const MeshDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh& mesh,
@@ -89,20 +107,34 @@ public:
         const label neighbourCellI,
         const MeshDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh&,
         const label thisFaceI,
         const MeshDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
-    inline bool operator!=(const MeshDistFromPatch &rhs);
+    inline bool operator!=(const MeshDistFromPatch &rhs) const;
 
     friend inline Ostream& operator<<(Ostream&, const MeshDistFromPatch&);
     friend inline Istream& operator>>(Istream&, MeshDistFromPatch&);
+
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+    inline bool equal(const MeshDistFromPatch &rhs,TrackingData &td) const;
+#endif
 
 };
 

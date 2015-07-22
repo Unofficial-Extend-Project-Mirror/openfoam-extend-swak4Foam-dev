@@ -109,6 +109,13 @@ public:
     //- Copy construct
     FaceZoneValueExpressionDriver(const faceZone &,const FaceZoneValueExpressionDriver&);
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new FaceZoneValueExpressionDriver(faceZone_,*this)
+            );
+        }
+
     // Destructor
 
     ~FaceZoneValueExpressionDriver();

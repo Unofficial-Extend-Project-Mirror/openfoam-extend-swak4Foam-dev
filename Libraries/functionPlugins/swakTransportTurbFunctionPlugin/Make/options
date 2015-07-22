@@ -21,6 +21,7 @@ LIB_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     -lswak4FoamParsers \
     -lfiniteVolume \
+    -lmeshTools \
     -lincompressibleTurbulenceModel \
     -lincompressibleLESModels \
     -lincompressibleRASModels \

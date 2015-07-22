@@ -30,6 +30,8 @@ License
 
 Contributors/Copyright:
     2009-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
+    2015 Dominik Christ <d.christ@wikki.co.uk>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -41,7 +43,9 @@ Contributors/Copyright:
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
 
-#if FOAM_VERSION4SWAK_MAJOR<2
+#include "swak.H"
+
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "directMappedPatchBase.H"
 #include "interpolationCell.H"
 
@@ -53,7 +57,8 @@ namespace Foam {
 }
 
 #else
-
+#include "mappedPatchBase.H"
+#include "interpolationCell.H"
 #endif
 
 #include <cassert>
@@ -529,11 +534,11 @@ namespace Foam {
                 interpolation<Type>::New(
                     schemeName,
                     psi
-                )
+                ).ptr()
             );
         }
 
-        return table[name];
+        return *table[name];
     }
 
     template<class T>
@@ -649,7 +654,7 @@ namespace Foam {
 
                 if (interpolationScheme != interpolationCell<T>::typeName)
                 {
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                     notImplemented(
                         "Interpolation scheme "+interpolationScheme
                         +" in version 1.x of OpenFOAM"
@@ -692,10 +697,17 @@ namespace Foam {
                     newValues = lookupMesh.lookupObject<localVolField>(name);
                 }
 
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 mapDistribute::distribute
                             (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+                                static_cast<Pstream::commsTypes>
+                                (
+                                    Pstream::defaultCommsType()
+                                ),
+#else
                                 Pstream::defaultCommsType,
+#endif
                                 distMap.schedule(),
                                 distMap.constructSize(),
                                 distMap.subMap(),
@@ -710,7 +722,7 @@ namespace Foam {
             }
 
             case mappedPatchBase::NEARESTPATCHFACE:
-#if FOAM_VERSION4SWAK_MAJOR>=2 && FOAM_VERSION4SWAK_MINOR>=1
+#ifdef FOAM_HAS_ABI_PATCHES
             case mappedPatchBase::NEARESTPATCHFACEAMI:
 #endif
             {
@@ -746,11 +758,18 @@ namespace Foam {
                     }
                 }
 
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 const mapDistribute& distMap = mpp.map();
                 mapDistribute::distribute
                             (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+                                static_cast<Pstream::commsTypes>
+                                (
+                                    Pstream::defaultCommsType()
+                                ),
+#else
                                 Pstream::defaultCommsType,
+#endif
                                 distMap.schedule(),
                                 distMap.constructSize(),
                                 distMap.subMap(),
@@ -807,10 +826,17 @@ namespace Foam {
                     }
                 }
 
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
                 mapDistribute::distribute
                             (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+                                static_cast<Pstream::commsTypes>
+                                (
+                                    Pstream::defaultCommsType()
+                                ),
+#else
                                 Pstream::defaultCommsType,
+#endif
                                 distMap.schedule(),
                                 distMap.constructSize(),
                                 distMap.subMap(),
@@ -829,7 +855,7 @@ namespace Foam {
                     FatalErrorIn
                         (
                             "tmp<Field<T> > PatchValueExpressionDriver::mapField"
-                        )<< "Unknown sampling mode: " << mpp.mode()
+                        )<< "Unknown sampling mode: " << label(mpp.mode())
                             << nl << abort(FatalError);
                 }
         }
@@ -862,7 +888,7 @@ namespace Foam {
 
         if(
             mpp.mode()!=mappedPatchBase::NEARESTPATCHFACE
-#if FOAM_VERSION4SWAK_MAJOR>=2 && FOAM_VERSION4SWAK_MINOR>=1
+#ifdef FOAM_HAS_ABI_PATCHES
             &&
             mpp.mode()!=mappedPatchBase::NEARESTPATCHFACEAMI
 #endif
@@ -896,11 +922,18 @@ namespace Foam {
                     << abort(FatalError);
         }
 
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
         const mapDistribute& distMap = mpp.map();
         mapDistribute::distribute
         (
+#ifdef FOAM_DEFAULTCOMMSTYPE_IS_METHOD
+            static_cast<Pstream::commsTypes>
+            (
+                Pstream::defaultCommsType()
+            ),
+#else
             Pstream::defaultCommsType,
+#endif
             distMap.schedule(),
             distMap.constructSize(),
             distMap.subMap(),

@@ -102,7 +102,7 @@ public:
     virtual bool start();
 
     //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
+    virtual bool execute(const bool forceWrite);
 
     //- Called when Time::run() determines that the time-loop exits.
     //  By default it simply calls execute().

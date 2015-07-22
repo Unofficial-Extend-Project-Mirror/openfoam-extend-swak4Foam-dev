@@ -1,0 +1,120 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     twoPhaseEulerFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         50;
+
+deltaT          0.001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.1;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable on;
+
+adjustTimeStep  yes;
+
+maxCo           0.5;
+
+maxDeltaT       1;
+
+functions
+{
+    doInit {
+        type initSwakFunctionObject;
+    }
+
+    // listFields {
+    //     type listRegisteredObjects;
+    // }
+    totalMu {
+        type expressionField;
+        expression "mu1+nut2*rho";
+        fieldName totalMu;
+        autowrite true;
+    }
+    balls {
+        type evolveKinematicCloud;
+        cloudName tracerBalls;
+        rhoName rho;
+        UName U;
+        muName totalMu;
+        //        g g [0 1 -2 0 0 0 0] (0 0 -9.81);
+    }
+    sandVelocity {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        variables (
+            "thres=0.55;"
+        );
+        expression "alpha1>thres ? mag(U1) : 0";
+        accumulations (
+            max
+            weightedAverage
+        );
+    }
+    totalSand {
+        $sandVelocity;
+        expression "vol()*alpha1";
+        accumulations (
+            sum
+        );
+    }
+    airCourant {
+        type expressionField;
+        autowrite true;
+        fieldName courantU1;
+        expression "courantIncompressible(phi1)";
+    }
+    sandCourant {
+        type expressionField;
+        autowrite true;
+        fieldName courantU2;
+        expression "courantIncompressible(phi2)";
+    }
+}
+
+libs (
+    "libgroovyBC.so"
+    "libsimpleLagrangianFunctionObjects.so"
+    "libsimpleFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakVelocityFunctionPlugin.so"
+);
+
+// ************************************************************************* //

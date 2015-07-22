@@ -37,16 +37,26 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "CoalCloud.H"
+#else
+#include "coalCloud.H"
+#endif
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,thermoCoalCloud);
     addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,constThermoCoalCloud);
     addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,icoPoly8ThermoCoalCloud);
+#else
+    addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,coalCloud);
+#endif
 
 } // namespace end
 

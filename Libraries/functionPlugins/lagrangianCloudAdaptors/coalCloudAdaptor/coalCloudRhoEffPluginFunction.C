@@ -38,7 +38,13 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "CoalCloud.H"
+#else
+#include "coalCloud.H"
+#endif
 
 namespace Foam {
 
@@ -66,9 +72,13 @@ coalCloudRhoEffPluginFunction::coalCloudRhoEffPluginFunction(
 autoPtr<volScalarField> coalCloudRhoEffPluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     tryCall(volScalarField,constThermoCoalCloud,reactingMultiphaseCloud,rhoEff());
     tryCall(volScalarField,thermoCoalCloud,reactingMultiphaseCloud,rhoEff());
     tryCall(volScalarField,icoPoly8ThermoCoalCloud,reactingMultiphaseCloud,rhoEff());
+#else
+    tryCall(volScalarField,coalCloud,reactingMultiphaseCloud,rhoEff());
+#endif
 
     return lcsRhoEffPluginFunction::internalEvaluate();
 }

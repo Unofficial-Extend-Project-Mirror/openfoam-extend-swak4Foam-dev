@@ -41,9 +41,13 @@ dictionaryReplacement
             }
             "rightSolid_to_.*"
             {
-                type            compressible::turbulentTemperatureCoupledBaffle;
+                //                type            compressible::turbulentTemperatureCoupledBaffle;
+                type            compressible::turbulentTemperatureCoupledBaffleMixed;
+                kappa           solidThermo;
+                kappaName       none;
                 neighbourFieldName T;
-                K               K;
+                K               solidThermo;
+                KName           none;
                 value           uniform 300;
             }
         }

@@ -114,6 +114,13 @@ public:
         const CellSetValueExpressionDriver&
     );
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new CellSetValueExpressionDriver(cellSet_(),*this)
+            );
+        }
+
     // Destructor
 
     ~CellSetValueExpressionDriver();

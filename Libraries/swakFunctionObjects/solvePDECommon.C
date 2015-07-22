@@ -60,6 +60,14 @@ Foam::solvePDECommon::solvePDECommon
     const dictionary& dict,
     const bool loadFromFiles
 ):
+#ifdef FOAM_HAS_FVOPTIONS
+    dummyOptionList_(
+       dynamicCast<const fvMesh&>(obr)
+    ),
+    warnedAboutMissingOptionList_(
+       false
+    ),
+#endif
     active_(true),
     obr_(obr),
     name_(name),
@@ -78,6 +86,30 @@ Foam::solvePDECommon::solvePDECommon
 
 Foam::solvePDECommon::~solvePDECommon()
 {}
+
+#ifdef FOAM_HAS_FVOPTIONS
+Foam::fv::optionList &Foam::solvePDECommon::fvOptions() const
+{
+    if(obr_.foundObject<fv::optionList>("fvOptions")) {
+        return const_cast<fv::optionList&>(
+            obr_.lookupObject<fv::optionList>("fvOptions")
+        );
+    } else {
+        if(!warnedAboutMissingOptionList_) {
+            const_cast<solvePDECommon&>(*this).warnedAboutMissingOptionList_=true;
+            WarningIn("Foam::solvePDECommon::fvOptions()")
+                 << "No 'fvOptions' found. Returning dummy (no further warnings)"
+                 << endl;
+        }
+        return const_cast<solvePDECommon&>(*this).dummyOptionList_;
+    }
+}
+#endif
+
+void Foam::solvePDECommon::timeSet()
+{
+    // Do nothing
+}
 
 void Foam::solvePDECommon::readExpressionAndDimension(
     const dictionary &dict,
@@ -207,6 +239,32 @@ void Foam::solvePDECommon::write()
 
         writeData();
     }
+}
+
+bool Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const
+{
+#ifdef FOAM_HAS_FVOPTIONS
+    if(
+        warnIfSteady
+	&&
+	steady_
+	&&
+	fvOptions().size()>0
+    ) {
+        WarningIn("Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const")
+	  << "There are " << fvOptions().size() << " fvOptions defined." << nl
+	  << "For technical reason a 'rho' entry is needed in " << name_ 
+	  << endl;
+    }
+#endif
+
+    return 
+      !steady_
+#ifdef FOAM_HAS_FVOPTIONS
+      ||
+      fvOptions().size()>0
+#endif
+      ;
 }
 
 // ************************************************************************* //

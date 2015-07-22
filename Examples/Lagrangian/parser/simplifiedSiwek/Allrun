@@ -1,4 +1,5 @@
 #!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
 
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
@@ -9,6 +10,8 @@ application=`getApplication`
 runApplication blockMesh
 
 # create ignition cells cellSet
-runApplication cellSet
+runApplication topoSet
 
 runApplication $application
+
+# ----------------------------------------------------------------- end-of-file

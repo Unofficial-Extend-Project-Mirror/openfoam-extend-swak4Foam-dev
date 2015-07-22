@@ -70,6 +70,8 @@ namespace Foam
 
 class ExpressionDriverWriter;
 
+class initSwakFunctionObject;
+
 class CommonPluginFunction;
 
 class CommonValueExpressionDriver
@@ -98,6 +100,9 @@ class CommonValueExpressionDriver
     //- by using it this class doesn't have to inherit from regIOobject
     //- (which would be an overkill and inconvenient)
     autoPtr<ExpressionDriverWriter> writer_;
+
+    //- pointer to the "default" mesh
+    static const fvMesh *defaultMeshPtr_;
 
     //- getting our own pointMesh
     autoPtr<pointMesh> pMesh_;
@@ -176,6 +181,12 @@ private:
 
     bool variableNameIdenticalToField_;
 
+#ifndef FOAM_DLLIBRARY_USES_STATIC_METHODS
+    dlLibraryTable libraries_;
+#endif
+
+    void readPluginLibraries(const dictionary &dict);
+
 protected:
     const ExpressionResult &lookupGlobal(const word &name) const;
 
@@ -239,6 +250,15 @@ protected:
 
     //- get the current time
     virtual const word time() const;
+
+    //- set the default Mesh (if it is unset)
+    static bool setUnsetDefaultMesh(const fvMesh &);
+
+    //- set the default Mesh
+    static bool resetDefaultMesh(const fvMesh &);
+
+    //- get the default Mesh (if one is defined)
+    static const fvMesh &getDefaultMesh();
 
     //- find out which mesh is meant from the dictionary
     static const fvMesh &regionMesh
@@ -441,6 +461,8 @@ public:
         const CommonValueExpressionDriver&
     );
 
+    virtual autoPtr<CommonValueExpressionDriver> clone() const = 0;
+
     //- Construct from a dictionary
     CommonValueExpressionDriver(const dictionary&);
 
@@ -449,6 +471,12 @@ public:
     (
         const dictionary& dict,
         const fvMesh& mesh
+    );
+
+    //- Return a reference to the selected value driver
+    static autoPtr<CommonValueExpressionDriver> New
+    (
+        const dictionary& dict
     );
 
     //- Return a reference to the selected value driver
@@ -489,6 +517,13 @@ public:
         const exprString &remoteExpr,
         const word &name,
         const exprString &expr
+    );
+
+    //- allows adding uniform variables from outside
+    template<class T>
+    void addUniformVariable(
+        const word &name,
+        const T &val
     );
 
     //- calculate the weighted average of a field
@@ -651,7 +686,12 @@ public:
     tmp<T> interpolateForeignField(
         const word &meshName,
         const word &fieldName,
-        meshToMesh::order theOrder=meshToMesh::INTERPOLATE
+        meshToMeshOrder theOrder=
+#ifdef FOAM_NEW_MESH2MESH
+        meshToMesh::imCellVolumeWeight
+#else
+        meshToMesh::INTERPOLATE
+#endif
     ) const;
 
     //- read all the interpolation tables known to man
@@ -752,6 +792,9 @@ public:
     void appendToContext(const string &value);
 
     friend class ExpressionDriverWriter;
+
+    friend class initSwakFunctionObject;
+
     friend class CommonPluginFunction;
     friend class exprString;
 };

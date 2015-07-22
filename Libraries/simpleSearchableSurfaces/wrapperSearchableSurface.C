@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "wrapperSearchableSurface.H"
@@ -81,12 +81,12 @@ Foam::wrapperSearchableSurface::wrapperSearchableSurface
             << name() << " wraps " << delegate().name() << endl;
     }
     if(regions().size()!=size()) {
-        FatalErrorIn("wrapperSearchableSurface::wrapperSearchableSurface")
+        WarningIn("wrapperSearchableSurface::wrapperSearchableSurface")
             << "Number of regions " << regions().size() << " not equal to size "
                 << size() << nl << "Regions: " << regions()
                 << endl
-                << exit(FatalError);
-
+                << "in " << name() << " wraps " << delegate().name() << endl;
+        //                << exit(FatalError);
     }
 }
 
@@ -210,5 +210,28 @@ void Foam::wrapperSearchableSurface::getVolumeType
         );
 }
 
+bool Foam::wrapperSearchableSurface::overlaps(const boundBox& bb) const
+{
+    notImplemented
+        (
+            "Foam::wrapperSearchableSurface::overlaps(const boundBox&) const"
+        );
+
+    return false;
+}
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::wrapperSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    delegate().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+}
+#endif
 
 // ************************************************************************* //

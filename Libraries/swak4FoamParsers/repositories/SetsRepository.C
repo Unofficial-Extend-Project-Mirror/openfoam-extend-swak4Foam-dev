@@ -40,6 +40,8 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "meshSearch.H"
 
+#include "Time.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

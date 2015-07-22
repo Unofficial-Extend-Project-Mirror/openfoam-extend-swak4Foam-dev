@@ -48,6 +48,7 @@ Contributors/Copyright:
 #ifndef TimeClone_H
 #define TimeClone_H
 
+#include "objectRegistry.H"
 #include "Time.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -98,8 +99,13 @@ public:
     bool write(const bool force=false);
 
     //- Destructor
-    ~TimeClone();
+    virtual ~TimeClone();
 
+    bool ok() const {
+        return storedTime_.valid();
+    }
+
+    const Time &operator()() const;
 
     // Member Functions
 

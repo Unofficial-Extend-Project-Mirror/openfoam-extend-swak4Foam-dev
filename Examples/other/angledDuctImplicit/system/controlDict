@@ -540,7 +540,7 @@ functions
         surfaceName testPatch;
         surface {
             type patch;
-            patchName outlet;
+            patches ( outlet );
             //            triangulate      false;
         }
         verbose true;
@@ -595,7 +595,7 @@ functions
         }
         writeSetOnConstruction true;
         autoWriteSet true;
-        setFormat jplot;
+        setFormat vtk;
     }
     onlyHighPressure {
         type executeIfSwakExpression;
@@ -710,7 +710,7 @@ functions
         }
         writeSetOnConstruction true;
         autoWriteSet true;
-        setFormat jplot;
+        setFormat vtk;
         storedVariables (
             {
                 name pInit;
@@ -820,6 +820,9 @@ functions
                 outputControl timeStep;
                 outputInterval 1;
                 fieldName yPlus;
+                aliases {
+                    mu thermo:mu;
+                }
                 expression "pow(0.09,0.25)*sqr(k)*nearDist()/mu";
                 autowrite true;
             }
@@ -827,6 +830,9 @@ functions
             {
                 type patchExpression;
                 expression "pow(0.09,0.25)*sqr(k)*dist()/mu";
+                aliases {
+                    mu thermo:mu;
+                }
                 accumulations (
                     min
                     max
@@ -1067,6 +1073,7 @@ functions
                 parallelMasterOnly false;
                 isParallelized true;
 
+		initCode "";
                 conditionCode "return abs(runTime % 3)<1e-5";
                 //                conditionFile "$FOAM_CASE/test.py"
 
@@ -1158,7 +1165,7 @@ functions
         }
         writeSetOnConstruction true;
         autoWriteSet true;
-        setFormat jplot;
+        setFormat vtk;
     }
     createMinMaxLineSet2
     {
@@ -1173,7 +1180,7 @@ functions
         }
         writeSetOnConstruction true;
         autoWriteSet true;
-        setFormat jplot;
+        setFormat vtk;
     }
     createMinMaxLineSet3
     {
@@ -1188,7 +1195,7 @@ functions
         }
         writeSetOnConstruction true;
         autoWriteSet true;
-        setFormat jplot;
+        setFormat vtk;
     }
     testLineSetNr{
         $testPlaneArea;

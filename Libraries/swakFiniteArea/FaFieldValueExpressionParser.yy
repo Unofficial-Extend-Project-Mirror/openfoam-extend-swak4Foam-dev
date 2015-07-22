@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -1907,7 +1907,13 @@ exp:    TOKEN_NUM                                  {
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_pi                                 {
-            $$ = driver.makeConstantField<Foam::areaScalarField>(M_PI).ptr();
+            $$ = driver.makeConstantField<Foam::areaScalarField>(
+#ifdef FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+                Foam::mathematicalConstant::pi
+#else
+                Foam::constant::mathematical::pi
+#endif
+            ).ptr();
           }
         | TOKEN_rdist '(' vexp ')'                 {
             $$ = driver.makeRDistanceField(*$3).ptr();

@@ -53,7 +53,7 @@ void ReaderParticle::writeFields (const Cloud<ReaderParticle> &cGeneral) {
         dynamicCast<const ReaderParticleCloud>(cGeneral)
     );
 
-    Particle<ReaderParticle>::writeFields(c);
+    ReaderParticleBaseClass::writeFields(c);
 
     c.writeData(c.scalarData_);
     c.writeData(c.labelData_);
@@ -64,7 +64,7 @@ void ReaderParticle::writeFields (const Cloud<ReaderParticle> &cGeneral) {
 }
 
 void ReaderParticle::readFields (ReaderParticleCloud &c) {
-    Particle<ReaderParticle>::readFields(c);
+    ReaderParticleBaseClass::readFields(c);
 
     const objectRegistry &obr=c.parent();
 

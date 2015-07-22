@@ -38,6 +38,12 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+#define TRACKDATA td
+#else
+#define TRACKDATA
+#endif
+
     MeshLayersDistFromPatch::MeshLayersDistFromPatch()
         :
         dist_(-2),
@@ -53,12 +59,22 @@ namespace Foam {
     label MeshLayersDistFromPatch::dist() const
         { return dist_; }
 
-    bool MeshLayersDistFromPatch::valid() const
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
+    bool MeshLayersDistFromPatch::valid(
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        TrackingData &td
+#endif
+    ) const
         { return dist_>=0; }
 
     bool MeshLayersDistFromPatch::blocked() const
         { return blocked_; }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool MeshLayersDistFromPatch::updateCell
     (
         const polyMesh& mesh,
@@ -66,9 +82,12 @@ namespace Foam {
         const label neighbourFaceI,
         const MeshLayersDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
-            if(!valid()) {
+            if(!valid(TRACKDATA)) {
                 if(!blocked()) {
                     dist_=1+neighbourInfo.dist();
                     return true;
@@ -86,6 +105,9 @@ namespace Foam {
             }
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool MeshLayersDistFromPatch::updateFace
     (
         const polyMesh& mesh,
@@ -93,9 +115,12 @@ namespace Foam {
         const label neighbourCellI,
         const MeshLayersDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
-            if(!valid()) {
+            if(!valid(TRACKDATA)) {
                 if(!blocked()) {
                     dist_=1+neighbourInfo.dist();
                     return true;
@@ -113,15 +138,21 @@ namespace Foam {
             }
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool MeshLayersDistFromPatch::updateFace
     (
         const polyMesh&,
         const label thisFaceI,
         const MeshLayersDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
-            if(!valid()) {
+            if(!valid(TRACKDATA)) {
                 if(!blocked()) {
                     dist_=neighbourInfo.dist();
                     return true;
@@ -138,9 +169,17 @@ namespace Foam {
             }
         }
 
-    bool MeshLayersDistFromPatch::operator!=(const MeshLayersDistFromPatch &rhs) {
+    bool MeshLayersDistFromPatch::operator!=(const MeshLayersDistFromPatch &rhs) const {
         return dist_<0 || dist_ != rhs.dist();
     }
+
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+    bool MeshLayersDistFromPatch::equal(const MeshLayersDistFromPatch &rhs,TrackingData &td) const
+    {
+        return !(operator!=(rhs));
+    }
+#endif
 
     Ostream& operator<<
     (
@@ -166,6 +205,8 @@ namespace Foam {
 
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+
+    #undef TRACKDATA
 
 } // namespace
 

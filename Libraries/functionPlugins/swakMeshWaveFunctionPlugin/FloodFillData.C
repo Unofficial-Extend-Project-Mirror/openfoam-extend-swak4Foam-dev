@@ -38,6 +38,12 @@ Contributors/Copyright:
 
 namespace Foam {
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+#define TRACKDATA td
+#else
+#define TRACKDATA
+#endif
+
     FloodFillData::FloodFillData()
         :
         val_(-2),
@@ -58,12 +64,22 @@ namespace Foam {
     label FloodFillData::val() const
         { return val_; }
 
-    bool FloodFillData::valid() const
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
+    bool FloodFillData::valid(
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        TrackingData &
+#endif
+    ) const
         { return val_>=0; }
 
     bool FloodFillData::blocked() const
         { return blocked_; }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool FloodFillData::updateCell
     (
         const polyMesh& mesh,
@@ -71,9 +87,12 @@ namespace Foam {
         const label neighbourFaceI,
         const FloodFillData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
-            if(!valid()) {
+            if(!valid(TRACKDATA)) {
                 if(!blocked()) {
                     val_=target_;
                     return true;
@@ -85,6 +104,9 @@ namespace Foam {
             }
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool FloodFillData::updateFace
     (
         const polyMesh& mesh,
@@ -92,9 +114,12 @@ namespace Foam {
         const label neighbourCellI,
         const FloodFillData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
-            if(!valid()) {
+            if(!valid(TRACKDATA)) {
                 if(!blocked()) {
                     val_=target_;
                     return true;
@@ -106,15 +131,21 @@ namespace Foam {
             }
         }
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     bool FloodFillData::updateFace
     (
         const polyMesh&,
         const label thisFaceI,
         const FloodFillData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     )
         {
-            if(!valid()) {
+            if(!valid(TRACKDATA)) {
                 if(!blocked()) {
                     val_=target_;
                     return true;
@@ -126,7 +157,7 @@ namespace Foam {
             }
         }
 
-    bool FloodFillData::operator!=(const FloodFillData &rhs) {
+    bool FloodFillData::operator!=(const FloodFillData &rhs) const {
         return val_<0 || val_ != rhs.val();
     }
 
@@ -146,15 +177,15 @@ namespace Foam {
         return is >> wDist.val_ >> wDist.target_ >> wDist.blocked_;
     }
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+    bool FloodFillData::equal(const FloodFillData &rhs,TrackingData &td) const
+    {
+        return !(operator!=(rhs));
+    }
+#endif
 
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+#undef TRACKDATA
 
 } // namespace
 

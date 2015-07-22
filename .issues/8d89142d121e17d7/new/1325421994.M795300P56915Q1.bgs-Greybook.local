@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 01 Jan 2012 13:40:41 +0100
+State: new
+Subject: symmTensor & symmTensor = symmTensort not working with gcc46 
+Message-Id: <8d89142d121e17d7-0-artemis@bgs-Greybook.local>
+
+The compiler says that the result is a tensor. 
+
+currently commented out in the Parsers.
+
+Spherical Tensor seems to be OK

@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,96 +15,117 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-active          true;
-
-// InjectionModel  ManualInjection;
-InjectionModel  none;
-
-DragModel       SphereDrag;
-
-DispersionModel StochasticDispersionRAS;
-
-PatchInteractionModel StandardWallInteraction;
-
-HeatTransferModel RanzMarshall;
-
-PostProcessingModel none;
-
-radiation       on;
-
-coupled         true;
-
-cellValueSourceCorrection on;
-
-parcelTypeId    2;
-
-constantProperties
+solution
 {
-    rhoMin          rhoMin [ 1 -3 0 0 0 ] 1e-15;
-    TMin            TMin [ 0 0 0 1 0 ] 200;
-    minParticleMass minParticleMass [ 1 0 0 0 0 ] 1e-15;
-    rho0            rho0 [ 1 -3 0 0 0 ] 2500;
-    T0              T0 [ 0 0 0 1 0 ] 300;
-    cp0             cp0 [ 0 2 -2 -1 0 ] 900;
-    epsilon0        epsilon0 [ 0 0 0 0 0 ] 1;
-    f0              f0 [ 0 0 0 0 0 ] 0.5;
-    Pr              Pr [ 0 0 0 0 0 ] 0.7;
-}
+    active          true;
+    coupled         true;
+    transient       yes;
+    cellValueSourceCorrection on;
 
-interpolationSchemes
-{
-    rho             cell;
-    mu              cell;
-    U               cellPoint;
-    Cp              cell;
-    T               cell;
-}
-
-integrationSchemes
-{
-    U               Euler;
-    T               Analytical;
-}
-
-particleForces
-{
-    gravity         on;
-    virtualMass     off;
-    pressureGradient off;
-}
-
-ManualInjectionCoeffs
-{
-    massTotal       massTotal [ 1 0 0 0 0 ] 0.0001;
-    parcelBasisType mass;
-    SOI             0;
-    positionsFile   "limestonePositions";
-    U0              ( 0 0 0 );
-    parcelPDF
+    sourceTerms
     {
-        pdfType         RosinRammler;
-        RosinRammlerPDF
+        schemes
         {
-            minValue        5e-06;
-            maxValue        0.000565;
-            d               4.8e-05;
-            n               0.5;
+            U               explicit 1;
+            h               explicit 1;
+            radiation       explicit 1;
         }
+    }
+
+    interpolationSchemes
+    {
+        rho             cell;
+        thermo:mu       cell;
+        U               cellPoint;
+        Cp              cell;
+        kappa           cell;
+        T               cell;
+        G               cell;
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+        T               analytical;
     }
 }
 
-StandardWallInteractionCoeffs
+constantProperties
 {
-    type            rebound;
-    e               1; // optional
-    mu              0; // optional
+    parcelTypeId    2;
+
+    rho0            2500;
+    T0              300;
+    Cp0             900;
+
+    youngsModulus   40e9;
+    poissonsRatio   0.25;
+
+    epsilon0        1;
+    f0              0.5;
+
+    Pr              0.7;
 }
 
-RanzMarshallCoeffs
+subModels
 {
-    // thermal shielding
-    BirdCorrection  false;
+    particleForces
+    {
+        sphereDrag;
+        gravity;
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            //            type            manualInjection;
+            type            none;
+            massTotal       0.0001;
+            parcelBasisType mass;
+            SOI             0;
+            positionsFile   "limestonePositions";
+            U0              ( 0 0 0 );
+            sizeDistribution
+            {
+                type        RosinRammler;
+                RosinRammlerDistribution
+                {
+                    minValue        5e-06;
+                    maxValue        0.000565;
+                    d               4.8e-05;
+                    n               0.5;
+                }
+            }
+        }
+    }
+
+    dispersionModel stochasticDispersionRAS;
+
+    patchInteractionModel standardWallInteraction;
+
+    heatTransferModel RanzMarshall;
+
+    surfaceFilmModel none;
+
+    radiation       on;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+        e               1;
+        mu              0;
+    }
+
+    RanzMarshallCoeffs
+    {
+        BirdCorrection  false;
+    }
 }
+
+
+cloudFunctions
+{}
 
 
 // ************************************************************************* //

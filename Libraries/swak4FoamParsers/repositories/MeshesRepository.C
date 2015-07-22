@@ -39,6 +39,8 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "meshSearch.H"
 
+#include "swak.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -234,6 +236,9 @@ meshToMesh &MeshesRepository::getMeshToMesh(
              new meshToMesh(
                  *meshes_[name],
                  mesh
+#ifdef FOAM_NEW_MESH2MESH
+                 ,getInterpolationOrder(name)
+#endif
              )
          );
     }
@@ -288,9 +293,15 @@ scalar MeshesRepository::setTime(
         mesh.readUpdate();
         mesh.readModifiedObjects();
 
-        HashTable<const regIOobject*> content(mesh.lookupClass<regIOobject>());
+#ifdef FOAM_LOOKUPCLASS_NO_CONST
+        typedef HashTable<regIOobject*> regIOTable;
+#else
+        typedef HashTable<const regIOobject*> regIOTable;
+#endif
 
-        forAllIter(HashTable<const regIOobject*>,content,iter) {
+        regIOTable content(mesh.lookupClass<regIOobject>());
+
+        forAllIter(regIOTable,content,iter) {
             word newInstance=theTime.findInstance(
                 (*iter)->local(),
                 iter.key(),
@@ -311,20 +322,24 @@ scalar MeshesRepository::setTime(
 
 void MeshesRepository::setInterpolationOrder(
     const word &name,
-    meshToMesh::order val
+    meshToMeshOrder val
 )
 {
     interpolationOrder_.set(name,val);
 }
 
-meshToMesh::order MeshesRepository::getInterpolationOrder(
+meshToMeshOrder MeshesRepository::getInterpolationOrder(
     const word &name
 )
 {
     if(interpolationOrder_.found(name)) {
         return interpolationOrder_[name];
     } else {
+#ifdef FOAM_NEW_MESH2MESH
+        return meshToMesh::imCellVolumeWeight;
+#else
         return meshToMesh::INTERPOLATE;
+#endif
     }
 }
 

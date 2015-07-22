@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "pythonInterpreterWrapper.H"
@@ -45,6 +45,10 @@ Contributors/Copyright:
 #include "tensor.H"
 #include "symmTensor.H"
 #include "sphericalTensor.H"
+
+#ifdef FOAM_HAS_STRINGOPS
+#include "stringOps.H"
+#endif
 
 // #include <fcntl.h>
 
@@ -180,7 +184,11 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
 
     syncParallel();
 
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugPythonWrapper",debug);
+#endif
 
     if(!dict.found("useNumpy")) {
         WarningIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
@@ -528,6 +536,10 @@ bool pythonInterpreterWrapper::executeCode(
 )
 {
     Pbug << "ExecuteCode: " << code << endl;
+    if(code.size()==0) {
+        Pbug << "No code. Exiting" << endl;
+        return true;
+    }
     syncParallel();
 
     int fail=0;
@@ -1324,6 +1336,9 @@ void pythonInterpreterWrapper::readCode(
             code="";
         }
     }
+#ifdef FOAM_HAS_STRINGOPS
+    code=stringOps::trim(code);
+#endif
 }
 
 void pythonInterpreterWrapper::scatterGlobals()

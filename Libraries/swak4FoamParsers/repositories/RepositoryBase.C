@@ -36,6 +36,8 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
+#include "Time.H"
+
 namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

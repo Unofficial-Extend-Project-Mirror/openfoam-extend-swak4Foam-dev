@@ -109,11 +109,15 @@ const FieldType &EvolveCloudFunctionObject<CloudType>::getField(const word &fiel
 }
 
 template<class CloudType>
-bool EvolveCloudFunctionObject<CloudType>::execute()
+bool EvolveCloudFunctionObject<CloudType>::execute(bool forceWrite)
 {
     cloud_->evolve();
 
-    if(obr().time().outputTime()) {
+    if(
+        obr().time().outputTime()
+        ||
+        forceWrite
+    ) {
         Info << "Writing cloud " << cloud_->name() << endl;
         cloud_->write();
     }

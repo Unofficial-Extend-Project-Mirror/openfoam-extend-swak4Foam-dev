@@ -40,13 +40,17 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef wrapperSearchableSurface_H
 #define wrapperSearchableSurface_H
 
 #include "searchableSurface.H"
+
+#include "swakSurfaceTypes.H"
+
+#include "boundBox.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -115,7 +119,13 @@ public:
             return delegate().size();
         }
 
-        pointField coordinates() const {
+
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+        virtual tmp<pointField> coordinates() const
+#else
+        virtual pointField coordinates() const
+#endif
+        {
             return delegate().coordinates();
         }
 
@@ -177,6 +187,23 @@ public:
                 notImplemented("wrapperSearchableSurface::writeData(Ostream&) const");
                 return false;
             }
+
+#ifdef FOAM_SEARCHABLE_SURF_HAS_POINTS
+        virtual tmp<pointField> points() const
+        {
+            return delegate().points();
+        }
+#endif
+
+        virtual bool overlaps(const boundBox &) const;
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+    virtual void boundingSpheres
+    (
+        pointField& centres,
+        scalarField& radiusSqr
+    ) const;
+#endif
 
 };
 

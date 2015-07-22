@@ -137,6 +137,7 @@ void TimeCloneList::copy(const Time &t)
 
 bool TimeCloneList::write(const bool force)
 {
+    Pout << storedTimes_.size() << " times to write" << endl;
     Dbug << "write. Force: " << force << endl;
 
     forAll(storedTimes_,i) {
@@ -152,6 +153,22 @@ bool TimeCloneList::write(const bool force)
     return true;
 }
 
+bool TimeCloneList::has(const Time& other)
+{
+    forAll(storedTimes_,i) {
+        const TimeClone *clone=storedTimes_[i];
+        if(
+            clone!=NULL
+            &&
+            clone->ok()
+        ) {
+            if((*clone)().value()==other.value()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 // * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * * Friend Functions  * * * * * * * * * * * * * * //

@@ -13,6 +13,7 @@ export SWAKLIBS=(groovyBC \
     swakPythonIntegration* \
     swak*FunctionPlugin \
     swak*CloudAdaptor \
+    swakFvOptions \
     swakFunctionObjects)
 
 if [ "$FOAM_DEV" != "" ]

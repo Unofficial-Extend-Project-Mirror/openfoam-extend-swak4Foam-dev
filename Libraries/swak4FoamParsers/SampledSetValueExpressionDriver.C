@@ -67,15 +67,19 @@ void SampledSetValueExpressionDriver::setDebug()
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 
-//     SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(const sampledSet &surf,const SampledSetValueExpressionDriver& orig)
-// :
-//         SubsetValueExpressionDriver(orig),
-//         theSet_(surf.clone()),
-//         interpolate_(orig.interpolate_),
-//         interpolationType_(orig.interpolationType_)
-// {
-//     setDebug();
-// }
+SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(
+    const sampledSet &surf,
+    const SampledSetValueExpressionDriver& orig
+)
+:
+        SubsetValueExpressionDriver(orig),
+        //        theSet_(surf.clone()),
+        theSet_(surf),
+        interpolate_(orig.interpolate_),
+        interpolationType_(orig.interpolationType_)
+{
+    setDebug();
+}
 
 SampledSetValueExpressionDriver::SampledSetValueExpressionDriver(
     sampledSet &surf,

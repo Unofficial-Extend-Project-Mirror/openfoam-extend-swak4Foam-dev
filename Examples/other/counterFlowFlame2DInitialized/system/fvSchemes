@@ -35,11 +35,13 @@ divSchemes
     div(phi,CH4)    $div(phi,Yi_h);
     div(phi,O2)     $div(phi,Yi_h);
     div(phi,hs)     Gauss limitedLinear 1;
+    div(phi,K)     Gauss limitedLinear 1;
     div(phiU,p)     Gauss limitedLinear 1;
     div(phid,p)     Gauss limitedLinear 1;
     div(phi,epsilon) Gauss limitedLinear 1;
     div(phi,k) Gauss limitedLinear 1;
     div((muEff*dev2(grad(U).T()))) Gauss linear;
+    div((muEff*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -51,6 +53,7 @@ laplacianSchemes
     laplacian(DepsilonEff,epsilon) Gauss linear uncorrected;
     laplacian((rho*(1|A(U))),p) Gauss linear uncorrected;
     laplacian(alphaEff,hs) Gauss linear uncorrected;
+    laplacian(alphaEff,h) Gauss linear uncorrected;
 }
 
 interpolationSchemes

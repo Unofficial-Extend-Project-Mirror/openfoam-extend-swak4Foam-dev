@@ -55,9 +55,13 @@ dictionaryReplacement
 
             "bottomAir_to_.*"
             {
-                type            compressible::turbulentTemperatureCoupledBaffle;
+                //                type            compressible::turbulentTemperatureCoupledBaffle;
+                type            compressible::turbulentTemperatureCoupledBaffleMixed;
+                kappa           fluidThermo;
+                kappaName       none;
                 neighbourFieldName T;
-                K               K;
+                K               basicThermo;
+                KName           none;
                 value           uniform 300;
             }
             minY

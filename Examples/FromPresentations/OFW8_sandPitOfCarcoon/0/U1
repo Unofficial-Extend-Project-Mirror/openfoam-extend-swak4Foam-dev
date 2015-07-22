@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U1;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions          [ 0 1 -1 0 0 0 0 ];
+
+internalField       uniform (0 0 0);
+
+boundaryField
+{
+    bottom
+    {
+        type               groovyBC;
+        value              uniform (0 0 0);
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "middle=0.5*(minX+maxX);"
+            "vMax=1;"
+            "profile=vMax*(1-pow((pos().x-middle)/(middle-minX),2));"
+            "tOpen=5;"
+            "tOpening=1;"
+            "factor=time()<tOpen ? 0 : (time()>(tOpen+tOpening) ? 1 : (time()-tOpen)/tOpening);"
+        );
+        valueExpression "normal()*factor*profile";
+    }
+
+    top
+    {
+        type               pressureInletOutletVelocity;
+//        phi                phi1;
+        phi                phi2;     // this avoids a divergence in the case
+        value              $internalField;
+    }
+
+    walls
+    {
+        type               fixedValue;
+        value              uniform (0 0 0);
+    }
+
+    floor 
+    {
+      $walls;
+    }
+      
+    frontBack
+    {
+        type               empty;
+    }
+
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

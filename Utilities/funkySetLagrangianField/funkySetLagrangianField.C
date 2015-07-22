@@ -311,6 +311,7 @@ int main(int argc, char *argv[])
     if(!args.options().found("allowFunctionObjects")) {
         runTime.functionObjects().off();
     }
+
     bool debugParser=args.options().found("debugParser");
 
     forAll(timeDirs, timeI)
@@ -450,7 +451,11 @@ int main(int argc, char *argv[])
                                 << endl
                                 << exit(FatalError);
                     }
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
                     dlLibraryTable::open(spec,"libs");
+#else
+                    table.open(spec,"libs");
+#endif
 
                     wordList preloadFieldNames(spec.lookup("preloadFields"));
 

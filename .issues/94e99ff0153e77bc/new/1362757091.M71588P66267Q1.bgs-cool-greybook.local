@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Fri, 08 Mar 2013 16:37:18 +0100
+State: new
+Subject: Allow selection by patchgroups in 2.2
+Message-Id: <94e99ff0153e77bc-0-artemis@bgs-cool-greybook.local>
+
+This is related to issue 8be3ab0671559897

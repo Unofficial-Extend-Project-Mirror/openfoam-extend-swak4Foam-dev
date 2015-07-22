@@ -16,10 +16,10 @@ FoamFile
 
 solvers
 {
-    pcorr 
+    pcorr
     {
         solver PCG;
-        preconditioner   
+        preconditioner
         {
             preconditioner   GAMG
             tolerance        1e-3;
@@ -62,10 +62,10 @@ solvers
         $p_rgh;
     };
 
-    p_rghFinal 
+    p_rghFinal
     {
         solver PCG;
-        preconditioner 
+        preconditioner
         {
             preconditioner   GAMG
             tolerance        1e-8;
@@ -93,7 +93,7 @@ solvers
         $p_rghFinal;
     };
 
-    U 
+    U
     {
         solver smoothSolver;
         smoother         GaussSeidel;
@@ -102,30 +102,45 @@ solvers
         nSweeps          1;
     };
 
-    k 
+    k
     {
         solver PBiCG;
         preconditioner   DILU;
         tolerance        1e-08;
         relTol           0;
     };
-    B 
+    B
     {
         solver PBiCG;
         preconditioner   DILU;
         tolerance        1e-08;
         relTol           0;
     };
-    nuTilda 
+    nuTilda
     {
         solver PBiCG;
         preconditioner   DILU;
         tolerance        1e-08;
         relTol           0;
     };
+    "alpha.water.*"
+    {
+        nAlphaCorr      2;
+        nAlphaSubCycles 1;
+        cAlpha          1;
+
+        MULESCorr       yes;
+        nLimiterIter    3;
+
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+    }
+
 }
 
-PISO
+PIMPLE
 {
     momentumPredictor no;
     nCorrectors     3;
@@ -140,6 +155,10 @@ PISO
         fields  (pd);
         probeLocations ((0.01 0.01 0.01));
     };
+}
+
+PIMPLE {
+    $PISO;
 }
 
 // ************************************************************************* //

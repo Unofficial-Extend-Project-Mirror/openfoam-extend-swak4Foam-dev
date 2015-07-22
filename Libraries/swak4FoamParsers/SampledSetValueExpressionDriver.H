@@ -68,7 +68,7 @@ class SampledSetValueExpressionDriver
     static word driverName_;
 
     // Private data
-    sampledSet &theSet_;
+    const sampledSet &theSet_;
 
     // Private Member Functions
 
@@ -121,7 +121,14 @@ public:
     SampledSetValueExpressionDriver(const dictionary& dict,const fvMesh&mesh);
 
 //     //- Copy construct
-//     SampledSetValueExpressionDriver(const sampledSet &,const SampledSetValueExpressionDriver&);
+    SampledSetValueExpressionDriver(const sampledSet &,const SampledSetValueExpressionDriver&);
+
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new SampledSetValueExpressionDriver(theSet_,*this)
+            );
+        }
 
     // Destructor
 

@@ -15,14 +15,14 @@ FoamFile
 expressions
 (
     alphaCopy {
-        field alpha;
+        field alpha1;
         create true;
         expression "alphaZero";
         valuePatches ( inlet );
     }
     halfFilled
     {
-        field alpha;
+        field alpha1;
         expression "0.55";
         keepPatches true;
         condition "pos().y<0.5";

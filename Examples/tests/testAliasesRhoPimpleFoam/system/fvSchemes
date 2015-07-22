@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.x                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -31,7 +31,7 @@ divSchemes
     default         none;
     div(phi,U)      Gauss limitedLinearV 1;
     div(phid,p)     Gauss limitedLinear 1;
-    div(phiU,p)     Gauss linear;
+    div(phi,K)      Gauss linear;
     div(phi,h)      Gauss limitedLinear 1;
     div(phi,k)      Gauss limitedLinear 1;
     div(phi,epsilon) Gauss limitedLinear 1;
@@ -41,20 +41,19 @@ divSchemes
     div(R)          Gauss linear;
     div(U)          Gauss linear;
     div((muEff*dev2(T(grad(U))))) Gauss linear;
-    div((muEff*dev2(grad(U).T())))  Gauss linear;
 }
 
 laplacianSchemes
 {
     default         none;
-    laplacian(muEff,U) Gauss linear corrected;
-    laplacian(mut,U) Gauss linear corrected;
-    laplacian(DkEff,k) Gauss linear corrected;
-    laplacian(DepsilonEff,epsilon) Gauss linear corrected;
-    laplacian(DREff,R) Gauss linear corrected;
-    laplacian(DomegaEff,omega) Gauss linear corrected;
-    laplacian((rho*(1|A(U))),p) Gauss linear corrected;
-    laplacian(alphaEff,h) Gauss linear corrected;
+    laplacian(muEff,U) Gauss linear orthogonal;
+    laplacian(mut,U) Gauss linear orthogonal;
+    laplacian(DkEff,k) Gauss linear orthogonal;
+    laplacian(DepsilonEff,epsilon) Gauss linear orthogonal;
+    laplacian(DREff,R) Gauss linear orthogonal;
+    laplacian(DomegaEff,omega) Gauss linear orthogonal;
+    laplacian(Dp,p) Gauss linear orthogonal;
+    laplacian(alphaEff,h) Gauss linear orthogonal;
 }
 
 interpolationSchemes
@@ -64,7 +63,7 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         corrected;
+    default         orthogonal;
 }
 
 fluxRequired

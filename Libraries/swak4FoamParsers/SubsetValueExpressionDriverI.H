@@ -40,7 +40,14 @@ Contributors/Copyright:
 #include "fvsPatchField.H"
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
+
+#include "swak.H"
+
+#ifdef FOAM_COUPLEDPOLYPATCH_HAS_OWNER
+#include "coupledPolyPatch.H"
+#else
 #include "processorPolyPatch.H"
+#endif
 
 #include <cassert>
 
@@ -424,11 +431,17 @@ namespace Foam {
             if(!patch.coupled()) {
                 return true;
             } else {
-                // in 2.x this works for coupled
+#ifdef FOAM_COUPLEDPOLYPATCH_HAS_OWNER
+                if(isA<coupledPolyPatch>(patch)) {
+                    const coupledPolyPatch &pp=dynamicCast<const coupledPolyPatch&>(
+                        patch
+                    );
+#else
                 if(isA<processorPolyPatch>(patch)) {
                     const processorPolyPatch &pp=dynamicCast<const processorPolyPatch&>(
                         patch
                     );
+#endif
                     return pp.owner();
                 } else {
                     return false;

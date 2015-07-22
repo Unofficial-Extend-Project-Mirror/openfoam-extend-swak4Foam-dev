@@ -48,7 +48,7 @@ namespace Foam
 
     // Specialization because solidParticleCloud has no evolve
 template<>
-bool EvolveCloudFunctionObject<solidParticleCloud>::execute()
+bool EvolveCloudFunctionObject<solidParticleCloud>::execute(bool forceWrite)
 {
     Info << "Moving solidParticeCloud:" << cloud_->name()
         << " with " << cloud_->size() << " particles" << endl;
@@ -56,7 +56,11 @@ bool EvolveCloudFunctionObject<solidParticleCloud>::execute()
     Info << tab << cloud_->size() << " particles after moving"
         << endl;
 
-    if(obr().time().outputTime()) {
+    if(
+        obr().time().outputTime()
+        ||
+        forceWrite
+    ) {
         Info << "Writing cloud " << cloud_->name() << endl;
         cloud_->write();
     }

@@ -41,6 +41,8 @@ Contributors/Copyright:
 
 #include "fvCFD.H"
 
+#include "swak.H"
+
 #include "pythonInterpreterWrapper.H"
 
 #include "timeSelector.H"
@@ -50,6 +52,8 @@ Contributors/Copyright:
 #include "printSwakVersion.H"
 
 #include "RepositoryBase.H"
+
+#include "simpleDataFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // Main program:
@@ -64,6 +68,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
     argList::validOptions.insert("interactive","");
     argList::validOptions.insert("debugOnException","");
+    argList::validOptions.insert("postProcDir","dirname");
 
 #   include "setRootCase.H"
 
@@ -71,6 +76,17 @@ int main(int argc, char *argv[])
 
     IFstream theFile(args.args()[1]);
     dictionary spec(theFile);
+
+    if(args.options().found("postProcDir")) {
+        simpleDataFunctionObject::setPostProcDir(
+            word(args.options()["postProcDir"])
+        );
+    } else {
+        simpleDataFunctionObject::setPostProcDir(
+            // a bit clumsy because some foam-versions have no fileName.name(bool)
+            fileName(fileName(args.args()[1]).name()).lessExt()+"Output"
+        );
+    }
     bool interactive(args.options().found("interactive"));
     bool failOnException(!args.options().found("debugOnException"));
 
@@ -92,7 +108,12 @@ int main(int argc, char *argv[])
                 << endl
                 << exit(FatalError);
     }
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
     dlLibraryTable::open(spec,"libs");
+#else
+    dlLibraryTable table(spec,"libs");
+#endif
 
     wordList preloadFieldNames(spec.lookup("preloadFields"));
 
@@ -193,7 +214,11 @@ int main(int argc, char *argv[])
         Info << endl << endl;
 
         Info << "Function objects: execute " << functions.size() << " function objects" << endl;
-        functions.execute();
+        functions.execute(
+#ifndef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+            true
+#endif
+        );
         Info << endl;
 
         if(executeCode!="") {

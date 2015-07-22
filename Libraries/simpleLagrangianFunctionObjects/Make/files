@@ -2,7 +2,7 @@ EvolveSolidParticleCloudFunctionObject.C
 
 EvolveKinematicCloudFunctionObject.C
 EvolveThermoCloudFunctionObject.C
-EvolveReactingCloudFunctionObjects.C
-EvolveReactingMultiphaseCloudFunctionObjects.C
+EvolveReactingCloudFunctionObject.C
+EvolveReactingMultiphaseCloudFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleLagrangianFunctionObjects

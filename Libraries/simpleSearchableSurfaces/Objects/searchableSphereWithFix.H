@@ -48,6 +48,8 @@ Contributors/Copyright:
 
 #include "searchableSphere.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

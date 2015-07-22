@@ -181,6 +181,13 @@ public:
         const ReaderParticleCloud& c
     );
 
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new CloudValueExpressionDriver(*this)
+            );
+        }
+
     // Destructor
 
     ~CloudValueExpressionDriver();

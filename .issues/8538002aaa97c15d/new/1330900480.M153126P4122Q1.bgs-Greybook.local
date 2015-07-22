@@ -1,0 +1,10 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Sun, 04 Mar 2012 22:46:29 +0100
+State: new
+Subject: writeAdditionalFields-FO generates too much data in 2.x
+Message-Id: <8538002aaa97c15d-0-artemis@bgs-Greybook.local>
+
+Using this FO in 2.x generates a directory for EVERY timestep
+
+Maybe we should get rid of this FO anyhow as there is a similar on in
+OF for some time

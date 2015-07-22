@@ -92,7 +92,7 @@ void Foam::solveTransportPDE::read(const dictionary& dict)
     solvePDECommonFiniteVolume::read(dict);
 
     if(active_) {
-        if(!steady_) {
+        if(needsRhoField(true)) {
             readExpressionAndDimension(
                 dict,
                 "rho",
@@ -201,6 +201,29 @@ void Foam::solveTransportPDE::solve()
                 sourceField
             );
 
+	    autoPtr<volScalarField> rhoField;
+	    if(needsRhoField()) {
+	      driver.parse(rhoExpression_);
+	      if(!driver.resultIsTyp<volScalarField>()) {
+		FatalErrorIn("Foam::solveLaplacianPDE::solve()")
+		  << rhoExpression_ << " does not evaluate to a scalar"
+		  << endl
+		  << exit(FatalError);
+	      }
+	      rhoField.set(
+		  new volScalarField(
+		      driver.getResult<volScalarField>()
+		  )
+	      );
+	      rhoField().dimensions().reset(rhoDimension_);
+	    }
+
+#ifdef FOAM_HAS_FVOPTIONS
+	    if(needsRhoField()) {
+ 	       eq-=fvOptions()(rhoField(),f);
+	    }
+#endif
+
             if(!steady_) {
                 driver.parse(rhoExpression_);
                 if(!driver.resultIsTyp<volScalarField>()) {
@@ -212,7 +235,7 @@ void Foam::solveTransportPDE::solve()
                 volScalarField rhoField(driver.getResult<volScalarField>());
                 rhoField.dimensions().reset(rhoDimension_);
 
-                fvMatrix<scalar> ddtMatrix=fvm::ddt(f);
+                fvMatrix<scalar> ddtMatrix(fvm::ddt(f));
                 if(
                     !ddtMatrix.diagonal()
                     &&
@@ -244,11 +267,19 @@ void Foam::solveTransportPDE::solve()
                 eq.relax();
             }
 
+#ifdef FOAM_HAS_FVOPTIONS
+            fvOptions().constrain(eq);
+#endif
+
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
             for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
             {
                 eq.solve();
             }
+
+#ifdef FOAM_HAS_FVOPTIONS
+            fvOptions().correct(f);
+#endif
         }
     }
 }

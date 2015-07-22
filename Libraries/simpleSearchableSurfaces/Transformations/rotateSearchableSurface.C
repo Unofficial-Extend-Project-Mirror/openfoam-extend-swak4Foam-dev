@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "rotateSearchableSurface.H"
@@ -105,7 +105,7 @@ void Foam::rotateSearchableSurface::getNormal
 ) const
 {
     vectorField iNormal;
-    
+
     transformationSearchableSurface::getNormal
         (
             info,
@@ -119,5 +119,21 @@ void Foam::rotateSearchableSurface::getNormal
     }
 }
 
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::rotateSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    delegate().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+    forAll(centres,i) {
+        centres[i]=Foam::transform(rotation_,centres[i]);
+    }
+}
+#endif
 
 // ************************************************************************* //

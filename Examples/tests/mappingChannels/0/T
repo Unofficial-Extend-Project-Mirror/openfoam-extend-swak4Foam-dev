@@ -50,7 +50,8 @@ boundaryField
         value uniform 0;
         valueExpression "mapped(T)";
         mappingInterpolation {
-            default cell;
+            //            default cell;
+            T cellPointFace;
         }
     }
     walls

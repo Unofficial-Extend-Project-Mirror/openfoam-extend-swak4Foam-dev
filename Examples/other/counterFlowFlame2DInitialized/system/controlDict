@@ -130,11 +130,34 @@ functions {
                 source "factor*TRef" [0 -3 -1 1 0 0 0];
                 sourceImplicit "-factor" [0 -3 -1 0 0 0 0];
             }
-            recalcEnthalpy {
-                type recalcThermoHs;
-                outputControlMode startup;
+            oldOrNew {
+                type executeIfOpenFOAMVersionBiggerEqual;
+                readDuringConstruction true;
                 runIfStartTime true;
-                onlyAtStartup true;
+                outputControlMode startup;
+
+                majorVersion "2";
+                minorVersion "2";
+                //                patchVersion "x";
+
+                functions {
+                    recalcEnthalpy {
+                        type recalcThermoHe;
+                        outputControlMode startup;
+                        runIfStartTime true;
+                        onlyAtStartup true;
+                    }
+                }
+                else {
+                    functions {
+                        recalcEnthalpy {
+                            type recalcThermoHs;
+                            outputControlMode startup;
+                            runIfStartTime true;
+                            onlyAtStartup true;
+                        }
+                    }
+                }
             }
             correctThermo {
                 type correctThermo;

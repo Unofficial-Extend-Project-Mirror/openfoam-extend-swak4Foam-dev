@@ -38,8 +38,15 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "BasicReactingCloud.H"
 #include "BasicReactingMultiphaseCloud.H"
+#else
+#include "basicReactingCloud.H"
+#include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -70,24 +77,34 @@ autoPtr<lcsSpeciesSourcePluginFunction::dimScalarField>
 lcsSpeciesSourcePluginFunction::internalEvaluate(const label speciesIndex)
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     tryCall(dimScalarField,constThermoReactingCloud,reactingCloud,Srho(speciesIndex));
     tryCall(dimScalarField,thermoReactingCloud,reactingCloud,Srho(speciesIndex));
     tryCall(dimScalarField,icoPoly8ThermoReactingCloud,reactingCloud,Srho(speciesIndex));
     tryCall(dimScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
     tryCall(dimScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
     tryCall(dimScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+#else
+    tryCall(dimScalarField,basicReactingCloud,reactingCloud,Srho(speciesIndex));
+    tryCall(dimScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,Srho(speciesIndex));
+#endif
 
     return autoPtr<dimScalarField>();
 }
 
 label lcsSpeciesSourcePluginFunction::getIndex(wordList &speciesList)
 {
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     getSpeciesIndex(constThermoReactingCloud,reactingCloud);
     getSpeciesIndex(thermoReactingCloud,reactingCloud);
     getSpeciesIndex(icoPoly8ThermoReactingCloud,reactingCloud);
     getSpeciesIndex(constThermoReactingMultiphaseCloud,reactingMultiphaseCloud);
     getSpeciesIndex(thermoReactingMultiphaseCloud,reactingMultiphaseCloud);
     getSpeciesIndex(icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud);
+#else
+    getSpeciesIndex(basicReactingCloud,reactingCloud);
+    getSpeciesIndex(basicReactingMultiphaseCloud,reactingMultiphaseCloud);
+#endif
 
     return -1;
 }

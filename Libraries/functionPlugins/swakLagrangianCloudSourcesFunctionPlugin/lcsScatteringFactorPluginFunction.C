@@ -38,9 +38,16 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "basicThermoCloud.H"
 #include "BasicReactingCloud.H"
 #include "BasicReactingMultiphaseCloud.H"
+#else
+#include "basicReactingCloud.H"
+#include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -69,6 +76,7 @@ lcsScatteringFactorPluginFunction::lcsScatteringFactorPluginFunction(
 autoPtr<volScalarField> lcsScatteringFactorPluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     tryCall(volScalarField,basicThermoCloud,thermoCloud,sigmap());
     tryCall(volScalarField,constThermoReactingCloud,reactingCloud,sigmap());
     tryCall(volScalarField,thermoReactingCloud,reactingCloud,sigmap());
@@ -76,13 +84,19 @@ autoPtr<volScalarField> lcsScatteringFactorPluginFunction::internalEvaluate()
     tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
     tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
     tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+#else
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,sigmap());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,sigmap());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,sigmap());
+#endif
 
     return autoPtr<volScalarField>();
 }
 
 void lcsScatteringFactorPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> psigmap=internalEvaluate();
+
+   autoPtr<volScalarField> psigmap=internalEvaluate();
 
     noCloudFound(psigmap);
 

@@ -73,10 +73,20 @@ public:
 
     inline label dist() const;
 
-    inline bool valid() const;
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
+    inline bool valid(
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        TrackingData &td
+#endif
+    ) const;
 
     inline bool blocked() const;
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateCell
     (
         const polyMesh& mesh,
@@ -84,8 +94,14 @@ public:
         const label neighbourFaceI,
         const MeshLayersDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh& mesh,
@@ -93,20 +109,34 @@ public:
         const label neighbourCellI,
         const MeshLayersDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh&,
         const label thisFaceI,
         const MeshLayersDistFromPatch& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &td
+#endif
     );
 
-    inline bool operator!=(const MeshLayersDistFromPatch &rhs);
+    inline bool operator!=(const MeshLayersDistFromPatch &rhs) const;
 
     friend inline Ostream& operator<<(Ostream&, const MeshLayersDistFromPatch&);
     friend inline Istream& operator>>(Istream&, MeshLayersDistFromPatch&);
+
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+    inline bool equal(const MeshLayersDistFromPatch &rhs,TrackingData &td) const;
+#endif
 
 };
 

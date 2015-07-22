@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2012 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$
@@ -42,10 +42,21 @@ Contributors/Copyright:
 #include "calculatedFvPatchFields.H"
 #include "calculatedFvsPatchFields.H"
 
+#include "foamVersion4swak.H"
+#ifndef FOAM_MAPPED_IS_DIRECTMAPPED
+#include "mappedFvPatch.H"
+#include "mappedWallFvPatch.H"
+#else
+#include "directMappedFvPatch.H"
+#include "directMappedWallFvPatch.H"
+#define mappedFvPatch directMappedFvPatch
+#define mappedWallFvPatch directMappedWallFvPatch
+#endif
+
 #include "volPointInterpolation.H"
 #include "interpolatePointToCell.H"
 
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
 #include "directMappedFvPatch.H"
 #include "directMappedPointPatch.H"
 #else
@@ -114,9 +125,11 @@ inline bool FieldValueExpressionDriver::canBeValuePatch(const fvPatch &patch)
         ||
         isType<fvPatch>(patch)
         ||
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
         isA<directMappedFvPatch>(patch);
 #else
+        isA<mappedWallFvPatch>(patch)
+ 	||
         isA<mappedFvPatch>(patch);
 #endif
 }
@@ -128,7 +141,7 @@ inline bool FieldValueExpressionDriver::canBeValuePatch(const pointPatch &patch)
         ||
         isType<facePointPatch>(patch)
         ||
-#if FOAM_VERSION4SWAK_MAJOR<2
+#ifdef FOAM_MAPPED_IS_DIRECTMAPPED
         isA<directMappedPointPatch>(patch);
 #else
         isA<mappedPointPatch>(patch);

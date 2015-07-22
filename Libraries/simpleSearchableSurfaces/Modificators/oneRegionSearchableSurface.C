@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "oneRegionSearchableSurface.H"
@@ -79,9 +79,18 @@ const Foam::wordList& Foam::oneRegionSearchableSurface::regions() const
     return name_;
 }
 
-Foam::pointField Foam::oneRegionSearchableSurface::coordinates() const
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+Foam::tmp<Foam::pointField>
+#else
+Foam::pointField
+#endif
+Foam::oneRegionSearchableSurface::coordinates() const
 {
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+    return tmp<pointField>(new pointField(1,delegate().coordinates()()[0]));
+#else
     return pointField(1,delegate().coordinates()[0]);
+#endif
 }
 
 void Foam::oneRegionSearchableSurface::getRegion

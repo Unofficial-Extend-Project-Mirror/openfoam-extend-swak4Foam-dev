@@ -65,7 +65,7 @@ class FieldValueExpressionDriver
 {
 
     // forbid copy
-    FieldValueExpressionDriver(const FieldValueExpressionDriver &);
+    //    FieldValueExpressionDriver(const FieldValueExpressionDriver &);
     void operator=(const FieldValueExpressionDriver&);
 
     const string time_;
@@ -125,6 +125,16 @@ public:
 
     //- Construct from an id
     FieldValueExpressionDriver(const word& id,const fvMesh&mesh);
+
+    //- Copy construct
+    FieldValueExpressionDriver(const FieldValueExpressionDriver &);
+
+    autoPtr<CommonValueExpressionDriver> clone() const
+        {
+            return autoPtr<CommonValueExpressionDriver>(
+                new FieldValueExpressionDriver(*this)
+            );
+        }
 
     virtual ~FieldValueExpressionDriver();
 

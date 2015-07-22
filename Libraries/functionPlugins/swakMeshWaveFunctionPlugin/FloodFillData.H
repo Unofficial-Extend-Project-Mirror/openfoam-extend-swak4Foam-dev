@@ -77,10 +77,20 @@ public:
 
     inline void setTarget(label t);
 
-    inline bool valid() const;
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
+    inline bool valid(
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        TrackingData &
+#endif
+    ) const;
 
     inline bool blocked() const;
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateCell
     (
         const polyMesh& mesh,
@@ -88,8 +98,14 @@ public:
         const label neighbourFaceI,
         const FloodFillData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh& mesh,
@@ -97,21 +113,34 @@ public:
         const label neighbourCellI,
         const FloodFillData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh&,
         const label thisFaceI,
         const FloodFillData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
-    inline bool operator!=(const FloodFillData &rhs);
+    inline bool operator!=(const FloodFillData &rhs) const;
 
     friend inline Ostream& operator<<(Ostream&, const FloodFillData&);
     friend inline Istream& operator>>(Istream&, FloodFillData&);
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+    inline bool equal(const FloodFillData &rhs,TrackingData &td) const;
+#endif
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

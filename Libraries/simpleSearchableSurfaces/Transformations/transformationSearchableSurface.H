@@ -40,13 +40,17 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef transformationSearchableSurface_H
 #define transformationSearchableSurface_H
 
 #include "searchableSurface.H"
+
+#include "swakSurfaceTypes.H"
+
+#include "boundBox.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -119,9 +123,19 @@ public:
 
     virtual label size() const { return delegate().size(); }
 
-    virtual pointField coordinates() const;
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+        virtual tmp<pointField> coordinates() const;
+#else
+        virtual pointField coordinates() const;
+#endif
+
+#ifdef FOAM_SEARCHABLE_SURF_HAS_POINTS
+        virtual tmp<pointField> points() const;
+#endif
 
         virtual const wordList& regions() const;
+
+        virtual bool overlaps(const boundBox &) const;
 
         //- Whether supports volume type below
         virtual bool hasVolumeType() const

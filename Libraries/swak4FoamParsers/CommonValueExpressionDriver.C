@@ -31,6 +31,7 @@ License
 Contributors/Copyright:
     2010-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2012 Bruno Santos <wyldckat@gmail.com>
+    2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -58,6 +59,41 @@ defineRunTimeSelectionTable(CommonValueExpressionDriver, idName);
 
     // Currently not working
 bool CommonValueExpressionDriver::cacheSets_=true;
+
+const fvMesh *CommonValueExpressionDriver::defaultMeshPtr_=NULL;
+
+const fvMesh &CommonValueExpressionDriver::getDefaultMesh()
+{
+    if(defaultMeshPtr_==NULL) {
+        FatalErrorIn("CommonValueExpressionDriver::getDefaultMesh()")
+            << "No default mesh set (value is NULL)" << endl
+                << "Try using the 'initSwakFunctionObject' to work   around this"
+                << endl
+                << abort(FatalError);
+    }
+    return *defaultMeshPtr_;
+}
+
+bool CommonValueExpressionDriver::resetDefaultMesh(const fvMesh &mesh)
+{
+    bool wasSet=defaultMeshPtr_!=NULL;
+
+    defaultMeshPtr_=&mesh;
+
+    return wasSet;
+}
+
+bool CommonValueExpressionDriver::setUnsetDefaultMesh(const fvMesh &mesh)
+{
+    if(defaultMeshPtr_==NULL) {
+        Info << "swak4Foam: Setting default mesh" << endl;
+        defaultMeshPtr_=&mesh;
+
+        return true;
+    } else {
+        return false;
+    }
+}
 
 dictionary CommonValueExpressionDriver::emptyData_("noDictionary");
 
@@ -121,18 +157,17 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     scanner_(NULL),
     prevIterIsOldTime_(dict.lookupOrDefault("prevIterIsOldTime",false))
 {
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+#endif
 
     if(debug) {
         Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
     }
 
-    if(dict.found("functionPlugins")) {
-        wordList pluginNames(dict["functionPlugins"]);
-        forAll(pluginNames,i) {
-            dlLibraryTable::open("libswak"+pluginNames[i]+"FunctionPlugin.so");
-        }
-    }
+    readPluginLibraries(dict);
 
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
@@ -165,6 +200,23 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     readTables(dict);
 }
 
+void CommonValueExpressionDriver::readPluginLibraries(const dictionary &dict)
+{
+    if(dict.found("functionPlugins")) {
+        wordList pluginNames(dict["functionPlugins"]);
+
+        forAll(pluginNames,i) {
+
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+            dlLibraryTable::open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#else
+            dlLibraryTable table;
+            libraries_.open("libswak"+pluginNames[i]+"FunctionPlugin.so");
+#endif
+        }
+    }
+}
+
 CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool cacheReadFields,
     bool searchInMemory,
@@ -192,7 +244,13 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
 
 void CommonValueExpressionDriver::readVariablesAndTables(const dictionary &dict)
 {
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugCommonDriver",debug());
+#else
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
+#endif
+
+    readPluginLibraries(dict);
 
     if(dict.found("globalScopes")) {
         setGlobalScopes(wordList(dict.lookup("globalScopes")));
@@ -275,8 +333,9 @@ label CommonValueExpressionDriver::readForeignMeshInfo(
             region=word(info.lookup("region"));
         }
         const scalar time(readScalar(info.lookup("time")));
-        const MeshInterpolationOrder::value interpolationOrder
-            =MeshInterpolationOrder::names[
+        const meshToMeshOrder interpolationOrder
+            =
+            meshToMeshInterpolationNames[
                 word(info.lookup("interpolationOrder"))
             ];
 
@@ -349,10 +408,23 @@ void CommonValueExpressionDriver::setSearchBehaviour(
 
 autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
 (
+    const dictionary& dict
+)
+{
+    return CommonValueExpressionDriver::New(
+        dict,
+        getDefaultMesh()
+    );
+}
+
+autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
+(
     const dictionary& dict,
     const fvMesh& mesh
 )
 {
+    setUnsetDefaultMesh(mesh);
+
     word driverType(dict.lookup("valueType"));
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(driverType);
@@ -366,7 +438,7 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
             << endl << endl
             << "Valid valueTypes are :" << endl
 #ifdef FOAM_HAS_SORTED_TOC
-            << dictionaryConstructorTablePtr_->sortedToc() // does not work in 1.6
+            << dictionaryConstructorTablePtr_->sortedToc()
 #else
             << dictionaryConstructorTablePtr_->toc()
 #endif
@@ -390,6 +462,8 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
     const fvMesh& mesh
 )
 {
+    setUnsetDefaultMesh(mesh);
+
     idNameConstructorTable::iterator cstrIter =
         idNameConstructorTablePtr_->find(driverType);
 
@@ -402,7 +476,7 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
             << endl << endl
             << "Valid valueTypes are :" << endl
 #ifdef FOAM_HAS_SORTED_TOC
-            << idNameConstructorTablePtr_->sortedToc() // does not work in 1.6
+            << idNameConstructorTablePtr_->sortedToc()
 #else
             << idNameConstructorTablePtr_->toc()
 #endif
@@ -451,7 +525,29 @@ List<exprString> CommonValueExpressionDriver::readVariableStrings(
                 << exit(FatalError);
     }
 
-    ITstream data(dict.lookup(name));
+#ifdef FOAM_HAS_SCOPED_LOOKUP
+    const entry *pe=dict.lookupScopedEntryPtr(
+        name,
+        true, // recursive
+        true //  pattern matching
+    );
+    if(pe==NULL) {
+        FatalErrorIn("CommonValueExpressionDriver::readVariableStrings")
+            << "Entry " << name << " not found in "
+                << dict.name()
+                << endl
+                << exit(FatalError);
+    }
+    const entry &e=*pe;
+#else
+    const entry &e=dict.lookupEntry(
+        name,
+        true, // recursive
+        true //  pattern matching
+    );
+#endif
+
+    ITstream data(e.stream());
     token nextToken;
     data.read(nextToken);
 
@@ -594,11 +690,27 @@ string getEntryString(
     const dictionary &dict,
     const string &replace
 ) {
+#ifdef FOAM_HAS_SCOPED_LOOKUP
+    const entry *pe=dict.lookupScopedEntryPtr(
+        replace,
+        true, // recursive
+        true //  pattern matching
+    );
+    if(pe==NULL) {
+        FatalErrorIn("CommonValueExpressionDriver::getEntryString")
+            << "Entry " << replace << " not found in "
+                << dict.name()
+                << endl
+                << exit(FatalError);
+    }
+    const entry &e=*pe;
+#else
     const entry &e=dict.lookupEntry(
         replace,
         true, // recursive
         true //  pattern matching
     );
+#endif
     if(e.isDict()) {
         FatalErrorIn("getEntryString")
             << "Entry " << replace << " found in dictionary "
@@ -686,7 +798,27 @@ exprString CommonValueExpressionDriver::expandDictVariables(
                 );
             } else {
                 autoPtr<entryToExpression> e2e=entryToExpression::New(castTo);
-                const entry &e=dict.lookupEntry(entryName,true,true);
+#ifdef FOAM_HAS_SCOPED_LOOKUP
+                const entry *pe=dict.lookupScopedEntryPtr(
+                    entryName,
+                    true, // recursive
+                    true //  pattern matching
+                );
+                if(pe==NULL) {
+                    FatalErrorIn("CommonValueExpressionDriver::expandDictVariables")
+                        << "Entry " << entryName << " not found in "
+                            << dict.name()
+                            << endl
+                            << exit(FatalError);
+                }
+                const entry &e=*pe;
+#else
+                const entry &e=dict.lookupEntry(
+                    entryName,
+                    true,
+                    true
+                );
+#endif
                 replacement=e2e->toExpr(e);
             }
         } else {
@@ -993,7 +1125,7 @@ ExpressionResult CommonValueExpressionDriver::getUniform(
 
 void CommonValueExpressionDriver::error (const std::string& m)
 {
-    Foam::FatalErrorIn("parsingValue")
+    FatalErrorIn("parsingValue")
         //        << Foam::args.executable()
             << " Parser Error: " << m
             << Foam::exit(Foam::FatalError);
@@ -1238,6 +1370,7 @@ void CommonValueExpressionDriver::evaluateVariable(
     }
 
     parse(expr);
+    result_.calcIsSingleValue();
 
     if(debug) {
         Pout << "Evaluating: " << expr << " -> " << name << endl;
@@ -1337,6 +1470,7 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     otherDriver->parse(expr);
 
     autoPtr<ExpressionResult> otherResult(this->getRemoteResult(otherDriver()));
+    otherResult->calcIsSingleValue();
 
     if(debug) {
         Pout << "Remote result: "
@@ -1839,7 +1973,7 @@ void CommonValueExpressionDriver::prepareData(dictionary &dict) const
     }
 }
 
-class lessOp {
+class littlerOp {
 public:
     bool operator()(scalar a,scalar b) {
         return a<b;
@@ -1904,7 +2038,7 @@ vector CommonValueExpressionDriver::getPositionOfMinimum(
     const vectorField &locs
 ) const
 {
-    return getExtremePosition(lessOp(),vals,locs);
+    return getExtremePosition(littlerOp(),vals,locs);
 }
 
 vector CommonValueExpressionDriver::getPositionOfMaximum(
@@ -2030,7 +2164,7 @@ const word &CommonValueExpressionDriver::getAlias(const word &name) const
                 << "Available aliases are " << aliases_.toc()
                 << endl
                 << exit(FatalError);
-        return word();
+        return word::null;
 
     } else {
         return aliases_[name];

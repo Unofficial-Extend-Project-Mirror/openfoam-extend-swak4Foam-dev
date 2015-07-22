@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "translateSearchableSurface.H"
@@ -81,5 +81,22 @@ Foam::point Foam::translateSearchableSurface::inverseTransform(const point &p) c
 {
     return p-translation_;
 }
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+void Foam::translateSearchableSurface::boundingSpheres
+(
+    pointField& centres,
+    scalarField& radiusSqr
+) const
+{
+    delegate().boundingSpheres(
+        centres,
+        radiusSqr
+    );
+    forAll(centres,i) {
+        centres[i]=centres[i]+translation_;
+    }
+}
+#endif
 
 // ************************************************************************* //

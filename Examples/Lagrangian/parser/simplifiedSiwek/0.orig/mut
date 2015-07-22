@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -23,17 +23,17 @@ boundaryField
 {
     top
     {
-        type            mutWallFunction;
+        type            mutkWallFunction;
         value           uniform 0;
     }
     bottom
     {
-        type            mutWallFunction;
+        type            mutkWallFunction;
         value           uniform 0;
     }
     walls
     {
-        type            mutWallFunction;
+        type            mutkWallFunction;
         value           uniform 0;
     }
     symmetry

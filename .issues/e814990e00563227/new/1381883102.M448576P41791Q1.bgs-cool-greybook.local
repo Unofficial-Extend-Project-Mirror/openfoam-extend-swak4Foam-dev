@@ -1,0 +1,14 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Tue, 15 Oct 2013 19:40:50 +0200
+State: new
+Subject: Check laplacian-operators
+Message-Id: <e814990e00563227-0-artemis@bgs-cool-greybook.local>
+
+In the 1.x-branch certain variants of the laplacian operators were
+commented out because their runtime-selection-table was present in OF
+
+This should be rechecked in more UpToDate-versions
+
+Parts affected are
+- the Field-parser
+- The fvc-plugin functions

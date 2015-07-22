@@ -39,4 +39,8 @@ Contributors/Copyright:
 
 Foam::argList::validOptions.insert("functionPlugins", "comma-separated list of plugin names (no 'libswak' in the beginning and no 'FunctionPlugin.so' in the end)");
 
+#ifndef FOAM_DLLIBRARY_USES_STATIC_METHODS
+dlLibraryTable table;
+#endif
+
 // ************************************************************************* //

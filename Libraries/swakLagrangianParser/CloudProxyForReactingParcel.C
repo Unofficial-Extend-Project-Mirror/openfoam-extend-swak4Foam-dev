@@ -37,6 +37,8 @@ Contributors/Copyright:
 
 #include "DebugOStream.H"
 
+#include "swakCloudTypes.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -97,6 +99,11 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             constProps.pMin()
         )
     );
+#ifdef FOAM_PHASECHANGEMODEL_HAS_TVAP
+
+    // TODO: Reimplement. But use a general solution that calls sub-models
+
+#else
     this->addScalarFunction(
         "Tvap",
         "Vaporisation temperature (constant)",
@@ -104,6 +111,7 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             constProps.Tvap()
         )
     );
+#ifdef FOAM_REACTINGCLOUD_OLD_STYLE
     this->addScalarFunction(
         "Tbp",
         "Boiling point (constant)",
@@ -111,6 +119,8 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             constProps.Tbp()
         )
     );
+#endif
+#endif
 }
 
 

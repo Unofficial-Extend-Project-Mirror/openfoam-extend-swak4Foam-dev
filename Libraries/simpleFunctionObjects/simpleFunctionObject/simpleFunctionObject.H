@@ -54,6 +54,9 @@ Contributors/Copyright:
 #include "Field.H"
 #include "NamedEnum.H"
 
+#include "swak.H"
+#include "switchableNotImplemented.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -135,7 +138,7 @@ protected:
     bool writeDebug() const { return writeDebug_; }
 
     //- Do output this time?
-    virtual bool outputTime();
+    virtual bool outputTime(const bool forceWrite);
 
 public:
 
@@ -160,13 +163,38 @@ public:
     virtual bool start();
 
     //- execute is called at each ++ or += of the time-loop
-    virtual bool execute();
+    virtual bool execute(const bool forceWrite);
+
+#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+    bool execute()
+        {
+            return execute(false);
+        }
+#endif
 
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
 
     //- Sample and write
     virtual void write()=0;
+
+#ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
+    // make functionObject happy but fail because this is not an implementation
+    virtual void updateMesh(const mapPolyMesh&) {
+        switchableNotImplemented(
+            "simpleFunctionObject::updateMesh",
+            dict()
+        );
+    }
+
+    // make functionObject happy but fail because this is not an implementation
+    virtual void movePoints(const polyMesh&) {
+        switchableNotImplemented(
+            "simpleFunctionObject::movePoints",
+            dict()
+        );
+    }
+#endif
 
     //- Optional stuff to do after write
     virtual void flush();

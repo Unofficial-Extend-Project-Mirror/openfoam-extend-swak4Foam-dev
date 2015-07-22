@@ -35,13 +35,21 @@ boundaryField
     {
         type            zeroGradient;
     }
-    jump1
+    jump1_master
     {
         type            cyclic;
     }
-    jump2
+    jump1_slave
     {
-        $jump1;
+        type            cyclic;
+    }
+    jump2_master
+    {
+        $jump1_master;
+    }
+    jump2_slave
+    {
+        $jump1_slave;
     }
     frontAndBack
     {

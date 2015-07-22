@@ -34,6 +34,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
+#ifndef FOAM_NEW_MESH2MESH
+
 #include "MeshInterpolationOrder.H"
 
 namespace Foam {
@@ -66,5 +70,7 @@ const NamedEnum<MeshInterpolationOrder::value, 3>
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 } // namespace
+
+#endif
 
 // ************************************************************************* //

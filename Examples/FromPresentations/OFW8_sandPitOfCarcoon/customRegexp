@@ -1,0 +1,26 @@
+alphaGraph {
+	   expr "Dispersed phase volume fraction = (%f%)  Min\(alpha1\) = (%f%)  Max\(alpha1\) = (%f%)";
+	   theTitle "Alpha fraction";
+	   titles ( average min max );
+}
+NumberOfParticles {
+		  expr "Current number of parcels       = (%f%)";
+		  theTitle "Particles and their movement";
+		  titles ( nr );
+		  xlabel "t[s]";
+		  y2label "nr[1]";
+		  ylabel "energy";
+     	          alternateAxis ( nr );
+}
+kineticEnergy {
+	      expr "Linear kinetic energy           = (%f%)";
+	      type slave;
+	      master NumberOfParticles;
+	      titles (energy);
+}
+sandVelocity {
+	     theTitle "Velocity of the sand phase";
+	     expr "Expression sandVelocity :  max=(%f%) weightedAverage=(%f%)";
+	     titles (max average);
+	     ylabel "velocity[m/s]";
+}

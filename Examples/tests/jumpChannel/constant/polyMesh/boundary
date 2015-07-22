@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.x                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -15,13 +15,14 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-6
+8
 (
     walls
     {
-        type            wall;
+        type            walls;
         nFaces          400;
         startFace       7740;
+        faces           ( ( 3 7 6 2 ) ( 1 5 4 0 ) );
     }
     inlet
     {
@@ -41,19 +42,37 @@ FoamFile
         nFaces          8000;
         startFace       8180;
     }
-    jump1
+    jump1_master
     {
         type            cyclic;
-        nFaces          40;
+        nFaces          20;
         startFace       16180;
-        featureCos      0.9;
+        matchTolerance  0.0001;
+        neighbourPatch  jump1_slave;
     }
-    jump2
+    jump1_slave
     {
         type            cyclic;
-        nFaces          40;
+        nFaces          20;
+        startFace       16200;
+        matchTolerance  0.0001;
+        neighbourPatch  jump1_master;
+    }
+    jump2_master
+    {
+        type            cyclic;
+        nFaces          20;
         startFace       16220;
-        featureCos      0.9;
+        matchTolerance  0.0001;
+        neighbourPatch  jump2_slave;
+    }
+    jump2_slave
+    {
+        type            cyclic;
+        nFaces          20;
+        startFace       16240;
+        matchTolerance  0.0001;
+        neighbourPatch  jump2_master;
     }
 )
 

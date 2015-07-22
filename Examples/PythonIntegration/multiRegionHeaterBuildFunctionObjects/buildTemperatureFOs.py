@@ -22,7 +22,8 @@ functions {
    energySolid_In_|name| {
         type swakExpression;
         region |name|;
-        expression "rho*cp*T*vol()";
+//        expression "rho*cp*T*vol()";
+        expression "rho*T*vol()";
         accumulations ( sum );
         valueType internalField;
         verbose true;

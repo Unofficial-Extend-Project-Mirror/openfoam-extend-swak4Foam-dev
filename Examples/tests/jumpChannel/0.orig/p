@@ -34,17 +34,27 @@ boundaryField
         type            fixedValue;
         value           uniform 0;
     }
-    jump1
+    jump1_master
     {
         type            groovyBCJump;
         patchType       cyclic;
         jumpExpression  "(normal() & U)>0 ? -1 : 1";
+        value           uniform 0;
     }
-    jump2
+    jump1_slave
+    {
+        $jump1_master;
+    }
+    jump2_master
     {
         type            groovyBCJump;
         patchType       cyclic;
         jumpExpression  "((normal() & U)>0 ? -1 : 1)*10*mag(U)";
+        value           uniform 0;
+    }
+    jump2_slave
+    {
+        $jump2_master;
     }
     frontAndBack
     {

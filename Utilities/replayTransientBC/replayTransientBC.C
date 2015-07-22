@@ -163,8 +163,6 @@ int main(int argc, char *argv[])
     if(timeDirs.size()>0) {
         Info << endl << "Jumping to " << timeDirs.size()
             << " time directories instead of looping" << endl;
-    } else {
-      runTime++;
     }
 
     label timeDirCnt=0;
@@ -172,7 +170,7 @@ int main(int argc, char *argv[])
     while(
         timeDirs.size()>0
         ||
-        !runTime.end()
+        runTime.loop()
     )
     {
         if(timeDirs.size()>0) {
@@ -181,10 +179,7 @@ int main(int argc, char *argv[])
             }
             runTime.setTime(timeDirs[timeDirCnt],timeDirCnt);
             timeDirCnt++;
-        } else {
-	  runTime++;
-	}
-
+        }
         Info<< "Time = " << runTime.timeName() << nl << endl;
         Info<< "deltaT = " <<  runTime.deltaT().value() << endl;
 

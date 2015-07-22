@@ -75,6 +75,12 @@ protected:
 
     void updateChemistry(const scalar dt);
 
+#ifdef FOAM_RR_ONLY_DIMENSIONED_FIELD
+    tmp<volScalarField> wrapDimField(
+        const DimensionedField<scalar,volMesh> &dimField
+    );
+#endif
+
 public:
     swakPsiChemistryModelPluginFunction(
         const FieldValueExpressionDriver &parentDriver,

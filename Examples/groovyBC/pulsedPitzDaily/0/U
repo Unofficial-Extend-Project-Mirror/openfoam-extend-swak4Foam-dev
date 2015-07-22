@@ -18,6 +18,8 @@ dimensions      [0 1 -1 0 0 0 0];
 
 internalField   uniform (0 0 0);
 
+frequency 500;
+
 boundaryField
 {
     inlet
@@ -29,10 +31,10 @@ boundaryField
 
         //        variableNameIdenticalToField true;
 
-      minMaxPoint (
-          "minY=min(yp);"
-          "maxY=max(yp);"
-      );
+        minMaxPoint (
+            "minY=min(yp);"
+            "maxY=max(yp);"
+        );
 
       getPoints "pts().y";
 
@@ -44,7 +46,7 @@ boundaryField
 
       amplitude a [0 1 -1 0 0 0 0] 10;
 
-      valueExpression "$[(dimensionedScalar)amplitude]*(1+0.5*sin(500*time()))*para";
+      valueExpression "$[(dimensionedScalar)amplitude]*(1+0.5*sin($[:frequency]*time()))*para";
 
       value           uniform (10 0 0);
     }

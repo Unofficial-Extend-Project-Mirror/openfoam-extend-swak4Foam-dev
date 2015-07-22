@@ -1,0 +1,11 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Mon, 13 May 2013 20:51:40 +0200
+Subject: Re: circulatingSplash funkySetFields not working
+Message-Id: <ee647e39ffe158ec-90ba6450f9b77071-artemis@bgs-cool-greybook.local>
+References: <ee647e39ffe158ec-0-artemis@bgs-cool-greybook.local>
+In-Reply-To: <ee647e39ffe158ec-0-artemis@bgs-cool-greybook.local>
+
+Seems like
+
+searchOnDisc is read but not used (in controlDict). In the 1.x-branch
+it works

@@ -41,7 +41,7 @@ boundaryField
 
     ".+Wall.*"
     {
-        type            nutWallFunction;
+        type            nutkWallFunction;
         value           uniform 0;
     }
 
@@ -53,7 +53,7 @@ boundaryField
 
     "bike._.*"
     {
-        type            nutWallFunction;
+        type            nutkWallFunction;
         value           uniform 0;
     }
 }

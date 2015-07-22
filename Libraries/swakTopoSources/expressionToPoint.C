@@ -153,6 +153,13 @@ Foam::expressionToPoint::~expressionToPoint()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+#ifdef FOAM_TOPOSETSOURCE_HAS_SETTYPE
+Foam::topoSetSource::sourceType Foam::expressionToPoint::setType() const
+{
+    return POINTSETSOURCE;
+}
+#endif
+
 void Foam::expressionToPoint::applyToSet
 (
     const topoSetSource::setAction action,

@@ -91,10 +91,20 @@ public:
 
     inline void setColour(label col,bool goOn=false);
 
-    inline bool valid() const;
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
+    inline bool valid(
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        TrackingData &
+#endif
+    ) const;
 
     inline bool goOn() const;
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateCell
     (
         const polyMesh& mesh,
@@ -102,8 +112,14 @@ public:
         const label neighbourFaceI,
         const CellColouringData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh& mesh,
@@ -111,21 +127,34 @@ public:
         const label neighbourCellI,
         const CellColouringData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+#endif
     inline bool updateFace
     (
         const polyMesh&,
         const label thisFaceI,
         const CellColouringData& neighbourInfo,
         const scalar tol
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+        ,TrackingData &
+#endif
     );
 
-    inline bool operator!=(const CellColouringData &rhs);
+    inline bool operator!=(const CellColouringData &rhs) const;
 
     friend inline Ostream& operator<<(Ostream&, const CellColouringData&);
     friend inline Istream& operator>>(Istream&, CellColouringData&);
 
+#ifdef FOAM_FACECELLWAVE_HAS_TRACKINGDATA
+    template<class TrackingData>
+    inline bool equal(const CellColouringData &rhs,TrackingData &td) const;
+#endif
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -40,13 +40,17 @@ SourceFiles
 Contributors/Copyright:
     2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef binaryOperationSearchableSurface_H
 #define binaryOperationSearchableSurface_H
 
 #include "searchableSurface.H"
+
+#include "swakSurfaceTypes.H"
+
+#include "boundBox.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -225,7 +229,15 @@ public:
 
         virtual label size() const { return regions().size(); }
 
+#ifdef FOAM_SEARCHABLE_SURF_USES_TMP
+        virtual tmp<pointField> coordinates() const;
+#else
         virtual pointField coordinates() const;
+#endif
+
+        virtual bool overlaps(const boundBox &) const;
+
+        virtual tmp<pointField> points() const;
 
         //- Whether supports volume type below
         virtual bool hasVolumeType() const
@@ -278,6 +290,14 @@ public:
                 const List<pointIndexHit>&,
                 vectorField& normal
             ) const;
+
+#ifdef FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
+            virtual void boundingSpheres
+            (
+                pointField& centres,
+                scalarField& radiusSqr
+            ) const;
+#endif
 
         // regIOobject implementation
 

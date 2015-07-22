@@ -47,6 +47,8 @@ Contributors/Copyright:
 
 #include "topoSetSource.H"
 
+#include "swak.H"
+
 #include "exprString.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -116,6 +118,10 @@ public:
             const topoSetSource::setAction action,
             topoSet&
         ) const;
+
+#ifdef FOAM_TOPOSETSOURCE_HAS_SETTYPE
+        virtual sourceType setType() const;
+#endif
 
 };
 

@@ -35,7 +35,6 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "CloudRepository.H"
-#include "writer.H"
 
 #include "polyMesh.H"
 #include "meshSearch.H"

@@ -38,10 +38,17 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "swakCloudTypes.H"
+
 #include "basicKinematicCloud.H"
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
 #include "basicThermoCloud.H"
 #include "BasicReactingCloud.H"
 #include "BasicReactingMultiphaseCloud.H"
+#else
+#include "basicReactingCloud.H"
+#include "basicReactingMultiphaseCloud.H"
+#endif
 
 namespace Foam {
 
@@ -71,6 +78,7 @@ autoPtr<volScalarField> lcsMassFractionPluginFunction::internalEvaluate()
 {
     // pick up the first fitting class
     tryCall(volScalarField,basicKinematicCloud,kinematicCloud,alpha());
+#ifdef FOAM_REACTINGCLOUD_TEMPLATED
     tryCall(volScalarField,basicThermoCloud,thermoCloud,alpha());
     tryCall(volScalarField,constThermoReactingCloud,reactingCloud,alpha());
     tryCall(volScalarField,thermoReactingCloud,reactingCloud,alpha());
@@ -78,6 +86,11 @@ autoPtr<volScalarField> lcsMassFractionPluginFunction::internalEvaluate()
     tryCall(volScalarField,constThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
     tryCall(volScalarField,thermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
     tryCall(volScalarField,icoPoly8ThermoReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+#else
+    tryCall(volScalarField,swakFluidThermoCloudType,thermoCloud,alpha());
+    tryCall(volScalarField,basicReactingCloud,reactingCloud,alpha());
+    tryCall(volScalarField,basicReactingMultiphaseCloud,reactingMultiphaseCloud,alpha());
+#endif
 
     return autoPtr<volScalarField>();
 }

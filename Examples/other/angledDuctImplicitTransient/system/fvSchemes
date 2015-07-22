@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -32,8 +32,8 @@ divSchemes
     div(phi,h)      Gauss limitedLinear 1;
     div(phi,k)      Gauss limitedLinear 1;
     div(phi,epsilon) Gauss limitedLinear 1;
-    div((muEff*dev2(grad(U).T()))) Gauss linear;
-    div(phiU,p) Gauss linear;
+    div((muEff*dev2(T(grad(U))))) Gauss linear;
+    div(phi,K)      Gauss linear;
 }
 
 laplacianSchemes

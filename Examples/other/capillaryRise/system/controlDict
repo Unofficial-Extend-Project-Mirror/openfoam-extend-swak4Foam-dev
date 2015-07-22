@@ -157,6 +157,7 @@ functions
                 surfaceName interface;
             }
         );
+        interpolationScheme nix;
     } 
 );
 

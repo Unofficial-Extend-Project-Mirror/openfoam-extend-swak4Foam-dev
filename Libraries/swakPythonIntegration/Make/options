@@ -1,4 +1,7 @@
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
 EXE_INC = \
+        $(FOAM_DEV_OPTION) \
 	$(SWAK_PYTHON_INCLUDE) \
 	-I../swak4FoamParsers/lnInclude \
 	-I../simpleFunctionObjects/lnInclude
@@ -8,4 +11,3 @@ LIB_LIBS = \
 	-L$(FOAM_USER_LIBBIN) \
 	-lswak4FoamParsers \
 	-lsimpleFunctionObjects
-

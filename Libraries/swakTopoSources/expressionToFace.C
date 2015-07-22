@@ -194,6 +194,13 @@ Foam::expressionToFace::~expressionToFace()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+#ifdef FOAM_TOPOSETSOURCE_HAS_SETTYPE
+Foam::topoSetSource::sourceType Foam::expressionToFace::setType() const
+{
+    return FACESETSOURCE;
+}
+#endif
+
 void Foam::expressionToFace::applyToSet
 (
     const topoSetSource::setAction action,

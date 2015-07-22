@@ -1,0 +1,7 @@
+From: Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+Date: Thu, 09 May 2013 16:00:24 +0200
+State: new
+Subject: movingConeDistorted not working
+Message-Id: <b329a2ae3bb7e954-0-artemis@bgs-cool-greybook.local>
+
+movePoints not supported in simpleFunctionObjects
