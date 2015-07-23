@@ -70,12 +70,12 @@
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
 ** Requirements
-   - Version 2.0, 2.1 or 2.2 of OpenFOAM (a version that works with 1.6,
-     1.6-ext and 1.7 is available separately) and version 3.0 of Foam
+   - Version 2.0 or higher of OpenFOAM and version 3.0 or higher of Foam
    - the compiler generators =bison= and =flex=
      - bison :: =swak4Foam= is known to work with =bison= version 2.4 and
-       higher. Version 2.3 compiles but the plugin-functionality does
-                not work correctly
+                higher. Version 2.3 compiles but the plugin-functionality does
+                not work correctly.
+                Version 3.0 does *not* work
      - flex :: since the introduction of the plugin functions at least
                a flex version of =2.5.33= is required (=2.5.35= is the
                lowest *confirmed* version)
@@ -84,7 +84,12 @@
    to compile =gcc=) and should exist on every Linux distribution. Use
    the package manager of your distribution to install them and *only*
    if the compilation process of =swak4Foam= complains about too low
-   versions try to install them from other sources.
+   or too high versions compile special version. This can be easily
+   done by calling
+: ./maintainanceScripts/compileRequirements.sh
+   in the directory of the sources. This will download a fitting
+   =bison= version, compile it and install it in such a way that it is
+   *only* used during the compilation of =swak4Foam=.
 
    =swak4Foam= tries to keep the requirements on these as low as
    possible and sometimes lower versions than the ones reported *may*
@@ -776,7 +781,7 @@ S_{expl} + S_{impl} T
 : hg branch <branchName>
    where =<branchname>= is an easily identifiable name that makes the
    purpose of the branch clear (for instance
-   =bugfixWrongRandomFunction= or =featureHyperbolicFunctions=). Don't
+   =hotfix/WrongRandomFunction= or =feature/HyperbolicFunctions=). Don't
    work on the =default= branch or any other branches that are not
    "yours". Such contributions will not be merged
 
@@ -822,17 +827,12 @@ S_{expl} + S_{impl} T
 *** Special branches
     Currently the main branches are:
     - default :: The *main* branch. This is the brancht that the
-                 general public will receive. It compiles under 1.7
-                 and 1.6-ext
-    - =port_2.0.x= :: The branch that compiles under OpenFOAM 2.0. This
-                    will eventually become the =default=-branch
+                 general public will receive. It compiles under
+                 OpenFOAM 2.0 and higher
     - debianPackaging :: Branch for generating new Debian-packages of
          =swak4Foam=. If somebody wants to "inherit" this: contact the
          maintainer
-    - finiteArea :: In this branch the things for the
-                    =finiteArea=-discretization (only present in
-                    =1.6-ext=) is developed. Usually gets merged back
-                    into the =default=-branch once a feature is completed
+    - develop :: Actual development branch
 *** Distributed bug-tracking
     As an experimental feature distributed bug-tracking was introduced
     using the /Artemis/-extension for /Mercurial/ (see
@@ -852,9 +852,7 @@ S_{expl} + S_{impl} T
     branches of this extension. This *seems* to be the most up-to date
     and still under active development)
 
-    The two main lines (=1.x= and =2.x=) have slightly different names
-    for the =master= and the =dvelopment=-branch. But apart from that
-    in the future this repository will try to stick to the model
+    In the future this repository will try to stick to the model
     described in [[http://nvie.com/posts/a-successful-git-branching-model/]]
 * Copyright
   =swak4Foam= is free software; you can redistribute it and/or modify it
@@ -2930,7 +2928,6 @@ S_{expl} + S_{impl} T
      fixed by checking whether the current time is already stored
 **** Turbulence plugin-functions did not correct the boundary field
      This has been fixed
-*** Infrastructure
 **** Some =maintainanceScripts= do not work under Python 3
      The scripts
      - =makeSwakVersionFile.py=
@@ -2962,7 +2959,6 @@ S_{expl} + S_{impl} T
 
      Automatically finds the linking options for Python with
      =python-config=
-*** Documentation
 *** New features
 **** Additional distance-functions in field-parser
      Similar to =distToPatch= there are now two additional built-in
@@ -3159,3 +3155,14 @@ S_{expl} + S_{impl} T
 **** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
      This case demonstrates how to add lagrangian particles to the
      simplest tutorial-case
+** Next release - version number : 0.4.0
+   This is the first release that does not support OpenFOAM 1.7.x,
+   OpenFOAM 1.6-ext and older versions anymore
+*** Incompatibilities
+*** New supported versions
+*** Bug fixes
+*** Infrastructure
+*** Documentation
+*** New features
+*** Enhancements
+*** Examples
