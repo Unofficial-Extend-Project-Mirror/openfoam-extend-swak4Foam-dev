@@ -73,6 +73,14 @@ of_version_major=`echo $WM_PROJECT_VERSION | sed -e 's=\([0-9]*\).*=\1='`
 of_version_minor=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.\([0-9]*\).*=\1='`
 of_version_patch=`echo $WM_PROJECT_VERSION | sed -e 's=[0-9]*\.[0-9]*\.\([0-9a-z]*\).*=\1=' -e 's=[0-9]*\.[0-9]*=x=' -e 's=x=-1='`
 
+if [[ $of_version_minor == "dev" && $of_version_patch == "dev" ]]; then
+    echo "This seems to be an OpenFOAM-development version"
+    of_version_major=9
+    of_version_minor=9
+    of_version_patch=99
+    of_development=1
+fi
+
 if [[ $of_version_patch == -1  ]]; then
     # Needs to be 98 so that it is smaller than version macro with 99
     of_version_patch_num=98
@@ -93,6 +101,13 @@ cat >$versionFile.tmp <<EOF
 #define FOAM_VERSION4SWAK_MINOR $of_version_minor
 #define FOAM_VERSION4SWAK_PATCH $of_version_patch
 #define FOAM_VERSION4SWAK_PATCH_NUM $of_version_patch_num
+EOF
+
+if [[ $of_development != "" ]]; then
+    echo >>$versionFile.tmp "#define FOAM_VERSION4SWAK_OF_DEV"
+fi
+
+cat >>$versionFile.tmp <<EOF
 
 #endif
 EOF
