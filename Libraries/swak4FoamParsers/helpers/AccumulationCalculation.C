@@ -363,7 +363,11 @@ template <typename Type>
 Type AccumulationCalculation<Type>::maximum()
 {
     if(!hasMaximum_) {
-        maximum_=gMax(data());
+        if(this->size()>0) {
+            maximum_=gMax(data());
+        } else {
+            maximum_=pTraits<Type>::max/pTraits<scalar>::rootMax;
+        }
         hasMaximum_=true;
     }
     return maximum_;
@@ -373,7 +377,11 @@ template <typename Type>
 Type AccumulationCalculation<Type>::minimum()
 {
     if(!hasMinimum_) {
-        minimum_=gMin(data());
+        if(this->size()>0) {
+            minimum_=gMin(data());
+        } else {
+            minimum_=pTraits<Type>::min/pTraits<scalar>::rootMax;
+        }
         hasMinimum_=true;
     }
     return minimum_;

@@ -241,6 +241,13 @@ public:
     const word &otherMeshName() const { return otherMeshName_; }
     word &otherMeshName() { return otherMeshName_; }
 
+    //- add an alias. Return true if the alias wasn't already there
+    bool addAlias(
+        const word &name,
+        const word &field,
+        bool overwrite=false
+    );
+
 protected:
     //- get the mesh we're living on
     virtual const fvMesh &mesh() const = 0;
