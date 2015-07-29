@@ -3166,6 +3166,10 @@ S_{expl} + S_{impl} T
      names by swak (because for instance the have a dot in the name
      like =alpha.water=) were not handled by =fieldReport=. This has
      been fixed
+**** Construction of =SimpleDistribution= may fail for zero-size fields
+     The reason is the initialization with =pTraits::max= and that
+     during the calculation of =mag= this causes an overlflow. Fixed
+     by scaling down to the square root of the maximum
 *** Infrastructure
 *** Documentation
 *** New features
