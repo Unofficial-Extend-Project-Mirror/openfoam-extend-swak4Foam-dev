@@ -3161,6 +3161,11 @@ S_{expl} + S_{impl} T
 *** Incompatibilities
 *** New supported versions
 *** Bug fixes
+**** =fieldReport= doesn't work with all field names
+     Fields that have names that are not considered proper variable
+     names by swak (because for instance the have a dot in the name
+     like =alpha.water=) were not handled by =fieldReport=. This has
+     been fixed
 *** Infrastructure
 *** Documentation
 *** New features
