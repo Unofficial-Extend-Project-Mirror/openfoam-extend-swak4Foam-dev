@@ -1,4 +1,6 @@
 
+include $(OBJECTS_DIR)/../../../../rules/versionOptions
+
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV
 endif
@@ -13,6 +15,7 @@ EXE_INC = \
     -I$(LIB_SRC)/turbulenceModels/incompressible/turbulenceModel/lnInclude/ \
     -I$(LIB_SRC)/turbulenceModels/incompressible/LES/lnInclude/ \
     -I$(LIB_SRC)/turbulenceModels/incompressible/RAS/lnInclude/ \
+    $(INCOMPRESSIBLE_TURB_INC) \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/transportModels/ \
     -I$(LIB_SRC)/transportModels/incompressible/lnInclude
@@ -22,7 +25,5 @@ LIB_LIBS = \
     -lswak4FoamParsers \
     -lfiniteVolume \
     -lmeshTools \
-    -lincompressibleTurbulenceModel \
-    -lincompressibleLESModels \
-    -lincompressibleRASModels \
-    -lincompressibleTransportModels
+    $(INCOMPRESSIBLE_TURB_ALL_LIBS) \
+    $(INCOMPRESSIBLE_TURB_LIB)

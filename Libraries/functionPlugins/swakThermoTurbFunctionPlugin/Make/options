@@ -13,6 +13,8 @@ EXE_INC = \
     -I$(LIB_SRC)/turbulenceModels/compressible/turbulenceModel/lnInclude/ \
     -I$(LIB_SRC)/turbulenceModels/compressible/LES/lnInclude/ \
     -I$(LIB_SRC)/turbulenceModels/compressible/RAS/lnInclude/ \
+    $(COMPRESSIBLE_TRANSPORT_INC) \
+    $(COMPRESSIBLE_TURB_INC) \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude
 
 LIB_LIBS = \
@@ -20,7 +22,6 @@ LIB_LIBS = \
     -lswak4FoamParsers \
     -lfiniteVolume \
     -lmeshTools \
-    -lcompressibleTurbulenceModel \
-    -lcompressibleLESModels \
-    -lcompressibleRASModels \
+    $(COMPRESSIBLE_TURB_ALL_LIBS) \
+    $(COMPRESSIBLE_TURB_LIB) \
     $(FLUIDTHERMO_LIB)
