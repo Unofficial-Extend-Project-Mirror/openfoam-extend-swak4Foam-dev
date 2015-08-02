@@ -72,6 +72,10 @@ Contributors/Copyright:
 #define FOAM_OLDTIME_PROBLEM
 #endif
 
+#if FOAM_VERSION4SWAK_MAJOR > 8
+#define FOAM_OF_DEV_VERSION
+#endif
+
 // in 1.6-ext the operation s1 & s2 of two symmetrical tensor fields does not yield a symmetric tensor
 #if defined(FOAM_DEV) || FOAM_VERSION4SWAK_MAJOR>1
 #define FOAM_SYMMTENSOR_WORKAROUND
@@ -293,6 +297,10 @@ Contributors/Copyright:
 
 #if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_DEV)
 #define FOAM_HAS_LOCAL_DEBUGSWITCHES
+#endif
+
+#ifdef FOAM_OF_DEV_VERSION
+#define FOAM_WALLDIST_HAS_Y_METHOD
 #endif
 
 #include "swakVersion.H"
