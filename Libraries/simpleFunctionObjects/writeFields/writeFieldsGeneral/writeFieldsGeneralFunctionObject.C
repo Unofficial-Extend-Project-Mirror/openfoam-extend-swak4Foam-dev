@@ -57,7 +57,6 @@ Contributors/Copyright:
 #include "basicReactingMultiphaseCloud.H"
 #include "basicReactingCloud.H"
 #endif
-#include "basicThermoCloud.H"
 
 #include "cloud.H"
 // #include "const_iterator.H"
@@ -161,7 +160,7 @@ void writeFieldsGeneralFunctionObject::write()
 #ifdef FOAM_HAS_MPICC_CLOUD
         cnt+=writeCloud<basicKinematicMPPICCloud>(name);
 #endif
-        cnt+=writeCloud<basicThermoCloud>(name);
+        cnt+=writeCloud<swakFluidThermoCloudType>(name);
 #ifdef FOAM_REACTINGCLOUD_TEMPLATED
         cnt+=writeCloud<constThermoReactingCloud>(name);
         cnt+=writeCloud<thermoReactingCloud>(name);
