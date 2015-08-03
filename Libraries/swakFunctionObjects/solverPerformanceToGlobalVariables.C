@@ -44,6 +44,10 @@ Contributors/Copyright:
 
 #include "fvMesh.H"
 
+#ifdef FOAM_LDUMATRIX_SOLVER_PERFORMANCE
+typedef Foam::lduMatrix::solverPerformance solverPerformance;
+#endif
+
 namespace Foam {
     defineTypeNameAndDebug(solverPerformanceToGlobalVariables,0);
 }

@@ -3172,6 +3172,9 @@ S_{expl} + S_{impl} T
      by scaling down to the square root of the maximum
 **** Wrong type for cloud in =writeFieldsGeneral=
      Because of this compilation in 2.2 failed. Fix provided by Bruno Santos
+**** =solverPerformanceToGlobalVariables.C= did not compile with OF 2.2
+     The reason was that the =solverPerformance=-class is hidden in
+     =lduMatrix=. Fix provided by Bruno Santos
 *** Infrastructure
 *** Documentation
 *** New features

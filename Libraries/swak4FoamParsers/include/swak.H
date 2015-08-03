@@ -295,6 +295,10 @@ Contributors/Copyright:
 #define FOAM_HAS_LOCAL_DEBUGSWITCHES
 #endif
 
+#if FOAM_VERSION4SWAK < VERSION_NR2(2,2) && !defined(FOAM_DEV)
+#define FOAM_LDUMATRIX_SOLVER_PERFORMANCE
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
