@@ -3170,6 +3170,8 @@ S_{expl} + S_{impl} T
      The reason is the initialization with =pTraits::max= and that
      during the calculation of =mag= this causes an overlflow. Fixed
      by scaling down to the square root of the maximum
+**** Wrong type for cloud in =writeFieldsGeneral=
+     Because of this compilation in 2.2 failed. Fix provided by Bruno Santos
 *** Infrastructure
 *** Documentation
 *** New features
