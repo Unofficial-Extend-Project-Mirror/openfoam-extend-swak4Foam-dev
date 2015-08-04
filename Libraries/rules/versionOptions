@@ -29,6 +29,7 @@ ifeq "dev" "$(WM_PROJECT_VERSION)"
   COMPRESSIBLE_TURB_LIB=-lcompressibleTurbulenceModels -lturbulenceModels
   INCOMPRESSIBLE_TURB_ALL_LIBS=
   COMPRESSIBLE_TURB_ALL_LIBS=
+  RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude
 endif
 
 ifdef FOAM_DEV
