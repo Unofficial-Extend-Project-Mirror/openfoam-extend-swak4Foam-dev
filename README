@@ -3179,6 +3179,20 @@ S_{expl} + S_{impl} T
 
      Internally the =dev=-version is maintained as version =9.9.99=
 *** Bug fixes
+**** =fieldReport= doesn't work with all field names
+     Fields that have names that are not considered proper variable
+     names by swak (because for instance the have a dot in the name
+     like =alpha.water=) were not handled by =fieldReport=. This has
+     been fixed
+**** Construction of =SimpleDistribution= may fail for zero-size fields
+     The reason is the initialization with =pTraits::max= and that
+     during the calculation of =mag= this causes an overlflow. Fixed
+     by scaling down to the square root of the maximum
+**** Wrong type for cloud in =writeFieldsGeneral=
+     Because of this compilation in 2.2 failed. Fix provided by Bruno Santos
+**** =solverPerformanceToGlobalVariables.C= did not compile with OF 2.2
+     The reason was that the =solverPerformance=-class is hidden in
+     =lduMatrix=. Fix provided by Bruno Santos
 *** Infrastructure
 *** Documentation
 *** New features

@@ -2178,4 +2178,28 @@ const word &CommonValueExpressionDriver::resolveAlias(const word &name) const {
     return name;
 }
 
+bool CommonValueExpressionDriver::addAlias(
+    const word &name,
+    const word &field,
+    bool overwrite
+)
+{
+    bool isThere=hasAlias(name);
+
+    if(
+        isThere
+        &&
+        !overwrite
+    ) {
+        FatalErrorIn("CommonValueExpressionDriver::addAlias")
+            << name << " already an alias and no overwrite specified"
+                << endl
+                << exit(FatalError);
+    }
+
+    aliases_.set(name,field);
+
+    return !isThere;
+}
+
 } // namespace
