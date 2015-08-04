@@ -674,7 +674,13 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceField()
     );
     f->dimensions().reset(mesh_.C().dimensions());
     wallDist dist(mesh_);
+
+#ifdef FOAM_WALLDIST_HAS_Y_METHOD
+    f()==dist.y();
+#else
     f()==dist;
+#endif
+
     f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();

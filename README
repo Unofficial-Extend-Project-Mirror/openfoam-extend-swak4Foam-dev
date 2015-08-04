@@ -70,7 +70,11 @@
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
 ** Requirements
-   - Version 2.0 or higher of OpenFOAM and version 3.0 or higher of Foam
+   - Version 2.0 or higher of OpenFOAM and version 3.0 or higher of
+     Foam.  The =OpenFOAM-dev= is also supported but because this is
+     frequently changing compilation may fail. The branch
+     =feature/port_of-dev= of the development repository *may* work
+     better
    - the compiler generators =bison= and =flex=
      - bison :: =swak4Foam= is known to work with =bison= version 2.4 and
                 higher. Version 2.3 compiles but the plugin-functionality does
@@ -764,6 +768,9 @@ S_{expl} + S_{impl} T
    http://sourceforge.net/apps/mantisbt/openfoam-extend/search.php?project_id=10&sticky_issues=on&sortby=last_updated&dir=DESC&hide_status_id=90
 
    A sourceforge-account is required for reporting
+
+   Please *always* report the FOAM-version you use. As =OpenFOAM-dev=
+   is a moving target only bug-reports that add fixes are handled for this.
 *** Things to do before reporting bug
     If you're reporting a bug about the compilation please run
     =Allwmake= *twice* and only report the messages from the second
@@ -3160,6 +3167,17 @@ S_{expl} + S_{impl} T
    OpenFOAM 1.6-ext and older versions anymore
 *** Incompatibilities
 *** New supported versions
+**** Rolling support for =OpenFOAM-dev=
+     This version adds support for =OpenFOAM-dev= published at
+     =git://github.com/OpenFOAM/OpenFOAM-dev.git=
+
+     As this version is constantly changing it might or might not work
+     with the most up-to-date version of the repository.
+
+     The port is maintained in a branch =feature/port_of-dev= that is
+     never closed and is periodically merged to the =develop=-branch.
+
+     Internally the =dev=-version is maintained as version =9.9.99=
 *** Bug fixes
 **** =fieldReport= doesn't work with all field names
      Fields that have names that are not considered proper variable

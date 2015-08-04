@@ -32,60 +32,26 @@ Class
 
 
 Description
-    Define types that were renamed in OpenFOAM 2.2
+    Define turbulence types that were renamed
 
 SourceFiles
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakFvOptionMacroHeader_H
-#define SwakFvOptionMacroHeader_H
+#ifndef SwakTurbulenceMacroHeader_H
+#define SwakTurbulenceMacroHeader_H
 
 #include "swak.H"
 
-#ifdef FOAM_HAS_FVOPTIONS
-
-#include "fvOption.H"
-#include "makeFvOption.H"
-
-#if FOAM_VERSION4SWAK_MAJOR>8
-
-#include "cellSetOption.H"
-
-namespace Foam {
-    typedef fv::cellSetOption swakFvOptionType;
-}
-
-#else
-
-namespace Foam {
-    typedef fv::option swakFvOptionType;
-}
-
+#if FOAM_VERSION4SWAK_MAJOR > 8
+#define FOAM_NEW_TURBULENCE_STRUCTURE
 #endif
 
-#define makeSwakFvOption makeFvOption
-
-#if (FOAM_VERSION4SWAK >= VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
-#define FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
-#endif
-
-#else
-
-#include "basicSource.H"
-#include "makeBasicSource.H"
-
-namespace Foam {
-    typedef basicSource swakFvOptionType;
-}
-
-#define makeSwakFvOption makeBasicSource
-
-#endif
+#include "DebugOStream.H"
 
 #endif
 

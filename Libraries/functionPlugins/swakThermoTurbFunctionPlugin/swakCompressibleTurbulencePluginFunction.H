@@ -47,7 +47,13 @@ Contributors/Copyright:
 
 #include "swakThermophysicalPluginFunction.H"
 
+#include "swakTurbulence.H"
+
+#ifdef FOAM_NEW_TURBULENCE_STRUCTURE
+#include "turbulentFluidThermoModel.H"
+#else
 #include "turbulenceModel.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -27,8 +27,11 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
-    -I$(LIB_SRC)/turbulenceModels \
+    $(INCOMPRESSIBLE_TURB_INC) \
+    $(COMPRESSIBLE_TURB_INC) \
+    -I$(LIB_SRC)/transportModels/incompressible/singlePhaseTransportModel \
     -I$(LIB_SRC)/transportModels \
+    $(COMPRESSIBLE_TRANSPORT_INC) \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
     -I$(LIB_SRC)/lagrangian/intermediate/lnInclude \
     $(ADDITIONALFILES_INC)
@@ -40,8 +43,8 @@ LIB_LIBS = \
     -ltriSurface \
     $(FLUIDTHERMO_LIB) \
     -lincompressibleTransportModels \
-    -lcompressibleTurbulenceModel \
-    -lincompressibleTurbulenceModel \
+    $(INCOMPRESSIBLE_TURB_LIB) \
+    $(COMPRESSIBLE_TURB_LIB) \
     -lspecie \
     -llagrangian \
     $(RADIATION_LIB) \
