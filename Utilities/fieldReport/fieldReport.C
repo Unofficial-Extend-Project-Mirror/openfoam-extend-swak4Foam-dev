@@ -181,10 +181,14 @@ void reportValues(
         entName
     );
 
+    const word aName("aLongAliasNameThatIsNotLikelyToClashWithExistingFields");
+
+    driver.addAlias(aName,fieldName);
+
     Field<Type> result(
         driver.evaluate<Type>(
             exprString(
-                fieldName,
+                aName,
                 dictionary::null
             )
         )
