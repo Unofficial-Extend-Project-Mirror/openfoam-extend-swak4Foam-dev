@@ -3195,6 +3195,8 @@ S_{expl} + S_{impl} T
      =lduMatrix=. Fix provided by Bruno Santos
 *** Infrastructure
 *** Documentation
+**** Adaption of the reference guide for new =org-mode=
+     New version of =org-mode= makes changes in the UML-code necessary
 *** New features
 *** Enhancements
 *** Examples

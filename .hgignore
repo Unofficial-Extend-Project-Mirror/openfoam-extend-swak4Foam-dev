@@ -23,6 +23,9 @@ GRTAGS
 
 *.tex
 *.pdf
+*.lof
+*.lot
+
 auto
 doc
 \#*\#
