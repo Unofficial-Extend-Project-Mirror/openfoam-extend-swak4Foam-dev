@@ -41,7 +41,11 @@ Contributors/Copyright:
 
 // not working
 
+#include "swak.H"
+
 #ifdef __clang__
+
+#ifndef FOAM_SOLUTION_HAS_NO_READ_WITH_DICT
 
 #include "IOdictionary.H"
 #define class struct
@@ -57,6 +61,9 @@ bool Foam::solution::readPrivate(const dictionary &d)
     read(d);
     return true;
 }
+
+#endif
+
 #endif
 
 #include "manipulateFvSolutionFvSchemesFunctionObject.H"
