@@ -52,9 +52,21 @@ Contributors/Copyright:
 #include "fvOption.H"
 #include "makeFvOption.H"
 
+#if FOAM_VERSION4SWAK_MAJOR>8
+
+#include "cellSetOption.H"
+
+namespace Foam {
+    typedef fv::cellSetOption swakFvOptionType;
+}
+
+#else
+
 namespace Foam {
     typedef fv::option swakFvOptionType;
 }
+
+#endif
 
 #define makeSwakFvOption makeFvOption
 

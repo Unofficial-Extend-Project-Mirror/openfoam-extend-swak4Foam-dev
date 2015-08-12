@@ -1,3 +1,4 @@
+# -*- Makefile -*-
 # Set switches for libraries that were renamed between versions
 
 ifdef FOAM_DEV
@@ -6,8 +7,29 @@ endif
 
 FLUIDTHERMO_LIB=-lbasicThermophysicalModels
 SOLIDTHERMO_LIB=-lbasicSolidThermo
+
 RADIATION_LIB=-lradiationModels
 RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiationModels/lnInclude
+
+INCOMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
+COMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
+INCOMPRESSIBLE_TURB_LIB=-lincompressibleTurbulenceModel
+COMPRESSIBLE_TURB_LIB=-lcompressibleTurbulenceModel
+INCOMPRESSIBLE_TURB_ALL_LIBS=-lincompressibleLESModels -lincompressibleRASModels
+COMPRESSIBLE_TURB_ALL_LIBS=-lcompressibleLESModels -lcompressibleRASModels
+
+ifeq "dev" "$(WM_PROJECT_VERSION)"
+  WMAKE_NEW_CONVENTION=new
+
+  COMPRESSIBLE_TRANSPORT_INC=-I$(LIB_SRC)/transportModels/compressible/lnInclude
+
+  INCOMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/TurbulenceModels/incompressible/lnInclude -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude
+  COMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude
+  INCOMPRESSIBLE_TURB_LIB=-lincompressibleTurbulenceModels -lturbulenceModels
+  COMPRESSIBLE_TURB_LIB=-lcompressibleTurbulenceModels -lturbulenceModels
+  INCOMPRESSIBLE_TURB_ALL_LIBS=
+  COMPRESSIBLE_TURB_ALL_LIBS=
+endif
 
 ifdef FOAM_DEV
   RADIATION_LIB=-lradiation

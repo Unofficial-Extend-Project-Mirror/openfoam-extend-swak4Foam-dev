@@ -45,7 +45,14 @@ Contributors/Copyright:
 #ifndef ReaderParticleCloud_H
 #define ReaderParticleCloud_H
 
+#include "swakCloudTypes.H"
+
+#ifdef FOAM_CLOUDTEMPLATE_IS_CLOUD_H
+#include "CloudTemplate.H"
+#else
 #include "Cloud.H"
+#endif
+
 #include "ReaderParticle.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

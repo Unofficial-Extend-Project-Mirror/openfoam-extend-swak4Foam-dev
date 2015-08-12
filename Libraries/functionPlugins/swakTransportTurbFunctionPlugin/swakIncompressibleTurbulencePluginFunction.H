@@ -47,7 +47,14 @@ Contributors/Copyright:
 
 #include "swakTransportModelsPluginFunction.H"
 
+#include "swakTurbulence.H"
+
+#ifdef FOAM_NEW_TURBULENCE_STRUCTURE
+#include "singlePhaseTransportModel.H"
+#include "turbulentTransportModel.H"
+#else
 #include "turbulenceModel.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

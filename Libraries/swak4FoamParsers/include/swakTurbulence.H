@@ -32,73 +32,23 @@ Class
 
 
 Description
-    Define types that were renamed in OpenFOAM 2.2
+    Define turbulence types that were renamed
 
 SourceFiles
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakCloudMacroHeader_H
-#define SwakCloudMacroHeader_H
+#ifndef SwakTurbulenceMacroHeader_H
+#define SwakTurbulenceMacroHeader_H
 
 #include "swak.H"
 
-#ifdef FOAM_HAS_FLUIDTHERMO_CLOUD
-
-#include "fluidThermoCloud.H"
-
-namespace Foam {
-    typedef fluidThermoCloud swakFluidThermoCloudType;
-}
-
-#else
-
-#include "basicThermoCloud.H"
-
-namespace Foam {
-    typedef basicThermoCloud swakFluidThermoCloudType;
-}
-#endif
-
-#ifdef FOAM_DEV
-#define FOAM_REACTINGCLOUD_TEMPLATED
-#endif
-
-#ifdef FOAM_DEV
-#define FOAM_KINEMATICCLOUD_OLD_STYLE
-#endif
-
-#ifdef FOAM_DEV
-#define FOAM_THERMOCLOUD_OLD_STYLE
-#endif
-
-#ifdef FOAM_DEV
-#define FOAM_REACTINGCLOUD_OLD_STYLE
-#endif
-
-
-#if FOAM_VERSION4SWAK > VERSION_NR2(2,2)
-#define FOAM_PHASECHANGEMODEL_HAS_TVAP
-#endif
-
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_DEV)
-#define FOAM_HAS_COLLIDING_CLOUD
-#endif
-
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)
-#define FOAM_HAS_MPICC_CLOUD
-#endif
-
-#if (FOAM_VERSION4SWAK > VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
-#define FOAM_KINEMATIC_PARCEL_HAS_MINPARCELMASS
-#endif
-
-#if (FOAM_VERSION4SWAK > VERSION_NR2(3,1)) && defined(FOAM_DEV)
-#define FOAM_CLOUDTEMPLATE_IS_CLOUD_H
+#if FOAM_VERSION4SWAK_MAJOR > 8
+#define FOAM_NEW_TURBULENCE_STRUCTURE
 #endif
 
 #include "DebugOStream.H"

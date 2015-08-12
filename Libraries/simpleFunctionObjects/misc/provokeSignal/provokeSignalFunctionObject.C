@@ -43,6 +43,8 @@ Contributors/Copyright:
 
 #include "HashSet.H"
 
+#include "objectRegistry.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
