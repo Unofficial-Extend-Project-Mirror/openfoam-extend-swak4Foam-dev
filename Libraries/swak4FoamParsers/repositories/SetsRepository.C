@@ -40,7 +40,7 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "meshSearch.H"
 
-#include "Time.H"
+#include "swakTime.H"
 
 namespace Foam {
 

@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "timelineFunctionObject.H"
@@ -39,7 +39,7 @@ Contributors/Copyright:
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "swakTime.H"
 
 #include "OFstream.H"
 

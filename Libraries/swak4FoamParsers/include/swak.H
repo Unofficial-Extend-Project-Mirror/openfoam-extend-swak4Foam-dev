@@ -295,6 +295,10 @@ Contributors/Copyright:
 #define FOAM_HAS_LOCAL_DEBUGSWITCHES
 #endif
 
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_DEV)
+#define FOAM_MOVED_TIME_AND_STRING_HEADERS
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

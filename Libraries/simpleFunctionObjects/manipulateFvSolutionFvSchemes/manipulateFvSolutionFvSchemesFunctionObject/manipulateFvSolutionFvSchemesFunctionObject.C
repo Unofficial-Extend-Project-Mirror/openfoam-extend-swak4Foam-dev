@@ -39,7 +39,7 @@ Contributors/Copyright:
 
 #include "fvMesh.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "swakTime.H"
 
 #include "swak.H"
 

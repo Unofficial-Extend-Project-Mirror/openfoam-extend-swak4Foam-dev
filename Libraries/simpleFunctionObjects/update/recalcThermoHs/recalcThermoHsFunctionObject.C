@@ -43,7 +43,7 @@ Contributors/Copyright:
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "swakTime.H"
 
 #include "basicThermo.H"
 

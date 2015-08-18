@@ -49,7 +49,7 @@ Contributors/Copyright:
 #define TimeClone_H
 
 #include "objectRegistry.H"
-#include "Time.H"
+#include "swakTime.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
