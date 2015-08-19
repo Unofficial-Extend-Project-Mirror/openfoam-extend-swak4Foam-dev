@@ -36,7 +36,7 @@ Contributors/Copyright:
 #include "expressionToFace.H"
 #include "polyMesh.H"
 #include "cellSet.H"
-#include "Time.H"
+#include "swakTime.H"
 #include "syncTools.H"
 #include "addToRunTimeSelectionTable.H"
 

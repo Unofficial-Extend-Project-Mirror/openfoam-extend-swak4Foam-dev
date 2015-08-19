@@ -71,7 +71,7 @@ bool Foam::solution::readPrivate(const dictionary &d)
 
 #include "fvMesh.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "swakTime.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

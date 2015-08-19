@@ -36,7 +36,7 @@ Contributors/Copyright:
 
 #include "RepositoryBase.H"
 
-#include "Time.H"
+#include "swakTime.H"
 
 namespace Foam {
 

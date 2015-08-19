@@ -30,7 +30,7 @@ License
 #include "swakCodedFunctionObject.H"
 #include "volFields.H"
 #include "dictionary.H"
-#include "Time.H"
+#include "swakTime.H"
 #include "SHA1Digest.H"
 #include "dynamicCode.H"
 #include "dynamicCodeContext.H"

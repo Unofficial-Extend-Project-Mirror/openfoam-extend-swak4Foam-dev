@@ -48,7 +48,7 @@ Contributors/Copyright:
 
 #include "dictionary.H"
 #include "objectRegistry.H"
-#include "Time.H"
+#include "swakTime.H"
 
 #include "Python.h"
 
