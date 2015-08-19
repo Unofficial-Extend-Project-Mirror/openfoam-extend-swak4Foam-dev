@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "executeIfObjectExistsFunctionObject.H"
@@ -39,7 +39,7 @@ Contributors/Copyright:
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "swakTime.H"
 #include "argList.H"
 
 #include "objectRegistry.H"
@@ -110,7 +110,7 @@ bool executeIfObjectExistsFunctionObject::read(const dictionary& dict)
     return conditionalFunctionObjectListProxy::read(dict);
 }
 
-void executeIfObjectExistsFunctionObject::readParameters(const dictionary &dict) 
+void executeIfObjectExistsFunctionObject::readParameters(const dictionary &dict)
 {
     objectName_=word(dict.lookup("objectName"));
     checkType_=readBool(dict.lookup("checkType"));

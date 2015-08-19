@@ -37,7 +37,7 @@ Contributors/Copyright:
 #include "provokeSignalFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "Time.H"
+#include "swakTime.H"
 
 #include <signal.h>
 
