@@ -15,7 +15,10 @@ darwin*Debug
 
 lnInclude
 
+ccache4vm
 .vagrant
+
+postProcessing
 
 GTAGS
 GPATH
