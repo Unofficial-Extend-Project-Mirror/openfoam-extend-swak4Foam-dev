@@ -315,6 +315,10 @@ Contributors/Copyright:
 #define FOAM_MOVED_TIME_AND_STRING_HEADERS
 #endif
 
+#if !defined(FOAM_DEV)
+#define FOAM_FV_HAS_SMOOTH_SWEEP_SPREAD
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
