@@ -38,7 +38,7 @@ Contributors/Copyright:
 
 #ifdef  FOAM_FV_HAS_SMOOTH_SWEEP_SPREAD
 
-#include "fvcSmoothPluginFunction.H"
+#include "fvcSpreadPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
@@ -47,13 +47,13 @@ Contributors/Copyright:
 
 namespace Foam {
 
-defineTypeNameAndDebug(fvcSmoothPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, fvcSmoothPluginFunction , name, fvcSmooth);
+defineTypeNameAndDebug(fvcSpreadPluginFunction,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, fvcSpreadPluginFunction , name, fvcSpread);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-fvcSmoothPluginFunction::fvcSmoothPluginFunction(
+fvcSpreadPluginFunction::fvcSpreadPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -61,8 +61,14 @@ fvcSmoothPluginFunction::fvcSmoothPluginFunction(
         parentDriver,
         name,
         word("volScalarField"),
-        string("originalField internalField volScalarField"
-        ",coffRelative primitive scalar")
+        string(
+            "originalField internalField volScalarField"
+            ",alphaField internalField volScalarField"
+            ",nLayers primitive label"
+            ",alphaDiff_default=0.2 primitive scalar"
+            ",alphaMax_default=0.99 primitive scalar"
+            ",alphaMan_default=0.01 primitive scalar"
+        )
     )
 {
 }
@@ -72,19 +78,19 @@ fvcSmoothPluginFunction::fvcSmoothPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void fvcSmoothPluginFunction::doEvaluation()
+void fvcSpreadPluginFunction::doEvaluation()
 {
     autoPtr<volScalarField> pResult(
         new volScalarField(
             IOobject(
-                "smoothed",
+                "spread",
                 this->mesh().time().timeName(),
                 this->mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
             this->mesh(),
-            dimensionedScalar("smoothed",dimless,0),
+            dimensionedScalar("spread",dimless,0),
             "zeroGradient"
         )
     );
@@ -92,38 +98,66 @@ void fvcSmoothPluginFunction::doEvaluation()
 
     result==field_();
 
-    fvc::smooth(
+    fvc::spread(
         result,
-        coeff_
+        alpha_,
+        nLayers_,
+        alphaDiff_,
+        alphaMax_,
+        alphaMin_
     );
 
     this->result().setObjectResult(pResult);
 }
 
-void fvcSmoothPluginFunction::setArgument(
+void fvcSpreadPluginFunction::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
 ) {
-    assert(index==0);
+    assert(index==0 || index==1);
 
-    this->field_.set(
-        new volScalarField(
-            //                dynamicCast<const FieldValueExpressionDriver &>(
-            dynamic_cast<const FieldValueExpressionDriver &>(
-                driver
-            ).getResult<volScalarField>()
-        )
-    );
+    if(index==0) {
+        this->field_.set(
+            new volScalarField(
+                dynamic_cast<const FieldValueExpressionDriver &>(
+                    driver
+                ).getResult<volScalarField>()
+            )
+        );
+    } else {
+        this->alpha_.set(
+            new volScalarField(
+                dynamic_cast<const FieldValueExpressionDriver &>(
+                    driver
+                ).getResult<volScalarField>()
+            )
+        );
+    }
 }
 
-void fvcSmoothPluginFunction::setArgument(
+void fvcSpreadPluginFunction::setArgument(
     label index,
     const scalar &val
 )
 {
-    assert(index==1);
-    coeff_=val;
+    assert(index==3 || index==4 || index==5);
+    if(index==3) {
+        alphaDiff_=val;
+    } else if(index==4) {
+        alphaMax_=val;
+    } else {
+        alphaMin_=val;
+    }
+}
+
+void fvcSpreadPluginFunction::setArgument(
+    label index,
+    const label &val
+)
+{
+    assert(index==2);
+    nLayers_=val;
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

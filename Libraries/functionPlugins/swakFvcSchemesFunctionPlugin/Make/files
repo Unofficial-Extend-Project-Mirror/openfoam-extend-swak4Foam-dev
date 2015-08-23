@@ -6,6 +6,8 @@ fvcConvectionDivFunctionPlugin.C
 fvcLaplacianFunctionPlugin.C
 fvcCoeffLaplacianFunctionPlugin.C
 fvcSurfCoeffLaplacianFunctionPlugin.C
+
 fvcSmoothPluginFunction.C
+fvcSpreadPluginFunction.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakFvcSchemesFunctionPlugin
