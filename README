@@ -3197,4 +3197,8 @@ S_{expl} + S_{impl} T
 *** Documentation
 *** New features
 *** Enhancements
+**** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
+     These functions from =fvc= were implemented as
+     plugin-functions. Mainly to be able to test their behavior. To
+     check what they do see =fvcSmooth.H= in =finiteVolume=
 *** Examples
