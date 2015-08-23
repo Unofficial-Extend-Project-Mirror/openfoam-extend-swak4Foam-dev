@@ -25,5 +25,5 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \
-    -ltriSurface \
+    $(TRISURFACE_LIB) \
     -llagrangian
