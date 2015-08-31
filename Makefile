@@ -25,3 +25,6 @@ globalinstall:
 	./Allwmake
 	./copySwakFilesToSite.sh
 	./removeSwakFilesFromLocal.sh
+
+docu:
+	doxygen
