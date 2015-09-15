@@ -65,7 +65,7 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 class swakCompressibleTurbulencePluginFunction
 :
-    public swakThermophysicalPluginFunction
+    public swakThermophysicalPluginFunction<swakFluidThermoType>
 {
     //- Disallow default bitwise assignment
     void operator=(const swakCompressibleTurbulencePluginFunction &);

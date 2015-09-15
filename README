@@ -3193,6 +3193,9 @@ S_{expl} + S_{impl} T
 **** =solverPerformanceToGlobalVariables.C= did not compile with OF 2.2
      The reason was that the =solverPerformance=-class is hidden in
      =lduMatrix=. Fix provided by Bruno Santos
+**** Solid thermophysics not available in the =ThermoTurb= function plugin
+     For OF-versions where =fluidThermo= and =solidThermo= have the
+     same base functions like =thermo_Cp= can be used for solids too
 *** Infrastructure
 *** Documentation
 *** New features
@@ -3201,4 +3204,7 @@ S_{expl} + S_{impl} T
      These functions from =fvc= were implemented as
      plugin-functions. Mainly to be able to test their behavior. To
      check what they do see =fvcSmooth.H= in =finiteVolume=
+**** Additional functions in plugin =ThermoTurb=
+     Functions from the public interface of =basicThermo= and
+     =turbulenceModel= have been added (like =kappa=, =kappaEff= etc)
 *** Examples
