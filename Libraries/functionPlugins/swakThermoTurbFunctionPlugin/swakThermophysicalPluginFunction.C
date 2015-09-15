@@ -173,6 +173,76 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
     return *(thermo_[reg.name()]);
 }
 
+#ifdef FOAM_HAS_FLUIDTHERMO
+template<>
+const solidThermo &swakThermophysicalPluginFunction<solidThermo>::thermoInternal(
+    const fvMesh &reg
+)
+{
+    static HashPtrTable<solidThermo> thermo_;
+
+    if(reg.foundObject<solidThermo>("thermophysicalProperties")) {
+        if(debug) {
+            Info << "swakThermophysicalPluginFunction::thermoInternal: "
+                << "already in memory" << endl;
+        }
+        // Somebody else already registered this
+        return reg.lookupObject<solidThermo>("thermophysicalProperties");
+    }
+    if(!thermo_.found(reg.name())) {
+        if(debug) {
+            Info << "swakThermophysicalPluginFunction::thermoInternal: "
+                << "not yet in memory for " << reg.name() << endl;
+        }
+
+        {
+            // make sure it is gone before we create the object
+            IOdictionary dict
+                (
+                    IOobject
+                    (
+                        "thermophysicalProperties",
+                        reg.time().constant(),
+                        reg,
+                        IOobject::MUST_READ,
+                        IOobject::NO_WRITE
+                    )
+                );
+
+            word thermoTypeName=dict["thermoType"];
+
+            solidThermo::fvMeshConstructorTable::iterator cstrIter =
+                solidThermo::fvMeshConstructorTablePtr_->find(
+                    thermoTypeName
+                );
+            if (cstrIter != solidThermo::fvMeshConstructorTablePtr_->end())
+            {
+                if(debug) {
+                    Info << thermoTypeName << " is a solidThermo-type";
+                }
+            } else if(debug) {
+                Info << "No " << thermoTypeName << " in solidThermo-types "
+#ifdef FOAM_HAS_SORTED_TOC
+                    << solidThermo::fvMeshConstructorTablePtr_->sortedToc()
+#else
+                    << solidThermo::fvMeshConstructorTablePtr_->toc()
+#endif
+                    << endl;
+            }
+
+        }
+
+        // Create it ourself because nobody registered it
+        thermo_.set(
+            reg.name(),
+            solidThermo::New(reg).ptr()
+        );
+    }
+
+    return *(thermo_[reg.name()]);
+}
+#endif
+
 template<class ThermoType>
 const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermo()
 {
@@ -213,7 +283,7 @@ concreteThermoFunction(rho,volScalarField,basicThermo);
 concreteThermoFunction(psi,volScalarField,swakFluidThermoType);
 #ifdef FOAM_HAS_FLUIDTHERMO
 concreteThermoFunction(he,volScalarField,basicThermo);
-    // concreteThermoFunction(Kappa,volVectorField,solidThermo);
+concreteThermoFunction(Kappa,volVectorField,solidThermo);
 #else
 concreteThermoFunction(h,volScalarField,basicThermo);
 concreteThermoFunction(hs,volScalarField,basicThermo);
@@ -225,6 +295,15 @@ concreteThermoFunction(Cp,volScalarField,basicThermo);
 concreteThermoFunction(Cv,volScalarField,basicThermo);
 concreteThermoFunction(mu,volScalarField,swakFluidThermoType);
 concreteThermoFunction(alpha,volScalarField,basicThermo);
+
+#ifdef FOAM_HAS_FLUIDTHERMO
+concreteThermoFunction(gamma,volScalarField,basicThermo);
+concreteThermoFunction(Cpv,volScalarField,basicThermo);
+concreteThermoFunction(CpByCpv,volScalarField,basicThermo);
+concreteThermoFunction(kappa,volScalarField,basicThermo);
+    // concreteThermoFunction(kappaEff,volScalarField,basicThermo);
+    // concreteThermoFunction(alphaEff,volScalarField,basicThermo);
+#endif
 
 } // namespace
 

@@ -3200,4 +3200,7 @@ S_{expl} + S_{impl} T
 *** Documentation
 *** New features
 *** Enhancements
+**** Additional functions in plugin =ThermoTurb=
+     Functions from the public interface of =basicThermo= and
+     =turbulenceModel= have been added (like =kappa=, =kappaEff= etc)
 *** Examples
