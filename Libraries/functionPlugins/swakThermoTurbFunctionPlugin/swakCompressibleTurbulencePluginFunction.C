@@ -54,7 +54,7 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
     const word &name,
     const word &returnValueType
 ):
-    swakThermophysicalPluginFunction(
+    swakThermophysicalPluginFunction<swakFluidThermoType>(
         parentDriver,
         name,
         returnValueType
