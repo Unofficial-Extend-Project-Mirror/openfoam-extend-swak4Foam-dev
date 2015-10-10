@@ -319,6 +319,10 @@ Contributors/Copyright:
 #define FOAM_FV_HAS_SMOOTH_SWEEP_SPREAD
 #endif
 
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)
+#define FOAM_HAS_INTERPOLATION2DTABLE
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

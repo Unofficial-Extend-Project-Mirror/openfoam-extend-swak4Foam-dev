@@ -122,6 +122,9 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     globalVariableScopes_(orig.globalVariableScopes_),
     lines_(orig.lines_),
     lookup_(orig.lookup_),
+#ifdef FOAM_HAS_INTERPOLATION2DTABLE
+    lookup2D_(orig.lookup2D_),
+#endif
     content_(""),
     trace_scanning_ (orig.trace_scanning_),
     trace_parsing_ (orig.trace_parsing_),
@@ -376,6 +379,12 @@ void CommonValueExpressionDriver::readTables(const dictionary &dict)
     if(dict.found("lookuptables")) {
         readTables(dict.lookup("lookuptables"),lookup_);
     }
+
+#ifdef FOAM_HAS_INTERPOLATION2DTABLE
+    if(dict.found("lookuptables2D")) {
+        readTables(dict.lookup("lookuptables2D"),lookup2D_);
+    }
+#endif
 
     if(dict.found("aliases")) {
         dictionary aliasDict(dict.subDict("aliases"));
@@ -903,6 +912,12 @@ Ostream &CommonValueExpressionDriver::writeCommon(Ostream &os,bool debug) const
     writeTables(os,lookup_);
     os << token::END_STATEMENT << nl;
 
+#ifdef FOAM_HAS_INTERPOLATION2DTABLE
+    os.writeKeyword("lookuptables2D");
+    writeTables(os,lookup2D_);
+    os << token::END_STATEMENT << nl;
+#endif
+
     if(debug) {
         os.writeKeyword("variableValues");
         os << variables_ << endl;
@@ -1204,6 +1219,31 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup(
         result()[i]=table(val[i]);
     }
 
+    return tmp<scalarField>(result);
+}
+
+tmp<scalarField> CommonValueExpressionDriver::getLookup2D(
+    const word &name,
+    const scalarField &val,
+    const scalarField &val2
+)
+{
+    tmp<scalarField> result(
+        new scalarField(val.size())
+    );
+#ifdef FOAM_HAS_INTERPOLATION2DTABLE
+    const interpolation2DTable<scalar> &table=lookup2D_[name];
+
+    forAll(val,i) {
+        result()[i]=table(val[i],val2[i]);
+    }
+#else
+    FatalErrorIn("CommonValueExpressionDriver::getLookup2D")
+        << "This Foam-version has no class interpolation2DTable" << nl
+            << "Two-dimensional lookup is therefor not supported"
+            << endl
+            << exit(FatalError);
+#endif
     return tmp<scalarField>(result);
 }
 
@@ -1581,9 +1621,10 @@ void CommonValueExpressionDriver::addVariables(
     }
 }
 
+template<class TableType>
 void CommonValueExpressionDriver::readTables(
     Istream &is,
-    HashTable<interpolationTable<scalar> > &tables,
+    HashTable<TableType> &tables,
     bool clear
 )
 {
@@ -1594,17 +1635,18 @@ void CommonValueExpressionDriver::readTables(
 
     forAll(lines,i) {
         const dictionary &dict=lines[i];
-        tables.insert(dict.lookup("name"),interpolationTable<scalar>(dict));
+        tables.insert(dict.lookup("name"),TableType(dict));
     }
 }
 
+template<class TableType>
 void CommonValueExpressionDriver::writeTables(
     Ostream &os,
-    const HashTable<interpolationTable<scalar> > &tables
+    const HashTable<TableType> &tables
 ) const
 {
     os << token::BEGIN_LIST << nl;
-    forAllConstIter(HashTable<interpolationTable<scalar> >,tables,it) {
+    forAllConstIter(typename HashTable<TableType>,tables,it) {
         os << token::BEGIN_BLOCK << nl;
         os.writeKeyword("name") << it.key() << token::END_STATEMENT << nl;
         (*it).write(os);

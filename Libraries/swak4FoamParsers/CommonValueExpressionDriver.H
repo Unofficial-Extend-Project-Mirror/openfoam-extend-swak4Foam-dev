@@ -46,8 +46,13 @@ Contributors/Copyright:
 #ifndef CommonValueExpressionDriver_H
 #define CommonValueExpressionDriver_H
 
+#include "swak.H"
+
 #include "volFields.H"
 #include "interpolationTable.H"
+#ifdef FOAM_HAS_INTERPOLATION2DTABLE
+#include "interpolation2DTable.H"
+#endif
 
 #include "runTimeSelectionTables.H"
 
@@ -172,6 +177,10 @@ private:
     HashTable<interpolationTable<scalar>,word> lines_;
 
     HashTable<interpolationTable<scalar>,word> lookup_;
+
+#ifdef FOAM_HAS_INTERPOLATION2DTABLE
+    HashTable<interpolation2DTable<scalar>,word> lookup2D_;
+#endif
 
     exprString content_;
 
@@ -672,9 +681,10 @@ public:
     );
 
     //- read some interpolation tables
+    template<typename TableType>
     void readTables(
         Istream &is,
-        HashTable<interpolationTable<scalar> > &,
+        HashTable<TableType> &,
         bool clear=true
     );
 
@@ -708,9 +718,10 @@ public:
     virtual void readVariablesAndTables(const dictionary &);
 
     //- write some interpolation tables
+    template<class TableType>
     void writeTables(
         Ostream &os,
-        const HashTable<interpolationTable<scalar> > &
+        const HashTable<TableType> &
     ) const;
 
     //- is this a lookup table
@@ -722,6 +733,18 @@ public:
     tmp<scalarField> getLookup(
         const word &name,
         const scalarField &val
+    );
+
+    //- is this a 2D lookup table
+    inline bool isLookup2D(
+        const word &name
+    ) const;
+
+    //- get the value for a 2D lookuptable for a set of values
+    tmp<scalarField> getLookup2D(
+        const word &name,
+        const scalarField &val,
+        const scalarField &val2
     );
 
     tmp<scalarField> makeModuloField(
