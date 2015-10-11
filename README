@@ -3196,6 +3196,8 @@ S_{expl} + S_{impl} T
 **** Solid thermophysics not available in the =ThermoTurb= function plugin
      For OF-versions where =fluidThermo= and =solidThermo= have the
      same base functions like =thermo_Cp= can be used for solids too
+**** =lookup=-tables no working in =faField=-parser
+     Because of a bug in the lexer lookup tables did not work. Fixed
 *** Infrastructure
 *** Documentation
 *** New features

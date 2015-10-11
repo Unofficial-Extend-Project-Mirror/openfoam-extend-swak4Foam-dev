@@ -221,6 +221,8 @@ false                  return token::TOKEN_FALSE;
     Foam::word *ptr=new Foam::word (yytext);
     if(driver.isLine(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LINE;
+    } else if(driver.isLookup(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LOOKUP;
     } else if(
         driver.isVariable<Foam::areaScalarField::value_type>(*ptr)
         ||
