@@ -51,7 +51,11 @@ Contributors/Copyright:
 #include "volFields.H"
 #include "interpolationTable.H"
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
+#ifdef FOAM_NEEDS_PATCHED_INTERPOLATION2DTABLE
+#include "patchedInterpolation2DTable.H"
+#else
 #include "interpolation2DTable.H"
+#endif
 #endif
 
 #include "runTimeSelectionTables.H"
