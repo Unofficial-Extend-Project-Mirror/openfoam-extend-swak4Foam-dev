@@ -1,0 +1,10 @@
+variables (
+    "aValue=alphaMove(time(),pos().x);"
+);
+lookuptables2D (
+    {
+        name alphaMove;
+        outOfBounds clamp;
+        fileName "$FOAM_CASE/constant/alphaMove.data";
+    }
+);

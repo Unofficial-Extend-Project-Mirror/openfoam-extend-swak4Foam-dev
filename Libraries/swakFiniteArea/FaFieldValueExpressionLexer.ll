@@ -223,6 +223,8 @@ false                  return token::TOKEN_FALSE;
         yylval->name = ptr; return token::TOKEN_LINE;
     } else if(driver.isLookup(*ptr)) {
         yylval->name = ptr; return token::TOKEN_LOOKUP;
+    } else if(driver.isLookup2D(*ptr)) {
+        yylval->name = ptr; return token::TOKEN_LOOKUP2D;
     } else if(
         driver.isVariable<Foam::areaScalarField::value_type>(*ptr)
         ||

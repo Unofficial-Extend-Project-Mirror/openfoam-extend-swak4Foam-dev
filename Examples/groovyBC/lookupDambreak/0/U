@@ -38,8 +38,12 @@ boundaryField
     }
     atmosphere
     {
-        type            pressureInletOutletVelocity;
+        //        type            pressureInletOutletVelocity;
+        type groovyBC;
         value           uniform (0 0 0);
+        fractionExpression "max(aValue,0.1)";
+        valueExpression "-normal()*0.1";
+#include "include/alphaMove"
     }
     defaultFaces
     {

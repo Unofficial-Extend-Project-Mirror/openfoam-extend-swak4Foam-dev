@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression uncompressed;
+writeCompression compressed;
 
 timeFormat      general;
 
@@ -47,10 +47,13 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
-maxCo           1;
-maxAlphaCo      1;
+maxCo           0.5;
+maxAlphaCo      0.5;
 
-maxDeltaT       1;
+maxDeltaT       0.1;
 
+libs (
+    "libgroovyBC.so"
+);
 
 // ************************************************************************* //

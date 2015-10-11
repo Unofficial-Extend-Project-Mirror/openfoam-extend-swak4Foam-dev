@@ -37,9 +37,12 @@ boundaryField
 
     atmosphere
     {
-        type            inletOutlet;
-        inletValue      uniform 0;
+        type            groovyBC;
+        gradientExpression "0";
+        fractionExpression "(phi<0 || aValue>0.01) ? 1 : 0";
+        valueExpression "aValue";
         value           uniform 0;
+#include "include/alphaMove"
     }
 
     defaultFaces

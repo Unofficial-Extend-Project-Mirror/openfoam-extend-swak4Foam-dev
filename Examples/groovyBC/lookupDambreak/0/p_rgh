@@ -41,6 +41,7 @@ boundaryField
     atmosphere
     {
         type            totalPressure;
+        //  type fixedValue;
         p0              uniform 0;
         U               U;
         phi             phi;
