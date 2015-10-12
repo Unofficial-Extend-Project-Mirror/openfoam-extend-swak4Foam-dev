@@ -2009,7 +2009,7 @@ exp:    TOKEN_NUM                                  {
           }
         | TOKEN_LOOKUP2D '(' exp ',' exp ')'		   {
             $$ = driver.makeField<Foam::areaScalarField>(
-                driver.getLookup2D(*$1,*$3,*5)
+                driver.getLookup2D(*$1,*$3,*$5)
             ).ptr();
             delete $1;  delete $3; delete $5;
   }

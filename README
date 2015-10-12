@@ -3218,7 +3218,9 @@ S_{expl} + S_{impl} T
      This feature is based on the =interpolation2DTable= that is part
      of OpenFOAM since 2.2 but there is a modified version of this
      class included in =swak4Foam= as there is a problem with the
-     output in the original version
+     output in the original version. Currently =foam-extend= is not
+     supported as this is missing some base classes as well
+     (=tableReader=)
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as

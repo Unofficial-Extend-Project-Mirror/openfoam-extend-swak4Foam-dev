@@ -1281,7 +1281,7 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
             delete $1; delete $3;
 				}
         | TOKEN_LOOKUP2D '(' exp ',' exp ')'   {
-            $$=driver.getLookup(*$1,*$3,$5).ptr();
+            $$=driver.getLookup2D(*$1,*$3,*$5).ptr();
             delete $1; delete $3; delete $5;
           }
         | TOKEN_lnGrad '(' TOKEN_SID ')' {
