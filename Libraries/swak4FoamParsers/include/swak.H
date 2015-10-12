@@ -319,6 +319,15 @@ Contributors/Copyright:
 #define FOAM_FV_HAS_SMOOTH_SWEEP_SPREAD
 #endif
 
+#if !defined(FOAM_DEV)
+// currently the available version of interpolation2DTable have a syntax error
+#define FOAM_NEEDS_PATCHED_INTERPOLATION2DTABLE
+#endif
+
+#if ((FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)) || defined(FOAM_NEEDS_PATCHED_INTERPOLATION2DTABLE)
+#define FOAM_HAS_INTERPOLATION2DTABLE
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"

@@ -142,6 +142,7 @@ namespace Foam {
 
 %token <name>   TOKEN_LINE  "timeline"
 %token <name>   TOKEN_LOOKUP  "lookup"
+%token <name>   TOKEN_LOOKUP2D  "lookup2D"
 %token <name>   TOKEN_SID   "scalarID"
 %token <name>   TOKEN_VID   "vectorID"
 %token <name>   TOKEN_LID   "logicalID"
@@ -1327,7 +1328,11 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
           }
 	| TOKEN_LOOKUP '(' exp ')' {
             $$=driver.getLookup(*$1,*$3).ptr();
-            delete $1; delete$3;
+            delete $1; delete $3;
+          }
+        | TOKEN_LOOKUP2D '(' exp ',' exp ')' {
+            $$=driver.getLookup2D(*$1,*$3,*$5).ptr();
+            delete $1; delete $3; delete $5;
           }
         | TOKEN_snGrad '(' TOKEN_SID ')' {
             $$=driver.getSurfaceNormalField<Foam::scalar>(*$3).ptr();
@@ -2182,7 +2187,7 @@ pexp:   pexp '+' pexp 		{
         | TOKEN_pow '(' pexp ',' pexp ')'		{
             sameSize($3,$5);
             $$ = new Foam::scalarField(Foam::pow(*$3, *$5));
-            delete $3; delete$5;
+            delete $3; delete $5;
           }
         | TOKEN_log '(' pexp ')'       {
             $$ = new Foam::scalarField(Foam::log(*$3));
@@ -2478,7 +2483,11 @@ pexp:   pexp '+' pexp 		{
         //   }
 	| TOKEN_LOOKUP '(' pexp ')' {
             $$=driver.getLookup(*$1,*$3).ptr();
-            delete $1; delete$3;
+            delete $1; delete $3;
+          }
+        | TOKEN_LOOKUP2D '(' pexp  ',' pexp ')' {
+            $$=driver.getLookup2D(*$1,*$3,*$5).ptr();
+            delete $1; delete $3; delete $5;
           }
         | TOKEN_min '(' pexp ',' pexp  ')'           {
             $$ = Foam::min(*$3,*$5).ptr();
