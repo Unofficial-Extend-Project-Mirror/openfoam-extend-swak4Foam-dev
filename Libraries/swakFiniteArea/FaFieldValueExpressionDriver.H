@@ -33,11 +33,11 @@ Contributors/Copyright:
 #ifndef FAFIELD_VALUE_EXPRESSION_DRIVER_H
 #define FAFIELD_VALUE_EXPRESSION_DRIVER_H
 
-#include <string.H>
-#include <scalar.H>
+#include "swakString.H"
+#include "scalar.H"
 
-#include <areaFields.H>
-#include <edgeFields.H>
+#include "areaFields.H"
+#include "edgeFields.H"
 
 namespace Foam {
     class FaFieldValueExpressionDriver;

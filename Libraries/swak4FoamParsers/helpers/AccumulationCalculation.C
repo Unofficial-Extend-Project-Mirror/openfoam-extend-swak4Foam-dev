@@ -366,7 +366,11 @@ Type AccumulationCalculation<Type>::maximum()
         if(this->size()>0) {
             maximum_=gMax(data());
         } else {
+#ifdef FOAM_PTRAITS_HAS_ROOTMAX
             maximum_=pTraits<Type>::max/pTraits<scalar>::rootMax;
+#else
+            maximum_=pTraits<Type>::max/sqrt(pTraits<scalar>::max);
+#endif
         }
         hasMaximum_=true;
     }
@@ -380,7 +384,11 @@ Type AccumulationCalculation<Type>::minimum()
         if(this->size()>0) {
             minimum_=gMin(data());
         } else {
+#ifdef FOAM_PTRAITS_HAS_ROOTMAX
             minimum_=pTraits<Type>::min/pTraits<scalar>::rootMax;
+#else
+            minimum_=pTraits<Type>::min/sqrt(pTraits<scalar>::max);
+#endif
         }
         hasMinimum_=true;
     }

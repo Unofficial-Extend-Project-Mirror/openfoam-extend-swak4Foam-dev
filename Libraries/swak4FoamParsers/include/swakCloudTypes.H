@@ -97,6 +97,10 @@ namespace Foam {
 #define FOAM_KINEMATIC_PARCEL_HAS_MINPARCELMASS
 #endif
 
+#if (FOAM_VERSION4SWAK > VERSION_NR2(3,1)) && defined(FOAM_DEV)
+#define FOAM_CLOUDTEMPLATE_IS_CLOUD_H
+#endif
+
 #include "DebugOStream.H"
 
 #endif

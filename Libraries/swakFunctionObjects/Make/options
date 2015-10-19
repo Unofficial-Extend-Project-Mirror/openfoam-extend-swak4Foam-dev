@@ -22,6 +22,6 @@ LIB_LIBS = \
     $(FILEFORMATS_LIB) \
     $(FVOPTIONS_LIB) \
     -lsampling \
-    -ltriSurface \
+    $(TRISURFACE_LIB) \
     -lutilityFunctionObjects \
     -llagrangian

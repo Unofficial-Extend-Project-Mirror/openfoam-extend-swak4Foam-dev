@@ -161,6 +161,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 
 %token <name>   TOKEN_LINE  "timeline"
 %token <name>   TOKEN_LOOKUP  "lookup"
+%token <name>   TOKEN_LOOKUP2D  "lookup2D"
 %token <name>   TOKEN_SID   "scalarID"
 %token <name>  TOKEN_VID   "vectorID"
 %token <name>  TOKEN_TID   "tensorID"
@@ -2004,8 +2005,14 @@ exp:    TOKEN_NUM                                  {
             $$ = driver.makeField<Foam::areaScalarField>(
                 driver.getLookup(*$1,*$3)
             ).ptr();
-            delete $1;  delete$3;
+            delete $1;  delete $3;
           }
+        | TOKEN_LOOKUP2D '(' exp ',' exp ')'		   {
+            $$ = driver.makeField<Foam::areaScalarField>(
+                driver.getLookup2D(*$1,*$3,*$5)
+            ).ptr();
+            delete $1;  delete $3; delete $5;
+  }
 ;
 
 evaluateScalarFunction: TOKEN_FUNCTION_SID '(' eatCharactersSwitch

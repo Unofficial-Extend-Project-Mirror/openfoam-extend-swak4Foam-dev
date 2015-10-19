@@ -37,7 +37,7 @@ Contributors/Copyright:
 #include "GlobalVariablesRepository.H"
 
 #include "objectRegistry.H"
-#include "Time.H"
+#include "swakTime.H"
 
 namespace Foam {
 

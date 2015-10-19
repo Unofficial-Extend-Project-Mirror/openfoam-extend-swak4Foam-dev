@@ -47,7 +47,7 @@ Contributors/Copyright:
 #ifndef exprString_H
 #define exprString_H
 
-#include "string.H"
+#include "swakString.H"
 #include "dictionary.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

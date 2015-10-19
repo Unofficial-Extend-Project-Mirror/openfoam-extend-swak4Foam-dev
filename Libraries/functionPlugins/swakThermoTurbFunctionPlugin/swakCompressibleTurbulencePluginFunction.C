@@ -54,7 +54,7 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
     const word &name,
     const word &returnValueType
 ):
-    swakThermophysicalPluginFunction(
+    swakThermophysicalPluginFunction<swakFluidThermoType>(
         parentDriver,
         name,
         returnValueType
@@ -152,6 +152,10 @@ concreteTurbFunction(epsilon,volScalarField);
 concreteTurbFunction(R,volSymmTensorField);
 concreteTurbFunction(devRhoReff,volSymmTensorField);
 
+#ifdef FOAM_HAS_FLUIDTHERMO
+concreteTurbFunction(kappaEff,volScalarField);
+concreteTurbFunction(rhoEpsilonEff,volScalarField);
+#endif
 
 } // namespace
 

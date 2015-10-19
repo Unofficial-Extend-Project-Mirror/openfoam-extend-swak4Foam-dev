@@ -40,7 +40,7 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \
-    -ltriSurface \
+    $(TRISURFACE_LIB) \
     $(FLUIDTHERMO_LIB) \
     -lincompressibleTransportModels \
     $(INCOMPRESSIBLE_TURB_LIB) \

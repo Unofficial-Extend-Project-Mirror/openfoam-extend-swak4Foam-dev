@@ -43,7 +43,7 @@ Contributors/Copyright:
 
 #include "fvCFD.H"
 #include "argList.H"
-#include "Time.H"
+#include "swakTime.H"
 #include "polyMesh.H"
 #include "OFstream.H"
 #include "IOPtrList.H"

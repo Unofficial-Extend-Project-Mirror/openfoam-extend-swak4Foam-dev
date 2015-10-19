@@ -10,6 +10,7 @@ SOLIDTHERMO_LIB=-lbasicSolidThermo
 
 RADIATION_LIB=-lradiationModels
 RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiationModels/lnInclude
+TRISURFACE_LIB=-ltriSurface
 
 INCOMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
 COMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
@@ -36,6 +37,10 @@ ifdef FOAM_DEV
   RADIATION_LIB=-lradiation
   RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude
   SOLIDTHERMO_LIB=
+  ifeq "3.1" "$(word 1, $(sort 3.1 $(WM_PROJECT_VERSION)))"
+    # triSurface-library was moved to meshTools
+    TRISURFACE_LIB=
+  endif
 else
   ifeq "2.2" "$(word 1, $(sort 2.2 $(WM_PROJECT_VERSION)))"
      FILEFORMATS_LIB=-lfileFormats

@@ -38,7 +38,7 @@ Contributors/Copyright:
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
-#include "Time.H"
+#include "swakTime.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

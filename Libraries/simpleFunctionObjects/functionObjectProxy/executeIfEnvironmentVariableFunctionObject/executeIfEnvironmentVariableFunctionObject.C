@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "executeIfEnvironmentVariableFunctionObject.H"
@@ -39,7 +39,7 @@ Contributors/Copyright:
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "swakTime.H"
 #include "argList.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -63,8 +63,8 @@ namespace Foam
         "fitsRegexp"
     };
     const NamedEnum<executeIfEnvironmentVariableFunctionObject::fitVariableMode,3> executeIfEnvironmentVariableFunctionObject::fitVariableModeNames_;
-    
-    
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 executeIfEnvironmentVariableFunctionObject::executeIfEnvironmentVariableFunctionObject
@@ -108,7 +108,7 @@ bool executeIfEnvironmentVariableFunctionObject::condition()
                 content=getEnv(variableName_);
                 if(writeDebug()) {
                     Info << "Content of " << variableName_ << ": "
-                        << content 
+                        << content
                         << (contentRegexp_.match(content) ? " fits " : " does not fit ")
                         << endl;
                 }
@@ -121,7 +121,7 @@ bool executeIfEnvironmentVariableFunctionObject::condition()
                     << " is not implemented" << endl
                     << exit(FatalError);
     }
-    return false; 
+    return false;
 }
 
 void executeIfEnvironmentVariableFunctionObject::readData(const dictionary& dict)

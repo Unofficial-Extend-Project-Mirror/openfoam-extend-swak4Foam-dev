@@ -10,4 +10,4 @@ EXE_INC = \
 LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
-    -ltriSurface
+    $(TRISURFACE_LIB)

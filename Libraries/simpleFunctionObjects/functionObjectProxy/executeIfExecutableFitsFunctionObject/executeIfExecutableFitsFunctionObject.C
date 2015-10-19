@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "executeIfExecutableFitsFunctionObject.H"
@@ -39,7 +39,7 @@ Contributors/Copyright:
 
 #include "polyMesh.H"
 #include "IOmanip.H"
-#include "Time.H"
+#include "swakTime.H"
 #include "argList.H"
 
 #ifdef darwin
@@ -80,7 +80,7 @@ executeIfExecutableFitsFunctionObject::executeIfExecutableFitsFunctionObject
     readRegexp(dict);
 
     fileName exePath;
-    
+
 #ifdef darwin
     {
         char path[1024];

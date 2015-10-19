@@ -33,12 +33,12 @@ Contributors/Copyright:
 #ifndef FieldValueExpressionDriver_H
 #define FieldValueExpressionDriver_H
 
-#include <string.H>
-#include <scalar.H>
+#include "swakString.H"
+#include "scalar.H"
 
-#include <volFields.H>
-#include <surfaceFields.H>
-#include <pointFields.H>
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "pointFields.H"
 
 namespace Foam {
     class FieldValueExpressionDriver;
