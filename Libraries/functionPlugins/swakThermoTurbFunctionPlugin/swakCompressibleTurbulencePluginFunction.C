@@ -154,7 +154,9 @@ concreteTurbFunction(devRhoReff,volSymmTensorField);
 
 #ifdef FOAM_HAS_FLUIDTHERMO
 concreteTurbFunction(kappaEff,volScalarField);
+#ifndef FOAM_NEW_TURBULENCE_STRUCTURE
 concreteTurbFunction(rhoEpsilonEff,volScalarField);
+#endif
 #endif
 
 } // namespace
