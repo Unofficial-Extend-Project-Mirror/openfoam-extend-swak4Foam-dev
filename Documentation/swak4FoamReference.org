@@ -1,3 +1,4 @@
+# -*- org-confirm-babel-evaluate: nil -*-
 #+LATEX_HEADER: \usepackage{float} \usepackage{hyperref} \usepackage{utopia}
 #+TITLE: The /incomplete/ =swak4Foam= reference
 #+AUTHOR: Bernhard F.W. Gschaider
@@ -76,14 +77,15 @@
       fields, getting cell centers, etc)
   In the following texts the term /Parser/ will refer to this complex
   of three entities
-  #+CAPTION: Relationship Driver/Lexer/Parser
-  #+LABEL: fig:driverLexerParser
+
 #+begin_src plantuml :file parserDriverLexer.png
 Driver o-- Lexer
 Driver o-- GrammarParser
 Lexer .> GrammarParser
 #+end_src
 
+#+NAME: fig:driverLexerParser
+#+CAPTION: Relationship Driver/Lexer/Parser
 #+RESULTS:
 [[file:parserDriverLexer.png]]
 
@@ -99,8 +101,6 @@ Lexer .> GrammarParser
   As all drivers are derived from /Common/ there is a set of options
   that is available in all drivers/parser.
 
-  #+CAPTION: Inheritance relation of the Parsers
-  #+LABEL: fig:parserRelations
 #+begin_src plantuml :file parserRelationships.png
 package swak4FoamParsers {
 Common <|-- Field
@@ -136,8 +136,10 @@ hide circle
 
 #+end_src
 
-#+RESULTS:
-[[file:parserRelationships.png]]
+  #+CAPTION: Inheritance relation of the Parsers
+  #+LABEL: fig:parserRelations
+  #+RESULTS:
+  [[file:parserRelationships.png]]
 
   Usually the parser used is determined by the using entity (for
   instance =patch= is used by =groovyBC=) but sometimes (for instance

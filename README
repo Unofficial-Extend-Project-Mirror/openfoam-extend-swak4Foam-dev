@@ -3206,6 +3206,8 @@ S_{expl} + S_{impl} T
      Because of a bug in the lexer lookup tables did not work. Fixed
 *** Infrastructure
 *** Documentation
+**** Adaption of the reference guide for new =org-mode=
+     New version of =org-mode= makes changes in the UML-code necessary
 *** New features
 **** 2D-lookup tables supported in grammars
      Like the optional list =lookuptables= it is now possible to have
