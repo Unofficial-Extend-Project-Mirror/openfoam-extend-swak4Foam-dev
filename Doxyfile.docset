@@ -1,0 +1,5 @@
+@INCLUDE = Doxyfile
+
+GENERATE_DOCSET        = YES
+DISABLE_INDEX          = YES
+SEARCHENGINE           = NO

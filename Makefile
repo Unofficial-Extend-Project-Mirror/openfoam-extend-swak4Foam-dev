@@ -27,4 +27,11 @@ globalinstall:
 	./removeSwakFilesFromLocal.sh
 
 docu:
+	rm -rf doc/html
 	doxygen
+
+docset:
+	rm -rf doc/html
+	doxygen	Doxyfile.docset
+	(cd doc/html; make)
+	mv doc/html/net.sourceforge.openfoam-extend.Swak4Foam.docset doc
