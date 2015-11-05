@@ -3184,6 +3184,9 @@ S_{expl} + S_{impl} T
      never closed and is periodically merged to the =develop=-branch.
 
      Internally the =dev=-version is maintained as version =9.9.99=
+**** Support for OpenFOAM 3.0
+     Support for this version has been added (basically all the fixes
+     from the =dev=-branch were guarded with the correct version
 *** Bug fixes
 **** =fieldReport= doesn't work with all field names
      Fields that have names that are not considered proper variable
