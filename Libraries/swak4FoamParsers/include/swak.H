@@ -72,6 +72,7 @@ Contributors/Copyright:
 #define FOAM_OLDTIME_PROBLEM
 #endif
 
+// OpenFOAM-dev version. Has no number. Is assumed to be 9.x
 #if FOAM_VERSION4SWAK_MAJOR > 8
 #define FOAM_OF_DEV_VERSION
 #endif
@@ -303,7 +304,7 @@ Contributors/Copyright:
 #define FOAM_LDUMATRIX_SOLVER_PERFORMANCE
 #endif
 
-#ifdef FOAM_OF_DEV_VERSION
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,0,0) && !defined(FOAM_DEV)
 #define FOAM_WALLDIST_HAS_Y_METHOD
 #endif
 

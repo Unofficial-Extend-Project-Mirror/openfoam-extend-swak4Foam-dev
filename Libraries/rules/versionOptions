@@ -21,7 +21,14 @@ COMPRESSIBLE_TURB_ALL_LIBS=-lcompressibleLESModels -lcompressibleRASModels
 
 ifeq "dev" "$(WM_PROJECT_VERSION)"
   WMAKE_NEW_CONVENTION=new
+  FOAM_UNIFIEDTURBULENCE=yes
+endif
+ifeq "3.0" "$(word 1, $(sort 3.0 $(WM_PROJECT_VERSION)))"
+  WMAKE_NEW_CONVENTION=new
+  FOAM_UNIFIEDTURBULENCE=yes
+endif
 
+ifeq "$(FOAM_UNIFIEDTURBULENCE)" "yes"
   COMPRESSIBLE_TRANSPORT_INC=-I$(LIB_SRC)/transportModels/compressible/lnInclude
 
   INCOMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/TurbulenceModels/incompressible/lnInclude -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude
