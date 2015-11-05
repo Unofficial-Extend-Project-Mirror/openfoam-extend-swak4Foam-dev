@@ -47,7 +47,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#if FOAM_VERSION4SWAK_MAJOR > 8
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,0,0) && !defined(FOAM_DEV)
 #define FOAM_NEW_TURBULENCE_STRUCTURE
 #endif
 
