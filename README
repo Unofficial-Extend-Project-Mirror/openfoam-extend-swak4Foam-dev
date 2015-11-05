@@ -487,6 +487,12 @@ S_{expl} + S_{impl} T
      - Description :: Demonstrates the use of =groovyB= with
                       =potentialFoam= (also a problem connected with
                       that). Provided by Martin Backer
+**** lookupDambreak
+     - Solver :: interFoam
+     - Preparation :: run =pyFoamPrepareCase.py=
+     - Description :: Demonstrates the use of 2-dimensional lookup
+          tables. For the initialization as well as the boundary
+          condition
 *** FunkyDoCalc
     Example dictionaries for =funkyDoCalc=
 *** FunkySetFields
@@ -3178,6 +3184,9 @@ S_{expl} + S_{impl} T
      never closed and is periodically merged to the =develop=-branch.
 
      Internally the =dev=-version is maintained as version =9.9.99=
+**** Support for OpenFOAM 3.0
+     Support for this version has been added (basically all the fixes
+     from the =dev=-branch were guarded with the correct version
 *** Bug fixes
 **** =fieldReport= doesn't work with all field names
      Fields that have names that are not considered proper variable
@@ -3196,10 +3205,32 @@ S_{expl} + S_{impl} T
 **** Solid thermophysics not available in the =ThermoTurb= function plugin
      For OF-versions where =fluidThermo= and =solidThermo= have the
      same base functions like =thermo_Cp= can be used for solids too
+**** =lookup=-tables no working in =faField=-parser
+     Because of a bug in the lexer lookup tables did not work. Fixed
 *** Infrastructure
 *** Documentation
+**** Adaption of the reference guide for new =org-mode=
+     New version of =org-mode= makes changes in the UML-code necessary
 *** New features
+**** 2D-lookup tables supported in grammars
+     Like the optional list =lookuptables= it is now possible to have
+     a list =lookuptables2D= with 2-dimensional lookup tables. A table
+     with the name =tbl= can be used like this in expressions:
+     =tbl(expr1,expr2)=. =expr1= and =expr2= must evaluate to scalar
+     values of the same entity (cells, faces, points ...) and the
+     expression will evaluate to a scalar.
+
+     This feature is based on the =interpolation2DTable= that is part
+     of OpenFOAM since 2.2 but there is a modified version of this
+     class included in =swak4Foam= as there is a problem with the
+     output in the original version. Currently =foam-extend= is not
+     supported as this is missing some base classes as well
+     (=tableReader=)
 *** Enhancements
+**** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
+     These functions from =fvc= were implemented as
+     plugin-functions. Mainly to be able to test their behavior. To
+     check what they do see =fvcSmooth.H= in =finiteVolume=
 **** Additional functions in plugin =ThermoTurb=
      Functions from the public interface of =basicThermo= and
      =turbulenceModel= have been added (like =kappa=, =kappaEff= etc)

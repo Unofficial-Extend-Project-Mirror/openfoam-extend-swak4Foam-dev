@@ -1,8 +1,14 @@
 include $(OBJECTS_DIR)/../../../../Libraries/rules/versionOptions
 
-include $(OBJECTS_DIR)/../mybison
-include $(OBJECTS_DIR)/../myflex
-sinclude $(OBJECTS_DIR)/../mydependencies
+ifeq "$(WMAKE_NEW_CONVENTION)" "new"
+  include $(OBJECTS_DIR)/../mybisonNew
+  include $(OBJECTS_DIR)/../myflexNew
+else
+  include $(OBJECTS_DIR)/../mybison
+  include $(OBJECTS_DIR)/../myflex
+
+  sinclude $(OBJECTS_DIR)/../mydependencies
+endif
 
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV
@@ -34,6 +40,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude \
     $(LAGRANGIAN_ADDITIONAL_INCLUDES) \
+    $(COMPRESSIBLE_TRANSPORT_INC) \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
     -I$(LIB_SRC)/lagrangian/intermediate/lnInclude \
     -I$(LIB_SRC)/lagrangian/solidParticle/lnInclude
@@ -45,7 +52,7 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \
-    -ltriSurface \
+    $(TRISURFACE_LIB) \
     -llagrangian \
     -llagrangianIntermediate \
     -lthermophysicalFunctions \

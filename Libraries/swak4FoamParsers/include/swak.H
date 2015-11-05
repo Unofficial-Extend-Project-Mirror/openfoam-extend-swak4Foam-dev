@@ -72,6 +72,7 @@ Contributors/Copyright:
 #define FOAM_OLDTIME_PROBLEM
 #endif
 
+// OpenFOAM-dev version. Has no number. Is assumed to be 9.x
 #if FOAM_VERSION4SWAK_MAJOR > 8
 #define FOAM_OF_DEV_VERSION
 #endif
@@ -303,7 +304,7 @@ Contributors/Copyright:
 #define FOAM_LDUMATRIX_SOLVER_PERFORMANCE
 #endif
 
-#ifdef FOAM_OF_DEV_VERSION
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,0,0) && !defined(FOAM_DEV)
 #define FOAM_WALLDIST_HAS_Y_METHOD
 #endif
 
@@ -313,6 +314,19 @@ Contributors/Copyright:
 
 #if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_DEV)
 #define FOAM_MOVED_TIME_AND_STRING_HEADERS
+#endif
+
+#if !defined(FOAM_DEV)
+#define FOAM_FV_HAS_SMOOTH_SWEEP_SPREAD
+#endif
+
+#if !defined(FOAM_DEV)
+// currently the available version of interpolation2DTable have a syntax error
+#define FOAM_NEEDS_PATCHED_INTERPOLATION2DTABLE
+#endif
+
+#if ((FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)) || defined(FOAM_NEEDS_PATCHED_INTERPOLATION2DTABLE)
+#define FOAM_HAS_INTERPOLATION2DTABLE
 #endif
 
 #include "swakVersion.H"

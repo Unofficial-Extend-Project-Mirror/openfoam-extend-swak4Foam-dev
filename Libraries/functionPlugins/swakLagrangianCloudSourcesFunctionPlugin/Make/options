@@ -27,6 +27,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
+    $(COMPRESSIBLE_TRANSPORT_INC) \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
     -I$(LIB_SRC)/lagrangian/intermediate/lnInclude \
     -I$(LIB_SRC)/lagrangian/solidParticle/lnInclude
@@ -37,7 +38,7 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \
-    -ltriSurface \
+    $(TRISURFACE_LIB) \
     -llagrangian \
     -llagrangianIntermediate \
     -lthermophysicalFunctions \
