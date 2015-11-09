@@ -14,9 +14,12 @@ then
 
     # needed for add-appt-repository
     apt-get -y install python-software-properties
-
-    add-apt-repository ppa:mercurial-ppa/releases
 fi
+
+apt-key adv --keyserver keyserver.ubuntu.com --recv-key 323293EE
+add-apt-repository ppa:mercurial-ppa/releases
+
+apt-get update -y
 
 echo
 echo "Adding OpenFOAM-Repository"
