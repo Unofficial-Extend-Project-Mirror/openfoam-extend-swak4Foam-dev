@@ -135,7 +135,7 @@ public:
             const swakDataEntry<Type>& cnst
         );
 
-#if (FOAM_VERSION4SWAK_MAJOR>=2) && (FOAM_VERSION4SWAK_MINOR>0)
+#ifdef FOAM_DATAENTRY_CLASS_NEEDS_WRITEDATA
         //- Write in dictionary format
         virtual void writeData(Ostream& os) const;
 #endif

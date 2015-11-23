@@ -165,7 +165,7 @@ Foam::Ostream& Foam::operator<<
     return os;
 }
 
-#if (FOAM_VERSION4SWAK_MAJOR>=2) && (FOAM_VERSION4SWAK_MINOR>0)
+#ifdef FOAM_DATAENTRY_CLASS_NEEDS_WRITEDATA
 template<class Type>
 void Foam::swakDataEntry<Type>::writeData(Ostream& os) const
 {
