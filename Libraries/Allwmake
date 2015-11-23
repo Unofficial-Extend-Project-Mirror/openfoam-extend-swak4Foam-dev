@@ -154,7 +154,7 @@ wmake libso simpleSwakFunctionObjects
 
 wmake libso swakTopoSources
 
-if [ $of_version_major -ge 2 -a $of_version_minor -eq 0 ]; then
+if [ $of_version_major -eq 2 -a $of_version_minor -eq 0 ]; then
   wmake libso swakSourceFields Make.20
 else
   wmake libso swakSourceFields
