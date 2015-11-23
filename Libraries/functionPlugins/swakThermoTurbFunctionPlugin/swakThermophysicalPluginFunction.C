@@ -71,6 +71,14 @@ swakThermophysicalPluginFunction<ThermoType>::swakThermophysicalPluginFunction(
 {
 }
 
+  // this explicit instantiation is needed on Ubunut 14.04
+  // the compiler of that crappy pseudo-Linux needs it (but nobody else)
+#ifdef FOAM_HAS_FLUIDTHERMO
+template class swakThermophysicalPluginFunction<swakFluidThermoType>;
+template class swakThermophysicalPluginFunction<solidThermo>;
+#endif
+template class swakThermophysicalPluginFunction<basicThermo>;
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 

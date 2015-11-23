@@ -34,7 +34,7 @@ License
 namespace Foam
 {
 
-#ifdef FOAM_HAS_FVOPTIONS
+#if defined(FOAM_HAS_FVOPTIONS) && !defined(FOAM_FVOPTION_MAKE_NOT_IN_NAMESPACE)
     namespace fv {
 #endif
 
@@ -44,7 +44,7 @@ namespace Foam
         makeSwakFvOption(SwakSetValue, symmTensor);
         makeSwakFvOption(SwakSetValue, tensor);
 
-#ifdef FOAM_HAS_FVOPTIONS
+#if defined(FOAM_HAS_FVOPTIONS) && !defined(FOAM_FVOPTION_MAKE_NOT_IN_NAMESPACE)
     }
 #endif
 
