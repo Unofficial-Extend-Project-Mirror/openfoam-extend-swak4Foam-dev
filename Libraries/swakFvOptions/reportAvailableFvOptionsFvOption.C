@@ -64,6 +64,10 @@ bool Foam::fv::reportAvailableFvOptionsFvOption::alwaysApply() const
     return true;
 }
 
+Foam::label Foam::fv::reportAvailableFvOptionsFvOption::applyToField(const word &fieldName) const
+{
+    return 0;
+}
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::fv::reportAvailableFvOptionsFvOption::reportAvailableFvOptionsFvOption

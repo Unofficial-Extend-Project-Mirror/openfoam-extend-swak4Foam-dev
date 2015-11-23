@@ -105,6 +105,8 @@ public:
 
     virtual bool alwaysApply() const;
 
+    virtual label applyToField(const word &fieldName) const;
+
     // Evaluate
 
     // Correct
