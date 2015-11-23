@@ -3207,6 +3207,9 @@ S_{expl} + S_{impl} T
      same base functions like =thermo_Cp= can be used for solids too
 **** =lookup=-tables no working in =faField=-parser
      Because of a bug in the lexer lookup tables did not work. Fixed
+**** =swakDataEntry= not correctly written for some versions of OpenFOAM
+     The macro that guarded the code needed for some OpenFOAM-versions
+     did not include OpenFOAM 3.0. Fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
