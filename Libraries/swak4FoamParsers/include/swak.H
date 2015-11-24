@@ -68,13 +68,13 @@ Contributors/Copyright:
 #define FOAM_HAS_SORTED_TOC
 #endif
 
-#if !((FOAM_VERSION4SWAK_MAJOR > 1) || (FOAM_VERSION4SWAK_MINOR > 6))
-#define FOAM_OLDTIME_PROBLEM
-#endif
-
 // OpenFOAM-dev version. Has no number. Is assumed to be 9.x
 #if FOAM_VERSION4SWAK_MAJOR > 8
 #define FOAM_OF_DEV_VERSION
+#endif
+
+#if (defined(FOAM_DEV) && FOAM_VERSION4SWAK_MAJOR<2) || (!defined(FOAM_DEV) && FOAM_VERSION4SWAK_MAJOR>=3)
+#define FOAM_OLDTIME_PROBLEM
 #endif
 
 // in 1.6-ext the operation s1 & s2 of two symmetrical tensor fields does not yield a symmetric tensor
