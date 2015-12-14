@@ -3210,6 +3210,10 @@ S_{expl} + S_{impl} T
 **** =swakDataEntry= not correctly written for some versions of OpenFOAM
      The macro that guarded the code needed for some OpenFOAM-versions
      did not include OpenFOAM 3.0. Fixed
+**** =executeFunctionObjectsFvOption= always executed for =makeRelative= and =makeAbsolute=
+     The wrong flags were checked and the function objects were always
+     executed when even if =doMakeAbsolute= and =doMakeRelative= were
+     set to =false=. Fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
