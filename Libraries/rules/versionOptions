@@ -24,8 +24,10 @@ ifeq "dev" "$(WM_PROJECT_VERSION)"
   FOAM_UNIFIEDTURBULENCE=yes
 endif
 ifeq "3.0" "$(word 1, $(sort 3.0 $(WM_PROJECT_VERSION)))"
-  WMAKE_NEW_CONVENTION=new
-  FOAM_UNIFIEDTURBULENCE=yes
+  ifndef FOAM_DEV
+    WMAKE_NEW_CONVENTION=new
+    FOAM_UNIFIEDTURBULENCE=yes
+  endif
 endif
 
 ifeq "$(FOAM_UNIFIEDTURBULENCE)" "yes"
