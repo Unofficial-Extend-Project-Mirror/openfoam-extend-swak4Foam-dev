@@ -15,6 +15,10 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+DebugSwitches
+{
+    // SampledSurfaceValueExpressionDriver 1;
+}
 application     interFoam;
 
 startFrom       latestTime;
@@ -58,8 +62,8 @@ libs (
     "libOpenFOAM.so" // keeps paraFoam happy
     "libtwoPhaseInterfaceProperties.so"
     "libinterfaceProperties.so"
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
 );
 
 functions
@@ -87,7 +91,7 @@ functions
         accumulations (
             min
             max
-        );        
+        );
     }
     // This should fail because the size of the variable changes
 //     moved
@@ -107,7 +111,7 @@ functions
 //             min
 //             max
 //             average
-//         );        
+//         );
 //     }
     surface
     {
@@ -130,7 +134,7 @@ functions
         variables "yAvg=sum(pos().y*area())/sum(area());";
         accumulations (
             sum
-        );        
+        );
     }
     velocity
     {
@@ -141,7 +145,7 @@ functions
         expression "mag(U)";
         accumulations (
             max
-        );        
+        );
     }
     swakSurfInterface
     {
@@ -158,7 +162,7 @@ functions
             }
         );
         interpolationScheme nix;
-    } 
+    }
 );
 
 // ************************************************************************* //
