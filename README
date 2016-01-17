@@ -568,7 +568,7 @@ S_{expl} + S_{impl} T
                        output of temporal changes
 **** =capillaryRise=
      - Solver :: interFoam
-     - Case preparation :: run the supplied script =prepareCase.sh=
+     - Case preparation :: run the =pyFoam=-utility =pyFoamPrepareCase.py=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
 **** =mixingDam=
