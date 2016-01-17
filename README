@@ -568,7 +568,7 @@ S_{expl} + S_{impl} T
                        output of temporal changes
 **** =capillaryRise=
      - Solver :: interFoam
-     - Case preparation :: run the supplied script =prepareCase.sh=
+     - Case preparation :: run the =pyFoam=-utility =pyFoamPrepareCase.py=
      - Demonstrates :: Usage of a sampled surface to track the
                        interface in a VOF-simulation
 **** =mixingDam=
@@ -929,6 +929,16 @@ S_{expl} + S_{impl} T
    Currently the only workaround is to edit
    =$WM_PROJECT_DIR/etc/controlDict= so that a different =commsType=
    is used (=nonBlocking= or =scheduled=)
+** Failure with =sampledSurfaces= that change size on certain distros
+   Older Foam-versions had the problem that when the surface changes
+   the size then certain values (especially the =mag= are not properly
+   recalculated).
+
+   This causes this bug:
+   https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/231/
+
+   The bug can not be fixed in =swak4Foam= but has to be fixed in the
+   Foam-Distro
 * History
 ** 2010-09-13 - version number : 0.1
    First Release
