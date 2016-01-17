@@ -1088,11 +1088,11 @@ namespace Foam {
 #ifdef FOAM_HAS_INTERPOLATION2DTABLE
         return lookup2D_.found(name);
 #else
-        FatalErrorIn("CommonValueExpressionDriver::getLookup2D")
-            << "This Foam-version has no class interpolation2DTable" << nl
-                << "Two-dimensional lookup is therefor not supported"
-                << endl
-                << exit(FatalError);
+        // FatalErrorIn("CommonValueExpressionDriver::getLookup2D")
+        //     << "This Foam-version has no class interpolation2DTable" << nl
+        //         << "Two-dimensional lookup is therefor not supported"
+        //         << endl
+        //         << exit(FatalError);
         return false;
 #endif
 

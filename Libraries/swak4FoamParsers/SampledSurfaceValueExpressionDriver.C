@@ -154,28 +154,27 @@ SampledSurfaceValueExpressionDriver::~SampledSurfaceValueExpressionDriver()
 
 bool SampledSurfaceValueExpressionDriver::update()
 {
-    if(debug) {
-        Info << "SampledSurfaceValueExpressionDriver::update() "
-            << "needsUpdate: " << theSurface_.needsUpdate() << endl;
+    Dbug << "update() "
+        << "needsUpdate: " << theSurface_.needsUpdate() << endl;
+
+    if(theSurface_.needsUpdate()) {
+        bool expired=const_cast<sampledSurface&>(theSurface_).expire();
+        Dbug << "Expired: " << expired << endl;
     }
     bool updated=const_cast<sampledSurface &>(theSurface_).update(); // valgrind reports huge memory losses here
 
-    if(debug) {
-        Pout << "Updated: " << updated << " " << this->size() << endl;
-    }
+    Dbug << "Updated: " << updated << " " << this->size() << endl;
 
     return updated;
 }
 
 void SampledSurfaceValueExpressionDriver::updateIfNeeded()
 {
-    if(debug) {
-        Info << "SampledSurfaceValueExpressionDriver::updateIfNeeded()" << endl;
-    }
+    Dbug << "updateIfNeeded()" << endl;
+
     if(theSurface_.needsUpdate()) {
-        if(debug) {
-            Info << "Forcing an update" << endl;
-        }
+        Dbug << "Forcing an update" << endl;
+
         update();
     }
 }
@@ -267,11 +266,21 @@ SampledSurfaceValueExpressionDriver::makeCellVolumeField() const
 tmp<scalarField>
 SampledSurfaceValueExpressionDriver::makeFaceAreaMagField() const
 {
-    if(debug) {
-        Pout << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
-            << " size: " << this->size() << " magSf: "
-            << theSurface_.magSf().size()
-            << endl;
+    label mySize=this->size();
+    label areaSize=theSurface_.magSf().size();
+    Pbug << "SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()"
+        << " size: " << mySize << " magSf: "
+        << areaSize
+        << endl;
+
+    if(mySize!=areaSize) {
+        FatalErrorIn("SampledSurfaceValueExpressionDriver::makeFaceAreaMagField()")
+            << "Size of magSf " << areaSize << " and size of the surface "
+                << mySize << " differ."
+                << endl << "Probably the surface changed and was not correctly recalculated (bug in Foam)"
+            //                << endl << theSurface_.magSf()
+                << endl
+                << exit(FatalError);
     }
     return tmp<scalarField>(
         new scalarField(theSurface_.magSf())
@@ -343,10 +352,8 @@ tmp<scalarField> SampledSurfaceValueExpressionDriver::weightsNonPoint(
 
 label SampledSurfaceValueExpressionDriver::size() const
 {
-    if(debug) {
-        Info << "SampledSurfaceValueExpressionDriver::size()" << endl;
-        Info << "Needs update: " << theSurface_.needsUpdate() << endl;
-    }
+    Dbug << "size()" << endl;
+    Dbug << "Needs update: " << theSurface_.needsUpdate() << endl;
 
     const_cast<SampledSurfaceValueExpressionDriver&>(*this).updateIfNeeded();
 
@@ -355,9 +362,7 @@ label SampledSurfaceValueExpressionDriver::size() const
 
 label SampledSurfaceValueExpressionDriver::pointSize() const
 {
-    if(debug) {
-        Info << "SampledSurfaceValueExpressionDriver::pointSize()" << endl;
-    }
+    Dbug << "pointSize()" << endl;
 
     const_cast<SampledSurfaceValueExpressionDriver&>(*this).updateIfNeeded();
 
@@ -366,9 +371,8 @@ label SampledSurfaceValueExpressionDriver::pointSize() const
 
 const fvMesh &SampledSurfaceValueExpressionDriver::mesh() const
 {
-    if(debug) {
-        Info << "SampledSurfaceValueExpressionDriver::mesh()" << endl;
-    }
+    Dbug << "mesh()" << endl;
+
     //        return dynamicCast<const fvMesh&>(faceZone_.zoneMesh().mesh()); // doesn't work with gcc 4.2
     return dynamic_cast<const fvMesh&>(theSurface_.mesh());
 }
