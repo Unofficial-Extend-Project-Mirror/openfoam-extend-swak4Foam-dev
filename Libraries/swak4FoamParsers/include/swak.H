@@ -266,6 +266,10 @@ Contributors/Copyright:
 #define FOAM_NEW_MESH2MESH
 #endif
 
+#if defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS)
+#define FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR
+#endif
+
 #if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
 #define FOAM_VOLUMETYPE_IS_TYPE
 #endif
