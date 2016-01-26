@@ -29,6 +29,7 @@ divSchemes
 {
     div(phi,U)      bounded Gauss upwind;
     div((muEff*dev2(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
     div(phi,h)      bounded Gauss upwind;
     div(phi,epsilon) bounded Gauss upwind;
     div(phi,k)      bounded Gauss upwind;
@@ -42,8 +43,11 @@ laplacianSchemes
     laplacian(alphaEff,h) Gauss linear corrected;
     laplacian((rho*rAU),p) Gauss linear corrected;
     laplacian(DepsilonEff,epsilon) Gauss linear corrected;
+    laplacian((rho*nuEff),U) Gauss linear corrected;
     laplacian(DkEff,k) Gauss linear corrected;
     laplacian(1,p)  Gauss linear corrected;
+    laplacian((rho*DepsilonEff),epsilon) Gauss linear corrected;
+    laplacian((rho*DkEff),k) Gauss linear corrected;
 }
 
 interpolationSchemes

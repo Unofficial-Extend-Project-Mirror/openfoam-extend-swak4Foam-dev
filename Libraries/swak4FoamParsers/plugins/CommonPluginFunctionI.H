@@ -44,7 +44,7 @@ namespace Foam {
 template <typename T>
 tmp<T> CommonPluginFunction::evaluate(
     const string &content,
-    label &consumed
+    int &consumed
 )
 {
     evaluateInternal(content,consumed);
@@ -55,7 +55,7 @@ tmp<T> CommonPluginFunction::evaluate(
 template <typename T>
 tmp<Field<T> > CommonPluginFunction::evaluate(
     const string &content,
-    label &consumed,
+    int &consumed,
     bool isPoint
 )
 {

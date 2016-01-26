@@ -329,7 +329,7 @@ label CommonPluginFunction::scanEmpty(
 
 void CommonPluginFunction::evaluateInternal(
     const string &content,
-    label &consumed
+    int &consumed
 )
 {
     if(debug || parentDriver_.traceParsing()) {
