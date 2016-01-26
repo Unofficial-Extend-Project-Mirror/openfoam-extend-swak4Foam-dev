@@ -16,6 +16,7 @@ EXE_INC = -I$(OBJECTS_DIR) \
     -I$(LIB_SRC)/sampling/lnInclude \
     $(FILEFORMATS_INC) \
     -I$(LIB_SRC)/triSurface/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
     -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude
@@ -25,5 +26,6 @@ LIB_LIBS = -lfiniteVolume \
 	-lsampling \
 	$(FILEFORMATS_LIB) \
         -llagrangian \
+	-ldynamicMesh \
 	-lsurfMesh \
 	-lmeshTools
