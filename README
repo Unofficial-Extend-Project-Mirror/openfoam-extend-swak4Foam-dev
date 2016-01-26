@@ -3224,6 +3224,9 @@ S_{expl} + S_{impl} T
      The wrong flags were checked and the function objects were always
      executed when even if =doMakeAbsolute= and =doMakeRelative= were
      set to =false=. Fixed
+**** Does not compile with ~WM_LABEL_SIZE=64~
+     A reference to a =label= that was passed to a =flex=-function
+     broke compilation because that expects a 32-bit integer. Fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
