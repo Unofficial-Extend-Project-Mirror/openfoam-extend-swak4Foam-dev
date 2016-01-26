@@ -57,7 +57,11 @@ Contributors/Copyright:
 #include "exprString.H"
 
 #ifdef FOAM_HAS_FVOPTIONS
+#ifdef FOAM_FVOPTIONS_IN_FV
+#include "fvOptionList.H"
+#else
 #include "fvIOoptionList.H"
+#endif
 #endif
 
 namespace Foam

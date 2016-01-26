@@ -169,6 +169,10 @@ Contributors/Copyright:
 #define FOAM_HAS_FVOPTIONS
 #endif
 
+#if defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS)
+#define FOAM_FVOPTIONS_IN_FV
+#endif
+
 #ifndef FOAM_DEV
 // movePoints now gets a polyMesh
 #define FOAM_MOVEPOINTS_GETS_POLYMESH
