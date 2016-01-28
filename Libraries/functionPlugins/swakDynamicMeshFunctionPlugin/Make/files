@@ -1,0 +1,3 @@
+meshCourantPluginFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakDynamicMeshFunctionPlugin
