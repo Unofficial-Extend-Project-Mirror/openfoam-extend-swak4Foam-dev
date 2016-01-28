@@ -28,82 +28,68 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+    Foam::meshPhiPluginFunction
+
+Description
+
+SourceFiles
+    meshPhiPluginFunction.C
+
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "meshCourantPluginFunction.H"
-#include "FieldValueExpressionDriver.H"
+#ifndef meshPhiPluginFunction_H
+#define meshPhiPluginFunction_H
 
-#include "addToRunTimeSelectionTable.H"
+#include "FieldValuePluginFunction.H"
 
-#include "fvc.H"
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam {
-
-defineTypeNameAndDebug(meshCourantPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, meshCourantPluginFunction , name, dyM_meshCourant);
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-meshCourantPluginFunction::meshCourantPluginFunction(
-    const FieldValueExpressionDriver &parentDriver,
-    const word &name
-):
-    FieldValuePluginFunction(
-        parentDriver,
-        name,
-        word("volScalarField"),
-        string("")
-    )
+namespace Foam
 {
-}
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-void meshCourantPluginFunction::doEvaluation()
+/*---------------------------------------------------------------------------*\
+                           Class meshPhiPluginFunction Declaration
+\*---------------------------------------------------------------------------*/
+class meshPhiPluginFunction
+:
+    public FieldValuePluginFunction
 {
-    autoPtr<volScalarField> pCo(
-        new volScalarField(
-            IOobject(
-                "Co",
-                mesh().time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh(),
-            dimensionedScalar("nonOr",dimless,0),
-            "zeroGradient"
-        )
+    //- Disallow default bitwise assignment
+    void operator=(const meshPhiPluginFunction &);
+
+    meshPhiPluginFunction(const meshPhiPluginFunction &);
+
+protected:
+
+    void doEvaluation();
+
+public:
+    meshPhiPluginFunction(
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
     );
-    volScalarField &Co=pCo();
 
-    scalarField sumPhi
-        (
-            fvc::surfaceSum(mag(mesh().phi()))().internalField()
-        );
+    virtual ~meshPhiPluginFunction() {}
 
-    Co.internalField() =
-        0.5
-        *
-        (sumPhi/mesh().V().field())
-        *
-        mesh().time().deltaT().value();
+    TypeName("meshPhiPluginFunction");
 
-    Co.correctBoundaryConditions();
+};
 
-    result().setObjectResult(pCo);
-}
 
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
-} // namespace
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

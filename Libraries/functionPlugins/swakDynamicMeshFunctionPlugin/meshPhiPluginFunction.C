@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "meshCourantPluginFunction.H"
+#include "meshPhiPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
@@ -43,20 +43,20 @@ Contributors/Copyright:
 
 namespace Foam {
 
-defineTypeNameAndDebug(meshCourantPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, meshCourantPluginFunction , name, dyM_meshCourant);
+defineTypeNameAndDebug(meshPhiPluginFunction,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, meshPhiPluginFunction , name, dyM_meshPhi);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-meshCourantPluginFunction::meshCourantPluginFunction(
+meshPhiPluginFunction::meshPhiPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
     FieldValuePluginFunction(
         parentDriver,
         name,
-        word("volScalarField"),
+        word("surfaceScalarField"),
         string("")
     )
 {
@@ -67,39 +67,22 @@ meshCourantPluginFunction::meshCourantPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void meshCourantPluginFunction::doEvaluation()
+void meshPhiPluginFunction::doEvaluation()
 {
-    autoPtr<volScalarField> pCo(
-        new volScalarField(
+    autoPtr<surfaceScalarField> pPhi(
+        new surfaceScalarField(
             IOobject(
-                "Co",
+                "meshPhi",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            mesh(),
-            dimensionedScalar("nonOr",dimless,0),
-            "zeroGradient"
+            mesh().phi()
         )
     );
-    volScalarField &Co=pCo();
 
-    scalarField sumPhi
-        (
-            fvc::surfaceSum(mag(mesh().phi()))().internalField()
-        );
-
-    Co.internalField() =
-        0.5
-        *
-        (sumPhi/mesh().V().field())
-        *
-        mesh().time().deltaT().value();
-
-    Co.correctBoundaryConditions();
-
-    result().setObjectResult(pCo);
+    result().setObjectResult(pPhi);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
