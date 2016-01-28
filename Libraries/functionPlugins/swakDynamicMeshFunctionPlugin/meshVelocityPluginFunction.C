@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "meshPhiPluginFunction.H"
+#include "meshVelocityPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
@@ -43,20 +43,20 @@ Contributors/Copyright:
 
 namespace Foam {
 
-defineTypeNameAndDebug(meshPhiPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, meshPhiPluginFunction , name, dyM_meshPhi);
+defineTypeNameAndDebug(meshVelocityPluginFunction,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, meshVelocityPluginFunction , name, dyM_meshVelocity);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-meshPhiPluginFunction::meshPhiPluginFunction(
+meshVelocityPluginFunction::meshVelocityPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
     FieldValuePluginFunction(
         parentDriver,
         name,
-        word("surfaceScalarField"),
+        word("volVectorField"),
         string("")
     )
 {
@@ -67,22 +67,29 @@ meshPhiPluginFunction::meshPhiPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void meshPhiPluginFunction::doEvaluation()
+void meshVelocityPluginFunction::doEvaluation()
 {
-    autoPtr<surfaceScalarField> pPhi(
-        new surfaceScalarField(
+    autoPtr<volVectorField> pU(
+        new volVectorField(
             IOobject(
-                "meshPhiSwak",
+                "meshUSwak",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            mesh().phi()
+            mesh(),
+            dimensionedVector("nonOr",dimless,vector::zero),
+            "zeroGradient"
         )
     );
+    volVectorField &U=pU();
 
-    result().setObjectResult(pPhi);
+    U = fvc::reconstruct(mesh().phi());
+
+    U.correctBoundaryConditions();
+
+    result().setObjectResult(pU);
 }
 
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //

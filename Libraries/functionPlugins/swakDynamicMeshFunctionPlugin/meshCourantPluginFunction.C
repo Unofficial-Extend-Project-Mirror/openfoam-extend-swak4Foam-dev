@@ -72,7 +72,7 @@ void meshCourantPluginFunction::doEvaluation()
     autoPtr<volScalarField> pCo(
         new volScalarField(
             IOobject(
-                "Co",
+                "meshCoSwak",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,

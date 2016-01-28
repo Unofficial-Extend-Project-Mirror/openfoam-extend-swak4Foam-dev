@@ -28,65 +28,68 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+    Foam::meshVelocityPluginFunction
+
+Description
+
+SourceFiles
+    meshVelocityPluginFunction.C
+
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "meshPhiPluginFunction.H"
-#include "FieldValueExpressionDriver.H"
+#ifndef meshVelocityPluginFunction_H
+#define meshVelocityPluginFunction_H
 
-#include "addToRunTimeSelectionTable.H"
+#include "FieldValuePluginFunction.H"
 
-#include "fvc.H"
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam {
-
-defineTypeNameAndDebug(meshPhiPluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, meshPhiPluginFunction , name, dyM_meshPhi);
-
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-meshPhiPluginFunction::meshPhiPluginFunction(
-    const FieldValueExpressionDriver &parentDriver,
-    const word &name
-):
-    FieldValuePluginFunction(
-        parentDriver,
-        name,
-        word("surfaceScalarField"),
-        string("")
-    )
+namespace Foam
 {
-}
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-void meshPhiPluginFunction::doEvaluation()
+/*---------------------------------------------------------------------------*\
+                           Class meshVelocityPluginFunction Declaration
+\*---------------------------------------------------------------------------*/
+class meshVelocityPluginFunction
+:
+    public FieldValuePluginFunction
 {
-    autoPtr<surfaceScalarField> pPhi(
-        new surfaceScalarField(
-            IOobject(
-                "meshPhiSwak",
-                mesh().time().timeName(),
-                mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh().phi()
-        )
+    //- Disallow default bitwise assignment
+    void operator=(const meshVelocityPluginFunction &);
+
+    meshVelocityPluginFunction(const meshVelocityPluginFunction &);
+
+protected:
+
+    void doEvaluation();
+
+public:
+    meshVelocityPluginFunction(
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
     );
 
-    result().setObjectResult(pPhi);
-}
+    virtual ~meshVelocityPluginFunction() {}
 
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
+    TypeName("meshVelocityPluginFunction");
 
-} // namespace
+};
+
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //
