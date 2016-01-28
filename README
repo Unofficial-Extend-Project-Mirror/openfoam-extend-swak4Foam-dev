@@ -3246,6 +3246,18 @@ S_{expl} + S_{impl} T
      output in the original version. Currently =foam-extend= is not
      supported as this is missing some base classes as well
      (=tableReader=)
+**** Added a function plugin for dynamic meshes
+     The Plugin =DynamicMesh= adds functions to visualize the mesh
+     movement. The functions are
+     - dyM_meshPhi :: the mesh =phi= as stored with the mesh. Some
+          distributions write this field anyway
+     - dyM_meshCourant :: Mesh courant number. Replicates the number
+          some solvers print automatically
+     - dyM_meshVelocity :: Velocity with which the cells are
+          moved. Reconstructed from the mesh =phi=
+     These functions might failed if the mesh has not been moved yet
+     so their calls might have to be encapsulated in a
+     =executeIfStartTime= function Object
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
