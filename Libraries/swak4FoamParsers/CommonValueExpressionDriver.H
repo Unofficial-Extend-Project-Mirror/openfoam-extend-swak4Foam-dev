@@ -369,7 +369,7 @@ protected:
     };
 
     template<class T>
-    inline autoPtr<T> getSet(
+    inline autoPtr<T> getTopoSet(
         const fvMesh &,
         const word &,
         SetOrigin &origin

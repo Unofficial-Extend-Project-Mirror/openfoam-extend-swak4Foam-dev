@@ -90,7 +90,7 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const word& id,const 
  :
     SetSubsetValueExpressionDriver(id,INVALID),
     cellSet_(
-        getSet<cellSet>(
+        getTopoSet<cellSet>(
             mesh,
             id,
             origin_
@@ -103,7 +103,7 @@ CellSetValueExpressionDriver::CellSetValueExpressionDriver(const dictionary& dic
  :
     SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),NEW),
     cellSet_(
-        getSet<cellSet>(
+        getTopoSet<cellSet>(
             regionMesh(
                 dict,
                 mesh,
