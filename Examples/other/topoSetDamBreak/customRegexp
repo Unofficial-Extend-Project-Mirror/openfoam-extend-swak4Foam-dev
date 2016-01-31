@@ -1,0 +1,10 @@
+// -*- c++ -*-
+middleLiquid {
+    theTitle "Liquid in the middle";
+    expr "Expression middleLiquid :  min=(.+) weightedAverage=(.+) max=(.+)";
+    titles (
+        min
+        average
+        max
+    );
+}

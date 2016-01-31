@@ -591,6 +591,10 @@ S_{expl} + S_{impl} T
      bended pip geometries
      - Solver :: simpleFoam
      - Case preparation :: Run =prepare.sh=
+**** =topoSetDamBreak=
+     Case to demonstrate various things about =cell= and =faceSet=
+     - Solver :: interFoam
+     - Case preparation :: Run =pyFoamPrepareCase.py .=
 *** FromPresentations
     Cases that were shown in some presentations
 **** OSCFD_cleaningTank3D
@@ -3258,6 +3262,9 @@ S_{expl} + S_{impl} T
      These functions might failed if the mesh has not been moved yet
      so their calls might have to be encapsulated in a
      =executeIfStartTime= function Object
+**** Function object to load =cell=, =face= and =pointSet=
+     The function object =loadTopoSets= loads all the available sets
+     in the mesh into memory for expressions that need them
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as

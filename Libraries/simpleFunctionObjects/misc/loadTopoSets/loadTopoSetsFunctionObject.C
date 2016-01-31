@@ -1,0 +1,166 @@
+/*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright  held by original author
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is based on OpenFOAM.
+
+    OpenFOAM is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM; if not, write to the Free Software Foundation,
+    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+Contributors/Copyright:
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+
+ SWAK Revision: $Id$
+\*---------------------------------------------------------------------------*/
+
+#include "swak.H"
+
+#include "loadTopoSetsFunctionObject.H"
+#include "addToRunTimeSelectionTable.H"
+
+#include "fvMesh.H"
+#include "cellSet.H"
+#include "faceSet.H"
+#include "pointSet.H"
+#include "swakTime.H"
+#include "IOobjectList.H"
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+    defineTypeNameAndDebug(loadTopoSetsFunctionObject, 0);
+
+    addToRunTimeSelectionTable
+    (
+        functionObject,
+        loadTopoSetsFunctionObject,
+        dictionary
+    );
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+loadTopoSetsFunctionObject::loadTopoSetsFunctionObject
+(
+    const word &name,
+    const Time& t,
+    const dictionary& dict
+)
+:
+    simpleFunctionObject(name,t,dict),
+    forceLoading_(readBool(dict.lookup("forceLoading"))),
+    loadCellSets_(readBool(dict.lookup("loadCellSets"))),
+    loadFaceSets_(readBool(dict.lookup("loadFaceSets"))),
+    loadPointSets_(readBool(dict.lookup("loadPointSets")))
+{
+}
+
+bool loadTopoSetsFunctionObject::start()
+{
+    Info << "Loading topoSets of " << obr().name()
+        << " at start" << endl;
+
+    loadSets();
+
+    return true;
+}
+
+void loadTopoSetsFunctionObject::write()
+{
+}
+
+void loadTopoSetsFunctionObject::loadSets()
+{
+    if(loadCellSets_) {
+        loadAllSets<cellSet>();
+    }
+    if(loadFaceSets_) {
+        loadAllSets<faceSet>();
+    }
+    if(loadPointSets_) {
+        loadAllSets<pointSet>();
+    }
+}
+
+template<class TopoSetType>
+void loadTopoSetsFunctionObject::loadAllSets()
+{
+    Info << "Loading sets of type " << TopoSetType::typeName << " from "
+        << this->obr().name() << endl;
+
+    const polyMesh &mesh=dynamic_cast<const polyMesh&>(
+        this->obr()
+    );
+
+    // adapted from setsToZones.C
+
+    word setsInstance = mesh.time().findInstance
+        (
+            polyMesh::meshSubDir/"sets",
+            word::null,
+            IOobject::MUST_READ,
+            mesh.facesInstance()
+        );
+    IOobjectList objects(mesh, setsInstance, polyMesh::meshSubDir/"sets");
+
+    IOobjectList topoObjects(objects.lookupClass(TopoSetType::typeName));
+    forAllConstIter(IOobjectList,topoObjects,iter) {
+        const word &name=(*iter)->name();
+        if(mesh.found(name)) {
+            if(mesh.foundObject<TopoSetType>(name)) {
+                if(forceLoading_) {
+                    Info << "Re-loading " << name << endl;
+                    autoPtr<TopoSetType> set(new TopoSetType(*iter()));
+                    Info << " ... storing in " << mesh.name() <<
+                        " (old version might still exist)" << endl;
+                    set->store(set);
+                } else {
+                    WarningIn("loadTopoSetsFunctionObject::loadAllSets()")
+                        << "There is already a " << TopoSetType::typeName
+                            << " named " << name << " in " << mesh.name()
+                            << ". Not loading"
+                            << endl;
+                }
+            } else {
+                FatalErrorIn("loadTopoSetsFunctionObject::loadAllSets()")
+                    << "There is already an object named " << name
+                        << " in " << mesh.name() << " but it is not a "
+                        << TopoSetType::typeName
+                        << endl
+                        << exit(FatalError);
+            }
+        } else {
+            Info << "Reading " << name << endl;
+            autoPtr<TopoSetType> set(new TopoSetType(*iter()));
+            Info << " ... storing in " << mesh.name() << endl;
+            set->store(set);
+        }
+    }
+}
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+} // namespace Foam
+
+
+// ************************************************************************* //

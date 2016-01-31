@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      faceSetDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions (
+    {
+        type faceSet;
+        name middleFaces;
+        action new;
+        source expressionToFace;
+        sourceInfo {
+            expression "pos().x>0.291";
+        }
+    }
+    {
+        type cellSet;
+        name centerCells;
+        action new;
+        source expressionToCell;
+        sourceInfo {
+            expression "mag(pos()-vector(0.291,0.291,0.007)) < 0.1";
+        }
+    }
+);
+
+// ************************************************************************* //
