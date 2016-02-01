@@ -72,7 +72,8 @@ loadTopoSetsFunctionObject::loadTopoSetsFunctionObject
     forceLoading_(readBool(dict.lookup("forceLoading"))),
     loadCellSets_(readBool(dict.lookup("loadCellSets"))),
     loadFaceSets_(readBool(dict.lookup("loadFaceSets"))),
-    loadPointSets_(readBool(dict.lookup("loadPointSets")))
+    loadPointSets_(readBool(dict.lookup("loadPointSets"))),
+    writeSets_(readBool(dict.lookup("writeSets")))
 {
 }
 
@@ -88,23 +89,49 @@ bool loadTopoSetsFunctionObject::start()
 
 void loadTopoSetsFunctionObject::write()
 {
+    if(
+        obr_.time().outputTime()
+        &&
+        writeSets_
+    ) {
+        writeAllSets<cellSet>(cellSetNames_);
+        writeAllSets<faceSet>(faceSetNames_);
+        writeAllSets<pointSet>(pointSetNames_);
+    }
 }
 
 void loadTopoSetsFunctionObject::loadSets()
 {
     if(loadCellSets_) {
-        loadAllSets<cellSet>();
+        loadAllSets<cellSet>(cellSetNames_);
     }
     if(loadFaceSets_) {
-        loadAllSets<faceSet>();
+        loadAllSets<faceSet>(faceSetNames_);
     }
     if(loadPointSets_) {
-        loadAllSets<pointSet>();
+        loadAllSets<pointSet>(pointSetNames_);
     }
 }
 
 template<class TopoSetType>
-void loadTopoSetsFunctionObject::loadAllSets()
+void loadTopoSetsFunctionObject::writeAllSets(HashSet<word> &names)
+{
+    const polyMesh &mesh=dynamic_cast<const polyMesh&>(
+        this->obr()
+    );
+
+    forAllConstIter(HashSet<word>,names,iter) {
+        const word &name=iter.key();
+        Info << "Writing " << TopoSetType::typeName << " " << name << endl;
+
+        TopoSetType &set=const_cast<TopoSetType &>(mesh.lookupObject<TopoSetType>(name));
+        set.instance()=mesh.time().timeName();
+        set.write();
+    }
+}
+
+template<class TopoSetType>
+void loadTopoSetsFunctionObject::loadAllSets(HashSet<word> &names)
 {
     Info << "Loading sets of type " << TopoSetType::typeName << " from "
         << this->obr().name() << endl;
@@ -135,6 +162,7 @@ void loadTopoSetsFunctionObject::loadAllSets()
                     Info << " ... storing in " << mesh.name() <<
                         " (old version might still exist)" << endl;
                     set->store(set);
+                    names.insert(name);
                 } else {
                     WarningIn("loadTopoSetsFunctionObject::loadAllSets()")
                         << "There is already a " << TopoSetType::typeName
@@ -155,6 +183,7 @@ void loadTopoSetsFunctionObject::loadAllSets()
             autoPtr<TopoSetType> set(new TopoSetType(*iter()));
             Info << " ... storing in " << mesh.name() << endl;
             set->store(set);
+            names.insert(name);
         }
     }
 }

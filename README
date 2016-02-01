@@ -3264,7 +3264,8 @@ S_{expl} + S_{impl} T
      =executeIfStartTime= function Object
 **** Function object to load =cell=, =face= and =pointSet=
      The function object =loadTopoSets= loads all the available sets
-     in the mesh into memory for expressions that need them
+     in the mesh into memory for expressions that need them. Also
+     allows automatic writing of these sets (switched by =writeSets=)
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as

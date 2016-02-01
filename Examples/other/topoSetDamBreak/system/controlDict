@@ -67,6 +67,7 @@ functions {
         loadCellSets true;
         loadFaceSets true;
         loadPointSets false;
+        writeSets true;
     }
     getTheSetsAgain {
         // Just checking how reloading works
@@ -77,6 +78,7 @@ functions {
         loadCellSets true;
         loadFaceSets true;
         loadPointSets false;
+        writeSets true;
     }
     middleLiquid {
         type swakExpression;

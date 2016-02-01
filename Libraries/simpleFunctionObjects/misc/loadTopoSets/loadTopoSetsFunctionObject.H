@@ -48,6 +48,9 @@ Contributors/Copyright:
 #define loadTopoSetsFunctionObject_H
 
 #include "simpleFunctionObject.H"
+
+#include "HashSet.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -74,7 +77,11 @@ class loadTopoSetsFunctionObject
 
     //- load sets of a specific type
     template<class TopoSetType>
-    void loadAllSets();
+    void loadAllSets(HashSet<word> &names);
+
+    //- write sets of a specific type
+    template<class TopoSetType>
+    void writeAllSets(HashSet<word> &names);
 
     //- Load sets even if they are already in memory
     bool forceLoading_;
@@ -87,6 +94,13 @@ class loadTopoSetsFunctionObject
 
     //- load pointSets
     bool loadPointSets_;
+
+    //- should we write?
+    bool writeSets_;
+
+    HashSet<word> cellSetNames_;
+    HashSet<word> faceSetNames_;
+    HashSet<word> pointSetNames_;
 
 public:
 
