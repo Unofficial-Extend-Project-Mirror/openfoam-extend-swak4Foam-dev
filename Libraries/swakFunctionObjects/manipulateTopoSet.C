@@ -205,6 +205,7 @@ void Foam::manipulateTopoSet<TopoSetType>::write()
                 Info << "Rewriting manipulated " << TopoSetType::typeName
                     << " " << set.name() << endl;
 
+                set.instance()=obr_.time().timeName();
                 set.write();
             } else {
                 Info << "Manipulated field " << set.name()
