@@ -1,5 +1,7 @@
 manipulateField.C
 manipulateFieldFunctionObject.C
+manipulateTopoSet.C
+manipulateTopoSetFunctionObject.C
 manipulatePatchField.C
 manipulatePatchFieldFunctionObject.C
 expressionField.C
