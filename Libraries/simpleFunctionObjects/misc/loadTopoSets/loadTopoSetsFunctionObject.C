@@ -45,6 +45,7 @@ Contributors/Copyright:
 #include "pointSet.H"
 #include "swakTime.H"
 #include "IOobjectList.H"
+#include "Scalar.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -125,7 +126,14 @@ void loadTopoSetsFunctionObject::writeAllSets(HashSet<word> &names)
         Info << "Writing " << TopoSetType::typeName << " " << name << endl;
 
         TopoSetType &set=const_cast<TopoSetType &>(mesh.lookupObject<TopoSetType>(name));
-        set.instance()=mesh.time().timeName();
+        if(Pstream::parRun()) {
+            set.instance()=
+                (word("processor") + name(Pstream::myProcNo()))
+                /
+                mesh.time().timeName();
+        } else {
+            set.instance()=mesh.time().timeName();
+        }
         set.write();
     }
 }

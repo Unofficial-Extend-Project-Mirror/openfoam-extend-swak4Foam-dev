@@ -107,6 +107,17 @@ functions {
         mask "0.1<aWater && aWater<0.9";
         createMissing true;
     }
+    undecidedVelocity {
+        $middleLiquid;
+        valueType cellSet;
+        setName undecided;
+        expression "mag(U)";
+        accumulations (
+            size
+            weightedAverage
+            max
+        );
+    }
 }
 
 // ************************************************************************* //

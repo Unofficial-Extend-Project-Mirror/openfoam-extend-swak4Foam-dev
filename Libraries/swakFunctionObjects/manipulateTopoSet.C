@@ -192,10 +192,14 @@ void Foam::manipulateTopoSet<TopoSetType>::write()
         reduce(cnt,plusOp<label>());
         reduce(added,plusOp<label>());
         reduce(removed,plusOp<label>());
+        label maskSize=mask_.size();
+        reduce(maskSize,plusOp<label>());
+        label oldSetSize=oldSet.size();
+        reduce(oldSetSize,plusOp<label>());
 
         Info << "Manipulated " << TopoSetType::typeName << " " << name_
             << " with the expression " << maskExpression_ << ". Size: "
-            << cnt << " of " << mask_.size() << " (old size: " << oldSet.size() << ")"
+            << cnt << " of " << maskSize << " (old size: " << oldSetSize << ")"
             << " Added: " << added << " Removed: " << removed << endl;
 
         if(
@@ -205,7 +209,14 @@ void Foam::manipulateTopoSet<TopoSetType>::write()
                 Info << "Rewriting manipulated " << TopoSetType::typeName
                     << " " << set.name() << endl;
 
-                set.instance()=obr_.time().timeName();
+                if(Pstream::parRun()) {
+                    set.instance()=
+                        (word("processor") + Foam::name(Pstream::myProcNo()))
+                        /
+                        obr_.time().timeName();
+                } else {
+                    set.instance()=obr_.time().timeName();
+                }
                 set.write();
             } else {
                 Info << "Manipulated field " << set.name()
