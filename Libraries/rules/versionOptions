@@ -27,6 +27,10 @@ ifeq "3.0" "$(word 1, $(sort 3.0 $(WM_PROJECT_VERSION)))"
   ifndef FOAM_DEV
     WMAKE_NEW_CONVENTION=new
     FOAM_UNIFIEDTURBULENCE=yes
+  else
+    ifdef WM_WMAKE_NEW_CONVENTION
+      WMAKE_NEW_CONVENTION=new
+    endif
   endif
 endif
 
