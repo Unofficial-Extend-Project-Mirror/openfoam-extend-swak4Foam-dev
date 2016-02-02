@@ -50,10 +50,11 @@ Contributors/Copyright:
 #include "autoPtr.H"
 #include "dictionary.H"
 
-#include "swak.H"
-
 #include "exprString.H"
 #include "scalarField.H"
+#include "pointField.H"
+
+#include "swak.H"
 
 namespace Foam
 {
@@ -161,7 +162,7 @@ public:
 #ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
     virtual void movePoints(const polyMesh&)
 #else
-    virtual void movePoints(const pointTopoSet&)
+    virtual void movePoints(const pointField&)
 #endif
         {}
 };
