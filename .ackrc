@@ -1,0 +1,5 @@
+--ignore-dir=.hg
+--ignore-file=ext:dep
+--ignore-file=ext:o
+--type-set=foamSource:ext:H,C
+--type-add=cpp:ext:C,H

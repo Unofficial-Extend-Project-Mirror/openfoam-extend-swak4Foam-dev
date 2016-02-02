@@ -1,0 +1,31 @@
+// -*- c++ -*-
+middleLiquid {
+    theTitle "Liquid in the middle";
+    expr "Expression middleLiquid :  min=(.+) weightedAverage=(.+) max=(.+)";
+    titles (
+        min
+        average
+        max
+    );
+}
+undecidedVelocity {
+    theTitle "Velocity in undecided cells";
+    expr "Expression undecidedVelocity :  size=[1-9].* weightedAverage=(.*) max=(.*)";
+    titles (
+        average
+        max
+    );
+    alternateAxis (
+        nr
+    );
+    ylabel "Velocity";
+    y2label "Number of cells";
+}
+undecidedCells {
+    type slave;
+    master undecidedVelocity;
+    expr "Manipulated cellSet undecided with the expression .*\. Size: (.+) of";
+    titles (
+        nr
+    );
+}
