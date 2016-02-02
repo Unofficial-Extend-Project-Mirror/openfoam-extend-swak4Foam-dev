@@ -382,7 +382,7 @@ namespace Foam {
     }
 
     template<class T>
-    inline autoPtr<T> CommonValueExpressionDriver::getSet(
+    inline autoPtr<T> CommonValueExpressionDriver::getTopoSet(
         const fvMesh &mesh,
         const word &inName,
         SetOrigin &origin
@@ -391,7 +391,7 @@ namespace Foam {
         word name(inName);
         if(this->hasAlias(name)) {
             if(debug) {
-                Pout << "CommonValueExpressionDriver::getSet. Name: " << name
+                Pout << "CommonValueExpressionDriver::getTopoSet. Name: " << name
                     << " is an alias for " << this->getAlias(name) << endl;
             }
             name=this->getAlias(name);

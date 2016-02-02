@@ -106,7 +106,7 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
  :
     SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),INVALID),
     faceSet_(
-        getSet<faceSet>(
+        getTopoSet<faceSet>(
             regionMesh(
                 dict,
                 mesh,
@@ -131,7 +131,7 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
         false
     ),
     faceSet_(
-        getSet<faceSet>(
+        getTopoSet<faceSet>(
             mesh,
             id,
             origin_
@@ -257,7 +257,7 @@ tmp<scalarField> FaceSetValueExpressionDriver::makeFaceFlipField() const
     cellSet cells(
         mesh,
         setName,
-        getSet<cellSet>(
+        getTopoSet<cellSet>(
             mesh,
             setName,
             origin
