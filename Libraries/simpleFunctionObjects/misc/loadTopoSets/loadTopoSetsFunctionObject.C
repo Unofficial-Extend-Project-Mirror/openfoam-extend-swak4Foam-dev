@@ -45,7 +45,6 @@ Contributors/Copyright:
 #include "pointSet.H"
 #include "swakTime.H"
 #include "IOobjectList.H"
-#include "Scalar.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
