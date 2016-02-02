@@ -149,6 +149,9 @@ void loadTopoSetsFunctionObject::loadAllSets(HashSet<word> &names)
 
     // adapted from setsToZones.C
 
+#ifdef FOAM_HAS_NO_FOUR_PARAMETER_FINDINSTANCE
+    IOobjectList objects(mesh, mesh.facesInstance(), polyMesh::meshSubDir/"sets");
+#else
     word setsInstance = mesh.time().findInstance
         (
             polyMesh::meshSubDir/"sets",
@@ -157,6 +160,7 @@ void loadTopoSetsFunctionObject::loadAllSets(HashSet<word> &names)
             mesh.facesInstance()
         );
     IOobjectList objects(mesh, setsInstance, polyMesh::meshSubDir/"sets");
+#endif
 
     IOobjectList topoObjects(objects.lookupClass(TopoSetType::typeName));
     forAllConstIter(IOobjectList,topoObjects,iter) {
