@@ -61,9 +61,17 @@ conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
         name,
         t,
         dict,
-        false
+        dict.lookupOrDefault<bool>("constructUnconditionally",false)
     )
 {
+    if(!dict.found("constructUnconditionally")) {
+        WarningIn("conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy")
+            << "'constructUnconditionally' not set in " << dict.name()
+                << ". Assuming 'no'. If you want "
+                << "'functions' to be constructed at the start then set to 'yes'"
+                << endl;
+
+    }
     if(debug) {
         Info << "conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy" << endl;
     }

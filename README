@@ -3293,4 +3293,11 @@ S_{expl} + S_{impl} T
 **** Additional functions in plugin =ThermoTurb=
      Functions from the public interface of =basicThermo= and
      =turbulenceModel= have been added (like =kappa=, =kappaEff= etc)
+**** Conditional function objects now allow construction of their =functions= at start
+     With the parameter
+: constructUnconditionally yes;
+     in function objects that start with =executeIf= it is possible to
+     construct the lists unconditionally at start instead of waiting
+     for the condition to be true. If unset then the function objects
+     default to the old behaviour
 *** Examples
