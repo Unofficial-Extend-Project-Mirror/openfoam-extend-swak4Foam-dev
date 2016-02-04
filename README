@@ -3277,6 +3277,14 @@ S_{expl} + S_{impl} T
      whether the topoSet should be written at write times.
 
      An example of this functionality is found in =Examples/other/topoSetDamBreak=
+**** Function object that executes other function objects only at write time
+     The function object =executeIfWriteTime= in the
+     =simpleFunctionObjects= executes a list of other function objects
+     only if the current time is a scheduled write time. The purpose
+     of this function object is to only execute function objects at
+     write times that don't honor the
+     =outputControlMode=-setting. Also does the =else=-branch allow
+     executing only when *nothing* is written
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
