@@ -3277,6 +3277,14 @@ S_{expl} + S_{impl} T
      whether the topoSet should be written at write times.
 
      An example of this functionality is found in =Examples/other/topoSetDamBreak=
+**** Function object that executes other function objects only at write time
+     The function object =executeIfWriteTime= in the
+     =simpleFunctionObjects= executes a list of other function objects
+     only if the current time is a scheduled write time. The purpose
+     of this function object is to only execute function objects at
+     write times that don't honor the
+     =outputControlMode=-setting. Also does the =else=-branch allow
+     executing only when *nothing* is written
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
@@ -3285,4 +3293,11 @@ S_{expl} + S_{impl} T
 **** Additional functions in plugin =ThermoTurb=
      Functions from the public interface of =basicThermo= and
      =turbulenceModel= have been added (like =kappa=, =kappaEff= etc)
+**** Conditional function objects now allow construction of their =functions= at start
+     With the parameter
+: constructUnconditionally yes;
+     in function objects that start with =executeIf= it is possible to
+     construct the lists unconditionally at start instead of waiting
+     for the condition to be true. If unset then the function objects
+     default to the old behaviour
 *** Examples
