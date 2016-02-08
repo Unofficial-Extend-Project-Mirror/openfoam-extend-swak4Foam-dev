@@ -3285,6 +3285,12 @@ S_{expl} + S_{impl} T
      write times that don't honor the
      =outputControlMode=-setting. Also does the =else=-branch allow
      executing only when *nothing* is written
+**** Added a function plugin for MRF cases
+     This function plugin makes a number of function from the
+     =MRF=-model available:
+     - functions to make fields absolute or relative in the =MRF= region
+     - a function to calculate the Coriolis force
+     All these functions call the MRF-model
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
