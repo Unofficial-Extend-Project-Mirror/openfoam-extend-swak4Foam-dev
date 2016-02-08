@@ -1,0 +1,4 @@
+swakMRFPluginFunctionBasis.C
+MRFIncompressibleFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakMRFFunctionPlugin
