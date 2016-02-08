@@ -141,6 +141,50 @@ concreteMRF(makeRelative,volVectorField,relativeVelocity);
 concreteMRF(makeRelativeSurf,surfaceScalarField,relativeFlux);
 #endif
 
+class swakCoriolisMRFPluginFunction
+: public MRFIncompressibleFunction<volVectorField>
+{
+public:
+    TypeName("swakCoriolisMRFPluginFunction");
+    swakCoriolisMRFPluginFunction(
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
+    ):  MRFIncompressibleFunction<volVectorField>(
+        parentDriver,
+        name
+    ) {}
+    void manipulate(volVectorField &) {
+        // do nothing
+    }
+    void doEvaluation() {
+            autoPtr<volVectorField> pResult(
+                new volVectorField(
+                    IOobject(
+                        "coriolisMRFResult",
+                        mesh().time().timeName(),
+                        mesh(),
+                        IOobject::NO_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    mesh(),
+                    dimensionedVector("zero",dimless,vector::zero),
+                    "zeroGradient"
+                )
+            );
+            volVectorField &Result=pResult();
+
+#ifdef FOAM_MRF_CHANGED_CORIOLIS
+            MRF().addAcceleration(field_(),Result);
+#else
+            MRF().addCoriolis(field_(),Result);
+#endif
+            result().setObjectResult(pResult);
+        }
+
+};
+
+defineTypeNameAndDebug(swakCoriolisMRFPluginFunction,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakCoriolisMRFPluginFunction,name,MRF_coriolis);
 } // namespace
 
 #endif // FOAM_HAS_IOMRFLIST

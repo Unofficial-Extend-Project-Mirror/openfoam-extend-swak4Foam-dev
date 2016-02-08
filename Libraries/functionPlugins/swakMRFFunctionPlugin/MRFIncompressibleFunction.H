@@ -70,9 +70,9 @@ class MRFIncompressibleFunction
 
     MRFIncompressibleFunction(const MRFIncompressibleFunction &);
 
-    autoPtr<FieldType> field_;
-
 protected:
+
+    autoPtr<FieldType> field_;
 
     void doEvaluation();
 
