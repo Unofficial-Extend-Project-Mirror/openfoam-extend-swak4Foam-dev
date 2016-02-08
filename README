@@ -3300,4 +3300,10 @@ S_{expl} + S_{impl} T
      construct the lists unconditionally at start instead of waiting
      for the condition to be true. If unset then the function objects
      default to the old behaviour
+**** =manipulateField=-function object can switch *off* manipulating at start
+     The regular behavior for this function object is that it does
+     the first manipulation during construction. This can be switched
+     off with the setting =manipulateAtStartup= in cases where not all
+     the requirements for correctly evaluating the expressions are
+     fulfilled during construction
 *** Examples

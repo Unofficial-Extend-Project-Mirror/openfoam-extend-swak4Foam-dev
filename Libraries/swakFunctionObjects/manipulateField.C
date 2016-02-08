@@ -64,7 +64,18 @@ Foam::manipulateField::manipulateField
                 << endl;
     }
     read(dict);
-    write();
+    bool writeAtStart=true;
+    if(dict.found("manipulateAtStartup")) {
+        writeAtStart=readBool(dict.lookup("manipulateAtStartup"));
+    } else {
+        WarningIn("Foam::manipulateField::manipulateField")
+            << "'manipulateAtStartup' not set in " << dict.name() << nl
+                << "Assuming: true"
+                << endl;
+    }
+    if(writeAtStart) {
+        write();
+    }
 }
 
 Foam::manipulateField::~manipulateField()
