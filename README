@@ -3231,6 +3231,10 @@ S_{expl} + S_{impl} T
 **** Does not compile with ~WM_LABEL_SIZE=64~
      A reference to a =label= that was passed to a =flex=-function
      broke compilation because that expects a 32-bit integer. Fixed
+**** Tensor-fields not correctly handled by =replayTransientBC=
+     Due to a copy/past-problem all tensor-fields (including
+     symmtrical and spherical) would have caused the utility to
+     fail. Fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
@@ -3312,4 +3316,7 @@ S_{expl} + S_{impl} T
      off with the setting =manipulateAtStartup= in cases where not all
      the requirements for correctly evaluating the expressions are
      fulfilled during construction
+**** =replayTransientBC= now handles surface and point fields
+     The utility can now read surface and point fields. Surface-fields
+     are not corrected because this is not supported by Foam
 *** Examples

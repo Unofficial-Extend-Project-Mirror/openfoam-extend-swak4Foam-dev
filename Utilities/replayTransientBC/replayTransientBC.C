@@ -69,6 +69,8 @@ int main(int argc, char *argv[])
 
 #   include "createNamedMesh.H"
 
+    pointMesh pMesh(mesh);
+
     IOdictionary replayDict
     (
         IOobject
@@ -115,37 +117,83 @@ int main(int argc, char *argv[])
 
     const wordList fieldNames = replayDict.lookup("fields");
 
-    SLPtrList<volScalarField> scalarFields;
-    SLPtrList<volVectorField> vectorFields;
-    SLPtrList<volTensorField> tensorFields;
-    SLPtrList<volSymmTensorField> symmTensorFields;
-    SLPtrList<volSphericalTensorField> sphericalTensorFields;
+    SLPtrList<volScalarField> scalarVolFields;
+    SLPtrList<volVectorField> vectorVolFields;
+    SLPtrList<volTensorField> tensorVolFields;
+    SLPtrList<volSymmTensorField> symmTensorVolFields;
+    SLPtrList<volSphericalTensorField> sphericalTensorVolFields;
+
+    SLPtrList<surfaceScalarField> scalarSurfaceFields;
+    SLPtrList<surfaceVectorField> vectorSurfaceFields;
+    SLPtrList<surfaceTensorField> tensorSurfaceFields;
+    SLPtrList<surfaceSymmTensorField> symmTensorSurfaceFields;
+    SLPtrList<surfaceSphericalTensorField> sphericalTensorSurfaceFields;
+
+    SLPtrList<pointScalarField> scalarPointFields;
+    SLPtrList<pointVectorField> vectorPointFields;
+    SLPtrList<pointTensorField> tensorPointFields;
+    SLPtrList<pointSymmTensorField> symmTensorPointFields;
+    SLPtrList<pointSphericalTensorField> sphericalTensorPointFields;
 
     forAll(fieldNames,fieldI) {
         word fName=fieldNames[fieldI];
 
         if(
-            !loadFieldFunction(mesh,fName,scalarFields)
+            !loadFieldFunction(mesh,fName,scalarVolFields)
             &&
-            !loadFieldFunction(mesh,fName,vectorFields)
+            !loadFieldFunction(mesh,fName,vectorVolFields)
             &&
-            !loadFieldFunction(mesh,fName,tensorFields)
+            !loadFieldFunction(mesh,fName,tensorVolFields)
             &&
-            !loadFieldFunction(mesh,fName,symmTensorFields)
+            !loadFieldFunction(mesh,fName,symmTensorVolFields)
             &&
-            !loadFieldFunction(mesh,fName,sphericalTensorFields)
+            !loadFieldFunction(mesh,fName,sphericalTensorVolFields)
+            &&
+            !loadFieldFunction(mesh,fName,scalarSurfaceFields)
+            &&
+            !loadFieldFunction(mesh,fName,vectorSurfaceFields)
+            &&
+            !loadFieldFunction(mesh,fName,tensorSurfaceFields)
+            &&
+            !loadFieldFunction(mesh,fName,symmTensorSurfaceFields)
+            &&
+            !loadFieldFunction(mesh,fName,sphericalTensorSurfaceFields)
+            &&
+            !loadPointFieldFunction(mesh,pMesh,fName,scalarPointFields)
+            &&
+            !loadPointFieldFunction(mesh,pMesh,fName,vectorPointFields)
+            &&
+            !loadPointFieldFunction(mesh,pMesh,fName,tensorPointFields)
+            &&
+            !loadPointFieldFunction(mesh,pMesh,fName,symmTensorPointFields)
+            &&
+            !loadPointFieldFunction(mesh,pMesh,fName,sphericalTensorPointFields)
         ) {
             Info << "Field " << fName << " not found " << endl;
         }
     }
 
+    if(
+        scalarSurfaceFields.size()>0
+        ||
+        vectorSurfaceFields.size()>0
+        ||
+        tensorSurfaceFields.size()>0
+        ||
+        symmTensorSurfaceFields.size()>0
+        ||
+        sphericalTensorSurfaceFields.size()>0
+    ){
+        WarningIn(args.executable())
+            << "Surface fields loaded. These will not be corrected"
+                << endl;
+    }
     wordList preloadFieldNames;
     if(!replayDict.found("preloadFields")) {
         WarningIn(args.executable())
             << "No list 'preloadFields' defined. Boundary conditions that depend "
                 << "on other fields will fail"
                 << endl;
-
     } else {
         preloadFieldNames=wordList(replayDict.lookup("preloadFields"));
     }
@@ -183,11 +231,23 @@ int main(int argc, char *argv[])
         Info<< "Time = " << runTime.timeName() << nl << endl;
         Info<< "deltaT = " <<  runTime.deltaT().value() << endl;
 
-        SLPtrList<volScalarField> scalarFieldsPre;
-        SLPtrList<volVectorField> vectorFieldsPre;
-        SLPtrList<volTensorField> tensorFieldsPre;
-        SLPtrList<volSymmTensorField> symmTensorFieldsPre;
-        SLPtrList<volSphericalTensorField> sphericalTensorFieldsPre;
+        SLPtrList<volScalarField> scalarVolFieldsPre;
+        SLPtrList<volVectorField> vectorVolFieldsPre;
+        SLPtrList<volTensorField> tensorVolFieldsPre;
+        SLPtrList<volSymmTensorField> symmTensorVolFieldsPre;
+        SLPtrList<volSphericalTensorField> sphericalTensorVolFieldsPre;
+
+        SLPtrList<surfaceScalarField> scalarSurfaceFieldsPre;
+        SLPtrList<surfaceVectorField> vectorSurfaceFieldsPre;
+        SLPtrList<surfaceTensorField> tensorSurfaceFieldsPre;
+        SLPtrList<surfaceSymmTensorField> symmTensorSurfaceFieldsPre;
+        SLPtrList<surfaceSphericalTensorField> sphericalTensorSurfaceFieldsPre;
+
+        SLPtrList<pointScalarField> scalarPointFieldsPre;
+        SLPtrList<pointVectorField> vectorPointFieldsPre;
+        SLPtrList<pointTensorField> tensorPointFieldsPre;
+        SLPtrList<pointSymmTensorField> symmTensorPointFieldsPre;
+        SLPtrList<pointSphericalTensorField> sphericalTensorPointFieldsPre;
 
         if(preloadFieldNames.size()>0) {
             Info << "Preloading fields" << endl;
@@ -196,15 +256,35 @@ int main(int argc, char *argv[])
                 word fName=preloadFieldNames[fieldI];
 
                 if(
-                    !loadFieldFunction(mesh,fName,scalarFieldsPre)
+                    !loadFieldFunction(mesh,fName,scalarVolFieldsPre)
                     &&
-                    !loadFieldFunction(mesh,fName,vectorFieldsPre)
+                    !loadFieldFunction(mesh,fName,vectorVolFieldsPre)
                     &&
-                    !loadFieldFunction(mesh,fName,tensorFieldsPre)
+                    !loadFieldFunction(mesh,fName,tensorVolFieldsPre)
                     &&
-                    !loadFieldFunction(mesh,fName,symmTensorFieldsPre)
+                    !loadFieldFunction(mesh,fName,symmTensorVolFieldsPre)
                     &&
-                    !loadFieldFunction(mesh,fName,sphericalTensorFieldsPre)
+                    !loadFieldFunction(mesh,fName,sphericalTensorVolFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,scalarSurfaceFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,vectorSurfaceFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,tensorSurfaceFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,symmTensorSurfaceFieldsPre)
+                    &&
+                    !loadFieldFunction(mesh,fName,sphericalTensorSurfaceFieldsPre)
+                    &&
+                    !loadPointFieldFunction(mesh,pMesh,fName,scalarPointFieldsPre)
+                    &&
+                    !loadPointFieldFunction(mesh,pMesh,fName,vectorPointFieldsPre)
+                    &&
+                    !loadPointFieldFunction(mesh,pMesh,fName,tensorPointFieldsPre)
+                    &&
+                    !loadPointFieldFunction(mesh,pMesh,fName,symmTensorPointFieldsPre)
+                    &&
+                    !loadPointFieldFunction(mesh,pMesh,fName,sphericalTensorPointFieldsPre)
                 ) {
                     Info << "Field " << fName << " not found " << endl;
                 }
@@ -212,19 +292,34 @@ int main(int argc, char *argv[])
         }
 
         // force the boundary conditions to be updated
-        forAllIter(SLPtrList<volScalarField>,scalarFields,it) {
+        forAllIter(SLPtrList<volScalarField>,scalarVolFields,it) {
             (*it).correctBoundaryConditions();
         }
-        forAllIter(SLPtrList<volVectorField>,vectorFields,it) {
+        forAllIter(SLPtrList<volVectorField>,vectorVolFields,it) {
             (*it).correctBoundaryConditions();
         }
-        forAllIter(SLPtrList<volVectorField>,tensorFields,it) {
+        forAllIter(SLPtrList<volTensorField>,tensorVolFields,it) {
             (*it).correctBoundaryConditions();
         }
-        forAllIter(SLPtrList<volVectorField>,symmTensorFields,it) {
+        forAllIter(SLPtrList<volSymmTensorField>,symmTensorVolFields,it) {
             (*it).correctBoundaryConditions();
         }
-        forAllIter(SLPtrList<volVectorField>,sphericalTensorFields,it) {
+        forAllIter(SLPtrList<volSphericalTensorField>,sphericalTensorVolFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+        forAllIter(SLPtrList<pointScalarField>,scalarPointFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+        forAllIter(SLPtrList<pointVectorField>,vectorPointFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+        forAllIter(SLPtrList<pointTensorField>,tensorPointFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+        forAllIter(SLPtrList<pointSymmTensorField>,symmTensorPointFields,it) {
+            (*it).correctBoundaryConditions();
+        }
+        forAllIter(SLPtrList<pointSphericalTensorField>,sphericalTensorPointFields,it) {
             (*it).correctBoundaryConditions();
         }
 
@@ -233,19 +328,19 @@ int main(int argc, char *argv[])
         if(timeDirs.size()>0) {
             Info << "Force writing of fields" << endl;
 
-            forAllIter(SLPtrList<volScalarField>,scalarFields,it) {
+            forAllIter(SLPtrList<volScalarField>,scalarVolFields,it) {
                 (*it).write();
             }
-            forAllIter(SLPtrList<volVectorField>,vectorFields,it) {
+            forAllIter(SLPtrList<volVectorField>,vectorVolFields,it) {
                 (*it).write();
             }
-            forAllIter(SLPtrList<volVectorField>,tensorFields,it) {
+            forAllIter(SLPtrList<volTensorField>,tensorVolFields,it) {
                 (*it).write();
             }
-            forAllIter(SLPtrList<volVectorField>,symmTensorFields,it) {
+            forAllIter(SLPtrList<volSymmTensorField>,symmTensorVolFields,it) {
                 (*it).write();
             }
-            forAllIter(SLPtrList<volVectorField>,sphericalTensorFields,it) {
+            forAllIter(SLPtrList<volSphericalTensorField>,sphericalTensorVolFields,it) {
                 (*it).write();
             }
         }
