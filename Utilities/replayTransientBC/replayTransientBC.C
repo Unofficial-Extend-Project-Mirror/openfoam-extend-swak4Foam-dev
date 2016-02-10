@@ -47,6 +47,11 @@ Contributors/Copyright:
 #include "interpolationCellPoint.H"
 #include "vectorList.H"
 #include "LPtrList.H"
+#include "swak.H"
+
+#ifdef FOAM_HAS_FVOPTIONS
+#include "fvOptions.H"
+#endif
 
 using namespace Foam;
 
@@ -63,6 +68,9 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
     argList::validOptions.insert("allowFunctionObjects","");
     argList::validOptions.insert("addDummyPhi","");
+#ifdef FOAM_HAS_FVOPTIONS
+    argList::validOptions.insert("useFvOptions","");
+#endif
 
 #   include "setRootCase.H"
 #   include "createTime.H"
@@ -214,6 +222,22 @@ int main(int argc, char *argv[])
     }
 
     label timeDirCnt=0;
+
+#ifdef FOAM_HAS_FVOPTIONS
+    #include "createFvOptions.H"
+    if(fvOptions.PtrList::size()>0) {
+        Info << "Read fvOptions with " << fvOptions.PtrList::size() << " elements"
+            << endl;
+        if(
+            !args.options().found("useFvOptions")
+            &&
+            !replayDict.lookupOrDefault<bool>("useFvOptions",false)
+        ) {
+            Info << "Clearing fvOptions. Use 'useFvOptions' (commandline or dictionary) if you need them" << endl;
+            fvOptions.PtrList::clear();
+        }
+    }
+#endif
 
     while(
         timeDirs.size()>0

@@ -3319,4 +3319,9 @@ S_{expl} + S_{impl} T
 **** =replayTransientBC= now handles surface and point fields
      The utility can now read surface and point fields. Surface-fields
      are not corrected because this is not supported by Foam
+**** =replayTransientBC= reads =fvOptions=
+     The utility now reads =fvOptions= for FOAM-versions that support
+     it. They have to be switched on with 'useFvOptions' as most of
+     the tine they are not needed (only with function objects that
+     solve equations)
 *** Examples
