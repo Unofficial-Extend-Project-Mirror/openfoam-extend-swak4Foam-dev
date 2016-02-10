@@ -345,6 +345,19 @@ Contributors/Copyright:
 #define FOAM_HAS_INTERPOLATION2DTABLE
 #endif
 
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,2,0)) && !defined(FOAM_DEV)
+#define FOAM_HAS_IOMRFLIST
+#endif
+
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,3,0)) && !defined(FOAM_DEV)
+#define FOAM_MRF_NEW_METHOD_NAME
+#endif
+
+#if (FOAM_VERSION4SWAK >= VERSION_NR(3,0,0)) && !defined(FOAM_DEV)
+#define FOAM_MRF_CHANGED_CORIOLIS
+#endif
+
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
