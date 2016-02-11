@@ -3324,4 +3324,7 @@ S_{expl} + S_{impl} T
      it. They have to be switched on with 'useFvOptions' as most of
      the tine they are not needed (only with function objects that
      solve equations)
+**** PDE-function objects now have additional =solveAt=-option =never=
+     When this option is set then the function-objects are read
+     (including the field) but never solved
 *** Examples

@@ -91,7 +91,8 @@ public:
     enum solveAt {
         saStartup,
         saTimestep,
-        saWrite
+        saWrite,
+        saNever
     };
 protected:
 
@@ -144,7 +145,7 @@ protected:
     //- write specific data
     virtual void writeData() = 0;
 
-    static const NamedEnum<solveAt,3> solveAtNames_;
+    static const NamedEnum<solveAt,4> solveAtNames_;
     solveAt solveAt_;
 
     //- should the fields before and after be written?
