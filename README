@@ -3328,3 +3328,8 @@ S_{expl} + S_{impl} T
      When this option is set then the function-objects are read
      (including the field) but never solved
 *** Examples
+**** =solverPDE/pitzDailyWithPDE= extended
+     This case has been modified to a version that was presented at
+     the PFAU (Austrian User Group Meeting) in 2015. Now it compares
+     with the =scalarTransport= function object that was added to
+     OpenFOAM
