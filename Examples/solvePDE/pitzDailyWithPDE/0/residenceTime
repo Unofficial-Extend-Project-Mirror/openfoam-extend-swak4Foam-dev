@@ -9,52 +9,42 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      fvSolution;
+    class       volScalarField;
+    object      T;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-solvers
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
 {
-    T
+    inlet
     {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-06;
-        relTol          0;
+        type            fixedValue;
+        value           uniform 0;
     }
-    U
-    {
-        $T;
-    }
-    "swakTransport.*"
-    {
-        $T;
-    }
-    "residenceTime.*"
-    {
-        $T;
-    }
-    "openFoamResidenceTime.*Steady"
-    {
-        $T;
-    }
-}
 
-nToCorrect 0;
+    outlet
+    {
+        type            zeroGradient;
+    }
 
-SIMPLE
-{
-    nNonOrthogonalCorrectors $nToCorrect;
-}
+    upperWall
+    {
+        type            zeroGradient;
+    }
 
+    lowerWall
+    {
+        type            zeroGradient;
+    }
 
-".*TransportPDE"
-{
-    $SIMPLE;
-    nCorrectors $nToCorrect;
-    nNonOrthogonalCorrectors 0;
+    frontAndBack
+    {
+        type            empty;
+    }
 }
 
 // ************************************************************************* //

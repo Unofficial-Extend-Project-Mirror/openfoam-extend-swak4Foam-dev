@@ -3332,4 +3332,8 @@ S_{expl} + S_{impl} T
      This case has been modified to a version that was presented at
      the PFAU (Austrian User Group Meeting) in 2015. Now it compares
      with the =scalarTransport= function object that was added to
-     OpenFOAM
+     OpenFOAM.
+
+     The case now also calculates the time the fluid needs from the
+     inlet to the outlet (=residenceTime=). Steady as well as
+     transient

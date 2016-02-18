@@ -18,6 +18,7 @@ FoamFile
 ddtSchemes
 {
     default         Euler;
+    "ddt\(openFoamResidenceTime.*Steady\)" steadyState;
 }
 
 gradSchemes
@@ -36,6 +37,13 @@ divSchemes
     div(phi_copyBySwak4Foam,swakTransportUpwind) Gauss upwind;
     div(phi_copyBySwak4Foam,swakTransportDownwind) Gauss downwind;
     div(phi_copyBySwak4Foam,T_copyBySwak4Foam) Gauss linearUpwind grad(swakTransport);
+    div(phi_copyBySwak4Foam,residenceTime) Gauss linearUpwind grad(residenceTime);
+    div(phi_copyBySwak4Foam,residenceTimeSteady) Gauss linearUpwind grad(residenceTimeSteady);
+    div(phi_copyBySwak4Foam,residenceTimeZero) Gauss linearUpwind grad(residenceTimeZero);
+    div(phi_copyBySwak4Foam,residenceTimeZeroSteady) Gauss linearUpwind grad(residenceTimeZeroSteady);
+    div(phi_copyBySwak4Foam,residenceTimeLow) Gauss linearUpwind grad(residenceTimeLow);
+    div(phi_copyBySwak4Foam,residenceTimeLowSteady) Gauss linearUpwind grad(residenceTimeLowSteady);
+    "div\(phi,openFoamResidenceTime.*Steady\)"      Gauss linearUpwind grad(T);
 }
 
 laplacianSchemes
@@ -43,8 +51,10 @@ laplacianSchemes
     default         none;
     laplacian(DT,T) Gauss linear corrected;
     laplacian(DT,U) Gauss linear corrected;
+    "laplacian\(DT,openFoamResidenceTime.*Steady\)" Gauss linear corrected;
     "laplacian\(diffusion,swakTransport.*\)" Gauss linear corrected;
     laplacian(constantscalar,T_copyBySwak4Foam) Gauss linear corrected;
+    "laplacian\(diffusion,residenceTime.*\)" Gauss linear corrected;
 }
 
 interpolationSchemes
