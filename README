@@ -3327,6 +3327,9 @@ S_{expl} + S_{impl} T
 **** PDE-function objects now have additional =solveAt=-option =never=
      When this option is set then the function-objects are read
      (including the field) but never solved
+**** =replayTransientBC= reports execution time
+     The utility now reports the time. This is useful when using the
+     utility to test function objects
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at

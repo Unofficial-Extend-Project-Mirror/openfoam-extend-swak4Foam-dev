@@ -368,6 +368,10 @@ int main(int argc, char *argv[])
                 (*it).write();
             }
         }
+
+        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
+            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+            << nl << endl;
     }
 
     Info << "End\n" << endl;
