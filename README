@@ -3295,6 +3295,22 @@ S_{expl} + S_{impl} T
      - functions to make fields absolute or relative in the =MRF= region
      - a function to calculate the Coriolis force
      All these functions call the MRF-model
+**** Added library =simpleCloudFunctionObjects= with function objects for particle clouds
+     These function objects can be added to particle clouds. In this
+     first version these objects can be added:
+     - cloudMoveStatistics :: Records simple statistics about the
+          solution of the cloud:
+       - How often were faces hit by particles (total, per particle:
+         minimum, mean and average)
+       - How often were particles moved (same data as face hits)
+       - How often was each patch hit
+       Only minimum effort has been spent to consolidate this data
+       across processors (particles may be counted on multiple
+       processors).
+
+       The main purpose of this function object is to spot problematic
+       behavior (particles that hit patches repeatedly and don't
+       move)
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as

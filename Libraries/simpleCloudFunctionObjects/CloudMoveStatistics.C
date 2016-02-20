@@ -76,6 +76,7 @@ void Foam::CloudMoveStatistics<CloudType>::preEvolve()
 {
     Info << this->modelName() << ":" << this->modelType()
         << ": Clearing data" << endl;
+
     faceHitCounter_.clear();
 
     // Initialize with zero to make sure that particles that don't hit faces are counted as well
@@ -83,6 +84,14 @@ void Foam::CloudMoveStatistics<CloudType>::preEvolve()
         const typename CloudType::parcelType& p = iter();
         faceHitCounter_.insert(labelPair(p.origProc(), p.origId()), 0);
     }
+
+    movesCounter_.clear();
+    forAllConstIter(typename CloudType, this->owner(), iter) {
+        const typename CloudType::parcelType& p = iter();
+        movesCounter_.insert(labelPair(p.origProc(), p.origId()), 0);
+    }
+
+    patchHitCounter_.clear();
 }
 
 template<class CloudType>
@@ -99,7 +108,8 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
     }
     if(faceHitNr>0) {
         Pout << this->modelName() << ":" << this->modelType()
-            << ": Face hit Nr: " << faceHitNr
+            << ": Face hit Nr: " << faceHitSum
+            << " (" << faceHitNr << " particles)"
             << " Min: " << faceHitMin
             << " Mean: " << float(faceHitSum)/faceHitNr
             << " Max: " << faceHitMax << endl;
@@ -114,7 +124,8 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
         reduce(faceHitMax,maxOp<label>());
         if(faceHitNr>0) {
             Info << this->modelName() << ":" << this->modelType()
-                << ": Face hit Nr: " << faceHitNr
+                << ": Face hit Nr: " << faceHitSum
+                << " (" << faceHitNr << " particles)"
                 << " Min: " << faceHitMin
                 << " Mean: " << float(faceHitSum)/faceHitNr
                 << " Max: " << faceHitMax << endl;
@@ -122,6 +133,49 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
             Info << this->modelName() << ":" << this->modelType()
                 << ": No face hits" << endl;
         }
+    }
+
+    label movesNr=movesCounter_.size();
+    label movesMin=labelMax;
+    label movesMax=labelMin;
+    label movesSum=0;
+    forAllConstIter(hitTableType,movesCounter_,iter) {
+        movesSum+=iter();
+        movesMin=min(movesMin,iter());
+        movesMax=max(movesMax,iter());
+    }
+    if(movesNr>0) {
+        Pout << this->modelName() << ":" << this->modelType()
+            << ": Moves Nr: " << movesSum
+            << " (" << movesNr << " particles)"
+            << " Min: " << movesMin
+            << " Mean: " << float(movesSum)/movesNr
+            << " Max: " << movesMax << endl;
+    } else {
+        Pout << this->modelName() << ":" << this->modelType()
+            << ": No moves" << endl;
+    }
+    if(Pstream::parRun()) {
+        reduce(movesNr,plusOp<label>());
+        reduce(movesSum,plusOp<label>());
+        reduce(movesMin,minOp<label>());
+        reduce(movesMax,maxOp<label>());
+        if(movesNr>0) {
+            Info << this->modelName() << ":" << this->modelType()
+                << ": Moves Nr: " << movesSum
+                << " (" << movesNr << " particles)"
+                << " Min: " << movesMin
+                << " Mean: " << float(movesSum)/movesNr
+                << " Max: " << movesMax << endl;
+        } else {
+            Info << this->modelName() << ":" << this->modelType()
+                << ": No moves" << endl;
+        }
+    }
+
+    forAllConstIter(patchHitTableType,patchHitCounter_,iter) {
+        Pout << this->modelName() << ":" << this->modelType()
+            << " Patch " << iter.key() << " hit " << iter() << " times" << endl;
     }
 }
 
@@ -135,6 +189,18 @@ void Foam::CloudMoveStatistics<CloudType>::postMove
     bool& keepParticle
 )
 {
+    hitTableType::iterator iter =
+        movesCounter_.find(labelPair(p.origProc(), p.origId()));
+
+    if (iter != movesCounter_.end())
+    {
+        iter()++;
+    }
+    else
+    {
+        // particles that come from another processor will be counted on both
+        movesCounter_.insert(labelPair(p.origProc(), p.origId()), 1);
+    }
 }
 
 template<class CloudType>
@@ -147,6 +213,19 @@ void Foam::CloudMoveStatistics<CloudType>::postPatch
     bool& keepParticle
 )
 {
+    patchHitTableType::iterator iter =
+        patchHitCounter_.find(pp.name());
+
+    if (iter != patchHitCounter_.end())
+    {
+        iter()++;
+    }
+    else
+    {
+        // particles that come from another processor will be counted on both
+        patchHitCounter_.insert(pp.name(), 1);
+    }
+
 }
 
 template<class CloudType>

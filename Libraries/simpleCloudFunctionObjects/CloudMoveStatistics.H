@@ -75,9 +75,16 @@ class CloudMoveStatistics
     //- Convenience typedef for hash hit-table
     typedef HashTable<label, labelPair, typename labelPair::Hash<> > hitTableType;
 
+    typedef HashTable<label, word> patchHitTableType;
+
     //- Table of number of times a particle has hit a face
     hitTableType faceHitCounter_;
 
+    //- Table of number of times a particle has been moved
+    hitTableType movesCounter_;
+
+    //- table of the number of times a patch has been hit
+    patchHitTableType patchHitCounter_;
 protected:
 
     // Protected member functions
