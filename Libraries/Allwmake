@@ -182,3 +182,8 @@ else
     echo "If you have your own function-plugins you can specify them using the SWAK_USER_PLUGINS environment variable and they would be compiled now. If you don't know what this means: don't bother. You propably don't need it"
     echo
 fi
+
+if [ "$FOAM_DEV" == "" ]
+then
+    wmake libso simpleCloudFunctionObjects
+fi
