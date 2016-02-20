@@ -1,7 +1,91 @@
-compareSteady {
-	theTitle "FunctionObject compared to native";
-	expr "Expression compare(\S+) :  min=(%f%) max=(%f%) average=(%f%)";
-	type dynamic;
-	titles (min max average);
-	idNr 1;
+// -*- c++ -*-
+
+theValues {
+    type dynamic;
+    theTitle "Transported values";
+    expr "Expression transported(.+) :  min=(.+) weightedQuantile0.1=(.+) weightedAverage=(.+) weightedQuantile0.9=(.+) max=(.+)";
+    idNr 1;
+    titles (
+        min
+        "10%"
+        average
+        "90%"
+        max
+    );
+}
+residenceTime {
+    type dynamic;
+    theTitle "Residence time";
+    expr "Expression residenceTime(.+) :  min=(.+) weightedQuantile0.1=(.+) weightedAverage=(.+) weightedQuantile0.9=(.+) max=(.+)";
+    idNr 1;
+    titles (
+        min
+        "10%"
+        average
+        "90%"
+        max
+    );
+}
+residenceTimeOut {
+    type dynamic;
+    theTitle "Residence time on outlet ";
+    expr "Expression outResidenceTime(.+) :  min=(.+) weightedAverage=(.+) max=(.+)";
+    idNr 1;
+    titles (
+        min
+        average
+        max
+    );
+}
+standardValues {
+    type dynamic;
+    theTitle "Solver comparison";
+    expr "Expression transported(Original|OF|Swak) :  min=(.+) weightedQuantile0.1=(.+) weightedAverage=(.+) weightedQuantile0.9=(.+) max=(.+)";
+    idNr 1;
+    titles (
+        min
+        "10%"
+        average
+        "90%"
+        max
+    );
+}
+discetizationValues {
+    type dynamic;
+    theTitle "Discretization comparison";
+    expr "Expression transported(Original|Linear|Upwind) :  min=(.+) weightedQuantile0.1=(.+) weightedAverage=(.+) weightedQuantile0.9=(.+) max=(.+)";
+    idNr 1;
+    titles (
+        min
+        "10%"
+        average
+        "90%"
+        max
+    );
+}
+modificationValues {
+    type dynamic;
+    theTitle "Diffusion modification";
+    expr "Expression transported(Swak|SwakMod) :  min=(.+) weightedQuantile0.1=(.+) weightedAverage=(.+) weightedQuantile0.9=(.+) max=(.+)";
+    idNr 1;
+    titles (
+        min
+        "10%"
+        average
+        "90%"
+        max
+    );
+}
+downwindValues {
+    type dynamic;
+    idNr 1;
+    theTitle "Downwind vs Upwind";
+    expr "Expression transported(.+)wind :  min=(.+) weightedQuantile0.1=(.+) weightedAverage=(.+) weightedQuantile0.9=(.+) max=(.+)";
+    titles (
+        min
+        "10%"
+        average
+        "90%"
+        max
+    );
 }

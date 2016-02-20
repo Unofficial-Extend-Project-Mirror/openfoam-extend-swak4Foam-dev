@@ -169,6 +169,10 @@ Contributors/Copyright:
 #define FOAM_HAS_FVOPTIONS
 #endif
 
+#if defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS)
+#define FOAM_FVOPTIONS_IN_FV
+#endif
+
 #ifndef FOAM_DEV
 // movePoints now gets a polyMesh
 #define FOAM_MOVEPOINTS_GETS_POLYMESH
@@ -264,6 +268,10 @@ Contributors/Copyright:
 
 #if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
 #define FOAM_NEW_MESH2MESH
+#endif
+
+#if defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS)
+#define FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR
 #endif
 
 #if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)

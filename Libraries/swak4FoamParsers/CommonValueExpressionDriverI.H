@@ -940,10 +940,16 @@ namespace Foam {
             Info << "Objects in mesh: " << theMesh.names() << endl;
         }
 #ifdef FOAM_NEW_MESH2MESH
+#ifdef FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR
+        return interpolation.mapSrcToTgt(
+            theMesh.lookupObject<T>(fieldName)
+        );
+#else
         return interpolation.mapSrcToTgt(
             theMesh.lookupObject<T>(fieldName),
             eqOp<typename T::value_type>()
         );
+#endif
 #else
         return interpolation.interpolate(
             theMesh.lookupObject<T>(fieldName),

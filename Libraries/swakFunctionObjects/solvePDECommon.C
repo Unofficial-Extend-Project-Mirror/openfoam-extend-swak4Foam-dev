@@ -44,14 +44,15 @@ namespace Foam {
 }
 
 template<>
-const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,3>::names[]=
+const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,4>::names[]=
 {
     "startup",
     "timestep",
-    "write"
+    "write",
+    "never"
 };
 
-const Foam::NamedEnum<Foam::solvePDECommon::solveAt,3> Foam::solvePDECommon::solveAtNames_;
+const Foam::NamedEnum<Foam::solvePDECommon::solveAt,4> Foam::solvePDECommon::solveAtNames_;
 
 Foam::solvePDECommon::solvePDECommon
 (
@@ -253,12 +254,12 @@ bool Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const
     ) {
         WarningIn("Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const")
 	  << "There are " << fvOptions().size() << " fvOptions defined." << nl
-	  << "For technical reason a 'rho' entry is needed in " << name_ 
+	  << "For technical reason a 'rho' entry is needed in " << name_
 	  << endl;
     }
 #endif
 
-    return 
+    return
       !steady_
 #ifdef FOAM_HAS_FVOPTIONS
       ||

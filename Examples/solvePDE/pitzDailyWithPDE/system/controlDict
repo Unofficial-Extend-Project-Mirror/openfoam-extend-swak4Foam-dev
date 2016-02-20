@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  3.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -29,7 +29,7 @@ deltaT          0.0001;
 
 writeControl    timeStep;
 
-writeInterval   50;
+writeInterval   10;
 
 purgeWrite      0;
 
@@ -37,70 +37,316 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression compressed;
+writeCompression on;
 
 timeFormat      general;
 
 timePrecision   6;
 
-runTimeModifiable yes;
+runTimeModifiable true;
+
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libutilityFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakFvcSchemesFunctionPlugin.so"
+    "libswakSourceFields.so"
+    "libswakFvOptions.so"
+);
+
+nToCorrect 0;
 
 functions {
-    TCompare {
-        type solveTransportPDE;
-        outputControl   timeStep;
-        outputInterval  1;
-
-        solveAt timestep;
-        fieldName TCompare;
-        steady false;
-        rho "1" [0 0 0 0 0 0 0];
-        diffusion "0.01" [0 2 -1 0 0 0 0];
-        source "0" [0 0 -1 1 0 0 0];
-        phi "phi" [0 3 -1 0 0];
-    }
-    TUpwind {
-        $TCompare;
-
-        fieldName TUpwind;
-    }
-    TLinear {
-        $TCompare;
-
-        fieldName TLinear;
-    }
-    TSteady {
-        $TCompare;
-
-        fieldName TSteady;
-        steady true;
-        solveAt startup;
-    }
-    compareTransient {
+    transportedOriginal {
         type swakExpression;
+        valueType internalField;
         verbose true;
-        expression "T-TCompare";
+        expression "T";
+        nCorr $nToCorrect;
+        outputControlMode timeStep;
+        outputInterval 1;
         accumulations (
             min
+            weightedQuantile0.1
+            weightedAverage
+            weightedQuantile0.9
             max
-            average
         );
-        valueType internalField;
     }
-    compareLinear {
-        $compareTransient;
-        expression "T-TLinear";
+    openFoamTransport {
+        type scalarTransport;
+        resetOnStartUp false;
+        autoSchemes true;
+        DT 0.01;
+        fvOptions {}
     }
-    compareUpwind {
-        $compareTransient;
-        expression "T-TUpwind";
+    transportedOF {
+        $transportedOriginal;
+        expression "openFoamTransport";
+    }
+    swak4FoamTransport {
+        type solveTransportPDE;
+        solveAt timestep;
+        fieldName swakTransport;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "0.01" [m^2/s];
+        source "0" [K/s];
+        phi "phi" [m^3/s];
+        relaxUnsteady false;
+    }
+    transportedSwak {
+        $transportedOriginal;
+        expression "swakTransport";
+    }
+    swak4FoamTransportMod {
+        $swak4FoamTransport;
+        fieldName swakTransportMod;
+        diffusion "0.01*(1-3*(swakTransportMod)*(1-swakTransportMod))" [m^2/s];
+    }
+    transportedSwakMod {
+        $transportedOriginal;
+        expression "swakTransportMod";
+    }
+    swak4FoamLinearTransport {
+        $swak4FoamTransport;
+        fieldName swakTransportLinear;
+    }
+    transportedLinear {
+        $transportedOriginal;
+        expression "swakTransportLinear";
+    }
+    diffLinear {
+        type expressionField;
+        autowrite true;
+        fieldName diffLinear;
+        expression "swakTransportLinear-swakTransport";
+    }
+    swak4FoamUpwindTransport {
+        $swak4FoamTransport;
+        fieldName swakTransportUpwind;
+    }
+    transportedUpwind {
+        $transportedOriginal;
+        expression "swakTransportUpwind";
+    }
+    diffUpwind {
+        type expressionField;
+        autowrite true;
+        fieldName diffUpwind;
+        expression "swakTransportUpwind-swakTransport";
+    }
+    swak4FoamDownwindTransport {
+        $swak4FoamTransport;
+        fieldName swakTransportDownwind;
+    }
+    transportedDownwind {
+        $transportedOriginal;
+        expression "swakTransportDownwind";
+    }
+    convectionContribution {
+        type expressionField;
+        autowrite true;
+        fieldName convectionDDT;
+        expression "-div(phi,T)";
+    }
+    diffusionContribution {
+        $convectionContribution;
+        fieldName diffusionDDT;
+        expression "laplacian(0.01,T)";
+    }
+    totalTimeChange {
+        $diffusionContribution;
+        fieldName totalDDT;
+        expression "convectionDDT+diffusionDDT";
+    }
+    differenceUpwindLinear {
+        $diffusionContribution;
+        fieldName upwindVsLinear;
+        expression "fvcConvectionDivScalar(phi,T,\"Gauss linear\")-fvcConvectionDivScalar(phi,T,\"Gauss upwind\")";
+    }
+    divergenceFlowField {
+        $diffusionContribution;
+        fieldName divPhi;
+        expression "div(phi)";
+    }
+    residenceTimeTransientTransport {
+        type solveTransportPDE;
+        solveAt timestep;
+        fieldName residenceTime;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "0.01" [m^2/s];
+        source "1" [K/s];
+        phi "phi" [m^3/s];
+        relaxUnsteady false;
+    }
+    residenceTimeTransient {
+        $transportedOriginal;
+        expression "residenceTime";
+    }
+    outResidenceTimeTransient {
+        $residenceTimeTransient;
+        valueType patch;
+        patchName outlet;
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+    }
+    residenceTimeSteadyTransport {
+        $residenceTimeTransientTransport;
+        steady true;
+        fieldName residenceTimeSteady;
+    }
+    residenceTimeSteady {
+        $residenceTimeTransient;
+        expression "residenceTimeSteady";
+    }
+    outResidenceTimeSteady {
+        $outResidenceTimeTransient;
+        expression "residenceTimeSteady";
+    }
+    residenceTimeZeroTransport {
+        $residenceTimeTransientTransport;
+        diffusion "0.0" [m^2/s];
+        fieldName residenceTimeZero;
+    }
+    residenceTimeZero {
+        $residenceTimeTransient;
+        expression "residenceTimeZero";
+    }
+    outResidenceTimeZero {
+        $outResidenceTimeTransient;
+        expression "residenceTimeZero";
+    }
+    residenceTimeZeroSteadyTransport {
+        $residenceTimeZeroTransport;
+        steady true;
+        fieldName residenceTimeZeroSteady;
+    }
+    residenceTimeZeroSteady {
+        $residenceTimeTransient;
+        expression "residenceTimeZeroSteady";
+    }
+    outResidenceTimeZeroSteady {
+        $outResidenceTimeTransient;
+        expression "residenceTimeZeroSteady";
+    }
+    residenceTimeLowTransport {
+        $residenceTimeTransientTransport;
+        diffusion "1e-6" [m^2/s];
+        fieldName residenceTimeLow;
+    }
+    residenceTimeLow {
+        $residenceTimeTransient;
+        expression "residenceTimeLow";
+    }
+    outResidenceTimeLow {
+        $outResidenceTimeTransient;
+        expression "residenceTimeLow";
+    }
+    residenceTimeLowSteadyTransport {
+        $residenceTimeLowTransport;
+        steady true;
+        fieldName residenceTimeLowSteady;
+    }
+    residenceTimeLowSteady {
+        $residenceTimeTransient;
+        expression "residenceTimeLowSteady";
+    }
+    outResidenceTimeLowSteady {
+        $outResidenceTimeTransient;
+        expression "residenceTimeLowSteady";
+    }
+    openFoamResidenceTime {
+        type scalarTransport;
+        resetOnStartUp false;
+        autoSchemes true;
+        DT 0.01;
+        nCorr $nToCorrect;
+        fvOptions {
+            // weAreHere {
+            //     type reportAvailableFvOptions;
+            //     active on;
+            //     reportAvailableFvOptionsCoeffs {
+            //     }
+            // }
+            constantSourceTerm {
+                type scalarSemiImplicitSource;
+                // type scalarSwakExplicitSource;
+                active on;
+                scalarSemiImplicitSourceCoeffs {
+                    // selectionMode cellZone;
+                    // cellZone nix;
+                    selectionMode all;
+                    volumeMode specific;
+                    // timeStart       0.0;
+                    // duration        $endTime;
+                    injectionRateSuSp {
+                        openFoamResidenceTime  (1 0);
+                        openFoamResidenceTimeSteady $openFoamResidenceTime;
+                        openFoamResidenceTimeZeroSteady $openFoamResidenceTime;
+                        openFoamResidenceTimeLowSteady $openFoamResidenceTime;
+                    }
+                }
+                scalarSwakExplicitSourceCoeffs {
+                    $scalarSemiImplicitSourceCoeffs;
+                    expressions {
+                        openFoamResidenceTime "1" [K/s];
+                        openFoamResidenceTimeSteady $openFoamResidenceTime;
+                        openFoamResidenceTimeZeroSteady $openFoamResidenceTime;
+                        openFoamResidenceTimeLowSteady $openFoamResidenceTime;
+                    }
+                }
+            }
+        }
+    }
+    residenceTimeOpenFOAM {
+        $residenceTimeTransient;
+        expression "openFoamResidenceTime";
+    }
+    outResidenceTimeOpenFOAM {
+        $outResidenceTimeTransient;
+        expression "openFoamResidenceTime";
+    }
+    openFoamResidenceTimeSteady {
+        $openFoamResidenceTime;
+        autoSchemes false;
+    }
+    residenceTimeOpenFOAMSteady {
+        $residenceTimeTransient;
+        expression "openFoamResidenceTimeSteady";
+    }
+    outResidenceTimeOpenFOAMSteady {
+        $outResidenceTimeTransient;
+        expression "openFoamResidenceTimeSteady";
+    }
+    openFoamResidenceTimeZeroSteady {
+        $openFoamResidenceTimeSteady;
+        DT 0;
+    }
+    residenceTimeOpenFOAMZeroSteady {
+        $residenceTimeTransient;
+        expression "openFoamResidenceTimeZeroSteady";
+    }
+    outResidenceTimeOpenFOAMZeroSteady {
+        $outResidenceTimeTransient;
+        expression "openFoamResidenceTimeZeroSteady";
+    }
+    openFoamResidenceTimeLowSteady {
+        $openFoamResidenceTimeSteady;
+        DT 1e-6;
+    }
+    residenceTimeOpenFOAMLowSteady {
+        $residenceTimeTransient;
+        expression "openFoamResidenceTimeLowSteady";
+    }
+    outResidenceTimeOpenFOAMLowSteady {
+        $outResidenceTimeTransient;
+        expression "openFoamResidenceTimeLowSteady";
     }
 }
-
-libs ( 
-    "libOpenFOAM.so" 
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
-) ;
 
 // ************************************************************************* //

@@ -3231,6 +3231,10 @@ S_{expl} + S_{impl} T
 **** Does not compile with ~WM_LABEL_SIZE=64~
      A reference to a =label= that was passed to a =flex=-function
      broke compilation because that expects a 32-bit integer. Fixed
+**** Tensor-fields not correctly handled by =replayTransientBC=
+     Due to a copy/past-problem all tensor-fields (including
+     symmtrical and spherical) would have caused the utility to
+     fail. Fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
@@ -3312,4 +3316,27 @@ S_{expl} + S_{impl} T
      off with the setting =manipulateAtStartup= in cases where not all
      the requirements for correctly evaluating the expressions are
      fulfilled during construction
+**** =replayTransientBC= now handles surface and point fields
+     The utility can now read surface and point fields. Surface-fields
+     are not corrected because this is not supported by Foam
+**** =replayTransientBC= reads =fvOptions=
+     The utility now reads =fvOptions= for FOAM-versions that support
+     it. They have to be switched on with 'useFvOptions' as most of
+     the tine they are not needed (only with function objects that
+     solve equations)
+**** PDE-function objects now have additional =solveAt=-option =never=
+     When this option is set then the function-objects are read
+     (including the field) but never solved
+**** =replayTransientBC= reports execution time
+     The utility now reports the time. This is useful when using the
+     utility to test function objects
 *** Examples
+**** =solverPDE/pitzDailyWithPDE= extended
+     This case has been modified to a version that was presented at
+     the PFAU (Austrian User Group Meeting) in 2015. Now it compares
+     with the =scalarTransport= function object that was added to
+     OpenFOAM.
+
+     The case now also calculates the time the fluid needs from the
+     inlet to the outlet (=residenceTime=). Steady as well as
+     transient
