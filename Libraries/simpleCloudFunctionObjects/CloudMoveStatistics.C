@@ -47,7 +47,9 @@ Foam::CloudMoveStatistics<CloudType>::CloudMoveStatistics
 )
 :
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
-    faceHitCounter_()
+    faceHitCounter_(),
+    movesCounter_(),
+    patchHitCounter_()
 {}
 
 
@@ -58,7 +60,9 @@ Foam::CloudMoveStatistics<CloudType>::CloudMoveStatistics
 )
 :
     CloudFunctionObject<CloudType>(ppm),
-    faceHitCounter_(ppm.faceHitCounter_)
+    faceHitCounter_(ppm.faceHitCounter_),
+    movesCounter_(ppm.movesCounter_),
+    patchHitCounter_(ppm.patchHitCounter_)
 {}
 
 
