@@ -33,6 +33,12 @@ License
 template<class CloudType>
 void Foam::EliminateCaughtParcels<CloudType>::write()
 {
+    if (eliminatedPtr_.valid())
+    {
+        eliminatedPtr_->write();
+
+        eliminatedPtr_->clear();
+    }
 }
 
 
@@ -56,7 +62,8 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     minDistanceMove_(
         readScalar(dict.lookup("minDistanceMove"))
     ),
-    toEliminate_()
+    toEliminate_(),
+    eliminatedPtr_(NULL)
 {}
 
 
@@ -72,7 +79,8 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     lastPosition_(ppm.lastPosition_),
     maxNumberOfHits_(ppm.maxNumberOfHits_),
     minDistanceMove_(ppm.minDistanceMove_),
-    toEliminate_(ppm.toEliminate_)
+    toEliminate_(ppm.toEliminate_),
+    eliminatedPtr_(ppm.eliminatedPtr_)
 {}
 
 
@@ -95,11 +103,31 @@ void Foam::EliminateCaughtParcels<CloudType>::preEvolve()
     lastFace_.clear();
     lastPosition_.clear();
     toEliminate_.clear();
+
+    if (!eliminatedPtr_.valid())
+    {
+        eliminatedPtr_.reset
+            (
+                this->owner().cloneBare(
+                    this->owner().name()
+                    +
+                    this->modelName()
+                    +
+                    "Eliminated"
+                ).ptr()
+            );
+    }
 }
 
 template<class CloudType>
 void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
 {
+    label nrEliminated=toEliminate_.size();
+    reduce(nrEliminated,plusOp<label>());
+    if(nrEliminated>0) {
+        Info << this->modelName() << ":" << this->modelType()
+            << " : " << nrEliminated << " parcels eliminated" << endl;
+    }
 }
 
 
@@ -118,26 +146,6 @@ void Foam::EliminateCaughtParcels<CloudType>::postMove
         if(keepParticle) {
             Pout << this->modelName() << ":" << this->modelType()
                 << ": removing " << theId << " ... postMove" << endl;
-        }
-        keepParticle=false;
-    }
-}
-
-template<class CloudType>
-void Foam::EliminateCaughtParcels<CloudType>::postPatch
-(
-    const typename CloudType::parcelType& p,
-    const polyPatch& pp,
-    const scalar trackFraction,
-    const tetIndices& testIs,
-    bool& keepParticle
-)
-{
-    const labelPair theId(p.origProc(), p.origId());
-    if(toEliminate_.found(theId)) {
-        if(keepParticle) {
-            Pout << this->modelName() << ":" << this->modelType()
-                << ": removing " << theId << " ... postPatch" << endl;
         }
         keepParticle=false;
     }
@@ -182,7 +190,12 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
 
                         keepParticle=false;
                         const_cast<parcelType&>(p).active()=false;
-                        toEliminate_.insert(theId);
+                        if(!toEliminate_.found(theId)) {
+                            toEliminate_.insert(theId);
+                            eliminatedPtr_->append(
+                                p.clone(this->owner().mesh()).ptr()
+                            );
+                        }
                     }
                 }
             }
@@ -203,7 +216,12 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
 
                             keepParticle=false;
                             const_cast<parcelType&>(p).active()=false;
-                            toEliminate_.insert(theId);
+                            if(!toEliminate_.found(theId)) {
+                                toEliminate_.insert(theId);
+                                eliminatedPtr_->append(
+                                    p.clone(this->owner().mesh()).ptr()
+                                );
+                            }
                         };
                     }
                 } else {

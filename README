@@ -3311,6 +3311,21 @@ S_{expl} + S_{impl} T
        The main purpose of this function object is to spot problematic
        behavior (particles that hit patches repeatedly and don't
        move)
+
+     - eliminateCaughtParticles :: Sometimes particles get caught in
+          "endless loops" (hitting the same patch over and over again
+          without significant movement). This may slow down
+          simulations significantly as basically the same impact is
+          calculated over and over again without any progress. Two
+          parameters allow eliminating such parcels:
+       - maximumNumberOfHits :: if the same boundary face is hit more often
+         than this by the particle (without hitting any other
+         faces) then the particle is eliminated. Recommended value: 1000
+       - minDistanceMove :: Minimum distance a particle has to move
+         when hitting a boundary face. If it moved less the
+         particle is removed. Recommended: $10^{-9}$
+       If one of the parameters is set to a negative value the
+       criterion is "switched off"
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as

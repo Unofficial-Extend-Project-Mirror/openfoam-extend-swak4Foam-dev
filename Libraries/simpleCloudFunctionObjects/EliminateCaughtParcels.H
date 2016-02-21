@@ -101,6 +101,9 @@ class EliminateCaughtParcels
     //- remember particles to eliminate because setting keepParticle to false in postPatch is not sufficient
     HashSet<labelPair, typename labelPair::Hash<> > toEliminate_;
 
+    //- Pointer to the cloud storage
+    autoPtr<Cloud<parcelType> > eliminatedPtr_;
+
 protected:
 
     // Protected member functions
@@ -159,16 +162,6 @@ public:
         const label cellI,
         const scalar dt,
         const point& position0,
-        bool& keepParticle
-    );
-
-    //- Post-patch hook
-    virtual void postPatch
-    (
-        const typename CloudType::parcelType& p,
-        const polyPatch& pp,
-        const scalar trackFraction,
-        const tetIndices& testIs,
         bool& keepParticle
     );
 
