@@ -47,6 +47,22 @@ Contributors/Copyright:
 #include "basicReactingCloud.H"
 #include "basicReactingMultiphaseCloud.H"
 
+#ifdef FOAM_HAS_MPICC_CLOUD
+#include "basicKinematicMPPICCloud.H"
+#define makeCloudFunctionObjectTypeMultiMPICC(FunctionObjectType)   \
+      makeCloudFunctionObjectTypeMulti(FunctionObjectType,basicKinematicMPPICCloud);
+#else
+#define makeCloudFunctionObjectTypeMultiMPICC(FunctionObjectType)
+#endif
+
+#ifdef FOAM_HAS_COLLIDING_CLOUD
+#include "basicKinematicCollidingCloud.H"
+#define makeCloudFunctionObjectTypeMultiColliding(FunctionObjectType)   \
+    makeCloudFunctionObjectTypeMulti(FunctionObjectType,basicKinematicCollidingCloud);
+#else
+#define makeCloudFunctionObjectTypeMultiColliding(FunctionObjectType)
+#endif
+
 // redefinition of the original because the typedef is not unique
 #define makeCloudFunctionObjectTypeMulti(SS, CloudType)             \
                                                                         \
@@ -59,6 +75,8 @@ Contributors/Copyright:
 
 #define makeFunctionObjectsForKnownClouds(FunctionObjectType)       \
     makeCloudFunctionObjectTypeMulti(FunctionObjectType,basicKinematicCloud); \
+    makeCloudFunctionObjectTypeMultiMPICC(FunctionObjectType);          \
+    makeCloudFunctionObjectTypeMultiColliding(FunctionObjectType);      \
     makeCloudFunctionObjectTypeMulti(FunctionObjectType,basicThermoCloud); \
     makeCloudFunctionObjectTypeMulti(FunctionObjectType,basicReactingCloud); \
     makeCloudFunctionObjectTypeMulti(FunctionObjectType,basicReactingMultiphaseCloud);
