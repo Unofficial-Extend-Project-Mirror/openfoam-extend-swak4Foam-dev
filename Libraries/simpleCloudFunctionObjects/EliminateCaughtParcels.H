@@ -98,9 +98,6 @@ class EliminateCaughtParcels
     //- distance below which it is assumed that the particle has not moved
     scalar minDistanceMove_;
 
-    //- when eliminating the parcel set the velocity to 0 (for moving meshes)
-    bool clearVelocityOnElimination_;
-
     //- remember particles to eliminate because setting keepParticle to false in postPatch is not sufficient
     HashSet<labelPair, typename labelPair::Hash<> > toEliminate_;
 

@@ -56,9 +56,6 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     minDistanceMove_(
         readScalar(dict.lookup("minDistanceMove"))
     ),
-    clearVelocityOnElimination_(
-        readBool(dict.lookup("clearVelocityOnElimination"))
-    ),
     toEliminate_()
 {}
 
@@ -75,7 +72,6 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     lastPosition_(ppm.lastPosition_),
     maxNumberOfHits_(ppm.maxNumberOfHits_),
     minDistanceMove_(ppm.minDistanceMove_),
-    clearVelocityOnElimination_(ppm.clearVelocityOnElimination_),
     toEliminate_(ppm.toEliminate_)
 {}
 
@@ -188,12 +184,6 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                         const_cast<parcelType&>(p).active()=false;
                         toEliminate_.insert(theId);
                     }
-                    if(
-                        clearVelocityOnElimination_
-                    ) {
-                        // set to zero because in moving meshes the velocity might be non-zero
-                        const_cast<parcelType&>(p).U()=vector::zero;
-                    }
                 }
             }
             if(maxNumberOfHits_>1) {
@@ -215,12 +205,6 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                             const_cast<parcelType&>(p).active()=false;
                             toEliminate_.insert(theId);
                         };
-                        if(
-                            clearVelocityOnElimination_
-                        ) {
-                            // set to zero because in moving meshes the velocity might be non-zero
-                            const_cast<parcelType&>(p).U()=vector::zero;
-                        }
                     }
                 } else {
                     // different face. Reset
