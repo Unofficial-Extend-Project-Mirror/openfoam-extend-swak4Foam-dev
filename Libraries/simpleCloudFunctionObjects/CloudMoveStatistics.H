@@ -85,6 +85,7 @@ class CloudMoveStatistics
 
     //- table of the number of times a patch has been hit
     patchHitTableType patchHitCounter_;
+
 protected:
 
     // Protected member functions

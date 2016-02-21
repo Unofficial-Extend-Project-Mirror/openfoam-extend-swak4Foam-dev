@@ -55,7 +55,11 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     ),
     minDistanceMove_(
         readScalar(dict.lookup("minDistanceMove"))
-    )
+    ),
+    clearVelocityOnElimination_(
+        readBool(dict.lookup("clearVelocityOnElimination"))
+    ),
+    toEliminate_()
 {}
 
 
@@ -70,7 +74,9 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     lastFace_(ppm.lastFace_),
     lastPosition_(ppm.lastPosition_),
     maxNumberOfHits_(ppm.maxNumberOfHits_),
-    minDistanceMove_(ppm.minDistanceMove_)
+    minDistanceMove_(ppm.minDistanceMove_),
+    clearVelocityOnElimination_(ppm.clearVelocityOnElimination_),
+    toEliminate_(ppm.toEliminate_)
 {}
 
 
@@ -92,11 +98,53 @@ void Foam::EliminateCaughtParcels<CloudType>::preEvolve()
     faceHitCounter_.clear();
     lastFace_.clear();
     lastPosition_.clear();
+    toEliminate_.clear();
 }
 
 template<class CloudType>
 void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
 {
+}
+
+
+template<class CloudType>
+void Foam::EliminateCaughtParcels<CloudType>::postMove
+(
+    typename CloudType::parcelType& p,
+    const label cellI,
+    const scalar dt,
+    const point& position0,
+    bool& keepParticle
+)
+{
+    const labelPair theId(p.origProc(), p.origId());
+    if(toEliminate_.found(theId)) {
+        if(keepParticle) {
+            Pout << this->modelName() << ":" << this->modelType()
+                << ": removing " << theId << " ... postMove" << endl;
+        }
+        keepParticle=false;
+    }
+}
+
+template<class CloudType>
+void Foam::EliminateCaughtParcels<CloudType>::postPatch
+(
+    const typename CloudType::parcelType& p,
+    const polyPatch& pp,
+    const scalar trackFraction,
+    const tetIndices& testIs,
+    bool& keepParticle
+)
+{
+    const labelPair theId(p.origProc(), p.origId());
+    if(toEliminate_.found(theId)) {
+        if(keepParticle) {
+            Pout << this->modelName() << ":" << this->modelType()
+                << ": removing " << theId << " ... postPatch" << endl;
+        }
+        keepParticle=false;
+    }
 }
 
 template<class CloudType>
@@ -130,11 +178,22 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                     <
                     minDistanceMove_
                 ) {
-                    Pout << this->modelName() << ":" << this->modelType()
-                        << "Eliminating particle because it only moved " << moved << nl
-                        << p << endl;
+                    if(keepParticle) {
+                        // only print this once
+                        Pout << this->modelName() << ":" << this->modelType()
+                            << "Eliminating particle because it only moved " << moved << nl
+                            << p << endl;
 
-                    keepParticle=false;
+                        keepParticle=false;
+                        const_cast<parcelType&>(p).active()=false;
+                        toEliminate_.insert(theId);
+                    }
+                    if(
+                        clearVelocityOnElimination_
+                    ) {
+                        // set to zero because in moving meshes the velocity might be non-zero
+                        const_cast<parcelType&>(p).U()=vector::zero;
+                    }
                 }
             }
             if(maxNumberOfHits_>1) {
@@ -145,12 +204,23 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                         >
                         maxNumberOfHits_
                     ) {
-                        Pout << this->modelName() << ":" << this->modelType()
-                            << "Eliminating particle because it hit face " << faceI
-                            << " for " << iter() << " times in a row" << nl
-                            << p << endl;
+                        // only print this once
+                        if(keepParticle) {
+                            Pout << this->modelName() << ":" << this->modelType()
+                                << "Eliminating particle because it hit face " << faceI
+                                << " for " << iter() << " times in a row" << nl
+                                << p << endl;
 
-                        keepParticle=false;
+                            keepParticle=false;
+                            const_cast<parcelType&>(p).active()=false;
+                            toEliminate_.insert(theId);
+                        };
+                        if(
+                            clearVelocityOnElimination_
+                        ) {
+                            // set to zero because in moving meshes the velocity might be non-zero
+                            const_cast<parcelType&>(p).U()=vector::zero;
+                        }
                     }
                 } else {
                     // different face. Reset

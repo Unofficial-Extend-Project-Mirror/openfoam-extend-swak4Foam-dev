@@ -98,6 +98,12 @@ class EliminateCaughtParcels
     //- distance below which it is assumed that the particle has not moved
     scalar minDistanceMove_;
 
+    //- when eliminating the parcel set the velocity to 0 (for moving meshes)
+    bool clearVelocityOnElimination_;
+
+    //- remember particles to eliminate because setting keepParticle to false in postPatch is not sufficient
+    HashSet<labelPair, typename labelPair::Hash<> > toEliminate_;
+
 protected:
 
     // Protected member functions
@@ -148,6 +154,26 @@ public:
 
     //- Post-evolve hook
     virtual void postEvolve();
+
+    //- Post-move hook
+    virtual void postMove
+    (
+        typename CloudType::parcelType& p,
+        const label cellI,
+        const scalar dt,
+        const point& position0,
+        bool& keepParticle
+    );
+
+    //- Post-patch hook
+    virtual void postPatch
+    (
+        const typename CloudType::parcelType& p,
+        const polyPatch& pp,
+        const scalar trackFraction,
+        const tetIndices& testIs,
+        bool& keepParticle
+    );
 
     //- Post-face hook
     virtual void postFace
