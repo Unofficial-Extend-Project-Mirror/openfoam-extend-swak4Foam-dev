@@ -83,6 +83,9 @@ protected:
     exprString sourceImplicitExpression_;
     dimensionSet sourceImplicitDimension_;
 
+    //- Discretize Implicit Source term with SpUp
+    bool sourceImplicitUseSuSp_;
+
     //- do the actual solving
     void solve();
 

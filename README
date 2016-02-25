@@ -3330,6 +3330,11 @@ S_{expl} + S_{impl} T
 **** =replayTransientBC= reports execution time
      The utility now reports the time. This is useful when using the
      utility to test function objects
+**** Added parameter =sourceImplicitUseSuSp= to =PDE=-function objects
+     The function objects =solveLaplacianPDE= and =solveTransportPDE=
+     now have a new parameter =sourceImplicitUseSuSp= that allows
+     switching from using =Sp()= (the default) to =SuSp()= for the
+     addition of =sourceImplicitExpression=
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at
