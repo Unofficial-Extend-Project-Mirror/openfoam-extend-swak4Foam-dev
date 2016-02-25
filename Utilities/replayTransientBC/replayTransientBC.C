@@ -50,7 +50,11 @@ Contributors/Copyright:
 #include "swak.H"
 
 #ifdef FOAM_HAS_FVOPTIONS
+#ifdef FOAM_FVOPTIONS_IN_FV
 #include "fvOptions.H"
+#else
+#include "fvIOoptionList.H"
+#endif
 #endif
 
 using namespace Foam;

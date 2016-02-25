@@ -90,7 +90,7 @@ namespace Foam {
 #endif
 
 #if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)
-#define FOAM_HAS_MPICC_CLOUD
+#define FOAM_HAS_MPPIC_CLOUD
 #endif
 
 #if (FOAM_VERSION4SWAK > VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
