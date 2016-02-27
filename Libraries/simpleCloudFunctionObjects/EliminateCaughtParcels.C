@@ -123,10 +123,34 @@ template<class CloudType>
 void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
 {
     label nrEliminated=toEliminate_.size();
+    label totalEliminated=
+        nrEliminated
+        +
+        this->template getModelProperty<scalar>("nrEliminated");
+
+    this->template setModelProperty<scalar>(
+        "nrEliminated",
+        totalEliminated
+    );
+
     reduce(nrEliminated,plusOp<label>());
-    if(nrEliminated>0) {
+    if(Pstream::parRun()) {
+        totalEliminated=
+            nrEliminated
+            +
+            this->template getModelProperty<scalar>("nrEliminatedAllProc");
+
+        this->template setModelProperty<scalar>(
+            "nrEliminatedAllProc",
+            totalEliminated
+        );
+    }
+
+
+    if(totalEliminated>0) {
         Info << this->modelName() << ":" << this->modelType()
-            << " : " << nrEliminated << " parcels eliminated" << endl;
+            << " : " << nrEliminated << " parcels eliminated this timeste. "
+            << totalEliminated << " in total" << endl;
     }
 }
 

@@ -121,6 +121,14 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
         Pout << this->modelName() << ":" << this->modelType()
             << ": No face hits" << endl;
     }
+    faceHitCounter_.clear();
+    this->template setModelProperty<scalar>(
+        "numberOfFaceHits",
+        faceHitSum
+        +
+        this->template getModelProperty<scalar>("numberOfFaceHits")
+    );
+
     if(Pstream::parRun()) {
         reduce(faceHitNr,plusOp<label>());
         reduce(faceHitSum,plusOp<label>());
@@ -148,6 +156,13 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
         movesMin=min(movesMin,iter());
         movesMax=max(movesMax,iter());
     }
+    movesCounter_.clear();
+    this->template setModelProperty<scalar>(
+        "numberOfMoves",
+        movesSum
+        +
+        this->template getModelProperty<scalar>("numberOfMoves")
+    );
     if(movesNr>0) {
         Pout << this->modelName() << ":" << this->modelType()
             << ": Moves Nr: " << movesSum
@@ -180,6 +195,14 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
     forAllConstIter(patchHitTableType,patchHitCounter_,iter) {
         Pout << this->modelName() << ":" << this->modelType()
             << " Patch " << iter.key() << " hit " << iter() << " times" << endl;
+
+        const word propName="numberOfHitsPatch_"+iter.key();
+        this->template setModelProperty<scalar>(
+            propName,
+            iter()
+            +
+            this->template getModelProperty<scalar>(propName)
+        );
     }
 }
 
