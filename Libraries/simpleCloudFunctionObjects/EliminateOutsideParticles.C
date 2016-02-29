@@ -61,6 +61,12 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
     eliminatedPrePtr_(NULL),
     eliminatedPostPtr_(NULL),
+    eliminatePre_(
+        readBool(dict.lookup("eliminatePre"))
+    ),
+    eliminatePost_(
+        readBool(dict.lookup("eliminatePost"))
+    ),
     out_(
         this->outputDir(),
         this->owner().time()
@@ -85,6 +91,8 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
     CloudFunctionObject<CloudType>(ppm),
     eliminatedPrePtr_(ppm.eliminatedPrePtr_),
     eliminatedPostPtr_(ppm.eliminatedPostPtr_),
+    eliminatePre_(ppm.eliminatePre_),
+    eliminatePost_(ppm.eliminatePost_),
     out_(
         this->outputDir(),
         this->owner().time()
@@ -119,21 +127,23 @@ void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
     Info << this->modelName() << ":" << this->modelType()
         << ": Checking pre" << endl;
 
-    if (!eliminatedPrePtr_.valid())
-    {
-        eliminatedPrePtr_.reset
-            (
-                this->owner().cloneBare(
-                    this->owner().name()
-                    +
-                    this->modelName()
-                    +
-                    "EliminatedPre"
-                ).ptr()
-            );
-    }
+    if(eliminatePre_) {
+        if (!eliminatedPrePtr_.valid())
+        {
+            eliminatedPrePtr_.reset
+                (
+                    this->owner().cloneBare(
+                        this->owner().name()
+                        +
+                        this->modelName()
+                        +
+                        "EliminatedPre"
+                    ).ptr()
+                );
+        }
 
-    nrPre_=checkInside(eliminatedPrePtr_());
+        nrPre_=checkInside(eliminatedPrePtr_());
+    }
 }
 
 template<class CloudType>
@@ -142,22 +152,24 @@ void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
     Info << this->modelName() << ":" << this->modelType()
         << ": Checking post" << endl;
 
-    if (!eliminatedPostPtr_.valid())
-    {
-        eliminatedPostPtr_.reset
-            (
-                this->owner().cloneBare(
-                    this->owner().name()
-                    +
-                    this->modelName()
-                    +
-                    "EliminatedPost"
-                ).ptr()
-            );
+    label nrPost=0;
+    if(eliminatePost_) {
+        if(!eliminatedPostPtr_.valid())
+        {
+            eliminatedPostPtr_.reset
+                (
+                    this->owner().cloneBare(
+                        this->owner().name()
+                        +
+                        this->modelName()
+                        +
+                        "EliminatedPost"
+                    ).ptr()
+                );
+        }
+
+        nrPost=checkInside(eliminatedPostPtr_());
     }
-
-    label nrPost=checkInside(eliminatedPostPtr_());
-
     label nrEliminatedPre=nrPre_;
     label totalEliminatedPre=
         nrEliminatedPre
