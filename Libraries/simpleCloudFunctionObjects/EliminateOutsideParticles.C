@@ -221,6 +221,7 @@ template<class CloudType>
 Foam::label Foam::EliminateOutsideParticles<CloudType>::checkInside(Cloud<parcelType> &eliminate)
 {
     label cnt=0;
+    label outCnt=0;
 
     forAllIter(typename CloudType,this->owner(),iter) {
         parcelType &p=iter();
@@ -240,9 +241,13 @@ Foam::label Foam::EliminateOutsideParticles<CloudType>::checkInside(Cloud<parcel
             );
             this->owner().deleteParticle(p);
         } else if(cellI!=oldCellI) {
-            Pout << "Cell at position " << p.position() << " is " << cellI
-                << ". Not " << oldCellI << endl;
+            // Pout << "Cell at position " << p.position() << " is " << cellI
+            //     << ". Not " << oldCellI << endl;
+            outCnt++;
         }
+    }
+    if(outCnt>0) {
+        Pout << outCnt << " particles not in the right cell" << endl;
     }
     return cnt;
 }
