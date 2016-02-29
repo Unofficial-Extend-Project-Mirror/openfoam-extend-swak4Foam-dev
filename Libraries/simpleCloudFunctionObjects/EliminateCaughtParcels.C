@@ -152,6 +152,8 @@ void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
             << " : " << nrEliminated << " parcels eliminated this timeste. "
             << totalEliminated << " in total" << endl;
     }
+
+    CloudFunctionObject<CloudType>::postEvolve();
 }
 
 

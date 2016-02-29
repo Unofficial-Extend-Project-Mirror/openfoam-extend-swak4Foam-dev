@@ -204,6 +204,8 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
             this->template getModelProperty<scalar>(propName)
         );
     }
+
+    CloudFunctionObject<CloudType>::postEvolve();
 }
 
 template<class CloudType>
