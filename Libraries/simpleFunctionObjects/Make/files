@@ -2,6 +2,7 @@ SolverInfo/SolverInfo.C
 
 DataStructures/TimeClone/TimeClone.C
 DataStructures/TimeClone/TimeCloneList.C
+DataStructures/TimelineCollection/TimelineCollection.C
 
 simpleFunctionObject/simpleFunctionObject.C
 simpleDataFunctionObject/simpleDataFunctionObject.C

@@ -63,8 +63,17 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
         readScalar(dict.lookup("minDistanceMove"))
     ),
     toEliminate_(),
-    eliminatedPtr_(NULL)
-{}
+    eliminatedPtr_(NULL),
+    out_(
+        this->outputDir(),
+        this->owner().time()
+    )
+{
+    out_.addSpec(
+        "eliminated.*",
+        "sum"
+    );
+}
 
 
 template<class CloudType>
@@ -80,7 +89,11 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     maxNumberOfHits_(ppm.maxNumberOfHits_),
     minDistanceMove_(ppm.minDistanceMove_),
     toEliminate_(ppm.toEliminate_),
-    eliminatedPtr_(ppm.eliminatedPtr_)
+    eliminatedPtr_(ppm.eliminatedPtr_),
+    out_(
+        this->outputDir(),
+        this->owner().time()
+    )
 {}
 
 
@@ -132,7 +145,10 @@ void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
         "nrEliminated",
         totalEliminated
     );
-
+    if(Pstream::parRun()) {
+        out_["eliminatedCpu"+name(Pstream::myProcNo())]
+            << nrEliminated << endl;
+    }
     reduce(nrEliminated,plusOp<label>());
     if(Pstream::parRun()) {
         totalEliminated=
@@ -146,10 +162,14 @@ void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
         );
     }
 
+    if(Pstream::master()) {
+        out_["eliminatedTotal"]
+            << nrEliminated << endl;
+    }
 
     if(totalEliminated>0) {
         Info << this->modelName() << ":" << this->modelType()
-            << " : " << nrEliminated << " parcels eliminated this timeste. "
+            << " : " << nrEliminated << " parcels eliminated this timestep. "
             << totalEliminated << " in total" << endl;
     }
 

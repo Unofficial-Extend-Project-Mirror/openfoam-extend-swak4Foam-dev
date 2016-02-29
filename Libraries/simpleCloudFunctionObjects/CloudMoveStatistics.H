@@ -51,6 +51,8 @@ Contributors/Copyright:
 
 #include "swakCloudTypes.H"
 
+#include "TimelineCollection.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -85,6 +87,9 @@ class CloudMoveStatistics
 
     //- table of the number of times a patch has been hit
     patchHitTableType patchHitCounter_;
+
+    //- here we get our files from
+    TimelineCollection out_;
 
 protected:
 
