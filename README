@@ -3326,6 +3326,10 @@ S_{expl} + S_{impl} T
          particle is removed. Recommended: $10^{-9}$
        If one of the parameters is set to a negative value the
        criterion is "switched off"
+     - eliminateOutsideParticles :: Removes particles that are outside
+       the mesh (are not inside any cell). The purpose of this is
+       to eliminate particles that are for some reason not
+       correctly tracked
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
