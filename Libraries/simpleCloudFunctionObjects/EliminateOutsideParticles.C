@@ -107,6 +107,15 @@ Foam::EliminateOutsideParticles<CloudType>::~EliminateOutsideParticles()
 template<class CloudType>
 void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
 {
+    if(
+        this->owner().mesh().changing()
+    ) {
+        Info << this->modelName() << ":" << this->modelType()
+            << ": Mesh moving" << endl;
+
+        search_.correct();
+    }
+
     Info << this->modelName() << ":" << this->modelType()
         << ": Checking pre" << endl;
 
