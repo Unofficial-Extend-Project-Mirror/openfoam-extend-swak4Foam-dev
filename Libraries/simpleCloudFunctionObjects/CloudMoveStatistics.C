@@ -49,8 +49,25 @@ Foam::CloudMoveStatistics<CloudType>::CloudMoveStatistics
     CloudFunctionObject<CloudType>(dict, owner, modelName, typeName),
     faceHitCounter_(),
     movesCounter_(),
-    patchHitCounter_()
-{}
+    patchHitCounter_(),
+    out_(
+        this->outputDir(),
+        this->owner().time()
+    )
+{
+    out_.addSpec(
+        "faceHit.*",
+        "sum \t min \t mean \t max"
+    );
+    out_.addSpec(
+        "moves.*",
+        "sum \t min \t mean \t max"
+    );
+    out_.addSpec(
+        "patchHit.*",
+        "sum"
+    );
+}
 
 
 template<class CloudType>
@@ -62,7 +79,11 @@ Foam::CloudMoveStatistics<CloudType>::CloudMoveStatistics
     CloudFunctionObject<CloudType>(ppm),
     faceHitCounter_(ppm.faceHitCounter_),
     movesCounter_(ppm.movesCounter_),
-    patchHitCounter_(ppm.patchHitCounter_)
+    patchHitCounter_(ppm.patchHitCounter_),
+    out_(
+        this->outputDir(),
+        this->owner().time()
+    )
 {}
 
 
@@ -110,35 +131,54 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
         faceHitMin=min(faceHitMin,iter());
         faceHitMax=max(faceHitMax,iter());
     }
+    scalar faceHitMean=0;
+
     if(faceHitNr>0) {
+        faceHitMean=float(faceHitSum)/faceHitNr;
         Pout << this->modelName() << ":" << this->modelType()
             << ": Face hit Nr: " << faceHitSum
             << " (" << faceHitNr << " particles)"
             << " Min: " << faceHitMin
-            << " Mean: " << float(faceHitSum)/faceHitNr
+            << " Mean: " << faceHitMean
             << " Max: " << faceHitMax << endl;
     } else {
         Pout << this->modelName() << ":" << this->modelType()
             << ": No face hits" << endl;
     }
+    faceHitCounter_.clear();
+    this->template setModelProperty<scalar>(
+        "numberOfFaceHits",
+        faceHitSum
+        +
+        this->template getModelProperty<scalar>("numberOfFaceHits")
+    );
+
     if(Pstream::parRun()) {
+        word fName="faceHitProc"+name(Pstream::myProcNo());
+        out_[fName] << faceHitNr << tab << faceHitMin
+            << tab << faceHitMean << tab << faceHitMax << endl;
+
         reduce(faceHitNr,plusOp<label>());
         reduce(faceHitSum,plusOp<label>());
         reduce(faceHitMin,minOp<label>());
         reduce(faceHitMax,maxOp<label>());
         if(faceHitNr>0) {
+            faceHitMean=float(faceHitSum)/faceHitNr;
             Info << this->modelName() << ":" << this->modelType()
                 << ": Face hit Nr: " << faceHitSum
                 << " (" << faceHitNr << " particles)"
                 << " Min: " << faceHitMin
-                << " Mean: " << float(faceHitSum)/faceHitNr
+                << " Mean: " << faceHitMean
                 << " Max: " << faceHitMax << endl;
         } else {
             Info << this->modelName() << ":" << this->modelType()
                 << ": No face hits" << endl;
         }
     }
-
+    if(Pstream::master()) {
+        out_["faceHitsTotal"] << faceHitNr << tab << faceHitMin
+            << tab << faceHitMean << tab << faceHitMax << endl;
+    }
     label movesNr=movesCounter_.size();
     label movesMin=labelMax;
     label movesMax=labelMin;
@@ -148,39 +188,69 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
         movesMin=min(movesMin,iter());
         movesMax=max(movesMax,iter());
     }
+    movesCounter_.clear();
+    this->template setModelProperty<scalar>(
+        "numberOfMoves",
+        movesSum
+        +
+        this->template getModelProperty<scalar>("numberOfMoves")
+    );
+    scalar movesMean=0;
     if(movesNr>0) {
+        movesMean=float(movesSum)/movesNr;
         Pout << this->modelName() << ":" << this->modelType()
             << ": Moves Nr: " << movesSum
             << " (" << movesNr << " particles)"
             << " Min: " << movesMin
-            << " Mean: " << float(movesSum)/movesNr
+            << " Mean: " << movesMean
             << " Max: " << movesMax << endl;
     } else {
         Pout << this->modelName() << ":" << this->modelType()
             << ": No moves" << endl;
     }
     if(Pstream::parRun()) {
+        word fName="movesProc"+name(Pstream::myProcNo());
+        out_[fName] << movesNr << tab << movesMin
+            << tab << movesMean << tab << movesMax << endl;
+
         reduce(movesNr,plusOp<label>());
         reduce(movesSum,plusOp<label>());
         reduce(movesMin,minOp<label>());
         reduce(movesMax,maxOp<label>());
+        movesMean=float(movesSum)/movesNr;
         if(movesNr>0) {
             Info << this->modelName() << ":" << this->modelType()
                 << ": Moves Nr: " << movesSum
                 << " (" << movesNr << " particles)"
                 << " Min: " << movesMin
-                << " Mean: " << float(movesSum)/movesNr
+                << " Mean: " << movesMean
                 << " Max: " << movesMax << endl;
         } else {
             Info << this->modelName() << ":" << this->modelType()
                 << ": No moves" << endl;
         }
     }
+    if(Pstream::master()) {
+        out_["movessTotal"] << movesNr << tab << movesMin
+            << tab << movesMean << tab << movesMax << endl;
+    }
 
     forAllConstIter(patchHitTableType,patchHitCounter_,iter) {
         Pout << this->modelName() << ":" << this->modelType()
             << " Patch " << iter.key() << " hit " << iter() << " times" << endl;
+
+        const word propName="numberOfHitsPatch_"+iter.key();
+        this->template setModelProperty<scalar>(
+            propName,
+            iter()
+            +
+            this->template getModelProperty<scalar>(propName)
+        );
+        out_["patchHit_"+iter.key()+"proc"+name(Pstream::myProcNo())]
+            << iter() << endl;
     }
+
+    CloudFunctionObject<CloudType>::postEvolve();
 }
 
 template<class CloudType>

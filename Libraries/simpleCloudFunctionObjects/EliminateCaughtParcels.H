@@ -57,6 +57,8 @@ Contributors/Copyright:
 
 #include "swakCloudTypes.H"
 
+#include "TimelineCollection.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -103,6 +105,9 @@ class EliminateCaughtParcels
 
     //- Pointer to the cloud storage
     autoPtr<Cloud<parcelType> > eliminatedPtr_;
+
+    //- here we get our files from
+    TimelineCollection out_;
 
 protected:
 

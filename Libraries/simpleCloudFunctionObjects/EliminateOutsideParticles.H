@@ -28,14 +28,13 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::CloudMoveStatistics
+    Foam::EliminateOutsideParticles
 
 Description
-    Record the number of faces etc that were hit during one evolution. This is
-    mainly used to find out whether there is a problem during the tracking phase
+    Eliminate parcels that are outside of the known cells
 
 SourceFiles
-    CloudMoveStatistics.C
+    EliminateOutsideParticles.C
 
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,8 +43,8 @@ Contributors/Copyright:
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef CloudMoveStatistics_H
-#define CloudMoveStatistics_H
+#ifndef EliminateOutsideParticles_H
+#define EliminateOutsideParticles_H
 
 #include "CloudFunctionObject.H"
 
@@ -53,17 +52,19 @@ Contributors/Copyright:
 
 #include "TimelineCollection.H"
 
+#include "meshSearch.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class CloudMoveStatistics Declaration
+                       Class EliminateOutsideParticles Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class CloudType>
-class CloudMoveStatistics
+class EliminateOutsideParticles
 :
     public CloudFunctionObject<CloudType>
 {
@@ -74,22 +75,22 @@ class CloudMoveStatistics
     //- Convenience typedef for parcel type
     typedef typename CloudType::parcelType parcelType;
 
-    //- Convenience typedef for hash hit-table
-    typedef HashTable<label, labelPair, typename labelPair::Hash<> > hitTableType;
+    //- Pointer to the cloud storage
+    autoPtr<Cloud<parcelType> > eliminatedPrePtr_;
 
-    typedef HashTable<label, word> patchHitTableType;
-
-    //- Table of number of times a particle has hit a face
-    hitTableType faceHitCounter_;
-
-    //- Table of number of times a particle has been moved
-    hitTableType movesCounter_;
-
-    //- table of the number of times a patch has been hit
-    patchHitTableType patchHitCounter_;
+    //- Pointer to the cloud storage
+    autoPtr<Cloud<parcelType> > eliminatedPostPtr_;
 
     //- here we get our files from
     TimelineCollection out_;
+
+    //- data structure to search cells
+    meshSearch search_;
+
+    //- check whether particles are outside and mark particles to be outside
+    label checkInside(Cloud<parcelType> &eliminate);
+
+    label nrPre_;
 
 protected:
 
@@ -102,13 +103,13 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("cloudMoveStatistics");
+    TypeName("eliminateOutsideParticles");
 
 
     // Constructors
 
     //- Construct from dictionary
-    CloudMoveStatistics
+    EliminateOutsideParticles
     (
         const dictionary& dict,
         CloudType& owner,
@@ -116,20 +117,20 @@ public:
     );
 
     //- Construct copy
-    CloudMoveStatistics(const CloudMoveStatistics<CloudType>& ppm);
+    EliminateOutsideParticles(const EliminateOutsideParticles<CloudType>& ppm);
 
     //- Construct and return a clone
     virtual autoPtr<CloudFunctionObject<CloudType> > clone() const
         {
             return autoPtr<CloudFunctionObject<CloudType> >
                 (
-                    new CloudMoveStatistics<CloudType>(*this)
+                    new EliminateOutsideParticles<CloudType>(*this)
                 );
         }
 
 
     //- Destructor
-    virtual ~CloudMoveStatistics();
+    virtual ~EliminateOutsideParticles();
 
 
     // Member Functions
@@ -142,35 +143,6 @@ public:
     //- Post-evolve hook
     virtual void postEvolve();
 
-    //- Post-move hook
-    virtual void postMove
-    (
-        typename CloudType::parcelType& p,
-        const label cellI,
-        const scalar dt,
-        const point& position0,
-        bool& keepParticle
-    );
-
-    //- Post-patch hook
-    virtual void postPatch
-    (
-        const typename CloudType::parcelType& p,
-        const polyPatch& pp,
-        const scalar trackFraction,
-        const tetIndices& testIs,
-        bool& keepParticle
-    );
-
-    //- Post-face hook
-    virtual void postFace
-    (
-        const parcelType& p,
-        const label faceI,
-        bool& keepParticle
-    );
-
-
 };
 
 
@@ -182,7 +154,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "CloudMoveStatistics.C"
+#   include "EliminateOutsideParticles.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -63,8 +63,17 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
         readScalar(dict.lookup("minDistanceMove"))
     ),
     toEliminate_(),
-    eliminatedPtr_(NULL)
-{}
+    eliminatedPtr_(NULL),
+    out_(
+        this->outputDir(),
+        this->owner().time()
+    )
+{
+    out_.addSpec(
+        "eliminated.*",
+        "sum"
+    );
+}
 
 
 template<class CloudType>
@@ -80,7 +89,11 @@ Foam::EliminateCaughtParcels<CloudType>::EliminateCaughtParcels
     maxNumberOfHits_(ppm.maxNumberOfHits_),
     minDistanceMove_(ppm.minDistanceMove_),
     toEliminate_(ppm.toEliminate_),
-    eliminatedPtr_(ppm.eliminatedPtr_)
+    eliminatedPtr_(ppm.eliminatedPtr_),
+    out_(
+        this->outputDir(),
+        this->owner().time()
+    )
 {}
 
 
@@ -123,11 +136,44 @@ template<class CloudType>
 void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
 {
     label nrEliminated=toEliminate_.size();
-    reduce(nrEliminated,plusOp<label>());
-    if(nrEliminated>0) {
-        Info << this->modelName() << ":" << this->modelType()
-            << " : " << nrEliminated << " parcels eliminated" << endl;
+    label totalEliminated=
+        nrEliminated
+        +
+        this->template getModelProperty<scalar>("nrEliminated");
+
+    this->template setModelProperty<scalar>(
+        "nrEliminated",
+        totalEliminated
+    );
+    if(Pstream::parRun()) {
+        out_["eliminatedCpu"+name(Pstream::myProcNo())]
+            << nrEliminated << endl;
     }
+    reduce(nrEliminated,plusOp<label>());
+    if(Pstream::parRun()) {
+        totalEliminated=
+            nrEliminated
+            +
+            this->template getModelProperty<scalar>("nrEliminatedAllProc");
+
+        this->template setModelProperty<scalar>(
+            "nrEliminatedAllProc",
+            totalEliminated
+        );
+    }
+
+    if(Pstream::master()) {
+        out_["eliminatedTotal"]
+            << nrEliminated << endl;
+    }
+
+    if(totalEliminated>0) {
+        Info << this->modelName() << ":" << this->modelType()
+            << " : " << nrEliminated << " parcels eliminated this timestep. "
+            << totalEliminated << " in total" << endl;
+    }
+
+    CloudFunctionObject<CloudType>::postEvolve();
 }
 
 
