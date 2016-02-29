@@ -3330,6 +3330,11 @@ S_{expl} + S_{impl} T
        the mesh (are not inside any cell). The purpose of this is
        to eliminate particles that are for some reason not
        correctly tracked
+     - correctParticleCell :: Correct the cell of the particle before
+       the evolution begins.
+
+       This should fix problems with moving meshes but is currently
+       not working correctly
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
