@@ -81,6 +81,10 @@ class EliminateOutsideParticles
     //- Pointer to the cloud storage
     autoPtr<Cloud<parcelType> > eliminatedPostPtr_;
 
+    bool eliminatePre_;
+
+    bool eliminatePost_;
+
     //- here we get our files from
     TimelineCollection out_;
 
