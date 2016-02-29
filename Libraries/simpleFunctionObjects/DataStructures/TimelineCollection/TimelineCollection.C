@@ -94,7 +94,7 @@ OFstream &TimelineCollection::operator[](const word &name) {
                 outputDirectory_/time_.timeName()/name
             )
         );
-        Pout << headerSpecs_ << endl;
+        //        Pout << headerSpecs_ << endl;
         OFstream &o=*outputFilePtr_[name];
         o << "# Time \t " << string(headerSpecs_[name]).c_str() << endl;
     }
