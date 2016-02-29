@@ -73,7 +73,8 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
     ),
     search_(
         this->owner().mesh()
-    )
+    ),
+    nrPre_(0)
 {
     out_.addSpec(
         "eliminated.*",
@@ -99,7 +100,8 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
     ),
     search_(
         this->owner().mesh()
-    )
+    ),
+    nrPre_(ppm.nrPre_)
 {}
 
 

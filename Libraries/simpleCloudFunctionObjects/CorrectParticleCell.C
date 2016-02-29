@@ -84,6 +84,11 @@ Foam::CorrectParticleCell<CloudType>::~CorrectParticleCell()
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CloudType>
+void Foam::CorrectParticleCell<CloudType>::write()
+{
+}
+
+template<class CloudType>
 void Foam::CorrectParticleCell<CloudType>::preEvolve()
 {
     if(

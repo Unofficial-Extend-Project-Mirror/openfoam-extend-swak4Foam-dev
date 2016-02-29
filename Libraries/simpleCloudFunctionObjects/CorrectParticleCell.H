@@ -88,6 +88,8 @@ protected:
 
     // Protected member functions
 
+    //- Write post-processing info
+    void write();
 
 public:
 
