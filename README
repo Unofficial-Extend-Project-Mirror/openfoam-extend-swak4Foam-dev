@@ -3335,6 +3335,13 @@ S_{expl} + S_{impl} T
 
        This should fix problems with moving meshes but is currently
        not working correctly
+**** Add library =swakCloudFunctionObjects= with function objects that use expressions for clouds
+     These function objects can be added to particle clouds and use
+     expressions. The function objects are
+     - eliminateBySwakExpression :: Evaluates an expression for each
+       particle. If the expression is =true= then the particle is
+       eliminated. Expression can be evaluated before or after the
+       moving of the particles
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as

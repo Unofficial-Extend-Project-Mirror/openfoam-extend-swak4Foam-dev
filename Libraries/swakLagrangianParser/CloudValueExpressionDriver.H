@@ -175,6 +175,12 @@ public:
         const word &defaultInterpolation
     );
 
+    //- construct from an existing cloud
+    CloudValueExpressionDriver(
+        const cloud& c,
+        const dictionary&
+    );
+
     //- Construct from a dictionary and cloud
     CloudValueExpressionDriver(
         const dictionary&,
