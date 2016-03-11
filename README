@@ -3235,6 +3235,10 @@ S_{expl} + S_{impl} T
      Due to a copy/past-problem all tensor-fields (including
      symmtrical and spherical) would have caused the utility to
      fail. Fixed
+**** Surfaces created by =createSampledSurface= not updated during mesh movement
+     The function object ignored the callbacks for moving meshes. It
+     now implements them and forces a regeneration of the surface if
+     the mesh moves
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
