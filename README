@@ -757,6 +757,9 @@ S_{expl} + S_{impl} T
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
+**** =AMIPipe=
+     Simple geometry for testing function objects with AMI. "Execute"
+     with =replayTransientBC=
 *** BugCases
     These are cases provided by users to demonstrate bugs. Not
     maintained nor documented and may be removed at any time
@@ -3377,6 +3380,9 @@ S_{expl} + S_{impl} T
 **** =replayTransientBC= reports execution time
      The utility now reports the time. This is useful when using the
      utility to test function objects
+**** =replayTransientBC= can read and update dynamic meshes
+     The command line option =-useDynamicMesh= tells the utility to
+     read the mesh as a dynamic mesh and update it at every time-step
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at
