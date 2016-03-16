@@ -45,5 +45,31 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
+functions {
+    solveTracer {
+        type solveTransportPDE;
+        solveAt timestep;
+        fieldName movedField;
+        outputControl timeStep;
+        outputInterval 1;
+        //    writeBeforeAfter true;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "1e-6" [0 2 -1 0 0 0 0]; // [m^2/s];
+        source "0" [0 0 -1 0 0 0 0];
+        phi "interpolate(U) & face()" [0 3 -1 0 0 0 0]; // [m^3/s];
+        //            relaxUnsteady true;
+        relaxUnsteady false;
+        makePhiRelative true;
+        //        makePhiRelative false;
+        //        velocityName U;
+        velocityExpression "U" [0 1 -1 0 0 0 0];
+    }
+}
+
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+);
 
 // ************************************************************************* //

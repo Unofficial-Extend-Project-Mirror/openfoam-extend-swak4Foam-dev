@@ -3383,6 +3383,13 @@ S_{expl} + S_{impl} T
 **** =replayTransientBC= can read and update dynamic meshes
      The command line option =-useDynamicMesh= tells the utility to
      read the mesh as a dynamic mesh and update it at every time-step
+**** =solveTransportPDE= function object now aware of mesh movement
+     If the function object detects that it is created with a moving
+     mesh then it asks for a parameter =makePhiRelative= to specify
+     whether =phi= should be made relative to the mesh movement (this
+     is usually necessary). Then either a =velocityExpression= or a
+     =velocityName= has to be specified as well and =phi= is corrected
+     according to the mesh movement
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at
