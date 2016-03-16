@@ -315,6 +315,8 @@ int main(int argc, char *argv[])
         if(useDynamicMesh) {
             Info << "Moving mesh" << endl;
             dynamicCast<dynamicFvMesh&>(mesh).update();
+
+            #include "meshCourantNo.H"
         }
 
         SLPtrList<volScalarField> scalarVolFieldsPre;
