@@ -65,6 +65,13 @@ functions {
         //        velocityName U;
         velocityExpression "U" [0 1 -1 0 0 0 0];
     }
+    solveSteadyTracer {
+        $solveTracer;
+        fieldName movedSteadyField;
+        steady true;
+        relaxLastIteration true;
+        //        makePhiRelative false;
+    }
 }
 
 libs (

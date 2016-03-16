@@ -58,7 +58,7 @@ solvers {
         relTol          0;
     }
 
-    movedField {
+    "moved.*Field" {
         solver          PBiCG;
         preconditioner  DILU;
         maxIter         1000;
@@ -74,7 +74,7 @@ PIMPLE {
     nNonOrthogonalCorrectors 0;
 }
 
-movedFieldTransportPDE {
+"moved.*FieldTransportPDE" {
     nCorrectors 2;
     nNonOrthogonalCorrectors 0;
 }
@@ -82,6 +82,7 @@ movedFieldTransportPDE {
 relaxationFactors
 {
     "(U|k|epsilon).*"   1;
+    movedSteadyField 0.8;
 }
 
 cache

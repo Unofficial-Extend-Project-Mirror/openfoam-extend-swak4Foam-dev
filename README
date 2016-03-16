@@ -3390,6 +3390,8 @@ S_{expl} + S_{impl} T
      is usually necessary). Then either a =velocityExpression= or a
      =velocityName= has to be specified as well and =phi= is corrected
      according to the mesh movement
+
+     If =steady= is =true= then =phi= is *not* made relative
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at

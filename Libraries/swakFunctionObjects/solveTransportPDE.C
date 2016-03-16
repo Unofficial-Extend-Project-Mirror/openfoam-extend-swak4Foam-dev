@@ -251,7 +251,11 @@ void Foam::solveTransportPDE::solve()
                 rhoField().dimensions().reset(rhoDimension_);
 	    }
 
-            if(makePhiRelative_) {
+            if(
+                makePhiRelative_
+                &&
+                !steady_
+            ) {
                 if(velocityName_!="none") {
                     if(needsRhoField()) {
                         fvc::makeRelative(
