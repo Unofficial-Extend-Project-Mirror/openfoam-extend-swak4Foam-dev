@@ -73,11 +73,51 @@ functions {
         relaxLastIteration true;
         //        makePhiRelative false;
     }
+    rhoField {
+        type expressionField;
+        fieldName pseudoRho;
+        expression "1139.0";
+        autowrite false;
+    }
+    muField {
+        type expressionField;
+        fieldName pseudoMu;
+        expression "70.0";
+        autowrite false;
+    }
+    staticUField {
+        type expressionField;
+        fieldName staticU;
+        expression "vector(0,0,0)";
+        autowrite false;
+    }
+    inletTransientParticle {
+        type evolveKinematicCloud;
+        cloudName transientInletCloud;
+        g "down" [0 1 -2 0 0 0 0] (0 0 -9.81);
+        rhoName pseudoRho;
+        muName pseudoMu;
+        UName U;
+
+        autowrite true;
+        ignore_unimplemented_EvolveCloudFunctionObject::movePoints true;
+    }
+    gridTransientParticle {
+        $inletTransientParticle;
+        cloudName transientGridCloud;
+    }
+    gridStaticParticle {
+        $gridTransientParticle;
+        cloudName staticGridCloud;
+        UName staticU;
+    }
 }
 
 libs (
     "libsimpleSwakFunctionObjects.so"
     "libswakFunctionObjects.so"
+    "libsimpleLagrangianFunctionObjects.so"
+    "libsimpleCloudFunctionObjects.so"
 );
 
 // ************************************************************************* //

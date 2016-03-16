@@ -8,6 +8,8 @@ pyFoamDecompose.py . |-numberOfProcessors-| --template=system/decomposeParDict.s
 pyFoamRunner.py --auto funkySetFields -create -time 0 -field cpuNr -expression "cpu()"
 <!--(end)-->
 
+pyFoamRunner.py --auto funkySetLagrangianField -time 0
+
 pyFoamRunner.py --auto funkySetFields -time 0 -field nonMovedField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
 pyFoamRunner.py --auto funkySetFields -time 0 -field movedField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
 pyFoamRunner.py --auto funkySetFields -time 0 -field movedField -keepPatches -expression "0"
