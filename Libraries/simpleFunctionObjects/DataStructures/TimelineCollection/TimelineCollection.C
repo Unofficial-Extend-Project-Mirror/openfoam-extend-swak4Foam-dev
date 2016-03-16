@@ -54,12 +54,17 @@ defineTypeNameAndDebug(TimelineCollection, 0);
 
 TimelineCollection::TimelineCollection(
     const fileName &dir,
-    const Time &time
+    const Time &time,
+    bool useStartTime
 ):
     outputDirectory_(dir),
-    time_(time)
+    time_(time),
+    timeName_("")
 {
     Dbug << "Construction" << endl;
+    if(useStartTime) {
+        timeName_=time.timeName();
+    }
 }
 
 
@@ -85,13 +90,17 @@ void TimelineCollection::addSpec(
 // * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * * //
 
 OFstream &TimelineCollection::operator[](const word &name) {
+    word timeName=timeName_;
+    if(timeName=="") {
+        timeName=time_.timeName();
+    }
     if(!outputFilePtr_.found(name)) {
         Dbug << "File name" << name << "not in table" << endl;
-        mkDir(outputDirectory_/time_.timeName());
+        mkDir(outputDirectory_/timeName);
         outputFilePtr_.insert(
             name,
             new OFstream(
-                outputDirectory_/time_.timeName()/name
+                outputDirectory_/timeName/name
             )
         );
         //        Pout << headerSpecs_ << endl;

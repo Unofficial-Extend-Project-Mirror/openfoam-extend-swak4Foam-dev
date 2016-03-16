@@ -131,15 +131,15 @@ cloudFunctions
     profileHits {
         type cloudMoveStatistics;
     }
-    // removeHitters {
-    //     type eliminateCaughtParcels;
-    //     maximumNumberOfHits 1000;
-    //     minDistanceMove -1;
-    //     clearVelocityOnElimination no;
-    // }
-    // outsideParticles {
-    //     type eliminateOutsideParticles;
-    //     eliminatePre false;
-    //     eliminatePost true;
-    // }
+    removeHitters {
+        type eliminateCaughtParcels;
+        maximumNumberOfHits 1000;
+        minDistanceMove -1;
+        clearVelocityOnElimination no;
+    }
+    outsideParticles {
+        type eliminateOutsideParticles;
+        eliminatePre false;
+        eliminatePost true;
+    }
 }
