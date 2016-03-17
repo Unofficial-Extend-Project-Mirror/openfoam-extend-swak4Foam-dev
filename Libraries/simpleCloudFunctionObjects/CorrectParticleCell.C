@@ -116,10 +116,34 @@ void Foam::CorrectParticleCell<CloudType>::preEvolve()
             // (cellI % 4)==0
         ) {
             cnt++;
+            //            Info << "Not in Mesh" << endl;
+            // label tetC=-1,tetP=-1,newCell=-1;
+            // this->owner().mesh().findCellFacePt(
+            //     p.position(),
+            //     newCell,
+            //     tetC,
+            //     tetP
+            // );
+            // Info << p.position() << " " << newCell << " " << tetC << " " << tetP << endl;
+            // Info << "Old: " << oldCellI << " " << p.tetFace() << " " << p.tetPt() << endl;
         } else if(cellI!=oldCellI) {
+            // Info << "Cell: " << cellI << " old: " << oldCellI << endl;
+            label tetC=-1,tetP=-1,newCell=-1;
+            this->owner().mesh().findCellFacePt(
+                p.position(),
+                newCell,
+                tetC,
+                tetP
+            );
+            // Info << "Corrected: " << p.position() << " " << newCell << " " << tetC << " " << tetP << endl;
+            // Info << "Old: " << p.cell() << " "<< p.tetFace() << " " << p.tetPt() << endl;
+
             outCnt++;
+            p.cell()=newCell;
+            p.tetFace()=tetC;
+            p.tetPt()=tetP;
             p.cell()=cellI;
-            //            p.initCellFacePt();
+            p.initCellFacePt();
         }
     }
     if(outCnt>0) {
@@ -128,13 +152,21 @@ void Foam::CorrectParticleCell<CloudType>::preEvolve()
 
     if(Pstream::parRun()) {
         out_["correctedCellProc"+name(Pstream::myProcNo())]
-            << outCnt << tab << cnt;
+            << outCnt << tab << cnt << endl;
     }
     reduce(cnt,plusOp<label>());
     reduce(outCnt,plusOp<label>());
     if(Pstream::master()) {
         out_["correctedCellTotal"]
-            << outCnt << tab << cnt;
+            << outCnt << tab << cnt << endl;
+    }
+    if(outCnt>0) {
+        Info << this->modelName() << ":" << this->modelType()
+            << "Corrected " << outCnt << " particles" << endl;
+    }
+    if(cnt>0) {
+        Info << this->modelName() << ":" << this->modelType()
+            << "Not in mesh " << cnt << " particles" << endl;
     }
 }
 

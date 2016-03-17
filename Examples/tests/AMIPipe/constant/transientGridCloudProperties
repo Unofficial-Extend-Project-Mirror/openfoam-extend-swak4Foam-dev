@@ -100,9 +100,9 @@ subModels
 
 cloudFunctions
 {
-    // correctCells {
-    //     type correctParticleCell;
-    // }
+    correctCells {
+        type correctParticleCell;
+    }
     patchAuslass
     {
         type            patchPostProcessing;
