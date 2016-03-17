@@ -113,7 +113,16 @@ public:
         const string &headerSpecString
     );
 
-    OFstream &operator[](const word &name);
+    OFstream &operator()(
+        const word &name,
+        bool autoParallel=true
+    );
+
+    OFstream &operator[](
+        const word &name
+    ) {
+        return (*this)(name,false);
+    }
 
     // Member Functions
 

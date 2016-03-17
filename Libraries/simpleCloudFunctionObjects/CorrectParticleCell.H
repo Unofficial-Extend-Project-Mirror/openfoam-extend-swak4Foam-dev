@@ -84,6 +84,9 @@ class CorrectParticleCell
     //- data structure to search cells
     meshSearch search_;
 
+    //- should all corrected particles be written
+    bool logCorrected_;
+
 protected:
 
     // Protected member functions

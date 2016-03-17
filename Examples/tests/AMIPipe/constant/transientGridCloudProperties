@@ -102,6 +102,7 @@ cloudFunctions
 {
     correctCells {
         type correctParticleCell;
+        //        logCorrected true;
     }
     patchAuslass
     {

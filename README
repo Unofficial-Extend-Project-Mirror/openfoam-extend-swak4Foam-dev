@@ -3337,7 +3337,12 @@ S_{expl} + S_{impl} T
        the evolution begins.
 
        This should fix problems with moving meshes but is currently
-       not working correctly
+       not working correctly.
+
+       An optional parameter =logCorrected= logs the data of the
+       corrected particles to a file. Only use for debugging or if you don't
+       expect many incidents
+
 **** Add library =swakCloudFunctionObjects= with function objects that use expressions for clouds
      These function objects can be added to particle clouds and use
      expressions. The function objects are
