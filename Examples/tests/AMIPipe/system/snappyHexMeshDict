@@ -215,10 +215,6 @@ addLayersControls
     // Per final patch (so not geometry!) the layer information
     layers
     {
-        "flange_.*"
-        {
-            nSurfaceLayers 1;
-        }
     }
 
     // Expansion factor for layer mesh
