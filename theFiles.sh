@@ -14,12 +14,14 @@ export SWAKLIBS=(groovyBC \
     swak*FunctionPlugin \
     swak*CloudAdaptor \
     swakFvOptions \
-    simpleCloudFunctionObjects \
     swakFunctionObjects)
 
 if [ "$FOAM_DEV" != "" ]
 then
     SWAKLIBS+=(swakFiniteArea)
+else
+    SWAKLIBS+=(simpleCloudFunctionObjects \
+         swakCloudFunctionObjects)
 fi
 
 export SWAKUTILS=(funkySetBoundaryField \

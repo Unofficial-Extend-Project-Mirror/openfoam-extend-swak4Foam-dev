@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "EliminateOutsideParticles.H"
+#include "EliminateBySwakExpression.H"
 #include "Pstream.H"
 #include "ListListOps.H"
 #include "IOPtrList.H"
@@ -31,7 +31,7 @@ License
 // * * * * * * * * * * * * * protected Member Functions  * * * * * * * * * * //
 
 template<class CloudType>
-void Foam::EliminateOutsideParticles<CloudType>::write()
+void Foam::EliminateBySwakExpression<CloudType>::write()
 {
     if (eliminatedPrePtr_.valid())
     {
@@ -51,7 +51,7 @@ void Foam::EliminateOutsideParticles<CloudType>::write()
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CloudType>
-Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
+Foam::EliminateBySwakExpression<CloudType>::EliminateBySwakExpression
 (
     const dictionary& dict,
     CloudType& owner,
@@ -71,11 +71,18 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
         this->outputDir(),
         this->owner().time()
     ),
-    search_(
-        this->owner().mesh()
+    driver_(
+        this->owner(),
+        dict
+    ),
+    expression_(
+        dict.lookup("eliminationExpression"),
+        dict
     ),
     nrPre_(0)
 {
+    driver_.readVariablesAndTables(dict);
+
     out_.addSpec(
         "eliminated.*",
         "pre post"
@@ -84,9 +91,9 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
 
 
 template<class CloudType>
-Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
+Foam::EliminateBySwakExpression<CloudType>::EliminateBySwakExpression
 (
-    const EliminateOutsideParticles<CloudType>& ppm
+    const EliminateBySwakExpression<CloudType>& ppm
 )
 :
     CloudFunctionObject<CloudType>(ppm),
@@ -98,8 +105,11 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
         this->outputDir(),
         this->owner().time()
     ),
-    search_(
-        this->owner().mesh()
+    driver_(
+        ppm.driver_
+    ),
+    expression_(
+        ppm.expression_
     ),
     nrPre_(ppm.nrPre_)
 {}
@@ -108,24 +118,15 @@ Foam::EliminateOutsideParticles<CloudType>::EliminateOutsideParticles
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class CloudType>
-Foam::EliminateOutsideParticles<CloudType>::~EliminateOutsideParticles()
+Foam::EliminateBySwakExpression<CloudType>::~EliminateBySwakExpression()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CloudType>
-void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
+void Foam::EliminateBySwakExpression<CloudType>::preEvolve()
 {
-    if(
-        this->owner().mesh().changing()
-    ) {
-        Info << this->modelName() << ":" << this->modelType()
-            << ": Mesh moving" << endl;
-
-        search_.correct();
-    }
-
     Info << this->modelName() << ":" << this->modelType()
         << ": Checking pre" << endl;
 
@@ -144,12 +145,12 @@ void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
                 );
         }
 
-        nrPre_=checkInside(eliminatedPrePtr_());
+        nrPre_=checkExpression(eliminatedPrePtr_());
     }
 }
 
 template<class CloudType>
-void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
+void Foam::EliminateBySwakExpression<CloudType>::postEvolve()
 {
     Info << this->modelName() << ":" << this->modelType()
         << ": Checking post" << endl;
@@ -170,7 +171,7 @@ void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
                 );
         }
 
-        nrPost=checkInside(eliminatedPostPtr_());
+        nrPost=checkExpression(eliminatedPostPtr_());
     }
     label nrEliminatedPre=nrPre_;
     label totalEliminatedPre=
@@ -241,37 +242,39 @@ void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
 }
 
 template<class CloudType>
-Foam::label Foam::EliminateOutsideParticles<CloudType>::checkInside(Cloud<parcelType> &eliminate)
+Foam::label Foam::EliminateBySwakExpression<CloudType>::checkExpression(Cloud<parcelType> &eliminate)
 {
+    driver_.clearVariables();
+    driver_.parse(expression_);
+
+    if(driver_.getResultType()!=pTraits<bool>::typeName) {
+        FatalErrorIn("Foam::EliminateBySwakExpression<CloudType>::checkExpression")
+            << "Expected 'bool' as result of " << expression_ << nl
+                << "Got " << driver_.getResultType()
+                << endl
+                << exit(FatalError);
+    }
+
+    Field<bool> conditionField(driver_.getResult<bool>());
+    assert(conditionField.size()==this->owner().size());
+
     label cnt=0;
-    label outCnt=0;
+    label nr=0;
 
     forAllIter(typename CloudType,this->owner(),iter) {
         parcelType &p=iter();
-        label oldCellI=p.cell();
-        label cellI=search_.findCell(
-            p.position(),
-            oldCellI
-        );
         if(
-            cellI<0
-            // ||
-            // (cellI % 4)==0
+            conditionField[nr]
         ) {
             cnt++;
             eliminate.append(
                 p.clone(this->owner().mesh()).ptr()
             );
             this->owner().deleteParticle(p);
-        } else if(cellI!=oldCellI) {
-            // Pout << "Cell at position " << p.position() << " is " << cellI
-            //     << ". Not " << oldCellI << endl;
-            outCnt++;
         }
+        nr++;
     }
-    if(outCnt>0) {
-        Pout << outCnt << " particles not in the right cell" << endl;
-    }
+
     return cnt;
 }
 

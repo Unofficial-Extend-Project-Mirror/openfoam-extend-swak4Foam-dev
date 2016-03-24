@@ -1,0 +1,172 @@
+// -*- c++ -*-
+
+// transientGridCloud {
+
+    createCloud true;
+
+    creationSpec {
+        libs (
+            "libswakFunctionObjects.so"
+            "libswakPythonIntegration.so"
+        );
+        preloadFields (
+            U
+        );
+        functions {
+            getGeometryExtent {
+                type calculateGlobalVariables;
+                verbose true;
+                outputControl timeStep;
+                outputInterval 1;
+                valueType internalField;
+                toGlobalNamespace geometryExtent;
+                toGlobalVariables (
+                    minX maxX
+                    minY maxY
+                    minZ maxZ
+                );
+                xS $....xScale;
+                yS $....yScale;
+                variables (
+                    "minX=$xS*interpolateToCell(min(pts().x));"
+                    "maxX=$xS*interpolateToCell(max(pts().x));"
+                    "minY=$yS*interpolateToCell(min(pts().y));"
+                    "maxY=$yS*interpolateToCell(max(pts().y));"
+                    "minZ=interpolateToCell(min(pts().z));"
+                    "maxZ=interpolateToCell(max(pts().z));"
+                );
+            }
+            calculateParticleData {
+                type pythonIntegration;
+                executeFile "$FOAM_CASE/system/calcGridCloud.py";
+                startFile $executeFile;
+                writeCode "";
+                endCode "";
+                swakToPythonNamespaces (
+                    geometryExtent
+                );
+                interactiveAfterException true;
+                useNumpy true;
+                useIPython true;
+                //                    interactiveAfterExecute true;
+                parallelMasterOnly false;
+                isParallelized true;
+                pythonToSwakNamespace coalData;
+                pythonToSwakVariables (
+                    positions
+                    d
+                );
+            }
+        }
+        globalNamespacesForData (
+            coalData
+        );
+        positionVariable positions;
+    }
+    expressions {
+        age {
+            create true;
+            field age;
+            expression "0";
+        }
+        active {
+            $age;
+            field active;
+            expression "1";
+            writeValueAsLabel true;
+        }
+        typeId {
+            $active;
+            field typeId;
+            expression "1";
+        }
+        nParticle {
+            $age;
+            field nParticle;
+            expression "1";
+        }
+        U {
+            $nParticle;
+            field U;
+            expression "fluidPhase(U)";
+            interpolationSchemes
+            {
+                U         cellPointWallModified;
+            }
+        }
+        UTurb {
+            $nParticle;
+            field UTurb;
+            expression "vector(0,0,0)";
+        }
+        rho {
+            $nParticle;
+            field rho;
+            expression "100000";
+        }
+        tTurb {
+            $nParticle;
+            field tTurb;
+            expression "1e-5";
+        }
+        dTarget {
+            $nParticle;
+            field dTarget;
+            expression "0.5*0.0001";
+        }
+        mass0 {
+            $nParticle;
+            field mass0;
+            expression "5.2359877559829894e-08";
+        }
+        force {
+            $nParticle;
+            field f;
+            expression "vector(0,0,0)";
+        }
+        angularMomentum {
+            $nParticle;
+            field angularMomentum;
+            expression "vector(0,0,0)";
+        }
+        torque {
+            $nParticle;
+            field torque;
+            expression "vector(0,0,0)";
+        }
+        collisionRecordsPairAccessed {
+            field collisionRecordsPairAccessed;
+            class labelFieldField;
+            expression "0()";
+        }
+        collisionRecordsPairAccessed {
+            field collisionRecordsPairAccessed;
+            class labelFieldField;
+            expression "0()";
+        }
+        collisionRecordsPairOrigProcOfOther {
+            $collisionRecordsPairAccessed;
+            field collisionRecordsPairOrigProcOfOther;
+        }
+        collisionRecordsPairOrigIdOfOther {
+            $collisionRecordsPairAccessed;
+            field collisionRecordsPairOrigIdOfOther;
+        }
+        collisionRecordsPairData {
+            field collisionRecordsPairData;
+            class vectorFieldField;
+            expression "0()";
+        }
+        collisionRecordsWallAccessed {
+            $collisionRecordsPairAccessed;
+            field collisionRecordsWallAccessed;
+        }
+        collisionRecordsWallData {
+            $collisionRecordsPairData;
+            field collisionRecordsWallData;
+        }
+        collisionRecordsWallPRel {
+            $collisionRecordsPairData;
+            field collisionRecordsWallPRel;
+        }
+    }

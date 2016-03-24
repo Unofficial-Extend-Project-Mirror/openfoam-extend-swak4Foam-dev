@@ -54,12 +54,17 @@ defineTypeNameAndDebug(TimelineCollection, 0);
 
 TimelineCollection::TimelineCollection(
     const fileName &dir,
-    const Time &time
+    const Time &time,
+    bool useStartTime
 ):
     outputDirectory_(dir),
-    time_(time)
+    time_(time),
+    timeName_("")
 {
     Dbug << "Construction" << endl;
+    if(useStartTime) {
+        timeName_=time.timeName();
+    }
 }
 
 
@@ -84,22 +89,37 @@ void TimelineCollection::addSpec(
 
 // * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * * //
 
-OFstream &TimelineCollection::operator[](const word &name) {
-    if(!outputFilePtr_.found(name)) {
-        Dbug << "File name" << name << "not in table" << endl;
-        mkDir(outputDirectory_/time_.timeName());
+OFstream &TimelineCollection::operator()(
+    const word &name,
+    bool autoParallel
+) {
+    word timeName=timeName_;
+    if(timeName=="") {
+        timeName=time_.timeName();
+    }
+    word usedName=name;
+    if(
+        Pstream::parRun()
+        &&
+        autoParallel
+    ) {
+        usedName+="Proc"+name(Pstream::myProcNo());
+    }
+    if(!outputFilePtr_.found(usedName)) {
+        Dbug << "File name" << usedName << "not in table" << endl;
+        mkDir(outputDirectory_/timeName);
         outputFilePtr_.insert(
-            name,
+            usedName,
             new OFstream(
-                outputDirectory_/time_.timeName()/name
+                outputDirectory_/timeName/usedName
             )
         );
         //        Pout << headerSpecs_ << endl;
-        OFstream &o=*outputFilePtr_[name];
-        o << "# Time \t " << string(headerSpecs_[name]).c_str() << endl;
+        OFstream &o=*outputFilePtr_[usedName];
+        o << "# Time \t " << string(headerSpecs_[usedName]).c_str() << endl;
     }
-    *outputFilePtr_[name] << time_.value() << tab;
-    return *outputFilePtr_[name];
+    *outputFilePtr_[usedName] << time_.value() << tab;
+    return *outputFilePtr_[usedName];
 }
 
 

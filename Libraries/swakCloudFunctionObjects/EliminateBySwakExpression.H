@@ -28,16 +28,13 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::CorrectParticleCell
+    Foam::EliminateBySwakExpression
 
 Description
-    Correct the cell of the particle at the begin of the evolution
-
-    This might only be necessary for moving meshes were the particles
-    end up in the wrong cell
+    Eliminate parcels for which a swak-Expression is true
 
 SourceFiles
-    CorrectParticleCell.C
+    EliminateBySwakExpression.C
 
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -46,8 +43,8 @@ Contributors/Copyright:
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef CorrectParticleCell_H
-#define CorrectParticleCell_H
+#ifndef EliminateBySwakExpression_H
+#define EliminateBySwakExpression_H
 
 #include "CloudFunctionObject.H"
 
@@ -55,7 +52,7 @@ Contributors/Copyright:
 
 #include "TimelineCollection.H"
 
-#include "meshSearch.H"
+#include "CloudValueExpressionDriver.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,11 +60,11 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class CorrectParticleCell Declaration
+                       Class EliminateBySwakExpression Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class CloudType>
-class CorrectParticleCell
+class EliminateBySwakExpression
 :
     public CloudFunctionObject<CloudType>
 {
@@ -78,14 +75,29 @@ class CorrectParticleCell
     //- Convenience typedef for parcel type
     typedef typename CloudType::parcelType parcelType;
 
+    //- Pointer to the cloud storage
+    autoPtr<Cloud<parcelType> > eliminatedPrePtr_;
+
+    //- Pointer to the cloud storage
+    autoPtr<Cloud<parcelType> > eliminatedPostPtr_;
+
+    bool eliminatePre_;
+
+    bool eliminatePost_;
+
     //- here we get our files from
     TimelineCollection out_;
 
-    //- data structure to search cells
-    meshSearch search_;
+    //- the actual expression driver
+    CloudValueExpressionDriver driver_;
 
-    //- should all corrected particles be written
-    bool logCorrected_;
+    //- the logical expression
+    exprString expression_;
+
+    //- check whether particles are outside and mark particles to be outside
+    label checkExpression(Cloud<parcelType> &eliminate);
+
+    label nrPre_;
 
 protected:
 
@@ -94,16 +106,17 @@ protected:
     //- Write post-processing info
     void write();
 
+
 public:
 
     //- Runtime type information
-    TypeName("correctParticleCell");
+    TypeName("eliminateBySwakExpression");
 
 
     // Constructors
 
     //- Construct from dictionary
-    CorrectParticleCell
+    EliminateBySwakExpression
     (
         const dictionary& dict,
         CloudType& owner,
@@ -111,20 +124,20 @@ public:
     );
 
     //- Construct copy
-    CorrectParticleCell(const CorrectParticleCell<CloudType>& ppm);
+    EliminateBySwakExpression(const EliminateBySwakExpression<CloudType>& ppm);
 
     //- Construct and return a clone
     virtual autoPtr<CloudFunctionObject<CloudType> > clone() const
         {
             return autoPtr<CloudFunctionObject<CloudType> >
                 (
-                    new CorrectParticleCell<CloudType>(*this)
+                    new EliminateBySwakExpression<CloudType>(*this)
                 );
         }
 
 
     //- Destructor
-    virtual ~CorrectParticleCell();
+    virtual ~EliminateBySwakExpression();
 
 
     // Member Functions
@@ -133,6 +146,9 @@ public:
 
     //- Pre-evolve hook
     virtual void preEvolve();
+
+    //- Post-evolve hook
+    virtual void postEvolve();
 
 };
 
@@ -145,7 +161,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "CorrectParticleCell.C"
+#   include "EliminateBySwakExpression.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

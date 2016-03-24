@@ -87,6 +87,9 @@ class TimelineCollection
     //- Disallow default bitwise assignment
     void operator=(const TimelineCollection&);
 
+    //- Default time name
+    word timeName_;
+
 public:
 
     // Static data members
@@ -98,7 +101,8 @@ public:
     //- Construct null
     TimelineCollection(
         const fileName &dir,
-        const Time &time
+        const Time &time,
+        bool useStartTime=true
     );
 
     //- Destructor
@@ -109,7 +113,16 @@ public:
         const string &headerSpecString
     );
 
-    OFstream &operator[](const word &name);
+    OFstream &operator()(
+        const word &name,
+        bool autoParallel=true
+    );
+
+    OFstream &operator[](
+        const word &name
+    ) {
+        return (*this)(name,false);
+    }
 
     // Member Functions
 

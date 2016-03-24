@@ -89,6 +89,14 @@ protected:
     //- do the actual solving
     void solve();
 
+    //- should the flux be made relative on a moving mesh
+    bool makePhiRelative_;
+
+    //- velocity for making the flux relative
+    exprString velocityExpression_;
+    dimensionSet velocityDimension_;
+    word velocityName_;
+
 public:
 
     //- Runtime type information

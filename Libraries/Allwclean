@@ -39,6 +39,8 @@ wclean swakFvOptions
 
 wclean simpleCloudFunctionObjects
 
+wclean swakCloudFunctionObjects
+
 # Remove residual from bison
 rm -f */*.output
 

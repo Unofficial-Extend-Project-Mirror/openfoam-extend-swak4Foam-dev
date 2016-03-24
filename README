@@ -757,6 +757,9 @@ S_{expl} + S_{impl} T
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
+**** =AMIPipe=
+     Simple geometry for testing function objects with AMI. "Execute"
+     with =replayTransientBC=
 *** BugCases
     These are cases provided by users to demonstrate bugs. Not
     maintained nor documented and may be removed at any time
@@ -3338,7 +3341,19 @@ S_{expl} + S_{impl} T
        the evolution begins.
 
        This should fix problems with moving meshes but is currently
-       not working correctly
+       not working correctly.
+
+       An optional parameter =logCorrected= logs the data of the
+       corrected particles to a file. Only use for debugging or if you don't
+       expect many incidents
+
+**** Add library =swakCloudFunctionObjects= with function objects that use expressions for clouds
+     These function objects can be added to particle clouds and use
+     expressions. The function objects are
+     - eliminateBySwakExpression :: Evaluates an expression for each
+       particle. If the expression is =true= then the particle is
+       eliminated. Expression can be evaluated before or after the
+       moving of the particles
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
@@ -3379,6 +3394,27 @@ S_{expl} + S_{impl} T
      now have a new parameter =sourceImplicitUseSuSp= that allows
      switching from using =Sp()= (the default) to =SuSp()= for the
      addition of =sourceImplicitExpression=
+**** =replayTransientBC= can read and update dynamic meshes
+     The command line option =-useDynamicMesh= tells the utility to
+     read the mesh as a dynamic mesh and update it at every time-step
+**** =solveTransportPDE= function object now aware of mesh movement
+     If the function object detects that it is created with a moving
+     mesh then it asks for a parameter =makePhiRelative= to specify
+     whether =phi= should be made relative to the mesh movement (this
+     is usually necessary). Then either a =velocityExpression= or a
+     =velocityName= has to be specified as well and =phi= is corrected
+     according to the mesh movement
+
+     If =steady= is =true= then =phi= is *not* made relative
+**** =funkySetLagrangianFields= allows creating fields of arbitrary types
+     If a cloud is created and in en entry in =expressions= the entry
+     =class= is found then it is assumed that a field of that type
+     should be created. The =expression= is not evaluated but added to
+     the cloud for each particle.
+
+     *Note:* this does not do *any* semantic checking and is only to
+     be used to set constant values for required fields for which
+     =swak= can not evaluate the type
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at

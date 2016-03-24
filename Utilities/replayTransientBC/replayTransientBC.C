@@ -48,6 +48,7 @@ Contributors/Copyright:
 #include "vectorList.H"
 #include "LPtrList.H"
 #include "swak.H"
+#include "dynamicFvMesh.H"
 
 #ifdef FOAM_HAS_FVOPTIONS
 #ifdef FOAM_FVOPTIONS_IN_FV
@@ -72,6 +73,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
     argList::validOptions.insert("allowFunctionObjects","");
     argList::validOptions.insert("addDummyPhi","");
+    argList::validOptions.insert("useDynamicMesh","");
 #ifdef FOAM_HAS_FVOPTIONS
     argList::validOptions.insert("useFvOptions","");
 #endif
@@ -79,7 +81,58 @@ int main(int argc, char *argv[])
 #   include "setRootCase.H"
 #   include "createTime.H"
 
-#   include "createNamedMesh.H"
+    bool useDynamicMesh=args.options().found("useDynamicMesh");
+
+    autoPtr<fvMesh> meshPtr;
+
+    {
+        Foam::word regionName;
+
+        if (args.optionReadIfPresent("region", regionName))
+        {
+            Foam::Info
+                << "Create mesh " << regionName << " for time = "
+                    << runTime.timeName() << Foam::nl << Foam::endl;
+        }
+        else
+        {
+            regionName = Foam::fvMesh::defaultRegion;
+            Foam::Info
+                << "Create mesh for time = "
+                    << runTime.timeName() << Foam::nl << Foam::endl;
+        }
+
+        if(useDynamicMesh) {
+            Info << "Dynamic mesh" << endl;
+            meshPtr.set(
+                dynamicFvMesh::New
+                (
+                    IOobject
+                    (
+                        regionName,
+                        runTime.timeName(),
+                        runTime,
+                        IOobject::MUST_READ
+                    )
+                ).ptr()
+            );
+        } else {
+            meshPtr.set(
+                new fvMesh
+                (
+                    Foam::IOobject
+                    (
+                        regionName,
+                        runTime.timeName(),
+                        runTime,
+                        Foam::IOobject::MUST_READ
+                    )
+                )
+            );
+        }
+    }
+
+    fvMesh &mesh=meshPtr();
 
     pointMesh pMesh(mesh);
 
@@ -258,6 +311,13 @@ int main(int argc, char *argv[])
         }
         Info<< "Time = " << runTime.timeName() << nl << endl;
         Info<< "deltaT = " <<  runTime.deltaT().value() << endl;
+
+        if(useDynamicMesh) {
+            Info << "Moving mesh" << endl;
+            dynamicCast<dynamicFvMesh&>(mesh).update();
+
+            #include "meshCourantNo.H"
+        }
 
         SLPtrList<volScalarField> scalarVolFieldsPre;
         SLPtrList<volVectorField> vectorVolFieldsPre;

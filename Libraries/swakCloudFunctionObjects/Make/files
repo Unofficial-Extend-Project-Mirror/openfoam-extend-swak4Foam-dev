@@ -1,0 +1,3 @@
+EliminateBySwakExpressionInstances.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakCloudFunctionObjects
