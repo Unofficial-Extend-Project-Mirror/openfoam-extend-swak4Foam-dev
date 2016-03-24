@@ -66,12 +66,30 @@ functions {
         //        velocityName U;
         velocityExpression "U" [0 1 -1 0 0 0 0];
     }
+    tracerStats {
+        type swakExpression;
+        valueType internalField;
+        expression "movedField";
+        verbose true;
+        accumulations (
+            min
+            weightedQuantile0.01
+            weightedAverage
+            weightedQuantile0.99
+            max
+        );
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
     solveSteadyTracer {
         $solveTracer;
         fieldName movedSteadyField;
         steady true;
         relaxLastIteration true;
         //        makePhiRelative false;
+    }
+    steadyTracerStats {
+        $tracerStats;
+        expression "movedSteadyField";
     }
     rhoField {
         type expressionField;

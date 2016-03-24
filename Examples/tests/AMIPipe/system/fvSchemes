@@ -29,9 +29,9 @@ gradSchemes
 
 divSchemes
 {
-    default          Gauss linearUpwind default;
+    //    default          Gauss linearUpwind default;
     //    default          Gauss linear;
-    //    default          Gauss upwind;
+    default          Gauss upwind;
 
     div(phi,U)      Gauss linearUpwind grad(U);
     div((nuEff*dev2(T(grad(U))))) Gauss linear;
@@ -40,6 +40,7 @@ divSchemes
 laplacianSchemes
 {
     default         Gauss linear limited  0.5;
+    //   default Gauss linear uncorrected;
 }
 
 // ************************************************************************* //
