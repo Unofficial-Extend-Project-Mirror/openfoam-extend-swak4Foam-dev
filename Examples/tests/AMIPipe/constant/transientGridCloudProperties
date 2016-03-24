@@ -39,9 +39,9 @@ solution
         pseudoRho             cell;
         pseudoMu              cell;
         //        U                cellPoint;
-        //        U                cell;
+        U                cell;
         //        U                     pointMVC;
-        U         cellPointWallModified;
+        //        U         cellPointWallModified;
         staticU   $U;
         rho                   cell;
         mu                    cell;

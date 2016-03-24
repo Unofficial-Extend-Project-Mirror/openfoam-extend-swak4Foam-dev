@@ -31,3 +31,46 @@ tracerStats {
         max
     );
 }
+particleVelocity {
+    type dynamic;
+    expr "Expression (.+)Velocity :  min=(.+) average=(.+) max=(.+)";
+    theTitle "Particle Velocity";
+    titles (
+        min
+        average
+        max
+    );
+    idNr 1;
+}
+particleVelocityDiff {
+    type dynamic;
+    expr "Expression (.+)VelocityDiff :  average=(.+) max=(.+)";
+    theTitle "Difference gas/particle velocity";
+    titles (
+        average
+        max
+    );
+    idNr 1;
+}
+particlePosition {
+    type dynamic;
+    theTitle "Particle Positions";
+    idNr 1;
+    expr "Expression (.+)Position :  min=\((.+) (.+) (.+)\) average=\((.+) (.+) (.+)\) max=\((.+) (.+) (.+)\)";
+    titles (
+        "min x"
+        "min y"
+        "min z"
+        "average x"
+        "average y"
+        "average z"
+        "max x"
+        "max y"
+        "max z"
+    );
+    alternateAxis (
+        ".+ z"
+    );
+    ylabel "x/y position";
+    y2label "z position";
+}
