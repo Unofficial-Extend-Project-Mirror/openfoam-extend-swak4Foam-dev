@@ -58,7 +58,7 @@ solvers {
         relTol          0;
     }
 
-    "moved.*Field" {
+    ".*Field" {
         solver          PBiCG;
         preconditioner  DILU;
         maxIter         1000;
@@ -74,7 +74,7 @@ PIMPLE {
     nNonOrthogonalCorrectors 0;
 }
 
-"moved.*FieldTransportPDE" {
+".*FieldTransportPDE" {
     nCorrectors 2;
     nNonOrthogonalCorrectors 0;
 }

@@ -91,6 +91,18 @@ functions {
         $tracerStats;
         expression "movedSteadyField";
     }
+    solveStaticTracer {
+        $solveTracer;
+        fieldName staticField;
+        phi "interpolate(0)" [0 3 -1 0 0 0 0]; // [m^3/s];
+        diffusion "0" [0 2 -1 0 0 0 0]; // [m^2/s];
+        relaxLastIteration true;
+        //        makePhiRelative false;
+    }
+    staticTracerStats {
+        $tracerStats;
+        expression "staticField";
+    }
     rhoField {
         type expressionField;
         fieldName pseudoRho;
