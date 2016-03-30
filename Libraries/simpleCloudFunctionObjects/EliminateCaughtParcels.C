@@ -109,7 +109,8 @@ Foam::EliminateCaughtParcels<CloudType>::~EliminateCaughtParcels()
 template<class CloudType>
 void Foam::EliminateCaughtParcels<CloudType>::preEvolve()
 {
-    Info << this->modelName() << ":" << this->modelType()
+    Info << this->modelName() << ":" << this->owner().name()
+        << ":" << this->modelType()
         << ": Clearing data" << endl;
 
     faceHitCounter_.clear();
@@ -168,7 +169,8 @@ void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
     }
 
     if(totalEliminated>0) {
-        Info << this->modelName() << ":" << this->modelType()
+        Info << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << " : " << nrEliminated << " parcels eliminated this timestep. "
             << totalEliminated << " in total" << endl;
     }
@@ -190,7 +192,8 @@ void Foam::EliminateCaughtParcels<CloudType>::postMove
     const labelPair theId(p.origProc(), p.origId());
     if(toEliminate_.found(theId)) {
         if(keepParticle) {
-            Pout << this->modelName() << ":" << this->modelType()
+            Pout << this->modelName() << ":" << this->owner().name()
+                << ":" << this->modelType()
                 << ": removing " << theId << " ... postMove" << endl;
         }
         keepParticle=false;
@@ -230,7 +233,8 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                 ) {
                     if(keepParticle) {
                         // only print this once
-                        Pout << this->modelName() << ":" << this->modelType()
+                        Pout << this->modelName() << ":" << this->owner().name()
+                            << ":" << this->modelType()
                             << "Eliminating particle because it only moved " << moved << nl
                             << p << endl;
 
@@ -255,7 +259,8 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                     ) {
                         // only print this once
                         if(keepParticle) {
-                            Pout << this->modelName() << ":" << this->modelType()
+                            Pout << this->modelName() << ":" << this->owner().name()
+                                << ":" << this->modelType()
                                 << "Eliminating particle because it hit face " << faceI
                                 << " for " << iter() << " times in a row" << nl
                                 << p << endl;

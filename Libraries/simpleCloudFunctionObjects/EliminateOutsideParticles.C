@@ -120,13 +120,15 @@ void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
     if(
         this->owner().mesh().changing()
     ) {
-        Info << this->modelName() << ":" << this->modelType()
+        Info << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << ": Mesh moving" << endl;
 
         search_.correct();
     }
 
-    Info << this->modelName() << ":" << this->modelType()
+    Info << this->modelName() << ":" << this->owner().name()
+        << ":" << this->modelType()
         << ": Checking pre" << endl;
 
     if(eliminatePre_) {
@@ -151,7 +153,8 @@ void Foam::EliminateOutsideParticles<CloudType>::preEvolve()
 template<class CloudType>
 void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
 {
-    Info << this->modelName() << ":" << this->modelType()
+    Info << this->modelName() << ":" << this->owner().name()
+        << ":" << this->modelType()
         << ": Checking post" << endl;
 
     label nrPost=0;
@@ -230,7 +233,8 @@ void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
         ||
         totalEliminatedPost>0
     ) {
-        Info << this->modelName() << ":" << this->modelType()
+        Info << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << " : " << nrEliminatedPre << " parcels eliminated before timestep. "
             << totalEliminatedPre << " in total" << tab
             << "After: " << nrEliminatedPost << " (" << totalEliminatedPost

@@ -127,7 +127,8 @@ Foam::EliminateBySwakExpression<CloudType>::~EliminateBySwakExpression()
 template<class CloudType>
 void Foam::EliminateBySwakExpression<CloudType>::preEvolve()
 {
-    Info << this->modelName() << ":" << this->modelType()
+    Info << this->modelName() << ":" << this->owner().name()
+        << ":" << this->modelType()
         << ": Checking pre" << endl;
 
     if(eliminatePre_) {
@@ -152,7 +153,8 @@ void Foam::EliminateBySwakExpression<CloudType>::preEvolve()
 template<class CloudType>
 void Foam::EliminateBySwakExpression<CloudType>::postEvolve()
 {
-    Info << this->modelName() << ":" << this->modelType()
+    Info << this->modelName() << ":" << this->owner().name()
+        << ":" << this->modelType()
         << ": Checking post" << endl;
 
     label nrPost=0;
@@ -231,7 +233,8 @@ void Foam::EliminateBySwakExpression<CloudType>::postEvolve()
         ||
         totalEliminatedPost>0
     ) {
-        Info << this->modelName() << ":" << this->modelType()
+        Info << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << " : " << nrEliminatedPre << " parcels eliminated before timestep. "
             << totalEliminatedPre << " in total" << tab
             << "After: " << nrEliminatedPost << " (" << totalEliminatedPost

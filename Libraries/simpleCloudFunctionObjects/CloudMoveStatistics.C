@@ -99,7 +99,8 @@ Foam::CloudMoveStatistics<CloudType>::~CloudMoveStatistics()
 template<class CloudType>
 void Foam::CloudMoveStatistics<CloudType>::preEvolve()
 {
-    Info << this->modelName() << ":" << this->modelType()
+    Info << this->modelName() << ":" << this->owner().name()
+        << ":" << this->modelType()
         << ": Clearing data" << endl;
 
     faceHitCounter_.clear();
@@ -135,14 +136,16 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
 
     if(faceHitNr>0) {
         faceHitMean=float(faceHitSum)/faceHitNr;
-        Pout << this->modelName() << ":" << this->modelType()
+        Pout << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << ": Face hit Nr: " << faceHitSum
             << " (" << faceHitNr << " particles)"
             << " Min: " << faceHitMin
             << " Mean: " << faceHitMean
             << " Max: " << faceHitMax << endl;
     } else {
-        Pout << this->modelName() << ":" << this->modelType()
+        Pout << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << ": No face hits" << endl;
     }
     faceHitCounter_.clear();
@@ -164,14 +167,16 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
         reduce(faceHitMax,maxOp<label>());
         if(faceHitNr>0) {
             faceHitMean=float(faceHitSum)/faceHitNr;
-            Info << this->modelName() << ":" << this->modelType()
+            Info << this->modelName() << ":" << this->owner().name()
+                << ":" << this->modelType()
                 << ": Face hit Nr: " << faceHitSum
                 << " (" << faceHitNr << " particles)"
                 << " Min: " << faceHitMin
                 << " Mean: " << faceHitMean
                 << " Max: " << faceHitMax << endl;
         } else {
-            Info << this->modelName() << ":" << this->modelType()
+            Info << this->modelName() << ":" << this->owner().name()
+                << ":" << this->modelType()
                 << ": No face hits" << endl;
         }
     }
@@ -198,14 +203,16 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
     scalar movesMean=0;
     if(movesNr>0) {
         movesMean=float(movesSum)/movesNr;
-        Pout << this->modelName() << ":" << this->modelType()
+        Pout << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << ": Moves Nr: " << movesSum
             << " (" << movesNr << " particles)"
             << " Min: " << movesMin
             << " Mean: " << movesMean
             << " Max: " << movesMax << endl;
     } else {
-        Pout << this->modelName() << ":" << this->modelType()
+        Pout << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << ": No moves" << endl;
     }
     if(Pstream::parRun()) {
@@ -219,14 +226,16 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
         reduce(movesMax,maxOp<label>());
         movesMean=float(movesSum)/movesNr;
         if(movesNr>0) {
-            Info << this->modelName() << ":" << this->modelType()
+            Info << this->modelName() << ":" << this->owner().name()
+                << ":" << this->modelType()
                 << ": Moves Nr: " << movesSum
                 << " (" << movesNr << " particles)"
                 << " Min: " << movesMin
                 << " Mean: " << movesMean
                 << " Max: " << movesMax << endl;
         } else {
-            Info << this->modelName() << ":" << this->modelType()
+            Info << this->modelName() << ":" << this->owner().name()
+                << ":" << this->modelType()
                 << ": No moves" << endl;
         }
     }
@@ -236,7 +245,8 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
     }
 
     forAllConstIter(patchHitTableType,patchHitCounter_,iter) {
-        Pout << this->modelName() << ":" << this->modelType()
+        Pout << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << " Patch " << iter.key() << " hit " << iter() << " times" << endl;
 
         const word propName="numberOfHitsPatch_"+iter.key();
