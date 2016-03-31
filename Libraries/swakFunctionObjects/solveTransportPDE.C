@@ -355,14 +355,35 @@ void Foam::solveTransportPDE::solve()
 #endif
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
+            bool converged=true;
             for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
             {
-                eq.solve();
+                volScalarField fallback(
+                    "fallback"+f.name(),
+                    f
+                );
+                solverPerformance perf=eq.solve();
+                if(
+                    !perf.converged()
+                    &&
+                    restoreNonConvergedSteady()
+                ) {
+                    WarningIn("Foam::solveTransportPDE::solve()")
+                        << "Solution for " << f.name()
+                            << " not converged. Restoring"
+                            << endl;
+                    f=fallback;
+                    converged=false;
+                    break;
+                }
             }
 
 #ifdef FOAM_HAS_FVOPTIONS
             fvOptions().correct(f);
 #endif
+            if(!converged) {
+                break;
+            }
         }
     }
 }
