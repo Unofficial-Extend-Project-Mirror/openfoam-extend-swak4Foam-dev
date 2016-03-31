@@ -100,10 +100,23 @@ subModels
 
 cloudFunctions
 {
-    correctCells {
-        type correctParticleCell;
-        //        logCorrected true;
-    }
+    // traceParticles {
+    //     type traceParticles;
+    //     particleIds (
+    //         {
+    //             origProc 0;
+    //             origId 2323;
+    //         }
+    //         {
+    //             origProc 0;
+    //             origId 849;
+    //         }
+    //     );
+    // }
+    // correctCells {
+    //     type correctParticleCell;
+    //     //        logCorrected true;
+    // }
     patchAuslass
     {
         type            patchPostProcessing;
@@ -131,6 +144,8 @@ cloudFunctions
     }
     profileHits {
         type cloudMoveStatistics;
+        reportHitNr 100;
+        reportMoveNr 100;
     }
     removeHitters {
         type eliminateCaughtParcels;

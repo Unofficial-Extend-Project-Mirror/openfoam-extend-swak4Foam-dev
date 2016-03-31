@@ -274,7 +274,9 @@ Foam::label Foam::EliminateOutsideParticles<CloudType>::checkInside(Cloud<parcel
         }
     }
     if(outCnt>0) {
-        Pout << outCnt << " particles not in the right cell" << endl;
+        Pout << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
+            << " : " << outCnt << " particles not in the right cell" << endl;
     }
     return cnt;
 }

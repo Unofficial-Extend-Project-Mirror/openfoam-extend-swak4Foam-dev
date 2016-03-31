@@ -50,6 +50,12 @@ Foam::CloudMoveStatistics<CloudType>::CloudMoveStatistics
     faceHitCounter_(),
     movesCounter_(),
     patchHitCounter_(),
+    reportHitNr_(
+        dict.lookupOrDefault<label>("reportHitNr",-1)
+    ),
+    reportMoveNr_(
+        dict.lookupOrDefault<label>("reportMoveNr",-1)
+    ),
     out_(
         this->outputDir(),
         this->owner().time()
@@ -128,6 +134,16 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
     label faceHitMax=labelMin;
     label faceHitSum=0;
     forAllConstIter(hitTableType,faceHitCounter_,iter) {
+        if(
+            reportHitNr_>0
+            &&
+            iter()>reportHitNr_
+        ) {
+            Pout << this->modelName() << ":" << this->owner().name()
+                << ":" << this->modelType()
+                << ": " << iter() << " hits by  origCpu: " << iter.key().first()
+                << " origId: " << iter.key().second() << endl;
+        }
         faceHitSum+=iter();
         faceHitMin=min(faceHitMin,iter());
         faceHitMax=max(faceHitMax,iter());
@@ -189,6 +205,16 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
     label movesMax=labelMin;
     label movesSum=0;
     forAllConstIter(hitTableType,movesCounter_,iter) {
+        if(
+            reportMoveNr_>0
+            &&
+            iter()>reportMoveNr_
+        ) {
+            Pout << this->modelName() << ":" << this->owner().name()
+                << ":" << this->modelType()
+                << ": " << iter() << " moves by  origCpu: " << iter.key().first()
+                << " origId: " << iter.key().second() << endl;
+        }
         movesSum+=iter();
         movesMin=min(movesMin,iter());
         movesMax=max(movesMax,iter());

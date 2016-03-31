@@ -74,3 +74,47 @@ particlePosition {
     ylabel "x/y position";
     y2label "z position";
 }
+correctedParticles {
+    type dynamic;
+    idNr 1;
+    theTitle "Corrected particles";
+    expr "correctCells:(.+)Cloud:correctParticleCellCorrected ([0-9]+) particles";
+    with steps;
+    titles (
+        nr
+    );
+}
+faceHits {
+    type dynamic;
+    idNr 1;
+    theTitle "Face hits by particles";
+    expr "profileHits:(.+)Cloud:cloudMoveStatistics: Face hit Nr: .+ \(.+ particles\) Min: (.+) Mean: (.+) Max: (.+)";
+    with steps;
+    titles (
+        min
+        avg
+        max
+    );
+    alternateAxis (
+        ".*max"
+    );
+    ylabel "min/avg";
+    y2label "max";
+}
+moves {
+    type dynamic;
+    idNr 1;
+    theTitle "Moves by particles";
+    expr "profileHits:(.+)Cloud:cloudMoveStatistics: Moves Nr: .+ \(.+ particles\) Min: (.+) Mean: (.+) Max: (.+)";
+    with steps;
+    titles (
+        min
+        avg
+        max
+    );
+    alternateAxis (
+        ".*max"
+    );
+    ylabel "min/avg";
+    y2label "max";
+}

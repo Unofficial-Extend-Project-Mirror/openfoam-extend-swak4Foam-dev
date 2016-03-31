@@ -3315,6 +3315,9 @@ S_{expl} + S_{impl} T
        behavior (particles that hit patches repeatedly and don't
        move)
 
+       The optional parameter =reportHitNr= and =reportMoveNr= print
+       out the ids of particles that exceed these thresholds
+
      - eliminateCaughtParticles :: Sometimes particles get caught in
           "endless loops" (hitting the same patch over and over again
           without significant movement). This may slow down
@@ -3342,7 +3345,12 @@ S_{expl} + S_{impl} T
        An optional parameter =logCorrected= logs the data of the
        corrected particles to a file. Only use for debugging or if you don't
        expect many incidents
+     - traceParticles :: This function object gets a list of particle
+       ids. For these particles all data is written whenever a
+       function object is called.
 
+       This function object should *only* be used for debugging if the
+       behavior of a special particle should be tracked
 **** Add library =swakCloudFunctionObjects= with function objects that use expressions for clouds
      These function objects can be added to particle clouds and use
      expressions. The function objects are
