@@ -189,7 +189,13 @@ int main(int argc, char *argv[])
                 field.writeHeader(headerStream);
                 string newHeader=headerStream.str().replace("dictionary",actualClass);
 
-                OFstream outStream(field.filePath());
+                IFstream inStream(field.filePath());
+                OFstream outStream(
+                    field.filePath(),
+                    inStream.format(),
+                    inStream.version(),
+                    inStream.compression()
+                );
                 outStream << newHeader.c_str();
                 field.writeData(outStream);
             }
