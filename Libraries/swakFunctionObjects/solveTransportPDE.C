@@ -70,6 +70,7 @@ Foam::solveTransportPDE::solveTransportPDE
     phiDimension_(dimless),
     sourceDimension_(dimless),
     sourceImplicitDimension_(dimless),
+    sourceImplicitUseSuSp_(false),
     makePhiRelative_(false),
     velocityDimension_(dimless),
     velocityName_("none")
@@ -127,6 +128,13 @@ void Foam::solveTransportPDE::read(const dictionary& dict)
                 sourceImplicitExpression_,
                 sourceImplicitDimension_
             );
+            if(dict.found("sourceImplicitUseSuSp")) {
+                sourceImplicitUseSuSp_=readBool(dict.lookup("sourceImplicitUseSuSp"));
+            } else {
+                WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")
+                    << "'sourceImplicitUseSuSp' not set in " << dict.name()
+                        << " assuming 'false'" << endl;
+             }
         } else {
             if(sourceExpression_!="0") {
                 WarningIn("Foam::solveTransportPDE::read(const dictionary& dict)")
@@ -343,7 +351,11 @@ void Foam::solveTransportPDE::solve()
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
 
-                eq-=fvm::Sp(sourceImplicitField,f);
+                if(sourceImplicitUseSuSp_) {
+                    eq-=fvm::SuSp(sourceImplicitField,f);
+                } else {
+                    eq-=fvm::Sp(sourceImplicitField,f);
+                }
             }
 
             if(doRelax(corr==nCorr)) {

@@ -103,6 +103,12 @@ public:
         const fvMesh &mesh
     );
 
+    //- force an update of a surface
+    bool updateSurface(
+        const word &name,
+        const fvMesh &mesh
+    );
+
     //- Make sure that this class is not abstract
     bool writeData(Ostream &) const;
 

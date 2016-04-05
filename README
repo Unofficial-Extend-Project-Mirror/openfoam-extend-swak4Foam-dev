@@ -3238,6 +3238,15 @@ S_{expl} + S_{impl} T
      Due to a copy/past-problem all tensor-fields (including
      symmtrical and spherical) would have caused the utility to
      fail. Fixed
+**** Surfaces created by =createSampledSurface= not updated during mesh movement
+     The function object ignored the callbacks for moving meshes. It
+     now implements them and forces a regeneration of the surface if
+     the mesh moves
+**** =funkySetFields= does not set dimensions
+     The =dimension=-entries were read but not set. This is now fixed
+**** =funkySetBoundaryField= does not compress files
+     The utility now reads the compression state of the original and
+     sets the resulting file accordingly
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
@@ -3393,6 +3402,11 @@ S_{expl} + S_{impl} T
 **** =replayTransientBC= reports execution time
      The utility now reports the time. This is useful when using the
      utility to test function objects
+**** Added parameter =sourceImplicitUseSuSp= to =PDE=-function objects
+     The function objects =solveLaplacianPDE= and =solveTransportPDE=
+     now have a new parameter =sourceImplicitUseSuSp= that allows
+     switching from using =Sp()= (the default) to =SuSp()= for the
+     addition of =sourceImplicitExpression=
 **** =replayTransientBC= can read and update dynamic meshes
      The command line option =-useDynamicMesh= tells the utility to
      read the mesh as a dynamic mesh and update it at every time-step
@@ -3414,13 +3428,18 @@ S_{expl} + S_{impl} T
      *Note:* this does not do *any* semantic checking and is only to
      be used to set constant values for required fields for which
      =swak= can not evaluate the type
-**** Unconverged steady solution of PDF-function objects are reset
+**** Unconverged steady solution of PDE-function objects are reset
      For some reason the linear solver does not converge on the
-     =solveTransportPDE= and =solveLaplacianPDF= function
+     =solveTransportPDE= and =solveLaplacianPDE= function
      objects. This messes up the solution field. In these cases the
      solution field is reset to the last known good solution. If this
      behavior is undesired it can be switched off with
      =restoreNonConvergedSteady=
+**** Additional output options for function obkjects based on =simpleFunctionObjects=
+     There are now three more options for =outputControlMode=:
+     =outputTimeAndStartup=, =timeStepAndStartup= and
+     =deltaTAndStartup=. These work like the other options but write
+     data at the startup-time as well
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at

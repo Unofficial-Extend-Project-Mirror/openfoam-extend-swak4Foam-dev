@@ -118,6 +118,18 @@ sampledSurface &SurfacesRepository::getSurface(
     return found;
 }
 
+bool SurfacesRepository::updateSurface(
+    const word &name,
+    const fvMesh &mesh
+) {
+    sampledSurface &surf=getSurface(name,mesh);
+    bool expired=surf.expire();
+    bool updated=surf.update();
+    Pbug << "Surface " << name << " Expired: " << expired << " Updated: " << updated << endl;
+    return expired && updated;
+}
+
+
 sampledSurface &SurfacesRepository::getSurface(
     const dictionary &dict,
     const fvMesh &mesh
