@@ -115,7 +115,7 @@ void timelineFunctionObject::closeAllFiles()
 
 bool timelineFunctionObject::start()
 {
-    simpleDataFunctionObject::start();
+    Dbug << name() << ": start() - entering" << endl;
 
     if (Pstream::master())
     {
@@ -168,6 +168,8 @@ bool timelineFunctionObject::start()
             }
         }
     }
+
+    simpleDataFunctionObject::start();
 
     return true;
 }

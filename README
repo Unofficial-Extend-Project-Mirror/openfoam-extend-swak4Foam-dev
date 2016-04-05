@@ -3420,6 +3420,11 @@ S_{expl} + S_{impl} T
      *Note:* this does not do *any* semantic checking and is only to
      be used to set constant values for required fields for which
      =swak= can not evaluate the type
+**** Additional output options for function obkjects based on =simpleFunctionObjects=
+     There are now three more options for =outputControlMode=:
+     =outputTimeAndStartup=, =timeStepAndStartup= and
+     =deltaTAndStartup=. These work like the other options but write
+     data at the startup-time as well
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at
