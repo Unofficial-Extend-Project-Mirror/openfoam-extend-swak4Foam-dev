@@ -99,6 +99,8 @@ timelineFunctionObject::timelineFunctionObject
 
 void timelineFunctionObject::flush()
 {
+    Dbug << " flush " << name() << endl;
+
     forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
     {
         (*iter()).flush();
@@ -107,6 +109,8 @@ void timelineFunctionObject::flush()
 
 void timelineFunctionObject::closeAllFiles()
 {
+    Dbug << " closeAllFiles " << name() << endl;
+
     forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
     {
         delete filePtrs_.remove(iter);
@@ -128,6 +132,8 @@ bool timelineFunctionObject::start()
         {
             if (findIndex(names, iter.key()) == -1)
             {
+                Dbug << "Closing file " << iter.key() << endl;
+
                 // Field has been removed. Close file
                 delete filePtrs_.remove(iter);
             }
@@ -140,13 +146,19 @@ bool timelineFunctionObject::start()
         forAll(names,fileI)
         {
             const word& fldName = names[fileI];
+            Dbug << "Checking " << fldName << endl;
 
             // Check if added field. If so open a stream for it.
 
             if (!filePtrs_.found(fldName))
             {
-                fileName theDir=dataDir();
+                Dbug << "Creating " << fldName << endl;
 
+                fileName theDir=dataDir();
+                if(!exists(theDir)) {
+                    Dbug << "Creating directory " << theDir << endl;
+                    mkDir(theDir);
+                }
                 OFstream* sPtr = new OFstream(theDir/fldName+fileExtension_);
 
                 filePtrs_.insert(fldName, sPtr);
@@ -175,6 +187,8 @@ bool timelineFunctionObject::start()
 }
 
 void timelineFunctionObject::endData(const word &name) {
+    Dbug << " endData " << name << endl;
+
     (*filePtrs_[name]) << endl;
 }
 
