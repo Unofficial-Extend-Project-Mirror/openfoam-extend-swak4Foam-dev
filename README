@@ -3440,6 +3440,10 @@ S_{expl} + S_{impl} T
      =outputTimeAndStartup=, =timeStepAndStartup= and
      =deltaTAndStartup=. These work like the other options but write
      data at the startup-time as well
+**** =dumpSwakExpression= now works in parallel as well
+     This function object used to only dump values from the master
+     processor if used in parallel. Now the values from all processors
+     are dumped in the order of the processors
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at

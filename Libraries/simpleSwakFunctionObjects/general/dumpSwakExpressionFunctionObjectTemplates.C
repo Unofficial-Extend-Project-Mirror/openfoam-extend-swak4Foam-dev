@@ -65,15 +65,17 @@ void dumpSwakExpressionFunctionObject::writeValue(Ostream &o,const Type &val,uns
 template <class T>
 void dumpSwakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &driver)
 {
-    Field<T> result(driver.getResult<T>());
+    List<Field<T> > results(Pstream::nProcs());
+    results[Pstream::myProcNo()]=driver.getResult<T>();
+
+    Pstream::gatherList(results);
 
     if (Pstream::master()) {
         writeTime(name(),time().value());
-        writeData(name(),result);
+        forAll(results,procNo) {
+            writeData(name(),results[procNo]);
+        }
         endData(name());
-    } else {
-        Pout << "My data is lost because for dumpSwakExpressionFunctionObject"
-            << " only the masters data gets written" << endl;
     }
 }
 
