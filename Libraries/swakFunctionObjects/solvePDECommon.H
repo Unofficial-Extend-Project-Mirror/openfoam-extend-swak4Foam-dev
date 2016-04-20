@@ -117,6 +117,9 @@ protected:
     //- the last iteration will also be relaxed
     bool relaxLastIteration_;
 
+    //- if a steady solution does not converge: restore it
+    bool restoreNonConvergedSteady_;
+
     //- should we relax?
     bool doRelax(bool last);
 
@@ -155,6 +158,12 @@ protected:
 
     virtual void writeNewField() = 0;
 
+    inline bool restoreNonConvergedSteady() {
+        return
+            steady_
+            &&
+            restoreNonConvergedSteady_;
+    }
 public:
 
     //- Runtime type information

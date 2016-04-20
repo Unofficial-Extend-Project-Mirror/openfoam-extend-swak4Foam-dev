@@ -108,7 +108,8 @@ void Foam::CorrectParticleCell<CloudType>::preEvolve()
     if(
         this->owner().mesh().changing()
     ) {
-        Info << this->modelName() << ":" << this->modelType()
+        Info << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << ": Mesh moving" << endl;
 
         search_.correct();
@@ -183,11 +184,13 @@ void Foam::CorrectParticleCell<CloudType>::preEvolve()
             << outCnt << tab << cnt << endl;
     }
     if(outCnt>0) {
-        Info << this->modelName() << ":" << this->modelType()
+        Info << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << "Corrected " << outCnt << " particles" << endl;
     }
     if(cnt>0) {
-        Info << this->modelName() << ":" << this->modelType()
+        Info << this->modelName() << ":" << this->owner().name()
+            << ":" << this->modelType()
             << "Not in mesh " << cnt << " particles" << endl;
     }
 }

@@ -39,9 +39,9 @@ solution
         pseudoRho             cell;
         pseudoMu              cell;
         //        U                cellPoint;
-        //        U                cell;
+        U                cell;
         //        U                     pointMVC;
-        U         cellPointWallModified;
+        //        U         cellPointWallModified;
         rho                   cell;
         mu                    cell;
     }
@@ -128,9 +128,9 @@ subModels
 
 cloudFunctions
 {
-    correctCells {
-        type correctParticleCell;
-    }
+    // correctCells {
+    //     type correctParticleCell;
+    // }
     patchAuslass
     {
         type            patchPostProcessing;

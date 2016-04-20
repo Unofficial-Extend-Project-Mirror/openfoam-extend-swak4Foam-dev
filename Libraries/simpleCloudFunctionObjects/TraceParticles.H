@@ -28,14 +28,14 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::CloudMoveStatistics
+    Foam::TraceParticles
 
 Description
-    Record the number of faces etc that were hit during one evolution. This is
-    mainly used to find out whether there is a problem during the tracking phase
+    Gets a list of particle ids (origCpu and origId). Writes every information
+    about these particles
 
 SourceFiles
-    CloudMoveStatistics.C
+    TraceParticles.C
 
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -44,8 +44,8 @@ Contributors/Copyright:
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef CloudMoveStatistics_H
-#define CloudMoveStatistics_H
+#ifndef TraceParticles_H
+#define TraceParticles_H
 
 #include "CloudFunctionObject.H"
 
@@ -59,11 +59,11 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class CloudMoveStatistics Declaration
+                       Class TraceParticles Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class CloudType>
-class CloudMoveStatistics
+class TraceParticles
 :
     public CloudFunctionObject<CloudType>
 {
@@ -75,24 +75,10 @@ class CloudMoveStatistics
     typedef typename CloudType::parcelType parcelType;
 
     //- Convenience typedef for hash hit-table
-    typedef HashTable<label, labelPair, typename labelPair::Hash<> > hitTableType;
+    typedef HashTable<label, labelPair, typename labelPair::Hash<> > idTableType;
 
-    typedef HashTable<label, word> patchHitTableType;
-
-    //- Table of number of times a particle has hit a face
-    hitTableType faceHitCounter_;
-
-    //- Table of number of times a particle has been moved
-    hitTableType movesCounter_;
-
-    //- table of the number of times a patch has been hit
-    patchHitTableType patchHitCounter_;
-
-    //- number of hits to report a particle
-    label reportHitNr_;
-
-    //- number of moves to report a particle
-    label reportMoveNr_;
+    //- Table with id for tracing
+    idTableType ids_;
 
     //- here we get our files from
     TimelineCollection out_;
@@ -104,17 +90,22 @@ protected:
     //- Write post-processing info
     void write();
 
+    //- Write particle information
+    void writeParticle(
+        const typename CloudType::parcelType& p,
+        const word &desrc
+    );
 
 public:
 
     //- Runtime type information
-    TypeName("cloudMoveStatistics");
+    TypeName("traceParticles");
 
 
     // Constructors
 
     //- Construct from dictionary
-    CloudMoveStatistics
+    TraceParticles
     (
         const dictionary& dict,
         CloudType& owner,
@@ -122,20 +113,20 @@ public:
     );
 
     //- Construct copy
-    CloudMoveStatistics(const CloudMoveStatistics<CloudType>& ppm);
+    TraceParticles(const TraceParticles<CloudType>& ppm);
 
     //- Construct and return a clone
     virtual autoPtr<CloudFunctionObject<CloudType> > clone() const
         {
             return autoPtr<CloudFunctionObject<CloudType> >
                 (
-                    new CloudMoveStatistics<CloudType>(*this)
+                    new TraceParticles<CloudType>(*this)
                 );
         }
 
 
     //- Destructor
-    virtual ~CloudMoveStatistics();
+    virtual ~TraceParticles();
 
 
     // Member Functions
@@ -188,7 +179,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "CloudMoveStatistics.C"
+#   include "TraceParticles.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

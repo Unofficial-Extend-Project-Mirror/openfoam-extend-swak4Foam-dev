@@ -11,6 +11,7 @@ pyFoamRunner.py --auto funkySetFields -create -time 0 -field cpuNr -expression "
 pyFoamRunner.py --auto funkySetLagrangianField -time 0
 
 pyFoamRunner.py --auto funkySetFields -time 0 -field nonMovedField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
+pyFoamRunner.py --auto funkySetFields -time 0 -field staticField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
 pyFoamRunner.py --auto funkySetFields -time 0 -field movedField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
 pyFoamRunner.py --auto funkySetFields -time 0 -field movedField -keepPatches -expression "0"
 pyFoamRunner.py --auto funkySetFields -time 0 -field movedSteadyField -keepPatches -valuePatches inlet -expression "mag(pos().x)<0.005 ? 1 : 0"
