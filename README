@@ -3247,6 +3247,8 @@ S_{expl} + S_{impl} T
 **** =funkySetBoundaryField= does not compress files
      The utility now reads the compression state of the original and
      sets the resulting file accordingly
+**** =swakExpression= not working for point fields
+     Point fields were not correctly returned. This is fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
