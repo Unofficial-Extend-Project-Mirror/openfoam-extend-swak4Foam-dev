@@ -3369,6 +3369,8 @@ S_{expl} + S_{impl} T
        particle. If the expression is =true= then the particle is
        eliminated. Expression can be evaluated before or after the
        moving of the particles
+**** =streamFunction= added to =VelocityField= function-plugin
+     A function that calculates the stream function in a 2D simulation has been added
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
