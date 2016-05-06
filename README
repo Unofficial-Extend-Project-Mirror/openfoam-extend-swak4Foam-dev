@@ -3448,6 +3448,9 @@ S_{expl} + S_{impl} T
      This function object used to only dump values from the master
      processor if used in parallel. Now the values from all processors
      are dumped in the order of the processors
+**** Missing properties =age= and =dTarget= added to KinematicCloud parser
+     Two properties that were missing for that cloud type are now
+     available in the parser
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at

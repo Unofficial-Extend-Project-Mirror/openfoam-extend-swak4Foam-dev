@@ -89,6 +89,13 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::d
         )
     );
+    this->addScalarFunction(
+        "dTarget",
+        "Target diameter",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::dTarget
+        )
+    );
     this->addVectorFunction(
         "U",
         "Velocity",
@@ -101,6 +108,13 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
         "Density",
         new typename baseType::template ParticleMethodWrapperValue<scalar>(
             &CloudType::particleType::rho
+        )
+    );
+    this->addScalarFunction(
+        "age",
+        "Age of the prticle",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::age
         )
     );
     this->addScalarFunction(
