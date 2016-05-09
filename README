@@ -3185,7 +3185,7 @@ S_{expl} + S_{impl} T
 **** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
      This case demonstrates how to add lagrangian particles to the
      simplest tutorial-case
-** Next release - version number : 0.4.0
+** Next release - version number : 0.3.3
    This is the first release that does not support OpenFOAM 1.7.x,
    OpenFOAM 1.6-ext and older versions anymore
 *** Incompatibilities
