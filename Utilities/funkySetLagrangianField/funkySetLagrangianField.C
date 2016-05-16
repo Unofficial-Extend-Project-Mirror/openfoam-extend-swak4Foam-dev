@@ -110,11 +110,20 @@ void doAnExpression(
         );
         OFstream o(
             theFile.objectPath(),
+#ifdef FOAM_DEV
+		    std::ios_base::out,
+#endif		    
             IOstream::ASCII,
             IOstream::currentVersion,
             IOstream::COMPRESSED
         );
-        theFile.writeHeader(o,cls);
+        theFile.writeHeader(
+#ifndef FOAM_DEV
+	     o,cls
+#else
+	     o
+#endif	     
+	);
         o << nl
             << theCloud.size() << nl
             << "(" << nl;

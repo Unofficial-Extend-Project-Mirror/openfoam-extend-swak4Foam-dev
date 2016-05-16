@@ -89,6 +89,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::d
         )
     );
+#ifdef FOAM_KINEMATIC_PARCEL_HAS_DTARGET
     this->addScalarFunction(
         "dTarget",
         "Target diameter",
@@ -96,6 +97,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::dTarget
         )
     );
+#endif    
     this->addVectorFunction(
         "U",
         "Velocity",
@@ -110,6 +112,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::rho
         )
     );
+#ifdef FOAM_KINEMATIC_PARCEL_HAS_AGE
     this->addScalarFunction(
         "age",
         "Age of the prticle",
@@ -117,6 +120,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::age
         )
     );
+#endif    
     this->addScalarFunction(
         "tTurb",
         "Time in turbulent eddy",

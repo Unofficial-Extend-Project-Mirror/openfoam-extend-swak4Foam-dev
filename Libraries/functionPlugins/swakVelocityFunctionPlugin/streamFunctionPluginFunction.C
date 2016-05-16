@@ -37,7 +37,9 @@ Contributors/Copyright:
 #include "streamFunctionPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
+#ifndef FOAM_DEV
 #include "symmetryPlanePolyPatch.H"
+#endif
 #include "symmetryPolyPatch.H"
 #include "emptyPolyPatch.H"
 #include "wedgePolyPatch.H"
@@ -69,7 +71,7 @@ streamFunctionPluginFunction::streamFunctionPluginFunction(
 
     if (nD != 2)
     {
-        FatalErrorInFunction
+      FatalErrorIn("streamFunctionPluginFunction::streamFunctionPluginFunction")
             << "Case is not 2D, stream-function cannot be computed"
                 << exit(FatalError);
     }
@@ -106,7 +108,11 @@ void streamFunctionPluginFunction::doEvaluation()
             & Vector<label>(Vector<label>::X, Vector<label>::Y, Vector<label>::Z)
         );
 
-    scalar thickness = vector(slabNormal) & mesh().bounds().span();
+    scalar thickness = vector(
+			      slabNormal.x(),
+			      slabNormal.y(),
+			      slabNormal.z()
+		       ) & mesh().bounds().span();
 
     const pointMesh& pMesh = pointMesh::New(mesh());
 
@@ -136,7 +142,7 @@ void streamFunctionPluginFunction::doEvaluation()
     label nVisited = 0;
     label nVisitedOld = 0;
 
-    const faceUList& faces = mesh().faces();
+    const UList<face>& faces = mesh().faces();
     const pointField& points = mesh().points();
 
     label nInternalFaces = mesh().nInternalFaces();
@@ -240,7 +246,7 @@ void streamFunctionPluginFunction::doEvaluation()
                 }
                 else
                 {
-                    FatalErrorInFunction
+ 		    FatalErrorIn("streamFunctionPluginFunction::doEvaluation()")
                         << "Cannot find initialisation face or a cell."
                             << abort(FatalError);
                 }
@@ -301,8 +307,10 @@ void streamFunctionPluginFunction::doEvaluation()
                                 (
                                     !isType<emptyPolyPatch>
                                     (patches[patchNo])
+#ifndef FOAM_DEV				    
                                     && !isType<symmetryPlanePolyPatch>
                                     (patches[patchNo])
+#endif				    
                                     && !isType<symmetryPolyPatch>
                                     (patches[patchNo])
                                     && !isType<wedgePolyPatch>
