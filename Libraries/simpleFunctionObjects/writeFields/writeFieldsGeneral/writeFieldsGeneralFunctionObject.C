@@ -47,7 +47,7 @@ Contributors/Copyright:
 #ifdef FOAM_HAS_COLLIDING_CLOUD
 #include "basicKinematicCollidingCloud.H"
 #endif
-#ifdef FOAM_HAS_MPICC_CLOUD
+#ifdef FOAM_HAS_MPPIC_CLOUD
 #include "basicKinematicMPPICCloud.H"
 #endif
 #ifdef FOAM_REACTINGCLOUD_TEMPLATED
@@ -157,7 +157,7 @@ void writeFieldsGeneralFunctionObject::write()
 #ifdef FOAM_HAS_COLLIDING_CLOUD
         cnt+=writeCloud<basicKinematicCollidingCloud>(name);
 #endif
-#ifdef FOAM_HAS_MPICC_CLOUD
+#ifdef FOAM_HAS_MPPIC_CLOUD
         cnt+=writeCloud<basicKinematicMPPICCloud>(name);
 #endif
         cnt+=writeCloud<swakFluidThermoCloudType>(name);

@@ -74,7 +74,8 @@ Foam::solvePDECommon::solvePDECommon
     name_(name),
     steady_(false),
     relaxUnsteady_(false),
-    relaxLastIteration_(false)
+    relaxLastIteration_(false),
+    restoreNonConvergedSteady_(true)
 {
     if (!isA<polyMesh>(obr))
     {
@@ -151,6 +152,15 @@ void Foam::solvePDECommon::read(const dictionary& dict)
 
         steady_=readBool(dict.lookup("steady"));
         if(steady_) {
+            if(dict.found("restoreNonConvergedSteady")) {
+                restoreNonConvergedSteady_=readBool(dict.lookup("restoreNonConvergedSteady"));
+            } else {
+                WarningIn("solvePDECommon::read(const dictionary& dict)")
+                    << "If you don't want to restore a steady solution that didn't converge set "
+                        << "'restoreNonConvergedSteady false;' in " << dict.name()
+                        << endl;
+                restoreNonConvergedSteady_=true;
+            }
             relaxUnsteady_=false;
         } else {
             if(dict.found("relaxUnsteady")) {
@@ -162,6 +172,7 @@ void Foam::solvePDECommon::read(const dictionary& dict)
                         << endl;
                 relaxUnsteady_=false;
             }
+            restoreNonConvergedSteady_=false;
         }
         if(steady_ || relaxUnsteady_) {
             if(dict.found("relaxLastIteration")) {

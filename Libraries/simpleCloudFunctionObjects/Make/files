@@ -1,0 +1,7 @@
+CloudMoveStatisticsInstances.C
+EliminateCaughtParcelsInstances.C
+EliminateOutsideParticlesInstances.C
+CorrectParticleCellInstances.C
+TraceParticlesInstances.C
+
+LIB = $(FOAM_USER_LIBBIN)/libsimpleCloudFunctionObjects

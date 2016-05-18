@@ -92,8 +92,12 @@ void distributionFunctionObject::clearDistributions() {
 }
 
 bool distributionFunctionObject::start() {
+    Dbug << name() << " start() - entering" << endl;
+
     startup_=true;
     startTime_=time().timeName();
+
+    simpleFunctionObject::start();
 
     return true;
 }
@@ -107,6 +111,7 @@ void distributionFunctionObject::flush() {
 
 fileName distributionFunctionObject::dataDir()
 {
+    Dbug << name() << " dataDir()" << endl;
     if(startup_) {
         return baseDir()/startTime_;
     } else {
@@ -115,6 +120,8 @@ fileName distributionFunctionObject::dataDir()
 }
 
 void distributionFunctionObject::write() {
+    Dbug << name() << " write()" << endl;
+
     clearDistributions();
 
     getDistribution();

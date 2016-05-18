@@ -11,6 +11,7 @@ EXE_INC = \
     $(FVOPTIONS_INC) \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)//postProcessing/functionObjects/utilities/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude
 
 
@@ -24,4 +25,7 @@ LIB_LIBS = \
     -lsampling \
     $(TRISURFACE_LIB) \
     -lutilityFunctionObjects \
+    -ldynamicFvMesh \
+    -ltopoChangerFvMesh \
+    -ldynamicMesh \
     -llagrangian
