@@ -55,7 +55,11 @@ void swakExpressionFunctionObject::writeTheData(
     CommonValueExpressionDriver &driver
 )
 {
-    Field<T> result(driver.getResult<T>());
+    Field<T> result(
+        driver.getResult<T>(
+            driver.result().isPoint()
+        )
+    );
 
     autoPtr<AccumulationCalculation<T> > pCalculator;
 

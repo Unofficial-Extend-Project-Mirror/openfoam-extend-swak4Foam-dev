@@ -192,6 +192,9 @@ int main(int argc, char *argv[])
                 IFstream inStream(field.filePath());
                 OFstream outStream(
                     field.filePath(),
+#ifdef FOAM_DEV
+		    std::ios_base::out,
+#endif		    
                     inStream.format(),
                     inStream.version(),
                     inStream.compression()
