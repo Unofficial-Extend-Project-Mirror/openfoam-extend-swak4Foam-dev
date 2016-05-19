@@ -67,14 +67,6 @@ streamFunctionPluginFunction::streamFunctionPluginFunction(
         string("phi internalField surfaceScalarField")
     )
 {
-    label nD = mesh().nGeometricD();
-
-    if (nD != 2)
-    {
-      FatalErrorIn("streamFunctionPluginFunction::streamFunctionPluginFunction")
-            << "Case is not 2D, stream-function cannot be computed"
-                << exit(FatalError);
-    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -101,6 +93,15 @@ void streamFunctionPluginFunction::setArgument(
 
 void streamFunctionPluginFunction::doEvaluation()
 {
+    label nD = mesh().nGeometricD();
+
+    if (nD != 2)
+    {
+        FatalErrorIn("streamFunctionPluginFunction::doEvaluation()")
+            << "Case is not 2D, stream-function cannot be computed"
+                << exit(FatalError);
+    }
+
     Vector<label> slabNormal((Vector<label>::one - mesh().geometricD())/2);
     const direction slabDir
         (
@@ -307,10 +308,10 @@ void streamFunctionPluginFunction::doEvaluation()
                                 (
                                     !isType<emptyPolyPatch>
                                     (patches[patchNo])
-#ifndef FOAM_DEV				    
+#ifndef FOAM_DEV
                                     && !isType<symmetryPlanePolyPatch>
                                     (patches[patchNo])
-#endif				    
+#endif
                                     && !isType<symmetryPolyPatch>
                                     (patches[patchNo])
                                     && !isType<wedgePolyPatch>
