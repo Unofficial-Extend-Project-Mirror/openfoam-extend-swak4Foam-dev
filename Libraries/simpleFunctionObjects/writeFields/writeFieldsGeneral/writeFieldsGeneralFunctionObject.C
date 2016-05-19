@@ -29,8 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
     2014 David Huckaby <e.david.huckaby@netl.doe.gov>
+    2015 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

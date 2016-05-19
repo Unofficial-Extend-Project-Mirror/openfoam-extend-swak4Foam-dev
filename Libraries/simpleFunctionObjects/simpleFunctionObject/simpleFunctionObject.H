@@ -38,7 +38,7 @@ SourceFiles
     simpleFunctionObject.C
 
 Contributors/Copyright:
-    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2014, 2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
