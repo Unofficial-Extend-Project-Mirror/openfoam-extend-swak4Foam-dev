@@ -3206,6 +3206,9 @@ S_{expl} + S_{impl} T
      from the =dev=-branch were guarded with the correct version
 **** Support for =foam-extend= 4.0
      This version is supported by =swak4Foam= (compiles and runs)
+**** Support for the OpenFOAM v3.0+ version
+     This version is supported. For the time being it can be assumed
+     that this version is similar to the regular OpenFOAM 3.0
 *** Bug fixes
 **** =fieldReport= doesn't work with all field names
      Fields that have names that are not considered proper variable
