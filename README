@@ -3204,6 +3204,8 @@ S_{expl} + S_{impl} T
 **** Support for OpenFOAM 3.0
      Support for this version has been added (basically all the fixes
      from the =dev=-branch were guarded with the correct version
+**** Support for =foam-extend= 4.0
+     This version is supported by =swak4Foam= (compiles and runs)
 *** Bug fixes
 **** =fieldReport= doesn't work with all field names
      Fields that have names that are not considered proper variable
@@ -3247,6 +3249,8 @@ S_{expl} + S_{impl} T
 **** =funkySetBoundaryField= does not compress files
      The utility now reads the compression state of the original and
      sets the resulting file accordingly
+**** =swakExpression= not working for point fields
+     Point fields were not correctly returned. This is fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
@@ -3367,6 +3371,8 @@ S_{expl} + S_{impl} T
        particle. If the expression is =true= then the particle is
        eliminated. Expression can be evaluated before or after the
        moving of the particles
+**** =streamFunction= added to =VelocityField= function-plugin
+     A function that calculates the stream function in a 2D simulation has been added
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
@@ -3444,6 +3450,9 @@ S_{expl} + S_{impl} T
      This function object used to only dump values from the master
      processor if used in parallel. Now the values from all processors
      are dumped in the order of the processors
+**** Missing properties =age= and =dTarget= added to KinematicCloud parser
+     Two properties that were missing for that cloud type are now
+     available in the parser
 *** Examples
 **** =solverPDE/pitzDailyWithPDE= extended
      This case has been modified to a version that was presented at

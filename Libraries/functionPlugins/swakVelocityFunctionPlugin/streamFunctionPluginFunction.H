@@ -29,87 +29,76 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-
+    Foam::streamFunctionPluginFunction
 
 Description
-    Define types that were renamed in OpenFOAM 2.2
+    Calculates the stream-function for a 2D flow field. Basically lifts
+    the implementation from the streamFunction utility
 
 SourceFiles
+    streamFunctionPluginFunction.C
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef SwakCloudMacroHeader_H
-#define SwakCloudMacroHeader_H
+#ifndef streamFunctionPluginFunction_H
+#define streamFunctionPluginFunction_H
 
-#include "swak.H"
+#include "FieldValuePluginFunction.H"
 
-#ifdef FOAM_HAS_FLUIDTHERMO_CLOUD
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "fluidThermoCloud.H"
+namespace Foam
+{
 
-namespace Foam {
-    typedef fluidThermoCloud swakFluidThermoCloudType;
-}
+/*---------------------------------------------------------------------------*\
+                           Class streamFunctionPluginFunction Declaration
+\*---------------------------------------------------------------------------*/
+class streamFunctionPluginFunction
+:
+    public FieldValuePluginFunction
+{
+    //- Disallow default bitwise assignment
+    void operator=(const streamFunctionPluginFunction &);
 
-#else
+    streamFunctionPluginFunction(const streamFunctionPluginFunction &);
 
-#include "basicThermoCloud.H"
+    autoPtr<surfaceScalarField> phi_;
 
-namespace Foam {
-    typedef basicThermoCloud swakFluidThermoCloudType;
-}
-#endif
+protected:
 
-#ifdef FOAM_DEV
-#define FOAM_REACTINGCLOUD_TEMPLATED
-#endif
+    void doEvaluation();
 
-#ifdef FOAM_DEV
-#define FOAM_KINEMATICCLOUD_OLD_STYLE
-#endif
+    virtual void setArgument(
+        label index,
+        const string &content,
+        const CommonValueExpressionDriver &driver
+    );
 
-#ifdef FOAM_DEV
-#define FOAM_THERMOCLOUD_OLD_STYLE
-#endif
+public:
+    streamFunctionPluginFunction(
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
+    );
 
-#ifdef FOAM_DEV
-#define FOAM_REACTINGCLOUD_OLD_STYLE
-#endif
+    virtual ~streamFunctionPluginFunction() {}
+
+    TypeName("streamFunctionPluginFunction");
+
+};
 
 
-#if FOAM_VERSION4SWAK > VERSION_NR2(2,2)
-#define FOAM_PHASECHANGEMODEL_HAS_TVAP
-#endif
 
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_DEV)
-#define FOAM_HAS_COLLIDING_CLOUD
-#endif
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)
-#define FOAM_HAS_MPPIC_CLOUD
-#endif
+} // End namespace Foam
 
-#if (FOAM_VERSION4SWAK > VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
-#define FOAM_KINEMATIC_PARCEL_HAS_MINPARCELMASS
-#endif
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#if !defined(FOAM_DEV)
-#define FOAM_KINEMATIC_PARCEL_HAS_DTARGET
-#endif
-
-#if !defined(FOAM_DEV)
-#define FOAM_KINEMATIC_PARCEL_HAS_AGE
-#endif
-
-#if (FOAM_VERSION4SWAK > VERSION_NR2(3,1)) && defined(FOAM_DEV)
-#define FOAM_CLOUDTEMPLATE_IS_CLOUD_H
-#endif
-
-#include "DebugOStream.H"
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #endif
 
