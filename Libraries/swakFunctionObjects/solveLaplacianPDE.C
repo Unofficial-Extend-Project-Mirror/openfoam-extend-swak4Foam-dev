@@ -261,8 +261,10 @@ void Foam::solveLaplacianPDE::solve()
                     "fallback"+f.name(),
                     f
                 );
-#ifdef FOAM_DEV		
+#ifdef FOAM_LDUMATRIX_SOLVERPERFORMANCE
 		lduMatrix::solverPerformance perf=eq.solve();
+#elif defined(FOAM_LDUSOLVERPERFORMANCE)
+		lduSolverPerformance  perf=eq.solve();
 #else
 		solverPerformance perf=eq.solve();
 #endif		

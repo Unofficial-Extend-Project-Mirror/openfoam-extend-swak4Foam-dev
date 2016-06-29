@@ -359,6 +359,13 @@ Contributors/Copyright:
 #endif
 
 
+#if FOAM_VERSION4SWAK >= VERSION_NR(4,0,0) && defined(FOAM_DEV)
+#define FOAM_LDUSOLVERPERFORMANCE
+#elif FOAM_VERSION4SWAK < VERSION_NR(4,0,0) && defined(FOAM_DEV)
+#define FOAM_LDUMATRIX_SOLVERPERFORMANCE
+#endif
+
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
