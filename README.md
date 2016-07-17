@@ -1,202 +1,3 @@
----
-options: 'H:4'
-title: '`README` for `swak4Foam` - Version for OpenFOAM 2.x'
-...
-
--   Description
--   About this document
-    -   Scope
-    -   Technical
--   Contributors etc
-    -   Original Author
-    -   Current Maintainer
-    -   Contributors
-    -   Documentation
--   Installation/Compilation
-    -   Requirements
-    -   Building
-        -   Additional configuration
-        -   Possible compilation failure with old 2.0.x-versions
-        -   Special versions of the python integration
-    -   Global installation
-    -   Packaging
-        -   Debian
--   Contents
-    -   Libraries
-        -   =swak4FoamParsers=
-        -   =simpleFunctionObjects=
-        -   =groovyBC=
-        -   =swakFunctionObjects=
-        -   =simpleSwakFunctionObjects=
-        -   =swakSourceFields=
-        -   =swakFvOptions=
-        -   =swakTopoSources=
-        -   =swakFiniteArea=
-        -   =groovyStandardBCs=
-        -   =pythonIntegration=
-        -   =simpleLagrangianFunctionObjects=
-        -   =simpleSearchableSurfaces=
-        -   =fluFunctionObjectDriver=
-        -   =swakLagrangianParser=
-        -   =functionPlugins=
-    -   Utilities
-        -   =funkySetFields=
-        -   =funkySetAreaFields=
-        -   =funkySetBoundaryField=
-        -   =replayTransientBC=
-        -   =funkyDoCalc=
-        -   =calcNonUniformOffsetsForMapped=
-        -   =fieldReport=
-        -   =funkyPythonPostproc=
-        -   =funkySetLagrangianField=
-    -   Examples
-        -   groovyBC
-        -   FunkyDoCalc
-        -   FunkySetFields
-        -   FunkySetBoundaryFields
-        -   InterFoamWithSources
-        -   InterFoamWithFixed
-        -   FiniteArea
-        -   FvOptions
-        -   other
-        -   FromPresentations
-        -   PythonIntegration
-        -   =CodeStream=
-        -   solvePDE
-        -   BasicSourceSubclasses
-        -   Lagrangian
-        -   SimpleSurface
-        -   manipulateFvSolutionFvSchemes
-        -   tests
-        -   BugCases
-    -   =maintainanceScripts=
-    -   Documentation
-    -   releaseTesting
--   Bug reporting and Development
-    -   Bug reports
-        -   Things to do before reporting bug
-    -   Development
-        -   Suggest reading
-        -   Special branches
-        -   Distributed bug-tracking
-        -   Maintaining feature and hotfix-branches
--   Copyright
--   Known bugs
-    -   Moving meshes and `sampledSurfaces`
-    -   Missing support for interpolation and point-Fields
-    -   Caching of loaded fields not working
-    -   Possible enhancements of the code
-        -   Pointers in the driver code
-    -   Possible memory loss
-    -   Non-treatment of the inner product `&` of symmetric tensors
-    -   No point-vector construction for Subsets
-    -   No tab-completion for regular Python-shell and old
-        IPython-versions
-    -   Failure of `groovyBC` for `commsType` `blocking`
--   History
-    -   2010-09-13 - version number : 0.1
-    -   2010-12-18 - version number : 0.1.1
-        -   Parser for `sampledSurfaces`
-        -   Multiline `variables`
-        -   Two maintainance-scripts were added
-        -   Parsers using 'external variables' are now run-time
-            selectable
-    -   2011-01-30 - version number : 0.1.2
-        -   Support for *Finite Area*-stuff
-        -   Bugfix for compiling in single precision
-        -   New function `nearDist`
-    -   2011-04-20 - version number : 0.1.3
-        -   New utility `funkySetAreaField`
-        -   Refactoring of `groovyBC` and groovified boundary conditions
-        -   Easier deployment
-        -   Force equations
-        -   New utility `funkyDoCalc`
-        -   Debian packaging
-        -   Lookup-tables
-        -   Stored variables
-        -   Sampled sets
-    -   2011-07-26 - version number : 0.1.4
-        -   Port to OpenFOAM 2.0
-        -   New features:
-        -   Bug-fixes
-        -   Packaging
-    -   2011-10-03 - version number : 0.1.5
-        -   New features
-        -   Administrative and packaging
-        -   Bugfixes
-    -   2012-01-04 - version number : 0.1.6
-        -   Cases changed
-        -   Infrastructure
-        -   Technical
-        -   New features
-        -   Bug fixes
-        -   Discontinued features
-    -   2012-04-13 - version number : 0.2.0 Friday the 13th
-        -   New features
-        -   Infrastructure
-        -   Packaging
-        -   Changes in the behavior
-        -   Bug fixes
-    -   2012-10-18 - version number : 0.2.1
-        -   Requirements
-        -   Bug fixes
-        -   Enhancements
-        -   New features
-        -   Infrastructure
-    -   2013-02-28 - version number : 0.2.2
-        -   Incompatibilities to previous versions
-        -   Bug fixes
-        -   New Examples
-        -   New features
-        -   Enhancements
-        -   Infrastructure
-        -   Cosmetics
-        -   Documentation
-    -   2013-03-18 - version number : 0.2.3
-        -   Supports OpenFOAM 2.2
-        -   Incompatibilities to previous versions
-        -   Bug fixes
-        -   New features
-        -   Enhancements
-    -   2013-05-24 - version number : 0.2.4
-        -   Incompatibilities to previous versions
-        -   Infrastructure
-        -   Cosmetics
-        -   Bug fixes
-        -   New features
-        -   Enhancements
-    -   2014-01-24 - version number : 0.3.0
-        -   Incompatibilities to previous versions
-        -   New supported versions
-        -   Infrastructure
-        -   Documentation
-        -   Incompatibilities to previous versions
-        -   Bug fixes
-        -   New features
-        -   Enhancements
-        -   Examples
-    -   2014-07-11 - version number : 0.3.1
-        -   Incompatibilities to previous versions
-        -   New supported versions
-        -   Infrastructure
-        -   Documentation
-        -   Bug fixes
-        -   New features
-        -   Enhancements
-        -   Examples
-    -   2015-05-31 - version number : 0.3.2
-        -   Future changes
-        -   Incompatibilities
-        -   New supported versions
-        -   Internals (for developers)
-        -   Bug fixes
-        -   Infrastructure
-        -   Infrastructure
-        -   Documentation
-        -   New features
-        -   Enhancements
-        -   Examples
-
 Description
 ===========
 
@@ -235,12 +36,12 @@ Contributors etc
 Original Author
 ---------------
 
-Bernhard Gschaider (bgschaid@ice-sf.at)
+Bernhard Gschaider (bgschaid@hfd-research.com)
 
 Current Maintainer
 ------------------
 
-Bernhard Gschaider (bgschaid@ice-sf.at)
+Bernhard Gschaider (bgschaid@hfd-research.com)
 
 Contributors
 ------------
@@ -284,19 +85,20 @@ According to the commits in the `mercurial`-repository (and the
 repositories of the projects from which swak emerged) contributors are
 (ordered by the year of their first contribution):
 
--   2006-2015 Bernhard F.W. Gschaider \<bgschaid@ice-sf.at\>
+-   2006-2016 Bernhard F.W. Gschaider \<bgschaid@hfd-research.com\>
 -   2008 Hannes Kroeger (hannes@kroegeronline.net)
 -   2008-2009, 2012 Martin Beaudoin, Hydro-Quebec
     (beaudoin.martin@ireq.ca)
--   2010 Marianne Mataln \<mmataln@ice-sf\>
+-   2010 Marianne Mataln \<mmataln@ice-sf.at\>
 -   2010 Oliver Borm (oli.borm@web.de)
 -   2011 Alexey Petrov \<alexey.petrov.nnov@gmail.com\>
 -   2011 Petr Vita \<petr.vita@unileoben.ac.at\>
--   2012-2014 Bruno Santos \<wyldckat@gmail.com\>
+-   2012-2016 Bruno Santos \<wyldckat@gmail.com\>
 -   2013 Georg Reiss \<georg.reiss@ice-sf.at\>
 -   2014 Hrvoje Jasak \<h.jasak@wikki.co.uk\>
 -   2014 David Huckaby \<e.david.huckaby@netl.doe.gov\>
 -   2015 Domink Christ \<d.christ@wikki.co.uk\>
+-   2015 Alexey Matveichev \<alexey.matveichev@gmail.com\>
 
 Documentation
 -------------
@@ -309,14 +111,16 @@ Installation/Compilation
 Requirements
 ------------
 
--   Version 2.0, 2.1 or 2.2 of OpenFOAM (a version that works with 1.6,
-    1.6-ext and 1.7 is available separately) and version 3.0 of Foam
+-   Version 2.0 or higher of OpenFOAM and version 3.0 or higher of Foam.
+    The `OpenFOAM-dev` is also supported but because this is frequently
+    changing compilation may fail. The branch `feature/port_of-dev` of
+    the development repository **may** work better
 -   the compiler generators `bison` and `flex`
 
     bison
     :   `swak4Foam` is known to work with `bison` version 2.4 and
         higher. Version 2.3 compiles but the plugin-functionality does
-        not work correctly
+        not work correctly. Version 3.0 does **not** work
     flex
     :   since the introduction of the plugin functions at least a flex
         version of `2.5.33` is required (`2.5.35` is the lowest
@@ -325,8 +129,16 @@ Requirements
 Both of these are mainstream packages (they are for instance needed to
 compile `gcc`) and should exist on every Linux distribution. Use the
 package manager of your distribution to install them and **only** if the
-compilation process of `swak4Foam` complains about too low versions try
-to install them from other sources.
+compilation process of `swak4Foam` complains about too low or too high
+versions compile special version. This can be easily done by calling
+
+``` {.example}
+./maintainanceScripts/compileRequirements.sh
+```
+
+in the directory of the sources. This will download a fitting `bison`
+version, compile it and install it in such a way that it is **only**
+used during the compilation of `swak4Foam`.
 
 `swak4Foam` tries to keep the requirements on these as low as possible
 and sometimes lower versions than the ones reported **may** work. If
@@ -870,6 +682,16 @@ Description
 :   Demonstrates the use of `groovyB` with `potentialFoam` (also a
     problem connected with that). Provided by Martin Backer
 
+#### lookupDambreak
+
+Solver
+:   interFoam
+Preparation
+:   run `pyFoamPrepareCase.py`
+Description
+:   Demonstrates the use of 2-dimensional lookup tables. For the
+    initialization as well as the boundary condition
+
 ### FunkyDoCalc
 
 Example dictionaries for `funkyDoCalc`
@@ -988,7 +810,7 @@ Demonstrates
 Solver
 :   interFoam
 Case
-:   run the supplied script `prepareCase.sh`
+:   run the `pyFoam`-utility `pyFoamPrepareCase.py`
 Demonstrates
 :   Usage of a sampled surface to track the interface in a
     VOF-simulation
@@ -1026,6 +848,15 @@ Solver
 :   simpleFoam
 Case
 :   Run `prepare.sh`
+
+#### =topoSetDamBreak=
+
+Case to demonstrate various things about `cell` and `faceSet`
+
+Solver
+:   interFoam
+Case
+:   Run `pyFoamPrepareCase.py .`
 
 ### FromPresentations
 
@@ -1291,6 +1122,11 @@ Sorry
 Testing of different seeds for the `rand`-function. Also tests the
 `randFixed`-function
 
+#### =AMIPipe=
+
+Simple geometry for testing function objects with AMI. "Execute" with
+`replayTransientBC`
+
 ### BugCases
 
 These are cases provided by users to demonstrate bugs. Not maintained
@@ -1330,6 +1166,9 @@ The preferred place for bug reports is
 
 A sourceforge-account is required for reporting
 
+Please **always** report the FOAM-version you use. As `OpenFOAM-dev` is
+a moving target only bug-reports that add fixes are handled for this.
+
 ### Things to do before reporting bug
 
 If you're reporting a bug about the compilation please run `Allwmake`
@@ -1358,9 +1197,9 @@ hg branch <branchName>
 ```
 
 where `<branchname>` is an easily identifiable name that makes the
-purpose of the branch clear (for instance `bugfixWrongRandomFunction` or
-`featureHyperbolicFunctions`). Don't work on the `default` branch or any
-other branches that are not "yours". Such contributions will not be
+purpose of the branch clear (for instance `hotfix/WrongRandomFunction`
+or `feature/HyperbolicFunctions`). Don't work on the `default` branch or
+any other branches that are not "yours". Such contributions will not be
 merged
 
 Once development on the branch is finished export the relevant
@@ -1420,17 +1259,12 @@ Currently the main branches are:
 
 default
 :   The **main** branch. This is the brancht that the general public
-    will receive. It compiles under 1.7 and 1.6-ext
-`port_2.0.x`
-:   The branch that compiles under OpenFOAM 2.0. This will eventually
-    become the `default`-branch
+    will receive. It compiles under OpenFOAM 2.0 and higher
 debianPackaging
 :   Branch for generating new Debian-packages of `swak4Foam`. If
     somebody wants to "inherit" this: contact the maintainer
-finiteArea
-:   In this branch the things for the `finiteArea`-discretization (only
-    present in `1.6-ext`) is developed. Usually gets merged back into
-    the `default`-branch once a feature is completed
+develop
+:   Actual development branch
 
 ### Distributed bug-tracking
 
@@ -1457,10 +1291,8 @@ The repository comes with a `.hgflow`-file that is set for the
 branches of this extension. This **seems** to be the most up-to date and
 still under active development)
 
-The two main lines (`1.x` and `2.x`) have slightly different names for
-the `master` and the `dvelopment`-branch. But apart from that in the
-future this repository will try to stick to the model described in
-<http://nvie.com/posts/a-successful-git-branching-model/>
+In the future this repository will try to stick to the model described
+in <http://nvie.com/posts/a-successful-git-branching-model/>
 
 Copyright
 =========
@@ -1562,6 +1394,19 @@ If the `commsType` is set to `blocking` then the MPI-communications of
 Currently the only workaround is to edit
 `$WM_PROJECT_DIR/etc/controlDict` so that a different `commsType` is
 used (`nonBlocking` or `scheduled`)
+
+Failure with `sampledSurfaces` that change size on certain distros
+------------------------------------------------------------------
+
+Older Foam-versions had the problem that when the surface changes the
+size then certain values (especially the `mag` are not properly
+recalculated).
+
+This causes this bug:
+<https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/231/>
+
+The bug can not be fixed in `swak4Foam` but has to be fixed in the
+Foam-Distro
 
 History
 =======
@@ -4372,8 +4217,6 @@ checking whether the current time is already stored
 
 This has been fixed
 
-### Infrastructure
-
 #### Some `maintainanceScripts` do not work under Python 3
 
 The scripts
@@ -4415,8 +4258,6 @@ puts it into the directory `releases`
 Provided by Alexey Matveichev
 
 Automatically finds the linking options for Python with `python-config`
-
-### Documentation
 
 ### New features
 
@@ -4676,3 +4517,394 @@ This is only needed in rare cases.
 
 This case demonstrates how to add lagrangian particles to the simplest
 tutorial-case
+
+2016-07-17 - version number : 0.4.0
+-----------------------------------
+
+This is the first release that does not support OpenFOAM 1.7.x, OpenFOAM
+1.6-ext and older versions anymore
+
+### New supported versions
+
+#### Rolling support for `OpenFOAM-dev`
+
+This version adds support for `OpenFOAM-dev` published at
+`git://github.com/OpenFOAM/OpenFOAM-dev.git`
+
+As this version is constantly changing it might or might not work with
+the most up-to-date version of the repository.
+
+The port is maintained in a branch `feature/port_of-dev` that is never
+closed and is periodically merged to the `develop`-branch.
+
+Internally the `dev`-version is maintained as version `9.9.99`
+
+#### Support for OpenFOAM 3.0
+
+Support for this version has been added (basically all the fixes from
+the `dev`-branch were guarded with the correct version
+
+#### Support for `foam-extend` 4.0
+
+This version is supported by `swak4Foam` (compiles and runs)
+
+#### Support for the OpenFOAM v3.0+ version
+
+This version is supported. For the time being it can be assumed that
+this version is similar to the regular OpenFOAM 3.0
+
+### Bug fixes
+
+#### =fieldReport= doesn't work with all field names
+
+Fields that have names that are not considered proper variable names by
+swak (because for instance the have a dot in the name like
+`alpha.water`) were not handled by `fieldReport`. This has been fixed
+
+#### Construction of `SimpleDistribution` may fail for zero-size fields
+
+The reason is the initialization with `pTraits::max` and that during the
+calculation of `mag` this causes an overlflow. Fixed by scaling down to
+the square root of the maximum
+
+#### Wrong type for cloud in `writeFieldsGeneral`
+
+Because of this compilation in 2.2 failed. Fix provided by Bruno Santos
+
+#### =solverPerformanceToGlobalVariables.C= did not compile with OF 2.2
+
+The reason was that the `solverPerformance`-class is hidden in
+`lduMatrix`. Fix provided by Bruno Santos
+
+#### Solid thermophysics not available in the `ThermoTurb` function plugin
+
+For OF-versions where `fluidThermo` and `solidThermo` have the same base
+functions like `thermo_Cp` can be used for solids too
+
+#### =lookup=-tables no working in `faField`-parser
+
+Because of a bug in the lexer lookup tables did not work. Fixed
+
+#### =swakDataEntry= not correctly written for some versions of OpenFOAM
+
+The macro that guarded the code needed for some OpenFOAM-versions did
+not include OpenFOAM 3.0. Fixed
+
+#### =executeFunctionObjectsFvOption= always executed for `makeRelative` and `makeAbsolute`
+
+The wrong flags were checked and the function objects were always
+executed when even if `doMakeAbsolute` and `doMakeRelative` were set to
+`false`. Fixed
+
+#### Does not compile with 
+
+A reference to a `label` that was passed to a `flex`-function broke
+compilation because that expects a 32-bit integer. Fixed
+
+#### Tensor-fields not correctly handled by `replayTransientBC`
+
+Due to a copy/past-problem all tensor-fields (including symmtrical and
+spherical) would have caused the utility to fail. Fixed
+
+#### Surfaces created by `createSampledSurface` not updated during mesh movement
+
+The function object ignored the callbacks for moving meshes. It now
+implements them and forces a regeneration of the surface if the mesh
+moves
+
+#### =funkySetFields= does not set dimensions
+
+The `dimension`-entries were read but not set. This is now fixed
+
+#### =funkySetBoundaryField= does not compress files
+
+The utility now reads the compression state of the original and sets the
+resulting file accordingly
+
+#### =swakExpression= not working for point fields
+
+Point fields were not correctly returned. This is fixed
+
+### Infrastructure
+
+### Documentation
+
+#### Adaption of the reference guide for new `org-mode`
+
+New version of `org-mode` makes changes in the UML-code necessary
+
+### New features
+
+#### 2D-lookup tables supported in grammars
+
+Like the optional list `lookuptables` it is now possible to have a list
+`lookuptables2D` with 2-dimensional lookup tables. A table with the name
+`tbl` can be used like this in expressions: `tbl(expr1,expr2)`. `expr1`
+and `expr2` must evaluate to scalar values of the same entity (cells,
+faces, points ...) and the expression will evaluate to a scalar.
+
+This feature is based on the `interpolation2DTable` that is part of
+OpenFOAM since 2.2 but there is a modified version of this class
+included in `swak4Foam` as there is a problem with the output in the
+original version. Currently `foam-extend` is not supported as this is
+missing some base classes as well (`tableReader`)
+
+#### Added a function plugin for dynamic meshes
+
+The Plugin `DynamicMesh` adds functions to visualize the mesh movement.
+The functions are
+
+dyM
+:   the mesh `phi` as stored with the mesh. Some distributions write
+    this field anyway
+dyM
+:   Mesh courant number. Replicates the number some solvers print
+    automatically
+dyM
+:   Velocity with which the cells are moved. Reconstructed from the mesh
+    `phi`
+
+These functions might failed if the mesh has not been moved yet so their
+calls might have to be encapsulated in a `executeIfStartTime` function
+Object
+
+#### Function object to load `cell`, `face` and `pointSet`
+
+The function object `loadTopoSets` loads all the available sets in the
+mesh into memory for expressions that need them. Also allows automatic
+writing of these sets (switched by `writeSets`)
+
+#### Function object to create and manipulate `cell`, `face` and `pointSets`
+
+The function objects `manipulateCellSet`, `manipulateFaceSet` and
+`manipulatePointSet` allow the manipulation of these `topoSet`. They do
+so by evaluating an expression `mask` and all cells (faces, points) for
+which the expression is `true` will be part of the topoSet. If the
+topoSet is not present in memory the function object fails unless the
+parameter `createMissing` is set to `true`. The entry `writeManipulated`
+(default: `true`) says whether the topoSet should be written at write
+times.
+
+An example of this functionality is found in
+`Examples/other/topoSetDamBreak`
+
+#### Function object that executes other function objects only at write time
+
+The function object `executeIfWriteTime` in the `simpleFunctionObjects`
+executes a list of other function objects only if the current time is a
+scheduled write time. The purpose of this function object is to only
+execute function objects at write times that don't honor the
+`outputControlMode`-setting. Also does the `else`-branch allow executing
+only when **nothing** is written
+
+#### Added a function plugin for MRF cases
+
+This function plugin makes a number of function from the `MRF`-model
+available:
+
+-   functions to make fields absolute or relative in the `MRF` region
+-   a function to calculate the Coriolis force
+
+All these functions call the MRF-model
+
+#### Added library `simpleCloudFunctionObjects` with function objects for particle clouds
+
+These function objects can be added to particle clouds. In this first
+version these objects can be added:
+
+cloudMoveStatistics
+:   Records simple statistics about the solution of the cloud:
+
+    -   How often were faces hit by particles (total, per particle:
+        minimum, mean and average)
+    -   How often were particles moved (same data as face hits)
+    -   How often was each patch hit
+
+    Only minimum effort has been spent to consolidate this data across
+    processors (particles may be counted on multiple processors).
+
+    The main purpose of this function object is to spot problematic
+    behavior (particles that hit patches repeatedly and don't move)
+
+    The optional parameter `reportHitNr` and `reportMoveNr` print out
+    the ids of particles that exceed these thresholds
+
+eliminateCaughtParticles
+:   Sometimes particles get caught in "endless loops" (hitting the same
+    patch over and over again without significant movement). This may
+    slow down simulations significantly as basically the same impact is
+    calculated over and over again without any progress. Two parameters
+    allow eliminating such parcels:
+
+    maximumNumberOfHits
+    :   if the same boundary face is hit more often than this by the
+        particle (without hitting any other faces) then the particle is
+        eliminated. Recommended value: 1000
+    minDistanceMove
+    :   Minimum distance a particle has to move when hitting a boundary
+        face. If it moved less the particle is removed. Recommended:
+        $10^{-9}$
+
+    If one of the parameters is set to a negative value the criterion is
+    "switched off"
+eliminateOutsideParticles
+:   Removes particles that are outside the mesh (are not inside any
+    cell). The purpose of this is to eliminate particles that are for
+    some reason not correctly tracked
+correctParticleCell
+:   Correct the cell of the particle before the evolution begins.
+
+    This should fix problems with moving meshes but is currently not
+    working correctly.
+
+    An optional parameter `logCorrected` logs the data of the corrected
+    particles to a file. Only use for debugging or if you don't expect
+    many incidents
+traceParticles
+:   This function object gets a list of particle ids. For these
+    particles all data is written whenever a function object is called.
+
+    This function object should **only** be used for debugging if the
+    behavior of a special particle should be tracked
+
+#### Add library `swakCloudFunctionObjects` with function objects that use expressions for clouds
+
+These function objects can be added to particle clouds and use
+expressions. The function objects are
+
+eliminateBySwakExpression
+:   Evaluates an expression for each particle. If the expression is
+    `true` then the particle is eliminated. Expression can be evaluated
+    before or after the moving of the particles
+
+#### =streamFunction= added to `VelocityField` function-plugin
+
+A function that calculates the stream function in a 2D simulation has
+been added
+
+### Enhancements
+
+#### Added function for `smooth`, `sweep`, `spread` to `FvcSchemes`-function plugin
+
+These functions from `fvc` were implemented as plugin-functions. Mainly
+to be able to test their behavior. To check what they do see
+`fvcSmooth.H` in `finiteVolume`
+
+#### Additional functions in plugin `ThermoTurb`
+
+Functions from the public interface of `basicThermo` and
+`turbulenceModel` have been added (like `kappa`, `kappaEff` etc)
+
+#### Conditional function objects now allow construction of their `functions` at start
+
+With the parameter
+
+``` {.example}
+constructUnconditionally yes;
+```
+
+in function objects that start with `executeIf` it is possible to
+construct the lists unconditionally at start instead of waiting for the
+condition to be true. If unset then the function objects default to the
+old behaviour
+
+#### =manipulateField=-function object can switch **off** manipulating at start
+
+The regular behavior for this function object is that it does the first
+manipulation during construction. This can be switched off with the
+setting `manipulateAtStartup` in cases where not all the requirements
+for correctly evaluating the expressions are fulfilled during
+construction
+
+#### =replayTransientBC= now handles surface and point fields
+
+The utility can now read surface and point fields. Surface-fields are
+not corrected because this is not supported by Foam
+
+#### =replayTransientBC= reads `fvOptions`
+
+The utility now reads `fvOptions` for FOAM-versions that support it.
+They have to be switched on with 'useFvOptions' as most of the tine they
+are not needed (only with function objects that solve equations)
+
+#### PDE-function objects now have additional `solveAt`-option `never`
+
+When this option is set then the function-objects are read (including
+the field) but never solved
+
+#### =replayTransientBC= reports execution time
+
+The utility now reports the time. This is useful when using the utility
+to test function objects
+
+#### Added parameter `sourceImplicitUseSuSp` to `PDE`-function objects
+
+The function objects `solveLaplacianPDE` and `solveTransportPDE` now
+have a new parameter `sourceImplicitUseSuSp` that allows switching from
+using `Sp()` (the default) to `SuSp()` for the addition of
+`sourceImplicitExpression`
+
+#### =replayTransientBC= can read and update dynamic meshes
+
+The command line option `-useDynamicMesh` tells the utility to read the
+mesh as a dynamic mesh and update it at every time-step
+
+#### =solveTransportPDE= function object now aware of mesh movement
+
+If the function object detects that it is created with a moving mesh
+then it asks for a parameter `makePhiRelative` to specify whether `phi`
+should be made relative to the mesh movement (this is usually
+necessary). Then either a `velocityExpression` or a `velocityName` has
+to be specified as well and `phi` is corrected according to the mesh
+movement
+
+If `steady` is `true` then `phi` is **not** made relative
+
+#### =funkySetLagrangianFields= allows creating fields of arbitrary types
+
+If a cloud is created and in en entry in `expressions` the entry `class`
+is found then it is assumed that a field of that type should be created.
+The `expression` is not evaluated but added to the cloud for each
+particle.
+
+**Note:** this does not do **any** semantic checking and is only to be
+used to set constant values for required fields for which `swak` can not
+evaluate the type
+
+#### Unconverged steady solution of PDE-function objects are reset
+
+For some reason the linear solver does not converge on the
+`solveTransportPDE` and `solveLaplacianPDE` function objects. This
+messes up the solution field. In these cases the solution field is reset
+to the last known good solution. If this behavior is undesired it can be
+switched off with `restoreNonConvergedSteady`
+
+#### Additional output options for function obkjects based on `simpleFunctionObjects`
+
+There are now three more options for `outputControlMode`:
+`outputTimeAndStartup`, `timeStepAndStartup` and `deltaTAndStartup`.
+These work like the other options but write data at the startup-time as
+well
+
+#### =dumpSwakExpression= now works in parallel as well
+
+This function object used to only dump values from the master processor
+if used in parallel. Now the values from all processors are dumped in
+the order of the processors
+
+#### Missing properties `age` and `dTarget` added to KinematicCloud parser
+
+Two properties that were missing for that cloud type are now available
+in the parser
+
+### Examples
+
+#### =solverPDE/pitzDailyWithPDE= extended
+
+This case has been modified to a version that was presented at the PFAU
+(Austrian User Group Meeting) in 2015. Now it compares with the
+`scalarTransport` function object that was added to OpenFOAM.
+
+The case now also calculates the time the fluid needs from the inlet to
+the outlet (`residenceTime`). Steady as well as transient
+
