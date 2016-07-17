@@ -1,11 +1,14 @@
+include $(OBJECTS_DIR)/../../../rules/versionOptions
 
-ifdef FOAM_DEV
-FOAM_DEV_OPTION = -DFOAM_DEV
+ifeq "$(WMAKE_NEW_CONVENTION)" "new"
+  include $(OBJECTS_DIR)/../mybisonNew
+  include $(OBJECTS_DIR)/../myflexNew
+else
+  include $(OBJECTS_DIR)/../mybison
+  include $(OBJECTS_DIR)/../myflex
+  
+  sinclude $(OBJECTS_DIR)/../mydependencies
 endif
-
-include $(OBJECTS_DIR)/../mybison
-include $(OBJECTS_DIR)/../myflex
-sinclude $(OBJECTS_DIR)/../mydependencies
 
 EXE_INC = -I$(OBJECTS_DIR) \
 	$(FOAM_DEV_OPTION) 	\

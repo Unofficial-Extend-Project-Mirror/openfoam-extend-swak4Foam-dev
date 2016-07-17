@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -65,15 +65,17 @@ void dumpSwakExpressionFunctionObject::writeValue(Ostream &o,const Type &val,uns
 template <class T>
 void dumpSwakExpressionFunctionObject::writeTheData(CommonValueExpressionDriver &driver)
 {
-    Field<T> result(driver.getResult<T>());
+    List<Field<T> > results(Pstream::nProcs());
+    results[Pstream::myProcNo()]=driver.getResult<T>();
+
+    Pstream::gatherList(results);
 
     if (Pstream::master()) {
         writeTime(name(),time().value());
-        writeData(name(),result);
+        forAll(results,procNo) {
+            writeData(name(),results[procNo]);
+        }
         endData(name());
-    } else {
-        Pout << "My data is lost because for dumpSwakExpressionFunctionObject"
-            << " only the masters data gets written" << endl;
     }
 }
 

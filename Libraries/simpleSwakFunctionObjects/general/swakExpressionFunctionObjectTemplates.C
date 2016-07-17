@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2011, 2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -55,7 +55,11 @@ void swakExpressionFunctionObject::writeTheData(
     CommonValueExpressionDriver &driver
 )
 {
-    Field<T> result(driver.getResult<T>());
+    Field<T> result(
+        driver.getResult<T>(
+            driver.result().isPoint()
+        )
+    );
 
     autoPtr<AccumulationCalculation<T> > pCalculator;
 

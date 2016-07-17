@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010, 2013-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -51,7 +51,8 @@ Foam::createSampledSurface::createSampledSurface
     const bool loadFromFiles
 ):
     active_(true),
-    obr_(obr)
+    obr_(obr),
+    surfaceName_("noSurfaceHereIn_"+name)
 {
     if (!isA<fvMesh>(obr))
     {
@@ -75,6 +76,8 @@ void Foam::createSampledSurface::timeSet()
 void Foam::createSampledSurface::read(const dictionary& dict)
 {
     if(active_) {
+        surfaceName_=word(dict.lookup("surfaceName"));
+
         SurfacesRepository::getRepository(obr_).getSurface(
             dict,
             dynamic_cast<const fvMesh &>(obr_)
@@ -97,6 +100,33 @@ void Foam::createSampledSurface::write()
 
 void Foam::createSampledSurface::clearData()
 {
+}
+
+//- Update for changes of mesh
+void Foam::createSampledSurface::updateMesh(const mapPolyMesh&)
+{
+    redoSurface();
+}
+
+//- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+void Foam::createSampledSurface::movePoints(const polyMesh&)
+#else
+void Foam::createSampledSurface::movePoints(const pointField&)
+#endif
+{
+    redoSurface();
+}
+
+void Foam::createSampledSurface::redoSurface()
+{
+    Info << "Forcing regeneration of surface " << surfaceName_ << endl;
+
+    bool status=SurfacesRepository::getRepository(obr_).updateSurface(
+        surfaceName_,
+        dynamic_cast<const fvMesh &>(obr_)
+    );
+    Info << "Forcing status for " << surfaceName_ << ": " << status << endl;
 }
 
 // ************************************************************************* //

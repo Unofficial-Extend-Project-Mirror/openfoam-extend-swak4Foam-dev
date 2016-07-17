@@ -37,7 +37,11 @@ wclean swakFvOptions
 
 (cd functionPlugins; ./Allwclean)
 
-# remove residual from bison
+wclean simpleCloudFunctionObjects
+
+wclean swakCloudFunctionObjects
+
+# Remove residual from bison
 rm -f */*.output
 
 if [ "$SWAK_USER_PLUGINS" != "" ]

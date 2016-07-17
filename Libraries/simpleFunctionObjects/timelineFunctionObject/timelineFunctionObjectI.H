@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -46,7 +46,11 @@ namespace Foam {
 
 template<>
 inline void timelineFunctionObject::writeData(const word &name,const UList<string> &data) {
-    Ostream &s=*filePtrs_[name];
+    Dbug << "write Data - string: " << name << " size: " << data.size() << endl;
+
+    OFstream &s=*filePtrs_[name];
+    Dbug << "To: " << s.name() << endl;
+
     forAll(data,index) {
         string d(data[index]);
         d.replaceAll(" ","_");
@@ -75,7 +79,11 @@ inline void timelineFunctionObject::writeData(const word &name,const UList<strin
 
 template<>
 inline void timelineFunctionObject::writeData(const word &name,const UList<scalar> &data) {
-    Ostream &s=*filePtrs_[name];
+    Dbug << "write Data - scalar: " << name << " size: " << data.size() << endl;
+
+    OFstream &s=*filePtrs_[name];
+    Dbug << "To: " << s.name() << endl;
+
     forAll(data,index) {
         switch(outputFileMode_) {
             case ofmFoam:
@@ -96,7 +104,12 @@ inline void timelineFunctionObject::writeData(const word &name,const UList<scala
 
 template<class T>
 void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
-    Ostream &s=*filePtrs_[name];
+    Dbug << "write Data: " << name << " type: " << pTraits<T>::typeName
+        << " size: " << data.size() << endl;
+
+    OFstream &s=*filePtrs_[name];
+    Dbug << "To: " << s.name() << endl;
+
     forAll(data,index) {
         if(outputFileMode_==ofmFoam) {
             s << setw(IOstream::defaultPrecision() + 7) << data[index];
@@ -122,7 +135,10 @@ void timelineFunctionObject::writeData(const word &name,const UList<T> &data) {
 
 template<class T>
 void timelineFunctionObject::writeTime(const word &name,const T &time) {
-    Ostream &s=*filePtrs_[name];
+    Dbug << "writeTime: " << name << " t=" << time << endl;
+    OFstream &s=*filePtrs_[name];
+    Dbug << "To: " << s.name() << endl;
+
     switch(outputFileMode_) {
         case ofmFoam:
         case ofmRaw:

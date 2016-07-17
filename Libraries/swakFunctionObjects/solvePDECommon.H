@@ -38,7 +38,7 @@ SourceFiles
     solvePDECommon.C
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -57,7 +57,11 @@ Contributors/Copyright:
 #include "exprString.H"
 
 #ifdef FOAM_HAS_FVOPTIONS
+#ifdef FOAM_FVOPTIONS_IN_FV
+#include "fvOptionList.H"
+#else
 #include "fvIOoptionList.H"
+#endif
 #endif
 
 namespace Foam
@@ -87,7 +91,8 @@ public:
     enum solveAt {
         saStartup,
         saTimestep,
-        saWrite
+        saWrite,
+        saNever
     };
 protected:
 
@@ -111,6 +116,9 @@ protected:
 
     //- the last iteration will also be relaxed
     bool relaxLastIteration_;
+
+    //- if a steady solution does not converge: restore it
+    bool restoreNonConvergedSteady_;
 
     //- should we relax?
     bool doRelax(bool last);
@@ -140,7 +148,7 @@ protected:
     //- write specific data
     virtual void writeData() = 0;
 
-    static const NamedEnum<solveAt,3> solveAtNames_;
+    static const NamedEnum<solveAt,4> solveAtNames_;
     solveAt solveAt_;
 
     //- should the fields before and after be written?
@@ -150,6 +158,12 @@ protected:
 
     virtual void writeNewField() = 0;
 
+    inline bool restoreNonConvergedSteady() {
+        return
+            steady_
+            &&
+            restoreNonConvergedSteady_;
+    }
 public:
 
     //- Runtime type information

@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -61,9 +61,17 @@ conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
         name,
         t,
         dict,
-        false
+        dict.lookupOrDefault<bool>("constructUnconditionally",false)
     )
 {
+    if(!dict.found("constructUnconditionally")) {
+        WarningIn("conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy")
+            << "'constructUnconditionally' not set in " << dict.name()
+                << ". Assuming 'no'. If you want "
+                << "'functions' to be constructed at the start then set to 'yes'"
+                << endl;
+
+    }
     if(debug) {
         Info << "conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy" << endl;
     }

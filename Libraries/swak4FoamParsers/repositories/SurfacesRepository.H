@@ -39,7 +39,7 @@ SourceFiles
     SurfacesRepositoryIO.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -99,6 +99,12 @@ public:
 
     //- get a surface using its name (surface must exist)
     sampledSurface &getSurface(
+        const word &name,
+        const fvMesh &mesh
+    );
+
+    //- force an update of a surface
+    bool updateSurface(
         const word &name,
         const fvMesh &mesh
     );

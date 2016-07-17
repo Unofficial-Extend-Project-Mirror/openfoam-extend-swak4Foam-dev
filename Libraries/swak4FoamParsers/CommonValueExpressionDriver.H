@@ -38,7 +38,7 @@ SourceFiles
     CommonValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -369,7 +369,7 @@ protected:
     };
 
     template<class T>
-    inline autoPtr<T> getSet(
+    inline autoPtr<T> getTopoSet(
         const fvMesh &,
         const word &,
         SetOrigin &origin

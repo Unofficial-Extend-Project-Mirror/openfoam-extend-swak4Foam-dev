@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  3.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -24,26 +24,37 @@ solvers
         tolerance       1e-06;
         relTol          0;
     }
-    "T.+"
+    U
+    {
+        $T;
+    }
+    "swakTransport.*"
+    {
+        $T;
+    }
+    "residenceTime.*"
+    {
+        $T;
+    }
+    "openFoamResidenceTime.*Steady"
     {
         $T;
     }
 }
 
+nToCorrect 0;
+
 SIMPLE
 {
+    nNonOrthogonalCorrectors $nToCorrect;
+}
+
+
+".*TransportPDE"
+{
+    $SIMPLE;
+    nCorrectors $nToCorrect;
     nNonOrthogonalCorrectors 0;
-}
-
-TSteadyTransportPDE
-{
-    $SIMPLE;
-    //    nCorrectors 15;
-}
-
-"T.+TransportPDE"
-{
-    $SIMPLE;
 }
 
 // ************************************************************************* //

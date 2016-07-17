@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -106,7 +106,7 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
  :
     SetSubsetValueExpressionDriver(dict,dict.lookup("setName"),INVALID),
     faceSet_(
-        getSet<faceSet>(
+        getTopoSet<faceSet>(
             regionMesh(
                 dict,
                 mesh,
@@ -131,7 +131,7 @@ FaceSetValueExpressionDriver::FaceSetValueExpressionDriver(
         false
     ),
     faceSet_(
-        getSet<faceSet>(
+        getTopoSet<faceSet>(
             mesh,
             id,
             origin_
@@ -257,7 +257,7 @@ tmp<scalarField> FaceSetValueExpressionDriver::makeFaceFlipField() const
     cellSet cells(
         mesh,
         setName,
-        getSet<cellSet>(
+        getTopoSet<cellSet>(
             mesh,
             setName,
             origin

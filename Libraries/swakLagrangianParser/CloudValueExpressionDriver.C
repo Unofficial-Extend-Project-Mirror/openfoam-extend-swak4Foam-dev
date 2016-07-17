@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -168,6 +168,27 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
             cloud_
         )
     ),
+    interpolationSchemes_(
+        dict.subOrEmptyDict("interpolationSchemes")
+    )
+{
+    writeProxyInfo();
+}
+
+CloudValueExpressionDriver::CloudValueExpressionDriver(
+    const cloud& c,
+    const dictionary& dict
+)
+    :
+    CommonValueExpressionDriver(dict),
+        cloud_(
+            c
+        ),
+        proxy_(
+            CloudProxy::New(
+                cloud_
+            )
+        ),
     interpolationSchemes_(
         dict.subOrEmptyDict("interpolationSchemes")
     )

@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013, 2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -89,6 +89,15 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::d
         )
     );
+#ifdef FOAM_KINEMATIC_PARCEL_HAS_DTARGET
+    this->addScalarFunction(
+        "dTarget",
+        "Target diameter",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::dTarget
+        )
+    );
+#endif    
     this->addVectorFunction(
         "U",
         "Velocity",
@@ -103,6 +112,15 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::rho
         )
     );
+#ifdef FOAM_KINEMATIC_PARCEL_HAS_AGE
+    this->addScalarFunction(
+        "age",
+        "Age of the prticle",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::age
+        )
+    );
+#endif    
     this->addScalarFunction(
         "tTurb",
         "Time in turbulent eddy",

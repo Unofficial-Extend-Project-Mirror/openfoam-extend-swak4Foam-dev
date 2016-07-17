@@ -38,7 +38,7 @@ SourceFiles
     CloudValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -173,6 +173,12 @@ public:
     CloudValueExpressionDriver(
         const ReaderParticleCloud& c,
         const word &defaultInterpolation
+    );
+
+    //- construct from an existing cloud
+    CloudValueExpressionDriver(
+        const cloud& c,
+        const dictionary&
     );
 
     //- Construct from a dictionary and cloud

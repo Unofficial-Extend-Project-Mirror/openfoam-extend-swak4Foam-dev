@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -99,6 +99,8 @@ timelineFunctionObject::timelineFunctionObject
 
 void timelineFunctionObject::flush()
 {
+    Dbug << " flush " << name() << endl;
+
     forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
     {
         (*iter()).flush();
@@ -107,6 +109,8 @@ void timelineFunctionObject::flush()
 
 void timelineFunctionObject::closeAllFiles()
 {
+    Dbug << " closeAllFiles " << name() << endl;
+
     forAllIter(HashPtrTable<OFstream>, filePtrs_, iter)
     {
         delete filePtrs_.remove(iter);
@@ -115,7 +119,7 @@ void timelineFunctionObject::closeAllFiles()
 
 bool timelineFunctionObject::start()
 {
-    simpleDataFunctionObject::start();
+    Dbug << name() << ": start() - entering" << endl;
 
     if (Pstream::master())
     {
@@ -128,6 +132,8 @@ bool timelineFunctionObject::start()
         {
             if (findIndex(names, iter.key()) == -1)
             {
+                Dbug << "Closing file " << iter.key() << endl;
+
                 // Field has been removed. Close file
                 delete filePtrs_.remove(iter);
             }
@@ -140,13 +146,19 @@ bool timelineFunctionObject::start()
         forAll(names,fileI)
         {
             const word& fldName = names[fileI];
+            Dbug << "Checking " << fldName << endl;
 
             // Check if added field. If so open a stream for it.
 
             if (!filePtrs_.found(fldName))
             {
-                fileName theDir=dataDir();
+                Dbug << "Creating " << fldName << endl;
 
+                fileName theDir=dataDir();
+                if(!exists(theDir)) {
+                    Dbug << "Creating directory " << theDir << endl;
+                    mkDir(theDir);
+                }
                 OFstream* sPtr = new OFstream(theDir/fldName+fileExtension_);
 
                 filePtrs_.insert(fldName, sPtr);
@@ -169,10 +181,14 @@ bool timelineFunctionObject::start()
         }
     }
 
+    simpleDataFunctionObject::start();
+
     return true;
 }
 
 void timelineFunctionObject::endData(const word &name) {
+    Dbug << " endData " << name << endl;
+
     (*filePtrs_[name]) << endl;
 }
 

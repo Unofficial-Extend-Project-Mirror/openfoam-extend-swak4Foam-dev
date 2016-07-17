@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,14 +48,17 @@ namespace Foam
     defineTypeNameAndDebug(simpleFunctionObject, 0);
 
 template<>
-const char* NamedEnum<Foam::simpleFunctionObject::outputControlModeType,4>::names[]=
+const char* NamedEnum<Foam::simpleFunctionObject::outputControlModeType,7>::names[]=
 {
     "timeStep",
     "deltaT",
     "outputTime",
-    "startup"
+    "startup",
+    "outputTimeAndStartup",
+    "timeStepAndStartup",
+    "deltaTAndStartup"
 };
-const NamedEnum<simpleFunctionObject::outputControlModeType,4> simpleFunctionObject::outputControlModeTypeNames_;
+const NamedEnum<simpleFunctionObject::outputControlModeType,7> simpleFunctionObject::outputControlModeTypeNames_;
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -97,6 +100,7 @@ simpleFunctionObject::simpleFunctionObject
     outputDeltaT_(1.),
     time_(t),
     lastWrite_(time_.value()),
+    started_(false),
     dict_(dict),
     regionName_(
         dict_.found("region")
@@ -113,6 +117,7 @@ simpleFunctionObject::simpleFunctionObject
     }
     switch(outputControlMode_) {
         case ocmTimestep:
+        case ocmTimestepAndStartup:
             if(!dict.found("outputInterval")) {
                 WarningIn("simpleFunctionObject::simpleFunctionObject")
                     << "'outputInterval' not found in " << this->name() << endl
@@ -121,6 +126,7 @@ simpleFunctionObject::simpleFunctionObject
             }
             break;
         case ocmDeltaT:
+        case ocmDeltaTAndStartup:
             outputDeltaT_=readScalar(dict.lookup("outputDeltaT"));
             break;
         default:
@@ -138,13 +144,36 @@ simpleFunctionObject::simpleFunctionObject
 
 bool simpleFunctionObject::start()
 {
+    Dbug << name() << "::start() - Entering" << endl;
+
+    if(started_) {
+        // Break infinite recursion
+        return true;
+    }
+    started_=true;
+
     timeSteps_=outputInterval_;
+
+    if(
+        outputControlMode()==ocmStartup
+        ||
+        outputControlMode()==ocmOutputTimeAndStartup
+        ||
+        outputControlMode()==ocmTimestepAndStartup
+        ||
+        outputControlMode()==ocmDeltaTAndStartup
+    ) {
+        write();
+        flush();
+    }
 
     return true;
 }
 
 bool simpleFunctionObject::outputTime(const bool forceWrite)
 {
+    Dbug << name() << "::output() - Entering" << endl;
+
     if(time_.time().value()<after_) {
         return false;
     }
@@ -152,11 +181,13 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
 
     switch(outputControlMode_) {
         case ocmTimestep:
+        case ocmTimestepAndStartup:
             if((outputInterval_>0) && (timeSteps_>=outputInterval_)) {
                 doOutput=true;
             }
             break;
         case ocmDeltaT:
+        case ocmDeltaTAndStartup:
             {
                 // factor (1-SMALL) is necessary to 'hit' exact timesteps
                 scalar now=time_.value()*(1-SMALL);
@@ -174,6 +205,7 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
             }
             break;
         case ocmOutputTime:
+        case ocmOutputTimeAndStartup:
             doOutput=time_.outputTime();
             break;
         case ocmStartup:
@@ -191,30 +223,22 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
 
 bool simpleFunctionObject::execute(const bool forceWrite)
 {
-    if(debug) {
-        Info << name() << "::execute() - Entering" << endl;
-    }
+    Dbug << name() << "::execute() - Entering" << endl;
     if(time_.time().value()<after_) {
-        if(debug) {
-            Info << name() << "::execute() - Leaving - after" << endl;
-        }
+        Dbug << name() << "::execute() - Leaving - after" << endl;
         return true;
     }
 
     timeSteps_++;
 
     if(this->outputTime(forceWrite)) {
-        if(debug) {
-            Info << name() << "::execute() - outputTime" << endl;
-        }
+        Dbug << name() << "::execute() - outputTime" << endl;
         timeSteps_=0;
         write();
         flush();
     }
 
-    if(debug) {
-        Info << name() << "::execute() - Leaving" << endl;
-    }
+    Dbug << name() << "::execute() - Leaving" << endl;
     return true;
 }
 
@@ -224,6 +248,8 @@ void simpleFunctionObject::flush()
 
 bool simpleFunctionObject::read(const dictionary& dict)
 {
+    Dbug << name() << "::read() - Entering" << endl;
+
     if (dict != dict_)
     {
         dict_ = dict;
@@ -236,11 +262,6 @@ bool simpleFunctionObject::read(const dictionary& dict)
         }
 
         bool isStart=start();
-
-        if(outputControlMode()==ocmStartup) {
-            write();
-            flush();
-        }
 
         return isStart;
     }

@@ -29,8 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2014 David Huckaby <e.david.huckaby@netl.doe.gov>
+    2015 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -47,7 +48,7 @@ Contributors/Copyright:
 #ifdef FOAM_HAS_COLLIDING_CLOUD
 #include "basicKinematicCollidingCloud.H"
 #endif
-#ifdef FOAM_HAS_MPICC_CLOUD
+#ifdef FOAM_HAS_MPPIC_CLOUD
 #include "basicKinematicMPPICCloud.H"
 #endif
 #ifdef FOAM_REACTINGCLOUD_TEMPLATED
@@ -157,7 +158,7 @@ void writeFieldsGeneralFunctionObject::write()
 #ifdef FOAM_HAS_COLLIDING_CLOUD
         cnt+=writeCloud<basicKinematicCollidingCloud>(name);
 #endif
-#ifdef FOAM_HAS_MPICC_CLOUD
+#ifdef FOAM_HAS_MPPIC_CLOUD
         cnt+=writeCloud<basicKinematicMPPICCloud>(name);
 #endif
         cnt+=writeCloud<swakFluidThermoCloudType>(name);

@@ -1,0 +1,32 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  3.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// preservePatches (
+//     interface_leitrohr_zulauf
+//     interface_zulauf_leitrohr
+//     interface_trichter_leitrohr
+//     interface_leitrohr_trichter
+//     interface_zulauf_ruehrer
+//     interface_ruehrer_zulauf
+// );
+
+singleProcessorFaceSets (
+    (intersect1Set -1)
+    (intersect2Set -1)
+);
+
+// ************************************************************************* //

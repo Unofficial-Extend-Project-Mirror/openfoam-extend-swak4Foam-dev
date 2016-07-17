@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.1                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  3.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -18,6 +18,7 @@ FoamFile
 ddtSchemes
 {
     default         Euler;
+    "ddt\(openFoamResidenceTime.*Steady\)" steadyState;
 }
 
 gradSchemes
@@ -28,18 +29,32 @@ gradSchemes
 divSchemes
 {
     default         none;
-    div(phi,T)      Gauss limitedLinear 1;
-    div(phi,TCompare)      Gauss limitedLinear 1;
-    div(phi,TLinear)      Gauss linear;
-    div(phi,TUpwind)      Gauss upwind;
-    div(phi,TSteady)      Gauss limitedLinear 1;
+    div(phi,T)      Gauss linearUpwind grad(T);
+    div(phi,U)      Gauss linearUpwind grad(U);
+    div(phi_copyBySwak4Foam,swakTransport) Gauss linearUpwind grad(swakTransport);
+    div(phi_copyBySwak4Foam,swakTransportMod) Gauss linearUpwind grad(swakTransportMod);
+    div(phi_copyBySwak4Foam,swakTransportLinear) Gauss linear;
+    div(phi_copyBySwak4Foam,swakTransportUpwind) Gauss upwind;
+    div(phi_copyBySwak4Foam,swakTransportDownwind) Gauss downwind;
+    div(phi_copyBySwak4Foam,T_copyBySwak4Foam) Gauss linearUpwind grad(swakTransport);
+    div(phi_copyBySwak4Foam,residenceTime) Gauss linearUpwind grad(residenceTime);
+    div(phi_copyBySwak4Foam,residenceTimeSteady) Gauss linearUpwind grad(residenceTimeSteady);
+    div(phi_copyBySwak4Foam,residenceTimeZero) Gauss linearUpwind grad(residenceTimeZero);
+    div(phi_copyBySwak4Foam,residenceTimeZeroSteady) Gauss linearUpwind grad(residenceTimeZeroSteady);
+    div(phi_copyBySwak4Foam,residenceTimeLow) Gauss linearUpwind grad(residenceTimeLow);
+    div(phi_copyBySwak4Foam,residenceTimeLowSteady) Gauss linearUpwind grad(residenceTimeLowSteady);
+    "div\(phi,openFoamResidenceTime.*Steady\)"      Gauss linearUpwind grad(T);
 }
 
 laplacianSchemes
 {
     default         none;
     laplacian(DT,T) Gauss linear corrected;
-    "laplacian\(diffusion,T.+\)" Gauss linear corrected;
+    laplacian(DT,U) Gauss linear corrected;
+    "laplacian\(DT,openFoamResidenceTime.*Steady\)" Gauss linear corrected;
+    "laplacian\(diffusion,swakTransport.*\)" Gauss linear corrected;
+    laplacian(constantscalar,T_copyBySwak4Foam) Gauss linear corrected;
+    "laplacian\(diffusion,residenceTime.*\)" Gauss linear corrected;
 }
 
 interpolationSchemes
@@ -50,12 +65,6 @@ interpolationSchemes
 snGradSchemes
 {
     default         corrected;
-}
-
-fluxRequired
-{
-    default         no;
-    T               ;
 }
 
 

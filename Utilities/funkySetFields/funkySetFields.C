@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2006-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -103,6 +103,7 @@ void setField
     const T &result,
     const scalarField &cond,
     bool create,
+    bool setDimension,
     const dimensionSet &dim,
     bool correctBoundaryField,
     bool keepPatches,
@@ -171,6 +172,12 @@ void setField
 
     doCorrectBoundaryConditions(correctBoundaryField,*pTemp);
 
+    if(
+        setDimension
+    ) {
+        Info << "Setting dimension to " << dim << endl;
+        pTemp->dimensions().reset(dim);
+    }
     Info << " Writing to " << name << endl;
 
     pTemp->write();
@@ -187,6 +194,7 @@ void setField
     const T &result,
     const scalarField &cond,
     bool create,
+    bool setDimension,
     const dimensionSet &dim,
     bool correctBoundaryField,
     bool keepPatches,
@@ -200,6 +208,7 @@ void setField
         result,
         cond,
         create,
+        setDimension,
         dim,
         correctBoundaryField,
         keepPatches,
@@ -218,6 +227,7 @@ void doAnExpression
     bool create,
     bool cacheVariables,
     const dictionary &dict,
+    bool setDimension,
     const dimensionSet &dim,
     bool correctBoundaryField,
     bool keepPatches,
@@ -428,6 +438,7 @@ void doAnExpression
                 driver.getResult<volScalarField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -441,6 +452,7 @@ void doAnExpression
                 driver.getResult<volVectorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -454,6 +466,7 @@ void doAnExpression
                 driver.getResult<volTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -467,6 +480,7 @@ void doAnExpression
                 driver.getResult<volSymmTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -480,6 +494,7 @@ void doAnExpression
                 driver.getResult<volSphericalTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -497,6 +512,7 @@ void doAnExpression
                 driver.getResult<surfaceScalarField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -510,6 +526,7 @@ void doAnExpression
                 driver.getResult<surfaceVectorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -523,6 +540,7 @@ void doAnExpression
                 driver.getResult<surfaceTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -536,6 +554,7 @@ void doAnExpression
                 driver.getResult<surfaceSymmTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -549,6 +568,7 @@ void doAnExpression
                 driver.getResult<surfaceSphericalTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -567,6 +587,7 @@ void doAnExpression
                 driver.getResult<pointScalarField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -581,6 +602,7 @@ void doAnExpression
                 driver.getResult<pointVectorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -595,6 +617,7 @@ void doAnExpression
                 driver.getResult<pointTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -609,6 +632,7 @@ void doAnExpression
                 driver.getResult<pointSymmTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -623,6 +647,7 @@ void doAnExpression
                 driver.getResult<pointSphericalTensorField>(correctPatches),
                 conditionField,
                 create,
+                setDimension,
                 dim,
                 correctBoundaryField,
                 keepPatches,
@@ -926,7 +951,8 @@ int main(int argc, char *argv[])
 
             string dimString="[0 0 0 0 0]";
 
-            if (args.options().found("dimension")) {
+            bool setDimension=args.options().found("dimension");
+            if (setDimension) {
                 dimString=args.options()["dimension"];
             }
             IStringStream dimStream(dimString);
@@ -999,6 +1025,7 @@ int main(int argc, char *argv[])
                 create,
                 !args.options().found("noCacheVariables"),
                 dummyDict,
+                setDimension,
                 dim,
                 correctResultBoundaryFields,
                 keepPatches,
@@ -1101,8 +1128,9 @@ int main(int argc, char *argv[])
                 }
 
                 dimensionSet dim(0,0,0,0,0);
+                bool setDimension=part.found("dimension");
 
-                if (part.found("dimension")) {
+                if (setDimension) {
                     part.lookup("dimension") >> dim;
                 }
 
@@ -1141,6 +1169,7 @@ int main(int argc, char *argv[])
                     create,
                     !args.options().found("noCacheVariables"),
                     part,
+                    setDimension,
                     dim,
                     correctResultBoundaryFieldsLocal,
                     keepPatches,

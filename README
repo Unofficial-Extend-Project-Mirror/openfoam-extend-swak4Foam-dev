@@ -24,9 +24,9 @@
    during releases. *Don't edit it*.
 * Contributors etc
 ** Original Author
-   Bernhard Gschaider (bgschaid@ice-sf.at)
+   Bernhard Gschaider (bgschaid@hfd-research.com)
 ** Current Maintainer
-   Bernhard Gschaider (bgschaid@ice-sf.at)
+   Bernhard Gschaider (bgschaid@hfd-research.com)
 ** Contributors
    In alphabetical order of the surname
    - Martin Beaudoin :: =trackDictionary= in =simpleFunctionObjects=
@@ -54,18 +54,19 @@
    According to the commits in the =mercurial=-repository (and
    the repositories of the projects from which swak emerged)
    contributors are (ordered by the year of their first contribution):
-   - 2006-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+   - 2006-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
    - 2008 Hannes Kroeger (hannes@kroegeronline.net)
    - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
-   - 2010 Marianne Mataln <mmataln@ice-sf>
+   - 2010 Marianne Mataln <mmataln@ice-sf.at>
    - 2010 Oliver Borm (oli.borm@web.de)
    - 2011 Alexey Petrov <alexey.petrov.nnov@gmail.com>
    - 2011 Petr Vita <petr.vita@unileoben.ac.at>
-   - 2012-2014 Bruno Santos <wyldckat@gmail.com>
+   - 2012-2016 Bruno Santos <wyldckat@gmail.com>
    - 2013 Georg Reiss <georg.reiss@ice-sf.at>
    - 2014 Hrvoje Jasak <h.jasak@wikki.co.uk>
    - 2014 David Huckaby <e.david.huckaby@netl.doe.gov>
    - 2015 Domink Christ <d.christ@wikki.co.uk>
+   - 2015 Alexey Matveichev <alexey.matveichev@gmail.com>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -591,6 +592,10 @@ S_{expl} + S_{impl} T
      bended pip geometries
      - Solver :: simpleFoam
      - Case preparation :: Run =prepare.sh=
+**** =topoSetDamBreak=
+     Case to demonstrate various things about =cell= and =faceSet=
+     - Solver :: interFoam
+     - Case preparation :: Run =pyFoamPrepareCase.py .=
 *** FromPresentations
     Cases that were shown in some presentations
 **** OSCFD_cleaningTank3D
@@ -753,6 +758,9 @@ S_{expl} + S_{impl} T
 **** =randomCavity=
      Testing of different seeds for the =rand=-function. Also tests
      the =randFixed=-function
+**** =AMIPipe=
+     Simple geometry for testing function objects with AMI. "Execute"
+     with =replayTransientBC=
 *** BugCases
     These are cases provided by users to demonstrate bugs. Not
     maintained nor documented and may be removed at any time
@@ -3178,10 +3186,9 @@ S_{expl} + S_{impl} T
 **** =icoFoamCavityWithParcel= as a minimal example for adding lagrangian particles
      This case demonstrates how to add lagrangian particles to the
      simplest tutorial-case
-** Next release - version number : 0.4.0
+** 2016-07-17 - version number : 0.4.0
    This is the first release that does not support OpenFOAM 1.7.x,
    OpenFOAM 1.6-ext and older versions anymore
-*** Incompatibilities
 *** New supported versions
 **** Rolling support for =OpenFOAM-dev=
      This version adds support for =OpenFOAM-dev= published at
@@ -3197,6 +3204,11 @@ S_{expl} + S_{impl} T
 **** Support for OpenFOAM 3.0
      Support for this version has been added (basically all the fixes
      from the =dev=-branch were guarded with the correct version
+**** Support for =foam-extend= 4.0
+     This version is supported by =swak4Foam= (compiles and runs)
+**** Support for the OpenFOAM v3.0+ version
+     This version is supported. For the time being it can be assumed
+     that this version is similar to the regular OpenFOAM 3.0
 *** Bug fixes
 **** =fieldReport= doesn't work with all field names
      Fields that have names that are not considered proper variable
@@ -3227,6 +3239,21 @@ S_{expl} + S_{impl} T
 **** Does not compile with ~WM_LABEL_SIZE=64~
      A reference to a =label= that was passed to a =flex=-function
      broke compilation because that expects a 32-bit integer. Fixed
+**** Tensor-fields not correctly handled by =replayTransientBC=
+     Due to a copy/past-problem all tensor-fields (including
+     symmtrical and spherical) would have caused the utility to
+     fail. Fixed
+**** Surfaces created by =createSampledSurface= not updated during mesh movement
+     The function object ignored the callbacks for moving meshes. It
+     now implements them and forces a regeneration of the surface if
+     the mesh moves
+**** =funkySetFields= does not set dimensions
+     The =dimension=-entries were read but not set. This is now fixed
+**** =funkySetBoundaryField= does not compress files
+     The utility now reads the compression state of the original and
+     sets the resulting file accordingly
+**** =swakExpression= not working for point fields
+     Point fields were not correctly returned. This is fixed
 *** Infrastructure
 *** Documentation
 **** Adaption of the reference guide for new =org-mode=
@@ -3246,6 +3273,109 @@ S_{expl} + S_{impl} T
      output in the original version. Currently =foam-extend= is not
      supported as this is missing some base classes as well
      (=tableReader=)
+**** Added a function plugin for dynamic meshes
+     The Plugin =DynamicMesh= adds functions to visualize the mesh
+     movement. The functions are
+     - dyM_meshPhi :: the mesh =phi= as stored with the mesh. Some
+          distributions write this field anyway
+     - dyM_meshCourant :: Mesh courant number. Replicates the number
+          some solvers print automatically
+     - dyM_meshVelocity :: Velocity with which the cells are
+          moved. Reconstructed from the mesh =phi=
+     These functions might failed if the mesh has not been moved yet
+     so their calls might have to be encapsulated in a
+     =executeIfStartTime= function Object
+**** Function object to load =cell=, =face= and =pointSet=
+     The function object =loadTopoSets= loads all the available sets
+     in the mesh into memory for expressions that need them. Also
+     allows automatic writing of these sets (switched by =writeSets=)
+**** Function object to create and manipulate =cell=, =face= and =pointSets=
+     The function objects =manipulateCellSet=, =manipulateFaceSet= and
+     =manipulatePointSet= allow the manipulation of these
+     =topoSet=. They do so by evaluating an expression =mask= and all
+     cells (faces, points) for which the expression is =true= will be
+     part of the topoSet. If the topoSet is not present in memory the
+     function object fails unless the parameter =createMissing= is set
+     to =true=. The entry =writeManipulated= (default: =true=) says
+     whether the topoSet should be written at write times.
+
+     An example of this functionality is found in =Examples/other/topoSetDamBreak=
+**** Function object that executes other function objects only at write time
+     The function object =executeIfWriteTime= in the
+     =simpleFunctionObjects= executes a list of other function objects
+     only if the current time is a scheduled write time. The purpose
+     of this function object is to only execute function objects at
+     write times that don't honor the
+     =outputControlMode=-setting. Also does the =else=-branch allow
+     executing only when *nothing* is written
+**** Added a function plugin for MRF cases
+     This function plugin makes a number of function from the
+     =MRF=-model available:
+     - functions to make fields absolute or relative in the =MRF= region
+     - a function to calculate the Coriolis force
+     All these functions call the MRF-model
+**** Added library =simpleCloudFunctionObjects= with function objects for particle clouds
+     These function objects can be added to particle clouds. In this
+     first version these objects can be added:
+     - cloudMoveStatistics :: Records simple statistics about the
+          solution of the cloud:
+       - How often were faces hit by particles (total, per particle:
+         minimum, mean and average)
+       - How often were particles moved (same data as face hits)
+       - How often was each patch hit
+       Only minimum effort has been spent to consolidate this data
+       across processors (particles may be counted on multiple
+       processors).
+
+       The main purpose of this function object is to spot problematic
+       behavior (particles that hit patches repeatedly and don't
+       move)
+
+       The optional parameter =reportHitNr= and =reportMoveNr= print
+       out the ids of particles that exceed these thresholds
+
+     - eliminateCaughtParticles :: Sometimes particles get caught in
+          "endless loops" (hitting the same patch over and over again
+          without significant movement). This may slow down
+          simulations significantly as basically the same impact is
+          calculated over and over again without any progress. Two
+          parameters allow eliminating such parcels:
+       - maximumNumberOfHits :: if the same boundary face is hit more often
+         than this by the particle (without hitting any other
+         faces) then the particle is eliminated. Recommended value: 1000
+       - minDistanceMove :: Minimum distance a particle has to move
+         when hitting a boundary face. If it moved less the
+         particle is removed. Recommended: $10^{-9}$
+       If one of the parameters is set to a negative value the
+       criterion is "switched off"
+     - eliminateOutsideParticles :: Removes particles that are outside
+       the mesh (are not inside any cell). The purpose of this is
+       to eliminate particles that are for some reason not
+       correctly tracked
+     - correctParticleCell :: Correct the cell of the particle before
+       the evolution begins.
+
+       This should fix problems with moving meshes but is currently
+       not working correctly.
+
+       An optional parameter =logCorrected= logs the data of the
+       corrected particles to a file. Only use for debugging or if you don't
+       expect many incidents
+     - traceParticles :: This function object gets a list of particle
+       ids. For these particles all data is written whenever a
+       function object is called.
+
+       This function object should *only* be used for debugging if the
+       behavior of a special particle should be tracked
+**** Add library =swakCloudFunctionObjects= with function objects that use expressions for clouds
+     These function objects can be added to particle clouds and use
+     expressions. The function objects are
+     - eliminateBySwakExpression :: Evaluates an expression for each
+       particle. If the expression is =true= then the particle is
+       eliminated. Expression can be evaluated before or after the
+       moving of the particles
+**** =streamFunction= added to =VelocityField= function-plugin
+     A function that calculates the stream function in a 2D simulation has been added
 *** Enhancements
 **** Added function for =smooth=, =sweep=, =spread= to =FvcSchemes=-function plugin
      These functions from =fvc= were implemented as
@@ -3254,4 +3384,85 @@ S_{expl} + S_{impl} T
 **** Additional functions in plugin =ThermoTurb=
      Functions from the public interface of =basicThermo= and
      =turbulenceModel= have been added (like =kappa=, =kappaEff= etc)
+**** Conditional function objects now allow construction of their =functions= at start
+     With the parameter
+: constructUnconditionally yes;
+     in function objects that start with =executeIf= it is possible to
+     construct the lists unconditionally at start instead of waiting
+     for the condition to be true. If unset then the function objects
+     default to the old behaviour
+**** =manipulateField=-function object can switch *off* manipulating at start
+     The regular behavior for this function object is that it does
+     the first manipulation during construction. This can be switched
+     off with the setting =manipulateAtStartup= in cases where not all
+     the requirements for correctly evaluating the expressions are
+     fulfilled during construction
+**** =replayTransientBC= now handles surface and point fields
+     The utility can now read surface and point fields. Surface-fields
+     are not corrected because this is not supported by Foam
+**** =replayTransientBC= reads =fvOptions=
+     The utility now reads =fvOptions= for FOAM-versions that support
+     it. They have to be switched on with 'useFvOptions' as most of
+     the tine they are not needed (only with function objects that
+     solve equations)
+**** PDE-function objects now have additional =solveAt=-option =never=
+     When this option is set then the function-objects are read
+     (including the field) but never solved
+**** =replayTransientBC= reports execution time
+     The utility now reports the time. This is useful when using the
+     utility to test function objects
+**** Added parameter =sourceImplicitUseSuSp= to =PDE=-function objects
+     The function objects =solveLaplacianPDE= and =solveTransportPDE=
+     now have a new parameter =sourceImplicitUseSuSp= that allows
+     switching from using =Sp()= (the default) to =SuSp()= for the
+     addition of =sourceImplicitExpression=
+**** =replayTransientBC= can read and update dynamic meshes
+     The command line option =-useDynamicMesh= tells the utility to
+     read the mesh as a dynamic mesh and update it at every time-step
+**** =solveTransportPDE= function object now aware of mesh movement
+     If the function object detects that it is created with a moving
+     mesh then it asks for a parameter =makePhiRelative= to specify
+     whether =phi= should be made relative to the mesh movement (this
+     is usually necessary). Then either a =velocityExpression= or a
+     =velocityName= has to be specified as well and =phi= is corrected
+     according to the mesh movement
+
+     If =steady= is =true= then =phi= is *not* made relative
+**** =funkySetLagrangianFields= allows creating fields of arbitrary types
+     If a cloud is created and in en entry in =expressions= the entry
+     =class= is found then it is assumed that a field of that type
+     should be created. The =expression= is not evaluated but added to
+     the cloud for each particle.
+
+     *Note:* this does not do *any* semantic checking and is only to
+     be used to set constant values for required fields for which
+     =swak= can not evaluate the type
+**** Unconverged steady solution of PDE-function objects are reset
+     For some reason the linear solver does not converge on the
+     =solveTransportPDE= and =solveLaplacianPDE= function
+     objects. This messes up the solution field. In these cases the
+     solution field is reset to the last known good solution. If this
+     behavior is undesired it can be switched off with
+     =restoreNonConvergedSteady=
+**** Additional output options for function obkjects based on =simpleFunctionObjects=
+     There are now three more options for =outputControlMode=:
+     =outputTimeAndStartup=, =timeStepAndStartup= and
+     =deltaTAndStartup=. These work like the other options but write
+     data at the startup-time as well
+**** =dumpSwakExpression= now works in parallel as well
+     This function object used to only dump values from the master
+     processor if used in parallel. Now the values from all processors
+     are dumped in the order of the processors
+**** Missing properties =age= and =dTarget= added to KinematicCloud parser
+     Two properties that were missing for that cloud type are now
+     available in the parser
 *** Examples
+**** =solverPDE/pitzDailyWithPDE= extended
+     This case has been modified to a version that was presented at
+     the PFAU (Austrian User Group Meeting) in 2015. Now it compares
+     with the =scalarTransport= function object that was added to
+     OpenFOAM.
+
+     The case now also calculates the time the fluid needs from the
+     inlet to the outlet (=residenceTime=). Steady as well as
+     transient

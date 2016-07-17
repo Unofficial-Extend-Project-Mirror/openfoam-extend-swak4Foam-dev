@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -64,7 +64,18 @@ Foam::manipulateField::manipulateField
                 << endl;
     }
     read(dict);
-    write();
+    bool writeAtStart=true;
+    if(dict.found("manipulateAtStartup")) {
+        writeAtStart=readBool(dict.lookup("manipulateAtStartup"));
+    } else {
+        WarningIn("Foam::manipulateField::manipulateField")
+            << "'manipulateAtStartup' not set in " << dict.name() << nl
+                << "Assuming: true"
+                << endl;
+    }
+    if(writeAtStart) {
+        write();
+    }
 }
 
 Foam::manipulateField::~manipulateField()

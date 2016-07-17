@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -117,6 +117,18 @@ sampledSurface &SurfacesRepository::getSurface(
 
     return found;
 }
+
+bool SurfacesRepository::updateSurface(
+    const word &name,
+    const fvMesh &mesh
+) {
+    sampledSurface &surf=getSurface(name,mesh);
+    bool expired=surf.expire();
+    bool updated=surf.update();
+    Pbug << "Surface " << name << " Expired: " << expired << " Updated: " << updated << endl;
+    return expired && updated;
+}
+
 
 sampledSurface &SurfacesRepository::getSurface(
     const dictionary &dict,

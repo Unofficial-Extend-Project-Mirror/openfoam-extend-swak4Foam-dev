@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -66,7 +67,8 @@ Foam::solveLaplacianPDE::solveLaplacianPDE
     rhoDimension_(dimless),
     lambdaDimension_(dimless),
     sourceDimension_(dimless),
-    sourceImplicitDimension_(dimless)
+    sourceImplicitDimension_(dimless),
+    sourceImplicitUseSuSp_(false)
 {
     if (!isA<polyMesh>(obr))
     {
@@ -118,6 +120,13 @@ void Foam::solveLaplacianPDE::read(const dictionary& dict)
                 sourceImplicitExpression_,
                 sourceImplicitDimension_
             );
+            if(dict.found("sourceImplicitUseSuSp")) {
+                sourceImplicitUseSuSp_=readBool(dict.lookup("sourceImplicitUseSuSp"));
+            } else {
+                WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")
+                    << "'sourceImplicitUseSuSp' not set in " << dict.name()
+                        << " assuming 'false'" << endl;
+             }
         } else {
             if(sourceExpression_!="0") {
                 WarningIn("Foam::solveLaplacianPDE::read(const dictionary& dict)")
@@ -230,7 +239,11 @@ void Foam::solveLaplacianPDE::solve()
                 volScalarField sourceImplicitField(driver.getResult<volScalarField>());
                 sourceImplicitField.dimensions().reset(sourceImplicitDimension_);
 
-                eq-=fvm::Sp(sourceImplicitField,f);
+                if(sourceImplicitUseSuSp_) {
+                    eq-=fvm::SuSp(sourceImplicitField,f);
+                } else {
+                    eq-=fvm::Sp(sourceImplicitField,f);
+                }
             }
 
             if(doRelax(corr==nCorr)) {
@@ -242,14 +255,41 @@ void Foam::solveLaplacianPDE::solve()
 #endif
 
             int nNonOrthCorr=sol.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
+            bool converged=true;
             for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
             {
-                eq.solve();
+                volScalarField fallback(
+                    "fallback"+f.name(),
+                    f
+                );
+#ifdef FOAM_LDUMATRIX_SOLVERPERFORMANCE
+		lduMatrix::solverPerformance perf=eq.solve();
+#elif defined(FOAM_LDUSOLVERPERFORMANCE)
+		lduSolverPerformance  perf=eq.solve();
+#else
+		solverPerformance perf=eq.solve();
+#endif		
+                if(
+                    !perf.converged()
+                    &&
+                    restoreNonConvergedSteady()
+                ) {
+                    WarningIn("Foam::solveTransportPDE::solve()")
+                        << "Solution for " << f.name()
+                            << " not converged. Restoring"
+                            << endl;
+                    f=fallback;
+                    converged=false;
+                    break;
+                }
             }
 
 #ifdef FOAM_HAS_FVOPTIONS
             fvOptions().correct(f);
 #endif
+            if(!converged) {
+                break;
+            }
         }
     }
 }

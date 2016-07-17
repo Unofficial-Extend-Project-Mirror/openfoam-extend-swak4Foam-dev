@@ -4,8 +4,17 @@ EXE_INC = -I$(LIB_SRC)/cfdTools/lnInclude \
           $(FOAM_DEV_OPTION)  \
           -I$(LIB_SRC)/cfdTools/general/lnInclude \
 	  -I$(LIB_SRC)/finiteVolume/lnInclude \
+          -I$(LIB_SRC)/sampling/lnInclude \
 	  -I$(LIB_SRC)/meshTools/lnInclude \
+	  -I$(LIB_SRC)/fvOptions/lnInclude \
+          -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+          -I$(LIB_SRC)/dynamicMesh/dynamicFvMesh/lnInclude \
 	  -I../../Libraries/swak4FoamParsers/lnInclude/
 
 EXE_LIBS = -lfiniteVolume \
+    $(FVOPTIONS_LIB) \
+    -ldynamicFvMesh \
+    -lsampling \
+    -ltopoChangerFvMesh \
+    -ldynamicMesh \
     -lmeshTools

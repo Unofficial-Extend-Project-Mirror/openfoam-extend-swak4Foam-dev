@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2006-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2006-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -93,6 +93,47 @@ void doAnExpression(
     bool doDebug
 ) {
     double time=driver.mesh().time().value();
+
+    if(dict.found("class")) {
+        word cls(dict.lookup("class"));
+
+        Info << "Creating field " << field << " of class " << cls
+            << " with constant string " << expression
+            << ". Not added to the cloud" << endl;
+        IOobject theFile(
+            field,
+            theCloud.instance(),
+            theCloud,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE,
+            false
+        );
+        OFstream o(
+            theFile.objectPath(),
+#ifdef FOAM_DEV
+		    std::ios_base::out,
+#endif		    
+            IOstream::ASCII,
+            IOstream::currentVersion,
+            IOstream::COMPRESSED
+        );
+        theFile.writeHeader(
+#ifndef FOAM_DEV
+	     o,cls
+#else
+	     o
+#endif	     
+	);
+        o << nl
+            << theCloud.size() << nl
+            << "(" << nl;
+        forAll(theCloud,i) {
+            o << expression.c_str() << nl;
+        }
+        o << ")" << endl;
+
+        return;
+     }
 
     if(create) {
         if(driver.proxy().hasField(field)) {

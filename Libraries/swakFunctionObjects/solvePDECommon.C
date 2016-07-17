@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -44,14 +44,15 @@ namespace Foam {
 }
 
 template<>
-const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,3>::names[]=
+const char* Foam::NamedEnum<Foam::solvePDECommon::solveAt,4>::names[]=
 {
     "startup",
     "timestep",
-    "write"
+    "write",
+    "never"
 };
 
-const Foam::NamedEnum<Foam::solvePDECommon::solveAt,3> Foam::solvePDECommon::solveAtNames_;
+const Foam::NamedEnum<Foam::solvePDECommon::solveAt,4> Foam::solvePDECommon::solveAtNames_;
 
 Foam::solvePDECommon::solvePDECommon
 (
@@ -73,7 +74,8 @@ Foam::solvePDECommon::solvePDECommon
     name_(name),
     steady_(false),
     relaxUnsteady_(false),
-    relaxLastIteration_(false)
+    relaxLastIteration_(false),
+    restoreNonConvergedSteady_(true)
 {
     if (!isA<polyMesh>(obr))
     {
@@ -150,6 +152,15 @@ void Foam::solvePDECommon::read(const dictionary& dict)
 
         steady_=readBool(dict.lookup("steady"));
         if(steady_) {
+            if(dict.found("restoreNonConvergedSteady")) {
+                restoreNonConvergedSteady_=readBool(dict.lookup("restoreNonConvergedSteady"));
+            } else {
+                WarningIn("solvePDECommon::read(const dictionary& dict)")
+                    << "If you don't want to restore a steady solution that didn't converge set "
+                        << "'restoreNonConvergedSteady false;' in " << dict.name()
+                        << endl;
+                restoreNonConvergedSteady_=true;
+            }
             relaxUnsteady_=false;
         } else {
             if(dict.found("relaxUnsteady")) {
@@ -161,6 +172,7 @@ void Foam::solvePDECommon::read(const dictionary& dict)
                         << endl;
                 relaxUnsteady_=false;
             }
+            restoreNonConvergedSteady_=false;
         }
         if(steady_ || relaxUnsteady_) {
             if(dict.found("relaxLastIteration")) {
@@ -253,12 +265,12 @@ bool Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const
     ) {
         WarningIn("Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const")
 	  << "There are " << fvOptions().size() << " fvOptions defined." << nl
-	  << "For technical reason a 'rho' entry is needed in " << name_ 
+	  << "For technical reason a 'rho' entry is needed in " << name_
 	  << endl;
     }
 #endif
 
-    return 
+    return
       !steady_
 #ifdef FOAM_HAS_FVOPTIONS
       ||

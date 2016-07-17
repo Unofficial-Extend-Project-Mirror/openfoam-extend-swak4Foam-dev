@@ -1,0 +1,173 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  3.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      limestoneCloud1Properties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         false;
+    transient       yes;
+    calcFrequency   1;
+
+    cellValueSourceCorrection off;
+    maxCo           0.3;
+
+    sourceTerms
+    {
+        resetOnStartup  no;
+        schemes
+        {
+            U           semiImplicit 1;
+        }
+    }
+
+    interpolationSchemes
+    {
+        pseudoRho             cell;
+        pseudoMu              cell;
+        //        U                cellPoint;
+        U                cell;
+        //        U                     pointMVC;
+        //        U         cellPointWallModified;
+        rho                   cell;
+        mu                    cell;
+    }
+
+    integrationSchemes
+    {
+        //        U               Euler;
+        U               analytical;
+    }
+}
+
+constantProperties
+{
+    parcelTypeId    2;
+
+    rho0            100000;
+}
+
+subModels
+{
+    particleForces
+    {
+        sphereDrag;
+        //        gravity;
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            type            patchInjection;
+            //            massFlowRate    1;
+            massTotal       1;
+            SOI             0;
+            parcelBasisType mass;
+            patchName       inlet;
+            duration        1;
+            concentration   constant 0.01;
+            //            parcelConcentration 1e5;
+            parcelsPerSecond 1e4;
+            U0              (0 0 1);
+            flowRateProfile constant 1;
+            sizeDistribution
+            {
+                type        fixedValue;
+                normalDistribution
+                {
+                    expectation 1000e-6;
+                    variance 250e-6;
+                    minValue 200e-6;
+                    maxValue 1800e-6;
+                }
+                fixedValueDistribution {
+                    value    0.0001;
+                }
+            }
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel standardWallInteraction;
+
+    stochasticCollisionModel none;
+
+    surfaceFilmModel none;
+
+    collisionModel none;
+
+    radiation       off;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+        e               1;
+        mu              0;
+    }
+    RanzMarshallCoeffs
+    {
+        BirdCorrection  false;
+    }
+}
+
+
+cloudFunctions
+{
+    // correctCells {
+    //     type correctParticleCell;
+    // }
+    patchAuslass
+    {
+        type            patchPostProcessing;
+        maxStoredParcels 10000;
+        patches         (
+            inlet
+            outlet
+        );
+    }
+    patchWall
+    {
+        type            patchPostProcessing;
+        maxStoredParcels 10000;
+        patches         (
+            cylinder
+        );
+    }
+    patchInterface
+    {
+        type            patchPostProcessing;
+        maxStoredParcels 10000;
+        patches         (
+            "intersect.*"
+        );
+    }
+    profileHits {
+        type cloudMoveStatistics;
+    }
+    removeHitters {
+        type eliminateCaughtParcels;
+        maximumNumberOfHits 1000;
+        minDistanceMove -1;
+        clearVelocityOnElimination no;
+    }
+    outsideParticles {
+        type eliminateOutsideParticles;
+        eliminatePre false;
+        eliminatePost true;
+    }
+}

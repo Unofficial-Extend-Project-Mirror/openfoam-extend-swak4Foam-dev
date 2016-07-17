@@ -39,7 +39,7 @@ SourceFiles
     writeIfFieldOutsideFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id: writeIfFieldOutsideFunctionObject.H,v 78b0d113b99b 2013-02-25 16:12:41Z bgschaid $
 \*---------------------------------------------------------------------------*/

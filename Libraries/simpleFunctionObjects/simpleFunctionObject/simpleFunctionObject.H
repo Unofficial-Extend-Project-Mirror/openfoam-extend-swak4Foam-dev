@@ -38,7 +38,7 @@ SourceFiles
     simpleFunctionObject.C
 
 Contributors/Copyright:
-    2008-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2008-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -77,7 +77,10 @@ public:
         ocmTimestep,
         ocmDeltaT,
         ocmOutputTime,
-        ocmStartup
+        ocmStartup,
+        ocmOutputTimeAndStartup,
+        ocmTimestepAndStartup,
+        ocmDeltaTAndStartup
     };
 private:
     // Private Member Functions
@@ -103,7 +106,7 @@ private:
     label timeSteps_;
 
     //- possible outputControl-modes
-    static const NamedEnum<outputControlModeType,4> outputControlModeTypeNames_;
+    static const NamedEnum<outputControlModeType,7> outputControlModeTypeNames_;
     outputControlModeType outputControlMode_;
 
     //- how many time-steps between outputs
@@ -115,6 +118,8 @@ private:
     const Time& time_;
 
     scalar lastWrite_;
+
+    bool started_;
 
 protected:
 

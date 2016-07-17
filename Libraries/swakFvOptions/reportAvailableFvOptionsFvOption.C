@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2014-2015 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -64,6 +64,10 @@ bool Foam::fv::reportAvailableFvOptionsFvOption::alwaysApply() const
     return true;
 }
 
+Foam::label Foam::fv::reportAvailableFvOptionsFvOption::applyToField(const word &fieldName) const
+{
+    return 0;
+}
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::fv::reportAvailableFvOptionsFvOption::reportAvailableFvOptionsFvOption

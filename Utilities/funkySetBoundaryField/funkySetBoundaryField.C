@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2010, 2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2010, 2012-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -189,7 +189,16 @@ int main(int argc, char *argv[])
                 field.writeHeader(headerStream);
                 string newHeader=headerStream.str().replace("dictionary",actualClass);
 
-                OFstream outStream(field.filePath());
+                IFstream inStream(field.filePath());
+                OFstream outStream(
+                    field.filePath(),
+#ifdef FOAM_DEV
+		    std::ios_base::out,
+#endif		    
+                    inStream.format(),
+                    inStream.version(),
+                    inStream.compression()
+                );
                 outStream << newHeader.c_str();
                 field.writeData(outStream);
             }

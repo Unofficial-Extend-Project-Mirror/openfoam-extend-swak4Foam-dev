@@ -1,0 +1,120 @@
+// -*- c++ -*-
+
+amiWeights {
+    theTitle "AMI weights";
+    expr "AMI: Patch source sum\(weights\) min/max/average = (%f%), (%f%), (%f%)\nAMI: Patch target sum\(weights\) min/max/average = (%f%), (%f%), (%f%)\nAMI: Creating addressing and weights between [0-9]+ source faces and [0-9]+ target faces\nAMI: Patch source sum\(weights\) min/max/average = (%f%), (%f%), (%f%)\nAMI: Patch target sum\(weights\) min/max/average = (%f%), (%f%), (%f%)";
+    titles (
+        "source 1 min"
+        "source 1 max"
+        "source 1 average"
+        "target 1 min"
+        "target 1 max"
+        "target 1 average"
+        "source 2 min"
+        "source 2 max"
+        "source 2 average"
+        "target 2 min"
+        "target 2 max"
+        "target 2 average"
+    );
+}
+tracerStats {
+    type dynamic;
+    expr "Expression (.+)Stats :  min=(%f%) weightedQuantile0.01=(%f%) weightedAverage=(%f%) weightedQuantile0.99=(%f%) max=(%f%)";
+    idNr 1;
+    theTitle "Tracer statistics";
+    titles (
+        min
+        "1 %"
+        average
+        "99 %"
+        max
+    );
+}
+particleVelocity {
+    type dynamic;
+    expr "Expression (.+)Velocity :  min=(.+) average=(.+) max=(.+)";
+    theTitle "Particle Velocity";
+    titles (
+        min
+        average
+        max
+    );
+    idNr 1;
+}
+particleVelocityDiff {
+    type dynamic;
+    expr "Expression (.+)VelocityDiff :  average=(.+) max=(.+)";
+    theTitle "Difference gas/particle velocity";
+    titles (
+        average
+        max
+    );
+    idNr 1;
+}
+particlePosition {
+    type dynamic;
+    theTitle "Particle Positions";
+    idNr 1;
+    expr "Expression (.+)Position :  min=\((.+) (.+) (.+)\) average=\((.+) (.+) (.+)\) max=\((.+) (.+) (.+)\)";
+    titles (
+        "min x"
+        "min y"
+        "min z"
+        "average x"
+        "average y"
+        "average z"
+        "max x"
+        "max y"
+        "max z"
+    );
+    alternateAxis (
+        ".+ z"
+    );
+    ylabel "x/y position";
+    y2label "z position";
+}
+correctedParticles {
+    type dynamic;
+    idNr 1;
+    theTitle "Corrected particles";
+    expr "correctCells:(.+)Cloud:correctParticleCellCorrected ([0-9]+) particles";
+    with steps;
+    titles (
+        nr
+    );
+}
+faceHits {
+    type dynamic;
+    idNr 1;
+    theTitle "Face hits by particles";
+    expr "profileHits:(.+)Cloud:cloudMoveStatistics: Face hit Nr: .+ \(.+ particles\) Min: (.+) Mean: (.+) Max: (.+)";
+    with steps;
+    titles (
+        min
+        avg
+        max
+    );
+    alternateAxis (
+        ".*max"
+    );
+    ylabel "min/avg";
+    y2label "max";
+}
+moves {
+    type dynamic;
+    idNr 1;
+    theTitle "Moves by particles";
+    expr "profileHits:(.+)Cloud:cloudMoveStatistics: Moves Nr: .+ \(.+ particles\) Min: (.+) Mean: (.+) Max: (.+)";
+    with steps;
+    titles (
+        min
+        avg
+        max
+    );
+    alternateAxis (
+        ".*max"
+    );
+    ylabel "min/avg";
+    y2label "max";
+}

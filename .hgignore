@@ -42,3 +42,16 @@ foamVersionThisIsCompiledFor
 privateRequirements
 
 Libraries/swak4FoamParsers/foamVersion4swak.H
+
+# PyFoam-Stuff
+PlyParser_*.py
+*.logfile
+*.analyzed
+PyFoamHistory
+PyFoamPrepareCaseParameters*
+PyFoamState.*
+*.foam
+__pycache__
+
+# Other stuff we won't need
+*.vtk
