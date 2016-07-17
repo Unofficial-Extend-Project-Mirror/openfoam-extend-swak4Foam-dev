@@ -35,7 +35,7 @@ Description
     Warp mesh with new coordinates calculated for the points
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

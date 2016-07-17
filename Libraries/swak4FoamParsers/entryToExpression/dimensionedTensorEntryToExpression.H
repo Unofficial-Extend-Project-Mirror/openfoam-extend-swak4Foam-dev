@@ -38,7 +38,7 @@ SourceFiles
     dimensionedTensorEntryToExpression.C
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

@@ -38,8 +38,8 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
-    2015 Bruno Santos <wyldckat@gmail.com>
+    2012-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2015-2016 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -356,6 +356,13 @@ Contributors/Copyright:
 
 #if (FOAM_VERSION4SWAK >= VERSION_NR(3,0,0)) && !defined(FOAM_DEV)
 #define FOAM_MRF_CHANGED_CORIOLIS
+#endif
+
+
+#if FOAM_VERSION4SWAK >= VERSION_NR(4,0,0) && defined(FOAM_DEV)
+#define FOAM_LDUSOLVERPERFORMANCE
+#elif FOAM_VERSION4SWAK < VERSION_NR(4,0,0) && defined(FOAM_DEV)
+#define FOAM_LDUMATRIX_SOLVERPERFORMANCE
 #endif
 
 

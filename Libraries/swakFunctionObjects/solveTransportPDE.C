@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014, 2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -374,10 +375,12 @@ void Foam::solveTransportPDE::solve()
                     "fallback"+f.name(),
                     f
                 );
-#ifdef FOAM_DEV
+#ifdef FOAM_LDUMATRIX_SOLVERPERFORMANCE
 		lduMatrix::solverPerformance perf=eq.solve();
-#else		
-                solverPerformance perf=eq.solve();
+#elif defined(FOAM_LDUSOLVERPERFORMANCE)
+		lduSolverPerformance  perf=eq.solve();
+#else
+		solverPerformance perf=eq.solve();
 #endif		
                 if(
                     !perf.converged()
