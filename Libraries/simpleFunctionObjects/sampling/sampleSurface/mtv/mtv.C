@@ -24,7 +24,7 @@ License
 
 Contributors/Copyright:
     2008 Hannes Kroeger (hannes@kroegeronline.net)
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

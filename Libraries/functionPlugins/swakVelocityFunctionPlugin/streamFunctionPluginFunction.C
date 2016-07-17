@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -67,14 +67,6 @@ streamFunctionPluginFunction::streamFunctionPluginFunction(
         string("phi internalField surfaceScalarField")
     )
 {
-    label nD = mesh().nGeometricD();
-
-    if (nD != 2)
-    {
-      FatalErrorIn("streamFunctionPluginFunction::streamFunctionPluginFunction")
-            << "Case is not 2D, stream-function cannot be computed"
-                << exit(FatalError);
-    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -101,6 +93,15 @@ void streamFunctionPluginFunction::setArgument(
 
 void streamFunctionPluginFunction::doEvaluation()
 {
+    label nD = mesh().nGeometricD();
+
+    if (nD != 2)
+    {
+        FatalErrorIn("streamFunctionPluginFunction::doEvaluation()")
+            << "Case is not 2D, stream-function cannot be computed"
+                << exit(FatalError);
+    }
+
     Vector<label> slabNormal((Vector<label>::one - mesh().geometricD())/2);
     const direction slabDir
         (
@@ -307,10 +308,10 @@ void streamFunctionPluginFunction::doEvaluation()
                                 (
                                     !isType<emptyPolyPatch>
                                     (patches[patchNo])
-#ifndef FOAM_DEV				    
+#ifndef FOAM_DEV
                                     && !isType<symmetryPlanePolyPatch>
                                     (patches[patchNo])
-#endif				    
+#endif
                                     && !isType<symmetryPolyPatch>
                                     (patches[patchNo])
                                     && !isType<wedgePolyPatch>

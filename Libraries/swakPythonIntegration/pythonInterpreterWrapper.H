@@ -38,7 +38,7 @@ SourceFiles
     pythonInterpreterWrapper.C
 
 Contributors/Copyright:
-    2011-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2011-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/

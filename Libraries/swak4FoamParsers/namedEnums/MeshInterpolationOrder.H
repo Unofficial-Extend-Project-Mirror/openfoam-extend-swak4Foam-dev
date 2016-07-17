@@ -37,7 +37,7 @@ SourceFiles
     MeshInterpolationOrder.C
 
 Contributors/Copyright:
-    2012-2014 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
