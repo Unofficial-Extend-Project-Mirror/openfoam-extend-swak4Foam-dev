@@ -45,7 +45,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 makePointPatchFields(groovyBC,pointPatch,PointPatch);
 #else
 makePointPatchFields(groovyBC);

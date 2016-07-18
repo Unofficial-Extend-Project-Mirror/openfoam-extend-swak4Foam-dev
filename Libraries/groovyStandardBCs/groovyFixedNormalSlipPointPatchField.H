@@ -45,7 +45,9 @@ Contributors/Copyright:
 #ifndef groovyFixedNormalSlipPointPatchField_H
 #define groovyFixedNormalSlipPointPatchField_H
 
-#ifdef FOAM_DEV
+#include "swak.H"
+
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 
 #include "SlipPointPatchField.H"
 #define SlipPointPatchFieldType SlipPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,Type>
