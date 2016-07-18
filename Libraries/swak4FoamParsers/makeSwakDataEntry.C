@@ -40,9 +40,13 @@ License
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 namespace Foam {
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+#define makeDataEntryType makeFunction1Type
+#endif
+
     makeDataEntryType(swakDataEntry,scalar);
     makeDataEntryType(swakDataEntry,vector);
-#if (FOAM_VERSION4SWAK_MAJOR>=2) && (FOAM_VERSION4SWAK_MINOR>0)
+#ifdef FOAM_DATAENTRY_HAS_TENSOR_INSTANCES
     makeDataEntryType(swakDataEntry,tensor);
     makeDataEntryType(swakDataEntry,sphericalTensor);
     makeDataEntryType(swakDataEntry,symmTensor);
