@@ -109,6 +109,10 @@ namespace Foam {
 #define FOAM_CLOUDTEMPLATE_IS_CLOUD_H
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#define FOAM_KINEMATIC_PARCEL_ACTIVE_SET_THROUGH_METHOD
+#endif
+
 #include "DebugOStream.H"
 
 #endif

@@ -239,7 +239,11 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                             << p << endl;
 
                         keepParticle=false;
+#ifdef FOAM_KINEMATIC_PARCEL_ACTIVE_SET_THROUGH_METHOD
+                        const_cast<parcelType&>(p).active(false);
+#else
                         const_cast<parcelType&>(p).active()=false;
+#endif
                         if(!toEliminate_.found(theId)) {
                             toEliminate_.insert(theId);
                             eliminatedPtr_->append(
@@ -266,7 +270,11 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                                 << p << endl;
 
                             keepParticle=false;
+#ifdef FOAM_KINEMATIC_PARCEL_ACTIVE_SET_THROUGH_METHOD
+                            const_cast<parcelType&>(p).active(false);
+#else
                             const_cast<parcelType&>(p).active()=false;
+#endif
                             if(!toEliminate_.found(theId)) {
                                 toEliminate_.insert(theId);
                                 eliminatedPtr_->append(
