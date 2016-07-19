@@ -3468,6 +3468,18 @@ S_{expl} + S_{impl} T
      transient
 ** Next release - version number : 0.4.1
 *** New supported versions
+**** Support for OpenFOAM v1606+ version
+     This version is supported in the this version of
+     =swak4Foam=. There is only one problem: there were changes to the
+     =tmp=-template. These changes have been taken care of in the
+     =swak4Foam=-sources. *But* there are two source files in the
+     distro that need to be modified (basically adding =.ref()=
+     instead of =()= in three places:
+: src/finiteVolume/finiteVolume/fvc/fvcD2dt2.C
+: src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C
+     Therefor the officially released version will *never* compile
+     with =swak4Foam= but this is nothing that can be fixed in
+     =swak4Foam=
 *** Incompatibilities
 *** Bug fixes
 *** Infrastructure
