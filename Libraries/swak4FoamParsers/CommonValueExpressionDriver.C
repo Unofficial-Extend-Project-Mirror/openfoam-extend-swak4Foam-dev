@@ -1736,8 +1736,13 @@ word CommonValueExpressionDriver::getTypeOfFieldInternal(
     if(debug) {
         Pout<< "Mesh: " << theMesh.polyMesh::path()
             << " Name: " << name << " Time: " << mesh().time().timeName()
-            << " Path: " << f.filePath() << " Class: "
-            << f.headerClassName() << endl;
+            << " Path: "
+#ifdef FOAM_HAS_LOCAL_FILEPATH
+            << f.localFilePath()
+#else
+            << f.filePath()
+#endif
+            << " Class: " << f.headerClassName() << endl;
     }
 
     return f.headerClassName();

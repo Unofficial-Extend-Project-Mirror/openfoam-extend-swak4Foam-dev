@@ -324,7 +324,12 @@ namespace Foam {
 #endif
                     ) {
                         if(debug) {
-                            Pout << "Rereading from " << header.filePath()
+                            Pout << "Rereading from "
+#ifdef FOAM_HAS_LOCAL_FILEPATH
+                                << header.localFilePath()
+#else
+                                << header.filePath()
+#endif
                                 << endl;
                         }
                         theSet.reset(
