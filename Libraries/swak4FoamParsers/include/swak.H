@@ -397,6 +397,10 @@ Contributors/Copyright:
 #define FOAM_HAS_LOCAL_FILEPATH
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_OPENFOAMPLUS) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#define FOAM_COMPONENT_NAMES_ARE_CONST_PTR
+#endif
+
 #include "swakVersion.H"
 
 #include "DebugOStream.H"
