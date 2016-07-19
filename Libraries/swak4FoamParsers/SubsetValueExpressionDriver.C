@@ -109,7 +109,7 @@ tmp<scalarField> SubsetValueExpressionDriver::makeIdField()
         new scalarField(this->size())
     );
     forAll(ids(),i) {
-        ids()[i]=i;
+        const_cast<scalar&>(ids()[i])=i;
     }
     return ids;
 }

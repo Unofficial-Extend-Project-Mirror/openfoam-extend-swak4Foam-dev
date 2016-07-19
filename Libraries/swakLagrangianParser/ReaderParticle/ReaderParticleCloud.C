@@ -91,7 +91,7 @@ tmp<Field<T> > filterValues(
             pTraits<T>::zero
         )
     );
-    Field<T> &result=pResult();
+    Field<T> &result=const_cast<Field<T>&>(pResult());
     label cnt=0;
     forAll(orig,i)
     {

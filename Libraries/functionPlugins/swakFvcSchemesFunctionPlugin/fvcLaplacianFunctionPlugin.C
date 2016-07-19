@@ -105,7 +105,7 @@ void fvcLaplacianFunctionPlugin<T>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().fvcLaplacian(original_())
+            const_cast<fv::laplacianScheme<T,scalar>&>(scheme()).fvcLaplacian(original_())
         )
     );
 

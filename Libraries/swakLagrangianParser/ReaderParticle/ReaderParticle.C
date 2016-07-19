@@ -90,7 +90,11 @@ void ReaderParticle::readFields (ReaderParticleCloud &c) {
         );
 
         if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+            header.typeHeaderOk<IOobject>(false)
+#else
             header.headerOk()
+#endif
         ) {
             const word className(header.headerClassName());
 

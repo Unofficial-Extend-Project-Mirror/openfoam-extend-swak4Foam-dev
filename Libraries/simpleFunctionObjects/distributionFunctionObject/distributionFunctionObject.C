@@ -213,7 +213,11 @@ wordList distributionFunctionObject::fileNames() {
 }
 
 stringList distributionFunctionObject::componentNames() {
+#ifdef FOAM_COMPONENT_NAMES_ARE_CONST_PTR
+    const char * const *names=NULL;
+#else
     const char **names=NULL;
+#endif
     direction nComp=0;
 
     if(distScalar_.valid()) {

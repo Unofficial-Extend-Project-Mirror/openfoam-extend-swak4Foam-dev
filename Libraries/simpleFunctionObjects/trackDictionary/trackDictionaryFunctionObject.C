@@ -35,6 +35,8 @@ Contributors/Copyright:
 #include "stringListOps.H"
 #include "fileStat.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -272,7 +274,7 @@ void Foam::trackDictionaryFunctionObject::echoSwitchesValues()
     if(echoControlDictOptimisationSwitches_ && debug::controlDict().found("OptimisationSwitches"))
         Pout << "OptimisationSwitches : " << Foam::debug::optimisationSwitches();
 
-#ifdef FOAM_DEV
+#ifdef FOAM_HAS_TOLERANCE_SWITCHES
     if(echoControlDictTolerances_ && debug::controlDict().found("Tolerances"))
         Pout << "Tolerance switches   : " << Foam::debug::tolerances();
 #endif

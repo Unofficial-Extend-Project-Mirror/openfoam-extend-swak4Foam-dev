@@ -53,7 +53,12 @@ bool loadFieldFunction(
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+    f.typeHeaderOk<FieldType>(false);
+#else
     f.headerOk();
+#endif
+
     word className=f.headerClassName();
 
     if(className==FieldType::typeName) {
@@ -96,7 +101,12 @@ bool loadPointFieldFunction(
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+    f.typeHeaderOk<FieldType>(false);
+#else
     f.headerOk();
+#endif
+
     word className=f.headerClassName();
 
     if(className==FieldType::typeName) {
@@ -146,7 +156,13 @@ string reloadFieldsFunction(
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             );
-        if(f.headerOk()) {
+        if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+            f.typeHeaderOk<FieldType>(false)
+#else
+            f.headerOk()
+#endif
+        ) {
             word className=f.headerClassName();
 
             if(className==FieldType::typeName) {

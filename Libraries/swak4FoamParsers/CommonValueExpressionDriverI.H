@@ -43,6 +43,8 @@ Contributors/Copyright:
 
 #include <cassert>
 
+#include "swak.H"
+
 namespace Foam {
 
     inline const pointMesh &CommonValueExpressionDriver::pMesh()
@@ -313,12 +315,21 @@ namespace Foam {
                             IOobject::NO_WRITE
                         );
                     if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+                        header.typeHeaderOk<T>()
+#else
                         header.headerOk()
                         &&
                         header.headerClassName()==T::typeName
+#endif
                     ) {
                         if(debug) {
-                            Pout << "Rereading from " << header.filePath()
+                            Pout << "Rereading from "
+#ifdef FOAM_HAS_LOCAL_FILEPATH
+                                << header.localFilePath()
+#else
+                                << header.filePath()
+#endif
                                 << endl;
                         }
                         theSet.reset(
@@ -1118,7 +1129,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i]=op(a[i],b[i]);
+            const_cast<bool&>(res()[i])=op(a[i],b[i]);
         }
 
         return res;
@@ -1138,7 +1149,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i]=op(a[i],b[i]);
+            const_cast<bool&>(res()[i])=op(a[i],b[i]);
         }
 
         return res;
@@ -1158,7 +1169,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i] = d[i] ? yes[i] : no[i];
+            const_cast<Type&>(res()[i]) = d[i] ? yes[i] : no[i];
         }
 
         return res;
@@ -1173,7 +1184,7 @@ namespace Foam {
         );;
 
         forAll(res(),i) {
-            res()[i] = a[i];
+            const_cast<bool&>(res()[i]) = a[i];
         }
 
         return res;

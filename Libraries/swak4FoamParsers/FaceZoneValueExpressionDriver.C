@@ -248,7 +248,7 @@ tmp<scalarField> FaceZoneValueExpressionDriver::makeFaceFlipField() const
     forAll(faceZone_,i) {
         const label faceI=faceZone_[i];
         if(useFaceValue(faceI)) {
-            result()[cnt]= (flip[i] ? -1 : 1);
+            const_cast<scalar&>(result()[cnt])= (flip[i] ? -1 : 1);
             cnt++;
         }
     }

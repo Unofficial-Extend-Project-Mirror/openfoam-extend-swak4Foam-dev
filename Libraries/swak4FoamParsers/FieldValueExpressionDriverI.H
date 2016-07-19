@@ -34,6 +34,8 @@ Contributors/Copyright:
 #ifndef VALUE_EXPRESSION_DRIVER_I_H
 #define VALUE_EXPRESSION_DRIVER_I_H
 
+#include "swak.H"
+
 #include "wallFvPatch.H"
 #include "wallPointPatch.H"
 #include "fixedValueFvPatchFields.H"
@@ -64,7 +66,7 @@ Contributors/Copyright:
 #include "mappedPointPatch.H"
 #endif
 
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 #include "FixedValuePointPatchField.H"
 #include "ZeroGradientPointPatchField.H"
 #include "CalculatedPointPatchField.H"
@@ -280,13 +282,13 @@ void FieldValueExpressionDriver::makePatches
         )
     ) {
         if(isValuePatch){
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
             bfNew[patchI]=new FixedValuePointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>(patch,field);
 #else
             bfNew[patchI]=new fixedValuePointPatchField<T>(patch,field);
 #endif
         } else {
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
             bfNew[patchI]=new ZeroGradientPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>(patch,field);
 #else
             bfNew[patchI]=new zeroGradientPointPatchField<T>(patch,field);
@@ -356,7 +358,7 @@ void FieldValueExpressionDriver::setCalculatedPatches
         pointPatchField<T> &pf=bf[patchI];
 
         if(
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
             typeid(pf)==typeid(CalculatedPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
 #else
             typeid(pf)==typeid(calculatedPointPatchField<T>)
@@ -425,7 +427,7 @@ void FieldValueExpressionDriver::copyCalculatedPatches
         pointPatchField<T> &pf=bf[patchI];
 
         if(
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
             typeid(pf)==typeid(CalculatedPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
 #else
             typeid(pf)==typeid(calculatedPointPatchField<T>)
@@ -560,7 +562,7 @@ void FieldValueExpressionDriver::setValuePatches
         )
     ) {
         if(
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
             typeid(field.boundaryField()[patchI])
             ==
             typeid(FixedValuePointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,T>)
@@ -703,7 +705,7 @@ inline tmp<FType> FieldValueExpressionDriver::makeConstantFieldInternal(
         )
     );
     if(pTraits<typename FType::PatchFieldType>::typeName=="fvsPatchField") {
-        setCalculatedPatches(f(),val);
+        this->setCalculatedPatches(const_cast<FType&>(f()),val);
     }
 
     return f;

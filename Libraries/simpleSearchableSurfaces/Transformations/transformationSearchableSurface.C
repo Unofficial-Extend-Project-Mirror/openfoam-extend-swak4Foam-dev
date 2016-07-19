@@ -135,7 +135,7 @@ Foam::transformationSearchableSurface::coordinates() const
 {
 #ifdef FOAM_SEARCHABLE_SURF_USES_TMP
     tmp<pointField> tResult(new pointField(delegate().coordinates()));
-    pointField &result=tResult();
+    pointField &result=const_cast<pointField&>(tResult());
 #else
     pointField result(delegate().coordinates());
 #endif

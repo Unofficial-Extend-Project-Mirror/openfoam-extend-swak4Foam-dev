@@ -47,7 +47,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#ifdef FOAM_DEV
+    #ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 
 #   include "MixedPointPatchField.H"
     // Predefine extra template paramters

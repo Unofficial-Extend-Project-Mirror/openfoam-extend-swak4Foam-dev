@@ -369,7 +369,7 @@ tmp<Field<RType> > CloudProxyForParticle<CloudType>::mapToParticles(
     tmp<Field<RType> > tResult(
         new Field<RType>(theCloud().size())
     );
-    Field<RType> &result=tResult();
+    Field<RType> &result=const_cast<Field<RType>&>(tResult());
     label i=0;
     forAllConstIter(typename CloudType,theCloud(),it)
     {

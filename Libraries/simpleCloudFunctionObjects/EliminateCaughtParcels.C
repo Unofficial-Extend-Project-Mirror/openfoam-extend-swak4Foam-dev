@@ -218,7 +218,7 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
             // Clear existing data because this is an internal face
             iter()=0;
             lastFace_[theId]=-1;
-            lastPosition_[theId]=vector::one*HUGE;
+            lastPosition_[theId]=vector::one*pTraits<scalar>::max;
         }
     } else {
         if (iter != faceHitCounter_.end())
@@ -239,7 +239,11 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                             << p << endl;
 
                         keepParticle=false;
+#ifdef FOAM_KINEMATIC_PARCEL_ACTIVE_SET_THROUGH_METHOD
+                        const_cast<parcelType&>(p).active(false);
+#else
                         const_cast<parcelType&>(p).active()=false;
+#endif
                         if(!toEliminate_.found(theId)) {
                             toEliminate_.insert(theId);
                             eliminatedPtr_->append(
@@ -266,7 +270,11 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
                                 << p << endl;
 
                             keepParticle=false;
+#ifdef FOAM_KINEMATIC_PARCEL_ACTIVE_SET_THROUGH_METHOD
+                            const_cast<parcelType&>(p).active(false);
+#else
                             const_cast<parcelType&>(p).active()=false;
+#endif
                             if(!toEliminate_.found(theId)) {
                                 toEliminate_.insert(theId);
                                 eliminatedPtr_->append(

@@ -246,7 +246,11 @@ void doAnExpression
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        f.typeHeaderOk<IOobject>(false);
+#else
         f.headerOk();
+#endif
 
         oldFieldType=f.headerClassName();
 
@@ -687,8 +691,12 @@ void preLoadFieldsFunction(
 
             if
             (
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+                fieldHeader.typeHeaderOk<FieldType>(true)
+#else
                 fieldHeader.headerOk()
                 && fieldHeader.headerClassName() == pTraits<FieldType>::typeName
+#endif
             )
             {
                 Info << " Preloading " << name << " of type "

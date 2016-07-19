@@ -34,12 +34,15 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
 #include "streamFunctionPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
-#ifndef FOAM_DEV
+#ifdef FOAM_HAS_SYMMETRY_PLANE_POLY_PATCH
 #include "symmetryPlanePolyPatch.H"
 #endif
+
 #include "symmetryPolyPatch.H"
 #include "emptyPolyPatch.H"
 #include "wedgePolyPatch.H"
@@ -308,7 +311,7 @@ void streamFunctionPluginFunction::doEvaluation()
                                 (
                                     !isType<emptyPolyPatch>
                                     (patches[patchNo])
-#ifndef FOAM_DEV
+#ifdef FOAM_HAS_SYMMETRY_PLANE_POLY_PATCH
                                     && !isType<symmetryPlanePolyPatch>
                                     (patches[patchNo])
 #endif

@@ -40,7 +40,7 @@ Contributors/Copyright:
 
 #include "groovyBCCommon.H"
 
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 #include "PointPatchFieldMapper.H"
 #else
 #include "pointPatchFieldMapper.H"

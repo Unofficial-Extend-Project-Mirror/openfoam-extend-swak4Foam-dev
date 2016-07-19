@@ -47,12 +47,21 @@ SourceFiles
 #include "CommonValueExpressionDriver.H"
 #include "exprString.H"
 
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+#include "Function1.H"
+#define DataEntry Function1
+#else
 #include "DataEntry.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+    namespace Function1Types {
+#endif
 
 template<class Type>
 class swakDataEntry;
@@ -142,6 +151,9 @@ public:
 
 };
 
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+    }
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

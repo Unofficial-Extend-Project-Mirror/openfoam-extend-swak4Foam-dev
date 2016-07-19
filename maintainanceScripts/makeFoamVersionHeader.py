@@ -77,7 +77,7 @@ else:
 
 vParts=verString.split(".")
 
-of_version_major=9
+of_version_major=99
 of_version_minor=9
 of_version_patch="x"
 
@@ -106,6 +106,9 @@ elif verString in ["dev","plus"]:
     of_version_patch=-1
     of_version_patch_num=99
 elif len(vParts)==2:
+    of_version_patch=0
+    of_version_patch_num=0
+elif len(vParts)==1 and foamFork=="openfoamplus":
     of_version_patch=0
     of_version_patch_num=0
 else:

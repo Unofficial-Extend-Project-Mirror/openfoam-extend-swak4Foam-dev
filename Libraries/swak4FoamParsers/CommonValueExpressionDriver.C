@@ -1009,7 +1009,7 @@ tmp<vectorField> CommonValueExpressionDriver::composeVectorField(
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::vector(x[faceI],y[faceI],z[faceI]);
+        const_cast<vector&>(result()[faceI])=Foam::vector(x[faceI],y[faceI],z[faceI]);
     }
 
     return result;
@@ -1050,7 +1050,7 @@ tmp<tensorField> CommonValueExpressionDriver::composeTensorField(
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::tensor(
+        const_cast<tensor&>(result()[faceI])=Foam::tensor(
             xx[faceI],xy[faceI],xz[faceI],
             yx[faceI],yy[faceI],yz[faceI],
             zx[faceI],zy[faceI],zz[faceI]
@@ -1090,7 +1090,7 @@ tmp<symmTensorField> CommonValueExpressionDriver::composeSymmTensorField(
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::symmTensor(
+        const_cast<symmTensor&>(result()[faceI])=Foam::symmTensor(
             xx[faceI],xy[faceI],xz[faceI],
             yy[faceI],yz[faceI],
             zz[faceI]
@@ -1110,7 +1110,7 @@ tmp<sphericalTensorField> CommonValueExpressionDriver::composeSphericalTensorFie
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::sphericalTensor(
+        const_cast<sphericalTensor&>(result()[faceI])=Foam::sphericalTensor(
             ii[faceI]
         );
 
@@ -1171,7 +1171,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeModuloField(
                 val += b[i];
             }
         }
-        result()[i]=val;
+        const_cast<scalar&>(result()[i])=val;
     }
 
     return result;
@@ -1189,7 +1189,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeRandomField(label seed) const
 
     Foam::Random rand(seed);
     forAll(result(),i) {
-        result()[i]=rand.scalar01();
+        const_cast<scalar&>(result()[i])=rand.scalar01();
     }
 
     return result;
@@ -1216,7 +1216,7 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup(
     const interpolationTable<scalar> &table=lookup_[name];
 
     forAll(val,i) {
-        result()[i]=table(val[i]);
+        const_cast<scalar&>(result()[i])=table(val[i]);
     }
 
     return tmp<scalarField>(result);
@@ -1235,7 +1235,7 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup2D(
     const interpolation2DTable<scalar> &table=lookup2D_[name];
 
     forAll(val,i) {
-        result()[i]=table(val[i],val2[i]);
+        const_cast<scalar&>(result()[i])=table(val[i],val2[i]);
     }
 #else
     FatalErrorIn("CommonValueExpressionDriver::getLookup2D")
@@ -1266,7 +1266,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
 
     Foam::Random rand(seed);
     forAll(result(),i) {
-        result()[i]=rand.GaussNormal();
+        const_cast<scalar&>(result()[i])=rand.GaussNormal();
     }
 
     return result;
@@ -1727,13 +1727,22 @@ word CommonValueExpressionDriver::getTypeOfFieldInternal(
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+    f.typeHeaderOk<IOobject>(false);
+#else
     f.headerOk();
+#endif
 
     if(debug) {
         Pout<< "Mesh: " << theMesh.polyMesh::path()
             << " Name: " << name << " Time: " << mesh().time().timeName()
-            << " Path: " << f.filePath() << " Class: "
-            << f.headerClassName() << endl;
+            << " Path: "
+#ifdef FOAM_HAS_LOCAL_FILEPATH
+            << f.localFilePath()
+#else
+            << f.filePath()
+#endif
+            << " Class: " << f.headerClassName() << endl;
     }
 
     return f.headerClassName();
@@ -1763,7 +1772,13 @@ word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
             IOobject::NO_WRITE
         );
 
-    if(f.headerOk()) {;
+    if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        f.typeHeaderOk<IOobject>(false)
+#else
+        f.headerOk()
+#endif
+    ) {;
         return f.headerClassName();
     } else {
         Pout << "No set " << name << " at t=" << mesh().time().timeName()
@@ -1777,7 +1792,12 @@ word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        f.typeHeaderOk<IOobject>(false);
+#else
         f.headerOk();
+#endif
+
         return f.headerClassName();
     }
 }
@@ -2057,8 +2077,8 @@ vector getExtremePosition(
 ) {
     assert(vals.size()==locs.size());
 
-    vector pos(HUGE,HUGE,HUGE);
-    scalar val=op(1,-1) ? -HUGE : HUGE;
+    vector pos(pTraits<scalar>::max,pTraits<scalar>::max,pTraits<scalar>::max);
+    scalar val=op(1,-1) ? pTraits<scalar>::min : pTraits<scalar>::max;
     forAll(vals,i) {
         if(op(vals[i],val)) {
             val=vals[i];
