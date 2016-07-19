@@ -218,7 +218,7 @@ void Foam::EliminateCaughtParcels<CloudType>::postFace
             // Clear existing data because this is an internal face
             iter()=0;
             lastFace_[theId]=-1;
-            lastPosition_[theId]=vector::one*HUGE;
+            lastPosition_[theId]=vector::one*pTraits<scalar>::max;
         }
     } else {
         if (iter != faceHitCounter_.end())

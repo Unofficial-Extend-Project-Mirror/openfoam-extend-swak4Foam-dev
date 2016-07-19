@@ -77,7 +77,7 @@ void surfaceDistancePluginFunction::doEvaluation()
                 IOobject::NO_WRITE
             ),
             mesh(),
-            dimensionedScalar("no",dimless,HUGE)
+            dimensionedScalar("no",dimless,pTraits<scalar>::max)
         )
     );
 
