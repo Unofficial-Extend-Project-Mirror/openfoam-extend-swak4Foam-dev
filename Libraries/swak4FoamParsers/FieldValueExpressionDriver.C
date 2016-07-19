@@ -778,7 +778,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeCellSetField(const word &nam
 #ifdef FOAM_HAS_TYPE_HEADER_OK
       head.typeHeaderOk<IOobject>(false);
 #else
-      head.headerOk()
+      head.headerOk();
 #endif
   }
 
