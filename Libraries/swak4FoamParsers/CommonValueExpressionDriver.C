@@ -1727,7 +1727,11 @@ word CommonValueExpressionDriver::getTypeOfFieldInternal(
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+    f.typeHeaderOk<IOobject>(false);
+#else
     f.headerOk();
+#endif
 
     if(debug) {
         Pout<< "Mesh: " << theMesh.polyMesh::path()
@@ -1763,7 +1767,13 @@ word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
             IOobject::NO_WRITE
         );
 
-    if(f.headerOk()) {;
+    if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        f.typeHeaderOk<IOobject>(false)
+#else
+        f.headerOk()
+#endif
+    ) {;
         return f.headerClassName();
     } else {
         Pout << "No set " << name << " at t=" << mesh().time().timeName()
@@ -1777,7 +1787,12 @@ word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
             IOobject::MUST_READ,
             IOobject::NO_WRITE
         );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        f.typeHeaderOk<IOobject>(false);
+#else
         f.headerOk();
+#endif
+
         return f.headerClassName();
     }
 }

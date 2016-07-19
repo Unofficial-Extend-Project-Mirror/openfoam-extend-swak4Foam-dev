@@ -759,7 +759,13 @@ tmp<volScalarField> FieldValueExpressionDriver::makeCellSetField(const word &nam
           IOobject::NO_WRITE
       );
 
-  if(!head.headerOk()) {;
+  if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+      !head.typeHeaderOk<IOobject>(false)
+#else
+      !head.headerOk()
+#endif
+  ) {;
       head=IOobject
           (
               name,
@@ -769,7 +775,11 @@ tmp<volScalarField> FieldValueExpressionDriver::makeCellSetField(const word &nam
               IOobject::MUST_READ,
               IOobject::NO_WRITE
           );
-      head.headerOk();
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+      head.typeHeaderOk<IOobject>(false);
+#else
+      head.headerOk()
+#endif
   }
 
   cellSet cs(head);
@@ -831,7 +841,13 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceSetField(const word 
           IOobject::NO_WRITE
       );
 
-  if(!head.headerOk()) {;
+  if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+      !head.typeHeaderOk<IOobject>(false)
+#else
+      !head.headerOk()
+#endif
+  ) {;
       head=IOobject
           (
               name,
@@ -841,7 +857,11 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeFaceSetField(const word 
               IOobject::MUST_READ,
               IOobject::NO_WRITE
           );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+      head.typeHeaderOk<IOobject>(false);
+#else
       head.headerOk();
+#endif
   }
 
   faceSet cs(head);
@@ -886,7 +906,13 @@ tmp<pointScalarField> FieldValueExpressionDriver::makePointSetField(const word &
           IOobject::NO_WRITE
       );
 
-  if(!head.headerOk()) {;
+  if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+      !head.typeHeaderOk<IOobject>(false)
+#else
+      !head.headerOk()
+#endif
+  ) {;
       head=IOobject
           (
               name,
@@ -896,7 +922,11 @@ tmp<pointScalarField> FieldValueExpressionDriver::makePointSetField(const word &
               IOobject::MUST_READ,
               IOobject::NO_WRITE
           );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+      head.typeHeaderOk<IOobject>(false);
+#else
       head.headerOk();
+#endif
   }
 
   pointSet cs(head);

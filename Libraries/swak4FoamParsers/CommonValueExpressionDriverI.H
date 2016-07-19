@@ -315,9 +315,13 @@ namespace Foam {
                             IOobject::NO_WRITE
                         );
                     if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+                        header.typeHeaderOk<T>()
+#else
                         header.headerOk()
                         &&
                         header.headerClassName()==T::typeName
+#endif
                     ) {
                         if(debug) {
                             Pout << "Rereading from " << header.filePath()

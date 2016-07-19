@@ -330,7 +330,13 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
             IOobject::NO_WRITE
         );
 
-    if(!head.headerOk()) {;
+    if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        !head.typeHeaderOk<IOobject>(false)
+#else
+        !head.headerOk()
+#endif
+    ) {;
         head=IOobject
             (
                 name,
@@ -340,7 +346,11 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        head.typeHeaderOk<IOobject>(false);
+#else
         head.headerOk();
+#endif
     }
 
     cellSet cs(head);
