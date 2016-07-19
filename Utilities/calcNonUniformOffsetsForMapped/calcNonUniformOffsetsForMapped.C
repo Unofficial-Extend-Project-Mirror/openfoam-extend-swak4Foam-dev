@@ -88,7 +88,7 @@ tmp<vectorField> transformPoints(
     tmp<vectorField> result(
         new vectorField(original)
     );
-    vectorField &tr=result();
+    vectorField &tr=const_cast<vectorField&>(result());
 
     tr+=transposeFirst;
     forAll(tr,i) {

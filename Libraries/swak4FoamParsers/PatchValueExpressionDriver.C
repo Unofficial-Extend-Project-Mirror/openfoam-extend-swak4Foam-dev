@@ -302,7 +302,7 @@ tmp<scalarField> PatchValueExpressionDriver::makeFaceIdField()
         new scalarField(patch_.size())
     );
     forAll(result(),i) {
-        result()[i]=i;
+        const_cast<scalar&>(result()[i])=i;
     }
     return result;
 }
@@ -314,7 +314,7 @@ tmp<scalarField> PatchValueExpressionDriver::makeNearDistField()
     );
 
     nearWallDist dist(this->mesh());
-    result()=dist[patch_.index()];
+    const_cast<scalarField&>(result())=dist[patch_.index()];
     return result;
 }
 

@@ -43,6 +43,8 @@ Contributors/Copyright:
 
 #include <cassert>
 
+#include "swak.H"
+
 namespace Foam {
 
     inline const pointMesh &CommonValueExpressionDriver::pMesh()
@@ -1118,7 +1120,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i]=op(a[i],b[i]);
+            const_cast<bool&>(res()[i])=op(a[i],b[i]);
         }
 
         return res;
@@ -1138,7 +1140,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i]=op(a[i],b[i]);
+            const_cast<bool&>(res()[i])=op(a[i],b[i]);
         }
 
         return res;
@@ -1158,7 +1160,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i] = d[i] ? yes[i] : no[i];
+            const_cast<Type&>(res()[i]) = d[i] ? yes[i] : no[i];
         }
 
         return res;
@@ -1173,7 +1175,7 @@ namespace Foam {
         );;
 
         forAll(res(),i) {
-            res()[i] = a[i];
+            const_cast<bool&>(res()[i]) = a[i];
         }
 
         return res;

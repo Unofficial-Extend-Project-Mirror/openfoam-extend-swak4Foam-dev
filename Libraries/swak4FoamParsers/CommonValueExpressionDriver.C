@@ -1009,7 +1009,7 @@ tmp<vectorField> CommonValueExpressionDriver::composeVectorField(
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::vector(x[faceI],y[faceI],z[faceI]);
+        const_cast<vector&>(result()[faceI])=Foam::vector(x[faceI],y[faceI],z[faceI]);
     }
 
     return result;
@@ -1050,7 +1050,7 @@ tmp<tensorField> CommonValueExpressionDriver::composeTensorField(
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::tensor(
+        const_cast<tensor&>(result()[faceI])=Foam::tensor(
             xx[faceI],xy[faceI],xz[faceI],
             yx[faceI],yy[faceI],yz[faceI],
             zx[faceI],zy[faceI],zz[faceI]
@@ -1090,7 +1090,7 @@ tmp<symmTensorField> CommonValueExpressionDriver::composeSymmTensorField(
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::symmTensor(
+        const_cast<symmTensor&>(result()[faceI])=Foam::symmTensor(
             xx[faceI],xy[faceI],xz[faceI],
             yy[faceI],yz[faceI],
             zz[faceI]
@@ -1110,7 +1110,7 @@ tmp<sphericalTensorField> CommonValueExpressionDriver::composeSphericalTensorFie
     );
 
     forAll(result(),faceI) {
-        result()[faceI]=Foam::sphericalTensor(
+        const_cast<sphericalTensor&>(result()[faceI])=Foam::sphericalTensor(
             ii[faceI]
         );
 
@@ -1171,7 +1171,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeModuloField(
                 val += b[i];
             }
         }
-        result()[i]=val;
+        const_cast<scalar&>(result()[i])=val;
     }
 
     return result;
@@ -1189,7 +1189,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeRandomField(label seed) const
 
     Foam::Random rand(seed);
     forAll(result(),i) {
-        result()[i]=rand.scalar01();
+        const_cast<scalar&>(result()[i])=rand.scalar01();
     }
 
     return result;
@@ -1216,7 +1216,7 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup(
     const interpolationTable<scalar> &table=lookup_[name];
 
     forAll(val,i) {
-        result()[i]=table(val[i]);
+        const_cast<scalar&>(result()[i])=table(val[i]);
     }
 
     return tmp<scalarField>(result);
@@ -1235,7 +1235,7 @@ tmp<scalarField> CommonValueExpressionDriver::getLookup2D(
     const interpolation2DTable<scalar> &table=lookup2D_[name];
 
     forAll(val,i) {
-        result()[i]=table(val[i],val2[i]);
+        const_cast<scalar&>(result()[i])=table(val[i],val2[i]);
     }
 #else
     FatalErrorIn("CommonValueExpressionDriver::getLookup2D")
@@ -1266,7 +1266,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
 
     Foam::Random rand(seed);
     forAll(result(),i) {
-        result()[i]=rand.GaussNormal();
+        const_cast<scalar&>(result()[i])=rand.GaussNormal();
     }
 
     return result;

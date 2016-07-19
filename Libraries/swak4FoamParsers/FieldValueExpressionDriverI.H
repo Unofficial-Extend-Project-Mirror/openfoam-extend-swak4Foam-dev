@@ -705,7 +705,7 @@ inline tmp<FType> FieldValueExpressionDriver::makeConstantFieldInternal(
         )
     );
     if(pTraits<typename FType::PatchFieldType>::typeName=="fvsPatchField") {
-        setCalculatedPatches(f(),val);
+        this->setCalculatedPatches(const_cast<FType&>(f()),val);
     }
 
     return f;

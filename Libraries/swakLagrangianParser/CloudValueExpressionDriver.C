@@ -309,7 +309,7 @@ tmp<scalarField> CloudValueExpressionDriver::makeIdField()
         new scalarField(this->size())
     );
     forAll(ids(),i) {
-        ids()[i]=i;
+        const_cast<scalar&>(ids()[i])=i;
     }
     return ids;
 }
@@ -350,7 +350,7 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
     {
         label cellI=theCells[i];
         if(cs.found(cellI)) {
-            result()[i]=true;
+            const_cast<bool&>(result()[i])=true;
         }
     }
 
@@ -380,7 +380,7 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellZoneField(const word &name
     {
         label cellI=theCells[i];
         if(zone.found(cellI)) {
-            result()[i]=true;
+            const_cast<bool&>(result()[i])=true;
         }
     }
 

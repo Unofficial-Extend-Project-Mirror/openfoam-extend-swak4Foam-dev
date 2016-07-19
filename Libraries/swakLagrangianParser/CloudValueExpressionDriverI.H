@@ -62,7 +62,7 @@ namespace Foam {
                 pTraits<Type>::zero
             )
         );
-        Field<Type> &result=pResult();
+        Field<Type> &result=const_cast<Field<Type>&>(pResult());
 
         typedef GeometricField< Type, fvPatchField, volMesh > volField;
 
