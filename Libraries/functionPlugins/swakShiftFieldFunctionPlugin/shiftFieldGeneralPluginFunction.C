@@ -52,9 +52,9 @@ shiftFieldGeneralPluginFunction<Type>::shiftFieldGeneralPluginFunction(
 ):
     FieldValuePluginFunction(
         parentDriver,
-        pTraits<Type>::typeName+name,
+        name,
         word(ResultType::typeName),
-        shiftDescription+",field internalField "+ResultType::typeName
+        "field internalField "+ResultType::typeName+","+shiftDescription
     )
 {
 }
@@ -103,47 +103,49 @@ void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
         field_->boundaryField()
     );
 
+    autoPtr<ResultType> mappedField(
+        new ResultType(
+            0*field_()
+        )
+    );
+    ResultType &initField=mappedField();
+
     meshToMesh interpolation(
         shiftMesh,
-        origMesh
+        origMesh,
 #ifdef FOAM_NEW_MESH2MESH
-        ,meshToMesh::imCellVolumeWeight
+        meshToMesh::imCellVolumeWeight,
 #endif
+        false
     );
 
 #ifdef FOAM_NEW_MESH2MESH
 #ifdef FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR
-    autoPtr<ResultType>(
-        result().setObjectResult(
-            interpolation.mapSrcToTgt(
-                newField
-            ).ptr()
-        )
+    interpolation.mapSrcToTgt(
+        newField,
+        initField
     );
 #else
-    result().setObjectResult(
-        autoPtr<ResultType>(
-            interpolation.mapSrcToTgt(
-                newField,
-                eqOp<Type>()
-            ).ptr()
-        )
+    interpolation.mapSrcToTgt(
+        newField,
+        eqOp<Type>(),
+        initField
     );
 #endif
 #else
-    result().setObjectResult(
-        autoPtr<ResultType>(
-            interpolation.interpolate(
-                newField,
-                meshToMesh::imCellVolumeWeight,
+    interpolation.interpolate(
+        newField,
+        meshToMesh::imCellVolumeWeight,
 #ifdef FOAM_MESHTOMESH_INTERPOLATE_REDUCE
-                ,eqOp<Type>()
+        eqOp<Type>(),
 #endif
-            ).ptr()
-        )
+        initField
     );
 #endif
 
+    result().setObjectResult(
+        mappedField
+    );
 }
 
 template<class Type>
@@ -152,7 +154,7 @@ void shiftFieldGeneralPluginFunction<Type>::setArgument(
     const string &content,
     const CommonValueExpressionDriver &driver
 ) {
-    assert(index==1);
+    assert(index==0);
 
     field_.set(
         new ResultType(

@@ -1,3 +1,4 @@
 shiftFieldGeneralPluginFunction.C
+shiftFieldConstantVectorPluginFunction.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakShiftFieldFunctionPlugin

@@ -1,0 +1,77 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.05;
+
+// writeControl    timeStep;
+writeControl    adjustableRunTime;
+
+// writeInterval   20;
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakShiftFieldFunctionPlugin.so"
+);
+
+functions {
+    constantShifted {
+        type expressionField;
+        autowrite true;
+        fieldName shiftedCircle;
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "minY=min(pts().y);"
+            "maxY=max(pts().y);"
+            "minZ=min(pts().z);"
+            "maxZ=max(pts().z);"
+            "radius=0.5*interpolateToCell(maxX-minX);"
+            "center=0.5*interpolateToCell(vector(maxX+minX,maxY+minY,maxZ+minZ));"
+            "vals=mag(pos()-center)<radius ? 1 : -1;"
+        );
+        //        expression "shiftConstantScalarField(vals,(-0.025,0,0))";
+        expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
+    }
+}
+
+// ************************************************************************* //
