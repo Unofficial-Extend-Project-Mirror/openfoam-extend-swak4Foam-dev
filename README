@@ -3506,4 +3506,7 @@ S_{expl} + S_{impl} T
      zero. Boundary patches are not interpolated. Both of these
      behaviors can cause weird results
 *** Enhancements
+**** Primitive parser for Plugin-functions now supports tensor types
+     The parser for =primitve= types now supports =tensor=,
+     =symmTensor= and =sphericalTensor= as well.
 *** Examples
