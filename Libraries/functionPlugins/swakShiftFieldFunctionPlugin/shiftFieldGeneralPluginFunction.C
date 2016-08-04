@@ -55,6 +55,9 @@ shiftFieldGeneralPluginFunction<Type>::shiftFieldGeneralPluginFunction(
         name,
         word(ResultType::typeName),
         "field internalField "+ResultType::typeName+","+shiftDescription
+    ),
+    defaultValue_(
+        pTraits<Type>::zero
     )
 {
 }
@@ -105,10 +108,12 @@ void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
 
     autoPtr<ResultType> mappedField(
         new ResultType(
-            0*field_()
+            field_()
         )
     );
     ResultType &initField=mappedField();
+    initField.internalField()=defaultValue_;
+    initField.correctBoundaryConditions();
 
     meshToMesh interpolation(
         shiftMesh,

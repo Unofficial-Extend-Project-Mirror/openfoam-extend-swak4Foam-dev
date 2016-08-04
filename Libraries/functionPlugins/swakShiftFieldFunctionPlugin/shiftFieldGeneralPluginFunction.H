@@ -75,6 +75,9 @@ protected:
         const string &content,
         const CommonValueExpressionDriver &driver
     );
+
+    Type defaultValue_;
+
 private:
 
     autoPtr<ResultType> field_;
