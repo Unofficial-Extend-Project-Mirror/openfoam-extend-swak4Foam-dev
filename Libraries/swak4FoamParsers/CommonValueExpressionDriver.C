@@ -223,10 +223,11 @@ void CommonValueExpressionDriver::readPluginLibraries(const dictionary &dict)
 CommonValueExpressionDriver::CommonValueExpressionDriver(
     bool cacheReadFields,
     bool searchInMemory,
-    bool searchOnDisc
+    bool searchOnDisc,
+    const dictionary &dict
 )
 :
-    dict_(emptyData_),
+    dict_(dict),
     variableStrings_(),
     contextString_("- Driver constructed from scratch"),
     specialVariablesIndex_(-1),

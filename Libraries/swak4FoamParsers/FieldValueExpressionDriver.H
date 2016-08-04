@@ -109,7 +109,8 @@ public:
         const fvMesh &mesh,
         bool cacheReadFields=false,
         bool searchInMemory=false,
-        bool searchOnDisc=true
+        bool searchOnDisc=true,
+        const dictionary &dict=emptyDict()
     );
 
     //- simpler Constructor
@@ -117,7 +118,8 @@ public:
         const fvMesh &mesh,
         bool cacheReadFields=false,
         bool searchInMemory=false,
-        bool searchOnDisc=true
+        bool searchOnDisc=true,
+        const dictionary &dict=emptyDict()
     );
 
     //- Construct from dictionary

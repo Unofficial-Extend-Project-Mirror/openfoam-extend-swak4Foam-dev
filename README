@@ -3512,4 +3512,11 @@ S_{expl} + S_{impl} T
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
      =symmTensor= and =sphericalTensor= as well.
+**** Plugin-functions now can use =variables= (under certain circumstances)
+     For an expression =fooFunmction(var+2)= where =fooFunction= is a
+     Plugin-function the symbol =var= can now be a variable: if in the
+     parent dictionary there is a sub-dictionary =fooFunctionData=
+     then this dictionary is searched for a =variables=-entry and
+     these variables are then evaluated (it is also possible to have
+     =lookuptables= and similar in =fooFunctionData=)
 *** Examples

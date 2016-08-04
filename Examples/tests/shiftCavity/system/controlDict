@@ -58,34 +58,47 @@ functions {
         type expressionField;
         autowrite true;
         fieldName shiftedCircle;
-        variables (
-            "minX=min(pts().x);"
-            "maxX=max(pts().x);"
-            "minY=min(pts().y);"
-            "maxY=max(pts().y);"
-            "minZ=min(pts().z);"
-            "maxZ=max(pts().z);"
-            "radius=0.5*interpolateToCell(maxX-minX);"
-            "center=0.5*interpolateToCell(vector(maxX+minX,maxY+minY,maxZ+minZ));"
-            "vals=mag(pos()-center)<radius ? 1 : -1;"
-        );
-        //        expression "shiftConstantScalarField(vals,(-0.025,0,0))";
-        expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
+        shiftConstantScalarFieldData {
+            variables (
+                "minX=min(pts().x);"
+                "maxX=max(pts().x);"
+                "minY=min(pts().y);"
+                "maxY=max(pts().y);"
+                "minZ=min(pts().z);"
+                "maxZ=max(pts().z);"
+                "span=interpolateToCell(maxX-minX);"
+                "radius=0.4*span;"
+                "center=0.5*interpolateToCell(vector(maxX+minX,maxY+minY,maxZ+minZ));"
+                "vals=mag(pos()-center)<radius ? 1 : -1;"
+                "shift=interpolateToPoint(span/0.5*(time()-0.25)*vector(-1,0,0));"
+            );
+        }
+        expression "shiftConstantScalarField(vals,(-0.025 0 0))";
+        //        expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
     }
     timeShifted {
         $constantShifted;
         fieldName shiftedCircleTime;
-        expression "shiftExpressionScalarField(pos().y<pos().x? 1 : -1,interpolateToPoint(0.2*(time()-0.25)*vector(-1,0,0)))";
+        shiftExpressionScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "shiftExpressionScalarField(vals,shift)";
     }
     shiftedCircleDefault {
         $constantShifted;
         fieldName shiftedCircleDefault;
-        expression "shiftConstantScalarFieldDefault(pos().y<pos().x? 1 : -1,(-0.025 0 0),2)";
+        shiftConstantScalarFieldDefaultData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "shiftConstantScalarFieldDefault(vals,(-0.025 0 0),2)";
     }
     timeShiftedDefault {
         $constantShifted;
         fieldName shiftedCircleTimeDefault;
-        expression "shiftExpressionVectorFieldDefault(vector(1,1,1)*(pos().y<pos().x? 1 : -1),interpolateToPoint(0.2*(time()-0.25)*vector(-1,0,0)),(1 2 3))";
+        shiftExpressionVectorFieldDefaultData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "shiftExpressionVectorFieldDefault(vector(1,1,1)*vals,shift,(1 2 3))";
     }
 }
 

@@ -415,6 +415,19 @@ void CommonPluginFunction::evaluateInternal(
                 content+"\""
             );
 
+            const word dictName=name_+"Data";
+            //            Info << "Looking for " << dictName << " in " << parentDriver_.dict().name() << endl;
+            if(
+                parentDriver_.dict().found(dictName)
+                &&
+                parentDriver_.dict().isDict(dictName)
+            ) {
+                //                Info << "Found " << parentDriver_.dict().subDict(dictName) << endl;
+                driver->readVariablesAndTables(
+                    parentDriver_.dict().subDict(dictName)
+                );
+                driver->clearVariables();
+            }
             used=readArgument(i,currentContent,driver());
         }
 

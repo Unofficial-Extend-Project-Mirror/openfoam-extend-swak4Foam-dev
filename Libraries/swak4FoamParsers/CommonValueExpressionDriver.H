@@ -165,6 +165,9 @@ protected:
     const dictionary &dict() const
         { return dict_; }
 
+    static const dictionary &emptyDict()
+        { return emptyData_; }
+
 private:
     ExpressionResult result_;
 
@@ -473,7 +476,8 @@ public:
     CommonValueExpressionDriver(
         bool cacheReadFields=false,
         bool searchInMemory=true,
-        bool searchOnDisc=false
+        bool searchOnDisc=false,
+        const dictionary &dict=emptyData_
     );
 
     //- Copy construct
