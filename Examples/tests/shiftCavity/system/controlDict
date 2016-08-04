@@ -72,6 +72,11 @@ functions {
         //        expression "shiftConstantScalarField(vals,(-0.025,0,0))";
         expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
     }
+    timeShifted {
+        $constantShifted;
+        fieldName shiftedCircleTime;
+        expression "shiftExpressionScalarField(pos().y<pos().x? 1 : -1,interpolateToPoint(0.2*(time()-0.25)*vector(-1,0,0)))";
+    }
 }
 
 // ************************************************************************* //
