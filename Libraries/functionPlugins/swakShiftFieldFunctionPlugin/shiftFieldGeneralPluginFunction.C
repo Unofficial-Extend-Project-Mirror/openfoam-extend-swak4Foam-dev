@@ -89,7 +89,7 @@ void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
         shiftMesh.addPatches(newBound);
     }
 
-    pointField newPoints(origMesh.points()+this->displacement());
+    pointField newPoints(origMesh.points()-this->displacement());
     shiftMesh.movePoints(newPoints);
 
     ResultType newField(

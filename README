@@ -3478,5 +3478,32 @@ S_{expl} + S_{impl} T
 *** Documentation
 *** Internals (for developers)
 *** New features
+**** Function plugin =ShiftField= that allows shifting volume fields
+     When adding the library =libswakShiftFieldFunctionPlugin.so= to
+     =libs= in the =controlDict= functions are added that allow
+     shifting volume fields by a specified distance. One example
+     would be an expression
+: "shiftConstantScalarField(T,(1 1 0))"
+     which generates a new =volScalarField= where the value at =(0 0
+     0)= is the value of =T= at the location =(1 0 0)=.
+
+     The scheme for naming the functions is
+     =scalar<ShiftType><ValueType>Field= with
+     - ValueType :: one of the base types =Scalar=, =Vector=,
+          =Tensor=, =SymmTensor=, =SphericalTensor=
+     - ShiftType :: how the shift is specified. Possible values are either
+       - Constant :: A constant vector (like the example here)
+       - Expression :: An expression that gives a =pointVectorField=
+            (for instance =interpolateToPoint(time()*vector(0,0,-1))=)
+
+     These functions work by generating a new mesh that is shifted as
+     specified (in the inverse direction) and interpolating between
+     this and the original mesh. This is computationally *very*
+     expensive and therefor not recommended in evaluations that occur
+     very often.
+
+     Cells that have no shifted equivalent value are set to
+     zero. Boundary patches are not interpolated. Both of these
+     behaviors can cause weird results
 *** Enhancements
 *** Examples
