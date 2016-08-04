@@ -3471,6 +3471,10 @@ S_{expl} + S_{impl} T
 *** Incompatibilities
 *** Bug fixes
 *** Infrastructure
+**** Add the development branch to the version string in utilities
+     If the compiled version is not a released one then the info of
+     =hg branch= is added to the version output that utilities like
+     =funkySetFields= print
 *** Documentation
 *** Internals (for developers)
 *** New features
