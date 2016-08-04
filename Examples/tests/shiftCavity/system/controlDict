@@ -77,6 +77,16 @@ functions {
         fieldName shiftedCircleTime;
         expression "shiftExpressionScalarField(pos().y<pos().x? 1 : -1,interpolateToPoint(0.2*(time()-0.25)*vector(-1,0,0)))";
     }
+    shiftedCircleDefault {
+        $constantShifted;
+        fieldName shiftedCircleDefault;
+        expression "shiftConstantScalarFieldDefault(pos().y<pos().x? 1 : -1,(-0.025 0 0),2)";
+    }
+    timeShiftedDefault {
+        $constantShifted;
+        fieldName shiftedCircleTimeDefault;
+        expression "shiftExpressionVectorFieldDefault(vector(1,1,1)*(pos().y<pos().x? 1 : -1),interpolateToPoint(0.2*(time()-0.25)*vector(-1,0,0)),(1 2 3))";
+    }
 }
 
 // ************************************************************************* //
