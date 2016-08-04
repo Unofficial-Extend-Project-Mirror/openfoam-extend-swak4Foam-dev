@@ -41,6 +41,14 @@ namespace Foam {
 
 defineTemplateTypeNameAndDebug(shiftFieldConstantVectorPluginFunction<scalar>,1);
 addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorPluginFunction,scalar , name, shiftConstantScalarField);
+defineTemplateTypeNameAndDebug(shiftFieldConstantVectorPluginFunction<vector>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorPluginFunction,vector , name, shiftConstantVectorField);
+defineTemplateTypeNameAndDebug(shiftFieldConstantVectorPluginFunction<tensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorPluginFunction,tensor , name, shiftConstantTensorField);
+defineTemplateTypeNameAndDebug(shiftFieldConstantVectorPluginFunction<symmTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorPluginFunction,symmTensor , name, shiftConstantSymmTensorField);
+defineTemplateTypeNameAndDebug(shiftFieldConstantVectorPluginFunction<sphericalTensor>,1);
+addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorPluginFunction,sphericalTensor , name, shiftConstantSphericalTensorField);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

@@ -169,6 +169,14 @@ void shiftFieldGeneralPluginFunction<Type>::setArgument(
 
 template
 class shiftFieldGeneralPluginFunction<scalar>;
+template
+class shiftFieldGeneralPluginFunction<vector>;
+template
+class shiftFieldGeneralPluginFunction<tensor>;
+template
+class shiftFieldGeneralPluginFunction<symmTensor>;
+template
+class shiftFieldGeneralPluginFunction<sphericalTensor>;
 
 } // namespace
 
