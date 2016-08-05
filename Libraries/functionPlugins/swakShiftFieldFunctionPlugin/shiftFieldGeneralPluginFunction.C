@@ -119,7 +119,9 @@ void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
         shiftMesh,
         origMesh,
 #ifdef FOAM_NEW_MESH2MESH
-        meshToMesh::imCellVolumeWeight,
+        meshToMesh::imCellVolumeWeight,   // strange patterns
+        //        meshToMesh::imDirect,  // almost no  fitting
+        //        meshToMesh::imMapNearest, // stable. No default
 #endif
         false
     );
