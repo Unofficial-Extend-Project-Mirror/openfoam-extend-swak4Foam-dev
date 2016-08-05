@@ -50,10 +50,10 @@ namespace Foam
     Class shiftFieldExpressionDefaultValuePluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
+template<class Type,meshToMeshOrder Order>
 class shiftFieldExpressionDefaultValuePluginFunction
 :
-    public shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>
+    public shiftFieldGeneralPluginFunction<Type,Order>
 {
     //- Disallow default bitwise assignment
     void operator=(const shiftFieldExpressionDefaultValuePluginFunction &);

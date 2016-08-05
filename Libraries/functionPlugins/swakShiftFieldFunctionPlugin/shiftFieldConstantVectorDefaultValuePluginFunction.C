@@ -39,29 +39,51 @@ Contributors/Copyright:
 
 namespace Foam {
 
-defineTemplateTypeNameAndDebug(shiftFieldConstantVectorDefaultValuePluginFunction<scalar>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorDefaultValuePluginFunction,scalar , name, shiftConstantScalarFieldDefault);
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<scalar,meshToMesh::imCellVolumeWeight> shiftScalarWeight;
+defineTemplateTypeNameAndDebug(shiftScalarWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarWeight , name, shiftConstantScalarFieldDefault);
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<scalar,meshToMesh::imMapNearest> shiftScalarMap;
+defineTemplateTypeNameAndDebug(shiftScalarMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarMap , name, mapConstantScalarFieldDefault);
 
-    // this can't be instantiated because of conflicting types
-    // defineTemplateTypeNameAndDebug(shiftFieldConstantVectorDefaultValuePluginFunction<vector>,1);
-    // addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorDefaultValuePluginFunction,vector , name, shiftConstantVectorFieldDefault);
+// typedef shiftFieldConstantVectorDefaultValuePluginFunction<vector,meshToMesh::imCellVolumeWeight> shiftVectorWeight;
+// defineTemplateTypeNameAndDebug(shiftVectorWeight,1);
+// addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorWeight , name, shiftConstantVectorFieldDefault);
+// typedef shiftFieldConstantVectorDefaultValuePluginFunction<vector,meshToMesh::imMapNearest> shiftVectorMap;
+// defineTemplateTypeNameAndDebug(shiftVectorMap,1);
+// addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorMap , name, mapConstantVectorFieldDefault);
 
-defineTemplateTypeNameAndDebug(shiftFieldConstantVectorDefaultValuePluginFunction<tensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorDefaultValuePluginFunction,tensor , name, shiftConstantTensorFieldDefault);
-defineTemplateTypeNameAndDebug(shiftFieldConstantVectorDefaultValuePluginFunction<symmTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorDefaultValuePluginFunction,symmTensor , name, shiftConstantSymmTensorFieldDefault);
-defineTemplateTypeNameAndDebug(shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldConstantVectorDefaultValuePluginFunction,sphericalTensor , name, shiftConstantSphericalTensorFieldDefault);
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<tensor,meshToMesh::imCellVolumeWeight> shiftTensorWeight;
+defineTemplateTypeNameAndDebug(shiftTensorWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorWeight , name, shiftConstantTensorFieldDefault);
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<tensor,meshToMesh::imMapNearest> shiftTensorMap;
+defineTemplateTypeNameAndDebug(shiftTensorMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorMap , name, mapConstantTensorFieldDefault);
+
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<symmTensor,meshToMesh::imCellVolumeWeight> shiftSymmTensorWeight;
+defineTemplateTypeNameAndDebug(shiftSymmTensorWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorWeight , name, shiftConstantSymmTensorFieldDefault);
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<symmTensor,meshToMesh::imMapNearest> shiftSymmTensorMap;
+defineTemplateTypeNameAndDebug(shiftSymmTensorMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorMap , name, mapConstantSymmTensorFieldDefault);
+
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor,meshToMesh::imCellVolumeWeight> shiftSphericalTensorWeight;
+defineTemplateTypeNameAndDebug(shiftSphericalTensorWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorWeight , name, shiftConstantSphericalTensorFieldDefault);
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor,meshToMesh::imMapNearest> shiftSphericalTensorMap;
+defineTemplateTypeNameAndDebug(shiftSphericalTensorMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorMap , name, mapConstantSphericalTensorFieldDefault);
+
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class Type>
-shiftFieldConstantVectorDefaultValuePluginFunction<Type>::shiftFieldConstantVectorDefaultValuePluginFunction(
+template<class Type,meshToMeshOrder Order>
+shiftFieldConstantVectorDefaultValuePluginFunction<Type,Order>::shiftFieldConstantVectorDefaultValuePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>(
+    shiftFieldGeneralPluginFunction<Type,Order>(
         parentDriver,
         name,
         string("shiftValue primitive vector,defaultValue primitive ")+pTraits<Type>::typeName
@@ -74,8 +96,8 @@ shiftFieldConstantVectorDefaultValuePluginFunction<Type>::shiftFieldConstantVect
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class Type>
-tmp<pointField> shiftFieldConstantVectorDefaultValuePluginFunction<Type>::displacement()
+template<class Type,meshToMeshOrder Order>
+tmp<pointField> shiftFieldConstantVectorDefaultValuePluginFunction<Type,Order>::displacement()
 {
     return tmp<pointField>(
         new pointField(
@@ -87,8 +109,8 @@ tmp<pointField> shiftFieldConstantVectorDefaultValuePluginFunction<Type>::displa
 
 
 
-template<class Type>
-void shiftFieldConstantVectorDefaultValuePluginFunction<Type>::setArgument(
+template<class Type,meshToMeshOrder Order>
+void shiftFieldConstantVectorDefaultValuePluginFunction<Type,Order>::setArgument(
     label index,
     const Type &content
 ) {
@@ -97,8 +119,8 @@ void shiftFieldConstantVectorDefaultValuePluginFunction<Type>::setArgument(
     this->defaultValue_=content;
 }
 
-template<class Type>
-void shiftFieldConstantVectorDefaultValuePluginFunction<Type>::setArgument(
+template<class Type,meshToMeshOrder Order>
+void shiftFieldConstantVectorDefaultValuePluginFunction<Type,Order>::setArgument(
     label index,
     const vector &content
 ) {

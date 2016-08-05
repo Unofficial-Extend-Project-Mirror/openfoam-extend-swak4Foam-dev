@@ -39,26 +39,50 @@ Contributors/Copyright:
 
 namespace Foam {
 
-defineTemplateTypeNameAndDebug(shiftFieldExpressionDefaultValuePluginFunction<scalar>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldExpressionDefaultValuePluginFunction,scalar , name, shiftExpressionScalarFieldDefault);
-defineTemplateTypeNameAndDebug(shiftFieldExpressionDefaultValuePluginFunction<vector>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldExpressionDefaultValuePluginFunction,vector , name, shiftExpressionVectorFieldDefault);
-defineTemplateTypeNameAndDebug(shiftFieldExpressionDefaultValuePluginFunction<tensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldExpressionDefaultValuePluginFunction,tensor , name, shiftExpressionTensorFieldDefault);
-defineTemplateTypeNameAndDebug(shiftFieldExpressionDefaultValuePluginFunction<symmTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldExpressionDefaultValuePluginFunction,symmTensor , name, shiftExpressionSymmTensorFieldDefault);
-defineTemplateTypeNameAndDebug(shiftFieldExpressionDefaultValuePluginFunction<sphericalTensor>,1);
-addNamedTemplateToRunTimeSelectionTable(FieldValuePluginFunction, shiftFieldExpressionDefaultValuePluginFunction,sphericalTensor , name, shiftExpressionSphericalTensorFieldDefault);
+typedef shiftFieldExpressionDefaultValuePluginFunction<scalar,meshToMesh::imCellVolumeWeight> shiftScalarWeight;
+defineTemplateTypeNameAndDebug(shiftScalarWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarWeight , name, shiftExpressionScalarFieldDefault);
+typedef shiftFieldExpressionDefaultValuePluginFunction<scalar,meshToMesh::imMapNearest> shiftScalarMap;
+defineTemplateTypeNameAndDebug(shiftScalarMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarMap , name, mapExpressionScalarFieldDefault);
+
+typedef shiftFieldExpressionDefaultValuePluginFunction<vector,meshToMesh::imCellVolumeWeight> shiftVectorWeight;
+defineTemplateTypeNameAndDebug(shiftVectorWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorWeight , name, shiftExpressionVectorFieldDefault);
+typedef shiftFieldExpressionDefaultValuePluginFunction<vector,meshToMesh::imMapNearest> shiftVectorMap;
+defineTemplateTypeNameAndDebug(shiftVectorMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorMap , name, mapExpressionVectorFieldDefault);
+
+typedef shiftFieldExpressionDefaultValuePluginFunction<tensor,meshToMesh::imCellVolumeWeight> shiftTensorWeight;
+defineTemplateTypeNameAndDebug(shiftTensorWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorWeight , name, shiftExpressionTensorFieldDefault);
+typedef shiftFieldExpressionDefaultValuePluginFunction<tensor,meshToMesh::imMapNearest> shiftTensorMap;
+defineTemplateTypeNameAndDebug(shiftTensorMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorMap , name, mapExpressionTensorFieldDefault);
+
+typedef shiftFieldExpressionDefaultValuePluginFunction<symmTensor,meshToMesh::imCellVolumeWeight> shiftSymmTensorWeight;
+defineTemplateTypeNameAndDebug(shiftSymmTensorWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorWeight , name, shiftExpressionSymmTensorFieldDefault);
+typedef shiftFieldExpressionDefaultValuePluginFunction<symmTensor,meshToMesh::imMapNearest> shiftSymmTensorMap;
+defineTemplateTypeNameAndDebug(shiftSymmTensorMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorMap , name, mapExpressionSymmTensorFieldDefault);
+
+typedef shiftFieldExpressionDefaultValuePluginFunction<sphericalTensor,meshToMesh::imCellVolumeWeight> shiftSphericalTensorWeight;
+defineTemplateTypeNameAndDebug(shiftSphericalTensorWeight,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorWeight , name, shiftExpressionSphericalTensorFieldDefault);
+typedef shiftFieldExpressionDefaultValuePluginFunction<sphericalTensor,meshToMesh::imMapNearest> shiftSphericalTensorMap;
+defineTemplateTypeNameAndDebug(shiftSphericalTensorMap,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorMap , name, mapExpressionSphericalTensorFieldDefault);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class Type>
-shiftFieldExpressionDefaultValuePluginFunction<Type>::shiftFieldExpressionDefaultValuePluginFunction(
+template<class Type,meshToMeshOrder Order>
+shiftFieldExpressionDefaultValuePluginFunction<Type,Order>::shiftFieldExpressionDefaultValuePluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>(
+    shiftFieldGeneralPluginFunction<Type,Order>(
         parentDriver,
         name,
         string("shiftValue internalField pointVectorField,defaultValue primitive ")+pTraits<Type>::typeName
@@ -70,8 +94,8 @@ shiftFieldExpressionDefaultValuePluginFunction<Type>::shiftFieldExpressionDefaul
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-template<class Type>
-tmp<pointField> shiftFieldExpressionDefaultValuePluginFunction<Type>::displacement()
+template<class Type,meshToMeshOrder Order>
+tmp<pointField> shiftFieldExpressionDefaultValuePluginFunction<Type,Order>::displacement()
 {
     return tmp<pointField>(
         new pointField(
@@ -80,8 +104,8 @@ tmp<pointField> shiftFieldExpressionDefaultValuePluginFunction<Type>::displaceme
     );
 }
 
-template<class Type>
-void shiftFieldExpressionDefaultValuePluginFunction<Type>::setArgument(
+template<class Type,meshToMeshOrder Order>
+void shiftFieldExpressionDefaultValuePluginFunction<Type,Order>::setArgument(
     label index,
     const Type &content
 ) {
@@ -91,8 +115,8 @@ void shiftFieldExpressionDefaultValuePluginFunction<Type>::setArgument(
 }
 
 
-template<class Type>
-void shiftFieldExpressionDefaultValuePluginFunction<Type>::setArgument(
+template<class Type,meshToMeshOrder Order>
+void shiftFieldExpressionDefaultValuePluginFunction<Type,Order>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
@@ -108,7 +132,7 @@ void shiftFieldExpressionDefaultValuePluginFunction<Type>::setArgument(
             )
         );
     } else {
-        shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>::setArgument(
+        shiftFieldGeneralPluginFunction<Type,Order>::setArgument(
             index,
             content,
             driver
