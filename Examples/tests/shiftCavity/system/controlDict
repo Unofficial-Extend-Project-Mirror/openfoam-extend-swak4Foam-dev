@@ -76,6 +76,14 @@ functions {
         expression "shiftConstantScalarField(vals,(-0.025 0 0))";
         //        expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
     }
+    mapShifted {
+        $constantShifted;
+        fieldName shiftedCircleMap;
+        mapConstantScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapConstantScalarField(vals,(-0.025 0 0))";
+    }
     timeShifted {
         $constantShifted;
         fieldName shiftedCircleTime;
@@ -83,6 +91,14 @@ functions {
             $shiftConstantScalarFieldData;
         }
         expression "shiftExpressionScalarField(vals,shift)";
+    }
+    timeMapShifted {
+        $constantShifted;
+        fieldName shiftedCircleTimeMap;
+        mapExpressionScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapExpressionScalarField(vals,shift)";
     }
     shiftedCircleDefault {
         $constantShifted;

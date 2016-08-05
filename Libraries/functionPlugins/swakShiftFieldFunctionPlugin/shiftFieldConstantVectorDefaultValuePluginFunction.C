@@ -61,7 +61,7 @@ shiftFieldConstantVectorDefaultValuePluginFunction<Type>::shiftFieldConstantVect
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    shiftFieldGeneralPluginFunction<Type>(
+    shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>(
         parentDriver,
         name,
         string("shiftValue primitive vector,defaultValue primitive ")+pTraits<Type>::typeName

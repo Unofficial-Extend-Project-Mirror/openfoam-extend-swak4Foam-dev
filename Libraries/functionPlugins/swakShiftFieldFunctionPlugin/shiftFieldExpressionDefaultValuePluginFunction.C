@@ -58,7 +58,7 @@ shiftFieldExpressionDefaultValuePluginFunction<Type>::shiftFieldExpressionDefaul
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
-    shiftFieldGeneralPluginFunction<Type>(
+    shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>(
         parentDriver,
         name,
         string("shiftValue internalField pointVectorField,defaultValue primitive ")+pTraits<Type>::typeName
@@ -108,7 +108,7 @@ void shiftFieldExpressionDefaultValuePluginFunction<Type>::setArgument(
             )
         );
     } else {
-        shiftFieldGeneralPluginFunction<Type>::setArgument(
+        shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>::setArgument(
             index,
             content,
             driver

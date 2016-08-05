@@ -50,7 +50,7 @@ namespace Foam
                            Class shiftFieldGeneralPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
+template<class Type,meshToMeshOrder Order>
 class shiftFieldGeneralPluginFunction
 :
     public FieldValuePluginFunction

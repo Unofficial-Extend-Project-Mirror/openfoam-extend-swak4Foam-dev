@@ -50,10 +50,10 @@ namespace Foam
     Class shiftFieldConstantVectorPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
+template<class Type,meshToMeshOrder Order>
 class shiftFieldConstantVectorPluginFunction
 :
-    public shiftFieldGeneralPluginFunction<Type>
+    public shiftFieldGeneralPluginFunction<Type,Order>
 {
     //- Disallow default bitwise assignment
     void operator=(const shiftFieldConstantVectorPluginFunction &);

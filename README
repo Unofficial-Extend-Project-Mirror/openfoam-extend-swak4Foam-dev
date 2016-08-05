@@ -3508,6 +3508,10 @@ S_{expl} + S_{impl} T
 
      There are also variants with =Default= in the end. These allow
      setting different default values than $0$
+
+     The functions with the names =map<ShiftType><ValueType>Field= map
+     the value of the nearest cell. This is more stable and doesn't
+     need default value but might coarsen the field
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,

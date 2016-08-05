@@ -44,8 +44,8 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class Type>
-shiftFieldGeneralPluginFunction<Type>::shiftFieldGeneralPluginFunction(
+template<class Type,meshToMeshOrder Order>
+shiftFieldGeneralPluginFunction<Type,Order>::shiftFieldGeneralPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name,
     const string &shiftDescription
@@ -67,8 +67,8 @@ shiftFieldGeneralPluginFunction<Type>::shiftFieldGeneralPluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class Type>
-void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
+template<class Type,meshToMeshOrder Order>
+void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
 {
     const fvMesh &origMesh=this->mesh();
     fvMesh shiftMesh(
@@ -119,9 +119,10 @@ void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
         shiftMesh,
         origMesh,
 #ifdef FOAM_NEW_MESH2MESH
-        meshToMesh::imCellVolumeWeight,   // strange patterns
+        //        meshToMesh::imCellVolumeWeight,   // strange patterns
         //        meshToMesh::imDirect,  // almost no  fitting
         //        meshToMesh::imMapNearest, // stable. No default
+        Order,
 #endif
         false
     );
@@ -142,7 +143,8 @@ void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
 #else
     interpolation.interpolate(
         newField,
-        meshToMesh::imCellVolumeWeight,
+        //        meshToMesh::imCellVolumeWeight,
+        Order,
 #ifdef FOAM_MESHTOMESH_INTERPOLATE_REDUCE
         eqOp<Type>(),
 #endif
@@ -155,8 +157,8 @@ void shiftFieldGeneralPluginFunction<Type>::doEvaluation()
     );
 }
 
-template<class Type>
-void shiftFieldGeneralPluginFunction<Type>::setArgument(
+template<class Type,meshToMeshOrder Order>
+void shiftFieldGeneralPluginFunction<Type,Order>::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
@@ -175,15 +177,26 @@ void shiftFieldGeneralPluginFunction<Type>::setArgument(
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 template
-class shiftFieldGeneralPluginFunction<scalar>;
+class shiftFieldGeneralPluginFunction<scalar,meshToMesh::imCellVolumeWeight>;
 template
-class shiftFieldGeneralPluginFunction<vector>;
+class shiftFieldGeneralPluginFunction<vector,meshToMesh::imCellVolumeWeight>;
 template
-class shiftFieldGeneralPluginFunction<tensor>;
+class shiftFieldGeneralPluginFunction<tensor,meshToMesh::imCellVolumeWeight>;
 template
-class shiftFieldGeneralPluginFunction<symmTensor>;
+class shiftFieldGeneralPluginFunction<symmTensor,meshToMesh::imCellVolumeWeight>;
 template
-class shiftFieldGeneralPluginFunction<sphericalTensor>;
+class shiftFieldGeneralPluginFunction<sphericalTensor,meshToMesh::imCellVolumeWeight>;
+
+template
+class shiftFieldGeneralPluginFunction<scalar,meshToMesh::imMapNearest>;
+template
+class shiftFieldGeneralPluginFunction<vector,meshToMesh::imMapNearest>;
+template
+class shiftFieldGeneralPluginFunction<tensor,meshToMesh::imMapNearest>;
+template
+class shiftFieldGeneralPluginFunction<symmTensor,meshToMesh::imMapNearest>;
+template
+class shiftFieldGeneralPluginFunction<sphericalTensor,meshToMesh::imMapNearest>;
 
 } // namespace
 

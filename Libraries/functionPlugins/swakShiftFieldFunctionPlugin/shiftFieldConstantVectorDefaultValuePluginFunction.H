@@ -53,7 +53,7 @@ namespace Foam
 template<class Type>
 class shiftFieldConstantVectorDefaultValuePluginFunction
 :
-    public shiftFieldGeneralPluginFunction<Type>
+    public shiftFieldGeneralPluginFunction<Type,meshToMesh::imCellVolumeWeight>
 {
     //- Disallow default bitwise assignment
     void operator=(const shiftFieldConstantVectorDefaultValuePluginFunction &);
