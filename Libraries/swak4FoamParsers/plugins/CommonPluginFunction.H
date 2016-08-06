@@ -55,6 +55,9 @@ Contributors/Copyright:
 #include "ExpressionResult.H"
 
 #include "vector.H"
+#include "tensor.H"
+#include "symmTensor.H"
+#include "sphericalTensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -151,6 +154,33 @@ protected:
     ) {
         // should be overwritten by the function itself
         notImplemented("setArgument(label index,const &vector)");
+    }
+
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const tensor &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &tensor)");
+    }
+
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const symmTensor &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &symmTensor)");
+    }
+
+    //- set a primitive argument
+    virtual void setArgument(
+        label index,
+        const sphericalTensor &value
+    ) {
+        // should be overwritten by the function itself
+        notImplemented("setArgument(label index,const &sphericalTensor)");
     }
 
     //- set a primitive argument
