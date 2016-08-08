@@ -53,6 +53,7 @@ typedef shiftFieldExpressionPluginFunction<vector,meshToMesh::imMapNearest> shif
 defineTemplateTypeNameAndDebug(shiftVectorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorMap , name, mapExpressionVectorField);
 
+#ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 typedef shiftFieldExpressionPluginFunction<tensor,meshToMesh::imCellVolumeWeight> shiftTensorWeight;
 defineTemplateTypeNameAndDebug(shiftTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorWeight , name, shiftExpressionTensorField);
@@ -73,6 +74,7 @@ addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorWe
 typedef shiftFieldExpressionPluginFunction<sphericalTensor,meshToMesh::imMapNearest> shiftSphericalTensorMap;
 defineTemplateTypeNameAndDebug(shiftSphericalTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorMap , name, mapExpressionSphericalTensorField);
+#endif
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

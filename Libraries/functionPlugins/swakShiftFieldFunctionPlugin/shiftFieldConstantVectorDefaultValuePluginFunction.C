@@ -53,6 +53,7 @@ addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarMap , name,
 // defineTemplateTypeNameAndDebug(shiftVectorMap,1);
 // addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorMap , name, mapConstantVectorFieldDefault);
 
+#ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 typedef shiftFieldConstantVectorDefaultValuePluginFunction<tensor,meshToMesh::imCellVolumeWeight> shiftTensorWeight;
 defineTemplateTypeNameAndDebug(shiftTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorWeight , name, shiftConstantTensorFieldDefault);
@@ -73,6 +74,7 @@ addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorWe
 typedef shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor,meshToMesh::imMapNearest> shiftSphericalTensorMap;
 defineTemplateTypeNameAndDebug(shiftSphericalTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorMap , name, mapConstantSphericalTensorFieldDefault);
+#endif
 
 
 
