@@ -153,6 +153,10 @@ Contributors/Copyright:
 #define FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 #endif
 
+#ifdef FOAM_VERSION4SWAK_IS_OPENFOAMPLUS
+#define FOAM_MESHTOMESH_HAS_CORRECTEDCELLVOLUMEWEIGHT
+#endif
+
 #if !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 // functionObject now needs at least dummy-implementations of updateMesh and movePoints
 #define FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH

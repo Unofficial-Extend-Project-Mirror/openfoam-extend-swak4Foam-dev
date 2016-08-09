@@ -90,6 +90,19 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         }
         shiftMesh.removeFvBoundary();
         shiftMesh.addPatches(newBound);
+
+#ifdef FOAM_MESHTOMESH_HAS_CORRECTEDCELLVOLUMEWEIGHT
+        shiftMesh.fvSchemes::merge(
+            origMesh.schemesDict()
+        );
+        shiftMesh.fvSchemes::readOpt()=IOobject::READ_IF_PRESENT;
+        shiftMesh.fvSchemes::read();
+        //        const_cast<dictionary&>(shiftMesh.schemesDict())=origMesh.schemesDict();
+        // Info << origMesh.schemesDict() << endl;
+        // Info << shiftMesh.schemesDict().name() << endl;
+        // Info << shiftMesh.schemesDict() << endl;
+        // Info << shiftMesh.gradScheme("valsShift") << endl;
+#endif
     }
 
     pointField newPoints(origMesh.points()-this->displacement());
@@ -177,29 +190,29 @@ void shiftFieldGeneralPluginFunction<Type,Order>::setArgument(
 // * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 template
-class shiftFieldGeneralPluginFunction<scalar,meshToMesh::imCellVolumeWeight>;
+class shiftFieldGeneralPluginFunction<scalar,SHIFT_METHOD>;
 template
-class shiftFieldGeneralPluginFunction<vector,meshToMesh::imCellVolumeWeight>;
+class shiftFieldGeneralPluginFunction<vector,SHIFT_METHOD>;
 #ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 template
-class shiftFieldGeneralPluginFunction<tensor,meshToMesh::imCellVolumeWeight>;
+class shiftFieldGeneralPluginFunction<tensor,SHIFT_METHOD>;
 template
-class shiftFieldGeneralPluginFunction<symmTensor,meshToMesh::imCellVolumeWeight>;
+class shiftFieldGeneralPluginFunction<symmTensor,SHIFT_METHOD>;
 template
-class shiftFieldGeneralPluginFunction<sphericalTensor,meshToMesh::imCellVolumeWeight>;
+class shiftFieldGeneralPluginFunction<sphericalTensor,SHIFT_METHOD>;
 #endif
 
 template
-class shiftFieldGeneralPluginFunction<scalar,meshToMesh::imMapNearest>;
+class shiftFieldGeneralPluginFunction<scalar,MAP_METHOD>;
 template
-class shiftFieldGeneralPluginFunction<vector,meshToMesh::imMapNearest>;
+class shiftFieldGeneralPluginFunction<vector,MAP_METHOD>;
 #ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 template
-class shiftFieldGeneralPluginFunction<tensor,meshToMesh::imMapNearest>;
+class shiftFieldGeneralPluginFunction<tensor,MAP_METHOD>;
 template
-class shiftFieldGeneralPluginFunction<symmTensor,meshToMesh::imMapNearest>;
+class shiftFieldGeneralPluginFunction<symmTensor,MAP_METHOD>;
 template
-class shiftFieldGeneralPluginFunction<sphericalTensor,meshToMesh::imMapNearest>;
+class shiftFieldGeneralPluginFunction<sphericalTensor,MAP_METHOD>;
 #endif
 
 } // namespace
