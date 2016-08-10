@@ -34,13 +34,12 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
-#include "meshToMesh.H"
-#include "MeshInterpolationOrder.H"
+#include "meshSearch.H"
 
 namespace Foam {
 
     typedef findShiftedFieldPluginFunction<scalar> findShiftedFieldScalar;
-    defineTemplateTypeNameAndDebug(findShiftedFieldScalar,1);
+    defineTemplateTypeNameAndDebug(findShiftedFieldScalar,0);
     addNamedToRunTimeSelectionTable(FieldValuePluginFunction, findShiftedFieldScalar , name, findShiftedScalarField);
 
 
@@ -79,10 +78,12 @@ void findShiftedFieldPluginFunction<Type>::doEvaluation()
         )
     );
 
+    meshSearch search(mesh());
+
     forAll(shift_(),cellI) {
         const vector &shift=shift_()[cellI];
         const vector targetPlace=mesh().C()[cellI]+shift;
-        label fromCell=mesh().findCell(targetPlace);
+        label fromCell=search.findCell(targetPlace);
         if(fromCell>=0) {
             mappedField()[cellI]=field_()[fromCell];
         }
@@ -104,6 +105,7 @@ void findShiftedFieldPluginFunction<Type>::setArgument(
     assert(index==0 || index==1 || index==2);
 
     if(index==0) {
+        Dbug << "Setting field" << endl;
         field_.set(
             new ResultType(
                 dynamic_cast<const FieldValueExpressionDriver &>(
@@ -112,6 +114,7 @@ void findShiftedFieldPluginFunction<Type>::setArgument(
             )
         );
     } else if(index==1) {
+        Dbug << "Setting shift" << endl;
         shift_.set(
             new volVectorField(
                 dynamic_cast<const FieldValueExpressionDriver &>(
@@ -120,6 +123,7 @@ void findShiftedFieldPluginFunction<Type>::setArgument(
             )
         );
     } else if(index==2) {
+        Dbug << "Setting default" << endl;
         default_.set(
             new ResultType(
                 dynamic_cast<const FieldValueExpressionDriver &>(
