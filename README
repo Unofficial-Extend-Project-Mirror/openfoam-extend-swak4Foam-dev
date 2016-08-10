@@ -3512,6 +3512,12 @@ S_{expl} + S_{impl} T
      The functions with the names =map<ShiftType><ValueType>Field= map
      the value of the nearest cell. This is more stable but might
      coarsen the field
+
+     The additional =findShifted<ValueType>Field=-functions do the
+     mapping by avoiding the =meshToMesh=-functions of OpenFOAM: the
+     shifted value is found by "looking" into the original cell that
+     contains the point that is the cell center plus the displacement
+     value. If that point is not in the mesh a default value is used
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
