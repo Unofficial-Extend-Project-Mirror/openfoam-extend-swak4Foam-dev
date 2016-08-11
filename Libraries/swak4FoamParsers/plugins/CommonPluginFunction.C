@@ -287,11 +287,35 @@ label CommonPluginFunction::readArgument(
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
         setArgument(index,value);
+    } else if(type=="tensor") {
+        tensor value;
+        is >> value;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Read tensor: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
+    } else if(type=="symmTensor") {
+        symmTensor value;
+        is >> value;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Read symmTensor: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
+    } else if(type=="sphericalTensor") {
+        sphericalTensor value;
+        is >> value;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Read sphericalTensor: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
     } else {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Unsupported type " << type
                 << endl
-                << "Currently supported: scalar, label, word, string, vector"
+                << "Currently supported: scalar, label, word, string, vector, tensor, symmTensor, sphericalTensor"
                 << exit(FatalError);
     }
 
@@ -391,6 +415,19 @@ void CommonPluginFunction::evaluateInternal(
                 content+"\""
             );
 
+            const word dictName=name_+"Data";
+            //            Info << "Looking for " << dictName << " in " << parentDriver_.dict().name() << endl;
+            if(
+                parentDriver_.dict().found(dictName)
+                &&
+                parentDriver_.dict().isDict(dictName)
+            ) {
+                //                Info << "Found " << parentDriver_.dict().subDict(dictName) << endl;
+                driver->readVariablesAndTables(
+                    parentDriver_.dict().subDict(dictName)
+                );
+                driver->clearVariables();
+            }
             used=readArgument(i,currentContent,driver());
         }
 

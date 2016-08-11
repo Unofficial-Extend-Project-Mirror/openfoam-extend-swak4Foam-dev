@@ -678,6 +678,9 @@ hide circle
       - bool :: =true= or =false=
       - label :: integer values
       - vector :: three values enclosed by =()=
+      - tensor :: nine values enclosed by =()=
+      - symmTensor :: six values enclosed by =()=
+      - sphericalTensor :: one value enclosed by =()=
     - parsed values :: these are values returned by a swak-parser (it
                        does not necessarily have to be the same parser
                        type as the calling one. For instance a
@@ -714,6 +717,14 @@ hide circle
     this expression will be given. Also the location in the
     expression that called the plugin-function (in fact the whole
     stack if this expression is part of another plugin-function call)
+
+    For an expression =fooFunmction(var+2)= where =fooFunction= is a
+    Plugin-function the symbol =var= can be a variable: if in the
+    parent dictionary there is a sub-dictionary =fooFunctionData= then
+    this dictionary is searched for a =variables=-entry and these
+    variables are then evaluated (it is also possible to have
+    =lookuptables= and similar in =fooFunctionData=). This is only
+    available if the "parent"-expression was created from a dictionary
 *** Macro expansion
     Before expression and variable strings are stored in memory they are
     expanded with a simple mechanism that is based on the corresponding

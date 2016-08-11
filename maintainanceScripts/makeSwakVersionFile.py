@@ -60,10 +60,18 @@ else:
             write(arg)
         write(end)
 
+hgbranch=None
+
 from subprocess import Popen,PIPE
 try:
-    output = str(Popen(["hg", "branch"], stdout=PIPE).communicate()[0])
+    output = Popen(["hg", "branch"], stdout=PIPE).communicate()[0]
+    try:
+        output=output.decode()
+    except AttributeError:
+        # Python 2. This is already a string
+        pass
     isPackage = (output.find("debian")==0)
+    hgbranch = str(output).strip()
 except OSError:
     # there is no mercurial
     isPackage=False
@@ -108,6 +116,8 @@ new.append("#define SWAK_VERSION_PATCH %s" % vpatch)
 new.append('#define SWAK_RELEASE_DATE "%s"' % reldate)
 if extension!="":
     new.append('#define SWAK_VERSION_EXTENSION "%s"' % extension)
+if hgbranch is not None and not reldate[0].isdigit():
+    new.append('#define SWAK_HGBRANCH "%s"' % hgbranch)
 
 newContent="\n".join(new)+"\n"
 

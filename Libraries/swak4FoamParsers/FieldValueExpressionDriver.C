@@ -61,12 +61,14 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     const fvMesh &mesh,
     bool cacheReadFields,
     bool searchInMemory,
-    bool searchOnDisc
+    bool searchOnDisc,
+    const dictionary &dict
 )
     : CommonValueExpressionDriver(
         cacheReadFields,
         searchInMemory,
-        searchOnDisc
+        searchOnDisc,
+        dict
     ),
       time_(time),
       mesh_(mesh),
@@ -116,12 +118,14 @@ FieldValueExpressionDriver::FieldValueExpressionDriver (
     const fvMesh &mesh,
     bool cacheReadFields,
     bool searchInMemory,
-    bool searchOnDisc
+    bool searchOnDisc,
+    const dictionary &dict
 )
     : CommonValueExpressionDriver(
         cacheReadFields,
         searchInMemory,
-        searchOnDisc
+        searchOnDisc,
+        dict
     ),
       time_(""),
       mesh_(mesh),
