@@ -3470,6 +3470,9 @@ S_{expl} + S_{impl} T
 *** New supported versions
 *** Incompatibilities
 *** Bug fixes
+**** =functionObjectListProxy= does not honor =outputTime=
+     The function object was executed every time not matter what
+     =outputControlMode= was set. Fixed
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of

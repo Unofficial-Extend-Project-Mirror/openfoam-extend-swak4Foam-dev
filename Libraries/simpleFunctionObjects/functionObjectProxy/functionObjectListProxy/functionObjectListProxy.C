@@ -139,11 +139,15 @@ bool functionObjectListProxy::execute(const bool forceWrite)
         Info << this->name() << " functionObjectListProxy::execute()" << endl;
     }
 
+    if(outputTime(forceWrite)) {
 #ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
-    return functions().execute();
+        return functions().execute();
 #else
-    return functions().execute(forceWrite);
+        return functions().execute(forceWrite);
 #endif
+    } else {
+        return false;
+    }
 }
 
 bool functionObjectListProxy::start()
