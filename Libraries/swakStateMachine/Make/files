@@ -1,2 +1,3 @@
+BaseClasses/StateMachine.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakStateMachine
