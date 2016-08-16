@@ -23,13 +23,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    createAndUpdateStateMachineFunctionObject
+    stateMachineCreateAndUpdateFunctionObject
 
 Description
     Creates a state-machine and updates it at ever time-step
 
 SourceFiles
-    createAndUpdateStateMachineFunctionObject.C
+    stateMachineCreateAndUpdateFunctionObject.C
 
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
@@ -37,8 +37,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef createAndUpdateStateMachineFunctionObject_H
-#define createAndUpdateStateMachineFunctionObject_H
+#ifndef stateMachineCreateAndUpdateFunctionObject_H
+#define stateMachineCreateAndUpdateFunctionObject_H
 
 #include "simpleFunctionObject.H"
 
@@ -50,33 +50,33 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class createAndUpdateStateMachineFunctionObject Declaration
+                           Class stateMachineCreateAndUpdateFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class createAndUpdateStateMachineFunctionObject
+class stateMachineCreateAndUpdateFunctionObject
 :
     public simpleFunctionObject
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    createAndUpdateStateMachineFunctionObject(const createAndUpdateStateMachineFunctionObject&);
+    stateMachineCreateAndUpdateFunctionObject(const stateMachineCreateAndUpdateFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const createAndUpdateStateMachineFunctionObject&);
+    void operator=(const stateMachineCreateAndUpdateFunctionObject&);
 
     StateMachine &machine_;
 
 public:
 
     //- Runtime type information
-    TypeName("createAndUpdateStateMachine");
+    TypeName("stateMachineCreateAndUpdate");
 
 
     // Constructors
 
     //- Construct from components
-    createAndUpdateStateMachineFunctionObject
+    stateMachineCreateAndUpdateFunctionObject
     (
         const word&,
         const Time&,

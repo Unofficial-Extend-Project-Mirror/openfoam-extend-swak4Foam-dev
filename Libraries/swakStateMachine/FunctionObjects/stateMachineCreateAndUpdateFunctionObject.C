@@ -30,7 +30,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#include "createAndUpdateStateMachineFunctionObject.H"
+#include "stateMachineCreateAndUpdateFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "fvMesh.H"
@@ -44,18 +44,18 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(createAndUpdateStateMachineFunctionObject, 0);
+    defineTypeNameAndDebug(stateMachineCreateAndUpdateFunctionObject, 0);
 
     addToRunTimeSelectionTable
     (
         functionObject,
-        createAndUpdateStateMachineFunctionObject,
+        stateMachineCreateAndUpdateFunctionObject,
         dictionary
     );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-createAndUpdateStateMachineFunctionObject::createAndUpdateStateMachineFunctionObject
+stateMachineCreateAndUpdateFunctionObject::stateMachineCreateAndUpdateFunctionObject
 (
     const word &name,
     const Time& t,
@@ -72,12 +72,12 @@ createAndUpdateStateMachineFunctionObject::createAndUpdateStateMachineFunctionOb
 {
 }
 
-bool createAndUpdateStateMachineFunctionObject::start()
+bool stateMachineCreateAndUpdateFunctionObject::start()
 {
     return true;
 }
 
-void createAndUpdateStateMachineFunctionObject::write()
+void stateMachineCreateAndUpdateFunctionObject::write()
 {
     Info << name() << ": "
         << std::string(machine_.step()) << endl;

@@ -51,7 +51,7 @@ libs (
 
 functions {
     firstStateMachine {
-        type createAndUpdateStateMachine;
+        type stateMachineCreateAndUpdate;
         valueType internalField;
         states (
             start
@@ -61,6 +61,9 @@ functions {
         );
         machineName firstMachine;
         initialState start;
+        variables (
+            "theTime=time();"
+        );
         transitions (
             {
                 from start;
@@ -73,7 +76,7 @@ functions {
                 from one;
                 to two;
                 description "The time has come";
-                expression "time()>=0.05";
+                expression "theTime>=0.05 && theTime<0.3";
                 logicalAccumulation or;
             }
         );

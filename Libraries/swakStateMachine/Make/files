@@ -1,6 +1,6 @@
 BaseClasses/StateMachine.C
 
-FunctionObjects/createAndUpdateStateMachineFunctionObject.C
+FunctionObjects/stateMachineCreateAndUpdateFunctionObject.C
 FunctionObjects/stateMachineSetStateFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakStateMachine
