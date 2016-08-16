@@ -114,7 +114,7 @@ class StateMachine
         string description_;
 
         //- The condition expression
-        const exprString expression_;
+        const exprString condition_;
 
         //- How should the condition be aqccumulated
         LogicalAccumulationNamedEnum::value logicalAccumulation_;

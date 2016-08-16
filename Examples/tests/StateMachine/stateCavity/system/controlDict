@@ -69,21 +69,21 @@ functions {
                 from start;
                 to one;
                 description "Move away from first state";
-                expression "true";
+                condition "true";
                 logicalAccumulation or;
             }
             {
                 from one;
                 to two;
                 description "The time has come";
-                expression "theTime>=0.05 && theTime<0.3";
+                condition "theTime>=0.05 && theTime<0.3";
                 logicalAccumulation or;
             }
             {
                 from two;
                 to buh;
                 description "Patch says no";
-                expression "stateMachine_isState(thirdMachine,noMove)";
+                condition "stateMachine_isState(thirdMachine,noMove)";
                 logicalAccumulation or;
             }
         );
@@ -102,14 +102,14 @@ functions {
                 from stop;
                 to go;
                 description "Other machine in state 'two'";
-                expression "stateMachine_isState(firstMachine,two)";
+                condition "stateMachine_isState(firstMachine,two)";
                 logicalAccumulation and;
             }
             {
                 from go;
                 to stop;
                 description "Go back immediately";
-                expression "true";
+                condition "true";
                 logicalAccumulation or;
             }
         );
@@ -129,14 +129,14 @@ functions {
                 from noMove;
                 to move;
                 description "Yipeee";
-                expression "stateMachine_isState(secondMachine,go)";
+                condition "stateMachine_isState(secondMachine,go)";
                 logicalAccumulation and;
             }
             {
                 from move;
                 to noMove;
                 description "Boooring!";
-                expression "stateMachine_timeSinceChange(thirdMachine)>0.07";
+                condition "stateMachine_timeSinceChange(thirdMachine)>0.07";
                 logicalAccumulation and;
             }
         );

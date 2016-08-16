@@ -133,8 +133,8 @@ StateMachine::StateTransition::StateTransition(
     description_(
         data.lookup("description")
     ),
-    expression_(
-        data.lookup("expression"),
+    condition_(
+        data.lookup("condition"),
         data
     ),
     logicalAccumulation_(
@@ -169,7 +169,7 @@ bool StateMachine::StateTransition::operator()()
 {
     CommonValueExpressionDriver &driver=machine_.driver();
 
-    driver.parse(expression_);
+    driver.parse(condition_);
 
     if(
         driver.CommonValueExpressionDriver::getResultType()
@@ -177,7 +177,7 @@ bool StateMachine::StateTransition::operator()()
         pTraits<bool>::typeName
     ) {
         FatalErrorIn("StateMachine::StateTransition::operator()()")
-            << "Logical Expression " << expression_
+            << "Logical Expression " << condition_
                 << " evaluates to type "
                 << driver.CommonValueExpressionDriver::getResultType()
                 << " when it should be " << pTraits<bool>::typeName
