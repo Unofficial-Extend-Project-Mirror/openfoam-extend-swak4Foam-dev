@@ -3,4 +3,6 @@ BaseClasses/StateMachine.C
 FunctionObjects/stateMachineCreateAndUpdateFunctionObject.C
 FunctionObjects/stateMachineSetStateFunctionObject.C
 
+PluginFunctions/isStateFunctionPlugin.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakStateMachine

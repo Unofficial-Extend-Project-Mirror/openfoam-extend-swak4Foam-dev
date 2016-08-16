@@ -81,6 +81,52 @@ functions {
             }
         );
     }
+    secondStateMachine {
+        type stateMachineCreateAndUpdate;
+        valueType internalField;
+        states (
+            stop
+            go
+        );
+        machineName secondMachine;
+        initialState stop;
+        transitions (
+            {
+                from stop;
+                to go;
+                description "Other machine in state 'two'";
+                expression "stateMachine_isState(firstMachine,two)";
+                logicalAccumulation and;
+            }
+            {
+                from go;
+                to stop;
+                description "Go back immediately";
+                expression "true";
+                logicalAccumulation or;
+            }
+        );
+    }
+    patchStateMachine {
+        type stateMachineCreateAndUpdate;
+        valueType patch;
+        patchName movingWall;
+        states (
+            move
+            noMove
+        );
+        initialState noMove;
+        machineName thirdMachine;
+        transitions (
+            {
+                from noMove;
+                to move;
+                description "Yipeee";
+                expression "stateMachine_isState(secondMachine,go)";
+                logicalAccumulation and;
+            }
+        );
+    }
     moveBackToOneAtOutput {
         type stateMachineSetState;
         machineName firstMachine;

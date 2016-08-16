@@ -55,6 +55,7 @@ StateMachine &StateMachine::NewMachine(
         )
     ) {
         FatalErrorIn("StateMachine::NewMachine")
+            << "In " << dict.name() << nl
             << "A machine " << name << " already exists"
                 << endl
                 << exit(FatalError);
