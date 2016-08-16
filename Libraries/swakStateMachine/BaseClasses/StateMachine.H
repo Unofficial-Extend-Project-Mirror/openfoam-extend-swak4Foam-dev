@@ -183,10 +183,15 @@ public:
         return state_;
     }
 
-    //- moves the state machine to the next machine
+    //- moves the state machine to the next state
 
     //- return value is a string with the information about what happened
     string step();
+
+    //- force the state machine to a given state
+
+    //- return value is a string with the information about what happened
+    string force(label state);
 };
 
 

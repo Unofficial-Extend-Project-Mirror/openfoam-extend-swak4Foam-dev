@@ -73,10 +73,16 @@ functions {
                 from one;
                 to two;
                 description "The time has come";
-                expression "time()>=0.1";
+                expression "time()>=0.05";
                 logicalAccumulation or;
             }
         );
+    }
+    moveBackToOneAtOutput {
+        type stateMachineSetState;
+        machineName firstMachine;
+        state one;
+        outputControlMode outputTime;
     }
 }
 

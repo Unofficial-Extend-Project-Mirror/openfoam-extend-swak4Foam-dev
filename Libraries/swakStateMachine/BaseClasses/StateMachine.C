@@ -242,6 +242,37 @@ string StateMachine::step() {
     return out.str();
 }
 
+string StateMachine::force(label newState) {
+    OStringStream out;
+    out << machineName_ << ": ";
+    if(
+        newState<0
+        ||
+        newState>=names_.size()
+    ) {
+        FatalErrorIn("StateMachine::force")
+            << "Can not set machine " << name() << "to state " << newState << nl
+                << "Valid states are 0 to " << names_.size()-1
+                << endl
+                << exit(FatalError);
+    }
+    if(
+        state_
+        ==
+        newState
+    ) {
+        out << "Already in state " << stateName(state_);
+    } else {
+            out << "Forced state from " << stateName(state_)
+                << " to " << stateName(newState)
+                << " after "
+                << (mesh_.time().value()-lastStateChange_) << "s";
+            state_=newState;
+            lastStateChange_=mesh_.time().value();
+    }
+    return out.str();
+}
+
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 
