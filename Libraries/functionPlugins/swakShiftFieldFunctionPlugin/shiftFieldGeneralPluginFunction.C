@@ -128,7 +128,7 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
     );
 
 #ifdef FOAM_NEW_MESH2MESH
-#ifdef FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR
+#if defined(FOAM_MESH2MESH_NO_2ND_ORDER_TENSOR) && !defined(FOAM_MESHTOMESH_MAPSRCTOTGT_REDUCE)
     interpolation.mapSrcToTgt(
         newField,
         initField
@@ -180,23 +180,27 @@ template
 class shiftFieldGeneralPluginFunction<scalar,meshToMesh::imCellVolumeWeight>;
 template
 class shiftFieldGeneralPluginFunction<vector,meshToMesh::imCellVolumeWeight>;
+#ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 template
 class shiftFieldGeneralPluginFunction<tensor,meshToMesh::imCellVolumeWeight>;
 template
 class shiftFieldGeneralPluginFunction<symmTensor,meshToMesh::imCellVolumeWeight>;
 template
 class shiftFieldGeneralPluginFunction<sphericalTensor,meshToMesh::imCellVolumeWeight>;
+#endif
 
 template
 class shiftFieldGeneralPluginFunction<scalar,meshToMesh::imMapNearest>;
 template
 class shiftFieldGeneralPluginFunction<vector,meshToMesh::imMapNearest>;
+#ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
 template
 class shiftFieldGeneralPluginFunction<tensor,meshToMesh::imMapNearest>;
 template
 class shiftFieldGeneralPluginFunction<symmTensor,meshToMesh::imMapNearest>;
 template
 class shiftFieldGeneralPluginFunction<sphericalTensor,meshToMesh::imMapNearest>;
+#endif
 
 } // namespace
 
