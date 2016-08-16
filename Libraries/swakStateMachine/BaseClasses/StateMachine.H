@@ -183,6 +183,9 @@ public:
         return state_;
     }
 
+    //- time since last state change
+    scalar timeSinceChange() const;
+
     //- moves the state machine to the next state
 
     //- return value is a string with the information about what happened

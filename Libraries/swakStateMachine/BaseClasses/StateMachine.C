@@ -237,7 +237,7 @@ string StateMachine::step() {
             << " to " << stateName(state_)
             << " (rule: " << std::string(reason) << ")"
             << " after "
-            << (mesh_.time().value()-lastStateChange_) << "s";
+            << timeSinceChange() << "s";
         lastStateChange_=mesh_.time().value();
     }
     return out.str();
@@ -267,13 +267,17 @@ string StateMachine::force(label newState) {
             out << "Forced state from " << stateName(state_)
                 << " to " << stateName(newState)
                 << " after "
-                << (mesh_.time().value()-lastStateChange_) << "s";
+                << timeSinceChange() << "s";
             state_=newState;
             lastStateChange_=mesh_.time().value();
     }
     return out.str();
 }
 
+scalar StateMachine::timeSinceChange() const
+{
+    return mesh_.time().value()-lastStateChange_;
+}
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 

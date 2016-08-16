@@ -79,6 +79,13 @@ functions {
                 expression "theTime>=0.05 && theTime<0.3";
                 logicalAccumulation or;
             }
+            {
+                from two;
+                to buh;
+                description "Patch says no";
+                expression "stateMachine_isState(thirdMachine,noMove)";
+                logicalAccumulation or;
+            }
         );
     }
     secondStateMachine {
@@ -123,6 +130,13 @@ functions {
                 to move;
                 description "Yipeee";
                 expression "stateMachine_isState(secondMachine,go)";
+                logicalAccumulation and;
+            }
+            {
+                from move;
+                to noMove;
+                description "Boooring!";
+                expression "stateMachine_timeSinceChange(thirdMachine)>0.07";
                 logicalAccumulation and;
             }
         );

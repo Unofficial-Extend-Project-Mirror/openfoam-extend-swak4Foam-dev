@@ -30,7 +30,7 @@ Contributors/Copyright:
 
 #include "StateMachine.H"
 
-#include "isStateFunctionPlugin.H"
+#include "timeSinceChangeFunctionPlugin.H"
 
 #include "FieldValueExpressionDriver.H"
 #include "PatchValueExpressionDriver.H"
@@ -69,84 +69,84 @@ Contributors/Copyright:
 namespace Foam {
 
     // for fields
-typedef isStatePluginFunction<FieldValuePluginFunction> isState4Field;
-defineTemplateTypeNameAndDebug(isState4Field,0);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, isState4Field , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<FieldValuePluginFunction> timeSinceChange4Field;
+defineTemplateTypeNameAndDebug(timeSinceChange4Field,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, timeSinceChange4Field , name, stateMachine_timeSinceChange);
 
     // for patches
-typedef isStatePluginFunction<PatchValuePluginFunction> isState4Patch;
-defineTemplateTypeNameAndDebug(isState4Patch,0);
-addNamedToRunTimeSelectionTable(PatchValuePluginFunction, isState4Patch , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<PatchValuePluginFunction> timeSinceChange4Patch;
+defineTemplateTypeNameAndDebug(timeSinceChange4Patch,0);
+addNamedToRunTimeSelectionTable(PatchValuePluginFunction, timeSinceChange4Patch , name, stateMachine_timeSinceChange);
 
     // for cellSets
-typedef isStatePluginFunction<CellSetValuePluginFunction> isState4CellSet;
-defineTemplateTypeNameAndDebug(isState4CellSet,0);
-addNamedToRunTimeSelectionTable(CellSetValuePluginFunction, isState4CellSet , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<CellSetValuePluginFunction> timeSinceChange4CellSet;
+defineTemplateTypeNameAndDebug(timeSinceChange4CellSet,0);
+addNamedToRunTimeSelectionTable(CellSetValuePluginFunction, timeSinceChange4CellSet , name, stateMachine_timeSinceChange);
 
     // for faceSets
-typedef isStatePluginFunction<FaceSetValuePluginFunction> isState4FaceSet;
-defineTemplateTypeNameAndDebug(isState4FaceSet,0);
-addNamedToRunTimeSelectionTable(FaceSetValuePluginFunction, isState4FaceSet , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<FaceSetValuePluginFunction> timeSinceChange4FaceSet;
+defineTemplateTypeNameAndDebug(timeSinceChange4FaceSet,0);
+addNamedToRunTimeSelectionTable(FaceSetValuePluginFunction, timeSinceChange4FaceSet , name, stateMachine_timeSinceChange);
 
     // for cellZones
-typedef isStatePluginFunction<CellZoneValuePluginFunction> isState4CellZone;
-defineTemplateTypeNameAndDebug(isState4CellZone,0);
-addNamedToRunTimeSelectionTable(CellZoneValuePluginFunction, isState4CellZone , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<CellZoneValuePluginFunction> timeSinceChange4CellZone;
+defineTemplateTypeNameAndDebug(timeSinceChange4CellZone,0);
+addNamedToRunTimeSelectionTable(CellZoneValuePluginFunction, timeSinceChange4CellZone , name, stateMachine_timeSinceChange);
 
     // for sampledSets
-typedef isStatePluginFunction<SampledSetValuePluginFunction> isState4SampledSet;
-defineTemplateTypeNameAndDebug(isState4SampledSet,0);
-addNamedToRunTimeSelectionTable(SampledSetValuePluginFunction, isState4SampledSet , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<SampledSetValuePluginFunction> timeSinceChange4SampledSet;
+defineTemplateTypeNameAndDebug(timeSinceChange4SampledSet,0);
+addNamedToRunTimeSelectionTable(SampledSetValuePluginFunction, timeSinceChange4SampledSet , name, stateMachine_timeSinceChange);
 
     // for sampledSurfaces
-typedef isStatePluginFunction<SampledSurfaceValuePluginFunction> isState4SampledSurface;
-defineTemplateTypeNameAndDebug(isState4SampledSurface,0);
-addNamedToRunTimeSelectionTable(SampledSurfaceValuePluginFunction, isState4SampledSurface , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<SampledSurfaceValuePluginFunction> timeSinceChange4SampledSurface;
+defineTemplateTypeNameAndDebug(timeSinceChange4SampledSurface,0);
+addNamedToRunTimeSelectionTable(SampledSurfaceValuePluginFunction, timeSinceChange4SampledSurface , name, stateMachine_timeSinceChange);
 
 #ifdef FOAM_DEV
 
     // for faField
-typedef isStatePluginFunction<FaFieldValuePluginFunction> isState4FaField;
-defineTemplateTypeNameAndDebug(isState4FaField,0);
-addNamedToRunTimeSelectionTable(FaFieldValuePluginFunction, isState4FaField , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<FaFieldValuePluginFunction> timeSinceChange4FaField;
+defineTemplateTypeNameAndDebug(timeSinceChange4FaField,0);
+addNamedToRunTimeSelectionTable(FaFieldValuePluginFunction, timeSinceChange4FaField , name, stateMachine_timeSinceChange);
 
 
     // for faPatch
-typedef isStatePluginFunction<FaPatchValuePluginFunction> isState4FaPatch;
-defineTemplateTypeNameAndDebug(isState4FaPatch,0);
-addNamedToRunTimeSelectionTable(FaPatchValuePluginFunction, isState4FaPatch , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<FaPatchValuePluginFunction> timeSinceChange4FaPatch;
+defineTemplateTypeNameAndDebug(timeSinceChange4FaPatch,0);
+addNamedToRunTimeSelectionTable(FaPatchValuePluginFunction, timeSinceChange4FaPatch , name, stateMachine_timeSinceChange);
 
 #endif
 
     // for clouds
-typedef isStatePluginFunction<CloudValuePluginFunction> isState4Cloud;
-defineTemplateTypeNameAndDebug(isState4Cloud,0);
-addNamedToRunTimeSelectionTable(CloudValuePluginFunction, isState4Cloud , name, stateMachine_isState);
+typedef timeSinceChangePluginFunction<CloudValuePluginFunction> timeSinceChange4Cloud;
+defineTemplateTypeNameAndDebug(timeSinceChange4Cloud,0);
+addNamedToRunTimeSelectionTable(CloudValuePluginFunction, timeSinceChange4Cloud , name, stateMachine_timeSinceChange);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template <class PluginType>
-isStatePluginFunction<PluginType>::isStatePluginFunction(
+timeSinceChangePluginFunction<PluginType>::timeSinceChangePluginFunction(
     const typename PluginType::driverType &parentDriver,
     const word &name
 ):
     PluginType(
         parentDriver,
         name,
-        "volLogicalField",
+        "volScalarField",
         string(
-            "machineName primitive word,stateName primitive word"
+            "machineName primitive word"
         )
     )
 {
     typedef typename PluginType::driverType PluginTypeDriverType;
 
     if(PluginTypeDriverType::driverName()!="internalField") {
-        this->returnType()="bool";
+        this->returnType()="scalar";
     }
 #ifdef FOAM_DEV
     if(PluginTypeDriverType::driverName()=="internalFaField") {
-        this->returnType()="areaLogicalField";
+        this->returnType()="areaScalarField";
     }
 #endif
 }
@@ -157,46 +157,36 @@ isStatePluginFunction<PluginType>::isStatePluginFunction(
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template <class PluginType>
-void isStatePluginFunction<PluginType>::setArgument(
+void timeSinceChangePluginFunction<PluginType>::setArgument(
     label index,
     const word &value
 ) {
-    assert(index==0 || index==1);
+    assert(index==0);
 
-    if(index==0) {
-        machineName_=value;
-    } else {
-        state_=value;
-    }
+    machineName_=value;
 }
 
 
 template <class PluginType>
-void isStatePluginFunction<PluginType>::doEvaluation()
+void timeSinceChangePluginFunction<PluginType>::doEvaluation()
 {
-    bool yep=
-        StateMachine::machine(machineName_).stateCode(state_)
-        ==
-        StateMachine::machine(machineName_).currentState();
+    scalar elapsed=StateMachine::machine(machineName_).timeSinceChange();
 
     this->result().setResult(
-        yep,
+        elapsed,
         this->parentDriver().size()
     );
 }
 
 template <>
-void isStatePluginFunction<FieldValuePluginFunction>::doEvaluation()
+void timeSinceChangePluginFunction<FieldValuePluginFunction>::doEvaluation()
 {
-    bool yep=
-        StateMachine::machine(machineName_).stateCode(state_)
-        ==
-        StateMachine::machine(machineName_).currentState();
+    scalar elapsed=StateMachine::machine(machineName_).timeSinceChange();
 
     autoPtr<volScalarField> pResult(
         new volScalarField(
             IOobject(
-                "isState_"+state_,
+                "timeSinceChange_",
                 this->mesh().time().timeName(),
                 this->mesh(),
                 IOobject::NO_READ,
@@ -204,9 +194,9 @@ void isStatePluginFunction<FieldValuePluginFunction>::doEvaluation()
             ),
             this->mesh(),
             dimensionedScalar(
-                "isState",
+                "timeSinceChange",
                 dimless,
-                yep ? 1. : 0
+                elapsed
             )
         )
     );
@@ -216,16 +206,13 @@ void isStatePluginFunction<FieldValuePluginFunction>::doEvaluation()
 
 #ifdef FOAM_DEV
 template <>
-void isStatePluginFunction<FieldValuePluginFunction>::doEvaluation()
-    bool yep=
-    StateMachine::machine(machineName_).stateCode(state_)
-    ==
-    StateMachine::machine(machineName_).currentState();
+void timeSinceChangePluginFunction<FieldValuePluginFunction>::doEvaluation()
+    scalar elapsed=StateMachine::machine(machineName_).timeSinceChange();
 
     autoPtr<areaScalarField> pResult(
         new areaScalarField(
             IOobject(
-                "isState_"+state_,
+                "timeSinceChange_",
                 this->mesh().time().timeName(),
                 this->mesh(),
                 IOobject::NO_READ,
@@ -233,9 +220,9 @@ void isStatePluginFunction<FieldValuePluginFunction>::doEvaluation()
             ),
             FaCommonValueExpressionDriver::faRegionMesh(this->mesh()),
             dimensionedScalar(
-                "isState",
+                "timeSinceChange",
                 dimless,
-                yep ? 1 : 0
+                elapsed
             )
         )
     );
