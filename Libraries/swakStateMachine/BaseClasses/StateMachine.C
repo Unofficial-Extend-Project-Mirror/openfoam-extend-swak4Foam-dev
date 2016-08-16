@@ -55,12 +55,12 @@ StateMachine &StateMachine::NewMachine(
         )
     ) {
         FatalErrorIn("StateMachine::NewMachine")
-            << "A machine " << m->name() << " already exists"
+            << "A machine " << name << " already exists"
                 << endl
                 << exit(FatalError);
     } else {
         allMachines_.insert(
-            m->name(),
+            name,
             m.ptr()
         );
     }
@@ -227,14 +227,14 @@ string StateMachine::step() {
 
     if(
         state_
-        !=
+        ==
         oldState
     ) {
         out << "Stayed in state " << stateName(state_);
     } else {
         out << "Changed state from " << stateName(oldState)
             << " to " << stateName(state_)
-            << " (rule: " << reason << ")"
+            << " (rule: " << std::string(reason) << ")"
             << " after "
             << (mesh_.time().value()-lastStateChange_) << "s";
         lastStateChange_=mesh_.time().value();
