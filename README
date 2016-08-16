@@ -3470,6 +3470,9 @@ S_{expl} + S_{impl} T
 *** New supported versions
 *** Incompatibilities
 *** Bug fixes
+**** Plugin functions with =bool= results not supported by all drivers
+     Until now only the =internalField= and the =faInternalField=
+     supported boolean results. Now all drivers support them
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of
