@@ -3473,6 +3473,9 @@ S_{expl} + S_{impl} T
 **** Plugin functions with =bool= results not supported by all drivers
      Until now only the =internalField= and the =faInternalField=
      supported boolean results. Now all drivers support them
+**** No plugin function for =cloud= possible
+     Because the static variable/method =driverName= was not specified
+     no plugin functions for clouds could get specified
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of
