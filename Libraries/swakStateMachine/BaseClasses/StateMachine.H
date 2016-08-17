@@ -200,12 +200,12 @@ public:
     //- moves the state machine to the next state
 
     //- return value is a string with the information about what happened
-    string step();
+    std::string step();
 
     //- force the state machine to a given state
 
     //- return value is a string with the information about what happened
-    string force(label state);
+    std::string force(label state);
 
     friend StateMachineRepository;
 };

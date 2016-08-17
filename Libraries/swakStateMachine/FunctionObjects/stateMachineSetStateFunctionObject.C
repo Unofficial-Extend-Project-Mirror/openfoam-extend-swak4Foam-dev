@@ -83,8 +83,8 @@ bool stateMachineSetStateFunctionObject::start()
 
 void stateMachineSetStateFunctionObject::write()
 {
-    Info << name() << ": "
-        << std::string(machine_.force(state_)) << endl;
+    Info << name() << " setting: "
+        << machine_.force(state_) << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

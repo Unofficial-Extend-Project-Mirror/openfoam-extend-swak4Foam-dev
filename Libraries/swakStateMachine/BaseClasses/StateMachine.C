@@ -211,7 +211,7 @@ bool StateMachine::StateTransition::operator()()
     return result;
 }
 
-string StateMachine::step() {
+std::string StateMachine::step() {
     OStringStream out;
     out << machineName_ << ": ";
     label oldState=state_;
@@ -241,7 +241,7 @@ string StateMachine::step() {
     } else {
         out << "Changed state from " << stateName(oldState)
             << " to " << stateName(state_)
-            << " (rule: " << std::string(reason) << ")"
+            << " (rule: " << reason.c_str() << ")"
             << " after "
             << timeSinceChange() << "s";
         lastStateChange_=mesh_.time().value();
@@ -249,7 +249,7 @@ string StateMachine::step() {
     return out.str();
 }
 
-string StateMachine::force(label newState) {
+std::string StateMachine::force(label newState) {
     OStringStream out;
     out << machineName_ << ": ";
     if(

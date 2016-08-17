@@ -79,8 +79,8 @@ bool stateMachineCreateAndUpdateFunctionObject::start()
 
 void stateMachineCreateAndUpdateFunctionObject::write()
 {
-    Info << name() << ": "
-        << std::string(machine_.step()) << endl;
+    Info << name() << " stepping: "
+        << machine_.step() << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
