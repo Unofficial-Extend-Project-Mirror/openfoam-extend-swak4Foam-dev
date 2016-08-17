@@ -271,6 +271,8 @@ zone                  {
              tokenTyp=token::TOKEN_FUNCTION_YID;
         } else if(fInfo->returnType()=="sphericalTensor") {
              tokenTyp=token::TOKEN_FUNCTION_HID;
+        } else if(fInfo->returnType()=="bool") {
+            tokenTyp=token::TOKEN_FUNCTION_LID;
         } else {
             driver.error (
                 *yylloc,
