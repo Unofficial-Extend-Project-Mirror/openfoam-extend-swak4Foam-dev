@@ -1,4 +1,5 @@
 BaseClasses/StateMachine.C
+BaseClasses/StateMachineRepository.C
 
 FunctionObjects/stateMachineCreateAndUpdateFunctionObject.C
 FunctionObjects/stateMachineSetStateFunctionObject.C

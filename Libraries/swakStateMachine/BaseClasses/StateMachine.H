@@ -45,7 +45,6 @@ Contributors/Copyright:
 
 #include "CommonValueExpressionDriver.H"
 #include "hashedWordList.H"
-#include "HashPtrTable.H"
 #include "PtrList.H"
 #include "LogicalAccumulationNamedEnum.H"
 
@@ -53,6 +52,8 @@ Contributors/Copyright:
 
 namespace Foam
 {
+
+    class StateMachineRepository;
 
 /*---------------------------------------------------------------------------*\
                            Class StateMachine Declaration
@@ -97,8 +98,6 @@ class StateMachine
         const fvMesh &mesh
     );
 
-    static HashPtrTable<StateMachine,word> allMachines_;
-
     class StateTransition {
 
         //- state this goes from
@@ -140,6 +139,18 @@ class StateMachine
     };
 
     PtrList<StateTransition> transitions_;
+
+protected:
+
+    void resetState(
+        const word &state,
+        scalar timeOfChange
+    );
+
+    inline scalar lastStateChange() const {
+        return lastStateChange_;
+    }
+
 public:
      //- Runtime type information
     TypeName("StateMachine");
@@ -195,6 +206,8 @@ public:
 
     //- return value is a string with the information about what happened
     string force(label state);
+
+    friend StateMachineRepository;
 };
 
 

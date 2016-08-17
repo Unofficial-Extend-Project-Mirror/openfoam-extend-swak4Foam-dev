@@ -30,11 +30,11 @@ Contributors/Copyright:
 
 #include "StateMachine.H"
 
+#include "StateMachineRepository.H"
+
 namespace Foam {
 
     defineTypeNameAndDebug(StateMachine, 0);
-
-    HashPtrTable<StateMachine,word> StateMachine::allMachines_;
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -49,8 +49,12 @@ StateMachine &StateMachine::NewMachine(
         )
     );
     const word name=m->name();
+
+    StateMachineRepository &repo=
+        StateMachineRepository::getStateMachines(mesh);
+
     if(
-        allMachines_.found(
+        repo.found(
             m->name()
         )
     ) {
@@ -60,9 +64,8 @@ StateMachine &StateMachine::NewMachine(
                 << endl
                 << exit(FatalError);
     } else {
-        allMachines_.insert(
-            name,
-            m.ptr()
+        repo.insert(
+            m
         );
     }
     return machine(name);
@@ -71,16 +74,19 @@ StateMachine &StateMachine::NewMachine(
 StateMachine &StateMachine::machine(
     const word &name
 ) {
+    StateMachineRepository &repo=
+        StateMachineRepository::getStateMachines();
+
     if(
-        !allMachines_.found(name)
+        !repo.found(name)
     ) {
         FatalErrorIn("StateMachine::machine")
             << "No machine " << name << " found. " << nl
-                << "Available: " << allMachines_.sortedToc()
+                << "Available: " << repo.toc()
                 << endl
                 << exit(FatalError);
     }
-    return *allMachines_[name];
+    return repo[name];
 }
 
 StateMachine::StateMachine(
@@ -278,6 +284,15 @@ scalar StateMachine::timeSinceChange() const
 {
     return mesh_.time().value()-lastStateChange_;
 }
+
+void StateMachine::resetState(
+    const word &state,
+    scalar timeOfChange
+) {
+    state_=stateCode(state);
+    lastStateChange_=timeOfChange;
+}
+
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 
