@@ -71,6 +71,11 @@ StateMachine &StateMachine::NewMachine(
     return machine(name);
 }
 
+void StateMachine::ensureWrite()
+{
+    StateMachineRepository::getStateMachines().ensureWrite();
+}
+
 StateMachine &StateMachine::machine(
     const word &name
 ) {
@@ -114,6 +119,11 @@ StateMachine::StateMachine(
     state_(initialState_),
     lastStateChange_(
         mesh.time().value()
+    ),
+    stepsSinceChange_(0),
+    changedTo_(
+        names_.size(),
+        0
     )
 {
     List<dictionary> data(
@@ -237,15 +247,20 @@ std::string StateMachine::step() {
         ==
         oldState
     ) {
-        out << "Stayed in state " << stateName(state_);
+        stepsSinceChange_++;
+        out << "Stayed in state " << stateName(state_)
+            << " (" << stepsSinceChange_ << " steps)";
     } else {
         out << "Changed state from " << stateName(oldState)
             << " to " << stateName(state_)
             << " (rule: " << reason.c_str() << ")"
             << " after "
-            << timeSinceChange() << "s";
+            << timeSinceChange() << "s (" << stepsSinceChange_ << " steps)";
         lastStateChange_=mesh_.time().value();
+        stepsSinceChange_=0;
+        changedTo_[state_]++;
     }
+
     return out.str();
 }
 
@@ -273,9 +288,11 @@ std::string StateMachine::force(label newState) {
             out << "Forced state from " << stateName(state_)
                 << " to " << stateName(newState)
                 << " after "
-                << timeSinceChange() << "s";
+                << timeSinceChange() << "s (" << stepsSinceChange_ << " steps)";
             state_=newState;
             lastStateChange_=mesh_.time().value();
+            stepsSinceChange_=0;
+            changedTo_[state_]++;
     }
     return out.str();
 }
@@ -287,10 +304,15 @@ scalar StateMachine::timeSinceChange() const
 
 void StateMachine::resetState(
     const word &state,
-    scalar timeOfChange
+    scalar timeOfChange,
+    label stepsSinceChange,
+    labelList changedTo
 ) {
+    assert(changedTo.size()==names_.size());
     state_=stateCode(state);
     lastStateChange_=timeOfChange;
+    stepsSinceChange_=stepsSinceChange;
+    changedTo_=changedTo;
 }
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //

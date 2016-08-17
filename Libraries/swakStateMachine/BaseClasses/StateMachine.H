@@ -92,6 +92,12 @@ class StateMachine
     //- last time the state changed
     scalar lastStateChange_;
 
+    //- Steps since last change
+    label stepsSinceChange_;
+
+    //- How often changed the machine to this state
+    labelList changedTo_;
+
     //- Constructor
     StateMachine(
         const dictionary &dict,
@@ -144,7 +150,9 @@ protected:
 
     void resetState(
         const word &state,
-        scalar timeOfChange
+        scalar timeOfChange,
+        label stepsSinceChange,
+        labelList changedTo
     );
 
     inline scalar lastStateChange() const {
@@ -170,8 +178,15 @@ public:
         const word &name
     );
 
+    //- make sure that the state is consistently written
+    static void ensureWrite();
+
     inline CommonValueExpressionDriver &driver() {
         return driver_();
+    }
+
+    inline label numberOfStates() const {
+        return names_.size();
     }
 
     inline const word &name() {
@@ -192,6 +207,14 @@ public:
 
     inline label currentState() const {
         return state_;
+    }
+
+    inline label stepsSinceChange() const {
+        return stepsSinceChange_;
+    }
+
+    inline label changedTo(label state) const {
+        return changedTo_[state];
     }
 
     //- time since last state change

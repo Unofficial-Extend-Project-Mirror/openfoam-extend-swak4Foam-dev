@@ -113,6 +113,17 @@ StateMachineRepository &StateMachineRepository::getStateMachines()
     return *repositoryInstance;
 }
 
+void StateMachineRepository::ensureWrite()
+{
+    if(time().outputTime()) {
+        writeObject(
+            time().writeFormat(),
+            IOstream::currentVersion,
+            time().writeCompression()
+        );
+    }
+}
+
 bool StateMachineRepository::writeData(Ostream &os) const
 {
     Pbug << "StateMachineRepository at " << objectPath()
@@ -131,7 +142,15 @@ bool StateMachineRepository::writeData(Ostream &os) const
         dictionary state;
         state.set("state",m.stateName(m.currentState()));
         state.set("changeTime",m.lastStateChange());
-
+        state.set("stepsSinceChange",m.stepsSinceChange());
+        for(label stateNr=0;stateNr<m.numberOfStates();stateNr++) {
+            if(m.changedTo(stateNr)>0) {
+                state.set(
+                    word("changedTo_"+m.stateName(stateNr)),
+                    m.changedTo(stateNr)
+                );
+            }
+        }
         states.set(name,state);
     }
 
@@ -192,9 +211,19 @@ void StateMachineRepository::insert(
         Info << "Reseting state machine " << name << flush;
         const dictionary &data=readFromRestart_.subDict(name);
         StateMachine &m=(*this)[name];
+        labelList changedTo(
+            m.numberOfStates(),
+            0
+        );
+        forAll(changedTo,stateI) {
+            const word &name="changedTo_"+m.stateName(stateI);
+            changedTo[stateI]=data.lookupOrDefault<label>(name,0);
+        }
         m.resetState(
             word(data["state"]),
-            readScalar(data["changeTime"])
+            readScalar(data["changeTime"]),
+            readLabel(data["stepsSinceChange"]),
+            changedTo
         );
         Info << " to state " << m.stateName(m.currentState())
             << " (changed at " << m.lastStateChange() << ")" << endl;

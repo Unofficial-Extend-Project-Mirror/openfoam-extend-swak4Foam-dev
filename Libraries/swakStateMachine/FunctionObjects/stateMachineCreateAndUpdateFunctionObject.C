@@ -81,6 +81,8 @@ void stateMachineCreateAndUpdateFunctionObject::write()
 {
     Info << name() << " stepping: "
         << machine_.step() << endl;
+
+    StateMachine::ensureWrite();
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

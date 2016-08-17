@@ -85,6 +85,8 @@ void stateMachineSetStateFunctionObject::write()
 {
     Info << name() << " setting: "
         << machine_.force(state_) << endl;
+
+    StateMachine::ensureWrite();
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

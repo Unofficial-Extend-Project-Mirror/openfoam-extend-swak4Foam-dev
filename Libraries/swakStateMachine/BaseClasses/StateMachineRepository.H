@@ -89,6 +89,9 @@ public:
 
     static StateMachineRepository &getStateMachines();
 
+    //- make sure that the state is consistently written
+    void ensureWrite();
+
     virtual bool writeData(Ostream &) const ;
 
     virtual bool readData(Istream &);
