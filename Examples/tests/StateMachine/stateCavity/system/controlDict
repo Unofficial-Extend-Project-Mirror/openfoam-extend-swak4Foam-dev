@@ -102,14 +102,14 @@ functions {
                 from stop;
                 to go;
                 description "Other machine in state 'two'";
-                condition "stateMachine_isState(firstMachine,two)";
+                condition "stateMachine_isState(firstMachine,two) && stateMachine_changedTo(secondMachine,stop)<5";
                 logicalAccumulation and;
             }
             {
                 from go;
                 to stop;
-                description "Go back immediately";
-                condition "true";
+                description "Go back after two steps";
+                condition "stateMachine_stepsSinceChange(secondMachine)>1";
                 logicalAccumulation or;
             }
         );
@@ -129,6 +129,7 @@ functions {
                 from noMove;
                 to move;
                 description "Yipeee";
+                //                condition "stateMachine_isState(secondMachine,go) && stateMachine_stepsSinceChange(secondMachine)>1";
                 condition "stateMachine_isState(secondMachine,go)";
                 logicalAccumulation and;
             }

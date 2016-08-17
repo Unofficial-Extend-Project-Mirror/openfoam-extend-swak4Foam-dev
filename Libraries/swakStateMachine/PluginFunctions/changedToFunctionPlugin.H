@@ -23,13 +23,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::timeSinceChangePluginFunction
+    Foam::changedToPluginFunction
 
 Description
-    Time since the state machine last changed its state
+    Number of times the machine changed to a certain state
 
 SourceFiles
-    timeSinceChangePluginFunction.C
+    changedToPluginFunction.C
 
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -37,8 +37,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef timeSinceChangePluginFunction_H
-#define timeSinceChangePluginFunction_H
+#ifndef changedToPluginFunction_H
+#define changedToPluginFunction_H
 
 #include "FieldValuePluginFunction.H"
 
@@ -48,20 +48,22 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class timeSinceChangePluginFunction Declaration
+                           Class changedToPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
 template <class PluginType>
-class timeSinceChangePluginFunction
+class changedToPluginFunction
 :
     public PluginType
 {
     //- Disallow default bitwise assignment
-    void operator=(const timeSinceChangePluginFunction &);
+    void operator=(const changedToPluginFunction &);
 
-    timeSinceChangePluginFunction(const timeSinceChangePluginFunction &);
+    changedToPluginFunction(const changedToPluginFunction &);
 
     word machineName_;
+
+    word state_;
 
 protected:
 
@@ -72,14 +74,14 @@ protected:
 
 public:
 
-    timeSinceChangePluginFunction(
+    changedToPluginFunction(
         const typename PluginType::driverType &parentDriver,
         const word &name
     );
 
-    virtual ~timeSinceChangePluginFunction() {}
+    virtual ~changedToPluginFunction() {}
 
-    TypeName("timeSinceChangePluginFunction");
+    TypeName("changedToPluginFunction");
 
     void doEvaluation();
 

@@ -6,5 +6,7 @@ FunctionObjects/stateMachineSetStateFunctionObject.C
 
 PluginFunctions/isStateFunctionPlugin.C
 PluginFunctions/timeSinceChangeFunctionPlugin.C
+PluginFunctions/stepsSinceChangeFunctionPlugin.C
+PluginFunctions/changedToFunctionPlugin.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakStateMachine

@@ -23,13 +23,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::timeSinceChangePluginFunction
+    Foam::stepsSinceChangePluginFunction
 
 Description
-    Time since the state machine last changed its state
+    Number of steps since the state machine last changed its state
 
 SourceFiles
-    timeSinceChangePluginFunction.C
+    stepsSinceChangePluginFunction.C
 
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
@@ -37,8 +37,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef timeSinceChangePluginFunction_H
-#define timeSinceChangePluginFunction_H
+#ifndef stepsSinceChangePluginFunction_H
+#define stepsSinceChangePluginFunction_H
 
 #include "FieldValuePluginFunction.H"
 
@@ -48,18 +48,18 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class timeSinceChangePluginFunction Declaration
+                           Class stepsSinceChangePluginFunction Declaration
 \*---------------------------------------------------------------------------*/
 
 template <class PluginType>
-class timeSinceChangePluginFunction
+class stepsSinceChangePluginFunction
 :
     public PluginType
 {
     //- Disallow default bitwise assignment
-    void operator=(const timeSinceChangePluginFunction &);
+    void operator=(const stepsSinceChangePluginFunction &);
 
-    timeSinceChangePluginFunction(const timeSinceChangePluginFunction &);
+    stepsSinceChangePluginFunction(const stepsSinceChangePluginFunction &);
 
     word machineName_;
 
@@ -72,14 +72,14 @@ protected:
 
 public:
 
-    timeSinceChangePluginFunction(
+    stepsSinceChangePluginFunction(
         const typename PluginType::driverType &parentDriver,
         const word &name
     );
 
-    virtual ~timeSinceChangePluginFunction() {}
+    virtual ~stepsSinceChangePluginFunction() {}
 
-    TypeName("timeSinceChangePluginFunction");
+    TypeName("stepsSinceChangePluginFunction");
 
     void doEvaluation();
 
