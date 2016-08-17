@@ -130,7 +130,7 @@ bool conditionalFunctionObjectListProxy::execute(const bool forceWrite)
     }
 
     if(condition()) {
-        return functionObjectListProxy::execute(forceWrite);
+        return functions().execute(forceWrite);
     } else {
         if(else_.valid()) {
             return else_->execute(forceWrite);
@@ -148,7 +148,7 @@ bool conditionalFunctionObjectListProxy::start()
     }
 
     if(condition()) {
-        return functionObjectListProxy::start();
+        return functions().start();
     } else {
         if(else_.valid()) {
             return else_->start();
@@ -166,7 +166,7 @@ bool conditionalFunctionObjectListProxy::end()
     }
 
     if(condition()) {
-        return functionObjectListProxy::end();
+        return functions().end();
     } else {
         if(else_.valid()) {
             return else_->end();

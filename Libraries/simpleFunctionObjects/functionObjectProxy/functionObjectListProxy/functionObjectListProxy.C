@@ -140,12 +140,20 @@ bool functionObjectListProxy::execute(const bool forceWrite)
     }
 
     if(outputTime(forceWrite)) {
+        if(writeDebug()) {
+            Info << this->name() << " functionObjectListProxy::execute() - doing" << endl;
+        }
+
 #ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
         return functions().execute();
 #else
         return functions().execute(forceWrite);
 #endif
     } else {
+        if(writeDebug()) {
+            Info << this->name() << " functionObjectListProxy::execute() - skipping" << endl;
+        }
+
         return false;
     }
 }
