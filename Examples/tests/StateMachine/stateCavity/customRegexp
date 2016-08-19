@@ -1,0 +1,12 @@
+// -*- c++ -*-
+
+stateCodes {
+    theTitle "The states";
+    type dynamic;
+    expr "Machine (.+) in state .+ \(code: ([0-9])\)";
+    idNr 1;
+    with linespoints;
+    titles (
+        state
+    );
+}

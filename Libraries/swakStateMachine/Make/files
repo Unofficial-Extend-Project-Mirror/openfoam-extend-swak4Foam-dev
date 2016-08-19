@@ -3,6 +3,7 @@ BaseClasses/StateMachineRepository.C
 
 FunctionObjects/stateMachineCreateAndUpdateFunctionObject.C
 FunctionObjects/stateMachineSetStateFunctionObject.C
+FunctionObjects/stateMachineStateFunctionObject.C
 
 PluginFunctions/isStateFunctionPlugin.C
 PluginFunctions/timeSinceChangeFunctionPlugin.C

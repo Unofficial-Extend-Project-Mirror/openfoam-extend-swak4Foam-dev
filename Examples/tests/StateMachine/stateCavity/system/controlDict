@@ -148,6 +148,20 @@ functions {
         state one;
         outputControlMode outputTime;
     }
+    firstMachineState{
+        type stateMachineState;
+        verbose true;
+        writeStartState true;
+        machineName firstMachine;
+    }
+    secondMachineState{
+        $firstMachineState;
+        machineName secondMachine;
+    }
+    thirdMachineState{
+        $firstMachineState;
+        machineName thirdMachine;
+    }
 }
 
 // ************************************************************************* //
