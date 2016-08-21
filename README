@@ -3524,6 +3524,17 @@ S_{expl} + S_{impl} T
      shifted value is found by "looking" into the original cell that
      contains the point that is the cell center plus the displacement
      value. If that point is not in the mesh a default value is used
+**** Library =swakStateMachine= to easily implement switching in cases
+     This library implements /State machines/. This is a convenient
+     way to store a state in a simulation and switch between them by
+     predefined rules. An example for states in a /State machine/
+     would be: =closed=, =valveOpening=, =open=, =valveClosing=
+
+     The library has the function objects and plugin functions to use
+     /State machines/.
+
+     The chapter /State machines/ in the /Incomplete swak4Foam
+     reference/ describes it in more detail
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
