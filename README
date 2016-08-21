@@ -3535,4 +3535,11 @@ S_{expl} + S_{impl} T
      then this dictionary is searched for a =variables=-entry and
      these variables are then evaluated (it is also possible to have
      =lookuptables= and similar in =fooFunctionData=)
+**** Timeline function objects now optionally write value at start time
+     Function objects that inherit from =timelineFunctionObject= (like
+     =swakExpression=) now have an optional parameter
+     =writeStartTime=. If set to =yes= then the value at start-time
+     will be written. The default setting is =no=. This is similar to
+     the old behavior and avoids crashes at startup. Some classes
+     change this default to make it =yes=
 *** Examples

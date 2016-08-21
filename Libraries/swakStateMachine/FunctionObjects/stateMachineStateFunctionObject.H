@@ -73,9 +73,6 @@ class stateMachineStateFunctionObject
     //- Name of the state machinr
     word machineName_;
 
-    //- Should we write the state on startup
-    bool writeStartState_;
-
 protected:
 
     word dirName();
@@ -102,8 +99,6 @@ public:
 
     //- Do the writing
     virtual void write();
-
-    virtual bool start();
 };
 
 

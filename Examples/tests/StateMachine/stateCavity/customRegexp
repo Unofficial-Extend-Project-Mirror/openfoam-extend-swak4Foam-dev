@@ -10,3 +10,7 @@ stateCodes {
         state
     );
 }
+pseudoTime {
+    theTitle "Pseudo time";
+    expr "Expression pseudoTime :  average=(.+)";
+}

@@ -55,28 +55,19 @@ stateMachineStateFunctionObject::stateMachineStateFunctionObject
     const dictionary& dict
 )
 :
-    timelineFunctionObject(name,t,dict),
+    timelineFunctionObject(
+        name,
+        t,
+        dict,
+        true  // by default write the first state
+    ),
     machineName_(
         dict.lookup("machineName")
-    ),
-    writeStartState_(
-        readBool(
-            dict.lookup("writeStartState")
-        )
     )
 {
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-bool stateMachineStateFunctionObject::start()
-{
-    timelineFunctionObject::start();
-    if(writeStartState_) {
-        write();
-    }
-    return true;
-}
 
 word stateMachineStateFunctionObject::dirName()
 {

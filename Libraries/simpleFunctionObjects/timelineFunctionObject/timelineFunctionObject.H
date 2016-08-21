@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef timelineFunctionObject_H
@@ -123,6 +123,10 @@ protected:
     //- close all files to enable a new slate
     void closeAllFiles();
 
+private:
+    //- should we write immediately at startup
+    bool writeStartTime_;
+
 public:
 
     //- Runtime type information
@@ -136,7 +140,8 @@ public:
     (
         const word &name,
         const Time&,
-        const dictionary&
+        const dictionary&,
+        bool writeStartTime=false
     );
 
 
