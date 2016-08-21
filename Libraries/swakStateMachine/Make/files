@@ -10,4 +10,6 @@ PluginFunctions/timeSinceChangeFunctionPlugin.C
 PluginFunctions/stepsSinceChangeFunctionPlugin.C
 PluginFunctions/changedToFunctionPlugin.C
 
+other/stateMachineFvSolutionFvSchemesFunctionObject.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakStateMachine
