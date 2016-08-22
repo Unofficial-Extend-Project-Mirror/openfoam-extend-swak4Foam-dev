@@ -747,6 +747,9 @@ S_{expl} + S_{impl} T
 **** pitzDailyTimeSwitched
      The regular =simpleFoam=-tutorial. Modified so that it switches
      to higher relaxation factors during the run
+**** pitzDailyStateMachineSwitched
+     =simpleFoam=-tutorial. Uses state machines to change the
+     discretization periodically
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -3527,6 +3530,20 @@ S_{expl} + S_{impl} T
      shifted value is found by "looking" into the original cell that
      contains the point that is the cell center plus the displacement
      value. If that point is not in the mesh a default value is used
+**** Library =swakStateMachine= to easily implement switching in cases
+     This library implements /State machines/. This is a convenient
+     way to store a state in a simulation and switch between them by
+     predefined rules. An example for states in a /State machine/
+     would be: =closed=, =valveOpening=, =open=, =valveClosing=
+
+     The library has the function objects and plugin functions to use
+     /State machines/.
+
+     The chapter /State machines/ in the /Incomplete swak4Foam
+     reference/ describes it in more detail
+**** Function object =stateMachineFvSolutionFvSchemes= to switch numerics accorrding to a state machine
+     This function object allows modifying =fvSchemes= and
+     =fvSolution= according to the states of two state machines.
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
@@ -3538,4 +3555,11 @@ S_{expl} + S_{impl} T
      then this dictionary is searched for a =variables=-entry and
      these variables are then evaluated (it is also possible to have
      =lookuptables= and similar in =fooFunctionData=)
+**** Timeline function objects now optionally write value at start time
+     Function objects that inherit from =timelineFunctionObject= (like
+     =swakExpression=) now have an optional parameter
+     =writeStartTime=. If set to =yes= then the value at start-time
+     will be written. The default setting is =no=. This is similar to
+     the old behavior and avoids crashes at startup. Some classes
+     change this default to make it =yes=
 *** Examples

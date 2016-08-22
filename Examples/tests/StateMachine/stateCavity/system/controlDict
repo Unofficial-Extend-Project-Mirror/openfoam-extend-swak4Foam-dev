@@ -47,6 +47,7 @@ runTimeModifiable true;
 
 libs (
     "libswakStateMachine.so"
+    "libsimpleSwakFunctionObjects.so"
 );
 
 functions {
@@ -147,6 +148,40 @@ functions {
         machineName firstMachine;
         state one;
         outputControlMode outputTime;
+    }
+    firstMachineState{
+        type stateMachineState;
+        verbose true;
+        machineName firstMachine;
+    }
+    secondMachineState{
+        $firstMachineState;
+        machineName secondMachine;
+    }
+    thirdMachineState{
+        $firstMachineState;
+        machineName thirdMachine;
+    }
+    pseudoTime {
+        type swakExpression;
+        valueType patch;
+        patchName movingWall;
+        writeStartTime yes;
+        verbose true;
+        expression "pseudoTime";
+        variables (
+            "dt=deltaT()*(stateMachine_isState(secondMachine,go) ? 1 : 0);"
+            "pseudoTime=pseudoTime+dt;"
+        );
+        storedVariables (
+            {
+                name pseudoTime;
+                initialValue "0";
+            }
+        );
+        accumulations (
+            average
+        );
     }
 }
 
