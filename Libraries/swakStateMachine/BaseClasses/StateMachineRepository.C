@@ -233,6 +233,9 @@ void StateMachineRepository::insert(
 
 StateMachine &StateMachineRepository::operator[](const word &name)
 {
+    Pbug << "operator[" << name << "] Found: " << found(name) << "/"
+        << allMachines_.found(name) << endl;
+
     return *allMachines_[name];
 }
 

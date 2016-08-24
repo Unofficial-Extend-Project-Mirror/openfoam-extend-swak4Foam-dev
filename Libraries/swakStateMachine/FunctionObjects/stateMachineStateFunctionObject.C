@@ -97,6 +97,9 @@ stringList stateMachineStateFunctionObject::columnNames()
 
 void stateMachineStateFunctionObject::write()
 {
+    if(!Pstream::master()) {
+        return;
+    }
     const StateMachine &m=StateMachine::machine(machineName_);
     const word state(m.stateName(m.currentState()));
 
