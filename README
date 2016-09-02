@@ -3482,6 +3482,12 @@ S_{expl} + S_{impl} T
 **** No plugin function for =cloud= possible
      Because the static variable/method =driverName= was not specified
      no plugin functions for clouds could get specified
+**** Wrong syntax in primitive types of plugin-function causes C++-error
+     If a primitive function for instance expects a label and finds an
+     unscanable string like ~x23~ then this used to generate a failure
+     by the C++-library. This gave no indication on the real
+     problem. Now there is a OpenFOAM-error message with a somewhat
+     better explanation
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of
