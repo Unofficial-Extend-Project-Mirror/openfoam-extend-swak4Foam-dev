@@ -1,0 +1,3 @@
+fracSmallerThanPluginFunction.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakQuantileFunctionPlugin
