@@ -23,12 +23,12 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::quantilePluginFunction
+    Foam::fracSmallerThanPluginFunction
 
 Description
 
 SourceFiles
-    quantilePluginFunction.C
+    fracSmallerThanPluginFunction.C
 
 Contributors/Copyright:
     2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
@@ -36,8 +36,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef quantilePluginFunction_H
-#define quantilePluginFunction_H
+#ifndef fracSmallerThanPluginFunction_H
+#define fracSmallerThanPluginFunction_H
 
 #include "FieldValuePluginFunction.H"
 
@@ -47,16 +47,16 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class quantilePluginFunction Declaration
+                           Class fracSmallerThanPluginFunction Declaration
 \*---------------------------------------------------------------------------*/
-class quantilePluginFunction
+class fracSmallerThanPluginFunction
 :
     public FieldValuePluginFunction
 {
     //- Disallow default bitwise assignment
-    void operator=(const quantilePluginFunction &);
+    void operator=(const fracSmallerThanPluginFunction &);
 
-    quantilePluginFunction(const quantilePluginFunction &);
+    fracSmallerThanPluginFunction(const fracSmallerThanPluginFunction &);
 
     autoPtr<volScalarField> field_;
 
@@ -64,23 +64,27 @@ class quantilePluginFunction
 
     autoPtr<volScalarField> mask_;
 
+    label binNumber_;
+
 protected:
 
-    virtual void setArgument(
+    void setArgument(
         label index,
         const string &content,
         const CommonValueExpressionDriver &driver
     );
 
+    void setArgument(label index,const label &);
+
 public:
-    quantilePluginFunction(
+    fracSmallerThanPluginFunction(
         const FieldValueExpressionDriver &parentDriver,
         const word &name
     );
 
-    virtual ~quantilePluginFunction() {}
+    virtual ~fracSmallerThanPluginFunction() {}
 
-    TypeName("quantilePluginFunction");
+    TypeName("fracSmallerThanPluginFunction");
 
     void doEvaluation();
 };

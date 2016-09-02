@@ -28,7 +28,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "quantilePluginFunction.H"
+#include "fracSmallerThanPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
 #include "addToRunTimeSelectionTable.H"
@@ -37,13 +37,13 @@ Contributors/Copyright:
 
 namespace Foam {
 
-defineTypeNameAndDebug(quantilePluginFunction,1);
-addNamedToRunTimeSelectionTable(FieldValuePluginFunction, quantilePluginFunction , name, quantile);
+defineTypeNameAndDebug(fracSmallerThanPluginFunction,1);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction, fracSmallerThanPluginFunction , name, fracSmallerThan);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-quantilePluginFunction::quantilePluginFunction(
+fracSmallerThanPluginFunction::fracSmallerThanPluginFunction(
     const FieldValueExpressionDriver &parentDriver,
     const word &name
 ):
@@ -51,8 +51,9 @@ quantilePluginFunction::quantilePluginFunction(
         parentDriver,
         name,
         word("volScalarField"),
-        string("field internalField volScalarField,weight internalField volScalarField,mask internalField volLogicalField")
-    )
+        string("field internalField volScalarField,weight internalField volScalarField,mask internalField volLogicalField,binNumber primitive label")
+    ),
+    binNumber_(1000)
 {
 }
 
@@ -61,7 +62,16 @@ quantilePluginFunction::quantilePluginFunction(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void quantilePluginFunction::setArgument(
+void fracSmallerThanPluginFunction::setArgument(
+    label index,
+    const label &value
+) {
+    assert(index==3);
+    binNumber_=value;
+}
+
+
+void fracSmallerThanPluginFunction::setArgument(
     label index,
     const string &content,
     const CommonValueExpressionDriver &driver
@@ -98,13 +108,13 @@ void quantilePluginFunction::setArgument(
     }
 }
 
-void quantilePluginFunction::doEvaluation()
+void fracSmallerThanPluginFunction::doEvaluation()
 {
     const scalarField &field=field_->internalField();
     SimpleDistribution<scalar> dist(
         gMin(field),
         gMax(field),
-        1000
+        binNumber_
     );
 
     Field<bool> mask(mask_->internalField().size(),true);
@@ -128,7 +138,7 @@ void quantilePluginFunction::doEvaluation()
     autoPtr<volScalarField> pSmaller(
         new volScalarField(
             IOobject(
-                "quantileOfField",
+                "fracSmallerThanField",
                 mesh().time().timeName(),
                 mesh(),
                 IOobject::NO_READ,
