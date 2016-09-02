@@ -67,6 +67,14 @@ void fracSmallerThanPluginFunction::setArgument(
     const label &value
 ) {
     assert(index==3);
+    if(value<1) {
+        FatalErrorIn("fracSmallerThanPluginFunction::setArgument")
+            << "Bin number is " << value << nl
+                << "Should be bigger than 0 in "
+                << helpText()
+                << endl
+                << exit(FatalError);
+    }
     binNumber_=value;
 }
 
