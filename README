@@ -3550,6 +3550,37 @@ S_{expl} + S_{impl} T
 **** Function object =stateMachineFvSolutionFvSchemes= to switch numerics accorrding to a state machine
      This function object allows modifying =fvSchemes= and
      =fvSolution= according to the states of two state machines.
+**** Function plugin =Quantile= for calculations with the distribution of a function
+     All the functions in this plugin first calculate a
+     distribution. This distribution is calculated from the first parameters:
+     1. the field for which the distribution is calculated
+     2. the weight with which the cell values enter the
+        distribution. Usually =vol()= (volume weighted) or =1= (equal
+        weight for all cells)
+     3. a logical expression that specifies which cells are used
+        (=true= for all cells)
+     4. the number of bins to use for the distribution. This specifies
+        how fine the distribution is calculated. Should be small
+        compared to the number of cells. Usually the values =100= or
+        =1000= should be sufficient
+     The implemented functions are
+     - fracSmallerThan :: Writes a fraction in the range from $0$ to
+          $1$ with for instance $0.5$ meaning "50 % of the
+          distribution is smaller than the value in this cell". The
+          cells which are masked out get the value $-1$.
+     - fracSmallerThanFromOther :: Like =fracSmallerThan= but there is
+          an additional parameter: the field that is used for
+          calculating the fraction. Here the mask is not used for
+          calculating the fraction (but still used for calculating the
+          distribution)
+     - quantileFromOther :: Basically the inverse of
+          =fracSmallerThanFromOther=. The last parameter is a fraction
+          (from $0$ to $1$) and the result is the corresponding
+          quantile: if a fraction $0.5$ is specified then the value
+          from the distribution for which 50% are smaller is written
+          to the cell
+     Note: values may slightly vary according to the number of
+     bins. But the bin number also increases the calculation time.
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
