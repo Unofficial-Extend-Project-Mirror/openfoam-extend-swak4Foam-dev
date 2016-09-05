@@ -4,4 +4,4 @@
 #define SWAK_VERSION_MINOR 4
 #define SWAK_VERSION_PATCH 1
 #define SWAK_RELEASE_DATE "Next release"
-#define SWAK_HGBRANCH "feature/functionPlugin/quantilePlug"
+#define SWAK_HGBRANCH ""
