@@ -245,6 +245,7 @@ reconstruct           return token::TOKEN_reconstruct;
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
+outputTime            return token::TOKEN_outputTime;
 
 vector                 return token::TOKEN_VECTOR;
 tensor                 return token::TOKEN_TENSOR;

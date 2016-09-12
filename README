@@ -3584,6 +3584,10 @@ S_{expl} + S_{impl} T
           to the cell
      Note: values may slightly vary according to the number of
      bins. But the bin number also increases the calculation time.
+**** Function =outputTime()= to indicate output time
+     A function =outputTime()= has been added to the parsers. This
+     function is =true= if Foam is writing at the current time and
+     =false= else
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,

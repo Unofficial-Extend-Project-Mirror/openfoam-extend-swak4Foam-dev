@@ -473,6 +473,8 @@ hide circle
           available for =cloud=
      - deltaT() :: Scalar field with the current time-step size
      - time() :: Scalar field with the current time
+     - outputTime() :: Boolean field that is =true= if the current
+          time is a time at which data will be written
 **** Differential operators
      The differential operators are only available in the
      =internalField=-parser. They are available in various forms. In

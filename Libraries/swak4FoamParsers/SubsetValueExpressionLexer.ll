@@ -171,6 +171,7 @@ randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNo
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
+outputTime            return token::TOKEN_outputTime;
 
 oldTime               return token::TOKEN_oldTime;
 
