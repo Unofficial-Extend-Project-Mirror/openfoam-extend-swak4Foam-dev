@@ -2891,9 +2891,11 @@ texp:   tensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' yexp ')'       {
+#ifndef FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
             $$ = driver.makeField<Foam::volTensorField>(
                 Foam::eigenVectors($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3831,9 +3833,11 @@ ftexp:   ftensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' fyexp ')'       {
+#ifndef FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
             $$ = driver.makeField<Foam::surfaceTensorField>(
                 Foam::eigenVectors($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -5258,9 +5262,11 @@ ptexp:   ptensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' pyexp ')'       {
+#ifndef FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
             $$ = driver.makePointField<Foam::pointTensorField>(
                 Foam::eigenVectors($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }

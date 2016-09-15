@@ -83,6 +83,10 @@ Contributors/Copyright:
 #define FOAM_SYMMTENSOR_WORKAROUND
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#define FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
+#endif
+
 // in 1.6-ext nextRelease a different Macro is used for the creation of certain patch types
 #ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_USE_MAKE_TEMPLATE_PATCH_TYPE
