@@ -2905,9 +2905,11 @@ texp:   tensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' texp ')' 	            {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::volTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3218,9 +3220,11 @@ yexp:   symmTensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' yexp ')' 	            {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::volSymmTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -3847,9 +3851,11 @@ ftexp:   ftensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' ftexp ')' 	            {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::surfaceTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -4064,9 +4070,11 @@ fyexp:   fsymmTensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' fyexp ')' 	            {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::surfaceSymmTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -5276,9 +5284,11 @@ ptexp:   ptensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' ptexp ')' 	            {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makePointField<Foam::pointTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -5518,9 +5528,11 @@ pyexp:   psymmTensor                  { $$ = $1; }
             delete $3;
           }
         | TOKEN_cof '(' pyexp ')'            {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makePointField<Foam::pointSymmTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
           }
         | TOKEN_dev '(' pyexp ')'            {
