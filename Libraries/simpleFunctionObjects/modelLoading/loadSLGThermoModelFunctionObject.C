@@ -53,7 +53,7 @@ namespace Foam
 {
 
     template <>
-    void modelLoadingFunctionObject<SLGThermo>::write()
+    void modelLoadingFunctionObject<SLGThermo>::writeSimple()
     {
         if(correctModel_) {
             if(model_.valid()) {

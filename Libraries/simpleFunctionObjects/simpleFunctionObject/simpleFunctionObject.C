@@ -163,7 +163,7 @@ bool simpleFunctionObject::start()
         ||
         outputControlMode()==ocmDeltaTAndStartup
     ) {
-        write();
+        writeSimple();
         flush();
     }
 
@@ -234,7 +234,7 @@ bool simpleFunctionObject::execute(const bool forceWrite)
     if(this->outputTime(forceWrite)) {
         Dbug << name() << "::execute() - outputTime" << endl;
         timeSteps_=0;
-        write();
+        writeSimple();
         flush();
     }
 

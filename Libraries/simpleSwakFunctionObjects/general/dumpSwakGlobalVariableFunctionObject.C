@@ -94,7 +94,7 @@ stringList dumpSwakGlobalVariableFunctionObject::columnNames()
     return stringList(1,"No way to know how much data will follow");
 }
 
-void dumpSwakGlobalVariableFunctionObject::write()
+void dumpSwakGlobalVariableFunctionObject::writeSimple()
 {
 
     if(verbose()) {
@@ -123,7 +123,7 @@ void dumpSwakGlobalVariableFunctionObject::write()
     } else if(rType==pTraits<sphericalTensor>::typeName) {
         writeTheData<sphericalTensor>(value);
     } else {
-        WarningIn("dumpSwakGlobalVariableFunctionObject::write()")
+        WarningIn("dumpSwakGlobalVariableFunctionObject::writeSimple()")
             << "Don't know how to handle type " << rType
                 << endl;
     }

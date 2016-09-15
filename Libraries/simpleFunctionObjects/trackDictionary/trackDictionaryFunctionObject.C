@@ -338,7 +338,7 @@ Foam::string Foam::trackDictionaryFunctionObject::echoSectionSeparator(
     return outputString.replace("_sectionIdToken_", sectionId);
 }
 
-void Foam::trackDictionaryFunctionObject::write()
+void Foam::trackDictionaryFunctionObject::writeSimple()
 {
     // Do nothing for now
 }

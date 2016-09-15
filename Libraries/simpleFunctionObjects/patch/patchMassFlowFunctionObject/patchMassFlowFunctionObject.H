@@ -100,7 +100,7 @@ public:
     // Member Functions
 
     //- Sample and write
-    void write();
+    void writeSimple();
 };
 
 

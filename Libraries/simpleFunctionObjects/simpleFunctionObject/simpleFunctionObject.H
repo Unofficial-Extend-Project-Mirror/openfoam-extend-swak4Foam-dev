@@ -177,11 +177,21 @@ public:
         }
 #endif
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD
+    //- Interface for new functionObject
+    virtual bool execute() {
+        return execute(false);
+    }
+    virtual bool write() {
+        return execute(true);
+    }
+#endif
+
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
 
     //- Sample and write
-    virtual void write()=0;
+    virtual void writeSimple()=0;
 
 #ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
     // make functionObject happy but fail because this is not an implementation

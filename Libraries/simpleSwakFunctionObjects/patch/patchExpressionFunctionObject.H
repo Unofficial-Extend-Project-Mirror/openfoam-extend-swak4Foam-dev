@@ -116,7 +116,7 @@ public:
     );
 
     //- Do the writing
-    virtual void write();
+    virtual void writeSimple();
 
     //- read the stuff
     virtual bool start();

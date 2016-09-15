@@ -132,7 +132,7 @@ public:
     //- start is called at the start of the time-loop
     virtual bool start();
 
-    virtual void write();
+    virtual void writeSimple();
 };
 
 

@@ -46,6 +46,8 @@ SourceFiles
 #include "dictionary.H"
 #include "outputFilterOutputControl.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -205,7 +207,17 @@ public:
             //- Called at each ++ or += of the time-loop
             virtual bool execute(const bool forceWrite);
 
-            //- Called when Time::run() determines that the time-loop exits
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD
+            //- Interface for new functionObject
+            virtual bool execute() {
+                return execute(false);
+            }
+            virtual bool write() {
+                return execute(true);
+            }
+#endif
+
+    //- Called when Time::run() determines that the time-loop exits
             virtual bool end();
 
             //- Called when time was set at the end of the Time::operator++

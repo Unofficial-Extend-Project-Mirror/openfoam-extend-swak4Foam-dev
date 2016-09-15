@@ -90,14 +90,14 @@ bool writeAndEndFunctionObject::start()
     return true;
 }
 
-void writeAndEndFunctionObject::write()
+void writeAndEndFunctionObject::writeSimple()
 {
     if(debug) {
-        Info << name() << "::write() - Entering" << endl;
+        Info << name() << "::writeSimple() - Entering" << endl;
     }
     if(isStopped()) {
         if(debug) {
-            Info << name() << "::write() - isStopped" << endl;
+            Info << name() << "::writeSimple() - isStopped" << endl;
         }
         return;
     }
@@ -105,7 +105,7 @@ void writeAndEndFunctionObject::write()
         this->endRunNow()
     ) {
         if(debug) {
-            Info << name() << "::write() - stopping" << endl;
+            Info << name() << "::writeSimple() - stopping" << endl;
         }
         isStopped_=true;
 
@@ -122,7 +122,7 @@ void writeAndEndFunctionObject::write()
         lastTimes_->copy(time());
     }
     if(debug) {
-        Info << name() << "::write() - Leaving" << endl;
+        Info << name() << "::writeSimple() - Leaving" << endl;
     }
 }
 

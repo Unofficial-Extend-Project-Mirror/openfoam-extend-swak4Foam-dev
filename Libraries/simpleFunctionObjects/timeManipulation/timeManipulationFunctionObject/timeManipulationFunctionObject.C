@@ -87,7 +87,7 @@ bool timeManipulationFunctionObject::start()
     return true;
 }
 
-void timeManipulationFunctionObject::write()
+void timeManipulationFunctionObject::writeSimple()
 {
     scalar newDeltaT=this->deltaT();
     scalar newEndTime=this->endTime();
@@ -97,7 +97,7 @@ void timeManipulationFunctionObject::write()
     reduce(minDeltaT,minOp<scalar>());
     reduce(maxDeltaT,maxOp<scalar>());
     if(minDeltaT!=maxDeltaT) {
-        FatalErrorIn("timeManipulationFunctionObject::write()")
+        FatalErrorIn("timeManipulationFunctionObject::writeSimple()")
             << "Across the processors the minimum " << minDeltaT
                 << " and the maximum " << maxDeltaT << " of the new deltaT"
                 << " differ by " << maxDeltaT-minDeltaT
@@ -117,7 +117,7 @@ void timeManipulationFunctionObject::write()
     reduce(minEndTime,minOp<scalar>());
     reduce(maxEndTime,maxOp<scalar>());
     if(minEndTime!=maxEndTime) {
-        FatalErrorIn("timeManipulationFunctionObject::write()")
+        FatalErrorIn("timeManipulationFunctionObject::writeSimple()")
             << "Across the processors the minimum " << minEndTime
                 << " and the maximum " << maxEndTime << " of the new endTime"
                 << " differ by " << maxEndTime-minEndTime
@@ -141,7 +141,7 @@ void timeManipulationFunctionObject::write()
         &&
         !time().outputTime()
     ) {
-        WarningIn("timeManipulationFunctionObject::write()")
+        WarningIn("timeManipulationFunctionObject::writeSimple()")
             << "Forcing write because we (" << name()
                 << ") changed the endTime to "
                 << myEndTime_ << " and this is not a write-time"

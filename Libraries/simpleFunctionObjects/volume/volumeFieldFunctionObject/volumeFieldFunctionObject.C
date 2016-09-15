@@ -68,7 +68,7 @@ volumeFieldFunctionObject::volumeFieldFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void volumeFieldFunctionObject::write()
+void volumeFieldFunctionObject::writeSimple()
 {
     processAndWrite<scalar>(scalarFields_);
     processAndWrite<vector>(vectorFields_);

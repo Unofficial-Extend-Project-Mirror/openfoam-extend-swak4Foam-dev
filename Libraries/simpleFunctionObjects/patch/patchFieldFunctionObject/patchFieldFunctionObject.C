@@ -68,7 +68,7 @@ patchFieldFunctionObject::patchFieldFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void patchFieldFunctionObject::write()
+void patchFieldFunctionObject::writeSimple()
 {
     processAndWrite<scalar>(scalarFields_);
     processAndWrite<vector>(vectorFields_);

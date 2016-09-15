@@ -73,7 +73,7 @@ patchMassFlowFunctionObject::patchMassFlowFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void patchMassFlowFunctionObject::write()
+void patchMassFlowFunctionObject::writeSimple()
 {
     scalarField vals(patchNames_.size(), -GREAT);
    

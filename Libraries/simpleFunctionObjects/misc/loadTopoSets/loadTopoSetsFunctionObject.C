@@ -87,7 +87,7 @@ bool loadTopoSetsFunctionObject::start()
     return true;
 }
 
-void loadTopoSetsFunctionObject::write()
+void loadTopoSetsFunctionObject::writeSimple()
 {
     if(
         obr_.time().outputTime()

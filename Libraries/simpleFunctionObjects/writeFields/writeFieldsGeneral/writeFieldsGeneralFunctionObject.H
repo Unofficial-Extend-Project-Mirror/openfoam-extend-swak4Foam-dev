@@ -100,7 +100,7 @@ public:
 
     bool start();
 
-    void write();
+    void writeSimple();
 
     const wordList &fieldNames() const { return fieldNames_; }
 

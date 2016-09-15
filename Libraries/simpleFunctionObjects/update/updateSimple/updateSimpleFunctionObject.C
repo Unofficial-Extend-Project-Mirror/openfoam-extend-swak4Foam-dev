@@ -84,7 +84,7 @@ bool updateSimpleFunctionObject::start()
     return true;
 }
 
-void updateSimpleFunctionObject::write()
+void updateSimpleFunctionObject::writeSimple()
 {
     if(!onlyAtStartup_) {
         recalc();

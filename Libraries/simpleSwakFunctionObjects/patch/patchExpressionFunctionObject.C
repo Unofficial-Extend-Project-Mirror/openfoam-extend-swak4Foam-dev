@@ -121,7 +121,7 @@ stringList patchExpressionFunctionObject::columnNames()
     return result;
 }
 
-void patchExpressionFunctionObject::write()
+void patchExpressionFunctionObject::writeSimple()
 {
     forAll(patchIndizes_,i) {
         if(patchIndizes_[i]<0) {

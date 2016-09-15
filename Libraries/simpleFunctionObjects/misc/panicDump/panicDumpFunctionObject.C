@@ -105,7 +105,7 @@ bool panicDumpFunctionObject::start()
     return true;
 }
 
-void panicDumpFunctionObject::write()
+void panicDumpFunctionObject::writeSimple()
 {
     check<volScalarField>();
     check<volVectorField>();

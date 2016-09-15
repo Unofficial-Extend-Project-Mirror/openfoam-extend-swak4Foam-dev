@@ -107,7 +107,7 @@ public:
     virtual inline bool start();
 
     //- Sample and write
-    virtual void write();
+    virtual void writeSimple();
 
 };
 

@@ -117,7 +117,7 @@ public:
 
     bool start();
 
-    void write();
+    void writeSimple();
 
     virtual bool manipulateFvSolution(const Time &) = 0;
 

@@ -116,7 +116,7 @@ class panicDumpFunctionObject
 
     bool start();
 
-    void write();
+    void writeSimple();
 };
 
 

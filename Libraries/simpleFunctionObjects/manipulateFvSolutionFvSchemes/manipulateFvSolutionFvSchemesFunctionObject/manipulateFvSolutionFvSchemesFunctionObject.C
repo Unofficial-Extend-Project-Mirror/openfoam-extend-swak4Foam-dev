@@ -166,7 +166,7 @@ bool manipulateFvSolutionFvSchemesFunctionObject::start()
     return true;
 }
 
-void manipulateFvSolutionFvSchemesFunctionObject::write()
+void manipulateFvSolutionFvSchemesFunctionObject::writeSimple()
 {
     if(this->manipulateFvSolution(obr().time())) {
         rereadFvSolution();
