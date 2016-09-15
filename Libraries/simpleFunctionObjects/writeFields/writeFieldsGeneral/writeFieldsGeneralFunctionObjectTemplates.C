@@ -39,7 +39,6 @@ Contributors/Copyright:
 #include "volFields.H"
 #include "IOmanip.H"
 #include "fvMesh.H"
-#include "fvCFD.H"
 
 #include "basicKinematicCloud.H"
 #include "objectRegistryUtility.H"

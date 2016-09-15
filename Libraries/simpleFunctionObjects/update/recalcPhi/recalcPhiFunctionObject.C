@@ -41,7 +41,12 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "swakTime.H"
 
-#include "fvCFD.H"
+#include "surfaceMesh.H"
+#include "fvMesh.H"
+#include "volFields.H"
+#include "surfaceFields.H"
+#include "surfaceInterpolate.H"
+#include "adjustPhi.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
