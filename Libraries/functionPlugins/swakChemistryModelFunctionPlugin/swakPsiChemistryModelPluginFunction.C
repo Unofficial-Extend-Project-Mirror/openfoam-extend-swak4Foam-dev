@@ -425,7 +425,7 @@ public:
         val->internalField()=dtChem;
 #else
 #ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
-        const_cast<scalarField&>(val->internalField())=dtChem;
+        const_cast<scalarField&>(val->internalField().field())=dtChem;
 #else
         val->dimensionedInternalField()=dtChem;
 #endif
