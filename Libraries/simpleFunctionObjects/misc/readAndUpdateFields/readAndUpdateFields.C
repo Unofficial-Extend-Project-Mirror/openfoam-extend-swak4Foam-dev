@@ -167,7 +167,12 @@ void Foam::readAndUpdateFields::end()
 }
 
 
-void Foam::readAndUpdateFields::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::readAndUpdateFields::write()
 {
     // Do nothing
 }

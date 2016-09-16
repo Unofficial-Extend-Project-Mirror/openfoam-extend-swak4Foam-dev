@@ -177,7 +177,12 @@ void Foam::solverPerformanceToGlobalVariables::read(const dictionary& dict)
             << endl;
 }
 
-void Foam::solverPerformanceToGlobalVariables::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::solverPerformanceToGlobalVariables::write()
 {
     executeAndWriteToGlobal();
 }

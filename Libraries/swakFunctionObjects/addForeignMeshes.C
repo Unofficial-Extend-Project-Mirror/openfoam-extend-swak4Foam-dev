@@ -77,7 +77,12 @@ void Foam::addForeignMeshes::end()
 {
 }
 
-void Foam::addForeignMeshes::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::addForeignMeshes::write()
 {
 }
 

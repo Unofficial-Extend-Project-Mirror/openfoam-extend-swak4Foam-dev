@@ -155,7 +155,12 @@ void Foam::expressionField::read(const dictionary& dict)
     }
 }
 
-void Foam::expressionField::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::expressionField::write()
 {
     if(active_) {
         Info << "Creating expression field " << name_ << " ..." << flush;

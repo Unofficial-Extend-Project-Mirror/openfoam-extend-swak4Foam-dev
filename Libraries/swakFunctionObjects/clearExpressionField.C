@@ -102,7 +102,12 @@ void Foam::clearExpressionField::end()
 {
 }
 
-void Foam::clearExpressionField::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::clearExpressionField::write()
 {
 }
 

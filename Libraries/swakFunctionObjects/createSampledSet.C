@@ -93,7 +93,12 @@ void Foam::createSampledSet::end()
 {
 }
 
-void Foam::createSampledSet::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::createSampledSet::write()
 {
 }
 

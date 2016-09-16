@@ -167,7 +167,11 @@ public:
         virtual void end();
 
         //- Write
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+        virtual bool write();
+#else
         virtual void write();
+#endif
 
         //- Update for changes of mesh
         virtual void updateMesh(const mapPolyMesh&)

@@ -101,7 +101,12 @@ void Foam::foreignMeshesFollowTime::end()
     followCurrentTime();
 }
 
-void Foam::foreignMeshesFollowTime::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::foreignMeshesFollowTime::write()
 {
     followCurrentTime();
 }
