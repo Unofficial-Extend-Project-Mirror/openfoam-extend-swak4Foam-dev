@@ -760,7 +760,10 @@ void FieldValueExpressionDriver::setResult(
 
     typ_=pTraits<T>::typeName;
 
-    this->result().setResult(result.internalField(),isPointField);
+    this->result().setResult(
+        (Field<typename T::value_type>&)(result.internalField()),
+        isPointField
+    );
 
     isLogical_=false;
     isSurfaceField_=isSurfaceField;
