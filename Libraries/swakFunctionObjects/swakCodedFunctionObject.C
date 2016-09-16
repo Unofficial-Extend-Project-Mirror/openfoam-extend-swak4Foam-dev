@@ -25,7 +25,7 @@ License
 
 #include "swak.H"
 
-#ifndef FOAM_HAS_NO_CODED_CLASS
+#if !defined(FOAM_HAS_NO_CODED_CLASS) && !defined(FOAM_CODED_FUNCTION_OBJECT_NEW_INTERFACE)
 
 #include "swakCodedFunctionObject.H"
 #include "volFields.H"
