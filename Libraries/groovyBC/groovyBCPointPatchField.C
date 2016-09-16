@@ -109,7 +109,7 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
             "const DimensionedField<Type, pointMesh>& iF,"
             "const dictionary& dict"
             ")"
-        ) << "No value defined for " << this->dimensionedInternalField().name()
+        ) << "No value defined for " << this->internalField().name()
             << " on " << this->patch().name() << " therefore using "
 #ifndef FOAM_NO_MIXED_POINT_PATCH
             << "the internal field next to the patch"

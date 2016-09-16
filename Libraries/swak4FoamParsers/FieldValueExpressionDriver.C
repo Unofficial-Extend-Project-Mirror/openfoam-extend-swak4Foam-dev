@@ -202,7 +202,13 @@ tmp<volScalarField> FieldValueExpressionDriver::makeRandomField(label seed)
 {
     tmp<volScalarField> f=makeConstantField<volScalarField>(0.);
 
-    f->internalField()=CommonValueExpressionDriver::makeRandomField(seed);
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+    =
+        CommonValueExpressionDriver::makeRandomField(seed);
 
     f->correctBoundaryConditions();
 
@@ -226,7 +232,13 @@ tmp<volScalarField> FieldValueExpressionDriver::makeGaussRandomField(label seed)
 {
     tmp<volScalarField> f=makeConstantField<volScalarField>(0.);
 
-    f->internalField()=CommonValueExpressionDriver::makeGaussRandomField(seed);
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+    =
+        CommonValueExpressionDriver::makeGaussRandomField(seed);
 
     f->correctBoundaryConditions();
 
@@ -278,7 +290,13 @@ tmp<pointVectorField> FieldValueExpressionDriver::makePointPositionField()
             "zeroGradient"
         )
     );
-    f->internalField()=mesh_.points();
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<vectorField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+    =
+        mesh_.points();
     f->correctBoundaryConditions();
 
     return f;

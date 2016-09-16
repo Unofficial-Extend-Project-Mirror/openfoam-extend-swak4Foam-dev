@@ -127,7 +127,12 @@ void lcsMomentumSourcePluginFunction::doEvaluation()
 #ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
     pSource->internalField()=SU.field();
 #else
-    pSource->internalField()=SU.field()/(mesh().time().deltaT().value()*mesh().V());
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<vectorField&>(pSource->internalField().field())
+#else
+    pSource->internalField()
+#endif
+        =SU.field()/(mesh().time().deltaT().value()*mesh().V());
 #endif
 
     result().setObjectResult(pSource);

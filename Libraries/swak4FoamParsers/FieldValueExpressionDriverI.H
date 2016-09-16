@@ -637,7 +637,12 @@ inline tmp<FType> FieldValueExpressionDriver::makeFieldInternal(
                 << exit(FatalError);
     }
 
-    f->internalField()=val;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<Field<typename FType::value_type>&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+        = val;
 
     correctField(f);
 

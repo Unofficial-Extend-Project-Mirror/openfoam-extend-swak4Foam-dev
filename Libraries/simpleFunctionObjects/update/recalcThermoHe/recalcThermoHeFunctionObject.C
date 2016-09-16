@@ -96,7 +96,12 @@ void recalcThermoHeFunctionObject::recalc()
     forAll(allCells,cellI) {
         allCells[cellI]=cellI;
     }
-    h.internalField()=thermo.he(
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(h.internalField().field())
+#else
+    h.internalField()
+#endif
+    = thermo.he(
         p.internalField(),
         T.internalField(),
         allCells

@@ -114,7 +114,12 @@ void lcsMassSourcePluginFunction::doEvaluation()
         )
     );
 
-    pSource->internalField()=Srho.field();
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(pSource->internalField().field())
+#else
+    pSource->internalField()
+#endif
+        =Srho.field();
 
     result().setObjectResult(pSource);
 }

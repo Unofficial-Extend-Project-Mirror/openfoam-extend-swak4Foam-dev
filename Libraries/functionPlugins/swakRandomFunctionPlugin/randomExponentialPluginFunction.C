@@ -107,7 +107,13 @@ void randomExponentialPluginFunction<FType,DType>::doEvaluation()
         )
     );
 
-    doEvaluationInternal(pRandom->internalField());
+    doEvaluationInternal(
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<scalarField&>(pRandom->internalField().field())
+#else
+        pRandom->internalField()
+#endif
+    );
 
     this->result().setObjectResult(pRandom);
 }

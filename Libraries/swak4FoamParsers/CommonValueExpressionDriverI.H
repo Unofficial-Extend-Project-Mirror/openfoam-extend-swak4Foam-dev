@@ -652,7 +652,12 @@ namespace Foam {
             bool sameSize=vals.size()==f->size();
             reduce(sameSize,andOp<bool>());
             if(sameSize) {
-                f->internalField()=vals;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                const_cast<Field<Type>&>(f->internalField().field())
+#else
+                f->internalField()
+#endif
+                    = vals;
             } else {
                 Type avg=gAverage(vals);
 
@@ -670,7 +675,12 @@ namespace Foam {
                     }
                 }
 
-                f->internalField()=avg;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                const_cast<Field<Type>&>(f->internalField().field())
+#else
+                f->internalField()
+#endif
+                    = avg;
             }
 
             correctField(f());
