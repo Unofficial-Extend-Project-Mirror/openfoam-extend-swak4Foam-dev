@@ -111,7 +111,8 @@ void meshLayersGeneralPluginFunction::doEvaluation()
             for(label i=0;i<layers.boundaryField()[patchI].size();i++) {
                 label faceI=mesh().boundaryMesh()[patchI].start()+i;
 
-                layers.boundaryField()[patchI][i]=faceValues_[faceI].dist()/2;
+                const_cast<scalar&>(layers.boundaryField()[patchI][i])=
+                    faceValues_[faceI].dist()/2;
             }
         }
     }

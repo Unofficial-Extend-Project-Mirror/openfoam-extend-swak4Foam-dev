@@ -378,7 +378,8 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceProjectionField()
     forAll(mesh_.boundaryMesh(),patchI)
     {
         labelList cNumbers = mesh_.boundaryMesh()[patchI].faceCells();
-        fvsPatchVectorField & fFace = f->boundaryField()[patchI];
+        fvsPatchVectorField & fFace =
+            const_cast<fvsPatchVectorField&>(f->boundaryField()[patchI]);
 
         forAll(fFace,faceI)
         {
@@ -665,7 +666,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToField(
             for(label i=0;i<f->boundaryField()[patchI].size();i++) {
                 label faceI=mesh().boundaryMesh()[patchI].start()+i;
 
-                f->boundaryField()[patchI][i]=faceValues[faceI].dist();
+                const_cast<scalar&>(f->boundaryField()[patchI][i])=
+                    faceValues[faceI].dist();
             }
         }
     }
@@ -728,7 +730,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeNearDistanceField()
 
     f->dimensions().reset(mesh_.C().dimensions());
     nearWallDist dist(mesh_);
-    f->boundaryField()==dist;
+    const_cast<volScalarField::GeometricBoundaryField&>(f->boundaryField())==dist;
     f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
@@ -819,7 +821,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeInternalFaceField()
 
     forAll(f->boundaryField(),patchI) {
         forAll(f().boundaryField()[patchI],faceI) {
-            f->boundaryField()[patchI][faceI]=0;
+            const_cast<scalar&>(f->boundaryField()[patchI][faceI])=0;
         }
     }
 

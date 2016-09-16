@@ -491,7 +491,9 @@ void streamFunctionPluginFunction::doEvaluation()
 
     // Normalise the stream-function by the 2D mesh thickness
     streamFunction /= thickness;
-    streamFunction.boundaryField() = 0.0;
+    const_cast<pointScalarField::GeometricBoundaryField&>(
+        streamFunction.boundaryField()
+    ) = 0.0;
     // end of 'borrowed' code
 
     result().setObjectResult(pStreamFunction);
