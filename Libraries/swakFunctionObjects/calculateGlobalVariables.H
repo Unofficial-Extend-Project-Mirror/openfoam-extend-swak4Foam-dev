@@ -114,8 +114,8 @@ public:
 
     // Member Functions
 
-    //- Called when time was set at the end of the Time::operator++ 
-    virtual void timeSet();         
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
 
     //- Read the forces data
     virtual void read(const dictionary&);

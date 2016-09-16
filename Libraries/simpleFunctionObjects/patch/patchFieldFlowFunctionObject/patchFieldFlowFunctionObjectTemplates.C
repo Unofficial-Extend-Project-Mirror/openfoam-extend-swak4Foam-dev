@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchFieldFlowFunctionObject.H"
@@ -80,12 +80,12 @@ Field<T> patchFieldFlowFunctionObject::fieldFlow(const word& fieldName,T unsetVa
     }
 
     if(verbose()) {
-        Info<< regionString() 
+        Info<< regionString()
             << " Flows of " << fieldName << " :";
 
         forAll(patchNames_, patchI)
         {
-            Info << "  " << patchNames_[patchI] << " = " 
+            Info << "  " << patchNames_[patchI] << " = "
                 << vals[patchI];
         }
 

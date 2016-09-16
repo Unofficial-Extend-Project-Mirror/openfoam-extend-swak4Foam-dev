@@ -31,7 +31,7 @@ Contributors/Copyright:
     2012-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "readAndUpdateFields.H"
@@ -102,19 +102,19 @@ void Foam::readAndUpdateFields::read(const dictionary& dict)
 
         //Info<< type() << " " << name_ << ":" << nl;
 
-        // Clear out any previously loaded fields 
+        // Clear out any previously loaded fields
         vsf_.clear();
         vvf_.clear();
         vSpheretf_.clear();
         vSymmtf_.clear();
         vtf_.clear();
-        
+
         psf_.clear();
         pvf_.clear();
         pSpheretf_.clear();
         pSymmtf_.clear();
         ptf_.clear();
-        
+
         forAll(fieldSet_, fieldI)
         {
             bool found = loadField<scalar>(fieldSet_[fieldI], vsf_, psf_);
@@ -122,14 +122,14 @@ void Foam::readAndUpdateFields::read(const dictionary& dict)
             found = found || loadField<sphericalTensor>(fieldSet_[fieldI], vSpheretf_, pSpheretf_);
             found = found || loadField<symmTensor>(fieldSet_[fieldI], vSymmtf_, pSymmtf_);
             found = found || loadField<tensor>(fieldSet_[fieldI], vtf_, ptf_);
-        
+
             if(!found)
-            { 
+            {
                 FatalErrorIn("Foam::readAndUpdateFields::read(const dictionary& dict)")
                     << "Field " << fieldSet_[fieldI] << " does not exist"
                         << endl
                         << exit(FatalError);
-                
+
             }
         }
     }

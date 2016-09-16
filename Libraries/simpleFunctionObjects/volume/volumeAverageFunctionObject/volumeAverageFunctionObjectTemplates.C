@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "volumeAverageFunctionObject.H"
@@ -59,7 +59,7 @@ Field<T> volumeAverageFunctionObject::average(const word& fieldName,T unsetVal) 
     Field<T> vals(1, unsetVal);
 
     const fvMesh &mesh=refCast<const fvMesh>(obr_);
-    
+
     vals[0] = (
         sum
         (
@@ -68,7 +68,7 @@ Field<T> volumeAverageFunctionObject::average(const word& fieldName,T unsetVal) 
     ).value();
 
     if(verbose()) {
-        Info<< regionString() 
+        Info<< regionString()
             << " Average of " << fieldName << " = "
             << vals[0] << "  " << fld.dimensions() << endl;
     }
