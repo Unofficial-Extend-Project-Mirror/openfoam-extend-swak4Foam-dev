@@ -44,6 +44,7 @@ Contributors/Copyright:
 #include "argList.H"
 #include "swakTime.H"
 #include "polyMesh.H"
+#include "fvMesh.H"
 #include "OFstream.H"
 #include "IOPtrList.H"
 #include "IFstream.H"
