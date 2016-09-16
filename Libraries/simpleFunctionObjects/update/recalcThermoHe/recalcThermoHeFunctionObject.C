@@ -38,6 +38,11 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
+
 #ifdef FOAM_HAS_ENERGY_HE
 
 #include "recalcThermoHeFunctionObject.H"

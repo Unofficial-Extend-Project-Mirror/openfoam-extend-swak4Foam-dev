@@ -51,6 +51,11 @@ Contributors/Copyright:
 
 #include "fvc.H"
 
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
+
 namespace Foam {
 
 defineTypeNameAndDebug(streamFunctionPluginFunction,1);
