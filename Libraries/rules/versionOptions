@@ -64,3 +64,9 @@ else
      FVOPTIONS_INC=-I$(LIB_SRC)/fvOptions/lnInclude
   endif
 endif
+
+ifndef FOAM_DEV
+  ifeq "4" "$(word 1, $(sort 4 $(WM_PROJECT_VERSION)))"
+    NEEDS_FILTER_DROPIN=1
+  endif
+endif
