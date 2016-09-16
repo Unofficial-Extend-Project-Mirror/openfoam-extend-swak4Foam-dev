@@ -174,7 +174,8 @@ void distributionFunctionObject::writeSimple() {
             << "Distribution for " << name() << " has size 0. "
                 << "Doing nothing"
                 << endl;
-        return;
+
+        // return;
     }
     if(Pstream::master()) {
         if(writeTimeline()) {
