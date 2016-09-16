@@ -655,7 +655,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToField(
     );
 
     forAll(cellValues,cellI) {
-        f->internalField()[cellI]=cellValues[cellI].dist();
+        const_cast<scalar&>(f->internalField()[cellI])=
+            cellValues[cellI].dist();
     }
     forAll(f->boundaryField(), patchI)
     {

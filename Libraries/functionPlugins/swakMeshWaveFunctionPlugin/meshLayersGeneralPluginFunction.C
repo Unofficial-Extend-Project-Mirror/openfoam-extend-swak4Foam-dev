@@ -101,7 +101,8 @@ void meshLayersGeneralPluginFunction::doEvaluation()
     volScalarField &layers=pLayers();
 
     forAll(cellValues_,cellI) {
-        layers.internalField()[cellI]=cellValues_[cellI].dist()/2;
+        const_cast<scalar&>(layers.internalField()[cellI])=
+            cellValues_[cellI].dist()/2;
     }
     forAll(layers.boundaryField(), patchI)
     {
