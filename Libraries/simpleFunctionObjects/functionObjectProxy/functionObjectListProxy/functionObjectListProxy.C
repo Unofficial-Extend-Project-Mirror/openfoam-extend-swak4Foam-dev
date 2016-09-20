@@ -142,7 +142,7 @@ bool functionObjectListProxy::execute(const bool forceWrite)
 #ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
     return functions().execute();
 #else
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     if(forceWrite) {
         return functions().execute(); // there is no .write()-method
     } else {

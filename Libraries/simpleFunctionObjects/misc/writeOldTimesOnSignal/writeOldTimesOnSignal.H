@@ -164,7 +164,7 @@ public:
 #else
     virtual bool execute(const bool forceWrite);
 
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     virtual bool execute() {
         return execute(false);
     }

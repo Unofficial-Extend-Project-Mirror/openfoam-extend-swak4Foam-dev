@@ -113,7 +113,7 @@ public:
     virtual bool execute();
 #endif
 
-#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     //- Interface for new functionObject
     virtual bool execute();
     virtual bool write();

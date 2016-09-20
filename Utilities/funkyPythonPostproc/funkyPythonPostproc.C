@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
 
         Info << "Function objects: execute " << functions.size() << " function objects" << endl;
         functions.execute(
-#if !defined(FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE) && !defined(FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD)
+#if !defined(FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE) && !defined(FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START)
             true
 #endif
         );
