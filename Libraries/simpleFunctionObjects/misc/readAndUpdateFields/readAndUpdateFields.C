@@ -175,6 +175,9 @@ void
 Foam::readAndUpdateFields::write()
 {
     // Do nothing
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

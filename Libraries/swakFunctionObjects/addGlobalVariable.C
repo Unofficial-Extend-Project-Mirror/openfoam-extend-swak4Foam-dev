@@ -114,6 +114,9 @@ void
 #endif
 Foam::addGlobalVariable::write()
 {
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 void Foam::addGlobalVariable::clearData()

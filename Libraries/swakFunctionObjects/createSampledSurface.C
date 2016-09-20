@@ -101,6 +101,9 @@ void
 #endif
 Foam::createSampledSurface::write()
 {
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 void Foam::createSampledSurface::clearData()

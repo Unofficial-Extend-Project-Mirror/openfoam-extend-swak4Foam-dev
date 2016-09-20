@@ -256,6 +256,9 @@ Foam::solvePDECommon::write()
 
         writeData();
     }
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 bool Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const

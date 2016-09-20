@@ -84,6 +84,9 @@ void
 #endif
 Foam::addForeignMeshes::write()
 {
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 void Foam::addForeignMeshes::clearData()

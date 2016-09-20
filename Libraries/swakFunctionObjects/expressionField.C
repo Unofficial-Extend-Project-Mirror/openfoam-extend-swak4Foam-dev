@@ -248,6 +248,9 @@ Foam::expressionField::write()
     }
 
     driver_->tryWrite();
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

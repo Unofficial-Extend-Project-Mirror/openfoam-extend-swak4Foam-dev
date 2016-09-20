@@ -185,6 +185,10 @@ void
 Foam::solverPerformanceToGlobalVariables::write()
 {
     executeAndWriteToGlobal();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 
