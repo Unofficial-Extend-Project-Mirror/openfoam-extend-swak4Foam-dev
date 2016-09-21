@@ -422,6 +422,10 @@ Contributors/Copyright:
 #endif
 
 #if (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#define FOAM_HAS_NO_IOFILTERFUNCTIONOBJECT_ANYMORE
+#endif
+
+#if (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
 // TODO: currently only used to comment the instantiations out
 #define FOAM_CODED_FUNCTION_OBJECT_NEW_INTERFACE
 #endif
