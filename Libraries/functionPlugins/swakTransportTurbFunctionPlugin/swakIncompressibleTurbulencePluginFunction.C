@@ -73,6 +73,14 @@ const incompressible::turbulenceModel &swakIncompressibleTurbulencePluginFunctio
 {
     static HashPtrTable<incompressible::turbulenceModel> turb_;
 
+    if(reg.foundObject<incompressible::turbulenceModel>("turbulenceProperties")) {
+        if(debug) {
+            Info << "swakIncompressibleTurbulencePluginFunction::turbInternal: "
+                << "turbulence model already in memory" << endl;
+        }
+        // Somebody else already registered this
+        return reg.lookupObject<incompressible::turbulenceModel>("turbulenceProperties");
+    }
     if(reg.foundObject<incompressible::LESModel>("LESProperties")) {
         if(debug) {
             Info << "swakIncompressibleTurbulencePluginFunction::turbInternal: "
