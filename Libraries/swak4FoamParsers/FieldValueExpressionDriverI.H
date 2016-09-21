@@ -761,7 +761,7 @@ void FieldValueExpressionDriver::setResult(
     typ_=pTraits<T>::typeName;
 
     this->result().setResult(
-        (Field<typename T::value_type>&)(result.internalField()),
+        const_cast<Field<typename T::value_type>&>(result.internalField()),
         isPointField
     );
 

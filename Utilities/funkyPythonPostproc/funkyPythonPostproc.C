@@ -190,6 +190,11 @@ int main(int argc, char *argv[])
             true,
             failOnException
         );
+        if(!ok) {
+            WarningIn(args.executable())
+                << "Problem with startCode?"
+                    << endl;
+        }
     }
 
     forAll(timeDirs, timeI)
@@ -228,6 +233,11 @@ int main(int argc, char *argv[])
                 true,
                 failOnException
             );
+            if(!ok) {
+                WarningIn(args.executable())
+                    << "Problem with executeCode?"
+                        << endl;
+            }
         }
 
         Info << endl;
@@ -244,6 +254,11 @@ int main(int argc, char *argv[])
             true,
             failOnException
         );
+        if(!ok) {
+            WarningIn(args.executable())
+                << "Problem with endCode?"
+                    << endl;
+        }
         Info << endl;
     }
 
