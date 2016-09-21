@@ -46,7 +46,7 @@ graphFormat     raw;
 
 runTimeModifiable yes;
 
-functions (
+functions {
     // listVariables {
     //     type listRegisteredObjects;
     // }
@@ -154,7 +154,7 @@ functions (
     // listVariables {
     //     type listRegisteredObjects;
     // }
-);
+}
 
 libs (
     "libOpenFOAM.so"

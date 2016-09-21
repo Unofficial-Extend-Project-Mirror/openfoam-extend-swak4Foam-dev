@@ -41,6 +41,10 @@ solvers
         maxIter          100;
     };
 
+    pcorrFinal {
+        $pcorr;
+        relTol 0;
+    }
     p_rgh
     {
         solver GAMG;

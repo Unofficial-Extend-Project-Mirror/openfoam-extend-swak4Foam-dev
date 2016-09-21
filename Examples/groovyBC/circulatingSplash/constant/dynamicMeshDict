@@ -23,7 +23,8 @@ dynamicRefineFvMeshCoeffs
     refineInterval 1;
 
     // volScalarField to base refinement on
-    field alpha1;
+    //    field alpha1;
+    field alpha.water;
 
     //
     // 1. interpolate field
@@ -54,7 +55,12 @@ dynamicRefineFvMeshCoeffs
     maxCells 500000;
 
     // Fluxes to correct and variable they can be interpolated from
-    correctFluxes ((phi U));
+    correctFluxes (
+        (phi U)
+        (nHatf none)
+        (rhoPhi none)
+        (alphaPhi none)
+        (ghf none)    );
 
     // Write cellLevel?
     dumpLevel true;

@@ -56,7 +56,7 @@ libs (
 ) ;
 
 functions
-(
+{
     planeAverage
     {
         type swakExpression;
@@ -212,6 +212,6 @@ functions
 
         ignore_unimplemented_simpleFunctionObject::movePoints true;
     }
-);
+}
 
 // ************************************************************************* //

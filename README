@@ -458,17 +458,17 @@ S_{expl} + S_{impl} T
     - Solver :: solidDisplacementFoam
 **** circulatingSplash
     - Solver :: interDyMFoam
+    - Preparation :: =pyFoamPrepareCase.py=
 **** movingConeDistorted
     - Solver :: pimpleDyMFoam
     - Also demonstrates :: =swakExpression= with =surface=. Due to a
       problem described below this currently doesn't work
 **** average-t-junction
     - Solver :: pimpleFoam
-    - Mesh preparation :: Execute the script =prepare.sh= in that
-         directory (requires PyFoam: if not installed change in the
-         =boundary=-file the type of the =defaultFaces= to =wall=)
+    - Mesh preparation :: =pyFoamPrepareCase.sh=
 **** delayed-t-junction
     - Solver :: pimpleFoam
+    - Mesh preparation :: =pyFoamPrepareCase.sh=
     - Demonstrates :: Delayed variables to simulate an inflow that
                       depends on the value of the outflow
 **** multiRegionHeaterFeedback
