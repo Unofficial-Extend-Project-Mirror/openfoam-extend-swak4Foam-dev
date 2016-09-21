@@ -34,6 +34,8 @@ License
 template<class OutputFilter>
 void Foam::OutputFilterFunctionObject<OutputFilter>::readDict()
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::readDict()" << endl;
+
     dict_.readIfPresent("region", regionName_);
     dict_.readIfPresent("dictionary", dictName_);
     dict_.readIfPresent("enabled", enabled_);
@@ -57,8 +59,11 @@ bool Foam::OutputFilterFunctionObject<OutputFilter>::active() const
 template<class OutputFilter>
 void Foam::OutputFilterFunctionObject<OutputFilter>::allocateFilter()
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::allocateFilter()" << endl;
+    Dbug << this->name() << " OutputFilterFunctionObject::dictName_: " << dictName_ << endl;
     if (dictName_.size())
     {
+        Dbug << this->name() << " OutputFilterFunctionObject::Creating IOOutputFilter<OutputFilter> " << name()  << endl;
         ptr_.reset
         (
             new IOOutputFilter<OutputFilter>
@@ -71,6 +76,7 @@ void Foam::OutputFilterFunctionObject<OutputFilter>::allocateFilter()
     }
     else
     {
+        Dbug << this->name() << " OutputFilterFunctionObject::Creating OutputFilter " << name() << endl;
         ptr_.reset
         (
             new OutputFilter
@@ -81,12 +87,16 @@ void Foam::OutputFilterFunctionObject<OutputFilter>::allocateFilter()
             )
         );
     }
+
+    Dbug << this->name() << " OutputFilterFunctionObject::allocateFilter() - end" << endl;
 }
 
 
 template<class OutputFilter>
 void Foam::OutputFilterFunctionObject<OutputFilter>::destroyFilter()
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::destroyFilter()" << endl;
+
     ptr_.reset();
 }
 
@@ -117,6 +127,9 @@ Foam::OutputFilterFunctionObject<OutputFilter>::OutputFilterFunctionObject
     outputControl_(t, dict, "output"),
     evaluateControl_(t, dict, "evaluate")
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::Constructor" << endl;
+
+    read(dict);
     readDict();
 }
 
@@ -140,12 +153,16 @@ void Foam::OutputFilterFunctionObject<OutputFilter>::off()
 template<class OutputFilter>
 bool Foam::OutputFilterFunctionObject<OutputFilter>::start()
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::start()" << endl;
+
     readDict();
 
     if (enabled_ && storeFilter_)
     {
         allocateFilter();
     }
+
+    Dbug << this->name() << " OutputFilterFunctionObject::start() - end" << endl;
 
     return true;
 }
@@ -157,6 +174,8 @@ bool Foam::OutputFilterFunctionObject<OutputFilter>::execute
     const bool forceWrite
 )
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::execute() forceWrite: " << forceWrite << endl;
+
     if (active())
     {
         if (!storeFilter_)
@@ -187,6 +206,8 @@ bool Foam::OutputFilterFunctionObject<OutputFilter>::execute
 template<class OutputFilter>
 bool Foam::OutputFilterFunctionObject<OutputFilter>::end()
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::end()" << endl;
+
     if (enabled_)
     {
         if (!storeFilter_)
@@ -275,8 +296,11 @@ bool Foam::OutputFilterFunctionObject<OutputFilter>::read
     const dictionary& dict
 )
 {
+    Dbug << this->name() << " OutputFilterFunctionObject::read()" << endl;
+
     if (dict != dict_)
     {
+        Dbug << this->name() << " OutputFilterFunctionObject::read() - Dictionary changed" << endl;
         dict_ = dict;
         outputControl_.read(dict);
 

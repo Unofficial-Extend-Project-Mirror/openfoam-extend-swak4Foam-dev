@@ -109,6 +109,8 @@ simpleFunctionObject::simpleFunctionObject
     ),
     obr_(time_.lookupObject<objectRegistry>(regionName_))
 {
+    Dbug << name << " constructor" << endl;
+
     if(!dict.found("outputControlMode")) {
         WarningIn("simpleFunctionObject::simpleFunctionObject")
             << "'outputControlMode' not found in " << this->name() << endl
@@ -172,7 +174,7 @@ bool simpleFunctionObject::start()
 
 bool simpleFunctionObject::outputTime(const bool forceWrite)
 {
-    Dbug << name() << "::output() - Entering" << endl;
+    Dbug << name() << "::outputTime() - Entering" << endl;
 
     if(time_.time().value()<after_) {
         return false;
@@ -223,7 +225,8 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
 
 bool simpleFunctionObject::execute(const bool forceWrite)
 {
-    Dbug << name() << "::execute() - Entering" << endl;
+    Dbug << name() << "::execute(forceWrite: " << forceWrite << ") - Entering" << endl;
+
     if(time_.time().value()<after_) {
         Dbug << name() << "::execute() - Leaving - after" << endl;
         return true;
@@ -244,6 +247,7 @@ bool simpleFunctionObject::execute(const bool forceWrite)
 
 void simpleFunctionObject::flush()
 {
+    Dbug << name() << "::flush()" << endl;
 }
 
 bool simpleFunctionObject::read(const dictionary& dict)

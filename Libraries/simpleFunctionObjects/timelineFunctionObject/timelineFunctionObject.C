@@ -75,6 +75,8 @@ timelineFunctionObject::timelineFunctionObject
         outputFileModeNames_[dict.lookupOrDefault<word>("outputFileMode","foam")]
     )
 {
+    Dbug << name << " - constructor" << endl;
+
     switch(outputFileMode_) {
         case ofmFoam:
             fileExtension_="";

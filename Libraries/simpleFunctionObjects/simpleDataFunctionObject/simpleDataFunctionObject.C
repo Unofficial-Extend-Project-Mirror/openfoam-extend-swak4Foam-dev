@@ -68,6 +68,8 @@ simpleDataFunctionObject::simpleDataFunctionObject
     simpleFunctionObject(name,t,dict),
     postProcDir_(defaultPostProcDir_)
 {
+    Dbug << name << " - Constructor" << endl;
+
     if(dict.found("postProcDir")) {
         postProcDir_=fileName(
             dict.lookup("postProcDir")
@@ -110,6 +112,8 @@ fileName simpleDataFunctionObject::baseDir()
 
 bool simpleDataFunctionObject::start()
 {
+    Dbug << name() << "::start()" << endl;
+
     simpleFunctionObject::start();
 
     mkDir(dataDir());
