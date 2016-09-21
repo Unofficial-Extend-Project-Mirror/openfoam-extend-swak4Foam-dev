@@ -23,6 +23,10 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
+#ifdef FOAM_HAS_NO_IOFILTERFUNCTIONOBJECT_ANYMORE
+
 #include "outputFilterOutputControl.H"
 #include "PstreamReduceOps.H"
 
@@ -215,5 +219,6 @@ bool Foam::outputFilterOutputControl::output()
     return false;
 }
 
+#endif
 
 // ************************************************************************* //
