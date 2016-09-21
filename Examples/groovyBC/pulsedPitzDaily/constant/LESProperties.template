@@ -14,8 +14,14 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
- LESModel            oneEqEddy;
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+LESModel        dynamicKEqn;
+<!--(else)-->
+LESModel            oneEqEddy;
 // LESModel            LRRDiffStress;
+<!--(end)-->
+
+turbulence on;
 
 delta               cubeRootVol;
 
@@ -29,6 +35,11 @@ oneEqEddyCoeffs
 {
     ck               0.07;
     ce               1.05;
+}
+
+dynamicKEqnCoeffs
+{
+    filter simple;
 }
 
 dynOneEqEddyCoeffs

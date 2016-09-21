@@ -440,6 +440,9 @@ S_{expl} + S_{impl} T
     functions etc) not all of the examples work with all
     OpenFOAM-installations "out of the box". Slight adaptions may be
     necessary
+
+    Some of the cases use the =pyFoamPrepareCase.py=-utility of [[https://openfoamwiki.net/index.php/Contrib/PyFoam][PyFoam]]
+    to set up the case for the current OpenFOAM-version
 *** groovyBC
     The old =groovyBC=-Demos
 **** pulsedPitzDaily
@@ -450,6 +453,7 @@ S_{expl} + S_{impl} T
          =simpleSwakFunctionObjects=. =solveLaplacianPDE= and
          =solveTransportPDE= for solving equations,
          =pythonIntegration= with calculations using =numpy=
+    - Preparation :: =pyFoamPrepareCase.py=
 **** wobbler
     - Solver :: solidDisplacementFoam
 **** circulatingSplash
