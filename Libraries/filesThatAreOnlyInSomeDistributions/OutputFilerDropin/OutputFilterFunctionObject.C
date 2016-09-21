@@ -126,6 +126,9 @@ Foam::OutputFilterFunctionObject<OutputFilter>::OutputFilterFunctionObject
     ),
     outputControl_(t, dict, "output"),
     evaluateControl_(t, dict, "evaluate")
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    ,lastTimeStepExecute_(-1)
+#endif
 {
     Dbug << this->name() << " OutputFilterFunctionObject::Constructor" << endl;
 
@@ -289,6 +292,40 @@ bool Foam::OutputFilterFunctionObject<OutputFilter>::adjustTimeStep()
     return true;
 }
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+
+template<class OutputFilter>
+bool Foam::OutputFilterFunctionObject<OutputFilter>::execute() {
+    Dbug << this->name() << " OutputFilterFunctionObject::execute()" << endl;
+    if(ensureExecuteOnce()) {
+        return execute(false);
+    } else {
+        return true;
+    }
+}
+
+template<class OutputFilter>
+bool Foam::OutputFilterFunctionObject<OutputFilter>::write() {
+    Dbug << this->name() << " OutputFilterFunctionObject::write()" << endl;
+    if(ensureExecuteOnce()) {
+        return execute(true);
+    } else {
+        return true;
+    }
+}
+template<class OutputFilter>
+bool Foam::OutputFilterFunctionObject<OutputFilter>::ensureExecuteOnce() {
+    bool firstTime=
+        lastTimeStepExecute_
+        !=
+        time_.timeIndex();
+    Dbug << this->name() << " OutputFilterFunctionObject::ensureExecuteOnce(): "
+        << firstTime << endl;
+    lastTimeStepExecute_=time_.timeIndex();
+    return firstTime;
+}
+
+#endif
 
 template<class OutputFilter>
 bool Foam::OutputFilterFunctionObject<OutputFilter>::read

@@ -101,6 +101,9 @@ simpleFunctionObject::simpleFunctionObject
     time_(t),
     lastWrite_(time_.value()),
     started_(false),
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    lastTimeStepExecute_(-1),
+#endif
     dict_(dict),
     regionName_(
         dict_.found("region")
@@ -227,6 +230,12 @@ bool simpleFunctionObject::execute(const bool forceWrite)
 {
     Dbug << name() << "::execute(forceWrite: " << forceWrite << ") - Entering" << endl;
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    if(!started_) {
+        read(dict_);
+    }
+#endif
+
     if(time_.time().value()<after_) {
         Dbug << name() << "::execute() - Leaving - after" << endl;
         return true;
@@ -244,6 +253,39 @@ bool simpleFunctionObject::execute(const bool forceWrite)
     Dbug << name() << "::execute() - Leaving" << endl;
     return true;
 }
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+
+bool simpleFunctionObject::execute() {
+    Dbug << name() << "::execute()" << endl;
+    if(ensureExecuteOnce()) {
+        return execute(false);
+    } else {
+        return true;
+    }
+}
+
+bool simpleFunctionObject::write() {
+    Dbug << name() << "::write()" << endl;
+    if(ensureExecuteOnce()) {
+        return execute(true);
+    } else {
+        return true;
+    }
+}
+
+bool simpleFunctionObject::ensureExecuteOnce() {
+    bool firstTime=
+        lastTimeStepExecute_
+        !=
+        time_.timeIndex();
+    Dbug << this->name() << "::ensureExecuteOnce(): "
+        << firstTime << endl;
+    lastTimeStepExecute_=time_.timeIndex();
+    return firstTime;
+}
+
+#endif
 
 void simpleFunctionObject::flush()
 {

@@ -106,6 +106,12 @@ class OutputFilterFunctionObject
         //- Pointer to the output filter
         autoPtr<OutputFilter> ptr_;
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+        //- make sure that execute is not called twice at one time-step
+        label lastTimeStepExecute_;
+
+        bool ensureExecuteOnce();
+#endif
 
     // Private Member Functions
 
@@ -209,12 +215,8 @@ public:
 
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
             //- Interface for new functionObject
-            virtual bool execute() {
-                return execute(false);
-            }
-            virtual bool write() {
-                return execute(true);
-            }
+            virtual bool execute();
+            virtual bool write();
 #endif
 
     //- Called when Time::run() determines that the time-loop exits
