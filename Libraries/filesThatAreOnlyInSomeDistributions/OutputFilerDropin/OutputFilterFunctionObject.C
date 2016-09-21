@@ -113,7 +113,7 @@ Foam::OutputFilterFunctionObject<OutputFilter>::OutputFilterFunctionObject
 :
     functionObject(name),
     time_(t),
-    dict_(dict),
+    //    dict_(dict),
     regionName_(polyMesh::defaultRegion),
     dictName_(),
     enabled_(true),

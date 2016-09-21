@@ -296,9 +296,17 @@ bool simpleFunctionObject::read(const dictionary& dict)
 {
     Dbug << name() << "::read() - Entering" << endl;
 
-    if (dict != dict_)
+    if (
+        dict != dict_
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+        ||
+        !started_
+#endif
+    )
     {
-        dict_ = dict;
+        if(dict_!=dict) {
+            dict_ = dict;
+        }
 
         if(dict_.found("outputInterval")) {
             outputInterval_=readLabel(dict.lookup("outputInterval"));
