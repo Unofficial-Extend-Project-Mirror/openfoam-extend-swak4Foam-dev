@@ -115,7 +115,12 @@ groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
             "const DimensionedField<Type, volMesh>& iF,"
             "const dictionary& dict"
             ")"
-        ) << "No value defined for " << this->internalField().name()
+        ) << "No value defined for "
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            << this->internalField().name()
+#else
+            << this->dimensionedInternalField().name()
+#endif
             << " on " << this->patch().name() << " therefore would be undefined "
             << "and set to the internal field next to the patch"
             << endl;
