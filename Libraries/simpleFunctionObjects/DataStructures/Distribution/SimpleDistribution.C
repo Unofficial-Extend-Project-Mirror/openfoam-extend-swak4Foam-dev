@@ -168,9 +168,11 @@ Type SimpleDistribution<Type>::min() const
 {
     Type val(pTraits<Type>::zero);
     for(direction i=0;i<pTraits<Type>::nComponents;i++) {
-        label index=this->validLimits(i).first();
-        label key=this->keys(i)[index];
-        setComponent(val,i)=component(this->binWidth(),i)*key;
+        if(this->keys(i).size()>0) {
+            label index=this->validLimits(i).first();
+            label key=this->keys(i)[index];
+            setComponent(val,i)=component(this->binWidth(),i)*key;
+        }
     }
 
     return val;
@@ -181,9 +183,11 @@ Type SimpleDistribution<Type>::max() const
 {
     Type val(pTraits<Type>::zero);
     for(direction i=0;i<pTraits<Type>::nComponents;i++) {
-        label index=this->validLimits(i).second();
-        label key=this->keys(i)[index];
-        setComponent(val,i)=component(this->binWidth(),i)*(key+1);
+        if(this->keys(i).size()>0) {
+            label index=this->validLimits(i).second();
+            label key=this->keys(i)[index];
+            setComponent(val,i)=component(this->binWidth(),i)*(key+1);
+        }
     }
 
     return val;
