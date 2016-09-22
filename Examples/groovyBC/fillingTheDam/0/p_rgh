@@ -22,19 +22,22 @@ boundaryField
 {
     leftWall
     {
-        type            buoyantPressure;
+        //        type            buoyantPressure;
+        type            fixedFluxPressure;
         value           uniform 0;
     }
 
     rightWall
     {
-        type            buoyantPressure;
+        //        type            buoyantPressure;
+        type            fixedFluxPressure;
         value           uniform 0;
     }
 
     lowerWall
     {
-        type            buoyantPressure;
+        //        type            buoyantPressure;
+        type            fixedFluxPressure;
         value           uniform 0;
     }
 

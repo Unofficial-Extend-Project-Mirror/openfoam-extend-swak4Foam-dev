@@ -103,6 +103,9 @@ functions
         valueType set;
         setName  fillingHeight;
         globalScopes ( "fillDam" );
+        aliases {
+            alpha1 alpha.water;
+        }
         expression "(alpha1 > aThres) ? pos().y : 0";
         accumulations (
             max
@@ -138,6 +141,10 @@ functions
                 initialValue "0";
             }
         );
+        aliases {
+            alpha1 alpha.water;
+        }
+        //        debugCommonDriver 1;
         variables (
             "currentPegel=(alpha1 > aThres) ? pos().y : 0;"
             "pegel=(currentPegel > pegel) ? currentPegel : pegel;"
@@ -152,7 +159,7 @@ functions
         surfaceName liquidSurf;
         surface {
             type isoSurface;
-            isoField alpha1;
+            isoField alpha.water;
             isoValue 0.5;
             interpolate true;
         }
@@ -187,6 +194,9 @@ functions
         verbose true;
         surfaceName liquidSurf2;
         globalScopes ( "fillDam" );
+        aliases {
+            alpha1 alpha.water;
+        }
         expression "alpha1*vol()/gridThick";
         accumulations (
             sum
@@ -292,6 +302,9 @@ functions
 
         // expression "tracer*alpha1";
         // mask "true";
+        aliases {
+            alpha1 alpha.water;
+        }
 
         expression "0";
         mask "alpha1<0.01";
@@ -311,6 +324,9 @@ functions
                         outputInterval 1;
                         valueType internalField;
                         toGlobalNamespace pythonStatistics;
+                        aliases {
+                            alpha1 alpha.water;
+                        }
                         variables (
                             "heightField=pos().y;"
                             "alphaField=alpha1;"
@@ -341,6 +357,7 @@ functions
                 }
                 readDuringConstruction true;
                 conditionFile "$FOAM_CASE/system/checkForNumpy.py";
+                initCode "";
             }
         }
         readDuringConstruction true;

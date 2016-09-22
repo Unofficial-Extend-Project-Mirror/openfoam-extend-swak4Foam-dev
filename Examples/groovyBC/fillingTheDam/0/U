@@ -37,9 +37,12 @@ boundaryField
                 initialValue "0";
             }
         );
+        aliases {
+            alpha1 alpha.water;
+        }
         variables (
             "aHeight{set'fillingLine}=average(alpha1*(max(pos().y)-min(pos().y)));"
-            "pling=aHeight>0.35;"
+            //            "pling=aHeight>0.35;"
             "full=(full>0) ? full : ((aHeight>0.35) ? 1 : 0);"
         );
     }
