@@ -54,3 +54,5 @@ then
 	wclean $plugins
     done
 fi
+
+rmdepall Libraries/filesThatAreOnlyInSomeDistributions
