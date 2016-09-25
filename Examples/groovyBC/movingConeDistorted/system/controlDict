@@ -198,6 +198,10 @@ functions
         );
         interpolationScheme nix;
     }
+    // whatIsHere {
+    //     type listRegisteredObjects;
+    //     ignore_unimplemented_simpleFunctionObject::movePoints true;
+    // }
     meshMovement
     {
         type swakExpression;
