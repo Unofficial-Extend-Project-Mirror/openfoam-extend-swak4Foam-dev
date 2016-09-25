@@ -266,7 +266,7 @@ tmp<volVectorField> FieldValueExpressionDriver::makePositionField()
                 false // don't register
             ),
             mesh_,
-            vector(0,0,0),
+            dimensionedVector("pos",dimless,vector::zero),
             "zeroGradient"
         )
     );
@@ -293,7 +293,7 @@ tmp<pointVectorField> FieldValueExpressionDriver::makePointPositionField()
                 false // don't register
             ),
             this->pMesh(),
-            vector::zero,
+            dimensionedVector("pos",dimless,vector::zero),
             "zeroGradient"
         )
     );
@@ -323,7 +323,7 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFacePositionField()
                 false // don't register
             ),
             mesh_,
-            vector::zero
+            dimensionedVector("pos",dimless,vector::zero)
         )
     );
     f->dimensions().reset(mesh_.Cf().dimensions());
@@ -347,7 +347,7 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceProjectionField()
                 false // don't register
             ),
             mesh_,
-            vector(0,0,0)
+            dimensionedVector("proj",dimless,vector::zero)
         )
     );
     f->dimensions().reset(mesh_.Cf().dimensions());
@@ -448,7 +448,7 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceField()
                 false // don't register
             ),
             mesh_,
-            vector(0,0,0)
+            dimensionedVector("faceField",dimless,vector::zero)
         )
     );
     f->dimensions().reset(mesh_.Sf().dimensions());
@@ -472,7 +472,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeAreaField()
                 false // don't register
             ),
             mesh_,
-            0.
+            dimensionedScalar("Area",dimless,0)
         )
     );
     f->dimensions().reset(mesh_.magSf().dimensions());
@@ -496,7 +496,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeVolumeField()
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("volume",dimless,0),
             "zeroGradient"
         )
     );
@@ -657,7 +657,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToField(
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("dist",dimless,0),
             "fixedValue"
         )
     );
@@ -696,7 +696,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceField()
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("distance",dimless,0),
             "fixedValue"
         )
     );
@@ -730,7 +730,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeNearDistanceField()
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("distance",dimless,0),
             "fixedValue"
         )
     );
@@ -759,7 +759,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeRDistanceField(const volVect
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("rdist",dimless,0),
             "zeroGradient"
         )
     );
