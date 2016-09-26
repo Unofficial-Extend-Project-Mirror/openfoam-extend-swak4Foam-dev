@@ -38,6 +38,11 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
+
 #ifdef FOAM_HAS_ENERGY_HE
 
 #include "recalcThermoHeFunctionObject.H"
@@ -96,14 +101,19 @@ void recalcThermoHeFunctionObject::recalc()
     forAll(allCells,cellI) {
         allCells[cellI]=cellI;
     }
-    h.internalField()=thermo.he(
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(h.internalField().field())
+#else
+    h.internalField()
+#endif
+    = thermo.he(
         p.internalField(),
         T.internalField(),
         allCells
     );
     forAll(h.boundaryField(), patchi)
     {
-        h.boundaryField()[patchi] ==
+        const_cast<volScalarField::PatchFieldType&>(h.boundaryField()[patchi]) ==
             thermo.he(
                 p.boundaryField()[patchi],
                 T.boundaryField()[patchi],
@@ -112,7 +122,8 @@ void recalcThermoHeFunctionObject::recalc()
     }
 
     // hBoundaryCorrection
-    volScalarField::GeometricBoundaryField& hbf = h.boundaryField();
+    volScalarField::GeometricBoundaryField& hbf =
+        const_cast<volScalarField::GeometricBoundaryField&>(h.boundaryField());
 
     forAll(hbf, patchi)
     {

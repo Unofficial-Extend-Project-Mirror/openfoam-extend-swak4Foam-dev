@@ -169,6 +169,7 @@ randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNo
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
+outputTime            return token::TOKEN_outputTime;
 
 vector                 return token::TOKEN_VECTOR;
 tensor                 return token::TOKEN_TENSOR;
@@ -271,6 +272,8 @@ zone                  {
              tokenTyp=token::TOKEN_FUNCTION_YID;
         } else if(fInfo->returnType()=="sphericalTensor") {
              tokenTyp=token::TOKEN_FUNCTION_HID;
+        } else if(fInfo->returnType()=="bool") {
+            tokenTyp=token::TOKEN_FUNCTION_LID;
         } else {
             driver.error (
                 *yylloc,

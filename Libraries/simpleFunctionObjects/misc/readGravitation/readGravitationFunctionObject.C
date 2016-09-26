@@ -84,7 +84,7 @@ readGravitationFunctionObject::readGravitationFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void readGravitationFunctionObject::write()
+void readGravitationFunctionObject::writeSimple()
 {
 }
 

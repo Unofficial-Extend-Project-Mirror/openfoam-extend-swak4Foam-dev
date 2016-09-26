@@ -57,6 +57,8 @@ Foam::expressionField::expressionField
     dimensions_(dimless),
     setDimensions_(false)
 {
+    Dbug << "expressionField::expressionField" << endl;
+
     if (!isA<fvMesh>(obr_))
     {
         active_=false;
@@ -65,7 +67,10 @@ Foam::expressionField::expressionField
                 << endl;
     }
     read(dict);
+    Dbug << "Read. Now writing" << endl;
     write();
+
+    Dbug << "expressionField::expressionField - end" << endl;
 }
 
 Foam::expressionField::~expressionField()
@@ -76,7 +81,9 @@ void Foam::expressionField::storeField(
     const T &data
 )
 {
+    Dbug << "storeField()" << endl;
     if(field_.empty()) {
+        Dbug << "storeField() - reset" << endl;
         field_.reset(
             new T(
                 IOobject(
@@ -100,13 +107,17 @@ void Foam::expressionField::storeField(
         dynamic_cast<T &>(field_()).dimensions().reset(dimensions_);
     }
 
+    Dbug << "autoWrite: " << this->autowrite_ << " output Time: "
+        << this->obr_.time().outputTime() << endl;
     if(
         this->autowrite_
         &&
         this->obr_.time().outputTime()
     ) {
+        Dbug << "storeField() - writing" << endl;
         field_->write();
     }
+    Dbug << "storeField() - end" << endl;
 }
 
 void Foam::expressionField::timeSet()
@@ -116,6 +127,8 @@ void Foam::expressionField::timeSet()
 
 void Foam::expressionField::read(const dictionary& dict)
 {
+    Dbug << " read(&dict) - active: " << active_ << endl;
+
     if(active_) {
         name_=word(dict.lookup("fieldName"));
         expression_=exprString(
@@ -154,10 +167,18 @@ void Foam::expressionField::read(const dictionary& dict)
         // this might not work when rereading ... but what is consistent in that case?
         driver_->createWriterAndRead(name_+"_"+type());
     }
+    Dbug << " read(&dict) - end " << endl;
 }
 
-void Foam::expressionField::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::expressionField::write()
 {
+    Dbug << "write()" << endl;
+
     if(active_) {
         Info << "Creating expression field " << name_ << " ..." << flush;
 
@@ -244,6 +265,10 @@ void Foam::expressionField::write()
     }
 
     driver_->tryWrite();
+    Dbug << "write() - end" << endl;
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

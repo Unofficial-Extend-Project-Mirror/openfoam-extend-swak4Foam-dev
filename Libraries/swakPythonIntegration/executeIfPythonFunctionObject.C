@@ -40,7 +40,6 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "swakTime.H"
-#include "argList.H"
 
 #include "objectRegistry.H"
 

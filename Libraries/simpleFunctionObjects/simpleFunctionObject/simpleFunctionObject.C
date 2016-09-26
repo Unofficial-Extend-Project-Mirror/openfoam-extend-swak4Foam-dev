@@ -101,6 +101,9 @@ simpleFunctionObject::simpleFunctionObject
     time_(t),
     lastWrite_(time_.value()),
     started_(false),
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    lastTimeStepExecute_(-1),
+#endif
     dict_(dict),
     regionName_(
         dict_.found("region")
@@ -109,6 +112,8 @@ simpleFunctionObject::simpleFunctionObject
     ),
     obr_(time_.lookupObject<objectRegistry>(regionName_))
 {
+    Dbug << name << " constructor" << endl;
+
     if(!dict.found("outputControlMode")) {
         WarningIn("simpleFunctionObject::simpleFunctionObject")
             << "'outputControlMode' not found in " << this->name() << endl
@@ -163,7 +168,7 @@ bool simpleFunctionObject::start()
         ||
         outputControlMode()==ocmDeltaTAndStartup
     ) {
-        write();
+        writeSimple();
         flush();
     }
 
@@ -172,7 +177,7 @@ bool simpleFunctionObject::start()
 
 bool simpleFunctionObject::outputTime(const bool forceWrite)
 {
-    Dbug << name() << "::output() - Entering" << endl;
+    Dbug << name() << "::outputTime() - Entering" << endl;
 
     if(time_.time().value()<after_) {
         return false;
@@ -223,7 +228,14 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
 
 bool simpleFunctionObject::execute(const bool forceWrite)
 {
-    Dbug << name() << "::execute() - Entering" << endl;
+    Dbug << name() << "::execute(forceWrite: " << forceWrite << ") - Entering" << endl;
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    if(!started_) {
+        read(dict_);
+    }
+#endif
+
     if(time_.time().value()<after_) {
         Dbug << name() << "::execute() - Leaving - after" << endl;
         return true;
@@ -234,7 +246,7 @@ bool simpleFunctionObject::execute(const bool forceWrite)
     if(this->outputTime(forceWrite)) {
         Dbug << name() << "::execute() - outputTime" << endl;
         timeSteps_=0;
-        write();
+        writeSimple();
         flush();
     }
 
@@ -242,17 +254,59 @@ bool simpleFunctionObject::execute(const bool forceWrite)
     return true;
 }
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+
+bool simpleFunctionObject::execute() {
+    Dbug << name() << "::execute()" << endl;
+    if(ensureExecuteOnce()) {
+        return execute(false);
+    } else {
+        return true;
+    }
+}
+
+bool simpleFunctionObject::write() {
+    Dbug << name() << "::write()" << endl;
+    if(ensureExecuteOnce()) {
+        return execute(true);
+    } else {
+        return true;
+    }
+}
+
+bool simpleFunctionObject::ensureExecuteOnce() {
+    bool firstTime=
+        lastTimeStepExecute_
+        !=
+        time_.timeIndex();
+    Dbug << this->name() << "::ensureExecuteOnce(): "
+        << firstTime << endl;
+    lastTimeStepExecute_=time_.timeIndex();
+    return firstTime;
+}
+
+#endif
+
 void simpleFunctionObject::flush()
 {
+    Dbug << name() << "::flush()" << endl;
 }
 
 bool simpleFunctionObject::read(const dictionary& dict)
 {
     Dbug << name() << "::read() - Entering" << endl;
 
-    if (dict != dict_)
+    if (
+        dict != dict_
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+        ||
+        !started_
+#endif
+    )
     {
-        dict_ = dict;
+        if(dict_!=dict) {
+            dict_ = dict;
+        }
 
         if(dict_.found("outputInterval")) {
             outputInterval_=readLabel(dict.lookup("outputInterval"));

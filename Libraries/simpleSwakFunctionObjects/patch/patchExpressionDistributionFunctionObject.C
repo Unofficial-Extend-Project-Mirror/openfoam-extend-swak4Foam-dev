@@ -141,7 +141,7 @@ void patchExpressionDistributionFunctionObject::getDistribution()
     getDistributionInternal(distSphericalTensor_);
 }
 
-void patchExpressionDistributionFunctionObject::write()
+void patchExpressionDistributionFunctionObject::writeSimple()
 {
     forAll(patchIDs_,i) {
         PatchValueExpressionDriver &driver=drivers_[i];
@@ -154,7 +154,7 @@ void patchExpressionDistributionFunctionObject::write()
         driver.parse(expression_);
     }
 
-    distributionFunctionObject::write();
+    distributionFunctionObject::writeSimple();
 
     if(verbose()) {
         Info << endl;

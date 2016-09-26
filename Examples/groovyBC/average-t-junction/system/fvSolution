@@ -74,6 +74,7 @@ relaxationFactors
     U               1;
     k               1;
     epsilon         1;
+    UFinal          $U;
 }
 
 

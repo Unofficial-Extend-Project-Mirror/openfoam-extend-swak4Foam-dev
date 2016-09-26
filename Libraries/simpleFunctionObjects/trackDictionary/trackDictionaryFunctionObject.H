@@ -232,7 +232,7 @@ public:
     virtual bool read(const dictionary& dict);
 
     //- Sample and write
-    virtual void write();
+    virtual void writeSimple();
 
     //- Optional stuff to do after write
     virtual void flush();

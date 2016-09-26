@@ -66,7 +66,8 @@ DebugOStream::DebugOStream(
 word getHex(const void *ptr)
 {
     std::ostringstream makeHex;
-    makeHex << std::hex << (void*)ptr;
+    makeHex << std::hex <<
+        const_cast<void*>(ptr);
     return word(makeHex.str());
 }
 

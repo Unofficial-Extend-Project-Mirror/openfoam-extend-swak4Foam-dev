@@ -68,6 +68,8 @@ simpleDataFunctionObject::simpleDataFunctionObject
     simpleFunctionObject(name,t,dict),
     postProcDir_(defaultPostProcDir_)
 {
+    Dbug << name << " - Constructor" << endl;
+
     if(dict.found("postProcDir")) {
         postProcDir_=fileName(
             dict.lookup("postProcDir")
@@ -79,7 +81,22 @@ simpleDataFunctionObject::simpleDataFunctionObject
 
 fileName simpleDataFunctionObject::dataDir()
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    // make sure that when starting we take the start time
+    if(
+        obr_.time().timeIndex()
+        <=
+        obr_.time().startTimeIndex()+1
+    ) {
+        return baseDir()/obr_.time().timeName(
+            obr_.time().startTime().value()
+        );
+    } else {
+        return baseDir()/obr_.time().timeName();
+    }
+#else
     return baseDir()/obr_.time().timeName();
+#endif
 }
 
 fileName simpleDataFunctionObject::baseDir()
@@ -110,6 +127,8 @@ fileName simpleDataFunctionObject::baseDir()
 
 bool simpleDataFunctionObject::start()
 {
+    Dbug << name() << "::start()" << endl;
+
     simpleFunctionObject::start();
 
     mkDir(dataDir());

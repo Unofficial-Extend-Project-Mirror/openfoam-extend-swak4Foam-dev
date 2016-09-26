@@ -119,8 +119,8 @@ fileName distributionFunctionObject::dataDir()
     }
 }
 
-void distributionFunctionObject::write() {
-    Dbug << name() << " write()" << endl;
+void distributionFunctionObject::writeSimple() {
+    Dbug << name() << " writeSimple()" << endl;
 
     clearDistributions();
 
@@ -170,11 +170,12 @@ void distributionFunctionObject::write() {
     }
 
     if(zeroDistribution) {
-        WarningIn("distributionFunctionObject::write")
+        WarningIn("distributionFunctionObject::writeSimple")
             << "Distribution for " << name() << " has size 0. "
                 << "Doing nothing"
                 << endl;
-        return;
+
+        // return;
     }
     if(Pstream::master()) {
         if(writeTimeline()) {

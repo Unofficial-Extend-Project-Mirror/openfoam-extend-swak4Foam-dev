@@ -990,6 +990,41 @@ void pythonInterpreterWrapper::getGlobals()
                                 double(v.z())
                             )
                         );
+                } else if(val.valueType()==pTraits<symmTensor>::typeName) {
+                    const symmTensor v=val.getResult<symmTensor>()()[0];
+                    PyObject_SetAttrString
+                        (
+                            m,
+                            const_cast<char*>(var.c_str()),
+                            Py_BuildValue(
+                                "dddddd",
+                                double(v.xx()),
+                                double(v.xy()),
+                                double(v.xz()),
+                                double(v.yy()),
+                                double(v.yz()),
+                                double(v.zz())
+                            )
+                        );
+                } else if(val.valueType()==pTraits<tensor>::typeName) {
+                    const tensor v=val.getResult<tensor>()()[0];
+                    PyObject_SetAttrString
+                        (
+                            m,
+                            const_cast<char*>(var.c_str()),
+                            Py_BuildValue(
+                                "ddddddddd",
+                                double(v.xx()),
+                                double(v.xy()),
+                                double(v.xz()),
+                                double(v.yx()),
+                                double(v.yy()),
+                                double(v.yz()),
+                                double(v.zx()),
+                                double(v.zy()),
+                                double(v.zz())
+                            )
+                        );
                 } else {
                     FatalErrorIn("pythonInterpreterWrapper::getGlobals()")
                         << "The variable " << var << " has the unsupported type "

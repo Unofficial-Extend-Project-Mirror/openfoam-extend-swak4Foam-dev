@@ -386,6 +386,15 @@ void CommonPluginFunction::evaluateInternal(
                 Info << "Used " << used << " characters "
                     << ". Now looking for " << lookFor << endl;
             }
+            if(used<0) {
+                FatalErrorIn("CommonPluginFunction::evaluateInternal")
+                    << "Error while looking for " << argumentTypes_[i]
+                        << " in " << currentContent << " of expression "
+                        << content
+                        << " in function " << this->helpText()
+                        << endl
+                        << exit(FatalError);
+            }
             used+=scanEmpty(currentContent.substr(used),lookFor);
             if(debug || parentDriver_.traceParsing()) {
                 Info << "Used " << used << " characters after looking for "

@@ -115,7 +115,8 @@ void surfaceValueAveragePluginFunction<Type>::doEvaluation()
 
     forAll(areaSum,cellI) {
         if(areaSum[cellI]>SMALL) {
-            pValueAverage->internalField()[cellI]/=areaSum[cellI];
+            const_cast<Type&>(pValueAverage->internalField()[cellI])
+                /=areaSum[cellI];
         }
     }
 

@@ -125,7 +125,11 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
         )
     );
     ResultType &initField=mappedField();
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<Field<Type>&>(initField.internalField().field())=defaultValue_;
+#else
     initField.internalField()=defaultValue_;
+#endif
     initField.correctBoundaryConditions();
 
     meshToMesh interpolation(

@@ -268,7 +268,7 @@ void Foam::solveLaplacianPDE::solve()
 		lduSolverPerformance  perf=eq.solve();
 #else
 		solverPerformance perf=eq.solve();
-#endif		
+#endif
                 if(
                     !perf.converged()
                     &&

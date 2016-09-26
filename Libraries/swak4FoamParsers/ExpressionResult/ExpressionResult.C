@@ -380,7 +380,7 @@ void ExpressionResult::calcIsSingleValue()
         }
     } else {
         FatalErrorIn("ExpressionResult::calcIsSingleValue()")
-            << "Not set. Can't determine if unifor," << endl
+            << "Not set. Can't determine if uniform" << endl
                 << exit(FatalError);
    }
 }

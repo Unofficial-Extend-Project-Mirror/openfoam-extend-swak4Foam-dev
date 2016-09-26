@@ -438,6 +438,8 @@ int main(int argc, char *argv[])
             << nl << endl;
     }
 
+    dummyPhi.clear();
+
     Info << "End\n" << endl;
 
     return 0;

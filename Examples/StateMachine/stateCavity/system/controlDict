@@ -1,0 +1,188 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.005;
+
+writeControl    timeStep;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+libs (
+    "libswakStateMachine.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+functions {
+    firstStateMachine {
+        type stateMachineCreateAndUpdate;
+        valueType internalField;
+        states (
+            start
+            one
+            two
+            buh
+        );
+        machineName firstMachine;
+        initialState start;
+        variables (
+            "theTime=time();"
+        );
+        transitions (
+            {
+                from start;
+                to one;
+                description "Move away from first state";
+                condition "true";
+                logicalAccumulation or;
+            }
+            {
+                from one;
+                to two;
+                description "The time has come";
+                condition "theTime>=0.05 && theTime<0.3";
+                logicalAccumulation or;
+            }
+            {
+                from two;
+                to buh;
+                description "Patch says no";
+                condition "stateMachine_isState(thirdMachine,noMove)";
+                logicalAccumulation or;
+            }
+        );
+    }
+    secondStateMachine {
+        type stateMachineCreateAndUpdate;
+        valueType internalField;
+        states (
+            stop
+            go
+        );
+        machineName secondMachine;
+        initialState stop;
+        transitions (
+            {
+                from stop;
+                to go;
+                description "Other machine in state 'two'";
+                condition "stateMachine_isState(firstMachine,two) && stateMachine_changedTo(secondMachine,stop)<5";
+                logicalAccumulation and;
+            }
+            {
+                from go;
+                to stop;
+                description "Go back after two steps";
+                condition "stateMachine_stepsSinceChange(secondMachine)>1";
+                logicalAccumulation or;
+            }
+        );
+    }
+    patchStateMachine {
+        type stateMachineCreateAndUpdate;
+        valueType patch;
+        patchName movingWall;
+        states (
+            move
+            noMove
+        );
+        initialState noMove;
+        machineName thirdMachine;
+        transitions (
+            {
+                from noMove;
+                to move;
+                description "Yipeee";
+                //                condition "stateMachine_isState(secondMachine,go) && stateMachine_stepsSinceChange(secondMachine)>1";
+                condition "stateMachine_isState(secondMachine,go)";
+                logicalAccumulation and;
+            }
+            {
+                from move;
+                to noMove;
+                description "Boooring!";
+                condition "stateMachine_timeSinceChange(thirdMachine)>0.07";
+                logicalAccumulation and;
+            }
+        );
+    }
+    moveBackToOneAtOutput {
+        type stateMachineSetState;
+        machineName firstMachine;
+        state one;
+        outputControlMode outputTime;
+    }
+    firstMachineState{
+        type stateMachineState;
+        verbose true;
+        machineName firstMachine;
+    }
+    secondMachineState{
+        $firstMachineState;
+        machineName secondMachine;
+    }
+    thirdMachineState{
+        $firstMachineState;
+        machineName thirdMachine;
+    }
+    pseudoTime {
+        type swakExpression;
+        valueType patch;
+        patchName movingWall;
+        writeStartTime yes;
+        verbose true;
+        expression "pseudoTime";
+        variables (
+            "dt=deltaT()*(stateMachine_isState(secondMachine,go) ? 1 : 0);"
+            "pseudoTime=pseudoTime+dt;"
+        );
+        storedVariables (
+            {
+                name pseudoTime;
+                initialValue "0";
+            }
+        );
+        accumulations (
+            average
+        );
+    }
+}
+
+// ************************************************************************* //

@@ -167,7 +167,7 @@ public:
 
     //     virtual void flush();
 
-    virtual void write();
+    virtual void writeSimple();
 
     virtual bool start();
 

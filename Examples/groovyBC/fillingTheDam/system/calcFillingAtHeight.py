@@ -1,4 +1,4 @@
-bins=numpy.linspace(min(minY),max(maxY),25)
+bins=numpy.linspace(minY,maxY,25)
 vol,edges=numpy.histogram(heightField,bins=bins,weights=volume)
 alpha,edges=numpy.histogram(heightField,bins=bins,weights=volume*alphaField)
 

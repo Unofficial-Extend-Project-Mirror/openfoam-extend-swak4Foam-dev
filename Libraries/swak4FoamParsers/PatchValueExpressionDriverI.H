@@ -962,7 +962,7 @@ namespace Foam {
             name=this->getAlias(name);
         }
 
-        typedef GeometricField<T,pointPatchField,pointMesh> localPointField;
+        //        typedef GeometricField<T,pointPatchField,pointMesh> localPointField;
 
         // dummy implemntation
         tmp<Field<T> > result(new Field<T>(this->pointSize(),pTraits<T>::zero));

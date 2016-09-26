@@ -64,7 +64,8 @@ timelineFunctionObject::timelineFunctionObject
 (
     const word &name,
     const Time& t,
-    const dictionary& dict
+    const dictionary& dict,
+    bool writeStartTime
 )
 :
     simpleDataFunctionObject(name,t,dict),
@@ -73,8 +74,23 @@ timelineFunctionObject::timelineFunctionObject
     ),
     outputFileMode_(
         outputFileModeNames_[dict.lookupOrDefault<word>("outputFileMode","foam")]
+    ),
+    writeStartTime_(
+        dict.lookupOrDefault<bool>(
+            "writeStartTime",
+            writeStartTime
+        )
     )
 {
+    Dbug << name << " - constructor" << endl;
+
+    if(!dict.found("writeStartTime")) {
+        WarningIn("timelineFunctionObject::timelineFunctionObject")
+            << "No entry 'writeStartTime' in " << dict.name()
+                << ". Assuming " << (writeStartTime ? "'yes'" : "'no'")
+                << endl;
+    }
+
     switch(outputFileMode_) {
         case ofmFoam:
             fileExtension_="";
@@ -182,6 +198,10 @@ bool timelineFunctionObject::start()
     }
 
     simpleDataFunctionObject::start();
+
+    if(writeStartTime_) {
+        writeSimple();
+    }
 
     return true;
 }

@@ -46,6 +46,13 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include <swak.H>
+
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
+
 namespace Foam {
 
 word FieldValueExpressionDriver::driverName_="internalField";
@@ -206,7 +213,13 @@ tmp<volScalarField> FieldValueExpressionDriver::makeRandomField(label seed)
 {
     tmp<volScalarField> f=makeConstantField<volScalarField>(0.);
 
-    f->internalField()=CommonValueExpressionDriver::makeRandomField(seed);
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+    =
+        CommonValueExpressionDriver::makeRandomField(seed);
 
     f->correctBoundaryConditions();
 
@@ -230,7 +243,13 @@ tmp<volScalarField> FieldValueExpressionDriver::makeGaussRandomField(label seed)
 {
     tmp<volScalarField> f=makeConstantField<volScalarField>(0.);
 
-    f->internalField()=CommonValueExpressionDriver::makeGaussRandomField(seed);
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+    =
+        CommonValueExpressionDriver::makeGaussRandomField(seed);
 
     f->correctBoundaryConditions();
 
@@ -251,7 +270,7 @@ tmp<volVectorField> FieldValueExpressionDriver::makePositionField()
                 false // don't register
             ),
             mesh_,
-            vector(0,0,0),
+            dimensionedVector("pos",dimless,vector::zero),
             "zeroGradient"
         )
     );
@@ -278,11 +297,17 @@ tmp<pointVectorField> FieldValueExpressionDriver::makePointPositionField()
                 false // don't register
             ),
             this->pMesh(),
-            vector::zero,
+            dimensionedVector("pos",dimless,vector::zero),
             "zeroGradient"
         )
     );
-    f->internalField()=mesh_.points();
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<vectorField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+    =
+        mesh_.points();
     f->correctBoundaryConditions();
 
     return f;
@@ -302,7 +327,7 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFacePositionField()
                 false // don't register
             ),
             mesh_,
-            vector::zero
+            dimensionedVector("pos",dimless,vector::zero)
         )
     );
     f->dimensions().reset(mesh_.Cf().dimensions());
@@ -326,7 +351,7 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceProjectionField()
                 false // don't register
             ),
             mesh_,
-            vector(0,0,0)
+            dimensionedVector("proj",dimless,vector::zero)
         )
     );
     f->dimensions().reset(mesh_.Cf().dimensions());
@@ -364,7 +389,8 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceProjectionField()
     forAll(mesh_.boundaryMesh(),patchI)
     {
         labelList cNumbers = mesh_.boundaryMesh()[patchI].faceCells();
-        fvsPatchVectorField & fFace = f->boundaryField()[patchI];
+        fvsPatchVectorField & fFace =
+            const_cast<fvsPatchVectorField&>(f->boundaryField()[patchI]);
 
         forAll(fFace,faceI)
         {
@@ -426,7 +452,7 @@ tmp<surfaceVectorField> FieldValueExpressionDriver::makeFaceField()
                 false // don't register
             ),
             mesh_,
-            vector(0,0,0)
+            dimensionedVector("faceField",dimless,vector::zero)
         )
     );
     f->dimensions().reset(mesh_.Sf().dimensions());
@@ -450,7 +476,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeAreaField()
                 false // don't register
             ),
             mesh_,
-            0.
+            dimensionedScalar("Area",dimless,0)
         )
     );
     f->dimensions().reset(mesh_.magSf().dimensions());
@@ -474,7 +500,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeVolumeField()
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("volume",dimless,0),
             "zeroGradient"
         )
     );
@@ -635,13 +661,14 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToField(
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("dist",dimless,0),
             "fixedValue"
         )
     );
 
     forAll(cellValues,cellI) {
-        f->internalField()[cellI]=cellValues[cellI].dist();
+        const_cast<scalar&>(f->internalField()[cellI])=
+            cellValues[cellI].dist();
     }
     forAll(f->boundaryField(), patchI)
     {
@@ -650,7 +677,8 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceToField(
             for(label i=0;i<f->boundaryField()[patchI].size();i++) {
                 label faceI=mesh().boundaryMesh()[patchI].start()+i;
 
-                f->boundaryField()[patchI][i]=faceValues[faceI].dist();
+                const_cast<scalar&>(f->boundaryField()[patchI][i])=
+                    faceValues[faceI].dist();
             }
         }
     }
@@ -672,7 +700,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceField()
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("distance",dimless,0),
             "fixedValue"
         )
     );
@@ -706,14 +734,14 @@ tmp<volScalarField> FieldValueExpressionDriver::makeNearDistanceField()
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("distance",dimless,0),
             "fixedValue"
         )
     );
 
     f->dimensions().reset(mesh_.C().dimensions());
     nearWallDist dist(mesh_);
-    f->boundaryField()==dist;
+    const_cast<volScalarField::GeometricBoundaryField&>(f->boundaryField())==dist;
     f->dimensions().reset(dimless);
 
     f->correctBoundaryConditions();
@@ -735,7 +763,7 @@ tmp<volScalarField> FieldValueExpressionDriver::makeRDistanceField(const volVect
                 false // don't register
             ),
             mesh_,
-            0.,
+            dimensionedScalar("rdist",dimless,0),
             "zeroGradient"
         )
     );
@@ -804,7 +832,7 @@ tmp<surfaceScalarField> FieldValueExpressionDriver::makeInternalFaceField()
 
     forAll(f->boundaryField(),patchI) {
         forAll(f().boundaryField()[patchI],faceI) {
-            f->boundaryField()[patchI][faceI]=0;
+            const_cast<scalar&>(f->boundaryField()[patchI][faceI])=0;
         }
     }
 

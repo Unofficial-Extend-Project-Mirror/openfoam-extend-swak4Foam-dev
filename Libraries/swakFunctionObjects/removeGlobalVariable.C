@@ -95,8 +95,16 @@ void Foam::removeGlobalVariable::end()
 {
 }
 
-void Foam::removeGlobalVariable::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::removeGlobalVariable::write()
 {
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 void Foam::removeGlobalVariable::clearData()

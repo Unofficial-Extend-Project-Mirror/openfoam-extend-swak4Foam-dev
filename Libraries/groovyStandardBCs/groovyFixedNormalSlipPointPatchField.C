@@ -144,7 +144,12 @@ void Foam::groovyFixedNormalSlipPointPatchField<Type>::evaluate
     tmp<Field<Type> > tvalues=transform(I - n*n, this->patchInternalField())+transform(n*n,val);
 
     // Get internal field to insert values into
-    Field<Type>& iF = const_cast<Field<Type>&>(this->internalField());
+    Field<Type>& iF =
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<Field<Type>&>(this->internalField().field());
+#else
+    const_cast<Field<Type>&>(this->internalField());
+#endif
 
     this->setInInternalField(iF, tvalues());
 }

@@ -45,6 +45,11 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
+
 namespace Foam {
 
     inline const pointMesh &CommonValueExpressionDriver::pMesh()
@@ -652,7 +657,12 @@ namespace Foam {
             bool sameSize=vals.size()==f->size();
             reduce(sameSize,andOp<bool>());
             if(sameSize) {
-                f->internalField()=vals;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                const_cast<Field<Type>&>(f->internalField().field())
+#else
+                f->internalField()
+#endif
+                    = vals;
             } else {
                 Type avg=gAverage(vals);
 
@@ -670,7 +680,12 @@ namespace Foam {
                     }
                 }
 
-                f->internalField()=avg;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                const_cast<Field<Type>&>(f->internalField().field())
+#else
+                f->internalField()
+#endif
+                    = avg;
             }
 
             correctField(f());
@@ -1067,6 +1082,7 @@ namespace Foam {
                         );
                         // this should fail
                         const T &f=this->mesh().lookupObject<T>(name);
+                        Info << "for " << f.name() << endl;
                     }
                 }
                 Info << endl;

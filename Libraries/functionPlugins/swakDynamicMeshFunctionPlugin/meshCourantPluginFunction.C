@@ -90,7 +90,12 @@ void meshCourantPluginFunction::doEvaluation()
             fvc::surfaceSum(mag(mesh().phi()))().internalField()
         );
 
-    Co.internalField() =
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(Co.internalField().field())
+#else
+    Co.internalField()
+#endif
+    =
         0.5
         *
         (sumPhi/mesh().V().field())

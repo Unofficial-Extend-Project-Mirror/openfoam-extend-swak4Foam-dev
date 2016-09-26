@@ -93,7 +93,7 @@ public:
 
     bool start();
 
-    void write();
+    void writeSimple();
 
     //- new timestep. To be overridden. This is only a dummy-implementation
     virtual scalar deltaT();

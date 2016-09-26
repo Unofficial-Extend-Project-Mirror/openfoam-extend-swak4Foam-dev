@@ -41,7 +41,14 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "swakTime.H"
 
-#include "fvCFD.H"
+#include "fvMesh.H"
+#include "volFields.H"
+#include "surfaceInterpolate.H"
+#include "fvmLaplacian.H"
+#include "fvcDiv.H"
+#include "fvcReconstruct.H"
+#include "findRefCell.H"
+#include "adjustPhi.H"
 
 #include "swak.H"
 
@@ -88,6 +95,7 @@ void initPotentialFlowFunctionObject::recalc()
 {
     Info << "Solving potential flow for velocity " << UName_
         << " and pressure " << pName_ << endl;
+    Pbug << "Starting recalc()" << endl;
 
     const fvMesh &mesh=dynamicCast<const fvMesh&>(obr_);
 
@@ -140,6 +148,8 @@ void initPotentialFlowFunctionObject::recalc()
 
     for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
     {
+        Pbug << "Solve nonOrth " << nonOrth << endl;
+
         fvScalarMatrix pEqn
         (
             fvm::laplacian
@@ -208,6 +218,7 @@ void initPotentialFlowFunctionObject::recalc()
             pNew.write();
         }
     }
+    Pbug << "Ended recalc()" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

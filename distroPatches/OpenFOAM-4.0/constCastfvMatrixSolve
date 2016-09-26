@@ -1,0 +1,15 @@
+# HG changeset patch
+# Parent  1d86098f9ed2a3848933ff7e5df69c56b3593b61
+
+diff --git a/src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C b/src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C
+--- a/src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C
++++ b/src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C
+@@ -330,7 +330,7 @@
+ Foam::tmp<Foam::Field<Type>> Foam::fvMatrix<Type>::residual() const
+ {
+     tmp<Field<Type>> tres(new Field<Type>(source_));
+-    Field<Type>& res = tres();
++    Field<Type>& res = const_cast<Field<Type>&>(tres());
+ 
+     addBoundarySource(res);
+ 

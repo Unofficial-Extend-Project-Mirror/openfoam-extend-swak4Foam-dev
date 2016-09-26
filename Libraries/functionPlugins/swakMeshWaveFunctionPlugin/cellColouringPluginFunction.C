@@ -162,7 +162,8 @@ void cellColouringPluginFunction::doEvaluation()
     volScalarField &regions=pRegions();
 
     forAll(cellValues,cellI) {
-        regions.internalField()[cellI]=cellValues[cellI].colour();
+        const_cast<scalar&>(regions.internalField()[cellI])=
+            cellValues[cellI].colour();
     }
 
     regions.correctBoundaryConditions();

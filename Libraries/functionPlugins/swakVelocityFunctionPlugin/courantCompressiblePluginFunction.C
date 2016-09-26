@@ -113,7 +113,11 @@ void courantCompressiblePluginFunction::doEvaluation()
     );
     volScalarField &Co=pCo();
 
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(Co.internalField().field()) =
+#else
     Co.internalField() =
+#endif
         (0.5*mesh().time().deltaT().value())
         *fvc::surfaceSum(mag(phi_()))().internalField()
         /(rho_()*mesh().V());

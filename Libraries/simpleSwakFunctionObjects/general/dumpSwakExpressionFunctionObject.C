@@ -104,7 +104,7 @@ stringList dumpSwakExpressionFunctionObject::columnNames()
     return stringList(1,"No way to know how much data will follow");
 }
 
-void dumpSwakExpressionFunctionObject::write()
+void dumpSwakExpressionFunctionObject::writeSimple()
 {
 
     if(verbose()) {
@@ -126,7 +126,7 @@ void dumpSwakExpressionFunctionObject::write()
     } else if(rType==pTraits<sphericalTensor>::typeName) {
         writeTheData<sphericalTensor>(driver_());
     } else {
-        WarningIn("dumpSwakExpressionFunctionObject::write()")
+        WarningIn("dumpSwakExpressionFunctionObject::writeSimple()")
             << "Don't know how to handle type " << rType
                 << endl;
     }

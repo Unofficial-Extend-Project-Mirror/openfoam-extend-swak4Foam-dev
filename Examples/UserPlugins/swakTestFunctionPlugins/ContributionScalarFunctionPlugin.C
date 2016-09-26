@@ -246,7 +246,12 @@ void setResultForContribution<FieldValuePluginFunction>(
         )
     );
 
-    pResult->internalField()=values;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(pResult->internalField().field())
+#else
+    pResult->internalField()
+#endif
+        =values;
     pResult->correctBoundaryConditions();
 
     result.setObjectResult(pResult);

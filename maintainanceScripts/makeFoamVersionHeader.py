@@ -77,7 +77,8 @@ else:
 
 vParts=verString.split(".")
 
-of_version_major=99
+# Larger to accomodate new OF+-scheme
+of_version_major=2999
 of_version_minor=9
 of_version_patch="x"
 

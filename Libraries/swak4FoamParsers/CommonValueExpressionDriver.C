@@ -132,9 +132,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     scanner_(NULL),
     prevIterIsOldTime_(orig.prevIterIsOldTime_)
 {
-    if(debug) {
-        Info << "CommonValueExpressionDriver - copy constructor" << endl;
-    }
+    Dbug << "CommonValueExpressionDriver - copy constructor" << endl;
     setSearchBehaviour(
         orig.cacheReadFields_,
         orig.searchInMemory_,
@@ -166,9 +164,8 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     debug=dict.lookupOrDefault<label>("debugCommonDriver",debug);
 #endif
 
-    if(debug) {
-        Pout << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
-    }
+    Pbug << "CommonValueExpressionDriver::CommonValueExpressionDriver(const dictionary& dict)" << endl;
+
 
     readPluginLibraries(dict);
 
@@ -176,9 +173,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         storedVariables_=List<StoredExpressionResult>(
             dict.lookup("storedVariables")
         );
-        if(debug) {
-            Info << "Read stored variables:" << storedVariables_ << endl;
-        }
+        Dbug << "Read stored variables:" << storedVariables_ << endl;
     }
 
     if(dict.found("delayedVariables")) {
@@ -189,9 +184,7 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
         {
             delayedVariables_.insert(readDelays[i].name(),readDelays[i]);
         }
-        if(debug) {
-            Info << "Read delayed variables:" << delayedVariables_ << endl;
-        }
+        Dbug << "Read delayed variables:" << delayedVariables_ << endl;
     }
 
     setSearchBehaviour(
@@ -396,9 +389,7 @@ void CommonValueExpressionDriver::readTables(const dictionary &dict)
                 word(aliasDict[toc[i]])
             );
         }
-        if(debug) {
-            Info << "Reading aliases: " << aliases_ << endl;
-        }
+        Dbug << "Reading aliases: " << aliases_ << endl;
     }
 }
 
@@ -455,9 +446,8 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
             << exit(FatalError);
     }
 
-    if(debug) {
-        Pout << "Creating driver of type " << driverType << endl;
-    }
+    Sbug << "Creating driver of type " << driverType << endl;
+
 
     return autoPtr<CommonValueExpressionDriver>
     (
@@ -493,9 +483,8 @@ autoPtr<CommonValueExpressionDriver> CommonValueExpressionDriver::New
             << exit(FatalError);
     }
 
-    if(debug) {
-        Pout << "Creating driver of type " << driverType << endl;
-    }
+    Sbug << "Creating driver of type " << driverType << endl;
+
 
     return autoPtr<CommonValueExpressionDriver>
     (
@@ -1280,34 +1269,29 @@ bool CommonValueExpressionDriver::update()
 
 void CommonValueExpressionDriver::updateSpecialVariables(bool force)
 {
-    if(debug) {
-        Info << "CommonValueExpressionDriver::updateSpecialVariables(bool force)"
-            << " Force: " << force << endl;
-    }
+    Dbug << "CommonValueExpressionDriver::updateSpecialVariables(bool force)"
+        << " Force: " << force << endl;
+
     bool updated=this->update();
-    if(debug) {
-        Info << "Updated: " << updated << endl;
-    }
+    Dbug << "Updated: " << updated << endl;
 
     if(specialVariablesIndex_<0) {
-        if(debug) {
-            Pout << "First update: " << mesh().time().timeIndex() << endl;
-        }
+        Pbug << "First update: " << mesh().time().timeIndex() << endl;
+
         specialVariablesIndex_=mesh().time().timeIndex();
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
+            Pbug << v.name() << " = " << v.initialValueExpression() << " (has value "
+                << v.hasValue() << ")" << endl;
             if(!v.hasValue()) {
-                if(debug) {
-                    Pout << "First value: " << v.initialValueExpression()
-                        << " -> " << v.name() << endl;
-                }
+                Pbug << "First value: " << v.initialValueExpression()
+                    << " -> " << v.name() << endl;
+
                 parse(v.initialValueExpression());
                 v=result_;
-                if(debug) {
-                    Info << "Parser size: " << this->size() << endl;
-                    Info << "Calculated: " << result_ << endl;
-                    Info << "Stored: " << v << endl;
-                }
+                Dbug << "Parser size: " << this->size() << endl;
+                Dbug << "Calculated: " << result_ << endl;
+                Dbug << "Stored: " << v << endl;
             }
         }
     }
@@ -1317,18 +1301,16 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
         ||
         specialVariablesIndex_!=mesh().time().timeIndex()
     ) {
-        if(debug) {
-            Pout << "Store variables: " << force << " "
-                << specialVariablesIndex_ << " "
-                << mesh().time().timeIndex() << endl;
-        }
+        Pbug << "Store variables: " << force << " "
+            << specialVariablesIndex_ << " "
+            << mesh().time().timeIndex() << endl;
+
         forAll(storedVariables_,i) {
             StoredExpressionResult &v=storedVariables_[i];
             if(variables_.found(v.name())) {
-                if(debug) {
-                    Pout << "Storing variable: " << v.name() << " "
-                        << variables_[v.name()] << endl;
-                }
+                Pbug << "Storing variable: " << v.name() << " "
+                    << variables_[v.name()] << endl;
+
                 v=variables_[v.name()];
             }
         }
@@ -1338,35 +1320,27 @@ void CommonValueExpressionDriver::updateSpecialVariables(bool force)
     typedef HashTable<DelayedExpressionResult,word> tableType;
     forAllIter(tableType,delayedVariables_,iter)
     {
-        if(debug) {
-            Pout << "Updating delayed variable " << iter().name() << endl;
-        }
+        Pbug << "Updating delayed variable " << iter().name() << endl;
+
         if(!iter().updateReadValue(mesh().time().value())) {
             const exprString &expr=iter().startupValueExpression();
-            if(debug) {
-                Pout << "Evaluate: " << expr << endl;
-            }
+            Pbug << "Evaluate: " << expr << endl;
+
             parse(expr);
             iter().setReadValue(result_);
-            if(debug) {
-                Pout << "Value " << iter() << endl;
-                Pout << "Type " << iter().valueType() << "("
-                    << result_.valueType() << ")" << endl;
-
-            }
+            Pbug << "Value " << iter() << endl;
+            Pbug << "Type " << iter().valueType() << "("
+                << result_.valueType() << ")" << endl;
         } else {
-            if(debug) {
-                Pout << iter().name() << " updated without problem" << endl;
-            }
+            Pbug << iter().name() << " updated without problem" << endl;
         }
     }
 }
 
 void CommonValueExpressionDriver::clearVariables()
 {
-    if(debug) {
-        Pout << "Clearing variables" << endl;
-    }
+    Pbug << "Clearing variables" << endl;
+
 
     this->update();
 
@@ -1413,22 +1387,17 @@ void CommonValueExpressionDriver::evaluateVariable(
     parse(expr);
     result_.calcIsSingleValue();
 
-    if(debug) {
-        Pout << "Evaluating: " << expr << " -> " << name << endl;
-        Pout << result_;
-    }
+    Pbug << "Evaluating: " << expr << " -> " << name << endl
+        << result_;
 
     if(delayedVariables_.found(name)) {
-        if(debug) {
-            Pout << name << " is delayed" << endl;
-        }
+        Pbug << name << " is delayed" << endl;
+
         delayedVariables_[name]=result_;
     } else {
         variables_.set(name,ExpressionResult(result_));
     }
-    if(debug>1) {
-        Pout << "Value stored: " << variables_[name] << endl;
-    }
+    Pbug << "Value stored: " << variables_[name] << endl;
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(
@@ -1437,10 +1406,8 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     const exprString &expr
 )
 {
-    if(debug) {
-        Pout << "Evaluating remote " << remoteExpr
-            << " : " << expr << " -> " << name << endl;
-    }
+    Pbug << "Evaluating remote " << remoteExpr
+        << " : " << expr << " -> " << name << endl;
 
     exprString remote=remoteExpr;
     word regionName="";
@@ -1513,15 +1480,11 @@ void CommonValueExpressionDriver::evaluateVariableRemote(
     autoPtr<ExpressionResult> otherResult(this->getRemoteResult(otherDriver()));
     otherResult->calcIsSingleValue();
 
-    if(debug) {
-        Pout << "Remote result: "
-            << otherResult() << endl;
-    }
+    Pbug << "Remote result: " << otherResult() << endl;
 
     if(delayedVariables_.found(name)) {
-        if(debug) {
-            Pout << name << " is delayed - setting" << endl;
-        }
+        Pbug << name << " is delayed - setting" << endl;
+
         delayedVariables_[name]=otherResult();
     } else {
         variables_.insert(name,otherResult());
@@ -1664,16 +1627,12 @@ const fvMesh &CommonValueExpressionDriver::regionMesh
 )
 {
     if(!dict.found("region")) {
-        if(debug) {
-            Pout << "Using original mesh " << endl;
-        }
+        Sbug << "Using original mesh " << endl;
 
         return mesh;
     }
 
-    if(debug) {
-        Pout << "Using mesh " << dict.lookup("region")  << endl;
-    }
+    Sbug << "Using mesh " << dict.lookup("region")  << endl;
 
     if(
         !mesh.time().foundObject<objectRegistry>(
@@ -1734,17 +1693,15 @@ word CommonValueExpressionDriver::getTypeOfFieldInternal(
     f.headerOk();
 #endif
 
-    if(debug) {
-        Pout<< "Mesh: " << theMesh.polyMesh::path()
-            << " Name: " << name << " Time: " << mesh().time().timeName()
-            << " Path: "
+    Pbug << "Mesh: " << theMesh.polyMesh::path()
+        << " Name: " << name << " Time: " << mesh().time().timeName()
+        << " Path: "
 #ifdef FOAM_HAS_LOCAL_FILEPATH
-            << f.localFilePath()
+        << f.localFilePath()
 #else
-            << f.filePath()
+        << f.filePath()
 #endif
-            << " Class: " << f.headerClassName() << endl;
-    }
+        << " Class: " << f.headerClassName() << endl;
 
     return f.headerClassName();
 }
@@ -1753,16 +1710,14 @@ word CommonValueExpressionDriver::getTypeOfSet(const word &inName) const
 {
     word name(inName);
     if(this->hasAlias(name)) {
-        if(debug) {
-            Pout << "CommonValueExpressionDriver::getTypeOfSet. Name: " << name
-                << " is an alias for " << this->getAlias(name) << endl;
-        }
+        Pbug << "CommonValueExpressionDriver::getTypeOfSet. Name: " << name
+            << " is an alias for " << this->getAlias(name) << endl;
+
         name=this->getAlias(name);
     }
 
-    if(debug) {
-        Pout << "Looking for set named " << name << endl;
-    }
+    Pbug << "Looking for set named " << name << endl;
+
     IOobject f
         (
             name,
@@ -2003,9 +1958,7 @@ bool CommonValueExpressionDriver::hasDataToWrite() const
 
 void CommonValueExpressionDriver::getData(const dictionary &dict)
 {
-    if(debug) {
-        Info << "CommonValueExpressionDriver::getData(const dictionary &dict)" << endl;
-    }
+    Dbug << "CommonValueExpressionDriver::getData(const dictionary &dict)" << endl;
 
     if(dict.found("storedVariables")) {
         storedVariables_=List<StoredExpressionResult>(
@@ -2016,12 +1969,10 @@ void CommonValueExpressionDriver::getData(const dictionary &dict)
 
 void CommonValueExpressionDriver::prepareData(dictionary &dict) const
 {
-    if(debug) {
-        Info << "CommonValueExpressionDriver::prepareData(dictionary &dict)" << endl;
-    }
+    Dbug << "CommonValueExpressionDriver::prepareData(dictionary &dict)" << endl;
     bool updated=const_cast<CommonValueExpressionDriver&>(*this).update();
     if(debug && updated) {
-        Info << "Updated before write" << endl;
+        Dbug << "Updated before write" << endl;
     }
 
     if(storedVariables_.size()>0) {
@@ -2159,10 +2110,9 @@ bool CommonValueExpressionDriver::hasVariable(
     const word &name
 ) const
 {
-    if(debug) {
-        Pout << "(var:" << delayedVariables_.found(name)
-            << " " << variables_.found(name) << ")";
-    }
+    Pbug << "(var:" << delayedVariables_.found(name)
+        << " " << variables_.found(name) << ")";
+
     if(delayedVariables_.found(name)) {
         return true;
     } else {
@@ -2210,11 +2160,10 @@ tmp<scalarField> CommonValueExpressionDriver::weights(
 
 bool CommonValueExpressionDriver::hasAlias(const word &name) const
 {
-    if(debug) {
-        Info << "CommonValueExpressionDriver::hasAlias " << name
-            << " : " << aliases_.found(name) << " of "
-            << aliases_.size() << endl;
-    }
+    Dbug << "CommonValueExpressionDriver::hasAlias " << name
+        << " : " << aliases_.found(name) << " of "
+        << aliases_.size() << endl;
+
     return aliases_.found(name);
 }
 

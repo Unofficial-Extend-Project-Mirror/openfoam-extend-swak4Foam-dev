@@ -41,10 +41,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "fvCFD.H"
 #include "argList.H"
 #include "swakTime.H"
 #include "polyMesh.H"
+#include "fvMesh.H"
 #include "OFstream.H"
 #include "IOPtrList.H"
 #include "IFstream.H"

@@ -51,6 +51,11 @@ Contributors/Copyright:
 
 #include "fvc.H"
 
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
+
 namespace Foam {
 
 defineTypeNameAndDebug(streamFunctionPluginFunction,1);
@@ -491,7 +496,9 @@ void streamFunctionPluginFunction::doEvaluation()
 
     // Normalise the stream-function by the 2D mesh thickness
     streamFunction /= thickness;
-    streamFunction.boundaryField() = 0.0;
+    const_cast<pointScalarField::GeometricBoundaryField&>(
+        streamFunction.boundaryField()
+    ) = 0.0;
     // end of 'borrowed' code
 
     result().setObjectResult(pStreamFunction);

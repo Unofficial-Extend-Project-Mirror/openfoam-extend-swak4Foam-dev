@@ -41,6 +41,8 @@ wclean simpleCloudFunctionObjects
 
 wclean swakCloudFunctionObjects
 
+wclean swakStateMachine
+
 # Remove residual from bison
 rm -f */*.output
 
@@ -54,3 +56,5 @@ then
 	wclean $plugins
     done
 fi
+
+rmdepall Libraries/filesThatAreOnlyInSomeDistributions

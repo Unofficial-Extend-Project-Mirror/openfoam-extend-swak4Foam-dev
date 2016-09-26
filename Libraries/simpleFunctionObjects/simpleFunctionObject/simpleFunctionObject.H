@@ -121,6 +121,13 @@ private:
 
     bool started_;
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    //- make sure that execute is not called twice at one time-step
+    label lastTimeStepExecute_;
+
+    bool ensureExecuteOnce();
+#endif
+
 protected:
 
     outputControlModeType outputControlMode() const
@@ -177,11 +184,17 @@ public:
         }
 #endif
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    //- Interface for new functionObject
+    virtual bool execute();
+    virtual bool write();
+#endif
+
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
 
     //- Sample and write
-    virtual void write()=0;
+    virtual void writeSimple()=0;
 
 #ifdef FOAM_FUNCTIONOBJECT_NEEDS_UPDATEMESH
     // make functionObject happy but fail because this is not an implementation

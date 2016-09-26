@@ -37,7 +37,7 @@ divSchemes
     div(R)          Gauss linear;
     div(phi,nuTilda) Gauss limitedLinear 1;
     div((nuEff*dev(T(grad(U))))) Gauss linear;
-    div((nuEff*dev(grad(U).T()))) $div((nuEff*dev(T(grad(U)))));
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -45,6 +45,8 @@ laplacianSchemes
     default         none;
     laplacian(nuEff,U) Gauss linear corrected;
     laplacian((1|A(U)),p) Gauss linear corrected;
+    laplacian((1|aU),p) Gauss linear corrected;
+    laplacian(rAUf,p) $laplacian((1|A(U)),p);
     laplacian(DkEff,k) Gauss linear corrected;
     laplacian(DepsilonEff,epsilon) Gauss linear corrected;
     laplacian(DREff,R) Gauss linear corrected;

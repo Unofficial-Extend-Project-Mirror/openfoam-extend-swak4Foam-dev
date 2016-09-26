@@ -150,7 +150,8 @@ void floodFillGeneralPluginFunction::doEvaluation()
     volScalarField &regions=pRegions();
 
     forAll(cellValues_,cellI) {
-        regions.internalField()[cellI]=cellValues_[cellI].val();
+        const_cast<scalar&>(regions.internalField()[cellI])=
+            cellValues_[cellI].val();
     }
 
     regions.correctBoundaryConditions();
