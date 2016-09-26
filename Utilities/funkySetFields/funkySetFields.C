@@ -1191,6 +1191,8 @@ int main(int argc, char *argv[])
         }
     }
 
+    dummyPhi.clear();
+
     Info << "End\n" << endl;
 
     return 0;

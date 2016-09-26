@@ -3486,6 +3486,10 @@ S_{expl} + S_{impl} T
      =swak4Foam=
 *** Incompatibilities
 *** Bug fixes
+**** Destruction of =dummyPhi= causes error message
+     On some distros the destruction of a field stored in an =autoPtr=
+     *after* the destruction of the mesh causes an error message. This
+     has no effect but is annoying. Fixed
 *** Infrastructure
 *** Documentation
 *** Internals (for developers)
