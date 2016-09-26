@@ -761,7 +761,11 @@ void FieldValueExpressionDriver::setResult(
     typ_=pTraits<T>::typeName;
 
     this->result().setResult(
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<Field<typename T::value_type>&>(result.internalField().field()),
+#else
         const_cast<Field<typename T::value_type>&>(result.internalField()),
+#endif
         isPointField
     );
 
