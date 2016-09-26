@@ -39,39 +39,39 @@ Contributors/Copyright:
 
 namespace Foam {
 
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<scalar,meshToMesh::imCellVolumeWeight> shiftScalarWeight;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<scalar,SHIFT_METHOD> shiftScalarWeight;
 defineTemplateTypeNameAndDebug(shiftScalarWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarWeight , name, shiftConstantScalarFieldDefault);
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<scalar,meshToMesh::imMapNearest> shiftScalarMap;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<scalar,MAP_METHOD> shiftScalarMap;
 defineTemplateTypeNameAndDebug(shiftScalarMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarMap , name, mapConstantScalarFieldDefault);
 
-// typedef shiftFieldConstantVectorDefaultValuePluginFunction<vector,meshToMesh::imCellVolumeWeight> shiftVectorWeight;
+// typedef shiftFieldConstantVectorDefaultValuePluginFunction<vector,SHIFT_METHOD> shiftVectorWeight;
 // defineTemplateTypeNameAndDebug(shiftVectorWeight,1);
 // addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorWeight , name, shiftConstantVectorFieldDefault);
-// typedef shiftFieldConstantVectorDefaultValuePluginFunction<vector,meshToMesh::imMapNearest> shiftVectorMap;
+// typedef shiftFieldConstantVectorDefaultValuePluginFunction<vector,MAP_METHOD> shiftVectorMap;
 // defineTemplateTypeNameAndDebug(shiftVectorMap,1);
 // addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorMap , name, mapConstantVectorFieldDefault);
 
 #ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<tensor,meshToMesh::imCellVolumeWeight> shiftTensorWeight;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<tensor,SHIFT_METHOD> shiftTensorWeight;
 defineTemplateTypeNameAndDebug(shiftTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorWeight , name, shiftConstantTensorFieldDefault);
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<tensor,meshToMesh::imMapNearest> shiftTensorMap;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<tensor,MAP_METHOD> shiftTensorMap;
 defineTemplateTypeNameAndDebug(shiftTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorMap , name, mapConstantTensorFieldDefault);
 
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<symmTensor,meshToMesh::imCellVolumeWeight> shiftSymmTensorWeight;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<symmTensor,SHIFT_METHOD> shiftSymmTensorWeight;
 defineTemplateTypeNameAndDebug(shiftSymmTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorWeight , name, shiftConstantSymmTensorFieldDefault);
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<symmTensor,meshToMesh::imMapNearest> shiftSymmTensorMap;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<symmTensor,MAP_METHOD> shiftSymmTensorMap;
 defineTemplateTypeNameAndDebug(shiftSymmTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorMap , name, mapConstantSymmTensorFieldDefault);
 
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor,meshToMesh::imCellVolumeWeight> shiftSphericalTensorWeight;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor,SHIFT_METHOD> shiftSphericalTensorWeight;
 defineTemplateTypeNameAndDebug(shiftSphericalTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorWeight , name, shiftConstantSphericalTensorFieldDefault);
-typedef shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor,meshToMesh::imMapNearest> shiftSphericalTensorMap;
+typedef shiftFieldConstantVectorDefaultValuePluginFunction<sphericalTensor,MAP_METHOD> shiftSphericalTensorMap;
 defineTemplateTypeNameAndDebug(shiftSphericalTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorMap , name, mapConstantSphericalTensorFieldDefault);
 #endif
