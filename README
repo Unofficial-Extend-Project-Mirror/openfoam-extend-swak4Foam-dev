@@ -754,6 +754,12 @@ S_{expl} + S_{impl} T
 **** pitzDailyStateMachineSwitched
      =simpleFoam=-tutorial. Uses state machines to change the
      discretization periodically
+*** StateMachine
+    Demonstrate the usage of state machines
+**** stateCavity
+     The case is only an excuse for the state machines
+     - Running :: =replayTransientBC -allowFunctionObjects=
+     - Case setup :: =pyFoamPrepareCase.py=
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
