@@ -43,6 +43,13 @@ Contributors/Copyright:
 
 #include <cassert>
 
+#include "swak.H"
+
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
+
 namespace Foam {
 
     inline const pointMesh &CommonValueExpressionDriver::pMesh()
@@ -313,12 +320,21 @@ namespace Foam {
                             IOobject::NO_WRITE
                         );
                     if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+                        header.typeHeaderOk<T>()
+#else
                         header.headerOk()
                         &&
                         header.headerClassName()==T::typeName
+#endif
                     ) {
                         if(debug) {
-                            Pout << "Rereading from " << header.filePath()
+                            Pout << "Rereading from "
+#ifdef FOAM_HAS_LOCAL_FILEPATH
+                                << header.localFilePath()
+#else
+                                << header.filePath()
+#endif
                                 << endl;
                         }
                         theSet.reset(
@@ -641,7 +657,12 @@ namespace Foam {
             bool sameSize=vals.size()==f->size();
             reduce(sameSize,andOp<bool>());
             if(sameSize) {
-                f->internalField()=vals;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                const_cast<Field<Type>&>(f->internalField().field())
+#else
+                f->internalField()
+#endif
+                    = vals;
             } else {
                 Type avg=gAverage(vals);
 
@@ -659,7 +680,12 @@ namespace Foam {
                     }
                 }
 
-                f->internalField()=avg;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+                const_cast<Field<Type>&>(f->internalField().field())
+#else
+                f->internalField()
+#endif
+                    = avg;
             }
 
             correctField(f());
@@ -1056,6 +1082,7 @@ namespace Foam {
                         );
                         // this should fail
                         const T &f=this->mesh().lookupObject<T>(name);
+                        Info << "for " << f.name() << endl;
                     }
                 }
                 Info << endl;
@@ -1118,7 +1145,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i]=op(a[i],b[i]);
+            const_cast<bool&>(res()[i])=op(a[i],b[i]);
         }
 
         return res;
@@ -1138,7 +1165,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i]=op(a[i],b[i]);
+            const_cast<bool&>(res()[i])=op(a[i],b[i]);
         }
 
         return res;
@@ -1158,7 +1185,7 @@ namespace Foam {
         );
 
         forAll(res(),i) {
-            res()[i] = d[i] ? yes[i] : no[i];
+            const_cast<Type&>(res()[i]) = d[i] ? yes[i] : no[i];
         }
 
         return res;
@@ -1173,7 +1200,7 @@ namespace Foam {
         );;
 
         forAll(res(),i) {
-            res()[i] = a[i];
+            const_cast<bool&>(res()[i]) = a[i];
         }
 
         return res;

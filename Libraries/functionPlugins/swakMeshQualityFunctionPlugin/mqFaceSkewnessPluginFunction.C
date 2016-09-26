@@ -123,7 +123,8 @@ void mqFaceSkewnessPluginFunction::doEvaluation()
 
     forAll(skewness.boundaryField(),patchI)
     {
-        fvsPatchField<scalar> &thePatch=skewness.boundaryField()[patchI];
+        fvsPatchField<scalar> &thePatch=
+            const_cast<fvsPatchField<scalar>&>(skewness.boundaryField()[patchI]);
 
         forAll(thePatch,i)
         {

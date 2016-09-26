@@ -41,7 +41,14 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "swakTime.H"
 
-#include "fvCFD.H"
+#include "fvMesh.H"
+#include "volFields.H"
+#include "surfaceInterpolate.H"
+#include "fvmLaplacian.H"
+#include "fvcDiv.H"
+#include "fvcReconstruct.H"
+#include "findRefCell.H"
+#include "adjustPhi.H"
 
 #include "swak.H"
 

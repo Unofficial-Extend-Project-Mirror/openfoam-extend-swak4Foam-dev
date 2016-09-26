@@ -156,7 +156,11 @@ bool pythonIntegrationFunctionObject::read(const dictionary& dict)
     readCode(dict,"execute",executeCode_);
     readCode(dict,"write",writeCode_,false);
 
-    return true; // start();
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    return start();
+#else
+    return true;
+#endif
 }
 
 } // namespace Foam

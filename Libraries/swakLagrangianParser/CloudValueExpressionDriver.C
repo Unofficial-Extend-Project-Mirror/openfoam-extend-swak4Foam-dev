@@ -311,7 +311,7 @@ tmp<scalarField> CloudValueExpressionDriver::makeIdField()
         new scalarField(this->size())
     );
     forAll(ids(),i) {
-        ids()[i]=i;
+        const_cast<scalar&>(ids()[i])=i;
     }
     return ids;
 }
@@ -332,7 +332,13 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
             IOobject::NO_WRITE
         );
 
-    if(!head.headerOk()) {;
+    if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        !head.typeHeaderOk<IOobject>(false)
+#else
+        !head.headerOk()
+#endif
+    ) {;
         head=IOobject
             (
                 name,
@@ -342,7 +348,11 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        head.typeHeaderOk<IOobject>(false);
+#else
         head.headerOk();
+#endif
     }
 
     cellSet cs(head);
@@ -352,7 +362,7 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
     {
         label cellI=theCells[i];
         if(cs.found(cellI)) {
-            result()[i]=true;
+            const_cast<bool&>(result()[i])=true;
         }
     }
 
@@ -382,7 +392,7 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellZoneField(const word &name
     {
         label cellI=theCells[i];
         if(zone.found(cellI)) {
-            result()[i]=true;
+            const_cast<bool&>(result()[i])=true;
         }
     }
 

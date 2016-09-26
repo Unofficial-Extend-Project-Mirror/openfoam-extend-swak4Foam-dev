@@ -46,7 +46,7 @@ boundaryField
 
       amplitude a [0 1 -1 0 0 0 0] 10;
 
-      valueExpression "$[(dimensionedScalar)amplitude]*(1+0.5*sin($[:frequency]*time()))*para";
+      valueExpression "$[(dimensionedScalar)amplitude]*(1+0.5*sin($[frequency]*time()))*para";
 
       value           uniform (10 0 0);
     }

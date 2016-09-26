@@ -119,7 +119,7 @@ provokeSignalFunctionObject::provokeSignalFunctionObject
     }
 }
 
-void provokeSignalFunctionObject::write()
+void provokeSignalFunctionObject::writeSimple()
 {
     if(
         raiseOnThisProc_
@@ -156,7 +156,7 @@ void provokeSignalFunctionObject::write()
                 raise(SIGUSR2);
                 break;
             default:
-                FatalErrorIn("provokeSignalFunctionObject::write()")
+                FatalErrorIn("provokeSignalFunctionObject::writeSimple()")
                     << "Unimplemented signal "
                         << possibleSignalsNames_[signalToRaise_]
                         << endl;

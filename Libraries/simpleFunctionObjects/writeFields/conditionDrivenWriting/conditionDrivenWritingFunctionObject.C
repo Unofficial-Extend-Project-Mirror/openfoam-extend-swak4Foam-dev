@@ -286,7 +286,7 @@ bool conditionDrivenWritingFunctionObject::checkWrite()
     }
 }
 
-void conditionDrivenWritingFunctionObject::write()
+void conditionDrivenWritingFunctionObject::writeSimple()
 {
     bool doWrite=false;
 

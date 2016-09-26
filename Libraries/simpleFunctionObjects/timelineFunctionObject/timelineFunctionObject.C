@@ -82,12 +82,15 @@ timelineFunctionObject::timelineFunctionObject
         )
     )
 {
+    Dbug << name << " - constructor" << endl;
+
     if(!dict.found("writeStartTime")) {
         WarningIn("timelineFunctionObject::timelineFunctionObject")
             << "No entry 'writeStartTime' in " << dict.name()
                 << ". Assuming " << (writeStartTime ? "'yes'" : "'no'")
                 << endl;
     }
+    
     switch(outputFileMode_) {
         case ofmFoam:
             fileExtension_="";

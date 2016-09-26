@@ -77,7 +77,7 @@ bool listRegisteredObjectsFunctionObject::start()
     return true;
 }
 
-void listRegisteredObjectsFunctionObject::write()
+void listRegisteredObjectsFunctionObject::writeSimple()
 {
     Info << "Content of object registry " << obr().name()
         << endl;

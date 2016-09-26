@@ -47,7 +47,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#ifdef FOAM_DEV
+#ifdef FOAM_HAS_NO_POINT_PATCH_FIELD_TYPEDEF
     // Rebuilds the call
     // makePointPatchFieldTypedefs(groovyFixedNormalSlip);
 

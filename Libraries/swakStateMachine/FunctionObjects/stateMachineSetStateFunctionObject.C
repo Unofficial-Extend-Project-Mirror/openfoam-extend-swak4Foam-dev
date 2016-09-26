@@ -81,7 +81,7 @@ bool stateMachineSetStateFunctionObject::start()
     return true;
 }
 
-void stateMachineSetStateFunctionObject::write()
+void stateMachineSetStateFunctionObject::writeSimple()
 {
     Info << name() << " setting: "
         << machine_.force(state_) << endl;

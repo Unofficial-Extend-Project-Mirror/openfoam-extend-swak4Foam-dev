@@ -113,7 +113,7 @@ public:
         const dictionary&
     );
 
-    void write();
+    void writeSimple();
 };
 
 

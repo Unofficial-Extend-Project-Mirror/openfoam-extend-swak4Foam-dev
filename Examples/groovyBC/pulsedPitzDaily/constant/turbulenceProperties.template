@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.5                                   |
-|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -10,31 +10,19 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      mechanicalProperties;
+    location    "constant";
+    object      turbulenceProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-rho {
-    type uniform;
-    value 7854;
-}
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+simulationType  LES;
+<!--(else)-->
+simulationType  LESModel;
+<!--(end)-->
 
-nu {
-    type uniform;
-    value 0.3;
+LES {
+        #include "LESProperties"
 }
-
-E {
-    type uniform;
-    value 2e+3;
-}
-
-planeStress     yes;
 
 // ************************************************************************* //
-
-
-
-
-
-

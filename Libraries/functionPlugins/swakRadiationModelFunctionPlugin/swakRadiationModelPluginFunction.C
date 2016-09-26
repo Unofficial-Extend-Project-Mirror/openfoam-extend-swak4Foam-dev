@@ -172,7 +172,12 @@ public:
                 "zeroGradient"
             )
         );
-        val->dimensionedInternalField()=ruRad;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<scalarField&>(val->internalField().field())
+#else
+        val->dimensionedInternalField()
+#endif
+            =ruRad;
 
         result().setObjectResult(
             val
@@ -218,7 +223,12 @@ public:
             )
         );
 
-        val().internalField()+=radiation().Ru();
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<scalarField&>(val().internalField().field())
+#else
+        val().internalField()
+#endif
+            +=radiation().Ru();
         val().correctBoundaryConditions();
 
         result().setObjectResult(

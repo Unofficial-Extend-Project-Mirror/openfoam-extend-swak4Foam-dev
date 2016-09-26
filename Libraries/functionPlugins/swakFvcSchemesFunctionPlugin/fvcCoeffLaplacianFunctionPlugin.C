@@ -211,7 +211,7 @@ void fvcCoeffLaplacianFunctionPlugin<T,GT>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().fvcLaplacian(coeff_(),original_())
+            const_cast<fv::laplacianScheme<T,GT>&>(scheme()).fvcLaplacian(coeff_(),original_())
         )
     );
 

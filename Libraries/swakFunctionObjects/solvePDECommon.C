@@ -236,7 +236,12 @@ void Foam::solvePDECommon::solveWrapper()
     }
 }
 
-void Foam::solvePDECommon::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::solvePDECommon::write()
 {
     if(debug) {
         Info << "Foam::solvePDECommon::write()" << endl;
@@ -251,6 +256,9 @@ void Foam::solvePDECommon::write()
 
         writeData();
     }
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 bool Foam::solvePDECommon::needsRhoField(bool warnIfSteady) const

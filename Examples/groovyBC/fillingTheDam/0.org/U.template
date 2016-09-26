@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    leftWall
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    rightWall
+    {
+        type            groovyBC;
+        value           uniform (0 0 0);
+        valueExpression "((pos().y < 0.1) && full<1) ? -normal() : vector(0,0,0)";
+        storedVariables (
+            {
+                name full;
+                initialValue "0";
+            }
+        );
+<!--(if foamFork!="extend")-->
+        aliases {
+            alpha1 alpha.water;
+        }
+<!--(end)-->
+        variables (
+            "aHeight{set'fillingLine}=average(alpha1*(max(pos().y)-min(pos().y)));"
+            //            "pling=aHeight>0.35;"
+            "full=(full>0) ? full : ((aHeight>0.35) ? 1 : 0);"
+        );
+    }
+    lowerWall
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    atmosphere
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

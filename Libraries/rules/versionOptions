@@ -19,10 +19,19 @@ COMPRESSIBLE_TURB_LIB=-lcompressibleTurbulenceModel
 INCOMPRESSIBLE_TURB_ALL_LIBS=-lincompressibleLESModels -lincompressibleRASModels
 COMPRESSIBLE_TURB_ALL_LIBS=-lcompressibleLESModels -lcompressibleRASModels
 
+ifeq "v0" "$(word 1, $(sort v0 $(WM_PROJECT_VERSION)))"
+  $(info This seems to be an OpenFOAM+ version)
+  IS_OPENFOAMPLUS=1
+endif
+
 ifeq "dev" "$(WM_PROJECT_VERSION)"
+  $(info This seems to be a development version of OpenFOAM)
+  IS_OPENFOAM_DEV_VERSION=1
+
   WMAKE_NEW_CONVENTION=new
   FOAM_UNIFIEDTURBULENCE=yes
 endif
+
 ifeq "3.0" "$(word 1, $(sort 3.0 $(WM_PROJECT_VERSION)))"
   ifndef FOAM_DEV
     WMAKE_NEW_CONVENTION=new
@@ -62,5 +71,13 @@ else
      SOLIDTHERMO_LIB=-lsolidThermo
      FVOPTIONS_LIB=-lfvOptions
      FVOPTIONS_INC=-I$(LIB_SRC)/fvOptions/lnInclude
+  endif
+endif
+
+ifndef FOAM_DEV
+  ifndef IS_OPENFOAMPLUS
+    ifeq "4" "$(word 1, $(sort 4 $(WM_PROJECT_VERSION)))"
+      NEEDS_FILTER_DROPIN=1
+    endif
   endif
 endif

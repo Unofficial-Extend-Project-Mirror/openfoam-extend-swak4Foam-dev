@@ -113,6 +113,12 @@ public:
     virtual bool execute();
 #endif
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    //- Interface for new functionObject
+    virtual bool execute();
+    virtual bool write();
+#endif
+
     //- Read and set the function object if it's data has changed
     virtual bool read(const dictionary& dict);
 

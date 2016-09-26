@@ -77,7 +77,7 @@ bool stateMachineCreateAndUpdateFunctionObject::start()
     return true;
 }
 
-void stateMachineCreateAndUpdateFunctionObject::write()
+void stateMachineCreateAndUpdateFunctionObject::writeSimple()
 {
     Info << name() << " stepping: "
         << machine_.step() << endl;

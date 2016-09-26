@@ -298,6 +298,7 @@ functions
         type swakExpression;
         valueType internalField;
         expression "mag(ddt(foo))";
+        //        expression "ddt(bar)";
         accumulations (
             average
             max
@@ -485,6 +486,7 @@ functions
                         pythonToSwakVariables (
                             componentSum
                         );
+                        //                        interactiveAfterException true;
                     }
                     writeComonentField {
                         type expressionField;

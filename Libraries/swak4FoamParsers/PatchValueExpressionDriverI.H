@@ -602,7 +602,7 @@ namespace Foam {
         }
 
         tmp<Field<T> > result(new Field<T>(this->size(),pTraits<T>::zero));
-        Field<T> &newValues=result();
+        Field<T> &newValues=const_cast<Field<T>&>(result());
 
         if(
             isSurfaceField
@@ -906,7 +906,7 @@ namespace Foam {
             new Field<T>(orig)
         );
 
-        Field<T> &result=pResult();
+        Field<T> &result=const_cast<Field<T>&>(pResult());
 
         const label nbrPatchID =
             nbrMesh.boundaryMesh().findPatchID(mpp.samplePatch());
@@ -962,7 +962,7 @@ namespace Foam {
             name=this->getAlias(name);
         }
 
-        typedef GeometricField<T,pointPatchField,pointMesh> localPointField;
+        //        typedef GeometricField<T,pointPatchField,pointMesh> localPointField;
 
         // dummy implemntation
         tmp<Field<T> > result(new Field<T>(this->pointSize(),pTraits<T>::zero));

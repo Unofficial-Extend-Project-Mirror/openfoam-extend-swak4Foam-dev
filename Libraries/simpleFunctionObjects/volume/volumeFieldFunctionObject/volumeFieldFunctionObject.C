@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "volumeFieldFunctionObject.H"
@@ -68,7 +68,7 @@ volumeFieldFunctionObject::volumeFieldFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void volumeFieldFunctionObject::write()
+void volumeFieldFunctionObject::writeSimple()
 {
     processAndWrite<scalar>(scalarFields_);
     processAndWrite<vector>(vectorFields_);

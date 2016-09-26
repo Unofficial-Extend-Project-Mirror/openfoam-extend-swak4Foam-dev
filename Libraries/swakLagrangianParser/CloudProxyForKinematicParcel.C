@@ -97,7 +97,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::dTarget
         )
     );
-#endif    
+#endif
     this->addVectorFunction(
         "U",
         "Velocity",
@@ -120,7 +120,7 @@ CloudProxyForKinematicParcel<CloudType>::CloudProxyForKinematicParcel
             &CloudType::particleType::age
         )
     );
-#endif    
+#endif
     this->addScalarFunction(
         "tTurb",
         "Time in turbulent eddy",
@@ -219,7 +219,7 @@ tmp<Field<scalar> > CloudProxyForKinematicParcel<CloudType>::weights() const
     tmp<Field<scalar> > tWeight(
         new Field<scalar>(this->theCloud().size())
     );
-    Field<scalar> &weight=tWeight();
+    Field<scalar> &weight=const_cast<Field<scalar>&>(tWeight());
     label i=0;
     forAllConstIter(typename CloudType,this->theCloud(),it)
     {

@@ -109,8 +109,12 @@ bool Foam::readAndUpdateFields::loadField
 
         if
         (
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+            fieldHeader.typeHeaderOk<vfType>()
+#else
             fieldHeader.headerOk()
-         && fieldHeader.headerClassName() == vfType::typeName
+            && fieldHeader.headerClassName() == vfType::typeName
+#endif
         )
         {
             // store field locally
@@ -124,8 +128,12 @@ bool Foam::readAndUpdateFields::loadField
         }
         else if
         (
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+            fieldHeader.typeHeaderOk<pfType>()
+#else
             fieldHeader.headerOk()
-         && fieldHeader.headerClassName() == pfType::typeName
+            && fieldHeader.headerClassName() == pfType::typeName
+#endif
         )
         {
             // store field locally
@@ -139,8 +147,12 @@ bool Foam::readAndUpdateFields::loadField
         }
         else if
         (
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+            fieldHeader.typeHeaderOk<sfType>()
+#else
             fieldHeader.headerOk()
-         && fieldHeader.headerClassName() == sfType::typeName
+            && fieldHeader.headerClassName() == sfType::typeName
+#endif
         )
         {
             WarningIn("Foam::readAndUpdateFields::loadField")

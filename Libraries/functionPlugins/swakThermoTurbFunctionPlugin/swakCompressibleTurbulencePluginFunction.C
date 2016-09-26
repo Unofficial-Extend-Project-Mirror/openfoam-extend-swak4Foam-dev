@@ -73,6 +73,14 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
 {
     static HashPtrTable<compressible::turbulenceModel> turb_;
 
+    if(reg.foundObject<compressible::turbulenceModel>("turbulenceProperties")) {
+        if(debug) {
+            Info << "swakCompressibleTurbulencePluginFunction::turbInternal: "
+                << "turbulence already in memory" << endl;
+        }
+        // Somebody else already registered this
+        return reg.lookupObject<compressible::turbulenceModel>("turbulenceProperties");
+    }
     if(reg.foundObject<compressible::LESModel>("LESProperties")) {
         if(debug) {
             Info << "swakCompressibleTurbulencePluginFunction::turbInternal: "

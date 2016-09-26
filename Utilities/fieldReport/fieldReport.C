@@ -397,9 +397,13 @@ bool reportAField(
             IOobject::NO_WRITE
         );
     if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        header.typeHeaderOk<Type>(true)
+#else
         header.headerOk()
         &&
         header.headerClassName()==Type::typeName
+#endif
     ) {
         Info << " Reading Field " << fieldName << " of type "
             << Type::typeName << endl;

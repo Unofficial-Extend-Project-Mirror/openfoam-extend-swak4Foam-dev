@@ -1,3 +1,5 @@
+../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/outputFilterOutputControl.C
+
 helpers/printSwakVersion.C
 helpers/exprString.C
 helpers/switchableNotImplemented.C

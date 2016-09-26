@@ -35,8 +35,14 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+namespace Foam {
+
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+namespace Function1Types {
+#endif
+
 template<class Type>
-Foam::swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary& dict)
+swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary& dict)
 :
     DataEntry<Type>(entryName)
 {
@@ -54,7 +60,7 @@ Foam::swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary
 
 
 template<class Type>
-Foam::swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
+swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
 :
     DataEntry<Type>(cnst),
     data_(cnst.data_),
@@ -67,14 +73,14 @@ Foam::swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::swakDataEntry<Type>::~swakDataEntry()
+swakDataEntry<Type>::~swakDataEntry()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::CommonValueExpressionDriver &Foam::swakDataEntry<Type>::driver()
+CommonValueExpressionDriver &swakDataEntry<Type>::driver()
 {
     if(!driver_.valid()) {
         driver_=CommonValueExpressionDriver::New(
@@ -86,7 +92,7 @@ Foam::CommonValueExpressionDriver &Foam::swakDataEntry<Type>::driver()
 }
 
 template<class Type>
-Type Foam::swakDataEntry<Type>::value(const scalar x) const
+Type swakDataEntry<Type>::value(const scalar x) const
 {
     CommonValueExpressionDriver &theDriver=const_cast<swakDataEntry<Type> &>(
         *this
@@ -102,7 +108,7 @@ Type Foam::swakDataEntry<Type>::value(const scalar x) const
 }
 
 template<class Type>
-Type Foam::swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
+Type swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
 {
     CommonValueExpressionDriver &theDriver=const_cast<swakDataEntry<Type> &>(
         *this
@@ -139,7 +145,7 @@ Type Foam::swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
 
 
 template<class Type>
-Foam::Ostream& Foam::operator<<
+Ostream& operator<<
 (
     Ostream& os,
     const swakDataEntry<Type>& cnst
@@ -167,7 +173,7 @@ Foam::Ostream& Foam::operator<<
 
 #ifdef FOAM_DATAENTRY_CLASS_NEEDS_WRITEDATA
 template<class Type>
-void Foam::swakDataEntry<Type>::writeData(Ostream& os) const
+void swakDataEntry<Type>::writeData(Ostream& os) const
 {
     DataEntry<Type>::writeData(os);
 
@@ -176,5 +182,11 @@ void Foam::swakDataEntry<Type>::writeData(Ostream& os) const
     os  << token::END_STATEMENT << nl;
 }
 #endif
+
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+}
+#endif
+
+}
 
 // ************************************************************************* //

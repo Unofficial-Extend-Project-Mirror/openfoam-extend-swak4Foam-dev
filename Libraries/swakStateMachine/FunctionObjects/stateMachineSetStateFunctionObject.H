@@ -87,7 +87,7 @@ public:
 
     bool start();
 
-    void write();
+    void writeSimple();
 };
 
 

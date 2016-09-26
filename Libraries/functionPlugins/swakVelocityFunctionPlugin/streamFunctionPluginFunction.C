@@ -34,12 +34,15 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "swak.H"
+
 #include "streamFunctionPluginFunction.H"
 #include "FieldValueExpressionDriver.H"
 
-#ifndef FOAM_DEV
+#ifdef FOAM_HAS_SYMMETRY_PLANE_POLY_PATCH
 #include "symmetryPlanePolyPatch.H"
 #endif
+
 #include "symmetryPolyPatch.H"
 #include "emptyPolyPatch.H"
 #include "wedgePolyPatch.H"
@@ -47,6 +50,11 @@ Contributors/Copyright:
 #include "addToRunTimeSelectionTable.H"
 
 #include "fvc.H"
+
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
 
 namespace Foam {
 
@@ -308,7 +316,7 @@ void streamFunctionPluginFunction::doEvaluation()
                                 (
                                     !isType<emptyPolyPatch>
                                     (patches[patchNo])
-#ifndef FOAM_DEV
+#ifdef FOAM_HAS_SYMMETRY_PLANE_POLY_PATCH
                                     && !isType<symmetryPlanePolyPatch>
                                     (patches[patchNo])
 #endif
@@ -488,7 +496,9 @@ void streamFunctionPluginFunction::doEvaluation()
 
     // Normalise the stream-function by the 2D mesh thickness
     streamFunction /= thickness;
-    streamFunction.boundaryField() = 0.0;
+    const_cast<pointScalarField::GeometricBoundaryField&>(
+        streamFunction.boundaryField()
+    ) = 0.0;
     // end of 'borrowed' code
 
     result().setObjectResult(pStreamFunction);

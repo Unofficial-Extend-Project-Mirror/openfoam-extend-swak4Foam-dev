@@ -1,6 +1,10 @@
 
 include $(OBJECTS_DIR)/../../../rules/versionOptions
 
+ifdef NEEDS_FILTER_DROPIN
+ADDITIONALFILES_INC=-I../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/
+endif
+
 EXE_INC = \
     $(FOAM_DEV_OPTION) 	\
     -I../swak4FoamParsers/lnInclude \
@@ -10,10 +14,13 @@ EXE_INC = \
     $(FILEFORMATS_INC) \
     $(FVOPTIONS_INC) \
     -I$(LIB_SRC)/triSurface/lnInclude \
-    -I$(LIB_SRC)//postProcessing/functionObjects/utilities/lnInclude \
+    -I$(LIB_SRC)/postProcessing/functionObjects/utilities/lnInclude \
+    -I$(LIB_SRC)/functionObjects/utilities/lnInclude \
     -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
     -I$(LIB_SRC)/dynamicMesh/dynamicFvMesh/lnInclude \
-    -I$(LIB_SRC)/lagrangian/basic/lnInclude
+    -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    $(ADDITIONALFILES_INC)
+    
 
 
 LIB_LIBS = \

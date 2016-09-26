@@ -196,7 +196,7 @@ void findShiftedFieldPluginFunction<Type>::doEvaluation()
     notFound.shrink();
     Pbug << notFound.size() << " cells not found" << endl;
 
-    if(Pstream::parRun) {
+    if(Pstream::parRun()) {
         List<List<FoundValue<Type> > > data(Pstream::nProcs());
         data[Pstream::myProcNo()]=notFound;
         Pstream::gatherList(data);

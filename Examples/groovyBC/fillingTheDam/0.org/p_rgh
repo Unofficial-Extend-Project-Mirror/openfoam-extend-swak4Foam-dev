@@ -9,55 +9,54 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    location    "0";
-    object      U;
+    class       volScalarField;
+    object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
+dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform (0 0 0);
+internalField   uniform 0;
 
 boundaryField
 {
     leftWall
     {
-        type            fixedValue;
-        value           uniform (0 0 0);
+        //        type            buoyantPressure;
+        type            fixedFluxPressure;
+        value           uniform 0;
     }
+
     rightWall
     {
-        type            groovyBC;
-        value           uniform (0 0 0);
-        valueExpression "((pos().y < 0.1) && full<1) ? -normal() : vector(0,0,0)";
-        storedVariables (
-            {
-                name full;
-                initialValue "0";
-            }
-        );
-        variables (
-            "aHeight{set'fillingLine}=average(alpha1*(max(pos().y)-min(pos().y)));"
-            "pling=aHeight>0.35;"
-            "full=(full>0) ? full : ((aHeight>0.35) ? 1 : 0);"
-        );
+        //        type            buoyantPressure;
+        type            fixedFluxPressure;
+        value           uniform 0;
     }
+
     lowerWall
     {
-        type            fixedValue;
-        value           uniform (0 0 0);
+        //        type            buoyantPressure;
+        type            fixedFluxPressure;
+        value           uniform 0;
     }
+
     atmosphere
     {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
+        type            totalPressure;
+        p0              uniform 0;
+        U               U;
+        phi             phi;
+        rho             rho;
+        psi             none;
+        gamma           1;
+        value           uniform 0;
     }
+
     defaultFaces
     {
         type            empty;
     }
 }
-
 
 // ************************************************************************* //

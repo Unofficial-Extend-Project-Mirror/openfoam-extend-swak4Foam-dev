@@ -115,7 +115,7 @@ public:
     virtual bool read(const dictionary&);
 
     //- write from the simpleFunctionObjects
-    virtual void write();
+    virtual void writeSimple();
 };
 
 

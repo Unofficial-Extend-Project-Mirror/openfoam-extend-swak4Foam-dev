@@ -124,7 +124,12 @@ void lcsEnthalpySourcePluginFunction::doEvaluation()
 #ifdef FOAM_THERMOCLOUD_OLD_STYLE
     pSource->internalField()=Sh.field();
 #else
-    pSource->internalField()=Sh.field()/(mesh().V()*mesh().time().deltaT().value());
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(pSource->internalField().field())
+#else
+    pSource->internalField()
+#endif
+        =Sh.field()/(mesh().V()*mesh().time().deltaT().value());
 #endif
 
     result().setObjectResult(pSource);

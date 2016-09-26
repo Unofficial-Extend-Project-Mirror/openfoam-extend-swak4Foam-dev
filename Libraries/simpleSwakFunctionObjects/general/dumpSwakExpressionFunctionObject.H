@@ -111,7 +111,7 @@ public:
     );
 
     //- Do the writing
-    virtual void write();
+    virtual void writeSimple();
 
 };
 

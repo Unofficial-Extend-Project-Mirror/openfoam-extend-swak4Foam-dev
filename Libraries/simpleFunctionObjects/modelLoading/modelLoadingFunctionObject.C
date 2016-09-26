@@ -106,7 +106,7 @@ bool modelLoadingFunctionObject<ModelType>::start()
 }
 
 template <class ModelType>
-void modelLoadingFunctionObject<ModelType>::write()
+void modelLoadingFunctionObject<ModelType>::writeSimple()
 {
     if(correctModel_) {
         if(model_.valid()) {

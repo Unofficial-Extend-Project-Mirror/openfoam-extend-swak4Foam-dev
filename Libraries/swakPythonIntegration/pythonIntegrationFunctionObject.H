@@ -131,6 +131,18 @@ public:
         {
             return execute(false);
         }
+#else
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    virtual bool execute()
+        {
+            return execute(false);
+        }
+
+    virtual bool write()
+        {
+            return execute(true);
+        }
+#endif
 #endif
 
     //- Read and set the function object if it's data has changed

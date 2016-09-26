@@ -106,7 +106,7 @@ void Foam::fv::calcResidualFvOption::calcResidual(
         return;
     }
     tmp<Field<Type> > pRes(mat.residual());
-    Field<Type> &res=pRes();
+    Field<Type> &res=const_cast<Field<Type>&>(pRes());
 
     scalarField tmpField(res.size());
 

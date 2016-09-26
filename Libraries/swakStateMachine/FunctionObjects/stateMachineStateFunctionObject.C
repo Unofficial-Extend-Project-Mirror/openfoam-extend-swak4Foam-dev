@@ -95,7 +95,7 @@ stringList stateMachineStateFunctionObject::columnNames()
     return result;
 }
 
-void stateMachineStateFunctionObject::write()
+void stateMachineStateFunctionObject::writeSimple()
 {
     if(!Pstream::master()) {
         return;

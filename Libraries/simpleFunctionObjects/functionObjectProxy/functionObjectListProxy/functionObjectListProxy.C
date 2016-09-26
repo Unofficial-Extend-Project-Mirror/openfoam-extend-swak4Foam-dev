@@ -139,23 +139,19 @@ bool functionObjectListProxy::execute(const bool forceWrite)
         Info << this->name() << " functionObjectListProxy::execute()" << endl;
     }
 
-    if(outputTime(forceWrite)) {
-        if(writeDebug()) {
-            Info << this->name() << " functionObjectListProxy::execute() - doing" << endl;
-        }
-
 #ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
-        return functions().execute();
+    return functions().execute();
 #else
-        return functions().execute(forceWrite);
-#endif
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    if(forceWrite) {
+        return functions().execute(); // there is no .write()-method
     } else {
-        if(writeDebug()) {
-            Info << this->name() << " functionObjectListProxy::execute() - skipping" << endl;
-        }
-
-        return false;
+        return functions().execute();
     }
+#else
+    return functions().execute(forceWrite);
+#endif
+#endif
 }
 
 bool functionObjectListProxy::start()
@@ -185,7 +181,7 @@ bool functionObjectListProxy::read(const dictionary& dict)
     return functions().read();
 }
 
-void functionObjectListProxy::write()
+void functionObjectListProxy::writeSimple()
 {
     // Don't want to be abstract
 }

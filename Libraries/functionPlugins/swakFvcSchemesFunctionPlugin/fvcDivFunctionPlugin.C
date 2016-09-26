@@ -102,7 +102,7 @@ void fvcDivFunctionPlugin<T>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().fvcDiv(original_())
+            const_cast<fv::divScheme<T>&>(scheme()).fvcDiv(original_())
         )
     );
 

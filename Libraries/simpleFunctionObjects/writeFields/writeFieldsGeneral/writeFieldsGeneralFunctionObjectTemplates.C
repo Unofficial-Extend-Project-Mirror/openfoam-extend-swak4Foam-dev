@@ -32,14 +32,13 @@ Contributors/Copyright:
     2008-2011, 2013, 2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "volumeFieldFunctionObject.H"
 #include "volFields.H"
 #include "IOmanip.H"
 #include "fvMesh.H"
-#include "fvCFD.H"
 
 #include "basicKinematicCloud.H"
 #include "objectRegistryUtility.H"

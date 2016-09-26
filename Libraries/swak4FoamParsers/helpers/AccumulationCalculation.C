@@ -415,7 +415,7 @@ Type AccumulationCalculation<Type>::weightedAverage()
         if(mag(wSum)>SMALL) {
             weightedAverage_=tSum/wSum;
         } else {
-            weightedAverage_=pTraits<Type>::one*HUGE;
+            weightedAverage_=pTraits<Type>::one*pTraits<scalar>::max;
         }
         hasWeightedAverage_=true;
     }

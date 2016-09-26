@@ -160,7 +160,10 @@ void setField
     FieldValueExpressionDriver::setValuePatches(*pTemp,keepPatches,valuePatches);
 
     forAll(result.boundaryField(),patchI) {
-        typename T::PatchFieldType &pf=pTemp->boundaryField()[patchI];
+        typename T::PatchFieldType &pf=
+            const_cast<typename T::PatchFieldType&>(
+                pTemp->boundaryField()[patchI]
+            );
         const typename T::PatchFieldType &pfOrig=result.boundaryField()[patchI];
 
         if(pf.patch().coupled()) {
@@ -246,7 +249,11 @@ void doAnExpression
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        f.typeHeaderOk<IOobject>(false);
+#else
         f.headerOk();
+#endif
 
         oldFieldType=f.headerClassName();
 
@@ -687,8 +694,12 @@ void preLoadFieldsFunction(
 
             if
             (
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+                fieldHeader.typeHeaderOk<FieldType>(true)
+#else
                 fieldHeader.headerOk()
                 && fieldHeader.headerClassName() == pTraits<FieldType>::typeName
+#endif
             )
             {
                 Info << " Preloading " << name << " of type "
@@ -1179,6 +1190,8 @@ int main(int argc, char *argv[])
             }
         }
     }
+
+    dummyPhi.clear();
 
     Info << "End\n" << endl;
 

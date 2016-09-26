@@ -74,7 +74,7 @@ bool writeAdditionalFieldsFunctionObject::start()
     Info << "Additional fields " << fieldNames() << " will be written" << endl;
 
     if(outputControlMode()==ocmStartup) {
-        write();
+        writeSimple();
     }
 
     return true;

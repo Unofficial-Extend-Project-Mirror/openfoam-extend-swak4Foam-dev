@@ -91,10 +91,17 @@ bool initSwakFunctionObject::execute(const bool forceWrite)
     return true;
 }
 
-#ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+#if defined(FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE) || defined(FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START)
 bool initSwakFunctionObject::execute()
 {
     return execute(false);
+}
+#endif
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+bool initSwakFunctionObject::write()
+{
+    return execute(true);
 }
 #endif
 

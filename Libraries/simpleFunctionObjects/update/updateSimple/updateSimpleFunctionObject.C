@@ -88,7 +88,7 @@ bool updateSimpleFunctionObject::start()
     return true;
 }
 
-void updateSimpleFunctionObject::write()
+void updateSimpleFunctionObject::writeSimple()
 {
     Pbug << "write() started" << endl;
 

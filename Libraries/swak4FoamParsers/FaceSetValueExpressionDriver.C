@@ -326,7 +326,7 @@ tmp<scalarField> FaceSetValueExpressionDriver::makeFaceFlipField() const
         }
 
         if(use) {
-            result()[cnt]= (flip ? -1 : 1 );
+            const_cast<scalar&>(result()[cnt])= (flip ? -1 : 1 );
             cnt++;
         }
     }

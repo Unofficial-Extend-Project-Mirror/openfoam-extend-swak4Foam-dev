@@ -112,7 +112,8 @@ void setValueAveragePluginFunction<Type>::doEvaluation()
 
     forAll(nr,cellI) {
         if(nr[cellI]>SMALL) {
-            pValueAverage->internalField()[cellI]/=nr[cellI];
+            const_cast<Type&>(pValueAverage->internalField()[cellI])
+                /=nr[cellI];
         }
     }
 

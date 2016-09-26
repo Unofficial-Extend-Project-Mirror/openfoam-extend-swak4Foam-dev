@@ -440,6 +440,9 @@ S_{expl} + S_{impl} T
     functions etc) not all of the examples work with all
     OpenFOAM-installations "out of the box". Slight adaptions may be
     necessary
+
+    Some of the cases use the =pyFoamPrepareCase.py=-utility of [[https://openfoamwiki.net/index.php/Contrib/PyFoam][PyFoam]]
+    to set up the case for the current OpenFOAM-version
 *** groovyBC
     The old =groovyBC=-Demos
 **** pulsedPitzDaily
@@ -450,21 +453,22 @@ S_{expl} + S_{impl} T
          =simpleSwakFunctionObjects=. =solveLaplacianPDE= and
          =solveTransportPDE= for solving equations,
          =pythonIntegration= with calculations using =numpy=
+    - Preparation :: =pyFoamPrepareCase.py=
 **** wobbler
     - Solver :: solidDisplacementFoam
 **** circulatingSplash
     - Solver :: interDyMFoam
+    - Preparation :: =pyFoamPrepareCase.py=
 **** movingConeDistorted
     - Solver :: pimpleDyMFoam
     - Also demonstrates :: =swakExpression= with =surface=. Due to a
       problem described below this currently doesn't work
 **** average-t-junction
     - Solver :: pimpleFoam
-    - Mesh preparation :: Execute the script =prepare.sh= in that
-         directory (requires PyFoam: if not installed change in the
-         =boundary=-file the type of the =defaultFaces= to =wall=)
+    - Mesh preparation :: =pyFoamPrepareCase.sh=
 **** delayed-t-junction
     - Solver :: pimpleFoam
+    - Mesh preparation :: =pyFoamPrepareCase.sh=
     - Demonstrates :: Delayed variables to simulate an inflow that
                       depends on the value of the outflow
 **** multiRegionHeaterFeedback
@@ -750,6 +754,12 @@ S_{expl} + S_{impl} T
 **** pitzDailyStateMachineSwitched
      =simpleFoam=-tutorial. Uses state machines to change the
      discretization periodically
+*** StateMachine
+    Demonstrate the usage of state machines
+**** stateCavity
+     The case is only an excuse for the state machines
+     - Running :: =replayTransientBC -allowFunctionObjects=
+     - Case setup :: =pyFoamPrepareCase.py=
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -779,6 +789,10 @@ S_{expl} + S_{impl} T
 ** releaseTesting
    Scripts and configuration to test for a release in a virtual
    machine using =vagrant=. Also to be used for packaging
+** distroPatches
+   Patches that have to be applied to releases to get swak4Foam to
+   work with them. These are only needed to fix problems of the
+   distributions
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
@@ -3471,8 +3485,32 @@ S_{expl} + S_{impl} T
      transient
 ** Next release - version number : 0.4.1
 *** New supported versions
+**** Support for OpenFOAM v1606+ version
+     This version is supported in the this version of
+     =swak4Foam=. There is only one problem: there were changes to the
+     =tmp=-template. These changes have been taken care of in the
+     =swak4Foam=-sources. *But* there are two source files in the
+     distro that need to be modified (basically adding =.ref()=
+     instead of =()= in three places:
+: src/finiteVolume/finiteVolume/fvc/fvcD2dt2.C
+: src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C
+     Therefor the officially released version will *never* compile
+     with =swak4Foam= but this is nothing that can be fixed in
+     =swak4Foam= (the patch is found in the directory
+     =distroPatches/OpenFOAM-v1606+=)
+**** Support for OpenFOAM 4.0
+     This version is supported in this version of OpenFOAM. There is
+     one problem: the released version has two problems that mean that
+     =swak4foam= will *never* compile on the released version.
+
+     Patches fixing these issues are found in the directory
+     =distroPatches/OpenFOAM-4.0=
 *** Incompatibilities
 *** Bug fixes
+**** Destruction of =dummyPhi= causes error message
+     On some distros the destruction of a field stored in an =autoPtr=
+     *after* the destruction of the mesh causes an error message. This
+     has no effect but is annoying. Fixed
 **** =functionObjectListProxy= does not honor =outputTime=
      The function object was executed every time not matter what
      =outputControlMode= was set. Fixed

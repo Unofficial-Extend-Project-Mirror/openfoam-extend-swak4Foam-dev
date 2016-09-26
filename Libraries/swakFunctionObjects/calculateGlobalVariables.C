@@ -127,12 +127,21 @@ void Foam::calculateGlobalVariables::read(const dictionary& dict)
             << endl;
 }
 
-void Foam::calculateGlobalVariables::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::calculateGlobalVariables::write()
 {
     executeAndWriteToGlobal();
 
     // make sure that the stored Variables are consistently written
     driver_->tryWrite();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

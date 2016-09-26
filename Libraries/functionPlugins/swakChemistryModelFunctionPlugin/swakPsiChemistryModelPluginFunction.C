@@ -142,7 +142,12 @@ tmp<volScalarField> swakPsiChemistryModelPluginFunction::wrapDimField(
                 "zeroGradient"
             )
     );
-    result->dimensionedInternalField()=dimField;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(result->internalField().field())
+#else
+    result->internalField()
+#endif
+    = dimField;
 
     return result;
 }
@@ -419,7 +424,11 @@ public:
 #ifdef FOAM_DELTATCHEM_NOT_DIMENSIONED
         val->internalField()=dtChem;
 #else
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<scalarField&>(val->internalField().field())=dtChem;
+#else
         val->dimensionedInternalField()=dtChem;
+#endif
 #endif
 
         result().setObjectResult(
