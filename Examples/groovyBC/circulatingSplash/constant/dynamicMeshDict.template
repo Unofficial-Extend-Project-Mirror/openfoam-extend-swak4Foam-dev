@@ -23,8 +23,11 @@ dynamicRefineFvMeshCoeffs
     refineInterval 1;
 
     // volScalarField to base refinement on
-    //    field alpha1;
+<!--(if foamFork=="extend")-->
+    field alpha1;
+<!--(else)-->
     field alpha.water;
+<!--(end)-->
 
     //
     // 1. interpolate field

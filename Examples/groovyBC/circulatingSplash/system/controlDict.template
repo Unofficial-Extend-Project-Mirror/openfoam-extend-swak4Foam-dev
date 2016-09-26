@@ -53,6 +53,9 @@ maxCo           0.1;
 maxDeltaT       0.00025;
 
 functions {
+    // whoIsHere {
+    //     type listRegisteredObjects;
+    // }
     calculateInletVariables {
         type calculateGlobalVariables;
         outputControl timeStep;
@@ -65,9 +68,11 @@ functions {
             inletRadius
             inletVelocity
         );
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         variables (
             "r1=0.25*(max(pts().x)-min(pts().x));"
             "inletRadius=r1*0.2*(1-0.5*cos(54*time()));"
@@ -106,9 +111,11 @@ functions {
     }
     divergenceArea {
         type swakExpression;
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         variables (
             "idealArea=inletRadius*inletRadius*pi;"
             "realArea=sum(area()*alpha1);"
@@ -132,9 +139,11 @@ functions {
         accumulations (average );
         valueType patch;
         patchName atmosphere;
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         variables (
             "totalIn=totalIn+sum(alpha1*mag(U)*area()*deltaT());"
         );
@@ -169,9 +178,11 @@ functions {
         verbose true;
         accumulations ( sum );
         valueType internalField;
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         expression "vol()*alpha1";
         ignore_unimplemented_simpleFunctionObject::updateMesh true;
     }

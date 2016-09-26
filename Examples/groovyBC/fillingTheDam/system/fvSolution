@@ -54,6 +54,14 @@ solvers
         relTol          0;
     }
 
+    pd {
+        $p_rgh;
+    }
+
+    pdFinal {
+        $p_rghFinal;
+    }
+
     U
     {
         solver          smoothSolver;
@@ -79,6 +87,13 @@ PIMPLE
     nOuterCorrectors    1;
     nCorrectors         3;
     nNonOrthogonalCorrectors 0;
+    nAlphaCorr      1;
+    nAlphaSubCycles 2;
+}
+
+PISO {
+    cAlpha          1;
+    //    $PIMPLE;
 }
 
 relaxationFactors

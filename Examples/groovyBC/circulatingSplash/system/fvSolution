@@ -141,7 +141,9 @@ solvers
         tolerance       1e-8;
         relTol          0;
     }
-
+    alpha1 {
+        $alpha.water;
+    }
 }
 
 PIMPLE
@@ -161,8 +163,8 @@ PIMPLE
     };
 }
 
-PIMPLE {
-    $PISO;
+PISO {
+    $PIMPLE;
 }
 
 // ************************************************************************* //

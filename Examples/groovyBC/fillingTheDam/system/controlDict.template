@@ -103,9 +103,11 @@ functions
         valueType set;
         setName  fillingHeight;
         globalScopes ( "fillDam" );
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         expression "(alpha1 > aThres) ? pos().y : 0";
         accumulations (
             max
@@ -141,9 +143,11 @@ functions
                 initialValue "0";
             }
         );
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         //        debugCommonDriver 1;
         variables (
             "currentPegel=(alpha1 > aThres) ? pos().y : 0;"
@@ -159,7 +163,11 @@ functions
         surfaceName liquidSurf;
         surface {
             type isoSurface;
+<!--(if foamFork!="extend")-->
             isoField alpha.water;
+<!--(else)-->
+            isoField alpha1;
+<!--(end)-->
             isoValue 0.5;
             interpolate true;
         }
@@ -194,9 +202,11 @@ functions
         verbose true;
         surfaceName liquidSurf2;
         globalScopes ( "fillDam" );
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         expression "alpha1*vol()/gridThick";
         accumulations (
             sum
@@ -302,9 +312,11 @@ functions
 
         // expression "tracer*alpha1";
         // mask "true";
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
 
         expression "0";
         mask "alpha1<0.01";
@@ -324,9 +336,11 @@ functions
                         outputInterval 1;
                         valueType internalField;
                         toGlobalNamespace pythonStatistics;
+<!--(if foamFork!="extend")-->
                         aliases {
                             alpha1 alpha.water;
                         }
+<!--(end)-->
                         variables (
                             "heightField=pos().y;"
                             "alphaField=alpha1;"

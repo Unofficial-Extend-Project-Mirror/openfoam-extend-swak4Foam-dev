@@ -37,9 +37,11 @@ boundaryField
                 initialValue "0";
             }
         );
+<!--(if foamFork!="extend")-->
         aliases {
             alpha1 alpha.water;
         }
+<!--(end)-->
         variables (
             "aHeight{set'fillingLine}=average(alpha1*(max(pos().y)-min(pos().y)));"
             //            "pling=aHeight>0.35;"

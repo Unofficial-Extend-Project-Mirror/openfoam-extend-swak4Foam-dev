@@ -39,6 +39,10 @@ water
     }
 }
 
+phase1 {
+    $water;
+}
+
 air
 {
     transportModel  Newtonian;
@@ -59,6 +63,10 @@ air
         k               k [ 0 0 1 0 0 0 0 ] 99.6;
         n               n [ 0 0 0 0 0 0 0 ] 0.1003;
     }
+}
+
+phase2 {
+    $air;
 }
 
 sigma           sigma [ 1 0 -2 0 0 0 0 ] 0.07;
