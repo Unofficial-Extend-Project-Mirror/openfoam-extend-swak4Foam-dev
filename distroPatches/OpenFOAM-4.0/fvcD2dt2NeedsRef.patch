@@ -1,0 +1,24 @@
+# HG changeset patch
+# Parent  caf7ae07147d278fce48e5bb542bd8d492678039
+
+diff --git a/src/finiteVolume/finiteVolume/fvc/fvcD2dt2.C b/src/finiteVolume/finiteVolume/fvc/fvcD2dt2.C
+--- a/src/finiteVolume/finiteVolume/fvc/fvcD2dt2.C
++++ b/src/finiteVolume/finiteVolume/fvc/fvcD2dt2.C
+@@ -50,7 +50,7 @@
+     (
+         vf.mesh(),
+         vf.mesh().ddtScheme("d2dt2(" + vf.name() + ')')
+-    )().fvcD2dt2(vf);
++    ).ref().fvcD2dt2(vf);
+ }
+ 
+ 
+@@ -66,7 +66,7 @@
+     (
+         vf.mesh(),
+         vf.mesh().ddtScheme("d2dt2(" + rho.name() + ',' + vf.name() + ')')
+-    )().fvcD2dt2(rho, vf);
++    ).ref().fvcD2dt2(rho, vf);
+ }
+ 
+ 

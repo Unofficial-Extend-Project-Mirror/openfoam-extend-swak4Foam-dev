@@ -780,6 +780,10 @@ S_{expl} + S_{impl} T
 ** releaseTesting
    Scripts and configuration to test for a release in a virtual
    machine using =vagrant=. Also to be used for packaging
+** distroPatches
+   Patches that have to be applied to releases to get swak4Foam to
+   work with them. These are only needed to fix problems of the
+   distributions
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
@@ -3483,7 +3487,15 @@ S_{expl} + S_{impl} T
 : src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C
      Therefor the officially released version will *never* compile
      with =swak4Foam= but this is nothing that can be fixed in
-     =swak4Foam=
+     =swak4Foam= (the patch is found in the directory
+     =distroPatches/OpenFOAM-v1606+=)
+**** Support for OpenFOAM 4.0
+     This version is supported in this version of OpenFOAM. There is
+     one problem: the released version has two problems that mean that
+     =swak4foam= will *never* compile on the released version.
+
+     Patches fixing these issues are found in the directory
+     =distroPatches/OpenFOAM-4.0=
 *** Incompatibilities
 *** Bug fixes
 **** Destruction of =dummyPhi= causes error message
