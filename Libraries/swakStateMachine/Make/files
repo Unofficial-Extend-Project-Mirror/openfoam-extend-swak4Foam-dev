@@ -1,0 +1,15 @@
+BaseClasses/StateMachine.C
+BaseClasses/StateMachineRepository.C
+
+FunctionObjects/stateMachineCreateAndUpdateFunctionObject.C
+FunctionObjects/stateMachineSetStateFunctionObject.C
+FunctionObjects/stateMachineStateFunctionObject.C
+
+PluginFunctions/isStateFunctionPlugin.C
+PluginFunctions/timeSinceChangeFunctionPlugin.C
+PluginFunctions/stepsSinceChangeFunctionPlugin.C
+PluginFunctions/changedToFunctionPlugin.C
+
+other/stateMachineFvSolutionFvSchemesFunctionObject.C
+
+LIB = $(FOAM_USER_LIBBIN)/libswakStateMachine

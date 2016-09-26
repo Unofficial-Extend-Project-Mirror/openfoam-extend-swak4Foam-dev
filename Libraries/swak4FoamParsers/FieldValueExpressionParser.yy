@@ -405,6 +405,7 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 
 %token TOKEN_deltaT
 %token TOKEN_time
+%token TOKEN_outputTime
 
 %token TOKEN_pow
 %token TOKEN_log
@@ -2566,6 +2567,11 @@ lexp: TOKEN_TRUE                        {
     | TOKEN_FALSE                       {
             $$ = driver.makeConstantField<Foam::volScalarField>(
                 driver.FALSE_Value
+            ).ptr();
+          }
+    | TOKEN_outputTime '(' ')'          {
+            $$ = driver.makeConstantField<Foam::volScalarField>(
+                driver.runTime().outputTime()
             ).ptr();
           }
     | TOKEN_set '(' TOKEN_SETID ')'    {

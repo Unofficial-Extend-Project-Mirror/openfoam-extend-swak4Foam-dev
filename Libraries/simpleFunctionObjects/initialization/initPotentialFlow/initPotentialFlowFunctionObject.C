@@ -95,6 +95,7 @@ void initPotentialFlowFunctionObject::recalc()
 {
     Info << "Solving potential flow for velocity " << UName_
         << " and pressure " << pName_ << endl;
+    Pbug << "Starting recalc()" << endl;
 
     const fvMesh &mesh=dynamicCast<const fvMesh&>(obr_);
 
@@ -147,6 +148,8 @@ void initPotentialFlowFunctionObject::recalc()
 
     for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
     {
+        Pbug << "Solve nonOrth " << nonOrth << endl;
+
         fvScalarMatrix pEqn
         (
             fvm::laplacian
@@ -215,6 +218,7 @@ void initPotentialFlowFunctionObject::recalc()
             pNew.write();
         }
     }
+    Pbug << "Ended recalc()" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

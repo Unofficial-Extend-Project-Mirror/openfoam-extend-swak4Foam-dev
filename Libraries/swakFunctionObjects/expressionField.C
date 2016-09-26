@@ -157,7 +157,8 @@ void Foam::expressionField::read(const dictionary& dict)
                 mesh,
                 false, // no caching. No need
                 true,  // search fields in memory
-                false  // don't look up files in memory
+                false,  // don't look up files in memory
+                dict_
             )
         );
 

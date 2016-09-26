@@ -751,6 +751,9 @@ S_{expl} + S_{impl} T
 **** pitzDailyTimeSwitched
      The regular =simpleFoam=-tutorial. Modified so that it switches
      to higher relaxation factors during the run
+**** pitzDailyStateMachineSwitched
+     =simpleFoam=-tutorial. Uses state machines to change the
+     discretization periodically
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -3502,9 +3505,137 @@ S_{expl} + S_{impl} T
      On some distros the destruction of a field stored in an =autoPtr=
      *after* the destruction of the mesh causes an error message. This
      has no effect but is annoying. Fixed
+**** =functionObjectListProxy= does not honor =outputTime=
+     The function object was executed every time not matter what
+     =outputControlMode= was set. Fixed
+**** Plugin functions with =bool= results not supported by all drivers
+     Until now only the =internalField= and the =faInternalField=
+     supported boolean results. Now all drivers support them
+**** No plugin function for =cloud= possible
+     Because the static variable/method =driverName= was not specified
+     no plugin functions for clouds could get specified
+**** Wrong syntax in primitive types of plugin-function causes C++-error
+     If a primitive function for instance expects a label and finds an
+     unscanable string like ~x23~ then this used to generate a failure
+     by the C++-library. This gave no indication on the real
+     problem. Now there is a OpenFOAM-error message with a somewhat
+     better explanation
+**** Initialization function objects in =simpleFunctionObjects= fail in parallel
+     Because of the wrong order of initialization of these function
+     objects they failed in parallel. Fixed
 *** Infrastructure
+**** Add the development branch to the version string in utilities
+     If the compiled version is not a released one then the info of
+     =hg branch= is added to the version output that utilities like
+     =funkySetFields= print
 *** Documentation
 *** Internals (for developers)
 *** New features
+**** Function plugin =ShiftField= that allows shifting volume fields
+     When adding the library =libswakShiftFieldFunctionPlugin.so= to
+     =libs= in the =controlDict= functions are added that allow
+     shifting volume fields by a specified distance. One example
+     would be an expression
+: "shiftConstantScalarField(T,(1 1 0))"
+     which generates a new =volScalarField= where the value at =(0 0
+     0)= is the value of =T= at the location =(1 0 0)=.
+
+     The scheme for naming the functions is
+     =scalar<ShiftType><ValueType>Field= with
+     - ValueType :: one of the base types =Scalar=, =Vector=,
+          =Tensor=, =SymmTensor=, =SphericalTensor=
+     - ShiftType :: how the shift is specified. Possible values are either
+       - Constant :: A constant vector (like the example here)
+       - Expression :: An expression that gives a =pointVectorField=
+            (for instance =interpolateToPoint(time()*vector(0,0,-1))=)
+
+     These functions work by generating a new mesh that is shifted as
+     specified (in the inverse direction) and interpolating between
+     this and the original mesh. This is computationally *very*
+     expensive and therefor not recommended in evaluations that occur
+     very often.
+
+     Cells that have no shifted equivalent value are set to
+     zero. Boundary patches are not interpolated. Both of these
+     behaviors can cause weird results.
+
+     There are also variants with =Default= in the end. These allow
+     setting different default values than $0$
+
+     The functions with the names =map<ShiftType><ValueType>Field= map
+     the value of the nearest cell. This is more stable but might
+     coarsen the field
+
+     The additional =findShifted<ValueType>Field=-functions do the
+     mapping by avoiding the =meshToMesh=-functions of OpenFOAM: the
+     shifted value is found by "looking" into the original cell that
+     contains the point that is the cell center plus the displacement
+     value. If that point is not in the mesh a default value is used
+**** Library =swakStateMachine= to easily implement switching in cases
+     This library implements /State machines/. This is a convenient
+     way to store a state in a simulation and switch between them by
+     predefined rules. An example for states in a /State machine/
+     would be: =closed=, =valveOpening=, =open=, =valveClosing=
+
+     The library has the function objects and plugin functions to use
+     /State machines/.
+
+     The chapter /State machines/ in the /Incomplete swak4Foam
+     reference/ describes it in more detail
+**** Function object =stateMachineFvSolutionFvSchemes= to switch numerics accorrding to a state machine
+     This function object allows modifying =fvSchemes= and
+     =fvSolution= according to the states of two state machines.
+**** Function plugin =Quantile= for calculations with the distribution of a function
+     All the functions in this plugin first calculate a
+     distribution. This distribution is calculated from the first parameters:
+     1. the field for which the distribution is calculated
+     2. the weight with which the cell values enter the
+        distribution. Usually =vol()= (volume weighted) or =1= (equal
+        weight for all cells)
+     3. a logical expression that specifies which cells are used
+        (=true= for all cells)
+     4. the number of bins to use for the distribution. This specifies
+        how fine the distribution is calculated. Should be small
+        compared to the number of cells. Usually the values =100= or
+        =1000= should be sufficient
+     The implemented functions are
+     - fracSmallerThan :: Writes a fraction in the range from $0$ to
+          $1$ with for instance $0.5$ meaning "50 % of the
+          distribution is smaller than the value in this cell". The
+          cells which are masked out get the value $-1$.
+     - fracSmallerThanFromOther :: Like =fracSmallerThan= but there is
+          an additional parameter: the field that is used for
+          calculating the fraction. Here the mask is not used for
+          calculating the fraction (but still used for calculating the
+          distribution)
+     - quantileFromOther :: Basically the inverse of
+          =fracSmallerThanFromOther=. The last parameter is a fraction
+          (from $0$ to $1$) and the result is the corresponding
+          quantile: if a fraction $0.5$ is specified then the value
+          from the distribution for which 50% are smaller is written
+          to the cell
+     Note: values may slightly vary according to the number of
+     bins. But the bin number also increases the calculation time.
+**** Function =outputTime()= to indicate output time
+     A function =outputTime()= has been added to the parsers. This
+     function is =true= if Foam is writing at the current time and
+     =false= else
 *** Enhancements
+**** Primitive parser for Plugin-functions now supports tensor types
+     The parser for =primitve= types now supports =tensor=,
+     =symmTensor= and =sphericalTensor= as well.
+**** Plugin-functions now can use =variables= (under certain circumstances)
+     For an expression =fooFunmction(var+2)= where =fooFunction= is a
+     Plugin-function the symbol =var= can now be a variable: if in the
+     parent dictionary there is a sub-dictionary =fooFunctionData=
+     then this dictionary is searched for a =variables=-entry and
+     these variables are then evaluated (it is also possible to have
+     =lookuptables= and similar in =fooFunctionData=)
+**** Timeline function objects now optionally write value at start time
+     Function objects that inherit from =timelineFunctionObject= (like
+     =swakExpression=) now have an optional parameter
+     =writeStartTime=. If set to =yes= then the value at start-time
+     will be written. The default setting is =no=. This is similar to
+     the old behavior and avoids crashes at startup. Some classes
+     change this default to make it =yes=
 *** Examples

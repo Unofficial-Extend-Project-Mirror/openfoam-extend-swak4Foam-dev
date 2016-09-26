@@ -50,6 +50,9 @@ namespace Foam {
         Info << " - " SWAK_VERSION_EXTENSION;
 #endif
         Info << " (Release date: " SWAK_RELEASE_DATE ")";
+#ifdef SWAK_HGBRANCH
+        Info << " - HG Branch: " SWAK_HGBRANCH;
+#endif
         Info << endl;
         Info << "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //";
         Info << endl;

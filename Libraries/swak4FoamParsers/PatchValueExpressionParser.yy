@@ -285,6 +285,7 @@ namespace Foam {
 
 %token TOKEN_deltaT
 %token TOKEN_time
+%token TOKEN_outputTime
 
 %token TOKEN_pow
 %token TOKEN_log
@@ -1854,6 +1855,11 @@ evaluateSphericalTensorFunction: TOKEN_FUNCTION_HID '(' eatCharactersSwitch
 
 lexp: TOKEN_TRUE   { $$ = driver.makeField(true).ptr(); }
     | TOKEN_FALSE  { $$ = driver.makeField(false).ptr(); }
+    | TOKEN_outputTime '(' ')'          {
+           $$ = driver.makeField(
+                driver.runTime().outputTime()
+           ).ptr();
+       }
     | exp '<' exp  {
             sameSize($1,$3);
             $$ = driver.doCompare(

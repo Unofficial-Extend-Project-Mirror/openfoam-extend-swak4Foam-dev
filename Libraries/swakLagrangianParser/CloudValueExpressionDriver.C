@@ -49,6 +49,8 @@ namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+word CloudValueExpressionDriver::driverName_="cloud";
+
 defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
 
 addNamedToRunTimeSelectionTable(CommonValueExpressionDriver, CloudValueExpressionDriver, dictionary, cloud);

@@ -59,17 +59,18 @@ updateSimpleFunctionObject::updateSimpleFunctionObject
 :
     simpleFunctionObject(name,t,dict)
 {
-}
-
-bool updateSimpleFunctionObject::start()
-{
-    simpleFunctionObject::start();
-
     runIfStartTime_=dict_.lookupOrDefault<bool>("runIfStartTime",false);
     onlyAtStartup_=readBool(dict_.lookup("onlyAtStartup"));
     if(onlyAtStartup_) {
         runIfStartTime_=readBool(dict_.lookup("runIfStartTime"));
     }
+}
+
+bool updateSimpleFunctionObject::start()
+{
+    Pbug << "start() started" << endl;
+    simpleFunctionObject::start();
+    Pbug << "start() called parent" << endl;
 
     if(onlyAtStartup_) {
         if(
@@ -77,18 +78,26 @@ bool updateSimpleFunctionObject::start()
             ||
             time().timeIndex()==0
         ) {
+            Pbug << "Calling recalc()" << endl;
             recalc();
         }
     }
+
+    Pbug << "start() ended" << endl;
 
     return true;
 }
 
 void updateSimpleFunctionObject::writeSimple()
 {
+    Pbug << "write() started" << endl;
+
     if(!onlyAtStartup_) {
+        Pbug << "Calling recalc() always" << endl;
         recalc();
     }
+
+    Pbug << "write() ended" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

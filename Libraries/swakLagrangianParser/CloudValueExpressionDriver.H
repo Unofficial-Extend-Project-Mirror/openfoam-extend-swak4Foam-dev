@@ -83,6 +83,8 @@ class CloudValueExpressionDriver
 :
     public CommonValueExpressionDriver
 {
+    static word driverName_;
+
     // Private data
 
     //- the cloud
@@ -145,6 +147,8 @@ public:
 
      //- Runtime type information
     TypeName("CloudValueExpressionDriver");
+
+    static const word &driverName() { return driverName_; }
 
     // Constructors
 
