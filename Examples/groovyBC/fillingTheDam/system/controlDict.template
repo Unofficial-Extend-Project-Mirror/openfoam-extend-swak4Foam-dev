@@ -54,7 +54,7 @@ maxAlphaCo      0.5;
 maxDeltaT       1;
 
 functions
-(
+{
     defineFillDam {
         type addGlobalVariable;
         outputControl timeStep;
@@ -377,7 +377,7 @@ functions
         readDuringConstruction true;
         functionObjectName executeIfPython;
    }
-);
+}
 
 libs (
     "libOpenFOAM.so"

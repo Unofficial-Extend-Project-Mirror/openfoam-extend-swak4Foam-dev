@@ -31,5 +31,5 @@
   | groovyBC/delayed-t-junction  | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/circulatingSplash   | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/movingConeDistorted | \checkmark | \sad       | \checkmark | \checkmark |
-  | groovyBC/fillingTheDam       |            | \sad       | \checkmark | \checkmark |
+  | groovyBC/fillingTheDam       | \checkmark | \sad       | \checkmark | \checkmark |
   |                              |            |            |            |            |
