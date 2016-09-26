@@ -39,39 +39,39 @@ Contributors/Copyright:
 
 namespace Foam {
 
-typedef shiftFieldConstantVectorPluginFunction<scalar,meshToMesh::imCellVolumeWeight> shiftScalarWeight;
+typedef shiftFieldConstantVectorPluginFunction<scalar,SHIFT_METHOD> shiftScalarWeight;
 defineTemplateTypeNameAndDebug(shiftScalarWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarWeight , name, shiftConstantScalarField);
-typedef shiftFieldConstantVectorPluginFunction<scalar,meshToMesh::imMapNearest> shiftScalarMap;
+typedef shiftFieldConstantVectorPluginFunction<scalar,MAP_METHOD> shiftScalarMap;
 defineTemplateTypeNameAndDebug(shiftScalarMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftScalarMap , name, mapConstantScalarField);
 
-typedef shiftFieldConstantVectorPluginFunction<vector,meshToMesh::imCellVolumeWeight> shiftVectorWeight;
+typedef shiftFieldConstantVectorPluginFunction<vector,SHIFT_METHOD> shiftVectorWeight;
 defineTemplateTypeNameAndDebug(shiftVectorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorWeight , name, shiftConstantVectorField);
-typedef shiftFieldConstantVectorPluginFunction<vector,meshToMesh::imMapNearest> shiftVectorMap;
+typedef shiftFieldConstantVectorPluginFunction<vector,MAP_METHOD> shiftVectorMap;
 defineTemplateTypeNameAndDebug(shiftVectorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftVectorMap , name, mapConstantVectorField);
 
 #ifndef FOAM_MESHTOMESH_MAPSRCTOTGT_NO_TENSOR
-typedef shiftFieldConstantVectorPluginFunction<tensor,meshToMesh::imCellVolumeWeight> shiftTensorWeight;
+typedef shiftFieldConstantVectorPluginFunction<tensor,SHIFT_METHOD> shiftTensorWeight;
 defineTemplateTypeNameAndDebug(shiftTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorWeight , name, shiftConstantTensorField);
-typedef shiftFieldConstantVectorPluginFunction<tensor,meshToMesh::imMapNearest> shiftTensorMap;
+typedef shiftFieldConstantVectorPluginFunction<tensor,MAP_METHOD> shiftTensorMap;
 defineTemplateTypeNameAndDebug(shiftTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftTensorMap , name, mapConstantTensorField);
 
-typedef shiftFieldConstantVectorPluginFunction<symmTensor,meshToMesh::imCellVolumeWeight> shiftSymmTensorWeight;
+typedef shiftFieldConstantVectorPluginFunction<symmTensor,SHIFT_METHOD> shiftSymmTensorWeight;
 defineTemplateTypeNameAndDebug(shiftSymmTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorWeight , name, shiftConstantSymmTensorField);
-typedef shiftFieldConstantVectorPluginFunction<symmTensor,meshToMesh::imMapNearest> shiftSymmTensorMap;
+typedef shiftFieldConstantVectorPluginFunction<symmTensor,MAP_METHOD> shiftSymmTensorMap;
 defineTemplateTypeNameAndDebug(shiftSymmTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSymmTensorMap , name, mapConstantSymmTensorField);
 
-typedef shiftFieldConstantVectorPluginFunction<sphericalTensor,meshToMesh::imCellVolumeWeight> shiftSphericalTensorWeight;
+typedef shiftFieldConstantVectorPluginFunction<sphericalTensor,SHIFT_METHOD> shiftSphericalTensorWeight;
 defineTemplateTypeNameAndDebug(shiftSphericalTensorWeight,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorWeight , name, shiftConstantSphericalTensorField);
-typedef shiftFieldConstantVectorPluginFunction<sphericalTensor,meshToMesh::imMapNearest> shiftSphericalTensorMap;
+typedef shiftFieldConstantVectorPluginFunction<sphericalTensor,MAP_METHOD> shiftSphericalTensorMap;
 defineTemplateTypeNameAndDebug(shiftSphericalTensorMap,1);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction, shiftSphericalTensorMap , name, mapConstantSphericalTensorField);
 #endif

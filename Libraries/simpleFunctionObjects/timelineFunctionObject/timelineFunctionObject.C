@@ -90,7 +90,7 @@ timelineFunctionObject::timelineFunctionObject
                 << ". Assuming " << (writeStartTime ? "'yes'" : "'no'")
                 << endl;
     }
-    
+
     switch(outputFileMode_) {
         case ofmFoam:
             fileExtension_="";
@@ -200,7 +200,7 @@ bool timelineFunctionObject::start()
     simpleDataFunctionObject::start();
 
     if(writeStartTime_) {
-        write();
+        writeSimple();
     }
 
     return true;
