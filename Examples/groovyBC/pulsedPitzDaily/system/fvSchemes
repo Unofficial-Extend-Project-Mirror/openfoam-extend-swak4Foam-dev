@@ -42,7 +42,8 @@ divSchemes
     div((nuEff*dev2(T(grad(U))))) Gauss linear;
 
     "div\(.*,residualTime.*\)"      Gauss linear;
-    "div\(.*,scalar\)"      Gauss linear;
+    //    "div\(.*,scalar\)"      Gauss linear; // Massive over and underflow
+    "div\(.*,scalar\)"      Gauss vanLeer01;
 }
 
 laplacianSchemes

@@ -118,6 +118,38 @@ functions
 
         phi "phi" [0 3 -1 0 0];
     }
+    scalarStatistics {
+        type swakExpression;
+        valueType internalField;
+        expression "scalar";
+        outputControl   timeStep;
+        outputInterval  1;
+        verbose true;
+        accumulations (
+            min
+            weightedQuantile0.01
+            weightedAverage
+            weightedQuantile0.99
+            max
+        );
+    }
+    scalarInlet {
+        $scalarStatistics;
+        valueType patch;
+        patchName inlet;
+        accumulations (
+            weightedAverage
+        );
+    }
+    scalarOutlet {
+        $scalarInlet;
+        patchName outlet;
+        accumulations (
+            min
+            weightedAverage
+            max
+        );
+    }
     probes1
     {
         // Type of functionObject
@@ -431,7 +463,7 @@ functions
         logicalAccumulation and;
         variables (
             "diffU=U-oldU;"
-            "threshold=0.1;"
+            "threshold=0.01;"
             "oldU=U;"
         );
         storedVariables (
