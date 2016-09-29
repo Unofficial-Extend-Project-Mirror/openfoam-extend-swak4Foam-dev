@@ -674,7 +674,7 @@ S_{expl} + S_{impl} T
                        the laplacian (Poisson) equation and
                        (hopefully) that it gets the same result as the
                        native solver
-     - Case preparation :: =Allrun=-script is provided
+     - Case preparation :: =pyFoamPrepareCase.py=
 **** pitzDailyWithPDE
      - Solver :: scalarTransportFoam
      - Demonstrates :: Solving additional transport equations

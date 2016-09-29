@@ -770,12 +770,18 @@ namespace Foam {
                 }
 
 #ifndef FOAM_OLDTIME_PROBLEM
+                // temporarily switch off dimension checking because this might fail on some Foam-version
+                label oldDimensionSetDebug=dimensionSet::debug;
+                dimensionSet::debug=0;
+
                 // go through ALL old times
                 T *fp=f.operator->();
                 while(fp->nOldTimes()>0) {
                     fp=&(fp->oldTime());  // 1.6-ext seems to have a problem here
                     fp->dimensions().reset(nullDim);
                 }
+                // switch checking back on
+                dimensionSet::debug=oldDimensionSetDebug;
 #endif
             }
         }

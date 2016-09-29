@@ -33,3 +33,5 @@
   | groovyBC/movingConeDistorted | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/fillingTheDam       | \checkmark | \sad       | \checkmark | \checkmark |
   | StateMachine/stateCavity     | \checkmark |            | \checkmark |            |
+  | solvePDE/flangeWithPDE       |            |            | \checkmark |            |
+  | solvePDE/pitzDaylyWithPDE    |            |            | \checkmark |            |
