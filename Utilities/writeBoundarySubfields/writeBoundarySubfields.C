@@ -236,10 +236,36 @@ int main(int argc, char *argv[])
             const word &type=*iter;
 
             if(type=="native") {
-                if(className=="volScalarField" || className=="surfaceScalarField") {
+                if(
+                    className=="volScalarField"
+                    ||
+                    className=="surfaceScalarField"
+                ) {
                     makeSubfieldField<volScalarField>(field,name,mesh);
-                } else if(className=="volVectorField" || className=="surfaceVectorField") {
+                } else if(
+                    className=="volVectorField"
+                    ||
+                    className=="surfaceVectorField"
+                ) {
                         makeSubfieldField<volVectorField>(field,name,mesh);
+                } else if(
+                    className=="volTensorField"
+                    ||
+                    className=="surfaceTensorField"
+                ) {
+                    makeSubfieldField<volTensorField>(field,name,mesh);
+                } else if(
+                    className=="volSymmTensorField"
+                    ||
+                    className=="surfaceSymmTensorField"
+                ) {
+                    makeSubfieldField<volSymmTensorField>(field,name,mesh);
+                } else if(
+                    className=="volSphericalTensorField"
+                    ||
+                    className=="surfaceSphericalTensorField"
+                ) {
+                    makeSubfieldField<volSphericalTensorField>(field,name,mesh);
                 } else {
                     FatalErrorIn(args.executable())
                         << "Don't know 'native' type for class " << className
@@ -249,9 +275,13 @@ int main(int argc, char *argv[])
             } else if(type=="scalar") {
                 makeSubfieldField<volScalarField>(field,name,mesh);
             } else if(type=="vector") {
+                makeSubfieldField<volVectorField>(field,name,mesh);
             } else if(type=="tensor") {
+                makeSubfieldField<volTensorField>(field,name,mesh);
             } else if(type=="symmTensor") {
+                makeSubfieldField<volSymmTensorField>(field,name,mesh);
             } else if(type=="sphericalTensor") {
+                makeSubfieldField<volSphericalTensorField>(field,name,mesh);
             } else {
                 FatalErrorIn(args.executable())
                     << "Type " << type << " specified for subfield "
