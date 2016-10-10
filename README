@@ -3626,6 +3626,27 @@ S_{expl} + S_{impl} T
      A function =outputTime()= has been added to the parsers. This
      function is =true= if Foam is writing at the current time and
      =false= else
+**** Utility =writeBoundarySubfields= to write subfields of boundary conditions
+     Sometimes to debug problems with boundary conditions it is good
+     to *look* at fields like =refValue= in Paraview (for instance
+     because =groovyBC= might not have set that value the way we
+     expected it). For a field =foo= the utility would write a field
+     =foo_bar= if the user specified =bar= to be written. The interior
+     of the field will be $0$, patches where =bar= is defined will be
+     =fixedValue= with the value of =bar=. All others are
+     =zeroGradient=
+
+     A string with the specificion of the subfields to create fields
+     for is set with the option =-subfields=. The specifications are
+     separated by =,=. Each specification is of the form
+     =<name>:<type>= (with type being =scalar=, =vector=, =symmTensor=
+     or =sphericalTensor=. A type =native= assumes that the same type
+     as the field should be used). If unset the default value is used:
+     the specification to write all subfields usually associated with
+     the =mixed= boundary condition
+
+     It is assumed that the length of the sub-field is equal to the
+     number of faces in the patch
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
