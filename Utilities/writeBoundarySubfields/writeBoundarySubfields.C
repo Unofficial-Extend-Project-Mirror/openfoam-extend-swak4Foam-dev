@@ -98,7 +98,9 @@ void makeSubfieldField(
 
     forAll(result.boundaryField(),patchI) {
         fvPatchField<typename FType::value_type> &pField=
-            result.boundaryField()[patchI];
+            const_cast<fvPatchField<typename FType::value_type> &>(
+                result.boundaryField()[patchI]
+            );
         const word &pName=pField.patch().name();
         if(!bDict.found(pName)) {
             continue;
@@ -147,7 +149,7 @@ int main(int argc, char *argv[])
 
     printSwakVersion();
 
-    word fieldName(args.additionalArgs()[0]);
+    word fieldName(args.args()[1]);
     word subfieldSpec=defaultSubfieldSpec;
     if(args.options().found("subfields")) {
         subfieldSpec=word(args.options()["subfields"]);
