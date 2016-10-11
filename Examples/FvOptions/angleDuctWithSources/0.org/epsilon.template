@@ -15,6 +15,12 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+wallFunction epsilonWallFunction;
+<!--(else)-->
+wallFunction compressible::epsilonWallFunction;
+<!--(end)-->
+
 dimensions      [0 2 -3 0 0 0 0];
 
 internalField   uniform 200;
@@ -23,27 +29,31 @@ boundaryField
 {
     front
     {
-        type            compressible::epsilonWallFunction;
+        type            $wallFunction;
         value           uniform 200;
     }
     back
     {
-        type            compressible::epsilonWallFunction;
+        type            $wallFunction;
         value           uniform 200;
     }
     walls
     {
-        type            compressible::epsilonWallFunction;
+        type            $wallFunction;
         value           uniform 200;
     }
     porosityWall
     {
-        type            compressible::epsilonWallFunction;
+        type            $wallFunction;
         value           uniform 200;
     }
     inlet
     {
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+    type                turbulentMixingLengthDissipationRateInlet;
+<!--(else)-->
         type            compressible::turbulentMixingLengthDissipationRateInlet;
+<!--(end)-->
         mixingLength    0.005;
         value           uniform 200;
     }

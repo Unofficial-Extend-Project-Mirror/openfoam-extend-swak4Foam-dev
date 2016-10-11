@@ -547,7 +547,7 @@ S_{expl} + S_{impl} T
     Cases that demonstrate =swakSourceFields=
 **** angleDuctWithSources
      - Solver :: rhoPimpleFoam
-     - Mesh preparation :: Execute =prepareCase.sh=
+     - Mesh preparation :: Execute =pyFoamPrepareCase.py .=
      - Demonstrates :: Simple expression sources (adds a /heat source/
                        to the solid)
 *** other
