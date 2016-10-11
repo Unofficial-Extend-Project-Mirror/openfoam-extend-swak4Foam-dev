@@ -52,6 +52,7 @@ libs (
     "libswakFvcSchemesFunctionPlugin.so"
     "libswakSourceFields.so"
     "libswakFvOptions.so"
+    "libsolverFunctionObjects.so"
 );
 
 nToCorrect 0;
@@ -79,6 +80,7 @@ functions {
         autoSchemes true;
         DT 0.01;
         fvOptions {}
+        field openFoamTransport;
     }
     transportedOF {
         $transportedOriginal;
@@ -302,6 +304,7 @@ functions {
                 }
             }
         }
+        field openFoamResidenceTime;
     }
     residenceTimeOpenFOAM {
         $residenceTimeTransient;
@@ -314,6 +317,7 @@ functions {
     openFoamResidenceTimeSteady {
         $openFoamResidenceTime;
         autoSchemes false;
+        field openFoamResidenceTimeSteady;
     }
     residenceTimeOpenFOAMSteady {
         $residenceTimeTransient;
@@ -326,6 +330,7 @@ functions {
     openFoamResidenceTimeZeroSteady {
         $openFoamResidenceTimeSteady;
         DT 0;
+        field openFoamResidenceTimeZeroSteady;
     }
     residenceTimeOpenFOAMZeroSteady {
         $residenceTimeTransient;
@@ -338,6 +343,7 @@ functions {
     openFoamResidenceTimeLowSteady {
         $openFoamResidenceTimeSteady;
         DT 1e-6;
+        field openFoamResidenceTimeLowSteady;
     }
     residenceTimeOpenFOAMLowSteady {
         $residenceTimeTransient;

@@ -28,6 +28,7 @@ GRTAGS
 *.pdf
 *.lof
 *.lot
+*.log
 
 auto
 doc
@@ -52,6 +53,7 @@ PyFoamPrepareCaseParameters*
 PyFoamState.*
 *.foam
 __pycache__
+runOnMac*.sh
 
 # Other stuff we won't need
 *.vtk

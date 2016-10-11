@@ -30,6 +30,8 @@ divSchemes
 {
     default         none;
     div(phi,T)      Gauss linearUpwind grad(T);
+    div(phi,openFoamTransport)      Gauss linearUpwind grad(openFoamTransport);
+    div(phi,openFoamResidenceTime)      Gauss linearUpwind grad(openFoamResidenceTime);
     div(phi,U)      Gauss linearUpwind grad(U);
     div(phi_copyBySwak4Foam,swakTransport) Gauss linearUpwind grad(swakTransport);
     div(phi_copyBySwak4Foam,swakTransportMod) Gauss linearUpwind grad(swakTransportMod);
@@ -50,6 +52,7 @@ laplacianSchemes
 {
     default         none;
     laplacian(DT,T) Gauss linear corrected;
+    "laplacian\(DopenFoam.*,openFoam.*\)" Gauss linear corrected;
     laplacian(DT,U) Gauss linear corrected;
     "laplacian\(DT,openFoamResidenceTime.*Steady\)" Gauss linear corrected;
     "laplacian\(diffusion,swakTransport.*\)" Gauss linear corrected;
