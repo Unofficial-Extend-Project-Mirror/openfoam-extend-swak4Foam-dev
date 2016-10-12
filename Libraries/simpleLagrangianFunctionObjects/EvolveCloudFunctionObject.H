@@ -96,6 +96,11 @@ class EvolveCloudFunctionObject
     //- direction of gravity
     dimensionedVector g_;
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    //- make sure that execute is not called twice at one time-step
+    label lastTimeStepExecute_;
+#endif
+
 protected:
 
     //- get a reference to the field
@@ -109,6 +114,10 @@ protected:
     const dimensionedVector &g() const { return g_; }
 
     const objectRegistry &obr() const { return obr_; }
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    virtual bool start() = 0;
+#endif
 
 public:
 
