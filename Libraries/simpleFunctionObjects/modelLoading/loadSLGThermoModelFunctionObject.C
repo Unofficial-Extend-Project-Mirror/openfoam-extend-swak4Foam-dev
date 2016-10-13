@@ -92,14 +92,15 @@ loadSLGThermoModelFunctionObject::loadSLGThermoModelFunctionObject
 :
     modelLoadingFunctionObject<SLGThermo>(name,t,dict)
 {
+    this->read(dict);
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-    autoPtr<SLGThermo> loadSLGThermoModelFunctionObject::initModel()
+autoPtr<SLGThermo> loadSLGThermoModelFunctionObject::initModel()
 {
-    return autoPtr<SLGThermo>(
+    autoPtr<SLGThermo> result(
         new SLGThermo(
             dynamicCast<const fvMesh &>(
                 obr()
@@ -111,6 +112,8 @@ loadSLGThermoModelFunctionObject::loadSLGThermoModelFunctionObject
             )
         )
     );
+
+    return result;
 }
 
 

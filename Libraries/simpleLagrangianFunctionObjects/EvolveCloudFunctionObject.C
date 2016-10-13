@@ -146,6 +146,10 @@ bool EvolveCloudFunctionObject<CloudType>::execute(bool forceWrite)
 template<class CloudType>
 bool EvolveCloudFunctionObject<CloudType>::read(const dictionary& dict)
 {
+    if(!cloud_.valid()) {
+        this->start();
+    }
+
     if(dict_!=dict) {
         WarningIn("EvolveCloudFunctionObject<CloudType>::read(const dictionary& dict)")
             << "Can't change the cloud of " << this->name()

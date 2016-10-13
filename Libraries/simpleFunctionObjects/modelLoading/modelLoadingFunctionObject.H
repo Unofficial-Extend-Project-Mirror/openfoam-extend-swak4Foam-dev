@@ -109,6 +109,9 @@ public:
     //- Sample and write
     virtual void writeSimple();
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    bool read(const dictionary &);
+#endif
 };
 
 

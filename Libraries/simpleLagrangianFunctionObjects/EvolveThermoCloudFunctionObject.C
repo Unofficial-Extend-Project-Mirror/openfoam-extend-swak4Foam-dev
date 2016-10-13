@@ -70,6 +70,7 @@ EvolveThermoCloudFunctionObject::EvolveThermoCloudFunctionObject
         dict
     )
 {
+    this->read(dict);
 }
 
 

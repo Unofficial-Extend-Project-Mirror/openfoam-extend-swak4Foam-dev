@@ -110,6 +110,9 @@ EvolveSolidParticleCloudFunctionObject::EvolveSolidParticleCloudFunctionObject
         dict
     )
 {
+    Dbug << this->name() << " Construktor" << endl;
+
+    this->read(dict);
 }
 
 
@@ -117,6 +120,8 @@ EvolveSolidParticleCloudFunctionObject::EvolveSolidParticleCloudFunctionObject
 
 bool EvolveSolidParticleCloudFunctionObject::start()
 {
+    Dbug << this->name() << "::start()" << endl;
+
     cloud().set(
         new solidParticleCloud(
             //            dynamicCast<const fvMesh &>(

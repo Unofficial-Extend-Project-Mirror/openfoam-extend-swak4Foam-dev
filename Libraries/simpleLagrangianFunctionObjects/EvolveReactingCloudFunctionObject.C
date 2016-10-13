@@ -118,6 +118,7 @@ EvolveReactingCloudFunctionObject
         dict
     )
 {
+    this->read(dict);
 }
 
 

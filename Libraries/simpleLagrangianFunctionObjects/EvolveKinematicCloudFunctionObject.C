@@ -70,6 +70,7 @@ EvolveKinematicCloudFunctionObject::EvolveKinematicCloudFunctionObject
         dict
     )
 {
+    this->read(dict);
 }
 
 

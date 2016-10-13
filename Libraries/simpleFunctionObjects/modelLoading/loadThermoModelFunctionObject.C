@@ -56,6 +56,7 @@ loadThermoModelFunctionObject<ModelType>::loadThermoModelFunctionObject
 :
     modelLoadingFunctionObject<ModelType>(name,t,dict)
 {
+    this->read(dict);
 }
 
 

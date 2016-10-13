@@ -118,6 +118,7 @@ EvolveReactingMultiphaseCloudFunctionObject
         dict
     )
 {
+    this->read(dict);
 }
 
 
