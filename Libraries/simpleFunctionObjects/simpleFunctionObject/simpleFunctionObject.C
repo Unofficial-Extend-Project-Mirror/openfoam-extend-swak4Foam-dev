@@ -152,12 +152,17 @@ bool simpleFunctionObject::start()
     Dbug << name() << "::start() - Entering" << endl;
 
     if(started_) {
+        Dbug << name() << "::start() - Breaking recursion" << endl;
         // Break infinite recursion
         return true;
     }
     started_=true;
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    timeSteps_=0;
+#else
     timeSteps_=outputInterval_;
+#endif
 
     if(
         outputControlMode()==ocmStartup
@@ -171,6 +176,8 @@ bool simpleFunctionObject::start()
         writeSimple();
         flush();
     }
+
+    Dbug << name() << "::start() - Leaving" << endl;
 
     return true;
 }
@@ -187,8 +194,11 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
     switch(outputControlMode_) {
         case ocmTimestep:
         case ocmTimestepAndStartup:
+            Dbug << name() << "::doOutput - timestep " << timeSteps_
+                << " / " << outputInterval_ << endl;
             if((outputInterval_>0) && (timeSteps_>=outputInterval_)) {
                 doOutput=true;
+                Dbug << name() << "::doOutput - timestep triggered" << endl;
             }
             break;
         case ocmDeltaT:
@@ -206,6 +216,7 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
                 ) {
                     doOutput=true;
                     lastWrite_=outputDeltaT_*int((now+dt)/outputDeltaT_);
+                    Dbug << name() << "::doOutput - deltaT triggered" << endl;
                 }
             }
             break;
@@ -223,6 +234,10 @@ bool simpleFunctionObject::outputTime(const bool forceWrite)
                     << endl
                     << exit(FatalError);
     }
+
+    Dbug << name() << "::outputTime - return "
+        << int(doOutput || forceWrite) << endl;
+
     return doOutput || forceWrite;
 }
 
