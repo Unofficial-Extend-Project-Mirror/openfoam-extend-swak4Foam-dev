@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.3.x                                 |
+|  \\    /   O peration     | Version:  2.2.2                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -15,43 +15,40 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+wallFunction kqRWallFunction;
+<!--(else)-->
+wallFunction compressible::kqRWallFunction;
+<!--(end)-->
+
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 1;
+internalField   uniform 37.5;
 
 boundaryField
 {
-    front
+    top
     {
-        type            compressible::kqRWallFunction;
-        value           uniform 1;
+        type            $wallFunction;
+        value           uniform 37.5;
     }
-    back
+    bottom
     {
-        type            compressible::kqRWallFunction;
-        value           uniform 1;
+        type            $wallFunction;
+        value           uniform 37.5;
     }
-    wall
+    walls
     {
-        type            compressible::kqRWallFunction;
-        value           uniform 1;
+        type            $wallFunction;
+        value           uniform 37.5;
     }
-    porosityWall
+    symmetry
     {
-        type            compressible::kqRWallFunction;
-        value           uniform 1;
+        type            symmetryPlane;
     }
-    inlet
+    frontAndBack
     {
-        type            turbulentIntensityKineticEnergyInlet;
-        intensity       0.05;
-        value           uniform 1;
-    }
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      uniform 1;
-        value           uniform 1;
+        type            empty;
     }
 }
 

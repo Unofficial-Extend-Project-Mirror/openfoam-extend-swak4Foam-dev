@@ -31,6 +31,7 @@ solution
             U               explicit 1;
             Yi              explicit 1;
             hs              explicit 1;
+            h              explicit 1;
         }
     }
 
@@ -39,9 +40,11 @@ solution
         rhoPseudo             cell;
         U               cellPoint;
         mu              cell;
+        thermo:mu      cell;
         T               cell;
         Cp              cell;
         p               cell;
+        kappa           cell;
     }
 
     integrationSchemes
@@ -95,6 +98,8 @@ subModels
 
     surfaceFilmModel none;
 
+    stochasticCollisionModel none;
+
     particleForces
     {
         gravity         on;
@@ -147,6 +152,14 @@ subModels
         $ConeInjectionCoeffs;
     }
 
+    injectionModels
+    {
+        patch {
+            type patchInjection;
+            $patchInjectionCoeffs;
+        }
+    }
+
     standardWallInteractionCoeffs
     {
         type            rebound;
@@ -191,6 +204,7 @@ cloudFunctions
 {
     patchPostProcessing
     {
+        type patchPostProcessing;
         maxStoredParcels 10000;
         patches ( right );
     }

@@ -15,7 +15,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-thermoType hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+// thermoType hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+thermoType hePsiThermo<reactingMixture<sutherland<janaf<perfectGas<specie>>,sensibleEnthalpy>>>;
 
 inertSpecie N2;
 
@@ -27,19 +28,19 @@ foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas";
 
 solids
 {
-    solidComponents
-        (
-        );
+    // solidComponents
+    //     (
+    //     );
 }
 
 
 liquids
 {
-    liquidComponents
-        (
-            H2O
-            N2
-        );
+    // liquidComponents
+    //     (
+    //         H2O
+    //         N2
+    //     );
     H2O
     {
         defaultCoeffs   yes;

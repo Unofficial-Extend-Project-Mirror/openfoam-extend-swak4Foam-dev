@@ -120,6 +120,14 @@ subModels
         }
     }
 
+    injectionModels
+    {
+        cone {
+            type coneInjection;
+            $coneInjectionCoeffs;
+        }
+    }
+
     standardWallInteractionCoeffs
     {
         type            rebound;
@@ -130,12 +138,14 @@ subModels
         UFactor 1;
     }
 
+    stochasticCollisionModel none;
 }
 
 cloudFunctions
 {
     patchPostProcessing
     {
+        type patchPostProcessing;
         maxStoredParcels 10000;
         patches ( right );
     }

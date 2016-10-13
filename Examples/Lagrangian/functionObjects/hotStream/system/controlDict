@@ -59,6 +59,8 @@ functions {
         correctModel false;
         //        correctModel true;
         allowReload false;
+        //        failIfModelTypeExists false;
+        outputControl timeStep;
     }
     getSLGThermoForParcels {
         type loadSLGThermoModel;
@@ -101,6 +103,8 @@ functions {
         type evolveSolidParticleCloud;
         cloudName injectSolidParticle;
         g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
+        outputControl timeStep;
+        outputInterval 1;
     }
     kinematicParticle {
         type evolveKinematicCloud;
@@ -141,6 +145,9 @@ functions {
         outputControl timeStep;
         outputInterval 1;
         fieldName injectFromTopRhoEff;
+    }
+    whatIsHere {
+        type listRegisteredObjects;
     }
     reactingParticle {
         type evolveReactingCloud;
@@ -199,6 +206,15 @@ functions {
         outputInterval 1;
         fieldName injectFromLeftMomentumSource;
     }
+}
+
+DebugSwitches
+{
+    //    functionObject 1;
+    // simpleFunctionObject 1;
+    // loadThermoModelFunctionObject<swakPsiThermoType> 1;
+    // loadThermoModelFunctionObject<swakRhoThermoType> 1;
+    // EvolveSolidParticleCloudFunctionObject 1;
 }
 
 // ************************************************************************* //

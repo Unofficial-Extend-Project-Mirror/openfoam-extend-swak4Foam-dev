@@ -9,27 +9,46 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      fvOptions;
+    class       volScalarField;
+    location    "0";
+    object      epsilon;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-source1
-{
-    type            fixedTemperatureConstraint;
-    active          true;
-    timeStart       0.1;
-    duration        0.4;
-    selectionMode   cellSet;
-    cellSet         ignitionCells;
+<!--(if foamVersion>=(3,) and foamFork in ["openfoam","openfoamplus"])-->
+wallFunction epsilonWallFunction;
+<!--(else)-->
+wallFunction compressible::epsilonWallFunction;
+<!--(end)-->
 
-    fixedTemperatureConstraintCoeffs
+dimensions      [0 2 -3 0 0 0 0];
+
+internalField   uniform 5390.5;
+
+boundaryField
+{
+    top
     {
-        mode            uniform;
-        temperature     2000;
-        selectionMode   cellSet;
-        cellSet         ignitionCells;
+        type            $wallFunction;
+        value           uniform 5390.5;
+    }
+    bottom
+    {
+        type            $wallFunction;
+        value           uniform 5390.5;
+    }
+    walls
+    {
+        type            $wallFunction;
+        value           uniform 5390.5;
+    }
+    symmetry
+    {
+        type            symmetryPlane;
+    }
+    frontAndBack
+    {
+        type            empty;
     }
 }
 

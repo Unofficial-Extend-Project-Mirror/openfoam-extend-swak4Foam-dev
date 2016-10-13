@@ -443,6 +443,18 @@ S_{expl} + S_{impl} T
 
     Some of the cases use the =pyFoamPrepareCase.py=-utility of [[https://openfoamwiki.net/index.php/Contrib/PyFoam][PyFoam]]
     to set up the case for the current OpenFOAM-version
+
+    To run on multiple OpenFOAM-versions the cases sometimes have more
+    entries in the dictionaries
+
+    Also have a look at =Documentation/exampleCompatibilityMatrix.org=
+    to see with which versions which cases should work.
+
+    Usually the cases have been derived from regular tutorial
+    cases. After their first implementation they were only adapted to
+    run in new OpenFOAM versions but improvements in the tutorials are
+    usually not ported. The reason is that these are just example
+    cases for =swak4Foam=, not /best practice/ examples for OpenFOAM
 *** groovyBC
     The old =groovyBC=-Demos
 **** pulsedPitzDaily
@@ -698,8 +710,8 @@ S_{expl} + S_{impl} T
      Tests for the functionObjects that create and evolve a cloud of
      particles (library =simpleLagrangianFunctionObjects=)
 ***** hotStream
-      - Solver :: replayTransientBC
-      - Mesh preparation :: =prepareCase.sh=-script
+      - Solver :: =replayTransientBC -allowFunctionObjects=
+      - Mesh preparation :: =pyFoamPrepareCase.py .=
       - Demonstrates :: 3 clouds (kinematic, reacting,
                        	solidParticle). Loading of a thermophysical
                        	model with a functionObject. Plugin functions
@@ -723,7 +735,7 @@ S_{expl} + S_{impl} T
       - Demonstrates :: creating new clouds with
                         =funkySetLagrangianField= and evaluations on
                         clouds during the simulation
-      - Mesh preparation :: run the =prepareCase.sh= script to set up
+      - Mesh preparation :: run the =pyFoamPrepareCase.py .= script to set up
            the mesh and the fields
 *** SimpleSurface
     Examples for the use of the =simpleSearchableSurfaces=-library.
