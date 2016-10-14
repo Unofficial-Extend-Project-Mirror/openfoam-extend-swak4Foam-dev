@@ -1,5 +1,9 @@
 include $(OBJECTS_DIR)/../../../rules/versionOptions
 
+ifdef FOAM_DEV
+ADDITIONALFILES_LIB:=-lfiniteArea -lswakFiniteArea
+endif
+
 EXE_INC = \
     $(FOAM_DEV_OPTION)  \
     -I../swak4FoamParsers/lnInclude \
@@ -20,4 +24,6 @@ LIB_LIBS = \
     -lsimpleFunctionObjects \
     -lmeshTools \
     -lspecie \
-    -lfiniteVolume
+    -lfiniteVolume \
+    $(ADDITIONALFILES_LIB)
+    

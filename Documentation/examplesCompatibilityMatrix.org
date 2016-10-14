@@ -33,7 +33,7 @@
   | groovyBC/circulatingSplash                        | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/movingConeDistorted                      | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/fillingTheDam                            | \checkmark | \sad       | \checkmark | \checkmark |
-  | StateMachine/stateCavity                          | \checkmark |            | \checkmark | \checkmark |
+  | StateMachine/stateCavity                          | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                            | \checkmark |            | \checkmark | \checkmark |
   | solvePDE/pitzDaylyWithPDE                         | \checkmark |            | \checkmark | \checkmark |
   | FvOptions/angledDuctWithSources                   | \checkmark |            |            | \checkmark |
