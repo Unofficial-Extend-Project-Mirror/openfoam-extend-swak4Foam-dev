@@ -134,6 +134,9 @@ int main(int argc, char *argv[])
 
     argList::validArgs.append("fieldName");
 
+#ifdef FOAM_DEV
+    argList::validOptions.insert("subfields","subfieldSpec");
+#else
     argList::addOption(
         "subfields",
         "subfieldSpec",
@@ -144,6 +147,7 @@ int main(int argc, char *argv[])
         "the same type as the field should be used). If unset the default "
         "value "+defaultSubfieldSpec+" is used"
     );
+#endif
 
         #   include "setRootCase.H"
 
