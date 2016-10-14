@@ -34,9 +34,9 @@
   | groovyBC/movingConeDistorted                      | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/fillingTheDam                            | \checkmark | \sad       | \checkmark | \checkmark |
   | StateMachine/stateCavity                          | \checkmark | \checkmark | \checkmark | \checkmark |
-  | solvePDE/flangeWithPDE                            | \checkmark |            | \checkmark | \checkmark |
-  | solvePDE/pitzDaylyWithPDE                         | \checkmark |            | \checkmark | \checkmark |
-  | FvOptions/angledDuctWithSources                   | \checkmark |            |            | \checkmark |
+  | solvePDE/flangeWithPDE                            | \checkmark | \checkmark | \checkmark | \checkmark |
+  | solvePDE/pitzDaylyWithPDE                         | \checkmark | \checkmark | \checkmark | \checkmark |
+  | FvOptions/angledDuctWithSources                   | \checkmark | \dagger    |            | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                 | \checkmark |            |            | \checkmark |
   | Lagrangian/parser/parcelInBoxWithExpressions      | \checkmark |            |            | \checkmark |
   | Lagrangian/functionObject/angledDuctWithBalls     | \checkmark |            |            | \checkmark |
