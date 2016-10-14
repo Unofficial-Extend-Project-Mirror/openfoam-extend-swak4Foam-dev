@@ -771,7 +771,11 @@ namespace Foam {
 
 #ifndef FOAM_OLDTIME_PROBLEM
                 // temporarily switch off dimension checking because this might fail on some Foam-version
+#ifndef FOAM_HAS_LOCAL_DEBUGSWITCHES
                 label oldDimensionSetDebug=dimensionSet::debug;
+#else
+                int oldDimensionSetDebug=dimensionSet::debug();
+#endif
                 dimensionSet::debug=0;
 
                 // go through ALL old times
