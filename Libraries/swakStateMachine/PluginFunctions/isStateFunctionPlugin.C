@@ -216,7 +216,8 @@ void isStatePluginFunction<FieldValuePluginFunction>::doEvaluation()
 
 #ifdef FOAM_DEV
 template <>
-void isStatePluginFunction<FieldValuePluginFunction>::doEvaluation()
+void isStatePluginFunction<FaFieldValuePluginFunction>::doEvaluation()
+{
     bool yep=
     StateMachine::machine(machineName_).stateCode(state_)
     ==

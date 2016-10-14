@@ -44,7 +44,7 @@ Contributors/Copyright:
 #define StateMachine_H
 
 #include "CommonValueExpressionDriver.H"
-#include "hashedWordList.H"
+#include "speciesTable.H"
 #include "PtrList.H"
 #include "LogicalAccumulationNamedEnum.H"
 
@@ -78,7 +78,7 @@ class StateMachine
     const fvMesh &mesh_;
 
     //- the state names
-    const hashedWordList names_;
+    const speciesTable names_;
 
     //- the name of the machine
     word machineName_;

@@ -212,7 +212,7 @@ void changedToPluginFunction<FieldValuePluginFunction>::doEvaluation()
 
 #ifdef FOAM_DEV
 template <>
-void changedToPluginFunction<FieldValuePluginFunction>::doEvaluation()
+void changedToPluginFunction<FaFieldValuePluginFunction>::doEvaluation() {
     const StateMachine &m=StateMachine::machine(machineName_);
     scalar elapsed=m.changedTo(m.stateCode(state_));
 

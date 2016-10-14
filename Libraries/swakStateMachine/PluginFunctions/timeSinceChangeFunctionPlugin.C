@@ -206,7 +206,7 @@ void timeSinceChangePluginFunction<FieldValuePluginFunction>::doEvaluation()
 
 #ifdef FOAM_DEV
 template <>
-void timeSinceChangePluginFunction<FieldValuePluginFunction>::doEvaluation()
+void timeSinceChangePluginFunction<FaFieldValuePluginFunction>::doEvaluation() {
     scalar elapsed=StateMachine::machine(machineName_).timeSinceChange();
 
     autoPtr<areaScalarField> pResult(
