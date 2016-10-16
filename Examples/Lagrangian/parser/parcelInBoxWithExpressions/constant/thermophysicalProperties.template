@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+<!--(if foamFork in ["extend"])-->
+thermoType      hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+<!--(else)-->
+thermoType
+{
+    type            heRhoThermo;
+    mixture         reactingMixture;
+    transport       polynomial;
+    thermo          hPolynomial;
+    energy          sensibleEnthalpy;
+    equationOfState icoPolynomial;
+    specie          specie;
+}
+<!--(end)-->
+
+dpdt no;
+
+chemistryReader foamChemistryReader;
+
+<!--(if foamFork in ["extend"])-->
+foamChemistryFile "$FOAM_CASE/constant/reactions.inp";
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.dat";
+<!--(else)-->
+foamChemistryFile "$FOAM_CASE/constant/reactions";
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.incompressiblePoly";
+<!--(end)-->
+
+<!--(if foamFork in ["extend"])-->
+inertSpecie     N2;
+<!--(else)-->
+inertSpecie     air;
+<!--(end)-->
+
+liquids
+{
+    H2O
+    {
+        defaultCoeffs yes;
+    }
+}
+
+solids
+{
+    // none
+}
+
+liquidComponents
+(
+    H2O
+);
+
+H2O             H2O defaultCoeffs;
+
+solidComponents
+();
+
+
+// ************************************************************************* //

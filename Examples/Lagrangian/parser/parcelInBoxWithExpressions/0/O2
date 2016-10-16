@@ -9,50 +9,41 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "constant";
-    object      chemistryProperties;
+    class       volScalarField;
+    location    "0";
+    object      H2O;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-psiChemistryModel  ODEChemistryModel<gasThermoPhysics>;
+dimensions      [0 0 0 0 0 0 0];
 
-chemistryType
+internalField   uniform 0.27;
+
+boundaryField
 {
-    chemistrySolver   ode;
-    chemistryThermo   rho;
-}
-
-chemistrySolver ode;
-
-chemistry       off;
-
-turbulentReaction off;
-
-initialChemicalTimeStep 1e-07;
-
-sequentialCoeffs
-{
-    cTauChem        0.001;
-    equilibriumRateLimiter off;
-}
-
-EulerImplicitCoeffs
-{
-    cTauChem        0.05;
-    equilibriumRateLimiter off;
-}
-
-odeCoeffs
-{
-<!--(if foamVersion>=(2,3) and foamFork in ["openfoam","openfoamplus"])-->
-    solver          seulex;
-<!--(else)-->
-    solver          RK;
-<!--(end)-->
-    ODESolver $solver;
-    eps             0.05;
-    scale     1;
+    back
+    {
+        type            symmetryPlane;
+    }
+    front
+    {
+        type            symmetryPlane;
+    }
+    walls
+    {
+        type            zeroGradient;
+    }
+    outlet
+    {
+//        type            zeroGradient;
+        type            inletOutlet;
+        inletValue      $internalField;
+    }
+    inlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
 }
 
 

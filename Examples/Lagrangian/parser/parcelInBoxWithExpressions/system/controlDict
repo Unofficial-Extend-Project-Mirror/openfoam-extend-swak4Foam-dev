@@ -96,6 +96,9 @@ functions {
     }
     cloudWaterMass {
         $cloudPosition;
+        aliases {
+            YLiquid_H2O YH2O;
+        }
         expression "YLiquid_H2O*mass";
     }
     cloudRelativeMass {

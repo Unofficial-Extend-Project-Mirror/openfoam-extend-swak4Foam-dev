@@ -9,44 +9,41 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "constant";
-    object      thermophysicalProperties;
+    class       volScalarField;
+    location    "0";
+    object      H2O;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-thermoType
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0.72;
+
+boundaryField
 {
-    type            heRhoThermo;
-    mixture         reactingMixture;
-    transport       polynomial;
-    thermo          hPolynomial;
-    energy          sensibleEnthalpy;
-    equationOfState icoPolynomial;
-    specie          specie;
-}
-
-dpdt no;
-
-chemistryReader foamChemistryReader;
-
-foamChemistryFile "$FOAM_CASE/constant/reactions";
-
-foamChemistryThermoFile "$FOAM_CASE/constant/thermo.incompressiblePoly";
-
-inertSpecie     air;
-
-liquids
-{
-    H2O
+    back
     {
-        defaultCoeffs yes;
+        type            symmetryPlane;
     }
-}
-
-solids
-{
-    // none
+    front
+    {
+        type            symmetryPlane;
+    }
+    walls
+    {
+        type            zeroGradient;
+    }
+    outlet
+    {
+//        type            zeroGradient;
+        type            inletOutlet;
+        inletValue      $internalField;
+    }
+    inlet
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
 }
 
 

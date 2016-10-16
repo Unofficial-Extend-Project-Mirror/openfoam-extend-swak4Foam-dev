@@ -39,6 +39,7 @@ solution
         rho             cell;
         U               cellPoint;
         thermo:mu       cell;
+        mu              $thermo:mu;
         T               cell;
         Cp              cell;
         kappa           cell;
@@ -52,9 +53,30 @@ solution
     }
 }
 
+$solution;
+
+interpolation {
+    $interpolationSchemes;
+}
+
+parcelTypeId 1;
 
 constantProperties
 {
+<!--(if foamFork in ["extend"])-->
+    rhoMin          rhoMin [ 1 -3 0 0 0 ] 1e-15;
+    TMin            TMin [ 0 0 0 1 0 ] 200;
+    pMin            pMin [ 1 -1 2 0 0 ] 1000;
+    rho0            rho0 [ 1 -3 0 0 0 ] 1000;
+    minParticleMass minParticleMass [ 1 0 0 0 0 ] 1e-15;
+    T0              T0 [ 0 0 0 1 0 ] 350;
+    cp0             cp0 [ 0 2 -2 -1 0 ] 4100;
+    epsilon0        epsilon0 [ 0 0 0 0 0 ] 1;
+    f0              f0 [ 0 0 0 0 0 ] 0.5;
+    Pr              Pr [ 0 0 0 0 0 ] 0.7;
+    Tvap            Tvap [ 0 0 0 1 0 ] 284;
+    Tbp             Tvap [ 0 0 0 1 0 ] 373;
+<!--(else)-->
     rho0            1000;
     T0              350;
     Cp0             4100;
@@ -70,6 +92,7 @@ constantProperties
     Pr              0.7;
     LDevol          0;
     hRetentionCoeff 1;
+<!--(end)-->
 
     constantVolume  false;
 }
@@ -81,6 +104,8 @@ subModels
     {
         sphereDrag;
         gravity;
+        virtualMass     off;
+        pressureGradient off;
     }
 
     injectionModels
@@ -163,6 +188,86 @@ subModels
     }
 }
 
+$subModels;
+
+DragModel       SphereDrag;
+
+DispersionModel none;
+
+PatchInteractionModel StandardWallInteraction;
+
+HeatTransferModel RanzMarshall;
+
+CompositionModel SinglePhaseMixture;
+
+PhaseChangeModel LiquidEvaporation;
+
+DevolatilisationModel none;
+
+SurfaceReactionModel none;
+
+StochasticCollisionModel none;
+
+SurfaceFilmModel none;
+
+InjectionModel ManualInjection;
+
+PostProcessingModel none;
+
+ManualInjectionCoeffs
+{
+    type            manualInjection;
+    massTotal       massTotal [ 1 0 0 0 0 ] 5.23599e-10; // 1 droplet of density 1000 kg/m3
+    parcelBasisType mass;
+    SOI             0;
+    positionsFile   "reactingCloud1Positions";
+    U0              (0 0 0);
+    parcelPDF
+    {
+        pdfType uniform;
+        uniformPDF
+        {
+            minValue        100e-06;
+            maxValue        100e-06;
+        }
+    }
+}
+StandardWallInteractionCoeffs
+{
+    type            rebound;
+}
+
+RanzMarshallCoeffs
+{
+    BirdCorrection  off;
+}
+
+SinglePhaseMixtureCoeffs
+{
+    phases
+        (
+            // gas
+            // {
+            // }
+            liquid
+            {
+                H2O 1;
+            }
+            // solid
+            // {
+            // }
+        );
+    YGasTot0        0;
+    YLiquidTot0     1;
+    YSolidTot0      0;
+}
+
+LiquidEvaporationCoeffs
+{
+    enthalpyTransfer enthalpyDifference; // latentHeat;
+
+    activeLiquids   ( H2O );
+}
 
 cloudFunctions
 {}
