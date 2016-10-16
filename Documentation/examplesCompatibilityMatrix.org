@@ -42,3 +42,4 @@
   | Lagrangian/functionObject/angledDuctWithBalls     | \checkmark |            |            | \checkmark |
   | Lagrangian/functionObject/hotStream               | \sad       |            |            | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel | \checkmark |            |            | \checkmark |
+  | FiniteArea/planeTransport                         | \dagger    | \checkmark | \dagger    | \dagger    |

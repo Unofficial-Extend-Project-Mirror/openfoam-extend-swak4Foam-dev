@@ -126,6 +126,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
 
         f.set(
             new T(
+                name+"_copyBySwak4Foam",    // make sure that the original object is not shadowed
                 this->mesh().lookupObject<T>(name)
             )
         );
