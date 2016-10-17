@@ -345,6 +345,9 @@ S_{expl} + S_{impl} T
     using the =pythonFlu=-library
 *** =swakLagrangianParser=
     Parser for calculating expressions on clouds of lagrangian particles
+*** =swakStateMachine=
+    Library with function objects and plugin functions to work with
+    simple state machines
 *** =functionPlugins=
     Directory with a number of libraries with function-plugins:
     - swakFacSchemesFunctionPlugin :: functions with selectable
@@ -428,6 +431,9 @@ S_{expl} + S_{impl} T
 *** =funkySetLagrangianField=
     Utility to calculate fields for a lagrangian cloud (or setting it
     up from scratch)
+*** =writeBoundarySubfields=
+    Utility to write fields with subfields from boundary conditions
+    like =refValue= for post-processing
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
