@@ -104,8 +104,10 @@ subModels
     {
         sphereDrag;
         gravity;
+<!--(if foamFork=="extend")-->
         virtualMass     off;
         pressureGradient off;
+<!--(end)-->
     }
 
     injectionModels

@@ -36,10 +36,10 @@
   | StateMachine/stateCavity                          | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/flangeWithPDE                            | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDaylyWithPDE                         | \checkmark | \checkmark | \checkmark | \checkmark |
-  | FvOptions/angledDuctWithSources                   | \checkmark | \dagger    |            | \checkmark |
-  | Lagrangian/parser/simplifiedSiwek                 | \checkmark | \sad       |            | \checkmark |
-  | Lagrangian/parser/parcelInBoxWithExpressions      | \checkmark | \checkmark |            | \checkmark |
-  | Lagrangian/functionObject/angledDuctWithBalls     | \checkmark |            |            | \checkmark |
+  | FvOptions/angledDuctWithSources                   | \checkmark | \dagger    | \checkmark | \checkmark |
+  | Lagrangian/parser/simplifiedSiwek                 | \checkmark | \sad       | \checkmark | \checkmark |
+  | Lagrangian/parser/parcelInBoxWithExpressions      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/angledDuctWithBalls     | \checkmark | \checkmark |            | \checkmark |
   | Lagrangian/functionObject/hotStream               | \sad       |            |            | \sad       |
-  | Lagrangian/functionObject/icoFoamCavityWithParcel | \checkmark |            |            | \checkmark |
+  | Lagrangian/functionObject/icoFoamCavityWithParcel | \checkmark | \checkmark |            | \checkmark |
   | FiniteArea/planeTransport                         | \dagger    | \checkmark | \dagger    | \dagger    |

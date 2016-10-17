@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
-|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1606+                                |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -20,34 +20,38 @@ FoamFile
     top
     {
         type            wall;
+        inGroups        1(wall);
         nFaces          5;
         startFace       4855;
     }
     bottom
     {
         type            wall;
+        inGroups        1(wall);
         nFaces          45;
         startFace       4860;
     }
     walls
     {
         type            wall;
+        inGroups        1(wall);
         nFaces          140;
         startFace       4905;
     }
     symmetry
     {
         type            symmetryPlane;
+        inGroups        1(symmetryPlane);
         nFaces          100;
         startFace       5045;
     }
     frontAndBack
     {
         type            empty;
+        inGroups        1(empty);
         nFaces          5000;
         startFace       5145;
     }
 )
-
 
 // ************************************************************************* //
