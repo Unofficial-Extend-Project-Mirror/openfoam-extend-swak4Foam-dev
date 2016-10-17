@@ -47,6 +47,8 @@ Contributors/Copyright:
 
 #include "IFstream.H"
 
+#include "swak.H"
+
 template<class FType>
 void makeSubfieldField(
     const dictionary &field,
@@ -209,7 +211,11 @@ int main(int argc, char *argv[])
         );
         word className;
         if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+	    header.typeHeaderOk<IOobject>(false)
+#else
             header.headerOk()
+#endif
         ) {
             className=header.headerClassName();
             Info << " Reading Field " << fieldName << " of type "
