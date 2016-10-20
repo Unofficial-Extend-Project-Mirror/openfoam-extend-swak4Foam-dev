@@ -43,6 +43,9 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "sootModel.H"
+#include "absorptionEmissionModel.H"
+
 namespace Foam {
 
 defineTypeNameAndDebug(swakRadiationModelPluginFunction,0);
@@ -130,7 +133,8 @@ public:                                                            \
         result().setObjectResult(                                  \
             autoPtr<resultType>(                                   \
                 new resultType(                                    \
-                    radiation().funcName()                            \
+                    #funcName "_rad",                               \
+                    radiation().funcName()                          \
                 )                                                  \
             )                                                      \
         );                                                         \
@@ -238,6 +242,84 @@ public:
 };
 defineTypeNameAndDebug(swakRadiationModelPluginFunction_radSource,0);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakRadiationModelPluginFunction_radSource,name,radiation_radSource);
+
+    // Values of the sootModel
+class swakRadiationModelPluginFunction_soot
+: public swakRadiationModelPluginFunction
+{
+public:
+    TypeName("swakRadiationModelPluginFunction_soot");
+    swakRadiationModelPluginFunction_soot (
+        const FieldValueExpressionDriver &parentDriver,
+        const word &name
+    ): swakRadiationModelPluginFunction(
+        parentDriver,
+        name,
+        "volScalarField"
+    ) {}
+    void doEvaluation() {
+        result().setObjectResult(
+            autoPtr<volScalarField>(
+                new volScalarField(
+                    "soot_rad",
+                    radiation().soot().soot()
+                )
+            )
+        );
+    }
+};
+defineTypeNameAndDebug(swakRadiationModelPluginFunction_soot,0);
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakRadiationModelPluginFunction_soot,name,radiation_soot);
+
+// values of the absortption-Emission submodel
+#define concreteAbsEmiRadiationFunction(funcName,resultType)       \
+class swakRadiationModelPluginFunction_AbsEmi_ ## funcName         \
+: public swakRadiationModelPluginFunction                          \
+{                                                                  \
+    label band_;                                                   \
+public:                                                            \
+    TypeName("swakRadiationModelPluginFunction_AbsEmi_" #funcName);     \
+    swakRadiationModelPluginFunction_AbsEmi_ ## funcName (              \
+        const FieldValueExpressionDriver &parentDriver,            \
+        const word &name                                           \
+    ): swakRadiationModelPluginFunction(                           \
+        parentDriver,                                              \
+        name,                                                      \
+        #resultType ,                                              \
+        "band primitive label"                                     \
+    ),                                                             \
+        band_(-1)                                                  \
+        {}                                                         \
+    void doEvaluation() {                                          \
+        result().setObjectResult(                                  \
+            autoPtr<resultType>(                                   \
+                new resultType(                                    \
+                    #funcName "_absEmi_rad",                       \
+                    radiation().absorptionEmission().funcName(band_) \
+                )                                                  \
+            )                                                      \
+        );                                                         \
+    }                                                              \
+    void setArgument(                                              \
+        label index,                                               \
+        const label &band                                          \
+    ) {                                                            \
+        assert(index==0);                                          \
+        band_=band;                                                \
+    }                                                              \
+};                                                                 \
+defineTypeNameAndDebug(swakRadiationModelPluginFunction_AbsEmi_ ## funcName,0);  \
+addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakRadiationModelPluginFunction_AbsEmi_ ## funcName,name,radiation_AbsEmi_ ## funcName);
+
+concreteAbsEmiRadiationFunction(a,volScalarField);
+concreteAbsEmiRadiationFunction(aCont,volScalarField);
+concreteAbsEmiRadiationFunction(aDisp,volScalarField);
+concreteAbsEmiRadiationFunction(e,volScalarField);
+concreteAbsEmiRadiationFunction(eCont,volScalarField);
+concreteAbsEmiRadiationFunction(eDisp,volScalarField);
+concreteAbsEmiRadiationFunction(E,volScalarField);
+concreteAbsEmiRadiationFunction(ECont,volScalarField);
+concreteAbsEmiRadiationFunction(EDisp,volScalarField);
 
 } // namespace
 

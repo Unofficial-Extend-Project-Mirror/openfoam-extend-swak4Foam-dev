@@ -3683,4 +3683,7 @@ S_{expl} + S_{impl} T
      will be written. The default setting is =no=. This is similar to
      the old behavior and avoids crashes at startup. Some classes
      change this default to make it =yes=
+**** Additional functions in the radiation function plugin
+     Additional functions for the =absorptionEmissionModel= and the
+     =sootModel= are added to to library with the radiation-functions
 *** Examples
