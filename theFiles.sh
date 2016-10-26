@@ -15,6 +15,7 @@ export SWAKLIBS=(groovyBC \
     swak*CloudAdaptor \
     swakFvOptions \
     swakStateMachine \
+    swakDynamicMesh \
     swakFunctionObjects)
 
 if [ "$FOAM_DEV" != "" ]

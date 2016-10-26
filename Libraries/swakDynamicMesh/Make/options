@@ -1,0 +1,19 @@
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION)  \
+    -I../swak4FoamParsers/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lswak4FoamParsers \
+    -lmeshTools \
+    -ldynamicMesh \
+    -ldynamicFvMesh \
+    -ltopoChangerFvMesh \
+    -lfiniteVolume
+
