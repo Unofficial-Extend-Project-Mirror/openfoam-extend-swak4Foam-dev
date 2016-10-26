@@ -348,6 +348,8 @@ S_{expl} + S_{impl} T
 *** =swakStateMachine=
     Library with function objects and plugin functions to work with
     simple state machines
+*** =swakDynamicMesh=
+    Library with classes that combine swak with dynamic meshes
 *** =functionPlugins=
     Directory with a number of libraries with function-plugins:
     - swakFacSchemesFunctionPlugin :: functions with selectable
@@ -777,6 +779,13 @@ S_{expl} + S_{impl} T
 **** stateCavity
      The case is only an excuse for the state machines
      - Running :: =replayTransientBC -allowFunctionObjects=
+     - Case setup :: =pyFoamPrepareCase.py=
+*** DynamicMesh
+    Examples that demonstrate dynamic mesh applications
+**** hecticInletACMI2D
+     Variation of a tutorial case where the oscillation has been
+     replaced by an expression
+     - Solver :: =pimpleDyMFoam=
      - Case setup :: =pyFoamPrepareCase.py=
 *** tests
     Simple test cases for specific features. The names of the

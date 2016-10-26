@@ -1,2 +1,3 @@
+solidBodyMotion/swakMotion.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakDynamicMesh

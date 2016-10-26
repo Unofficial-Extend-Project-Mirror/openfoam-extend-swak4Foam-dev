@@ -43,3 +43,4 @@
   | Lagrangian/functionObject/hotStream               | \sad       |            |            | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel | \checkmark | \checkmark |            | \checkmark |
   | FiniteArea/planeTransport                         | \dagger    | \checkmark | \dagger    | \dagger    |
+  | DynamicMesh/hectivInletACMI2D                     | \checkmark |            |            |            |
