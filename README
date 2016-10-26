@@ -787,6 +787,9 @@ S_{expl} + S_{impl} T
      replaced by an expression
      - Solver :: =pimpleDyMFoam=
      - Case setup :: =pyFoamPrepareCase.py=
+**** rotatingTank2D
+     - Solver :: =interDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
