@@ -35,7 +35,7 @@ namespace Foam
 {
 namespace solidBodyMotionFunctions
 {
-    defineTypeNameAndDebug(swakMotion, 1);
+    defineTypeNameAndDebug(swakMotion, 0);
     addToRunTimeSelectionTable
     (
         solidBodyMotionFunction,

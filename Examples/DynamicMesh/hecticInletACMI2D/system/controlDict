@@ -51,11 +51,53 @@ maxCo           0.5;
 
 libs (
     "libswakDynamicMesh.so"
+    "libsimpleSwakFunctionObjects.so"
 );
 
-function {
-    defaultMesh {
-        type initSwakFunctionObject;
+functions {
+    calcMassFlows {
+        type patchExpression;
+        patches (
+            "ACMI.*"
+            ".*let"
+        );
+        accumulations (
+            sum
+        );
+        expression "phi";
+        verbose true;
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    calcPatchArea {
+        $calcMassFlows;
+        expression "area()";
+    }
+    calcMassFlowDeficit {
+        type swakExpression;
+        valueType patch;
+        patchName ACMI1_couple;
+        variables (
+            "myMF=sum(phi);"
+            "myArea=sum(area());"
+            "otherMF{ACMI2_couple}=sum(phi);"
+            "otherArea{ACMI2_couple}=sum(area());"
+            //            "totalVol{internalField'}=sum(vol());"
+            "inMF{inlet}=sum(phi);"
+        );
+        expression "myMF+otherMF";
+        verbose true;
+        accumulations (
+            min
+        );
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    relativeDeficit {
+        $calcMassFlowDeficit;
+        expression "(myMF+otherMF)/inMF";
+    }
+    areaDeficit {
+        $calcMassFlowDeficit;
+        expression "myArea-otherArea";
     }
 }
 
