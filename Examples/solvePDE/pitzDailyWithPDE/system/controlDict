@@ -195,7 +195,7 @@ functions {
         fieldName residenceTime;
         steady false;
         rho "1" [0 0 0 0 0 0 0];
-        diffusion "0.01" [0 2 -1 0 0 0 0];; // [m^2/s];
+        diffusion "0.01" [0 2 -1 0 0 0 0]; // [m^2/s];
         source "1" [0 0 -1 1 0 0 0]; // [K/s];
         phi "phi" [0 3 -1 0 0 0 0]; // [m^3/s];
         relaxUnsteady false;
@@ -319,7 +319,7 @@ functions {
                         scalarSwakExplicitSourceCoeffs {
                             $scalarSemiImplicitSourceCoeffs;
                             expressions {
-                                openFoamResidenceTime "1" [K/s];
+                                openFoamResidenceTime "1" [0 0 -1 1 0 0 0]; // [K/s];
                                 openFoamResidenceTimeSteady $openFoamResidenceTime;
                                 openFoamResidenceTimeZeroSteady $openFoamResidenceTime;
                                 openFoamResidenceTimeLowSteady $openFoamResidenceTime;
