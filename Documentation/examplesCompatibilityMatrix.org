@@ -35,16 +35,16 @@
   | groovyBC/movingConeDistorted                                | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark |            | \checkmark |
-  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark |            | \checkmark |
-  | Lagrangian/functionObject/hotStream                         | \sad       |            |            | \sad       |
+  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/hotStream                         | \sad       |            | \sad       | \sad       |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \checkmark | \sad       | \checkmark | \checkmark |
-  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark |            |            |            |
-  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark |            |            |            |
-  | other/capillaryRise                                         | \checkmark |            |            |            |
-  | other/simpleBendedPipe                                      | \checkmark |            |            |            |
-  | other/topoSetDamBreak                                       | \checkmark |            |            |            |
+  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark |            | \checkmark |            |
+  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark |            | \checkmark |            |
+  | other/capillaryRise                                         | \checkmark |            | \checkmark |            |
+  | other/simpleBendedPipe                                      | \checkmark |            | \checkmark |            |
+  | other/topoSetDamBreak                                       | \checkmark |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
