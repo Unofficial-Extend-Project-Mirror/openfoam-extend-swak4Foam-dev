@@ -716,7 +716,7 @@ S_{expl} + S_{impl} T
      Tests for the functionObjects that create and evolve a cloud of
      particles (library =simpleLagrangianFunctionObjects=)
 ***** hotStream
-      - Solver :: =replayTransientBC -allowFunctionObjects=
+      - Solver :: =replayTransientBC=
       - Mesh preparation :: =pyFoamPrepareCase.py .=
       - Demonstrates :: 3 clouds (kinematic, reacting,
                        	solidParticle). Loading of a thermophysical

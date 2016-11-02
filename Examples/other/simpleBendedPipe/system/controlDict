@@ -57,6 +57,7 @@ functions {
         type executeIfStartTime;
         readDuringConstruction true;
         runIfStartTime true;
+        constructUnconditionally true;
         functions {
             distance {
                 type expressionField;

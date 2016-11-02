@@ -68,7 +68,7 @@ libs (
 );
 
 functions
-(
+{
     createInterface
     {
         type createSampledSurface;
@@ -168,6 +168,6 @@ functions
         );
         interpolationScheme nix;
     }
-);
+}
 
 // ************************************************************************* //
