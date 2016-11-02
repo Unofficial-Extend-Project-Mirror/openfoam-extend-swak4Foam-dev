@@ -3517,12 +3517,15 @@ S_{expl} + S_{impl} T
      =swak4Foam= (the patch is found in the directory
      =distroPatches/OpenFOAM-v1606+=)
 **** Support for OpenFOAM 4.0
-     This version is supported in this version of OpenFOAM. There is
+     This version is supported in this version of =swak4Foam=. There is
      one problem: the released version has two problems that mean that
      =swak4foam= will *never* compile on the released version.
 
      Patches fixing these issues are found in the directory
      =distroPatches/OpenFOAM-4.0=
+**** Support for OpenFOAM 4.1
+     This version is supported in this version of =swak4Foam=. No
+     modifications are required
 *** Incompatibilities
 *** Bug fixes
 **** Destruction of =dummyPhi= causes error message
