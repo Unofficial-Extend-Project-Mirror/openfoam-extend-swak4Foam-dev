@@ -1,7 +1,5 @@
 #! /bin/sh
 
-pyFoamClearCase.py .
-
 rm -rf constant/polyMesh/sets/
 
 blockMesh
