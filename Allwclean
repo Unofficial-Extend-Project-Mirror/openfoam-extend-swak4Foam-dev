@@ -11,4 +11,6 @@ fi
 
 # (cd Examples/tests/fluIntegration/libRegistered; wclean)
 
+find . -name "*.dep" -print -exec rm {} \;
+
 rm -f foamVersionThisIsCompiledFor
