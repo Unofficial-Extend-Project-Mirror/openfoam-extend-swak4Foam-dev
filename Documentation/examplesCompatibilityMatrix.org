@@ -29,7 +29,7 @@
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \dagger    | \dagger    |
   | FvOptions/angledDuctWithSources                             | \sad       | \dagger    | \checkmark | \checkmark |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
-  | groovyBC/circulatingSplash                                  |            | \checkmark | \checkmark | \checkmark |
+  | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/fillingTheDam                                      | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/movingConeDistorted                                | \checkmark | \sad       | \checkmark | \checkmark |
@@ -46,5 +46,5 @@
   | other/simpleBendedPipe                                      | \checkmark |            |            |            |
   | other/topoSetDamBreak                                       | \checkmark |            |            |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
-  | solvePDE/pitzDailyWithPDE                                   |            | \checkmark | \checkmark | \checkmark |
+  | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |

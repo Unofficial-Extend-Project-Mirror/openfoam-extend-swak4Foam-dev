@@ -78,6 +78,7 @@ functions {
         type executeIfFunctionObjectPresent;
         functionObjectName scalarTransport;
         readDuringConstruction true;
+        constructUnconditionally yes;
         outputControlMode timeStep;
         outputInterval 1;
         functions {
