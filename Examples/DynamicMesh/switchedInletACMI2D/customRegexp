@@ -1,0 +1,17 @@
+// -*- c++ -*-
+massFlows {
+    theTitle "Mass flows";
+    type dynamic;
+    expr "Expression calcMassFlows on (.+):  sum=(.+)";
+    idNr 1;
+}
+patchArea {
+    theTitle "Area of the patch";
+    type dynamic;
+    expr "Expression calcPatchArea on (.+):  sum=(.+)";
+    idNr 1;
+}
+deficit {
+    theTitle "Mass flow deficit";
+    expr "Expression calcMassFlowDeficit :  min=(.+)";
+}

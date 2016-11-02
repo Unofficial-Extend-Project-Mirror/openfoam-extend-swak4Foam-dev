@@ -1,5 +1,5 @@
 solidBodyMotion/swakMotion.C
 
-patches/funkyCyclicACMIPolyPatch.C
+patches/groovyCyclicACMIPolyPatch.C
 
 LIB = $(FOAM_USER_LIBBIN)/libswakDynamicMesh

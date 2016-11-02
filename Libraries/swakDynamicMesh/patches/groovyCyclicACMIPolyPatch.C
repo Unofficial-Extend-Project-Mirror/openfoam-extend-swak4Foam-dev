@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "funkyCyclicACMIPolyPatch.H"
+#include "groovyCyclicACMIPolyPatch.H"
 #include "SubField.H"
 #include "Time.H"
 #include "addToRunTimeSelectionTable.H"
@@ -34,17 +34,17 @@ License
 
 namespace Foam
 {
-    defineTypeNameAndDebug(funkyCyclicACMIPolyPatch, 0);
+    defineTypeNameAndDebug(groovyCyclicACMIPolyPatch, 0);
 
-    addToRunTimeSelectionTable(polyPatch, funkyCyclicACMIPolyPatch, word);
-    addToRunTimeSelectionTable(polyPatch, funkyCyclicACMIPolyPatch, dictionary);
+    addToRunTimeSelectionTable(polyPatch, groovyCyclicACMIPolyPatch, word);
+    addToRunTimeSelectionTable(polyPatch, groovyCyclicACMIPolyPatch, dictionary);
 
-    addNamedToRunTimeSelectionTable(fvPatch,cyclicACMIFvPatch,polyPatch,funkyCyclicACMI);
+    addNamedToRunTimeSelectionTable(fvPatch,cyclicACMIFvPatch,polyPatch,groovyCyclicACMI);
 }
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-void Foam::funkyCyclicACMIPolyPatch::resetAMI
+void Foam::groovyCyclicACMIPolyPatch::resetAMI
 (
     const AMIPatchToPatchInterpolation::interpolationMethod& meth
 ) const
@@ -57,7 +57,7 @@ void Foam::funkyCyclicACMIPolyPatch::resetAMI
 
 // * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * * * //
 
-Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
+Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 (
     const word& name,
     const label size,
@@ -74,7 +74,7 @@ Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
 }
 
 
-Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
+Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 (
     const word& name,
     const dictionary& dict,
@@ -89,9 +89,9 @@ Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
 }
 
 
-Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
+Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 (
-    const funkyCyclicACMIPolyPatch& pp,
+    const groovyCyclicACMIPolyPatch& pp,
     const polyBoundaryMesh& bm
 )
 :
@@ -101,9 +101,9 @@ Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
 }
 
 
-Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
+Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 (
-    const funkyCyclicACMIPolyPatch& pp,
+    const groovyCyclicACMIPolyPatch& pp,
     const polyBoundaryMesh& bm,
     const label index,
     const label newSize,
@@ -127,9 +127,9 @@ Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
 }
 
 
-Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
+Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 (
-    const funkyCyclicACMIPolyPatch& pp,
+    const groovyCyclicACMIPolyPatch& pp,
     const polyBoundaryMesh& bm,
     const label index,
     const labelUList& mapAddressing,
@@ -144,7 +144,7 @@ Foam::funkyCyclicACMIPolyPatch::funkyCyclicACMIPolyPatch
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::funkyCyclicACMIPolyPatch::~funkyCyclicACMIPolyPatch()
+Foam::groovyCyclicACMIPolyPatch::~groovyCyclicACMIPolyPatch()
 {}
 
 
@@ -152,7 +152,7 @@ Foam::funkyCyclicACMIPolyPatch::~funkyCyclicACMIPolyPatch()
 
 
 
-void Foam::funkyCyclicACMIPolyPatch::write(Ostream& os) const
+void Foam::groovyCyclicACMIPolyPatch::write(Ostream& os) const
 {
     cyclicACMIPolyPatch::write(os);
 

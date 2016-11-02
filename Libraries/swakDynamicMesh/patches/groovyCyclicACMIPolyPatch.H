@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::funkyCyclicACMIPolyPatch
+    Foam::groovyCyclicACMIPolyPatch
 
 Description
     Cyclic patch for Arbitrarily Coupled Mesh Interface (ACMI).
@@ -30,12 +30,12 @@ Description
     whether faces are "really" open
 
 SourceFiles
-    funkyCyclicACMIPolyPatch.C
+    groovyCyclicACMIPolyPatch.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef funkyCyclicACMIPolyPatch_H
-#define funkyCyclicACMIPolyPatch_H
+#ifndef groovyCyclicACMIPolyPatch_H
+#define groovyCyclicACMIPolyPatch_H
 
 #include "cyclicACMIPolyPatch.H"
 #include "AMIPatchToPatchInterpolation.H"
@@ -47,10 +47,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                     Class funkyCyclicACMIPolyPatch Declaration
+                     Class groovyCyclicACMIPolyPatch Declaration
 \*---------------------------------------------------------------------------*/
 
-class funkyCyclicACMIPolyPatch
+class groovyCyclicACMIPolyPatch
 :
     public cyclicACMIPolyPatch
 {
@@ -76,13 +76,13 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("funkyCyclicACMI");
+    TypeName("groovyCyclicACMI");
 
 
     // Constructors
 
         //- Construct from (base couped patch) components
-        funkyCyclicACMIPolyPatch
+        groovyCyclicACMIPolyPatch
         (
             const word& name,
             const label size,
@@ -94,7 +94,7 @@ public:
         );
 
         //- Construct from dictionary
-        funkyCyclicACMIPolyPatch
+        groovyCyclicACMIPolyPatch
         (
             const word& name,
             const dictionary& dict,
@@ -104,17 +104,17 @@ public:
         );
 
         //- Construct as copy, resetting the boundary mesh
-        funkyCyclicACMIPolyPatch
+        groovyCyclicACMIPolyPatch
         (
-            const funkyCyclicACMIPolyPatch&,
+            const groovyCyclicACMIPolyPatch&,
             const polyBoundaryMesh&
         );
 
         //- Construct given the original patch and resetting the
         //  face list and boundary mesh information
-        funkyCyclicACMIPolyPatch
+        groovyCyclicACMIPolyPatch
         (
-            const funkyCyclicACMIPolyPatch& pp,
+            const groovyCyclicACMIPolyPatch& pp,
             const polyBoundaryMesh& bm,
             const label index,
             const label newSize,
@@ -125,9 +125,9 @@ public:
         );
 
         //- Construct given the original patch and a map
-        funkyCyclicACMIPolyPatch
+        groovyCyclicACMIPolyPatch
         (
-            const funkyCyclicACMIPolyPatch& pp,
+            const groovyCyclicACMIPolyPatch& pp,
             const polyBoundaryMesh& bm,
             const label index,
             const labelUList& mapAddressing,
@@ -138,7 +138,7 @@ public:
         //- Construct and return a clone, resetting the boundary mesh
         virtual autoPtr<polyPatch> clone(const polyBoundaryMesh& bm) const
         {
-            return autoPtr<polyPatch>(new funkyCyclicACMIPolyPatch(*this, bm));
+            return autoPtr<polyPatch>(new groovyCyclicACMIPolyPatch(*this, bm));
         }
 
         //- Construct and return a clone, resetting the face list
@@ -153,7 +153,7 @@ public:
         {
             return autoPtr<polyPatch>
             (
-                new funkyCyclicACMIPolyPatch
+                new groovyCyclicACMIPolyPatch
                 (
                     *this,
                     bm,
@@ -179,7 +179,7 @@ public:
         {
             return autoPtr<polyPatch>
             (
-                new funkyCyclicACMIPolyPatch
+                new groovyCyclicACMIPolyPatch
                 (
                     *this,
                     bm,
@@ -192,7 +192,7 @@ public:
 
 
     //- Destructor
-    virtual ~funkyCyclicACMIPolyPatch();
+    virtual ~groovyCyclicACMIPolyPatch();
 
 
     // Member Functions
@@ -210,7 +210,7 @@ public:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "funkyCyclicACMIPolyPatchI.H"
+#include "groovyCyclicACMIPolyPatchI.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
