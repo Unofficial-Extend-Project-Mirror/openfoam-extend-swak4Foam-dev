@@ -787,9 +787,15 @@ S_{expl} + S_{impl} T
      replaced by an expression
      - Solver :: =pimpleDyMFoam=
      - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =swakMotion= function for =solidBodyMotion=
 **** rotatingTank2D
      - Solver :: =interDyMFoam=
      - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =swakMotion= function for =solidBodyMotion=
+**** switchedInletACMI2D
+     - Solver :: =pimpleDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =groovyCyclicACMI= patch type
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -3677,6 +3683,25 @@ S_{expl} + S_{impl} T
 
      It is assumed that the length of the sub-field is equal to the
      number of faces in the patch
+**** Library =swakDynamicMesh= with "swakified" dynamic mesh subclasses
+     This libraries collects specializations of dynamic mesh classes
+     that work together with OpenFOAM. Currently these classes are in
+     the library:
+     - swakMotion :: this is a solid body motion solver for the
+          =solidBodyMotionFvMesh= where the translation and the
+          rotation of the solid body can be specified by =swak=-expressions
+     - groovyCyclicACMI :: this patch type is a subclass of
+          =cyclicACMI= where the faces that cyclic can be switched on
+          and off with an additional field that is specified with the
+          parameter =openField= in the specification in the
+          =boundary=-file. This field has to be present in memory at
+          the first time-step (usually a
+          =readAndUpdateFields=-functionObject is a good way to
+          achieve this). The values on the corresponding
+          =nonOverlapPatch= of the first boundary in the coupled pair
+          is used to switch faces on and off: if the value of the face
+          is $1$ then it is 'open' if it is $0$ it is 'closed'
+     The folder =Examples/DynamicMesh= has examples for this library
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,

@@ -45,3 +45,4 @@
   | FiniteArea/planeTransport                         | \dagger    | \checkmark | \dagger    | \dagger    |
   | DynamicMesh/hectivInletACMI2D                     | \checkmark |            |            |            |
   | DynamicMesh/rotatingTank2D                        | \checkmark |            |            |            |
+  | DynamicMesh/switchedInletACMI2D                   | \checkmark |            |            |            |
