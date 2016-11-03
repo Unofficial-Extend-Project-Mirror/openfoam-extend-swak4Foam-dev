@@ -117,7 +117,13 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
 
             const volScalarField &openField=
                 boundaryMesh().mesh().lookupObject<volScalarField>(openField_);
-            openValueSrc=openField.boundaryField()[nonOverlapPatchID()];
+            openValueSrc=min(
+                max(
+                    0.,
+                    openField.boundaryField()[nonOverlapPatchID()]
+                ),
+                1.
+            );
         }
         Dbug << "openValueSrc: " << min(openValueSrc) << ", " << max(openValueSrc) << ", "
             << average(openValueSrc) << " - " << openValueSrc.size() << endl;
