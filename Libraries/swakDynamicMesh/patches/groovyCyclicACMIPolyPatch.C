@@ -30,6 +30,8 @@ License
 
 #include "cyclicACMIFvPatch.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -49,7 +51,161 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
     const AMIPatchToPatchInterpolation::interpolationMethod& meth
 ) const
 {
-    cyclicACMIPolyPatch::resetAMI(meth);
+    // copy/pasted and then adapted version of the original method.
+    // Code duplication necessary because that makes sure that the
+    // masks are set consistent
+
+    Dbug << "resetAMI - entering" << endl;
+
+    if (owner())
+    {
+        const polyPatch& nonOverlapPatch = this->nonOverlapPatch();
+
+        if (debug)
+        {
+            Pout<< "cyclicACMIPolyPatch::resetAMI : recalculating weights"
+                << " for " << name() << " and " << nonOverlapPatch.name()
+                << endl;
+        }
+
+        if (boundaryMesh().mesh().hasCellCentres())
+        {
+            if (debug)
+            {
+                Pout<< "cyclicACMIPolyPatch::resetAMI : clearing cellCentres"
+                    << " for " << name() << " and " << nonOverlapPatch.name()
+                    << endl;
+            }
+
+            const_cast<polyMesh&>
+            (
+                boundaryMesh().mesh()
+            ).primitiveMesh::clearGeom();
+        }
+
+
+        // Trigger re-building of faceAreas
+        (void)boundaryMesh().mesh().faceAreas();
+
+
+        // Calculate the AMI using partial face-area-weighted. This leaves
+        // the weights as fractions of local areas (sum(weights) = 1 means
+        // face is fully covered)
+        cyclicAMIPolyPatch::resetAMI
+        (
+            AMIPatchToPatchInterpolation::imPartialFaceAreaWeight
+        );
+
+        AMIPatchToPatchInterpolation& AMI =
+            const_cast<AMIPatchToPatchInterpolation&>(this->AMI());
+
+        scalarField &srcMask=const_cast<scalarField&>(
+            this->srcMask()
+        );
+        scalarField &tgtMask=const_cast<scalarField&>(
+            this->tgtMask()
+        );
+
+        scalarField openValueSrc(
+            AMI.srcWeightsSum().size(),
+            1
+        );
+        forAll(openValueSrc,i) {
+            if(i < openValueSrc.size()/2) {
+                openValueSrc[i]=0;
+            }
+        }
+        scalarField openValueTgt(
+            AMI.interpolateToTarget(openValueSrc)
+        );
+        Dbug << "openValueSrc: " << min(openValueSrc) << ", " << max(openValueSrc) << ", "
+            << average(openValueSrc) << " - " << openValueSrc.size() << endl;
+        Dbug << "openValueTgt: " << min(openValueTgt) << ", " << max(openValueTgt) << ", "
+            << average(openValueTgt) << " - " << openValueTgt.size()  << endl;
+
+        srcMask =
+            min(scalar(1) - tolerance(), max(tolerance(), AMI.srcWeightsSum()*openValueSrc));
+
+        tgtMask =
+            min(scalar(1) - tolerance(), max(tolerance(), AMI.tgtWeightsSum()*openValueTgt));
+
+        Dbug << "srcMask: " << min(srcMask) << ", " << max(srcMask) << ", "
+            << average(srcMask) << " - " << srcMask.size() << endl;
+        Dbug << "tgtMask: " << min(tgtMask) << ", " << max(tgtMask) << ", "
+            << average(tgtMask) << " - " << tgtMask.size()  << endl;
+
+        // Adapt owner side areas. Note that in uncoupled situations (e.g.
+        // decomposePar) srcMask, tgtMask can be zero size.
+        if (srcMask.size())
+        {
+            vectorField::subField Sf = faceAreas();
+            vectorField::subField noSf = nonOverlapPatch.faceAreas();
+
+            forAll(Sf, facei)
+            {
+                Sf[facei] *= srcMask[facei];
+                noSf[facei] *= 1.0 - srcMask[facei];
+            }
+        }
+        // Adapt slave side areas
+        if (tgtMask.size())
+        {
+            const cyclicACMIPolyPatch& cp =
+                refCast<const cyclicACMIPolyPatch>(this->neighbPatch());
+            const polyPatch& pp = cp.nonOverlapPatch();
+
+            vectorField::subField Sf = cp.faceAreas();
+            vectorField::subField noSf = pp.faceAreas();
+
+            forAll(Sf, facei)
+            {
+                Sf[facei] *= tgtMask[facei];
+                noSf[facei] *= 1.0 - tgtMask[facei];
+            }
+        }
+
+        // Re-normalise the weights since the effect of overlap is already
+        // accounted for in the area.
+        {
+            scalarListList& srcWeights = AMI.srcWeights();
+            scalarField& srcWeightsSum = AMI.srcWeightsSum();
+            forAll(srcWeights, i)
+            {
+                scalarList& wghts = srcWeights[i];
+                if (wghts.size())
+                {
+                    scalar& sum = srcWeightsSum[i];
+
+                    forAll(wghts, j)
+                    {
+                        wghts[j] /= sum;
+                    }
+                    sum = 1.0;
+                }
+            }
+        }
+        {
+            scalarListList& tgtWeights = AMI.tgtWeights();
+            scalarField& tgtWeightsSum = AMI.tgtWeightsSum();
+            forAll(tgtWeights, i)
+            {
+                scalarList& wghts = tgtWeights[i];
+                if (wghts.size())
+                {
+                    scalar& sum = tgtWeightsSum[i];
+                    forAll(wghts, j)
+                    {
+                        wghts[j] /= sum;
+                    }
+                    sum = 1.0;
+                }
+            }
+        }
+
+        // Set the updated flag
+        setUpdated(true);
+    }
+    Dbug << "resetAMI - leaving" << endl;
 }
 
 

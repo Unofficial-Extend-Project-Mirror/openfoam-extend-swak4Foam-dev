@@ -113,7 +113,7 @@ DebugSwitches {
     cyclicAMI 1;
     cyclicAMILduInterface 1;
     cyclicAMILduInterfaceField 1;
-    funkyCyclicACMI 1;
+    groovyCyclicACMI 1;
 }
 
 // ************************************************************************* //
