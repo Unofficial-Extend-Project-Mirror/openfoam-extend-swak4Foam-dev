@@ -55,6 +55,12 @@ libs (
 );
 
 functions {
+    getTheValve {
+        type readAndUpdateFields;
+        fields (
+            valveField
+        );
+    }
     calcMassFlows {
         type patchExpression;
         patches (

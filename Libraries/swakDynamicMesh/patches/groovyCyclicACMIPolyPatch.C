@@ -32,6 +32,8 @@ License
 
 #include "DebugOStream.H"
 
+#include "volFields.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -110,16 +112,18 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
             AMI.srcWeightsSum().size(),
             1
         );
-        forAll(openValueSrc,i) {
-            if(i < openValueSrc.size()/2) {
-                openValueSrc[i]=0;
-            }
+        if(meshReady_) {
+            Dbug << "Getting open faces" << endl;
+
+            const volScalarField &openField=
+                boundaryMesh().mesh().lookupObject<volScalarField>(openField_);
+            openValueSrc=openField.boundaryField()[nonOverlapPatchID()];
         }
+        Dbug << "openValueSrc: " << min(openValueSrc) << ", " << max(openValueSrc) << ", "
+            << average(openValueSrc) << " - " << openValueSrc.size() << endl;
         scalarField openValueTgt(
             AMI.interpolateToTarget(openValueSrc)
         );
-        Dbug << "openValueSrc: " << min(openValueSrc) << ", " << max(openValueSrc) << ", "
-            << average(openValueSrc) << " - " << openValueSrc.size() << endl;
         Dbug << "openValueTgt: " << min(openValueTgt) << ", " << max(openValueTgt) << ", "
             << average(openValueTgt) << " - " << openValueTgt.size()  << endl;
 
@@ -204,7 +208,9 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
 
         // Set the updated flag
         setUpdated(true);
+
     }
+    const_cast<groovyCyclicACMIPolyPatch&>(*this).meshReady_=true;
     Dbug << "resetAMI - leaving" << endl;
 }
 
@@ -225,8 +231,10 @@ Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 )
 :
     cyclicACMIPolyPatch(name, size, start, index, bm, patchType, transform),
+    meshReady_(false),
     openField_(word::null)
 {
+    Dbug << "Constructor 1" << endl;
 }
 
 
@@ -240,8 +248,10 @@ Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 )
 :
     cyclicACMIPolyPatch(name, dict, index, bm, patchType),
+    meshReady_(false),
     openField_(dict.lookup("openField"))
 {
+    Dbug << "Constructor 2" << endl;
 }
 
 
@@ -252,8 +262,10 @@ Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 )
 :
     cyclicACMIPolyPatch(pp, bm),
+    meshReady_(pp.meshReady_),
     openField_(pp.openField_)
 {
+    Dbug << "Constructor 3" << endl;
 }
 
 
@@ -278,8 +290,10 @@ Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
         nbrPatchName,
         nonOverlapPatchName
     ),
+    meshReady_(false),
     openField_(openField)
 {
+    Dbug << "Constructor 4" << endl;
 }
 
 
@@ -293,8 +307,10 @@ Foam::groovyCyclicACMIPolyPatch::groovyCyclicACMIPolyPatch
 )
 :
     cyclicACMIPolyPatch(pp, bm, index, mapAddressing, newStart),
+    meshReady_(pp.meshReady_),
     openField_(pp.openField_)
 {
+    Dbug << "Constructor 5" << endl;
 }
 
 

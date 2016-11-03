@@ -59,7 +59,10 @@ private:
 
     // Private data
 
-    // name of the field where the patch value defines if a face is actually open
+    //- Mesh currently being created. The field can't possibly be there
+    bool meshReady_;
+
+    //- name of the field where the patch value defines if a face is actually open
     word openField_;
 
 protected:
