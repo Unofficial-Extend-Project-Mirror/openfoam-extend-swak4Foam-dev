@@ -31,8 +31,17 @@ boundaryField
     }
     ACMI1_blockage
     {
-        type            fixedValue;
+        type            groovyBC;
         value           uniform 1;
+        variables (
+            "myMin=min(pts().y);"
+            "myMax=max(pts().y);"
+            "otherMin{ACMI2_blockage}=min(pts().y);"
+            "otherMax{ACMI2_blockage}=max(pts().y);"
+            "higher=myMin>otherMin ? (myMax-0.25*(myMax-myMin)) : myMax;"
+            "lower=myMax<otherMax ? (myMin+0.25*(myMax-myMin)) : myMin;"
+        );
+        valueExpression "(pos().y>lower && pos().y<higher) ? 1 : 0";
     }
     ACMI1_couple
     {
