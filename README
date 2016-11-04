@@ -3724,3 +3724,7 @@ S_{expl} + S_{impl} T
      Additional functions for the =absorptionEmissionModel= and the
      =sootModel= are added to to library with the radiation-functions
 *** Examples
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:
