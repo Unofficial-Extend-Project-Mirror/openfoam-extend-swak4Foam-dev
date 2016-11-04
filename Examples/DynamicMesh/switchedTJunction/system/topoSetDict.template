@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+
+<!--(for name in ["InletCenter","CenterInlet","RightCenter","CenterRight","LeftCenter","CenterLeft"])-->
+    // Create faceZone for patch couple|-name-|
+    {
+        name    couple|-name-|FaceSet;
+        type    faceSet;
+        action  new;
+        source  patchToFace;
+        sourceInfo
+        {
+            name    couple|-name-|;
+        }
+    }
+    {
+        name    couple|-name-|Faces;
+        type    faceZoneSet;
+        action  new;
+        source  setToFaceZone;
+        sourceInfo
+        {
+            faceSet couple|-name-|FaceSet;
+        }
+    }
+<!--(end)-->
+);
+
+// ************************************************************************* //

@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet {
+        type fixedValue;
+        value uniform 1;
+    }
+    left {
+        type inletOutlet;
+        value $internalField;
+        inletValue $internalField;
+    }
+    right {
+        $left;
+    }
+    defaultFaces
+    {
+        type            zeroGradient;
+    }
+    "ACMI_.*_blockage"
+    {
+        $defaultFaces;
+    }
+    "ACMI_.*_couple"
+    {
+        type  cyclicACMI;
+        value uniform 0;
+    }
+
+}
+
+// ************************************************************************* //
