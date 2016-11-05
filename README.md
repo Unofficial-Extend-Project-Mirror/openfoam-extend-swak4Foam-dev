@@ -6169,6 +6169,8 @@ the library:
     `nonOverlapPatch` of the first boundary in the coupled pair
     is used to switch faces on and off: if the value of the face
     is \(1\) then it is 'open' if it is \(0\) it is 'closed'
+-   **nonMovingFvMesh:** A non-moving mesh that pretends to
+    move. This triggers the recalculation of AMI-interfaces
 
 The folder `Examples/DynamicMesh` has examples for this library
 
