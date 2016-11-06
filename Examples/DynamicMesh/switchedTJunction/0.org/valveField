@@ -9,51 +9,44 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    location    "0";
-    object      U;
+    class       volScalarField;
+    object      valveField;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
+dimensions      [0 0 0 0 0 0 0];
 
-internalField   uniform (0 0 0);
+internalField   uniform 0;
 
 boundaryField
 {
-    left
-    {
-        type            pressureInletOutletVelocity;
-        value           uniform (0 0 0);
+    inlet {
+        type fixedValue;
+        value uniform 1;
     }
-    right
-    {
-        $left
+    left {
+        type inletOutlet;
+        value $internalField;
+        inletValue $internalField;
     }
-    inlet
-    {
-        type groovyBC;
-        value           uniform (0 0 0);
-        valueExpression "vector(0,-1,0)";
-        fractionExpression "alphaWater>0.5 ? 1 : 0.1";
-        aliases {
-            alphaWater alpha.water;
-        }
+    right {
+        $left;
     }
     defaultFaces
     {
-        type            noSlip;
+        type            zeroGradient;
     }
     "ACMI_.*_blockage"
     {
-        $defaultFaces;
+        type fixedValue;
+        value uniform 1;
     }
     "ACMI_.*_couple"
     {
         type  cyclicACMI;
-        value uniform (0 0 0);
+        value uniform 0;
     }
-}
 
+}
 
 // ************************************************************************* //

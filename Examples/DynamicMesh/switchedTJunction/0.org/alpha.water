@@ -21,8 +21,14 @@ internalField   uniform 0;
 boundaryField
 {
     inlet {
-        type fixedValue;
-        value uniform 1;
+        type groovyBC;
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "middleX=(minX+maxX)/2;"
+        );
+        value uniform 0;
+        valueExpression "middleX>pos().x ? 1 : 0";
     }
     left {
         type inletOutlet;

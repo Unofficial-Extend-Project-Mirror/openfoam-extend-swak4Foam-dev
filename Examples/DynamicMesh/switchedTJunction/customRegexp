@@ -1,0 +1,19 @@
+// -*- c++ -*-
+fractions {
+    type dynamic;
+    idNr 1;
+    theTitle "Volume fractions";
+    expr "Expression (.+)Fraction :  weightedAverage=(.+)";
+    titles (
+        fraction
+    );
+}
+states {
+    type dynamic;
+    idNr 1;
+    theTitle "Machine states";
+    expr "Machine (.+) in state .+ \(code: (.+)\) for .+ s";
+    titles (
+        state
+    );
+}
