@@ -10,49 +10,26 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      alpha.water;
+    object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
+dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 1e5;
 
 boundaryField
 {
-    inlet {
-        //   type groovyBC;
-        type fixedValue;
-        variables (
-            "minX=min(pts().x);"
-            "maxX=max(pts().x);"
-            "middleX=(minX+maxX)/2;"
-        );
-        value uniform 1;
-        valueExpression "middleX>pos().x ? 1 : 0";
-    }
-    left {
-        type inletOutlet;
+    ".*"
+    {
+        type calculated;
         value $internalField;
-        inletValue $internalField;
-    }
-    right {
-        $left;
-    }
-    defaultFaces
-    {
-        type            zeroGradient;
-    }
-    "ACMI_.*_blockage"
-    {
-        $defaultFaces;
     }
     "ACMI_.*_couple"
     {
         type  cyclicACMI;
-        value uniform 0;
+        value uniform 1e5;
     }
-
 }
 
 // ************************************************************************* //

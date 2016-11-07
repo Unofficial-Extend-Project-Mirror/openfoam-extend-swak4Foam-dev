@@ -16,14 +16,14 @@ FoamFile
 
 dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform 1e5;
 
 boundaryField
 {
     left
     {
         type            totalPressure;
-        p0              uniform 0;
+        p0              uniform 1e5;
     }
 
     right
@@ -32,21 +32,22 @@ boundaryField
     }
 
     inlet {
-        type zeroGradient;
-        //        type            fixedFluxPressure;
-        value           uniform 0;
+        //        type zeroGradient;
+        type            fixedFluxPressure;
+        value           uniform 1e5;
     }
 
     defaultFaces
     {
         type            fixedFluxPressure;
-        value           uniform 0;
+        value           uniform 1e5;
     }
 
     ACMI_InletCenter_blockage
     {
-        type fixedValue;
-        value  uniform 0;
+        $defaultFaces;
+        // type fixedValue;
+        // value  uniform 0;
     }
 
     "ACMI_.*_blockage"
@@ -56,7 +57,7 @@ boundaryField
     "ACMI_.*_couple"
     {
         type  cyclicACMI;
-        value uniform 0;
+        value uniform 1e5;
     }
 }
 
