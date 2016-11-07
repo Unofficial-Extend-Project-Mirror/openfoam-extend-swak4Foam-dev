@@ -124,6 +124,9 @@ void Foam::groovyCyclicACMIPolyPatch::resetAMI
                 ),
                 1.
             );
+        } else {
+            Info << "Patch " << name() << " will be controlled by "
+                << nonOverlapPatch.name() << endl;
         }
         Dbug << "openValueSrc: " << min(openValueSrc) << ", " << max(openValueSrc) << ", "
             << average(openValueSrc) << " - " << openValueSrc.size() << endl;

@@ -95,7 +95,7 @@ functions {
             {
                 from closingLeft; to openRight;
                 description "Wait a little bit with the closing";
-                condition "stateMachine_timeSinceChange(valves)>0.1";  logicalAccumulation or;
+                condition "stateMachine_timeSinceChange(valves)>0.05";  logicalAccumulation or;
             }
             {
                 from openRight; to filling;

@@ -36,6 +36,24 @@ boundaryField
     {
         type            zeroGradient;
     }
+    ACMI_InletCenter_blockage
+    {
+        type groovyBC;
+        value uniform 0;
+        valueExpression "(stateMachine_isState(valves,filling)) ? 0 : 1";
+    }
+    ACMI_LeftCenter_blockage
+    {
+        type groovyBC;
+        value uniform 0;
+        valueExpression "(stateMachine_isState(valves,openRight) || stateMachine_isState(valves,closingLeft)) ? 0 : 1";
+    }
+    ACMI_LeftCenter_blockage
+    {
+        type groovyBC;
+        value uniform 0;
+        valueExpression "(stateMachine_isState(valves,openLeft) || stateMachine_isState(valves,closingLeft)) ? 0 : 1";
+    }
     "ACMI_.*_blockage"
     {
         type fixedValue;

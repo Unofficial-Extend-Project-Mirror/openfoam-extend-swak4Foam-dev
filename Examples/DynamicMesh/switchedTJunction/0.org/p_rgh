@@ -32,7 +32,8 @@ boundaryField
     }
 
     inlet {
-        type            fixedFluxPressure;
+        type zeroGradient;
+        //        type            fixedFluxPressure;
         value           uniform 0;
     }
 
@@ -40,6 +41,12 @@ boundaryField
     {
         type            fixedFluxPressure;
         value           uniform 0;
+    }
+
+    ACMI_InletCenter_blockage
+    {
+        type fixedValue;
+        value  uniform 0;
     }
 
     "ACMI_.*_blockage"

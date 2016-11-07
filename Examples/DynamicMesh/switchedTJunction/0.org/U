@@ -34,7 +34,7 @@ boundaryField
     {
         type groovyBC;
         value           uniform (0 0 0);
-        valueExpression "vector(0,-1,0)";
+        valueExpression "vector(0,alphaWater>0.5 ? -1 : 0,0)";
         fractionExpression "alphaWater>0.5 ? 1 : 0.1";
         aliases {
             alphaWater alpha.water;
