@@ -29,6 +29,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 
 #include "cyclicACMIFvPatch.H"
+#include "cyclicACMIPointPatch.H"
 
 #include "DebugOStream.H"
 
@@ -44,6 +45,7 @@ namespace Foam
     addToRunTimeSelectionTable(polyPatch, groovyCyclicACMIPolyPatch, dictionary);
 
     addNamedToRunTimeSelectionTable(fvPatch,cyclicACMIFvPatch,polyPatch,groovyCyclicACMI);
+    addNamedToRunTimeSelectionTable(facePointPatch,cyclicACMIPointPatch,polyPatch,groovyCyclicACMI);
 }
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
