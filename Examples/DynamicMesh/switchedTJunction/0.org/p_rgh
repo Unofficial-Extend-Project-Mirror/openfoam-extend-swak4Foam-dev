@@ -22,11 +22,13 @@ boundaryField
 {
     left
     {
-        type fixedValue;
-        //        type            totalPressure;
+        //        type fixedValue;
+        type            totalPressure;
         //        type zeroGradient;
+        //        type outletInlet;
         p0              uniform 1e5;
         value uniform 1e5;
+        outletValue $internalField;
     }
 
     right

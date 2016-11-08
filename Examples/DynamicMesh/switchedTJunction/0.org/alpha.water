@@ -30,6 +30,7 @@ boundaryField
         valueExpression "stateMachine_isState(theInlet,fullOn) ? 1 : lowerValue";
     }
     left {
+        //        type            zeroGradient;
         type inletOutlet;
         value $internalField;
         inletValue $internalField;
