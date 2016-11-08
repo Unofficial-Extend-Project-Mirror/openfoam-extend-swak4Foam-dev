@@ -239,7 +239,7 @@
 <li><a href="#orgheadline151">8.10. Failure with <code>sampledSurfaces</code> that change size on certain distros</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline684">9. History</a>
+<li><a href="#orgheadline685">9. History</a>
 <ul>
 <li><a href="#orgheadline153">9.1. 2010-09-13 - version number : 0.1</a></li>
 <li><a href="#orgheadline158">9.2. 2010-12-18 - version number : 0.1.1</a>
@@ -1003,7 +1003,7 @@
 </li>
 </ul>
 </li>
-<li><a href="#orgheadline683">9.17. Next release - version number : 0.4.1</a>
+<li><a href="#orgheadline684">9.17. Next release - version number : 0.4.1</a>
 <ul>
 <li><a href="#orgheadline656">9.17.1. New supported versions</a>
 <ul>
@@ -1040,15 +1040,16 @@
 <li><a href="#orgheadline675">9.17.7.7. Library <code>swakDynamicMesh</code> with "swakified" dynamic mesh subclasses</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline681">9.17.8. Enhancements</a>
+<li><a href="#orgheadline682">9.17.8. Enhancements</a>
 <ul>
 <li><a href="#orgheadline677">9.17.8.1. Primitive parser for Plugin-functions now supports tensor types</a></li>
 <li><a href="#orgheadline678">9.17.8.2. Plugin-functions now can use <code>variables</code> (under certain circumstances)</a></li>
 <li><a href="#orgheadline679">9.17.8.3. Timeline function objects now optionally write value at start time</a></li>
 <li><a href="#orgheadline680">9.17.8.4. Additional functions in the radiation function plugin</a></li>
+<li><a href="#orgheadline681">9.17.8.5. <code>funkyWarpMesh</code> allows reading function objects</a></li>
 </ul>
 </li>
-<li><a href="#orgheadline682">9.17.9. Examples</a></li>
+<li><a href="#orgheadline683">9.17.9. Examples</a></li>
 </ul>
 </li>
 </ul>
@@ -2409,7 +2410,7 @@ This causes this bug:
 The bug can not be fixed in `swak4Foam` but has to be fixed in the
 Foam-Distro
 
-# History<a id="orgheadline684"></a>
+# History<a id="orgheadline685"></a>
 
 ## 2010-09-13 - version number : 0.1<a id="orgheadline153"></a>
 
@@ -5938,7 +5939,7 @@ The case now also calculates the time the fluid needs from the
 inlet to the outlet (`residenceTime`). Steady as well as
 transient
 
-## Next release - version number : 0.4.1<a id="orgheadline683"></a>
+## Next release - version number : 0.4.1<a id="orgheadline684"></a>
 
 ### New supported versions<a id="orgheadline656"></a>
 
@@ -6174,7 +6175,7 @@ the library:
 
 The folder `Examples/DynamicMesh` has examples for this library
 
-### Enhancements<a id="orgheadline681"></a>
+### Enhancements<a id="orgheadline682"></a>
 
 #### Primitive parser for Plugin-functions now supports tensor types<a id="orgheadline677"></a>
 
@@ -6204,4 +6205,9 @@ change this default to make it `yes`
 Additional functions for the `absorptionEmissionModel` and the
 `sootModel` are added to to library with the radiation-functions
 
-### Examples<a id="orgheadline682"></a>
+#### `funkyWarpMesh` allows reading function objects<a id="orgheadline681"></a>
+
+Function objects can now be loaded with an option
+`-allowFunctionObjects`
+
+### Examples<a id="orgheadline683"></a>

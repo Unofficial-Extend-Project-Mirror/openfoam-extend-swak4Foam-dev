@@ -3725,6 +3725,9 @@ S_{expl} + S_{impl} T
 **** Additional functions in the radiation function plugin
      Additional functions for the =absorptionEmissionModel= and the
      =sootModel= are added to to library with the radiation-functions
+**** =funkyWarpMesh= allows reading function objects
+     Function objects can now be loaded with an option
+     =-allowFunctionObjects=
 *** Examples
 
 # Local Variables:
