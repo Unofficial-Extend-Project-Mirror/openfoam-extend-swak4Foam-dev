@@ -21,15 +21,13 @@ internalField   uniform 0;
 boundaryField
 {
     inlet {
-        //   type groovyBC;
-        type fixedValue;
+        type groovyBC;
+        //        type fixedValue;
         variables (
-            "minX=min(pts().x);"
-            "maxX=max(pts().x);"
-            "middleX=(minX+maxX)/2;"
+            "lowerValue=max(0,1-stateMachine_timeSinceChange(theInlet)/0.01);"
         );
         value uniform 1;
-        valueExpression "middleX>pos().x ? 1 : 0";
+        valueExpression "stateMachine_isState(theInlet,fullOn) ? 1 : lowerValue";
     }
     left {
         type inletOutlet;

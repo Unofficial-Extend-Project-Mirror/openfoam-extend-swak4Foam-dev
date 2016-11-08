@@ -97,9 +97,9 @@ PIMPLE
 {
     momentumPredictor   yes;
     transonic           no;
-    nOuterCorrectors    1;
-    nCorrectors         2;
-    nNonOrthogonalCorrectors 0;
+    nOuterCorrectors    3;
+    nCorrectors         3;
+    nNonOrthogonalCorrectors 2;
     correctPhi          no;
 }
 

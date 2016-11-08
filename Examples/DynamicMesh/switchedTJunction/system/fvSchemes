@@ -30,12 +30,18 @@ divSchemes
     div(phi,alpha)  Gauss vanLeer;
     div(phirb,alpha) Gauss linear;
 
-    div(rhoPhi,U)  Gauss vanLeerV;
-    div(phi,thermo:rho.water) Gauss linear;
-    div(phi,thermo:rho.air) Gauss linear;
-    div(rhoPhi,T)  Gauss vanLeer;
-    div(rhoPhi,K)  Gauss linear;
-    div((phi+meshPhi),p)  Gauss linear;
+    div(rhoPhi,U)  Gauss upwind;
+    div(phi,thermo:rho.water) Gauss upwind;
+    div(phi,thermo:rho.air) Gauss upwind;
+    div(rhoPhi,T)  Gauss upwind;
+    div(rhoPhi,K)  Gauss upwind;
+    div((phi+meshPhi),p)  Gauss upwind;
+    // div(rhoPhi,U)  Gauss vanLeerV;
+    // div(phi,thermo:rho.water) Gauss linear;
+    // div(phi,thermo:rho.air) Gauss linear;
+    // div(rhoPhi,T)  Gauss vanLeer;
+    // div(rhoPhi,K)  Gauss linear;
+    // div((phi+meshPhi),p)  Gauss linear;
 
     div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 

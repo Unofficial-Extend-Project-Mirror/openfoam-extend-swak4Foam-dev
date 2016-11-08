@@ -48,11 +48,12 @@ boundaryField
         value uniform 0;
         valueExpression "(stateMachine_isState(valves,openRight) || stateMachine_isState(valves,closingLeft)) ? 0 : 1";
     }
-    ACMI_LeftCenter_blockage
+    ACMI_RightCenter_blockage
     {
         type groovyBC;
         value uniform 0;
-        valueExpression "(stateMachine_isState(valves,openLeft) || stateMachine_isState(valves,closingLeft)) ? 0 : 1";
+        //        valueExpression "(stateMachine_isState(valves,openLeft) || stateMachine_isState(valves,closingLeft)) ? 0 : 1";
+        valueExpression "(stateMachine_isState(valves,openLeft)) ? 0 : 1";
     }
     "ACMI_.*_blockage"
     {

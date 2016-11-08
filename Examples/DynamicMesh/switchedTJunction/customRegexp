@@ -8,6 +8,15 @@ fractions {
         fraction
     );
 }
+pressures {
+    type dynamic;
+    idNr 1;
+    theTitle "Volume pressures";
+    expr "Expression (.+)Pressure :  weightedAverage=(.+)";
+    titles (
+        pressure
+    );
+}
 states {
     type dynamic;
     idNr 1;

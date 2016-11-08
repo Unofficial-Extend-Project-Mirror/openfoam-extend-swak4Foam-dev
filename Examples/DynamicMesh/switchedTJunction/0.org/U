@@ -23,7 +23,8 @@ boundaryField
 {
     left
     {
-        type            pressureInletOutletVelocity;
+        type zeroGradient;
+        //        type            pressureInletOutletVelocity;
         value           uniform (0 0 0);
     }
     right
@@ -32,10 +33,11 @@ boundaryField
     }
     inlet
     {
-        type groovyBC;
-        value           uniform (0 0 0);
+        //        type groovyBC;
+        type fixedValue;
+        value           uniform (0 -1 0);
         valueExpression "vector(0,alphaWater>0.5 ? -1 : 0,0)";
-        fractionExpression "alphaWater>0.5 ? 1 : 0.1";
+        //        fractionExpression "alphaWater>0.5 ? 1 : 0.1";
         aliases {
             alphaWater alpha.water;
         }

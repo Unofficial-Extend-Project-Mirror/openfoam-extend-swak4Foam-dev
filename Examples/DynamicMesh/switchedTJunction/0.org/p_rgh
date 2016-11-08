@@ -22,8 +22,11 @@ boundaryField
 {
     left
     {
-        type            totalPressure;
+        type fixedValue;
+        //        type            totalPressure;
+        //        type zeroGradient;
         p0              uniform 1e5;
+        value uniform 1e5;
     }
 
     right
