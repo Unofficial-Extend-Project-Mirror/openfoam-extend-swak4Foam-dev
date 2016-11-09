@@ -46,6 +46,7 @@
   | DynamicMesh/hectivInletACMI2D                     | \checkmark |            |            |            |
   | DynamicMesh/rotatingTank2D                        | \checkmark |            |            |            |
   | DynamicMesh/switchedInletACMI2D                   | \checkmark |            |            |            |
+  | DynamicMesh/switchedTJunction                     | \checkmark |            |            |            |
 
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)

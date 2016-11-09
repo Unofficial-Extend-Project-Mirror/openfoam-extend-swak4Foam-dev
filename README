@@ -796,6 +796,10 @@ S_{expl} + S_{impl} T
      - Solver :: =pimpleDyMFoam=
      - Case setup :: =pyFoamPrepareCase.py=
      - Demonstrates :: The =groovyCyclicACMI= patch type
+**** switchedTJunction
+     - Solver :: =compressibleInterDyMFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: The =groovyCyclicACMI= patch type. State machines. =funkyWarpMesh= utility
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
