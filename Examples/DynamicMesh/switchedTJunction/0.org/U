@@ -30,7 +30,7 @@ boundaryField
         aliases {
             alphaWater alpha.water;
         }
-        fractionExpression "alphaWater>0.01 ? 1 : 0.1";
+        fractionExpression "alphaWater>0.01 ? 1 : 0";
         value           uniform (0 0 0);
     }
     right
