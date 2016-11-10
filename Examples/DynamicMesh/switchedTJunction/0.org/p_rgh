@@ -29,9 +29,10 @@ boundaryField
         type groovyBC;
         valueExpression "1e5";
         variables (
-            "isOpen{ACMI_LeftCenter_blockage}=max(valveField>0.5 ? 1 : 0);"
+            "isOpenLeft{ACMI_LeftCenter_blockage}=max(valveField>0.5 ? 1 : 0);"
+            "isOpenRight{ACMI_RightCenter_blockage}=max(valveField>0.5 ? 1 : 0);"
         );
-        fractionExpression "isOpen";
+        fractionExpression "isOpenLeft";
         p0              uniform 1e5;
         value uniform 1e5;
         outletValue $internalField;
@@ -40,9 +41,7 @@ boundaryField
     right
     {
         $left;
-        variables (
-            "isOpen{ACMI_RightCenter_blockage}=max(valveField>0.5 ? 1 : 0);"
-        );
+        fractionExpression "isOpenRight";
     }
 
     inlet {
@@ -67,10 +66,15 @@ boundaryField
     {
         $defaultFaces;
     }
-    "ACMI_.*Center_blockage"
+    ACMI_LeftCenter_blockage
     {
         type fixedValue;
         value uniform 1e5;
+    }
+    ACMI_RightCenter_blockage
+    {
+        $ACMI_LeftCenter_blockage;
+
     }
     "ACMI_.*_couple"
     {

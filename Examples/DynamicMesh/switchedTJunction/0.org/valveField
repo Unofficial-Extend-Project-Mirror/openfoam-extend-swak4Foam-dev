@@ -40,7 +40,12 @@ boundaryField
     {
         type groovyBC;
         value uniform 0;
-        valueExpression "(stateMachine_isState(valves,filling)) ? 0 : 1";
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "halfX=(minX+maxX)/2;"
+        );
+        valueExpression "(stateMachine_isState(valves,filling)) ? (pos().x<halfX ? 0 : 1) : 1";
     }
     ACMI_LeftCenter_blockage
     {

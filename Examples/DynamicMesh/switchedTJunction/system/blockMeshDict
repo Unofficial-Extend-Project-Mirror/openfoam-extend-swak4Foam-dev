@@ -88,16 +88,16 @@ vertices
 blocks
 (
     // inlet block
-    hex (0 1 2 3  10 11 12 13) inletBlock (50 5 5) simpleGrading (1 1 1)
+    hex (0 1 2 3  10 11 12 13) inletBlock (100 10 10) simpleGrading (1 1 1)
 
     // central block
-    hex (20 4 5 21  22 14 15 23) centralBlock (5 5 5) simpleGrading (1 1 1)
+    hex (20 4 5 21  22 14 15 23) centralBlock (10 10 10) simpleGrading (1 1 1)
 
     // left block
-    hex (6 7 24 26  16 17 25 27) leftBlock (5 50 5) simpleGrading (1 1 1)
+    hex (6 7 24 26  16 17 25 27) leftBlock (10 100 10) simpleGrading (1 1 1)
 
     // right block
-    hex (30 28 9 8  31 29 19 18) rightBlock (5 50 5) simpleGrading (1 1 1)
+    hex (30 28 9 8  31 29 19 18) rightBlock (10 100 10) simpleGrading (1 1 1)
 );
 
 edges

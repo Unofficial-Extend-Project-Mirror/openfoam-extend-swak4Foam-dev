@@ -23,7 +23,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         5;
+endTime         3;
 
 deltaT          0.001;
 
@@ -57,6 +57,7 @@ libs (
     "libsimpleSwakFunctionObjects.so"
     "libgroovyBC.so"
     "libswakStateMachine.so"
+    "libswakFunctionObjects.so"
 );
 
 functions {
@@ -86,8 +87,8 @@ functions {
             {
                 from filling; to openLeft;
                 description "Fill up inlet pipe";
-                //                condition "filledIn>0.75"; logicalAccumulation and;
-                condition "pressureIn>1.01e5"; logicalAccumulation and;
+                condition "filledIn>0.75"; logicalAccumulation and;
+                //                condition "pressureIn>1.01e5"; logicalAccumulation and;
             }
             {
                 from openLeft; to closingLeft;
@@ -208,6 +209,34 @@ functions {
         $leftOutPressure;
         patchName right;
     }
+    // limitTemperature {
+    //     type manipulateField;
+    //     fieldName T;
+    //     name T;
+    //     expression "$name<295 ? 295 : ($name>305 ? 305 : $name)";
+    //     mask "$name<295 || $name>305";
+    //     aliases {
+    //         TAir T.air;
+    //         TWater T.water;
+    //     }
+    // }
+    // limitTemperatureAir {
+    //     $limitTemperature;
+    //     fieldName T.air;
+    //     name TAir;
+    // }
+    // limitTemperatureWater {
+    //     $limitTemperature;
+    //     fieldName T.water;
+    //     name TWater;
+    // }
+    // correctProperties {
+    //     type correctThermo;
+    //     onlyAtStartup false;
+    //     ignore_unimplemented_simpleFunctionObject::movePoints true;
+    //     updateRho true;
+    //     rhoName rho;
+    // }
 }
 
 DebugSwitches {

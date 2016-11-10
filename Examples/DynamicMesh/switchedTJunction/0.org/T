@@ -41,8 +41,8 @@ boundaryField
     defaultFaces
     {
         type            zeroGradient;
-        // type fixedValue;
-        // value $internalField;
+        //        type fixedValue;
+        value $internalField;
     }
 
     "ACMI_.*_blockage"
