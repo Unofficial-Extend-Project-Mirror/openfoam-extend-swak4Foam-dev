@@ -3,7 +3,6 @@ groovyBCFvPatchFields.C
 groovyBCDirectionFvPatchFields.C
 groovyBCFixedValueFvPatchFields.C
 groovyBCJumpFvPatchFields.C
-groovyBCJumpCyclicAMIFvPatchFields.C
 groovyBCPointPatchFields.C
 
 LIB = $(FOAM_USER_LIBBIN)/libgroovyBC

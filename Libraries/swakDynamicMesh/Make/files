@@ -4,4 +4,6 @@ patches/groovyCyclicACMIPolyPatch.C
 
 meshes/nonMovingFvMesh.C
 
+fvPatchFields/groovyBCJumpAMIFvPatchFields.C
+
 LIB = $(FOAM_USER_LIBBIN)/libswakDynamicMesh

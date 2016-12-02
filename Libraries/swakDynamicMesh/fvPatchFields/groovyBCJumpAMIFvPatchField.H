@@ -29,13 +29,13 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::groovyBCJumpCyclicAMIFvPatchField
+    Foam::groovyBCJumpAMIFvPatchField
 
 Description
-    Foam::groovyBCJumpCyclicAMIFvPatchField
+    Foam::groovyBCJumpAMIFvPatchField
 
 SourceFiles
-    groovyBCJumpCyclicAMIFvPatchField.C
+    groovyBCJumpAMIFvPatchField.C
 
 Contributors/Copyright:
     2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
@@ -43,8 +43,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef groovyBCJumpCyclicAMIFvPatchField_H
-#define groovyBCJumpCyclicAMIFvPatchField_H
+#ifndef groovyBCJumpAMIFvPatchField_H
+#define groovyBCJumpAMIFvPatchField_H
 
 #include "swak.H"
 
@@ -62,7 +62,7 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
-class groovyBCJumpCyclicAMIFvPatchField
+class groovyBCJumpAMIFvPatchField
 :
     public jumpCyclicAMIFvPatchField<Type>
 {
@@ -78,39 +78,39 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("groovyBCJumpCyclicAMI");
+    TypeName("groovyBCJumpAMI");
 
 
     // Constructors
 
     //- Construct from patch and internal field
-    groovyBCJumpCyclicAMIFvPatchField
+    groovyBCJumpAMIFvPatchField
     (
         const fvPatch&,
         const DimensionedField<Type, volMesh>&
     );
 
     //- Construct from patch, internal field and dictionary
-    groovyBCJumpCyclicAMIFvPatchField
+    groovyBCJumpAMIFvPatchField
     (
         const fvPatch&,
         const DimensionedField<Type, volMesh>&,
         const dictionary&
     );
 
-    //- Construct by mapping given groovyBCJumpCyclicAMIFvPatchField onto a new patch
-    groovyBCJumpCyclicAMIFvPatchField
+    //- Construct by mapping given groovyBCJumpAMIFvPatchField onto a new patch
+    groovyBCJumpAMIFvPatchField
     (
-        const groovyBCJumpCyclicAMIFvPatchField<Type>&,
+        const groovyBCJumpAMIFvPatchField<Type>&,
         const fvPatch&,
         const DimensionedField<Type, volMesh>&,
         const fvPatchFieldMapper&
     );
 
     //- Construct as copy
-    groovyBCJumpCyclicAMIFvPatchField
+    groovyBCJumpAMIFvPatchField
     (
-        const groovyBCJumpCyclicAMIFvPatchField<Type>&
+        const groovyBCJumpAMIFvPatchField<Type>&
     );
 
     //- Construct and return a clone
@@ -118,14 +118,14 @@ public:
         {
             return tmp<fvPatchField<Type> >
                 (
-                    new groovyBCJumpCyclicAMIFvPatchField<Type>(*this)
+                    new groovyBCJumpAMIFvPatchField<Type>(*this)
                 );
         }
 
     //- Construct as copy setting internal field reference
-    groovyBCJumpCyclicAMIFvPatchField
+    groovyBCJumpAMIFvPatchField
     (
-        const groovyBCJumpCyclicAMIFvPatchField<Type>&,
+        const groovyBCJumpAMIFvPatchField<Type>&,
         const DimensionedField<Type, volMesh>&
     );
 
@@ -137,7 +137,7 @@ public:
         {
             return tmp<fvPatchField<Type> >
                 (
-                    new groovyBCJumpCyclicAMIFvPatchField<Type>(*this, iF)
+                    new groovyBCJumpAMIFvPatchField<Type>(*this, iF)
                 );
         }
 
@@ -159,7 +159,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     #ifdef NoRepository
-    #   include "groovyBCJumpCyclicAMIFvPatchField.C"
+    #   include "groovyBCJumpAMIFvPatchField.C"
     #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

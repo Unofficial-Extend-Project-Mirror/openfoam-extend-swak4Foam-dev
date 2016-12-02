@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "groovyBCJumpCyclicAMIFvPatchField.H"
+#include "groovyBCJumpAMIFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -44,7 +44,7 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
+groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF
@@ -55,15 +55,15 @@ groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
     jumpExpression_("0")
 {
     if(debug) {
-        Info << "groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField 1" << endl;
+        Info << "groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField 1" << endl;
     }
 }
 
 
 template<class Type>
-groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
+groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField
 (
-    const groovyBCJumpCyclicAMIFvPatchField<Type>& ptf,
+    const groovyBCJumpAMIFvPatchField<Type>& ptf,
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
     const fvPatchFieldMapper& mapper
@@ -74,13 +74,13 @@ groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
     jumpExpression_(ptf.jumpExpression_)
 {
     if(debug) {
-        Info << "groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField 2" << endl;
+        Info << "groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField 2" << endl;
     }
 }
 
 
 template<class Type>
-groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
+groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
@@ -95,7 +95,7 @@ groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
     )
 {
     if(debug) {
-        Info << "groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField 3" << endl;
+        Info << "groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField 3" << endl;
     }
 
     driver_.readVariablesAndTables(dict);
@@ -115,9 +115,9 @@ groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
 
 
 template<class Type>
-groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
+groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField
 (
-    const groovyBCJumpCyclicAMIFvPatchField<Type>& ptf
+    const groovyBCJumpAMIFvPatchField<Type>& ptf
 )
 :
     jumpCyclicAMIFvPatchField<Type>(ptf),
@@ -125,15 +125,15 @@ groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
     jumpExpression_(ptf.jumpExpression_)
 {
     if(debug) {
-        Info << "groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField 4" << endl;
+        Info << "groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField 4" << endl;
     }
 }
 
 
 template<class Type>
-groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
+groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField
 (
-    const groovyBCJumpCyclicAMIFvPatchField<Type>& ptf,
+    const groovyBCJumpAMIFvPatchField<Type>& ptf,
     const DimensionedField<Type, volMesh>& iF
 )
 :
@@ -142,7 +142,7 @@ groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
     jumpExpression_(ptf.jumpExpression_)
 {
     if(debug) {
-        Info << "groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField 5" << endl;
+        Info << "groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField 5" << endl;
     }
 }
 
@@ -150,10 +150,10 @@ groovyBCJumpCyclicAMIFvPatchField<Type>::groovyBCJumpCyclicAMIFvPatchField
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-tmp<Field<Type> > groovyBCJumpCyclicAMIFvPatchField<Type>::jump() const
+tmp<Field<Type> > groovyBCJumpAMIFvPatchField<Type>::jump() const
 {
     if(debug) {
-        Info << "groovyBCJumpCyclicAMIFvPatchField<Type>::jump() with "
+        Info << "groovyBCJumpAMIFvPatchField<Type>::jump() with "
             << jumpExpression_ << endl;
     }
 
@@ -172,8 +172,8 @@ tmp<Field<Type> > groovyBCJumpCyclicAMIFvPatchField<Type>::jump() const
 
         return jf;
     } else {
-       const groovyBCJumpCyclicAMIFvPatchField& nbrPatch =
-           refCast<const groovyBCJumpCyclicAMIFvPatchField<Type> >(
+       const groovyBCJumpAMIFvPatchField& nbrPatch =
+           refCast<const groovyBCJumpAMIFvPatchField<Type> >(
                this->neighbourPatchField()
            );
        if (this->cyclicAMIPatch().applyLowWeightCorrection()) {
@@ -188,10 +188,10 @@ tmp<Field<Type> > groovyBCJumpCyclicAMIFvPatchField<Type>::jump() const
 }
 
 template<class Type>
-void groovyBCJumpCyclicAMIFvPatchField<Type>::write(Ostream& os) const
+void groovyBCJumpAMIFvPatchField<Type>::write(Ostream& os) const
 {
     if(debug) {
-        Info << "groovyBCJumpCyclicAMIFvPatchField<Type>::write" << endl;
+        Info << "groovyBCJumpAMIFvPatchField<Type>::write" << endl;
     }
     fvPatchField<Type>::write(os);
 

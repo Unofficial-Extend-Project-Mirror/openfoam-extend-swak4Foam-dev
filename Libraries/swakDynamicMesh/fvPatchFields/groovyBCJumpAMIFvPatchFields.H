@@ -34,10 +34,10 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef groovyBCJumpCyclicAMIFvPatchFields_H
-#define groovyBCJumpCyclicAMIFvPatchFields_H
+#ifndef groovyBCJumpAMIFvPatchFields_H
+#define groovyBCJumpAMIFvPatchFields_H
 
-#include "groovyBCJumpCyclicAMIFvPatchField.H"
+#include "groovyBCJumpAMIFvPatchField.H"
 #include "fieldTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -47,7 +47,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makePatchTypeFieldTypedefs(groovyBCJumpCyclicAMI)
+makePatchTypeFieldTypedefs(groovyBCJumpAMI)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

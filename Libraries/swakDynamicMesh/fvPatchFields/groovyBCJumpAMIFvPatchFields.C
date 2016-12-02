@@ -36,7 +36,7 @@ Contributors/Copyright:
 
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "groovyBCJumpCyclicAMIFvPatchFields.H"
+#include "groovyBCJumpAMIFvPatchFields.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -46,7 +46,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-    makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpCyclicAMIFvPatchScalarField);
+    makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpAMIFvPatchScalarField);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
