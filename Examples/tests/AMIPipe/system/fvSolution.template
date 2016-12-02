@@ -69,14 +69,14 @@ solvers {
 
 PIMPLE {
     correctPhi          no;
-    nOuterCorrectors    2;
-    nCorrectors         1;
-    nNonOrthogonalCorrectors 0;
+    nOuterCorrectors    |-pimpleOuterCorr-|;
+    nCorrectors         |-pimpleCorr-|;
+    nNonOrthogonalCorrectors |-pimpleNonOrthCorr-|;
 }
 
 ".*FieldTransportPDE" {
-    nCorrectors 2;
-    nNonOrthogonalCorrectors 0;
+    nCorrectors         |-transportCorr-|;
+    nNonOrthogonalCorrectors |-transportNonOrthCorr-|;
 }
 
 relaxationFactors

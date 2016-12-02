@@ -813,7 +813,7 @@ S_{expl} + S_{impl} T
      the =randFixed=-function
 **** =AMIPipe=
      Simple geometry for testing function objects with AMI. "Execute"
-     with =replayTransientBC=
+     with =replayTransientBC=, =pimpleFoam= or =pimpleDyMFoam=
 *** BugCases
     These are cases provided by users to demonstrate bugs. Not
     maintained nor documented and may be removed at any time
