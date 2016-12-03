@@ -46,7 +46,8 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-    makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpAMIFvPatchScalarField);
+    //    makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpAMIFvPatchScalarField);
+    makePatchFields(groovyBCJumpAMI);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

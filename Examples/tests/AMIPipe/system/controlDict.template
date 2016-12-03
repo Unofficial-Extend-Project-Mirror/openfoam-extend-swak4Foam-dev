@@ -215,6 +215,7 @@ libs (
     "libsimpleLagrangianFunctionObjects.so"
     "libsimpleCloudFunctionObjects.so"
     "libswakLagrangianParser.so"
+    "libswakDynamicMesh.so"
 );
 
 // ************************************************************************* //

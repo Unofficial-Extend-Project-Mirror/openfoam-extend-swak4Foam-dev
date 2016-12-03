@@ -8,6 +8,10 @@ doTransport {
     description "Should transport tests be done?";
     default yes;
 }
+pressureJump {
+    description"Add a pressure jump to one of the interfaces";
+    default no;
+}
 
 deltaT 1e-3;
 

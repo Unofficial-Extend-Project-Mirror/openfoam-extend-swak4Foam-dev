@@ -38,7 +38,22 @@ boundaryField
         type            zeroGradient;
     }
 
-    "intersect.*"
+    "intersect1.*"
+    {
+<!--(if pressureJump)-->
+        type groovyBCJumpAMI;
+        patchType cyclicAMI;
+        variables (
+            "maxDeltaP=1e5;"
+            "radius=max(pts().x);"
+            "r=sqrt(pos().x*pos().x+pos().y*pos().y);"
+        );
+        jumpExpression "maxDeltaP*(1-r/radius)";
+<!--(else)-->
+        type cyclicAMI;
+<!--(end)-->
+    }
+    "intersect2.*"
     {
         type cyclicAMI;
     }
