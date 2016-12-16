@@ -10,7 +10,7 @@ export SWAK_PYTHON_LINK="$(python-config --ldflags)"
 
 export SWAK_COMPILE_GRAMMAR_OPTION="-O1"
 
-if [ "$WM_USE_HOMEBREW" -eq "1" ]
+if [ "$WM_USE_HOMEBREW" = 1 ]
 then
     export SWAK_BISON=/usr/local/opt/bison27/bin/bison
 fi
