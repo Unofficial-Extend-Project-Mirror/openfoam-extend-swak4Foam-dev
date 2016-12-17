@@ -64,13 +64,13 @@ Contributors/Copyright:
 
 #define FOAM_VERSION4SWAK VERSION_NR(FOAM_VERSION4SWAK_MAJOR,FOAM_VERSION4SWAK_MINOR,FOAM_VERSION4SWAK_PATCH_NUM)
 
-    #if (FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)) || (FOAM_VERSION4SWAK > VERSION_NR2(3,0))
+#if (FOAM_VERSION4SWAK > VERSION_NR2(1,7) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)) || (FOAM_VERSION4SWAK > VERSION_NR2(3,0))
 // Just to make sure that stuff that comes from 1.7 works correctly
 #define FOAM_HAS_SORTED_TOC
 #endif
 
-// OpenFOAM-dev version. Has no number. Is assumed to be 9.x
-#if FOAM_VERSION4SWAK_MAJOR > 8
+// OpenFOAM-dev version. Has no number. Is assumed to be 2999.x
+#if FOAM_VERSION4SWAK_MAJOR >= 2999
 #define FOAM_OF_DEV_VERSION
 #endif
 
