@@ -10,19 +10,20 @@ ifeq "$(WMAKE_NEW_CONVENTION)" "new"
 else
   include $(OBJECTS_DIR)/../mybison
   include $(OBJECTS_DIR)/../myflex
-  
+
   sinclude $(OBJECTS_DIR)/../mydependencies
 endif
 
 EXE_INC = -I$(OBJECTS_DIR) \
     $(FOAM_DEV_OPTION) 	\
     -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     $(FILEFORMATS_INC) \
     -I$(LIB_SRC)/triSurface/lnInclude \
     -I$(LIB_SRC)/dynamicMesh/lnInclude \
-    -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
     $(ADDITIONALFILES_INC)
 
