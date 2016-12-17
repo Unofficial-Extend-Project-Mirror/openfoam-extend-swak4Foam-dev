@@ -57,4 +57,12 @@ then
     done
 fi
 
-rmdepall Libraries/filesThatAreOnlyInSomeDistributions
+rmdepall=rmdepall
+if type wrmdep >/dev/null 2>&1
+then
+    rmdepall="wrmdep -all"
+fi
+
+$rmdepall Libraries/filesThatAreOnlyInSomeDistributions
+
+# -----------------------------------------------------------------------------
