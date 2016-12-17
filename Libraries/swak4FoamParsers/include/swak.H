@@ -455,8 +455,13 @@ Contributors/Copyright:
 #define FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
 #endif
 
-#include "swakVersion.H"
+#if (OPENFOAM_PLUS >= 1612) \
+    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+#define FOAM_MAKE_TEMPLATE_PATCHTYPE_FIELD_USES_PRIMITIVES
+#endif
 
+
+#include "swakVersion.H"
 #include "DebugOStream.H"
 
 #endif

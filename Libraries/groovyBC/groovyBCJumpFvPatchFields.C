@@ -46,7 +46,15 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-    makeTemplatePatchTypeField(fvPatchScalarField, groovyBCJumpFvPatchScalarField);
+#ifdef FOAM_MAKE_TEMPLATE_PATCHTYPE_FIELD_USES_PRIMITIVES
+makeTemplatePatchTypeField(scalar, groovyBCJump);
+#else
+makeTemplatePatchTypeField
+(
+    fvPatchScalarField,
+    groovyBCJumpFvPatchScalarField
+);
+#endif
 
 #ifndef FOAM_JUMP_IS_JUMP_CYCLIC
 template<>
