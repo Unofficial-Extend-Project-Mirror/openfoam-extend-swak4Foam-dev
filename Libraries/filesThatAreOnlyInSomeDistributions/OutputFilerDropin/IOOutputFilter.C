@@ -115,9 +115,10 @@ bool Foam::IOOutputFilter<OutputFilter>::read()
 
 
 template<class OutputFilter>
-void Foam::IOOutputFilter<OutputFilter>::write()
+bool Foam::IOOutputFilter<OutputFilter>::write()
 {
     OutputFilter::write();
+    return true;
 }
 
 
