@@ -1,0 +1,59 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      nut;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    ".*"
+    {
+        type zeroGradient;
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+    ACMI1_blockage
+    {
+        type            groovyBC;
+        value           uniform 1;
+        variables (
+            "myMin=min(pts().y);"
+            "myMax=max(pts().y);"
+            "otherMin{ACMI2_blockage}=min(pts().y);"
+            "otherMax{ACMI2_blockage}=max(pts().y);"
+            "higher=myMin>otherMin ? (myMax-0.25*(myMax-myMin)) : myMax;"
+            "lower=myMax<otherMax ? (myMin+0.25*(myMax-myMin)) : myMin;"
+        );
+        valueExpression "(pos().y>lower && pos().y<higher) ? 1 : 0";
+    }
+    ACMI1_couple
+    {
+        type            cyclicACMI;
+        value           $internalField;
+    }
+    ACMI2_couple
+    {
+        type            cyclicACMI;
+        value           $internalField;
+    }
+}
+
+
+// ************************************************************************* //

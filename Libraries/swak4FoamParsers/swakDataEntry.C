@@ -28,7 +28,10 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "swakDataEntry.H"

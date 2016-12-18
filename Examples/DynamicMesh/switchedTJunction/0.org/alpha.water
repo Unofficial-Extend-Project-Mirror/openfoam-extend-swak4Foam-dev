@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet {
+        type groovyBC;
+        //        type fixedValue;
+        variables (
+            "lowerValue=max(0,1-stateMachine_timeSinceChange(theInlet)/0.01);"
+        );
+        value uniform 1;
+        valueExpression "stateMachine_isState(theInlet,fullOn) ? 1 : lowerValue";
+    }
+    left {
+        //        type            zeroGradient;
+        type inletOutlet;
+        value $internalField;
+        inletValue $internalField;
+    }
+    right {
+        $left;
+    }
+    defaultFaces
+    {
+        type            zeroGradient;
+    }
+    "ACMI_.*_blockage"
+    {
+        $defaultFaces;
+    }
+    "ACMI_.*_couple"
+    {
+        type  cyclicACMI;
+        value uniform 0;
+    }
+
+}
+
+// ************************************************************************* //

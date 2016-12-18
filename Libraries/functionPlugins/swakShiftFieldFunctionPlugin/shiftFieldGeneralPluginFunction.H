@@ -101,7 +101,8 @@ public:
 #define SHIFT_METHOD meshToMesh::imCellVolumeWeight
 #endif
 
-#define MAP_METHOD meshToMesh::imMapNearest
+    //        #define MAP_METHOD meshToMesh::imMapNearest
+#define MAP_METHOD meshToMesh::MAP
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

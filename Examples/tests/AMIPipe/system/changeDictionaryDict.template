@@ -14,8 +14,12 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+$$ oldFormat=(foamFork not in ["openfoam"]) or (foamFork=="openfoam" and foamVersion<(4,))
+
+<!--(if oldFormat)-->
 dictionaryReplacement
 {
+<!--(end)-->
     boundary
     {
         intersect1
@@ -89,4 +93,6 @@ dictionaryReplacement
             zone intersect2_slave_Zone;
         }
     }
+<!--(if oldFormat)-->
 }
+<!--(end)-->

@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      funkyWarpMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+mode set;
+
+relative true;
+
+variables (
+    "maxX=max(pts().x);"
+    "halfX=maxX/interpolateToPoint(2);"
+    "minY=min(mag(pts().x)<halfX ? pts().y : interpolateToPoint(1e6));"
+    "angle=interpolateToPoint(pi/2)*(mag(pts().x)-halfX)/(maxX-halfX);"
+    "zV=interpolateToPoint(vector(0,0,0));"
+    "zS=interpolateToPoint(0);"
+    "x0=halfX;"
+    "y0=minY-halfX;"
+);
+
+expression "mag(pts().x)<halfX ? zV : (pts().x>zS ? vector((x0-pts().x)+(pts().y-y0)*sin(angle),(y0-pts().y)+(pts().y-y0)*cos(angle),zS) : vector((-x0-pts().x)-(pts().y-y0)*sin(angle),(y0-pts().y)+(pts().y-y0)*cos(angle),zS))";
+
+// ************************************************************************* //
