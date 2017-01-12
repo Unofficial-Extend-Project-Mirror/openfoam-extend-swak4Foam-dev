@@ -46,6 +46,10 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+#ifdef FOAM_MAKE_TEMPLATE_PATCHTYPE_FIELD_USES_PRIMITIVES
+makeTemplatePatchTypeField(vector, groovyFixedNormalSlip);
+makeTemplatePatchTypeField(tensor, groovyFixedNormalSlip);
+#else
 makeTemplatePatchTypeField
 (
     fvPatchVectorField,
@@ -56,6 +60,7 @@ makeTemplatePatchTypeField
     fvPatchTensorField,
     groovyFixedNormalSlipFvPatchTensorField
 );
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

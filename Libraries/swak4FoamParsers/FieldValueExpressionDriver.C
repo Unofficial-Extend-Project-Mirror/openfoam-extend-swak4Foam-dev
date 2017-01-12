@@ -708,9 +708,9 @@ tmp<volScalarField> FieldValueExpressionDriver::makeDistanceField()
     wallDist dist(mesh_);
 
 #ifdef FOAM_WALLDIST_HAS_Y_METHOD
-    f()==dist.y();
+    const_cast<volScalarField&>(f()) == dist.y();
 #else
-    f()==dist;
+    const_cast<volScalarField&>(f()) == dist;
 #endif
 
     f->dimensions().reset(dimless);

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,7 +31,7 @@ Class
     Foam::swakRegistryProxySurface
 
 Description
-    A sampledSurface that is only a Proxy for one found in the 
+    A sampledSurface that is only a Proxy for one found in the
     Surface-registry of swak4Foam
 
 SourceFiles
@@ -40,7 +40,7 @@ SourceFiles
 Contributors/Copyright:
     2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakRegistryProxySurface_H
@@ -119,11 +119,37 @@ public:
             return realSurface().faces();
         }
 
+#if OPENFOAM_PLUS >= 1612
+        // Could also re-direct to realSurface(), but need to verify
 
-//         const isoSurface& surface() const
-//         {
-//             return realSurface().surface();
-//         }
+        //- Const access to per-face zone/region information
+        virtual const labelList& zoneIds() const
+        {
+            NotImplemented;
+            return labelList::null();
+        }
+
+        //- Face area vectors
+        virtual const vectorField& Sf() const
+        {
+            NotImplemented;
+            return vectorField::null();
+        }
+
+        //- Face area magnitudes
+        virtual const scalarField& magSf() const
+        {
+            NotImplemented;
+            return scalarField::null();
+        }
+
+        //- Face centres
+        virtual const vectorField& Cf() const
+        {
+            NotImplemented;
+            return vectorField::null();
+        }
+#endif
 
         //- sample field on surface
         virtual tmp<scalarField> sample

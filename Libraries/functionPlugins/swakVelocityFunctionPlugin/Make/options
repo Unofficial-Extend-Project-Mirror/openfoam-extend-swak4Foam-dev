@@ -7,6 +7,7 @@ EXE_INC = \
     $(FOAM_DEV_OPTION) 	\
     -I../../swak4FoamParsers/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude
 
