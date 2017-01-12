@@ -12,7 +12,7 @@
    - 4.1 Fnd :: The OpenFOAM 4.1 Foundation release
    - 4.0 Ext :: The Foam-Extend 4.0 release
    - 1606+ :: The OpenFOAM 1606+ release
-   - 2.3 :: The OpenFOAM 2.3 release (this is the oldes release
+   - 2.3 :: The OpenFOAM 2.3 release (this is the oldest release
         tested)
 ** Symbols in the tables
    - \checkmark :: this means that the case was tested and runs. Not
