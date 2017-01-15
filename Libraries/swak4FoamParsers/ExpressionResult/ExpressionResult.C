@@ -520,48 +520,86 @@ Ostream & operator<<(Ostream &out,const ExpressionResult &data)
         out.writeKeyword("fieldSize");
         out << data.size() << token::END_STATEMENT << nl;
 
-        if(data.isSingleValue_) {
+        if(data.size() <= 0) {
             out.writeKeyword("value");
-            if(data.valType_==pTraits<scalar>::typeName) {
-                out << (*static_cast<Field<scalar>*>(data.valPtr_))[0];
-            } else if(data.valType_==vector::typeName) {
-                out << (*static_cast<Field<vector>*>(data.valPtr_))[0];
-            } else if(data.valType_==tensor::typeName) {
-                out << (*static_cast<Field<tensor>*>(data.valPtr_))[0];
-            } else if(data.valType_==symmTensor::typeName) {
-                out << (*static_cast<Field<symmTensor>*>(data.valPtr_))[0];
-            } else if(data.valType_==sphericalTensor::typeName) {
-                out << (*static_cast<Field<sphericalTensor>*>(data.valPtr_))[0];
-            } else if(data.valType_==pTraits<bool>::typeName) {
-                out << (*static_cast<Field<bool>*>(data.valPtr_))[0];
+            if(data.isSingleValue_) {
+                if(data.valType_==pTraits<scalar>::typeName) {
+                    out << Field<scalar>(1,0)[0];
+                } else if(data.valType_==vector::typeName) {
+                    out << Field<vector>(1,vector())[0];
+                } else if(data.valType_==tensor::typeName) {
+                    out << Field<tensor>(1,tensor())[0];
+                } else if(data.valType_==symmTensor::typeName) {
+                    out << Field<symmTensor>(1,symmTensor())[0];
+                } else if(data.valType_==sphericalTensor::typeName) {
+                    out << Field<sphericalTensor>(1,sphericalTensor())[0];
+                } else if(data.valType_==pTraits<bool>::typeName) {
+                    out << Field<bool>(1,false)[0];
+                } else {
+                    out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+                }
             } else {
-                out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+                if(data.valType_==pTraits<scalar>::typeName) {
+                    out << "nonuniform " << Field<scalar>(0,0);
+                } else if(data.valType_==vector::typeName) {
+                    out << "nonuniform " << Field<vector>(0,vector());
+                } else if(data.valType_==tensor::typeName) {
+                    out << "nonuniform " << Field<tensor>(0,tensor());
+                } else if(data.valType_==symmTensor::typeName) {
+                    out << "nonuniform " << Field<symmTensor>(0,symmTensor());
+                } else if(data.valType_==sphericalTensor::typeName) {
+                    out << "nonuniform " << Field<sphericalTensor>(0,sphericalTensor());
+                } else if(data.valType_==pTraits<bool>::typeName) {
+                    out << "nonuniform " << Field<bool>(0,false);
+                } else {
+                    out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+                }
             }
             out << token::END_STATEMENT << nl;
         } else {
-            out.writeKeyword("value");
-            if(data.valType_==pTraits<scalar>::typeName) {
-                out << "nonuniform " << (*static_cast<Field<scalar>*>(data.valPtr_));
-                //                static_cast<Field<scalar>*>(data.valPtr_)->writeEntry("value",out);
-            } else if(data.valType_==vector::typeName) {
-                out << "nonuniform " << (*static_cast<Field<vector>*>(data.valPtr_));
-                //                static_cast<Field<vector>*>(data.valPtr_)->writeEntry("value",out);
-            } else if(data.valType_==tensor::typeName) {
-                out << "nonuniform " << (*static_cast<Field<tensor>*>(data.valPtr_));
-                //                static_cast<Field<tensor>*>(data.valPtr_)->writeEntry("value",out);
-            } else if(data.valType_==symmTensor::typeName) {
-                out << "nonuniform " << (*static_cast<Field<symmTensor>*>(data.valPtr_));
-                //                static_cast<Field<symmTensor>*>(data.valPtr_)->writeEntry("value",out);
-            } else if(data.valType_==sphericalTensor::typeName) {
-                out << "nonuniform " << (*static_cast<Field<sphericalTensor>*>(data.valPtr_));
-                //                static_cast<Field<sphericalTensor>*>(data.valPtr_)->writeEntry("value",out);
-            } else if(data.valType_==pTraits<bool>::typeName) {
-                out << "nonuniform " << (*static_cast<Field<bool>*>(data.valPtr_));
-                //                static_cast<Field<bool>*>(data.valPtr_)->writeEntry("value",out);
+            if(data.isSingleValue_) {
+                out.writeKeyword("value");
+                if(data.valType_==pTraits<scalar>::typeName) {
+                    out << (*static_cast<Field<scalar>*>(data.valPtr_))[0];
+                } else if(data.valType_==vector::typeName) {
+                    out << (*static_cast<Field<vector>*>(data.valPtr_))[0];
+                } else if(data.valType_==tensor::typeName) {
+                    out << (*static_cast<Field<tensor>*>(data.valPtr_))[0];
+                } else if(data.valType_==symmTensor::typeName) {
+                    out << (*static_cast<Field<symmTensor>*>(data.valPtr_))[0];
+                } else if(data.valType_==sphericalTensor::typeName) {
+                    out << (*static_cast<Field<sphericalTensor>*>(data.valPtr_))[0];
+                } else if(data.valType_==pTraits<bool>::typeName) {
+                    out << (*static_cast<Field<bool>*>(data.valPtr_))[0];
+                } else {
+                    out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+                }
+                out << token::END_STATEMENT << nl;
             } else {
-                out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+                out.writeKeyword("value");
+                if(data.valType_==pTraits<scalar>::typeName) {
+                    out << "nonuniform " << (*static_cast<Field<scalar>*>(data.valPtr_));
+                    //                static_cast<Field<scalar>*>(data.valPtr_)->writeEntry("value",out);
+                } else if(data.valType_==vector::typeName) {
+                    out << "nonuniform " << (*static_cast<Field<vector>*>(data.valPtr_));
+                    //                static_cast<Field<vector>*>(data.valPtr_)->writeEntry("value",out);
+                } else if(data.valType_==tensor::typeName) {
+                    out << "nonuniform " << (*static_cast<Field<tensor>*>(data.valPtr_));
+                    //                static_cast<Field<tensor>*>(data.valPtr_)->writeEntry("value",out);
+                } else if(data.valType_==symmTensor::typeName) {
+                    out << "nonuniform " << (*static_cast<Field<symmTensor>*>(data.valPtr_));
+                    //                static_cast<Field<symmTensor>*>(data.valPtr_)->writeEntry("value",out);
+                } else if(data.valType_==sphericalTensor::typeName) {
+                    out << "nonuniform " << (*static_cast<Field<sphericalTensor>*>(data.valPtr_));
+                    //                static_cast<Field<sphericalTensor>*>(data.valPtr_)->writeEntry("value",out);
+                } else if(data.valType_==pTraits<bool>::typeName) {
+                    out << "nonuniform " << (*static_cast<Field<bool>*>(data.valPtr_));
+                    //                static_cast<Field<bool>*>(data.valPtr_)->writeEntry("value",out);
+                } else {
+                    out << "ExpressionResult: unknown data type " << data.valType_ << endl;
+                }
+                out << token::END_STATEMENT << nl;
             }
-            out << token::END_STATEMENT << nl;
         }
     } else {
         out.writeKeyword("unsetValue");
