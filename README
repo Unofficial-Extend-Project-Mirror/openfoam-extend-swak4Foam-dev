@@ -52,6 +52,8 @@
    - Mark Olesen ::
      - port to OpenFOAM+ v1612
      - improvements to scripts
+   - Philippose Rajan ::
+     - Bugfix for segmentation faults in parallel
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
@@ -3557,6 +3559,24 @@ S_{expl} + S_{impl} T
 **** Initialization function objects in =simpleFunctionObjects= fail in parallel
      Because of the wrong order of initialization of these function
      objects they failed in parallel. Fixed
+**** Writing =storedVariables= fails for single values in parallel
+     This war reported by Philippose Rajan (who also provided a patch) at
+     https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/237/
+
+     In parallel if the values was marked as a single value but no
+     part of the underlying entity was on the processor it was tried
+     to access the first element of an empty field. The fix was to
+     write the value $0$ instead. This fix has been adapted so that
+     the actual uniform value is written to the file (and read as well)
+*** Internals
+**** =ExpressionResult= now stores single values separately
+     To fix a problem with writing of single values in parallel (see
+     above) a =union= was added to store the single values. The reason
+     for this is to avoid a second parallel communication when writing
+     the value. This adds memory to =ExpressionResult= (in the order
+     of a =tenor= object). The memory is not the problem but that the
+     single value is saved twice (the other time is in the regular
+     value field)
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of
