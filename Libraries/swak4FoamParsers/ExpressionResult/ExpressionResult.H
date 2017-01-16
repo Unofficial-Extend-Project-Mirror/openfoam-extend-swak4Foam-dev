@@ -82,6 +82,17 @@ class ExpressionResult
 
     bool isSingleValue_;
 
+    // store a single value so that it will be correctly written
+    union SingleUnion {
+        bool bool_;
+        scalar scalar_;
+        vector vector_;
+        tensor tensor_;
+        symmTensor symmTensor_;
+        sphericalTensor sphericalTensor_;
+        SingleUnion() { scalar_=0; }  // Keep gcc happy
+    } single_;
+
     //- alternative if anything different than a plain field should be stored
     autoPtr<IOobject> generalContent_;
 
@@ -113,7 +124,7 @@ class ExpressionResult
     inline void setObjectResultInternal(autoPtr<T> o);
 
     template <typename T>
-    inline void calcIsSingleValueInternal();
+    inline T calcIsSingleValueInternal();
 
     // whether or not the variable will be reset
     bool noReset_;
