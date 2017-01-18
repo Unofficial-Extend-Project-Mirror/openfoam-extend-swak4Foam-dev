@@ -57,7 +57,9 @@ Contributors/Copyright:
 #include "dimensionedType.H"
 #include "IOobject.H"
 
- #include "runTimeSelectionTables.H"
+#include "runTimeSelectionTables.H"
+
+#include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -83,7 +85,12 @@ class ExpressionResult
     bool isSingleValue_;
 
     // store a single value so that it will be correctly written
-    union SingleUnion {
+#ifdef FOAM_CXX_COMPILER_ALLOWS_NON_POD_IN_UNION
+    union
+#else
+    struct    // Non-POD members are only allowes in C++0x or newer. Use struct instead
+#endif 
+    SingleUnion {
         bool bool_;
         scalar scalar_;
         vector vector_;

@@ -3577,6 +3577,12 @@ S_{expl} + S_{impl} T
      of a =tenor= object). The memory is not the problem but that the
      single value is saved twice (the other time is in the regular
      value field)
+
+     For compilers that do not support the C++0x-standard instead of a
+     =union= a =struct= will be used because non-primitive members for
+     =unions= are only supported for that standard. This will lead to
+     a slightly higher memory usage (but still small compared to full
+     fields)
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of

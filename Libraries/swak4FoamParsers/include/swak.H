@@ -459,6 +459,9 @@ Contributors/Copyright:
 #define FOAM_MAKE_TEMPLATE_PATCHTYPE_FIELD_USES_PRIMITIVES
 #endif
 
+#if __cplusplus > 199711L
+#define FOAM_CXX_COMPILER_ALLOWS_NON_POD_IN_UNION
+#endif
 
 #include "swakVersion.H"
 #include "DebugOStream.H"
