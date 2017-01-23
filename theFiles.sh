@@ -33,6 +33,7 @@ export SWAKUTILS=(funkySetBoundaryField \
     fieldReport \
     funkyPythonPostproc \
     funkySetLagrangianField \
+    writeBoundarySubfields \
     replayTransientBC)
 
 if [ "$FOAM_DEV" != "" ]
