@@ -9,6 +9,10 @@ ifdef NEEDS_FILTER_DROPIN
 ADDITIONALFILES_INC:=$(ADDITIONALFILES_INC) -I../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/
 endif
 
+ifdef ADDITIONALFILES_INC
+ADDITIONALFILES_INC:=-I$(LIB_SRC)/OpenFOAM/lnInclude $(ADDITIONALFILES_INC)
+endif
+
 EXE_INC = \
     $(FOAM_DEV_OPTION) \
     -I../swak4FoamParsers/lnInclude \

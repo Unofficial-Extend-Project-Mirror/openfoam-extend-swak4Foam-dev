@@ -2,7 +2,7 @@
 include $(OBJECTS_DIR)/../../../rules/versionOptions
 
 ifdef NEEDS_FILTER_DROPIN
-ADDITIONALFILES_INC=-I../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/
+ADDITIONALFILES_INC=-I$(LIB_SRC)/OpenFOAM/lnInclude -I../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/
 endif
 
 EXE_INC = \
