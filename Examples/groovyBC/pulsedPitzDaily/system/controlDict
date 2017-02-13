@@ -698,4 +698,12 @@ libs (
     "libswakTransportTurbFunctionPlugin.so"
 ) ;
 
+profiling
+{
+    active      true;
+    cpuInfo     true;
+    memInfo     false;
+    sysInfo     true;
+}
+
 // ************************************************************************* //
