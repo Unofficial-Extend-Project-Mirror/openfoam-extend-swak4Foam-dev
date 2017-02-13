@@ -610,9 +610,9 @@ S_{expl} + S_{impl} T
      Demonstrates initializing a case with initial conditions that
      approximate the real flow.
      - Solver :: reactingFoam
-     - Case preparation :: run the supplied script
-          =prepareCase.sh=. *Caution:* this has to be done *every*
-          time before running the case
+     - Case preparation :: run =pyFoamPrepareCase.py=. *Caution:* this
+          has to be done *every* time before running the case because
+          the initialized fields are rewritten
      - Demonstrates :: Demonstrates setting calculated initial
                        conditions with functionObjects
 **** =simpleBendedPipe=
