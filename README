@@ -3568,6 +3568,9 @@ S_{expl} + S_{impl} T
      to access the first element of an empty field. The fix was to
      write the value $0$ instead. This fix has been adapted so that
      the actual uniform value is written to the file (and read as well)
+**** =executeIfOpenFOAMVersionBiggerEqual= not correctly working with alphabetic patch versions
+     If the patch version of the current OpenFOAM-version is not a
+     number and not =x= then this function object failed
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see

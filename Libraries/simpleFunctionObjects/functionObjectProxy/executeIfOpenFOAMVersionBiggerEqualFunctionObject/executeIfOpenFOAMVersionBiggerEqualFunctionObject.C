@@ -99,7 +99,7 @@ bool executeIfOpenFOAMVersionBiggerEqualFunctionObject::condition()
 #define TOSTRING(x) string(#x)
 
     label foamVersionPatch=-1;
-    if(TOSTRING(FOAM_VERSION4SWAK_PATCH)!="x") {
+    if(isdigit(TOSTRING(FOAM_VERSION4SWAK_PATCH)[0])) {
         foamVersionPatch=toLabel(TOSTRING(FOAM_VERSION4SWAK_PATCH));
     }
     if(majorVersion_>FOAM_VERSION4SWAK_MAJOR) {
