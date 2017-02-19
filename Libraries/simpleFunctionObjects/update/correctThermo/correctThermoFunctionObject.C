@@ -69,6 +69,9 @@ correctThermoFunctionObject::correctThermoFunctionObject
     updateSimpleFunctionObject(name,t,dict),
     rhoName_("none")
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 bool correctThermoFunctionObject::start()

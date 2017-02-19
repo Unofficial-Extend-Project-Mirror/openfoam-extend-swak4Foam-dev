@@ -61,6 +61,8 @@ functions {
         readDuringConstruction true;
         runIfStartTime true;
         outputControlMode startup;
+        //        constructUnconditionally yes;
+
         functions {
             calcPotentialU {
                 type initPotentialFlow;
@@ -184,4 +186,12 @@ functions {
     }
 }
 
+DebugSwitches
+{
+    // functionObject 1;
+    // simpleFunctionObject 1;
+    // updateSimpleFunctionObject 1;
+    // functionObjectListProxy 1;
+    // conditionalFunctionObjectListProxy 1;
+}
 // ************************************************************************* //

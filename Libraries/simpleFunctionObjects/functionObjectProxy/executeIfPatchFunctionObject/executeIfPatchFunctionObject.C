@@ -79,6 +79,10 @@ executeIfPatchFunctionObject::executeIfPatchFunctionObject
 {
     // do it here to avoid the superclass-read being read twice
     readPatches(dict);
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 

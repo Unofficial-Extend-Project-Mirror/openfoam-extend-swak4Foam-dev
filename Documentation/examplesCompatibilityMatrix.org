@@ -44,7 +44,7 @@
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark |            | \checkmark |            |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark |            | \checkmark |            |
   | other/capillaryRise                                         | \checkmark |            | \checkmark |            |
-  | other/counterFlowFlame2DInitialized                         |            |            | \sad       |            |
+  | other/counterFlowFlame2DInitialized                         |            |            | \checkmark |            |
   | other/simpleBendedPipe                                      | \checkmark |            | \checkmark |            |
   | other/topoSetDamBreak                                       | \checkmark |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |

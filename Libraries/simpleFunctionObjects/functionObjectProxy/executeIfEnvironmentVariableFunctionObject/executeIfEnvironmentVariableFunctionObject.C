@@ -81,6 +81,10 @@ executeIfEnvironmentVariableFunctionObject::executeIfEnvironmentVariableFunction
 {
     // do it here to avoid the superclass-read being read twice
     readData(dict);
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 

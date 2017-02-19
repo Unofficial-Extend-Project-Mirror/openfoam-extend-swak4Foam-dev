@@ -3568,7 +3568,7 @@ S_{expl} + S_{impl} T
      to access the first element of an empty field. The fix was to
      write the value $0$ instead. This fix has been adapted so that
      the actual uniform value is written to the file (and read as well)
-*** Internals
+*** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
      above) a =union= was added to store the single values. The reason
@@ -3583,13 +3583,19 @@ S_{expl} + S_{impl} T
      =unions= are only supported for that standard. This will lead to
      a slightly higher memory usage (but still small compared to full
      fields)
+**** Rewrite of =functionObject= removes the =start()=-method
+     OpenFOAM-versions based on the foundation release 4.0 and later
+     don't have a =start()=-method in the function objects
+     anymore. Lot of functionality of swak relied on this method. To
+     make swak compatible across versions =start()= is now called in
+     the constructors of the function-objects (if the OpenFOAM-version
+     requires it)
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of
      =hg branch= is added to the version output that utilities like
      =funkySetFields= print
 *** Documentation
-*** Internals (for developers)
 *** New features
 **** Function plugin =ShiftField= that allows shifting volume fields
      When adding the library =libswakShiftFieldFunctionPlugin.so= to
