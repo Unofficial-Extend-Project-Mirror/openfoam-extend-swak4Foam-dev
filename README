@@ -3725,4 +3725,9 @@ S_{expl} + S_{impl} T
 **** =reportAvailableFvOptions= now reports =constrain=-methods
      On OpenFOAM-versions that support it this now reports if
      =constrain= is called for an equation
+**** =constrain= method added to =fvOptions=
+     In earlier OpenFOAM-versions the name of this method was
+     =setValue=. To keep source compatibility this method is kept and
+     the method =constrain= patches through to it. If the =fvOption=
+     has =SetValue= in the name then this name is kept
 *** Examples
