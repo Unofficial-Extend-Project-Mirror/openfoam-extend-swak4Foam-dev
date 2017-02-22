@@ -1,4 +1,4 @@
-# -*- mode: org -*-
+OA# -*- mode: org -*-
 #+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 2.x
 #+OPTIONS: H:4
 * Description
@@ -3722,4 +3722,7 @@ S_{expl} + S_{impl} T
 **** Additional functions in the radiation function plugin
      Additional functions for the =absorptionEmissionModel= and the
      =sootModel= are added to to library with the radiation-functions
+**** =reportAvailableFvOptions= now reports =constrain=-methods
+     On OpenFOAM-versions that support it this now reports if
+     =constrain= is called for an equation
 *** Examples
