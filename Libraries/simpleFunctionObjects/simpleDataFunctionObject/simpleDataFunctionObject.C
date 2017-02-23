@@ -103,7 +103,9 @@ fileName simpleDataFunctionObject::baseDir()
 {
     fileName theDir;
     fileName dir=dirName()+"_"+name();
-
+    if(obr().name()!=polyMesh::defaultRegion) {
+        dir=obr().name() / dir;
+    }
     if (Pstream::parRun())
     {
         // Put in undecomposed case (Note: gives problems for

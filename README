@@ -3536,6 +3536,15 @@ S_{expl} + S_{impl} T
      This version supports OpenFOAM v1612+. The modifications were
      done by Mark Olesen
 *** Incompatibilities
+**** Changed location of files by =simpleFunctionObject= and subclasses for multi-region-cases
+     The location of files written by these function objects (which
+     are almost all function objects writing data in the
+     =postProcessing=-directory) has changed: now if the function
+     object belongs to a region that is not the default mesh the
+     output is written to a sub-directory with the name of that mesh.
+
+     This might break scripts or other tools that people use to
+     process that data
 *** Bug fixes
 **** Destruction of =dummyPhi= causes error message
      On some distros the destruction of a field stored in an =autoPtr=
@@ -3730,4 +3739,9 @@ S_{expl} + S_{impl} T
      =setValue=. To keep source compatibility this method is kept and
      the method =constrain= patches through to it. If the =fvOption=
      has =SetValue= in the name then this name is kept
+**** =simpleFunctionObjects= in multi-region cases now write to sub-directories of =postProcessing=
+     To conform with the way that regular OpenFOAM function objects do
+     it now function objects that belong to the non-default mesh in
+     multi-region cases write their data to a sub-directory of
+     =postProcessing= named after the mesh
 *** Examples
