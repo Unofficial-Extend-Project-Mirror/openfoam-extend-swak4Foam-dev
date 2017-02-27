@@ -123,6 +123,11 @@ functions
     }
 };
 
+DebugSwitches {
+    // simpleFunctionObject 1;
+    // listRegisteredObjectsFunctionObject 1;
+}
+
 libs (
     "libOpenFOAM.so"
     "libgroovyBC.so"
