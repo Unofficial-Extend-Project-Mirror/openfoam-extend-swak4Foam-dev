@@ -15,6 +15,21 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+matrixReport {
+    type reportMatrix;
+    active          true;
+    selectionMode   all;
+
+    reportMatrixCoeffs {
+        fieldNames (
+            U
+            h
+        );
+
+        doAddSup true;
+        doSetValue true;
+    }
+}
 energySourceBefore {
     type matrixChangeBefore;
     active true;
