@@ -15,6 +15,42 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+energySourceBefore {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        fieldName h;
+        namePrefix fvChange;
+    }
+}
+momentumSourceBefore {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        fieldName U;
+        namePrefix fvChange;
+    }
+}
+energyResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        fieldName h;
+        namePrefix before;
+    }
+}
+momentumResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        fieldName U;
+        namePrefix before;
+    }
+}
 showFvOptions {
     type reportAvailableFvOptions;
     active true;
@@ -67,6 +103,24 @@ porosityBlockage
                 }
             }
         }
+    }
+}
+energySourceAfter {
+    type matrixChangeAfter;
+    active true;
+    selectionMode all;
+    matrixChangeAfterCoeffs {
+        fieldName h;
+        namePrefix fvChange;
+    }
+}
+momentumSourceAfter {
+    type matrixChangeAfter;
+    active true;
+    selectionMode all;
+    matrixChangeAfterCoeffs {
+        fieldName U;
+        namePrefix fvChange;
     }
 }
 

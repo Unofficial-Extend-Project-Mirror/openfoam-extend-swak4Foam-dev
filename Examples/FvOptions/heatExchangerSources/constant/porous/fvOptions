@@ -15,6 +15,24 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+energySourceBefore {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        fieldName h;
+        namePrefix fvChange;
+    }
+}
+energyResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        fieldName h;
+        namePrefix before;
+    }
+}
 showFvOptions {
     type reportAvailableFvOptions;
     active true;
@@ -35,6 +53,15 @@ porousToair
         nbrModel        airToporous;
         fields          (h);
         semiImplicit    no;
+    }
+}
+energySourceAfter {
+    type matrixChangeAfter;
+    active true;
+    selectionMode all;
+    matrixChangeAfterCoeffs {
+        fieldName h;
+        namePrefix fvChange;
     }
 }
 
