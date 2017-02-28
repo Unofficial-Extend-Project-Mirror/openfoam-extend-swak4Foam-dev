@@ -1,0 +1,42 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+showFvOptions {
+    type reportAvailableFvOptions;
+    active true;
+    selectionMode all;
+    reportAvailableFvOptionsCoeffs {}
+}
+porousToair
+{
+    type            constantHeatTransfer;
+    active          yes;
+
+    constantHeatTransferCoeffs
+    {
+        interpolationMethod cellVolumeWeight;
+        nbrRegion       air;
+        master          true;
+
+        nbrModel        airToporous;
+        fields          (h);
+        semiImplicit    no;
+    }
+}
+
+
+// ************************************************************************* //

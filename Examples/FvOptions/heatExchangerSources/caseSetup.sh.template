@@ -1,0 +1,8 @@
+#!/bin/sh
+<!--(if numberOfProcessors>1)-->
+pyFoamDecompose.py . |-numberOfProcessors-| --no-decompose
+
+decomposePar -region air
+decomposePar -region porous
+<!--(end)-->
+# -----------------------------------------------------------------------------
