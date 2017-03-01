@@ -1,0 +1,33 @@
+// -*- c++ -*-
+
+energyChange {
+    theTitle "Energy exchange";
+    type dynamic;
+    expr "Expression energyChange(.+) : .* integrate=(.+)";
+    idNr 1;
+}
+residuals {
+    theTitle "Residual sources";
+    type dynamic;
+    expr "Expression residual(.+) :  min=-(.+) max=(.+) integrate=.+";
+    idNr 1;
+    titles (
+        min
+        max
+    );
+    logscale true;
+}
+residualU {
+    type slave;
+    master residuals;
+    expr "Expression residualMomentumAir :  min=\(-(.+) -(.+) -(.+)\) max=\((.+) (.+) (.+)\) integrate=.+";
+    titles (
+        "min Ux"
+        "min Uy"
+        "min Uz"
+        "max Ux"
+        "max Uy"
+        "max Uz"
+    );
+    logscale true;
+}

@@ -96,7 +96,7 @@ void Foam::fv::matrixChangeAfterFvOption::subtractResidual(
             this->fieldName()
         )
     );
-    theRes-=this->calcResiduum(matrix);
+    theRes=this->calcResiduum(matrix)-theRes;
 }
 
 void Foam::fv::matrixChangeAfterFvOption::addSup

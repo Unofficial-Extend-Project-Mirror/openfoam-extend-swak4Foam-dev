@@ -47,6 +47,46 @@ runTimeModifiable true;
 
 libs (
     "libswakFvOptions.so"
+    "libsimpleSwakFunctionObjects.so"
 );
 
+functions {
+    energyChangeAir {
+        type swakExpression;
+        valueType internalField;
+        region air;
+        expression "fvChangeAirh";
+        verbose true;
+        accumulations (
+            min
+            max
+            integrate
+        );
+    }
+    energyChangePorous {
+        $energyChangeAir;
+        region porous;
+        expression "fvChangeh";
+    }
+    residualEnergyAir {
+        $energyChangeAir;
+        expression "residualAirh";
+    }
+    residualEnergyPorous {
+        $energyChangePorous;
+        expression "residualh";
+    }
+    residualMomentumAir {
+        $residualEnergyAir;
+        expression "residualU";
+    }
+    residualTurbKAir {
+        $residualEnergyAir;
+        expression "residualk";
+    }
+    residualTurbEpsAir {
+        $residualEnergyAir;
+        expression "residualepsilon";
+    }
+}
 // ************************************************************************* //

@@ -37,7 +37,7 @@ energySourceBefore {
     matrixChangeBeforeCoeffs {
         doAtAddSup yes;
         fieldName h;
-        namePrefix fvChange;
+        namePrefix fvChangeAir;
     }
 }
 momentumSourceBefore {
@@ -57,7 +57,7 @@ energyResidual {
     matrixChangeBeforeCoeffs {
         doAtAddSup no;
         fieldName h;
-        namePrefix residual;
+        namePrefix residualAir;
     }
 }
 momentumResidual {
@@ -67,6 +67,26 @@ momentumResidual {
     matrixChangeBeforeCoeffs {
         doAtAddSup no;
         fieldName U;
+        namePrefix residual;
+    }
+}
+kResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup no;
+        fieldName k;
+        namePrefix residual;
+    }
+}
+epsilonResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup no;
+        fieldName epsilon;
         namePrefix residual;
     }
 }
@@ -131,7 +151,7 @@ energySourceAfter {
     matrixChangeAfterCoeffs {
         doAtAddSup yes;
         fieldName h;
-        namePrefix fvChange;
+        namePrefix fvChangeAir;
     }
 }
 momentumSourceAfter {
