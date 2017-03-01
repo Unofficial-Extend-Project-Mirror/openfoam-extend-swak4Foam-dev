@@ -20,6 +20,7 @@ energySourceBefore {
     active true;
     selectionMode all;
     matrixChangeBeforeCoeffs {
+        doAtAddSup yes;
         fieldName h;
         namePrefix fvChange;
     }
@@ -29,8 +30,9 @@ energyResidual {
     active true;
     selectionMode all;
     matrixChangeBeforeCoeffs {
+        doAtAddSup no;
         fieldName h;
-        namePrefix before;
+        namePrefix residual;
     }
 }
 showFvOptions {
@@ -60,6 +62,7 @@ energySourceAfter {
     active true;
     selectionMode all;
     matrixChangeAfterCoeffs {
+        doAtAddSup yes;
         fieldName h;
         namePrefix fvChange;
     }

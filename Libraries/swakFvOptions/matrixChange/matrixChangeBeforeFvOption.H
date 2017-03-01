@@ -251,6 +251,58 @@ public:
     );
 #endif
 
+    //- Scalar
+    virtual void setValue
+    (
+        fvMatrix<scalar>& eqn,
+        const label fieldI
+    );
+
+    //- Vector
+    virtual void setValue
+    (
+        fvMatrix<vector>& eqn,
+        const label fieldI
+    );
+
+    //- Spherical tensor
+    virtual void setValue
+    (
+        fvMatrix<sphericalTensor>& eqn,
+        const label fieldI
+    );
+
+    //- Symmetric tensor
+    virtual void setValue
+    (
+        fvMatrix<symmTensor>& eqn,
+        const label fieldI
+    );
+
+    //- Tensor
+    virtual void setValue
+    (
+        fvMatrix<tensor>& eqn,
+        const label fieldI
+    );
+
+
+    //- in newer versions setValue was renamed
+    virtual void constrain(fvMatrix<scalar>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<vector>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<tensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<symmTensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<sphericalTensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
 };
 
 

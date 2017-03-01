@@ -77,6 +77,8 @@ class matrixChangeBaseFvOption
 
     word namePrefix_;
 
+    bool doAtAddSup_;
+
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
@@ -95,6 +97,9 @@ protected:
         return namePrefix_ + fieldName_;
     }
 
+    bool doAtAddSup() {
+        return doAtAddSup_;
+    }
 public:
 
     //- Runtime type information

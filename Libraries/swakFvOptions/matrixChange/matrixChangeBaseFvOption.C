@@ -66,7 +66,10 @@ Foam::fv::matrixChangeBaseFvOption::matrixChangeBaseFvOption
 :
     option(sourceName, modelType, dict, mesh),
     fieldName_(coeffs_.lookup("fieldName")),
-    namePrefix_(coeffs_.lookup("namePrefix"))
+    namePrefix_(coeffs_.lookup("namePrefix")),
+    doAtAddSup_(
+        readBool(coeffs_.lookup("doAtAddSup"))
+    )
 {
     fieldNames_=wordList(1,fieldName_);
     applied_.setSize(fieldNames_.size(), false);

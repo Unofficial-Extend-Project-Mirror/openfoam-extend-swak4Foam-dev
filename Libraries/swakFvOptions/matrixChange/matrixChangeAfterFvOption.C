@@ -86,6 +86,9 @@ template<class T>
 void Foam::fv::matrixChangeAfterFvOption::subtractResidual(
     const fvMatrix<T>& matrix
 ) {
+    Info << this->name() << " subtracting from residual for "
+        << matrix.psi().name() << " to " << this->fieldName() << endl;
+
     typedef GeometricField<T,fvPatchField,volMesh> fType;
 
     fType &theRes=const_cast<fType&>(
@@ -96,13 +99,209 @@ void Foam::fv::matrixChangeAfterFvOption::subtractResidual(
     theRes-=this->calcResiduum(matrix);
 }
 
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+#endif
+
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+#endif
+
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+#endif
+
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+#endif
+
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+
+void Foam::fv::matrixChangeAfterFvOption::addSup
+(
+    const volScalarField& alpha,
+    const volScalarField& rho,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    if(doAtAddSup()) {
+        subtractResidual(eqn);
+    }
+}
+#endif
+
 void Foam::fv::matrixChangeAfterFvOption::setValue
 (
     fvMatrix<vector>& eqn,
     const label fieldI
 )
 {
-    subtractResidual(eqn);
+    if(!doAtAddSup()) {
+        subtractResidual(eqn);
+    }
 }
 
 
@@ -113,7 +312,9 @@ void Foam::fv::matrixChangeAfterFvOption::setValue
     const label fieldI
 )
 {
-    subtractResidual(eqn);
+    if(!doAtAddSup()) {
+        subtractResidual(eqn);
+    }
 }
 
 
@@ -123,7 +324,9 @@ void Foam::fv::matrixChangeAfterFvOption::setValue
     const label fieldI
 )
 {
-    subtractResidual(eqn);
+    if(!doAtAddSup()) {
+        subtractResidual(eqn);
+    }
 }
 
 
@@ -133,7 +336,9 @@ void Foam::fv::matrixChangeAfterFvOption::setValue
     const label fieldI
 )
 {
-    subtractResidual(eqn);
+    if(!doAtAddSup()) {
+        subtractResidual(eqn);
+    }
 }
 
 
@@ -143,7 +348,9 @@ void Foam::fv::matrixChangeAfterFvOption::setValue
     const label fieldI
 )
 {
-    subtractResidual(eqn);
+    if(!doAtAddSup()) {
+        subtractResidual(eqn);
+    }
 }
 
 
