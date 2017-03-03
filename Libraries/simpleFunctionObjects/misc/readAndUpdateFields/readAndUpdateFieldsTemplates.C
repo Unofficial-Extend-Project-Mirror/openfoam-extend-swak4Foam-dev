@@ -47,12 +47,15 @@ void Foam::readAndUpdateFields::correctBoundaryConditions(
 ) {
     forAll(flst,i)
     {
+        Info << " " << flst[i].name() << ":" << FType::typeName << flush;
+
 	flst[i].correctBoundaryConditions();
         if(
             this->obr_.time().outputTime()
             &&
             flst[i].writeOpt()==IOobject::AUTO_WRITE
         ) {
+            Info << "(writing)" << flush;
             flst[i].write();
         }
     }
@@ -63,6 +66,7 @@ bool Foam::readAndUpdateFields::loadField
 (
     const word& fieldName,
     PtrList<GeometricField<Type, fvPatchField, volMesh> >& vflds,
+    PtrList<GeometricField<Type, fvsPatchField, surfaceMesh> >& sflds,
     PtrList<GeometricField<Type, pointPatchField, pointMesh> >& pflds
 )
 {
@@ -72,27 +76,21 @@ bool Foam::readAndUpdateFields::loadField
 
     if (obr_.foundObject<vfType>(fieldName))
     {
-        if (debug)
-        {
-            Info<< "readAndUpdateFields : Field " << fieldName << " already in database"
-                << endl;
-        }
+        Info << this->name() << "  : Field " << fieldName << " of type "
+            << vfType::typeName << " already in database" << endl;
+        return true;
     }
     else if (obr_.foundObject<sfType>(fieldName))
     {
-        if (debug)
-        {
-            Info<< "readAndUpdateFields : Field " << fieldName << " already in database"
-                << endl;
-        }
+        Info << this->name() << "  : Field " << fieldName << " of type "
+            << sfType::typeName << " already in database" << endl;
+        return true;
     }
     else if (obr_.foundObject<pfType>(fieldName))
     {
-        if (debug)
-        {
-            Info<< "readAndUpdateFields : Field " << fieldName << " already in database"
-                << endl;
-        }
+        Info << this->name() << "  : Field " << fieldName << " of type "
+            << pfType::typeName << " already in database" << endl;
+        return true;
     }
     else
     {
@@ -118,7 +116,9 @@ bool Foam::readAndUpdateFields::loadField
         )
         {
             // store field locally
-            Info<< "    Reading " << fieldName << endl;
+            Info << this->name() << "  : Field " << fieldName << " of type "
+                << vfType::typeName << " being read" << endl;
+
             label sz = vflds.size();
             vflds.setSize(sz+1);
             vflds.set(sz, new vfType(fieldHeader, mesh));
@@ -137,7 +137,8 @@ bool Foam::readAndUpdateFields::loadField
         )
         {
             // store field locally
-            Info<< "    Reading " << fieldName << endl;
+            Info << this->name() << "  : Field " << fieldName << " of type "
+                << pfType::typeName << " being read" << endl;
             label sz = pflds.size();
             pflds.setSize(sz+1);
             pflds.set(sz, new pfType(fieldHeader, this->pMesh(mesh)));
@@ -155,12 +156,13 @@ bool Foam::readAndUpdateFields::loadField
 #endif
         )
         {
-            WarningIn("Foam::readAndUpdateFields::loadField")
-                << "Field " << fieldName << " is a "
-                    << sfType::typeName
-                    << " and surface-fields don't support correctBoundaryConditions"
-                    << endl << "-> Not read"
-                    << endl;
+            // store field locally
+            Info << this->name() << "  : Field " << fieldName << " of type "
+                << sfType::typeName << " being read" << endl;
+            label sz = sflds.size();
+            sflds.setSize(sz+1);
+            sflds.set(sz, new sfType(fieldHeader, mesh));
+            //            pflds[sz].writeOpt()=IOobject::AUTO_WRITE;
 
             return true;
         }

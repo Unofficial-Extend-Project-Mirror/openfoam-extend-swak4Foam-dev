@@ -80,6 +80,15 @@ functions
             }
         }
     }
+    readPhi {
+        type readAndUpdateFields;
+        fields (
+            phi
+        );
+        outputControl timeStep;
+        outputInterval 1;
+        correctBoundary no;
+    }
     calcPotentialU {
         type initPotentialFlow;
         UName U;

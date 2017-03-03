@@ -99,7 +99,16 @@ protected:
         PtrList<pointSymmTensorField> pSymmtf_;
         PtrList<pointTensorField> ptf_;
 
+        PtrList<surfaceScalarField> ssf_;
+        PtrList<surfaceVectorField> svf_;
+        PtrList<surfaceSphericalTensorField> sSpheretf_;
+        PtrList<surfaceSymmTensorField> sSymmtf_;
+        PtrList<surfaceTensorField> stf_;
+
         autoPtr<pointMesh> pMesh_;
+
+        // should the boundary conditions be corrected at every time-step?
+        bool correctBoundary_;
 
         const pointMesh &pMesh(const polyMesh &mesh);
 
@@ -116,6 +125,7 @@ protected:
         (
             const word&,
             PtrList<GeometricField<Type, fvPatchField, volMesh> >&,
+            PtrList<GeometricField<Type, fvsPatchField, surfaceMesh> >&,
             PtrList<GeometricField<Type, pointPatchField, pointMesh> >&
         );
 

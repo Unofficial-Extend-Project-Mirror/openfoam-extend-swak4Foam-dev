@@ -3731,4 +3731,13 @@ S_{expl} + S_{impl} T
 **** Additional functions in the radiation function plugin
      Additional functions for the =absorptionEmissionModel= and the
      =sootModel= are added to to library with the radiation-functions
+**** Improvement of =readAndUpdateFields=: surface fields, output, switching
+     The function object =readAndUpdateFields= got three improvements:
+     - an optional switch =correctBoundary= allows switching the
+       correction of boundary conditions off
+     - surface-fields are now read as well. But no boundary correction
+       is performed as the these fields do not support this
+     - better output. Instead of silently reading fields or using
+       those in memory the name of the field and the type are written
+       out
 *** Examples

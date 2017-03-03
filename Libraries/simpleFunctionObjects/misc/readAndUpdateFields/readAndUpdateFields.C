@@ -58,7 +58,8 @@ Foam::readAndUpdateFields::readAndUpdateFields
     name_(name),
     obr_(obr),
     active_(true),
-    fieldSet_()
+    fieldSet_(),
+    correctBoundary_(true)
 {
     // Check if the available mesh is an fvMesh otherise deactivate
     if (!isA<fvMesh>(obr_))
@@ -115,13 +116,19 @@ void Foam::readAndUpdateFields::read(const dictionary& dict)
         pSymmtf_.clear();
         ptf_.clear();
 
+        ssf_.clear();
+        svf_.clear();
+        sSpheretf_.clear();
+        sSymmtf_.clear();
+        stf_.clear();
+
         forAll(fieldSet_, fieldI)
         {
-            bool found = loadField<scalar>(fieldSet_[fieldI], vsf_, psf_);
-            found = found || loadField<vector>(fieldSet_[fieldI], vvf_, pvf_);
-            found = found || loadField<sphericalTensor>(fieldSet_[fieldI], vSpheretf_, pSpheretf_);
-            found = found || loadField<symmTensor>(fieldSet_[fieldI], vSymmtf_, pSymmtf_);
-            found = found || loadField<tensor>(fieldSet_[fieldI], vtf_, ptf_);
+            bool found = loadField<scalar>(fieldSet_[fieldI], vsf_, ssf_, psf_);
+            found = found || loadField<vector>(fieldSet_[fieldI], vvf_, svf_, pvf_);
+            found = found || loadField<sphericalTensor>(fieldSet_[fieldI], vSpheretf_, sSpheretf_, pSpheretf_);
+            found = found || loadField<symmTensor>(fieldSet_[fieldI], vSymmtf_, sSymmtf_, pSymmtf_);
+            found = found || loadField<tensor>(fieldSet_[fieldI], vtf_, stf_, ptf_);
 
             if(!found)
             {
@@ -129,8 +136,15 @@ void Foam::readAndUpdateFields::read(const dictionary& dict)
                     << "Field " << fieldSet_[fieldI] << " does not exist"
                         << endl
                         << exit(FatalError);
-
             }
+        }
+
+        correctBoundary_=dict.lookupOrDefault<bool>("correctBoundary",true);
+
+        if(!dict.found("correctBoundary")) {
+            WarningIn("Foam::readAndUpdateFields::read(const dictionary& dict)")
+                << "No entry 'correctBoundary' in " << dict.name()
+                    << ". Defaulting to 'true'" << endl;
         }
     }
 }
@@ -145,7 +159,13 @@ const Foam::pointMesh &Foam::readAndUpdateFields::pMesh(const polyMesh &mesh)
 
 void Foam::readAndUpdateFields::execute()
 {
-    if(active_) {
+    if(
+        active_
+        ||
+        correctBoundary_
+    ) {
+        Info << this->name() << " : Correcting " << flush;
+
         correctBoundaryConditions(vsf_);
         correctBoundaryConditions(vvf_);
         correctBoundaryConditions(vtf_);
@@ -157,6 +177,8 @@ void Foam::readAndUpdateFields::execute()
         correctBoundaryConditions(ptf_);
         correctBoundaryConditions(pSymmtf_);
         correctBoundaryConditions(pSpheretf_);
+
+        Info << endl;
     }
 }
 
