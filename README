@@ -3819,6 +3819,10 @@ S_{expl} + S_{impl} T
 **** =funkyWarpMesh= allows reading function objects
      Function objects can now be loaded with an option
      =-allowFunctionObjects=
+**** =executeIfStartTime= now also allows execution if it is "only" a restart
+     Normally the function object only executes only if this is the
+     real start time (not a restart). If the option =executeOnRestart=
+     is set then the function object also executes if this is a restart
 *** Examples
 
 # Local Variables:
