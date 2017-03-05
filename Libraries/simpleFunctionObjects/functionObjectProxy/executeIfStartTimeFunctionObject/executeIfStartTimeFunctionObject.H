@@ -74,6 +74,11 @@ class executeIfStartTimeFunctionObject
     //- execute only if this is the start time
     bool runIfStartTime_;
 
+    //- if this is a restart execute as well
+    bool executeOnRestart_;
+
+    //- the time index at which this was read
+    label timeIndexRead_;
 protected:
 
     //- the actual conition that determines whether the FO should be executed

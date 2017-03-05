@@ -3740,4 +3740,8 @@ S_{expl} + S_{impl} T
      - better output. Instead of silently reading fields or using
        those in memory the name of the field and the type are written
        out
+**** =executeIfStartTime= now also allows execution if it is "only" a restart
+     Normally the function object only executes only if this is the
+     real start time (not a restart). If the option =executeOnRestart=
+     is set then the function object also executes if this is a restart
 *** Examples

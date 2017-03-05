@@ -78,12 +78,23 @@ executeIfStartTimeFunctionObject::executeIfStartTimeFunctionObject
         readBool(
             dict.lookup("runIfStartTime")
         )
+    ),
+    executeOnRestart_(
+        dict.lookupOrDefault<bool>("executeOnRestart",false)
+    ),
+    timeIndexRead_(
+        time().timeIndex()
     )
 {
     Dbug << " constructing " << name << endl;
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     start();
 #endif
+    if(!dict.found("executeOnRestart")) {
+        WarningIn("executeIfStartTimeFunctionObject::executeIfStartTimeFunctionObject")
+            << "No entry 'executeOnRestart' in " << dict.name()
+                << ". Assuming 'false'" << endl;
+    }
 }
 
 
@@ -91,7 +102,11 @@ executeIfStartTimeFunctionObject::executeIfStartTimeFunctionObject
 
 bool executeIfStartTimeFunctionObject::condition()
 {
-    if(time().timeIndex()==0) {
+    if(
+        (time().timeIndex()==0 && !executeOnRestart_)
+        ||
+        (time().timeIndex()==timeIndexRead_ && executeOnRestart_)
+    ) {
         return runIfStartTime_;
     } else {
         return !runIfStartTime_;
