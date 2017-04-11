@@ -98,10 +98,11 @@ public:
 #ifdef FOAM_MESHTOMESH_HAS_CORRECTEDCELLVOLUMEWEIGHT
 #define SHIFT_METHOD meshToMesh::imCorrectedCellVolumeWeight
 #else
-#define SHIFT_METHOD meshToMesh::imCellVolumeWeight
+    //        #define SHIFT_METHOD meshToMesh::imCellVolumeWeight FIXME
+#define SHIFT_METHOD meshToMesh::INTERPOLATE
 #endif
 
-    //        #define MAP_METHOD meshToMesh::imMapNearest
+    //        #define MAP_METHOD meshToMesh::imMapNearest // FIXME
 #define MAP_METHOD meshToMesh::MAP
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

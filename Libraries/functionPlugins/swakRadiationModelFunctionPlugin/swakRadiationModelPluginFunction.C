@@ -43,7 +43,9 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#ifdef FOAM_RADIATION_HAS_SOOTMODEL
 #include "sootModel.H"
+#endif
 #include "absorptionEmissionModel.H"
 
 namespace Foam {
@@ -243,6 +245,7 @@ public:
 defineTypeNameAndDebug(swakRadiationModelPluginFunction_radSource,0);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakRadiationModelPluginFunction_radSource,name,radiation_radSource);
 
+#ifdef FOAM_HAS_SOOTMODEL
     // Values of the sootModel
 class swakRadiationModelPluginFunction_soot
 : public swakRadiationModelPluginFunction
@@ -270,7 +273,9 @@ public:
 };
 defineTypeNameAndDebug(swakRadiationModelPluginFunction_soot,0);
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakRadiationModelPluginFunction_soot,name,radiation_soot);
+#endif
 
+#ifdef FOAM_RADIATION_HAS_PUBLIC_ABSORPTIONMODEL
 // values of the absortption-Emission submodel
 #define concreteAbsEmiRadiationFunction(funcName,resultType)       \
 class swakRadiationModelPluginFunction_AbsEmi_ ## funcName         \
@@ -320,6 +325,7 @@ concreteAbsEmiRadiationFunction(eDisp,volScalarField);
 concreteAbsEmiRadiationFunction(E,volScalarField);
 concreteAbsEmiRadiationFunction(ECont,volScalarField);
 concreteAbsEmiRadiationFunction(EDisp,volScalarField);
+#endif
 
 } // namespace
 

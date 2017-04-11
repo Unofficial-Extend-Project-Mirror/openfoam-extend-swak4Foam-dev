@@ -27,7 +27,11 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "mathematicalConstants.H"
 
+#ifdef FOAM_NO_SEPARATE_CONSTANT_NAMESPACE
+using namespace Foam::mathematicalConstant;
+#else
 using namespace Foam::constant::mathematical;
+#endif
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -87,6 +91,13 @@ Foam::solidBodyMotionFunctions::swakMotion::driver() const
         );
     }
     return const_cast<swakMotion&>(*this).driver_();
+}
+
+Foam::septernion
+Foam::solidBodyMotionFunctions::swakMotion::velocity() const
+{
+    // dummy implementation
+    return septernion::zero;
 }
 
 Foam::septernion
