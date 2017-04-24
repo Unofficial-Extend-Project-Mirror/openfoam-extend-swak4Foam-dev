@@ -34,6 +34,9 @@ solvers
             relTol          0;
             smoother        DICGaussSeidel;
             cacheAgglomeration no;
+            agglomerator faceAreaPair;
+            nCellsInCoarsestLevel 10;
+            mergeLevels 1;
         }
 
         tolerance       1e-05;
@@ -43,10 +46,19 @@ solvers
 
     p_rgh
     {
+        $pcorr;
+
         solver          GAMG;
         tolerance       1e-08;
         relTol          0.01;
         smoother        DIC;
+        agglomerator faceAreaPair;
+        nCellsInCoarsestLevel 10;
+        mergeLevels 1;
+    }
+
+    pd {
+        $p_rgh;
     }
 
     p_rghFinal
@@ -60,11 +72,18 @@ solvers
             nVcycles        2;
             smoother        DICGaussSeidel;
             nPreSweeps      2;
+            agglomerator faceAreaPair;
+            nCellsInCoarsestLevel 10;
+            mergeLevels 1;
         }
 
         tolerance       2e-09;
         relTol          0;
         maxIter         20;
+    }
+
+    pdFinal {
+        $p_rghFinal;
     }
 
     U
@@ -84,8 +103,17 @@ PIMPLE
     nNonOrthogonalCorrectors 0;
     correctPhi      no;
 
+    nAlphaCorr      1;
+    nAlphaSubCycles 3;
+
     pRefPoint       (0 0 0.15);
+    pdRefPoint $pRefPoint;
     pRefValue       1e5;
+    pdRefValue $pRefValue;
+}
+
+PISO {
+    cAlpha 1.5;
 }
 
 relaxationFactors
@@ -94,6 +122,7 @@ relaxationFactors
     {
         "U.*"           1;
     }
+    U 1;
 }
 
 

@@ -63,6 +63,8 @@ functions
         type            probes;
         libs ("libsampling.so");
         writeControl    writeTime;
+        outputControl timeStep;
+        outputInterval 1;
         probeLocations
         (
             (0 9.95 19.77)
@@ -80,6 +82,8 @@ functions
         type            surfaces;
         libs ("libsampling.so");
         writeControl    writeTime;
+        outputControl timeStep;
+        outputInterval 10;
         surfaceFormat   raw;
         fields
         (
@@ -93,6 +97,7 @@ functions
             {
                 type        patch;
                 patches     (walls);
+                patchName walls;
                 triangulate false;
             }
         );
