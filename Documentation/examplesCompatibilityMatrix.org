@@ -27,6 +27,10 @@
 * The Matrix
   | Case name                                                   | 4.1 Fnd    | 4.0 Ext    | 1612+      | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
+  | DynamicMesh/hectivInletACMI2D                               | \checkmark | \dagger    |            |            |
+  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark |            |            |
+  | DynamicMesh/switchedTJunction                               | \checkmark | \dagger    |            |            |
+  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    |            |            |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \dagger    | \dagger    |
   | FvOptions/angledDuctWithSources                             | \sad       | \dagger    | \sad       | \checkmark |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -49,3 +53,7 @@
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:

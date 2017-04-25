@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     icoFoam;
+application     replayTransientBC;
 
 startFrom       startTime;
 
@@ -58,6 +58,8 @@ functions {
         type expressionField;
         autowrite true;
         fieldName shiftedCircle;
+        outputControl timeStep;
+        outputInterval 1;
         shiftConstantScalarFieldData {
             variables (
                 "minX=min(pts().x);"

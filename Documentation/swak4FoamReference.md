@@ -2,59 +2,70 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Introduction</a>
+<li><a href="#orgheadline3">1. Introduction</a>
 <ul>
-<li><a href="#sec-1-1">1.1. Generating a printable version of this document</a></li>
-<li><a href="#sec-1-2">1.2. Authorship and license</a></li>
+<li><a href="#orgheadline1">1.1. Generating a printable version of this document</a></li>
+<li><a href="#orgheadline2">1.2. Authorship and license</a></li>
 </ul>
 </li>
-<li><a href="#sec-2">2. The parsers (expression grammar)</a>
+<li><a href="#orgheadline40">2. The parsers (expression grammar)</a>
 <ul>
-<li><a href="#sec-2-1">2.1. Expressions</a>
+<li><a href="#orgheadline22">2.1. Expressions</a>
 <ul>
-<li><a href="#sec-2-1-1">2.1.1. Constants and type building</a></li>
-<li><a href="#sec-2-1-2">2.1.2. Operators</a></li>
-<li><a href="#sec-2-1-3">2.1.3. Mathematical functions available in all parsers</a></li>
-<li><a href="#sec-2-1-4">2.1.4. OpenFOAM-specific functions</a></li>
-<li><a href="#sec-2-1-5">2.1.5. Valid names</a></li>
-<li><a href="#sec-2-1-6">2.1.6. Variables and fields</a></li>
-<li><a href="#sec-2-1-7">2.1.7. Plugin functions</a></li>
-<li><a href="#sec-2-1-8">2.1.8. Macro expansion</a></li>
+<li><a href="#orgheadline4">2.1.1. Constants and type building</a></li>
+<li><a href="#orgheadline6">2.1.2. Operators</a></li>
+<li><a href="#orgheadline7">2.1.3. Mathematical functions available in all parsers</a></li>
+<li><a href="#orgheadline13">2.1.4. OpenFOAM-specific functions</a></li>
+<li><a href="#orgheadline14">2.1.5. Valid names</a></li>
+<li><a href="#orgheadline19">2.1.6. Variables and fields</a></li>
+<li><a href="#orgheadline20">2.1.7. Plugin functions</a></li>
+<li><a href="#orgheadline21">2.1.8. Macro expansion</a></li>
 </ul>
 </li>
-<li><a href="#sec-2-2">2.2. Parameters</a>
+<li><a href="#orgheadline38">2.2. Parameters</a>
 <ul>
-<li><a href="#sec-2-2-1">2.2.1. Common parameters</a></li>
-<li><a href="#sec-2-2-2">2.2.2. Parser-specific parameters</a></li>
+<li><a href="#orgheadline28">2.2.1. Common parameters</a></li>
+<li><a href="#orgheadline37">2.2.2. Parser-specific parameters</a></li>
 </ul>
 </li>
-<li><a href="#sec-2-3">2.3. Information written for restarting</a></li>
+<li><a href="#orgheadline39">2.3. Information written for restarting</a></li>
 </ul>
 </li>
-<li><a href="#sec-3">3. Usable parts</a>
+<li><a href="#orgheadline46">3. Usable parts</a>
 <ul>
-<li><a href="#sec-3-1">3.1. Utilities</a></li>
-<li><a href="#sec-3-2">3.2. Boundary conditions</a></li>
-<li><a href="#sec-3-3">3.3. Function objects</a></li>
-<li><a href="#sec-3-4">3.4. Function plugins</a></li>
-<li><a href="#sec-3-5">3.5. Data entry</a></li>
+<li><a href="#orgheadline41">3.1. Utilities</a></li>
+<li><a href="#orgheadline42">3.2. Boundary conditions</a></li>
+<li><a href="#orgheadline43">3.3. Function objects</a></li>
+<li><a href="#orgheadline44">3.4. Function plugins</a></li>
+<li><a href="#orgheadline45">3.5. Data entry</a></li>
 </ul>
 </li>
-<li><a href="#sec-4">4. Programming</a>
+<li><a href="#orgheadline49">4. Programming</a>
 <ul>
-<li><a href="#sec-4-1">4.1. Writing plugin-functions</a></li>
-<li><a href="#sec-4-2">4.2. Adding new parsers</a></li>
+<li><a href="#orgheadline47">4.1. Writing plugin-functions</a></li>
+<li><a href="#orgheadline48">4.2. Adding new parsers</a></li>
 </ul>
 </li>
-<li><a href="#sec-5">5. Bits and pieces</a>
+<li><a href="#orgheadline62">5. Bits and pieces</a>
 <ul>
-<li><a href="#sec-5-1">5.1. Accumulations</a></li>
-<li><a href="#sec-5-2">5.2. Parameters for the Python-interpreter wrapper</a>
+<li><a href="#orgheadline51">5.1. Accumulations</a>
 <ul>
-<li><a href="#sec-5-2-1">5.2.1. General behavior</a></li>
-<li><a href="#sec-5-2-2">5.2.2. Predefined variables and functions</a></li>
-<li><a href="#sec-5-2-3">5.2.3. The options</a></li>
-<li><a href="#sec-5-2-4">5.2.4. Loading code snipplets</a></li>
+<li><a href="#orgheadline50">5.1.1. Logical accumulations</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline57">5.2. Parameters for the Python-interpreter wrapper</a>
+<ul>
+<li><a href="#orgheadline53">5.2.1. General behavior</a></li>
+<li><a href="#orgheadline54">5.2.2. Predefined variables and functions</a></li>
+<li><a href="#orgheadline55">5.2.3. The options</a></li>
+<li><a href="#orgheadline56">5.2.4. Loading code snipplets</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline61">5.3. State machines</a>
+<ul>
+<li><a href="#orgheadline58">5.3.1. Specifying a state machine</a></li>
+<li><a href="#orgheadline59">5.3.2. Using the <i>State Machine</i></a></li>
+<li><a href="#orgheadline60">5.3.3. Additional function objects</a></li>
 </ul>
 </li>
 </ul>
@@ -64,7 +75,7 @@
 </div>
 
 
-# Introduction<a id="sec-1" name="sec-1"></a>
+# Introduction<a id="orgheadline3"></a>
 
 This document gives an overview of the usage of `swak4Foam`. It
 explains the common paramters, expressions and usable parts. It is
@@ -91,7 +102,7 @@ The structure of the document is
     of `swak4foam` in your own programs including a description of
     how to write your own plugin-function
 
-## Generating a printable version of this document<a id="sec-1-1" name="sec-1-1"></a>
+## Generating a printable version of this document<a id="orgheadline1"></a>
 
 This document was written in `org-mode` (<http://orgmode.org>) an
 outliner mode for the text editor Emacs. This mode offers a number
@@ -106,7 +117,7 @@ automatically called by `org-mode`):
 -   **Ditaa:** <http://ditaa.sourceforge.net>
 -   **PlantUML:** <http://plantuml.sourceforge.net/>
 
-## Authorship and license<a id="sec-1-2" name="sec-1-2"></a>
+## Authorship and license<a id="orgheadline2"></a>
 
 This document is licensed under the *Creative Commons
 Attribution-ShareAlike 3.0 Unported* License (for the full text of
@@ -125,7 +136,7 @@ Authors of this document are:
 yourself to this list and push the changes to a repository where
 the maintainer can merge them to the main line)
 
-# The parsers (expression grammar)<a id="sec-2" name="sec-2"></a>
+# The parsers (expression grammar)<a id="orgheadline40"></a>
 
 The central concept in `swak4Foam` is the *parser*. A parser reads a
 string with an expression, interprets it according to a grammar and
@@ -150,7 +161,7 @@ figure \ref{fig:driverLexerParser}:
 In the following texts the term *Parser* will refer to this complex
 of three entities
 
-![img](parserDriverLexer.png)
+![img](parserDriverLexer.png "Relationship Driver/Lexer/Parser")
 
 Which parser is used depends on the entity the calculation is done
 on and determines the supported functionality (differential
@@ -164,7 +175,7 @@ abstract classes.
 As all drivers are derived from *Common* there is a set of options
 that is available in all drivers/parser.
 
-![img](parserRelationships.png)
+![img](parserRelationships.png "Inheritance relation of the Parsers")
 
 Usually the parser used is determined by the using entity (for
 instance `patch` is used by `groovyBC`) but sometimes (for instance
@@ -172,85 +183,85 @@ the `swakExpression`-function object) the used parser can by
 selected by name. These names and a description of the entity the
 parser works on are given in table \ref{tab:selectionNames}.
 
-<table id="tab:selectionNames" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Selection names for the parsers</caption>
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">name</th>
-<th scope="col" class="left">Description</th>
+<th scope="col" class="org-left">name</th>
+<th scope="col" class="org-left">Description</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td class="left">`internalField`</td>
-<td class="left">Calculation on the internal values of a field</td>
+<td class="org-left">`internalField`</td>
+<td class="org-left">Calculation on the internal values of a field</td>
 </tr>
 
 
 <tr>
-<td class="left">`patch`</td>
-<td class="left">Calculation on a boundary patch</td>
+<td class="org-left">`patch`</td>
+<td class="org-left">Calculation on a boundary patch</td>
 </tr>
 
 
 <tr>
-<td class="left">`faceZone`</td>
-<td class="left">On a `faceZone` of the mesh</td>
+<td class="org-left">`faceZone`</td>
+<td class="org-left">On a `faceZone` of the mesh</td>
 </tr>
 
 
 <tr>
-<td class="left">`faceSet`</td>
-<td class="left">On a `faceSet`</td>
+<td class="org-left">`faceSet`</td>
+<td class="org-left">On a `faceSet`</td>
 </tr>
 
 
 <tr>
-<td class="left">`cellZone`</td>
-<td class="left">Calculation on a `cellZone`</td>
+<td class="org-left">`cellZone`</td>
+<td class="org-left">Calculation on a `cellZone`</td>
 </tr>
 
 
 <tr>
-<td class="left">`cellSet`</td>
-<td class="left">Set of cells</td>
+<td class="org-left">`cellSet`</td>
+<td class="org-left">Set of cells</td>
 </tr>
 
 
 <tr>
-<td class="left">`set`</td>
-<td class="left">Calculation on a `sampledSet`</td>
+<td class="org-left">`set`</td>
+<td class="org-left">Calculation on a `sampledSet`</td>
 </tr>
 
 
 <tr>
-<td class="left">`surface`</td>
-<td class="left">Calculation on a `sampledSurface`</td>
+<td class="org-left">`surface`</td>
+<td class="org-left">Calculation on a `sampledSurface`</td>
 </tr>
 
 
 <tr>
-<td class="left">`cloud`</td>
-<td class="left">Calculation on a cloud of lagrangian particles</td>
+<td class="org-left">`cloud`</td>
+<td class="org-left">Calculation on a cloud of lagrangian particles</td>
 </tr>
 
 
 <tr>
-<td class="left">`internalFaField`</td>
-<td class="left">Internal values of a FAM-field (`1.6-ext` only)</td>
+<td class="org-left">`internalFaField`</td>
+<td class="org-left">Internal values of a FAM-field (`1.6-ext` only)</td>
 </tr>
 
 
 <tr>
-<td class="left">`faPatch`</td>
-<td class="left">Boundary patch of a FAM-field (`1.6-ext` only)</td>
+<td class="org-left">`faPatch`</td>
+<td class="org-left">Boundary patch of a FAM-field (`1.6-ext` only)</td>
 </tr>
 </tbody>
 </table>
@@ -260,10 +271,11 @@ and selected at run-time (as for instance are the *FAM*-parsers
 which are located in a separate library that has to be loaded at
 run-time)
 
-## Expressions<a id="sec-2-1" name="sec-2-1"></a>
+## Expressions<a id="orgheadline22"></a>
 
 The basic syntax of the expressions is modelled after the syntax of
 expressions in OpenFOAM-programs. This means:
+
 -   the syntax is C++
     -   the usual precedence rules apply
 -   if possible the same operators and function names as in OpenFOAM
@@ -284,11 +296,14 @@ Available types are
     \(a_{ij}=a_{ji}\))
 -   **sphericalTensor:** Spherical tensor
 -   **boolean:** results of logical operations (can only be `true` or
-    `false`). Certain parsers implement them with scalars
+    `false`). Certain parsers (`internalField` and
+    `faInternalField`) implement them with scalars
     being \(0\) or \(1\). If values other then \(0\) or \(1\) are
     found (which can happen for instance due to
-    interpolation) they are interpreted as `true` (only
-    exactly \(0\) is interpreted as `false`)
+    interpolation) and they are \(>\frac{1}{2}\) they are
+    interpreted as `true` (otherwise `false`). This
+    behavior differs from older versions where only
+    exactly \(0\) was `false`.
 
 If the type of subexpressions for a certain operator/function is
 incompatible (for instance when trying to add a vector to a scalar)
@@ -314,99 +329,99 @@ structure if necessary (for instance `toPoint(1)` to use the
 constant `1` on the vertexes of a patch). Table
 \ref{tab:structures} gives an overview of the structures.
 
-<table id="tab:structures" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgtable2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 2:</span> Structures for the different parsers</caption>
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Parser</th>
-<th scope="col" class="left">*native* structure</th>
-<th scope="col" class="left">secondary structure</th>
+<th scope="col" class="org-left">Parser</th>
+<th scope="col" class="org-left">*native* structure</th>
+<th scope="col" class="org-left">secondary structure</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td class="left">`internalField`</td>
-<td class="left">Cell values</td>
-<td class="left">Face values and point values</td>
+<td class="org-left">`internalField`</td>
+<td class="org-left">Cell values</td>
+<td class="org-left">Face values and point values</td>
 </tr>
 
 
 <tr>
-<td class="left">`patch`</td>
-<td class="left">Face values</td>
-<td class="left">Point values</td>
+<td class="org-left">`patch`</td>
+<td class="org-left">Face values</td>
+<td class="org-left">Point values</td>
 </tr>
 
 
 <tr>
-<td class="left">`faceZone`</td>
-<td class="left">Face values</td>
-<td class="left">none</td>
+<td class="org-left">`faceZone`</td>
+<td class="org-left">Face values</td>
+<td class="org-left">none</td>
 </tr>
 
 
 <tr>
-<td class="left">`cellZone`</td>
-<td class="left">Cell values</td>
-<td class="left">none</td>
+<td class="org-left">`cellZone`</td>
+<td class="org-left">Cell values</td>
+<td class="org-left">none</td>
 </tr>
 
 
 <tr>
-<td class="left">`faceSet`</td>
-<td class="left">Face values</td>
-<td class="left">none</td>
+<td class="org-left">`faceSet`</td>
+<td class="org-left">Face values</td>
+<td class="org-left">none</td>
 </tr>
 
 
 <tr>
-<td class="left">`cellSet`</td>
-<td class="left">Cell values</td>
-<td class="left">none</td>
+<td class="org-left">`cellSet`</td>
+<td class="org-left">Cell values</td>
+<td class="org-left">none</td>
 </tr>
 
 
 <tr>
-<td class="left">`set`</td>
-<td class="left">Values on sample points</td>
-<td class="left">none</td>
+<td class="org-left">`set`</td>
+<td class="org-left">Values on sample points</td>
+<td class="org-left">none</td>
 </tr>
 
 
 <tr>
-<td class="left">`surface`</td>
-<td class="left">Values on the facets</td>
-<td class="left">vertices - not yet implemented</td>
+<td class="org-left">`surface`</td>
+<td class="org-left">Values on the facets</td>
+<td class="org-left">vertices - not yet implemented</td>
 </tr>
 
 
 <tr>
-<td class="left">`cloud`</td>
-<td class="left">Values on the particles</td>
-<td class="left">none</td>
+<td class="org-left">`cloud`</td>
+<td class="org-left">Values on the particles</td>
+<td class="org-left">none</td>
 </tr>
 
 
 <tr>
-<td class="left">`internalFaField`</td>
-<td class="left">Area (face) values</td>
-<td class="left">Edge values</td>
+<td class="org-left">`internalFaField`</td>
+<td class="org-left">Area (face) values</td>
+<td class="org-left">Edge values</td>
 </tr>
 
 
 <tr>
-<td class="left">`faPatch`</td>
-<td class="left">Edge values</td>
-<td class="left">Point values</td>
+<td class="org-left">`faPatch`</td>
+<td class="org-left">Edge values</td>
+<td class="org-left">Point values</td>
 </tr>
 </tbody>
 </table>
@@ -414,7 +429,7 @@ constant `1` on the vertexes of a patch). Table
 The following sections describe the basic concepts of the
 expressions.
 
-### Constants and type building<a id="sec-2-1-1" name="sec-2-1-1"></a>
+### Constants and type building<a id="orgheadline4"></a>
 
 This applies to all types of expressions.
 
@@ -443,10 +458,11 @@ the unit tensor.
 
 The logical constants `true` and `false` are available
 
-### Operators<a id="sec-2-1-2" name="sec-2-1-2"></a>
+### Operators<a id="orgheadline6"></a>
 
 These operators are implemented for all the parsers (the usual
 precedence-rules apply):
+
 -   **`+ - * /`:** Arithmetic operations
 -   **`&`:** Inner product for vectors and tensors
 -   **`^`:** Cross product of two vectors
@@ -477,43 +493,43 @@ In addition there are two unary operators:
     x-component of the field `U`). Table \ref{tab:components} gives
     an overview of the components of the various types
 
-    <table id="tab:components" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+    <table id="orgtable3" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     <caption class="t-above"><span class="table-number">Table 3:</span> Component names for the data types</caption>
 
     <colgroup>
-    <col  class="left" />
+    <col  class="org-left" />
 
-    <col  class="left" />
+    <col  class="org-left" />
     </colgroup>
     <thead>
     <tr>
-    <th scope="col" class="left">Data type</th>
-    <th scope="col" class="left">Components</th>
+    <th scope="col" class="org-left">Data type</th>
+    <th scope="col" class="org-left">Components</th>
     </tr>
     </thead>
 
     <tbody>
     <tr>
-    <td class="left">Vector</td>
-    <td class="left">x y z</td>
+    <td class="org-left">Vector</td>
+    <td class="org-left">x y z</td>
     </tr>
 
 
     <tr>
-    <td class="left">Tensor</td>
-    <td class="left">xx xy xz yx yy yz zx zy zz x y z</td>
+    <td class="org-left">Tensor</td>
+    <td class="org-left">xx xy xz yx yy yz zx zy zz x y z</td>
     </tr>
 
 
     <tr>
-    <td class="left">Symmetrical tensor</td>
-    <td class="left">xx xy xz yy yz zz</td>
+    <td class="org-left">Symmetrical tensor</td>
+    <td class="org-left">xx xy xz yy yz zz</td>
     </tr>
 
 
     <tr>
-    <td class="left">Spherical tensor</td>
-    <td class="left">ii</td>
+    <td class="org-left">Spherical tensor</td>
+    <td class="org-left">ii</td>
     </tr>
     </tbody>
     </table>
@@ -523,10 +539,11 @@ In addition there are two unary operators:
 
     `x`, `y` and `z` for tensors are the rows as vectors.
 
-### Mathematical functions available in all parsers<a id="sec-2-1-3" name="sec-2-1-3"></a>
+### Mathematical functions available in all parsers<a id="orgheadline7"></a>
 
 The mathematical functions described in the *Programmers Guide*
 are implemented in all parsers:
+
 -   **mag(x):** Absolute value \(|x|\). Implemented for all
     types. Yields a scalar
 
@@ -616,90 +633,90 @@ but help identify certain entities:
 -   **weight:** The "natural" weight according to table
     \ref{tab:naturalWeights} for the current parser
 
-<table id="tab:naturalWeights" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgtable4" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 4:</span> "Natural" weights for different parsers</caption>
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Driver</th>
-<th scope="col" class="left">Definition</th>
+<th scope="col" class="org-left">Driver</th>
+<th scope="col" class="org-left">Definition</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td class="left">`internalField`</td>
-<td class="left">the cell volume</td>
+<td class="org-left">`internalField`</td>
+<td class="org-left">the cell volume</td>
 </tr>
 
 
 <tr>
-<td class="left">`patch`</td>
-<td class="left">the face area</td>
+<td class="org-left">`patch`</td>
+<td class="org-left">the face area</td>
 </tr>
 
 
 <tr>
-<td class="left">`set`</td>
-<td class="left">constant volume \(1\)</td>
+<td class="org-left">`set`</td>
+<td class="org-left">constant volume \(1\)</td>
 </tr>
 
 
 <tr>
-<td class="left">`surface`</td>
-<td class="left">area of the facets</td>
+<td class="org-left">`surface`</td>
+<td class="org-left">area of the facets</td>
 </tr>
 
 
 <tr>
-<td class="left">`cellZone`</td>
-<td class="left">volume of the cell</td>
+<td class="org-left">`cellZone`</td>
+<td class="org-left">volume of the cell</td>
 </tr>
 
 
 <tr>
-<td class="left">`cellSet`</td>
-<td class="left">volume of the cell</td>
+<td class="org-left">`cellSet`</td>
+<td class="org-left">volume of the cell</td>
 </tr>
 
 
 <tr>
-<td class="left">`faceZone`</td>
-<td class="left">area of the face</td>
+<td class="org-left">`faceZone`</td>
+<td class="org-left">area of the face</td>
 </tr>
 
 
 <tr>
-<td class="left">`faceSet`</td>
-<td class="left">area of the face</td>
+<td class="org-left">`faceSet`</td>
+<td class="org-left">area of the face</td>
 </tr>
 
 
 <tr>
-<td class="left">`internalFaField`</td>
-<td class="left">area of the face</td>
+<td class="org-left">`internalFaField`</td>
+<td class="org-left">area of the face</td>
 </tr>
 
 
 <tr>
-<td class="left">`faPatch`</td>
-<td class="left">length of the edge</td>
+<td class="org-left">`faPatch`</td>
+<td class="org-left">length of the edge</td>
 </tr>
 
 
 <tr>
-<td class="left">`cloud`</td>
-<td class="left">constant \(1\) or total mass of the parcel</td>
+<td class="org-left">`cloud`</td>
+<td class="org-left">constant \(1\) or total mass of the parcel</td>
 </tr>
 </tbody>
 </table>
 
-### OpenFOAM-specific functions<a id="sec-2-1-4" name="sec-2-1-4"></a>
+### OpenFOAM-specific functions<a id="orgheadline13"></a>
 
 The following functions are not available in all parsers. In the
 description in brackets there will be a shorthand description of
@@ -710,55 +727,55 @@ sense for face zones. Calling this function will result in an
 error message). Table \ref{tab:parsershorthand} lists the short
 descriptions.
 
-<table id="tab:parsershorthand" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgtable5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 5:</span> Shorthand for the parsers</caption>
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Parser</th>
-<th scope="col" class="left">Shorthand</th>
+<th scope="col" class="org-left">Parser</th>
+<th scope="col" class="org-left">Shorthand</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td class="left">`internalField`</td>
-<td class="left">F</td>
+<td class="org-left">`internalField`</td>
+<td class="org-left">F</td>
 </tr>
 
 
 <tr>
-<td class="left">`patch`</td>
-<td class="left">P</td>
+<td class="org-left">`patch`</td>
+<td class="org-left">P</td>
 </tr>
 
 
 <tr>
-<td class="left">`subset`</td>
-<td class="left">S</td>
+<td class="org-left">`subset`</td>
+<td class="org-left">S</td>
 </tr>
 
 
 <tr>
-<td class="left">`faInternalField`</td>
-<td class="left">FF</td>
+<td class="org-left">`faInternalField`</td>
+<td class="org-left">FF</td>
 </tr>
 
 
 <tr>
-<td class="left">`faPatch`</td>
-<td class="left">FP</td>
+<td class="org-left">`faPatch`</td>
+<td class="org-left">FP</td>
 </tr>
 
 
 <tr>
-<td class="left">`cloud`</td>
-<td class="left">C</td>
+<td class="org-left">`cloud`</td>
+<td class="org-left">C</td>
 </tr>
 </tbody>
 </table>
@@ -767,6 +784,7 @@ descriptions.
 
     These functions give information about the mesh and are used
     without arguments:
+
     -   **pos():** Position of the native structures of the parser (for
         instance cell centers for `internalField`) (F, P, S,
         FF, FP, C)
@@ -782,6 +800,10 @@ descriptions.
     -   **nearDist():** Scalar field that gives the distance to the
         nearest wall (using `nearWallDist`)(F)
     -   **distToPatch(name):** Distance to patch `name` (F)
+    -   **distToCells(expr):** Distance to the cells for which the
+        expression is `true` (F)
+    -   **distToFaces(fexpr):** Distance to the faces for which the
+        expression is `true` (F)
     -   **rdist():** A field with the distances from a given vector
         (shorthand for `mag(pos()-v)`) (F, P, FF)
     -   **length():** Edge length (FF, FP)
@@ -820,10 +842,13 @@ descriptions.
 2.  Information about time
 
     Some special functions implemented in all parsers:
+
     -   **oldTime(fieldName):** value of a field at the last time. Not
         available for `cloud`
     -   **deltaT():** Scalar field with the current time-step size
     -   **time():** Scalar field with the current time
+    -   **outputTime():** Boolean field that is `true` if the current
+        time is a time at which data will be written
 
 3.  Differential operators
 
@@ -833,6 +858,7 @@ descriptions.
     expression of any type defined in a cell", an argument
     `faceScalar` means "only a scalar defined on a face is valid
     here"
+
     -   **div(cellExpr):** Divergence of tensor and vector fields
     -   **div(faceScalar,cellExpr):** Divergence with a "face flux"
     -   **div(faceExpr):** Divergence of a value defined on faces
@@ -865,6 +891,7 @@ descriptions.
 
     These functions interpolate fields between the native and the
     secondary structure of a parser
+
     -   **interpolate(cellExpr):** Interpolates to the faces (F, FF)
     -   **interpolateToPoint(cellExpr):** Interpolates to points (F)
     -   **interpolateToCell(pointExpr):** Interpolates to the cells (F)
@@ -891,6 +918,7 @@ descriptions.
 
     These functions take a field name and return a field from another
     place. They are only available in the patch parser:
+
     -   **internalField(fieldName):** Get the value of the field on the
         neighbouring internal cells(P, FP)
     -   **neighbourField(fieldName):** For a coupled patch get the value
@@ -911,7 +939,7 @@ descriptions.
     -   **snGrad(fieldName):** Gradient of the field `name` in the
         surface normal direction (P, FP)
 
-### Valid names<a id="sec-2-1-5" name="sec-2-1-5"></a>
+### Valid names<a id="orgheadline14"></a>
 
 Valid names in swak4Foam start with either a letter or `_` and
 continue with any number of letters, digits or `_`.
@@ -920,12 +948,13 @@ OpenFOAM allows the definition of names that have other
 characters too (like `:` or `-`). In that case these fields can
 be accessed using the `aliases`.
 
-### Variables and fields<a id="sec-2-1-6" name="sec-2-1-6"></a>
+### Variables and fields<a id="orgheadline19"></a>
 
 Names that are not functions specified in the grammar can be a
 number of things. It is tested for a number of other things (the
 first matching thing is used) and only when nothing of that name
 is found an error is raised:
+
 1.  The name of another mesh. This is only available in the
     Field-Parser and will be discussed below
 2.  A timeline. This is an object where a scalar is specified as a
@@ -938,9 +967,12 @@ is found an error is raised:
     `(` and `)`
 
     For details see the discussion of `lookuptables` below
-4.  A field or a variable. Fields are `GeometricFields` that are
+4.  A 2D lookup table which works like a lookup table with 2
+    variables
+5.  A field or a variable. Fields are `GeometricFields` that are
     usually declared and used by the OpenFOAM-solver. Depending on
     the application they are either
+
     -   looked up in memory
     -   looked up on disc and read in (in this case they **may** be
         cached in memory)
@@ -963,7 +995,7 @@ is found an error is raised:
     defined for that alias is searched. This allows accessing
     fields that have names with characters that are not valid for
     swak-names.
-5.  Names of plugin-functions. The concept of plugin-functions is
+6.  Names of plugin-functions. The concept of plugin-functions is
     described below
 
 1.  Fields from other meshes
@@ -1039,7 +1071,7 @@ is found an error is raised:
     parser. This avoids reading unneeded global variables.There are
     function objects that can set the values of global variables.
 
-### Plugin functions<a id="sec-2-1-7" name="sec-2-1-7"></a>
+### Plugin functions<a id="orgheadline20"></a>
 
 Plugin functions are functions that can be added to the parsers
 by loading a dynamic library. They are added to a dynamic
@@ -1062,6 +1094,9 @@ There are two basic types for arguments:
     -   **bool:** `true` or `false`
     -   **label:** integer values
     -   **vector:** three values enclosed by `()`
+    -   **tensor:** nine values enclosed by `()`
+    -   **symmTensor:** six values enclosed by `()`
+    -   **sphericalTensor:** one value enclosed by `()`
 -   **parsed values:** these are values returned by a swak-parser (it
     does not necessarily have to be the same parser
     type as the calling one. For instance a
@@ -1103,13 +1138,22 @@ this expression will be given. Also the location in the
 expression that called the plugin-function (in fact the whole
 stack if this expression is part of another plugin-function call)
 
-### Macro expansion<a id="sec-2-1-8" name="sec-2-1-8"></a>
+For an expression `fooFunmction(var+2)` where `fooFunction` is a
+Plugin-function the symbol `var` can be a variable: if in the
+parent dictionary there is a sub-dictionary `fooFunctionData` then
+this dictionary is searched for a `variables`-entry and these
+variables are then evaluated (it is also possible to have
+`lookuptables` and similar in `fooFunctionData`). This is only
+available if the "parent"-expression was created from a dictionary
+
+### Macro expansion<a id="orgheadline21"></a>
 
 Before expression and variable strings are stored in memory they are
 expanded with a simple mechanism that is based on the corresponding
 mechanism in OpenFOAM and therefor relies on the capabilities of
 the OpenFOAM-version (these differ between versions). It should be
 noted that
+
 -   this happens after OpenFOAM has read the dictionary-file (and
     done its own expansion)
 -   relies on the correct methods being used for reading the
@@ -1160,12 +1204,13 @@ variable list and inserted at that place into the variable
 list. During this process other lists are recursively inserted and
 macros are expanded (with `$`).
 
-## Parameters<a id="sec-2-2" name="sec-2-2"></a>
+## Parameters<a id="orgheadline38"></a>
 
 Usually parsers are getting their configuration parameters from an
 OpenFOAM dictionary (the only exceptions that a non-programming
 user will encounter are the utilities). For the most commonly used
 cases these are:
+
 -   **groovyBC:** the sub-dictionary that has the boundary condition
     specification (rule of thumb: the one that the `type`
     is specified in)
@@ -1188,9 +1233,10 @@ Description of the parameters are split in two parts:
 If in the following descriptions a default value for a parameter
 is specified then the parameter is **not** required.
 
-### Common parameters<a id="sec-2-2-1" name="sec-2-2-1"></a>
+### Common parameters<a id="orgheadline28"></a>
 
 Parameters for debugging the parser are:
+
 -   **debugCommonDriver:** Writes debugging information of the
     `Common` driver like variable evaluations etc. Makes output
     very verbose. Type: integer. Default: `0`
@@ -1250,6 +1296,7 @@ specification syntax is the same:
         an error)
     -   **readerType:** Type of the reader. Currently only two types
         are supported:
+
         -   **openFoam:** the regular OpenFOAM-format which
             is a list of value pairs: time
             and value
@@ -1276,6 +1323,11 @@ specification syntax is the same:
     conductivity). Specified exactly like
     `timelines` but when used a scalar expression
     has to be provided.
+-   **lookuptables2D:** Like `lookuptables` but for 2
+    variables. Currently no `readerType`-selection (only the
+    native `openFoam`-reader is supported: a list of tuples with
+    the first entry being the first value and the second a lookup
+    table for the second value)
 
 This optional parameter can be used to define aliases for field
 and set names:
@@ -1407,15 +1459,27 @@ and set names:
     If the case is a multi-region case then the mesh region for this
     parser can be specified. Otherwise the used region is
     context-dependent (usually the default mesh is used):
+
     -   **region:** Name of the mesh to be used
 
-### Parser-specific parameters<a id="sec-2-2-2" name="sec-2-2-2"></a>
+5.  Loading additional function plugins
+
+    It is possible to load additional function plugin libraries
+    through an optional entry:
+
+    -   **functionPlugins:** if present this is a list of words. To each
+        of theses words the string `libswak` is prepended and
+        `FunctionPlugin.so` is appended and a library of that name
+        is loaded
+
+### Parser-specific parameters<a id="orgheadline37"></a>
 
 Certain drivers/parsers have additional parameters.
 
 1.  Additional parameters of the field-parser
 
     This has only one additional parameter:
+
     -   **dimensions:** physical dimensions of the result. Depending on
         the application this parameter may or may not be
         used. Optional (otherwise the result is
@@ -1424,6 +1488,7 @@ Certain drivers/parsers have additional parameters.
 2.  Additional parameter of the patch-driver
 
     The only additional parameter here is
+
     -   **mappingInterpolation:** A sub-dictionary with the interpolation
         schemes to be used if this is a mapped patch and mapping
         with interpolation is used. Optional. If unset this is an
@@ -1440,6 +1505,7 @@ Certain drivers/parsers have additional parameters.
     The additional (optional) parameters for this class of drivers is
     concerned with what is happening if a field is undefined on the
     native structure:
+
     -   **autoInterpolate:** If this variable is `true` and for instance
         the parser works on faces and a field is **not** defined as a
         face-field but is defined as a volume-field then the driver
@@ -1454,18 +1520,21 @@ Certain drivers/parsers have additional parameters.
 
     To specify which set the driver is working on one parameter is
     needed:
+
     -   **setName:** name of the cell or face-set
 
 5.  Additional parameter for `cellZone` and `faceZone` drivers
 
     To specify which zone the driver is working on one parameter is
     needed:
+
     -   **zoneName:** name of the cell or face-zone
 
 6.  Additional parameters for sampled set and sampled surfaces
 
     These two drivers have two parameters that determine how field
     values are mapped to them:
+
     -   **interpolate:** if this is `true` then the field values are
         interpolated to the sample. Otherwise the field
         is "only" sampled (the value of the nearest cell
@@ -1528,6 +1597,7 @@ Certain drivers/parsers have additional parameters.
 
     The `faInternalField` driver adds the same parameter as the
     field-driver:
+
     -   **dimensions:** physical dimensions of the result
 
     The `faPatch` driver adds a parameter to determine the name of
@@ -1539,12 +1609,13 @@ Certain drivers/parsers have additional parameters.
 
     The additional parameter this parser needs is for the
     interpolation of fields from the fluid phase:
+
     -   **interpolationSchemes:** a dictionary with the interpolation
         schemes that should be used to interpolate from the fluid
         phase values to the particle position. Only required if
         `fluidPhase` is used in an expression
 
-## Information written for restarting<a id="sec-2-3" name="sec-2-3"></a>
+## Information written for restarting<a id="orgheadline39"></a>
 
 Certain features of the parsers (especially stored and delayed
 variables) need to write information to allow an exact
@@ -1562,17 +1633,17 @@ stored and delayed variables are restored to the state they had at
 write them. If this is not the desired behavior these files can be
 deleted before restart.
 
-# Usable parts<a id="sec-3" name="sec-3"></a>
+# Usable parts<a id="orgheadline46"></a>
 
-## Utilities<a id="sec-3-1" name="sec-3-1"></a>
+## Utilities<a id="orgheadline41"></a>
 
-## Boundary conditions<a id="sec-3-2" name="sec-3-2"></a>
+## Boundary conditions<a id="orgheadline42"></a>
 
-## Function objects<a id="sec-3-3" name="sec-3-3"></a>
+## Function objects<a id="orgheadline43"></a>
 
-## Function plugins<a id="sec-3-4" name="sec-3-4"></a>
+## Function plugins<a id="orgheadline44"></a>
 
-## Data entry<a id="sec-3-5" name="sec-3-5"></a>
+## Data entry<a id="orgheadline45"></a>
 
 The main library introduces a subtype of `DataEntry` that is
 selected under the name `swak` wherever data entries lie
@@ -1603,13 +1674,13 @@ Only for integrations an additional parameter is needed
 -   **integrationIntervalls:** number of intervals the integration
     range is divided into.
 
-# Programming<a id="sec-4" name="sec-4"></a>
+# Programming<a id="orgheadline49"></a>
 
-## Writing plugin-functions<a id="sec-4-1" name="sec-4-1"></a>
+## Writing plugin-functions<a id="orgheadline47"></a>
 
-## Adding new parsers<a id="sec-4-2" name="sec-4-2"></a>
+## Adding new parsers<a id="orgheadline48"></a>
 
-# Bits and pieces<a id="sec-5" name="sec-5"></a>
+# Bits and pieces<a id="orgheadline62"></a>
 
 This section holds bits of documentation that will later be moved
 to different places when the parts in whose context it makes sense
@@ -1617,7 +1688,7 @@ are written.
 
 But for the time being they are useful if they are **anywhere**
 
-## Accumulations<a id="sec-5-1" name="sec-5-1"></a>
+## Accumulations<a id="orgheadline51"></a>
 
 For function objects where a large number of values are to be
 broken down to a single value `swak4Foam` has the concept of
@@ -1630,6 +1701,7 @@ cells the cell volume . Otherwise the weight \(1\) is used. See also
 table \ref{tab:naturalWeights}). Some of these accumulations need a
 single floating point number as a parameter. This is simply added
 to the name. The added accumulations are:
+
 -   **min:** Minimum value
 -   **max:** Maximum value
 -   **sum:** Sum of the values
@@ -1660,14 +1732,25 @@ to the name. The added accumulations are:
 -   **weightSum:** Sum of the weights of the underlying
     entity. Usually the volume oder the area of it.
 
-## Parameters for the Python-interpreter wrapper<a id="sec-5-2" name="sec-5-2"></a>
+### Logical accumulations<a id="orgheadline50"></a>
+
+Logical swak-expressions usually generate an arry with more than 1
+logical value. Then a `logicalAccumulation` is used to boil it
+down to one logical value. The possible values here are either
+
+-   **or:** It is `true` if at least one of the logical values is
+    `true`. Therefor it is only `false` if **all** logical values
+    are `false`
+-   **and:** This is only `true` if **all** logical values are `true`
+
+## Parameters for the Python-interpreter wrapper<a id="orgheadline57"></a>
 
 These parameters are common to all programs that use the embedded
 python-interpreter and are specified in a dictionary (usually the
 one of the function object or a special one - `python` for.
 `funkyPythonPostproc`)
 
-### General behavior<a id="sec-5-2-1" name="sec-5-2-1"></a>
+### General behavior<a id="orgheadline53"></a>
 
 When the program is started (function object is created) Python
 is initialized (if this is the first instance) and then a new
@@ -1730,9 +1813,10 @@ two cases:
     to `vectorField`, 9 columns to `tensorField` and 6 columns to
     `symmTensorField`. Different column-numbers produce errors
 
-### Predefined variables and functions<a id="sec-5-2-2" name="sec-5-2-2"></a>
+### Predefined variables and functions<a id="orgheadline54"></a>
 
 Variables defined are
+
 -   **functionObjectName:** the name of the function object (or
     `notAFunctionObject`)
 -   **caseDir:** Path to the case directory
@@ -1766,7 +1850,7 @@ The functions are (`name` is the name of the function object)
     `<case>/<time>/<name>_data`. Should only be used for data
     that is written only at write-time
 
-### The options<a id="sec-5-2-3" name="sec-5-2-3"></a>
+### The options<a id="orgheadline55"></a>
 
 -   **useNumpy:** Automatically import the `numpy`-library if it is
     present (otherwise the program will behave as if the
@@ -1834,9 +1918,10 @@ The functions are (`name` is the name of the function object)
     which cause a deadlock when imported in the usual
     Python-code
 
-### Loading code snipplets<a id="sec-5-2-4" name="sec-5-2-4"></a>
+### Loading code snipplets<a id="orgheadline56"></a>
 
 Python code-snipplets can be specified in two forms:
+
 1.  As a separate file
 2.  As a string in the dictionary
 
@@ -1853,3 +1938,115 @@ entries has to be present in the dictionary
 
 `File` and `Code` are mutual exclusive. If both (or neither) are
 specified an error occurs
+
+## State machines<a id="orgheadline61"></a>
+
+*State machines* are computational abstractions: they always hold
+one of a finite number of states. There are rules for switching
+between states in the machine: The rules have three items:
+
+1.  the original state
+2.  a condition
+3.  the next state
+
+If the machine is in the original state **and** the condition is
+`true` then the machine switches to the next state
+
+The basic function objects to create and use state machines can be
+added to a case with
+
+    libs (
+        "libswakStateMachine.so"
+    );
+
+### Specifying a state machine<a id="orgheadline58"></a>
+
+The function object `stateMachineCreateAndUpdate` creates a *State
+machine* and updates it once per time-step. The function object is
+based on the `simpleFunctionObject` and therefor has all the
+options specified by it.
+
+The conditions will be evaluated by a swak4Foam-parser. What kind
+of parser can be specified with `valueType`. `variables` can be
+used as usual. They will be evaluated **before** the conditions are
+evaluated and will be only evaluated **once**.
+
+The acual specification of the *State machine* is done with these
+parameters:
+
+-   **machineName:** this is a unique name under which this machine
+    will be registered under a central registry. If a second
+    machine with the same name is created then the simulation
+    will fail. The machine can be found under this name
+-   **states:** A list with the names of the possible
+    states. The machine is always in one of these states
+-   **initialState:** the name of the state that the machine is in
+    when the simulation starts. During the simulation the state
+    is stored whenever a time-step is written to disk. When the
+    simulation is restarted from such a time-step this state
+    information is read and `initialState` is ignored
+-   **transitions:** These are the actual rules that control how the
+    state machine moves from one state to another. The list of
+    rules is evaluated in the specified order. Once one of the
+    rules applies the machine moves to the specified state and
+    all other rules are **not** tested. If none of the rules
+    applies then the machine remains in the current state.
+
+    A rule is specified by a dictionary with these parameters:
+
+    -   **from:** a state name. The rule only is tested if the
+        machine is in this state
+    -   **condition:** a swak-expression. This is the condition that is
+        tested. If it is `true` the machine switches to a new state
+    -   **logicalAccumulation:** Boils down the array of logical values
+        to one logical decision. See [5.1.1](#orgheadline50) above
+    -   **to:** name of the state the machine moves to if `condition` is
+        `true` according to `logicalAccumulation`
+    -   **description:** A descriptive text that is printed out at every
+        state transition. This is only for documentation
+
+### Using the *State Machine*<a id="orgheadline59"></a>
+
+Usually the machines are used in swak-expressions. To do that the
+library adds a number of plugin-functions. The convention is that
+the function name starts with `stateMachine_` and that the first
+parameter of the function is the `machineName` of the machine we
+want to get the information about
+
+-   **stateMachine<sub>isState</sub>:** Checks whether the machine is in a
+    certain state. The second parameter is the name of the state
+    that is checked for
+-   **stateMachine<sub>timeSinceChange</sub>:** Simulation time since the
+    machine changed to the current state. This can be used to
+    switch states after a certain time
+-   **stateMachine<sub>stepsSinceChange</sub>:** Number of steps since machine
+    changed to the current state. Can be used to make sure that
+    machines remain in a certain state for a fixed number of
+    steps
+-   **stateMachine<sub>changedTo</sub>:** Second parameter is a state name. This
+    function returns how often the machine changed into that
+    state. Can be used to change to a different state after a
+    certain number of cycles
+
+These functions can be used in almost all parsers and return their
+values in such a size that they fit the *native* structure of this
+parser.
+
+### Additional function objects<a id="orgheadline60"></a>
+
+There are also some function objects to manipulate the *State
+Machines* or report their state. The names of these always start
+with `stateMachine`:
+
+-   **stateMachineSetState:** forces the state machine into a certain
+    state (without using a condition)
+-   **stateMachineState:** writes the state of the machine to a
+    timeline in the `postProcessing`-directory. The information
+    written to this file is
+    -   the time
+    -   name of the state
+    -   the numeric code of the state
+    -   time since the last state change
+    -   number of steps since the last state change
+    -   for each state the information how often the machine changed
+        to that state

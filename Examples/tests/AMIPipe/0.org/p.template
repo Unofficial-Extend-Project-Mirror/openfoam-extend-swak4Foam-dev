@@ -1,0 +1,63 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v3.0+                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+
+    inlet
+    {
+        type            zeroGradient;
+    }
+
+    outlet
+    {
+        type            fixedValue;
+        value           uniform 0;
+    }
+
+    cylinder
+    {
+        type            zeroGradient;
+    }
+
+    "intersect1.*"
+    {
+<!--(if pressureJump)-->
+        type groovyBCJumpAMI;
+        patchType cyclicAMI;
+        variables (
+            "maxDeltaP=1e5;"
+            "radius=max(pts().x);"
+            "r=sqrt(pos().x*pos().x+pos().y*pos().y);"
+        );
+        jumpExpression "maxDeltaP*(1-r/radius)";
+<!--(else)-->
+        type cyclicAMI;
+<!--(end)-->
+    }
+    "intersect2.*"
+    {
+        type cyclicAMI;
+    }
+}
+
+
+// ************************************************************************* //
