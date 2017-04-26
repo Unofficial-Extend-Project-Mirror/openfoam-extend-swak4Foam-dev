@@ -36,7 +36,10 @@ Description
 SourceFiles
     swakDataEntry.C
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakDataEntry_H

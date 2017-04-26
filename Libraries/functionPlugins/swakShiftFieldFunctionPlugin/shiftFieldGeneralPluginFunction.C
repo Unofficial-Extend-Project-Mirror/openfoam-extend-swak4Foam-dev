@@ -89,7 +89,12 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
             newBound[patchI]=origBound[patchI].clone(shiftMesh.boundaryMesh()).ptr();
         }
         shiftMesh.removeFvBoundary();
+
+#ifdef FOAM_MESHTOMESH_OLD_STYLE
+        shiftMesh.addFvPatches(newBound);
+#else
         shiftMesh.addPatches(newBound);
+#endif
 
 #ifdef FOAM_MESHTOMESH_HAS_CORRECTEDCELLVOLUMEWEIGHT
         shiftMesh.fvSchemes::merge(
@@ -134,14 +139,16 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
 
     meshToMesh interpolation(
         shiftMesh,
-        origMesh,
+        origMesh
 #ifdef FOAM_NEW_MESH2MESH
         //        meshToMesh::imCellVolumeWeight,   // strange patterns
         //        meshToMesh::imDirect,  // almost no  fitting
         //        meshToMesh::imMapNearest, // stable. No default
-        Order,
+        ,Order
 #endif
-        false
+#ifndef FOAM_MESHTOMESH_OLD_STYLE
+        ,false
+#endif
     );
 
 #ifdef FOAM_NEW_MESH2MESH
@@ -159,13 +166,18 @@ void shiftFieldGeneralPluginFunction<Type,Order>::doEvaluation()
 #endif
 #else
     interpolation.interpolate(
+#ifdef FOAM_MESHTOMESH_OLD_STYLE
+        initField,
+#endif
         newField,
         //        meshToMesh::imCellVolumeWeight,
-        Order,
+        Order
 #ifdef FOAM_MESHTOMESH_INTERPOLATE_REDUCE
-        eqOp<Type>(),
+        ,eqOp<Type>(),
 #endif
-        initField
+#ifndef FOAM_MESHTOMESH_OLD_STYLE
+        ,initField
+#endif
     );
 #endif
 

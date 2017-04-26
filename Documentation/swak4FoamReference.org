@@ -1482,3 +1482,7 @@ libs (
       - number of steps since the last state change
       - for each state the information how often the machine changed
         to that state
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:

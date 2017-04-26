@@ -1,2 +1,5 @@
 [Plotting]
 autoplots: cloudNumberMass
+
+[Template]
+allowExecution: True

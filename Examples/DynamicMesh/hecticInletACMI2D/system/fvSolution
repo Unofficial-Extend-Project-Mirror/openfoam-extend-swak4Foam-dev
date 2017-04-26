@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  v3.0+                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -10,22 +10,19 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
     object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-solvers {
+solvers
+{
     pcorr
     {
         solver          GAMG;
         tolerance       1e-2;
         relTol          0;
-        smoother        DICGaussSeidel;
+        smoother        GaussSeidel;
         cacheAgglomeration no;
-        nCellsInCoarsestLevel 10;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
         maxIter         50;
     }
 
@@ -50,39 +47,26 @@ solvers {
         tolerance       1e-6;
         relTol          0.1;
     }
+
     "(U|k|epsilon)Final"
     {
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
+        $U;
         tolerance       1e-6;
         relTol          0;
     }
-
-    ".*Field" {
-        solver          PBiCG;
-        preconditioner  DILU;
-        maxIter         1000;
-        relTol          0;
-        nSweeps         1;
-    }
 }
 
-PIMPLE {
+PIMPLE
+{
     correctPhi          no;
-    nOuterCorrectors    2;
-    nCorrectors         1;
-    nNonOrthogonalCorrectors 0;
-}
-
-".*FieldTransportPDE" {
-    nCorrectors 2;
+    nOuterCorrectors    1;
+    nCorrectors         2;
     nNonOrthogonalCorrectors 0;
 }
 
 relaxationFactors
 {
-    "(U|k|epsilon).*"   1;
-    movedSteadyField 0.9;
+//    "(U|k|epsilon).*"   1;
 }
 
 cache

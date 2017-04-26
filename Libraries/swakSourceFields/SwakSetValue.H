@@ -100,7 +100,10 @@ public:
             //- Set value on vector field
             virtual void setValue(fvMatrix<T>& eqn, const label fieldI);
 
-
+            //- in newer versions setValue was renamed
+            virtual void constrain(fvMatrix<T>& eqn, const label fieldI) {
+                setValue(eqn,fieldI);
+            }
 };
 
 

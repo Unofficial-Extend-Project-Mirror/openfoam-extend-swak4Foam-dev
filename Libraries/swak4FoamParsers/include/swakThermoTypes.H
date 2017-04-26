@@ -71,6 +71,11 @@ namespace Foam {
 
 #endif
 
+#ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_RADIATION_HAS_SOOTMODEL
+#define FOAM_RADIATION_HAS_PUBLIC_ABSORPTIONMODEL
+#endif
+
 
 #include "DebugOStream.H"
 

@@ -1,0 +1,115 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createBafflesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Whether to convert internal faces only (so leave boundary faces intact).
+// This is only relevant if your face selection type can pick up boundary
+// faces.
+internalFacesOnly false;
+
+
+// Baffles to create.
+baffles
+{
+    // NOTE: cyclicAMI patches MUST BE defined PRIOR to their associted
+    //       blockage patches
+
+<!--(for name in ["Left","Right","Inlet"])-->
+    ACMI_|-name-|Center
+    {
+        //- Use predefined faceZone to select faces and orientation.
+        type        faceZone;
+        zoneName    couple|-name-|CenterFaces;
+
+        patches
+        {
+            master
+            {
+                //- Master side patch
+                name            ACMI_|-name-|Center_couple;
+                type            groovyCyclicACMI;
+                matchTolerance  0.0001;
+                neighbourPatch  ACMI_Center|-name-|_couple;
+                nonOverlapPatch ACMI_|-name-|Center_blockage;
+                transform       noOrdering;
+                openField       valveField;
+            }
+            slave // not used since we're manipulating a boundary patch
+            {
+                //- Slave side patch
+                name            ACMI_|-name-|Center_couple;
+                type            patch;
+            }
+
+            master2
+            {
+                //- Master side patch
+                name            ACMI_|-name-|Center_blockage;
+                type            wall;
+            }
+            slave2 // not used since we're manipulating a boundary patch
+            {
+                //- Slave side patch
+                name            ACMI_|-name-|Center_blockage;
+                type            wall;
+            }
+
+        }
+    }
+    ACMI_Center|-name-|
+    {
+        //- Use predefined faceZone to select faces and orientation.
+        type        faceZone;
+        zoneName    coupleCenter|-name-|Faces;
+
+        patches
+        {
+            master
+            {
+                //- Master side patch
+                name            ACMI_Center|-name-|_couple;
+                type            groovyCyclicACMI;
+                matchTolerance  0.0001;
+                neighbourPatch  ACMI_|-name-|Center_couple;
+                nonOverlapPatch ACMI_Center|-name-|_blockage;
+                transform       noOrdering;
+                openField       valveField;
+            }
+            slave // not used since we're manipulating a boundary patch
+            {
+                //- Slave side patch
+                name            ACMI_Center|-name-|_couple;
+                type            patch;
+            }
+
+            master2
+            {
+                //- Master side patch
+                name            ACMI_Center|-name-|_blockage;
+                type            wall;
+            }
+            slave2 // not used since we're manipulating a boundary patch
+            {
+                //- Slave side patch
+                name            ACMI_Center|-name-|_blockage;
+                type            wall;
+            }
+        }
+    }
+<!--(end)-->
+}
+
+
+// ************************************************************************* //

@@ -45,6 +45,8 @@ wclean swakCloudFunctionObjects
 
 wclean swakStateMachine
 
+wclean swakDynamicMesh
+
 # Remove residual from bison
 rm -f */*.output
 

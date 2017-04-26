@@ -25,7 +25,7 @@ stopAt          endTime;
 
 endTime         0.5;
 
-deltaT          1e-3;
+deltaT          |-deltaT-|;
 // deltaT          0.25e-3;
 
 writeControl    adjustableRunTime;
@@ -46,7 +46,11 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
+adjustTimeStep |-variableTimeStep-|;
+maxCo |-maxCo-|;
+
 functions {
+<!--(if doTransport)-->
     solveTracer {
         type solveTransportPDE;
         solveAt timestep;
@@ -103,6 +107,8 @@ functions {
         $tracerStats;
         expression "staticField";
     }
+<!--(end)-->
+<!--(if doParticles)-->
     rhoField {
         type expressionField;
         fieldName pseudoRho;
@@ -200,6 +206,7 @@ functions {
         $inletTransientPosition;
         cloudName staticGridCloud;
     }
+<!--(end)-->
 }
 
 libs (
@@ -208,6 +215,7 @@ libs (
     "libsimpleLagrangianFunctionObjects.so"
     "libsimpleCloudFunctionObjects.so"
     "libswakLagrangianParser.so"
+    "libswakDynamicMesh.so"
 );
 
 // ************************************************************************* //

@@ -281,6 +281,23 @@ public:
         const label fieldI
     );
 
+    //- in newer versions setValue was renamed
+    virtual void constrain(fvMatrix<scalar>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<vector>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<tensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<symmTensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<sphericalTensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+
 };
 
 
