@@ -59,6 +59,8 @@ updateSimpleFunctionObject::updateSimpleFunctionObject
 :
     simpleFunctionObject(name,t,dict)
 {
+    Pout << "Creating " << name << endl;
+
     runIfStartTime_=dict_.lookupOrDefault<bool>("runIfStartTime",false);
     onlyAtStartup_=readBool(dict_.lookup("onlyAtStartup"));
     if(onlyAtStartup_) {

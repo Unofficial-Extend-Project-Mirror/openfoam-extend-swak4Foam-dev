@@ -151,6 +151,8 @@ Contributors/Copyright:
 #if !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 // interpolate-method for meshToMesh needs a reduce-operation
 #define FOAM_MESHTOMESH_INTERPOLATE_REDUCE
+#else
+#define FOAM_MESHTOMESH_OLD_STYLE
 #endif
 
 #if (OPENFOAM_PLUS >= 1606)

@@ -72,6 +72,10 @@ executeIfObjectExistsFunctionObject::executeIfObjectExistsFunctionObject
     )
 {
     readParameters(dict);
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 

@@ -115,24 +115,26 @@ ExpressionResult::ExpressionResult(
         dict.found("value")
     ) {
         if(isSingleValue_) {
+            label fs=dict.lookupOrDefault<label>("fieldSize",1);
+
             if(valType_==pTraits<scalar>::typeName) {
                 single_.scalar_=pTraits<scalar>(dict.lookup("value"));
-                valPtr_=new scalarField(1,single_.scalar_);
+                valPtr_=new scalarField(fs,single_.scalar_);
             } else if(valType_==pTraits<bool>::typeName) {
                 single_.bool_=pTraits<bool>(dict.lookup("value"));
-                valPtr_=new Field<bool>(1,single_.bool_);
+                valPtr_=new Field<bool>(fs,single_.bool_);
             } else if(valType_==pTraits<vector>::typeName) {
                 single_.vector_=pTraits<vector>(dict.lookup("value"));
-                valPtr_=new Field<vector>(1,single_.vector_);
+                valPtr_=new Field<vector>(fs,single_.vector_);
             } else if(valType_==pTraits<tensor>::typeName) {
                 single_.tensor_=pTraits<tensor>(dict.lookup("value"));
-                valPtr_=new Field<tensor>(1,single_.tensor_);
+                valPtr_=new Field<tensor>(fs,single_.tensor_);
             } else if(valType_==pTraits<symmTensor>::typeName) {
                 single_.symmTensor_=pTraits<symmTensor>(dict.lookup("value"));
-                valPtr_=new Field<symmTensor>(1,single_.symmTensor_);
+                valPtr_=new Field<symmTensor>(fs,single_.symmTensor_);
             } else if(valType_==pTraits<sphericalTensor>::typeName) {
                 single_.sphericalTensor_=pTraits<sphericalTensor>(dict.lookup("value"));
-                valPtr_=new Field<sphericalTensor>(1,single_.sphericalTensor_);
+                valPtr_=new Field<sphericalTensor>(fs,single_.sphericalTensor_);
             } else {
                 FatalErrorIn("ExpressionResult::ExpressionResult(const dictionary &dict)")
                     << "Don't know how to read data type " << valType_

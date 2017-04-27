@@ -73,6 +73,10 @@ executeIfOpenFOAMVersionBiggerEqualFunctionObject::executeIfOpenFOAMVersionBigge
 {
     // do it here to avoid the superclass-read being read twice
     readData(dict);
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 
@@ -95,7 +99,7 @@ bool executeIfOpenFOAMVersionBiggerEqualFunctionObject::condition()
 #define TOSTRING(x) string(#x)
 
     label foamVersionPatch=-1;
-    if(TOSTRING(FOAM_VERSION4SWAK_PATCH)!="x") {
+    if(isdigit(TOSTRING(FOAM_VERSION4SWAK_PATCH)[0])) {
         foamVersionPatch=toLabel(TOSTRING(FOAM_VERSION4SWAK_PATCH));
     }
     if(majorVersion_>FOAM_VERSION4SWAK_MAJOR) {

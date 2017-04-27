@@ -1,0 +1,157 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application replayTransientBC;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+// endTime         0.001;
+endTime         0.1;
+
+deltaT          1e-05;
+
+writeControl    timeStep;
+
+writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+functions
+{
+    whatIsThere {
+        type listRegisteredObjects;
+    }
+    onlyOnStart {
+        type executeIfStartTime;
+        readDuringConstruction true;
+        runIfStartTime true;
+
+        functions {
+            getAPhi {
+                type expressionField;
+                fieldName phi;
+                expression "interpolate(0)";
+                dimension [0 3 -1 0 0 0 0];
+                autowrite true;
+            }
+        }
+        else {
+            functions {
+                phiValues {
+                    type swakExpression;
+                    valueType internalField;
+                    expression "phi";
+                    verbose true;
+                    accumulations (
+                        min
+                        average
+                        max
+                    );
+                }
+            }
+        }
+    }
+    readPhi {
+        type readAndUpdateFields;
+        fields (
+            phi
+        );
+        outputControl timeStep;
+        outputInterval 1;
+        correctBoundary no;
+    }
+    calcPotentialU {
+        type initPotentialFlow;
+        UName U;
+        pName p;
+        outputControlMode startup;
+        writeOldFields true;
+        writeFields true;
+        overrideP true;
+        initialiseUBCs true;
+        onlyAtStartup true;
+        runIfStartTime true;
+    }
+    resetPhi {
+        type recalcPhi;
+        outputControlMode startup;
+        writeOldFields true;
+        writeFields true;
+        UName U;
+        pName p;
+        phiName phi;
+        rhoName rho;
+        onlyAtStartup true;
+        runIfStartTime true;
+    }
+    scalarTransport {
+        // result doubtful
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName scalar;
+        steady false;
+
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "1e-4" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 0 0 0 0];
+
+        phi "phi" [0 3 -1 0 0];
+    }
+};
+
+DebugSwitches {
+    // simpleFunctionObject 1;
+    // listRegisteredObjectsFunctionObject 1;
+}
+
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libgroovyStandardBCs.so"
+    "libsimpleFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+) ;
+
+profiling
+{
+    active      true;
+    cpuInfo     true;
+    memInfo     false;
+    sysInfo     true;
+}
+
+// ************************************************************************* //

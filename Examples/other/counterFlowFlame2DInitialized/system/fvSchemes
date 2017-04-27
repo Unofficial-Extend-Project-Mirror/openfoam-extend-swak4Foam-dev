@@ -32,8 +32,7 @@ divSchemes
 
     div(phi,U)      Gauss limitedLinearV 1;
     div(phi,Yi_h)   Gauss limitedLinear01 1;
-    div(phi,CH4)    $div(phi,Yi_h);
-    div(phi,O2)     $div(phi,Yi_h);
+    "div\(phi.*,(CH4|O2)\)"    $div(phi,Yi_h);
     div(phi,hs)     Gauss limitedLinear 1;
     div(phi,K)     Gauss limitedLinear 1;
     div(phiU,p)     Gauss limitedLinear 1;
@@ -42,6 +41,7 @@ divSchemes
     div(phi,k) Gauss limitedLinear 1;
     div((muEff*dev2(grad(U).T()))) Gauss linear;
     div((muEff*dev2(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes

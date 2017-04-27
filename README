@@ -612,9 +612,9 @@ S_{expl} + S_{impl} T
      Demonstrates initializing a case with initial conditions that
      approximate the real flow.
      - Solver :: reactingFoam
-     - Case preparation :: run the supplied script
-          =prepareCase.sh=. *Caution:* this has to be done *every*
-          time before running the case
+     - Case preparation :: run =pyFoamPrepareCase.py=. *Caution:* this
+          has to be done *every* time before running the case because
+          the initialized fields are rewritten
      - Demonstrates :: Demonstrates setting calculated initial
                        conditions with functionObjects
 **** =simpleBendedPipe=
@@ -3594,7 +3594,10 @@ S_{expl} + S_{impl} T
      to access the first element of an empty field. The fix was to
      write the value $0$ instead. This fix has been adapted so that
      the actual uniform value is written to the file (and read as well)
-*** Internals
+**** =executeIfOpenFOAMVersionBiggerEqual= not correctly working with alphabetic patch versions
+     If the patch version of the current OpenFOAM-version is not a
+     number and not =x= then this function object failed
+*** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
      above) a =union= was added to store the single values. The reason
@@ -3609,13 +3612,19 @@ S_{expl} + S_{impl} T
      =unions= are only supported for that standard. This will lead to
      a slightly higher memory usage (but still small compared to full
      fields)
+**** Rewrite of =functionObject= removes the =start()=-method
+     OpenFOAM-versions based on the foundation release 4.0 and later
+     don't have a =start()=-method in the function objects
+     anymore. Lot of functionality of swak relied on this method. To
+     make swak compatible across versions =start()= is now called in
+     the constructors of the function-objects (if the OpenFOAM-version
+     requires it)
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of
      =hg branch= is added to the version output that utilities like
      =funkySetFields= print
 *** Documentation
-*** Internals (for developers)
 *** New features
 **** Function plugin =ShiftField= that allows shifting volume fields
      When adding the library =libswakShiftFieldFunctionPlugin.so= to
@@ -3772,6 +3781,19 @@ S_{expl} + S_{impl} T
 **** Additional functions in the radiation function plugin
      Additional functions for the =absorptionEmissionModel= and the
      =sootModel= are added to to library with the radiation-functions
+**** Improvement of =readAndUpdateFields=: surface fields, output, switching
+     The function object =readAndUpdateFields= got three improvements:
+     - an optional switch =correctBoundary= allows switching the
+       correction of boundary conditions off
+     - surface-fields are now read as well. But no boundary correction
+       is performed as the these fields do not support this
+     - better output. Instead of silently reading fields or using
+       those in memory the name of the field and the type are written
+       out
+**** =executeIfStartTime= now also allows execution if it is "only" a restart
+     Normally the function object only executes only if this is the
+     real start time (not a restart). If the option =executeOnRestart=
+     is set then the function object also executes if this is a restart
 **** =reportAvailableFvOptions= now reports =constrain=-methods
      On OpenFOAM-versions that support it this now reports if
      =constrain= is called for an equation
