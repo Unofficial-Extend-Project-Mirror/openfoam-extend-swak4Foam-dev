@@ -64,30 +64,27 @@ conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy
         dict.lookupOrDefault<bool>("constructUnconditionally",false)
     )
 {
+    Dbug << "constructing " << name << endl;
+
     if(!dict.found("constructUnconditionally")) {
         WarningIn("conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy")
             << "'constructUnconditionally' not set in " << dict.name()
                 << ". Assuming 'no'. If you want "
                 << "'functions' to be constructed at the start then set to 'yes'"
                 << endl;
+    }
 
-    }
-    if(debug) {
-        Info << "conditionalFunctionObjectListProxy::conditionalFunctionObjectListProxy" << endl;
-    }
     if(dict.found("else")) {
-        if(debug) {
-            Info << "'else' found" << endl;
-        }
+        Dbug << "'else' found" << endl;
+
         readElse(dict);
     }
 }
 
 void conditionalFunctionObjectListProxy::readElse(const dictionary &dict)
 {
-    if(debug) {
-        Info << "conditionalFunctionObjectListProxy::readElse" << endl;
-    }
+    Dbug << "conditionalFunctionObjectListProxy::readElse" << endl;
+
     elseDict_.set(
         new dictionary(dict.subDict("else"))
     );

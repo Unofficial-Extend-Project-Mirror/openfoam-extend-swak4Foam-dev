@@ -1,0 +1,30 @@
+// -*- c++ -*-
+
+doParticles {
+    description "Should particle tests be done?";
+    default yes;
+}
+doTransport {
+    description "Should transport tests be done?";
+    default yes;
+}
+pressureJump {
+    description"Add a pressure jump to one of the interfaces";
+    default no;
+}
+
+deltaT 1e-3;
+
+maxCo 0.5;
+
+variableTimeStep yes;
+
+pimpleOuterCorr 2;
+
+pimpleCorr 4;
+
+pimpleNonOrthCorr 0;
+
+transportCorr 2;
+
+transportNonOrthCorr 0;

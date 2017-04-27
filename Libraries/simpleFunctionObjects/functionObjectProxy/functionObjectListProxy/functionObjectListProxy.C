@@ -71,6 +71,8 @@ functionObjectListProxy::functionObjectListProxy
         dict
     )
 {
+    Pbug << "Constructing " << name << endl;
+
     if(
         allowReadingDuringConstruction
         &&
@@ -85,9 +87,8 @@ functionObjectListProxy::functionObjectListProxy
         &&
         readBool(dict.lookup("readDuringConstruction"))
     ) {
-        if(writeDebug()) {
-            Info << this->name() << " list initialized during construction" << endl;
-        }
+        Dbug << this->name() << " list initialized during construction" << endl;
+
         //        initFunctions();
         read(dict);
     } else if(
@@ -115,18 +116,15 @@ void functionObjectListProxy::initFunctions()
         )
     );
 
-    if(writeDebug()) {
-        Info << this->name() << " list initialized with "
-            << functions_->size() << " FOs" << endl;
-    }
+    Dbug << this->name() << " list initialized with "
+        << functions_->size() << " FOs" << endl;
 }
 
 functionObjectList &functionObjectListProxy::functions()
 {
     if(!functions_.valid()) {
-        if(writeDebug()) {
-            Info << this->name() << " list initialized on demand" << endl;
-        }
+        Dbug << this->name() << " list initialized on demand" << endl;
+
         initFunctions();
     }
 
@@ -135,9 +133,7 @@ functionObjectList &functionObjectListProxy::functions()
 
 bool functionObjectListProxy::execute(const bool forceWrite)
 {
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::execute()" << endl;
-    }
+    Dbug << this->name() << " functionObjectListProxy::execute()" << endl;
 
 #ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
     return functions().execute();
@@ -156,27 +152,21 @@ bool functionObjectListProxy::execute(const bool forceWrite)
 
 bool functionObjectListProxy::start()
 {
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::start()" << endl;
-    }
+    Dbug << this->name() << " functionObjectListProxy::start()" << endl;
 
     return functions().start();
 }
 
 bool functionObjectListProxy::end()
 {
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::end()" << endl;
-    }
+    Dbug << this->name() << " functionObjectListProxy::end()" << endl;
 
     return functions().end();
 }
 
 bool functionObjectListProxy::read(const dictionary& dict)
 {
-    if(writeDebug()) {
-        Info << this->name() << " functionObjectListProxy::read()" << endl;
-    }
+    Dbug << this->name() << " functionObjectListProxy::read()" << endl;
 
     return functions().read();
 }

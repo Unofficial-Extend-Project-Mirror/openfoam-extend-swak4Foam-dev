@@ -1,0 +1,76 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      valveField;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet {
+        type fixedValue;
+        value uniform 1;
+    }
+    left {
+        type inletOutlet;
+        value $internalField;
+        inletValue $internalField;
+    }
+    right {
+        $left;
+    }
+    defaultFaces
+    {
+        type            zeroGradient;
+    }
+    ACMI_InletCenter_blockage
+    {
+        type groovyBC;
+        value uniform 0;
+        variables (
+            "minX=min(pts().x);"
+            "maxX=max(pts().x);"
+            "halfX=(minX+maxX)/2;"
+        );
+        valueExpression "(stateMachine_isState(valves,filling)) ? (pos().x<halfX ? 0 : 1) : 1";
+    }
+    ACMI_LeftCenter_blockage
+    {
+        type groovyBC;
+        value uniform 0;
+        valueExpression "(stateMachine_isState(valves,openRight) || stateMachine_isState(valves,closingLeft)) ? 0 : 1";
+    }
+    ACMI_RightCenter_blockage
+    {
+        type groovyBC;
+        value uniform 0;
+        //        valueExpression "(stateMachine_isState(valves,openLeft) || stateMachine_isState(valves,closingLeft)) ? 0 : 1";
+        valueExpression "(stateMachine_isState(valves,openLeft)) ? 0 : 1";
+    }
+    "ACMI_.*_blockage"
+    {
+        type fixedValue;
+        value uniform 1;
+    }
+    "ACMI_.*_couple"
+    {
+        type  cyclicACMI;
+        value uniform 0;
+    }
+
+}
+
+// ************************************************************************* //

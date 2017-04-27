@@ -1,0 +1,129 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    alpha.water
+    {
+        nAlphaCorr      1;
+        nAlphaSubCycles 3;
+        cAlpha          1.5;
+    }
+
+    pcorr
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner  GAMG;
+            tolerance       1e-05;
+            relTol          0;
+            smoother        DICGaussSeidel;
+            cacheAgglomeration no;
+            agglomerator faceAreaPair;
+            nCellsInCoarsestLevel 10;
+            mergeLevels 1;
+        }
+
+        tolerance       1e-05;
+        relTol          0;
+        maxIter         100;
+    }
+
+    p_rgh
+    {
+        $pcorr;
+
+        solver          GAMG;
+        tolerance       1e-08;
+        relTol          0.01;
+        smoother        DIC;
+        agglomerator faceAreaPair;
+        nCellsInCoarsestLevel 10;
+        mergeLevels 1;
+    }
+
+    pd {
+        $p_rgh;
+    }
+
+    p_rghFinal
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner  GAMG;
+            tolerance       2e-09;
+            relTol          0;
+            nVcycles        2;
+            smoother        DICGaussSeidel;
+            nPreSweeps      2;
+            agglomerator faceAreaPair;
+            nCellsInCoarsestLevel 10;
+            mergeLevels 1;
+        }
+
+        tolerance       2e-09;
+        relTol          0;
+        maxIter         20;
+    }
+
+    pdFinal {
+        $p_rghFinal;
+    }
+
+    U
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        tolerance       1e-06;
+        relTol          0;
+        nSweeps         1;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor no;
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 0;
+    correctPhi      no;
+
+    nAlphaCorr      1;
+    nAlphaSubCycles 3;
+
+    pRefPoint       (0 0 0.15);
+    pdRefPoint $pRefPoint;
+    pRefValue       1e5;
+    pdRefValue $pRefValue;
+}
+
+PISO {
+    cAlpha 1.5;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        "U.*"           1;
+    }
+    U 1;
+}
+
+
+// ************************************************************************* //

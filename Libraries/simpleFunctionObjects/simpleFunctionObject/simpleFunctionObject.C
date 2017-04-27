@@ -320,7 +320,10 @@ bool simpleFunctionObject::read(const dictionary& dict)
     )
     {
         if(dict_!=dict) {
+            Dbug << "Rereading because of changed dict" << endl;
             dict_ = dict;
+        } else {
+            Dbug << "Reading because started" << endl;
         }
 
         if(dict_.found("outputInterval")) {

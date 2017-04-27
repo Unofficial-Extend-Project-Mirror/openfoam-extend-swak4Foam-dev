@@ -354,6 +354,8 @@ S_{expl} + S_{impl} T
 *** =swakStateMachine=
     Library with function objects and plugin functions to work with
     simple state machines
+*** =swakDynamicMesh=
+    Library with classes that combine swak with dynamic meshes
 *** =functionPlugins=
     Directory with a number of libraries with function-plugins:
     - swakFacSchemesFunctionPlugin :: functions with selectable
@@ -610,9 +612,9 @@ S_{expl} + S_{impl} T
      Demonstrates initializing a case with initial conditions that
      approximate the real flow.
      - Solver :: reactingFoam
-     - Case preparation :: run the supplied script
-          =prepareCase.sh=. *Caution:* this has to be done *every*
-          time before running the case
+     - Case preparation :: run =pyFoamPrepareCase.py=. *Caution:* this
+          has to be done *every* time before running the case because
+          the initialized fields are rewritten
      - Demonstrates :: Demonstrates setting calculated initial
                        conditions with functionObjects
 **** =simpleBendedPipe=
@@ -784,6 +786,26 @@ S_{expl} + S_{impl} T
      The case is only an excuse for the state machines
      - Running :: =replayTransientBC -allowFunctionObjects=
      - Case setup :: =pyFoamPrepareCase.py=
+*** DynamicMesh
+    Examples that demonstrate dynamic mesh applications
+**** hecticInletACMI2D
+     Variation of a tutorial case where the oscillation has been
+     replaced by an expression
+     - Solver :: =pimpleDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =swakMotion= function for =solidBodyMotion=
+**** rotatingTank2D
+     - Solver :: =interDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =swakMotion= function for =solidBodyMotion=
+**** switchedInletACMI2D
+     - Solver :: =pimpleDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =groovyCyclicACMI= patch type
+**** switchedTJunction
+     - Solver :: =compressibleInterDyMFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: The =groovyCyclicACMI= patch type. State machines. =funkyWarpMesh= utility
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -797,7 +819,11 @@ S_{expl} + S_{impl} T
      the =randFixed=-function
 **** =AMIPipe=
      Simple geometry for testing function objects with AMI. "Execute"
-     with =replayTransientBC=
+     with =replayTransientBC=, =pimpleFoam= or =pimpleDyMFoam=
+
+     Features can be "switched off" with =pyFoamPrepareCase.py=. What
+     can be switched on is a location dependent pressure jump on one
+     of the interfaces implemented with =groovyBCJumpAMI=
 *** BugCases
     These are cases provided by users to demonstrate bugs. Not
     maintained nor documented and may be removed at any time
@@ -3577,7 +3603,10 @@ S_{expl} + S_{impl} T
      to access the first element of an empty field. The fix was to
      write the value $0$ instead. This fix has been adapted so that
      the actual uniform value is written to the file (and read as well)
-*** Internals
+**** =executeIfOpenFOAMVersionBiggerEqual= not correctly working with alphabetic patch versions
+     If the patch version of the current OpenFOAM-version is not a
+     number and not =x= then this function object failed
+*** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
      above) a =union= was added to store the single values. The reason
@@ -3592,13 +3621,19 @@ S_{expl} + S_{impl} T
      =unions= are only supported for that standard. This will lead to
      a slightly higher memory usage (but still small compared to full
      fields)
+**** Rewrite of =functionObject= removes the =start()=-method
+     OpenFOAM-versions based on the foundation release 4.0 and later
+     don't have a =start()=-method in the function objects
+     anymore. Lot of functionality of swak relied on this method. To
+     make swak compatible across versions =start()= is now called in
+     the constructors of the function-objects (if the OpenFOAM-version
+     requires it)
 *** Infrastructure
 **** Add the development branch to the version string in utilities
      If the compiled version is not a released one then the info of
      =hg branch= is added to the version output that utilities like
      =funkySetFields= print
 *** Documentation
-*** Internals (for developers)
 *** New features
 **** Function plugin =ShiftField= that allows shifting volume fields
      When adding the library =libswakShiftFieldFunctionPlugin.so= to
@@ -3710,6 +3745,30 @@ S_{expl} + S_{impl} T
 
      It is assumed that the length of the sub-field is equal to the
      number of faces in the patch
+**** Library =swakDynamicMesh= with "swakified" dynamic mesh subclasses
+     This libraries collects specializations of dynamic mesh classes
+     that work together with OpenFOAM. Currently these classes are in
+     the library:
+     - swakMotion :: this is a solid body motion solver for the
+          =solidBodyMotionFvMesh= where the translation and the
+          rotation of the solid body can be specified by =swak=-expressions
+     - groovyCyclicACMI :: this patch type is a subclass of
+          =cyclicACMI= where the faces that cyclic can be switched on
+          and off with an additional field that is specified with the
+          parameter =openField= in the specification in the
+          =boundary=-file. This field has to be present in memory at
+          the first time-step (usually a
+          =readAndUpdateFields=-functionObject is a good way to
+          achieve this). The values on the corresponding
+          =nonOverlapPatch= of the first boundary in the coupled pair
+          is used to switch faces on and off: if the value of the face
+          is $1$ then it is 'open' if it is $0$ it is 'closed'
+     - nonMovingFvMesh :: A non-moving mesh that pretends to
+          move. This triggers the recalculation of AMI-interfaces
+     - groovyBCJumpAMI :: allows implementing a jump condition on an
+          AMI-interface that depends on an expression evaluated on the
+          master patch of the interface
+     The folder =Examples/DynamicMesh= has examples for this library
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
@@ -3731,6 +3790,19 @@ S_{expl} + S_{impl} T
 **** Additional functions in the radiation function plugin
      Additional functions for the =absorptionEmissionModel= and the
      =sootModel= are added to to library with the radiation-functions
+**** Improvement of =readAndUpdateFields=: surface fields, output, switching
+     The function object =readAndUpdateFields= got three improvements:
+     - an optional switch =correctBoundary= allows switching the
+       correction of boundary conditions off
+     - surface-fields are now read as well. But no boundary correction
+       is performed as the these fields do not support this
+     - better output. Instead of silently reading fields or using
+       those in memory the name of the field and the type are written
+       out
+**** =executeIfStartTime= now also allows execution if it is "only" a restart
+     Normally the function object only executes only if this is the
+     real start time (not a restart). If the option =executeOnRestart=
+     is set then the function object also executes if this is a restart
 **** =reportAvailableFvOptions= now reports =constrain=-methods
      On OpenFOAM-versions that support it this now reports if
      =constrain= is called for an equation
@@ -3744,4 +3816,11 @@ S_{expl} + S_{impl} T
      it now function objects that belong to the non-default mesh in
      multi-region cases write their data to a sub-directory of
      =postProcessing= named after the mesh
+**** =funkyWarpMesh= allows reading function objects
+     Function objects can now be loaded with an option
+     =-allowFunctionObjects=
 *** Examples
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:

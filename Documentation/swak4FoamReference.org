@@ -300,8 +300,9 @@ hide circle
      | Tensor             | xx xy xz yx yy yz zx zy zz x y z |
      | Symmetrical tensor | xx xy xz yy yz zz                |
      | Spherical tensor   | ii                               |
-     For the tensor types there is also the "component" =T= that
-     transposes the tensor (=A.T= gives the transposed tensor for =A=)
+     For the tensor types there is also the "component" =T= (with
+     added =()= because it is a "function") that transposes the tensor
+     (=A.T()= gives the transposed tensor for =A=)
 
      =x=, =y= and =z= for tensors are the rows as vectors.
 *** Mathematical functions available in all parsers
@@ -1481,3 +1482,7 @@ libs (
       - number of steps since the last state change
       - for each state the information how often the machine changed
         to that state
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:

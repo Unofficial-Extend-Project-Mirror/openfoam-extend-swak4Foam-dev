@@ -1,0 +1,86 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p_rgh;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 1e5;
+
+boundaryField
+{
+    left
+    {
+        //        type fixedValue;
+        //        type            totalPressure;
+        //        type zeroGradient;
+        //        type outletInlet;
+        type groovyBC;
+        valueExpression "1e5";
+        variables (
+            "isOpenLeft{ACMI_LeftCenter_blockage}=max(valveField>0.5 ? 1 : 0);"
+            "isOpenRight{ACMI_RightCenter_blockage}=max(valveField>0.5 ? 1 : 0);"
+        );
+        fractionExpression "isOpenLeft";
+        p0              uniform 1e5;
+        value uniform 1e5;
+        outletValue $internalField;
+    }
+
+    right
+    {
+        $left;
+        fractionExpression "isOpenRight";
+    }
+
+    inlet {
+        //        type zeroGradient;
+        type            fixedFluxPressure;
+        value           uniform 1e5;
+    }
+
+    defaultFaces
+    {
+        type            fixedFluxPressure;
+        value           uniform 1e5;
+    }
+
+    ACMI_InletCenter_blockage
+    {
+        $defaultFaces;
+        // type fixedValue;
+        // value  uniform 0;
+    }
+    "ACMI_.*_blockage"
+    {
+        $defaultFaces;
+    }
+    ACMI_LeftCenter_blockage
+    {
+        type fixedValue;
+        value uniform 1e5;
+    }
+    ACMI_RightCenter_blockage
+    {
+        $ACMI_LeftCenter_blockage;
+
+    }
+    "ACMI_.*_couple"
+    {
+        type  cyclicACMI;
+        value uniform 1e5;
+    }
+}
+
+// ************************************************************************* //

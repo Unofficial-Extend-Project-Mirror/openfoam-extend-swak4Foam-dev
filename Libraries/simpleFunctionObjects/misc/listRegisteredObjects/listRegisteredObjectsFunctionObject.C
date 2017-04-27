@@ -77,7 +77,7 @@ bool listRegisteredObjectsFunctionObject::start()
 
     dumpObr();
 
-    return true;
+    return simpleFunctionObject::start();
 }
 
 void listRegisteredObjectsFunctionObject::writeSimple()
