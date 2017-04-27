@@ -205,6 +205,11 @@ Contributors/Copyright:
 #define FOAM_HAS_AMI_INTERFACE
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK<VERSION_NR(4,0,0))
+#define FOAM_OLD_AMI_ACMI
+#endif
+
+
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // movePoints now gets a polyMesh
 #define FOAM_MOVEPOINTS_GETS_POLYMESH

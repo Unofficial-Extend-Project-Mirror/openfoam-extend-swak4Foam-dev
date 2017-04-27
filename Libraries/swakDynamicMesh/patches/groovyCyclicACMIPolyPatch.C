@@ -25,7 +25,7 @@ License
 
 #include "swak.H"
 
-#ifdef FOAM_HAS_ACMI_INTERFACE
+#if defined(FOAM_HAS_ACMI_INTERFACE) && !defined(FOAM_OLD_AMI_ACMI)
 
 #include "groovyCyclicACMIPolyPatch.H"
 #include "SubField.H"
