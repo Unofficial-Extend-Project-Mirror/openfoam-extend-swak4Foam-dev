@@ -39,7 +39,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#ifdef FOAM_HAS_AMI_INTERFACE
+#if defined(FOAM_HAS_AMI_INTERFACE) && !defined(FOAM_OLD_AMI_ACMI)
 
 #include "groovyBCJumpAMIFvPatchField.H"
 #include "fieldTypes.H"

@@ -576,6 +576,12 @@ S_{expl} + S_{impl} T
      - Mesh preparation :: Execute =pyFoamPrepareCase.py .=
      - Demonstrates :: Simple expression sources (adds a /heat source/
                        to the solid)
+**** heatExchangerSources
+     - Solver :: chtMultiRegionFoam
+     - Mesh preparation :: Execute =pyFoamPrepareCase.py .=
+     - Demonstrates :: Getting the residuals of the matrix with the
+                       =matrixChangeBefore= and =matrixChangeAfter=
+                       =fvOptions=
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
@@ -3562,6 +3568,15 @@ S_{expl} + S_{impl} T
      This version supports OpenFOAM v1612+. The modifications were
      done by Mark Olesen
 *** Incompatibilities
+**** Changed location of files by =simpleFunctionObject= and subclasses for multi-region-cases
+     The location of files written by these function objects (which
+     are almost all function objects writing data in the
+     =postProcessing=-directory) has changed: now if the function
+     object belongs to a region that is not the default mesh the
+     output is written to a sub-directory with the name of that mesh.
+
+     This might break scripts or other tools that people use to
+     process that data
 *** Bug fixes
 **** Destruction of =dummyPhi= causes error message
      On some distros the destruction of a field stored in an =autoPtr=
@@ -3760,6 +3775,32 @@ S_{expl} + S_{impl} T
           AMI-interface that depends on an expression evaluated on the
           master patch of the interface
      The folder =Examples/DynamicMesh= has examples for this library
+**** Record current residual of the equations with =fvOptions=
+     The two =fvOptions= =matrixChangeBefore= and =matrixChangeAfter=
+     can be used to record the residual or the change of it.
+
+     The residual $r$ for a field $\phi$ which is supposed to be the
+     solution of a linear equation $A \phi = b$ is $r=A \phi-b$
+
+     =matrixChangeBefore= calculates this for a $\phi$ specified in
+     =fieldName= and uses for $A$ and $b$ the current =fvMatrix= of
+     that field. The result is stored in a field whose name is
+     composed of the value of =namePrefix= and =fieldName=. This field
+     can be useful to see where the current solution does not fit the
+     linearized system
+
+     =matrixChangeAfter= does the same calculation but assumes that
+     the field already exists and subtracts the result from the
+     previous value. So if another =fvOption= was applied to the
+     =fvMatrix= between these calls then the field has the change of
+     this matrix. If "only" a source term was added then this field
+     corresponds to the source term.
+
+     In principle =fvOptions= are executed in the order in which they
+     are specified. If the setting =doAtAddSup= is set to =true= then
+     it is executed in an early phase (when source terms are set). If
+     set to =false= then the =fvOption= is executed during the
+     =setValues=/=constrain= phase.
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
@@ -3802,10 +3843,22 @@ S_{expl} + S_{impl} T
      =setValue=. To keep source compatibility this method is kept and
      the method =constrain= patches through to it. If the =fvOption=
      has =SetValue= in the name then this name is kept
+**** =simpleFunctionObjects= in multi-region cases now write to sub-directories of =postProcessing=
+     To conform with the way that regular OpenFOAM function objects do
+     it now function objects that belong to the non-default mesh in
+     multi-region cases write their data to a sub-directory of
+     =postProcessing= named after the mesh
 **** =funkyWarpMesh= allows reading function objects
      Function objects can now be loaded with an option
      =-allowFunctionObjects=
+**** =executeIfStartTime= now also allows execution if it is "only" a restart
+     Normally the function object only executes only if this is the
+     real start time (not a restart). If the option =executeOnRestart=
+     is set then the function object also executes if this is a restart
 *** Examples
+**** =FvOptions/heatExchangerSources=
+     Demonstrates getting changes to the solution (residuals) with
+     =matrixChangeBefore= and =matrixChangeAfter=
 
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
