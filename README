@@ -3801,6 +3801,11 @@ S_{expl} + S_{impl} T
      it is executed in an early phase (when source terms are set). If
      set to =false= then the =fvOption= is executed during the
      =setValues=/=constrain= phase.
+**** Setting time-step with an expression: =setDeltaTBySwakExpression=
+     This new function object in =simpleSwakFunctionObjects= evaluates
+     a =scalar= expression and sets =deltaT= accordingly. Only works
+     on OpenFOAM-versions that support =DataEntry= or its successor
+     =Function1Types=.
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,

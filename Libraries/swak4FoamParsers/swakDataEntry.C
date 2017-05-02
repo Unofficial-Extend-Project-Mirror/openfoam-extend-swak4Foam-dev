@@ -45,15 +45,22 @@ namespace Function1Types {
 #endif
 
 template<class Type>
-swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary& dict)
+swakDataEntry<Type>::swakDataEntry(
+    const word& entryName,
+    const dictionary& dict,
+    bool readEntryType
+)
 :
     DataEntry<Type>(entryName)
 {
-    Istream& is(dict.lookup(entryName));
-    word entryType(is);
+    if(readEntryType) {
+        Istream& is(dict.lookup(entryName));
+        word entryType(is);
 
-    data_.read(is);
-
+        data_.read(is);
+    } else {
+        data_=dict.subDict(entryName);
+    }
     expression_=exprString(
         data_.lookup("expression"),
         data_

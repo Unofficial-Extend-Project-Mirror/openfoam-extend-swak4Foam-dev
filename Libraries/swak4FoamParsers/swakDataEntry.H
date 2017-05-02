@@ -113,7 +113,11 @@ public:
     // Constructors
 
         //- Construct from entry name and Istream
-        swakDataEntry(const word& entryName, const dictionary& dict);
+        swakDataEntry(
+            const word& entryName,
+            const dictionary& dict,
+            bool readEntryType=true
+        );
 
         //- Copy constructor
         swakDataEntry(const swakDataEntry<Type>& cnst);
