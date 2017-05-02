@@ -3615,6 +3615,10 @@ S_{expl} + S_{impl} T
 **** =mqFaceMaximum= and =mqFaceMinimum= in the =LocalCalculations=-plugin fail for patch types without values
      As patch types like =empty= have no values stored this plugin
      failed. Now it checks if there is data
+**** =simpleFunctionObject= did not pass parent directory correctly
+     When storing the data for the function object no reference to the
+     parent directory was stored and therefor scoped macro-expansion
+     did not work anymore
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
@@ -3863,6 +3867,10 @@ S_{expl} + S_{impl} T
      Normally the function object only executes only if this is the
      real start time (not a restart). If the option =executeOnRestart=
      is set then the function object also executes if this is a restart
+**** Scoped macro expansion now works for =storedVariables= and =swakDataEntry=
+     When reading these data structures the parent directory is
+     correctly passed and therefor scoped macro expansions
+     (=$[:deltaT]= for instance) works
 *** Examples
 **** =FvOptions/heatExchangerSources=
      Demonstrates getting changes to the solution (residuals) with

@@ -84,7 +84,7 @@ class swakDataEntry
     // Private data
 
     //- the dictionary with the data (stored for rewriting)
-    dictionary data_;
+    autoPtr<dictionary> data_;
 
     //- the actual driver for the Expressions
     autoPtr<CommonValueExpressionDriver> driver_;

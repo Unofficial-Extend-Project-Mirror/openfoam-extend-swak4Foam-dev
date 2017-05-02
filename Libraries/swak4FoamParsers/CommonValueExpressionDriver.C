@@ -170,9 +170,18 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     readPluginLibraries(dict);
 
     if(dict.found("storedVariables")) {
-        storedVariables_=List<StoredExpressionResult>(
+        List<dictionary> variablesSpec(
             dict.lookup("storedVariables")
         );
+        storedVariables_.resize(variablesSpec.size());
+        forAll(variablesSpec,i) {
+            storedVariables_[i]=StoredExpressionResult(
+                dictionary(
+                    dict,
+                    variablesSpec[i]
+                )
+            );
+        }
         Dbug << "Read stored variables:" << storedVariables_ << endl;
     }
 

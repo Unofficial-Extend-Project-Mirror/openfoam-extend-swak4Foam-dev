@@ -126,6 +126,10 @@ StateMachine::StateMachine(
         0
     )
 {
+    driver_->createWriterAndRead(
+        "StateMachine_"+machineName_+"_"+dict.name().name()
+    );
+
     List<dictionary> data(
         dict.lookup("transitions")
     );
@@ -135,7 +139,10 @@ StateMachine::StateMachine(
             i,
             new StateTransition(
                 *this,
-                data[i]
+                dictionary(
+                    dict,
+                    data[i]
+                )
             )
         );
     }

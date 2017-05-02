@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------*\
+#/*---------------------------------------------------------------------------*\
  ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
@@ -89,7 +89,7 @@ class ExpressionResult
     union
 #else
     struct    // Non-POD members are only allowes in C++0x or newer. Use struct instead
-#endif 
+#endif
     SingleUnion {
         bool bool_;
         scalar scalar_;

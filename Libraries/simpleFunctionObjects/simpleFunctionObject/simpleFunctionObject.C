@@ -104,7 +104,10 @@ simpleFunctionObject::simpleFunctionObject
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     lastTimeStepExecute_(-1),
 #endif
-    dict_(dict),
+    dict_(
+        dict.parent(),
+        dict
+    ),
     regionName_(
         dict_.found("region")
         ? dict_.lookup("region")
