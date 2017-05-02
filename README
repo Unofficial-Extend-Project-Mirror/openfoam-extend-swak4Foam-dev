@@ -3612,6 +3612,9 @@ S_{expl} + S_{impl} T
 **** =executeIfOpenFOAMVersionBiggerEqual= not correctly working with alphabetic patch versions
      If the patch version of the current OpenFOAM-version is not a
      number and not =x= then this function object failed
+**** =mqFaceMaximum= and =mqFaceMinimum= in the =LocalCalculations=-plugin fail for patch types without values
+     As patch types like =empty= have no values stored this plugin
+     failed. Now it checks if there is data
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
