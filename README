@@ -1020,6 +1020,9 @@ S_{expl} + S_{impl} T
 
    The bug can not be fixed in =swak4Foam= but has to be fixed in the
    Foam-Distro
+** =solverPerformanceToGlobalVariables= only works for scalar fields
+   Currently only the data from scalar fields can be correctly
+   parsed. If =vector=-fields are specified the function object fails
 * History
 ** 2010-09-13 - version number : 0.1
    First Release
