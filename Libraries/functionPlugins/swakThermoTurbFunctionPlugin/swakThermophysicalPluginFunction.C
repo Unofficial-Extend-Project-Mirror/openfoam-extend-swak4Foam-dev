@@ -121,7 +121,22 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
                     )
                 );
 
-            word thermoTypeName=dict["thermoType"];
+            word thermoTypeName;
+            if (dict.isDict("thermoType")) {
+                const dictionary& thermoTypeDict(dict.subDict("thermoType"));
+
+                // Construct the name of the thermo package from the components
+                thermoTypeName =
+                    word(thermoTypeDict.lookup("type")) + '<'
+                    + word(thermoTypeDict.lookup("mixture")) + '<'
+                    + word(thermoTypeDict.lookup("transport")) + '<'
+                    + word(thermoTypeDict.lookup("thermo")) + '<'
+                    + word(thermoTypeDict.lookup("equationOfState")) + '<'
+                    + word(thermoTypeDict.lookup("specie")) + ">>,"
+                    + word(thermoTypeDict.lookup("energy")) + ">>>";
+            } else {
+                thermoTypeName=word(dict["thermoType"]);
+            }
 
             swakRhoThermoType::fvMeshConstructorTable::iterator cstrIter =
                 swakRhoThermoType::fvMeshConstructorTablePtr_->find(

@@ -3612,6 +3612,12 @@ S_{expl} + S_{impl} T
 **** =executeIfOpenFOAMVersionBiggerEqual= not correctly working with alphabetic patch versions
      If the patch version of the current OpenFOAM-version is not a
      number and not =x= then this function object failed
+**** =ThermoTurb= functionPlugin not working with new =thermoType=-format
+     The thermophysical functions in this plugin did not work if
+     =thermoType= was a dictionary. Fixed
+
+     Also: construction of turbulence now gets the rho-field directly
+     from the thermophysics
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
