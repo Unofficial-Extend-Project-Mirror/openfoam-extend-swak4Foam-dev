@@ -3622,6 +3622,12 @@ S_{expl} + S_{impl} T
      When storing the data for the function object no reference to the
      parent directory was stored and therefor scoped macro-expansion
      did not work anymore
+**** =ThermoTurb= functionPlugin not working with new =thermoType=-format
+     The thermophysical functions in this plugin did not work if
+     =thermoType= was a dictionary. Fixed
+
+     Also: construction of turbulence now gets the rho-field directly
+     from the thermophysics
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
