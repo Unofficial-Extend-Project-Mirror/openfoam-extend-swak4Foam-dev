@@ -3628,6 +3628,10 @@ S_{expl} + S_{impl} T
 
      Also: construction of turbulence now gets the rho-field directly
      from the thermophysics
+**** =solidThermo= instances could not use =basicThermo=-methods in =ThermoTurb=-plugin
+     Reason was that only two specific thermo-subtypes of
+     =fluidThermo= were searched if the method was not part of
+     =solidThermo=. Now also the basic type is searched
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
