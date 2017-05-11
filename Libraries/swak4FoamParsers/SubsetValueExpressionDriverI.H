@@ -84,6 +84,12 @@ namespace Foam {
                 Pout << name << " is a variable" << endl;
             }
             return this->variable(name).getResult<T>(true);
+        } else if(
+            this->isGlobal<T>(name,false)
+        ) {
+            return const_cast<ExpressionResult&>(
+                this->lookupGlobal(name)
+            ).getResult<T>(true);
         }
 
         tmp<Field<T> > result(new Field<T>(this->size()));

@@ -3632,6 +3632,9 @@ S_{expl} + S_{impl} T
      Reason was that only two specific thermo-subtypes of
      =fluidThermo= were searched if the method was not part of
      =solidThermo=. Now also the basic type is searched
+**** Global variables recognized but not correctly used by some drivers
+     The drivers for sampled entities, sets and zones found global
+     variables but were not able to use them correctly. Fixed
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see

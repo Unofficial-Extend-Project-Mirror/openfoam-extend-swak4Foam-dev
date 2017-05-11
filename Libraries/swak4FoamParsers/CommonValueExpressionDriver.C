@@ -1406,7 +1406,11 @@ void CommonValueExpressionDriver::evaluateVariable(
     } else {
         variables_.set(name,ExpressionResult(result_));
     }
-    Pbug << "Value stored: " << variables_[name] << endl;
+    if(variables_.found(name)) {
+        Pbug << "Value stored: " << variables_[name] << endl;
+    } else {
+        Pbug << "Nothing stored ... yet" << endl;
+    }
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(
