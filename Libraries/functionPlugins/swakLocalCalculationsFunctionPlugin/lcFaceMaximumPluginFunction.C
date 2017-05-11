@@ -97,10 +97,12 @@ void lcFaceMaximumPluginFunction::doCellCalculation(volScalarField &field)
             } else {
                 label patchID=field.mesh().boundaryMesh().whichPatch(faceI);
                 label startI=field.mesh().boundaryMesh()[patchID].start();
-                maxVal=max(
-                    maxVal,
-                    o.boundaryField()[patchID][faceI-startI]
-                );
+                if(faceI-startI<o.boundaryField()[patchID].size()) {
+                    maxVal=max(
+                        maxVal,
+                        o.boundaryField()[patchID][faceI-startI]
+                    );
+                }
             }
         }
 

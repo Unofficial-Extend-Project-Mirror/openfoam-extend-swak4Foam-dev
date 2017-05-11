@@ -95,10 +95,12 @@ void lcFaceMinimumPluginFunction::doCellCalculation(volScalarField &field)
             } else {
                 label patchID=field.mesh().boundaryMesh().whichPatch(faceI);
                 label startI=field.mesh().boundaryMesh()[patchID].start();
-                minVal=min(
-                    minVal,
-                    o.boundaryField()[patchID][faceI-startI]
-                );
+                if(faceI-startI<o.boundaryField()[patchID].size()) {
+                    minVal=min(
+                        minVal,
+                        o.boundaryField()[patchID][faceI-startI]
+                    );
+                }
             }
         }
 

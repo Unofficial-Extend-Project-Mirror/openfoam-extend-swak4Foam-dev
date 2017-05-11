@@ -84,7 +84,7 @@ class swakDataEntry
     // Private data
 
     //- the dictionary with the data (stored for rewriting)
-    dictionary data_;
+    autoPtr<dictionary> data_;
 
     //- the actual driver for the Expressions
     autoPtr<CommonValueExpressionDriver> driver_;
@@ -113,7 +113,11 @@ public:
     // Constructors
 
         //- Construct from entry name and Istream
-        swakDataEntry(const word& entryName, const dictionary& dict);
+        swakDataEntry(
+            const word& entryName,
+            const dictionary& dict,
+            bool readEntryType=true
+        );
 
         //- Copy constructor
         swakDataEntry(const swakDataEntry<Type>& cnst);

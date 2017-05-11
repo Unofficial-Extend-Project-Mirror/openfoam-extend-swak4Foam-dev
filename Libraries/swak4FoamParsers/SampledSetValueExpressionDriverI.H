@@ -85,6 +85,12 @@ namespace Foam {
             this->variable(name).valueType()==pTraits<Type>::typeName
         ) {
             return this->variable(name).getResult<Type>(true);
+        } else if(
+            this->isGlobal<Type>(name,false)
+        ) {
+            return const_cast<ExpressionResult&>(
+                this->lookupGlobal(name)
+            ).getResult<Type>(true);
         }
 
         autoPtr<Field<Type> > result;

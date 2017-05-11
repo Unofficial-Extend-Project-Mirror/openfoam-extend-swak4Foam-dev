@@ -170,9 +170,18 @@ CommonValueExpressionDriver::CommonValueExpressionDriver(
     readPluginLibraries(dict);
 
     if(dict.found("storedVariables")) {
-        storedVariables_=List<StoredExpressionResult>(
+        List<dictionary> variablesSpec(
             dict.lookup("storedVariables")
         );
+        storedVariables_.resize(variablesSpec.size());
+        forAll(variablesSpec,i) {
+            storedVariables_[i]=StoredExpressionResult(
+                dictionary(
+                    dict,
+                    variablesSpec[i]
+                )
+            );
+        }
         Dbug << "Read stored variables:" << storedVariables_ << endl;
     }
 
@@ -1397,7 +1406,11 @@ void CommonValueExpressionDriver::evaluateVariable(
     } else {
         variables_.set(name,ExpressionResult(result_));
     }
-    Pbug << "Value stored: " << variables_[name] << endl;
+    if(variables_.found(name)) {
+        Pbug << "Value stored: " << variables_[name] << endl;
+    } else {
+        Pbug << "Nothing stored ... yet" << endl;
+    }
 }
 
 void CommonValueExpressionDriver::evaluateVariableRemote(

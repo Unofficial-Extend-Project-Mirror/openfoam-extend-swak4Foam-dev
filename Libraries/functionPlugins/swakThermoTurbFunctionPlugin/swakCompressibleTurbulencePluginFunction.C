@@ -107,7 +107,8 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
         turb_.set(
             reg.name(),
             compressible::turbulenceModel::New(
-                reg.lookupObject<volScalarField>("rho"),
+                // reg.lookupObject<volScalarField>("rho"),
+                thermoInternal(reg).rho(),
                 reg.lookupObject<volVectorField>("U"),
                 reg.lookupObject<surfaceScalarField>("phi"),
                 thermoInternal(reg)
