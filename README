@@ -1020,6 +1020,9 @@ S_{expl} + S_{impl} T
 
    The bug can not be fixed in =swak4Foam= but has to be fixed in the
    Foam-Distro
+** =solverPerformanceToGlobalVariables= only works for scalar fields
+   Currently only the data from scalar fields can be correctly
+   parsed. If =vector=-fields are specified the function object fails
 * History
 ** 2010-09-13 - version number : 0.1
    First Release
@@ -3612,12 +3615,26 @@ S_{expl} + S_{impl} T
 **** =executeIfOpenFOAMVersionBiggerEqual= not correctly working with alphabetic patch versions
      If the patch version of the current OpenFOAM-version is not a
      number and not =x= then this function object failed
+**** =mqFaceMaximum= and =mqFaceMinimum= in the =LocalCalculations=-plugin fail for patch types without values
+     As patch types like =empty= have no values stored this plugin
+     failed. Now it checks if there is data
+**** =simpleFunctionObject= did not pass parent directory correctly
+     When storing the data for the function object no reference to the
+     parent directory was stored and therefor scoped macro-expansion
+     did not work anymore
 **** =ThermoTurb= functionPlugin not working with new =thermoType=-format
      The thermophysical functions in this plugin did not work if
      =thermoType= was a dictionary. Fixed
 
      Also: construction of turbulence now gets the rho-field directly
      from the thermophysics
+**** =solidThermo= instances could not use =basicThermo=-methods in =ThermoTurb=-plugin
+     Reason was that only two specific thermo-subtypes of
+     =fluidThermo= were searched if the method was not part of
+     =solidThermo=. Now also the basic type is searched
+**** Global variables recognized but not correctly used by some drivers
+     The drivers for sampled entities, sets and zones found global
+     variables but were not able to use them correctly. Fixed
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see
@@ -3807,6 +3824,11 @@ S_{expl} + S_{impl} T
      it is executed in an early phase (when source terms are set). If
      set to =false= then the =fvOption= is executed during the
      =setValues=/=constrain= phase.
+**** Setting time-step with an expression: =setDeltaTBySwakExpression=
+     This new function object in =simpleSwakFunctionObjects= evaluates
+     a =scalar= expression and sets =deltaT= accordingly. Only works
+     on OpenFOAM-versions that support =DataEntry= or its successor
+     =Function1Types=.
 *** Enhancements
 **** Primitive parser for Plugin-functions now supports tensor types
      The parser for =primitve= types now supports =tensor=,
@@ -3861,6 +3883,10 @@ S_{expl} + S_{impl} T
      Normally the function object only executes only if this is the
      real start time (not a restart). If the option =executeOnRestart=
      is set then the function object also executes if this is a restart
+**** Scoped macro expansion now works for =storedVariables= and =swakDataEntry=
+     When reading these data structures the parent directory is
+     correctly passed and therefor scoped macro expansions
+     (=$[:deltaT]= for instance) works
 *** Examples
 **** =FvOptions/heatExchangerSources=
      Demonstrates getting changes to the solution (residuals) with

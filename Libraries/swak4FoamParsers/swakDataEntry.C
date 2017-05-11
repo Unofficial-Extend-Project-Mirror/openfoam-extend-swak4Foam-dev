@@ -45,20 +45,38 @@ namespace Function1Types {
 #endif
 
 template<class Type>
-swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary& dict)
+swakDataEntry<Type>::swakDataEntry(
+    const word& entryName,
+    const dictionary& dict,
+    bool readEntryType
+)
 :
     DataEntry<Type>(entryName)
 {
-    Istream& is(dict.lookup(entryName));
-    word entryType(is);
+    if(readEntryType) {
+        Istream& is(dict.lookup(entryName));
+        word entryType(is);
 
-    data_.read(is);
-
+        dictionary d(is);
+        data_.set(
+            new dictionary(
+                dict,
+                d
+            )
+        );
+    } else {
+        data_.set(
+            new dictionary(
+                dict,
+                dict.subDict(entryName)
+            )
+        );
+    }
     expression_=exprString(
-        data_.lookup("expression"),
-        data_
+        data_->lookup("expression"),
+        data_()
     );
-    independentVariableName_=word(data_.lookup("independentVariableName"));
+    independentVariableName_=word(data_->lookup("independentVariableName"));
 }
 
 
@@ -66,7 +84,7 @@ template<class Type>
 swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
 :
     DataEntry<Type>(cnst),
-    data_(cnst.data_),
+    data_(new dictionary(cnst.data_())),
     //    driver_(cnst.driver_->clone()),
     expression_(cnst.expression_),
     independentVariableName_(cnst.independentVariableName_)
@@ -87,7 +105,10 @@ CommonValueExpressionDriver &swakDataEntry<Type>::driver()
 {
     if(!driver_.valid()) {
         driver_=CommonValueExpressionDriver::New(
-            data_
+            data_()
+        );
+        driver_->createWriterAndRead(
+            "dataEntry_"+data_->name().name()+"_"+this->name()
         );
     }
 
@@ -118,7 +139,7 @@ Type swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
     ).driver();
 
     theDriver.clearVariables();
-    label intervalls=readLabel(data_.lookup("integrationIntervalls"));
+    label intervalls=readLabel(data_->lookup("integrationIntervalls"));
     scalar dx=(x2-x1)/intervalls;
 
     scalar x=x1;
@@ -163,7 +184,7 @@ Ostream& operator<<
     {
         os  << static_cast<const DataEntry<Type>& >(cnst);
     }
-    cnst.data_.write(os,true);
+    cnst.data_->write(os,true);
 
     // Check state of Ostream
     os.check
@@ -181,7 +202,7 @@ void swakDataEntry<Type>::writeData(Ostream& os) const
     DataEntry<Type>::writeData(os);
 
     os  << token::SPACE;
-    data_.write(os,true);
+    data_->write(os,true);
     os  << token::END_STATEMENT << nl;
 }
 #endif

@@ -87,6 +87,7 @@ void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
     Dbug << "Getting solver performance for " << name << endl;
 
     const data &theData=dynamicCast<const fvMesh&>(obr_);
+    //    Info << theData.solverPerformanceDict() << endl;
     List<solverPerformance> perf(
         theData.solverPerformanceDict()[name]
     );
