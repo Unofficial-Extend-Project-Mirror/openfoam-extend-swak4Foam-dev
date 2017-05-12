@@ -28,10 +28,10 @@
 * The Matrix
   | Case name                                                   | 4.1 Fnd    | 4.0 Ext    | 1612+      | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
-  | DynamicMesh/hectivInletACMI2D                               | \checkmark | \sad       |            | \sad       |
-  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark |            |            |
-  | DynamicMesh/switchedTJunction                               | \checkmark | \sad       |            | \sad       |
-  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \sad       |            | \sad       |
+  | DynamicMesh/hectivInletACMI2D                               | \checkmark | \sad       | \checkmark | \sad       |
+  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark |            |
+  | DynamicMesh/switchedTJunction                               | \checkmark | \sad       | \checkmark | \sad       |
+  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \sad       | \checkmark | \sad       |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \dagger    | \dagger    |
   | FvOptions/angledDuctWithSources                             | \sad       | \dagger    | \sad       | \checkmark |
   | FvOptions/heatExchangerSources                              |            | \dagger    | \checkmark |            |
