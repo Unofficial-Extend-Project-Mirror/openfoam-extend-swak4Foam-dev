@@ -1,81 +1,4 @@
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#orgheadline3">1. Introduction</a>
-<ul>
-<li><a href="#orgheadline1">1.1. Generating a printable version of this document</a></li>
-<li><a href="#orgheadline2">1.2. Authorship and license</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline40">2. The parsers (expression grammar)</a>
-<ul>
-<li><a href="#orgheadline22">2.1. Expressions</a>
-<ul>
-<li><a href="#orgheadline4">2.1.1. Constants and type building</a></li>
-<li><a href="#orgheadline6">2.1.2. Operators</a></li>
-<li><a href="#orgheadline7">2.1.3. Mathematical functions available in all parsers</a></li>
-<li><a href="#orgheadline13">2.1.4. OpenFOAM-specific functions</a></li>
-<li><a href="#orgheadline14">2.1.5. Valid names</a></li>
-<li><a href="#orgheadline19">2.1.6. Variables and fields</a></li>
-<li><a href="#orgheadline20">2.1.7. Plugin functions</a></li>
-<li><a href="#orgheadline21">2.1.8. Macro expansion</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline38">2.2. Parameters</a>
-<ul>
-<li><a href="#orgheadline28">2.2.1. Common parameters</a></li>
-<li><a href="#orgheadline37">2.2.2. Parser-specific parameters</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline39">2.3. Information written for restarting</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline46">3. Usable parts</a>
-<ul>
-<li><a href="#orgheadline41">3.1. Utilities</a></li>
-<li><a href="#orgheadline42">3.2. Boundary conditions</a></li>
-<li><a href="#orgheadline43">3.3. Function objects</a></li>
-<li><a href="#orgheadline44">3.4. Function plugins</a></li>
-<li><a href="#orgheadline45">3.5. Data entry</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline49">4. Programming</a>
-<ul>
-<li><a href="#orgheadline47">4.1. Writing plugin-functions</a></li>
-<li><a href="#orgheadline48">4.2. Adding new parsers</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline62">5. Bits and pieces</a>
-<ul>
-<li><a href="#orgheadline51">5.1. Accumulations</a>
-<ul>
-<li><a href="#orgheadline50">5.1.1. Logical accumulations</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline57">5.2. Parameters for the Python-interpreter wrapper</a>
-<ul>
-<li><a href="#orgheadline53">5.2.1. General behavior</a></li>
-<li><a href="#orgheadline54">5.2.2. Predefined variables and functions</a></li>
-<li><a href="#orgheadline55">5.2.3. The options</a></li>
-<li><a href="#orgheadline56">5.2.4. Loading code snipplets</a></li>
-</ul>
-</li>
-<li><a href="#orgheadline61">5.3. State machines</a>
-<ul>
-<li><a href="#orgheadline58">5.3.1. Specifying a state machine</a></li>
-<li><a href="#orgheadline59">5.3.2. Using the <i>State Machine</i></a></li>
-<li><a href="#orgheadline60">5.3.3. Additional function objects</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-
-
-# Introduction<a id="orgheadline3"></a>
+# Introduction
 
 This document gives an overview of the usage of `swak4Foam`. It
 explains the common paramters, expressions and usable parts. It is
@@ -102,7 +25,8 @@ The structure of the document is
     of `swak4foam` in your own programs including a description of
     how to write your own plugin-function
 
-## Generating a printable version of this document<a id="orgheadline1"></a>
+
+## Generating a printable version of this document
 
 This document was written in `org-mode` (<http://orgmode.org>) an
 outliner mode for the text editor Emacs. This mode offers a number
@@ -117,7 +41,8 @@ automatically called by `org-mode`):
 -   **Ditaa:** <http://ditaa.sourceforge.net>
 -   **PlantUML:** <http://plantuml.sourceforge.net/>
 
-## Authorship and license<a id="orgheadline2"></a>
+
+## Authorship and license
 
 This document is licensed under the *Creative Commons
 Attribution-ShareAlike 3.0 Unported* License (for the full text of
@@ -136,7 +61,8 @@ Authors of this document are:
 yourself to this list and push the changes to a repository where
 the maintainer can merge them to the main line)
 
-# The parsers (expression grammar)<a id="orgheadline40"></a>
+
+# The parsers (expression grammar)
 
 The central concept in `swak4Foam` is the *parser*. A parser reads a
 string with an expression, interprets it according to a grammar and
@@ -183,7 +109,7 @@ the `swakExpression`-function object) the used parser can by
 selected by name. These names and a description of the entity the
 parser works on are given in table \ref{tab:selectionNames}.
 
-<table id="orgtable1" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org0b21df2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Selection names for the parsers</caption>
 
 <colgroup>
@@ -271,7 +197,8 @@ and selected at run-time (as for instance are the *FAM*-parsers
 which are located in a separate library that has to be loaded at
 run-time)
 
-## Expressions<a id="orgheadline22"></a>
+
+## Expressions
 
 The basic syntax of the expressions is modelled after the syntax of
 expressions in OpenFOAM-programs. This means:
@@ -329,7 +256,7 @@ structure if necessary (for instance `toPoint(1)` to use the
 constant `1` on the vertexes of a patch). Table
 \ref{tab:structures} gives an overview of the structures.
 
-<table id="orgtable2" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org1bebba4" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 2:</span> Structures for the different parsers</caption>
 
 <colgroup>
@@ -429,7 +356,8 @@ constant `1` on the vertexes of a patch). Table
 The following sections describe the basic concepts of the
 expressions.
 
-### Constants and type building<a id="orgheadline4"></a>
+
+### Constants and type building
 
 This applies to all types of expressions.
 
@@ -458,7 +386,8 @@ the unit tensor.
 
 The logical constants `true` and `false` are available
 
-### Operators<a id="orgheadline6"></a>
+
+### Operators
 
 These operators are implemented for all the parsers (the usual
 precedence-rules apply):
@@ -493,7 +422,7 @@ In addition there are two unary operators:
     x-component of the field `U`). Table \ref{tab:components} gives
     an overview of the components of the various types
 
-    <table id="orgtable3" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+    <table id="org7191fd7" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     <caption class="t-above"><span class="table-number">Table 3:</span> Component names for the data types</caption>
 
     <colgroup>
@@ -534,12 +463,14 @@ In addition there are two unary operators:
     </tbody>
     </table>
 
-    For the tensor types there is also the "component" `T` that
-    transposes the tensor (`A.T` gives the transposed tensor for `A`)
+    For the tensor types there is also the "component" `T` (with
+    added `()` because it is a "function") that transposes the tensor
+    (`A.T()` gives the transposed tensor for `A`)
 
     `x`, `y` and `z` for tensors are the rows as vectors.
 
-### Mathematical functions available in all parsers<a id="orgheadline7"></a>
+
+### Mathematical functions available in all parsers
 
 The mathematical functions described in the *Programmers Guide*
 are implemented in all parsers:
@@ -633,7 +564,7 @@ but help identify certain entities:
 -   **weight:** The "natural" weight according to table
     \ref{tab:naturalWeights} for the current parser
 
-<table id="orgtable4" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org90436c5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 4:</span> "Natural" weights for different parsers</caption>
 
 <colgroup>
@@ -716,7 +647,8 @@ but help identify certain entities:
 </tbody>
 </table>
 
-### OpenFOAM-specific functions<a id="orgheadline13"></a>
+
+### OpenFOAM-specific functions
 
 The following functions are not available in all parsers. In the
 description in brackets there will be a shorthand description of
@@ -727,7 +659,7 @@ sense for face zones. Calling this function will result in an
 error message). Table \ref{tab:parsershorthand} lists the short
 descriptions.
 
-<table id="orgtable5" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orga4be22b" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 5:</span> Shorthand for the parsers</caption>
 
 <colgroup>
@@ -939,7 +871,8 @@ descriptions.
     -   **snGrad(fieldName):** Gradient of the field `name` in the
         surface normal direction (P, FP)
 
-### Valid names<a id="orgheadline14"></a>
+
+### Valid names
 
 Valid names in swak4Foam start with either a letter or `_` and
 continue with any number of letters, digits or `_`.
@@ -948,7 +881,8 @@ OpenFOAM allows the definition of names that have other
 characters too (like `:` or `-`). In that case these fields can
 be accessed using the `aliases`.
 
-### Variables and fields<a id="orgheadline19"></a>
+
+### Variables and fields
 
 Names that are not functions specified in the grammar can be a
 number of things. It is tested for a number of other things (the
@@ -1071,7 +1005,8 @@ is found an error is raised:
     parser. This avoids reading unneeded global variables.There are
     function objects that can set the values of global variables.
 
-### Plugin functions<a id="orgheadline20"></a>
+
+### Plugin functions
 
 Plugin functions are functions that can be added to the parsers
 by loading a dynamic library. They are added to a dynamic
@@ -1146,7 +1081,8 @@ variables are then evaluated (it is also possible to have
 `lookuptables` and similar in `fooFunctionData`). This is only
 available if the "parent"-expression was created from a dictionary
 
-### Macro expansion<a id="orgheadline21"></a>
+
+### Macro expansion
 
 Before expression and variable strings are stored in memory they are
 expanded with a simple mechanism that is based on the corresponding
@@ -1204,7 +1140,8 @@ variable list and inserted at that place into the variable
 list. During this process other lists are recursively inserted and
 macros are expanded (with `$`).
 
-## Parameters<a id="orgheadline38"></a>
+
+## Parameters
 
 Usually parsers are getting their configuration parameters from an
 OpenFOAM dictionary (the only exceptions that a non-programming
@@ -1233,7 +1170,8 @@ Description of the parameters are split in two parts:
 If in the following descriptions a default value for a parameter
 is specified then the parameter is **not** required.
 
-### Common parameters<a id="orgheadline28"></a>
+
+### Common parameters
 
 Parameters for debugging the parser are:
 
@@ -1422,7 +1360,7 @@ and set names:
         dictionary. Entries in that dictionary are (although
         they rarely have to be edited) are
         -   **valueType:** word describing the value (for instance `scalar`
-                                  meaning that the value is a list of scalars)
+            meaning that the value is a list of scalars)
         -   **isPoint:** whether this value is defined on the *native
             structure* or the points
         -   **singleValue:** a boolean. If `true` the value is the same
@@ -1438,7 +1376,7 @@ and set names:
     -   **delay:** how much the value is "delayed" between writing and
         reading
     -   **startupValue:** value to use if time is smaller that `delay`
-                               (and therefor no values can be in the "pipeline")
+        (and therefor no values can be in the "pipeline")
     -   **storeInterval:** Interval in which values are actually stored
         (the used delayed values will be linearly
         interpolated between these values)
@@ -1472,7 +1410,8 @@ and set names:
         `FunctionPlugin.so` is appended and a library of that name
         is loaded
 
-### Parser-specific parameters<a id="orgheadline37"></a>
+
+### Parser-specific parameters
 
 Certain drivers/parsers have additional parameters.
 
@@ -1615,7 +1554,8 @@ Certain drivers/parsers have additional parameters.
         phase values to the particle position. Only required if
         `fluidPhase` is used in an expression
 
-## Information written for restarting<a id="orgheadline39"></a>
+
+## Information written for restarting
 
 Certain features of the parsers (especially stored and delayed
 variables) need to write information to allow an exact
@@ -1633,17 +1573,23 @@ stored and delayed variables are restored to the state they had at
 write them. If this is not the desired behavior these files can be
 deleted before restart.
 
-# Usable parts<a id="orgheadline46"></a>
 
-## Utilities<a id="orgheadline41"></a>
+# Usable parts
 
-## Boundary conditions<a id="orgheadline42"></a>
 
-## Function objects<a id="orgheadline43"></a>
+## Utilities
 
-## Function plugins<a id="orgheadline44"></a>
 
-## Data entry<a id="orgheadline45"></a>
+## Boundary conditions
+
+
+## Function objects
+
+
+## Function plugins
+
+
+## Data entry
 
 The main library introduces a subtype of `DataEntry` that is
 selected under the name `swak` wherever data entries lie
@@ -1674,13 +1620,17 @@ Only for integrations an additional parameter is needed
 -   **integrationIntervalls:** number of intervals the integration
     range is divided into.
 
-# Programming<a id="orgheadline49"></a>
 
-## Writing plugin-functions<a id="orgheadline47"></a>
+# Programming
 
-## Adding new parsers<a id="orgheadline48"></a>
 
-# Bits and pieces<a id="orgheadline62"></a>
+## Writing plugin-functions
+
+
+## Adding new parsers
+
+
+# Bits and pieces
 
 This section holds bits of documentation that will later be moved
 to different places when the parts in whose context it makes sense
@@ -1688,7 +1638,8 @@ are written.
 
 But for the time being they are useful if they are **anywhere**
 
-## Accumulations<a id="orgheadline51"></a>
+
+## Accumulations
 
 For function objects where a large number of values are to be
 broken down to a single value `swak4Foam` has the concept of
@@ -1732,7 +1683,8 @@ to the name. The added accumulations are:
 -   **weightSum:** Sum of the weights of the underlying
     entity. Usually the volume oder the area of it.
 
-### Logical accumulations<a id="orgheadline50"></a>
+
+### Logical accumulations
 
 Logical swak-expressions usually generate an arry with more than 1
 logical value. Then a `logicalAccumulation` is used to boil it
@@ -1743,14 +1695,16 @@ down to one logical value. The possible values here are either
     are `false`
 -   **and:** This is only `true` if **all** logical values are `true`
 
-## Parameters for the Python-interpreter wrapper<a id="orgheadline57"></a>
+
+## Parameters for the Python-interpreter wrapper
 
 These parameters are common to all programs that use the embedded
 python-interpreter and are specified in a dictionary (usually the
 one of the function object or a special one - `python` for.
 `funkyPythonPostproc`)
 
-### General behavior<a id="orgheadline53"></a>
+
+### General behavior
 
 When the program is started (function object is created) Python
 is initialized (if this is the first instance) and then a new
@@ -1813,7 +1767,8 @@ two cases:
     to `vectorField`, 9 columns to `tensorField` and 6 columns to
     `symmTensorField`. Different column-numbers produce errors
 
-### Predefined variables and functions<a id="orgheadline54"></a>
+
+### Predefined variables and functions
 
 Variables defined are
 
@@ -1850,7 +1805,8 @@ The functions are (`name` is the name of the function object)
     `<case>/<time>/<name>_data`. Should only be used for data
     that is written only at write-time
 
-### The options<a id="orgheadline55"></a>
+
+### The options
 
 -   **useNumpy:** Automatically import the `numpy`-library if it is
     present (otherwise the program will behave as if the
@@ -1918,7 +1874,8 @@ The functions are (`name` is the name of the function object)
     which cause a deadlock when imported in the usual
     Python-code
 
-### Loading code snipplets<a id="orgheadline56"></a>
+
+### Loading code snipplets
 
 Python code-snipplets can be specified in two forms:
 
@@ -1939,7 +1896,8 @@ entries has to be present in the dictionary
 `File` and `Code` are mutual exclusive. If both (or neither) are
 specified an error occurs
 
-## State machines<a id="orgheadline61"></a>
+
+## State machines
 
 *State machines* are computational abstractions: they always hold
 one of a finite number of states. There are rules for switching
@@ -1959,7 +1917,8 @@ added to a case with
         "libswakStateMachine.so"
     );
 
-### Specifying a state machine<a id="orgheadline58"></a>
+
+### Specifying a state machine
 
 The function object `stateMachineCreateAndUpdate` creates a *State
 machine* and updates it once per time-step. The function object is
@@ -1999,13 +1958,14 @@ parameters:
     -   **condition:** a swak-expression. This is the condition that is
         tested. If it is `true` the machine switches to a new state
     -   **logicalAccumulation:** Boils down the array of logical values
-        to one logical decision. See [5.1.1](#orgheadline50) above
+        to one logical decision. See [5.1.1](#org1777c0d) above
     -   **to:** name of the state the machine moves to if `condition` is
         `true` according to `logicalAccumulation`
     -   **description:** A descriptive text that is printed out at every
         state transition. This is only for documentation
 
-### Using the *State Machine*<a id="orgheadline59"></a>
+
+### Using the *State Machine*
 
 Usually the machines are used in swak-expressions. To do that the
 library adds a number of plugin-functions. The convention is that
@@ -2032,7 +1992,8 @@ These functions can be used in almost all parsers and return their
 values in such a size that they fit the *native* structure of this
 parser.
 
-### Additional function objects<a id="orgheadline60"></a>
+
+### Additional function objects
 
 There are also some function objects to manipulate the *State
 Machines* or report their state. The names of these always start

@@ -4,6 +4,7 @@
 #+AUTHOR: Bernhard F.W. Gschaider
 #+LATEX: \listoffigures
 #+LATEX: \listoftables
+#+OPTIONS: toc:nil
 
 * Introduction
   This document gives an overview of the usage of =swak4Foam=. It

@@ -1,4 +1,5 @@
 #+TITLE: Compatibility of the examples
+#+OPTIONS: H:4 toc:nil
 * Overview
   This document gives an overview on the compatibility of the examples
   with a some OF-versions.
