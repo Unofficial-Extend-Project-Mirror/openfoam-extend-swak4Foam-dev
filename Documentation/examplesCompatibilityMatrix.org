@@ -38,7 +38,7 @@
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
-  | groovyBC/fillingTheDam                                      | \checkmark | \sad       | \sad       | \checkmark |
+  | groovyBC/fillingTheDam                                      | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/movingConeDistorted                                | \checkmark | \sad       | \sad       | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
