@@ -125,6 +125,9 @@ private:
     //- make sure that execute is not called twice at one time-step
     label lastTimeStepExecute_;
 
+    //- allow executing more than once - for instance in fvOptions
+    bool executeMoreThanOnce_;
+
     bool ensureExecuteOnce();
 #endif
 
