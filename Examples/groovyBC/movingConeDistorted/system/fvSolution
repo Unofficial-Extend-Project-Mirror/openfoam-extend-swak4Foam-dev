@@ -24,7 +24,7 @@ solvers
         relTol           0;
     };
 
-    p 
+    p
     {
         solver PCG;
         preconditioner   DIC;
@@ -32,7 +32,7 @@ solvers
         relTol           0.05;
     };
 
-    pFinal 
+    pFinal
     {
         solver PCG;
         preconditioner   DIC;
@@ -40,7 +40,7 @@ solvers
         relTol           0;
     };
 
-    U 
+    U
     {
         solver PBiCG;
         preconditioner   DILU;
@@ -55,7 +55,7 @@ solvers
         relTol          0;
     }
 
-    cellMotionUx 
+    cellMotionUx
     {
         solver PCG;
         preconditioner   DIC;

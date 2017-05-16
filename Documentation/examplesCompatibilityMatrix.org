@@ -33,7 +33,7 @@
   | DynamicMesh/switchedTJunction                               | \checkmark | \sad       | \checkmark | \sad       |
   | DynamicMesh/switchedInletACMI2D                             | \checkmark | \sad       | \checkmark | \sad       |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \dagger    | \dagger    |
-  | FvOptions/angledDuctWithSources                             | \sad       | \dagger    | \sad       | \checkmark |
+  | FvOptions/angledDuctWithSources                             | \sad       | \dagger    | \checkmark | \checkmark |
   | FvOptions/heatExchangerSources                              |            | \dagger    | \checkmark |            |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \checkmark | \checkmark |
