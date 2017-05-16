@@ -50,6 +50,8 @@ Contributors/Copyright:
 
 #include "SurfacesRepository.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -119,35 +121,31 @@ public:
             return realSurface().faces();
         }
 
-#if OPENFOAM_PLUS >= 1612
+#ifdef FOAM_SAMPLED_SURFACE_ADDITIONAL_METHODS
         // Could also re-direct to realSurface(), but need to verify
 
         //- Const access to per-face zone/region information
         virtual const labelList& zoneIds() const
         {
-            NotImplemented;
-            return labelList::null();
+            return realSurface().zoneIds();
         }
 
         //- Face area vectors
         virtual const vectorField& Sf() const
         {
-            NotImplemented;
-            return vectorField::null();
+            return realSurface().Sf();
         }
 
         //- Face area magnitudes
         virtual const scalarField& magSf() const
         {
-            NotImplemented;
-            return scalarField::null();
+            return realSurface().magSf();
         }
 
         //- Face centres
         virtual const vectorField& Cf() const
         {
-            NotImplemented;
-            return vectorField::null();
+            return realSurface().Cf();
         }
 #endif
 
