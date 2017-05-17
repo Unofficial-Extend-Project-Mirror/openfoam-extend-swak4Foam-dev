@@ -42,9 +42,9 @@
   | groovyBC/movingConeDistorted                                | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \sad       | \checkmark |
-  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \sad       | \checkmark |
-  | Lagrangian/functionObject/hotStream                         | \sad       |            | \sad       | \sad       |
+  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/hotStream                         | \sad       |            | \checkmark | \sad       |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \checkmark | \sad       | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark |            | \checkmark |            |
