@@ -105,6 +105,7 @@ airToporous
     {
         interpolationMethod cellVolumeWeight;
         nbrRegion       porous;
+        nbrRegionName   $nbrRegion;
         master          false;
 
         nbrModel        porousToair;
@@ -122,6 +123,7 @@ porosityBlockage
     {
         interpolationMethod cellVolumeWeight;
         nbrRegion       porous;
+        nbrRegionName   $nbrRegion;
 
         type            DarcyForchheimer;
 

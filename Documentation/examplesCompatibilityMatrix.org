@@ -33,8 +33,8 @@
   | DynamicMesh/switchedTJunction                               | \checkmark | \sad       | \checkmark | \sad       |
   | DynamicMesh/switchedInletACMI2D                             | \checkmark | \sad       | \checkmark | \sad       |
   | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \dagger    | \dagger    |
-  | FvOptions/angledDuctWithSources                             | \sad       | \dagger    | \checkmark | \checkmark |
-  | FvOptions/heatExchangerSources                              |            | \dagger    | \checkmark |            |
+  | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    | \checkmark | \checkmark |
+  | FvOptions/heatExchangerSources                              | \checkmark | \dagger    | \checkmark |            |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -50,7 +50,7 @@
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark |            | \checkmark |            |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark |            | \checkmark |            |
   | other/capillaryRise                                         | \checkmark |            | \checkmark |            |
-  | other/counterFlowFlame2DInitialized                         |            |            | \checkmark |            |
+  | other/counterFlowFlame2DInitialized                         | \checkmark |            | \checkmark |            |
   | other/simpleBendedPipe                                      | \checkmark |            | \checkmark |            |
   | other/topoSetDamBreak                                       | \checkmark |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
