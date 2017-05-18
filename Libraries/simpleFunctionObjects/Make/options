@@ -20,7 +20,7 @@ EXE_INC = \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
-    -I$(LIB_SRC)/triSurface/lnInclude \
+    $(TRISURFACE_INC) \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
@@ -49,7 +49,6 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \
-    $(TRISURFACE_LIB) \
     $(FLUIDTHERMO_LIB) \
     -lincompressibleTransportModels \
     $(INCOMPRESSIBLE_TURB_LIB) \
