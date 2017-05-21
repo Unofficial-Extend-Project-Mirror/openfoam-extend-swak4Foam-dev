@@ -15,16 +15,25 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// thermoType hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+<!--(if foamFork=="extend")-->
+thermoType hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+<!--(else)-->
 thermoType hePsiThermo<reactingMixture<sutherland<janaf<perfectGas<specie>>,sensibleEnthalpy>>>;
+<!--(end)-->
 
 inertSpecie N2;
 
 chemistryReader foamChemistryReader;
 
+<!--(if foamFork=="extend")-->
+foamChemistryFile "$FOAM_CASE/constant/reactions.oldFormat";
+
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas.oldFormat";
+<!--(else)-->
 foamChemistryFile "$FOAM_CASE/constant/reactions";
 
 foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas";
+<!--(end)-->
 
 solids
 {

@@ -62,12 +62,14 @@ functions {
         //        failIfModelTypeExists false;
         outputControl timeStep;
     }
+<!--(if foamFork!="extend")-->
     getSLGThermoForParcels {
         type loadSLGThermoModel;
         correctModel false;
         allowReload false;
         thermoName thermophysicalProperties;
     }
+<!--(end)-->
     // loadThermoForParcels2 {
     //     type loadPsiThermoModel;
     //     correctModel false;
@@ -149,6 +151,7 @@ functions {
     whatIsHere {
         type listRegisteredObjects;
     }
+<!--(if foamFork!="extend")-->
     reactingParticle {
         type evolveReactingCloud;
         cloudName injectFromLeft;
@@ -206,6 +209,7 @@ functions {
         outputInterval 1;
         fieldName injectFromLeftMomentumSource;
     }
+<!--(end)-->
 }
 
 DebugSwitches

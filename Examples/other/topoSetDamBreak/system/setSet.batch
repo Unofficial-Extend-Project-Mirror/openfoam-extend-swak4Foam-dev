@@ -1,0 +1,2 @@
+faceSet middleFaces new expressionToFace  "pos().x>0.291"
+cellSet centerCells new expressionToCell  "mag(pos()-vector(0.291,0.291,0.007)) < 0.1"

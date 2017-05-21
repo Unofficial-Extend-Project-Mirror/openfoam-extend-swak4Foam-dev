@@ -15,8 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// thermoType hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
-
+<!--(if foamFork=="extend")-->
+thermoType hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+<!--(else)-->
 thermoType
 {
     type            hePsiThermo;
@@ -27,6 +28,7 @@ thermoType
     equationOfState perfectGas;
     specie          specie;
 }
+<!--(end)-->
 
 inertSpecie N2;
 
@@ -34,7 +36,15 @@ chemistryReader foamChemistryReader;
 
 foamChemistryFile "$FOAM_CASE/constant/reactions";
 
+<!--(if foamFork=="extend")-->
+foamChemistryFile "$FOAM_CASE/constant/reactions.oldFormat";
+
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas.oldFormat";
+<!--(else)-->
+foamChemistryFile "$FOAM_CASE/constant/reactions";
+
 foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas";
+<!--(end)-->
 
 
 // ************************************************************************* //

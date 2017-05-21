@@ -1,0 +1,11 @@
+#! /usr/bin/env bash
+
+rm -rf constant/polyMesh/sets
+
+blockMesh
+
+<!--(if foamFork=="extend")-->
+setSet -batch system/setSet.batch
+<!--(else)-->
+topoSet
+<!--(end)-->
