@@ -3635,6 +3635,11 @@ S_{expl} + S_{impl} T
 **** Global variables recognized but not correctly used by some drivers
      The drivers for sampled entities, sets and zones found global
      variables but were not able to use them correctly. Fixed
+**** Cloud function-objects that need a parser not working
+     The reason is that when constructing the =CloudProxy= a cast is
+     made to the /assumed/ cloud type which in the case of cloud
+     function-objects is not the /actual/ type. To avoid this separate
+     instantiations of the =CloudProxy= were added
 *** Internals (for developers)
 **** =ExpressionResult= now stores single values separately
      To fix a problem with writing of single values in parallel (see

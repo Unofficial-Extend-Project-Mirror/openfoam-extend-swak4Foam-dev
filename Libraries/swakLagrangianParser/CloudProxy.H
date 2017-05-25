@@ -201,6 +201,13 @@ public:
     add##ProxyType##CloudType##cloudConstructorToCloudProxyTable(       \
         Cloud<ParcelType>::typeName)
 
+    // This variation is used to add proxies that work in CloudFunctionObjects
+#define addKinematicCloudProxyToTable(ProxyType,CloudType)      \
+    CloudProxy::addcloudConstructorToTable                              \
+    <ProxyType<CloudType::kinematicCloudType> >                         \
+    addKinematic##ProxyType##CloudType##cloudConstructorToCloudProxyTable( \
+        word("kinematic")+Cloud<CloudType::particleType>::typeName)
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

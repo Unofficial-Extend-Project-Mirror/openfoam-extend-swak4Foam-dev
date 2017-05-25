@@ -179,7 +179,8 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
 
 CloudValueExpressionDriver::CloudValueExpressionDriver(
     const cloud& c,
-    const dictionary& dict
+    const dictionary& dict,
+    word alternateType
 )
     :
     CommonValueExpressionDriver(dict),
@@ -188,7 +189,8 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
         ),
         proxy_(
             CloudProxy::New(
-                cloud_
+                cloud_,
+                alternateType
             )
         ),
     interpolationSchemes_(

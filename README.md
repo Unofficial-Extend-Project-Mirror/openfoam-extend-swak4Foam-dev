@@ -5714,6 +5714,14 @@ The drivers for sampled entities, sets and zones found global
 variables but were not able to use them correctly. Fixed
 
 
+#### Cloud function-objects that need a parser not working
+
+The reason is that when constructing the `CloudProxy` a cast is
+made to the *assumed* cloud type which in the case of cloud
+function-objects is not the *actual* type. To avoid this separate
+instantiations of the `CloudProxy` were added
+
+
 ### Internals (for developers)
 
 
@@ -5755,6 +5763,32 @@ If the compiled version is not a released one then the info of
 
 
 ### Documentation
+
+
+#### Added *Compatibility matrix* for examples
+
+Different OpenFOAM-versions have different formats for the input
+files. This means that examples that work for one version will
+break with another version (but is still useful to see how things
+are done). The file
+`Documentation/examplesCompatibilityMatrix.org` gives an
+(incomplete) overview on which versions run which examples (some
+examples will never run because a certain feature might be
+missing in that Foam-version)
+
+Currently 4 Foam-versions are tested
+
+-   OpenFOAM 4.1 (the Foundation release)
+-   Foam-extend 4.0
+-   OpenFOAM+ 1612
+-   OpenFOAM 2.3 (to check compatibility with old versions)
+
+Other versions might or might not work. The first three will be
+replaced with the latest version of that fork once it becomes
+available
+
+
+### Internals (for developers)
 
 
 ### New features
@@ -6065,3 +6099,26 @@ correctly passed and therefor scoped macro expansions
 
 Demonstrates getting changes to the solution (residuals) with
 `matrixChangeBefore` and `matrixChangeAfter`
+
+
+#### State machine examples
+
+-   **Examples/StateMachine/stateCavity:** demonstrates the basic
+    functionality of state machines
+-   **Examples/manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched:** demonstrates
+    using state machines to manipulate the discretization during
+    a simulation
+
+
+#### Dynamic mesh examples
+
+The folder `Examples/DynamicMesh` has examples that demonstrate
+capabilities of the `swakDynamicMesh`-library.
+
+-   **rotatingTank2D:** is a demonstration of a `solidBody` mesh
+    movement where translation and rotation are
+    described by swak-expressions
+-   **hecticInletACMI2D,switchedTJunction,switchedInletACMI2D:** demonstrate
+    a `ACMI` boundary condition where switching of faces is done
+    by a swak-expression. Won't work with `Foam-extend` as this
+    has no `ACMI`

@@ -182,7 +182,8 @@ public:
     //- construct from an existing cloud
     CloudValueExpressionDriver(
         const cloud& c,
-        const dictionary&
+        const dictionary&,
+        word alternateType=""
     );
 
     //- Construct from a dictionary and cloud
