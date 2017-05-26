@@ -73,9 +73,8 @@ namespace Foam
 
     addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,basicReactingMultiphaseCloud);
 
-    // "only" thermo because the composition() is part of the cloud and breaks compilation
-    addKinematicCloudProxyToTable(CloudProxyForThermoParcel,basicReactingCloud);
-    addKinematicCloudProxyToTable(CloudProxyForThermoParcel,basicReactingMultiphaseCloud);
+    addKinematicCloudProxyToTable(CloudProxyForReactingParcelNoComposition,basicReactingCloud);
+    addKinematicCloudProxyToTable(CloudProxyForReactingMultiphaseParcelNoComposition,basicReactingMultiphaseCloud);
 
 #endif
 
