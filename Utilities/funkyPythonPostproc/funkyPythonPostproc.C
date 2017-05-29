@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2013-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

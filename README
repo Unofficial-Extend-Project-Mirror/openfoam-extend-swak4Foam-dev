@@ -3542,7 +3542,7 @@ S_{expl} + S_{impl} T
      The case now also calculates the time the fluid needs from the
      inlet to the outlet (=residenceTime=). Steady as well as
      transient
-** Next release - version number : 0.4.1
+** 2017-05-31 - version number : 0.4.1
 *** New supported versions
 **** Support for OpenFOAM v1606+
      This version is supported in the this version of

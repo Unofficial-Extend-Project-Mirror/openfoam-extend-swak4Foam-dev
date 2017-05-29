@@ -5557,7 +5557,7 @@ inlet to the outlet (`residenceTime`). Steady as well as
 transient
 
 
-## Next release - version number : 0.4.1
+## 2017-05-31 - version number : 0.4.1
 
 
 ### New supported versions
