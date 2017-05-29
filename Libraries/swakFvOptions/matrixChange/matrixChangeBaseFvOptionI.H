@@ -39,6 +39,8 @@ Contributors/Copyright:
 #ifndef matrixChangeBaseFvOptionI_H
 #define matrixChangeBaseFvOptionI_H
 
+#include "swak.H"
+
 namespace Foam
 {
 namespace fv
@@ -68,10 +70,18 @@ matrixChangeBaseFvOption::calcResiduum(const fvMatrix<T> &matrix) const
     GeometricField<T,fvPatchField,volMesh> &res=
         const_cast<GeometricField<T,fvPatchField,volMesh>&>(tres());
 
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
     const_cast<DimensionedField<T,volMesh>&>(res.internalField())=
+#else
+    res.internalField() =
+#endif
         (matrix & matrix.psi());
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
     const_cast<Field<T>&>(res.internalField().field())-=
-               matrix.source();
+#else
+    res.internalField() -=
+#endif
+        matrix.source();
 
     return tres;
 }

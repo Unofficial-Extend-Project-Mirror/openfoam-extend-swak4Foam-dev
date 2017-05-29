@@ -147,6 +147,7 @@ subModels
     patchInjectionCoeffs
     {
         patchName left;
+        patch $patchName;
         U0              ( 1 0 0 );
 
         $ConeInjectionCoeffs;

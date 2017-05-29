@@ -85,7 +85,11 @@ functions {
         valueType faceSet;
         setName middleFaces;
         aliases {
+<!--(if foamFork=="extend")-->
+            aWater alpha1;
+<!--(else)-->
             aWater alpha.water;
+<!--(end)-->
         }
         verbose true;
         expression "aWater";
@@ -102,10 +106,16 @@ functions {
         type manipulateCellSet;
         cellSetName undecided;
         aliases {
+<!--(if foamFork=="extend")-->
+            aWater alpha1;
+<!--(else)-->
             aWater alpha.water;
+<!--(end)-->
         }
         mask "0.1<aWater && aWater<0.9";
         createMissing true;
+        outputControl timeStep;
+        outputInterval 1;
     }
     undecidedVelocity {
         $middleLiquid;

@@ -103,6 +103,9 @@ simpleFunctionObject::simpleFunctionObject
     started_(false),
 #ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
     lastTimeStepExecute_(-1),
+    executeMoreThanOnce_(
+        dict.lookupOrDefault<bool>("executeMoreThanOnce",false)
+    ),
 #endif
     dict_(
         dict.parent(),
@@ -300,7 +303,7 @@ bool simpleFunctionObject::ensureExecuteOnce() {
     Dbug << this->name() << "::ensureExecuteOnce(): "
         << firstTime << endl;
     lastTimeStepExecute_=time_.timeIndex();
-    return firstTime;
+    return firstTime || executeMoreThanOnce_;
 }
 
 #endif

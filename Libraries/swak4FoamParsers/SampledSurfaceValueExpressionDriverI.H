@@ -60,9 +60,12 @@ namespace Foam {
         } else if(
             this->isGlobal<Type>(name,false)
         ) {
-            return const_cast<ExpressionResult&>(
-                this->lookupGlobal(name)
-            ).getResult<Type>(true);
+            const ExpressionResult &globalVar=this->lookupGlobal(name);
+            if(!globalVar.isSingleValue()) {
+                return const_cast<ExpressionResult&>(
+                    globalVar
+                ).getResult<Type>(true);
+            }
         }
 
         autoPtr<Field<Type> > result;

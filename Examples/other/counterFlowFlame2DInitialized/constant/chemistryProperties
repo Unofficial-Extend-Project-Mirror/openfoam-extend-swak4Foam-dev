@@ -28,6 +28,10 @@ chemistry           on;
 
 initialChemicalTimeStep 1e-07;
 
+turbulentReaction on;
+
+Cmix CMix [0 0 0 0 0 0 0] 0.1;
+
 sequentialCoeffs
 {
     cTauChem        0.001;
@@ -42,6 +46,7 @@ EulerImplicitCoeffs
 odeCoeffs
 {
     solver          SIBS;
+    ODESolver       $solver;
     eps             0.05;
     scale           1;
 }

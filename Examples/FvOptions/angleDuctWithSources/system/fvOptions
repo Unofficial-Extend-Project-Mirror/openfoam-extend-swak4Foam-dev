@@ -68,7 +68,7 @@ porosity1
 
         DarcyForchheimerCoeffs
         {
-            d   d [0 -2 0 0 0 0 0] (5e7 -1000 -1000);
+            d   d [0 -2 0 0 0 0 0] (7e5 -1000 -1000);
             f   f [0 -1 0 0 0 0 0] (0 0 0);
 
             coordinateSystem
@@ -197,6 +197,8 @@ reportStuff {
                 verbose true;
                 outputControlMode timeStep;
                 outputInterval 1;
+                executeMoreThanOnce true;
+                writeControl none;
 
                 fields (
                     p

@@ -87,9 +87,12 @@ namespace Foam {
         } else if(
             this->isGlobal<T>(name,false)
         ) {
-            return const_cast<ExpressionResult&>(
-                this->lookupGlobal(name)
-            ).getResult<T>(true);
+            const ExpressionResult &globalVar=this->lookupGlobal(name);
+            if(!globalVar.isSingleValue()) {
+                return const_cast<ExpressionResult&>(
+                    globalVar
+                ).getResult<T>(true);
+            }
         }
 
         tmp<Field<T> > result(new Field<T>(this->size()));

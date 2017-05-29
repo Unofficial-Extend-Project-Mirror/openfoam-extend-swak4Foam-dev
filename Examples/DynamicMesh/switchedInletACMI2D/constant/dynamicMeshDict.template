@@ -15,9 +15,15 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+<!--(if foamFork=="openfoamplus" and foamVersion>=(1612,))-->
+dynamicFvMesh dynamicMotionSolverFvMesh;
+<!--(else)-->
 dynamicFvMesh   solidBodyMotionFvMesh;
+<!--(end)-->
 
 motionSolverLibs ( "libfvMotionSolvers.so" );
+
+solver solidBody;
 
 solidBodyMotionFvMeshCoeffs
 {
@@ -32,5 +38,8 @@ solidBodyMotionFvMeshCoeffs
     }
 }
 
+solidBodyCoeffs {
+    $solidBodyMotionFvMeshCoeffs;
+}
 
 // ************************************************************************* //

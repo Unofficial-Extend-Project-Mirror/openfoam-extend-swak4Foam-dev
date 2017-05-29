@@ -50,6 +50,7 @@ porousToair
     {
         interpolationMethod cellVolumeWeight;
         nbrRegion       air;
+        nbrRegionName   $nbrRegion;
         master          true;
 
         nbrModel        airToporous;

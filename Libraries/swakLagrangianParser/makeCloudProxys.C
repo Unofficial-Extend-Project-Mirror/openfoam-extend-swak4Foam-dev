@@ -53,10 +53,12 @@ Contributors/Copyright:
 
 namespace Foam
 {
-
     addCloudProxyToTable(CloudProxyForKinematicParcel,basicKinematicCloud);
 
     addCloudProxyToTable(CloudProxyForThermoParcel,swakFluidThermoCloudType);
+
+    addKinematicCloudProxyToTable(CloudProxyForKinematicParcel,basicKinematicCloud);
+    addKinematicCloudProxyToTable(CloudProxyForThermoParcel,swakFluidThermoCloudType);
 
 #ifdef FOAM_REACTINGCLOUD_TEMPLATED
     addCloudProxyToTable(CloudProxyForReactingParcel,thermoReactingCloud);
@@ -70,7 +72,12 @@ namespace Foam
     addCloudProxyToTable(CloudProxyForReactingParcel,basicReactingCloud);
 
     addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,basicReactingMultiphaseCloud);
+
+    addKinematicCloudProxyToTable(CloudProxyForReactingParcelNoComposition,basicReactingCloud);
+    addKinematicCloudProxyToTable(CloudProxyForReactingMultiphaseParcelNoComposition,basicReactingMultiphaseCloud);
+
 #endif
+
 
 } // namespace end
 
