@@ -33,8 +33,17 @@ ifdef OPENFOAM_PLUS
     WMAKE_NEW_CONVENTION=new
     FOAM_UNIFIEDTURBULENCE=yes
     NEEDS_FILTER_DROPIN=1
+    # triSurface merged into surfMesh
+    TRISURFACE_INC=
+  else ifeq "1705" "$(word 1, $(sort 1705 $(OPENFOAM_PLUS)))"
+    # Changes with 1706
+    WMAKE_NEW_CONVENTION=new
+    FOAM_UNIFIEDTURBULENCE=yes
+    NEEDS_FILTER_DROPIN=1
+    # triSurface merged into surfMesh
+    TRISURFACE_INC=
   else ifeq "1611" "$(word 1, $(sort 1611 $(OPENFOAM_PLUS)))"
-    # Changes with v1612+
+    # Changes with 1612
     WMAKE_NEW_CONVENTION=new
     FOAM_UNIFIEDTURBULENCE=yes
     NEEDS_FILTER_DROPIN=1
