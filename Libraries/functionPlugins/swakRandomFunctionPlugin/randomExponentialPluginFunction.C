@@ -82,10 +82,14 @@ void randomExponentialPluginFunction<FType,DType>::doEvaluationInternal(
         seed=this->mesh().time().timeIndex()-seed;
     }
 
-    Random rand(seed);
+    Random rnd(seed);
 
     forAll(f,i) {
+#if (OPENFOAM_PLUS >= 1706)
+        f[i]=-log(1-rnd.sample01<scalar>())*halfLife_;
+#else
         f[i]=-log(1-rand.scalar01())*halfLife_;
+#endif
     }
 }
 
