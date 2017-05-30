@@ -29,6 +29,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/liquids/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/liquidMixture/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/solids/lnInclude \
@@ -55,6 +56,6 @@ LIB_LIBS = \
     $(COMPRESSIBLE_TURB_LIB) \
     -lspecie \
     -llagrangian \
+    $(THERMOPHYSICALFUNCTIONS_LIB) \
     $(RADIATION_LIB) \
-    -lthermophysicalFunctions \
     -llagrangianIntermediate

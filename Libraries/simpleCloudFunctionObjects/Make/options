@@ -23,6 +23,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
@@ -36,6 +37,6 @@ LIB_LIBS = \
     -lsampling \
     -llagrangian \
     -llagrangianIntermediate \
-    -lthermophysicalFunctions \
+    $(THERMOPHYSICALFUNCTIONS_LIB) \
     $(RADIATION_LIB) \
     -lsolidParticle

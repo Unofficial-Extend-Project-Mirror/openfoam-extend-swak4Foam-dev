@@ -8,6 +8,8 @@ endif
 FLUIDTHERMO_LIB=-lbasicThermophysicalModels
 SOLIDTHERMO_LIB=-lbasicSolidThermo
 
+THERMOPHYSICALFUNCTIONS_LIB=-lthermophysicalFunctions
+
 RADIATION_LIB=-lradiationModels
 RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiationModels/lnInclude
 
@@ -35,6 +37,7 @@ ifdef OPENFOAM_PLUS
     NEEDS_FILTER_DROPIN=1
     # triSurface merged into surfMesh
     TRISURFACE_INC=
+    THERMOPHYSICALFUNCTIONS_LIB=
   else ifeq "1705" "$(word 1, $(sort 1705 $(OPENFOAM_PLUS)))"
     # Changes with 1706
     WMAKE_NEW_CONVENTION=new
@@ -42,6 +45,7 @@ ifdef OPENFOAM_PLUS
     NEEDS_FILTER_DROPIN=1
     # triSurface merged into surfMesh
     TRISURFACE_INC=
+    THERMOPHYSICALFUNCTIONS_LIB=
   else ifeq "1611" "$(word 1, $(sort 1611 $(OPENFOAM_PLUS)))"
     # Changes with 1612
     WMAKE_NEW_CONVENTION=new

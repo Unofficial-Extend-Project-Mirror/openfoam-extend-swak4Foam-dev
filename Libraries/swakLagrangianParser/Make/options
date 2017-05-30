@@ -20,6 +20,7 @@ LAGRANGIAN_ADDITIONAL_INCLUDES = \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude
 endif
 
@@ -55,6 +56,6 @@ LIB_LIBS = \
     -lsampling \
     -llagrangian \
     -llagrangianIntermediate \
-    -lthermophysicalFunctions \
+    $(THERMOPHYSICALFUNCTIONS_LIB) \
     $(RADIATION_LIB) \
     -lsolidParticle
