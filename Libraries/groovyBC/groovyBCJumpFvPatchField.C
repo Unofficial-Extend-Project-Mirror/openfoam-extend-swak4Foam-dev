@@ -109,7 +109,11 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     }
     else
     {
+#if (OPENFOAM_PLUS >= 1706)
+        this->evaluate(Pstream::commsTypes::blocking);
+#else
         this->evaluate(Pstream::blocking);
+#endif
     }
 }
 

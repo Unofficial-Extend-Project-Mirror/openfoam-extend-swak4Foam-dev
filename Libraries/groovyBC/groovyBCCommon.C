@@ -166,7 +166,11 @@ groovyBCCommon<Type>::groovyBCCommon
         Pstream::defaultCommsType
 #endif
         ==
-        Pstream::blocking
+#if (OPENFOAM_PLUS >= 1706)
+       Pstream::commsTypes::blocking
+#else
+       Pstream::blocking
+#endif
     ) {
         WarningIn("groovyBCCommon<Type>::groovyBCCommon")
             << "The commsType is set to 'blocking'. This might cause the run to"
