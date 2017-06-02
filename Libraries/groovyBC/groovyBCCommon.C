@@ -166,7 +166,7 @@ groovyBCCommon<Type>::groovyBCCommon
         Pstream::defaultCommsType
 #endif
         ==
-#if (OPENFOAM_PLUS >= 1706)
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
        Pstream::commsTypes::blocking
 #else
        Pstream::blocking

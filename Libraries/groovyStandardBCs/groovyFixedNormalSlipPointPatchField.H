@@ -157,7 +157,7 @@ public:
             virtual void evaluate
             (
                 const Pstream::commsTypes commsType =
-#if (OPENFOAM_PLUS >= 1706)
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
                 Pstream::commsTypes::blocking
 #else
                 Pstream::blocking

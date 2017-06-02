@@ -85,10 +85,10 @@ void randomExponentialPluginFunction<FType,DType>::doEvaluationInternal(
     Random rnd(seed);
 
     forAll(f,i) {
-#if (OPENFOAM_PLUS >= 1706)
+#ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
         f[i]=-log(1-rnd.sample01<scalar>())*halfLife_;
 #else
-        f[i]=-log(1-rand.scalar01())*halfLife_;
+        f[i]=-log(1-rnd.scalar01())*halfLife_;
 #endif
     }
 }

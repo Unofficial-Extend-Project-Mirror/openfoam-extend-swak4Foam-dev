@@ -109,7 +109,7 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     }
     else
     {
-#if (OPENFOAM_PLUS >= 1706)
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
         this->evaluate(Pstream::commsTypes::blocking);
 #else
         this->evaluate(Pstream::blocking);

@@ -1188,7 +1188,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeRandomField(label seed) const
 
     Foam::Random rnd(seed);
     forAll(result(),i) {
-#if (OPENFOAM_PLUS >= 1706)
+#ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
         const_cast<scalar&>(result()[i]) = rnd.sample01<scalar>();
 #else
         const_cast<scalar&>(result()[i]) = rnd.scalar01();
@@ -1269,7 +1269,7 @@ tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
 
     Foam::Random rnd(seed);
     forAll(result(),i) {
-#if (OPENFOAM_PLUS >= 1706)
+#ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
         const_cast<scalar&>(result()[i]) = rnd.GaussNormal<scalar>();
 #else
         const_cast<scalar&>(result()[i]) = rnd.GaussNormal();
