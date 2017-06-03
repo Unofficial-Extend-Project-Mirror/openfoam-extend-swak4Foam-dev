@@ -183,10 +183,17 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
         }
 
         if(!found) {
+#ifdef FOAM_BASIC_THERMO_HAS_NO_NEW
+            FatalErrorIn("swakThermophysicalPluginFunction<ThermoType>::thermoInternal")
+                << "This version of Foam has no basicThermo::New"
+                    << endl
+                    << exit(FatalError);
+#else
             thermo_.set(
                 reg.name(),
                 ThermoType::New(reg).ptr()
             );
+#endif
         } else {
             // Create it ourself because nobody registered it
             if(usePsi) {
