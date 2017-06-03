@@ -58,7 +58,13 @@ CommonPluginFunction::CommonPluginFunction(
             Info << "Parsing arguments: " << argumentSpecificationString << endl;
         }
         word next;
-        forAll(argumentSpecificationString,i) {
+        for
+        (
+            string::size_type i = 0;
+            i < argumentSpecificationString.size();
+            ++i
+        )
+        {
             char c=argumentSpecificationString[i];
             if(c!=',') {
                 next+=c;
@@ -218,7 +224,13 @@ label CommonPluginFunction::readArgument(
     string tc="";
     {
         bool atStart=true;
-        forAll(content,i){
+        for
+        (
+            string::size_type i = 0;
+            i < content.size();
+            ++i
+        )
+        {
             if(isspace(content[i]) && atStart) {
                 consumed++;
             } else {

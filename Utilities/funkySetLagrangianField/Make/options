@@ -17,6 +17,7 @@ EXE_INC = -I$(OBJECTS_DIR) \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidMixtureProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \

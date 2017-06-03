@@ -1186,9 +1186,13 @@ tmp<scalarField> CommonValueExpressionDriver::makeRandomField(label seed) const
         seed=runTime().timeIndex()-seed;
     }
 
-    Foam::Random rand(seed);
+    Foam::Random rnd(seed);
     forAll(result(),i) {
-        const_cast<scalar&>(result()[i])=rand.scalar01();
+#ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
+        const_cast<scalar&>(result()[i]) = rnd.sample01<scalar>();
+#else
+        const_cast<scalar&>(result()[i]) = rnd.scalar01();
+#endif
     }
 
     return result;
@@ -1263,9 +1267,13 @@ tmp<scalarField> CommonValueExpressionDriver::makeGaussRandomField(
         seed=runTime().timeIndex()-seed;
     }
 
-    Foam::Random rand(seed);
+    Foam::Random rnd(seed);
     forAll(result(),i) {
-        const_cast<scalar&>(result()[i])=rand.GaussNormal();
+#ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
+        const_cast<scalar&>(result()[i]) = rnd.GaussNormal<scalar>();
+#else
+        const_cast<scalar&>(result()[i]) = rnd.GaussNormal();
+#endif
     }
 
     return result;

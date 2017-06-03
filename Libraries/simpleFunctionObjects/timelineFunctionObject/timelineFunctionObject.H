@@ -48,6 +48,7 @@ Contributors/Copyright:
 
 #include "simpleDataFunctionObject.H"
 #include "NamedEnum.H"
+#include "stringList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

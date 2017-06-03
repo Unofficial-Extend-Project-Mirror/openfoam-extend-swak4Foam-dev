@@ -21,6 +21,5 @@ LIB_LIBS = \
     $(FOAM_DEV_LIBS) \
     -lswak4FoamParsers \
     -lsampling \
-    $(FILEFORMATS_LIB) \
     -lfiniteVolume \
     -lmeshTools

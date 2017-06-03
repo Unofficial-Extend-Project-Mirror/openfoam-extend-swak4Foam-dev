@@ -153,10 +153,15 @@ public:
 
         // Evaluation functions
 
-             //- Update the patch field
+            //- Update the patch field
             virtual void evaluate
             (
-                const Pstream::commsTypes commsType=Pstream::blocking
+                const Pstream::commsTypes commsType =
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+                Pstream::commsTypes::blocking
+#else
+                Pstream::blocking
+#endif
             );
 
         //- Write
