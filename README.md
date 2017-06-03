@@ -88,7 +88,7 @@ contributors are (ordered by the year of their first contribution):
 -   2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 -   2015 Domink Christ <d.christ@wikki.co.uk>
 -   2015 Alexey Matveichev <alexey.matveichev@gmail.com>
--   2016 Mark Olesen <mark@opencfd>
+-   2016-2017 Mark Olesen <mark@opencfd>
 
 
 ## Documentation

@@ -25,8 +25,8 @@ Description
 
 
 Contributors/Copyright:
-    2006-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
-    2016 Mark Olesen <mark@opencfd>
+    2006-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
