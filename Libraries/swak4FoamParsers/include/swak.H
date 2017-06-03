@@ -483,6 +483,14 @@ Contributors/Copyright:
 #define FOAM_CXX_COMPILER_ALLOWS_NON_POD_IN_UNION
 #endif
 
+#if (OPENFOAM_PLUS >= 1706)
+#define FOAM_RANDOM_CLASS_NEW_INTERFACE
+#endif
+
+#if (OPENFOAM_PLUS >= 1706)
+#define FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+#endif
+
 #include "swakVersion.H"
 #include "DebugOStream.H"
 

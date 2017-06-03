@@ -166,7 +166,11 @@ groovyBCCommon<Type>::groovyBCCommon
         Pstream::defaultCommsType
 #endif
         ==
-        Pstream::blocking
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+       Pstream::commsTypes::blocking
+#else
+       Pstream::blocking
+#endif
     ) {
         WarningIn("groovyBCCommon<Type>::groovyBCCommon")
             << "The commsType is set to 'blocking'. This might cause the run to"

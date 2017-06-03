@@ -8,9 +8,10 @@ endif
 FLUIDTHERMO_LIB=-lbasicThermophysicalModels
 SOLIDTHERMO_LIB=-lbasicSolidThermo
 
+THERMOPHYSICALFUNCTIONS_LIB=-lthermophysicalFunctions
+
 RADIATION_LIB=-lradiationModels
 RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiationModels/lnInclude
-TRISURFACE_LIB=-ltriSurface
 
 INCOMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
 COMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
@@ -18,6 +19,8 @@ INCOMPRESSIBLE_TURB_LIB=-lincompressibleTurbulenceModel
 COMPRESSIBLE_TURB_LIB=-lcompressibleTurbulenceModel
 INCOMPRESSIBLE_TURB_ALL_LIBS=-lincompressibleLESModels -lincompressibleRASModels
 COMPRESSIBLE_TURB_ALL_LIBS=-lcompressibleLESModels -lcompressibleRASModels
+
+TRISURFACE_INC=-I$(LIB_SRC)/triSurface/lnInclude
 
 #
 # OpenFOAM+: v3.0+, v1606+, v1612+, ... plus (development branch)
@@ -32,8 +35,19 @@ ifdef OPENFOAM_PLUS
     WMAKE_NEW_CONVENTION=new
     FOAM_UNIFIEDTURBULENCE=yes
     NEEDS_FILTER_DROPIN=1
+    # triSurface merged into surfMesh
+    TRISURFACE_INC=
+    THERMOPHYSICALFUNCTIONS_LIB=
+  else ifeq "1705" "$(word 1, $(sort 1705 $(OPENFOAM_PLUS)))"
+    # Changes with 1706
+    WMAKE_NEW_CONVENTION=new
+    FOAM_UNIFIEDTURBULENCE=yes
+    NEEDS_FILTER_DROPIN=1
+    # triSurface merged into surfMesh
+    TRISURFACE_INC=
+    THERMOPHYSICALFUNCTIONS_LIB=
   else ifeq "1611" "$(word 1, $(sort 1611 $(OPENFOAM_PLUS)))"
-    # Changes with v1612+
+    # Changes with 1612
     WMAKE_NEW_CONVENTION=new
     FOAM_UNIFIEDTURBULENCE=yes
     NEEDS_FILTER_DROPIN=1
@@ -79,13 +93,8 @@ ifdef FOAM_DEV
   RADIATION_LIB=-lradiation
   RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude
   SOLIDTHERMO_LIB=
-  ifeq "3.1" "$(word 1, $(sort 3.1 $(WM_PROJECT_VERSION)))"
-    # triSurface-library was moved to meshTools
-    TRISURFACE_LIB=
-  endif
 else
   ifeq "2.2" "$(word 1, $(sort 2.2 $(WM_PROJECT_VERSION)))"
-     FILEFORMATS_LIB=-lfileFormats
      FILEFORMATS_INC=-I$(LIB_SRC)/fileFormats/lnInclude
      FLUIDTHERMO_LIB=-lfluidThermophysicalModels
      SOLIDTHERMO_LIB=-lsolidThermo

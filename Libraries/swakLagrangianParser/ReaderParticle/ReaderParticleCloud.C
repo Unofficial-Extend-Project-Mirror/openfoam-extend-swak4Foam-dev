@@ -80,7 +80,7 @@ void ReaderParticleCloud::clearData()
 }
 
 template <typename T>
-tmp<Field<T> > filterValues(
+tmp<Field<T> > filterFieldValues(
     const Field<T> &orig,
     const boolList &mask,
     label size
@@ -95,9 +95,9 @@ tmp<Field<T> > filterValues(
     label cnt=0;
     forAll(orig,i)
     {
-	if(mask[i]) {
+        if(mask[i]) {
             if(cnt>=size) {
-                FatalErrorIn("filterValues")
+                FatalErrorIn("filterFieldValues")
                     << "Mask seems to have more elements than " << size
                         << endl
                         << exit(FatalError);
@@ -107,7 +107,7 @@ tmp<Field<T> > filterValues(
         }
     }
     if(cnt!=size) {
-        FatalErrorIn("filterValues")
+        FatalErrorIn("filterFieldValues")
             << "Inconsistent amount of elements in mask " << cnt << nl
                 << "Need: " << size
                 << endl
@@ -227,7 +227,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                if(type==pTraits<scalar>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<scalar>()(),
                            usePos,
                            cloud.size()
@@ -236,7 +236,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<label>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<label>()(),
                            usePos,
                            cloud.size()
@@ -245,7 +245,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<vector>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<vector>()(),
                            usePos,
                            cloud.size()
@@ -254,7 +254,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<tensor>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<tensor>()(),
                            usePos,
                            cloud.size()
@@ -263,7 +263,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<symmTensor>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<symmTensor>()(),
                            usePos,
                            cloud.size()
@@ -272,7 +272,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<sphericalTensor>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<sphericalTensor>()(),
                            usePos,
                            cloud.size()
