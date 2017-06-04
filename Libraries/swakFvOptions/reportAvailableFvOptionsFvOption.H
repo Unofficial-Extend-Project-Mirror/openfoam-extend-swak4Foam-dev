@@ -38,7 +38,7 @@ SourceFiles
     reportAvailableFvOptionsFvOption.C
 
 Contributors/Copyright:
-    2014-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -163,7 +163,7 @@ public:
         const label fieldI
     );
 
-#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+    // #ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
     // Add explicit and implicit contributions to compressible equations
 
     //- Scalar
@@ -252,7 +252,7 @@ public:
         fvMatrix<tensor>& eqn,
         const label fieldI
     );
-#endif
+    // #endif
 
     // Set values directly
 
@@ -289,6 +289,38 @@ public:
     (
         fvMatrix<tensor>& eqn,
         const label fieldI
+    );
+
+    // Constraints
+
+    virtual void constrain
+    (
+        fvMatrix<scalar>& eqn,
+        const label fieldi
+    );
+
+    virtual void constrain
+    (
+        fvMatrix<vector>& eqn,
+        const label fieldi
+    );
+
+    virtual void constrain
+    (
+        fvMatrix<sphericalTensor>& eqn,
+        const label fieldi
+    );
+
+    virtual void constrain
+    (
+        fvMatrix<symmTensor>& eqn,
+        const label fieldi
+    );
+
+    virtual void constrain
+    (
+        fvMatrix<tensor>& eqn,
+        const label fieldi
     );
 
     // Flux manipulations

@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -91,7 +91,7 @@ tmp<Field<scalar> > CloudProxyForReaderParticle::getScalarField(
         tmp<Field<scalar> > result(new Field<scalar>(orig.size()));
         forAll(orig,i)
         {
-            result()[i]=orig[i];
+            const_cast<scalar&>(result()[i])=orig[i];
         }
         return result;
     }

@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.2.x                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -38,7 +38,6 @@ FoamFile
     axis
     {
         type            symmetryPlane;
-        inGroups        1(symmetryPlane);
         nFaces          0;
         startFace       3835;
     }
@@ -57,17 +56,16 @@ FoamFile
     back
     {
         type            wedge;
-        inGroups        1(wedge);
         nFaces          1900;
         startFace       3900;
     }
     front
     {
         type            wedge;
-        inGroups        1(wedge);
         nFaces          1900;
         startFace       5800;
     }
 )
+
 
 // ************************************************************************* //

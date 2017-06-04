@@ -36,7 +36,10 @@ Description
 SourceFiles
     swakDataEntry.C
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakDataEntry_H
@@ -47,12 +50,21 @@ SourceFiles
 #include "CommonValueExpressionDriver.H"
 #include "exprString.H"
 
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+#include "Function1.H"
+#define DataEntry Function1
+#else
 #include "DataEntry.H"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+    namespace Function1Types {
+#endif
 
 template<class Type>
 class swakDataEntry;
@@ -72,7 +84,7 @@ class swakDataEntry
     // Private data
 
     //- the dictionary with the data (stored for rewriting)
-    dictionary data_;
+    autoPtr<dictionary> data_;
 
     //- the actual driver for the Expressions
     autoPtr<CommonValueExpressionDriver> driver_;
@@ -101,7 +113,11 @@ public:
     // Constructors
 
         //- Construct from entry name and Istream
-        swakDataEntry(const word& entryName, const dictionary& dict);
+        swakDataEntry(
+            const word& entryName,
+            const dictionary& dict,
+            bool readEntryType=true
+        );
 
         //- Copy constructor
         swakDataEntry(const swakDataEntry<Type>& cnst);
@@ -142,6 +158,9 @@ public:
 
 };
 
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+    }
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

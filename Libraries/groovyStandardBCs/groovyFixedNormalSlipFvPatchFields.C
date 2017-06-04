@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2010, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2010, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -46,6 +47,10 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+#ifdef FOAM_MAKE_TEMPLATE_PATCHTYPE_FIELD_USES_PRIMITIVES
+makeTemplatePatchTypeField(vector, groovyFixedNormalSlip);
+makeTemplatePatchTypeField(tensor, groovyFixedNormalSlip);
+#else
 makeTemplatePatchTypeField
 (
     fvPatchVectorField,
@@ -56,6 +61,7 @@ makeTemplatePatchTypeField
     fvPatchTensorField,
     groovyFixedNormalSlipFvPatchTensorField
 );
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

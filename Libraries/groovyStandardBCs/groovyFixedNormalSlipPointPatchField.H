@@ -37,7 +37,8 @@ SourceFiles
     groovyFixedNormalSlipPointPatchField.C
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -45,7 +46,9 @@ Contributors/Copyright:
 #ifndef groovyFixedNormalSlipPointPatchField_H
 #define groovyFixedNormalSlipPointPatchField_H
 
-#ifdef FOAM_DEV
+#include "swak.H"
+
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 
 #include "SlipPointPatchField.H"
 #define SlipPointPatchFieldType SlipPointPatchField<pointPatchField,pointMesh,pointPatch,DummyMatrix,Type>
@@ -151,10 +154,15 @@ public:
 
         // Evaluation functions
 
-             //- Update the patch field
+            //- Update the patch field
             virtual void evaluate
             (
-                const Pstream::commsTypes commsType=Pstream::blocking
+                const Pstream::commsTypes commsType =
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+                Pstream::commsTypes::blocking
+#else
+                Pstream::blocking
+#endif
             );
 
         //- Write

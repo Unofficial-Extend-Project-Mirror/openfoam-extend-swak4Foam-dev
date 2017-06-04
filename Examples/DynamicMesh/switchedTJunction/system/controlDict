@@ -1,0 +1,246 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     compressibleInterDyMFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         3;
+
+deltaT          0.001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.01;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.5;
+maxAlphaCo      0.5;
+
+maxDeltaT       1;
+
+libs (
+    "libswakDynamicMesh.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libgroovyBC.so"
+    "libswakStateMachine.so"
+    "libswakFunctionObjects.so"
+);
+
+functions {
+    valveStates {
+        type stateMachineCreateAndUpdate;
+        valueType internalField;
+        states (
+            filling
+            openLeft
+            closingLeft
+            openRight
+        );
+        machineName valves;
+        initialState filling;
+        aliases {
+            frac alpha.water;
+        }
+        //        debugCommonDriver 1;
+        variables (
+            "filledIn{cellZone'inletBlock}=sum(vol()*frac)/sum(vol());"
+            "pressureIn{cellZone'inletBlock}=sum(vol()*p)/sum(vol());"
+            "inletFlow{inlet}=-sum(phi*frac);"
+            "leftFlow{left}=sum(phi*frac);"
+            "rightFlow{right}=sum(phi*frac);"
+        );
+        transitions (
+            {
+                from filling; to openLeft;
+                description "Fill up inlet pipe";
+                condition "filledIn>0.75"; logicalAccumulation and;
+                //                condition "pressureIn>1.01e5"; logicalAccumulation and;
+            }
+            {
+                from openLeft; to closingLeft;
+                description "More goes out than in";
+                condition "leftFlow>0.8*inletFlow"; logicalAccumulation and;
+            }
+            {
+                from closingLeft; to openRight;
+                description "Wait a little bit with the closing";
+                condition "stateMachine_timeSinceChange(valves)>0.05";  logicalAccumulation or;
+            }
+            {
+                from openRight; to filling;
+                description "Wait till the inlet is almost drained";
+                condition "filledIn<0.1"; logicalAccumulation or;
+            }
+        );
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    inletMachine {
+        type stateMachineCreateAndUpdate;
+        valueType patch;
+        patchName inlet;
+        states (
+            fullOn
+            rampDown
+        );
+        initialState fullOn;
+        machineName theInlet;
+        transitions (
+            {
+                from fullOn; to rampDown;
+                description "Close the inlet and drain";
+                condition "stateMachine_isState(valves,openRight)"; logicalAccumulation or;
+            }
+            {
+                from rampDown; to fullOn;
+                description "Switch to full again";
+                condition "stateMachine_isState(valves,filling)"; logicalAccumulation or;
+            }
+        );
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    writeValveMachine {
+        type stateMachineState;
+        machineName valves;
+        writeStartTime true;
+        verbose true;
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    writeInletMachine {
+        $writeValveMachine;
+        machineName theInlet;
+    }
+    getTheValve {
+        type readAndUpdateFields;
+        fields (
+            valveField
+        );
+    }
+    inletFraction {
+        type swakExpression;
+        valueType cellZone;
+        zoneName inletBlock;
+        verbose true;
+        accumulations (
+            weightedAverage
+        );
+        aliases {
+            aWater alpha.water;
+        }
+        expression "aWater";
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    centralFraction {
+        $inletFraction;
+        zoneName centralBlock;
+    }
+    leftFraction {
+        $inletFraction;
+        zoneName leftBlock;
+    }
+    rightFraction {
+        $inletFraction;
+        zoneName rightBlock;
+    }
+    leftOutFraction {
+        $inletFraction;
+        valueType patch;
+        patchName left;
+    }
+    rightOutFraction {
+        $leftOutFraction;
+        patchName right;
+    }
+    inletPressure {
+        $inletFraction;
+        expression "p";
+    }
+    centralPressure {
+        $inletPressure;
+        zoneName centralBlock;
+    }
+    leftPressure {
+        $inletPressure;
+        zoneName leftBlock;
+    }
+    rightPressure {
+        $inletPressure;
+        zoneName rightBlock;
+    }
+    leftOutPressure {
+        $inletPressure;
+        valueType patch;
+        patchName left;
+    }
+    rightOutPressure {
+        $leftOutPressure;
+        patchName right;
+    }
+    // limitTemperature {
+    //     type manipulateField;
+    //     fieldName T;
+    //     name T;
+    //     expression "$name<295 ? 295 : ($name>305 ? 305 : $name)";
+    //     mask "$name<295 || $name>305";
+    //     aliases {
+    //         TAir T.air;
+    //         TWater T.water;
+    //     }
+    // }
+    // limitTemperatureAir {
+    //     $limitTemperature;
+    //     fieldName T.air;
+    //     name TAir;
+    // }
+    // limitTemperatureWater {
+    //     $limitTemperature;
+    //     fieldName T.water;
+    //     name TWater;
+    // }
+    // correctProperties {
+    //     type correctThermo;
+    //     onlyAtStartup false;
+    //     ignore_unimplemented_simpleFunctionObject::movePoints true;
+    //     updateRho true;
+    //     rhoName rho;
+    // }
+}
+
+DebugSwitches {
+    // groovyCyclicACMI 1;
+}
+
+// ************************************************************************* //

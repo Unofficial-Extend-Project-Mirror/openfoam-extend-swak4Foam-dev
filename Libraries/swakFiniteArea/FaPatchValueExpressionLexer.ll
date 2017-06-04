@@ -172,6 +172,7 @@ randNormalFixed       { BEGIN(needsIntegerParameter); return token::TOKEN_randNo
 
 deltaT                return token::TOKEN_deltaT;
 time                  return token::TOKEN_time;
+outputTime            return token::TOKEN_outputTime;
 
 vector                 return token::TOKEN_VECTOR;
 tensor                 return token::TOKEN_TENSOR;
@@ -264,6 +265,8 @@ eigenVectors           return token::TOKEN_eigenVectors;
              tokenTyp=token::TOKEN_FUNCTION_YID;
         } else if(fInfo->returnType()=="sphericalTensor") {
              tokenTyp=token::TOKEN_FUNCTION_HID;
+        } else if(fInfo->returnType()=="bool") {
+            tokenTyp=token::TOKEN_FUNCTION_LID;
         } else if(fInfo->returnType()=="pointScalar") {
              tokenTyp=token::TOKEN_FUNCTION_PSID;
         } else if(fInfo->returnType()=="pointVector") {
@@ -274,6 +277,8 @@ eigenVectors           return token::TOKEN_eigenVectors;
              tokenTyp=token::TOKEN_FUNCTION_PYID;
         } else if(fInfo->returnType()=="pointSphericalTensor") {
              tokenTyp=token::TOKEN_FUNCTION_PHID;
+        } else if(fInfo->returnType()=="pointBool") {
+            tokenTyp=token::TOKEN_FUNCTION_PLID;
         } else {
             driver.error (
                 *yylloc,

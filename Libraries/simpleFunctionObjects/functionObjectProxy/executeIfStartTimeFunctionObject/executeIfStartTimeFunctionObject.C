@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -40,7 +40,6 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "swakTime.H"
-#include "argList.H"
 
 #ifdef darwin
 #include "mach-o/dyld.h"
@@ -79,8 +78,23 @@ executeIfStartTimeFunctionObject::executeIfStartTimeFunctionObject
         readBool(
             dict.lookup("runIfStartTime")
         )
+    ),
+    executeOnRestart_(
+        dict.lookupOrDefault<bool>("executeOnRestart",false)
+    ),
+    timeIndexRead_(
+        time().timeIndex()
     )
 {
+    Dbug << " constructing " << name << endl;
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
+    if(!dict.found("executeOnRestart")) {
+        WarningIn("executeIfStartTimeFunctionObject::executeIfStartTimeFunctionObject")
+            << "No entry 'executeOnRestart' in " << dict.name()
+                << ". Assuming 'false'" << endl;
+    }
 }
 
 
@@ -88,7 +102,11 @@ executeIfStartTimeFunctionObject::executeIfStartTimeFunctionObject
 
 bool executeIfStartTimeFunctionObject::condition()
 {
-    if(time().timeIndex()==0) {
+    if(
+        (time().timeIndex()==0 && !executeOnRestart_)
+        ||
+        (time().timeIndex()==timeIndexRead_ && executeOnRestart_)
+    ) {
         return runIfStartTime_;
     } else {
         return !runIfStartTime_;

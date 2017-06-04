@@ -6,7 +6,7 @@ ifeq "$(WMAKE_NEW_CONVENTION)" "new"
 else
   include $(OBJECTS_DIR)/../mybison
   include $(OBJECTS_DIR)/../myflex
-  
+
   sinclude $(OBJECTS_DIR)/../mydependencies
 endif
 
@@ -14,6 +14,7 @@ EXE_INC = -I$(OBJECTS_DIR) \
 	$(FOAM_DEV_OPTION) 	\
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/finiteArea/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
     -I../swak4FoamParsers/lnInclude/ \
     -I../groovyBC/lnInclude/ \

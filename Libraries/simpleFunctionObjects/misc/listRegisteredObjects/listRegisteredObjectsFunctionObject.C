@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -65,6 +65,9 @@ listRegisteredObjectsFunctionObject::listRegisteredObjectsFunctionObject
 :
     simpleFunctionObject(name,t,dict)
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    this->start();
+#endif
 }
 
 bool listRegisteredObjectsFunctionObject::start()
@@ -74,10 +77,10 @@ bool listRegisteredObjectsFunctionObject::start()
 
     dumpObr();
 
-    return true;
+    return simpleFunctionObject::start();
 }
 
-void listRegisteredObjectsFunctionObject::write()
+void listRegisteredObjectsFunctionObject::writeSimple()
 {
     Info << "Content of object registry " << obr().name()
         << endl;

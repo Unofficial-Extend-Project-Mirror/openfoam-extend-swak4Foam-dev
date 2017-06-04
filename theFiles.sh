@@ -14,6 +14,8 @@ export SWAKLIBS=(groovyBC \
     swak*FunctionPlugin \
     swak*CloudAdaptor \
     swakFvOptions \
+    swakStateMachine \
+    swakDynamicMesh \
     swakFunctionObjects)
 
 if [ "$FOAM_DEV" != "" ]
@@ -32,6 +34,7 @@ export SWAKUTILS=(funkySetBoundaryField \
     fieldReport \
     funkyPythonPostproc \
     funkySetLagrangianField \
+    writeBoundarySubfields \
     replayTransientBC)
 
 if [ "$FOAM_DEV" != "" ]

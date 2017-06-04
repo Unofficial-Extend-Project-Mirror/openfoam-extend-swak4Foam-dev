@@ -29,14 +29,14 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "groovyBCPointPatchField.H"
 
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 #include "PointPatchFieldMapper.H"
 #else
 #include "pointPatchFieldMapper.H"
@@ -109,7 +109,12 @@ groovyBCPointPatchField<Type>::groovyBCPointPatchField
             "const DimensionedField<Type, pointMesh>& iF,"
             "const dictionary& dict"
             ")"
-        ) << "No value defined for " << this->dimensionedInternalField().name()
+        ) << "No value defined for "
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            << this->internalField().name()
+#else
+            << this->dimensionedInternalField().name()
+#endif
             << " on " << this->patch().name() << " therefore using "
 #ifndef FOAM_NO_MIXED_POINT_PATCH
             << "the internal field next to the patch"

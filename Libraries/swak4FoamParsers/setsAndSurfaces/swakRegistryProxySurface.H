@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,16 +31,17 @@ Class
     Foam::swakRegistryProxySurface
 
 Description
-    A sampledSurface that is only a Proxy for one found in the 
+    A sampledSurface that is only a Proxy for one found in the
     Surface-registry of swak4Foam
 
 SourceFiles
     swakRegistryProxySurface.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakRegistryProxySurface_H
@@ -49,6 +50,8 @@ Contributors/Copyright:
 #include "sampledSurface.H"
 
 #include "SurfacesRepository.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -119,11 +122,33 @@ public:
             return realSurface().faces();
         }
 
+#ifdef FOAM_SAMPLED_SURFACE_ADDITIONAL_METHODS
+        // Could also re-direct to realSurface(), but need to verify
 
-//         const isoSurface& surface() const
-//         {
-//             return realSurface().surface();
-//         }
+        //- Const access to per-face zone/region information
+        virtual const labelList& zoneIds() const
+        {
+            return realSurface().zoneIds();
+        }
+
+        //- Face area vectors
+        virtual const vectorField& Sf() const
+        {
+            return realSurface().Sf();
+        }
+
+        //- Face area magnitudes
+        virtual const scalarField& magSf() const
+        {
+            return realSurface().magSf();
+        }
+
+        //- Face centres
+        virtual const vectorField& Cf() const
+        {
+            return realSurface().Cf();
+        }
+#endif
 
         //- sample field on surface
         virtual tmp<scalarField> sample

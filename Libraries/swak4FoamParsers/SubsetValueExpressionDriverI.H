@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -84,6 +84,15 @@ namespace Foam {
                 Pout << name << " is a variable" << endl;
             }
             return this->variable(name).getResult<T>(true);
+        } else if(
+            this->isGlobal<T>(name,false)
+        ) {
+            const ExpressionResult &globalVar=this->lookupGlobal(name);
+            if(!globalVar.isSingleValue()) {
+                return const_cast<ExpressionResult&>(
+                    globalVar
+                ).getResult<T>(true);
+            }
         }
 
         tmp<Field<T> > result(new Field<T>(this->size()));
@@ -104,14 +113,14 @@ namespace Foam {
                 const FieldType &f=this->mesh().lookupObject<FieldType>(name);
 
                 forAllConstIter(typename Subset,sub,iter) {
-                    result()[cnt]=f[getIndexFromIterator(iter)];
+                    const_cast<T&>(result()[cnt])=f[getIndexFromIterator(iter)];
                     cnt++;
                 }
             } else {
                 const FieldType &f=this->mesh().lookupObject<FieldType>(name).oldTime();
 
                 forAllConstIter(typename Subset,sub,iter) {
-                    result()[cnt]=f[getIndexFromIterator(iter)];
+                    const_cast<T&>(result()[cnt])=f[getIndexFromIterator(iter)];
                     cnt++;
                 }
             }
@@ -128,12 +137,12 @@ namespace Foam {
 
             if(!oldTime) {
                 forAllConstIter(typename Subset,sub,iter) {
-                    result()[cnt]=f()[getIndexFromIterator(iter)];
+                    const_cast<T&>(result()[cnt])=f()[getIndexFromIterator(iter)];
                     cnt++;
                 }
             } else {
                 forAllConstIter(typename Subset,sub,iter) {
-                    result()[cnt]=f->oldTime()[getIndexFromIterator(iter)];
+                    const_cast<T&>(result()[cnt])=f->oldTime()[getIndexFromIterator(iter)];
                     cnt++;
                 }
             }
@@ -184,9 +193,9 @@ namespace Foam {
                 const label index=getIndexFromIterator(iter);
                 if(index<this->mesh().nInternalFaces()) {
                     if(!oldTime) {
-                        result()[cnt]=f[index];
+                        const_cast<T&>(result()[cnt])=f[index];
                     } else {
-                        result()[cnt]=f.oldTime()[index];
+                        const_cast<T&>(result()[cnt])=f.oldTime()[index];
                     }
                     cnt++;
                 } else {
@@ -198,7 +207,7 @@ namespace Foam {
                         use=getBoundaryFaceValue(f.oldTime(),index,value);
                     }
                     if(use) {
-                        result()[cnt]=value;
+                        const_cast<T&>(result()[cnt])=value;
                         cnt++;
                     }
                 }
@@ -219,9 +228,9 @@ namespace Foam {
                     const label index=getIndexFromIterator(iter);
                     if(index<this->mesh().nInternalFaces()) {
                         if(!oldTime) {
-                            result()[cnt]=f()[index];
+                            const_cast<T&>(result()[cnt])=f()[index];
                         } else {
-                            result()[cnt]=f->oldTime()[index];
+                            const_cast<T&>(result()[cnt])=f->oldTime()[index];
                         }
                         cnt++;
                     } else {
@@ -233,7 +242,7 @@ namespace Foam {
                             use=getBoundaryFaceValue(f->oldTime(),index,value);
                         }
                         if(use) {
-                            result()[cnt]=value;
+                            const_cast<T&>(result()[cnt])=value;
                             cnt++;
                         }
                     }
@@ -273,12 +282,12 @@ namespace Foam {
                     label faceI=getIndexFromIterator(iter);
                     if(faceI<this->mesh().nInternalFaces()) {
                         if(!oldTime) {
-                            result()[cnt]=
+                            const_cast<T&>(result()[cnt])=
                                 weights[faceI]*f[own[faceI]]
                                 +
                                 (1-weights[faceI])*f[nei[faceI]];
                         } else {
-                            result()[cnt]=
+                            const_cast<T&>(result()[cnt])=
                                 weights[faceI]*f.oldTime()[own[faceI]]
                                 +
                                 (1-weights[faceI])*f.oldTime()[nei[faceI]];
@@ -293,7 +302,7 @@ namespace Foam {
                             use=getBoundaryFaceValue(f.oldTime(),faceI,value);
                         }
                         if(use) {
-                            result()[cnt]=value;
+                            const_cast<T&>(result()[cnt])=value;
                             cnt++;
                         }
                     }
@@ -316,12 +325,12 @@ namespace Foam {
                         label faceI=getIndexFromIterator(iter);
                         if(faceI<this->mesh().nInternalFaces()) {
                             if(!oldTime) {
-                                result()[cnt]=
+                                const_cast<T&>(result()[cnt])=
                                     weights[faceI]*f()[own[faceI]]
                                     +
                                     (1-weights[faceI])*f()[nei[faceI]];
                             } else {
-                                result()[cnt]=
+                                const_cast<T&>(result()[cnt])=
                                     weights[faceI]*f->oldTime()[own[faceI]]
                                     +
                                     (1-weights[faceI])*f->oldTime()[nei[faceI]];
@@ -336,7 +345,7 @@ namespace Foam {
                                 use=getBoundaryFaceValue(f->oldTime(),faceI,value);
                             }
                             if(use) {
-                                result()[cnt]=value;
+                                const_cast<T&>(result()[cnt])=value;
                                 cnt++;
                             }
                         }
@@ -374,7 +383,7 @@ namespace Foam {
         label cnt=0;
 
         forAllConstIter(typename Subset,sub,iter) {
-            result()[cnt]=original[getIndexFromIterator(iter)];
+            const_cast<T&>(result()[cnt])=original[getIndexFromIterator(iter)];
             cnt++;
         }
 
@@ -395,14 +404,14 @@ namespace Foam {
         forAllConstIter(typename Subset,sub,iter) {
             label faceI=getIndexFromIterator(iter);
             if(faceI<this->mesh().nInternalFaces()) {
-                result()[cnt]=original[faceI];
+                const_cast<T&>(result()[cnt])=original[faceI];
                 cnt++;
             } else {
                 T value;
                 bool use;
                 use=getBoundaryFaceValue(original,faceI,value);
                 if(use) {
-                    result()[cnt]=value;
+                    const_cast<T&>(result()[cnt])=value;
                     cnt++;
                 }
             }

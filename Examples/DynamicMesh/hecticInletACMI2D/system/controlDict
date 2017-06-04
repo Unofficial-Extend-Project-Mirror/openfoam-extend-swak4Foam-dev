@@ -1,0 +1,104 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     pimpleDyMFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         5;
+
+deltaT          0.005;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+adjustTimeStep  true;
+
+maxCo           0.5;
+
+libs (
+    "libswakDynamicMesh.so"
+    "libsimpleSwakFunctionObjects.so"
+);
+
+functions {
+    calcMassFlows {
+        type patchExpression;
+        patches (
+            "ACMI.*"
+            ".*let"
+        );
+        accumulations (
+            sum
+        );
+        expression "phi";
+        verbose true;
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    calcPatchArea {
+        $calcMassFlows;
+        expression "area()";
+    }
+    calcMassFlowDeficit {
+        type swakExpression;
+        valueType patch;
+        patchName ACMI1_couple;
+        variables (
+            "myMF=sum(phi);"
+            "myArea=sum(area());"
+            "otherMF{ACMI2_couple}=sum(phi);"
+            "otherArea{ACMI2_couple}=sum(area());"
+            //            "totalVol{internalField'}=sum(vol());"
+            "inMF{inlet}=sum(phi);"
+        );
+        expression "myMF+otherMF";
+        verbose true;
+        accumulations (
+            min
+        );
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    relativeDeficit {
+        $calcMassFlowDeficit;
+        expression "(myMF+otherMF)/inMF";
+    }
+    areaDeficit {
+        $calcMassFlowDeficit;
+        expression "myArea-otherArea";
+    }
+}
+
+// ************************************************************************* //

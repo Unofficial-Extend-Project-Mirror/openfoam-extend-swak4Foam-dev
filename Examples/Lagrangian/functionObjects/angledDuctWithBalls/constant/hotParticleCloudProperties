@@ -129,7 +129,8 @@ subModels {
         {
             type            patchInjection;
             patchName       inlet;
-            U0              ( 1 0 0 ); 
+            patch $patchName;
+            U0              ( 1 0 0 );
             flowRateProfile constant  0.1;
             massTotal        1.0e-12;
             SOI              0;

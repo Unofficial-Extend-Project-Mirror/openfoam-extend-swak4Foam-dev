@@ -16,6 +16,13 @@ expressions
 (
 	initLower
 	{
+		field alpha.water;
+		expression "1";
+		condition "pos().y<-0.075 && pos().x<0.1 && pos().z <0.1";
+		keepPatches true;
+	}
+	initLowerOld
+	{
 		field alpha1;
 		expression "1";
 		condition "pos().y<-0.075 && pos().x<0.1 && pos().z <0.1";

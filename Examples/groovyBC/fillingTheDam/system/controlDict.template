@@ -1,0 +1,390 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFoam;
+
+// startFrom       startTime;
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         5;
+
+deltaT          0.001;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.5;
+maxAlphaCo      0.5;
+
+maxDeltaT       1;
+
+functions
+{
+    defineFillDam {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+
+        globalScope fillDam;
+        globalVariables {
+            aThres {
+                valueType scalar;
+                value 0.5;
+            }
+            gridThick {
+                valueType scalar;
+                value 0.0146;
+            }
+        }
+    };
+    defineInletHeight {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalName inHeight;
+        globalScope fillDamBC;
+        valueType scalar;
+        value 0.1;
+    };
+
+    createFillingLine {
+        type createSampledSet;
+        outputControl timeStep;
+        outputInterval 1;
+        setName fillingLine;
+        set {
+            type uniform;
+            axis y;
+            start (0.1 0 0.007);
+            end (0.1 0.584 0.007);
+            nPoints 200;
+        }
+    }
+    fillingHeight
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  fillingHeight;
+        globalScopes ( "fillDam" );
+<!--(if foamFork!="extend")-->
+        aliases {
+            alpha1 alpha.water;
+        }
+<!--(end)-->
+        expression "(alpha1 > aThres) ? pos().y : 0";
+        accumulations (
+            max
+        );
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        interpolate true;
+        interpolationType cellPoint;
+    }
+    maxFilling
+    {
+        // Currently not working because the proxy doesn't work
+        type swakExpression;
+        verbose true;
+        valueType set;
+        setName  fillingHeight2;
+        globalScopes ( "fillDam" );
+        expression "pegel";
+        accumulations (
+            max
+        );
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        storedVariables (
+            {
+                name pegel;
+                initialValue "0";
+            }
+        );
+<!--(if foamFork!="extend")-->
+        aliases {
+            alpha1 alpha.water;
+        }
+<!--(end)-->
+        //        debugCommonDriver 1;
+        variables (
+            "currentPegel=(alpha1 > aThres) ? pos().y : 0;"
+            "pegel=(currentPegel > pegel) ? currentPegel : pegel;"
+        );
+        interpolate true;
+        interpolationType cellPoint;
+    }
+    surfaceVel {
+        type swakExpression;
+        valueType surface;
+        verbose true;
+        surfaceName liquidSurf;
+        surface {
+            type isoSurface;
+<!--(if foamFork!="extend")-->
+            isoField alpha.water;
+<!--(else)-->
+            isoField alpha1;
+<!--(end)-->
+            isoValue 0.5;
+            interpolate true;
+        }
+        expression "mag(U)";
+        accumulations (
+            max
+            average
+        );
+    }
+    surfaceSize {
+        type swakExpression;
+        valueType surface;
+        verbose true;
+        surfaceName liquidSurf2;
+        globalScopes ( "fillDam" );
+        surface {
+//             type isoSurface;
+//             isoField alpha1;
+//             isoValue 0.5;
+//             interpolate true;
+            type swakRegistryProxy;
+            surfaceName liquidSurf;
+        }
+        expression "area()/gridThick";
+        accumulations (
+            sum
+        );
+    }
+    normalizedVolume {
+        type swakExpression;
+        valueType internalField;
+        verbose true;
+        surfaceName liquidSurf2;
+        globalScopes ( "fillDam" );
+<!--(if foamFork!="extend")-->
+        aliases {
+            alpha1 alpha.water;
+        }
+<!--(end)-->
+        expression "alpha1*vol()/gridThick";
+        accumulations (
+            sum
+        );
+    }
+    getG {
+        type executeIfObjectExists;
+        readDuringConstruction true;
+
+        objectName g;
+        checkType true;
+        objectType uniformDimensionedVectorField;
+        objectShouldExist false;
+
+        functions {
+            loadG {
+                type readGravitation;
+            }
+        }
+    }
+    /* Commented out because this needs much space
+    massFlow
+    {
+        // Currently not working because the proxy doesn't work
+        type dumpSwakExpression;
+        valueType set;
+        setName  fillingHeight3;
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        expression "alpha1*U";
+        //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
+    }
+    alphaDump
+    {
+        // Currently not working because the proxy doesn't work
+        type dumpSwakExpression;
+        valueType set;
+        setName  fillingHeight4;
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        expression "alpha1";
+        //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
+    }
+    posDump
+    {
+        // Currently not working because the proxy doesn't work
+        type dumpSwakExpression;
+        valueType set;
+        setName  fillingHeight4;
+        set {
+            type swakRegistryProxy;
+            axis y;
+            setName fillingLine;
+        }
+        expression "pos()";
+        //        IKnowThatThisFunctionObjectMayWriteExcessiveAmountsOfData true;
+    }
+    rightDump
+    {
+        type  dumpSwakExpression;
+        valueType patch;
+        patchName rightWall;
+        expression "alpha1";
+    }
+        */
+    tracer {
+        // result doubtful
+        type solveTransportPDE;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        solveAt timestep;
+        fieldName tracer;
+        steady false;
+
+        rho "1" [0 0 0 0 0 0 0];
+
+        diffusion "1e-6" [0 2 -1 0 0 0 0];
+        source "0" [0 0 -1 0 0 0 0];
+
+        phi "phi" [0 3 -1 0 0];
+        // rho "rho" [1 -3 0 0 0 0 0];
+
+        // diffusion "1e-4" [1 -1 -1 0 0 0 0];
+        // source "0" [1 -3 -1 0 0 0 0];
+
+        // phi "phi*interpolate(rho)" [1 0 -1 0 0];
+    }
+    fixTracer {
+        type manipulateField;
+
+        outputControl   timeStep;
+        outputInterval  1;
+
+        fieldName tracer;
+
+        // expression "tracer*alpha1";
+        // mask "true";
+<!--(if foamFork!="extend")-->
+        aliases {
+            alpha1 alpha.water;
+        }
+<!--(end)-->
+
+        expression "0";
+        mask "alpha1<0.01";
+    }
+    // whichFields {
+    //     type listRegisteredObjects;
+    // }
+   doWithPython {
+        type executeIfFunctionObjectPresent;
+        functions {
+            doWithNumpy {
+                type executeIfPython;
+                functions {
+                    getVelocity {
+                        type calculateGlobalVariables;
+                        outputControl timeStep;
+                        outputInterval 1;
+                        valueType internalField;
+                        toGlobalNamespace pythonStatistics;
+<!--(if foamFork!="extend")-->
+                        aliases {
+                            alpha1 alpha.water;
+                        }
+<!--(end)-->
+                        variables (
+                            "heightField=pos().y;"
+                            "alphaField=alpha1;"
+                            "volume=vol();"
+                            "minY=min(pts().y);"
+                            "maxY=max(pts().y);"
+                        );
+                        toGlobalVariables (
+                            heightField
+                            alphaField
+                            volume
+                            minY
+                            maxY
+                        );
+                    }
+                    calculateDistribution {
+                        type pythonIntegration;
+                        startCode "";
+                        executeCode "";
+                        writeFile "$FOAM_CASE/system/calcFillingAtHeight.py";
+                        endFile "$FOAM_CASE/system/calcFillingAtHeight.py";
+                        //                        endFile $writeFile;
+                        swakToPythonNamespaces (
+                            pythonStatistics
+                        );
+                        interactiveAfterException true;
+                    }
+                }
+                readDuringConstruction true;
+                conditionFile "$FOAM_CASE/system/checkForNumpy.py";
+                initCode "";
+            }
+        }
+        readDuringConstruction true;
+        functionObjectName executeIfPython;
+   }
+}
+
+libs (
+    "libOpenFOAM.so"
+    "libgroovyBC.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libswakPythonIntegration.so"
+);
+
+// ************************************************************************* //

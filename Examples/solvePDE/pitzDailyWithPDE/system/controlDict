@@ -52,6 +52,7 @@ libs (
     "libswakFvcSchemesFunctionPlugin.so"
     "libswakSourceFields.so"
     "libswakFvOptions.so"
+    "libsolverFunctionObjects.so"
 );
 
 nToCorrect 0;
@@ -73,16 +74,27 @@ functions {
             max
         );
     }
-    openFoamTransport {
-        type scalarTransport;
-        resetOnStartUp false;
-        autoSchemes true;
-        DT 0.01;
-        fvOptions {}
-    }
-    transportedOF {
-        $transportedOriginal;
-        expression "openFoamTransport";
+    needTransport {
+        type executeIfFunctionObjectPresent;
+        functionObjectName scalarTransport;
+        readDuringConstruction true;
+        constructUnconditionally yes;
+        outputControlMode timeStep;
+        outputInterval 1;
+        functions {
+            openFoamTransport {
+                type scalarTransport;
+                resetOnStartUp false;
+                autoSchemes true;
+                DT 0.01;
+                fvOptions {}
+                field openFoamTransport;
+            }
+            transportedOF {
+                $transportedOriginal;
+                expression "openFoamTransport";
+            }
+        }
     }
     swak4FoamTransport {
         type solveTransportPDE;
@@ -90,10 +102,12 @@ functions {
         fieldName swakTransport;
         steady false;
         rho "1" [0 0 0 0 0 0 0];
-        diffusion "0.01" [m^2/s];
-        source "0" [K/s];
-        phi "phi" [m^3/s];
+        diffusion "0.01" [0 2 -1 0 0 0 0]; // [m^2/s];
+        source "0" [0 0 -1 1 0 0 0]; // [K/s];
+        phi "phi" [0 3 -1 0 0 0 0]; // [m^3/s];
         relaxUnsteady false;
+        outputControl timeStep;
+        outputInterval 1;
     }
     transportedSwak {
         $transportedOriginal;
@@ -102,7 +116,7 @@ functions {
     swak4FoamTransportMod {
         $swak4FoamTransport;
         fieldName swakTransportMod;
-        diffusion "0.01*(1-3*(swakTransportMod)*(1-swakTransportMod))" [m^2/s];
+        diffusion "0.01*(1-3*(swakTransportMod)*(1-swakTransportMod))" [0 2 -1 0 0 0 0]; // [m^2/s];
     }
     transportedSwakMod {
         $transportedOriginal;
@@ -121,6 +135,8 @@ functions {
         autowrite true;
         fieldName diffLinear;
         expression "swakTransportLinear-swakTransport";
+        outputControl timeStep;
+        outputInterval 1;
     }
     swak4FoamUpwindTransport {
         $swak4FoamTransport;
@@ -135,6 +151,8 @@ functions {
         autowrite true;
         fieldName diffUpwind;
         expression "swakTransportUpwind-swakTransport";
+        outputControl timeStep;
+        outputInterval 1;
     }
     swak4FoamDownwindTransport {
         $swak4FoamTransport;
@@ -149,6 +167,8 @@ functions {
         autowrite true;
         fieldName convectionDDT;
         expression "-div(phi,T)";
+        outputControl timeStep;
+        outputInterval 1;
     }
     diffusionContribution {
         $convectionContribution;
@@ -176,10 +196,12 @@ functions {
         fieldName residenceTime;
         steady false;
         rho "1" [0 0 0 0 0 0 0];
-        diffusion "0.01" [m^2/s];
-        source "1" [K/s];
-        phi "phi" [m^3/s];
+        diffusion "0.01" [0 2 -1 0 0 0 0]; // [m^2/s];
+        source "1" [0 0 -1 1 0 0 0]; // [K/s];
+        phi "phi" [0 3 -1 0 0 0 0]; // [m^3/s];
         relaxUnsteady false;
+        outputControl timeStep;
+        outputInterval 1;
     }
     residenceTimeTransient {
         $transportedOriginal;
@@ -210,7 +232,7 @@ functions {
     }
     residenceTimeZeroTransport {
         $residenceTimeTransientTransport;
-        diffusion "0.0" [m^2/s];
+        diffusion "0.0" [0 2 -1 0 0 0 0]; // [m^2/s];
         fieldName residenceTimeZero;
     }
     residenceTimeZero {
@@ -236,7 +258,7 @@ functions {
     }
     residenceTimeLowTransport {
         $residenceTimeTransientTransport;
-        diffusion "1e-6" [m^2/s];
+        diffusion "1e-6" [0 2 -1 0 0 0 0]; // [m^2/s];
         fieldName residenceTimeLow;
     }
     residenceTimeLow {
@@ -260,92 +282,102 @@ functions {
         $outResidenceTimeTransient;
         expression "residenceTimeLowSteady";
     }
-    openFoamResidenceTime {
-        type scalarTransport;
-        resetOnStartUp false;
-        autoSchemes true;
-        DT 0.01;
-        nCorr $nToCorrect;
-        fvOptions {
-            // weAreHere {
-            //     type reportAvailableFvOptions;
-            //     active on;
-            //     reportAvailableFvOptionsCoeffs {
-            //     }
-            // }
-            constantSourceTerm {
-                type scalarSemiImplicitSource;
-                // type scalarSwakExplicitSource;
-                active on;
-                scalarSemiImplicitSourceCoeffs {
-                    // selectionMode cellZone;
-                    // cellZone nix;
-                    selectionMode all;
-                    volumeMode specific;
-                    // timeStart       0.0;
-                    // duration        $endTime;
-                    injectionRateSuSp {
-                        openFoamResidenceTime  (1 0);
-                        openFoamResidenceTimeSteady $openFoamResidenceTime;
-                        openFoamResidenceTimeZeroSteady $openFoamResidenceTime;
-                        openFoamResidenceTimeLowSteady $openFoamResidenceTime;
+    needTransport2 {
+        $needTransport;
+        functions {
+            openFoamResidenceTime {
+                type scalarTransport;
+                resetOnStartUp false;
+                autoSchemes true;
+                DT 0.01;
+                nCorr $nToCorrect;
+                fvOptions {
+                    // weAreHere {
+                    //     type reportAvailableFvOptions;
+                    //     active on;
+                    //     reportAvailableFvOptionsCoeffs {
+                    //     }
+                    // }
+                    constantSourceTerm {
+                        type scalarSemiImplicitSource;
+                        // type scalarSwakExplicitSource;
+                        active on;
+                        selectionMode all;
+                        scalarSemiImplicitSourceCoeffs {
+                            // selectionMode cellZone;
+                            // cellZone nix;
+                            selectionMode all;
+                            volumeMode specific;
+                            // timeStart       0.0;
+                            // duration        $endTime;
+                            injectionRateSuSp {
+                                openFoamResidenceTime  (1 0);
+                                openFoamResidenceTimeSteady $openFoamResidenceTime;
+                                openFoamResidenceTimeZeroSteady $openFoamResidenceTime;
+                                openFoamResidenceTimeLowSteady $openFoamResidenceTime;
+                            }
+                        }
+                        scalarSwakExplicitSourceCoeffs {
+                            $scalarSemiImplicitSourceCoeffs;
+                            expressions {
+                                openFoamResidenceTime "1" [0 0 -1 1 0 0 0]; // [K/s];
+                                openFoamResidenceTimeSteady $openFoamResidenceTime;
+                                openFoamResidenceTimeZeroSteady $openFoamResidenceTime;
+                                openFoamResidenceTimeLowSteady $openFoamResidenceTime;
+                            }
+                        }
                     }
                 }
-                scalarSwakExplicitSourceCoeffs {
-                    $scalarSemiImplicitSourceCoeffs;
-                    expressions {
-                        openFoamResidenceTime "1" [K/s];
-                        openFoamResidenceTimeSteady $openFoamResidenceTime;
-                        openFoamResidenceTimeZeroSteady $openFoamResidenceTime;
-                        openFoamResidenceTimeLowSteady $openFoamResidenceTime;
-                    }
-                }
+                field openFoamResidenceTime;
+            }
+            residenceTimeOpenFOAM {
+                $residenceTimeTransient;
+                expression "openFoamResidenceTime";
+            }
+            outResidenceTimeOpenFOAM {
+                $outResidenceTimeTransient;
+                expression "openFoamResidenceTime";
+            }
+            openFoamResidenceTimeSteady {
+                $openFoamResidenceTime;
+                autoSchemes false;
+                field openFoamResidenceTimeSteady;
+            }
+            residenceTimeOpenFOAMSteady {
+                $residenceTimeTransient;
+                expression "openFoamResidenceTimeSteady";
+            }
+            outResidenceTimeOpenFOAMSteady {
+                $outResidenceTimeTransient;
+                expression "openFoamResidenceTimeSteady";
+            }
+            openFoamResidenceTimeZeroSteady {
+                $openFoamResidenceTimeSteady;
+                DT 0;
+                field openFoamResidenceTimeZeroSteady;
+            }
+            residenceTimeOpenFOAMZeroSteady {
+                $residenceTimeTransient;
+                expression "openFoamResidenceTimeZeroSteady";
+            }
+            outResidenceTimeOpenFOAMZeroSteady {
+                $outResidenceTimeTransient;
+                expression "openFoamResidenceTimeZeroSteady";
+            }
+            openFoamResidenceTimeLowSteady {
+                $openFoamResidenceTimeSteady;
+                DT 1e-6;
+                field openFoamResidenceTimeLowSteady;
+            }
+            residenceTimeOpenFOAMLowSteady {
+                $residenceTimeTransient;
+                expression "openFoamResidenceTimeLowSteady";
+            }
+            outResidenceTimeOpenFOAMLowSteady {
+                $outResidenceTimeTransient;
+                expression "openFoamResidenceTimeLowSteady";
             }
         }
-    }
-    residenceTimeOpenFOAM {
-        $residenceTimeTransient;
-        expression "openFoamResidenceTime";
-    }
-    outResidenceTimeOpenFOAM {
-        $outResidenceTimeTransient;
-        expression "openFoamResidenceTime";
-    }
-    openFoamResidenceTimeSteady {
-        $openFoamResidenceTime;
-        autoSchemes false;
-    }
-    residenceTimeOpenFOAMSteady {
-        $residenceTimeTransient;
-        expression "openFoamResidenceTimeSteady";
-    }
-    outResidenceTimeOpenFOAMSteady {
-        $outResidenceTimeTransient;
-        expression "openFoamResidenceTimeSteady";
-    }
-    openFoamResidenceTimeZeroSteady {
-        $openFoamResidenceTimeSteady;
-        DT 0;
-    }
-    residenceTimeOpenFOAMZeroSteady {
-        $residenceTimeTransient;
-        expression "openFoamResidenceTimeZeroSteady";
-    }
-    outResidenceTimeOpenFOAMZeroSteady {
-        $outResidenceTimeTransient;
-        expression "openFoamResidenceTimeZeroSteady";
-    }
-    openFoamResidenceTimeLowSteady {
-        $openFoamResidenceTimeSteady;
-        DT 1e-6;
-    }
-    residenceTimeOpenFOAMLowSteady {
-        $residenceTimeTransient;
-        expression "openFoamResidenceTimeLowSteady";
-    }
-    outResidenceTimeOpenFOAMLowSteady {
-        $outResidenceTimeTransient;
-        expression "openFoamResidenceTimeLowSteady";
     }
 }
 

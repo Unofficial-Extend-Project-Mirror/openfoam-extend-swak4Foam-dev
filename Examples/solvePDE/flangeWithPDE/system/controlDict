@@ -46,7 +46,7 @@ timePrecision   6;
 runTimeModifiable yes;
 
 functions
-(
+{
     TSteady {
         type solveLaplacianPDE;
         outputControl   timeStep;
@@ -116,12 +116,12 @@ functions
         );
         valueType internalField;
     }
-);
+}
 
-libs ( 
-    "libOpenFOAM.so" 
-    "libsimpleSwakFunctionObjects.so" 
-    "libswakFunctionObjects.so" 
+libs (
+    "libOpenFOAM.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
 ) ;
 
 // ************************************************************************* //

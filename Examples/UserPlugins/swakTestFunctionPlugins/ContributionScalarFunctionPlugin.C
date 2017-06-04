@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@ice-sf.at>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -246,7 +246,12 @@ void setResultForContribution<FieldValuePluginFunction>(
         )
     );
 
-    pResult->internalField()=values;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(pResult->internalField().field())
+#else
+    pResult->internalField()
+#endif
+        =values;
     pResult->correctBoundaryConditions();
 
     result.setObjectResult(pResult);

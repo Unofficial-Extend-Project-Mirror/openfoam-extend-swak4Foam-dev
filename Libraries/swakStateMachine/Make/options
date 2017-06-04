@@ -1,0 +1,30 @@
+include $(OBJECTS_DIR)/../../../rules/versionOptions
+
+ifdef FOAM_DEV
+ADDITIONALFILES_LIB:=-lfiniteArea -lswakFiniteArea
+endif
+
+EXE_INC = \
+    $(FOAM_DEV_OPTION)  \
+    -I../swak4FoamParsers/lnInclude \
+    -I../simpleFunctionObjects/lnInclude \
+    -I../swakLagrangianParser/lnInclude \
+    -I../swakFiniteArea/lnInclude \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/fileFormats/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+    -I$(LIB_SRC)/finiteArea/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lswak4FoamParsers \
+    -lswakLagrangianParser \
+    -lsimpleFunctionObjects \
+    -lmeshTools \
+    -lspecie \
+    -lfiniteVolume \
+    $(ADDITIONALFILES_LIB)
+

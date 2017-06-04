@@ -1,0 +1,62 @@
+#+TITLE: Compatibility of the examples
+#+OPTIONS: H:4 toc:nil
+* Overview
+  This document gives an overview on the compatibility of the examples
+  with a some OF-versions.
+
+  /Compatibility/ means that the cases run in this Foam-version, that
+  the =swak4Foam=-parts work but not necessarily that the results are
+  correct
+** Used Foam-versions
+   Currently these Foam-versions are in the matrix (these are the
+   names in the column titles):
+   - 4.1 Fnd :: The OpenFOAM 4.1 Foundation release
+   - 4.0 Ext :: The Foam-Extend 4.0 release
+   - 1612+ :: The OpenFOAM 1612+ release
+   - 2.3 :: The OpenFOAM 2.3 release (this is the oldest release
+        tested)
+** Symbols in the tables
+   - \checkmark :: this means that the case was tested and runs. Not
+                   necessarily till the end (meaning that at least a
+                   couple of time-steps is completed)
+   - \sad :: means that the case was tested and does not run or that
+        some functionality does not seem to work
+   - \smiley :: test runs and gives correct results
+   - \dagger :: This test will never run on this Foam version because
+        of technical constraints (missing solver etc)
+   - no symbol :: This means that the case was not yet tested on this version
+* The Matrix
+  | Case name                                                   | 4.1 Fnd    | 4.0 Ext    | 1612+       | 2.3        |
+  |-------------------------------------------------------------+------------+------------+-------------+------------|
+  | DynamicMesh/hectivInletACMI2D                               | \checkmark | \dagger    | \checkmark  | \sad       |
+  | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | DynamicMesh/switchedTJunction                               | \checkmark | \dagger    | \checkmark  | \sad       |
+  | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    | \checkmark  | \sad       |
+  | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \dagger     | \dagger    |
+  | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    | \checkmark  | \checkmark |
+  | FvOptions/heatExchangerSources                              | \checkmark | \dagger    | \checkmark  | \sad       |
+  | groovyBC/average-t-junction                                 | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | groovyBC/circulatingSplash                                  | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | groovyBC/delayed-t-junction                                 | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | groovyBC/fillingTheDam                                      | \checkmark | \sad       | w\checkmark | \checkmark |
+  | groovyBC/movingConeDistorted                                | \checkmark | \sad       | \checkmark  | \checkmark |
+  | groovyBC/pulsedPitzDaily                                    | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \checkmark  | \sad       |
+  | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | Lagrangian/parser/simplifiedSiwek                           | \checkmark | \sad       | \checkmark  | \checkmark |
+  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark  | \checkmark |
+  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark  | \checkmark |
+  | other/capillaryRise                                         | \checkmark | \sad       | \checkmark  | \checkmark |
+  | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \checkmark  | \checkmark |
+  | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark  | \checkmark |
+  | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark  | \checkmark |
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:

@@ -8,6 +8,8 @@ wclean swak4FoamParsers
 
 rm -f swak4FoamParsers/foamVersion4swak.H
 
+rm -rf swak4FoamParsers/Make/filesThatAreOnlyInSomeDistributions/
+
 # otherwise the next compilation will have trouble finding the version-file
 find . -name lnInclude -exec rm -r {} \; -prune
 
@@ -41,6 +43,10 @@ wclean simpleCloudFunctionObjects
 
 wclean swakCloudFunctionObjects
 
+wclean swakStateMachine
+
+wclean swakDynamicMesh
+
 # Remove residual from bison
 rm -f */*.output
 
@@ -54,3 +60,13 @@ then
 	wclean $plugins
     done
 fi
+
+rmdepall=rmdepall
+if type wrmdep >/dev/null 2>&1
+then
+    rmdepall="wrmdep -all"
+fi
+
+$rmdepall Libraries/filesThatAreOnlyInSomeDistributions
+
+# -----------------------------------------------------------------------------

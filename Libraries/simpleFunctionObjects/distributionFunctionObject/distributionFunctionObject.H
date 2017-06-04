@@ -38,7 +38,7 @@ SourceFiles
     distributionFunctionObject.C
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -159,7 +159,7 @@ public:
 
     virtual void flush();
 
-    virtual void write();
+    virtual void writeSimple();
 
     virtual bool start();
 

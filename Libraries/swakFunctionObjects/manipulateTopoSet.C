@@ -123,7 +123,12 @@ void Foam::manipulateTopoSet<TopoSetType>::read(const dictionary& dict)
 }
 
 template<class TopoSetType>
-void Foam::manipulateTopoSet<TopoSetType>::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::manipulateTopoSet<TopoSetType>::write()
 {
     if(active_) {
         FieldValueExpressionDriver &driver=driver_();
@@ -226,6 +231,10 @@ void Foam::manipulateTopoSet<TopoSetType>::write()
     }
 
     driver_->tryWrite();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

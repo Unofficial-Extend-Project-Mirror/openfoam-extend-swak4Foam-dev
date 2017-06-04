@@ -1,0 +1,221 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v3.0+                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     icoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          |-deltaT-|;
+// deltaT          0.25e-3;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.01;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep |-variableTimeStep-|;
+maxCo |-maxCo-|;
+
+functions {
+<!--(if doTransport)-->
+    solveTracer {
+        type solveTransportPDE;
+        solveAt timestep;
+        fieldName movedField;
+        outputControl timeStep;
+        outputInterval 1;
+        //    writeBeforeAfter true;
+        steady false;
+        rho "1" [0 0 0 0 0 0 0];
+        diffusion "1e-6" [0 2 -1 0 0 0 0]; // [m^2/s];
+        source "0" [0 0 -1 0 0 0 0];
+        phi "interpolate(U) & face()" [0 3 -1 0 0 0 0]; // [m^3/s];
+        //            relaxUnsteady true;
+        relaxUnsteady false;
+        makePhiRelative true;
+        //        makePhiRelative false;
+        //        velocityName U;
+        velocityExpression "U" [0 1 -1 0 0 0 0];
+    }
+    tracerStats {
+        type swakExpression;
+        valueType internalField;
+        expression "movedField";
+        verbose true;
+        accumulations (
+            min
+            weightedQuantile0.01
+            weightedAverage
+            weightedQuantile0.99
+            max
+        );
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    solveSteadyTracer {
+        $solveTracer;
+        fieldName movedSteadyField;
+        steady true;
+        relaxLastIteration true;
+        //        makePhiRelative false;
+    }
+    steadyTracerStats {
+        $tracerStats;
+        expression "movedSteadyField";
+    }
+    solveStaticTracer {
+        $solveTracer;
+        fieldName staticField;
+        phi "interpolate(0)" [0 3 -1 0 0 0 0]; // [m^3/s];
+        diffusion "0" [0 2 -1 0 0 0 0]; // [m^2/s];
+        relaxLastIteration true;
+        //        makePhiRelative false;
+    }
+    staticTracerStats {
+        $tracerStats;
+        expression "staticField";
+    }
+<!--(end)-->
+<!--(if doParticles)-->
+    rhoField {
+        type expressionField;
+        fieldName pseudoRho;
+        expression "1139.0";
+        autowrite false;
+    }
+    muField {
+        type expressionField;
+        fieldName pseudoMu;
+        expression "70.0";
+        autowrite false;
+    }
+    staticUField {
+        type expressionField;
+        fieldName staticU;
+        expression "vector(0,0,0)";
+        autowrite false;
+    }
+    inletTransientParticle {
+        type evolveKinematicCloud;
+        cloudName transientInletCloud;
+        g "down" [0 1 -2 0 0 0 0] (0 0 -9.81);
+        rhoName pseudoRho;
+        muName pseudoMu;
+        UName U;
+
+        autowrite true;
+        ignore_unimplemented_EvolveCloudFunctionObject::movePoints true;
+    }
+    gridTransientParticle {
+        $inletTransientParticle;
+        cloudName transientGridCloud;
+    }
+    gridStaticParticle {
+        $gridTransientParticle;
+        cloudName staticGridCloud;
+        UName staticU;
+    }
+    inletTransientVelocity {
+        type swakExpression;
+        valueType cloud;
+        cloudName transientInletCloud;
+        verbose true;
+        expression "mag(U)";
+        accumulations (
+            min
+            average
+            max
+        );
+        ignore_unimplemented_simpleFunctionObject::movePoints true;
+    }
+    gridTransientVelocity {
+        $inletTransientVelocity;
+        cloudName transientGridCloud;
+    }
+    gridStaticVelocity {
+        $inletTransientVelocity;
+        cloudName staticGridCloud;
+    }
+    inletTransientVelocityDiff {
+        $inletTransientVelocity;
+        expression "mag(U-fluidPhase(U))";
+        accumulations (
+            average
+            max
+        );
+        interpolationSchemes {
+            U cellPointWallModified;
+            staticU $U;
+        }
+    }
+    gridTransientVelocityDiff {
+        $inletTransientVelocityDiff;
+        cloudName transientGridCloud;
+    }
+    gridStaticVelocityDiff {
+        $inletTransientVelocityDiff;
+        cloudName staticGridCloud;
+        expression "mag(U-fluidPhase(staticU))";
+    }
+    inletTransientPosition {
+        $inletTransientVelocity;
+        expression "pos()";
+        accumulations (
+            min
+            average
+            max
+        );
+    }
+    gridTransientPosition {
+        $inletTransientPosition;
+        cloudName transientGridCloud;
+    }
+    gridStaticPosition {
+        $inletTransientPosition;
+        cloudName staticGridCloud;
+    }
+<!--(end)-->
+}
+
+libs (
+    "libsimpleSwakFunctionObjects.so"
+    "libswakFunctionObjects.so"
+    "libsimpleLagrangianFunctionObjects.so"
+    "libsimpleCloudFunctionObjects.so"
+    "libswakLagrangianParser.so"
+    "libswakDynamicMesh.so"
+);
+
+// ************************************************************************* //

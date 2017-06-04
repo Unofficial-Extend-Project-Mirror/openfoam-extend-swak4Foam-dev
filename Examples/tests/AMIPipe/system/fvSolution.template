@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v3.0+                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers {
+    pcorr
+    {
+        solver          GAMG;
+        tolerance       1e-2;
+        relTol          0;
+        smoother        DICGaussSeidel;
+        cacheAgglomeration no;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+        maxIter         50;
+    }
+
+    p
+    {
+        $pcorr;
+        tolerance       1e-5;
+        relTol          0.01;
+    }
+
+    pFinal
+    {
+        $p;
+        tolerance       1e-6;
+        relTol          0;
+    }
+
+    "(U|k|epsilon)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0.1;
+    }
+    "(U|k|epsilon)Final"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-6;
+        relTol          0;
+    }
+
+    ".*Field" {
+        solver          PBiCG;
+        preconditioner  DILU;
+        maxIter         1000;
+        relTol          0;
+        nSweeps         1;
+    }
+}
+
+PIMPLE {
+    correctPhi          no;
+    nOuterCorrectors    |-pimpleOuterCorr-|;
+    nCorrectors         |-pimpleCorr-|;
+    nNonOrthogonalCorrectors |-pimpleNonOrthCorr-|;
+}
+
+".*FieldTransportPDE" {
+    nCorrectors         |-transportCorr-|;
+    nNonOrthogonalCorrectors |-transportNonOrthCorr-|;
+}
+
+relaxationFactors
+{
+    "(U|k|epsilon).*"   1;
+    movedSteadyField 0.9;
+}
+
+cache
+{
+    grad(U);
+}
+
+// ************************************************************************* //

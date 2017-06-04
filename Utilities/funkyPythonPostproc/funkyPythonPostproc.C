@@ -34,7 +34,7 @@ Application
 Description
 
 Contributors/Copyright:
-    2013-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -190,6 +190,11 @@ int main(int argc, char *argv[])
             true,
             failOnException
         );
+        if(!ok) {
+            WarningIn(args.executable())
+                << "Problem with startCode?"
+                    << endl;
+        }
     }
 
     forAll(timeDirs, timeI)
@@ -215,7 +220,7 @@ int main(int argc, char *argv[])
 
         Info << "Function objects: execute " << functions.size() << " function objects" << endl;
         functions.execute(
-#ifndef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
+#if !defined(FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE) && !defined(FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START)
             true
 #endif
         );
@@ -228,6 +233,11 @@ int main(int argc, char *argv[])
                 true,
                 failOnException
             );
+            if(!ok) {
+                WarningIn(args.executable())
+                    << "Problem with executeCode?"
+                        << endl;
+            }
         }
 
         Info << endl;
@@ -244,6 +254,11 @@ int main(int argc, char *argv[])
             true,
             failOnException
         );
+        if(!ok) {
+            WarningIn(args.executable())
+                << "Problem with endCode?"
+                    << endl;
+        }
         Info << endl;
     }
 

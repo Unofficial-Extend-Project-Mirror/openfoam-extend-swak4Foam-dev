@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -95,10 +95,12 @@ void lcFaceMinimumPluginFunction::doCellCalculation(volScalarField &field)
             } else {
                 label patchID=field.mesh().boundaryMesh().whichPatch(faceI);
                 label startI=field.mesh().boundaryMesh()[patchID].start();
-                minVal=min(
-                    minVal,
-                    o.boundaryField()[patchID][faceI-startI]
-                );
+                if(faceI-startI<o.boundaryField()[patchID].size()) {
+                    minVal=min(
+                        minVal,
+                        o.boundaryField()[patchID][faceI-startI]
+                    );
+                }
             }
         }
 

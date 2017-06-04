@@ -5,13 +5,22 @@ ifdef FOAM_DEV
 ADDITIONALFILES_INC=-I../filesThatAreOnlyInSomeDistributions
 endif
 
+ifdef NEEDS_FILTER_DROPIN
+ADDITIONALFILES_INC:=$(ADDITIONALFILES_INC) -I../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/
+endif
+
+ifdef ADDITIONALFILES_INC
+ADDITIONALFILES_INC:=-I$(LIB_SRC)/OpenFOAM/lnInclude $(ADDITIONALFILES_INC)
+endif
+
 EXE_INC = \
     $(FOAM_DEV_OPTION) \
     -I../swak4FoamParsers/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
-    -I$(LIB_SRC)/triSurface/lnInclude \
+    $(TRISURFACE_INC) \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
@@ -20,6 +29,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/liquids/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/liquidMixture/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/solids/lnInclude \
@@ -40,13 +50,12 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \
-    $(TRISURFACE_LIB) \
     $(FLUIDTHERMO_LIB) \
     -lincompressibleTransportModels \
     $(INCOMPRESSIBLE_TURB_LIB) \
     $(COMPRESSIBLE_TURB_LIB) \
     -lspecie \
     -llagrangian \
+    $(THERMOPHYSICALFUNCTIONS_LIB) \
     $(RADIATION_LIB) \
-    -lthermophysicalFunctions \
     -llagrangianIntermediate

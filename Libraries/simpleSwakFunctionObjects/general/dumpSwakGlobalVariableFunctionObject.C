@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -94,7 +94,7 @@ stringList dumpSwakGlobalVariableFunctionObject::columnNames()
     return stringList(1,"No way to know how much data will follow");
 }
 
-void dumpSwakGlobalVariableFunctionObject::write()
+void dumpSwakGlobalVariableFunctionObject::writeSimple()
 {
 
     if(verbose()) {
@@ -123,7 +123,7 @@ void dumpSwakGlobalVariableFunctionObject::write()
     } else if(rType==pTraits<sphericalTensor>::typeName) {
         writeTheData<sphericalTensor>(value);
     } else {
-        WarningIn("dumpSwakGlobalVariableFunctionObject::write()")
+        WarningIn("dumpSwakGlobalVariableFunctionObject::writeSimple()")
             << "Don't know how to handle type " << rType
                 << endl;
     }

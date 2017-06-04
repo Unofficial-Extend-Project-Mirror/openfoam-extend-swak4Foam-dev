@@ -37,7 +37,7 @@ SourceFiles
     groovyBCPointPatchField.C
 
 Contributors/Copyright:
-    2010-2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#ifdef FOAM_DEV
+    #ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 
 #   include "MixedPointPatchField.H"
     // Predefine extra template paramters

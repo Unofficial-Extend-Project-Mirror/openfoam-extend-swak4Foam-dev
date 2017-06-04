@@ -42,7 +42,7 @@ SourceFiles
     manipulateFvSolutionFvSchemesFunctionObject.C
 
 Contributors/Copyright:
-    2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -117,7 +117,7 @@ public:
 
     bool start();
 
-    void write();
+    void writeSimple();
 
     virtual bool manipulateFvSolution(const Time &) = 0;
 

@@ -38,7 +38,7 @@ SourceFiles
     readAndUpdateFields.C
 
 Contributors/Copyright:
-    2012-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id$
@@ -99,7 +99,16 @@ protected:
         PtrList<pointSymmTensorField> pSymmtf_;
         PtrList<pointTensorField> ptf_;
 
+        PtrList<surfaceScalarField> ssf_;
+        PtrList<surfaceVectorField> svf_;
+        PtrList<surfaceSphericalTensorField> sSpheretf_;
+        PtrList<surfaceSymmTensorField> sSymmtf_;
+        PtrList<surfaceTensorField> stf_;
+
         autoPtr<pointMesh> pMesh_;
+
+        // should the boundary conditions be corrected at every time-step?
+        bool correctBoundary_;
 
         const pointMesh &pMesh(const polyMesh &mesh);
 
@@ -116,6 +125,7 @@ protected:
         (
             const word&,
             PtrList<GeometricField<Type, fvPatchField, volMesh> >&,
+            PtrList<GeometricField<Type, fvsPatchField, surfaceMesh> >&,
             PtrList<GeometricField<Type, pointPatchField, pointMesh> >&
         );
 
@@ -154,8 +164,8 @@ public:
             return name_;
         }
 
-        //- Called when time was set at the end of the Time::operator++ 
-        virtual void timeSet();         
+        //- Called when time was set at the end of the Time::operator++
+        virtual void timeSet();
 
         //- Read the field min/max data
         virtual void read(const dictionary&);
@@ -167,7 +177,11 @@ public:
         virtual void end();
 
         //- Write
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+        virtual bool write();
+#else
         virtual void write();
+#endif
 
         //- Update for changes of mesh
         virtual void updateMesh(const mapPolyMesh&)

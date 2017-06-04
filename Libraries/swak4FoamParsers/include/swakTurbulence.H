@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ Contributors/Copyright:
 
 #include "swak.H"
 
-#if FOAM_VERSION4SWAK >= VERSION_NR(3,0,0) && !defined(FOAM_DEV)
+#if FOAM_VERSION4SWAK >= VERSION_NR(3,0,0) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_NEW_TURBULENCE_STRUCTURE
 #endif
 

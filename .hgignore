@@ -28,6 +28,7 @@ GRTAGS
 *.pdf
 *.lof
 *.lot
+*.log
 
 auto
 doc
@@ -52,6 +53,14 @@ PyFoamPrepareCaseParameters*
 PyFoamState.*
 *.foam
 __pycache__
+runOnMac*.sh
 
 # Other stuff we won't need
 *.vtk
+*.deb
+*.E
+*.pyc
+
+# Time directories except 0
+syntax: regexp
+/(0\.[0-9][0-9]*|[1-9][0-9.]*)/

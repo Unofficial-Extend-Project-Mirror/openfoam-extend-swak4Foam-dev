@@ -72,6 +72,9 @@ EvolveCloudFunctionObject<CloudType>::EvolveCloudFunctionObject
         dict.lookup("cloudName")
     ),
     g_("dummy",dimless,vector::zero)
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    ,lastTimeStepExecute_(-1)
+#endif
 {
     if(dict_.found("g")) {
         dimensionedVector newG(dict_.lookup("g"));
@@ -111,6 +114,21 @@ const FieldType &EvolveCloudFunctionObject<CloudType>::getField(const word &fiel
 template<class CloudType>
 bool EvolveCloudFunctionObject<CloudType>::execute(bool forceWrite)
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    if(!cloud_.valid()) {
+        this->start();
+    }
+
+    if(
+        lastTimeStepExecute_
+        !=
+        obr().time().timeIndex()
+    ) {
+        lastTimeStepExecute_=obr().time().timeIndex();
+    } else {
+        return false;
+    }
+#endif
     cloud_->evolve();
 
     if(
@@ -128,6 +146,10 @@ bool EvolveCloudFunctionObject<CloudType>::execute(bool forceWrite)
 template<class CloudType>
 bool EvolveCloudFunctionObject<CloudType>::read(const dictionary& dict)
 {
+    if(!cloud_.valid()) {
+        this->start();
+    }
+
     if(dict_!=dict) {
         WarningIn("EvolveCloudFunctionObject<CloudType>::read(const dictionary& dict)")
             << "Can't change the cloud of " << this->name()

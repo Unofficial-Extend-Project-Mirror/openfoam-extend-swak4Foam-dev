@@ -39,9 +39,9 @@ SourceFiles
     readGravitationFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef readGravitationFunctionObject_H
@@ -67,7 +67,7 @@ class readGravitationFunctionObject
 
     //- Disallow default bitwise copy construct
     readGravitationFunctionObject(const readGravitationFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const readGravitationFunctionObject&);
 
@@ -90,7 +90,7 @@ public:
         const dictionary&
     );
 
-    void write();
+    void writeSimple();
 };
 
 

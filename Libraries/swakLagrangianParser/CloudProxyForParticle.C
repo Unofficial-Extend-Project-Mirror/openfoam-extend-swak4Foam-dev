@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -369,7 +369,7 @@ tmp<Field<RType> > CloudProxyForParticle<CloudType>::mapToParticles(
     tmp<Field<RType> > tResult(
         new Field<RType>(theCloud().size())
     );
-    Field<RType> &result=tResult();
+    Field<RType> &result=const_cast<Field<RType>&>(tResult());
     label i=0;
     forAllConstIter(typename CloudType,theCloud(),it)
     {

@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -115,7 +115,12 @@ groovyBCFixedValueFvPatchField<Type>::groovyBCFixedValueFvPatchField
             "const DimensionedField<Type, volMesh>& iF,"
             "const dictionary& dict"
             ")"
-        ) << "No value defined for " << this->dimensionedInternalField().name()
+        ) << "No value defined for "
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            << this->internalField().name()
+#else
+            << this->dimensionedInternalField().name()
+#endif
             << " on " << this->patch().name() << " therefore would be undefined "
             << "and set to the internal field next to the patch"
             << endl;

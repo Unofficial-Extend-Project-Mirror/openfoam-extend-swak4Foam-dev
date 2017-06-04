@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -56,7 +56,7 @@ Contributors/Copyright:
 
 #endif
 
-#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_DEV)
+#if FOAM_VERSION4SWAK > VERSION_NR2(2,2) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_SEARCHABLE_SURF_NEEDS_BOUNDING_SPHERES
 #endif
 

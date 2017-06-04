@@ -38,7 +38,7 @@ SourceFiles
     CloudValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -83,6 +83,8 @@ class CloudValueExpressionDriver
 :
     public CommonValueExpressionDriver
 {
+    static word driverName_;
+
     // Private data
 
     //- the cloud
@@ -146,6 +148,8 @@ public:
      //- Runtime type information
     TypeName("CloudValueExpressionDriver");
 
+    static const word &driverName() { return driverName_; }
+
     // Constructors
 
     // //- Construct from components
@@ -178,7 +182,8 @@ public:
     //- construct from an existing cloud
     CloudValueExpressionDriver(
         const cloud& c,
-        const dictionary&
+        const dictionary&,
+        word alternateType=""
     );
 
     //- Construct from a dictionary and cloud

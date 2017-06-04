@@ -35,7 +35,7 @@ Description
     Warp mesh with new coordinates calculated for the points
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -61,19 +61,25 @@ int main(int argc, char *argv[])
     argList::validOptions.insert("expression","expression to write");
     argList::validOptions.insert("dictExt","Extension to the dictionary");
     argList::validOptions.insert("relative", "");
+    argList::validOptions.insert("allowFunctionObjects","");
 
 #   include "setRootCase.H"
 
     printSwakVersion();
 
 #   include "createTime.H"
-    runTime.functionObjects().off();
 
     Foam::instantList timeDirs = Foam::timeSelector::select0(runTime, args);
 
 #   include "createNamedMesh.H"
 
 #   include "loadFunctionPlugins.H"
+
+    if(!args.options().found("allowFunctionObjects")) {
+        runTime.functionObjects().off();
+    } else {
+        runTime.functionObjects().start();
+    }
 
     const word oldInstance = mesh.pointsInstance();
 

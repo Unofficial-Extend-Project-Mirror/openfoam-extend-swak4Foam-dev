@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -40,7 +40,6 @@ Contributors/Copyright:
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "swakTime.H"
-#include "argList.H"
 
 #ifdef darwin
 #include "mach-o/dyld.h"
@@ -79,6 +78,9 @@ executeIfFunctionObjectPresentFunctionObject::executeIfFunctionObjectPresentFunc
         dict.lookup("functionObjectName")
     )
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 

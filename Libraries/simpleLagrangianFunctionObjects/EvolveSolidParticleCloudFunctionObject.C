@@ -50,6 +50,22 @@ namespace Foam
 template<>
 bool EvolveCloudFunctionObject<solidParticleCloud>::execute(bool forceWrite)
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    if(!cloud_.valid()) {
+        this->start();
+    }
+
+    if(
+        lastTimeStepExecute_
+        !=
+        obr().time().timeIndex()
+    ) {
+        lastTimeStepExecute_=obr().time().timeIndex();
+    } else {
+        return false;
+    }
+#endif
+
     Info << "Moving solidParticeCloud:" << cloud_->name()
         << " with " << cloud_->size() << " particles" << endl;
     cloud_->move(g());
@@ -94,6 +110,11 @@ EvolveSolidParticleCloudFunctionObject::EvolveSolidParticleCloudFunctionObject
         dict
     )
 {
+    Dbug << this->name() << " Construktor" << endl;
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    this->read(dict);
+#endif
 }
 
 
@@ -101,6 +122,8 @@ EvolveSolidParticleCloudFunctionObject::EvolveSolidParticleCloudFunctionObject
 
 bool EvolveSolidParticleCloudFunctionObject::start()
 {
+    Dbug << this->name() << "::start()" << endl;
+
     cloud().set(
         new solidParticleCloud(
             //            dynamicCast<const fvMesh &>(

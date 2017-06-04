@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -136,7 +136,7 @@ void swakExpressionDistributionFunctionObject::getDistribution()
     }
 }
 
-void swakExpressionDistributionFunctionObject::write()
+void swakExpressionDistributionFunctionObject::writeSimple()
 {
     if(verbose()) {
         Info << "DistributionExpression " << name() << " : ";
@@ -191,7 +191,7 @@ void swakExpressionDistributionFunctionObject::write()
             driver_->getResult<sphericalTensor>().ptr()
         );
     } else {
-        FatalErrorIn("swakExpressionDistributionFunctionObject::write()")
+        FatalErrorIn("swakExpressionDistributionFunctionObject::writeSimple()")
             << "Don't know how to handle weight expressions of type "
                 << driver_->CommonValueExpressionDriver::getResultType()
                 << endl
@@ -223,7 +223,7 @@ void swakExpressionDistributionFunctionObject::write()
             }
         }
     } else {
-        FatalErrorIn("swakExpressionDistributionFunctionObject::write()")
+        FatalErrorIn("swakExpressionDistributionFunctionObject::writeSimple()")
             << "Don't know how to handle logical expressions of type "
                 << driver_->CommonValueExpressionDriver::getResultType()
                 << endl
@@ -233,7 +233,7 @@ void swakExpressionDistributionFunctionObject::write()
 
     driver_->parse(expression_);
 
-    distributionFunctionObject::write();
+    distributionFunctionObject::writeSimple();
 
     if(verbose()) {
         Info << endl;

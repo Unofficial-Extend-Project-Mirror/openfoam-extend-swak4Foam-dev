@@ -38,7 +38,7 @@ SourceFiles
     EvolveCloudFunctionObject.C
 
 Contributors/Copyright:
-    2012-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -96,6 +96,11 @@ class EvolveCloudFunctionObject
     //- direction of gravity
     dimensionedVector g_;
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    //- make sure that execute is not called twice at one time-step
+    label lastTimeStepExecute_;
+#endif
+
 protected:
 
     //- get a reference to the field
@@ -109,6 +114,10 @@ protected:
     const dimensionedVector &g() const { return g_; }
 
     const objectRegistry &obr() const { return obr_; }
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    virtual bool start() = 0;
+#endif
 
 public:
 
@@ -136,6 +145,16 @@ public:
         {
             return execute(false);
         }
+#endif
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    virtual bool execute() {
+        return execute(false);
+    }
+
+    virtual bool write() {
+        return execute(true);
+    }
 #endif
 
     //- Read and set the function object if it's data has changed

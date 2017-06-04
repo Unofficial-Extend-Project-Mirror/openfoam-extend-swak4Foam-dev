@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -44,7 +44,7 @@ namespace Foam {
         valType_("None"),
         valPtr_(NULL),
         isPoint_(false),
-        isSingleValue_(true),
+        isSingleValue_(false),
         noReset_(false),
         needsReset_(false)
     {
@@ -60,7 +60,7 @@ namespace Foam {
         valType_("None"),
         valPtr_(NULL),
         isPoint_(false),
-        isSingleValue_(true),
+        isSingleValue_(false),
         noReset_(false),
         needsReset_(false)
     {
@@ -75,7 +75,7 @@ namespace Foam {
         valType_("None"),
         valPtr_(NULL),
         isPoint_(false),
-        isSingleValue_(true),
+        isSingleValue_(false),
         noReset_(false),
         needsReset_(false)
     {
@@ -94,7 +94,7 @@ namespace Foam {
         valType_("None"),
         valPtr_(NULL),
         isPoint_(false),
-        isSingleValue_(true),
+        isSingleValue_(false),
         noReset_(false),
         needsReset_(false)
     {
@@ -206,7 +206,7 @@ namespace Foam {
     }
 
     template<class Type>
-    void ExpressionResult::calcIsSingleValueInternal()
+    Type ExpressionResult::calcIsSingleValueInternal()
     {
         const Field<Type> &vals=*static_cast<Field<Type>*>(valPtr_);
 
@@ -221,6 +221,7 @@ namespace Foam {
         } else {
             isSingleValue_=true;
         }
+        return (minVal+maxVal)/2;   // if this is the single value
     }
 
     template<class Type>
@@ -229,6 +230,8 @@ namespace Foam {
         Pbug << "setSingleValueInternal(Type val)" << endl;
 
         clearResult();
+
+        Type(single_)=val;
 
         valType_=pTraits<Type>::typeName;
         valPtr_=static_cast<void *>(new Field<Type>(1,val));

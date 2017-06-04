@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -106,6 +106,7 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
         }
 
         bool usePsi=true;
+        bool found=false;
 
         {
             // make sure it is gone before we create the object
@@ -121,7 +122,22 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
                     )
                 );
 
-            word thermoTypeName=dict["thermoType"];
+            word thermoTypeName;
+            if (dict.isDict("thermoType")) {
+                const dictionary& thermoTypeDict(dict.subDict("thermoType"));
+
+                // Construct the name of the thermo package from the components
+                thermoTypeName =
+                    word(thermoTypeDict.lookup("type")) + '<'
+                    + word(thermoTypeDict.lookup("mixture")) + '<'
+                    + word(thermoTypeDict.lookup("transport")) + '<'
+                    + word(thermoTypeDict.lookup("thermo")) + '<'
+                    + word(thermoTypeDict.lookup("equationOfState")) + '<'
+                    + word(thermoTypeDict.lookup("specie")) + ">>,"
+                    + word(thermoTypeDict.lookup("energy")) + ">>>";
+            } else {
+                thermoTypeName=word(dict["thermoType"]);
+            }
 
             swakRhoThermoType::fvMeshConstructorTable::iterator cstrIter =
                 swakRhoThermoType::fvMeshConstructorTablePtr_->find(
@@ -133,6 +149,7 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
                     Info << thermoTypeName << " is a rhoThermo-type";
                 }
                 usePsi=false;
+                found=true;
             } else if(debug) {
                 Info << "No " << thermoTypeName << " in rhoThermo-types "
 #ifdef FOAM_HAS_SORTED_TOC
@@ -152,6 +169,7 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
                     if(debug) {
                         Info << thermoTypeName << " is a psiThermo-type";
                     }
+                    found=true;
                 } else if(debug) {
                     Info << "No " << thermoTypeName << " in psiThermo-types "
 #ifdef FOAM_HAS_SORTED_TOC
@@ -164,17 +182,31 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
             }
         }
 
-        // Create it ourself because nobody registered it
-        if(usePsi) {
+        if(!found) {
+#ifdef FOAM_BASIC_THERMO_HAS_NO_NEW
+            FatalErrorIn("swakThermophysicalPluginFunction<ThermoType>::thermoInternal")
+                << "This version of Foam has no basicThermo::New"
+                    << endl
+                    << exit(FatalError);
+#else
             thermo_.set(
                 reg.name(),
-                swakPsiThermoType::New(reg).ptr()
+                ThermoType::New(reg).ptr()
             );
+#endif
         } else {
-            thermo_.set(
-                reg.name(),
-                swakRhoThermoType::New(reg).ptr()
-            );
+            // Create it ourself because nobody registered it
+            if(usePsi) {
+                thermo_.set(
+                    reg.name(),
+                    swakPsiThermoType::New(reg).ptr()
+                );
+            } else {
+                thermo_.set(
+                    reg.name(),
+                    swakRhoThermoType::New(reg).ptr()
+                );
+            }
         }
     }
 
@@ -217,7 +249,22 @@ const solidThermo &swakThermophysicalPluginFunction<solidThermo>::thermoInternal
                     )
                 );
 
-            word thermoTypeName=dict["thermoType"];
+            word thermoTypeName;
+            if (dict.isDict("thermoType")) {
+                const dictionary& thermoTypeDict(dict.subDict("thermoType"));
+
+                // Construct the name of the thermo package from the components
+                thermoTypeName =
+                    word(thermoTypeDict.lookup("type")) + '<'
+                    + word(thermoTypeDict.lookup("mixture")) + '<'
+                    + word(thermoTypeDict.lookup("transport")) + '<'
+                    + word(thermoTypeDict.lookup("thermo")) + '<'
+                    + word(thermoTypeDict.lookup("equationOfState")) + '<'
+                    + word(thermoTypeDict.lookup("specie")) + ">>,"
+                    + word(thermoTypeDict.lookup("energy")) + ">>>";
+            } else {
+                thermoTypeName=word(dict["thermoType"]);
+            }
 
             solidThermo::fvMeshConstructorTable::iterator cstrIter =
                 solidThermo::fvMeshConstructorTablePtr_->find(

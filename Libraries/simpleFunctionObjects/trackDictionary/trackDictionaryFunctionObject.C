@@ -24,7 +24,7 @@ License
 
 Contributors/Copyright:
     2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*----------------------------------------------------------------------------*/
@@ -34,6 +34,8 @@ Contributors/Copyright:
 #include "dimensionedConstants.H"
 #include "stringListOps.H"
 #include "fileStat.H"
+
+#include "swak.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -272,7 +274,7 @@ void Foam::trackDictionaryFunctionObject::echoSwitchesValues()
     if(echoControlDictOptimisationSwitches_ && debug::controlDict().found("OptimisationSwitches"))
         Pout << "OptimisationSwitches : " << Foam::debug::optimisationSwitches();
 
-#ifdef FOAM_DEV
+#ifdef FOAM_HAS_TOLERANCE_SWITCHES
     if(echoControlDictTolerances_ && debug::controlDict().found("Tolerances"))
         Pout << "Tolerance switches   : " << Foam::debug::tolerances();
 #endif
@@ -336,7 +338,7 @@ Foam::string Foam::trackDictionaryFunctionObject::echoSectionSeparator(
     return outputString.replace("_sectionIdToken_", sectionId);
 }
 
-void Foam::trackDictionaryFunctionObject::write()
+void Foam::trackDictionaryFunctionObject::writeSimple()
 {
     // Do nothing for now
 }

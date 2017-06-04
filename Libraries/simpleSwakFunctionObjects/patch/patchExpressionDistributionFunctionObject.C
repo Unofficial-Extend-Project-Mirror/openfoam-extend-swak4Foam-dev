@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -141,7 +141,7 @@ void patchExpressionDistributionFunctionObject::getDistribution()
     getDistributionInternal(distSphericalTensor_);
 }
 
-void patchExpressionDistributionFunctionObject::write()
+void patchExpressionDistributionFunctionObject::writeSimple()
 {
     forAll(patchIDs_,i) {
         PatchValueExpressionDriver &driver=drivers_[i];
@@ -154,7 +154,7 @@ void patchExpressionDistributionFunctionObject::write()
         driver.parse(expression_);
     }
 
-    distributionFunctionObject::write();
+    distributionFunctionObject::writeSimple();
 
     if(verbose()) {
         Info << endl;

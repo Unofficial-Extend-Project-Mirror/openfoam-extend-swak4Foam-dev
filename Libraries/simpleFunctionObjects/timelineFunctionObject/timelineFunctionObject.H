@@ -38,9 +38,10 @@ SourceFiles
     timelineFunctionObject.C
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef timelineFunctionObject_H
@@ -48,6 +49,7 @@ Contributors/Copyright:
 
 #include "simpleDataFunctionObject.H"
 #include "NamedEnum.H"
+#include "stringList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -123,6 +125,10 @@ protected:
     //- close all files to enable a new slate
     void closeAllFiles();
 
+private:
+    //- should we write immediately at startup
+    bool writeStartTime_;
+
 public:
 
     //- Runtime type information
@@ -136,7 +142,8 @@ public:
     (
         const word &name,
         const Time&,
-        const dictionary&
+        const dictionary&,
+        bool writeStartTime=false
     );
 
 

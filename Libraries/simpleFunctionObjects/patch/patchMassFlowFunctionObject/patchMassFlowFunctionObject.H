@@ -38,9 +38,9 @@ SourceFiles
     patchMassFlowFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef patchMassFlowFunctionObject_H
@@ -67,7 +67,7 @@ class patchMassFlowFunctionObject
 
     //- Disallow default bitwise copy construct
     patchMassFlowFunctionObject(const patchMassFlowFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const patchMassFlowFunctionObject&);
 
@@ -100,7 +100,7 @@ public:
     // Member Functions
 
     //- Sample and write
-    void write();
+    void writeSimple();
 };
 
 

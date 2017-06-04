@@ -39,7 +39,7 @@ SourceFiles
     executeIfStartTimeFunctionObject.C
 
 Contributors/Copyright:
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -74,6 +74,11 @@ class executeIfStartTimeFunctionObject
     //- execute only if this is the start time
     bool runIfStartTime_;
 
+    //- if this is a restart execute as well
+    bool executeOnRestart_;
+
+    //- the time index at which this was read
+    label timeIndexRead_;
 protected:
 
     //- the actual conition that determines whether the FO should be executed

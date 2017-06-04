@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2010 Marianne Mataln <mmataln@ice-sf>
 
  SWAK Revision: $Id$
@@ -302,7 +302,7 @@ tmp<scalarField> PatchValueExpressionDriver::makeFaceIdField()
         new scalarField(patch_.size())
     );
     forAll(result(),i) {
-        result()[i]=i;
+        const_cast<scalar&>(result()[i])=i;
     }
     return result;
 }
@@ -314,7 +314,7 @@ tmp<scalarField> PatchValueExpressionDriver::makeNearDistField()
     );
 
     nearWallDist dist(this->mesh());
-    result()=dist[patch_.index()];
+    const_cast<scalarField&>(result())=dist[patch_.index()];
     return result;
 }
 

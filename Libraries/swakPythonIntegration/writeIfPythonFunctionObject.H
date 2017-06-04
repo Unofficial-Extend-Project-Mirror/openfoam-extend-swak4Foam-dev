@@ -40,7 +40,7 @@ SourceFiles
     writeIfPythonFunctionObject.C
 
 Contributors/Copyright:
-    2011-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/

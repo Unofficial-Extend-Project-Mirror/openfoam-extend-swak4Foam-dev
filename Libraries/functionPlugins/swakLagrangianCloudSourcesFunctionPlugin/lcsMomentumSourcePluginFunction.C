@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -127,7 +127,12 @@ void lcsMomentumSourcePluginFunction::doEvaluation()
 #ifdef FOAM_KINEMATICCLOUD_OLD_STYLE
     pSource->internalField()=SU.field();
 #else
-    pSource->internalField()=SU.field()/(mesh().time().deltaT().value()*mesh().V());
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<vectorField&>(pSource->internalField().field())
+#else
+    pSource->internalField()
+#endif
+        =SU.field()/(mesh().time().deltaT().value()*mesh().V());
 #endif
 
     result().setObjectResult(pSource);

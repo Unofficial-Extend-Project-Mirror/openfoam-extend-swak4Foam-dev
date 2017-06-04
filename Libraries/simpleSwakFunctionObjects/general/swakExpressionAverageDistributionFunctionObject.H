@@ -38,7 +38,7 @@ SourceFiles
     swakExpressionAverageDistributionFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -167,7 +167,7 @@ public:
 
     //     virtual void flush();
 
-    virtual void write();
+    virtual void writeSimple();
 
     virtual bool start();
 

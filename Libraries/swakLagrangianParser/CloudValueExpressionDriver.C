@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,6 +48,8 @@ Contributors/Copyright:
 namespace Foam {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+word CloudValueExpressionDriver::driverName_="cloud";
 
 defineTypeNameAndDebug(CloudValueExpressionDriver, 0);
 
@@ -177,7 +179,8 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
 
 CloudValueExpressionDriver::CloudValueExpressionDriver(
     const cloud& c,
-    const dictionary& dict
+    const dictionary& dict,
+    word alternateType
 )
     :
     CommonValueExpressionDriver(dict),
@@ -186,7 +189,8 @@ CloudValueExpressionDriver::CloudValueExpressionDriver(
         ),
         proxy_(
             CloudProxy::New(
-                cloud_
+                cloud_,
+                alternateType
             )
         ),
     interpolationSchemes_(
@@ -309,7 +313,7 @@ tmp<scalarField> CloudValueExpressionDriver::makeIdField()
         new scalarField(this->size())
     );
     forAll(ids(),i) {
-        ids()[i]=i;
+        const_cast<scalar&>(ids()[i])=i;
     }
     return ids;
 }
@@ -330,7 +334,13 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
             IOobject::NO_WRITE
         );
 
-    if(!head.headerOk()) {;
+    if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        !head.typeHeaderOk<IOobject>(false)
+#else
+        !head.headerOk()
+#endif
+    ) {;
         head=IOobject
             (
                 name,
@@ -340,7 +350,11 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
                 IOobject::MUST_READ,
                 IOobject::NO_WRITE
             );
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+        head.typeHeaderOk<IOobject>(false);
+#else
         head.headerOk();
+#endif
     }
 
     cellSet cs(head);
@@ -350,7 +364,7 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellSetField(const word &name)
     {
         label cellI=theCells[i];
         if(cs.found(cellI)) {
-            result()[i]=true;
+            const_cast<bool&>(result()[i])=true;
         }
     }
 
@@ -380,7 +394,7 @@ tmp<Field<bool> > CloudValueExpressionDriver::makeCellZoneField(const word &name
     {
         label cellI=theCells[i];
         if(zone.found(cellI)) {
-            result()[i]=true;
+            const_cast<bool&>(result()[i])=true;
         }
     }
 

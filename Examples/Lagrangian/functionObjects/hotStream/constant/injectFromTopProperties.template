@@ -1,0 +1,206 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      kinematicCloud1Properties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+<!--(if foamFork!="extend")-->
+solution
+{
+<!--(end)-->
+    active          true;
+    coupled         true;
+    transient       yes;
+    cellValueSourceCorrection on;
+
+    sourceTerms
+    {
+        schemes
+        {
+            rho             explicit 1;
+            U               explicit 1;
+            Yi              explicit 1;
+            hs              explicit 1;
+        }
+    }
+
+    interpolationSchemes
+    {
+        rhoPseudo             cell;
+        U               cellPoint;
+        mu              cell;
+        T               cell;
+        Cp              cell;
+        p               cell;
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+        T               analytical;
+    }
+<!--(if foamFork!="extend")-->
+}
+<!--(end)-->
+
+cellValueSourceCorrection on;
+
+parcelTypeId    1;
+
+constantProperties
+{
+<!--(if foamFork=="extend")-->
+    rhoMin         rhoMin [1 -3 0 0 0] 1e-15;
+minParticleMass minParticleMass  [0 0 0 0 0] 1e-15;
+    rho0 rho0             [1 -3 0 0 0] 5000;
+<!--(else)-->
+    parcelTypeId    1;
+
+    rhoMin           1e-15;
+    minParticleMass  1e-15;
+    rho0             5000;
+
+    youngsModulus   1e9;
+    poissonsRatio   0.35;
+<!--(end)-->
+}
+
+<!--(if foamFork!="extend")-->
+subModels
+{
+<!--(end)-->
+    injectionModel  coneInjection;
+
+    InjectionModel ConeInjection;
+
+    dispersionModel none;
+
+    DispersionModel $dispersionModel;
+
+    // patchInteractionModel rebound;
+    patchInteractionModel standardWallInteraction;
+
+    PatchInteractionModel StandardWallInteraction;
+
+    surfaceFilmModel none;
+
+    PostProcessingModel PatchPostProcessing;
+
+    DragModel SphereDrag;
+
+    particleForces
+    {
+        gravity         on;
+        sphereDrag on;
+        virtualMass     off;
+        pressureGradient off;
+    }
+
+    coneInjectionCoeffs
+    {
+<!--(if foamFork!="extend")-->
+        massTotal        0.002;
+<!--(else)-->
+        massTotal mt [1 0 0 0 0]        0.002;
+<!--(end)-->
+        parcelBasisType mass;
+
+        SOI             0.001;
+        duration        0.5;
+        positionAxis    (
+            (( 0.05 0.09 0.005 )( 0 -1 0 ))
+        );
+        position ( 0.05 0.09 0.005 );
+        direction (0 -1 0);
+        parcelsPerInjector 10000;
+        parcelsPerSecond $parcelsPerInjector;
+        flowRateProfile  constant 0.00001;
+        volumeFlowRate   $flowRateProfile;
+        Umag            constant 5e-1;
+        thetaInner      constant 0;
+        thetaOuter      constant 30;
+
+        sizeDistribution
+        {
+            type         uniform;
+            //        pdfType         RosinRammler;
+            pdfType $type;
+            RosinRammlerPDF
+            {
+                minValue        5e-05;
+                maxValue        0.001;
+                d                7.5e-05;
+                n                0.5 ;
+            }
+            uniformDistribution
+            {
+                minValue 5e-5;
+                maxValue 1e-3;
+            }
+            uniformPDF {
+                $uniformDistribution;
+            }
+        }
+        parcelPDF {
+            $sizeDistribution;
+        }
+    }
+
+    ConeInjectionCoeffs {
+        $coneInjectionCoeffs;
+    }
+
+    injectionModels
+    {
+        cone {
+            type coneInjection;
+            $coneInjectionCoeffs;
+        }
+    }
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+    }
+    StandardWallInteractionCoeffs {
+        $standardWallInteractionCoeffs;
+    }
+    reboundCoeffs
+    {
+        UFactor 1;
+    }
+
+    stochasticCollisionModel none;
+<!--(if foamFork!="extend")-->
+}
+<!--(end)-->
+
+<!--(if foamFork!="extend")-->
+cloudFunctions
+{
+<!--(end)-->
+    patchPostProcessing
+    {
+        type patchPostProcessing;
+        maxStoredParcels 10000;
+        patches ( right );
+    }
+    PatchPostProcessingCoeffs {
+        $patchPostProcessing;
+    }
+<!--(if foamFork!="extend")-->
+}
+<!--(end)-->
+
+// ************************************************************************* //

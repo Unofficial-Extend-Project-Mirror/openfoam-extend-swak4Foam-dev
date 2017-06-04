@@ -8,9 +8,10 @@ endif
 FLUIDTHERMO_LIB=-lbasicThermophysicalModels
 SOLIDTHERMO_LIB=-lbasicSolidThermo
 
+THERMOPHYSICALFUNCTIONS_LIB=-lthermophysicalFunctions
+
 RADIATION_LIB=-lradiationModels
 RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiationModels/lnInclude
-TRISURFACE_LIB=-ltriSurface
 
 INCOMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
 COMPRESSIBLE_TURB_INC=-I$(LIB_SRC)/turbulenceModels
@@ -19,10 +20,52 @@ COMPRESSIBLE_TURB_LIB=-lcompressibleTurbulenceModel
 INCOMPRESSIBLE_TURB_ALL_LIBS=-lincompressibleLESModels -lincompressibleRASModels
 COMPRESSIBLE_TURB_ALL_LIBS=-lcompressibleLESModels -lcompressibleRASModels
 
+TRISURFACE_INC=-I$(LIB_SRC)/triSurface/lnInclude
+
+#
+# OpenFOAM+: v3.0+, v1606+, v1612+, ... plus (development branch)
+# OPENFOAM_PLUS is the release date (YYMM) as an integer, added after 1606.
+#
+ifdef OPENFOAM_PLUS
+  $(info This is OpenFOAM+ $(OPENFOAM_PLUS))
+  IS_OPENFOAMPLUS=1
+  ifeq "plus" "$(WM_PROJECT_VERSION)"
+    $(info OpenFOAM+ development version)
+
+    WMAKE_NEW_CONVENTION=new
+    FOAM_UNIFIEDTURBULENCE=yes
+    NEEDS_FILTER_DROPIN=1
+    # triSurface merged into surfMesh
+    TRISURFACE_INC=
+    THERMOPHYSICALFUNCTIONS_LIB=
+  else ifeq "1705" "$(word 1, $(sort 1705 $(OPENFOAM_PLUS)))"
+    # Changes with 1706
+    WMAKE_NEW_CONVENTION=new
+    FOAM_UNIFIEDTURBULENCE=yes
+    NEEDS_FILTER_DROPIN=1
+    # triSurface merged into surfMesh
+    TRISURFACE_INC=
+    THERMOPHYSICALFUNCTIONS_LIB=
+  else ifeq "1611" "$(word 1, $(sort 1611 $(OPENFOAM_PLUS)))"
+    # Changes with 1612
+    WMAKE_NEW_CONVENTION=new
+    FOAM_UNIFIEDTURBULENCE=yes
+    NEEDS_FILTER_DROPIN=1
+  endif
+else ifeq "v3" "$(word 1, $(sort v3 $(WM_PROJECT_VERSION)))"
+  # For v3.0+ and v1606+
+  $(info Appears to be an OpenFOAM+ release)
+  IS_OPENFOAMPLUS=1
+endif
+
 ifeq "dev" "$(WM_PROJECT_VERSION)"
+  $(info Appears to be a development version of OpenFOAM)
+  IS_OPENFOAM_DEV_VERSION=1
+
   WMAKE_NEW_CONVENTION=new
   FOAM_UNIFIEDTURBULENCE=yes
 endif
+
 ifeq "3.0" "$(word 1, $(sort 3.0 $(WM_PROJECT_VERSION)))"
   ifndef FOAM_DEV
     WMAKE_NEW_CONVENTION=new
@@ -50,17 +93,20 @@ ifdef FOAM_DEV
   RADIATION_LIB=-lradiation
   RADIATION_INC=-I$(LIB_SRC)/thermophysicalModels/radiation/lnInclude
   SOLIDTHERMO_LIB=
-  ifeq "3.1" "$(word 1, $(sort 3.1 $(WM_PROJECT_VERSION)))"
-    # triSurface-library was moved to meshTools
-    TRISURFACE_LIB=
-  endif
 else
   ifeq "2.2" "$(word 1, $(sort 2.2 $(WM_PROJECT_VERSION)))"
-     FILEFORMATS_LIB=-lfileFormats
      FILEFORMATS_INC=-I$(LIB_SRC)/fileFormats/lnInclude
      FLUIDTHERMO_LIB=-lfluidThermophysicalModels
      SOLIDTHERMO_LIB=-lsolidThermo
      FVOPTIONS_LIB=-lfvOptions
      FVOPTIONS_INC=-I$(LIB_SRC)/fvOptions/lnInclude
+  endif
+endif
+
+ifndef FOAM_DEV
+  ifndef IS_OPENFOAMPLUS
+    ifeq "4" "$(word 1, $(sort 4 $(WM_PROJECT_VERSION)))"
+      NEEDS_FILTER_DROPIN=1
+    endif
   endif
 endif

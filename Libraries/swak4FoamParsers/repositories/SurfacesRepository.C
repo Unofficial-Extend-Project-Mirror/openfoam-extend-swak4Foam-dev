@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -191,11 +192,15 @@ sampledSurface &SurfacesRepository::getSurface(
                 sampledSurface &surf=*surfaces_[name];
                 surf.update();
 
-                theWriter->write(
+                theWriter->write
+                (
                     this->path(),
                     name+"_geometry_AtCreation",
-                    surf.points(),
-                    surf.faces()
+#if OPENFOAM_PLUS >= 1612
+                    meshedSurfRef(surf.points(), surf.faces())
+#else
+                    surf.points(), surf.faces()
+#endif
                 );
             }
         }
@@ -224,11 +229,15 @@ bool SurfacesRepository::writeData(Ostream &f) const
             scalarSurfaceWriter::New(format)
         );
 
-        theWriter->write(
+        theWriter->write
+        (
             f.name().path(),
             name+"_geometry",
-            surf.points(),
-            surf.faces()
+#if OPENFOAM_PLUS >= 1612
+            meshedSurfRef(surf.points(), surf.faces())
+#else
+            surf.points(), surf.faces()
+#endif
         );
     }
 

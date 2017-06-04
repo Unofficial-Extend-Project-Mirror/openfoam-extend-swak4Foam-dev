@@ -38,7 +38,7 @@ SourceFiles
     addGlobalVariable.C
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -95,8 +95,8 @@ public:
 
     // Member Functions
 
-    //- Called when time was set at the end of the Time::operator++ 
-    virtual void timeSet();         
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
 
     //- Read the forces data
     virtual void read(const dictionary&);
@@ -108,7 +108,11 @@ public:
     virtual void end();
 
     //- Write the forces
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    virtual bool write();
+#else
     virtual void write();
+#endif
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)

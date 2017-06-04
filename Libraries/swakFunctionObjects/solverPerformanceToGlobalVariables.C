@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013, 2015 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -87,6 +87,7 @@ void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
     Dbug << "Getting solver performance for " << name << endl;
 
     const data &theData=dynamicCast<const fvMesh&>(obr_);
+    //    Info << theData.solverPerformanceDict() << endl;
     List<solverPerformance> perf(
         theData.solverPerformanceDict()[name]
     );
@@ -177,9 +178,18 @@ void Foam::solverPerformanceToGlobalVariables::read(const dictionary& dict)
             << endl;
 }
 
-void Foam::solverPerformanceToGlobalVariables::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::solverPerformanceToGlobalVariables::write()
 {
     executeAndWriteToGlobal();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

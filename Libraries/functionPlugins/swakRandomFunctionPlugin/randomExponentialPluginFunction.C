@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -82,10 +83,14 @@ void randomExponentialPluginFunction<FType,DType>::doEvaluationInternal(
         seed=this->mesh().time().timeIndex()-seed;
     }
 
-    Random rand(seed);
+    Random rnd(seed);
 
     forAll(f,i) {
-        f[i]=-log(1-rand.scalar01())*halfLife_;
+#ifdef FOAM_RANDOM_CLASS_NEW_INTERFACE
+        f[i]=-log(1-rnd.sample01<scalar>())*halfLife_;
+#else
+        f[i]=-log(1-rnd.scalar01())*halfLife_;
+#endif
     }
 }
 
@@ -107,7 +112,13 @@ void randomExponentialPluginFunction<FType,DType>::doEvaluation()
         )
     );
 
-    doEvaluationInternal(pRandom->internalField());
+    doEvaluationInternal(
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<scalarField&>(pRandom->internalField().field())
+#else
+        pRandom->internalField()
+#endif
+    );
 
     this->result().setObjectResult(pRandom);
 }

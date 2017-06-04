@@ -37,7 +37,7 @@ SourceFiles
     CloudProxy.C
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -200,6 +200,13 @@ public:
     <ProxyType<CloudType> >                                             \
     add##ProxyType##CloudType##cloudConstructorToCloudProxyTable(       \
         Cloud<ParcelType>::typeName)
+
+    // This variation is used to add proxies that work in CloudFunctionObjects
+#define addKinematicCloudProxyToTable(ProxyType,CloudType)      \
+    CloudProxy::addcloudConstructorToTable                              \
+    <ProxyType<CloudType::kinematicCloudType> >                         \
+    addKinematic##ProxyType##CloudType##cloudConstructorToCloudProxyTable( \
+        word("kinematic")+Cloud<CloudType::particleType>::typeName)
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

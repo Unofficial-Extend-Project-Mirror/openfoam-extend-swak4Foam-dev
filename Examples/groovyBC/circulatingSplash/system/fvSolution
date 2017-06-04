@@ -41,6 +41,10 @@ solvers
         maxIter          100;
     };
 
+    pcorrFinal {
+        $pcorr;
+        relTol 0;
+    }
     p_rgh
     {
         solver GAMG;
@@ -123,8 +127,7 @@ solvers
         tolerance        1e-08;
         relTol           0;
     };
-    "alpha.water.*"
-    {
+    alpha1 {
         nAlphaCorr      2;
         nAlphaSubCycles 1;
         cAlpha          1;
@@ -137,7 +140,10 @@ solvers
         tolerance       1e-8;
         relTol          0;
     }
-
+    "alpha.water.*"
+    {
+        $alpha1;
+    }
 }
 
 PIMPLE
@@ -157,8 +163,8 @@ PIMPLE
     };
 }
 
-PIMPLE {
-    $PISO;
+PISO {
+    $PIMPLE;
 }
 
 // ************************************************************************* //

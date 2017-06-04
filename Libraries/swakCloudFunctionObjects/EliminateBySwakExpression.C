@@ -73,7 +73,8 @@ Foam::EliminateBySwakExpression<CloudType>::EliminateBySwakExpression
     ),
     driver_(
         this->owner(),
-        dict
+        dict,
+        "kinematic"+dynamic_cast<cloud&>(owner).type()
     ),
     expression_(
         dict.lookup("eliminationExpression"),

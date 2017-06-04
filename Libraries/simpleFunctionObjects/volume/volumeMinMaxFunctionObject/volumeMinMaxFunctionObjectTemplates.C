@@ -29,16 +29,15 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "volumeMinMaxFunctionObject.H"
 #include "volFields.H"
 #include "IOmanip.H"
 #include "fvMesh.H"
-#include "fvCFD.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,20 +58,20 @@ Field<T> volumeMinMaxFunctionObject::minMax(const word& fieldName,T unsetVal) co
 
     Field<T> vals(2, unsetVal);
 
-    vals[0] = 
+    vals[0] =
         min
         (
             fld
         ).value();
 
-    vals[1] = 
+    vals[1] =
         max
         (
             fld
         ).value();
 
     if(verbose()) {
-        Info<< regionString() 
+        Info<< regionString()
             << " Range of " << fieldName << " [ "
             << vals[0] << " , " << vals[1] << " ] "
             << fld.dimensions() << endl;

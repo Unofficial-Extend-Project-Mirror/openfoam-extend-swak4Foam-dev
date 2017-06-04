@@ -31,8 +31,8 @@ divSchemes
     default             none;
     div(phis,Cs)        Gauss linear;
 
-    div(phis,YTransient) Gauss linear;
-    div(phis,YSteady) Gauss linear;
+    "div\(phis.*,YTransient\)" Gauss linear;
+    "div\(phis.*,YSteady\)" Gauss linear;
 }
 
 laplacianSchemes

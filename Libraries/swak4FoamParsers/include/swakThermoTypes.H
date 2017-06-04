@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -69,6 +69,13 @@ namespace Foam {
     typedef basicRhoThermo swakRhoThermoType;
 }
 
+#endif
+
+#ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_RADIATION_HAS_SOOTMODEL
+#define FOAM_RADIATION_HAS_PUBLIC_ABSORPTIONMODEL
+#else
+#define FOAM_BASIC_THERMO_HAS_NO_NEW
 #endif
 
 

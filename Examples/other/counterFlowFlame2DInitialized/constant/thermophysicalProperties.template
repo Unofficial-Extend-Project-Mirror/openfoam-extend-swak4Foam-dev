@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+<!--(if foamFork=="extend")-->
+thermoType hsPsiMixtureThermo<reactingMixture<gasThermoPhysics>>;
+<!--(else)-->
+thermoType
+{
+    type            hePsiThermo;
+    mixture         reactingMixture;
+    transport       sutherland;
+    thermo          janaf;
+    energy          sensibleEnthalpy;
+    equationOfState perfectGas;
+    specie          specie;
+}
+<!--(end)-->
+
+inertSpecie N2;
+
+chemistryReader foamChemistryReader;
+
+foamChemistryFile "$FOAM_CASE/constant/reactions";
+
+<!--(if foamFork=="extend")-->
+foamChemistryFile "$FOAM_CASE/constant/reactions.oldFormat";
+
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas.oldFormat";
+<!--(else)-->
+foamChemistryFile "$FOAM_CASE/constant/reactions";
+
+foamChemistryThermoFile "$FOAM_CASE/constant/thermo.compressibleGas";
+<!--(end)-->
+
+
+// ************************************************************************* //

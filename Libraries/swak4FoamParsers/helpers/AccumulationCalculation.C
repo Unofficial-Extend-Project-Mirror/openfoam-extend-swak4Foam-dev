@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013, 2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -415,7 +415,7 @@ Type AccumulationCalculation<Type>::weightedAverage()
         if(mag(wSum)>SMALL) {
             weightedAverage_=tSum/wSum;
         } else {
-            weightedAverage_=pTraits<Type>::one*HUGE;
+            weightedAverage_=pTraits<Type>::one*pTraits<scalar>::max;
         }
         hasWeightedAverage_=true;
     }

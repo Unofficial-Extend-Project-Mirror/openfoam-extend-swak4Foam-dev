@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2014-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -119,7 +119,7 @@ provokeSignalFunctionObject::provokeSignalFunctionObject
     }
 }
 
-void provokeSignalFunctionObject::write()
+void provokeSignalFunctionObject::writeSimple()
 {
     if(
         raiseOnThisProc_
@@ -156,7 +156,7 @@ void provokeSignalFunctionObject::write()
                 raise(SIGUSR2);
                 break;
             default:
-                FatalErrorIn("provokeSignalFunctionObject::write()")
+                FatalErrorIn("provokeSignalFunctionObject::writeSimple()")
                     << "Unimplemented signal "
                         << possibleSignalsNames_[signalToRaise_]
                         << endl;

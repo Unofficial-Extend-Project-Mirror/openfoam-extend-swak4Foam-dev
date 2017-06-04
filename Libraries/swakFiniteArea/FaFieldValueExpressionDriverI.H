@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -126,6 +126,7 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
 
         f.set(
             new T(
+                name+"_copyBySwak4Foam",    // make sure that the original object is not shadowed
                 this->mesh().lookupObject<T>(name)
             )
         );

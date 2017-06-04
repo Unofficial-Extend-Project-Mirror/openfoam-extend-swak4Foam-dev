@@ -110,7 +110,7 @@ SourceFiles
 
 Contributors/Copyright:
     2008-2009 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
-    2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -232,7 +232,7 @@ public:
     virtual bool read(const dictionary& dict);
 
     //- Sample and write
-    virtual void write();
+    virtual void writeSimple();
 
     //- Optional stuff to do after write
     virtual void flush();

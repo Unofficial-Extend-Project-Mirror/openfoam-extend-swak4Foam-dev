@@ -68,7 +68,7 @@ libs (
 );
 
 functions
-(
+{
     createInterface
     {
         type createSampledSurface;
@@ -77,7 +77,7 @@ functions
         surfaceName interface;
         surface {
             type isoSurface;
-<!--(if foamFork=="openfoam")-->
+<!--(if foamFork in ["openfoam","openfoamplus"])-->
             isoField alpha.phase1;
 <!--(else)-->
             isoField alpha1;
@@ -168,6 +168,6 @@ functions
         );
         interpolationScheme nix;
     }
-);
+}
 
 // ************************************************************************* //

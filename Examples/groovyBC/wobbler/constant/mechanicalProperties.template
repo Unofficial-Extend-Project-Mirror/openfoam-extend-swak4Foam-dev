@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.5                                   |
+|   \\  /    A nd           | Web:      http://www.OpenFOAM.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      mechanicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+rhoValue 7854;
+nuValue 0.3;
+EValue 2e+3;
+
+<!--(if foamFork=="extend")-->
+rho rho [1 -3 0 0 0 0 0] $rhoValue;
+
+nu              nu [0 0 0 0 0 0 0] $nuValue;
+
+E               E [1 -1 -2 0 0 0 0] $EValue;
+
+<!--(else)-->
+rho {
+    type uniform;
+    value $rhoValue;
+}
+
+nu {
+    type uniform;
+    value $nuValue;
+}
+
+E {
+    type uniform;
+    value $EValue;
+}
+<!--(end)-->
+
+planeStress     yes;
+
+// ************************************************************************* //

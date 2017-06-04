@@ -59,14 +59,26 @@ modelLoadingFunctionObject<ModelType>::modelLoadingFunctionObject
 :
     simpleFunctionObject(name,t,dict)
 {
+    Dbug << name << " constructor for "
+        << ModelType::typeName << endl;
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    template <class ModelType>
+bool modelLoadingFunctionObject<ModelType>::read(const dictionary &)
+{
+    return this->start();
+}
+#endif
+
 template <class ModelType>
 bool modelLoadingFunctionObject<ModelType>::start()
 {
+    Dbug << name() << "::start() - entering" << endl;;
+
     simpleFunctionObject::start();
 
     correctModel_=readBool(dict_.lookup("correctModel"));
@@ -76,6 +88,8 @@ bool modelLoadingFunctionObject<ModelType>::start()
     );
 
     if(!model_.valid()) {
+        Dbug << name() << "::start() - no model" << endl;
+
         if(
             this->obr().template lookupClass<ModelType>().size()>0
             &&
@@ -91,10 +105,12 @@ bool modelLoadingFunctionObject<ModelType>::start()
 
         } else {
             model_.set(initModel().ptr());
+            Info << name() << ": loaded a " << ModelType::typeName << endl;
         }
     } else {
         if(allowReload_) {
             model_.set(initModel().ptr());
+            Info << name() << ": reloaded a " << ModelType::typeName << endl;
         } else {
             WarningIn("modelLoadingFunctionObject<ModelType>::start()")
                 << "Not reloading model because it is not allowed"
@@ -102,11 +118,13 @@ bool modelLoadingFunctionObject<ModelType>::start()
         }
     }
 
+    Dbug << name() << "::start() - exiting" << endl;
+
     return true;
 }
 
 template <class ModelType>
-void modelLoadingFunctionObject<ModelType>::write()
+void modelLoadingFunctionObject<ModelType>::writeSimple()
 {
     if(correctModel_) {
         if(model_.valid()) {

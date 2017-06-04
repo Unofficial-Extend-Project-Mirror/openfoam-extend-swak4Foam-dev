@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchFieldFunctionObject.H"
@@ -68,7 +68,7 @@ patchFieldFunctionObject::patchFieldFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void patchFieldFunctionObject::write()
+void patchFieldFunctionObject::writeSimple()
 {
     processAndWrite<scalar>(scalarFields_);
     processAndWrite<vector>(vectorFields_);

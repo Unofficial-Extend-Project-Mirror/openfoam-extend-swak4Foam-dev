@@ -28,36 +28,63 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
- ICE Revision: $Id$
+Contributors/Copyright:
+    2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "swakDataEntry.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+namespace Foam {
+
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+namespace Function1Types {
+#endif
+
 template<class Type>
-Foam::swakDataEntry<Type>::swakDataEntry(const word& entryName, const dictionary& dict)
+swakDataEntry<Type>::swakDataEntry(
+    const word& entryName,
+    const dictionary& dict,
+    bool readEntryType
+)
 :
     DataEntry<Type>(entryName)
 {
-    Istream& is(dict.lookup(entryName));
-    word entryType(is);
+    if(readEntryType) {
+        Istream& is(dict.lookup(entryName));
+        word entryType(is);
 
-    data_.read(is);
-
+        dictionary d(is);
+        data_.set(
+            new dictionary(
+                dict,
+                d
+            )
+        );
+    } else {
+        data_.set(
+            new dictionary(
+                dict,
+                dict.subDict(entryName)
+            )
+        );
+    }
     expression_=exprString(
-        data_.lookup("expression"),
-        data_
+        data_->lookup("expression"),
+        data_()
     );
-    independentVariableName_=word(data_.lookup("independentVariableName"));
+    independentVariableName_=word(data_->lookup("independentVariableName"));
 }
 
 
 template<class Type>
-Foam::swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
+swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
 :
     DataEntry<Type>(cnst),
-    data_(cnst.data_),
+    data_(new dictionary(cnst.data_())),
     //    driver_(cnst.driver_->clone()),
     expression_(cnst.expression_),
     independentVariableName_(cnst.independentVariableName_)
@@ -67,18 +94,21 @@ Foam::swakDataEntry<Type>::swakDataEntry(const swakDataEntry<Type>& cnst)
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::swakDataEntry<Type>::~swakDataEntry()
+swakDataEntry<Type>::~swakDataEntry()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::CommonValueExpressionDriver &Foam::swakDataEntry<Type>::driver()
+CommonValueExpressionDriver &swakDataEntry<Type>::driver()
 {
     if(!driver_.valid()) {
         driver_=CommonValueExpressionDriver::New(
-            data_
+            data_()
+        );
+        driver_->createWriterAndRead(
+            "dataEntry_"+data_->name().name()+"_"+this->name()
         );
     }
 
@@ -86,7 +116,7 @@ Foam::CommonValueExpressionDriver &Foam::swakDataEntry<Type>::driver()
 }
 
 template<class Type>
-Type Foam::swakDataEntry<Type>::value(const scalar x) const
+Type swakDataEntry<Type>::value(const scalar x) const
 {
     CommonValueExpressionDriver &theDriver=const_cast<swakDataEntry<Type> &>(
         *this
@@ -102,14 +132,14 @@ Type Foam::swakDataEntry<Type>::value(const scalar x) const
 }
 
 template<class Type>
-Type Foam::swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
+Type swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
 {
     CommonValueExpressionDriver &theDriver=const_cast<swakDataEntry<Type> &>(
         *this
     ).driver();
 
     theDriver.clearVariables();
-    label intervalls=readLabel(data_.lookup("integrationIntervalls"));
+    label intervalls=readLabel(data_->lookup("integrationIntervalls"));
     scalar dx=(x2-x1)/intervalls;
 
     scalar x=x1;
@@ -139,7 +169,7 @@ Type Foam::swakDataEntry<Type>::integrate(const scalar x1,const scalar x2) const
 
 
 template<class Type>
-Foam::Ostream& Foam::operator<<
+Ostream& operator<<
 (
     Ostream& os,
     const swakDataEntry<Type>& cnst
@@ -154,7 +184,7 @@ Foam::Ostream& Foam::operator<<
     {
         os  << static_cast<const DataEntry<Type>& >(cnst);
     }
-    cnst.data_.write(os,true);
+    cnst.data_->write(os,true);
 
     // Check state of Ostream
     os.check
@@ -167,14 +197,20 @@ Foam::Ostream& Foam::operator<<
 
 #ifdef FOAM_DATAENTRY_CLASS_NEEDS_WRITEDATA
 template<class Type>
-void Foam::swakDataEntry<Type>::writeData(Ostream& os) const
+void swakDataEntry<Type>::writeData(Ostream& os) const
 {
     DataEntry<Type>::writeData(os);
 
     os  << token::SPACE;
-    data_.write(os,true);
+    data_->write(os,true);
     os  << token::END_STATEMENT << nl;
 }
 #endif
+
+#ifdef FOAM_DATAENTRY_IS_NOW_FUNCTION1
+}
+#endif
+
+}
 
 // ************************************************************************* //

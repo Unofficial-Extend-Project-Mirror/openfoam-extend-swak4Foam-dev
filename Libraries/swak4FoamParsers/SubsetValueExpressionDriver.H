@@ -38,7 +38,7 @@ SourceFiles
     SubsetValueExpressionDriver.C
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -107,7 +107,7 @@ protected:
 
     //- get the index from the container iterator
     template<class Iter>
-    inline label getIndexFromIterator(const Iter &it) const;
+    label getIndexFromIterator(const Iter &it) const;
 
     template<class Subset>
     label nrValidFaces(const Subset &sub) const;

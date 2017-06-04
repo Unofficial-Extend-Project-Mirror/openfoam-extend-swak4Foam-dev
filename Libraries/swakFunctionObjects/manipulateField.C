@@ -195,7 +195,12 @@ void Foam::manipulateField::read(const dictionary& dict)
     }
 }
 
-void Foam::manipulateField::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::manipulateField::write()
 {
     if(active_) {
         FieldValueExpressionDriver &driver=driver_();
@@ -339,6 +344,10 @@ void Foam::manipulateField::write()
     }
 
     driver_->tryWrite();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

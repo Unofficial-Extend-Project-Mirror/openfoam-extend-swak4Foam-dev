@@ -39,7 +39,7 @@ SourceFiles
     solverPerformanceToGlobalVariables.C
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -128,7 +128,12 @@ public:
     virtual void end();
 
     //- Write the forces
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    virtual bool write();
+#else
     virtual void write();
+#endif
+
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)

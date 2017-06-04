@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2014-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -113,7 +113,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
-#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+// #ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
@@ -142,7 +142,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<vector>& "+eqn.psi().name()+")"
     );
 }
-#endif
+// #endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -152,6 +152,17 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 {
     report(
         "setValue(fvMatrix<vector>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::constrain
+(
+    fvMatrix<vector>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "constrain(fvMatrix<vector>& "+eqn.psi().name()+")"
     );
 }
 
@@ -172,7 +183,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
-#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+// #ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
     const volScalarField& rho,
@@ -200,7 +211,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<scalar>& "+eqn.psi().name()+")"
     );
 }
-#endif
+// #endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -210,6 +221,17 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 {
     report(
         "setValue(fvMatrix<scalar>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::constrain
+(
+    fvMatrix<scalar>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "constrain(fvMatrix<scalar>& "+eqn.psi().name()+")"
     );
 }
 
@@ -230,7 +252,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
-#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+// #ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
@@ -259,7 +281,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<tensor>& "+eqn.psi().name()+")"
     );
 }
-#endif
+// #endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -269,6 +291,17 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 {
     report(
         "setValue(fvMatrix<tensor>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::constrain
+(
+    fvMatrix<tensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "constrain(fvMatrix<tensor>& "+eqn.psi().name()+")"
     );
 }
 
@@ -289,7 +322,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
-#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+// #ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
@@ -318,7 +351,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<symmTensor>& "+eqn.psi().name()+")"
     );
 }
-#endif
+// #endif
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 (
@@ -328,6 +361,17 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 {
     report(
         "setValue(fvMatrix<symmTensor>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::constrain
+(
+    fvMatrix<symmTensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "constrain(fvMatrix<symmTensor>& "+eqn.psi().name()+")"
     );
 }
 
@@ -348,7 +392,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
     );
 }
 
-#ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
+// #ifdef FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 void Foam::fv::reportAvailableFvOptionsFvOption::addSup
 (
     const volScalarField& rho,
@@ -376,7 +420,7 @@ void Foam::fv::reportAvailableFvOptionsFvOption::addSup
         ",fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
     );
 }
-#endif
+// #endif
 
 
 void Foam::fv::reportAvailableFvOptionsFvOption::setValue
@@ -387,6 +431,17 @@ void Foam::fv::reportAvailableFvOptionsFvOption::setValue
 {
     report(
         "setValue(fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
+    );
+}
+
+void Foam::fv::reportAvailableFvOptionsFvOption::constrain
+(
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldI
+)
+{
+    report(
+        "constrain(fvMatrix<sphericalTensor>& "+eqn.psi().name()+")"
     );
 }
 

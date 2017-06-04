@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2010-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -112,7 +112,7 @@ stringList swakExpressionFunctionObject::columnNames()
     return result;
 }
 
-void swakExpressionFunctionObject::write()
+void swakExpressionFunctionObject::writeSimple()
 {
 
     if(verbose()) {
@@ -134,7 +134,7 @@ void swakExpressionFunctionObject::write()
     } else if(rType==pTraits<sphericalTensor>::typeName) {
         writeTheData<sphericalTensor>(driver_());
     } else {
-        WarningIn("swakExpressionFunctionObject::write()")
+        WarningIn("swakExpressionFunctionObject::writeSimple()")
             << "Don't know how to handle type " << rType
                 << endl;
     }

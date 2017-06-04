@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -37,6 +37,11 @@ Contributors/Copyright:
 #include "foamVersion4swak.H"
 
 #include "swak.H"
+
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define PatchFieldType Patch
+#define GeometricBoundaryField Boundary
+#endif
 
 #ifdef FOAM_HAS_ENERGY_HE
 
@@ -78,6 +83,9 @@ recalcThermoHeFunctionObject::recalcThermoHeFunctionObject
 :
     updateSimpleFunctionObject(name,t,dict)
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 void recalcThermoHeFunctionObject::recalc()
@@ -96,14 +104,19 @@ void recalcThermoHeFunctionObject::recalc()
     forAll(allCells,cellI) {
         allCells[cellI]=cellI;
     }
-    h.internalField()=thermo.he(
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(h.internalField().field())
+#else
+    h.internalField()
+#endif
+    = thermo.he(
         p.internalField(),
         T.internalField(),
         allCells
     );
     forAll(h.boundaryField(), patchi)
     {
-        h.boundaryField()[patchi] ==
+        const_cast<volScalarField::PatchFieldType&>(h.boundaryField()[patchi]) ==
             thermo.he(
                 p.boundaryField()[patchi],
                 T.boundaryField()[patchi],
@@ -112,7 +125,8 @@ void recalcThermoHeFunctionObject::recalc()
     }
 
     // hBoundaryCorrection
-    volScalarField::GeometricBoundaryField& hbf = h.boundaryField();
+    volScalarField::GeometricBoundaryField& hbf =
+        const_cast<volScalarField::GeometricBoundaryField&>(h.boundaryField());
 
     forAll(hbf, patchi)
     {

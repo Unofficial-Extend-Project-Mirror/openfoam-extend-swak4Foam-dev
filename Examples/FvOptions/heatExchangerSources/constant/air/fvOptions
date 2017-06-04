@@ -1,0 +1,171 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+matrixReport {
+    type reportMatrix;
+    active          no;
+    selectionMode   all;
+
+    reportMatrixCoeffs {
+        fieldNames (
+            U
+            h
+        );
+
+        doAddSup true;
+        doSetValue true;
+    }
+}
+energySourceBefore {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup yes;
+        fieldName h;
+        namePrefix fvChangeAir;
+    }
+}
+momentumSourceBefore {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup yes;
+        fieldName U;
+        namePrefix fvChange;
+    }
+}
+energyResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup no;
+        fieldName h;
+        namePrefix residualAir;
+    }
+}
+momentumResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup no;
+        fieldName U;
+        namePrefix residual;
+    }
+}
+kResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup no;
+        fieldName k;
+        namePrefix residual;
+    }
+}
+epsilonResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup no;
+        fieldName epsilon;
+        namePrefix residual;
+    }
+}
+showFvOptions {
+    type reportAvailableFvOptions;
+    active true;
+    selectionMode all;
+    reportAvailableFvOptionsCoeffs {}
+}
+airToporous
+{
+    type            constantHeatTransfer;
+    active          yes;
+
+    constantHeatTransferCoeffs
+    {
+        interpolationMethod cellVolumeWeight;
+        nbrRegion       porous;
+        nbrRegionName   $nbrRegion;
+        master          false;
+
+        nbrModel        porousToair;
+        fields          (h);
+        semiImplicit    no;
+    }
+}
+
+porosityBlockage
+{
+    type            interRegionExplicitPorositySource;
+    active          yes;
+
+    interRegionExplicitPorositySourceCoeffs
+    {
+        interpolationMethod cellVolumeWeight;
+        nbrRegion       porous;
+        nbrRegionName   $nbrRegion;
+
+        type            DarcyForchheimer;
+
+        DarcyForchheimerCoeffs
+        {
+            d   (-1000 -1000 1e4);
+            f   (0 0 0);
+
+            coordinateSystem
+            {
+                type    cartesian;
+                origin  (0 0 0);
+                coordinateRotation
+                {
+                    type    axesRotation;
+                    e1      (0 1 0);
+                    e2      (0 0 1);
+                }
+            }
+        }
+    }
+}
+energySourceAfter {
+    type matrixChangeAfter;
+    active true;
+    selectionMode all;
+    matrixChangeAfterCoeffs {
+        doAtAddSup yes;
+        fieldName h;
+        namePrefix fvChangeAir;
+    }
+}
+momentumSourceAfter {
+    type matrixChangeAfter;
+    active true;
+    selectionMode all;
+    matrixChangeAfterCoeffs {
+        doAtAddSup yes;
+        fieldName U;
+        namePrefix fvChange;
+    }
+}
+
+
+// ************************************************************************* //

@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -160,7 +160,7 @@ word swakExpressionAverageDistributionFunctionObject::baseName()
 }
 
 
-void swakExpressionAverageDistributionFunctionObject::write()
+void swakExpressionAverageDistributionFunctionObject::writeSimple()
 {
     if(verbose()) {
         Info << "AverageDistributionExpression " << name() << " : ";
@@ -180,7 +180,7 @@ void swakExpressionAverageDistributionFunctionObject::write()
             driver_->getResult<scalar>().ptr()
         );
     } else {
-        FatalErrorIn("swakExpressionAverageDistributionFunctionObject::write()")
+        FatalErrorIn("swakExpressionAverageDistributionFunctionObject::writeSimple()")
             << "Don't know how to handle weight expressions of type "
                 << driver_->CommonValueExpressionDriver::getResultType()
                 << endl
@@ -212,7 +212,7 @@ void swakExpressionAverageDistributionFunctionObject::write()
             }
         }
     } else {
-        FatalErrorIn("swakExpressionAverageDistributionFunctionObject::write()")
+        FatalErrorIn("swakExpressionAverageDistributionFunctionObject::writeSimple()")
             << "Don't know how to handle logical expressions of type "
                 << driver_->CommonValueExpressionDriver::getResultType()
                 << endl
@@ -233,7 +233,7 @@ void swakExpressionAverageDistributionFunctionObject::write()
     } else if(rType==pTraits<sphericalTensor>::typeName) {
         getDistributionInternal(distSphericalTensor_);
     } else {
-        WarningIn("swakExpressionAverageDistributionFunctionObject::write()")
+        WarningIn("swakExpressionAverageDistributionFunctionObject::writeSimple()")
             << "Don't know how to handle type " << rType
                 << " of expression " << abscissaExpression_
                 << endl;

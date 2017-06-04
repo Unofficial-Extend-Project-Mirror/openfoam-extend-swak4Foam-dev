@@ -31,7 +31,6 @@ License
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "swakTime.H"
-#include "argList.H"
 
 #include "objectRegistry.H"
 
@@ -64,6 +63,10 @@ executeIfSwakExpressionFunctionObject::executeIfSwakExpressionFunctionObject
     )
 {
     readParameters(dict);
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 

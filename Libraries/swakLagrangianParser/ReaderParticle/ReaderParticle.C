@@ -35,7 +35,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -90,7 +90,11 @@ void ReaderParticle::readFields (ReaderParticleCloud &c) {
         );
 
         if(
+#ifdef FOAM_HAS_TYPE_HEADER_OK
+            header.typeHeaderOk<IOobject>(false)
+#else
             header.headerOk()
+#endif
         ) {
             const word className(header.headerClassName());
 

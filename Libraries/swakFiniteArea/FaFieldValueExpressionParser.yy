@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2011-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -313,6 +313,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 
 %token TOKEN_deltaT
 %token TOKEN_time
+%token TOKEN_outputTime
 
 %token TOKEN_pow
 %token TOKEN_log
@@ -2036,6 +2037,11 @@ lexp: TOKEN_TRUE                       {
                 driver.FALSE_Value
             ).ptr();
           }
+    | TOKEN_outputTime '(' ')'          {
+       $$ = driver.makeConstantField<Foam::areaScalarField>(
+                driver.runTime().outputTime()
+           ).ptr();
+       }
     | exp '<' exp                      {
             sameSize($1,$3);
             $$ = driver.doCompare(

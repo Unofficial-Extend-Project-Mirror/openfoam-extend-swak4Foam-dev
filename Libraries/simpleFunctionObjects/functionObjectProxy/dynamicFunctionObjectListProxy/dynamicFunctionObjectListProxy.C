@@ -41,6 +41,8 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "swakTime.H"
 
+#include "swak.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -179,7 +181,7 @@ dynamicFunctionObjectListProxy::dynamicDictionaryProvider::New(
         )   << "Unknown dynamicFunctionObjectListProxy::dynamicDictionaryProvider type " << type
             << endl << endl
             << "Valid types are :" << endl
-#ifdef FOAM_DEV
+#ifndef FOAM_HAS_SORTED_TOC
             << dictionaryConstructorTablePtr_->toc()
 #else
             << dictionaryConstructorTablePtr_->sortedToc()

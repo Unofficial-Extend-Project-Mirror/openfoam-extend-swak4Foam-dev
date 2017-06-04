@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
  SWAK Revision: $Id:  $
@@ -127,12 +127,21 @@ void Foam::calculateGlobalVariables::read(const dictionary& dict)
             << endl;
 }
 
-void Foam::calculateGlobalVariables::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::calculateGlobalVariables::write()
 {
     executeAndWriteToGlobal();
 
     // make sure that the stored Variables are consistently written
     driver_->tryWrite();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

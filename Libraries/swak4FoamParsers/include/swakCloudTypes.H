@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -64,19 +64,23 @@ namespace Foam {
 }
 #endif
 
-#ifdef FOAM_DEV
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_REACTINGCLOUD_TEMPLATED
 #endif
 
-#ifdef FOAM_DEV
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_KINEMATICCLOUD_OLD_STYLE
 #endif
 
-#ifdef FOAM_DEV
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_THERMOCLOUD_OLD_STYLE
 #endif
 
-#ifdef FOAM_DEV
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_BASICKINEMATICCLOUD_HAS_NO_KINEMATIC_TYPE
+#endif
+
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_REACTINGCLOUD_OLD_STYLE
 #endif
 
@@ -85,28 +89,32 @@ namespace Foam {
 #define FOAM_PHASECHANGEMODEL_HAS_TVAP
 #endif
 
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_HAS_COLLIDING_CLOUD
 #endif
 
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,2)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_HAS_MPPIC_CLOUD
 #endif
 
-#if (FOAM_VERSION4SWAK > VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR(2,3,1)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_KINEMATIC_PARCEL_HAS_MINPARCELMASS
 #endif
 
-#if !defined(FOAM_DEV)
+#if !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_KINEMATIC_PARCEL_HAS_DTARGET
 #endif
 
-#if !defined(FOAM_DEV)
+#if !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_KINEMATIC_PARCEL_HAS_AGE
 #endif
 
-#if (FOAM_VERSION4SWAK > VERSION_NR2(3,1)) && defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(3,1)) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_CLOUDTEMPLATE_IS_CLOUD_H
+#endif
+
+#if (OPENFOAM_PLUS >= 1606)
+#define FOAM_KINEMATIC_PARCEL_ACTIVE_SET_THROUGH_METHOD
 #endif
 
 #include "DebugOStream.H"

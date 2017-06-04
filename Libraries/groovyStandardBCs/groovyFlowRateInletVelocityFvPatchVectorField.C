@@ -203,9 +203,20 @@ void Foam::groovyFlowRateInletVelocityFvPatchVectorField::updateCoeffs()
         (
             "flowRateInletVelocityFvPatchVectorField::updateCoeffs()"
         )   << "dimensions of " << phiName_ << " are incorrect" << nl
-            << "    on patch " << this->patch().name()
-            << " of field " << this->dimensionedInternalField().name()
-            << " in file " << this->dimensionedInternalField().objectPath()
+            << "    on patch "
+            << this->patch().name()
+            << " of field "
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            << this->internalField().name()
+#else
+            << this->dimensionedInternalField().name()
+#endif
+            << " in file "
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            << this->internalField().objectPath()
+#else
+            << this->dimensionedInternalField().objectPath()
+#endif
             << nl << exit(FatalError);
     }
 

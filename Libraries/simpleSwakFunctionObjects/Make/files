@@ -10,6 +10,8 @@ general/writeIfSwakExpressionFunctionObject.C
 patch/patchExpressionFunctionObject.C
 patch/patchExpressionDistributionFunctionObject.C
 
+timeManipulation/setDeltaTBySwakExpressionFunctionObject.C
+
 functionObjectProxy/executeIfSwakExpression/executeIfSwakExpressionFunctionObject.C
 
 LIB = $(FOAM_USER_LIBBIN)/libsimpleSwakFunctionObjects

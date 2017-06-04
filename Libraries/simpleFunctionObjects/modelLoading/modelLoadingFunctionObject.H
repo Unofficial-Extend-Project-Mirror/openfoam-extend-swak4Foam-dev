@@ -38,9 +38,9 @@ SourceFiles
     modelLoadingFunctionObject.C
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef modelLoadingFunctionObject_H
@@ -107,8 +107,11 @@ public:
     virtual inline bool start();
 
     //- Sample and write
-    virtual void write();
+    virtual void writeSimple();
 
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    bool read(const dictionary &);
+#endif
 };
 
 

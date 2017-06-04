@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2013-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -168,9 +168,11 @@ Type SimpleDistribution<Type>::min() const
 {
     Type val(pTraits<Type>::zero);
     for(direction i=0;i<pTraits<Type>::nComponents;i++) {
-        label index=this->validLimits(i).first();
-        label key=this->keys(i)[index];
-        setComponent(val,i)=component(this->binWidth(),i)*key;
+        if(this->keys(i).size()>0) {
+            label index=this->validLimits(i).first();
+            label key=this->keys(i)[index];
+            setComponent(val,i)=component(this->binWidth(),i)*key;
+        }
     }
 
     return val;
@@ -181,9 +183,11 @@ Type SimpleDistribution<Type>::max() const
 {
     Type val(pTraits<Type>::zero);
     for(direction i=0;i<pTraits<Type>::nComponents;i++) {
-        label index=this->validLimits(i).second();
-        label key=this->keys(i)[index];
-        setComponent(val,i)=component(this->binWidth(),i)*(key+1);
+        if(this->keys(i).size()>0) {
+            label index=this->validLimits(i).second();
+            label key=this->keys(i)[index];
+            setComponent(val,i)=component(this->binWidth(),i)*(key+1);
+        }
     }
 
     return val;
@@ -232,8 +236,8 @@ void SimpleDistribution<Type>::calcMinimumMaximum(
 
     for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
-        minimum_[cmpt]=List<scalar>((*this)[cmpt].size(), HUGE);
-        maximum_[cmpt]=List<scalar>((*this)[cmpt].size(),-HUGE);
+        minimum_[cmpt]=List<scalar>((*this)[cmpt].size(),pTraits<scalar>::max);
+        maximum_[cmpt]=List<scalar>((*this)[cmpt].size(),pTraits<scalar>::min);
         nSamples_[cmpt]=List<label>((*this)[cmpt].size(), 0);
     }
 
@@ -975,8 +979,8 @@ SimpleDistribution<Type> operator+
 
         for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
         {
-            d.minimum_[cmpt]=List<scalar>(d[cmpt].size(), HUGE);
-            d.maximum_[cmpt]=List<scalar>(d[cmpt].size(),-HUGE);
+            d.minimum_[cmpt]=List<scalar>(d[cmpt].size(),pTraits<scalar>::max);
+            d.maximum_[cmpt]=List<scalar>(d[cmpt].size(),pTraits<scalar>::min);
             d.nSamples_[cmpt]=List<label>(d[cmpt].size(), 0);
         }
         List< List< List < Tuple2<scalar,scalar> > > > rawMin(2);

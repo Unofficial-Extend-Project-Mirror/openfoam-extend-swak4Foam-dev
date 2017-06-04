@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -68,6 +68,8 @@ simpleDataFunctionObject::simpleDataFunctionObject
     simpleFunctionObject(name,t,dict),
     postProcDir_(defaultPostProcDir_)
 {
+    Dbug << name << " - Constructor" << endl;
+
     if(dict.found("postProcDir")) {
         postProcDir_=fileName(
             dict.lookup("postProcDir")
@@ -79,14 +81,31 @@ simpleDataFunctionObject::simpleDataFunctionObject
 
 fileName simpleDataFunctionObject::dataDir()
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    // make sure that when starting we take the start time
+    if(
+        obr_.time().timeIndex()
+        <=
+        obr_.time().startTimeIndex()+1
+    ) {
+        return baseDir()/obr_.time().timeName(
+            obr_.time().startTime().value()
+        );
+    } else {
+        return baseDir()/obr_.time().timeName();
+    }
+#else
     return baseDir()/obr_.time().timeName();
+#endif
 }
 
 fileName simpleDataFunctionObject::baseDir()
 {
     fileName theDir;
     fileName dir=dirName()+"_"+name();
-
+    if(obr().name()!=polyMesh::defaultRegion) {
+        dir=obr().name() / dir;
+    }
     if (Pstream::parRun())
     {
         // Put in undecomposed case (Note: gives problems for
@@ -110,6 +129,8 @@ fileName simpleDataFunctionObject::baseDir()
 
 bool simpleDataFunctionObject::start()
 {
+    Dbug << name() << "::start()" << endl;
+
     simpleFunctionObject::start();
 
     mkDir(dataDir());

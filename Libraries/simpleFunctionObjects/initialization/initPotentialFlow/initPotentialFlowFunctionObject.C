@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -41,7 +41,14 @@ Contributors/Copyright:
 #include "IOmanip.H"
 #include "swakTime.H"
 
-#include "fvCFD.H"
+#include "fvMesh.H"
+#include "volFields.H"
+#include "surfaceInterpolate.H"
+#include "fvmLaplacian.H"
+#include "fvcDiv.H"
+#include "fvcReconstruct.H"
+#include "findRefCell.H"
+#include "adjustPhi.H"
 
 #include "swak.H"
 
@@ -70,6 +77,9 @@ initPotentialFlowFunctionObject::initPotentialFlowFunctionObject
 :
     updateSimpleFunctionObject(name,t,dict)
 {
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    start();
+#endif
 }
 
 bool initPotentialFlowFunctionObject::start()
@@ -88,6 +98,7 @@ void initPotentialFlowFunctionObject::recalc()
 {
     Info << "Solving potential flow for velocity " << UName_
         << " and pressure " << pName_ << endl;
+    Pbug << "Starting recalc()" << endl;
 
     const fvMesh &mesh=dynamicCast<const fvMesh&>(obr_);
 
@@ -140,6 +151,8 @@ void initPotentialFlowFunctionObject::recalc()
 
     for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
     {
+        Pbug << "Solve nonOrth " << nonOrth << endl;
+
         fvScalarMatrix pEqn
         (
             fvm::laplacian
@@ -208,6 +221,7 @@ void initPotentialFlowFunctionObject::recalc()
             pNew.write();
         }
     }
+    Pbug << "Ended recalc()" << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009-2010, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009-2010, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -47,7 +47,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#ifdef FOAM_DEV
+#ifdef FOAM_HAS_NO_POINT_PATCH_FIELD_TYPEDEF
     // Rebuilds the call
     // makePointPatchFieldTypedefs(groovyFixedNormalSlip);
 

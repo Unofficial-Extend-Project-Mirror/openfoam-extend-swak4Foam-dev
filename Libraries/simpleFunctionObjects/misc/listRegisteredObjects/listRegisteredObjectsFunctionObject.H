@@ -39,7 +39,7 @@ SourceFiles
     listRegisteredObjectsFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -90,7 +90,7 @@ public:
 
     bool start();
 
-    void write();
+    void writeSimple();
 };
 
 

@@ -81,7 +81,7 @@ bool listMeshDataFunctionObject::start()
     return true;
 }
 
-void listMeshDataFunctionObject::write()
+void listMeshDataFunctionObject::writeSimple()
 {
     Info << "Content of mesh data " << obr().name()
         << endl;

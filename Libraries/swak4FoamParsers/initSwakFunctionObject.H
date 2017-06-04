@@ -38,7 +38,7 @@ SourceFiles
     initSwakFunctionObject.C
 
 Contributors/Copyright:
-    2008-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -111,6 +111,12 @@ public:
 #ifdef FOAM_FUNCTIONOBJECT_EXECUTE_HAS_NO_FORCE
     //- Interface for old functionObject
     virtual bool execute();
+#endif
+
+#ifdef FOAM_FUNCTIONOBJECT_HAS_SEPARATE_WRITE_METHOD_AND_NO_START
+    //- Interface for new functionObject
+    virtual bool execute();
+    virtual bool write();
 #endif
 
     //- Read and set the function object if it's data has changed

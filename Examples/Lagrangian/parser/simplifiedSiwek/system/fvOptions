@@ -28,6 +28,8 @@ source1
     {
         mode            uniform;
         temperature     2000;
+        selectionMode   cellSet;
+        cellSet         ignitionCells;
     }
 }
 

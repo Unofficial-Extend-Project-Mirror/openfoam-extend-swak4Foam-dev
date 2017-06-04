@@ -80,7 +80,7 @@ functions {
         fieldNames ();
         cloudNames (hotParticleCloud coldParticleCloud);
         outputControlMode timeStep;
-        outputInterval 1;
+        outputInterval 5;
     }
 
     coldParticle {

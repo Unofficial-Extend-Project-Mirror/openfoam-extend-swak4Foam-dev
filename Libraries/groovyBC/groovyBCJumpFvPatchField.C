@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -109,7 +110,11 @@ groovyBCJumpFvPatchField<Type>::groovyBCJumpFvPatchField
     }
     else
     {
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+        this->evaluate(Pstream::commsTypes::blocking);
+#else
         this->evaluate(Pstream::blocking);
+#endif
     }
 }
 

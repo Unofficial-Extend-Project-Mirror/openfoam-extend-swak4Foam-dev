@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -705,8 +705,8 @@ void  Foam::binaryOperationSearchableSurface::whose
     const scalar farTolerance=1e-5;
 
     forAll(whom,i) {
-        scalar distA=HUGE;
-        scalar distB=HUGE;
+        scalar distA=pTraits<scalar>::max;
+        scalar distB=pTraits<scalar>::max;
         if(nearestA[i].hit()) {
             distA=mag(samples[i]-nearestA[i].hitPoint());
         }

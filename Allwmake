@@ -2,10 +2,12 @@
 
 if [ -e foamVersionThisIsCompiledFor ]; then
     prevVersion=$(<foamVersionThisIsCompiledFor)
-    echo "Previously compiled for OpenFOAM $prevVersion"
-    if [ "$WM_PROJECT_VERSION" != "$prevVersion" ]; then
-	echo "The current OpenFOAM-version $WM_PROJECT_VERSION is different from the one used for compiling before ($prevVersion). Use ./Allwclean before compiling"
-	exit 42
+    echo "Previously compiled for OpenFOAM ($prevVersion)"
+    if [ "$WM_PROJECT_VERSION" != "$prevVersion" ]
+    then
+        echo "Different than current OpenFOAM ($WM_PROJECT_VERSION) version."
+        echo "   Use ./Allwclean before compiling"
+        exit 42
     fi
     unset prevVersion
 else

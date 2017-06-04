@@ -38,7 +38,7 @@ SourceFiles
     writeFieldsGeneralFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013, 2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 
  SWAK Revision: $Id$
@@ -100,7 +100,7 @@ public:
 
     bool start();
 
-    void write();
+    void writeSimple();
 
     const wordList &fieldNames() const { return fieldNames_; }
 

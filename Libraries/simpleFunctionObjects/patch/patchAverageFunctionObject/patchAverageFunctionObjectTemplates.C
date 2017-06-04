@@ -29,16 +29,16 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchAverageFunctionObject.H"
 #include "volFields.H"
 #include "IOmanip.H"
 #include "fvMesh.H"
-#include "fvCFD.H"
+#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,7 +60,7 @@ Field<T> patchAverageFunctionObject::average(const word& fieldName,T unsetVal) c
     Field<T> vals(patchNames_.size(), unsetVal);
 
     const fvMesh &mesh=refCast<const fvMesh>(obr_);
-    
+
     forAll(patchNames_, patchI)
     {
         if (patchIndizes_[patchI] >= 0)
@@ -79,12 +79,12 @@ Field<T> patchAverageFunctionObject::average(const word& fieldName,T unsetVal) c
     }
 
     if(verbose()) {
-        Info<< regionString() 
+        Info<< regionString()
             << " Averages of " << fieldName << " :";
 
         forAll(patchNames_, patchI)
         {
-            Info << "  " << patchNames_[patchI] << " = " 
+            Info << "  " << patchNames_[patchI] << " = "
                 << vals[patchI];
         }
 

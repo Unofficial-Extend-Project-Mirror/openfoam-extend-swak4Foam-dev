@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------*\
+#/*---------------------------------------------------------------------------*\
  ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
@@ -39,7 +39,7 @@ SourceFiles
     ExpressionResultIO.C
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -57,7 +57,9 @@ Contributors/Copyright:
 #include "dimensionedType.H"
 #include "IOobject.H"
 
- #include "runTimeSelectionTables.H"
+#include "runTimeSelectionTables.H"
+
+#include "tensor.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -81,6 +83,22 @@ class ExpressionResult
     bool isPoint_;
 
     bool isSingleValue_;
+
+    // store a single value so that it will be correctly written
+#ifdef FOAM_CXX_COMPILER_ALLOWS_NON_POD_IN_UNION
+    union
+#else
+    struct    // Non-POD members are only allowes in C++0x or newer. Use struct instead
+#endif
+    SingleUnion {
+        bool bool_;
+        scalar scalar_;
+        vector vector_;
+        tensor tensor_;
+        symmTensor symmTensor_;
+        sphericalTensor sphericalTensor_;
+        SingleUnion() { scalar_=0; }  // Keep gcc happy
+    } single_;
 
     //- alternative if anything different than a plain field should be stored
     autoPtr<IOobject> generalContent_;
@@ -113,7 +131,7 @@ class ExpressionResult
     inline void setObjectResultInternal(autoPtr<T> o);
 
     template <typename T>
-    inline void calcIsSingleValueInternal();
+    inline T calcIsSingleValueInternal();
 
     // whether or not the variable will be reset
     bool noReset_;

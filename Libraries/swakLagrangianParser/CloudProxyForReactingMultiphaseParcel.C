@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -48,12 +48,51 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CloudType>
+CloudProxyForReactingMultiphaseParcelNoComposition<CloudType>::CloudProxyForReactingMultiphaseParcelNoComposition
+(
+    const cloud& cl
+)
+:
+    CloudProxyForReactingParcelNoComposition<CloudType>(cl)
+{
+    typedef CloudProxyForReactingMultiphaseParcelNoComposition<CloudType> baseType;
+
+    this->addScalarFunction(
+        "pc",
+        "Owner cell pressure",
+        new typename baseType::template ParticleMethodWrapperValue<scalar>(
+            &CloudType::particleType::pc
+        )
+    );
+
+    //- constant Properties
+    const typename CloudType::particleType::constantProperties &constProps=
+        this->theCloud().constProps();
+
+    this->addScalarFunction(
+        "LDevol",
+        "Latent heat of devolatilisation (constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.LDevol()
+        )
+    );
+    this->addScalarFunction(
+        "hRetentionCoeff",
+        "Fraction of enthalpy retained due to surface reactions(constant)",
+        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
+            constProps.hRetentionCoeff()
+        )
+    );
+}
+
+
+template<class CloudType>
 CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphaseParcel
 (
     const cloud& cl
 )
 :
-    CloudProxyForReactingParcel<CloudType>(cl)
+    CloudProxyForReactingMultiphaseParcelNoComposition<CloudType>(cl)
 {
     typedef CloudProxyForReactingMultiphaseParcel<CloudType> baseType;
 
@@ -125,36 +164,27 @@ CloudProxyForReactingMultiphaseParcel<CloudType>::CloudProxyForReactingMultiphas
         );
     }
 
-    this->addScalarFunction(
-        "pc",
-        "Owner cell pressure",
-        new typename baseType::template ParticleMethodWrapperValue<scalar>(
-            &CloudType::particleType::pc
-        )
-    );
-
-    //- constant Properties
-    const typename CloudType::particleType::constantProperties &constProps=
-        this->theCloud().constProps();
-
-    this->addScalarFunction(
-        "LDevol",
-        "Latent heat of devolatilisation (constant)",
-        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
-            constProps.LDevol()
-        )
-    );
-    this->addScalarFunction(
-        "hRetentionCoeff",
-        "Fraction of enthalpy retained due to surface reactions(constant)",
-        new typename baseType::template ParticleMethodWrapperConstant<scalar>(
-            constProps.hRetentionCoeff()
-        )
-    );
+    // code duplication from the ReactingParcel-proxy (because we didn't inherit this)
+    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
+    forAll(phaseTypes,i) {
+        const word &name=phaseTypes[i];
+        this->addScalarFunction(
+            "Y"+name,
+            "Mass fraction of "+name,
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::Y,
+                i
+            )
+        );
+    }
 }
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+template<class CloudType>
+CloudProxyForReactingMultiphaseParcelNoComposition<CloudType>::~CloudProxyForReactingMultiphaseParcelNoComposition()
+{}
 
 template<class CloudType>
 CloudProxyForReactingMultiphaseParcel<CloudType>::~CloudProxyForReactingMultiphaseParcel()

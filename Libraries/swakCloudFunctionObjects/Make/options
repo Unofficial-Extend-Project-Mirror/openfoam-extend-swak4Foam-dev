@@ -8,8 +8,9 @@ EXE_INC = \
     -I../swakLagrangianParser/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
-    -I$(LIB_SRC)/triSurface/lnInclude \
+    $(TRISURFACE_INC) \
     -I$(LIB_SRC)/thermophysicalModels/pdfs/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
@@ -24,6 +25,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidMixtureProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/solidProperties/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/properties/liquidProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/regionModels/regionModel/lnInclude \
     -I$(LIB_SRC)/regionModels/surfaceFilmModels/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
@@ -38,9 +40,8 @@ LIB_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \
-    $(TRISURFACE_LIB) \
     -llagrangian \
     -llagrangianIntermediate \
-    -lthermophysicalFunctions \
+    $(THERMOPHYSICALFUNCTIONS_LIB) \
     $(RADIATION_LIB) \
     -lsolidParticle

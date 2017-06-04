@@ -30,6 +30,7 @@ License
 
 Contributors/Copyright:
     2012-2014, 2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -58,7 +59,13 @@ CommonPluginFunction::CommonPluginFunction(
             Info << "Parsing arguments: " << argumentSpecificationString << endl;
         }
         word next;
-        forAll(argumentSpecificationString,i) {
+        for
+        (
+            string::size_type i = 0;
+            i < argumentSpecificationString.size();
+            ++i
+        )
+        {
             char c=argumentSpecificationString[i];
             if(c!=',') {
                 next+=c;
@@ -218,7 +225,13 @@ label CommonPluginFunction::readArgument(
     string tc="";
     {
         bool atStart=true;
-        forAll(content,i){
+        for
+        (
+            string::size_type i = 0;
+            i < content.size();
+            ++i
+        )
+        {
             if(isspace(content[i]) && atStart) {
                 consumed++;
             } else {
@@ -287,11 +300,35 @@ label CommonPluginFunction::readArgument(
                 << "(stream pos: " << label(is.pos()) << ")" << endl;
         }
         setArgument(index,value);
+    } else if(type=="tensor") {
+        tensor value;
+        is >> value;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Read tensor: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
+    } else if(type=="symmTensor") {
+        symmTensor value;
+        is >> value;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Read symmTensor: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
+    } else if(type=="sphericalTensor") {
+        sphericalTensor value;
+        is >> value;
+        if(debug || parentDriver_.traceParsing()) {
+            Info << "Read sphericalTensor: " << value
+                << "(stream pos: " << label(is.pos()) << ")" << endl;
+        }
+        setArgument(index,value);
     } else {
         FatalErrorIn("CommonPluginFunction::readArgument")
             << "Unsupported type " << type
                 << endl
-                << "Currently supported: scalar, label, word, string, vector"
+                << "Currently supported: scalar, label, word, string, vector, tensor, symmTensor, sphericalTensor"
                 << exit(FatalError);
     }
 
@@ -362,6 +399,15 @@ void CommonPluginFunction::evaluateInternal(
                 Info << "Used " << used << " characters "
                     << ". Now looking for " << lookFor << endl;
             }
+            if(used<0) {
+                FatalErrorIn("CommonPluginFunction::evaluateInternal")
+                    << "Error while looking for " << argumentTypes_[i]
+                        << " in " << currentContent << " of expression "
+                        << content
+                        << " in function " << this->helpText()
+                        << endl
+                        << exit(FatalError);
+            }
             used+=scanEmpty(currentContent.substr(used),lookFor);
             if(debug || parentDriver_.traceParsing()) {
                 Info << "Used " << used << " characters after looking for "
@@ -391,6 +437,19 @@ void CommonPluginFunction::evaluateInternal(
                 content+"\""
             );
 
+            const word dictName=name_+"Data";
+            //            Info << "Looking for " << dictName << " in " << parentDriver_.dict().name() << endl;
+            if(
+                parentDriver_.dict().found(dictName)
+                &&
+                parentDriver_.dict().isDict(dictName)
+            ) {
+                //                Info << "Found " << parentDriver_.dict().subDict(dictName) << endl;
+                driver->readVariablesAndTables(
+                    parentDriver_.dict().subDict(dictName)
+                );
+                driver->clearVariables();
+            }
             used=readArgument(i,currentContent,driver());
         }
 

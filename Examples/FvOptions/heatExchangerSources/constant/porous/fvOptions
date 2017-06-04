@@ -1,0 +1,73 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+energySourceBefore {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup yes;
+        fieldName h;
+        namePrefix fvChange;
+    }
+}
+energyResidual {
+    type matrixChangeBefore;
+    active true;
+    selectionMode all;
+    matrixChangeBeforeCoeffs {
+        doAtAddSup no;
+        fieldName h;
+        namePrefix residual;
+    }
+}
+showFvOptions {
+    type reportAvailableFvOptions;
+    active true;
+    selectionMode all;
+    reportAvailableFvOptionsCoeffs {}
+}
+porousToair
+{
+    type            constantHeatTransfer;
+    active          yes;
+
+    constantHeatTransferCoeffs
+    {
+        interpolationMethod cellVolumeWeight;
+        nbrRegion       air;
+        nbrRegionName   $nbrRegion;
+        master          true;
+
+        nbrModel        airToporous;
+        fields          (h);
+        semiImplicit    no;
+    }
+}
+energySourceAfter {
+    type matrixChangeAfter;
+    active true;
+    selectionMode all;
+    matrixChangeAfterCoeffs {
+        doAtAddSup yes;
+        fieldName h;
+        namePrefix fvChange;
+    }
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,74 @@
+// -*- c++ -*-
+deltaP {
+    theTitle "DeltaP";
+    type dynamic;
+    idNr 1;
+    expr "Expression deltaP.* on (.+):  min=(%f%) max=(%f%) average=(%f%)";
+    titles (
+        min
+        max
+        average
+    );
+}
+kineticOut {
+    theTitle "Kinetic on patches";
+    type dynamic;
+    idNr 1;
+    expr "Expression kineticOut on (.*let):  min=%f% max=(%f%) sum=(%f%) average=(%f%) sumMag=(%f%) weightedAverage=(%f%)";
+    titles (
+        max
+        sum
+        average
+        sumMag
+        weightedAverage
+    );
+    logscale true;
+}
+massFlow {
+    theTitle "Mass flow in";
+    expr "Expression massFlowSwak on inlet:  sum=-(.+)";
+}
+scalar {
+    theTitle "Passive scalar";
+    expr "Expression scalarStatistics :  min=(.+) weightedQuantile0.01=(.+) weightedAverage=(.+) weightedQuantile0.99=(.+) max=(.+)";
+    titles (
+        min
+        "1%"
+        average
+        "99%"
+        max
+    );
+}
+scalarIn {
+    type slave;
+    master scalar;
+    expr "Expression scalarInlet :  weightedAverage=(.+)";
+    titles (
+        "Inlet value";
+    );
+}
+scalarOut {
+    type slave;
+    master scalar;
+    expr "Expression scalarOutlet :  min=(.+) weightedAverage=(.+) max=(.+)";
+    titles (
+        "Out - min"
+        "Out - average"
+        "Out - max"
+    );
+}
+scalarWidth {
+    type slave;
+    master scalar;
+    expr "Expression scalarStatistics :  min=(.+) weightedQuantile0.01=(.+) weightedAverage=(.+) weightedQuantile0.99=(.+) max=(.+)";
+    dataTransformations (
+        "$5-$1"
+        "($5-$1)/($3 if $3>0 else 1)"
+        "log($5 if $5>0 else 1)"
+    );
+    titles (
+        "span: max-min"
+        "relative span"
+        "log max"
+    );
+}

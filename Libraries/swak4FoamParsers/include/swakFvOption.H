@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -52,7 +52,7 @@ Contributors/Copyright:
 #include "fvOption.H"
 #include "makeFvOption.H"
 
-#if (FOAM_VERSION4SWAK >= VERSION_NR(3,0,0)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK >= VERSION_NR(3,0,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 
 #include "cellSetOption.H"
 
@@ -74,7 +74,7 @@ namespace Foam {
 
 #define makeSwakFvOption makeFvOption
 
-#if (FOAM_VERSION4SWAK >= VERSION_NR(2,3,1)) && !defined(FOAM_DEV)
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,3,1)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_FVOPTION_HAS_ADDITIONAL_ADDSUP
 #endif
 

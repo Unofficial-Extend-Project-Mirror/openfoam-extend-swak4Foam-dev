@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -73,6 +73,14 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
 {
     static HashPtrTable<compressible::turbulenceModel> turb_;
 
+    if(reg.foundObject<compressible::turbulenceModel>("turbulenceProperties")) {
+        if(debug) {
+            Info << "swakCompressibleTurbulencePluginFunction::turbInternal: "
+                << "turbulence already in memory" << endl;
+        }
+        // Somebody else already registered this
+        return reg.lookupObject<compressible::turbulenceModel>("turbulenceProperties");
+    }
     if(reg.foundObject<compressible::LESModel>("LESProperties")) {
         if(debug) {
             Info << "swakCompressibleTurbulencePluginFunction::turbInternal: "
@@ -99,7 +107,8 @@ swakCompressibleTurbulencePluginFunction::swakCompressibleTurbulencePluginFuncti
         turb_.set(
             reg.name(),
             compressible::turbulenceModel::New(
-                reg.lookupObject<volScalarField>("rho"),
+                // reg.lookupObject<volScalarField>("rho"),
+                thermoInternal(reg).rho(),
                 reg.lookupObject<volVectorField>("U"),
                 reg.lookupObject<surfaceScalarField>("phi"),
                 thermoInternal(reg)

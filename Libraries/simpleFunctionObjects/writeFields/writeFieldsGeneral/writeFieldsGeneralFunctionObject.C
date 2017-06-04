@@ -112,7 +112,7 @@ bool writeFieldsGeneralFunctionObject::start()
 // }
 
 
-void writeFieldsGeneralFunctionObject::write()
+void writeFieldsGeneralFunctionObject::writeSimple()
 {
     label totalCnt=0;
 
@@ -133,11 +133,11 @@ void writeFieldsGeneralFunctionObject::write()
         cnt+=writeField<surfaceTensorField>(name);
 
         if(cnt>1) {
-            WarningIn("writeFieldsGeneralFunctionObject::write()")
+            WarningIn("writeFieldsGeneralFunctionObject::writeSimple()")
                 << " More than one (" << cnt
                     << ") fields are known by the name " << name << endl;
         } else if(cnt<0) {
-            WarningIn("writeFieldsGeneralFunctionObject::write()")
+            WarningIn("writeFieldsGeneralFunctionObject::writeSimple()")
                 << " No field with the name " << name
                     << " found" << endl;
         } else {
@@ -174,11 +174,11 @@ void writeFieldsGeneralFunctionObject::write()
         cnt+=writeCloud<basicReactingMultiphaseCloud>(name);;
 #endif
         if(cnt>1) {
-            WarningIn("writeFieldsGeneralFunctionObject::write()")
+            WarningIn("writeFieldsGeneralFunctionObject::writeSimple()")
                 << " More than one (" << cnt
                     << ") clouds are known by the name " << name << endl;
         } else if(cnt<0) {
-            WarningIn("writeFieldsGeneralFunctionObject::write()")
+            WarningIn("writeFieldsGeneralFunctionObject::writeSimple()")
                 << " No clouds with the name " << name
                     << " found" << endl;
         } else {

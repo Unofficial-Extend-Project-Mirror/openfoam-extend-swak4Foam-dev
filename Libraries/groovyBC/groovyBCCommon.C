@@ -29,7 +29,8 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011, 2013-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -166,7 +167,11 @@ groovyBCCommon<Type>::groovyBCCommon
         Pstream::defaultCommsType
 #endif
         ==
-        Pstream::blocking
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+       Pstream::commsTypes::blocking
+#else
+       Pstream::blocking
+#endif
     ) {
         WarningIn("groovyBCCommon<Type>::groovyBCCommon")
             << "The commsType is set to 'blocking'. This might cause the run to"

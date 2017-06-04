@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -988,6 +988,41 @@ void pythonInterpreterWrapper::getGlobals()
                                 double(v.x()),
                                 double(v.y()),
                                 double(v.z())
+                            )
+                        );
+                } else if(val.valueType()==pTraits<symmTensor>::typeName) {
+                    const symmTensor v=val.getResult<symmTensor>()()[0];
+                    PyObject_SetAttrString
+                        (
+                            m,
+                            const_cast<char*>(var.c_str()),
+                            Py_BuildValue(
+                                "dddddd",
+                                double(v.xx()),
+                                double(v.xy()),
+                                double(v.xz()),
+                                double(v.yy()),
+                                double(v.yz()),
+                                double(v.zz())
+                            )
+                        );
+                } else if(val.valueType()==pTraits<tensor>::typeName) {
+                    const tensor v=val.getResult<tensor>()()[0];
+                    PyObject_SetAttrString
+                        (
+                            m,
+                            const_cast<char*>(var.c_str()),
+                            Py_BuildValue(
+                                "ddddddddd",
+                                double(v.xx()),
+                                double(v.xy()),
+                                double(v.xz()),
+                                double(v.yx()),
+                                double(v.yy()),
+                                double(v.yz()),
+                                double(v.zx()),
+                                double(v.zy()),
+                                double(v.zz())
                             )
                         );
                 } else {

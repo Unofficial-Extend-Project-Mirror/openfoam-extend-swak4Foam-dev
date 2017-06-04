@@ -1,0 +1,156 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     replayTransientBC;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.05;
+
+// writeControl    timeStep;
+writeControl    adjustableRunTime;
+
+// writeInterval   20;
+writeInterval   0.05;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+libs (
+    "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
+    "libswakShiftFieldFunctionPlugin.so"
+);
+
+functions {
+    constantShifted {
+        type expressionField;
+        autowrite true;
+        fieldName shiftedCircle;
+        outputControl timeStep;
+        outputInterval 1;
+        shiftConstantScalarFieldData {
+            variables (
+                "minX=min(pts().x);"
+                "maxX=max(pts().x);"
+                "minY=min(pts().y);"
+                "maxY=max(pts().y);"
+                "minZ=min(pts().z);"
+                "maxZ=max(pts().z);"
+                "span=interpolateToCell(maxX-minX);"
+                "radius=0.4*span;"
+                "center=0.5*interpolateToCell(vector(maxX+minX,maxY+minY,maxZ+minZ));"
+                "vals=mag(pos()-center)<radius ? 1 : -1;"
+                "shiftCell=span/0.5*(time()-0.25)*vector(-1,0,0);"
+                "shift=interpolateToPoint(shiftCell);"
+            );
+        }
+        expression "shiftConstantScalarField(vals,(-0.025 0 0))";
+        //        expression "shiftConstantScalarField(pos().y<pos().x? 1 : -1,(-0.025 0 0))";
+    }
+    mapShifted {
+        $constantShifted;
+        fieldName shiftedCircleMap;
+        mapConstantScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapConstantScalarField(vals,(-0.025 0 0))";
+    }
+    mapShiftedDefault {
+        $constantShifted;
+        fieldName shiftedCircleMapDefault;
+        mapConstantScalarFieldDefaultData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "mapConstantScalarFieldDefault(vals,(-0.025 0 0),2)";
+    }
+    findShifted {
+        $constantShifted;
+        fieldName shiftedCircleFind;
+        findShiftedScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "findShiftedScalarField(vals,vector(-0.025,0,0),2)";
+    }
+    timeShifted {
+        $constantShifted;
+        fieldName shiftedCircleTime;
+        shiftExpressionScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "shiftExpressionScalarField(vals,shift)";
+    }
+    // timeMapShifted {
+    //     $constantShifted;
+    //     fieldName shiftedCircleTimeMap;
+    //     mapExpressionScalarFieldData {
+    //         $shiftConstantScalarFieldData;
+    //     }
+    //     expression "mapExpressionScalarField(vals,shift)";
+    // }
+    shiftedCircleDefault {
+        $constantShifted;
+        fieldName shiftedCircleDefault;
+        shiftConstantScalarFieldDefaultData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "shiftConstantScalarFieldDefault(vals,(-0.025 0 0),2)";
+    }
+    timeShiftedDefault {
+        $constantShifted;
+        fieldName shiftedCircleTimeDefault;
+        shiftExpressionVectorFieldDefaultData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "shiftExpressionVectorFieldDefault(vector(1,1,1)*vals,shift,(1 2 3))";
+    }
+    // timeMapShiftedDefault {
+    //     $constantShifted;
+    //     fieldName shiftedCircleTimeMapDefault;
+    //     mapExpressionScalarFieldDefaultData {
+    //         $shiftConstantScalarFieldData;
+    //     }
+    //     expression "mapExpressionScalarFieldDefault(vals,shift,2)";
+    // }
+    findShiftedTime {
+        $constantShifted;
+        fieldName shiftedCircleFindTime;
+        findShiftedScalarFieldData {
+            $shiftConstantScalarFieldData;
+        }
+        expression "findShiftedScalarField(vals,shiftCell,2)";
+    }
+}
+
+// ************************************************************************* //

@@ -29,16 +29,15 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "volumeIntegrateFunctionObject.H"
 #include "volFields.H"
 #include "IOmanip.H"
 #include "fvMesh.H"
-#include "fvCFD.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -60,7 +59,7 @@ Field<T> volumeIntegrateFunctionObject::integrate(const word& fieldName,T unsetV
     Field<T> vals(1, unsetVal);
 
     const fvMesh &mesh=refCast<const fvMesh>(obr_);
-    
+
     vals[0] = (
         sum
         (
@@ -73,9 +72,9 @@ Field<T> volumeIntegrateFunctionObject::integrate(const word& fieldName,T unsetV
     }
 
     if(verbose()) {
-        Info<< regionString() 
+        Info<< regionString()
             << " Integral of " << fieldName << " = "
-            << vals[0] << "  " 
+            << vals[0] << "  "
             << fld.dimensions()*dimensionSet(0,3,0,0,0,0,0)
             << endl;
     }

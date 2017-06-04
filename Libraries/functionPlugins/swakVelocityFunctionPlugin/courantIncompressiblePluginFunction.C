@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -102,7 +102,11 @@ void courantIncompressiblePluginFunction::doEvaluation()
     );
     volScalarField &Co=pCo();
 
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(Co.internalField().field()) =
+#else
     Co.internalField() =
+#endif
         (0.5*mesh().time().deltaT().value())
         *fvc::surfaceSum(mag(phi_()))().internalField()
         /mesh().V();

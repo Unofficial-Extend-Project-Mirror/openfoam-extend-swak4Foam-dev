@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2010-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -66,18 +66,18 @@ tmp<Field> FieldValueExpressionDriver::doCompare(const Field &a,Op op,const Fiel
 
     forAll(res(),cellI) {
         if( op(a[cellI],b[cellI]) ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=FALSE_Value;
         }
     }
 
     forAll(res->boundaryField(),pI) {
         forAll(res->boundaryField()[pI],fI) {
             if( op(getFaceValue(a),getFaceValue(b)) ) {
-                getFaceValue(res())=TRUE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=TRUE_Value;
             } else {
-                getFaceValue(res())=FALSE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=FALSE_Value;
             }
         }
     }
@@ -92,9 +92,9 @@ tmp<Field> FieldValueExpressionDriver::doPointCompare(const Field &a,Op op,const
 
     forAll(res(),cellI) {
         if( op(a[cellI],b[cellI]) ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=FALSE_Value;
         }
     }
 
@@ -111,9 +111,9 @@ tmp<Field> FieldValueExpressionDriver::doLogicalOp(const Field &a,Op op,const Fi
         bool bv= toBool(b[cellI]);
 
         if( op(av,bv) ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=FALSE_Value;
         }
     }
 
@@ -122,13 +122,12 @@ tmp<Field> FieldValueExpressionDriver::doLogicalOp(const Field &a,Op op,const Fi
             bool av= toBool(getFaceValue(a));
             bool bv= toBool(getFaceValue(b));
             if( op(av,bv) ) {
-                getFaceValue(res())=TRUE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=TRUE_Value;
             } else {
-                getFaceValue(res())=FALSE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=FALSE_Value;
             }
         }
     }
-
     return res;
 }
 
@@ -146,9 +145,9 @@ tmp<Field> FieldValueExpressionDriver::doPointLogicalOp(
         bool bv= toBool(b[cellI]);
 
         if( op(av,bv) ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=FALSE_Value;
         }
     }
 
@@ -169,9 +168,9 @@ tmp<T>  FieldValueExpressionDriver::doConditional(
     forAll(result(),cellI) {
         bool c=toBool(cond[cellI]);
         if(c) {
-            result()[cellI]=yes[cellI];
+            const_cast<typename T::value_type&>(result()[cellI])=yes[cellI];
         } else {
-            result()[cellI]=no[cellI];
+            const_cast<typename T::value_type&>(result()[cellI])=no[cellI];
         }
     }
 
@@ -179,9 +178,9 @@ tmp<T>  FieldValueExpressionDriver::doConditional(
         forAll(result().boundaryField()[pI],fI) {
             bool c= toBool(getFaceValue(cond));
             if(c) {
-                getFaceValue(result())=getFaceValue(yes);
+                const_cast<typename T::value_type&>(getFaceValue(result()))=getFaceValue(yes);
             } else {
-                getFaceValue(result())=getFaceValue(no);
+                const_cast<typename T::value_type&>(getFaceValue(result()))=getFaceValue(no);
             }
         }
     }
@@ -203,9 +202,9 @@ tmp<T>  FieldValueExpressionDriver::doConditional(
     forAll(result(),cellI) {
         bool c=toBool(cond[cellI]);
         if(c) {
-            result()[cellI]=yes[cellI];
+            const_cast<typename T::value_type&>(result()[cellI])=yes[cellI];
         } else {
-            result()[cellI]=no[cellI];
+            const_cast<typename T::value_type&>(result()[cellI])=no[cellI];
         }
     }
 
@@ -221,9 +220,9 @@ tmp<Field> FieldValueExpressionDriver::doLogicalNot(const Field &a)
         bool av= toBool(a[cellI]);
 
         if( !av ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=FALSE_Value;
         }
     }
 
@@ -231,9 +230,9 @@ tmp<Field> FieldValueExpressionDriver::doLogicalNot(const Field &a)
         forAll(res->boundaryField()[pI],fI) {
             bool av= toBool(getFaceValue(a));
             if( !av ) {
-                getFaceValue(res())=TRUE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=TRUE_Value;
             } else {
-                getFaceValue(res())=FALSE_Value;
+                const_cast<typename Field::value_type&>(getFaceValue(res()))=FALSE_Value;
             }
         }
     }
@@ -250,9 +249,9 @@ tmp<Field> FieldValueExpressionDriver::doPointLogicalNot(const Field &a)
         bool av= toBool(a[cellI]);
 
         if( !av ) {
-            res()[cellI]=TRUE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=TRUE_Value;
         } else {
-            res()[cellI]=FALSE_Value;
+            const_cast<typename Field::value_type&>(res()[cellI])=FALSE_Value;
         }
     }
 

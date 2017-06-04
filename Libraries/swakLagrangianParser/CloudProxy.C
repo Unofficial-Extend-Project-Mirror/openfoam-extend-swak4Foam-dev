@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -70,7 +70,8 @@ autoPtr<CloudProxy> CloudProxy::New(
     const cloud &c,
     const word& alternateType
 ) {
-    Sbug << "CloudProxy::New with " << c.name() << " Type: " << c.type() << endl;
+    Sbug << "CloudProxy::New with " << c.name() << " Type: " << c.type()
+        << " Alternate type: " << alternateType << endl;
 
     word cloudType(c.type());
     if(
@@ -82,6 +83,9 @@ autoPtr<CloudProxy> CloudProxy::New(
 
         cloudType=alternateType;
     }
+
+    Sbug << "Looking for " << cloudType << " in "
+        << cloudConstructorTablePtr_->sortedToc() << endl;
 
     cloudConstructorTable::iterator cstrIter =
         cloudConstructorTablePtr_->find(cloudType);

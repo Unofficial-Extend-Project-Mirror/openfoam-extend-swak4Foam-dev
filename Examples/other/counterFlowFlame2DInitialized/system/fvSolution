@@ -89,6 +89,13 @@ PIMPLE
     nNonOrthogonalCorrectors 0;
 }
 
+p.potential {
+    solver           PCG;
+    preconditioner   DIC;
+    tolerance        1e-6;
+    relTol           0;
+}
+
 potentialFlow
 {
     nNonOrthogonalCorrectors 5;

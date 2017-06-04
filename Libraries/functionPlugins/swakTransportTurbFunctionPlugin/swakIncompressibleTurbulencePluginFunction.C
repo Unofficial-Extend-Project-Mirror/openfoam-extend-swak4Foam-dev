@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -73,6 +73,14 @@ const incompressible::turbulenceModel &swakIncompressibleTurbulencePluginFunctio
 {
     static HashPtrTable<incompressible::turbulenceModel> turb_;
 
+    if(reg.foundObject<incompressible::turbulenceModel>("turbulenceProperties")) {
+        if(debug) {
+            Info << "swakIncompressibleTurbulencePluginFunction::turbInternal: "
+                << "turbulence model already in memory" << endl;
+        }
+        // Somebody else already registered this
+        return reg.lookupObject<incompressible::turbulenceModel>("turbulenceProperties");
+    }
     if(reg.foundObject<incompressible::LESModel>("LESProperties")) {
         if(debug) {
             Info << "swakIncompressibleTurbulencePluginFunction::turbInternal: "

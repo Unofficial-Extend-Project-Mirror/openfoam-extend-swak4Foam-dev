@@ -119,8 +119,8 @@ fileName distributionFunctionObject::dataDir()
     }
 }
 
-void distributionFunctionObject::write() {
-    Dbug << name() << " write()" << endl;
+void distributionFunctionObject::writeSimple() {
+    Dbug << name() << " writeSimple()" << endl;
 
     clearDistributions();
 
@@ -170,11 +170,12 @@ void distributionFunctionObject::write() {
     }
 
     if(zeroDistribution) {
-        WarningIn("distributionFunctionObject::write")
+        WarningIn("distributionFunctionObject::writeSimple")
             << "Distribution for " << name() << " has size 0. "
                 << "Doing nothing"
                 << endl;
-        return;
+
+        // return;
     }
     if(Pstream::master()) {
         if(writeTimeline()) {
@@ -213,7 +214,11 @@ wordList distributionFunctionObject::fileNames() {
 }
 
 stringList distributionFunctionObject::componentNames() {
+#ifdef FOAM_COMPONENT_NAMES_ARE_CONST_PTR
+    const char * const *names=NULL;
+#else
     const char **names=NULL;
+#endif
     direction nComp=0;
 
     if(distScalar_.valid()) {

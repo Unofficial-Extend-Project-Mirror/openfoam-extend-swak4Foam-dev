@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -53,7 +53,7 @@ namespace Foam
 {
 
     template <>
-    void modelLoadingFunctionObject<SLGThermo>::write()
+    void modelLoadingFunctionObject<SLGThermo>::writeSimple()
     {
         if(correctModel_) {
             if(model_.valid()) {
@@ -92,14 +92,15 @@ loadSLGThermoModelFunctionObject::loadSLGThermoModelFunctionObject
 :
     modelLoadingFunctionObject<SLGThermo>(name,t,dict)
 {
+    this->read(dict);
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-    autoPtr<SLGThermo> loadSLGThermoModelFunctionObject::initModel()
+autoPtr<SLGThermo> loadSLGThermoModelFunctionObject::initModel()
 {
-    return autoPtr<SLGThermo>(
+    autoPtr<SLGThermo> result(
         new SLGThermo(
             dynamicCast<const fvMesh &>(
                 obr()
@@ -111,6 +112,8 @@ loadSLGThermoModelFunctionObject::loadSLGThermoModelFunctionObject
             )
         )
     );
+
+    return result;
 }
 
 

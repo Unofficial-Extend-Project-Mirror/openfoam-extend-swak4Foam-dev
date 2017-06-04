@@ -63,10 +63,12 @@ porosity1
     explicitPorositySourceCoeffs
     {
         type            DarcyForchheimer;
+        selectionMode   cellZone;
+        cellZone        porosity;
 
         DarcyForchheimerCoeffs
         {
-            d   d [0 -2 0 0 0 0 0] (5e7 -1000 -1000);
+            d   d [0 -2 0 0 0 0 0] (7e5 -1000 -1000);
             f   f [0 -1 0 0 0 0 0] (0 0 0);
 
             coordinateSystem
@@ -91,6 +93,8 @@ heatSource {
     cellZone porosity;
 
     scalarSwakExplicitSourceCoeffs {
+        selectionMode   cellZone;
+        cellZone        porosity;
         variables (
             "htCoeff=1e6;"
         );
@@ -107,6 +111,8 @@ velFix {
     cellZone porosity;
 
     vectorSwakSetValueCoeffs {
+        selectionMode   cellZone;
+        cellZone        porosity;
         useMaskExpression true;
         maskExpression "pos().z<0";
 
@@ -131,6 +137,8 @@ poroTimeSource {
     cellZone porosity;
 
     scalarSwakExplicitSourceCoeffs {
+        selectionMode   cellZone;
+        cellZone        porosity;
          expressions {
             poroTime "1" [0 0 0 0 0 0 0];
         }
@@ -145,6 +153,8 @@ poroTimeClear {
 
     scalarSwakSetValueCoeffs {
         useMaskExpression true;
+        selectionMode   cellZone;
+        cellZone        inlet;
 
         maskExpression "pos().y<15e-3";
         expressions {
@@ -187,6 +197,8 @@ reportStuff {
                 verbose true;
                 outputControlMode timeStep;
                 outputInterval 1;
+                executeMoreThanOnce true;
+                writeControl none;
 
                 fields (
                     p

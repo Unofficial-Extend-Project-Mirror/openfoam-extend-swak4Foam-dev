@@ -65,8 +65,8 @@ panicDumpFunctionObject::panicDumpFunctionObject
 :
     simpleFunctionObject(name,t,dict),
     fieldName_(""),
-    maximum_(HUGE),
-    minimum_(-HUGE),
+    maximum_(pTraits<scalar>::max),
+    minimum_(pTraits<scalar>::min),
     storeAndWritePreviousState_(false)
 {
 }
@@ -105,7 +105,7 @@ bool panicDumpFunctionObject::start()
     return true;
 }
 
-void panicDumpFunctionObject::write()
+void panicDumpFunctionObject::writeSimple()
 {
     check<volScalarField>();
     check<volVectorField>();

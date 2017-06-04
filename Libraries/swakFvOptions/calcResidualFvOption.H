@@ -37,7 +37,7 @@ SourceFiles
     calcResidualFvOption.C
 
 Contributors/Copyright:
-    2014-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -280,6 +280,23 @@ public:
         fvMatrix<tensor>& eqn,
         const label fieldI
     );
+
+    //- in newer versions setValue was renamed
+    virtual void constrain(fvMatrix<scalar>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<vector>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<tensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<symmTensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
+    virtual void constrain(fvMatrix<sphericalTensor>& eqn, const label fieldI) {
+        setValue(eqn,fieldI);
+    }
 
 };
 

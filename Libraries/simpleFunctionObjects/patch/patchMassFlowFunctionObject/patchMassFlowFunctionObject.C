@@ -29,9 +29,9 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2008-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "patchMassFlowFunctionObject.H"
@@ -73,10 +73,10 @@ patchMassFlowFunctionObject::patchMassFlowFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void patchMassFlowFunctionObject::write()
+void patchMassFlowFunctionObject::writeSimple()
 {
     scalarField vals(patchNames_.size(), -GREAT);
-   
+
     const surfaceScalarField &phi=obr_.lookupObject<surfaceScalarField>(solver_.phi());
 
     forAll(patchIndizes_,i) {
@@ -88,7 +88,7 @@ void patchMassFlowFunctionObject::write()
             );
             reduce(vals[i],sumOp<scalar>());
         }
-    }    
+    }
 
     forAll(vals,i) {
         vals[i]*=factor();
@@ -102,18 +102,18 @@ void patchMassFlowFunctionObject::write()
     }
 
     if(verbose()) {
-        Info<< regionString() 
+        Info<< regionString()
             << " MassFlows: ";
 
         forAll(patchNames_, patchI)
         {
-            Info << "  " << patchNames_[patchI] << " = " 
+            Info << "  " << patchNames_[patchI] << " = "
                 << vals[patchI];
         }
 
         Info << endl;
     }
-    
+
 }
 
     //- Names of the files

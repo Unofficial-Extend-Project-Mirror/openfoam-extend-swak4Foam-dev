@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2014-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -106,7 +106,7 @@ void Foam::fv::calcResidualFvOption::calcResidual(
         return;
     }
     tmp<Field<Type> > pRes(mat.residual());
-    Field<Type> &res=pRes();
+    Field<Type> &res=const_cast<Field<Type>&>(pRes());
 
     scalarField tmpField(res.size());
 

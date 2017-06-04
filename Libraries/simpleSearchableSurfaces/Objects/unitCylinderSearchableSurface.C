@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -95,7 +95,7 @@ Foam::pointIndexHit Foam::unitCylinderSearchableSurface::findNearest
         hit[2]=true;
     }
 
-    scalar minDist=HUGE;
+    scalar minDist=pTraits<scalar>::max;
     label minIndex=-1;
     forAll(pts,i) {
         if(mag(sample-pts[i])<minDist) {
@@ -122,22 +122,22 @@ void Foam::unitCylinderSearchableSurface::findLineAll
     List<pointIndexHit>& hit
 ) const
 {
-    List<scalar> f(4,HUGE);
+    List<scalar> f(4,pTraits<scalar>::max);
 
     vector dir=end-start;
 
-    f[0]=max(min(top_.normalIntersect(start,dir),HUGE),-HUGE);
+    f[0]=max(min(top_.normalIntersect(start,dir),pTraits<scalar>::max),pTraits<scalar>::min);
     point pt0=start+f[0]*dir;
     pt0.z()=0;
     if(magSqr(pt0)>1) {
-        f[0]=HUGE;
+        f[0]=pTraits<scalar>::max;
     }
 
-    f[1]=max(min(bottom_.normalIntersect(start,dir),HUGE),-HUGE);
+    f[1]=max(min(bottom_.normalIntersect(start,dir),pTraits<scalar>::max),pTraits<scalar>::min);
     point pt1=start+f[1]*dir;
     pt1.z()=0;
     if(magSqr(pt1)>1) {
-        f[1]=HUGE;
+        f[1]=pTraits<scalar>::max;
     }
 
     {
@@ -153,11 +153,11 @@ void Foam::unitCylinderSearchableSurface::findLineAll
         }
         scalar z2=start.z()+f[2]*dir.z();
         if(z2<-1 || z2>1) {
-            f[2]=HUGE;
+            f[2]=pTraits<scalar>::max;
         }
         scalar z3=start.z()+f[3]*dir.z();
         if(z3<-1 || z3>1) {
-            f[3]=HUGE;
+            f[3]=pTraits<scalar>::max;
         }
     }
 

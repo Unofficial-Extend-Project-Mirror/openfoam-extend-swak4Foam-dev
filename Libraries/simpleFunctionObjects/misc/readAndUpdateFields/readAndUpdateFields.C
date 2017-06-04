@@ -28,10 +28,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
     2013 Bruno Santos <wyldckat@gmail.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "readAndUpdateFields.H"
@@ -58,7 +58,8 @@ Foam::readAndUpdateFields::readAndUpdateFields
     name_(name),
     obr_(obr),
     active_(true),
-    fieldSet_()
+    fieldSet_(),
+    correctBoundary_(true)
 {
     // Check if the available mesh is an fvMesh otherise deactivate
     if (!isA<fvMesh>(obr_))
@@ -102,35 +103,48 @@ void Foam::readAndUpdateFields::read(const dictionary& dict)
 
         //Info<< type() << " " << name_ << ":" << nl;
 
-        // Clear out any previously loaded fields 
+        // Clear out any previously loaded fields
         vsf_.clear();
         vvf_.clear();
         vSpheretf_.clear();
         vSymmtf_.clear();
         vtf_.clear();
-        
+
         psf_.clear();
         pvf_.clear();
         pSpheretf_.clear();
         pSymmtf_.clear();
         ptf_.clear();
-        
+
+        ssf_.clear();
+        svf_.clear();
+        sSpheretf_.clear();
+        sSymmtf_.clear();
+        stf_.clear();
+
         forAll(fieldSet_, fieldI)
         {
-            bool found = loadField<scalar>(fieldSet_[fieldI], vsf_, psf_);
-            found = found || loadField<vector>(fieldSet_[fieldI], vvf_, pvf_);
-            found = found || loadField<sphericalTensor>(fieldSet_[fieldI], vSpheretf_, pSpheretf_);
-            found = found || loadField<symmTensor>(fieldSet_[fieldI], vSymmtf_, pSymmtf_);
-            found = found || loadField<tensor>(fieldSet_[fieldI], vtf_, ptf_);
-        
+            bool found = loadField<scalar>(fieldSet_[fieldI], vsf_, ssf_, psf_);
+            found = found || loadField<vector>(fieldSet_[fieldI], vvf_, svf_, pvf_);
+            found = found || loadField<sphericalTensor>(fieldSet_[fieldI], vSpheretf_, sSpheretf_, pSpheretf_);
+            found = found || loadField<symmTensor>(fieldSet_[fieldI], vSymmtf_, sSymmtf_, pSymmtf_);
+            found = found || loadField<tensor>(fieldSet_[fieldI], vtf_, stf_, ptf_);
+
             if(!found)
-            { 
+            {
                 FatalErrorIn("Foam::readAndUpdateFields::read(const dictionary& dict)")
                     << "Field " << fieldSet_[fieldI] << " does not exist"
                         << endl
                         << exit(FatalError);
-                
             }
+        }
+
+        correctBoundary_=dict.lookupOrDefault<bool>("correctBoundary",true);
+
+        if(!dict.found("correctBoundary")) {
+            WarningIn("Foam::readAndUpdateFields::read(const dictionary& dict)")
+                << "No entry 'correctBoundary' in " << dict.name()
+                    << ". Defaulting to 'true'" << endl;
         }
     }
 }
@@ -145,7 +159,13 @@ const Foam::pointMesh &Foam::readAndUpdateFields::pMesh(const polyMesh &mesh)
 
 void Foam::readAndUpdateFields::execute()
 {
-    if(active_) {
+    if(
+        active_
+        ||
+        correctBoundary_
+    ) {
+        Info << this->name() << " : Correcting " << flush;
+
         correctBoundaryConditions(vsf_);
         correctBoundaryConditions(vvf_);
         correctBoundaryConditions(vtf_);
@@ -157,6 +177,8 @@ void Foam::readAndUpdateFields::execute()
         correctBoundaryConditions(ptf_);
         correctBoundaryConditions(pSymmtf_);
         correctBoundaryConditions(pSpheretf_);
+
+        Info << endl;
     }
 }
 
@@ -167,9 +189,17 @@ void Foam::readAndUpdateFields::end()
 }
 
 
-void Foam::readAndUpdateFields::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::readAndUpdateFields::write()
 {
     // Do nothing
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

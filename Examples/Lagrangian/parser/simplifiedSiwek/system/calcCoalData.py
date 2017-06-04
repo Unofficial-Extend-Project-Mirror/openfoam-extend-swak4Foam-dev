@@ -1,8 +1,10 @@
 import math
 import numpy as np
 
-center=(min(minX+maxX)/2,min(minY+maxY)/2,min(minZ+maxZ)/2)
-radius=max(max(maxX-minX),max(maxY-minY))/2
+# center=(min(minX+maxX)/2,min(minY+maxY)/2,min(minZ+maxZ)/2)
+# radius=max(max(maxX-minX),max(maxY-minY))/2
+center=((minX+maxX)/2,(minY+maxY)/2,(minZ+maxZ)/2)
+radius=max((maxX-minX),(maxY-minY))/2
 
 nrPoints=500
 turns=10
@@ -17,7 +19,8 @@ U=positions-center
 
 dMin=5e-6
 dMax=5e-4
-d=dMin+(dMax-dMin)*(positions[:,1]-min(minX))/min(maxY-minY)
+# d=dMin+(dMax-dMin)*(positions[:,1]-min(minX))/min(maxY-minY)
+d=dMin+(dMax-dMin)*(positions[:,1]-minX)/(maxY-minY)
 
 Ysolid=np.random.normal(loc=0.7,scale=0.1,size=nrPoints).clip(0.1,0.9)
 Ygas=0.9*(1-Ysolid)

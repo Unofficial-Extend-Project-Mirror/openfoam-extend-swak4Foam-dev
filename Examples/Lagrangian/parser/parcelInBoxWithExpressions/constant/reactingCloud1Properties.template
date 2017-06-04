@@ -1,0 +1,278 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      reactingCloud1Properties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         false;
+    transient       yes;
+    cellValueSourceCorrection off;
+
+    sourceTerms
+    {
+        schemes
+        {
+            rho             explicit 1;
+            U               explicit 1;
+            Yi              explicit 1;
+            h               explicit 1;
+            radiation       explicit 1;
+        }
+    }
+
+    interpolationSchemes
+    {
+        rho             cell;
+        U               cellPoint;
+        thermo:mu       cell;
+        mu              $thermo:mu;
+        T               cell;
+        Cp              cell;
+        kappa           cell;
+        p               cell;
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+        T               Euler;
+    }
+}
+
+$solution;
+
+interpolation {
+    $interpolationSchemes;
+}
+
+parcelTypeId 1;
+
+constantProperties
+{
+<!--(if foamFork in ["extend"])-->
+    rhoMin          rhoMin [ 1 -3 0 0 0 ] 1e-15;
+    TMin            TMin [ 0 0 0 1 0 ] 200;
+    pMin            pMin [ 1 -1 2 0 0 ] 1000;
+    rho0            rho0 [ 1 -3 0 0 0 ] 1000;
+    minParticleMass minParticleMass [ 1 0 0 0 0 ] 1e-15;
+    T0              T0 [ 0 0 0 1 0 ] 350;
+    cp0             cp0 [ 0 2 -2 -1 0 ] 4100;
+    epsilon0        epsilon0 [ 0 0 0 0 0 ] 1;
+    f0              f0 [ 0 0 0 0 0 ] 0.5;
+    Pr              Pr [ 0 0 0 0 0 ] 0.7;
+    Tvap            Tvap [ 0 0 0 1 0 ] 284;
+    Tbp             Tvap [ 0 0 0 1 0 ] 373;
+<!--(else)-->
+    rho0            1000;
+    T0              350;
+    Cp0             4100;
+
+    youngsModulus   1e9;
+    poissonsRatio   0.35;
+
+    epsilon0        1;
+    f0              0.5;
+
+    Tvap            284;
+    Tbp             373;
+    Pr              0.7;
+    LDevol          0;
+    hRetentionCoeff 1;
+<!--(end)-->
+
+    constantVolume  false;
+}
+
+
+subModels
+{
+    particleForces
+    {
+        sphereDrag;
+        gravity;
+<!--(if foamFork=="extend")-->
+        virtualMass     off;
+        pressureGradient off;
+<!--(end)-->
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            type            manualInjection;
+            massTotal       5.23599e-10; // 1 droplet of density 1000 kg/m3
+            parcelBasisType mass;
+            SOI             0;
+            positionsFile   "reactingCloud1Positions";
+            U0              (0 0 0);
+            sizeDistribution
+            {
+                type uniform;
+                uniformDistribution
+                {
+                    minValue        100e-06;
+                    maxValue        100e-06;
+                }
+            }
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel standardWallInteraction;
+
+    heatTransferModel RanzMarshall;
+
+    compositionModel singleMixtureFraction;
+
+    phaseChangeModel liquidEvaporation;
+
+    devolatilisationModel none;
+
+    surfaceReactionModel none;
+
+    stochasticCollisionModel none;
+
+    surfaceFilmModel none;
+
+    radiation       off;
+
+    standardWallInteractionCoeffs
+    {
+        type            rebound;
+    }
+
+    RanzMarshallCoeffs
+    {
+        BirdCorrection  off;
+    }
+
+    singleMixtureFractionCoeffs
+    {
+        phases
+        (
+            gas
+            {
+            }
+            liquid
+            {
+                H2O 1;
+            }
+            solid
+            {
+            }
+        );
+        YGasTot0        0;
+        YLiquidTot0     1;
+        YSolidTot0      0;
+    }
+
+    liquidEvaporationCoeffs
+    {
+        enthalpyTransfer enthalpyDifference; // latentHeat;
+
+        activeLiquids   ( H2O );
+    }
+}
+
+$subModels;
+
+DragModel       SphereDrag;
+
+DispersionModel none;
+
+PatchInteractionModel StandardWallInteraction;
+
+HeatTransferModel RanzMarshall;
+
+CompositionModel SinglePhaseMixture;
+
+PhaseChangeModel LiquidEvaporation;
+
+DevolatilisationModel none;
+
+SurfaceReactionModel none;
+
+StochasticCollisionModel none;
+
+SurfaceFilmModel none;
+
+InjectionModel ManualInjection;
+
+PostProcessingModel none;
+
+ManualInjectionCoeffs
+{
+    type            manualInjection;
+    massTotal       massTotal [ 1 0 0 0 0 ] 5.23599e-10; // 1 droplet of density 1000 kg/m3
+    parcelBasisType mass;
+    SOI             0;
+    positionsFile   "reactingCloud1Positions";
+    U0              (0 0 0);
+    parcelPDF
+    {
+        pdfType uniform;
+        uniformPDF
+        {
+            minValue        100e-06;
+            maxValue        100e-06;
+        }
+    }
+}
+StandardWallInteractionCoeffs
+{
+    type            rebound;
+}
+
+RanzMarshallCoeffs
+{
+    BirdCorrection  off;
+}
+
+SinglePhaseMixtureCoeffs
+{
+    phases
+        (
+            // gas
+            // {
+            // }
+            liquid
+            {
+                H2O 1;
+            }
+            // solid
+            // {
+            // }
+        );
+    YGasTot0        0;
+    YLiquidTot0     1;
+    YSolidTot0      0;
+}
+
+LiquidEvaporationCoeffs
+{
+    enthalpyTransfer enthalpyDifference; // latentHeat;
+
+    activeLiquids   ( H2O );
+}
+
+cloudFunctions
+{}
+
+
+// ************************************************************************* //

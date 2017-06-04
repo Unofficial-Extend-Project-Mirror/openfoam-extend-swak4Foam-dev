@@ -35,7 +35,7 @@ Description
     print a little banner with the swak-version to ease support
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -50,6 +50,9 @@ namespace Foam {
         Info << " - " SWAK_VERSION_EXTENSION;
 #endif
         Info << " (Release date: " SWAK_RELEASE_DATE ")";
+#ifdef SWAK_HGBRANCH
+        Info << " - HG Branch: " SWAK_HGBRANCH;
+#endif
         Info << endl;
         Info << "// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //";
         Info << endl;

@@ -36,7 +36,7 @@ SourceFiles
     CloudProxyForReactingParcel.C
 
 Contributors/Copyright:
-    2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -56,9 +56,36 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 template<class CloudType>
-class CloudProxyForReactingParcel
+class CloudProxyForReactingParcelNoComposition
 :
     public CloudProxyForThermoParcel<CloudType>
+{
+    //- Disallow default bitwise assignment
+    void operator=(const CloudProxyForReactingParcelNoComposition&);
+
+    //- Disallow copy construct
+    CloudProxyForReactingParcelNoComposition(const CloudProxyForReactingParcelNoComposition &);
+
+public:
+
+    // Constructors
+
+    //- Construct from components
+    CloudProxyForReactingParcelNoComposition
+    (
+        const cloud &
+    );
+
+    // Destructor
+
+    virtual ~CloudProxyForReactingParcelNoComposition();
+
+};
+
+template<class CloudType>
+class CloudProxyForReactingParcel
+:
+    public CloudProxyForReactingParcelNoComposition<CloudType>
 {
     //- Disallow default bitwise assignment
     void operator=(const CloudProxyForReactingParcel&);

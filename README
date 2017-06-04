@@ -1,6 +1,6 @@
 # -*- mode: org -*-
 #+TITLE: =README= for =swak4Foam= - Version for OpenFOAM 2.x
-#+OPTIONS: H:4
+#+OPTIONS: H:4 toc:nil
 * Description
   A collection of libraries and tools that let the user handle
   OpenFOAM-data based on expressions
@@ -49,12 +49,17 @@
    - Alexey Matveichev ::
      - release generation script.
      - Automatic =swakConfiguration=
+   - Mark Olesen ::
+     - port to OpenFOAM+ v1612
+     - improvements to scripts
+   - Philippose Rajan ::
+     - Bugfix for segmentation faults in parallel
    If anyone is forgotten: let me know
 
    According to the commits in the =mercurial=-repository (and
    the repositories of the projects from which swak emerged)
    contributors are (ordered by the year of their first contribution):
-   - 2006-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+   - 2006-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
    - 2008 Hannes Kroeger (hannes@kroegeronline.net)
    - 2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
    - 2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -67,6 +72,7 @@
    - 2014 David Huckaby <e.david.huckaby@netl.doe.gov>
    - 2015 Domink Christ <d.christ@wikki.co.uk>
    - 2015 Alexey Matveichev <alexey.matveichev@gmail.com>
+   - 2016-2017 Mark Olesen <mark@opencfd>
 ** Documentation
    See: http://openfoamwiki.net/index.php/contrib/swak4Foam
 * Installation/Compilation
@@ -345,6 +351,11 @@ S_{expl} + S_{impl} T
     using the =pythonFlu=-library
 *** =swakLagrangianParser=
     Parser for calculating expressions on clouds of lagrangian particles
+*** =swakStateMachine=
+    Library with function objects and plugin functions to work with
+    simple state machines
+*** =swakDynamicMesh=
+    Library with classes that combine swak with dynamic meshes
 *** =functionPlugins=
     Directory with a number of libraries with function-plugins:
     - swakFacSchemesFunctionPlugin :: functions with selectable
@@ -428,6 +439,9 @@ S_{expl} + S_{impl} T
 *** =funkySetLagrangianField=
     Utility to calculate fields for a lagrangian cloud (or setting it
     up from scratch)
+*** =writeBoundarySubfields=
+    Utility to write fields with subfields from boundary conditions
+    like =refValue= for post-processing
 ** Examples
    If not otherwise noted cases are prepared by a simple
    =blockMesh=-call.
@@ -440,6 +454,21 @@ S_{expl} + S_{impl} T
     functions etc) not all of the examples work with all
     OpenFOAM-installations "out of the box". Slight adaptions may be
     necessary
+
+    Some of the cases use the =pyFoamPrepareCase.py=-utility of [[https://openfoamwiki.net/index.php/Contrib/PyFoam][PyFoam]]
+    to set up the case for the current OpenFOAM-version
+
+    To run on multiple OpenFOAM-versions the cases sometimes have more
+    entries in the dictionaries
+
+    Also have a look at =Documentation/exampleCompatibilityMatrix.org=
+    to see with which versions which cases should work.
+
+    Usually the cases have been derived from regular tutorial
+    cases. After their first implementation they were only adapted to
+    run in new OpenFOAM versions but improvements in the tutorials are
+    usually not ported. The reason is that these are just example
+    cases for =swak4Foam=, not /best practice/ examples for OpenFOAM
 *** groovyBC
     The old =groovyBC=-Demos
 **** pulsedPitzDaily
@@ -450,21 +479,22 @@ S_{expl} + S_{impl} T
          =simpleSwakFunctionObjects=. =solveLaplacianPDE= and
          =solveTransportPDE= for solving equations,
          =pythonIntegration= with calculations using =numpy=
+    - Preparation :: =pyFoamPrepareCase.py=
 **** wobbler
     - Solver :: solidDisplacementFoam
 **** circulatingSplash
     - Solver :: interDyMFoam
+    - Preparation :: =pyFoamPrepareCase.py=
 **** movingConeDistorted
     - Solver :: pimpleDyMFoam
     - Also demonstrates :: =swakExpression= with =surface=. Due to a
       problem described below this currently doesn't work
 **** average-t-junction
     - Solver :: pimpleFoam
-    - Mesh preparation :: Execute the script =prepare.sh= in that
-         directory (requires PyFoam: if not installed change in the
-         =boundary=-file the type of the =defaultFaces= to =wall=)
+    - Mesh preparation :: =pyFoamPrepareCase.sh=
 **** delayed-t-junction
     - Solver :: pimpleFoam
+    - Mesh preparation :: =pyFoamPrepareCase.sh=
     - Demonstrates :: Delayed variables to simulate an inflow that
                       depends on the value of the outflow
 **** multiRegionHeaterFeedback
@@ -543,9 +573,15 @@ S_{expl} + S_{impl} T
     Cases that demonstrate =swakSourceFields=
 **** angleDuctWithSources
      - Solver :: rhoPimpleFoam
-     - Mesh preparation :: Execute =prepareCase.sh=
+     - Mesh preparation :: Execute =pyFoamPrepareCase.py .=
      - Demonstrates :: Simple expression sources (adds a /heat source/
                        to the solid)
+**** heatExchangerSources
+     - Solver :: chtMultiRegionFoam
+     - Mesh preparation :: Execute =pyFoamPrepareCase.py .=
+     - Demonstrates :: Getting the residuals of the matrix with the
+                       =matrixChangeBefore= and =matrixChangeAfter=
+                       =fvOptions=
 *** other
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
@@ -582,9 +618,9 @@ S_{expl} + S_{impl} T
      Demonstrates initializing a case with initial conditions that
      approximate the real flow.
      - Solver :: reactingFoam
-     - Case preparation :: run the supplied script
-          =prepareCase.sh=. *Caution:* this has to be done *every*
-          time before running the case
+     - Case preparation :: run =pyFoamPrepareCase.py=. *Caution:* this
+          has to be done *every* time before running the case because
+          the initialized fields are rewritten
      - Demonstrates :: Demonstrates setting calculated initial
                        conditions with functionObjects
 **** =simpleBendedPipe=
@@ -670,7 +706,7 @@ S_{expl} + S_{impl} T
                        the laplacian (Poisson) equation and
                        (hopefully) that it gets the same result as the
                        native solver
-     - Case preparation :: =Allrun=-script is provided
+     - Case preparation :: =pyFoamPrepareCase.py=
 **** pitzDailyWithPDE
      - Solver :: scalarTransportFoam
      - Demonstrates :: Solving additional transport equations
@@ -694,8 +730,8 @@ S_{expl} + S_{impl} T
      Tests for the functionObjects that create and evolve a cloud of
      particles (library =simpleLagrangianFunctionObjects=)
 ***** hotStream
-      - Solver :: replayTransientBC
-      - Mesh preparation :: =prepareCase.sh=-script
+      - Solver :: =replayTransientBC=
+      - Mesh preparation :: =pyFoamPrepareCase.py .=
       - Demonstrates :: 3 clouds (kinematic, reacting,
                        	solidParticle). Loading of a thermophysical
                        	model with a functionObject. Plugin functions
@@ -719,7 +755,7 @@ S_{expl} + S_{impl} T
       - Demonstrates :: creating new clouds with
                         =funkySetLagrangianField= and evaluations on
                         clouds during the simulation
-      - Mesh preparation :: run the =prepareCase.sh= script to set up
+      - Mesh preparation :: run the =pyFoamPrepareCase.py .= script to set up
            the mesh and the fields
 *** SimpleSurface
     Examples for the use of the =simpleSearchableSurfaces=-library.
@@ -747,6 +783,35 @@ S_{expl} + S_{impl} T
 **** pitzDailyTimeSwitched
      The regular =simpleFoam=-tutorial. Modified so that it switches
      to higher relaxation factors during the run
+**** pitzDailyStateMachineSwitched
+     =simpleFoam=-tutorial. Uses state machines to change the
+     discretization periodically
+*** StateMachine
+    Demonstrate the usage of state machines
+**** stateCavity
+     The case is only an excuse for the state machines
+     - Running :: =replayTransientBC -allowFunctionObjects=
+     - Case setup :: =pyFoamPrepareCase.py=
+*** DynamicMesh
+    Examples that demonstrate dynamic mesh applications
+**** hecticInletACMI2D
+     Variation of a tutorial case where the oscillation has been
+     replaced by an expression
+     - Solver :: =pimpleDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =swakMotion= function for =solidBodyMotion=
+**** rotatingTank2D
+     - Solver :: =interDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =swakMotion= function for =solidBodyMotion=
+**** switchedInletACMI2D
+     - Solver :: =pimpleDyMFoam=
+     - Case setup :: =pyFoamPrepareCase.py=
+     - Demonstrates :: The =groovyCyclicACMI= patch type
+**** switchedTJunction
+     - Solver :: =compressibleInterDyMFoam=
+     - Case setup :: =pyFoamPrepareCase=
+     - Demonstrates :: The =groovyCyclicACMI= patch type. State machines. =funkyWarpMesh= utility
 *** tests
     Simple test cases for specific features. The names of the
     directories should give you a hint what is tested there. Most of
@@ -760,7 +825,11 @@ S_{expl} + S_{impl} T
      the =randFixed=-function
 **** =AMIPipe=
      Simple geometry for testing function objects with AMI. "Execute"
-     with =replayTransientBC=
+     with =replayTransientBC=, =pimpleFoam= or =pimpleDyMFoam=
+
+     Features can be "switched off" with =pyFoamPrepareCase.py=. What
+     can be switched on is a location dependent pressure jump on one
+     of the interfaces implemented with =groovyBCJumpAMI=
 *** BugCases
     These are cases provided by users to demonstrate bugs. Not
     maintained nor documented and may be removed at any time
@@ -776,6 +845,10 @@ S_{expl} + S_{impl} T
 ** releaseTesting
    Scripts and configuration to test for a release in a virtual
    machine using =vagrant=. Also to be used for packaging
+** distroPatches
+   Patches that have to be applied to releases to get swak4Foam to
+   work with them. These are only needed to fix problems of the
+   distributions
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
@@ -947,6 +1020,9 @@ S_{expl} + S_{impl} T
 
    The bug can not be fixed in =swak4Foam= but has to be fixed in the
    Foam-Distro
+** =solverPerformanceToGlobalVariables= only works for scalar fields
+   Currently only the data from scalar fields can be correctly
+   parsed. If =vector=-fields are specified the function object fails
 * History
 ** 2010-09-13 - version number : 0.1
    First Release
@@ -3466,3 +3542,395 @@ S_{expl} + S_{impl} T
      The case now also calculates the time the fluid needs from the
      inlet to the outlet (=residenceTime=). Steady as well as
      transient
+** 2017-05-31 - version number : 0.4.1
+*** New supported versions
+**** Support for OpenFOAM v1606+
+     This version is supported in the this version of
+     =swak4Foam=. There is only one problem: there were changes to the
+     =tmp=-template. These changes have been taken care of in the
+     =swak4Foam=-sources. *But* there are two source files in the
+     distro that need to be modified (basically adding =.ref()=
+     instead of =()= in three places:
+: src/finiteVolume/finiteVolume/fvc/fvcD2dt2.C
+: src/finiteVolume/fvMatrices/fvMatrix/fvMatrixSolve.C
+     Therefor the officially released version will *never* compile
+     with =swak4Foam= but this is nothing that can be fixed in
+     =swak4Foam= (the patch is found in the directory
+     =distroPatches/OpenFOAM-v1606+=)
+**** Support for OpenFOAM 4.0
+     This version is supported in this version of =swak4Foam=. There is
+     one problem: the released version has two problems that mean that
+     =swak4foam= will *never* compile on the released version.
+
+     Patches fixing these issues are found in the directory
+     =distroPatches/OpenFOAM-4.0=
+**** Support for OpenFOAM 4.1
+     This version is supported in this version of =swak4Foam=. No
+     modifications are required
+**** Support for OpenFOAM v1612+
+     This version supports OpenFOAM v1612+. The modifications were
+     done by Mark Olesen
+*** Incompatibilities
+**** Changed location of files by =simpleFunctionObject= and subclasses for multi-region-cases
+     The location of files written by these function objects (which
+     are almost all function objects writing data in the
+     =postProcessing=-directory) has changed: now if the function
+     object belongs to a region that is not the default mesh the
+     output is written to a sub-directory with the name of that mesh.
+
+     This might break scripts or other tools that people use to
+     process that data
+*** Bug fixes
+**** Destruction of =dummyPhi= causes error message
+     On some distros the destruction of a field stored in an =autoPtr=
+     *after* the destruction of the mesh causes an error message. This
+     has no effect but is annoying. Fixed
+**** =functionObjectListProxy= does not honor =outputTime=
+     The function object was executed every time not matter what
+     =outputControlMode= was set. Fixed
+**** Plugin functions with =bool= results not supported by all drivers
+     Until now only the =internalField= and the =faInternalField=
+     supported boolean results. Now all drivers support them
+**** No plugin function for =cloud= possible
+     Because the static variable/method =driverName= was not specified
+     no plugin functions for clouds could get specified
+**** Wrong syntax in primitive types of plugin-function causes C++-error
+     If a primitive function for instance expects a label and finds an
+     unscanable string like ~x23~ then this used to generate a failure
+     by the C++-library. This gave no indication on the real
+     problem. Now there is a OpenFOAM-error message with a somewhat
+     better explanation
+**** Initialization function objects in =simpleFunctionObjects= fail in parallel
+     Because of the wrong order of initialization of these function
+     objects they failed in parallel. Fixed
+**** Writing =storedVariables= fails for single values in parallel
+     This war reported by Philippose Rajan (who also provided a patch) at
+     https://sourceforge.net/p/openfoam-extend/ticketsswak4foam/237/
+
+     In parallel if the values was marked as a single value but no
+     part of the underlying entity was on the processor it was tried
+     to access the first element of an empty field. The fix was to
+     write the value $0$ instead. This fix has been adapted so that
+     the actual uniform value is written to the file (and read as well)
+**** =executeIfOpenFOAMVersionBiggerEqual= not correctly working with alphabetic patch versions
+     If the patch version of the current OpenFOAM-version is not a
+     number and not =x= then this function object failed
+**** =mqFaceMaximum= and =mqFaceMinimum= in the =LocalCalculations=-plugin fail for patch types without values
+     As patch types like =empty= have no values stored this plugin
+     failed. Now it checks if there is data
+**** =simpleFunctionObject= did not pass parent directory correctly
+     When storing the data for the function object no reference to the
+     parent directory was stored and therefor scoped macro-expansion
+     did not work anymore
+**** =ThermoTurb= functionPlugin not working with new =thermoType=-format
+     The thermophysical functions in this plugin did not work if
+     =thermoType= was a dictionary. Fixed
+
+     Also: construction of turbulence now gets the rho-field directly
+     from the thermophysics
+**** =solidThermo= instances could not use =basicThermo=-methods in =ThermoTurb=-plugin
+     Reason was that only two specific thermo-subtypes of
+     =fluidThermo= were searched if the method was not part of
+     =solidThermo=. Now also the basic type is searched
+**** Global variables recognized but not correctly used by some drivers
+     The drivers for sampled entities, sets and zones found global
+     variables but were not able to use them correctly. Fixed
+**** Cloud function-objects that need a parser not working
+     The reason is that when constructing the =CloudProxy= a cast is
+     made to the /assumed/ cloud type which in the case of cloud
+     function-objects is not the /actual/ type. To avoid this separate
+     instantiations of the =CloudProxy= were added
+*** Internals (for developers)
+**** =ExpressionResult= now stores single values separately
+     To fix a problem with writing of single values in parallel (see
+     above) a =union= was added to store the single values. The reason
+     for this is to avoid a second parallel communication when writing
+     the value. This adds memory to =ExpressionResult= (in the order
+     of a =tenor= object). The memory is not the problem but that the
+     single value is saved twice (the other time is in the regular
+     value field)
+
+     For compilers that do not support the C++0x-standard instead of a
+     =union= a =struct= will be used because non-primitive members for
+     =unions= are only supported for that standard. This will lead to
+     a slightly higher memory usage (but still small compared to full
+     fields)
+**** Rewrite of =functionObject= removes the =start()=-method
+     OpenFOAM-versions based on the foundation release 4.0 and later
+     don't have a =start()=-method in the function objects
+     anymore. Lot of functionality of swak relied on this method. To
+     make swak compatible across versions =start()= is now called in
+     the constructors of the function-objects (if the OpenFOAM-version
+     requires it)
+*** Infrastructure
+**** Add the development branch to the version string in utilities
+     If the compiled version is not a released one then the info of
+     =hg branch= is added to the version output that utilities like
+     =funkySetFields= print
+*** Documentation
+**** Added /Compatibility matrix/ for examples
+     Different OpenFOAM-versions have different formats for the input
+     files. This means that examples that work for one version will
+     break with another version (but is still useful to see how things
+     are done). The file
+     =Documentation/examplesCompatibilityMatrix.org= gives an
+     (incomplete) overview on which versions run which examples (some
+     examples will never run because a certain feature might be
+     missing in that Foam-version)
+
+     Currently 4 Foam-versions are tested
+     - OpenFOAM 4.1 (the Foundation release)
+     - Foam-extend 4.0
+     - OpenFOAM+ 1612
+     - OpenFOAM 2.3 (to check compatibility with old versions)
+     Other versions might or might not work. The first three will be
+     replaced with the latest version of that fork once it becomes
+     available
+*** New features
+**** Function plugin =ShiftField= that allows shifting volume fields
+     When adding the library =libswakShiftFieldFunctionPlugin.so= to
+     =libs= in the =controlDict= functions are added that allow
+     shifting volume fields by a specified distance. One example
+     would be an expression
+: "shiftConstantScalarField(T,(1 1 0))"
+     which generates a new =volScalarField= where the value at =(0 0
+     0)= is the value of =T= at the location =(1 0 0)=.
+
+     The scheme for naming the functions is
+     =scalar<ShiftType><ValueType>Field= with
+     - ValueType :: one of the base types =Scalar=, =Vector=,
+          =Tensor=, =SymmTensor=, =SphericalTensor=
+     - ShiftType :: how the shift is specified. Possible values are either
+       - Constant :: A constant vector (like the example here)
+       - Expression :: An expression that gives a =pointVectorField=
+            (for instance =interpolateToPoint(time()*vector(0,0,-1))=)
+
+     These functions work by generating a new mesh that is shifted as
+     specified (in the inverse direction) and interpolating between
+     this and the original mesh. This is computationally *very*
+     expensive and therefor not recommended in evaluations that occur
+     very often.
+
+     Cells that have no shifted equivalent value are set to
+     zero. Boundary patches are not interpolated. Both of these
+     behaviors can cause weird results.
+
+     There are also variants with =Default= in the end. These allow
+     setting different default values than $0$
+
+     The functions with the names =map<ShiftType><ValueType>Field= map
+     the value of the nearest cell. This is more stable but might
+     coarsen the field
+
+     The additional =findShifted<ValueType>Field=-functions do the
+     mapping by avoiding the =meshToMesh=-functions of OpenFOAM: the
+     shifted value is found by "looking" into the original cell that
+     contains the point that is the cell center plus the displacement
+     value. If that point is not in the mesh a default value is used
+**** Library =swakStateMachine= to easily implement switching in cases
+     This library implements /State machines/. This is a convenient
+     way to store a state in a simulation and switch between them by
+     predefined rules. An example for states in a /State machine/
+     would be: =closed=, =valveOpening=, =open=, =valveClosing=
+
+     The library has the function objects and plugin functions to use
+     /State machines/.
+
+     The chapter /State machines/ in the /Incomplete swak4Foam
+     reference/ describes it in more detail
+**** Function object =stateMachineFvSolutionFvSchemes= to switch numerics accorrding to a state machine
+     This function object allows modifying =fvSchemes= and
+     =fvSolution= according to the states of two state machines.
+**** Function plugin =Quantile= for calculations with the distribution of a function
+     All the functions in this plugin first calculate a
+     distribution. This distribution is calculated from the first parameters:
+     1. the field for which the distribution is calculated
+     2. the weight with which the cell values enter the
+        distribution. Usually =vol()= (volume weighted) or =1= (equal
+        weight for all cells)
+     3. a logical expression that specifies which cells are used
+        (=true= for all cells)
+     4. the number of bins to use for the distribution. This specifies
+        how fine the distribution is calculated. Should be small
+        compared to the number of cells. Usually the values =100= or
+        =1000= should be sufficient
+     The implemented functions are
+     - fracSmallerThan :: Writes a fraction in the range from $0$ to
+          $1$ with for instance $0.5$ meaning "50 % of the
+          distribution is smaller than the value in this cell". The
+          cells which are masked out get the value $-1$.
+     - fracSmallerThanFromOther :: Like =fracSmallerThan= but there is
+          an additional parameter: the field that is used for
+          calculating the fraction. Here the mask is not used for
+          calculating the fraction (but still used for calculating the
+          distribution)
+     - quantileFromOther :: Basically the inverse of
+          =fracSmallerThanFromOther=. The last parameter is a fraction
+          (from $0$ to $1$) and the result is the corresponding
+          quantile: if a fraction $0.5$ is specified then the value
+          from the distribution for which 50% are smaller is written
+          to the cell
+     Note: values may slightly vary according to the number of
+     bins. But the bin number also increases the calculation time.
+**** Function =outputTime()= to indicate output time
+     A function =outputTime()= has been added to the parsers. This
+     function is =true= if Foam is writing at the current time and
+     =false= else
+**** Utility =writeBoundarySubfields= to write subfields of boundary conditions
+     Sometimes to debug problems with boundary conditions it is good
+     to *look* at fields like =refValue= in Paraview (for instance
+     because =groovyBC= might not have set that value the way we
+     expected it). For a field =foo= the utility would write a field
+     =foo_bar= if the user specified =bar= to be written. The interior
+     of the field will be $0$, patches where =bar= is defined will be
+     =fixedValue= with the value of =bar=. All others are
+     =zeroGradient=
+
+     A string with the specificion of the subfields to create fields
+     for is set with the option =-subfields=. The specifications are
+     separated by =,=. Each specification is of the form
+     =<name>:<type>= (with type being =scalar=, =vector=, =symmTensor=
+     or =sphericalTensor=. A type =native= assumes that the same type
+     as the field should be used). If unset the default value is used:
+     the specification to write all subfields usually associated with
+     the =mixed= boundary condition
+
+     It is assumed that the length of the sub-field is equal to the
+     number of faces in the patch
+**** Library =swakDynamicMesh= with "swakified" dynamic mesh subclasses
+     This libraries collects specializations of dynamic mesh classes
+     that work together with OpenFOAM. Currently these classes are in
+     the library:
+     - swakMotion :: this is a solid body motion solver for the
+          =solidBodyMotionFvMesh= where the translation and the
+          rotation of the solid body can be specified by =swak=-expressions
+     - groovyCyclicACMI :: this patch type is a subclass of
+          =cyclicACMI= where the faces that cyclic can be switched on
+          and off with an additional field that is specified with the
+          parameter =openField= in the specification in the
+          =boundary=-file. This field has to be present in memory at
+          the first time-step (usually a
+          =readAndUpdateFields=-functionObject is a good way to
+          achieve this). The values on the corresponding
+          =nonOverlapPatch= of the first boundary in the coupled pair
+          is used to switch faces on and off: if the value of the face
+          is $1$ then it is 'open' if it is $0$ it is 'closed'
+     - nonMovingFvMesh :: A non-moving mesh that pretends to
+          move. This triggers the recalculation of AMI-interfaces
+     - groovyBCJumpAMI :: allows implementing a jump condition on an
+          AMI-interface that depends on an expression evaluated on the
+          master patch of the interface
+     The folder =Examples/DynamicMesh= has examples for this library
+**** Record current residual of the equations with =fvOptions=
+     The two =fvOptions= =matrixChangeBefore= and =matrixChangeAfter=
+     can be used to record the residual or the change of it.
+
+     The residual $r$ for a field $\phi$ which is supposed to be the
+     solution of a linear equation $A \phi = b$ is $r=A \phi-b$
+
+     =matrixChangeBefore= calculates this for a $\phi$ specified in
+     =fieldName= and uses for $A$ and $b$ the current =fvMatrix= of
+     that field. The result is stored in a field whose name is
+     composed of the value of =namePrefix= and =fieldName=. This field
+     can be useful to see where the current solution does not fit the
+     linearized system
+
+     =matrixChangeAfter= does the same calculation but assumes that
+     the field already exists and subtracts the result from the
+     previous value. So if another =fvOption= was applied to the
+     =fvMatrix= between these calls then the field has the change of
+     this matrix. If "only" a source term was added then this field
+     corresponds to the source term.
+
+     In principle =fvOptions= are executed in the order in which they
+     are specified. If the setting =doAtAddSup= is set to =true= then
+     it is executed in an early phase (when source terms are set). If
+     set to =false= then the =fvOption= is executed during the
+     =setValues=/=constrain= phase.
+**** Setting time-step with an expression: =setDeltaTBySwakExpression=
+     This new function object in =simpleSwakFunctionObjects= evaluates
+     a =scalar= expression and sets =deltaT= accordingly. Only works
+     on OpenFOAM-versions that support =DataEntry= or its successor
+     =Function1Types=.
+*** Enhancements
+**** Primitive parser for Plugin-functions now supports tensor types
+     The parser for =primitve= types now supports =tensor=,
+     =symmTensor= and =sphericalTensor= as well.
+**** Plugin-functions now can use =variables= (under certain circumstances)
+     For an expression =fooFunmction(var+2)= where =fooFunction= is a
+     Plugin-function the symbol =var= can now be a variable: if in the
+     parent dictionary there is a sub-dictionary =fooFunctionData=
+     then this dictionary is searched for a =variables=-entry and
+     these variables are then evaluated (it is also possible to have
+     =lookuptables= and similar in =fooFunctionData=)
+**** Timeline function objects now optionally write value at start time
+     Function objects that inherit from =timelineFunctionObject= (like
+     =swakExpression=) now have an optional parameter
+     =writeStartTime=. If set to =yes= then the value at start-time
+     will be written. The default setting is =no=. This is similar to
+     the old behavior and avoids crashes at startup. Some classes
+     change this default to make it =yes=
+**** Additional functions in the radiation function plugin
+     Additional functions for the =absorptionEmissionModel= and the
+     =sootModel= are added to to library with the radiation-functions
+**** Improvement of =readAndUpdateFields=: surface fields, output, switching
+     The function object =readAndUpdateFields= got three improvements:
+     - an optional switch =correctBoundary= allows switching the
+       correction of boundary conditions off
+     - surface-fields are now read as well. But no boundary correction
+       is performed as the these fields do not support this
+     - better output. Instead of silently reading fields or using
+       those in memory the name of the field and the type are written
+       out
+**** =executeIfStartTime= now also allows execution if it is "only" a restart
+     Normally the function object only executes only if this is the
+     real start time (not a restart). If the option =executeOnRestart=
+     is set then the function object also executes if this is a restart
+**** =reportAvailableFvOptions= now reports =constrain=-methods
+     On OpenFOAM-versions that support it this now reports if
+     =constrain= is called for an equation
+**** =constrain= method added to =fvOptions=
+     In earlier OpenFOAM-versions the name of this method was
+     =setValue=. To keep source compatibility this method is kept and
+     the method =constrain= patches through to it. If the =fvOption=
+     has =SetValue= in the name then this name is kept
+**** =simpleFunctionObjects= in multi-region cases now write to sub-directories of =postProcessing=
+     To conform with the way that regular OpenFOAM function objects do
+     it now function objects that belong to the non-default mesh in
+     multi-region cases write their data to a sub-directory of
+     =postProcessing= named after the mesh
+**** =funkyWarpMesh= allows reading function objects
+     Function objects can now be loaded with an option
+     =-allowFunctionObjects=
+**** =executeIfStartTime= now also allows execution if it is "only" a restart
+     Normally the function object only executes only if this is the
+     real start time (not a restart). If the option =executeOnRestart=
+     is set then the function object also executes if this is a restart
+**** Scoped macro expansion now works for =storedVariables= and =swakDataEntry=
+     When reading these data structures the parent directory is
+     correctly passed and therefor scoped macro expansions
+     (=$[:deltaT]= for instance) works
+*** Examples
+**** =FvOptions/heatExchangerSources=
+     Demonstrates getting changes to the solution (residuals) with
+     =matrixChangeBefore= and =matrixChangeAfter=
+**** State machine examples
+     - Examples/StateMachine/stateCavity :: demonstrates the basic
+          functionality of state machines
+     - Examples/manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched :: demonstrates
+          using state machines to manipulate the discretization during
+          a simulation
+**** Dynamic mesh examples
+     The folder =Examples/DynamicMesh= has examples that demonstrate
+     capabilities of the =swakDynamicMesh=-library.
+     - rotatingTank2D :: is a demonstration of a =solidBody= mesh
+                         movement where translation and rotation are
+                         described by swak-expressions
+     - hecticInletACMI2D,switchedTJunction,switchedInletACMI2D :: demonstrate
+          a =ACMI= boundary condition where switching of faces is done
+          by a swak-expression. Won't work with =Foam-extend= as this
+          has no =ACMI=
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
+# End:

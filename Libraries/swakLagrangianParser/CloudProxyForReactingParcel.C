@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -50,14 +50,14 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CloudType>
-CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
+CloudProxyForReactingParcelNoComposition<CloudType>::CloudProxyForReactingParcelNoComposition
 (
     const cloud& c
 )
 :
     CloudProxyForThermoParcel<CloudType>(c)
 {
-    typedef CloudProxyForReactingParcel<CloudType> baseType;
+    typedef CloudProxyForReactingParcelNoComposition<CloudType> baseType;
 
     this->addScalarFunction(
         "mass0",
@@ -66,19 +66,6 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
             &CloudType::particleType::mass0
         )
     );
-
-    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
-    forAll(phaseTypes,i) {
-        const word &name=phaseTypes[i];
-        this->addScalarFunction(
-            "Y"+name,
-            "Mass fraction of "+name,
-            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
-                &CloudType::particleType::Y,
-                i
-            )
-        );
-    }
 
     this->addScalarFunction(
         "pc",
@@ -124,7 +111,36 @@ CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
 }
 
 
+template<class CloudType>
+CloudProxyForReactingParcel<CloudType>::CloudProxyForReactingParcel
+(
+    const cloud& c
+)
+:
+    CloudProxyForReactingParcelNoComposition<CloudType>(c)
+{
+    typedef CloudProxyForReactingParcel<CloudType> baseType;
+
+    const wordList& phaseTypes = this->theCloud().composition().phaseTypes();
+    forAll(phaseTypes,i) {
+        const word &name=phaseTypes[i];
+        this->addScalarFunction(
+            "Y"+name,
+            "Mass fraction of "+name,
+            new typename baseType::template ParticleMethodWrapperFieldElement<scalar>(
+                &CloudType::particleType::Y,
+                i
+            )
+        );
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+template<class CloudType>
+CloudProxyForReactingParcelNoComposition<CloudType>::~CloudProxyForReactingParcelNoComposition()
+{}
 
 template<class CloudType>
 CloudProxyForReactingParcel<CloudType>::~CloudProxyForReactingParcel()

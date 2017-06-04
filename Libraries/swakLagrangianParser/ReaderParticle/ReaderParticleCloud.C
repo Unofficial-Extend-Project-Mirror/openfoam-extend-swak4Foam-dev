@@ -28,7 +28,8 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2017 Mark Olesen <Mark.Olesen@esi-group.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
@@ -80,7 +81,7 @@ void ReaderParticleCloud::clearData()
 }
 
 template <typename T>
-tmp<Field<T> > filterValues(
+tmp<Field<T> > filterFieldValues(
     const Field<T> &orig,
     const boolList &mask,
     label size
@@ -91,13 +92,13 @@ tmp<Field<T> > filterValues(
             pTraits<T>::zero
         )
     );
-    Field<T> &result=pResult();
+    Field<T> &result=const_cast<Field<T>&>(pResult());
     label cnt=0;
     forAll(orig,i)
     {
-	if(mask[i]) {
+        if(mask[i]) {
             if(cnt>=size) {
-                FatalErrorIn("filterValues")
+                FatalErrorIn("filterFieldValues")
                     << "Mask seems to have more elements than " << size
                         << endl
                         << exit(FatalError);
@@ -107,7 +108,7 @@ tmp<Field<T> > filterValues(
         }
     }
     if(cnt!=size) {
-        FatalErrorIn("filterValues")
+        FatalErrorIn("filterFieldValues")
             << "Inconsistent amount of elements in mask " << cnt << nl
                 << "Need: " << size
                 << endl
@@ -227,7 +228,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                if(type==pTraits<scalar>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<scalar>()(),
                            usePos,
                            cloud.size()
@@ -236,7 +237,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<label>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<label>()(),
                            usePos,
                            cloud.size()
@@ -245,7 +246,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<vector>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<vector>()(),
                            usePos,
                            cloud.size()
@@ -254,7 +255,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<tensor>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<tensor>()(),
                            usePos,
                            cloud.size()
@@ -263,7 +264,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<symmTensor>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<symmTensor>()(),
                            usePos,
                            cloud.size()
@@ -272,7 +273,7 @@ autoPtr<ReaderParticleCloud> ReaderParticleCloud::makeCloudFromVariables(
                } else if(type==pTraits<sphericalTensor>::typeName) {
                    cloud.setValues(
                        name,
-                       filterValues(
+                       filterFieldValues(
                            val.getResult<sphericalTensor>()(),
                            usePos,
                            cloud.size()

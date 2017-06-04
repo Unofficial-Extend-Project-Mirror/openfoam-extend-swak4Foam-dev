@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -101,7 +101,8 @@ void meshLayersGeneralPluginFunction::doEvaluation()
     volScalarField &layers=pLayers();
 
     forAll(cellValues_,cellI) {
-        layers.internalField()[cellI]=cellValues_[cellI].dist()/2;
+        const_cast<scalar&>(layers.internalField()[cellI])=
+            cellValues_[cellI].dist()/2;
     }
     forAll(layers.boundaryField(), patchI)
     {
@@ -110,7 +111,8 @@ void meshLayersGeneralPluginFunction::doEvaluation()
             for(label i=0;i<layers.boundaryField()[patchI].size();i++) {
                 label faceI=mesh().boundaryMesh()[patchI].start()+i;
 
-                layers.boundaryField()[patchI][i]=faceValues_[faceI].dist()/2;
+                const_cast<scalar&>(layers.boundaryField()[patchI][i])=
+                    faceValues_[faceI].dist()/2;
             }
         }
     }

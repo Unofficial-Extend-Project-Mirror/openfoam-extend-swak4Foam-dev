@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2009, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2009, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -135,7 +135,7 @@ Foam::transformationSearchableSurface::coordinates() const
 {
 #ifdef FOAM_SEARCHABLE_SURF_USES_TMP
     tmp<pointField> tResult(new pointField(delegate().coordinates()));
-    pointField &result=tResult();
+    pointField &result=const_cast<pointField&>(tResult());
 #else
     pointField result(delegate().coordinates());
 #endif

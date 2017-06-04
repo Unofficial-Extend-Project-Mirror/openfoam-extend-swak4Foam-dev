@@ -38,9 +38,9 @@ SourceFiles
     volumeFieldFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef volumeFieldFunctionObject_H
@@ -69,7 +69,7 @@ class volumeFieldFunctionObject
 
     //- Disallow default bitwise copy construct
     volumeFieldFunctionObject(const volumeFieldFunctionObject&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const volumeFieldFunctionObject&);
 
@@ -82,7 +82,7 @@ class volumeFieldFunctionObject
     wordList sphericalTensorFields_;
     wordList symmTensorFields_;
     wordList tensorFields_;
-    
+
      //- Process and write field
     template<class T>
     void processAndWrite(const word& fieldName);
@@ -132,7 +132,7 @@ public:
     //- start is called at the start of the time-loop
     virtual bool start();
 
-    virtual void write();
+    virtual void writeSimple();
 };
 
 

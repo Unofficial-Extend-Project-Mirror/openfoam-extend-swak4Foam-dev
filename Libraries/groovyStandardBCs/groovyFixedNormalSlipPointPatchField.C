@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -40,7 +40,7 @@ Contributors/Copyright:
 
 #include "groovyBCCommon.H"
 
-#ifdef FOAM_DEV
+#ifdef FOAM_POINTPATCHFIELD_HAS_FIVE_TEMPLATE_PARAMETERS
 #include "PointPatchFieldMapper.H"
 #else
 #include "pointPatchFieldMapper.H"
@@ -144,7 +144,12 @@ void Foam::groovyFixedNormalSlipPointPatchField<Type>::evaluate
     tmp<Field<Type> > tvalues=transform(I - n*n, this->patchInternalField())+transform(n*n,val);
 
     // Get internal field to insert values into
-    Field<Type>& iF = const_cast<Field<Type>&>(this->internalField());
+    Field<Type>& iF =
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+        const_cast<Field<Type>&>(this->internalField().field());
+#else
+    const_cast<Field<Type>&>(this->internalField());
+#endif
 
     this->setInInternalField(iF, tvalues());
 }

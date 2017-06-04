@@ -125,6 +125,7 @@ subModels {
         {
             type            patchInjection;
             patchName       movingWall;
+            patch $patchName;
             U0              ( 0 -1 0 );
             flowRateProfile constant  0.1;
             massTotal        1.0e-12;
