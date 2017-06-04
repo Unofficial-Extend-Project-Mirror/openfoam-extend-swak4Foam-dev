@@ -23,7 +23,8 @@ make_exclude_flag () {
 # Generate archives
 main () {
     local output_path="./releases"
-    local tag_regex="version_"
+    #    local tag_regex="version_"
+    local tag_regex="v0\.[0-9]\.[0-9]"
 
     # Parse command line options
     if [ "$#" -gt 0 ]; then
