@@ -75,7 +75,7 @@ According to the commits in the `mercurial`-repository (and
 the repositories of the projects from which swak emerged)
 contributors are (ordered by the year of their first contribution):
 
--   2006-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+-   2006-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 -   2008 Hannes Kroeger (hannes@kroegeronline.net)
 -   2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
 -   2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -5786,9 +5786,6 @@ Currently 4 Foam-versions are tested
 Other versions might or might not work. The first three will be
 replaced with the latest version of that fork once it becomes
 available
-
-
-### Internals (for developers)
 
 
 ### New features
