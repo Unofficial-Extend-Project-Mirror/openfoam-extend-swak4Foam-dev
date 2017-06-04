@@ -36,7 +36,7 @@ Description
     decided to switch it off in the dictionary
 
 Contributors/Copyright:
-    2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

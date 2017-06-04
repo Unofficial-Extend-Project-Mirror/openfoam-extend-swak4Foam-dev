@@ -3,5 +3,4 @@
 #define SWAK_VERSION_MAJOR 0
 #define SWAK_VERSION_MINOR 4
 #define SWAK_VERSION_PATCH 1
-#define SWAK_RELEASE_DATE "Next release"
-#define SWAK_HGBRANCH "feature/port/1707+"
+#define SWAK_RELEASE_DATE "2017-05-31"

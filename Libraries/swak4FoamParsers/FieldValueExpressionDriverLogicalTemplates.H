@@ -25,7 +25,7 @@ Description
 
 
 Contributors/Copyright:
-    2010-2015 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/

@@ -37,7 +37,7 @@ Description
 SourceFiles
 
 Contributors/Copyright:
-    2012-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -74,6 +74,10 @@ namespace Foam {
 
 #ifdef FOAM_VERSION4SWAK_IS_EXTEND
 #define FOAM_THERMOCLOUD_OLD_STYLE
+#endif
+
+#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_BASICKINEMATICCLOUD_HAS_NO_KINEMATIC_TYPE
 #endif
 
 #ifdef FOAM_VERSION4SWAK_IS_EXTEND
