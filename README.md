@@ -6119,3 +6119,33 @@ capabilities of the `swakDynamicMesh`-library.
     a `ACMI` boundary condition where switching of faces is done
     by a swak-expression. Won't work with `Foam-extend` as this
     has no `ACMI`
+
+
+## Next release - version number : 0.4.2
+
+
+### New supported versions
+
+
+## Incompatibilities
+
+
+## Bug fixes
+
+
+## Internals (for developers)
+
+
+## Infrastructure
+
+
+## Documentation
+
+
+## New features
+
+
+## Enhancements
+
+
+## Examples
