@@ -33,9 +33,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "PatchValueExpressionParser"
-
-%pure-parser
+%define parser_class_name {PatchValueExpressionParser}
 
 %{
 #include <volFields.H>
@@ -57,7 +55,7 @@ Contributors/Copyright:
 
 %}
 
-%name-prefix="parserPatch"
+%define api.prefix {parserPatch}
 
 %parse-param {void * scanner}
 %parse-param { PatchValueExpressionDriver& driver }

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -35,7 +35,7 @@ Description
 Contributors/Copyright:
     2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #ifndef swakChecks_H
@@ -45,12 +45,12 @@ Contributors/Copyright:
 
 namespace Foam {
     template<class T1,class T2>
-    string swakAssertSameSize(const T1 *a,const T2 *b) 
+    string swakAssertSameSize(const T1 *a,const T2 *b)
     {
         if(a->size()!=b->size()) {
             OStringStream o;
 
-            o << "Operands have different sizes: " 
+            o << "Operands have different sizes: "
                 << a->size() << " and " << b->size();
 
             return string(o.str());
@@ -60,6 +60,13 @@ namespace Foam {
     }
 }
 
-#define sameSize(a,b) {Foam::string err=Foam::swakAssertSameSize(a,b); if(err!="") { error(yylloc,err); YYERROR; }}
+#define sameSize(a,b) \
+    {                                                                   \
+        Foam::string err=Foam::swakAssertSameSize(a,b);                 \
+        if(err!="") {                                                   \
+            error(yyla.location,err);                                          \
+            YYERROR;                                                    \
+        }                                                               \
+    }
 
 #endif

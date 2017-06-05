@@ -33,10 +33,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "FaFieldValueExpressionParser"
-
-// make reentrant to allow sub-parsers
-%pure-parser
+%define parser_class_name {FaFieldValueExpressionParser}
 
 %{
 #include <areaFields.H>
@@ -69,7 +66,7 @@ Contributors/Copyright:
 #include "swak.H"
 %}
 
-%name-prefix="parserFaField"
+%define api.prefix {parserFaField}
 
 %parse-param {void * scanner}
 %parse-param { FaFieldValueExpressionDriver& driver }

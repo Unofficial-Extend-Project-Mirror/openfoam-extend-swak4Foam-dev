@@ -33,9 +33,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "FaPatchValueExpressionParser"
-
-%pure-parser
+%define parser_class_name {FaPatchValueExpressionParser}
 
 %{
 #include <volFields.H>
@@ -56,7 +54,7 @@ Contributors/Copyright:
 #include "swak.H"
 %}
 
-%name-prefix="parserFaPatch"
+%define api.prefix {parserFaPatch}
 
 %parse-param {void * scanner}
 %parse-param { FaPatchValueExpressionDriver& driver }
