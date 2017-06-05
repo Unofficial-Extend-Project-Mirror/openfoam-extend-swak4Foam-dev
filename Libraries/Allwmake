@@ -29,27 +29,10 @@ BISONVER=`bison -V | head -n 1| tr ' ' '\n' | tail -n 1`
 
 echo "Bison is version $BISONVER"
 
-if [[ $BISONVER < 2.4 ]]; then
-    echo "swak4Foam only confirmed to work with Bison >= 2.4"
-    echo "Compiles with 2.3 but has offset-problems with locations which break the Plugin-functionality"
+if [[ $BISONVER < 3 ]]; then
+    echo "swak4Foam only confirmed to work with Bison >= 3"
     echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation"
-    if [ -z $USE_OLD_BISON ]; then
-	echo "Set the environment variable USE_OLD_BISON if you want to continue anyway"
-	exit 42
-    else
-	echo "I continue under protest. Should swak4Foam work with your bison-version, then please report it"
-	echo
-	echo
-    fi
-fi
-
-if [[ $BISONVER > 2.999 ]]; then
-    echo "swak4Foam only confirmed to work with Bison 2.x"
-    echo "Consider running ./maintainanceScripts/compileRequirements.sh for a local bison-installation"
-    if [ -z $DEVELOPE_FOR_NEW_BISON ]; then
-	echo "Set the environment variable DEVELOPE_FOR_NEW_BISON if you want to continue anyway."
-	exit 42
-    fi
+    exit 42
 fi
 
 FLEXVER=`flex -V | head -n 1| tr ' ' '\n' | tail -n 1`
