@@ -14,17 +14,17 @@ if [ -e $requirementsDir/bin/bison ];
 then
     echo "Bison alread installed/compiled"
 else
-    bisonTarball=bison-2.7.1.tar.gz
+    bisonTarball=bison-3.0.4.tar.gz
     if [ -e  $requirementsDir/sources/$bisonTarball ];
     then
 	echo "$bisonTarball already downloaded"
     else
-	(cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/bison-2.7.1.tar.gz)
+	(cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/bison-3.0.4.tar.gz)
     fi
     echo "Untarring bison-sources"
     ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$bisonTarball )
 
-    ( cd $requirementsDir/compilation/bison-2.7.1 ; ./configure --prefix=$requirementsDir; make; make install )
+    ( cd $requirementsDir/compilation/bison-3.0.4 ; ./configure --prefix=$requirementsDir; make; make install )
 
 fi
 
