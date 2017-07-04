@@ -28,7 +28,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors/Copyright:
-    2012-2013 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -57,8 +57,10 @@ namespace Foam
 
     addCloudProxyToTable(CloudProxyForThermoParcel,swakFluidThermoCloudType);
 
+#ifndef FOAM_BASICKINEMATICCLOUD_HAS_NO_KINEMATIC_TYPE
     addKinematicCloudProxyToTable(CloudProxyForKinematicParcel,basicKinematicCloud);
     addKinematicCloudProxyToTable(CloudProxyForThermoParcel,swakFluidThermoCloudType);
+#endif
 
 #ifdef FOAM_REACTINGCLOUD_TEMPLATED
     addCloudProxyToTable(CloudProxyForReactingParcel,thermoReactingCloud);
@@ -73,8 +75,10 @@ namespace Foam
 
     addCloudProxyToTable(CloudProxyForReactingMultiphaseParcel,basicReactingMultiphaseCloud);
 
+#ifndef FOAM_BASICKINEMATICCLOUD_HAS_NO_KINEMATIC_TYPE
     addKinematicCloudProxyToTable(CloudProxyForReactingParcelNoComposition,basicReactingCloud);
     addKinematicCloudProxyToTable(CloudProxyForReactingMultiphaseParcelNoComposition,basicReactingMultiphaseCloud);
+#endif
 
 #endif
 

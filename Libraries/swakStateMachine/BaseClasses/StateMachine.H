@@ -35,7 +35,7 @@ SourceFiles
     StateMachine.C
 
 Contributors/Copyright:
-    2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -230,7 +230,7 @@ public:
     //- return value is a string with the information about what happened
     std::string force(label state);
 
-    friend StateMachineRepository;
+    friend class StateMachineRepository;
 };
 
 

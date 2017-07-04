@@ -29,7 +29,7 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2012-2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2012-2013, 2015-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
@@ -183,10 +183,17 @@ const ThermoType &swakThermophysicalPluginFunction<ThermoType>::thermoInternal(
         }
 
         if(!found) {
+#ifdef FOAM_BASIC_THERMO_HAS_NO_NEW
+            FatalErrorIn("swakThermophysicalPluginFunction<ThermoType>::thermoInternal")
+                << "This version of Foam has no basicThermo::New"
+                    << endl
+                    << exit(FatalError);
+#else
             thermo_.set(
                 reg.name(),
                 ThermoType::New(reg).ptr()
             );
+#endif
         } else {
             // Create it ourself because nobody registered it
             if(usePsi) {

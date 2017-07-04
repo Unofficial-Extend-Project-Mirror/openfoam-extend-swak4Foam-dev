@@ -38,7 +38,7 @@ SourceFiles
     patchExpressionFunctionObject.C
 
 Contributors/Copyright:
-    2010-2011, 2013-2014 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2010-2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/

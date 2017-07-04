@@ -75,7 +75,7 @@ According to the commits in the `mercurial`-repository (and
 the repositories of the projects from which swak emerged)
 contributors are (ordered by the year of their first contribution):
 
--   2006-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+-   2006-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 -   2008 Hannes Kroeger (hannes@kroegeronline.net)
 -   2008-2009, 2012 Martin Beaudoin, Hydro-Quebec (beaudoin.martin@ireq.ca)
 -   2010 Marianne Mataln <mmataln@ice-sf.at>
@@ -88,7 +88,7 @@ contributors are (ordered by the year of their first contribution):
 -   2014 David Huckaby <e.david.huckaby@netl.doe.gov>
 -   2015 Domink Christ <d.christ@wikki.co.uk>
 -   2015 Alexey Matveichev <alexey.matveichev@gmail.com>
--   2016 Mark Olesen <mark@opencfd>
+-   2016-2017 Mark Olesen <mark@opencfd>
 
 
 ## Documentation
@@ -5557,7 +5557,7 @@ inlet to the outlet (`residenceTime`). Steady as well as
 transient
 
 
-## Next release - version number : 0.4.1
+## 2017-05-31 - version number : 0.4.1
 
 
 ### New supported versions
@@ -5786,9 +5786,6 @@ Currently 4 Foam-versions are tested
 Other versions might or might not work. The first three will be
 replaced with the latest version of that fork once it becomes
 available
-
-
-### Internals (for developers)
 
 
 ### New features
@@ -6122,3 +6119,33 @@ capabilities of the `swakDynamicMesh`-library.
     a `ACMI` boundary condition where switching of faces is done
     by a swak-expression. Won't work with `Foam-extend` as this
     has no `ACMI`
+
+
+## Next release - version number : 0.4.2
+
+
+### New supported versions
+
+
+## Incompatibilities
+
+
+## Bug fixes
+
+
+## Internals (for developers)
+
+
+## Infrastructure
+
+
+## Documentation
+
+
+## New features
+
+
+## Enhancements
+
+
+## Examples
