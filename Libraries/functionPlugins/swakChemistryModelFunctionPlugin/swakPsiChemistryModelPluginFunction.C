@@ -188,8 +188,12 @@ defineTypeNameAndDebug(swakPsiChemistryModelPluginFunction_ ## funcName,0);  \
 addNamedToRunTimeSelectionTable(FieldValuePluginFunction,swakPsiChemistryModelPluginFunction_ ## funcName,name,psiChem_ ## funcName);
 
 concreteChemistryFunction(tc,volScalarField);
+#ifdef  FOAM_CHEMISTRYMODEL_HAS_NO_SOURCE_TERM
+concreteChemistryFunction(Qdot,volScalarField);
+#else
 concreteChemistryFunction(Sh,volScalarField);
 concreteChemistryFunction(dQ,volScalarField);
+#endif
 
 class swakPsiChemistryModelPluginFunction_RR
 : public swakPsiChemistryModelPluginFunction
