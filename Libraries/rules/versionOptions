@@ -1,6 +1,12 @@
 # -*- Makefile -*-
 # Set switches for libraries that were renamed between versions
 
+# Where am I
+SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+
+# Generated file with information about the current foam version
+include $(SELF_DIR)foamVersion
+
 ifdef FOAM_DEV
 FOAM_DEV_OPTION = -DFOAM_DEV
 endif

@@ -73,7 +73,7 @@ if "FOAM_DEV" in environ:
     # foam-extend
     foamFork = "extend"
 elif verString == "plus":
-    # OpenFOAM+ ('plus' is the development branch)
+    # openfoam.com (development branch)
     #
     # parse wmake/rules/General/general/rules for this type of content
     #    WM_VERSION = OPENFOAM_PLUS=1612
@@ -89,13 +89,16 @@ elif verString == "plus":
                 break
     except (KeyError, IOError):
         pass
-elif verString[0] == "v" and verString[-1] == "+":
-    # OpenFOAM+ (release version)
-    foamFork  = "openfoamplus"
-    verString = verString[1:-1]   # strip lead 'v', trailing '+'
 else:
-    # OpenFOAM .org version
-    foamFork = "openfoam"
+    m = re.match(r'v?(\d{4})\+?', verString)
+    # openfoam.com (release version) - eg, v1606+, v1612, 1706 etc
+
+    if m:
+        foamFork  = "openfoamplus"
+        verString = m.group(1)
+    else:
+        # openfoam.org version
+        foamFork = "openfoam"
 
 vParts=verString.split(".")
 

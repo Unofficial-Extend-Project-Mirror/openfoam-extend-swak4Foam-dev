@@ -113,7 +113,13 @@ groovyBCJumpAMIFvPatchField<Type>::groovyBCJumpAMIFvPatchField
     }
     else
     {
-        this->evaluate(Pstream::blocking);
+        this->evaluate(
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+            Pstream::commsTypes::blocking
+#else
+            Pstream::blocking
+#endif
+        );
     }
 }
 
