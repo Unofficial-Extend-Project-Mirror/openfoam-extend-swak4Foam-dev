@@ -6127,25 +6127,25 @@ capabilities of the `swakDynamicMesh`-library.
 ### New supported versions
 
 
-## Incompatibilities
+### Incompatibilities
 
 
-## Bug fixes
+### Bug fixes
 
 
-## Internals (for developers)
+### Internals (for developers)
 
 
-## Infrastructure
+### Infrastructure
 
 
-## Documentation
+### Documentation
 
 
-## New features
+### New features
 
 
-## Enhancements
+### Enhancements
 
 
-## Examples
+### Examples
