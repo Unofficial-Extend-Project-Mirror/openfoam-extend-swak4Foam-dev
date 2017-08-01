@@ -1411,14 +1411,28 @@ void pythonInterpreterWrapper::scatterGlobals()
         if (myComm.above() != -1)
         {
             string incoming="";
-            IPstream fromAbove(Pstream::scheduled, myComm.above());
+            IPstream fromAbove(
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+                Pstream::commsTypes::scheduled,
+#else
+                Pstream::scheduled,
+#endif
+                myComm.above()
+            );
             fromAbove >> incoming;
             IStringStream inStream(incoming);
             inStream >> result;
         }
         forAll(myComm.below(), belowI)
         {
-            OPstream toBelow(Pstream::scheduled,myComm.below()[belowI]);
+            OPstream toBelow(
+#ifdef FOAM_PSTREAM_COMMSTYPE_IS_ENUMCLASS
+                Pstream::commsTypes::scheduled,
+#else
+                Pstream::scheduled,
+#endif
+                myComm.below()[belowI]
+            );
             OStringStream outgoing;
             outgoing << result;
             toBelow << outgoing.str();
