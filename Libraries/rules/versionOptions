@@ -114,5 +114,8 @@ ifndef FOAM_DEV
     ifeq "4" "$(word 1, $(sort 4 $(WM_PROJECT_VERSION)))"
       NEEDS_FILTER_DROPIN=1
     endif
+    ifeq "4" "$(word 1, $(sort 4 $(WM_PROJECT_VERSION)))"
+      THERMOPHYSICALFUNCTIONS_LIB=
+    endif
   endif
 endif
