@@ -23,6 +23,10 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "swakCloudTypes.H"
+
+#ifndef FOAM_BARYCENTRIC_PARTICLES
+
 #include "CorrectParticleCell.H"
 #include "Pstream.H"
 #include "ListListOps.H"
@@ -195,5 +199,6 @@ void Foam::CorrectParticleCell<CloudType>::preEvolve()
     }
 }
 
+#endif
 
 // ************************************************************************* //

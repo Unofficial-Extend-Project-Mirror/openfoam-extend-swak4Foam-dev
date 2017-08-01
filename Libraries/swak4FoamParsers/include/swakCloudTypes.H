@@ -117,6 +117,11 @@ namespace Foam {
 #define FOAM_KINEMATIC_PARCEL_ACTIVE_SET_THROUGH_METHOD
 #endif
 
+#if (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>=VERSION_NR(5,0,0))
+#define FOAM_BARYCENTRIC_PARTICLES
+#endif
+
+
 #include "DebugOStream.H"
 
 #endif
