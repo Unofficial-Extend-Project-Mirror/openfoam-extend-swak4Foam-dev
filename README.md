@@ -6127,25 +6127,35 @@ capabilities of the `swakDynamicMesh`-library.
 ### New supported versions
 
 
-## Incompatibilities
+#### OpenFOAM+ v1706
+
+Minor adaptions were required to make this compile
 
 
-## Bug fixes
+#### OpenFOAM 5.0
+
+Some adaptions were required to make this compile
 
 
-## Internals (for developers)
+### Incompatibilities
 
 
-## Infrastructure
+### Bug fixes
 
 
-## Documentation
+### Internals (for developers)
 
 
-## New features
+### Infrastructure
 
 
-## Enhancements
+### Documentation
 
 
-## Examples
+### New features
+
+
+### Enhancements
+
+
+### Examples

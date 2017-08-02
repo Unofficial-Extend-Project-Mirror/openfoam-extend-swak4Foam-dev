@@ -103,8 +103,11 @@ subModels
     {
         gravity         on;
         sphereDrag on;
+<!--(if foamFork=="openfoamplus" and foamVersion>=(1706,))-->
+<!--(else)-->
         virtualMass     off;
         pressureGradient off;
+<!--(end)-->
     }
 
     coneInjectionCoeffs

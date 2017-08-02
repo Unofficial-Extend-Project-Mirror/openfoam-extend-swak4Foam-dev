@@ -23,6 +23,7 @@ boundaryField
             name impulse;
             outOfBounds clamp;
             fileName "$FOAM_CASE/impulse.data";
+            file     "$FOAM_CASE/impulse.data";
         }
     );
     lookuptables (
@@ -30,6 +31,7 @@ boundaryField
             name impulseLookup;
             outOfBounds clamp;
             fileName "$FOAM_CASE/impulse.data";
+            file     "$FOAM_CASE/impulse.data";
         }
     );
     //    valueExpression "-impulse*normal()";

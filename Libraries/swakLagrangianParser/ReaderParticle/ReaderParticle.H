@@ -45,6 +45,9 @@ Contributors/Copyright:
 
 #include "swak.H"
 
+#include "swakCloudTypes.H"
+
+
 #ifdef FOAM_PARTICLE_CLASS_IS_TEMPLATE
 #include "Particle.H"
 #else
@@ -91,7 +94,11 @@ public:
         ReaderParticle
         (
             const polyMesh& mesh,
+#ifdef FOAM_BARYCENTRIC_PARTICLES
+            const barycentric &position,
+#else
             const vector& position,
+#endif
             const label celli,
             const label tetFaceI,
             const label tetPtI
@@ -109,7 +116,12 @@ public:
             bool doCellFacePt = true
         )
         :
-            ReaderParticleBaseClass(mesh, position, cellI, doCellFacePt)
+            ReaderParticleBaseClass(
+                mesh, position, cellI
+#ifndef FOAM_BARYCENTRIC_PARTICLES
+                , doCellFacePt
+#endif
+            )
         {}
 
         //- Construct from Istream

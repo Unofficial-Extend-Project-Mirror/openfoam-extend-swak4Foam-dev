@@ -71,6 +71,9 @@ else
     mv $versionFile.tmp $versionFile
 fi
 
+# Quick and dirty generation of a file that sets OPENFOAM_PLUS as this is not done anywhere eelse. Or so it seems
+sed -e 's/.*OPENFOAMPLUS \([0-9][0-9]*\)/OPENFOAM_PLUS=\1/' <$versionFile | grep  OPENFOAM_PLUS= >rules/foamVersion
+
 wmakeLnInclude simpleFunctionObjects
 
 wmake libso swak4FoamParsers

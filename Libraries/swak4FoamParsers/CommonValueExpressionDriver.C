@@ -1719,7 +1719,11 @@ word CommonValueExpressionDriver::getTypeOfFieldInternal(
         << " Name: " << name << " Time: " << mesh().time().timeName()
         << " Path: "
 #ifdef FOAM_HAS_LOCAL_FILEPATH
-        << f.localFilePath()
+        << f.localFilePath(
+#ifdef FOAM_LOCAL_FILEPATH_NEEDS_TYPE_PARAMETER
+            f.headerClassName()
+#endif
+        )
 #else
         << f.filePath()
 #endif

@@ -39,6 +39,8 @@ Contributors/Copyright:
 
 #include <functional>
 
+#include "swakCloudTypes.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -97,6 +99,7 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::face
         )
     );
+#ifndef FOAM_BARYCENTRIC_PARTICLES
     addBoolFunction(
         "softImpact",
         "used impact model",
@@ -104,13 +107,35 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::softImpact
         )
     );
+#endif
     addBoolFunction(
         "onBoundary",
         "is this currently on the boundary",
         new ParticleMethodWrapperValue<bool>(
+#ifdef FOAM_BARYCENTRIC_PARTICLES
+            &particleType::onBoundaryFace
+#else
             &particleType::onBoundary
+#endif
         )
     );
+#ifdef FOAM_BARYCENTRIC_PARTICLES
+    addBoolFunction(
+        "onBoundaryFace",
+        "is this currently on the boundary",
+        new ParticleMethodWrapperValue<bool>(
+            &particleType::onBoundaryFace
+        )
+    );
+    addBoolFunction(
+        "onInternalFace",
+        "is this currently on the internal",
+        new ParticleMethodWrapperValue<bool>(
+            &particleType::onInternalFace
+        )
+    );
+#endif
+#ifndef FOAM_BARYCENTRIC_PARTICLES
     addScalarFunction(
         "currentTime",
         "current time of the particle",
@@ -118,6 +143,7 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::currentTime
         )
     );
+#endif
     addScalarFunction(
         "stepFraction",
         "fraction of the time-step completed",
@@ -125,6 +151,15 @@ CloudProxyForParticle<CloudType>::CloudProxyForParticle
             &particleType::stepFraction
         )
     );
+#ifdef FOAM_BARYCENTRIC_PARTICLES
+    addScalarFunction(
+        "currentTimeFraction",
+        "Current fraction within the time-step",
+        new ParticleMethodWrapperValue<scalar>(
+            &particleType::currentTimeFraction
+        )
+    );
+#endif
 }
 
 
