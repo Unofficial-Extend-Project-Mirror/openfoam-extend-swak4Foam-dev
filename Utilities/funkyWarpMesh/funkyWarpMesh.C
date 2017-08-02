@@ -203,6 +203,9 @@ int main(int argc, char *argv[])
             runTime.writeFormat(),
             IOstream::currentVersion,
             runTime.writeCompression()
+#ifdef FOAM_REGIOOBJECT_WRITEOBJECT_WITH_VALID
+            ,true
+#endif
         )
     )
     {

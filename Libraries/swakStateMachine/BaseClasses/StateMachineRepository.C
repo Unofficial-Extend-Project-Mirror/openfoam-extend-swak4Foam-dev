@@ -62,7 +62,14 @@ StateMachineRepository::StateMachineRepository(
     if(headerOk()) {
         Pbug << "Found a file " <<  objectPath() << endl;
 
-        readData(readStream("StateMachineRepository"));
+        readData(
+            readStream(
+                "StateMachineRepository"
+#ifdef FOAM_READSTREAM_METHOD_NEEDS_BOOL_PARAMETER
+                ,true
+#endif
+            )
+        );
     }
 }
 
@@ -120,6 +127,9 @@ void StateMachineRepository::ensureWrite()
             time().writeFormat(),
             IOstream::currentVersion,
             time().writeCompression()
+#ifdef FOAM_REGIOOBJECT_WRITEOBJECT_WITH_VALID
+            ,true
+#endif
         );
     }
 }

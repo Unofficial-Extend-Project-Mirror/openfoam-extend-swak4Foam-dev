@@ -71,7 +71,14 @@ GlobalVariablesRepository::GlobalVariablesRepository(
     if(headerOk()) {
         Pbug << "Found a file " <<  objectPath() << endl;
 
-        readData(readStream("GlobalVariablesRepository"));
+        readData(
+            readStream(
+                "GlobalVariablesRepository"
+#ifdef FOAM_READSTREAM_METHOD_NEEDS_BOOL_PARAMETER
+                ,true
+#endif
+            )
+        );
     }
 }
 

@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-<!--(if foamFork=="openfoamplus" and foamVersion>=(1612,))-->
+<!--(if (foamFork=="openfoamplus" and foamVersion>=(1612,)) or (foamFork=="openfoam" and foamVersion>=(5,)))-->
 dynamicFvMesh dynamicMotionSolverFvMesh;
 <!--(else)-->
 dynamicFvMesh   solidBodyMotionFvMesh;

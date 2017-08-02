@@ -331,7 +331,11 @@ namespace Foam {
                         if(debug) {
                             Pout << "Rereading from "
 #ifdef FOAM_HAS_LOCAL_FILEPATH
-                                << header.localFilePath()
+                                << header.localFilePath(
+#ifdef FOAM_LOCAL_FILEPATH_NEEDS_TYPE_PARAMETER
+                                    T::typeName
+#endif
+                                )
 #else
                                 << header.filePath()
 #endif

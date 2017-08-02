@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
- ##   ####  ######     | 
+ ##   ####  ######     |
  ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
  ##  ##     ####       |
  ##  ##     ##         | http://www.ice-sf.at
@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$ 
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
 #include "ExpressionDriverWriter.H"
@@ -39,7 +39,7 @@ Contributors/Copyright:
 #include "CommonValueExpressionDriver.H"
 
 namespace Foam {
- 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 defineTypeNameAndDebug(ExpressionDriverWriter, 0);
@@ -69,7 +69,14 @@ ExpressionDriverWriter::ExpressionDriverWriter(
             Pout << "Found a file " <<  objectPath() << endl;
         }
 
-        readData(readStream("ExpressionDriverWriter"));
+        readData(
+            readStream(
+                "ExpressionDriverWriter"
+#ifdef FOAM_READSTREAM_METHOD_NEEDS_BOOL_PARAMETER
+                ,true
+#endif
+            )
+        );
     }
 }
 
@@ -82,10 +89,10 @@ ExpressionDriverWriter::~ExpressionDriverWriter()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool ExpressionDriverWriter::writeData(Ostream &os) const 
+bool ExpressionDriverWriter::writeData(Ostream &os) const
 {
     if(debug) {
-        Pout << "ExpressionDriverWriter at " << objectPath() 
+        Pout << "ExpressionDriverWriter at " << objectPath()
             << " writing" << endl;
     }
 
@@ -99,13 +106,13 @@ bool ExpressionDriverWriter::writeData(Ostream &os) const
         Pout << "written " << dict << endl;
     }
 
-    return os.good();    
+    return os.good();
 }
 
 bool ExpressionDriverWriter::readData(Istream &is)
 {
     if(debug) {
-        Pout << "ExpressionDriverWriter at " << objectPath() 
+        Pout << "ExpressionDriverWriter at " << objectPath()
             << " reading" << endl;
     }
 
