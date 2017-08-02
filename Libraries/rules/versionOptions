@@ -33,7 +33,7 @@ TRISURFACE_INC=-I$(LIB_SRC)/triSurface/lnInclude
 # OPENFOAM_PLUS is the release date (YYMM) as an integer, added after 1606.
 #
 ifdef OPENFOAM_PLUS
-  $(info This is OpenFOAM+ $(OPENFOAM_PLUS))
+  # $(info This is OpenFOAM+ $(OPENFOAM_PLUS))
   IS_OPENFOAMPLUS=1
   ifeq "plus" "$(WM_PROJECT_VERSION)"
     $(info OpenFOAM+ development version)
