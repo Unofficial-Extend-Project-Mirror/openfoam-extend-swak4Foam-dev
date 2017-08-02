@@ -44,20 +44,20 @@
   | groovyBC/movingConeDistorted                                |            | \sad       | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    |            | \checkmark | \checkmark | \checkmark |
   | groovyBC/wobbler                                            |            | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/functionObject/angledDuctWithBalls               |            | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/functionObject/hotStream                         |            | \checkmark | \sad       | \sad       |
-  | Lagrangian/functionObject/icoFoamCavityWithParcel           |            | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/parser/parcelInBoxWithExpressions                |            | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/parser/simplifiedSiwek                           |            | \sad       | \sad       | \checkmark |
-  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched |            | \dagger    | \checkmark | \checkmark |
-  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         |            | \dagger    | \checkmark | \checkmark |
-  | other/capillaryRise                                         |            | \sad       | \checkmark | \checkmark |
-  | other/counterFlowFlame2DInitialized                         |            | \sad       | \checkmark | \checkmark |
-  | other/simpleBendedPipe                                      |            | \checkmark | \checkmark | \checkmark |
-  | other/topoSetDamBreak                                       |            | \checkmark | \checkmark | \checkmark |
-  | solvePDE/flangeWithPDE                                      |            | \checkmark | \checkmark | \checkmark |
-  | solvePDE/pitzDailyWithPDE                                   |            | \checkmark | \checkmark | \checkmark |
-  | StateMachine/stateCavity                                    |            | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \sad       | \sad       |
+  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       | \sad       | \checkmark |
+  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
+  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
+  | other/capillaryRise                                         | \checkmark | \sad       | \checkmark | \checkmark |
+  | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \checkmark | \checkmark |
+  | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
+  | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
+  | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/testFOExecution                                       | \checkmark |            | \checkmark |            |
 
 # Local Variables:
