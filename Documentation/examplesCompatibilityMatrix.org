@@ -12,7 +12,7 @@
    names in the column titles):
    - 4.1 Fnd :: The OpenFOAM 4.1 Foundation release
    - 4.0 Ext :: The Foam-Extend 4.0 release
-   - 1612+ :: The OpenFOAM 1612+ release
+   - 1706+ :: The OpenFOAM 1706+ release
    - 2.3 :: The OpenFOAM 2.3 release (this is the oldest release
         tested)
 ** Symbols in the tables
@@ -44,20 +44,20 @@
   | groovyBC/movingConeDistorted                                | \checkmark | \sad       | \checkmark | \checkmark |
   | groovyBC/pulsedPitzDaily                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | groovyBC/wobbler                                            | \checkmark | \checkmark | \checkmark | \checkmark |
-  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark |            | \checkmark |
-  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark |            | \checkmark |
-  | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark |            | \sad       |
-  | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark |            | \checkmark |
-  | Lagrangian/parser/simplifiedSiwek                           | \checkmark | \sad       |            | \checkmark |
-  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    |            | \checkmark |
-  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    |            | \checkmark |
-  | other/capillaryRise                                         | \checkmark | \sad       |            | \checkmark |
-  | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       |            | \checkmark |
-  | other/simpleBendedPipe                                      | \checkmark | \checkmark |            | \checkmark |
-  | other/topoSetDamBreak                                       | \checkmark | \checkmark |            | \checkmark |
-  | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark |            | \checkmark |
-  | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark |            | \checkmark |
-  | StateMachine/stateCavity                                    | \checkmark | \checkmark |            | \checkmark |
+  | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \sad       | \sad       |
+  | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/parser/simplifiedSiwek                           | \checkmark | \sad       | \sad       | \checkmark |
+  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
+  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
+  | other/capillaryRise                                         | \checkmark | \sad       | \checkmark | \checkmark |
+  | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \checkmark | \checkmark |
+  | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
+  | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
+  | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/testFOExecution                                       |            |            | \checkmark |            |
 
 # Local Variables:
