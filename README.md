@@ -6140,7 +6140,21 @@ Some adaptions were required to make this compile
 ### Incompatibilities
 
 
+#### Solved field in `initPotentialFlow` now named differently
+
+The field name is now the name of the original field plus
+`Potential`. This means that in `fvSchemes` discretizations for
+that field have to be provided
+
+
 ### Bug fixes
+
+
+#### `initPotentialFlow` not working in `foam-extend`
+
+Here the function object failed with a "copy to
+myself"-error. This has been fixed by changing the name of the
+temporary field.
 
 
 ### Internals (for developers)

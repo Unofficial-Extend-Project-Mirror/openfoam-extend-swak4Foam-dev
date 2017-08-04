@@ -33,9 +33,7 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "CloudValueExpressionParser"
-
-%pure-parser
+%define parser_class_name {CloudValueExpressionParser}
 
 %{
 #include <volFields.H>
@@ -57,7 +55,7 @@ Contributors/Copyright:
 
 %}
 
-%name-prefix="parserCloud"
+%define api.prefix {parserCloud}
 
 %parse-param {void * scanner}
 %parse-param { CloudValueExpressionDriver& driver }

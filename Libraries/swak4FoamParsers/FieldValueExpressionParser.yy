@@ -35,11 +35,10 @@ Contributors/Copyright:
 %skeleton "lalr1.cc"
 /* %require "2.1a" */
 %defines
-%define "parser_class_name" "FieldValueExpressionParser"
+%define parser_class_name {FieldValueExpressionParser}
 
 // make reentrant to allow sub-parsers
-// %define api.pure // not possible with C++?
-%pure-parser
+// %define api.pure full
 
 %{
 #include <uLabel.H>
@@ -78,7 +77,7 @@ Contributors/Copyright:
 
 %}
 
-%name-prefix="parserField"
+%define api.prefix {parserField}
 
 %parse-param {void * scanner}
 %parse-param { FieldValueExpressionDriver& driver }

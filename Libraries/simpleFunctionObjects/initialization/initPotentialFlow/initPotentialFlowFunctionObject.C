@@ -108,7 +108,11 @@ void initPotentialFlowFunctionObject::recalc()
     const int nNonOrthCorr =
         potentialFlow.lookupOrDefault<int>("nNonOrthogonalCorrectors", 0);
 
-    volScalarField p(mesh.lookupObject<volScalarField>(pName_));
+    volScalarField p(
+        pName_+"Potential",
+        mesh.lookupObject<volScalarField>(pName_)
+    );
+    mesh.schemesDict().setFluxRequired(p.name());
     volVectorField &U=const_cast<volVectorField&>(
         mesh.lookupObject<volVectorField>(UName_)
     );
