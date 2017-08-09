@@ -135,26 +135,7 @@ wmake libso swakStateMachine
 
 wmake libso groovyStandardBCs
 
-if [ "$SWAK_PYTHON_INCLUDE" != "" ]
-then
-    SOEXT=so
-
-    if [ `uname -s`=="Darwin" ]; then
-	SOEXT=dylib
-    fi
-
-    oldPython="$FOAM_USER_LIBBIN/libpythonIntegration.$SOEXT"
-    if [ -e $oldPython ]
-    then
-	echo "Removing old python integration $oldPython"
-	rm $oldPython
-    fi
-    wmake libso swakPythonIntegration
-else
-    echo
-    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
-    echo
-fi
+(cd languageIntegration/; wmake all)
 
 (cd functionPlugins; wmake all)
 
