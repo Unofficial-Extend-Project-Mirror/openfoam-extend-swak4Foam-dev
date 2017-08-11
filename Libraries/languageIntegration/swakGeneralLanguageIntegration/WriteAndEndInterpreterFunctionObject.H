@@ -29,25 +29,25 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    stdoutFromPythonScriptProvider
+    WriteAndEndInterpreterFunctionObject
 
 Description
-    Excutes a python script and uses the stdout as the basis for the dicitionary
+    Check whether a code evaluates to true. If yes everything is written to disk
+    and the run ends gracefully
 
 SourceFiles
-    stdoutFromPythonScriptProvider.C
+    WriteAndEndInterpreterFunctionObject.C
 
 Contributors/Copyright:
-    2011-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef stdoutFromPythonScriptProvider_H
-#define stdoutFromPythonScriptProvider_H
+#ifndef WriteAndEndInterpreterFunctionObject_H
+#define WriteAndEndInterpreterFunctionObject_H
 
-#include "dynamicFunctionObjectListProxy.H"
-#include "pythonInterpreterWrapper.H"
+#include "writeAndEndFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,27 +55,53 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class stdoutFromPythonScriptProvider Declaration
+                           Class WriteAndEndInterpreterFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class stdoutFromPythonScriptProvider
+template<class Wrapper>
+class WriteAndEndInterpreterFunctionObject
 :
-    public dynamicFunctionObjectListProxy::dynamicDictionaryProvider,
-    public pythonInterpreterWrapper
+    public writeAndEndFunctionObject,
+    public Wrapper
 {
+    // Private Member Functions
 
-    string thePythonScript_;
+    //- Disallow default bitwise copy construct
+    WriteAndEndInterpreterFunctionObject(const WriteAndEndInterpreterFunctionObject&);
+
+    //- Disallow default bitwise assignment
+    void operator=(const WriteAndEndInterpreterFunctionObject&);
+
+    //- the code that should be evaluated
+    string conditionCode_;
+
+    //- code that is evaluated when starting
+    string initCode_;
+
+    void readParameters(const dictionary &);
+
+protected:
+
+    //- do the actual checking
+    virtual bool endRunNow();
 
 public:
 
-    TypeName("stdoutFromPythonScriptProvider");
+    //- Runtime type information
+    TypeName("WriteAndEndInterpreter");
 
-    stdoutFromPythonScriptProvider(
-        const dictionary&,
-        const dynamicFunctionObjectListProxy &
+
+    // Constructors
+
+    //- Construct from components
+    WriteAndEndInterpreterFunctionObject
+    (
+        const word&,
+        const Time&,
+        const dictionary&
     );
 
-    string getDictionaryText();
+    bool read(const dictionary &dict);
 };
 
 
@@ -83,6 +109,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#include "WriteAndEndInterpreterFunctionObject.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

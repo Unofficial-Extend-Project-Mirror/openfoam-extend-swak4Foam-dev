@@ -1,3 +1,5 @@
+print "Executing mpi4py"
+
 data = (rank+cnt)**2
 data = comm.gather(data, root=0)
 if rank == 0:

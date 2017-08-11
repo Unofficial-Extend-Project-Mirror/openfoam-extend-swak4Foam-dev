@@ -29,24 +29,25 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    setDeltaTWithPythonFunctionObject
+    TimeManipulationWithInterpreterFunctionObject
 
 Description
-    Set the time-step according to a number returned by a python-snipplet
-
+    Basis for function objects that manipulate the runTime via Python-snipplets
 SourceFiles
-    setDeltaTWithPythonFunctionObject.C
+    TimeManipulationWithInterpreterFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef setDeltaTWithPythonFunctionObject_H
-#define setDeltaTWithPythonFunctionObject_H
+#ifndef TimeManipulationWithInterpreterFunctionObject_H
+#define TimeManipulationWithInterpreterFunctionObject_H
 
-#include "timeManipulationWithPythonFunctionObject.H"
+#include "timeManipulationFunctionObject.H"
+
+#include "pythonInterpreterWrapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,48 +55,39 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class setDeltaTWithPythonFunctionObject Declaration
+                           Class TimeManipulationWithInterpreterFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class setDeltaTWithPythonFunctionObject
+template<class Wrapper>
+class TimeManipulationWithInterpreterFunctionObject
 :
-    public timeManipulationWithPythonFunctionObject
+    public timeManipulationFunctionObject,
+    public Wrapper
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    setDeltaTWithPythonFunctionObject(const setDeltaTWithPythonFunctionObject&);
+    TimeManipulationWithInterpreterFunctionObject(const TimeManipulationWithInterpreterFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const setDeltaTWithPythonFunctionObject&);
-
-    //- the code that should be evaluated in the beginning
-    string initCode_;
-
-    //- the code that should be evaluated
-    string deltaTCode_;
-
-    void readParameters(const dictionary &);
+    void operator=(const TimeManipulationWithInterpreterFunctionObject&);
 
 public:
 
     //- Runtime type information
-    TypeName("setDeltaTWithPython");
+    TypeName("TimeManipulationWithInterpreter");
 
 
     // Constructors
 
     //- Construct from components
-    setDeltaTWithPythonFunctionObject
+    TimeManipulationWithInterpreterFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
-    virtual scalar deltaT();
-
-    bool read(const dictionary &dict);
 };
 
 
@@ -104,6 +96,9 @@ public:
 } // End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#ifdef NoRepository
+#include "TimeManipulationWithInterpreterFunctionObject.C"
+#endif
 
 #endif
 

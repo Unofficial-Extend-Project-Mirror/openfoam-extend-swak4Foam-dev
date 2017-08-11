@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "executeIfPythonFunctionObject.H"
+#include "ExecuteIfInterpreterFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
@@ -47,18 +47,19 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(executeIfPythonFunctionObject, 0);
+    // defineTypeNameAndDebug(ExecuteIfInterpreterFunctionObject, 0);
 
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        executeIfPythonFunctionObject,
-        dictionary
-    );
+    // addToRunTimeSelectionTable
+    // (
+    //     functionObject,
+    //     ExecuteIfInterpreterFunctionObject,
+    //     dictionary
+    // );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-executeIfPythonFunctionObject::executeIfPythonFunctionObject
+template<class Wrapper>
+ExecuteIfInterpreterFunctionObject<Wrapper>::ExecuteIfInterpreterFunctionObject
 (
     const word& name,
     const Time& t,
@@ -70,15 +71,15 @@ executeIfPythonFunctionObject::executeIfPythonFunctionObject
         t,
         dict
     ),
-    pythonInterpreterWrapper(
+    Wrapper(
         t.db(),
         dict
     )
 {
-    if(!parallelNoRun()) {
-        initEnvironment(t);
+    if(!this->parallelNoRun()) {
+        this->initEnvironment(t);
 
-        setRunTime(t);
+        this->setRunTime(t);
     }
 
     readParameters(dict);
@@ -91,34 +92,37 @@ executeIfPythonFunctionObject::executeIfPythonFunctionObject
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-bool executeIfPythonFunctionObject::condition()
+template<class Wrapper>
+bool ExecuteIfInterpreterFunctionObject<Wrapper>::condition()
 {
-    if(!parallelNoRun()) {
-        setRunTime(time());
+    if(!this->parallelNoRun()) {
+        this->setRunTime(time());
     }
 
     if(writeDebug()) {
         Info << "Evaluating " << conditionCode_ << endl;
     }
-    bool result=evaluateCodeTrueOrFalse(conditionCode_,true);
+    bool result=this->evaluateCodeTrueOrFalse(conditionCode_,true);
     if(writeDebug()) {
         Info << "Evaluated to " << result << endl;
     }
     return result;
 }
 
-bool executeIfPythonFunctionObject::read(const dictionary& dict)
+template<class Wrapper>
+bool ExecuteIfInterpreterFunctionObject<Wrapper>::read(const dictionary& dict)
 {
     readParameters(dict);
     return conditionalFunctionObjectListProxy::read(dict);
 }
 
-void executeIfPythonFunctionObject::readParameters(const dictionary &dict)
+template<class Wrapper>
+void ExecuteIfInterpreterFunctionObject<Wrapper>::readParameters(const dictionary &dict)
 {
-    readCode(dict,"init",initCode_);
-    readCode(dict,"condition",conditionCode_);
+    this->readCode(dict,"init",initCode_);
+    this->readCode(dict,"condition",conditionCode_);
 
-    pythonInterpreterWrapper::executeCode(
+    Wrapper::executeCode(
         initCode_,
         false
     );

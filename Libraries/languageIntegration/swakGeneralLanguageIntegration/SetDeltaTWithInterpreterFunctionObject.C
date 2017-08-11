@@ -29,89 +29,90 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "writeAndEndPythonFunctionObject.H"
+#include "SetDeltaTWithInterpreterFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
 #include "IOmanip.H"
 #include "swakTime.H"
 
+#include "DebugOStream.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(writeAndEndPythonFunctionObject, 0);
+    // defineTypeNameAndDebug(setDeltaTWithPythonFunctionObject, 0);
 
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        writeAndEndPythonFunctionObject,
-        dictionary
-    );
+    // addToRunTimeSelectionTable
+    // (
+    //     functionObject,
+    //     setDeltaTWithPythonFunctionObject,
+    //     dictionary
+    // );
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-writeAndEndPythonFunctionObject::writeAndEndPythonFunctionObject
+template<class Wrapper>
+SetDeltaTWithInterpreterFunctionObject<Wrapper>::SetDeltaTWithInterpreterFunctionObject
 (
     const word &name,
     const Time& t,
     const dictionary& dict
 )
 :
-    writeAndEndFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
+    TimeManipulationWithInterpreterFunctionObject<Wrapper>(name,t,dict)
 {
-    if(!parallelNoRun()) {
-        initEnvironment(t);
-
-        setRunTime(t);
-    }
-
-    readParameters(dict);
+    this->readParameters(dict);
 }
 
-bool writeAndEndPythonFunctionObject::read(const dictionary& dict)
+template<class Wrapper>
+bool SetDeltaTWithInterpreterFunctionObject<Wrapper>::read(const dictionary& dict)
 {
-    readParameters(dict);
-    return writeAndEndFunctionObject::read(dict);
+    this->readParameters(dict);
+    return TimeManipulationWithInterpreterFunctionObject<Wrapper>::read(dict);
 }
 
-void writeAndEndPythonFunctionObject::readParameters(const dictionary &dict)
+template<class Wrapper>
+void SetDeltaTWithInterpreterFunctionObject<Wrapper>::readParameters(const dictionary &dict)
 {
-    readCode(dict,"init",initCode_);
-    readCode(dict,"condition",conditionCode_);
+    this->readCode(dict,"init",initCode_);
+    this->readCode(dict,"deltaT",deltaTCode_);
 
-    pythonInterpreterWrapper::executeCode(
+    Wrapper::executeCode(
         initCode_,
         false
     );
 }
 
-bool writeAndEndPythonFunctionObject::endRunNow()
+template<class Wrapper>
+scalar SetDeltaTWithInterpreterFunctionObject<Wrapper>::deltaT()
 {
-    if(!parallelNoRun()) {
-        setRunTime(time());
+    if(!this->parallelNoRun()) {
+        this->setRunTime(this->time());
     }
 
-    if(writeDebug()) {
-        Info << "Evaluating " << conditionCode_ << endl;
-    }
-    bool result=evaluateCodeTrueOrFalse(conditionCode_,true);
-    if(writeDebug()) {
-        Info << "Evaluated to " << result << endl;
+    if(this->writeDebug()) {
+        Pbug << "Evaluating " << deltaTCode_ << endl;
     }
 
-    if(result) {
-        Info << "Stopping because python code  " << conditionCode_
-            << " evaluated to 'true' in " << name() << endl;
+    scalar result=this->evaluateCodeScalar(deltaTCode_,true);
+
+    if(this->writeDebug()) {
+        Pbug << "Evaluated to " << result << endl;
+    }
+
+    if(result!=this->time().deltaT().value()) {
+        Info << "Changing timestep because " << deltaTCode_
+            << " evaluated to " << result << "(current deltaT: "
+            << this->time().deltaT().value() << " in "
+            << this->name() << endl;
     }
 
     return result;

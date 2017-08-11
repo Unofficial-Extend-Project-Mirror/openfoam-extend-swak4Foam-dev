@@ -28,52 +28,67 @@ License
     along with OpenFOAM; if not, write to the Free Software Foundation,
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+Class
+    StdoutFromScriptProvider
+
+Description
+    Excutes a script and uses the stdout as the basis for the dicitionary
+
+SourceFiles
+    StdoutFromScriptProvider.C
+
 Contributors/Copyright:
-    2008-2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "timeManipulationWithPythonFunctionObject.H"
-#include "addToRunTimeSelectionTable.H"
+#ifndef StdoutFromScriptProvider_H
+#define StdoutFromScriptProvider_H
 
-#include "polyMesh.H"
-#include "IOmanip.H"
-#include "swakTime.H"
+#include "dynamicFunctionObjectListProxy.H"
 
-#include "DebugOStream.H"
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
 
+/*---------------------------------------------------------------------------*\
+                           Class StdoutFromScriptProvider Declaration
+\*---------------------------------------------------------------------------*/
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-timeManipulationWithPythonFunctionObject::timeManipulationWithPythonFunctionObject
-(
-    const word &name,
-    const Time& t,
-    const dictionary& dict
-)
+template<class Wrapper>
+class StdoutFromScriptProvider
 :
-    timeManipulationFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
-        t.db(),
-        dict
-    )
+    public dynamicFunctionObjectListProxy::dynamicDictionaryProvider,
+    public Wrapper
 {
-    if(!parallelNoRun()) {
-        initEnvironment(t);
 
-        setRunTime(t);
-    }
-}
+    string theScript_;
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+public:
 
-} // namespace Foam
+    TypeName("StdoutFromScriptProvider");
+
+    StdoutFromScriptProvider(
+        const dictionary&,
+        const dynamicFunctionObjectListProxy &
+    );
+
+    string getDictionaryText();
+};
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+#ifdef NoRepository
+#include "StdoutFromScriptProvider.C"
+#endif
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

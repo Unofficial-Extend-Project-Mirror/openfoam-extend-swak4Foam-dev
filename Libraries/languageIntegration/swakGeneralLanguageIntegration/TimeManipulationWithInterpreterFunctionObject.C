@@ -29,67 +29,51 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Contributors/Copyright:
-    2011-2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013, 2015-2016 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "stdoutFromPythonScriptProvider.H"
+#include "TimeManipulationWithInterpreterFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "IFstream.H"
+#include "polyMesh.H"
+#include "IOmanip.H"
+#include "swakTime.H"
+
+#include "DebugOStream.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(stdoutFromPythonScriptProvider,0);
+    // defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
 
-    // to keep the macro happy
-    typedef dynamicFunctionObjectListProxy::dynamicDictionaryProvider dynamicFunctionObjectListProxydynamicDictionaryProvider;
 
-    addToRunTimeSelectionTable
-    (
-        dynamicFunctionObjectListProxydynamicDictionaryProvider,
-        stdoutFromPythonScriptProvider,
-        dictionary
-    );
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-    stdoutFromPythonScriptProvider::stdoutFromPythonScriptProvider(
-        const dictionary& dict,
-        const dynamicFunctionObjectListProxy &owner
-    ):
-        dynamicFunctionObjectListProxy::dynamicDictionaryProvider(
-            dict,
-            owner
-        ),
-        pythonInterpreterWrapper(
-            const_cast<dynamicFunctionObjectListProxy&>(owner).obr(),
-            dict
-        )
-    {
-        if(!parallelNoRun()) {
-            initEnvironment(owner.time());
+template<class Wrapper>
+TimeManipulationWithInterpreterFunctionObject<Wrapper>::TimeManipulationWithInterpreterFunctionObject
+(
+    const word &name,
+    const Time& t,
+    const dictionary& dict
+)
+:
+    timeManipulationFunctionObject(name,t,dict),
+    Wrapper(
+        t.db(),
+        dict
+    )
+{
+    if(!this->parallelNoRun()) {
+        this->initEnvironment(t);
 
-            setRunTime(owner.time());
-        }
-
-        readCode(dict,"script",thePythonScript_);
+        this->setRunTime(t);
     }
+}
 
-
-    string stdoutFromPythonScriptProvider::getDictionaryText() {
-        string buffer;
-
-        executeCodeCaptureOutput(
-            thePythonScript_,
-            buffer,
-            false,
-            true
-        );
-
-        return buffer;
-    }
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 } // namespace Foam
 

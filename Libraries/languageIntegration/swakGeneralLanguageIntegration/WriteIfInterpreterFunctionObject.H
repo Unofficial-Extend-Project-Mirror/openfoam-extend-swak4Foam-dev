@@ -29,23 +29,26 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    timeManipulationWithPythonFunctionObject
+    WriteIfInterpreterFunctionObject
 
 Description
-    Basis for function objects that manipulate the runTime via Python-snipplets
+
+    Check whether a code evaluates to true. If yes write
+    timesteps
+
 SourceFiles
-    timeManipulationWithPythonFunctionObject.C
+    WriteIfInterpreterFunctionObject.C
 
 Contributors/Copyright:
-    2008-2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id$
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#ifndef timeManipulationWithPythonFunctionObject_H
-#define timeManipulationWithPythonFunctionObject_H
+#ifndef WriteIfInterpreterFunctionObject_H
+#define WriteIfInterpreterFunctionObject_H
 
-#include "timeManipulationFunctionObject.H"
+#include "conditionDrivenWritingFunctionObject.H"
 
 #include "pythonInterpreterWrapper.H"
 
@@ -55,44 +58,76 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class timeManipulationWithPythonFunctionObject Declaration
+                           Class WriteIfInterpreterFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class timeManipulationWithPythonFunctionObject
+template<class Wrapper>
+class WriteIfInterpreterFunctionObject
 :
-    public timeManipulationFunctionObject,
-    public pythonInterpreterWrapper
+    public conditionDrivenWritingFunctionObject,
+    public Wrapper
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    timeManipulationWithPythonFunctionObject(const timeManipulationWithPythonFunctionObject&);
+    WriteIfInterpreterFunctionObject(const WriteIfInterpreterFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const timeManipulationWithPythonFunctionObject&);
+    void operator=(const WriteIfInterpreterFunctionObject&);
+
+    //- code to be evaluated during construction
+    string initCode_;
+
+    //- the code that should be evaluated
+    string writeCode_;
+
+    //- the logical expression
+    string stopWriteCode_;
+
+    //- the logical expression
+    string stopCooldownCode_;
+
+    void readParameters(const dictionary &);
+
+    bool executeCode(const string code);
+protected:
+
+    //- should writing start now?
+    virtual bool checkStartWriting();
+
+    //- switch off writing?
+    virtual bool checkStopWriting();
+
+    //- switch off cooldown?
+    virtual bool checkStopCooldown();
 
 public:
 
     //- Runtime type information
-    TypeName("timeManipulationWithPython");
+    TypeName("WriteIfInterpreter");
 
 
     // Constructors
 
     //- Construct from components
-    timeManipulationWithPythonFunctionObject
+    WriteIfInterpreterFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
 
+    bool read(const dictionary &dict);
 };
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+#ifdef NoRepository
+#include "WriteIfInterpreterFunctionObject.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

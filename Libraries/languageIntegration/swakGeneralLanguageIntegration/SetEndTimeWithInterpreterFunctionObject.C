@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#include "setEndTimeWithPythonFunctionObject.H"
+#include "SetEndTimeWithInterpreterFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
@@ -47,65 +47,70 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(setEndTimeWithPythonFunctionObject, 0);
+    // defineTypeNameAndDebug(setEndTimeWithPythonFunctionObject, 0);
 
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        setEndTimeWithPythonFunctionObject,
-        dictionary
-    );
+    // addToRunTimeSelectionTable
+    // (
+    //     functionObject,
+    //     setEndTimeWithPythonFunctionObject,
+    //     dictionary
+    // );
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-setEndTimeWithPythonFunctionObject::setEndTimeWithPythonFunctionObject
+template<class Wrapper>
+SetEndTimeWithInterpreterFunctionObject<Wrapper>::SetEndTimeWithInterpreterFunctionObject
 (
     const word &name,
     const Time& t,
     const dictionary& dict
 )
 :
-    timeManipulationWithPythonFunctionObject(name,t,dict)
+    TimeManipulationWithInterpreterFunctionObject<Wrapper>(name,t,dict)
 {
-    readParameters(dict);
+    this->readParameters(dict);
 }
 
-bool setEndTimeWithPythonFunctionObject::read(const dictionary& dict)
+template<class Wrapper>
+bool SetEndTimeWithInterpreterFunctionObject<Wrapper>::read(const dictionary& dict)
 {
-    readParameters(dict);
-    return timeManipulationWithPythonFunctionObject::read(dict);
+    this->readParameters(dict);
+    return TimeManipulationWithInterpreterFunctionObject<Wrapper>::read(dict);
 }
 
-void setEndTimeWithPythonFunctionObject::readParameters(const dictionary &dict)
+template<class Wrapper>
+void SetEndTimeWithInterpreterFunctionObject<Wrapper>::readParameters(const dictionary &dict)
 {
-    readCode(dict,"init",initCode_);
-    readCode(dict,"endTime",endTimeCode_);
+    this->readCode(dict,"init",initCode_);
+    this->readCode(dict,"endTime",endTimeCode_);
 
-    pythonInterpreterWrapper::executeCode(
+    Wrapper::executeCode(
         initCode_,
         false
     );
 }
 
-scalar setEndTimeWithPythonFunctionObject::endTime()
+template<class Wrapper>
+scalar SetEndTimeWithInterpreterFunctionObject<Wrapper>::endTime()
 {
-    if(!parallelNoRun()) {
-        setRunTime(time());
+    if(!this->parallelNoRun()) {
+        this->setRunTime(this->time());
     }
 
-    if(writeDebug()) {
+    if(this->writeDebug()) {
         Pbug << "Evaluating " << endTimeCode_ << endl;
     }
-    scalar result=evaluateCodeScalar(endTimeCode_,true);
-    if(writeDebug()) {
+    scalar result=this->evaluateCodeScalar(endTimeCode_,true);
+    if(this->writeDebug()) {
         Pbug << "Evaluated to " << result << endl;
     }
 
-    if(result!=time().endTime().value()) {
+    if(result!=this->time().endTime().value()) {
         Info << "Changing end time because " << endTimeCode_
             << " evaluated to " << result << "(current endTime: "
-            << time().endTime().value() << " in " << name() << endl;
+            << this->time().endTime().value() << " in "
+            << this->name() << endl;
     }
 
     return result;

@@ -29,27 +29,24 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    writeAndEndPythonFunctionObject
+    SetEndTimeWithInterpreterFunctionObject
 
 Description
-    Check whether a python code evaluates to true. If yes everything is written to disk
-    and the run ends gracefully
+    Set the end time according to a number returned by a python-snipplet
 
 SourceFiles
-    writeAndEndPythonFunctionObject.C
+    SetEndTimeWithInterpreterFunctionObject.C
 
 Contributors/Copyright:
-    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef writeAndEndPythonFunctionObject_H
-#define writeAndEndPythonFunctionObject_H
+#ifndef SetEndTimeWithInterpreterFunctionObject_H
+#define SetEndTimeWithInterpreterFunctionObject_H
 
-#include "writeAndEndFunctionObject.H"
-
-#include "pythonInterpreterWrapper.H"
+#include "TimeManipulationWithInterpreterFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,50 +54,47 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class writeAndEndPythonFunctionObject Declaration
+                           Class SetEndTimeWithInterpreterFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class writeAndEndPythonFunctionObject
+template<class Wrapper>
+class SetEndTimeWithInterpreterFunctionObject
 :
-    public writeAndEndFunctionObject,
-    public pythonInterpreterWrapper
+    public TimeManipulationWithInterpreterFunctionObject<Wrapper>
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    writeAndEndPythonFunctionObject(const writeAndEndPythonFunctionObject&);
+    SetEndTimeWithInterpreterFunctionObject(const SetEndTimeWithInterpreterFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const writeAndEndPythonFunctionObject&);
+    void operator=(const SetEndTimeWithInterpreterFunctionObject&);
 
-    //- the code that should be evaluated
-    string conditionCode_;
-
-    //- code that is evaluated when starting
+    //- the code that should be evaluated in the beginning
     string initCode_;
 
+    //- the code that should be evaluated
+    string endTimeCode_;
+
     void readParameters(const dictionary &);
-
-protected:
-
-    //- do the actual checking
-    virtual bool endRunNow();
 
 public:
 
     //- Runtime type information
-    TypeName("writeAndEndPython");
+    TypeName("SetEndTimeWithInterpreter");
 
 
     // Constructors
 
     //- Construct from components
-    writeAndEndPythonFunctionObject
+    SetEndTimeWithInterpreterFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
+
+    virtual scalar endTime();
 
     bool read(const dictionary &dict);
 };
@@ -110,8 +104,10 @@ public:
 
 } // End namespace Foam
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#ifdef NoRepository
+#include "SetEndTimeWithInterpreterFunctionObject.C"
+#endif
 
 #endif
 

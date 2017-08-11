@@ -59,6 +59,7 @@
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark |            |
+  | tests/pythonIntegration                                     |            | \checkmark |            |            |
 
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)

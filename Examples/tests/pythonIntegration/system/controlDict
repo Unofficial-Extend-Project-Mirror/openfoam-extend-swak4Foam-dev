@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     icoFoam;
+application     replayTransientBC;
 
 startFrom       startTime;
 
@@ -45,7 +45,7 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-functions { 
+functions {
     pythonSimple
     {
         type pythonIntegration;
@@ -118,6 +118,7 @@ functions {
         useIPython true;
 
         conditionFile "$FOAM_CASE/checkPythonFlu.py";
+        initCode "";
 
         functions {
             pythonPythonFluFull
@@ -142,6 +143,7 @@ functions {
         useIPython true;
 
         conditionFile "$FOAM_CASE/checkMpi4Py.py";
+        initCode "";
 
         functions {
             GatherDataWithPython
@@ -238,7 +240,7 @@ functions {
         );
         variables (
             "facePos=pos();"
-            "faceArea=area();"
+            "faceArea=area()+1e-6*randNormal();"
         );
         noReset true;
     }
@@ -290,13 +292,15 @@ functions {
     pythonDeltaT {
         type setDeltaTWithPython;
         parallelMasterOnly true;
-        deltaTCode "import math;return 0.005*(1+0.5*math.sin(20*runTime))";
+        deltaTCode "return 0.005*(1+0.5*math.sin(20*runTime))";
+        initCode "import math";
     }
     pythonEndTime {
         type setEndTimeWithPython;
         parallelMasterOnly false;
         isParallelized true;
-        endTimeCode "import math;return 0.5+0.25*math.sqrt(runTime)";
+        endTimeCode "return 0.5+0.25*math.sqrt(runTime)";
+        initCode "import math";
     }
     pythonDynamic {
         type dynamicFunctionObjectListProxy;
@@ -310,12 +314,33 @@ functions {
         parallelMasterOnly false;
         isParallelized true;
     }
+    writeIfPython {
+        type writeIfPython;
+        parallelMasterOnly false;
+        isParallelized true;
+        initCode "import math";
+        writeControlMode timesteps;
+        cooldownMode timesteps;
+        storeAndWritePreviousState true;
+        writeTimesteps 3;
+        cooldownTimesteps 15;
+        numberOfTimestepsToStore 2;
+        initVariablesCode "";
+        startWriteCode "return True";
+    }
+    endEarly {
+        type writeAndEndPython;
+        parallelMasterOnly false;
+        isParallelized true;
+        initCode "";
+        conditionCode "return runTime>0.15";
+    }
 }
 
 libs (
     "libgroovyBC.so"
     "libswakPythonIntegration.so"
-    "libswakPythonIntegrationCluster.so"
+    //    "libswakPythonIntegrationCluster.so"
     "libswakFunctionObjects.so"
 );
 

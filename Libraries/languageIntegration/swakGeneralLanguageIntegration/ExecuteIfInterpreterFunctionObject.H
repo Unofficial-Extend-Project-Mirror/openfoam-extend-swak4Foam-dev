@@ -29,14 +29,14 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    executeIfPythonFunctionObject
+    ExecuteIfInterpreterFunctionObject
 
 Description
-    This proxy-functionObject only executs its childrens if a Python-code
+    This proxy-functionObject only executs its childrens if a interpreter-code
     evaluates to true
 
 SourceFiles
-    executeIfPythonFunctionObject.C
+    ExecuteIfInterpreterFunctionObject.C
 
 Contributors/Copyright:
     2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
@@ -44,12 +44,12 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef executeIfPythonFunctionObject_H
-#define executeIfPythonFunctionObject_H
+#ifndef ExecuteIfInterpreterFunctionObject_H
+#define ExecuteIfInterpreterFunctionObject_H
 
 #include "conditionalFunctionObjectListProxy.H"
 
-#include "pythonInterpreterWrapper.H"
+// #include "pythonInterpreterWrapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,21 +57,22 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class executeIfPythonFunctionObject Declaration
+                           Class ExecuteIfInterpreterFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class executeIfPythonFunctionObject
+template<class Wrapper>
+class ExecuteIfInterpreterFunctionObject
 :
     public conditionalFunctionObjectListProxy,
-    public pythonInterpreterWrapper
+    public Wrapper
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    executeIfPythonFunctionObject(const executeIfPythonFunctionObject&);
+    ExecuteIfInterpreterFunctionObject(const ExecuteIfInterpreterFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const executeIfPythonFunctionObject&);
+    void operator=(const ExecuteIfInterpreterFunctionObject&);
 
     //- the code that should be evaluated when the function object starts
     string initCode_;
@@ -88,13 +89,13 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("executeIfPython");
+    TypeName("ExecuteIfInterpreter");
 
 
     // Constructors
 
     //- Construct from components
-    executeIfPythonFunctionObject
+    ExecuteIfInterpreterFunctionObject
     (
         const word&,
         const Time&,
@@ -110,6 +111,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#include "ExecuteIfInterpreterFunctionObject.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

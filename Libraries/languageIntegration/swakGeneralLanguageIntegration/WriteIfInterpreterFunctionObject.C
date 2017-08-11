@@ -34,7 +34,7 @@ Contributors/Copyright:
  SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
-#include "writeIfPythonFunctionObject.H"
+#include "WriteIfInterpreterFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 
 #include "polyMesh.H"
@@ -45,18 +45,19 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(writeIfPythonFunctionObject, 0);
+    // defineTypeNameAndDebug(WriteIfInterpreterFunctionObject, 0);
 
-    addToRunTimeSelectionTable
-    (
-        functionObject,
-        writeIfPythonFunctionObject,
-        dictionary
-    );
+    // addToRunTimeSelectionTable
+    // (
+    //     functionObject,
+    //     WriteIfInterpreterFunctionObject,
+    //     dictionary
+    // );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-writeIfPythonFunctionObject::writeIfPythonFunctionObject
+template<class Wrapper>
+WriteIfInterpreterFunctionObject<Wrapper>::WriteIfInterpreterFunctionObject
 (
     const word &name,
     const Time& t,
@@ -64,53 +65,56 @@ writeIfPythonFunctionObject::writeIfPythonFunctionObject
 )
 :
     conditionDrivenWritingFunctionObject(name,t,dict),
-    pythonInterpreterWrapper(
+    Wrapper(
         t.db(),
         dict
     )
 {
-    if(!parallelNoRun()) {
-        initEnvironment(t);
+    if(!this->parallelNoRun()) {
+        this->initEnvironment(t);
 
-        setRunTime(t);
+        this->setRunTime(t);
     }
 
-    readParameters(dict);
+    this->readParameters(dict);
 }
 
-bool writeIfPythonFunctionObject::read(const dictionary& dict)
+template<class Wrapper>
+bool WriteIfInterpreterFunctionObject<Wrapper>::read(const dictionary& dict)
 {
-    readParameters(dict);
+    this->readParameters(dict);
     return conditionDrivenWritingFunctionObject::read(dict);
 }
 
-void writeIfPythonFunctionObject::readParameters(const dictionary &dict)
+template<class Wrapper>
+void WriteIfInterpreterFunctionObject<Wrapper>::readParameters(const dictionary &dict)
 {
-    readCode(dict,"initVariables",initCode_);
-    readCode(dict,"startWrite",writeCode_);
-    if(writeControlMode()==scmWriteUntilSwitch) {
-        readCode(dict,"stopWrite",stopWriteCode_);
+    this->readCode(dict,"initVariables",initCode_);
+    this->readCode(dict,"startWrite",writeCode_);
+    if(this->writeControlMode()==scmWriteUntilSwitch) {
+        this->readCode(dict,"stopWrite",stopWriteCode_);
     }
-    if(cooldownMode()==cdmRetrigger) {
-        readCode(dict,"stopCooldown",stopCooldownCode_);
+    if(this->cooldownMode()==cdmRetrigger) {
+        this->readCode(dict,"stopCooldown",stopCooldownCode_);
     }
 
-    pythonInterpreterWrapper::executeCode(
+    Wrapper::executeCode(
         initCode_,
         false
     );
 }
 
-bool writeIfPythonFunctionObject::executeCode(const string code)
+template<class Wrapper>
+bool WriteIfInterpreterFunctionObject<Wrapper>::executeCode(const string code)
 {
-    if(!parallelNoRun()) {
-        setRunTime(time());
+    if(!this->parallelNoRun()) {
+        this->setRunTime(this->time());
     }
 
-    if(writeDebug()) {
+    if(this->writeDebug()) {
         Info << "Evaluating " << code << endl;
     }
-    bool result=evaluateCodeTrueOrFalse(code,true);
+    bool result=this->evaluateCodeTrueOrFalse(code,true);
     if(writeDebug()) {
         Info << "Evaluated to " << result << endl;
     }
@@ -118,19 +122,22 @@ bool writeIfPythonFunctionObject::executeCode(const string code)
     return result;
 }
 
-bool writeIfPythonFunctionObject::checkStartWriting()
+template<class Wrapper>
+bool WriteIfInterpreterFunctionObject<Wrapper>::checkStartWriting()
 {
-    return executeCode(writeCode_);
+    return this->executeCode(writeCode_);
 }
 
-bool writeIfPythonFunctionObject::checkStopWriting()
+template<class Wrapper>
+bool WriteIfInterpreterFunctionObject<Wrapper>::checkStopWriting()
 {
-    return executeCode(stopWriteCode_);
+    return this->executeCode(stopWriteCode_);
 }
 
-bool writeIfPythonFunctionObject::checkStopCooldown()
+template<class Wrapper>
+bool WriteIfInterpreterFunctionObject<Wrapper>::checkStopCooldown()
 {
-    return executeCode(stopCooldownCode_);
+    return this->executeCode(stopCooldownCode_);
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

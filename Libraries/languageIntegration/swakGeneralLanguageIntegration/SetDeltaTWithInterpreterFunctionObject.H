@@ -29,28 +29,24 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    writeIfPythonFunctionObject
+    SetDeltaTWithInterpreterFunctionObject
 
 Description
-
-    Check whether a python code evaluates to true. If yes write
-    timesteps
+    Set the time-step according to a number returned by a interpreter-snipplet
 
 SourceFiles
-    writeIfPythonFunctionObject.C
+    SetDeltaTWithInterpreterFunctionObject.C
 
 Contributors/Copyright:
-    2011-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+    2008-2011, 2013-2014, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $
+ SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
-#ifndef writeIfPythonFunctionObject_H
-#define writeIfPythonFunctionObject_H
+#ifndef SetDeltaTWithInterpreterFunctionObject_H
+#define SetDeltaTWithInterpreterFunctionObject_H
 
-#include "conditionDrivenWritingFunctionObject.H"
-
-#include "pythonInterpreterWrapper.H"
+#include "TimeManipulationWithInterpreterFunctionObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,63 +54,47 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class writeIfPythonFunctionObject Declaration
+                           Class SetDeltaTWithInterpreterFunctionObject Declaration
 \*---------------------------------------------------------------------------*/
 
-class writeIfPythonFunctionObject
+template<class Wrapper>
+class SetDeltaTWithInterpreterFunctionObject
 :
-    public conditionDrivenWritingFunctionObject,
-    public pythonInterpreterWrapper
+    public TimeManipulationWithInterpreterFunctionObject<Wrapper>
 {
     // Private Member Functions
 
     //- Disallow default bitwise copy construct
-    writeIfPythonFunctionObject(const writeIfPythonFunctionObject&);
+    SetDeltaTWithInterpreterFunctionObject(const SetDeltaTWithInterpreterFunctionObject&);
 
     //- Disallow default bitwise assignment
-    void operator=(const writeIfPythonFunctionObject&);
+    void operator=(const SetDeltaTWithInterpreterFunctionObject&);
 
-    //- code to be evaluated during construction
+    //- the code that should be evaluated in the beginning
     string initCode_;
 
     //- the code that should be evaluated
-    string writeCode_;
-
-    //- the logical expression
-    string stopWriteCode_;
-
-    //- the logical expression
-    string stopCooldownCode_;
+    string deltaTCode_;
 
     void readParameters(const dictionary &);
-
-    bool executeCode(const string code);
-protected:
-
-    //- should writing start now?
-    virtual bool checkStartWriting();
-
-    //- switch off writing?
-    virtual bool checkStopWriting();
-
-    //- switch off cooldown?
-    virtual bool checkStopCooldown();
 
 public:
 
     //- Runtime type information
-    TypeName("writeIfPython");
+    TypeName("SetDeltaTWithInterpreter");
 
 
     // Constructors
 
     //- Construct from components
-    writeIfPythonFunctionObject
+    SetDeltaTWithInterpreterFunctionObject
     (
         const word&,
         const Time&,
         const dictionary&
     );
+
+    virtual scalar deltaT();
 
     bool read(const dictionary &dict);
 };
@@ -124,6 +104,9 @@ public:
 
 } // End namespace Foam
 
+#ifdef NoRepository
+#include "SetDeltaTWithInterpreterFunctionObject.C"
+#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
