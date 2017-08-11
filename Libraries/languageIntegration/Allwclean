@@ -1,4 +1,6 @@
 #! /bin/sh
 
+wclean swakGeneralLanguageIntegration
+
 wclean swakPythonIntegration
 

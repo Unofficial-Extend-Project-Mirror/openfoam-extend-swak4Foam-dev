@@ -1,5 +1,14 @@
 #! /bin/sh
 
+if [ -e ../../swakConfiguration ]; then
+    echo "Reading variables from 'swakConfiguration'"
+    source ../../swakConfiguration
+else
+    echo "No file 'swakConfiguration' in the top directory of the swak-sources. Language integrations probably won't work"
+fi
+
+wmake libso swakGeneralLanguageIntegration
+
 if [ "$SWAK_PYTHON_INCLUDE" != "" ]
 then
     SOEXT=so
