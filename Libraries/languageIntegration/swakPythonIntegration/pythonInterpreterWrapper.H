@@ -52,6 +52,8 @@ Contributors/Copyright:
 
 #include "Python.h"
 
+#include "generalInterpreterWrapper.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -63,6 +65,8 @@ namespace Foam
 
 
 class pythonInterpreterWrapper
+:
+    public generalInterpreterWrapper
 {
     // Private Member Functions
 
@@ -73,10 +77,6 @@ class pythonInterpreterWrapper
     void operator=(const pythonInterpreterWrapper&);
 
     // Private data
-
-    const objectRegistry& obr_;
-
-    const dictionary& dict_;
 
     //- state of 'my' Python subinterpreter
     PyThreadState *pythonState_;
@@ -93,49 +93,13 @@ class pythonInterpreterWrapper
     //- embed IPython using the old convention
     bool oldIPython_;
 
-    //- should exceptions be tolerated or lead to a fatal error?
-    bool tolerateExceptions_;
-
-    //- Should a non-uniform variable result in a warning?
-    bool warnOnNonUniform_;
-
-    //- Is this correctly parallelized?
-    bool isParallelized_;
-
-    //- Should parallel runs only run on the master
-    bool parallelMasterOnly_;
-
-    //- List of global swak namespaces to get values
-
-    //- variables in those namespaces should be inserted into the
-    //- Python namespace before running the snipplet
-    wordList swakToPythonNamespaces_;
-
-    //- Namespace to write values to
-
-    //- this global swak-namespace will get all values (if the user request such)
-    word pythonToSwakNamespace_;
-
-    //- Python variables that swak will receive
-
-    //- the values of these variables will get written to the global swak namespace
-    //- only variables that can be either interpreted as a scalar or a vector are
-    //- supported
-    wordList pythonToSwakVariables_;
-
-    //- should we get an interactive Python-Shell after every code-Execution?
-
-    //- used for debugging the Python-program
-    bool interactiveAfterExecute_;
-
-    //- used for debugging of failed Python-program
-    bool interactiveAfterException_;
-
     void getGlobals();
 
     void setGlobals();
 
     void initIPython();
+
+    void initInteractiveSpecial();
 
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
@@ -156,15 +120,6 @@ protected:
     //- release the state to "my" interpreter
     void releaseInterpreter();
 
-    //- Check whether we want to continue (parallel)
-    bool parallelNoRun(bool doWarning=false);
-
-    //- make sure that no functions are called that are no meant to be called in parallel
-    void assertParallel(const word &name);
-
-    //- whether the result has to be broadcast from the master processor
-    bool parallelMustBroadcast();
-
     //- run an interactive sesssion
     void interactiveLoop(const string &banner);
 
@@ -174,12 +129,6 @@ protected:
         const word &as="",
         bool useMainThreadStat=false
     );
-
-    //- copy the global variables to other processors if only the master has them
-    void scatterGlobals();
-
-    //- wait for all processors
-    void syncParallel() const;
 
 public:
     //- Execute code. Return true if there was no problem
@@ -222,20 +171,6 @@ public:
         bool failOnException=false
     );
 
-    //- Read code according to the dictionary
-    void readCode(
-        const dictionary &dict,
-        const word &prefix,
-        string &code,
-        bool mustRead=true
-    );
-
-    //- shorthand for reading
-    string readCode(
-        const word &prefix,
-        bool mustRead=true
-    );
-
     //- set up the environment with the basic variables
     void initEnvironment(const Time &t);
 
@@ -258,10 +193,6 @@ public:
 
     virtual ~pythonInterpreterWrapper();
 
-    void setInteractive(
-        bool interactiveAfterExecute,
-        bool interactiveAfterException
-    );
 };
 
 
