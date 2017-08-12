@@ -216,19 +216,6 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
         return;
     }
 
-    if(
-        interpreterToSwakVariables_.size()>0
-        &&
-        interpreterToSwakNamespace_==""
-    ) {
-        FatalErrorIn("pythonInterpreterWrapper::pythonInterpreterWrapper")
-            << "There are outgoing variables " << interpreterToSwakVariables_
-                << " defined, but no namespace 'interpreterToSwakNamespace'"
-                << " to write them to"
-                << endl
-                << exit(FatalError);
-    }
-
     interpreterCount++;
 
     Pbug << "Getting new interpreter" << endl;

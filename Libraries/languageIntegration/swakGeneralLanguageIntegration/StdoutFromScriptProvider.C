@@ -43,18 +43,6 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    // defineTypeNameAndDebug(StdoutFromScriptProvider,0);
-
-    // // to keep the macro happy
-    // typedef dynamicFunctionObjectListProxy::dynamicDictionaryProvider dynamicFunctionObjectListProxydynamicDictionaryProvider;
-
-    // addToRunTimeSelectionTable
-    // (
-    //     dynamicFunctionObjectListProxydynamicDictionaryProvider,
-    //     StdoutFromScriptProvider,
-    //     dictionary
-    // );
-
     template<class Wrapper>
     StdoutFromScriptProvider<Wrapper>::StdoutFromScriptProvider(
         const dictionary& dict,

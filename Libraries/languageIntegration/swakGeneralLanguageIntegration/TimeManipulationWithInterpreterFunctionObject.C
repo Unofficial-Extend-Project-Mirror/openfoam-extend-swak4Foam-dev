@@ -47,8 +47,6 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    // defineTypeNameAndDebug(timeManipulationWithPythonFunctionObject, 0);
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

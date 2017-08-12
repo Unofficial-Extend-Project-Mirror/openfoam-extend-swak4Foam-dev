@@ -32,7 +32,8 @@ Class
     TimeManipulationWithInterpreterFunctionObject
 
 Description
-    Basis for function objects that manipulate the runTime via Python-snipplets
+    Basis for function objects that manipulate the runTime via Interpreter-snipplets
+
 SourceFiles
     TimeManipulationWithInterpreterFunctionObject.C
 
@@ -46,8 +47,6 @@ Contributors/Copyright:
 #define TimeManipulationWithInterpreterFunctionObject_H
 
 #include "timeManipulationFunctionObject.H"
-
-#include "pythonInterpreterWrapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

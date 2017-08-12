@@ -50,8 +50,6 @@ Contributors/Copyright:
 
 #include "conditionDrivenWritingFunctionObject.H"
 
-#include "pythonInterpreterWrapper.H"
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

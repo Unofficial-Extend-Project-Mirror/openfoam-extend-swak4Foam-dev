@@ -32,7 +32,7 @@ Class
     SetEndTimeWithInterpreterFunctionObject
 
 Description
-    Set the end time according to a number returned by a python-snipplet
+    Set the end time according to a number returned by a interpretr-snipplet
 
 SourceFiles
     SetEndTimeWithInterpreterFunctionObject.C

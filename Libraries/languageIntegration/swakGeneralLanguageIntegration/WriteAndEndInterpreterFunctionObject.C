@@ -45,14 +45,6 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    // defineTypeNameAndDebug(WriteAndEndInterpreterFunctionObject, 0);
-
-    // addToRunTimeSelectionTable
-    // (
-    //     functionObject,
-    //     WriteAndEndInterpreterFunctionObject,
-    //     dictionary
-    // );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -114,7 +106,8 @@ bool WriteAndEndInterpreterFunctionObject<Wrapper>::endRunNow()
     }
 
     if(result) {
-        Info << "Stopping because python code  " << conditionCode_
+        Info << "Stopping because " << this->interpreterName()
+            << " code  " << conditionCode_
             << " evaluated to 'true' in " << this->name() << endl;
     }
 

@@ -45,14 +45,6 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    // defineTypeNameAndDebug(WriteIfInterpreterFunctionObject, 0);
-
-    // addToRunTimeSelectionTable
-    // (
-    //     functionObject,
-    //     WriteIfInterpreterFunctionObject,
-    //     dictionary
-    // );
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 

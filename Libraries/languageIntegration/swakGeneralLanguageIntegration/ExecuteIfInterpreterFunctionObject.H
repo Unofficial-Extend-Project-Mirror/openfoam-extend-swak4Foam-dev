@@ -49,8 +49,6 @@ Contributors/Copyright:
 
 #include "conditionalFunctionObjectListProxy.H"
 
-// #include "pythonInterpreterWrapper.H"
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam

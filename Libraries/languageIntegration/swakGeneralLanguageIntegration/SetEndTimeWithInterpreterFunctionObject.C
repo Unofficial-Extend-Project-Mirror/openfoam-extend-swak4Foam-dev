@@ -47,15 +47,6 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    // defineTypeNameAndDebug(setEndTimeWithPythonFunctionObject, 0);
-
-    // addToRunTimeSelectionTable
-    // (
-    //     functionObject,
-    //     setEndTimeWithPythonFunctionObject,
-    //     dictionary
-    // );
-
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
