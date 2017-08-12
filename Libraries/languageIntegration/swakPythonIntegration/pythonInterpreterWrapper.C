@@ -308,7 +308,6 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
                 << endl << "If code hangs during importing try importing "
             "the libraries from here first"
                 << endl;
-
     }
 
     PyEval_ReleaseThread(pythonState_);
@@ -446,66 +445,19 @@ void pythonInterpreterWrapper::releaseInterpreter()
     //     PyEval_ReleaseThread(mainThreadState);
 }
 
-bool pythonInterpreterWrapper::executeCode(
-    const string &code,
-    bool putVariables,
-    bool failOnException
-)
-{
-    Pbug << "ExecuteCode: " << code << endl;
-    if(code.size()==0) {
-        Pbug << "No code. Exiting" << endl;
-        return true;
-    }
-    syncParallel();
-
-    int fail=0;
-
-    if(!parallelNoRun()) {
-        setInterpreter();
-
-        getGlobals();
-
-        Pbug << "Execute" << endl;
-        fail=PyRun_SimpleString(code.c_str());
-        Pbug << "Fail: " << fail << endl;
-
-        doAfterExecution(fail,code,putVariables,failOnException);
-
-        releaseInterpreter();
-    }
-
-    if(parallelMustBroadcast()) {
-        Pbug << "Prescatter: " << fail << endl;
-        Pstream::scatter(fail);
-        Pbug << "Postscatter: " << fail << endl;
-        if(putVariables) {
-            scatterGlobals();
-        }
-    }
-
-    return fail==0;
+bool pythonInterpreterWrapper::executeCodeInternal(
+    const string &code
+) {
+    return PyRun_SimpleString(code.c_str())==0;
 }
 
-bool pythonInterpreterWrapper::executeCodeCaptureOutput(
+bool pythonInterpreterWrapper::executeCodeCaptureOutputInternal(
     const string &code,
-    string &stdout,
-    bool putVariables,
-    bool failOnException
+    string &stdout
 ) {
-    Pbug << "ExecuteCodeCaptureOutput: " << code << endl;
-    syncParallel();
+    PyObject *m = PyImport_AddModule("__main__");
 
-    int fail=0;
-
-    if(!parallelNoRun()) {
-        setInterpreter();
-
-        getGlobals();
-
-        PyObject *m = PyImport_AddModule("__main__");
-
-        char const* catcherCode =
+    char const* catcherCode =
 "# catcher code\n"
 "import sys\n"
 "class __StdoutCatcher:\n"
@@ -517,36 +469,21 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutput(
 "__precatcherStdout = sys.stdout\n"
 "sys.stdout = __catcher\n";
 
-        PyRun_SimpleString(catcherCode);
+    PyRun_SimpleString(catcherCode);
 
-        fail=PyRun_SimpleString(code.c_str());
+    int fail=PyRun_SimpleString(code.c_str());
 
-        char const* postCatchCode =
+    char const* postCatchCode =
 "sys.stdout = __precatcherStdout\n";
 
-        PyRun_SimpleString(postCatchCode);
+    PyRun_SimpleString(postCatchCode);
 
-        doAfterExecution(fail,code,putVariables,failOnException);
+    //    doAfterExecution(fail,code,putVariables,failOnException);
 
-        PyObject* catcher = PyObject_GetAttrString(m, "__catcher");
-        PyObject* output = PyObject_GetAttrString(catcher, "data");
+    PyObject* catcher = PyObject_GetAttrString(m, "__catcher");
+    PyObject* output = PyObject_GetAttrString(catcher, "data");
 
-        stdout=string(PyString_AsString(output));
-
-        Pbug << "Fail: " << fail << " Captured: " << stdout << endl;
-
-        releaseInterpreter();
-    }
-
-    if(parallelMustBroadcast()) {
-        Pbug << "Prescatter: " << fail << endl;
-        Pstream::scatter(fail);
-        Pstream::scatter(stdout);
-        Pbug << "Postscatter: " << fail << endl;
-        if(putVariables) {
-            scatterGlobals();
-        }
-    }
+    stdout=string(PyString_AsString(output));
 
     return fail==0;
 }
@@ -781,7 +718,7 @@ void pythonInterpreterWrapper::doAfterExecution(
     bool failOnException
 )
 {
-    if(fail!=0) {
+    if(fail) {
         Info << "Python Exception" << endl;
         PyErr_Print();
     }
@@ -789,14 +726,14 @@ void pythonInterpreterWrapper::doAfterExecution(
     if(
         interactiveAfterException_
         &&
-        fail!=0
+        fail
     ) {
         Info << "Got an exception for "<< code
             << " now you can interact." << endl;
         interactiveLoop("Exception handling");
     }
     if(
-        fail!=0
+        fail
         &&
         (
             !tolerateExceptions_

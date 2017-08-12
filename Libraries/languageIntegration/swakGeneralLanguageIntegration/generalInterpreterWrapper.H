@@ -155,13 +155,29 @@ protected:
         bool interactiveAfterException
     );
 
+    //- set the state to "my" interpreter
+    virtual void setInterpreter() = 0;
+
+    //- release the state to "my" interpreter
+    virtual void releaseInterpreter() = 0;
+
+
+    virtual bool executeCodeInternal(
+        const string &code
+    ) = 0;
+
+    virtual bool executeCodeCaptureOutputInternal(
+        const string &code,
+        string &stdout
+    ) = 0;
+
 public:
     //- Execute code. Return true if there was no problem
-    virtual bool executeCode(
+    bool executeCode(
         const string &code,
         bool putVariables,
         bool failOnException=false
-    ) = 0;
+    );
 
     //- Execute code and capture the stdout. Return true if there was no problem
     virtual bool executeCodeCaptureOutput(
@@ -169,7 +185,7 @@ public:
         string &stdout,
         bool putVariables,
         bool failOnException=false
-    ) = 0;
+    );
 
     //- Execute code and see if it returns to true or false
     virtual bool evaluateCodeTrueOrFalse(

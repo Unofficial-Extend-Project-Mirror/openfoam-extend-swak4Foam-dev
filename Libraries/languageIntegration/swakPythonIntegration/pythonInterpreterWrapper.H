@@ -130,21 +130,16 @@ protected:
         bool useMainThreadStat=false
     );
 
-public:
-    //- Execute code. Return true if there was no problem
-    bool executeCode(
-        const string &code,
-        bool putVariables,
-        bool failOnException=false
+    bool executeCodeInternal(
+        const string &code
     );
 
-    //- Execute code and capture the stdout. Return true if there was no problem
-    bool executeCodeCaptureOutput(
+    bool executeCodeCaptureOutputInternal(
         const string &code,
-        string &stdout,
-        bool putVariables,
-        bool failOnException=false
+        string &stdout
     );
+
+public:
 
     //- Execute code and return a value
     template <typename T,class Func>

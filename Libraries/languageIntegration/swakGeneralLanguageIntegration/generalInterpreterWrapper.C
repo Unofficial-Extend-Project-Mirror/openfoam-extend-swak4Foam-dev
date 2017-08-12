@@ -400,6 +400,89 @@ const word generalInterpreterWrapper::InterpreterName() {
     return result;
 }
 
+bool generalInterpreterWrapper::executeCode(
+    const string &code,
+    bool putVariables,
+    bool failOnException
+)
+{
+    Pbug << "ExecuteCode: " << code << endl;
+    if(code.size()==0) {
+        Pbug << "No code. Exiting" << endl;
+        return true;
+    }
+    syncParallel();
+
+    bool success=false;
+
+    if(!parallelNoRun()) {
+        setInterpreter();
+
+        getGlobals();
+
+        Pbug << "Execute" << endl;
+        success=executeCodeInternal(code);
+        Pbug << "Success: " << success << endl;
+
+        doAfterExecution(!success,code,putVariables,failOnException);
+
+        releaseInterpreter();
+    }
+
+    if(parallelMustBroadcast()) {
+        Pbug << "Prescatter: " << success << endl;
+        Pstream::scatter(success);
+        Pbug << "Postscatter: " << success << endl;
+        if(putVariables) {
+            scatterGlobals();
+        }
+    }
+
+    return success;
+}
+
+bool generalInterpreterWrapper::executeCodeCaptureOutput(
+    const string &code,
+    string &stdout,
+    bool putVariables,
+    bool failOnException
+) {
+    Pbug << "ExecuteCodeCaptureOutput: " << code << endl;
+    syncParallel();
+
+    bool success=false;
+
+    if(!parallelNoRun()) {
+        setInterpreter();
+
+        getGlobals();
+
+        success=executeCodeCaptureOutputInternal(
+            code,
+            stdout
+        );
+
+        doAfterExecution(!success,code,putVariables,failOnException);
+
+        Pbug << "Success: " << success << " Captured: " << stdout << endl;
+
+        releaseInterpreter();
+    }
+
+    if(parallelMustBroadcast()) {
+        Pbug << "Prescatter: " << success << endl;
+        Pstream::scatter(success);
+        Pstream::scatter(stdout);
+        Pbug << "Postscatter: " << success << endl;
+        if(putVariables) {
+            scatterGlobals();
+        }
+    }
+
+    return success;
+}
+
+
 } // namespace Foam
 
 // ************************************************************************* //
