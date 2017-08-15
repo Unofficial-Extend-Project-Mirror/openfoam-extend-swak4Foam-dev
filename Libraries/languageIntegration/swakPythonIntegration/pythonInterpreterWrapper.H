@@ -52,7 +52,7 @@ Contributors/Copyright:
 
 #include "Python.h"
 
-#include "generalInterpreterWrapper.H"
+#include "generalInterpreterWrapperCRTP.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,7 +66,7 @@ namespace Foam
 
 class pythonInterpreterWrapper
 :
-    public generalInterpreterWrapper
+    public generalInterpreterWrapperCRTP<pythonInterpreterWrapper>
 {
     // Private Member Functions
 
@@ -143,28 +143,31 @@ public:
 
     //- Execute code and return a value
     template <typename T,class Func>
-    T evaluateCode(
+    T evaluateCodeInternal(
         const string &code,
-        bool failOnException=false
+        bool &success
     );
 
-    //- Execute code and see if it returns to true or false
-    bool evaluateCodeTrueOrFalse(
-        const string &code,
-        bool failOnException=false
-    );
+    class toBool {
+    public:
+        bool operator()(PyObject *&pResult) {
+            return PyObject_IsTrue(pResult);
+        }
+    };
 
-     //- Execute code and use the return value as a float value
-    scalar evaluateCodeScalar(
-        const string &code,
-        bool failOnException=false
-    );
+    class toScalar {
+    public:
+        scalar operator()(PyObject *&pResult) {
+            return PyFloat_AsDouble(pResult);
+        }
+    };
 
-      //- Execute code and use the return value as a integer value
-    label evaluateCodeLabel(
-        const string &code,
-        bool failOnException=false
-    );
+    class toLabel {
+    public:
+        label operator()(PyObject *&pResult) {
+            return PyInt_AsLong(pResult);
+        }
+    };
 
     //- set up the environment with the basic variables
     void initEnvironment(const Time &t);

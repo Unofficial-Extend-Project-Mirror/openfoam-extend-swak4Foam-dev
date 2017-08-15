@@ -144,7 +144,7 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     const dictionary& dict,
     bool forceToNamespace
 ):
-    generalInterpreterWrapper(
+    generalInterpreterWrapperCRTP<pythonInterpreterWrapper>(
         obr,
         dict,
         forceToNamespace,
@@ -488,126 +488,65 @@ bool pythonInterpreterWrapper::executeCodeCaptureOutputInternal(
     return fail==0;
 }
 
-class pyToBool {
-public:
-    bool operator()(PyObject *&pResult) {
-        return PyObject_IsTrue(pResult);
-    }
-};
-
-bool pythonInterpreterWrapper::evaluateCodeTrueOrFalse(const string &code,bool failOnException)
-{
-    Pbug << "evaluateCodeTrueOrFalse" << endl;
-
-    return evaluateCode<bool,pyToBool>(code,failOnException);
-}
-
-class pyToScalar {
-public:
-    scalar operator()(PyObject *&pResult) {
-        return PyFloat_AsDouble(pResult);
-    }
-};
-
-scalar pythonInterpreterWrapper::evaluateCodeScalar(const string &code,bool failOnException)
-{
-    Pbug << "evaluateCodeScalar" << endl;
-
-    return evaluateCode<scalar,pyToScalar>(code,failOnException);
-}
-
-class pyToLabel {
-public:
-    label operator()(PyObject *&pResult) {
-        return PyInt_AsLong(pResult);
-    }
-};
-
-label pythonInterpreterWrapper::evaluateCodeLabel(const string &code,bool failOnException)
-{
-    Pbug << "evaluateCodeLabel" << endl;
-
-    return evaluateCode<label,pyToLabel>(code,failOnException);
-}
-
-template <typename T,class Func>
-T pythonInterpreterWrapper::evaluateCode(
+template <typename Result,class Func>
+Result pythonInterpreterWrapper::evaluateCodeInternal(
     const string &code,
-    bool failOnException
+    bool &success
 )
 {
-    Pbug << "evaluateCode: " << code << endl;
-    syncParallel();
+    Result result=pTraits<Result>::zero;
 
-    T result=pTraits<T>::zero;
-    if(!parallelNoRun()) {
-        setInterpreter();
+    const word funcName("decisionFunction");
+    string functionCode="def "+funcName+"():\n";
 
-        getGlobals();
-
-        const word funcName("decisionFunction");
-        string functionCode="def "+funcName+"():\n";
-
-        std::stringstream ss(code.c_str());
-        std::string line;
-        while(std::getline(ss, line)) {
-            functionCode+="    "+line+"\n";
-        }
-
-        Pbug << "Function code:" << endl
-            << functionCode;
-
-        PyObject *m = PyImport_AddModule("__main__");
-        PyObject *d = PyModule_GetDict(m);
-
-        PyObject *pResult=NULL;
-        PyObject *pCode=(Py_CompileString(functionCode.c_str(),"<string from swak>",Py_file_input));
-
-        if( pCode!=NULL && !PyErr_Occurred()) {
-            Pbug << "Compiled " << code << endl;
-
-            PyObject *pFunc=PyFunction_New(pCode,d);
-            Dbug << "Is function: " << PyFunction_Check(pFunc) << endl;
-
-            PyObject *pTemp=PyObject_CallFunction(pFunc,NULL);
-            Py_DECREF(pTemp);
-
-            pResult=PyRun_String((funcName+"()").c_str(),Py_eval_input,d,d);
-
-            Py_DECREF(pFunc);
-            Py_DECREF(pCode);
-        }
-
-        if(pResult!=NULL) {
-            if(debug) {
-                PyObject *str=PyObject_Str(pResult);
-
-                Pbug << "Result is " << PyString_AsString(str) << endl;
-
-                Py_DECREF(str);
-            }
-
-            result=Func()(pResult);
-            Pbug << "Evaluated to " << result << endl;
-
-            Py_DECREF(pResult);
-        }
-
-        bool success=(pResult!=NULL && !PyErr_Occurred());
-
-        Pbug << "Success of execution " << success << endl;
-
-        doAfterExecution(!success,code,false,failOnException);
-
-        releaseInterpreter();
+    std::stringstream ss(code.c_str());
+    std::string line;
+    while(std::getline(ss, line)) {
+        functionCode+="    "+line+"\n";
     }
 
-    if(parallelMustBroadcast()) {
-        Pbug << "Prescatter: " << result << endl;
-        Pstream::scatter(result);
-        Pbug << "Postscatter: " << result << endl;
-        //        scatterGlobals();
+    Pbug << "Function code:" << endl
+        << functionCode;
+
+    PyObject *m = PyImport_AddModule("__main__");
+    PyObject *d = PyModule_GetDict(m);
+
+    PyObject *pResult=NULL;
+    PyObject *pCode=(Py_CompileString(functionCode.c_str(),"<string from swak>",Py_file_input));
+
+    if( pCode!=NULL && !PyErr_Occurred()) {
+        Pbug << "Compiled " << code << endl;
+
+        PyObject *pFunc=PyFunction_New(pCode,d);
+        Dbug << "Is function: " << PyFunction_Check(pFunc) << endl;
+
+        PyObject *pTemp=PyObject_CallFunction(pFunc,NULL);
+        Py_DECREF(pTemp);
+
+        pResult=PyRun_String((funcName+"()").c_str(),Py_eval_input,d,d);
+
+        Py_DECREF(pFunc);
+        Py_DECREF(pCode);
     }
+
+    if(pResult!=NULL) {
+        if(debug) {
+            PyObject *str=PyObject_Str(pResult);
+
+            Pbug << "Result is " << PyString_AsString(str) << endl;
+
+            Py_DECREF(str);
+        }
+
+        result=Func()(pResult);
+        Pbug << "Evaluated to " << result << endl;
+
+        Py_DECREF(pResult);
+    }
+
+    success=(pResult!=NULL && !PyErr_Occurred());
+
+    Pbug << "Success of execution " << success << endl;
 
     return result;
 }
