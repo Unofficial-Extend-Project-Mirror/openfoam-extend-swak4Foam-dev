@@ -150,11 +150,6 @@ protected:
     // Special initialization for interactive mode
     virtual void initInteractiveSpecial() = 0;
 
-    void setInteractive(
-        bool interactiveAfterExecute,
-        bool interactiveAfterException
-    );
-
     //- set the state to "my" interpreter
     virtual void setInterpreter() = 0;
 
@@ -172,6 +167,11 @@ protected:
     ) = 0;
 
 public:
+    void setInteractive(
+        bool interactiveAfterExecute,
+        bool interactiveAfterException
+    );
+
     //- Execute code. Return true if there was no problem
     bool executeCode(
         const string &code,

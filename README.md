@@ -166,9 +166,9 @@ present these unconfigured features will not be compiled.
 
 Environment variables that can be set in this file are:
 
--   **SWAK<sub>PYTHON</sub><sub>INCLUDE</sub>:** Path to the `Python.h` file of the used
+-   **SWAK<sub>PYTHON2</sub><sub>INCLUDE</sub>:** Path to the `Python.h` file of the used
     `python`-installation
--   **SWAK<sub>PYTHON</sub><sub>LINK</sub>:** Options to link the `python`-library to the
+-   **SWAK<sub>PYTHON2</sub><sub>LINK</sub>:** Options to link the `python`-library to the
     library for the `python`-integration
 -   **SWAK<sub>USER</sub><sub>PLUGINS</sub>:** A list of paths separated by
     semicolons. These are the directories of libraries with
@@ -220,8 +220,8 @@ suffix `Cluster` makes a file
 `libswakPythonIntegrationCluster.so`). That script has to be run
 **on the target system** and needs 3 parameters:
 
-1.  `SWAK_PYTHON_INCLUDE`
-2.  `SWAK_PYTHON_LINK`
+1.  `SWAK_PYTHON2_INCLUDE`
+2.  `SWAK_PYTHON2_LINK`
 3.  The suffix
 
 For instance
@@ -6147,6 +6147,12 @@ The field name is now the name of the original field plus
 that field have to be provided
 
 
+#### Environment variables for Python 2 integration renamed
+
+These environment variables are now renamed from `_PYTHON_` to
+`_PYTHON2_`. Scripts are adapted
+
+
 ### Bug fixes
 
 
@@ -6158,6 +6164,13 @@ temporary field.
 
 
 ### Internals (for developers)
+
+
+#### Refactoring of the python integration
+
+The Python integration has now been split into the actual Python
+2 integration and a general part to allow the integration of
+other interpreter languages
 
 
 ### Infrastructure

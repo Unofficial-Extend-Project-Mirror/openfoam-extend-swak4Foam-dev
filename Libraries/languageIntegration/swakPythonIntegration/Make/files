@@ -3,4 +3,4 @@ pythonIntegrationFunctionObject.C
 pythonFluIntegrationFunctionObject.C
 makeFunctionObjects.C
 
-LIB = $(FOAM_USER_LIBBIN)/libswakPythonIntegration$(SWAK_PYTHON_INTEGRATION_SUFFIX)
+LIB = $(FOAM_USER_LIBBIN)/libswakPythonIntegration$(SWAK_PYTHON2_INTEGRATION_SUFFIX)

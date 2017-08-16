@@ -9,7 +9,7 @@ fi
 
 wmake libso swakGeneralLanguageIntegration
 
-if [ "$SWAK_PYTHON_INCLUDE" != "" ]
+if [ "$SWAK_PYTHON2_INCLUDE" != "" ]
 then
     SOEXT=so
 
@@ -26,7 +26,6 @@ then
     wmake libso swakPythonIntegration
 else
     echo
-    echo "SWAK_PYTHON_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
+    echo "SWAK_PYTHON2_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
     echo
 fi
-

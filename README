@@ -129,9 +129,9 @@
     present these unconfigured features will not be compiled.
 
     Environment variables that can be set in this file are:
-    - SWAK_PYTHON_INCLUDE :: Path to the =Python.h= file of the used
+    - SWAK_PYTHON2_INCLUDE :: Path to the =Python.h= file of the used
          =python=-installation
-    - SWAK_PYTHON_LINK :: Options to link the =python=-library to the
+    - SWAK_PYTHON2_LINK :: Options to link the =python=-library to the
          library for the =python=-integration
     - SWAK_USER_PLUGINS :: A list of paths separated by
          semicolons. These are the directories of libraries with
@@ -176,8 +176,8 @@
     suffix =Cluster= makes a file
     =libswakPythonIntegrationCluster.so=). That script has to be run
     *on the target system* and needs 3 parameters:
-    1. =SWAK_PYTHON_INCLUDE=
-    2. =SWAK_PYTHON_LINK=
+    1. =SWAK_PYTHON2_INCLUDE=
+    2. =SWAK_PYTHON2_LINK=
     3. The suffix
     For instance
 : ./maintainanceScripts/makeSpecialPythonLibrary.sh -I/opt/local/Library/Frameworks/Python.framework/Versions/2.5/include/python2.5 "-L/opt/local/lib -lpython2.5" Version2.5
@@ -3945,12 +3945,19 @@ S_{expl} + S_{impl} T
      The field name is now the name of the original field plus
      =Potential=. This means that in =fvSchemes= discretizations for
      that field have to be provided
+**** Environment variables for Python 2 integration renamed
+     These environment variables are now renamed from =_PYTHON_= to
+     =_PYTHON2_=. Scripts are adapted
 *** Bug fixes
 **** =initPotentialFlow= not working in =foam-extend=
      Here the function object failed with a "copy to
      myself"-error. This has been fixed by changing the name of the
      temporary field.
 *** Internals (for developers)
+**** Refactoring of the python integration
+     The Python integration has now been split into the actual Python
+     2 integration and a general part to allow the integration of
+     other interpreter languages
 *** Infrastructure
 *** Documentation
 *** New features

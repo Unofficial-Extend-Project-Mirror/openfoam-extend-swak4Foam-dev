@@ -2,13 +2,13 @@ include $(OBJECTS_DIR)/../../../../rules/versionOptions
 
 EXE_INC = \
         $(FOAM_DEV_OPTION) \
-	$(SWAK_PYTHON_INCLUDE) \
+	$(SWAK_PYTHON2_INCLUDE) \
         -I../swakGeneralLanguageIntegration/lnInclude \
 	-I../../swak4FoamParsers/lnInclude \
 	-I../../simpleFunctionObjects/lnInclude
         
 LIB_LIBS = \
-	$(SWAK_PYTHON_LINK) \
+	$(SWAK_PYTHON2_LINK) \
 	-L$(FOAM_USER_LIBBIN) \
         -lswakGeneralLanguageIntegration \
 	-lswak4FoamParsers \
