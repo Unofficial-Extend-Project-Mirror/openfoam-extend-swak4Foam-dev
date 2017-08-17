@@ -29,3 +29,24 @@ else
     echo "SWAK_PYTHON2_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
     echo
 fi
+
+if [ "$SWAK_PYTHON3_INCLUDE" != "" ]
+then
+    SOEXT=so
+
+    if [ `uname -s`=="Darwin" ]; then
+	SOEXT=dylib
+    fi
+
+    oldPython="$FOAM_USER_LIBBIN/libpythonIntegration.$SOEXT"
+    if [ -e $oldPython ]
+    then
+	echo "Removing old python integration $oldPython"
+	rm $oldPython
+    fi
+    wmake libso swakPython3Integration
+else
+    echo
+    echo "SWAK_PYTHON3_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
+    echo
+fi
