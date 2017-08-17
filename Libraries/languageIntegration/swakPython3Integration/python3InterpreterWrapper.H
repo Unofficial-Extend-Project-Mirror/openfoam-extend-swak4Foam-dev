@@ -81,6 +81,13 @@ class python3InterpreterWrapper
     //- state of 'my' Python subinterpreter
     PyThreadState *pythonState_;
 
+    //- remember the state of the gil
+    PyGILState_STATE gilState_;
+
+    void getGIL();
+
+    void releaseGIL();
+
     //- whether or not to use the numpy library
     bool useNumpy_;
 

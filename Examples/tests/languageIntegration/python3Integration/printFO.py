@@ -2,7 +2,7 @@ print("""
 functions {
     pythonDynamicOutput
     {
-        type pythonIntegration;
+        type python3Integration;
 
         startCode "print('Dynamic Starting')";
         executeCode "print('Dynamic Executing')";

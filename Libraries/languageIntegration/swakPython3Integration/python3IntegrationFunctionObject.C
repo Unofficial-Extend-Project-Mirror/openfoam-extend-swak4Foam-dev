@@ -85,7 +85,7 @@ python3IntegrationFunctionObject::python3IntegrationFunctionObject
         PyObject_SetAttrString(
             m,
             "functionObjectName",
-            PyBytes_FromString(this->name().c_str())
+            PyUnicode_FromString(this->name().c_str())
         );
         releaseInterpreter();
 

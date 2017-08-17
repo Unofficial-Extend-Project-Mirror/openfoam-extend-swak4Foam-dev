@@ -75,7 +75,8 @@ void python3InterpreterWrapper::initIPython() {
 
         if(useIPython_) {
     	    importLib("sys");
-	    PyRun_SimpleString("if 'argv' not in dir(sys): sys.argv=['OF-executable']");
+	    int result=PyRun_SimpleString("if 'argv' not in dir(sys): sys.argv=['OF-executable']");
+            Pbug << "no argv result " << result << endl;
 
             Dbug << "Attempting to import IPython" << endl;
 
@@ -133,7 +134,8 @@ void python3InterpreterWrapper::initIPython() {
             importLib("readline");
 
             // this currently has no effect in the embedded shell
-            PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
+            int result=PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
+            Pbug << "Result readline " << result << endl;
         }
     }
 }
@@ -189,15 +191,15 @@ python3InterpreterWrapper::python3InterpreterWrapper
 
         if(debug) {
             PyThreadState *current=PyGILState_GetThisThreadState();
-            Pbug << "GIL-state before thread" << getHex(current) << endl;
+            Pbug << "GIL-state before thread: " << getHex(current) << endl;
         }
         PyEval_InitThreads();
          if(debug) {
             PyThreadState *current=PyGILState_GetThisThreadState();
-            Pbug << "GIL-state after thread" << getHex(current) << endl;
+            Pbug << "GIL-state after thread: " << getHex(current) << endl;
         }
         // importLib("scipy.stats","stats"); - OK
-        mainThreadState = PyEval_SaveThread();
+        mainThreadState = PyThreadState_Get();
         // importLib("scipy.stats","stats"); - segFault
 
         Pbug << "Main thread state: " << getHex(mainThreadState) << endl;
@@ -218,11 +220,30 @@ python3InterpreterWrapper::python3InterpreterWrapper
 
     interpreterCount++;
 
+    getGIL();
+
     Pbug << "Getting new interpreter" << endl;
     pythonState_=Py_NewInterpreter();
     Pbug << "Interpreter state: " << getHex(pythonState_) << endl;
 
     //    interactiveLoop("Clean");
+
+    int unflush=PyRun_SimpleString(
+        "class __unbufferedFile(object):\n"
+        "    def __init__(self, stream):\n"
+        "        self.stream = stream\n"
+        "    def write(self, data):\n"
+        "        self.stream.write(data)\n"
+        "        self.stream.flush()\n"
+        "    def writelines(self, datas):\n"
+        "        self.stream.writelines(datas)\n"
+        "        self.stream.flush()\n"
+        "    def __getattr__(self, attr):\n"
+        "        return getattr(self.stream, attr)\n"
+        "import sys\n"
+        "sys.stderr = __unbufferedFile(sys.stderr)\n"
+        "sys.stdout = __unbufferedFile(sys.stdout)\n");
+    Pbug << "Unflush " << unflush << endl;
 
     initIPython();
 
@@ -290,6 +311,7 @@ python3InterpreterWrapper::python3InterpreterWrapper
             "   def __array_finalize__(self,obj):\n"
             "      if obj is None: return\n"
         );
+        Pbug << "OpenFOAMFieldArray " << fail << endl;
     }
 
     if(dict.found("importLibs")) {
@@ -310,10 +332,29 @@ python3InterpreterWrapper::python3InterpreterWrapper
                 << endl;
     }
 
+    //    releaseGIL();
+
     PyEval_ReleaseThread(pythonState_);
 
     Pbug << "End constructor" << endl;
  }
+
+void python3InterpreterWrapper::getGIL() {
+    Pbug << "Getting GIL: We have the GIL: " << PyGILState_Check() << endl;
+
+    gilState_=PyGILState_Ensure();
+
+    Pbug << "Getting GIL - post: We have the GIL: " << PyGILState_Check() << endl;
+}
+
+void python3InterpreterWrapper::releaseGIL() {
+    Pbug << "Releasing GIL: We have the GIL: " << PyGILState_Check() << endl;
+
+    PyGILState_Release(gilState_);
+
+    Pbug << "Releasing GIL - post:We have the GIL: " << PyGILState_Check() << endl;
+}
+
 
 void python3InterpreterWrapper::initEnvironment(const Time &t)
 {
@@ -325,13 +366,13 @@ void python3InterpreterWrapper::initEnvironment(const Time &t)
 
     PyObject *m = PyImport_AddModule("__main__");
 
-    PyObject_SetAttrString(m,"functionObjectName",PyBytes_FromString("notAFunctionObject"));
-    PyObject_SetAttrString(m,"caseDir",PyBytes_FromString(getEnv("FOAM_CASE").c_str()));
-    PyObject_SetAttrString(m,"systemDir",PyBytes_FromString((t.path()/t.caseSystem()).c_str()));
-    PyObject_SetAttrString(m,"constantDir",PyBytes_FromString((t.path()/t.caseConstant()).c_str()));
-    PyObject_SetAttrString(m,"meshDir",PyBytes_FromString((t.path()/t.constant()/"polyMesh").c_str()));
+    PyObject_SetAttrString(m,"functionObjectName",PyUnicode_FromString("notAFunctionObject"));
+    PyObject_SetAttrString(m,"caseDir",PyUnicode_FromString(getEnv("FOAM_CASE").c_str()));
+    PyObject_SetAttrString(m,"systemDir",PyUnicode_FromString((t.path()/t.caseSystem()).c_str()));
+    PyObject_SetAttrString(m,"constantDir",PyUnicode_FromString((t.path()/t.caseConstant()).c_str()));
+    PyObject_SetAttrString(m,"meshDir",PyUnicode_FromString((t.path()/t.constant()/"polyMesh").c_str()));
     if(Pstream::parRun()) {
-        PyObject_SetAttrString(m,"procDir",PyBytes_FromString(t.path().c_str()));
+        PyObject_SetAttrString(m,"procDir",PyUnicode_FromString(t.path().c_str()));
     }
     PyObject_SetAttrString(m,"parRun",PyBool_FromLong(Pstream::parRun()));
     PyObject_SetAttrString(m,"myProcNo",PyLong_FromLong(Pstream::myProcNo()));
@@ -361,21 +402,31 @@ void python3InterpreterWrapper::initEnvironment(const Time &t)
         "    makeDataDir(d)\n"
         "    return os.path.join(d,name)\n"
     );
+    Pbug << "makeDataDir: " << fail << endl;
 
     releaseInterpreter();
+
+    Pbug << "initEnvironment - end" << endl;
 }
 
 python3InterpreterWrapper::~python3InterpreterWrapper()
 {
+    Pbug << "Destructor" << endl;
+
     if(parallelNoRun()) {
+        Pbug << "Leaving early" << endl;
         return;
     }
 
     Dbug << "Currently " << interpreterCount
         << " Python interpreters (deleting one)" << endl;
 
+    Pbug << "State: " << getHex(pythonState_) << endl;
     if(pythonState_) {
+        getGIL();
+
         PyThreadState_Swap(pythonState_);
+        Pbug << "Ending the interpreter" << endl;
         Py_EndInterpreter(pythonState_);
         PyEval_ReleaseLock();
         pythonState_=NULL;
@@ -387,12 +438,7 @@ python3InterpreterWrapper::~python3InterpreterWrapper()
 
         PyEval_RestoreThread(mainThreadState);
         // This causes a segfault
-        //        Py_Finalize();
-        WarningIn("python3InterpreterWrapper::~python3InterpreterWrapper()")
-            << "Python not properly finalized (alternative would have been a "
-                << "segmentation fault)." << endl
-                << "This shouldn't be a problem as the program has finished anyway"
-                << endl;
+        Py_Finalize();
     }
 }
 
@@ -410,9 +456,9 @@ void python3InterpreterWrapper::setRunTime(const Time &time)
     PyObject_SetAttrString(m,"deltaT",PyFloat_FromDouble(time.deltaT().value()));
     PyObject_SetAttrString(m,"endTime",PyFloat_FromDouble(time.endTime().value()));
     PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
-    PyObject_SetAttrString(m,"timeName",PyBytes_FromString(time.timeName().c_str()));
+    PyObject_SetAttrString(m,"timeName",PyUnicode_FromString(time.timeName().c_str()));
     PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));
-    PyObject_SetAttrString(m,"timeDir",PyBytes_FromString((time.path()/time.timeName()).c_str()));
+    PyObject_SetAttrString(m,"timeDir",PyUnicode_FromString((time.path()/time.timeName()).c_str()));
 
     releaseInterpreter();
 }
@@ -421,7 +467,7 @@ void python3InterpreterWrapper::setInterpreter()
 {
     assertParallel("setInterpreter");
 
-    Pbug << "setInterpreter" << endl;
+    Pbug << "setInterpreter: We have the GIL: " << PyGILState_Check()  << endl;
 
     if(debug) {
         PyThreadState *current=PyGILState_GetThisThreadState();
@@ -430,17 +476,32 @@ void python3InterpreterWrapper::setInterpreter()
 
     if(pythonState_) {
         Pbug << "Setting state to " << getHex(pythonState_) << endl;
-        PyThreadState *old=PyThreadState_Swap(pythonState_);
+        PyThreadState *old=PyGILState_GetThisThreadState();
+        if(old==NULL) {
+            Pbug << "No current thread state" << endl;
+            PyEval_RestoreThread(pythonState_);
+        } else if(
+            old==mainThreadState
+            &&
+            PyGILState_Check()==0
+        ) {
+            Pbug << "Main thread state" << endl;
+            PyEval_RestoreThread(pythonState_);
+        } else {
+            Pbug << "Swapping out current" << endl;
+            old=PyThreadState_Swap(pythonState_);
+        }
         //        PyThreadState *old=PyThreadState_Swap(mainThreadState);
         Pbug << "Old state: " << getHex(old) << endl;
     }
+    Pbug << "setInterpreter - post: We have the GIL: " << PyGILState_Check() << endl;
 }
 
 void python3InterpreterWrapper::releaseInterpreter()
 {
     assertParallel("releaseInterpreter");
 
-    Pbug << "releaseInterpreter" << endl;
+    Pbug << "releaseInterpreter: We have the GIL: " << PyGILState_Check()  << endl;
     PyEval_ReleaseThread(pythonState_);
     //     PyEval_ReleaseThread(mainThreadState);
 }
@@ -448,6 +509,8 @@ void python3InterpreterWrapper::releaseInterpreter()
 bool python3InterpreterWrapper::executeCodeInternal(
     const string &code
 ) {
+    Pbug << "executeCodeInternal: " << code << endl;
+
     return PyRun_SimpleString(code.c_str())==0;
 }
 
@@ -455,6 +518,8 @@ bool python3InterpreterWrapper::executeCodeCaptureOutputInternal(
     const string &code,
     string &stdout
 ) {
+    Pbug << "executeCodeCaptureOutputInternal: " << code << endl;
+
     PyObject *m = PyImport_AddModule("__main__");
 
     char const* catcherCode =
@@ -469,21 +534,28 @@ bool python3InterpreterWrapper::executeCodeCaptureOutputInternal(
 "__precatcherStdout = sys.stdout\n"
 "sys.stdout = __catcher\n";
 
-    PyRun_SimpleString(catcherCode);
+    int result=PyRun_SimpleString(catcherCode);
+    Pbug << "catcher Code: " << result << endl;
 
     int fail=PyRun_SimpleString(code.c_str());
 
     char const* postCatchCode =
 "sys.stdout = __precatcherStdout\n";
 
-    PyRun_SimpleString(postCatchCode);
+    result=PyRun_SimpleString(postCatchCode);
+    Pbug << "post catcher Code: " << result << endl;
 
     //    doAfterExecution(fail,code,putVariables,failOnException);
 
     PyObject* catcher = PyObject_GetAttrString(m, "__catcher");
     PyObject* output = PyObject_GetAttrString(catcher, "data");
+    PyObject* ascii = PyUnicode_AsASCIIString(output);
 
-    stdout=string(PyBytes_AsString(output));
+    Pbug << "Catcher " << getHex(catcher) << " Output: " << getHex(output)
+        << " Ascii " << getHex(ascii) << endl;
+    stdout=string(PyBytes_AsString(ascii));
+
+    Py_DECREF(ascii);
 
     return fail==0;
 }
@@ -494,6 +566,8 @@ Result python3InterpreterWrapper::evaluateCodeInternal(
     bool &success
 )
 {
+    Pbug << "evaluateCodeInternal: " << code << endl;
+
     Result result=pTraits<Result>::zero;
 
     const word funcName("decisionFunction");
@@ -529,12 +603,17 @@ Result python3InterpreterWrapper::evaluateCodeInternal(
         Py_DECREF(pCode);
     }
 
+    Pbug << "Has Python-result " << getHex(pResult) << endl;
     if(pResult!=NULL) {
         if(debug) {
             PyObject *str=PyObject_Str(pResult);
+            Pbug << "String representation " << getHex(str) << endl;
+            PyObject *ascii=PyUnicode_AsASCIIString(str);
+            Pbug << " string at " << getHex(ascii)
+                << endl;
+            Pbug << "Result is " << PyBytes_AsString(ascii) << endl;
 
-            Pbug << "Result is " << PyBytes_AsString(str) << endl;
-
+            Py_DECREF(ascii);
             Py_DECREF(str);
         }
 
@@ -585,7 +664,6 @@ void python3InterpreterWrapper::interactiveLoop(
             WarningIn("python3InterpreterWrapper::interactiveLoop")
                 << "Problem executing "+cmdString
                     << endl;
-
         }
     }
 }
@@ -819,7 +897,7 @@ void python3InterpreterWrapper::getGlobals()
 
                 OStringStream cmd;
                 cmd << var << "=OpenFOAMFieldArray(";
-                cmd << "address='" << val.getAddressAsDecimal() << "',";
+                cmd << "address=" << val.getAddressAsDecimal() << ",";
                 cmd << "typestr='<f" << label(sizeof(scalar)) << "',";
                 cmd << "size=" << val.size();
                 label nr=-1;
@@ -844,7 +922,8 @@ void python3InterpreterWrapper::getGlobals()
 
                 Pbug << "Python: " << cmd.str() << endl;
 
-                PyRun_SimpleString(cmd.str().c_str());
+                int result=PyRun_SimpleString(cmd.str().c_str());
+                Pbug << "Result: " << result << endl;
             }
             Pbug << "Variable done" << endl;
         }
@@ -919,19 +998,22 @@ void python3InterpreterWrapper::setGlobals()
                 );
                 if(debug) {
                     PyObject *repr=PyObject_Str(interface);
+                    PyObject *ascii=PyUnicode_AsASCIIString(repr);
                     Dbug << "__array__interface__"
-                        << string(PyBytes_AsString(repr)) << endl;
+                        << string(PyBytes_AsString(ascii)) << endl;
+                    Py_DECREF(ascii);
                     Py_DECREF(repr);
                 }
                 OStringStream cmd;
                 cmd << "<f" << label(sizeof(scalar));
                 PyObject *typestrExpected=PyBytes_FromString(cmd.str().c_str());
-                PyObject *typestrIs=PyObject_Str(
+                PyObject *typestrIsRepr=PyObject_Str(
                     PyMapping_GetItemString(
                         interface,
                         "typestr"
                     )
                 );
+                PyObject *typestrIs=PyUnicode_AsASCIIString(typestrIsRepr);
 
                 Dbug << "Expected typestring "
                     << string(PyBytes_AsString(typestrExpected))
@@ -1031,6 +1113,7 @@ void python3InterpreterWrapper::setGlobals()
                 Dbug << "Created result" << eResult << endl;
 
                 Py_DECREF(typestrExpected);
+                Py_DECREF(typestrIsRepr);
                 Py_DECREF(typestrIs);
             } else {
                 PyObject *tuple=PySequence_Tuple(pVar);

@@ -52,9 +52,9 @@ functions {
 
         //        debugPythonWrapper 1; // switching on
 
-        startCode "print 'Starting';a=0; print dir()";
-        executeCode "a+=1; print 'a:',a";
-        endCode "print 'Never been here'";
+        startCode "print('Starting');a=0; print(dir())";
+        executeCode "a+=1; print('a:',a)";
+        endCode "print('Never been here')";
         //        tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
@@ -66,8 +66,8 @@ functions {
         type python3Integration;
 
         startCode "";
-        executeCode "print 'timeName :',timeName,'outputTime:',outputTime";
-        endCode "print 'timeName :',timeName,'outputTime:',outputTime";
+        executeCode "print('timeName :',timeName,'outputTime:',outputTime)";
+        endCode "print('timeName :',timeName,'outputTime:',outputTime)";
         //        tolerateExceptions true;
         parallelMasterOnly true;
         useNumpy false;
@@ -77,8 +77,8 @@ functions {
     {
         type python3Integration;
         startFile "$FOAM_CASE/printPaths.py";
-        executeCode "from os import environ;print 'FOAM_CASE=',environ['FOAM_CASE'];print 'Time data:',timeDir";
-        endCode "print 'Never been here'";
+        executeCode "from os import environ;print('FOAM_CASE=',environ['FOAM_CASE']);print('Time data:',timeDir)";
+        endCode "print('Never been here')";
 //        tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
@@ -89,9 +89,9 @@ functions {
     {
         type python3Integration;
         startCode "from os import path;from PyFoam.RunDictionary.ParsedParameterFile import ParsedParameterFile";
-        // executeCode "print 'Time till end:',float(ParsedParameterFile(path.join(caseDir,'system','controlDict'))['endTime'])-runTime";
+        // executeCode "print('Time till end:',float(ParsedParameterFile(path.join(caseDir,'system','controlDict'))['endTime'])-runTime)";
         executeFile "$FOAM_CASE/executePyFoam.py";
-        endCode "print 'Never been here'";
+        endCode "print('Never been here')";
         //        tolerateExceptions true;
         parallelMasterOnly true;
         useNumpy false;
@@ -101,8 +101,8 @@ functions {
     {
         type python3Integration;
         startCode "import Foam.OpenFOAM as OF";
-        endCode "print ";
-        executeCode "print 'Nr of Procs:',OF.Pstream.nProcs()";
+        endCode "print()";
+        executeCode "print('Nr of Procs:',OF.Pstream.nProcs())";
         tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
@@ -124,9 +124,9 @@ functions {
             pythonPythonFluFull
             {
                 type pythonFluIntegration;
-                startCode "print type(time)";
-                endCode "print ";
-                executeCode "print 'Nr of Procs:',OpenFOAM.Pstream.nProcs();print type(time);print dir();print time.timePath()";
+                startCode "print(type(time))";
+                endCode "print()";
+                executeCode "print('Nr of Procs:',OpenFOAM.Pstream.nProcs());print(type(time);print dir());print(time.timePath())";
                 //        tolerateExceptions true;
                 parallelMasterOnly false;
                 isParallelized true;
@@ -183,9 +183,9 @@ functions {
     {
         type python3Integration;
         swakToPython3Namespaces ( pythonVars );
-        startCode "print 'Start:',aVector,aScalar;newTime=0;newVector=range(3)";
-        executeCode "print 'Running:',map(lambda x:x*(runTime+aScalar),aVector);newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
-        endCode "print 'Never been here'";
+        startCode "print('Start:',aVector,aScalar);newTime=0;newVector=range(3)";
+        executeCode "print('Running:',list(map(lambda x:x*(runTime+aScalar),aVector)));newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
+        endCode "print('Never been here')";
         //        tolerateExceptions true;
         python3ToSwakNamespace testPython;
         python3ToSwakVariables (  newTime newVector );
@@ -193,6 +193,7 @@ functions {
         isParallelized true;
         useNumpy false;
         useIPython true;
+        interactiveAfterException true;
     }
     pythonGetGlobalsScatter
     {
@@ -211,9 +212,9 @@ functions {
     {
         type python3Integration;
         swakToPython3Namespaces ( testPython );
-        startCode "print 'Start PyFoam:',newVector;from PyFoam.Basics.FoamFileGenerator import Vector;foamVector=Vector(0,0,0)";
-        executeCode "foamVector=Vector(newVector[0],newVector[1],newVector[2]);print foamVector";
-        endCode "print 'Never been here'";
+        startCode "print('Start PyFoam:',newVector);from PyFoam.Basics.FoamFileGenerator import Vector;foamVector=Vector(0,0,0)";
+        executeCode "foamVector=Vector(newVector[0],newVector[1],newVector[2]);print(foamVector)";
+        endCode "print('Never been here')";
         //        tolerateExceptions true;
         python3ToSwakNamespace testPyFoam;
         python3ToSwakVariables ( foamVector );
@@ -251,14 +252,16 @@ functions {
         parallelMasterOnly false;
         useNumpy true;
         useIPython true;
+        //        useIPython false;
         swakToPython3Namespaces (
             testPython
             testPythonFields
         );
-        startCode "print facePos;total=numpy.zeros(facePos.shape)";
-        executeCode "total=total+facePos;print 'Ratio:',total.max()/facePos.max();faceArea[::2]=-faceArea[::2];print faceArea.shape";
+        startCode "print(facePos);total=numpy.zeros(facePos.shape)";
+        executeCode "total=total+facePos;print('Ratio:',total.max()/facePos.max());faceArea[::2]=-faceArea[::2];print(faceArea.shape)";
         endCode "";
         //        interactiveAfterExecute true;
+        //        interactiveAfterException true;
         python3ToSwakNamespace variablesFromNumpy;
         python3ToSwakVariables (
             total
@@ -275,10 +278,10 @@ functions {
             testPython
             testPythonFields
         );
-        executeCode "randomVector=apply(numpy.random.randn,facePos.shape);randomField=numpy.random.randn(facePos.shape[0]);normalVector=(1,2,3);normalScalar=42;print 'Mean facepos.x',facePos.x.mean();numpy.savetxt(dataFile('randomField'),randomField)";
+        executeCode "randomVector=numpy.random.randn(*facePos.shape);randomField=numpy.random.randn(facePos.shape[0]);normalVector=(1,2,3);normalScalar=42;print('Mean facepos.x',facePos.x.mean());numpy.savetxt(dataFile('randomField'),randomField)";
         startCode $executeCode;
         endCode "";
-        writeCode "print 'Write';numpy.save(timeDataFile('randomVector'),randomVector)";
+        writeCode "print('Write');numpy.save(timeDataFile('randomVector'),randomVector)";
 
         python3ToSwakNamespace variablesFromNumpy;
         python3ToSwakVariables (
@@ -288,6 +291,7 @@ functions {
             normalScalar
         );
         //        interactiveAfterExecute true;
+        interactiveAfterException true;
     }
     pythonDeltaT {
         type setDeltaTWithPython3;
