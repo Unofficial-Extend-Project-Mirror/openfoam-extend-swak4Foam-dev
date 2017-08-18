@@ -770,7 +770,7 @@ S_{expl} + S_{impl} T
                        of reference for both motorbikes is wrong
 **** littleVolcano
      - Solver :: interFoam
-     - Case preparation :: Script =caseSetup.sh= is provided
+     - Case preparation :: Use =pyFoamPrepareCase.py=
      - Demonstrates :: Boolean operations on STL-files
 **** chargedPlates
      - Solver :: electrostaticFoam

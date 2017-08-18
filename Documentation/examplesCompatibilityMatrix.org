@@ -23,6 +23,8 @@
                    swak)
    - \sad :: means that the case was tested and does not run or that
         some functionality does not seem to work
+   - \partial :: Basically like \checkmark but shows a bug that needs
+                 to be fixed
    - \smiley :: test runs and gives correct results
    - \dagger :: This test will never run on this Foam version because
         of technical constraints (missing solver etc)
@@ -55,9 +57,14 @@
   | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \checkmark | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
+  | SimpleSurface/littleVolcano                                 | \sad       |            |            |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/SearchableSurfaces/objectsTest                        | \sad       |            |            |            |
+  | tests/SearchableSurfaces/operationsTest                     | \checkmark |            |            |            |
+  | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            |            |            |
+  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            |            |            |
   | tests/testFOExecution                                       | \checkmark |            | \checkmark |            |
 
 # Local Variables:

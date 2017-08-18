@@ -1129,7 +1129,7 @@ Examples for the use of the `simpleSearchableSurfaces`-library.
 #### littleVolcano
 
 -   **Solver:** interFoam
--   **Case preparation:** Script `caseSetup.sh` is provided
+-   **Case preparation:** Use `pyFoamPrepareCase.py`
 -   **Demonstrates:** Boolean operations on STL-files
 
 
