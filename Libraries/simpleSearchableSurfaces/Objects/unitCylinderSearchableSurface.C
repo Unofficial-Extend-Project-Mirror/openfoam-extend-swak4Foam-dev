@@ -68,7 +68,7 @@ Foam::pointIndexHit Foam::unitCylinderSearchableSurface::findNearest
         topPt.x()/=topRadius;
         topPt.y()/=topRadius;
     } else {
-        hit[0]=false;
+        hit[0]=true;
     }
     point &bottomPt=pts[1];
     bottomPt=bottom_.nearestPoint(sample);
@@ -77,7 +77,7 @@ Foam::pointIndexHit Foam::unitCylinderSearchableSurface::findNearest
         bottomPt.x()/=bottomRadius;
         bottomPt.y()/=bottomRadius;
     } else {
-        hit[1]=false;
+        hit[1]=true;
     }
 
     scalar r=max(
@@ -138,7 +138,7 @@ void Foam::unitCylinderSearchableSurface::findLineAll
         f[0]=pTraits<scalar>::max;
     }
 
-    scalar bottomIntersect=top_.normalIntersect(start,dir);
+    scalar bottomIntersect=bottom_.normalIntersect(start,dir);
     f[1]=max(min(bottomIntersect,pTraits<scalar>::max),pTraits<scalar>::min);
     point pt1=start+f[1]*dir;
     pt1.z()=0;
@@ -220,6 +220,7 @@ Foam::unitCylinderSearchableSurface::unitCylinderSearchableSurface
     top_(point(0,0,1),vector(0,0,1)),
     bottom_(point(0,0,-1),vector(0,0,-1))
 {
+    bounds()=boundBox(point(-1,-1,-1),point(1,1,1));
 }
 
 
@@ -438,7 +439,7 @@ void Foam::unitCylinderSearchableSurface::boundingSpheres
     centres[0] = 0.5*(top_.refPoint()+bottom_.refPoint());
 
     radiusSqr.setSize(1);
-    radiusSqr[0] = 1*1 + 1*1 + SMALL;
+    radiusSqr[0] = 1*1 + 1*1 + SMALL*SMALL;
 }
 #endif
 

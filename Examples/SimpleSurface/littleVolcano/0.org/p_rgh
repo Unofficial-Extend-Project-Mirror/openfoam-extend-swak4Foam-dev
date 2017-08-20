@@ -42,7 +42,7 @@ boundaryField
         adjoint         no;
     }
 
-    "land.+"
+    "land.*"
     {
         $volcano_wall;
     }

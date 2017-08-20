@@ -57,11 +57,11 @@
   | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \checkmark | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
-  | SimpleSurface/littleVolcano                                 | \partial   |            |            |            |
+  | SimpleSurface/littleVolcano                                 | \checkmark |            |            |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/SearchableSurfaces/objectsTest                        | \partial   |            |            |            |
+  | tests/SearchableSurfaces/objectsTest                        | \checkmark |            |            |            |
   | tests/SearchableSurfaces/operationsTest                     | \checkmark |            |            |            |
   | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            |            |            |
   | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            |            |            |

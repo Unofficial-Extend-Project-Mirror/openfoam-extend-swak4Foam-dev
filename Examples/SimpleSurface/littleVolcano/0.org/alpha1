@@ -46,7 +46,7 @@ boundaryField
         value          uniform 0;
     }
 
-    "land.+" {
+    "land.*" {
         $volcano_wall;
         theta0         15;
     }
