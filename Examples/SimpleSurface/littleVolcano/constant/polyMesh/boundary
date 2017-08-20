@@ -15,26 +15,40 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-3
+5
 (
     sea
     {
         type            wall;
         inGroups        1(wall);
-        nFaces          3600;
-        startFace       210000;
+        nFaces          2541;
+        startFace       413469;
     }
     outside
     {
         type            patch;
-        nFaces          4800;
-        startFace       213600;
+        nFaces          4360;
+        startFace       416010;
     }
     sky
     {
         type            patch;
         nFaces          3600;
-        startFace       218400;
+        startFace       420370;
+    }
+    volcano_wall
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          9948;
+        startFace       423970;
+    }
+    land
+    {
+        type            wall;
+        inGroups        1(wall);
+        nFaces          12405;
+        startFace       433918;
     }
 )
 
