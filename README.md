@@ -6143,6 +6143,12 @@ Some adaptions were required to make this compile
 ### Bug fixes
 
 
+#### Floating point exception in `unitCylinder` in `simpleSearchableSurfaces`
+
+When finding a cutting point in "infinity" then `magSqr`
+failed. Fixed
+
+
 ### Internals (for developers)
 
 

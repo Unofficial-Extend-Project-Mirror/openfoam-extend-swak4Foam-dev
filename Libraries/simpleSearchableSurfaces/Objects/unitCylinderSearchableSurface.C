@@ -126,17 +126,27 @@ void Foam::unitCylinderSearchableSurface::findLineAll
 
     vector dir=end-start;
 
-    f[0]=max(min(top_.normalIntersect(start,dir),pTraits<scalar>::max),pTraits<scalar>::min);
+    scalar topIntersect=top_.normalIntersect(start,dir);
+    f[0]=max(min(topIntersect,pTraits<scalar>::max),pTraits<scalar>::min);
     point pt0=start+f[0]*dir;
     pt0.z()=0;
-    if(magSqr(pt0)>1) {
+    if(
+        mag(topIntersect)>HUGE
+        ||
+        mag(pt0)>1
+    ) {
         f[0]=pTraits<scalar>::max;
     }
 
-    f[1]=max(min(bottom_.normalIntersect(start,dir),pTraits<scalar>::max),pTraits<scalar>::min);
+    scalar bottomIntersect=top_.normalIntersect(start,dir);
+    f[1]=max(min(bottomIntersect,pTraits<scalar>::max),pTraits<scalar>::min);
     point pt1=start+f[1]*dir;
     pt1.z()=0;
-    if(magSqr(pt1)>1) {
+    if(
+        mag(bottomIntersect)>HUGE
+        ||
+        magSqr(pt1)>1
+    ) {
         f[1]=pTraits<scalar>::max;
     }
 

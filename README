@@ -3942,6 +3942,9 @@ S_{expl} + S_{impl} T
      Some adaptions were required to make this compile
 *** Incompatibilities
 *** Bug fixes
+**** Floating point exception in =unitCylinder= in =simpleSearchableSurfaces=
+     When finding a cutting point in "infinity" then =magSqr=
+     failed. Fixed
 *** Internals (for developers)
 *** Infrastructure
 *** Documentation

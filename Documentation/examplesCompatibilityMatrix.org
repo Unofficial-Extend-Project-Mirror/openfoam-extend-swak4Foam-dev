@@ -61,7 +61,7 @@
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/SearchableSurfaces/objectsTest                        | \sad       |            |            |            |
+  | tests/SearchableSurfaces/objectsTest                        | \partial   |            |            |            |
   | tests/SearchableSurfaces/operationsTest                     | \checkmark |            |            |            |
   | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            |            |            |
   | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            |            |            |
