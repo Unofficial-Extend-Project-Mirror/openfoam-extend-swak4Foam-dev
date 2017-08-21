@@ -1,0 +1,319 @@
+/*---------------------------------------------------------------------------*\
+ ##   ####  ######     |
+ ##  ##     ##         | Copyright: ICE Stroemungsfoschungs GmbH
+ ##  ##     ####       |
+ ##  ##     ##         | http://www.ice-sf.at
+ ##   ####  ######     |
+-------------------------------------------------------------------------------
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright  held by original author
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+License
+    This file is based on OpenFOAM.
+
+    OpenFOAM is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM; if not, write to the Free Software Foundation,
+    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+Contributors/Copyright:
+    2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
+
+ SWAK Revision: $Id$
+\*---------------------------------------------------------------------------*/
+
+#include "luaInterpreterWrapper.H"
+#include "addToRunTimeSelectionTable.H"
+
+#include "IFstream.H"
+
+#include "GlobalVariablesRepository.H"
+
+#include "vector.H"
+#include "tensor.H"
+#include "symmTensor.H"
+#include "sphericalTensor.H"
+
+#ifdef FOAM_HAS_STRINGOPS
+#include "stringOps.H"
+#endif
+
+// #include <fcntl.h>
+
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+namespace Foam
+{
+    defineTypeNameAndDebug(luaInterpreterWrapper, 0);
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+void luaInterpreterWrapper::initInteractiveSpecial() {
+
+}
+
+
+luaInterpreterWrapper::luaInterpreterWrapper
+(
+    const objectRegistry& obr,
+    const dictionary& dict,
+    bool forceToNamespace
+):
+    generalInterpreterWrapperCRTP<luaInterpreterWrapper>(
+        obr,
+        dict,
+        forceToNamespace,
+        "lua"
+    ),
+    luaState_(NULL)
+{
+    Pbug << "Starting constructor" << endl;
+
+    syncParallel();
+
+#ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
+    debug=dict.lookupOrDefault<label>("debugLuaWrapper",debug());
+#else
+    debug=dict.lookupOrDefault<label>("debugLuaWrapper",debug);
+#endif
+
+    if(Pstream::parRun()) {
+        Pbug << "This is a parallel run" << endl;
+
+        parallelMasterOnly_=readBool(dict.lookup("parallelMasterOnly"));
+    }
+
+    if(parallelNoRun(true)) {
+        Pbug << "Getting out because of 'parallelNoRun'" << endl;
+        return;
+    }
+
+
+    Pbug << "Getting new interpreter" << endl;
+    luaState_=luaL_newstate();
+    Pbug << "Interpreter state: " << getHex(luaState_) << endl;
+
+    interactiveLoop("Clean");
+
+
+    Pbug << "End constructor" << endl;
+ }
+
+void luaInterpreterWrapper::initEnvironment(const Time &t)
+{
+    assertParallel("initEnvironment");
+
+    Pbug << "initEnvironment" << endl;
+
+    setInterpreter();
+
+    // TODO
+
+    releaseInterpreter();
+}
+
+luaInterpreterWrapper::~luaInterpreterWrapper()
+{
+    if(parallelNoRun()) {
+        return;
+    }
+
+    if(luaState_){
+        lua_close(luaState_);
+    }
+}
+
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void luaInterpreterWrapper::setRunTime(const Time &time)
+{
+    assertParallel("setRunTime");
+
+    Pbug << "setRunTime " << time.timeName() << endl;
+
+    setInterpreter();
+
+    // TODO
+
+    releaseInterpreter();
+}
+
+void luaInterpreterWrapper::setInterpreter()
+{
+    assertParallel("setInterpreter");
+
+    Pbug << "setInterpreter" << endl;
+
+    // TODO
+}
+
+void luaInterpreterWrapper::releaseInterpreter()
+{
+    assertParallel("releaseInterpreter");
+
+    Pbug << "releaseInterpreter" << endl;
+
+    // TODO
+}
+
+bool luaInterpreterWrapper::executeCodeInternal(
+    const string &code
+) {
+    // TODO
+
+    return false;
+}
+
+bool luaInterpreterWrapper::executeCodeCaptureOutputInternal(
+    const string &code,
+    string &stdout
+) {
+    // TODO
+
+    return false;
+}
+
+template <typename Result,class Func>
+Result luaInterpreterWrapper::evaluateCodeInternal(
+    const string &code,
+    bool &success
+)
+{
+    Result result=pTraits<Result>::zero;
+
+    // TODO
+
+    return result;
+}
+
+
+void luaInterpreterWrapper::interactiveLoop(
+    const string &banner
+) {
+    Dbug << "interactiveLoop" << endl;
+
+    // TODO
+}
+
+void luaInterpreterWrapper::doAfterExecution(
+    bool fail,
+    const string &code,
+    bool putVariables,
+    bool failOnException
+)
+{
+    if(fail) {
+        Info << "Lua Exception" << endl;
+        // TODO
+    }
+
+    if(
+        interactiveAfterException_
+        &&
+        fail
+    ) {
+        Info << "Got an exception for "<< code
+            << " now you can interact." << endl;
+        interactiveLoop("Exception handling");
+    }
+    if(
+        fail
+        &&
+        (
+            !tolerateExceptions_
+            ||
+            failOnException
+        )
+    ) {
+        FatalErrorIn("luaInterpreterWrapper::doAfterExecution")
+            << "Lua exception raised by " << nl
+	    << code << endl
+	    << "To debug set 'interactiveAfterException true;' in " << dict().name()
+                << endl << exit(FatalError);
+    }
+
+    if(interactiveAfterExecute_) {
+        Info << "Executed "<< code
+            << " now you can interact." << endl;
+        interactiveLoop("After execution");
+    }
+
+    if(putVariables) {
+        setGlobals();
+    }
+}
+
+void luaInterpreterWrapper::getGlobals()
+{
+    assertParallel("getGlobals");
+
+    if(swakToInterpreterNamespaces_.size()==0) {
+        return;
+    }
+
+    Pbug << "Getting global variables from namespaces "
+        << swakToInterpreterNamespaces_ << endl;
+
+    forAll(swakToInterpreterNamespaces_,nameI) {
+        Pbug << "Namespace: " << swakToInterpreterNamespaces_[nameI] << endl;
+
+        const GlobalVariablesRepository::ResultTable &vars=
+            GlobalVariablesRepository::getGlobalVariables(
+                obr()
+            ).getNamespace(
+               swakToInterpreterNamespaces_[nameI]
+            );
+        forAllConstIter(
+            GlobalVariablesRepository::ResultTable,
+            vars,
+            iter
+        ) {
+            const word &var=iter.key();
+            const ExpressionResult &value=*(*iter);
+
+            Pbug << "Variable: " << var << endl;
+
+            // TODO
+
+            Pbug << "Variable done" << endl;
+        }
+        Pbug << "Namespace done" << endl;
+    }
+    Dbug << "End getGlobals" << endl;
+}
+
+void luaInterpreterWrapper::setGlobals()
+{
+    assertParallel("setGlobals");
+
+    if(interpreterToSwakVariables_.size()==0) {
+        return;
+    }
+
+    Dbug << "Writing variables " << interpreterToSwakVariables_
+        << " to namespace " << interpreterToSwakNamespace_ << endl;
+
+    forAll(interpreterToSwakVariables_,i) {
+        const word &name=interpreterToSwakVariables_[i];
+
+        Dbug << "Getting variable "<< name << endl;
+
+        // TODO
+    }
+}
+
+} // namespace Foam
+
+// ************************************************************************* //
