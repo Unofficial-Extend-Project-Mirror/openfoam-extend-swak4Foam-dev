@@ -50,3 +50,12 @@ else
     echo "SWAK_PYTHON3_INCLUDE not defined .... no Python-Integration. Most people are fine without it"
     echo
 fi
+
+if [ "$SWAK_LUA_INCLUDE" != "" ]
+then
+    wmake libso swakLuaIntegration
+else
+    echo
+    echo "SWAK_LUA_INCLUDE not defined .... no Lua-Integration. Most people are fine without it"
+    echo
+fi

@@ -1,0 +1,2 @@
+
+LIB = $(FOAM_USER_LIBBIN)/libswakLuaIntegration$(SWAK_LUA_INTEGRATION_SUFFIX)
