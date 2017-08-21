@@ -3959,6 +3959,10 @@ S_{expl} + S_{impl} T
      2 integration and a general part to allow the integration of
      other interpreter languages
 *** Infrastructure
+**** Automatic detection of Python in =swakConfiguation.automatic=
+     If =swakConfiguation.automatic= is used as =swakConfiguation=
+     then the highest available version of Python 2 and Python 3 is
+     used for the integration of these two languages
 *** Documentation
 *** New features
 *** Enhancements

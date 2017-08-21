@@ -6176,6 +6176,13 @@ other interpreter languages
 ### Infrastructure
 
 
+#### Automatic detection of Python in `swakConfiguation.automatic`
+
+If `swakConfiguation.automatic` is used as `swakConfiguation`
+then the highest available version of Python 2 and Python 3 is
+used for the integration of these two languages
+
+
 ### Documentation
 
 

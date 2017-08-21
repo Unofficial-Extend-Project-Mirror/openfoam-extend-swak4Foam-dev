@@ -1,5 +1,26 @@
-export SWAK_PYTHON2_INCLUDE="$(python2.7-config --cflags)"
-export SWAK_PYTHON2_LINK="$(python2.7-config --ldflags)"
+# -*- shell-script -*-
+
+for p2 in 7 6
+do
+    WHICHPATH=$(which python2.$p2-config)
+    if [[ $? == 0 ]]; then
+        export SWAK_PYTHON2_INCLUDE="$(python2.$p2-config --cflags)"
+        export SWAK_PYTHON2_LINK="$(python2.$p2-config --ldflags)"
+        echo "Using python2.$p2 at $WHICHPATH for python2"
+        break
+    fi
+done
+
+for p3 in 9 8 7 6 5 4 3
+do
+    WHICHPATH=$(which python3.$p3-config)
+    if [[ $? == 0 ]]; then
+        export SWAK_PYTHON3_INCLUDE="$(python3.$p3-config --cflags)"
+        export SWAK_PYTHON3_LINK="$(python3.$p3-config --ldflags)"
+        echo "Using python3.$p3 at $WHICHPATH for python3"
+        break
+    fi
+done
 
 # List separated by : with directories to user plugins
 # export SWAK_USER_PLUGINS=../Examples/UserPlugins/swakTestFunctionPlugins
