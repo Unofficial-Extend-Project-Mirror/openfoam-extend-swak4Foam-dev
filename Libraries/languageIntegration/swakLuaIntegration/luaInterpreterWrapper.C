@@ -56,7 +56,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(luaInterpreterWrapper, 1);
+    defineTypeNameAndDebug(luaInterpreterWrapper, 0);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -215,8 +215,6 @@ void luaInterpreterWrapper::setInterpreter()
     assertParallel("setInterpreter");
 
     Pbug << "setInterpreter" << endl;
-
-    // TODO
 }
 
 void luaInterpreterWrapper::releaseInterpreter()
@@ -224,8 +222,6 @@ void luaInterpreterWrapper::releaseInterpreter()
     assertParallel("releaseInterpreter");
 
     Pbug << "releaseInterpreter" << endl;
-
-    // TODO
 }
 
 bool luaInterpreterWrapper::executeCodeInternal(
@@ -238,7 +234,8 @@ bool luaInterpreterWrapper::executeCodeInternal(
     Dbug << "Execution returned " << rcode << endl;
 
     if(rcode!=0) {
-        printError();
+        //   printError();
+        Info << "Lua Error!" << endl;
     }
     return rcode==0;
 }
@@ -248,9 +245,39 @@ bool luaInterpreterWrapper::executeCodeCaptureOutputInternal(
     string &stdout
 ) {
     Dbug << "executeCodeCaptureOutputInternal " << code << endl;
-    // TODO
 
-    return false;
+    string redirectCode=
+        "_oldPrint=print\n"
+        "_stdoutBuf=''\n"
+        "print=function(...)\n"
+        "    for i,val in ipairs({...}) do\n"
+        "        if i~=1 then\n"
+        "            _stdoutBuf=_stdoutBuf..'\\t'\n"
+        "        end\n"
+        "        _stdoutBuf=_stdoutBuf..tostring(val)\n"
+        "    end\n"
+        "    _stdoutBuf=_stdoutBuf..'\\n'\n"
+        "end\n";
+    int rcode=luaL_dostring(luaState_,redirectCode.c_str());
+    Dbug << "Redirect worked" << rcode << endl;
+
+    rcode=luaL_dostring(luaState_,code.c_str());
+
+    Dbug << "Execution returned " << rcode << endl;
+
+    if(rcode!=0) {
+        //        printError();
+    }
+
+    int type=lua_getglobal(luaState_,"_stdoutBuf");
+    Dbug << "Getting _stdoutBuf " << type << endl;
+    stdout=string(lua_tostring(luaState_,-1));
+    Dbug << "Output: " << stdout << endl;
+    lua_pop(luaState_,1);
+    int r=luaL_dostring(luaState_,"print=_oldPrint;_oldPrint=nil;_stdoutBuf=nil");
+    Dbug << "Clearing " << r << endl;
+
+    return rcode==0;
 }
 
 template <typename Result,class Func>
@@ -273,7 +300,8 @@ Result luaInterpreterWrapper::evaluateCodeInternal(
         Dbug << "Result: " << result << endl;
         success=true;
     } else {
-        printError();
+        Info << "Lua Error!" << endl;
+        // printError();
     }
     return result;
 }
@@ -319,7 +347,8 @@ void luaInterpreterWrapper::doAfterExecution(
 {
     if(fail) {
         Info << "Lua Exception" << endl;
-        // TODO
+
+        printError();
     }
 
     if(

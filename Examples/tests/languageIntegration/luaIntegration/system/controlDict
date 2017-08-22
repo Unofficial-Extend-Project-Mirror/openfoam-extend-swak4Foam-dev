@@ -61,6 +61,100 @@ functions {
         //        interactiveAfterExecute true;
         interactiveAfterException true;
     }
+    luaOutput
+    {
+        type luaIntegration;
+
+        startCode "";
+        executeCode "print('timeName :',timeName,'outputTime:',outputTime)";
+        endCode "print('timeName :',timeName,'outputTime:',outputTime)";
+        //        tolerateExceptions true;
+        parallelMasterOnly true;
+    }
+    luaPaths
+    {
+        type luaIntegration;
+        startFile "$FOAM_CASE/printPaths.lua";
+        executeCode "print('FOAM_CASE=',os.getenv('FOAM_CASE'));print('Time data:',timeDir)";
+        endCode "print('Never been here')";
+        //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+    }
+    addScalar
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope luaVars;
+        globalName aScalar;
+        valueType scalar;
+        value 42;
+    }
+    addVector
+    {
+        type addGlobalVariable;
+        outputControl timeStep;
+        outputInterval 1;
+        globalScope luaVars;
+        globalName aVector;
+        valueType vector;
+        value (1 2 3);
+    }
+    luaGetGlobals
+    {
+        type luaIntegration;
+        swakToLuaNamespaces ( luaVars );
+        startCode "print('Start:',aVector,aScalar);newTime=0;newVector={x=0,y=0,z=0}";
+        // executeCode "print('Running:',list(map(lambda x:x*(runTime+aScalar),aVector)));newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
+        executeCode "print('not implemented .... yet')";
+        endCode "print('Never been here')";
+        //        tolerateExceptions true;
+        luaToSwakNamespace testLua;
+        luaToSwakVariables (  newTime newVector );
+        parallelMasterOnly false;
+        isParallelized true;
+        interactiveAfterException true;
+    }
+    luaDeltaT {
+        type setDeltaTWithLua;
+        parallelMasterOnly true;
+        deltaTCode "return 0.005*(1+0.5*math.sin(20*runTime))";
+        initCode "";
+    }
+    luaEndTime {
+        type setEndTimeWithLua;
+        parallelMasterOnly false;
+        isParallelized true;
+        endTimeCode "return 0.5+0.25*math.sqrt(runTime)";
+        initCode "";
+    }
+    luaDynamic {
+        type dynamicFunctionObjectListProxy;
+        readDuringConstruction true;
+        dictionaryProvider stdoutFromLuaScriptProvider;
+        parallelMasterOnly true;
+        scriptFile "$FOAM_CASE/printFO.lua";
+    }
+    luaDynamic2 {
+        $luaDynamic;
+        parallelMasterOnly false;
+        isParallelized true;
+    }
+    writeIfLua {
+        type writeIfLua;
+        parallelMasterOnly false;
+        isParallelized true;
+        initCode "import math";
+        writeControlMode timesteps;
+        cooldownMode timesteps;
+        storeAndWritePreviousState true;
+        writeTimesteps 3;
+        cooldownTimesteps 15;
+        numberOfTimestepsToStore 2;
+        initVariablesCode "";
+        startWriteCode "return True";
+    }
     endEarly {
         type writeAndEndLua;
         parallelMasterOnly false;
