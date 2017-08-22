@@ -151,7 +151,24 @@ void luaInterpreterWrapper::initEnvironment(const Time &t)
 
     setInterpreter();
 
-    // TODO
+    lua_pushstring(luaState_,"notAFunctionObject");
+    lua_setglobal(luaState_,"functionObjectName");
+    lua_pushstring(luaState_,getEnv("FOAM_CASE").c_str());
+    lua_setglobal(luaState_,"caseDir");
+    lua_pushstring(luaState_,(t.path()/t.caseSystem()).c_str());
+    lua_setglobal(luaState_,"systemDir");
+    lua_pushstring(luaState_,(t.path()/t.caseConstant()).c_str());
+    lua_setglobal(luaState_,"constantDir");
+    lua_pushstring(luaState_,(t.path()/t.constant()/"polyMesh").c_str());
+    lua_setglobal(luaState_,"meshDir");
+    if(Pstream::parRun()) {
+        lua_pushstring(luaState_,t.path().c_str());
+        lua_setglobal(luaState_,"procDir");
+    }
+    lua_pushboolean(luaState_,Pstream::parRun());
+    lua_setglobal(luaState_,"parRun");
+    lua_pushinteger(luaState_,Pstream::myProcNo());
+    lua_setglobal(luaState_,"myProcNo");
 
     releaseInterpreter();
 }
@@ -179,8 +196,16 @@ void luaInterpreterWrapper::setRunTime(const Time &time)
 
     lua_pushnumber(luaState_,time.value());
     lua_setglobal(luaState_,"runTime");
-
-    // TODO
+    lua_pushnumber(luaState_,time.endTime().value());
+    lua_setglobal(luaState_,"endTime");
+    lua_pushnumber(luaState_,time.deltaT().value());
+    lua_setglobal(luaState_,"deltaT");
+    lua_pushboolean(luaState_,time.outputTime());
+    lua_setglobal(luaState_,"outputTime");
+    lua_pushstring(luaState_,time.timeName().c_str());
+    lua_setglobal(luaState_,"timeName");
+    lua_pushstring(luaState_,(time.path()/time.timeName()).c_str());
+    lua_setglobal(luaState_,"timeDir");
 
     releaseInterpreter();
 }

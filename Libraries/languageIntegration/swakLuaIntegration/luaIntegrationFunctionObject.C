@@ -82,7 +82,8 @@ luaIntegrationFunctionObject::luaIntegrationFunctionObject
 
         setInterpreter();
 
-        // TODO
+        lua_pushstring(luaState(),this->name().c_str());
+        lua_setglobal(luaState(),"functionObjectName");
 
         releaseInterpreter();
 

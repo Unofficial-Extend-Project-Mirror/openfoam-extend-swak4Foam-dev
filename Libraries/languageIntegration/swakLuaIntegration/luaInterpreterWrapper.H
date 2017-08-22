@@ -101,6 +101,10 @@ class luaInterpreterWrapper
 
 protected:
 
+    lua_State *luaState() {
+        return luaState_;
+    }
+
     //- Execute after the lua-code has been called
     void doAfterExecution(
         bool fail,
