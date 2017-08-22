@@ -61,7 +61,7 @@ namespace Foam
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 void luaInterpreterWrapper::initInteractiveSpecial() {
-
+    initLuaPrompt();
 }
 
 
@@ -77,7 +77,9 @@ luaInterpreterWrapper::luaInterpreterWrapper
         forceToNamespace,
         "lua"
     ),
-    luaState_(NULL)
+    luaState_(NULL),
+    useLuaPrompt_(dict.lookupOrDefault<bool>("useLuaPrompt",true)),
+    hasLuaPrompt_(false)
 {
     Pbug << "Starting constructor" << endl;
 
@@ -106,11 +108,40 @@ luaInterpreterWrapper::luaInterpreterWrapper
     luaL_openlibs(luaState_);
     Pbug << "Interpreter state: " << getHex(luaState_) << endl;
 
+    if(
+        (
+            interactiveAfterExecute_
+            ||
+            interactiveAfterException_
+        )
+        &&
+        useLuaPrompt_
+    ) {
+        initLuaPrompt();
+    }
     //    interactiveLoop("Clean");
 
 
     Pbug << "End constructor" << endl;
  }
+
+void luaInterpreterWrapper::initLuaPrompt() {
+    Dbug << "Importing luaprompt library" << endl;
+    int result=luaL_dostring(luaState_,"_prompt=require 'prompt'");
+    if(result) {
+        Dbug << "No prompt library" << endl;
+        return;
+    }
+    hasLuaPrompt_=true;
+    result=luaL_dostring(
+        luaState_,
+        "_prompt.colorize = true;"
+        "_prompt.name = 'swakprompt';"
+        "_prompt.history = os.getenv('HOME') .. '/.lua_history';"
+        //        "_prompt.prompts = {'%  ', '%% '};"
+    );
+    Dbug << "Customizing prompt: " << result << endl;
+}
 
 void luaInterpreterWrapper::initEnvironment(const Time &t)
 {
@@ -236,7 +267,21 @@ void luaInterpreterWrapper::interactiveLoop(
     Dbug << "Executing " << cmd.c_str() << endl;
     int fail=luaL_dostring(luaState_,cmd.c_str());
     Dbug << "Printing failed: " << fail << endl;
-    fail=luaL_dostring(luaState_,"debug.debug()");
+    if(hasLuaPrompt_) {
+        fail=luaL_dostring(
+            luaState_,
+            "describe=_prompt.describe;"
+            "print('Use the describe function to get info about symbols. describe(_G) for everything');"
+            "print('Exit with Ctrl-D');"
+            "_prompt.enter()"
+        );
+    } else {
+        fail=luaL_dostring(
+            luaState_,
+            "print('Exit with Ctrl-D');"
+            "debug.debug()"
+        );
+    }
     Dbug << "Interactive failed " << fail << endl;
 }
 

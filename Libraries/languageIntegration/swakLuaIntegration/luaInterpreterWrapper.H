@@ -89,7 +89,11 @@ class luaInterpreterWrapper
 
     void setGlobals();
 
-    void initIPython();
+    bool useLuaPrompt_;
+
+    bool hasLuaPrompt_;
+
+    void initLuaPrompt();
 
     void initInteractiveSpecial();
 
