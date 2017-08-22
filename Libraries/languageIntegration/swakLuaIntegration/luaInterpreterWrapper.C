@@ -56,7 +56,7 @@ Contributors/Copyright:
 
 namespace Foam
 {
-    defineTypeNameAndDebug(luaInterpreterWrapper, 0);
+    defineTypeNameAndDebug(luaInterpreterWrapper, 1);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -103,9 +103,10 @@ luaInterpreterWrapper::luaInterpreterWrapper
 
     Pbug << "Getting new interpreter" << endl;
     luaState_=luaL_newstate();
+    luaL_openlibs(luaState_);
     Pbug << "Interpreter state: " << getHex(luaState_) << endl;
 
-    interactiveLoop("Clean");
+    //    interactiveLoop("Clean");
 
 
     Pbug << "End constructor" << endl;
@@ -145,6 +146,9 @@ void luaInterpreterWrapper::setRunTime(const Time &time)
 
     setInterpreter();
 
+    lua_pushnumber(luaState_,time.value());
+    lua_setglobal(luaState_,"runTime");
+
     // TODO
 
     releaseInterpreter();
@@ -171,15 +175,23 @@ void luaInterpreterWrapper::releaseInterpreter()
 bool luaInterpreterWrapper::executeCodeInternal(
     const string &code
 ) {
-    // TODO
+    Dbug << "executeCodeInternal " << code << endl;
 
-    return false;
+    int rcode=luaL_dostring(luaState_,code.c_str());
+
+    Dbug << "Execution returned " << rcode << endl;
+
+    if(rcode!=0) {
+        printError();
+    }
+    return rcode==0;
 }
 
 bool luaInterpreterWrapper::executeCodeCaptureOutputInternal(
     const string &code,
     string &stdout
 ) {
+    Dbug << "executeCodeCaptureOutputInternal " << code << endl;
     // TODO
 
     return false;
@@ -191,20 +203,41 @@ Result luaInterpreterWrapper::evaluateCodeInternal(
     bool &success
 )
 {
+    Dbug << "evaluateCodeInternal " << code << endl;
+
     Result result=pTraits<Result>::zero;
+    success=false;
 
-    // TODO
+    int rcode=luaL_dostring(luaState_,code.c_str());
 
+    Dbug << "Execution returned " << rcode << endl;
+
+    if(rcode==0) {
+        result=Func()(luaState_);
+        Dbug << "Result: " << result << endl;
+        success=true;
+    } else {
+        printError();
+    }
     return result;
 }
 
+void luaInterpreterWrapper::printError(){
+    string error(lua_tostring(luaState_,-1));
+    Info << nl << "Lua error: " << nl << error << nl << endl;
+}
 
 void luaInterpreterWrapper::interactiveLoop(
     const string &banner
 ) {
     Dbug << "interactiveLoop" << endl;
 
-    // TODO
+    string cmd="print('"+banner+"\\n')";
+    Dbug << "Executing " << cmd.c_str() << endl;
+    int fail=luaL_dostring(luaState_,cmd.c_str());
+    Dbug << "Printing failed: " << fail << endl;
+    fail=luaL_dostring(luaState_,"debug.debug()");
+    Dbug << "Interactive failed " << fail << endl;
 }
 
 void luaInterpreterWrapper::doAfterExecution(

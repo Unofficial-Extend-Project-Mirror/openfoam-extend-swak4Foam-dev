@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     replayTransientBC;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          0.005;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+functions {
+    luaSimple
+    {
+        type luaIntegration;
+
+        //        debugLuaWrapper 1; // switching on
+
+        startCode "print('Starting');a=0; print('a is',a)";
+        executeCode "a=a+1; print('a:',a)";
+        endCode "print('Never been here')";
+        //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+    }
+    endEarly {
+        type writeAndEndLua;
+        parallelMasterOnly false;
+        isParallelized true;
+        initCode "";
+        conditionCode "return runTime>0.15";
+        //        conditionCode "return 2>1";
+        interactiveAfterException true;
+    }
+}
+
+libs (
+    "libgroovyBC.so"
+    "libswakLuaIntegration.so"
+    "libswakFunctionObjects.so"
+);
+
+// ************************************************************************* //

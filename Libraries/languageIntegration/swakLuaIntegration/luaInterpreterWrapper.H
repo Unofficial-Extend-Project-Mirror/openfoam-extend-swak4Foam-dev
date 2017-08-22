@@ -93,6 +93,8 @@ class luaInterpreterWrapper
 
     void initInteractiveSpecial();
 
+    void printError();
+
 protected:
 
     //- Execute after the lua-code has been called
