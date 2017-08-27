@@ -105,16 +105,44 @@ functions {
     {
         type luaIntegration;
         swakToLuaNamespaces ( luaVars );
-        startCode "print('Start:',aVector,aScalar);newTime=0;newVector={x=0,y=0,z=0}";
-        // executeCode "print('Running:',list(map(lambda x:x*(runTime+aScalar),aVector)));newTime=aScalar*runTime;newVector=(runTime,-runTime,1)";
-        executeCode "print('not implemented .... yet')";
+        startCode "print('Start:',aVector,aScalar);newTime=0;newVector={x=0,y=0,z=0};newBool=true";
+        executeCode "print('Running:',runTime+aScalar+aVector.x);newTime=aScalar*runTime;newVector={x=runTime,y=-runTime,z=1};newBool=false;newTable={foo=1,bar=3}";
+        // executeCode "print('not implemented .... yet')";
         endCode "print('Never been here')";
         //        tolerateExceptions true;
         luaToSwakNamespace testLua;
-        luaToSwakVariables (  newTime newVector );
+        luaToSwakVariables (
+            newTime
+            newVector
+            newBool
+            notHere
+            newTable
+        );
         parallelMasterOnly false;
         isParallelized true;
         interactiveAfterException true;
+        //        interactiveAfterExecute true;
+    }
+    checkSingleValue {
+        type swakExpression;
+        verbose true;
+        valueType internalField;
+        accumulations (
+            min
+            max
+        );
+        globalScopes (
+            testLua
+        );
+        expression "newTime";
+    }
+    checkSingleValue2 {
+        $checkSingleValue;
+        expression "newBool";
+    }
+    checkSingleValue3 {
+        $checkSingleValue;
+        expression "newVector";
     }
     luaDeltaT {
         type setDeltaTWithLua;
@@ -170,6 +198,7 @@ libs (
     "libgroovyBC.so"
     "libswakLuaIntegration.so"
     "libswakFunctionObjects.so"
+    "libsimpleSwakFunctionObjects.so"
 );
 
 // ************************************************************************* //

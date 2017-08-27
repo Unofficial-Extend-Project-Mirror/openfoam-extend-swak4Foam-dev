@@ -99,6 +99,15 @@ class luaInterpreterWrapper
 
     void printError();
 
+    template<class T>
+    void vectorSpaceToStack(const T &val);
+
+    template<class T>
+    T stackToVectorSpace();
+
+    template<class T>
+    bool isVectorSpace();
+
 protected:
 
     lua_State *luaState() {
