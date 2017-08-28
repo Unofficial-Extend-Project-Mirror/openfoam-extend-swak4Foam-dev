@@ -50,6 +50,8 @@ Contributors/Copyright:
 #include "objectRegistry.H"
 #include "swakTime.H"
 
+#include "Field.H"
+
 extern "C" {
         # include "lua.h"
         # include "lauxlib.h"
@@ -103,7 +105,13 @@ class luaInterpreterWrapper
     void vectorSpaceToStack(const T &val);
 
     template<class T>
+    void vectorSpaceArrayToStack(const Field<T> &val);
+
+    template<class T>
     T stackToVectorSpace();
+
+    template<class T>
+    autoPtr<Field<T> > stackToVectorSpaceArray(label length);
 
     template<class T>
     bool isVectorSpace();

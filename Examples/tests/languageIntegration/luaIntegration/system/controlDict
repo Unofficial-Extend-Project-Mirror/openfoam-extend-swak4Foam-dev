@@ -144,6 +144,86 @@ functions {
         $checkSingleValue;
         expression "newVector";
     }
+    calcNonUniformValues {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+        valueType patch;
+        patchName fixedWalls;
+        toGlobalNamespace testLuaFields;
+        toGlobalVariables (
+            facePos
+            faceArea
+        );
+        variables (
+            "facePos=pos();"
+            "faceArea=area()+1e-6*randNormal();"
+        );
+        noReset true;
+    }
+    luaGetNonUniformGetGlobals
+    {
+        type luaIntegration;
+        isParallelized true;
+        parallelMasterOnly false;
+        swakToLuaNamespaces (
+            testLua
+            testLuaFields
+        );
+        startCode "print(facePos);total={};for i=1,#facePos do total[i]=0; end;vecSum={};for i=1,#facePos do vecSum[i]={x=0,y=0,z=0}; end";
+        executeCode "for i=1,#facePos do total[i]=total[i]+facePos[i].y;end;print(total);for i=1,#facePos do vecSum[i]={x=vecSum[i].x+facePos[i].x,y=vecSum[i].y+facePos[i].y,z=vecSum[i].z+facePos[i].z};end";
+        endCode "";
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+        luaToSwakNamespace variablesFromLua;
+        luaToSwakVariables (
+            total
+            vecSum
+        );
+    }
+    checkMultiValue {
+        type swakExpression;
+        verbose true;
+        valueType patch;
+        patchName fixedWalls;
+        accumulations (
+            min
+            average
+            max
+        );
+        globalScopes (
+            variablesFromLua
+        );
+        expression "total";
+    }
+    checkMultiValue2 {
+        $checkMultiValue;
+        expression "vecSum";
+    }
+    luaGetNonUniformSetGlobals
+    {
+        type luaIntegration;
+        isParallelized true;
+        parallelMasterOnly false;
+        swakToLuaNamespaces (
+            testLua
+            testLuaFields
+        );
+        executeCode "randomVector={};for i=1,#facePos do randomVector[i]={x=math.random(),y=math.random(),z=math.random()}; end ;randomField={};for i=1,#faceArea do randomField[i]=math.random(); end ; normalVector={x=1,y=2,z=3};normalScalar=42";
+        startCode $executeCode;
+        endCode "";
+        writeCode "print('Write')";
+
+        luaToSwakNamespace variablesFromLua;
+        luaToSwakVariables (
+            randomField
+            randomVector
+            normalVector
+            normalScalar
+        );
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+    }
     luaDeltaT {
         type setDeltaTWithLua;
         parallelMasterOnly true;
