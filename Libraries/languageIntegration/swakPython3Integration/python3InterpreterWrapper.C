@@ -130,8 +130,18 @@ void python3InterpreterWrapper::initIPython() {
             Dbug << "Preparing interpreter for convenient history editing" << endl;
 
             //            PyRun_SimpleString("import rlcompleter, readline");
-            importLib("rlcompleter");
-            importLib("readline");
+            importLib(
+                "rlcompleter"
+#ifndef OLD_PYTHON3
+                ,"rlcompleter",true
+#endif
+            );
+            importLib(
+                "readline"
+#ifndef OLD_PYTHON3
+                ,"readline",true
+#endif
+            );
 
             // this currently has no effect in the embedded shell
             int result=PyRun_SimpleString("readline.parse_and_bind('tab: complete')");
@@ -192,23 +202,28 @@ python3InterpreterWrapper::python3InterpreterWrapper
 
         Py_Initialize();
 
+#ifdef OLD_PYTHON3
         if(debug) {
             PyThreadState *current=PyGILState_GetThisThreadState();
             Pbug << "GIL-state before thread: " << getHex(current) << endl;
         }
         PyEval_InitThreads();
+
         if(debug) {
             PyThreadState *current=PyGILState_GetThisThreadState();
             Pbug << "GIL-state after thread: " << getHex(current) << endl;
         }
-
-         Pbug << "Before saving state: We have the GIL: " << PyGILState_Check()
-             << " our state " << getHex(pythonState_) << " Main: "
-             << getHex(mainThreadState) << " used: "
-             << getHex(PyGILState_GetThisThreadState()) << endl;
-         // mainThreadState = PyThreadState_Get();
+#endif
+        Pbug << "Before saving state: We have the GIL: " << PyGILState_Check()
+            << " our state " << getHex(pythonState_) << " Main: "
+            << getHex(mainThreadState) << " used: "
+            << getHex(PyGILState_GetThisThreadState()) << endl;
+#ifdef OLD_PYTHON3
         mainThreadState = PyEval_SaveThread();
-        Pbug << "After saving state: We have the GIL: " << PyGILState_Check()
+#else
+        mainThreadState = PyThreadState_Get();
+#endif
+         Pbug << "After saving state: We have the GIL: " << PyGILState_Check()
             << " our state " << getHex(pythonState_) << " Main: "
             << getHex(mainThreadState) << " used: "
             << getHex(PyGILState_GetThisThreadState()) << endl;
@@ -227,7 +242,9 @@ python3InterpreterWrapper::python3InterpreterWrapper
 
     interpreterCount++;
 
+#ifdef OLD_PYTHON3
     getGIL();
+#endif
     //    PyEval_AcquireLock();
 
     Pbug << "Getting new interpreter: We have the GIL: " << PyGILState_Check()
@@ -349,7 +366,9 @@ python3InterpreterWrapper::python3InterpreterWrapper
 
     //    releaseGIL();
 
+#ifdef OLD_PYTHON3
     PyEval_ReleaseThread(pythonState_);
+#endif
 
     //    releaseGIL();
 
@@ -432,7 +451,10 @@ void python3InterpreterWrapper::initEnvironment(const Time &t)
 
 python3InterpreterWrapper::~python3InterpreterWrapper()
 {
-    Pbug << "Destructor" << endl;
+    Pbug << "Starting destructor: We have the GIL: " << PyGILState_Check()
+        << " our state " << getHex(pythonState_) << " Main: "
+        << getHex(mainThreadState) << " used: "
+        << getHex(PyGILState_GetThisThreadState()) << endl;
 
     if(parallelNoRun()) {
         Pbug << "Leaving early" << endl;
@@ -444,12 +466,15 @@ python3InterpreterWrapper::~python3InterpreterWrapper()
 
     Pbug << "State: " << getHex(pythonState_) << endl;
     if(pythonState_) {
+#ifdef OLD_PYTHON3
         getGIL();
-
+#endif
         PyThreadState_Swap(pythonState_);
         Pbug << "Ending the interpreter" << endl;
         Py_EndInterpreter(pythonState_);
+#ifdef OLD_PYTHON3
         PyEval_ReleaseLock();
+#endif
         pythonState_=NULL;
     }
 
@@ -460,7 +485,12 @@ python3InterpreterWrapper::~python3InterpreterWrapper()
         PyEval_RestoreThread(mainThreadState);
         // This causes a segfault
         Py_Finalize();
+        mainThreadState=NULL;
     }
+    Pbug << "Ending destructor: We have the GIL: " << PyGILState_Check()
+        << " our state " << getHex(pythonState_) << " Main: "
+        << getHex(mainThreadState) << " used: "
+        << getHex(PyGILState_GetThisThreadState()) << endl;
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -737,6 +767,8 @@ bool python3InterpreterWrapper::importLib(
         << " as " << as << endl;
 
     PyObject * mainModule = PyImport_AddModule("__main__");
+    Pbug << "MainModule: " << getHex(mainModule) << endl;
+
     if(mainModule==NULL) {
         WarningIn("python3InterpreterWrapper::importLib(const word &name)")
             << "Could not get module __main__ when importing " << name
@@ -747,11 +779,14 @@ bool python3InterpreterWrapper::importLib(
 
     PyThreadState *old=NULL;
     if(useMainThreadState) {
+        Pbug << "Switch to main thread" << endl;
         old=PyThreadState_Swap(mainThreadState);
         Dbug << "Swapped from " << getHex(old) << " to "
             << getHex(mainThreadState) << "(main state)" << endl;
     }
+    Pbug << "Actual import" << endl;
     PyObject * libModule = PyImport_ImportModule(name.c_str());
+    Pbug << "LibModule: " << getHex(libModule) << endl;
     if(libModule==NULL) {
         WarningIn("python3InterpreterWrapper::importLib(const word &name)")
             << "Could not import " << name << " in " << dict().name()
@@ -764,6 +799,7 @@ bool python3InterpreterWrapper::importLib(
         return false;
     }
     if(useMainThreadState) {
+        Pbug << "Switch from main thread" << endl;
         PyObject * mainModule2 = PyImport_AddModule("__main__");
         if(mainModule2==NULL) {
             WarningIn("python3InterpreterWrapper::importLib(const word &name)")
