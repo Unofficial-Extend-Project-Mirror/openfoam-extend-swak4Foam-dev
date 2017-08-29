@@ -170,6 +170,14 @@ Environment variables that can be set in this file are:
     `python`-installation
 -   **SWAK<sub>PYTHON2</sub><sub>LINK</sub>:** Options to link the `python`-library to the
     library for the `python`-integration
+-   **SWAK<sub>PYTHON3</sub><sub>INCLUDE</sub>:** Path to the `Python.h` file of the used
+    `python3`-installation
+-   **SWAK<sub>PYTHON3</sub><sub>LINK</sub>:** Options to link the `python3`-library to the
+    library for the `python3`-integration
+-   **SWAK<sub>LUA</sub><sub>INCLUDE</sub>:** Path to the header files of the used
+    `Lua`-installation
+-   **SWAK<sub>LUA</sub><sub>LINK</sub>:** Options to link the `Lua`-library to the
+    library for the `Lua`-integration
 -   **SWAK<sub>USER</sub><sub>PLUGINS</sub>:** A list of paths separated by
     semicolons. These are the directories of libraries with
     function-plugins. They are compiled in the course of the
@@ -433,18 +441,6 @@ use the Mercurial-branch `groovyStandardBCs` to *groovyify*
 standard boundary conditions.
 
 
-### `pythonIntegration`
-
-Embeds a `Python`-interpreter.
-
--   **`pythonIntegrationFunctionObject`:** Executes `Python`-code
-    at the usual execution times of functionObjects. The
-    interpreter keeps its state
-
-This library is only compiled if the paths to the Python-Headers
-are configured in the `swakConfiguration`-file (see above)
-
-
 ### `simpleLagrangianFunctionObjects`
 
 Function objects that allow the easy addition of lagrangian
@@ -535,6 +531,39 @@ for special particle classes. These are
 
 These libraries have to be included in the `libs`-entry to
 be able to handle these libraries
+
+
+### `languageIntegration`
+
+Libraries that integrate various scripting languages with swak4Foam
+
+
+#### `swakGeneralLanguageIntegration`
+
+This library implements a common interface for the actual
+language integrations.
+
+
+#### `swakPythonIntegration`
+
+Embeds a `Python 2`-interpreter.
+
+-   **`pythonIntegrationFunctionObject`:** Executes `Python`-code
+    at the usual execution times of functionObjects. The
+    interpreter keeps its state
+
+This library is only compiled if the paths to the Python-Headers
+are configured in the `swakConfiguration`-file (see above)
+
+
+#### `swakPython3Integration`
+
+Embeds a `Python 3`-interpreter.
+
+
+#### `swakLuaIntegration`
+
+Embeds a `Lua`-interpreter.
 
 
 ## Utilities
@@ -6187,6 +6216,28 @@ used for the integration of these two languages
 
 
 ### New features
+
+
+#### Python 3 integration
+
+In addition to the "regular" Python-integration a separate
+library `swakPython3Integration` has been added which integrates
+with Python 3. The "old" Python integration will always be
+Python 2. The two integrations have the same features and the
+same function objects (in the names the `python` has to be
+replaced with `python3`)
+
+
+#### Lua integration
+
+The library `swakLuaIntegration` integrates with the [Lua
+Scripting language](https://www.lua.org/) the same way that the Python 2 and Python 3
+integrations do. The same function objects exist except that in
+the names `python` has to be replaced with `lua`. If fields are
+transferred to Lua then they are converted into
+Lua-tables. Therefor the performance should be much slower than
+the Python-integration where the native data is mapped to
+`numpy`-arrays
 
 
 ### Enhancements
