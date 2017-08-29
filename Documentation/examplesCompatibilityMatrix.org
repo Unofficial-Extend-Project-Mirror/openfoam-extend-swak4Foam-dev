@@ -59,8 +59,8 @@
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/luaIntegration                    |            | \checkmark |            |            |
-  | tests/languageIntegration/pythonIntegration                 |            | \checkmark |            |            |
-  | tests/languageIntegration/python3Integration                |            | \checkmark |            |            |
+  | tests/languageIntegration/pythonIntegration                 |            | \checkmark | \checkmark |            |
+  | tests/languageIntegration/python3Integration                |            | \checkmark | \checkmark |            |
   | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark |            |
 
 # Local Variables:
