@@ -102,7 +102,7 @@ scalar SetDeltaTWithInterpreterFunctionObject<Wrapper>::deltaT()
     if(result!=this->time().deltaT().value()) {
         Info << "Changing timestep because " << deltaTCode_
             << " evaluated to " << result << "(current deltaT: "
-            << this->time().deltaT().value() << " in "
+            << this->time().deltaT().value() << ") in "
             << this->name() << endl;
     }
 

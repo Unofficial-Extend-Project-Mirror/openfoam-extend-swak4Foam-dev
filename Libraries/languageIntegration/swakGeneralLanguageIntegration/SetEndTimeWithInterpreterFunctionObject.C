@@ -100,7 +100,7 @@ scalar SetEndTimeWithInterpreterFunctionObject<Wrapper>::endTime()
     if(result!=this->time().endTime().value()) {
         Info << "Changing end time because " << endTimeCode_
             << " evaluated to " << result << "(current endTime: "
-            << this->time().endTime().value() << " in "
+            << this->time().endTime().value() << ") in "
             << this->name() << endl;
     }
 
