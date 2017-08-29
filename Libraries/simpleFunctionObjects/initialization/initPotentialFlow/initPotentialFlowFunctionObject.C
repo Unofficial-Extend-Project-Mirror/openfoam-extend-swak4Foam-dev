@@ -112,7 +112,9 @@ void initPotentialFlowFunctionObject::recalc()
         pName_+"Potential",
         mesh.lookupObject<volScalarField>(pName_)
     );
+#ifdef FOAM_FVSCHEMES_HAS_SETFLUXREQUIRED
     mesh.schemesDict().setFluxRequired(p.name());
+#endif
     volVectorField &U=const_cast<volVectorField&>(
         mesh.lookupObject<volVectorField>(UName_)
     );

@@ -4,4 +4,4 @@
 #define SWAK_VERSION_MINOR 4
 #define SWAK_VERSION_PATCH 2
 #define SWAK_RELEASE_DATE "Next release"
-#define SWAK_HGBRANCH "feature/bison3"
+#define SWAK_HGBRANCH "develop"
