@@ -52,6 +52,10 @@ Contributors/Copyright:
 
 #include "Python.h"
 
+#if PY_VERSION_HEX<0x03060000
+#define OLD_PYTHON3
+#endif
+
 #include "generalInterpreterWrapperCRTP.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

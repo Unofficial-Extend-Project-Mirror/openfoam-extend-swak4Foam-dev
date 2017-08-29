@@ -158,7 +158,10 @@ python3InterpreterWrapper::python3InterpreterWrapper
     triedIPython_(false),
     oldIPython_(false)
 {
-    Pbug << "Starting constructor" << endl;
+    Pbug << "Starting constructor: We have the GIL: " << PyGILState_Check()
+        << " our state " << getHex(pythonState_) << " Main: "
+        << getHex(mainThreadState) << " used: "
+        << getHex(PyGILState_GetThisThreadState()) << endl;
 
     syncParallel();
 
@@ -194,17 +197,21 @@ python3InterpreterWrapper::python3InterpreterWrapper
             Pbug << "GIL-state before thread: " << getHex(current) << endl;
         }
         PyEval_InitThreads();
-         if(debug) {
+        if(debug) {
             PyThreadState *current=PyGILState_GetThisThreadState();
             Pbug << "GIL-state after thread: " << getHex(current) << endl;
         }
-        // importLib("scipy.stats","stats"); - OK
-        mainThreadState = PyThreadState_Get();
-        // importLib("scipy.stats","stats"); - segFault
 
-        Pbug << "Main thread state: " << getHex(mainThreadState) << endl;
-        // PyRun_SimpleString("import IPython\n" // here it works as expected
-        // "IPython.embed()\n");
+         Pbug << "Before saving state: We have the GIL: " << PyGILState_Check()
+             << " our state " << getHex(pythonState_) << " Main: "
+             << getHex(mainThreadState) << " used: "
+             << getHex(PyGILState_GetThisThreadState()) << endl;
+         // mainThreadState = PyThreadState_Get();
+        mainThreadState = PyEval_SaveThread();
+        Pbug << "After saving state: We have the GIL: " << PyGILState_Check()
+            << " our state " << getHex(pythonState_) << " Main: "
+            << getHex(mainThreadState) << " used: "
+            << getHex(PyGILState_GetThisThreadState()) << endl;
     }
 
     if(Pstream::parRun()) {
@@ -221,10 +228,18 @@ python3InterpreterWrapper::python3InterpreterWrapper
     interpreterCount++;
 
     getGIL();
+    //    PyEval_AcquireLock();
 
-    Pbug << "Getting new interpreter" << endl;
+    Pbug << "Getting new interpreter: We have the GIL: " << PyGILState_Check()
+        << " our state " << getHex(pythonState_) << " Main: "
+        << getHex(mainThreadState) << " used: "
+        << getHex(PyGILState_GetThisThreadState())  << endl;
     pythonState_=Py_NewInterpreter();
-    Pbug << "Interpreter state: " << getHex(pythonState_) << endl;
+    //    PyThreadState_Swap(pythonState_);
+    Pbug << "Interpreter state: We have the GIL: " << PyGILState_Check()
+        << " our state " << getHex(pythonState_) << " Main: "
+        << getHex(mainThreadState) << " used: "
+        << getHex(PyGILState_GetThisThreadState())  << endl;
 
     //    interactiveLoop("Clean");
 
@@ -336,11 +351,14 @@ python3InterpreterWrapper::python3InterpreterWrapper
 
     PyEval_ReleaseThread(pythonState_);
 
+    //    releaseGIL();
+
     Pbug << "End constructor: We have the GIL: " << PyGILState_Check()
         << " our state " << getHex(pythonState_) << " Main: "
         << getHex(mainThreadState) << " used: "
         << getHex(PyGILState_GetThisThreadState()) << endl;
- }
+        //        << getHex(PyThreadState_Get()) << endl;
+}
 
 void python3InterpreterWrapper::getGIL() {
     Pbug << "Getting GIL: We have the GIL: " << PyGILState_Check() << endl;
@@ -483,6 +501,7 @@ void python3InterpreterWrapper::setInterpreter()
     if(pythonState_) {
         Pbug << "Setting state to " << getHex(pythonState_) << endl;
         PyThreadState *old=PyGILState_GetThisThreadState();
+        Pbug << "Old state: " << getHex(old) << endl;
         if(old==NULL) {
             Pbug << "No current thread state" << endl;
             PyEval_RestoreThread(pythonState_);
@@ -495,11 +514,12 @@ void python3InterpreterWrapper::setInterpreter()
             PyEval_RestoreThread(pythonState_);
         } else {
             Pbug << "Swapping out current" << endl;
-            old=PyThreadState_Swap(pythonState_);
+            PyThreadState *prev=PyThreadState_Swap(pythonState_);
+            Pbug << "Swapped state: " << getHex(prev) << endl;
         }
         //        PyThreadState *old=PyThreadState_Swap(mainThreadState);
-        Pbug << "Old state: " << getHex(old) << endl;
     }
+    // getGIL();
     Pbug << "setInterpreter - post: We have the GIL: " << PyGILState_Check()
         << " our state " << getHex(pythonState_) << " Main: "
         << getHex(mainThreadState) << " used: "
@@ -515,9 +535,13 @@ void python3InterpreterWrapper::releaseInterpreter()
         << getHex(mainThreadState) << " used: "
         << getHex(PyGILState_GetThisThreadState()) << endl;
     if(
+#ifdef OLD_PYTHON3
+        true
+#else
         PyGILState_GetThisThreadState()
         ==
         pythonState_
+#endif
     ) {
         Pbug << "Releasing thread" << endl;
         PyEval_ReleaseThread(pythonState_);
@@ -535,6 +559,10 @@ bool python3InterpreterWrapper::executeCodeInternal(
     const string &code
 ) {
     Pbug << "executeCodeInternal: " << code << endl;
+    Pbug << "executeCodeInternal: We have the GIL: " << PyGILState_Check()
+        << " our state " << getHex(pythonState_) << " Main: "
+        << getHex(mainThreadState) << " used: "
+        << getHex(PyGILState_GetThisThreadState())  << endl;
 
     return PyRun_SimpleString(code.c_str())==0;
 }
