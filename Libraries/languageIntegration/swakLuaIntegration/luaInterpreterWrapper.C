@@ -122,14 +122,18 @@ luaInterpreterWrapper::luaInterpreterWrapper
     //    interactiveLoop("Clean");
 
 
-    Pbug << "End constructor" << endl;
+    Pbug << "End constructor: Size of Lua-stack "
+        << lua_gettop(luaState_) << endl ;
  }
 
 void luaInterpreterWrapper::initLuaPrompt() {
-    Dbug << "Importing luaprompt library" << endl;
+    Dbug << "Importing luaprompt library: Size of Lua-stack "
+        << lua_gettop(luaState_) << endl;
     int result=luaL_dostring(luaState_,"_prompt=require 'prompt'");
     if(result) {
-        Dbug << "No prompt library" << endl;
+        Dbug << "No prompt library: Size of Lua-stack "
+            << lua_gettop(luaState_) << endl;
+        lua_pop(luaState_,1);
         return;
     }
     hasLuaPrompt_=true;
@@ -227,7 +231,7 @@ void luaInterpreterWrapper::releaseInterpreter()
 
     if(lua_gettop(luaState_)>0) {
         FatalErrorIn("releaseInterpreter")
-            << "Stack must be 0" << nl
+            << "Stack must be 0 but is " << lua_gettop(luaState_) << nl
                 << "This is not your fault. Problem in the implementation of luaInterpreterWrapper"
                 << endl
                 << exit(FatalError);
