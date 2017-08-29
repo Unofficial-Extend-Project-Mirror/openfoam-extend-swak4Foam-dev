@@ -24,9 +24,15 @@ done
 
 HASLUA=$(pkg-config --exists lua)
 if [[ $? == 0 ]]; then
-    echo "Using lua"
-    export SWAK_LUA_INCLUDE=$(pkg-config --cflags lua)
-    export SWAK_LUA_LINK=$(pkg-config --libs lua)
+    LUAVERSION=$(pkg-config --modversion lua)
+    if [[ "$LUAVERSION" < "5.3" ]]
+    then
+        echo "Lua version $LUAVERSION too small. At least 5.3 required"
+    else
+        echo "Using lua"
+        export SWAK_LUA_INCLUDE=$(pkg-config --cflags lua)
+        export SWAK_LUA_LINK=$(pkg-config --libs lua)
+    fi
 fi
 
 # List separated by : with directories to user plugins

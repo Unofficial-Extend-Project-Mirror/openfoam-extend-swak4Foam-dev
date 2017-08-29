@@ -58,6 +58,10 @@ extern "C" {
         # include "lualib.h"
 }
 
+#if LUA_VERSION_NUM<503
+#error "Lua-version too low. Must be at least 5.3"
+#endif
+
 #include "generalInterpreterWrapperCRTP.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
