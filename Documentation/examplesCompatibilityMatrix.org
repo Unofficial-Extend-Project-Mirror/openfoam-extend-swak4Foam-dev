@@ -58,11 +58,11 @@
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
-  | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark |            |
-  | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark |            |
-  | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \checkmark |            |
-  | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark |            |
+  | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark | \checkmark |
 
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
-# End:
+# End
