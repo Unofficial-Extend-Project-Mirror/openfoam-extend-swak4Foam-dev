@@ -482,7 +482,10 @@ python3InterpreterWrapper::~python3InterpreterWrapper()
     if(interpreterCount==0) {
         Dbug << "Finalizing Python" << endl;
 
+#ifdef OLD_PYTHON3
         PyEval_RestoreThread(mainThreadState);
+        Dbug << "Actual finalizing" << endl;
+#endif
         // This causes a segfault
         Py_Finalize();
         mainThreadState=NULL;
