@@ -3696,9 +3696,9 @@ S_{expl} + S_{impl} T
      missing in that Foam-version)
 
      Currently 4 Foam-versions are tested
-     - OpenFOAM 4.1 (the Foundation release)
+     - OpenFOAM 5.0 (the Foundation release)
      - Foam-extend 4.0
-     - OpenFOAM+ 1612
+     - OpenFOAM+ 1706
      - OpenFOAM 2.3 (to check compatibility with old versions)
      Other versions might or might not work. The first three will be
      replaced with the latest version of that fork once it becomes
