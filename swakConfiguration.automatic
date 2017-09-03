@@ -22,16 +22,26 @@ do
     fi
 done
 
-HASLUA=$(pkg-config --exists lua)
-if [[ $? == 0 ]]; then
-    LUAVERSION=$(pkg-config --modversion lua)
-    if [[ "$LUAVERSION" < "5.3" ]]
-    then
-        echo "Lua version $LUAVERSION too small. At least 5.3 required"
-    else
-        echo "Using lua"
-        export SWAK_LUA_INCLUDE=$(pkg-config --cflags lua)
-        export SWAK_LUA_LINK=$(pkg-config --libs lua)
+swakDir=$(pwd)
+requirementsDir=$swakDir/privateRequirements
+
+if [ -e $requirementsDir/include/lua.h ];
+then
+    echo "Using our own Lua at $requirementsDir"
+    export SWAK_LUA_INCLUDE=-I$requirementsDir/include
+    export SWAK_LUA_LINK="-L$requirementsDir/lib -llua"
+else
+    HASLUA=$(pkg-config --exists lua)
+    if [[ $? == 0 ]]; then
+        LUAVERSION=$(pkg-config --modversion lua)
+        if [[ "$LUAVERSION" < "5.3" ]]
+        then
+            echo "Lua version $LUAVERSION too small. At least 5.3 required"
+        else
+            echo "Using lua"
+            export SWAK_LUA_INCLUDE=$(pkg-config --cflags lua)
+            export SWAK_LUA_LINK=$(pkg-config --libs lua)
+        fi
     fi
 fi
 

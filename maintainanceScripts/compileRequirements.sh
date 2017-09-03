@@ -12,14 +12,14 @@ mkdir -p $requirementsDir/compilation
 
 if [ -e $requirementsDir/bin/bison ];
 then
-    echo "Bison alread installed/compiled"
+    echo "Bison already installed/compiled"
 else
     bisonTarball=bison-3.0.4.tar.gz
     if [ -e  $requirementsDir/sources/$bisonTarball ];
     then
 	echo "$bisonTarball already downloaded"
     else
-	(cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/bison-3.0.4.tar.gz)
+	(cd $requirementsDir/sources; wget http://ftp.gnu.org/gnu/bison/$bisonTarball)
     fi
     echo "Untarring bison-sources"
     ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$bisonTarball )
@@ -34,6 +34,43 @@ then
 else
     echo
     echo "Bison not compiled. Check output"
+    echo
+fi
+
+if [ -e $requirementsDir/bin/lua ];
+then
+    echo "Lua already installed/compiled"
+else
+    luaTarball=lua-5.3.4.tar.gz
+    if [ -e  $requirementsDir/sources/$luaTarball ];
+    then
+	echo "$luaTarball already downloaded"
+    else
+	(cd $requirementsDir/sources; wget https://www.lua.org/ftp/$luaTarball)
+    fi
+    echo "Untarring lua-sources"
+    ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$luaTarball )
+
+    (
+        cd $requirementsDir/compilation/lua-5.3.4;
+        sed -i bak -e "s|/usr/local|$requirementsDir|" Makefile ;
+        sed -i bak -e "s|/usr/local|$requirementsDir|" src/luaconf.h ;
+        if [[ $(uname) == "Darwin" ]];
+        then
+            make macosx
+        else
+            make linux
+        fi
+        make install
+    )
+fi
+
+if [ -e $requirementsDir/bin/lua ];
+then
+    echo "Lua successfully compiled"
+else
+    echo
+    echo "Lua not compiled. Check output"
     echo
 fi
 

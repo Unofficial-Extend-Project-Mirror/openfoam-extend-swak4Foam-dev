@@ -6239,8 +6239,12 @@ Lua-tables. Therefor the performance should be much slower than
 the Python-integration where the native data is mapped to
 `numpy`-arrays
 
+The script `./maintainanceScripts/compileRequirements.sh`
+compiles a private version of Lua that is automatically used when
+the `swakConfiguation.automatic` is used
+
 
 ### Enhancements
 
 
-### Examples
+### Example
