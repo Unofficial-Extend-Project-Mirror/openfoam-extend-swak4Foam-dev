@@ -53,8 +53,9 @@ else
 
     (
         cd $requirementsDir/compilation/lua-5.3.4;
-        sed -i bak -e "s|/usr/local|$requirementsDir|" Makefile ;
-        sed -i bak -e "s|/usr/local|$requirementsDir|" src/luaconf.h ;
+        sed -i bak -e "s|/usr/local|$requirementsDir|" Makefile
+        sed -i bak -e "s|/usr/local|$requirementsDir|" src/luaconf.h
+        sed -i bak -e "s|CC= gcc -std=gnu99|CC= gcc -fPIC -std=gnu99|" src/Makefile
         if [[ $(uname) == "Darwin" ]];
         then
             make macosx
@@ -63,6 +64,7 @@ else
         fi
         make install
     )
+    echo "If there were problems during compilation install the readline-devel package (name may be different on platforms)"
 fi
 
 if [ -e $requirementsDir/bin/lua ];

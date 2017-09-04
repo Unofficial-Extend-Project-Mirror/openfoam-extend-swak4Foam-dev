@@ -110,6 +110,25 @@
 : bison -V
    The version of flex with
 : flex -V
+*** Scripting languages
+    If some scripting language integration should be used then the
+    appropriate development packages for that language must be
+    installed (something like =python-devel=) for Python. This differs
+    on the various platforms. The settings for your machine read from
+    the file =swakConfiguation= if it is present. The file
+    =swakConfiguation.automatic= tries to guess these settings so
+    either copy it with
+: cp swakConfiguation.automatic swakConfiguation
+    and modify it or link it
+: ln -s swakConfiguation.automatic swakConfiguation
+    but be aware that if modifying it the original is modified.
+
+    Because of its small footprint and to avoid problems on
+    distributions where it is outdated =Lua= is automatically compiled
+    by the =maintainanceScripts/compileRequirements= script and
+    =swakConfiguration.automatic= uses this version if found. It may
+    be necessary to install the development package of =readline= for
+    this
 ** Building
 : wmake all
    at the base directory should build all the libraries and
