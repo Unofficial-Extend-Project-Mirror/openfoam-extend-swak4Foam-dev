@@ -64,6 +64,25 @@ else
         fi
         make install
     )
+    if [ -e $requirementsDir/bin/lua ];
+    then
+       luarocksTarball=luarocks-2.4.1.tar.gz
+       if [ -e  $requirementsDir/sources/$luarocksTarball ];
+       then
+	   echo "$luarocksTarball already downloaded"
+       else
+	   (cd $requirementsDir/sources; wget https://luarocks.org/releases/$luarocksTarball)
+       fi
+       echo "Untarring luarocks-sources"
+       ( cd $requirementsDir/compilation; tar xzf $requirementsDir/sources/$luarocksTarball )
+       export PATH=$requirementsDir/bin:$PATH
+       (
+           cd $requirementsDir/compilation/luarocks-2.4.1
+           ./configure --prefix=$requirementsDir
+           make bootstrap
+           luarocks install luaprompt
+       )
+    fi
     echo "If there were problems during compilation install the readline-devel package (name may be different on platforms)"
 fi
 

@@ -166,6 +166,11 @@ by the `maintainanceScripts/compileRequirements` script and
 be necessary to install the development package of `readline` for
 this
 
+The script will also install `luarocks` (the Lua package manager)
+and using that `luaprompt`. The `luaprompt`-library will be used
+for interactive interactions with the Lua-integration (making it
+more comfortable)
+
 
 ## Building
 
