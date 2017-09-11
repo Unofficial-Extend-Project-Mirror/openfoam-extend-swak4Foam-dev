@@ -163,9 +163,7 @@ Foam::label Foam::binaryOperationSearchableSurface::toIndexB(
 
 const Foam::wordList& Foam::binaryOperationSearchableSurface::regions() const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::regions " << name() << endl;
-    }
+    Dbug << "regions " << name() << endl;
 
     if(regions_.size() == 0 ) {
         regions_.setSize(nrARegions_+nrBRegions_);
@@ -191,9 +189,7 @@ Foam::pointField
 #endif
 Foam::binaryOperationSearchableSurface::coordinates() const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::coordinates " << name() << endl;
-    }
+    Dbug << "coordinates " << name() << endl;
 
     pointField aCoords(a().coordinates());
     pointField bCoords(b().coordinates());
@@ -206,10 +202,9 @@ Foam::binaryOperationSearchableSurface::coordinates() const
     forAll(bCoords,i) {
         result[i+aCoords.size()]=bCoords[i];
     }
-    if(debug) {
-        Info << "A: " << aCoords.size() << " B: " << bCoords.size()
-            << " -> " << result.size() << "(" << this->size() << ")" << endl;
-    }
+    Dbug << "A: " << aCoords.size() << " B: " << bCoords.size()
+        << " -> " << result.size() << "(" << this->size() << ")" << endl;
+
     // if(result.size()!=this->size()) {
     //     WarningIn("binaryOperationSearchableSurface::coordinates()")
     //         << "Number of coordinates " << result.size() << " does not match "
@@ -244,21 +239,15 @@ void Foam::binaryOperationSearchableSurface::findNearest
     List<pointIndexHit>& info
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::findNearest "
-            << name() << " : "
-            << samples.size() << " samples" << endl;
-    }
+    Dbug << "findNearest "
+        << name() << " : "
+        << samples.size() << " samples" << endl;
 
     List<pointIndexHit> hitA;
     List<pointIndexHit> hitB;
-    if(debug) {
-        Info << "Doing A" << endl;
-    }
+    Dbug << "Doing A" << endl;
     a().findNearest(samples,nearestDistSqr,hitA);
-    if(debug) {
-        Info << "Doing B" << endl;
-    }
+    Dbug << "Doing B" << endl;
     b().findNearest(samples,nearestDistSqr,hitB);
 
     List<bool> inAA,inAB;
@@ -309,9 +298,7 @@ void Foam::binaryOperationSearchableSurface::findNearest
             info[i]=hitB[i];
         }
     }
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::findNearest - leaving" << endl;
-    }
+    Dbug << "findNearest - leaving" << endl;
 }
 
 void Foam::binaryOperationSearchableSurface::findLine
@@ -321,19 +308,24 @@ void Foam::binaryOperationSearchableSurface::findLine
     List<pointIndexHit>& info
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::findLine " << name() << endl;
-    }
+    Dbug << "findLine " << name() << endl;
 
     List<List<pointIndexHit> > infoAll;
     findLineAll(start,end,infoAll);
     info.setSize(start.size());
 
-    forAll(info,i) {
+    label cnt=0;
+    forAll(infoAll,i) {
         if(infoAll[i].size()>0) {
             info[i]=infoAll[i][0];
+            cnt++;
+        } else {
+            info[i].setMiss();
         }
     }
+    Dbug << "findLine: " << info.size() << " from "
+        << start.size() << "/" << end.size()
+        << " ok: " << cnt << endl;
 }
 
 
@@ -344,9 +336,7 @@ void Foam::binaryOperationSearchableSurface::findLineAny
     List<pointIndexHit>& info
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::findLineAny " << name() << endl;
-    }
+    Dbug << "findLineAny " << name() << endl;
 
     findLine(start,end,info);
 }
@@ -359,19 +349,16 @@ void Foam::binaryOperationSearchableSurface::findLineAll
     List<List<pointIndexHit> >& info
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::findLineAll " << name() << endl;
-    }
+    Dbug << "findLineAll " << name() << endl;
+
     List<List<pointIndexHit> > infoA;
     List<List<pointIndexHit> > infoB;
 
     a().findLineAll(start,end,infoA);
     b().findLineAll(start,end,infoB);
 
-    if(debug) {
-        Info << "Found a: " << infoA.size() << " b: " << infoB.size()
-            << endl;
-    }
+    Dbug << "Found a: " << infoA.size() << " b: " << infoB.size()
+        << endl;
 
     info.setSize(start.size());
 
@@ -387,7 +374,7 @@ void Foam::binaryOperationSearchableSurface::findLineAll
 
         filter(start[i],infoA[i],infoB[i],info[i]);
         if(debug>3) {
-            Info << infoA[i] << infoB[i] << info[i] << endl;
+            Dbug << infoA[i] << infoB[i] << info[i] << endl;
         }
        // it's only ugly bubble-sort but OK for the small number of points
         for(label j=0;j<(info[i].size()-1);j++) {
@@ -447,10 +434,10 @@ void Foam::binaryOperationSearchableSurface::findLineAll
             cntB+=infoB[j].size();
             cnt +=info[j].size();
         }
-        Info << "Found A: " << cntA << " B: " << cntB
+        Dbug << "findLineAll - Found A: " << cntA << " B: " << cntB
             << " Total: " << cnt << endl;
     }
- }
+}
 
 void Foam::binaryOperationSearchableSurface::filter
 (
@@ -460,9 +447,7 @@ void Foam::binaryOperationSearchableSurface::filter
     List<pointIndexHit>& result
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::filter" << endl;
-    }
+    Dbug << "filter" << endl;
 
     List<bool> inA;
     List<bool> inB;
@@ -490,6 +475,10 @@ void Foam::binaryOperationSearchableSurface::filter
             h.append(hits[i]);
         }
     }
+
+    Dbug << "filter: " << h.size() << " of "
+        << hitsA.size() << "/" << hitsB.size() << endl;
+
     result=h;
 }
 
@@ -500,9 +489,7 @@ void Foam::binaryOperationSearchableSurface::getRegion
     labelList& region
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::getRegion " << name() << endl;
-    }
+    Dbug << "getRegion " << name() << ": " << info.size() << endl;
 
     List<hitWhom> who;
     whose(info,who);
@@ -525,6 +512,8 @@ void Foam::binaryOperationSearchableSurface::getRegion
 
     label cntA=0,cntB=0;
     forAll(who,i) {
+        //        Info << i << " : " << info[i] << " -> "<< who[i] << endl;
+
         if(who[i]==BOTH || who[i]==HITSA) {
             region[i]=regionA[cntA];
             cntA++;
@@ -547,10 +536,13 @@ void Foam::binaryOperationSearchableSurface::getRegion
                 << "Hit " << info[i] << " does not fit any component" << endl
                     << "Defaulting to 0" << endl;
 
-            // FatalErrorIn("binaryOperationSearchableSurface::getRegion")
-            //     << "The hit " << info[i] << " hits none of both"
-            //         << endl
-            //         << abort(FatalError);
+            if(debug) {
+                FatalErrorIn("binaryOperationSearchableSurface::getRegion")
+                    << "The hit " << info[i] << " hits none of both"
+                        << " in " << this->name()
+                        << endl
+                        << abort(FatalError);
+            }
         }
     }
 
@@ -568,7 +560,7 @@ void Foam::binaryOperationSearchableSurface::getRegion
                     cntNone++; break;
             }
         }
-        Info << who.size() << " points. A: " << cntInA
+        Info << "getRegion: " << who.size() << " points. A: " << cntInA
             << " B: " << cntInB << " Both: " << cntBoth
             << " None: " << cntNone << endl;
 
@@ -593,7 +585,7 @@ void Foam::binaryOperationSearchableSurface::getRegion
                 cnts[reg]++;
             }
         }
-        Info << "Counts: " << cnts << endl;
+        Dbug << "Counts: " << cnts << endl;
     }
 }
 
@@ -604,9 +596,7 @@ void Foam::binaryOperationSearchableSurface::getNormal
     vectorField& normal
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::getNormal " << name() << endl;
-    }
+    Dbug << "getNormal " << name() << endl;
 
     List<hitWhom> who;
     whose(info,who);
@@ -667,7 +657,7 @@ void Foam::binaryOperationSearchableSurface::getNormal
                     cntNone++; break;
             }
         }
-        Info << who.size() << " points. A: " << cntInA
+        Info << "getNormal: " << who.size() << " points. A: " << cntInA
             << " B: " << cntInB << " Both: " << cntBoth
             << " None: " << cntNone << endl;
 
@@ -687,9 +677,7 @@ void  Foam::binaryOperationSearchableSurface::whose
     List<hitWhom> &whom
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::whose " << name() << endl;
-    }
+    Dbug << "whose " << name() << endl;
 
     pointField samples(hits.size());
     scalarField distance(hits.size(),1e5);
@@ -750,7 +738,7 @@ void  Foam::binaryOperationSearchableSurface::whose
                     cntNone++; break;
             }
         }
-        Info << whom.size() << " points. A: " << cntA
+        Dbug << "whose: " << whom.size() << " points. A: " << cntA
             << " B: " << cntB << " Both: " << cntBoth
             << " None: " << cntNone << endl;
     }
@@ -764,9 +752,7 @@ void  Foam::binaryOperationSearchableSurface::splitHits
     List<pointIndexHit>& hitsB
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::splitHits " << name() << endl;
-    }
+    Dbug << "splitHits " << name() << endl;
 
     label nrA=0;
     label nrB=0;
@@ -811,10 +797,8 @@ void  Foam::binaryOperationSearchableSurface::splitHits
                 << "\n" << endl
                 << abort(FatalError);
     }
-    if(debug) {
-        Info << "From " << hits.size() << " to A: " << hitsA.size()
-            << " to B: " << hitsB.size() << endl;
-    }
+    Dbug << "From " << hits.size() << " to A: " << hitsA.size()
+        << " to B: " << hitsB.size() << endl;
 }
 
 void  Foam::binaryOperationSearchableSurface::inside
@@ -824,9 +808,8 @@ void  Foam::binaryOperationSearchableSurface::inside
     List<bool> &in
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::inside " << name() << endl;
-    }
+    Dbug << "inside " << name() << endl;
+
     pointField samples(hits.size());
 
     forAll(hits,i) {
@@ -861,8 +844,8 @@ void  Foam::binaryOperationSearchableSurface::inside
                     cntUnknown++; break;
             }
         }
-        Info << "Inside " << cntIn << " of " << in.size() << endl;
-        Info << "VolType: Inside: " << cntInside << " Outside: "
+        Dbug << "Inside " << cntIn << " of " << in.size() << endl;
+        Dbug << "VolType: Inside: " << cntInside << " Outside: "
             << cntOutside << " Mixed: " << cntMixed << " Unknown: "
             << cntUnknown << endl;
     }
@@ -903,9 +886,7 @@ void Foam::binaryOperationSearchableSurface::collectInfo(
     List<hitWhom>& who
 ) const
 {
-    if(debug) {
-        Info << "Foam::binaryOperationSearchableSurface::collectInfo " << name() << endl;
-    }
+    Dbug << "collectInfo " << name() << endl;
 
     DynamicList<pointIndexHit> hits;
     DynamicList<hitWhom> whom;
@@ -969,12 +950,20 @@ void Foam::binaryOperationSearchableSurface::collectInfo(
     allHits=hits;
     who=whom;
 
+    // label noHit=0;
+    // forAll(allHits,i) {
+    //     if(!allHits[i].hit()) {
+    //         noHit++;
+    //     }
+    // }
+    // Info << "Did not hit " << noHit << " times" << endl;
+
     insideA(allHits,inA);
     insideB(allHits,inB);
 
     if(debug>1) {
         forAll(allHits,i) {
-            Info << allHits[i] << " whom:  " << whom[i] << " A: "
+            Dbug << "collectInfo:" <<  allHits[i] << " whom:  " << whom[i] << " A: "
                 << inA[i] << " inB: " << inB[i] << endl;
         }
     }
