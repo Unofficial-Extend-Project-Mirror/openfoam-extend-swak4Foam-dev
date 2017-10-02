@@ -1,0 +1,6 @@
+
+EXE_INC = -I../../Libraries/swak4FoamParsers/lnInclude
+
+EXE_LIBS = -L$(FOAM_USER_LIBBIN) \
+         -lswak4FoamParsers
+         

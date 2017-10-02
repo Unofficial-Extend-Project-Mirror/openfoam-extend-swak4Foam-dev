@@ -1331,6 +1331,12 @@ work with them. These are only needed to fix problems of the
 distributions
 
 
+## Development
+
+Programs and libraries that are only used for testing/developing
+swak
+
+
 # Bug reporting and Development
 
 
@@ -2628,7 +2634,7 @@ Also fixed a leak with the labels of plugin-functions that was
 present with all drivers
 
 
-#### Maintenance scripts not working with non-=bash= `/bin/sh`
+#### Maintenance scripts not working with non-`bash` `/bin/sh`
 
 Reported by Oliver Krueger that on systems where `/bin/sh` is not
 a `bash` anymore (newer Ubuntu and SuSE) the sourcing of
@@ -3599,7 +3605,7 @@ Methods that look for fields now use the appropriate data type
 
 There were template specializations for `pTraits` in
 `ExpressionResult.C` that had to be moved to `ExpressionResult.H`
-to allow compilation on these non-=gcc=-compilers
+to allow compilation on these non-`gcc`-compilers
 
 
 #### `executeIf`-function objects are executed if `readDuringConstruction` is set to `true`

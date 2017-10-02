@@ -890,6 +890,9 @@ S_{expl} + S_{impl} T
    Patches that have to be applied to releases to get swak4Foam to
    work with them. These are only needed to fix problems of the
    distributions
+** Development
+   Programs and libraries that are only used for testing/developing
+   swak
 * Bug reporting and Development
 ** Bug reports
    The preferred place for bug reports is
