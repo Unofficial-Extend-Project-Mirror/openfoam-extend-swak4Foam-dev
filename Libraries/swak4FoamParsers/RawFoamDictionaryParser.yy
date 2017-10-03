@@ -130,10 +130,11 @@ assignment:
 | "word" wordList ";"        { driver.add($1,driver.getWordList()); driver.startWordList(); }
 | "word" boolList ";"        { driver.add($1,driver.getBoolList()); driver.startBoolList(); }
 | "word" stringList ";"      { driver.add($1,driver.getStringList()); driver.startStringList(); }
-| "word" labelListList ";"       {}
-| "word" scalarListList ";"      {}
-| "word" wordListList ";"        {}
-| "word" boolListList ";"        {}
+| "word" labelListList ";"       {driver.add($1,driver.getLabelListList()); driver.startLabelListList();}
+| "word" scalarListList ";"      {driver.add($1,driver.getScalarListList()); driver.startScalarListList();}
+| "word" wordListList ";"        {driver.add($1,driver.getWordListList()); driver.startWordListList();}
+| "word" boolListList ";"        {driver.add($1,driver.getBoolListList()); driver.startBoolListList();}
+| "word" stringListList ";"        {driver.add($1,driver.getStringListList()); driver.startStringListList();}
 | "word" error ";"           { driver.add($1,driver.getError()); yyerrok; }
 | regexp {} error ";"           { yyerrok; }
 ;
@@ -158,9 +159,13 @@ labelSeq:
 
 scalarList:
   "(" scalarSeq ")"          {}
-| "(" ")"                    {}
+| emptyList                   {}
 | "label" "(" scalarSeq ")"   {}
 | "label" "{" "scalar" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
+;
+
+emptyList:
+  "(" ")"
 ;
 
 scalarSeq:
@@ -173,7 +178,6 @@ scalarSeq:
 wordList:
   "(" wordSeq ")"           {}
 | "label" "(" wordSeq ")"   {}
-| "label" "{" "word" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
 ;
 
 wordSeq:
@@ -195,7 +199,6 @@ boolSeq:
 stringList:
   "(" stringSeq ")"           {}
 | "label" "(" stringSeq ")"   {}
-| "label" "{" "string" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
 ;
 
 stringSeq:
@@ -208,18 +211,19 @@ labelListList:
 ;
 
 labelListSeq:
-  labelList                      {}
-| labelListSeq labelList             {}
+  labelList                      { driver.addToList(driver.getLabelList()); driver.startLabelList();}
+| labelListSeq labelList             {driver.addToList(driver.getLabelList()); driver.startLabelList();}
+;
 
 scalarListList:
   "(" scalarListSeq ")"          {}
 ;
 
 scalarListSeq:
-  scalarList                      {}
-| scalarListSeq scalarList            {}
-| labelListSeq scalarList             {}
-| scalarListSeq labelList            {}
+  scalarList                      {driver.addToList(driver.getScalarList()); driver.startScalarList();}
+| scalarListSeq scalarList            { driver.addToList(driver.getScalarList()); driver.startScalarList(); }
+| labelListSeq scalarList             { driver.moveLabelListListToScalar(); driver.addToList(driver.getScalarList()); driver.startScalarList(); }
+| scalarListSeq labelList            { driver.moveLabelListToScalar(); driver.addToList(driver.getScalarList()); driver.startScalarList(); }
 ;
 
 wordListList:
@@ -227,8 +231,19 @@ wordListList:
 ;
 
 wordListSeq:
-  wordList                      {}
-| wordListSeq wordList             {}
+  wordList                      {driver.addToList(driver.getWordList()); driver.startWordList();}
+| wordListSeq wordList             {driver.addToList(driver.getWordList()); driver.startWordList();}
+| wordListSeq emptyList             {driver.addToList(driver.getWordList()); driver.startWordList();}
+;
+
+stringListList:
+"(" stringListSeq ")"           {}
+;
+
+stringListSeq:
+  stringList                      {driver.addToList(driver.getStringList()); driver.startStringList();}
+| stringListSeq stringList             { driver.addToList(driver.getStringList()); driver.startStringList(); }
+| stringListSeq emptyList             { driver.addToList(driver.getStringList()); driver.startStringList(); }
 ;
 
 boolListList:
@@ -236,8 +251,9 @@ boolListList:
 ;
 
 boolListSeq:
-  boolList                      {}
-| boolListSeq boolList             {}
+  boolList                      { driver.addToList(driver.getBoolList()); driver.startBoolList();}
+| boolListSeq boolList             { driver.addToList(driver.getBoolList()); driver.startBoolList();}
+| boolListSeq emptyList             { driver.addToList(driver.getBoolList()); driver.startBoolList();}
 ;
 
 

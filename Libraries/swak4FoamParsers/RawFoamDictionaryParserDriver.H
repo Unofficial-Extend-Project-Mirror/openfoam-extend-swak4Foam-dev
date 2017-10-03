@@ -67,6 +67,12 @@ namespace Foam {
         DynamicList<word> wordList_;
         DynamicList<string> stringList_;
 
+        DynamicList<labelList> labelListList_;
+        DynamicList<scalarList> scalarListList_;
+        DynamicList<boolList> boolListList_;
+        DynamicList<wordList> wordListList_;
+        DynamicList<stringList> stringListList_;
+
     protected:
 
         void startLabelList();
@@ -89,6 +95,27 @@ namespace Foam {
         void startStringList();
         void addToList(const string &val);
         const stringList &getStringList();
+
+        void startLabelListList();
+        void addToList(const labelList &val);
+        const List<labelList> &getLabelListList();
+        void moveLabelListListToScalar();
+
+        void startScalarListList();
+        void addToList(const scalarList &val);
+        const List<scalarList> &getScalarListList();
+
+        void startBoolListList();
+        void addToList(const boolList &val);
+        const List<boolList> &getBoolListList();
+
+        void startWordListList();
+        void addToList(const wordList &val);
+        const List<wordList> &getWordListList();
+
+        void startStringListList();
+        void addToList(const stringList &val);
+        const List<stringList> &getStringListList();
 
         void setError(const std::string &e) {
             error_=e;
@@ -133,6 +160,16 @@ namespace Foam {
         virtual void add(const word& name,const wordList &value) = 0;
 
         virtual void add(const word& name,const stringList &value) = 0;
+
+        virtual void add(const word& name,const List<labelList> &value) = 0;
+
+        virtual void add(const word& name,const List<scalarList> &value) = 0;
+
+        virtual void add(const word& name,const List<boolList> &value) = 0;
+
+        virtual void add(const word& name,const List<wordList> &value) = 0;
+
+        virtual void add(const word& name,const List<stringList> &value) = 0;
 
         virtual void addTopDictAs(const word &name) = 0;
 

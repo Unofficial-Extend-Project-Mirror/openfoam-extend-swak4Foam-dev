@@ -121,6 +121,31 @@ namespace Foam {
         getTop().add(name,value);
     }
 
+    void DictionaryFoamDictionaryParserDriver::add(const word& name,const List<labelList> &value)
+    {
+        getTop().add(name,value);
+    }
+
+    void DictionaryFoamDictionaryParserDriver::add(const word& name,const List<scalarList> &value)
+    {
+        getTop().add(name,value);
+    }
+
+    void DictionaryFoamDictionaryParserDriver::add(const word& name,const List<boolList> &value)
+    {
+        getTop().add(name,value);
+    }
+
+    void DictionaryFoamDictionaryParserDriver::add(const word& name,const List<wordList> &value)
+    {
+        getTop().add(name,value);
+    }
+
+    void DictionaryFoamDictionaryParserDriver::add(const word& name,const List<stringList> &value)
+    {
+        getTop().add(name,value);
+    }
+
     void DictionaryFoamDictionaryParserDriver::addTopDictAs(const word &name) {
         dictionary *dPtr=dicts_.pop();
         getTop().add(name,*dPtr);

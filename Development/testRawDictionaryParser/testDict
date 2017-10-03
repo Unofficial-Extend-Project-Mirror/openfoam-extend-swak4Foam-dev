@@ -50,11 +50,28 @@ roots           ( );
 
 boolList ( on off true no yes false );
 
+onlyYes ( yes yes yes);
+onlyYes2 3 { true };
+
 mixedList ( 1 2.3 2);
+
+labelListList ((1 2 3) (4 5) (6 7 8 9));
 
 scalarListList ((2.4 5) (3));
 
+mixedScalarListList ((1 2 3) (4 5.5 6) (7 8 9));
+
+uniformScalarListList ( 3 {1.} (1 1 1) (1 1 1));
+
 emptyListList (());
+
+wordWordWord ((ho ja) (hi fo fo));
+
+stringsOfString (("nix da" "geh") ("he") () ("gg"));
+
+wordList ( boo ya tribe);
+
+wordListSame ( bo bo bo);
 
 retry $distributed;
 

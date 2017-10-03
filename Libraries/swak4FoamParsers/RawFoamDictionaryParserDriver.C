@@ -51,6 +51,12 @@ namespace Foam {
         startBoolList();
         startWordList();
         startStringList();
+
+        startLabelListList();
+        startScalarListList();
+        startBoolListList();
+        startWordListList();
+        startStringListList();
     }
 
     RawFoamDictionaryParserDriver::~RawFoamDictionaryParserDriver()
@@ -127,5 +133,68 @@ namespace Foam {
     const stringList &RawFoamDictionaryParserDriver::getStringList() {
         return stringList_;
     }
+
+    void RawFoamDictionaryParserDriver::startLabelListList() {
+        labelListList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(const labelList &val) {
+        labelListList_.append(val);
+    }
+    const List<labelList> &RawFoamDictionaryParserDriver::getLabelListList() {
+        return labelListList_;
+    }
+
+    void RawFoamDictionaryParserDriver::moveLabelListListToScalar() {
+        startScalarListList();
+        forAll(labelListList_,i) {
+            scalarList val(labelListList_[i].size());
+            forAll(val,j) {
+                val[j]=labelListList_[i][j];
+            }
+            addToList(val);
+        }
+        startLabelListList();
+    }
+
+    void RawFoamDictionaryParserDriver::startScalarListList() {
+        scalarListList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(const scalarList &val) {
+        scalarListList_.append(val);
+    }
+    const List<scalarList> &RawFoamDictionaryParserDriver::getScalarListList() {
+        return scalarListList_;
+    }
+
+    void RawFoamDictionaryParserDriver::startBoolListList() {
+        boolListList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(const boolList &val) {
+        boolListList_.append(val);
+    }
+    const List<boolList> &RawFoamDictionaryParserDriver::getBoolListList() {
+        return boolListList_;
+    }
+
+    void RawFoamDictionaryParserDriver::startWordListList() {
+        wordListList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(const wordList &val) {
+        wordListList_.append(val);
+    }
+    const List<wordList> &RawFoamDictionaryParserDriver::getWordListList() {
+        return wordListList_;
+    }
+
+    void RawFoamDictionaryParserDriver::startStringListList() {
+        stringListList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(const stringList &val) {
+        stringListList_.append(val);
+    }
+    const List<stringList> &RawFoamDictionaryParserDriver::getStringListList() {
+        return stringListList_;
+    }
+
 
 }

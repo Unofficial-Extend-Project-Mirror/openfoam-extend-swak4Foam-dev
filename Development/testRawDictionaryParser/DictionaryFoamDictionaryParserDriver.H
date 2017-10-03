@@ -75,6 +75,11 @@ namespace Foam {
         void add(const word& name,const boolList &value);
         void add(const word& name,const wordList &value);
         void add(const word& name,const stringList &value);
+        void add(const word& name,const List<labelList> &value);
+        void add(const word& name,const List<scalarList> &value);
+        void add(const word& name,const List<boolList> &value);
+        void add(const word& name,const List<wordList> &value);
+        void add(const word& name,const List<stringList> &value);
 
 
         void addTopDictAs(const word &name);
