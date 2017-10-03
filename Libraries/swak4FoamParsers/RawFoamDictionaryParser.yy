@@ -52,6 +52,7 @@ Contributors/Copyright:
     #include "scalar.H"
     #include "word.H"
     #include "label.H"
+    #include <sstream>
 
     namespace Foam {
         class RawFoamDictionaryParserDriver;
@@ -98,6 +99,7 @@ Contributors/Copyright:
      ;
 
 %token <Foam::word> WORD "word"
+%token <Foam::word> REDIRECTION "redirection"
 %token <Foam::scalar> SCALAR "scalar"
 %token <Foam::label> LABEL "label"
 %token <Foam::string> STRING "string"
@@ -117,14 +119,111 @@ assignments:
 
 assignment:
   "word" "word" ";"          {}
+| "word" "redirection" ";"   { error(@2,"Redirection "+$2+" can't be parsed"); }
 | "word" "scalar" ";"        {}
 | "word" "label" ";"         {}
-| "word" "bool" ";"         {}
+| "word" "bool" ";"          {}
+| "word" "string" ";"        {}
 | "word" dictionary          {}
+| "word" labelList ";"       {}
+| "word" scalarList ";"      {}
+| "word" wordList ";"        {}
+| "word" boolList ";"        {}
+| "word" labelListList ";"       {}
+| "word" scalarListList ";"      {}
+| "word" wordListList ";"        {}
+| "word" boolListList ";"        {}
+| "word" error ";"           { yyerrok; }
+| regexp {} error ";"           { yyerrok; }
 ;
+
+regexp:
+  "string" {
+      error(@1,"Can't parse regular expression key "+$1);
+      YYERROR;
+      // throw syntax_error(@1,"Can't parse regular expression key "+$1);
+  }
+;
+
+labelList:
+  "(" labelSeq ")"           {}
+;
+
+labelSeq:
+  "label"                      {}
+| labelSeq "label"             {}
+
+scalarList:
+  "(" scalarSeq ")"          {}
+| "(" ")"                    {}
+;
+
+scalarSeq:
+  "scalar"                      {}
+| scalarSeq "scalar"            {}
+| labelSeq "scalar"             {}
+| scalarSeq "label"            {}
+;
+
+wordList:
+  "(" wordSeq ")"           {}
+;
+
+wordSeq:
+  "word"                      {}
+| wordSeq "word"             {}
+;
+
+boolList:
+  "(" boolSeq ")"           {}
+;
+
+boolSeq:
+  "bool"                      {}
+| boolSeq "bool"             {}
+;
+
+labelListList:
+  "(" labelListSeq ")"           {}
+;
+
+labelListSeq:
+  labelList                      {}
+| labelListSeq labelList             {}
+
+scalarListList:
+  "(" scalarListSeq ")"          {}
+;
+
+scalarListSeq:
+  scalarList                      {}
+| scalarListSeq scalarList            {}
+| labelListSeq scalarList             {}
+| scalarListSeq labelList            {}
+;
+
+wordListList:
+  "(" wordListSeq ")"           {}
+;
+
+wordListSeq:
+  wordList                      {}
+| wordListSeq wordList             {}
+;
+
+boolListList:
+  "(" boolListSeq ")"           {}
+;
+
+boolListSeq:
+  boolList                      {}
+| boolListSeq boolList             {}
+;
+
 
 dictionary:
   "{" assignments "}"        {}
+
 %%
 
 void
@@ -133,6 +232,14 @@ parserRawDict::RawFoamDictionaryParser::error(
     const std::string& m
 )
 {
+    using namespace Foam;
+
+    std::ostringstream o;
+    o << l;
+
+    WarningIn("RawFoamDictionaryParser")
+        << "Parser error " << m << " at " << o.str()
+            << endl;
 }
 
 parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
@@ -155,8 +262,9 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
 
     token nextToken(driver.is());
 
-    Info << "Next token: " << nextToken.info() << endl;
-
+    if(driver.debug()>2 ) {
+        Info << "Next token: " << nextToken.info() << endl;
+    }
     switch(nextToken.type()) {
         case token::WORD:
             if(
@@ -180,6 +288,12 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
             ) {
                 return RawFoamDictionaryParser::make_BOOL(
                     false,
+                    loc
+                );
+            }
+            if(nextToken.wordToken()[0]=='$') {
+                return RawFoamDictionaryParser::make_REDIRECTION(
+                    nextToken.wordToken(),
                     loc
                 );
             }

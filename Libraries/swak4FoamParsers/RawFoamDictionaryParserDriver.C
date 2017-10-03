@@ -43,7 +43,8 @@ namespace Foam {
         Istream &is
     )
         :
-        is_(is)
+        is_(is),
+        debugLevel_(0)
     {}
 
     RawFoamDictionaryParserDriver::~RawFoamDictionaryParserDriver()
@@ -53,9 +54,11 @@ namespace Foam {
         return is_;
     }
 
-    label RawFoamDictionaryParserDriver::parse() {
+    label RawFoamDictionaryParserDriver::parse(int debugLevel) {
+        debugLevel_=debugLevel;
+
         parserRawDict::RawFoamDictionaryParser parser (*this);
-        parser.set_debug_level (1);
+        parser.set_debug_level (debugLevel);
         int res = parser.parse ();
 
         return res;

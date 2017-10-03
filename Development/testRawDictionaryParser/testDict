@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      decomposeParDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+numberOfSubdomains 4;
+
+method          simple;
+
+simpleCoeffs
+{
+    n               ( 2 2 1 );
+    delta           0.001;
+}
+
+hierarchicalCoeffs
+{
+    n               ( 1 1 1 );
+    delta           0.001;
+    order           xyz;
+}
+
+metisCoeffs
+{
+    processorWeights ( 1 1 1 1 );
+}
+
+manualCoeffs
+{
+    dataFile        "";
+}
+
+distributed     no;
+
+roots           ( );
+
+boolList ( on off true no yes false );
+
+mixedList ( 1 2.3 2);
+
+scalarListList ((2.4 5) (3));
+
+emptyListList (());
+
+retry $distributed;
+
+sequence 2 3;
+
+// "nix.+" test;
+
+a 2;
+
+// ************************************************************************* //

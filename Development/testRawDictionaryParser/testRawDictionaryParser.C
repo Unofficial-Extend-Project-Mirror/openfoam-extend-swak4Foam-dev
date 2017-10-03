@@ -44,8 +44,12 @@ int main(int args,char **argv)
     }
     IFstream f(argv[1]);
     RawFoamDictionaryParserDriver parser(f);
-    parser.parse();
 
+    Info << "Start parsing" << endl;
+
+    label result=parser.parse();
+
+    Info << nl << "Parser ended with result " << result << endl;
     return 0;
 }
 

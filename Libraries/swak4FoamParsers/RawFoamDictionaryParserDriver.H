@@ -48,6 +48,8 @@ namespace Foam {
         RawFoamDictionaryParserDriver(const RawFoamDictionaryParserDriver &);
         void operator=(const RawFoamDictionaryParserDriver&);
 
+        int debugLevel_;
+
     public:
 
         RawFoamDictionaryParserDriver(Istream &is);
@@ -56,7 +58,11 @@ namespace Foam {
 
         Istream &is();
 
-        label parse();
+        label parse(int debugLevel=0);
+
+        int debug() {
+            return debugLevel_;
+        }
     };
 }
 
