@@ -29,7 +29,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-#include "RawFoamDictionaryParserDriver.H"
+#include "DictionaryFoamDictionaryParserDriver.H"
 #include "IFstream.H"
 
 using namespace Foam;
@@ -43,13 +43,16 @@ int main(int args,char **argv)
         return 1;
     }
     IFstream f(argv[1]);
-    RawFoamDictionaryParserDriver parser(f);
+    DictionaryFoamDictionaryParserDriver parser(f);
 
     Info << "Start parsing" << endl;
 
     label result=parser.parse();
 
     Info << nl << "Parser ended with result " << result << endl;
+
+    Info << nl << "Result:" << nl << parser.getResult();
+
     return 0;
 }
 

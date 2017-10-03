@@ -118,22 +118,23 @@ assignments:
 | assignments assignment     {};
 
 assignment:
-  "word" "word" ";"          {}
-| "word" "redirection" ";"   { error(@2,"Redirection "+$2+" can't be parsed"); }
-| "word" "scalar" ";"        {}
-| "word" "label" ";"         {}
-| "word" "bool" ";"          {}
-| "word" "string" ";"        {}
-| "word" dictionary          {}
-| "word" labelList ";"       {}
-| "word" scalarList ";"      {}
-| "word" wordList ";"        {}
-| "word" boolList ";"        {}
+  "word" "word" ";"          { driver.add($1,$2); }
+| "word" "redirection" ";"   { error(@2,"Redirection "+$2+" can't be parsed"); driver.add($1,driver.getError()); }
+| "word" "scalar" ";"        { driver.add($1,$2); }
+| "word" "label" ";"         { driver.add($1,$2); }
+| "word" "bool" ";"          { driver.add($1,$2); }
+| "word" "string" ";"        { driver.add($1,$2); }
+| "word" dictionary          { driver.addTopDictAs($1); }
+| "word" labelList ";"       { driver.add($1,driver.getLabelList()); driver.startLabelList(); }
+| "word" scalarList ";"      { driver.add($1,driver.getScalarList()); driver.startScalarList(); }
+| "word" wordList ";"        { driver.add($1,driver.getWordList()); driver.startWordList(); }
+| "word" boolList ";"        { driver.add($1,driver.getBoolList()); driver.startBoolList(); }
+| "word" stringList ";"      { driver.add($1,driver.getStringList()); driver.startStringList(); }
 | "word" labelListList ";"       {}
 | "word" scalarListList ";"      {}
 | "word" wordListList ";"        {}
 | "word" boolListList ";"        {}
-| "word" error ";"           { yyerrok; }
+| "word" error ";"           { driver.add($1,driver.getError()); yyerrok; }
 | regexp {} error ";"           { yyerrok; }
 ;
 
@@ -147,40 +148,59 @@ regexp:
 
 labelList:
   "(" labelSeq ")"           {}
+| "label" "(" labelSeq ")"   {}
+| "label" "{" "label" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
 ;
 
 labelSeq:
-  "label"                      {}
-| labelSeq "label"             {}
+  "label"                      { driver.addToList($1); }
+| labelSeq "label"             { driver.addToList($2); }
 
 scalarList:
   "(" scalarSeq ")"          {}
 | "(" ")"                    {}
+| "label" "(" scalarSeq ")"   {}
+| "label" "{" "scalar" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
 ;
 
 scalarSeq:
-  "scalar"                      {}
-| scalarSeq "scalar"            {}
-| labelSeq "scalar"             {}
-| scalarSeq "label"            {}
+"scalar"                      { driver.addToList($1); }
+| scalarSeq "scalar"            { driver.addToList($2); }
+| labelSeq "scalar"             { driver.moveLabelListToScalar(); driver.addToList($2); }
+| scalarSeq "label"            { driver.addToList(Foam::scalar($2)); }
 ;
 
 wordList:
   "(" wordSeq ")"           {}
+| "label" "(" wordSeq ")"   {}
+| "label" "{" "word" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
 ;
 
 wordSeq:
-  "word"                      {}
-| wordSeq "word"             {}
+"word"                      { driver.addToList($1); }
+| wordSeq "word"             { driver.addToList($2); }
 ;
 
 boolList:
   "(" boolSeq ")"           {}
+| "label" "(" boolSeq ")"   {}
+| "label" "{" "bool" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
 ;
 
 boolSeq:
-  "bool"                      {}
-| boolSeq "bool"             {}
+"bool"                      { driver.addToList($1); }
+| boolSeq "bool"             { driver.addToList($2); }
+;
+
+stringList:
+  "(" stringSeq ")"           {}
+| "label" "(" stringSeq ")"   {}
+| "label" "{" "string" "}"    { for(int i=0;i<$1;i++) { driver.addToList($3); } }
+;
+
+stringSeq:
+  "string"                      { driver.addToList($1); }
+| stringSeq "string"             { driver.addToList($2); }
 ;
 
 labelListList:
@@ -222,7 +242,7 @@ boolListSeq:
 
 
 dictionary:
-  "{" assignments "}"        {}
+  "{" { driver.newTopDict(); } assignments "}"        {}
 
 %%
 
@@ -235,10 +255,12 @@ parserRawDict::RawFoamDictionaryParser::error(
     using namespace Foam;
 
     std::ostringstream o;
-    o << l;
+    o << "Parser error " << m << " at " << l;
+
+    driver.setError(o.str());
 
     WarningIn("RawFoamDictionaryParser")
-        << "Parser error " << m << " at " << o.str()
+        << o.str()
             << endl;
 }
 

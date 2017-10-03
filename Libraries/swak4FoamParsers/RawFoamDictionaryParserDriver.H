@@ -39,6 +39,15 @@ Contributors/Copyright:
 #define RAWFOAMDICTIONARYPARSERDRIVER_H
 
 #include "Istream.H"
+#include "DynamicList.H"
+#include "labelList.H"
+#include "scalarList.H"
+#include "boolList.H"
+#include "stringList.H"
+
+namespace parserRawDict {
+    class RawFoamDictionaryParser;
+}
 
 namespace Foam {
     class RawFoamDictionaryParserDriver {
@@ -49,6 +58,45 @@ namespace Foam {
         void operator=(const RawFoamDictionaryParserDriver&);
 
         int debugLevel_;
+
+        string error_;
+
+        DynamicList<label> labelList_;
+        DynamicList<scalar> scalarList_;
+        DynamicList<bool> boolList_;
+        DynamicList<word> wordList_;
+        DynamicList<string> stringList_;
+
+    protected:
+
+        void startLabelList();
+        void addToList(label val);
+        const labelList &getLabelList();
+        void moveLabelListToScalar();
+
+        void startScalarList();
+        void addToList(scalar val);
+        const scalarList &getScalarList();
+
+        void startBoolList();
+        void addToList(bool val);
+        const boolList &getBoolList();
+
+        void startWordList();
+        void addToList(const word &val);
+        const wordList &getWordList();
+
+        void startStringList();
+        void addToList(const string &val);
+        const stringList &getStringList();
+
+        void setError(const std::string &e) {
+            error_=e;
+        }
+
+        const string &getError() {
+            return error_;
+        }
 
     public:
 
@@ -63,6 +111,32 @@ namespace Foam {
         int debug() {
             return debugLevel_;
         }
+
+        friend parserRawDict::RawFoamDictionaryParser;
+
+        virtual void add(const word& name,scalar value) = 0;
+
+        virtual void add(const word& name,label value) = 0;
+
+        virtual void add(const word& name,bool value) = 0;
+
+        virtual void add(const word& name,const word &value) = 0;
+
+        virtual void add(const word& name,const string &value) = 0;
+
+        virtual void add(const word& name,const labelList &value) = 0;
+
+        virtual void add(const word& name,const scalarList &value) = 0;
+
+        virtual void add(const word& name,const boolList &value) = 0;
+
+        virtual void add(const word& name,const wordList &value) = 0;
+
+        virtual void add(const word& name,const stringList &value) = 0;
+
+        virtual void addTopDictAs(const word &name) = 0;
+
+        virtual void newTopDict() = 0;
     };
 }
 

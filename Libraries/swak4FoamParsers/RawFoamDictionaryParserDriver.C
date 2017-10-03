@@ -45,7 +45,13 @@ namespace Foam {
         :
         is_(is),
         debugLevel_(0)
-    {}
+    {
+        startLabelList();
+        startScalarList();
+        startBoolList();
+        startWordList();
+        startStringList();
+    }
 
     RawFoamDictionaryParserDriver::~RawFoamDictionaryParserDriver()
     {}
@@ -62,6 +68,64 @@ namespace Foam {
         int res = parser.parse ();
 
         return res;
+    }
+
+    void RawFoamDictionaryParserDriver::startLabelList() {
+        labelList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(label val) {
+        labelList_.append(val);
+    }
+    const labelList &RawFoamDictionaryParserDriver::getLabelList() {
+        return labelList_;
+    }
+
+    void RawFoamDictionaryParserDriver::moveLabelListToScalar() {
+        startScalarList();
+        forAll(labelList_,i) {
+            addToList(scalar(labelList_[i]));
+        }
+        startLabelList();
+    }
+
+    void RawFoamDictionaryParserDriver::startScalarList() {
+        scalarList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(scalar val) {
+        scalarList_.append(val);
+    }
+    const scalarList &RawFoamDictionaryParserDriver::getScalarList() {
+        return scalarList_;
+    }
+
+    void RawFoamDictionaryParserDriver::startBoolList() {
+        boolList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(bool val) {
+        boolList_.append(val);
+    }
+    const boolList &RawFoamDictionaryParserDriver::getBoolList() {
+        return boolList_;
+    }
+
+    void RawFoamDictionaryParserDriver::startWordList() {
+        wordList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(const word &val) {
+        wordList_.append(val);
+    }
+    const wordList &RawFoamDictionaryParserDriver::getWordList() {
+        return wordList_;
+    }
+
+    void RawFoamDictionaryParserDriver::startStringList() {
+        stringList_.clear();
+    }
+    void RawFoamDictionaryParserDriver::addToList(const string &val) {
+        stringList_.append(val);
+    }
+    const stringList &RawFoamDictionaryParserDriver::getStringList() {
+        return stringList_;
     }
 
 }
