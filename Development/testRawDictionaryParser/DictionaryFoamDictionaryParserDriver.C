@@ -37,10 +37,9 @@ Contributors/Copyright:
 
 namespace Foam {
     DictionaryFoamDictionaryParserDriver::DictionaryFoamDictionaryParserDriver(
-        Istream &is
     )
         :
-        RawFoamDictionaryParserDriver(is)
+        RawFoamDictionaryParserDriver()
     {
         addDict();
     }

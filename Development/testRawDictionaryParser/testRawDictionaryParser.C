@@ -43,11 +43,13 @@ int main(int args,char **argv)
         return 1;
     }
     IFstream f(argv[1]);
-    DictionaryFoamDictionaryParserDriver parser(f);
+
+    DictionaryFoamDictionaryParserDriver parser;
 
     Info << "Start parsing" << endl;
 
-    label result=parser.parse();
+    //    label result=parser.parse(f);
+    label result=parser.parse(dictionary(f));
 
     Info << nl << "Parser ended with result " << result << endl;
 

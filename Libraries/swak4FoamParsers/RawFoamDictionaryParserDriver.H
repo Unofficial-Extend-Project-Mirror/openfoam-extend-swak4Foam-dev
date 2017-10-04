@@ -52,7 +52,7 @@ namespace parserRawDict {
 namespace Foam {
     class RawFoamDictionaryParserDriver {
 
-        Istream &is_;
+        Istream *is_;
 
         RawFoamDictionaryParserDriver(const RawFoamDictionaryParserDriver &);
         void operator=(const RawFoamDictionaryParserDriver&);
@@ -127,13 +127,15 @@ namespace Foam {
 
     public:
 
-        RawFoamDictionaryParserDriver(Istream &is);
+        RawFoamDictionaryParserDriver();
 
         virtual ~RawFoamDictionaryParserDriver();
 
         Istream &is();
 
-        label parse(int debugLevel=0);
+        label parse(Istream &is,int debugLevel=0);
+
+        label parse(const dictionary &dict,int debugLevel=0);
 
         int debug() {
             return debugLevel_;

@@ -59,7 +59,7 @@ namespace Foam {
 
     public:
 
-        DictionaryFoamDictionaryParserDriver(Istream &is);
+        DictionaryFoamDictionaryParserDriver();
 
         virtual ~DictionaryFoamDictionaryParserDriver();
 

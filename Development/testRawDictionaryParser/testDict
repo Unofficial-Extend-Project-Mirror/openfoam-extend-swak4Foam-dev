@@ -73,9 +73,9 @@ wordList ( boo ya tribe);
 
 wordListSame ( bo bo bo);
 
-retry $distributed;
+retry $distributed;   // expected error
 
-sequence 2 3;
+sequence 2 3; // expected error
 
 // "nix.+" test;
 

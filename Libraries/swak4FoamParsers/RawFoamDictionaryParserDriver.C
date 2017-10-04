@@ -38,12 +38,13 @@ Contributors/Copyright:
 #include "RawFoamDictionaryParserDriver.H"
 #include "RawFoamDictionaryParser.tab.hh"
 
+#include "dictionary.H"
+
 namespace Foam {
     RawFoamDictionaryParserDriver::RawFoamDictionaryParserDriver(
-        Istream &is
     )
         :
-        is_(is),
+        is_(NULL),
         debugLevel_(0)
     {
         startLabelList();
@@ -63,16 +64,54 @@ namespace Foam {
     {}
 
     Istream &RawFoamDictionaryParserDriver::is() {
-        return is_;
+        if(is_==NULL) {
+            FatalErrorIn("RawFoamDictionaryParserDriver::is()")
+                << "The input stream was not set"
+                    << endl
+                    << exit(FatalError);
+        }
+        return *is_;
     }
 
-    label RawFoamDictionaryParserDriver::parse(int debugLevel) {
+    label RawFoamDictionaryParserDriver::parse(Istream &is,int debugLevel) {
+        is_=&is;
+
         debugLevel_=debugLevel;
 
         parserRawDict::RawFoamDictionaryParser parser (*this);
         parser.set_debug_level (debugLevel);
         int res = parser.parse ();
 
+        is_=NULL;
+
+        return res;
+    }
+
+    label RawFoamDictionaryParserDriver::parse(const dictionary &dict,int debugLevel) {
+        const wordList &toc=dict.toc();
+
+        int res=0;
+
+        forAll(toc,i) {
+            const word &name=toc[i];
+
+            if(dict.isDict(name)) {
+                newTopDict();
+                res+=parse(dict.subDict(name),debugLevel);
+                addTopDictAs(name);
+            } else {
+                tokenList inputTokens(1,token(name));
+
+                inputTokens.append(dict.lookup(name));
+                inputTokens.append(tokenList(1,token(token::END_STATEMENT)));
+                ITstream inStream(
+                    dict.name(),
+                    inputTokens
+                );
+
+                res+=parse(inStream,debugLevel);
+            }
+        }
         return res;
     }
 
