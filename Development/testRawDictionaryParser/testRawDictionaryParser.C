@@ -44,12 +44,16 @@ int main(int args,char **argv)
     }
     IFstream f(argv[1]);
 
-    DictionaryFoamDictionaryParserDriver parser;
+    DictionaryFoamDictionaryParserDriver parser(
+        //        RawFoamDictionaryParserDriver::FailError
+        RawFoamDictionaryParserDriver::WarnError
+        //        RawFoamDictionaryParserDriver::SilentError
+    );
 
     Info << "Start parsing" << endl;
 
-    //    label result=parser.parse(f);
-    label result=parser.parse(dictionary(f));
+    label result=parser.parse(f);
+    //    label result=parser.parse(dictionary(f));
 
     Info << nl << "Parser ended with result " << result << endl;
 

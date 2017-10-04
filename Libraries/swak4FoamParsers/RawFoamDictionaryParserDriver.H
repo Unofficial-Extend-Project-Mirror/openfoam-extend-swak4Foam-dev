@@ -52,6 +52,15 @@ namespace parserRawDict {
 namespace Foam {
     class RawFoamDictionaryParserDriver {
 
+    public:
+        enum  ErrorMode {
+            SilentError,
+            FailError,
+            WarnError
+        };
+
+    private:
+
         Istream *is_;
 
         RawFoamDictionaryParserDriver(const RawFoamDictionaryParserDriver &);
@@ -60,6 +69,8 @@ namespace Foam {
         int debugLevel_;
 
         string error_;
+
+        ErrorMode errorMode_;
 
         DynamicList<label> labelList_;
         DynamicList<scalar> scalarList_;
@@ -121,13 +132,16 @@ namespace Foam {
             error_=e;
         }
 
-        const string &getError() {
+        const string &getError() const {
             return error_;
         }
 
+        ErrorMode errorMode() const {
+            return errorMode_;
+        }
     public:
 
-        RawFoamDictionaryParserDriver();
+        RawFoamDictionaryParserDriver(ErrorMode mode=WarnError);
 
         virtual ~RawFoamDictionaryParserDriver();
 

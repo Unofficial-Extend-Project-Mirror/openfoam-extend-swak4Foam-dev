@@ -275,9 +275,22 @@ parserRawDict::RawFoamDictionaryParser::error(
 
     driver.setError(o.str());
 
-    WarningIn("RawFoamDictionaryParser")
-        << o.str()
-            << endl;
+    switch(driver.errorMode()) {
+        case RawFoamDictionaryParserDriver::WarnError:
+            WarningIn("RawFoamDictionaryParser")
+                << o.str()
+                    << endl;
+            break;
+        case RawFoamDictionaryParserDriver::FailError:
+            //            Foam::Info << "Fail" << endl;
+            FatalErrorIn("RawFoamDictionaryParser")
+                << o.str()
+                    << endl
+                    << exit(FatalError);
+            break;
+        case RawFoamDictionaryParserDriver::SilentError:
+            break;
+    }
 }
 
 parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(

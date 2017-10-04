@@ -37,9 +37,10 @@ Contributors/Copyright:
 
 namespace Foam {
     DictionaryFoamDictionaryParserDriver::DictionaryFoamDictionaryParserDriver(
+        ErrorMode mode
     )
         :
-        RawFoamDictionaryParserDriver()
+        RawFoamDictionaryParserDriver(mode)
     {
         addDict();
     }

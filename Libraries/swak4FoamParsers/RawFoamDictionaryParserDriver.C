@@ -42,10 +42,12 @@ Contributors/Copyright:
 
 namespace Foam {
     RawFoamDictionaryParserDriver::RawFoamDictionaryParserDriver(
+        ErrorMode mode
     )
         :
         is_(NULL),
-        debugLevel_(0)
+        debugLevel_(0),
+        errorMode_(mode)
     {
         startLabelList();
         startScalarList();
