@@ -137,6 +137,7 @@ assignment:
 | "word" stringListList ";"        {driver.add($1,driver.getStringListList()); driver.startStringListList();}
 | "word" error ";"           { driver.add($1,driver.getError()); yyerrok; }
 | regexp {} error ";"           { yyerrok; }
+| ";"                        {}
 ;
 
 regexp:
