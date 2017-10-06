@@ -1,0 +1,10 @@
+
+EXE_INC = -I../../Libraries/swak4FoamParsers/lnInclude \
+    -I../../Libraries/languageIntegration/swakGeneralLanguageIntegration/lnInclude
+
+EXE_LIBS = -L$(FOAM_USER_LIBBIN) \
+         -lswak4FoamParsers \
+         -lswakLuaIntegration \
+         -lswakPythonIntegration \
+         -lswakPython3Integration \
+         -lswakGeneralLanguageIntegration

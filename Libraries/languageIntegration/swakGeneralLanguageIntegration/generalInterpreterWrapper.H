@@ -50,6 +50,8 @@ Contributors/Copyright:
 #include "objectRegistry.H"
 #include "swakTime.H"
 
+#include "runTimeSelectionTables.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -138,9 +140,6 @@ protected:
     //- whether the result has to be broadcast from the master processor
     bool parallelMustBroadcast();
 
-    //- run an interactive sesssion
-    virtual void interactiveLoop(const string &banner) = 0;
-
     //- copy the global variables to other processors if only the master has them
     void scatterGlobals();
 
@@ -167,6 +166,9 @@ protected:
     ) = 0;
 
 public:
+    //- run an interactive session
+    virtual void interactiveLoop(const string &banner) = 0;
+
     void setInteractive(
         bool interactiveAfterExecute,
         bool interactiveAfterException
@@ -241,6 +243,26 @@ public:
     const dictionary &dict() {
         return dict_;
     }
+
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        generalInterpreterWrapper,
+        dictionary,
+        (
+            const objectRegistry& obr,
+            const dictionary& dict,
+            bool forceToNamespace
+        ),
+        (obr,dict,forceToNamespace)
+    );
+
+    static autoPtr<generalInterpreterWrapper> New
+    (
+        const objectRegistry& obr,
+        const dictionary& dict,
+        bool forceToNamespace=false
+    );
 
     // Constructors
 

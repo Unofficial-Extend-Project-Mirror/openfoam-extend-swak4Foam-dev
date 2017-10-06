@@ -50,6 +50,8 @@ Contributors/Copyright:
 #include "stringOps.H"
 #endif
 
+#include "addToRunTimeSelectionTable.H"
+
 // #include <fcntl.h>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -57,6 +59,7 @@ Contributors/Copyright:
 namespace Foam
 {
     defineTypeNameAndDebug(pythonInterpreterWrapper, 0);
+    addNamedToRunTimeSelectionTable(generalInterpreterWrapper,pythonInterpreterWrapper,dictionary,python2);
 
     label pythonInterpreterWrapper::interpreterCount=0;
     PyThreadState *pythonInterpreterWrapper::mainThreadState=NULL;

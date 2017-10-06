@@ -60,6 +60,8 @@ namespace Foam
 {
     defineTypeNameAndDebug(generalInterpreterWrapper, 0);
 
+    defineRunTimeSelectionTable(generalInterpreterWrapper, dictionary);
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 generalInterpreterWrapper::generalInterpreterWrapper
@@ -143,6 +145,41 @@ generalInterpreterWrapper::generalInterpreterWrapper
 
     Pbug << "End constructor" << endl;
  }
+
+autoPtr<generalInterpreterWrapper> generalInterpreterWrapper::New
+(
+    const objectRegistry& obr,
+    const dictionary& dict,
+    bool forceToNamespace
+)
+{
+    word wrapperType(dict.lookup("languageWrapperType"));
+    dictionaryConstructorTable::iterator cstrIter =
+        dictionaryConstructorTablePtr_->find(wrapperType);
+
+    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+            (
+                "autoPtr<generalInterpreterWrapper> generalInterpreterWrapper::New"
+            )   << "Unknown  generalInterpreterWrapper type " << wrapperType
+                << endl << endl
+                << "Valid valueTypes are :" << endl
+                #ifdef FOAM_HAS_SORTED_TOC
+                << dictionaryConstructorTablePtr_->sortedToc()
+                #else
+                << dictionaryConstructorTablePtr_->toc()
+                #endif
+                << exit(FatalError);
+    }
+
+    Sbug << "Creating wrapper of type " << wrapperType << endl;
+
+    return autoPtr<generalInterpreterWrapper>
+        (
+            cstrIter()(obr,dict,forceToNamespace)
+        );
+}
 
 bool generalInterpreterWrapper::parallelMustBroadcast()
 {

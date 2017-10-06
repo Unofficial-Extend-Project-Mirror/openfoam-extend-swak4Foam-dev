@@ -50,6 +50,7 @@ Contributors/Copyright:
 #include "stringOps.H"
 #endif
 
+#include "addToRunTimeSelectionTable.H"
 // #include <fcntl.h>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -57,6 +58,7 @@ Contributors/Copyright:
 namespace Foam
 {
     defineTypeNameAndDebug(luaInterpreterWrapper, 0);
+    addNamedToRunTimeSelectionTable(generalInterpreterWrapper,luaInterpreterWrapper,dictionary,lua);
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
