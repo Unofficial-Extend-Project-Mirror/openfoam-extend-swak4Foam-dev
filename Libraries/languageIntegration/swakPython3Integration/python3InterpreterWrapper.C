@@ -171,6 +171,10 @@ python3InterpreterWrapper::python3InterpreterWrapper
     triedIPython_(false),
     oldIPython_(false)
 {
+    if(generalInterpreterWrapper::debug>debug) {
+        debug=1;
+    }
+
     Pbug << "Starting constructor: We have the GIL: " << PyGILState_Check()
         << " our state " << getHex(pythonState_) << " Main: "
         << getHex(mainThreadState) << " used: "

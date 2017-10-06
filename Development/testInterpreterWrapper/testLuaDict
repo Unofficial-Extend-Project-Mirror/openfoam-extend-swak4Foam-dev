@@ -17,4 +17,6 @@ FoamFile
 
 languageWrapperType lua;
 
+interactiveAfterExecute true;
+
 // ************************************************************************* //

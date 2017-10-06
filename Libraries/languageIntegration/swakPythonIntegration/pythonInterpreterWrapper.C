@@ -159,6 +159,10 @@ pythonInterpreterWrapper::pythonInterpreterWrapper
     triedIPython_(false),
     oldIPython_(false)
 {
+    if(generalInterpreterWrapper::debug>debug) {
+        debug=1;
+    }
+
     Pbug << "Starting constructor" << endl;
 
     syncParallel();

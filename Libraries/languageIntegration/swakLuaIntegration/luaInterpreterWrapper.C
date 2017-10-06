@@ -83,6 +83,10 @@ luaInterpreterWrapper::luaInterpreterWrapper
     useLuaPrompt_(dict.lookupOrDefault<bool>("useLuaPrompt",true)),
     hasLuaPrompt_(false)
 {
+    if(generalInterpreterWrapper::debug>debug) {
+        debug=1;
+    }
+
     Pbug << "Starting constructor" << endl;
 
     syncParallel();

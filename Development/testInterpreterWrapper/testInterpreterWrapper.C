@@ -36,6 +36,7 @@ Description
 
 #include "generalInterpreterWrapper.H"
 
+
 using namespace Foam;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -43,6 +44,7 @@ using namespace Foam;
 int main(int argc,char **argv)
 {
     argList::validArgs.append("specDictionary");
+    argList::validOptions.insert("debugSwitches","");
 
 #   include "setRootCase.H"
 #   include "createTime.H"
@@ -51,7 +53,9 @@ int main(int argc,char **argv)
     IFstream f(args.additionalArgs()[0]);
     dictionary dict(f);
 
-    generalInterpreterWrapper::debug=1;
+    if(args.options().found("debugSwitches")) {
+        generalInterpreterWrapper::debug=1;
+    }
 
     Info << nl << "Getting Wrapper" << endl;
 
