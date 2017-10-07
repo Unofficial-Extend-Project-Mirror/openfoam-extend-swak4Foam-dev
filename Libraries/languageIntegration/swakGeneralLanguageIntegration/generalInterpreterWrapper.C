@@ -234,7 +234,7 @@ bool generalInterpreterWrapper::insertDictionary(
         << name << " from " << dict.name()  << endl;
     bool result=true;
 
-    result=result && startDictionary(name);
+    result=startDictionary(name);
 
     RawFoamDictionaryParserDriver &parser=getParser();
 
@@ -246,7 +246,7 @@ bool generalInterpreterWrapper::insertDictionary(
 
     result=result && (pResult!=0);
 
-    result=result && wrapUpDictionary(name);
+    result=wrapUpDictionary(name) && result;
 
     return result;
 }

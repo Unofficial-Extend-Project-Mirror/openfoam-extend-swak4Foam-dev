@@ -35,6 +35,8 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "luaInterpreterWrapper.H"
+#include "LuaFoamDictionaryParserDriver.H"
+
 #include "addToRunTimeSelectionTable.H"
 
 #include "IFstream.H"
@@ -767,6 +769,35 @@ void luaInterpreterWrapper::setGlobals()
         res.noReset();
     }
 }
+
+autoPtr<RawFoamDictionaryParserDriver> luaInterpreterWrapper::getParserInternal(
+    RawFoamDictionaryParserDriver::ErrorMode mode
+) {
+    return autoPtr<RawFoamDictionaryParserDriver>(
+        new LuaFoamDictionaryParserDriver(
+            *this,
+            mode
+        )
+    );
+}
+
+bool luaInterpreterWrapper::startDictionary(const word &name) {
+    Dbug << "Starting table " << name << endl;
+    Dbug << "Stack in the beginning: " << lua_gettop(luaState_) << endl;
+
+    lua_newtable(luaState_);
+
+    return true;
+}
+
+bool luaInterpreterWrapper::wrapUpDictionary(const word &name) {
+    Dbug << "Setting global " << name << endl;
+    lua_setglobal(luaState_,name.c_str());
+
+    Dbug << "Stack in the end: " << lua_gettop(luaState_) << endl;
+    return true;
+}
+
 
 } // namespace Foam
 

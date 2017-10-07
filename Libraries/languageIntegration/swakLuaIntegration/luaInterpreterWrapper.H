@@ -69,6 +69,8 @@ extern "C" {
 namespace Foam
 {
 
+    class LuaFoamDictionaryParserDriver;
+
 /*---------------------------------------------------------------------------*\
                            Class luaInterpreterWrapper Declaration
 \*---------------------------------------------------------------------------*/
@@ -152,6 +154,14 @@ protected:
         string &stdout
     );
 
+    autoPtr<RawFoamDictionaryParserDriver> getParserInternal(
+        RawFoamDictionaryParserDriver::ErrorMode mode
+    );
+
+    bool startDictionary(const word &name);
+
+    bool wrapUpDictionary(const word &name);
+
 public:
 
     //- Execute code and return a value
@@ -203,6 +213,8 @@ public:
     );
 
     virtual ~luaInterpreterWrapper();
+
+    friend LuaFoamDictionaryParserDriver;
 
 };
 
