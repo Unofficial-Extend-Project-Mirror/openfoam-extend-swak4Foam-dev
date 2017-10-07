@@ -41,6 +41,22 @@ Contributors/Copyright:
 #include "dictionary.H"
 
 namespace Foam {
+
+    template<>
+    const char* NamedEnum
+    <
+        RawFoamDictionaryParserDriver::ErrorMode,
+        3
+        >::names[] =
+    {
+        "silent",
+        "fail",
+        "warn"
+    };
+
+    const NamedEnum<RawFoamDictionaryParserDriver::ErrorMode, 3>
+        RawFoamDictionaryParserDriver::errorModeNames;
+
     RawFoamDictionaryParserDriver::RawFoamDictionaryParserDriver(
         ErrorMode mode
     )

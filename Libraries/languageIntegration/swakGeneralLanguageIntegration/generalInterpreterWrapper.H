@@ -52,6 +52,8 @@ Contributors/Copyright:
 
 #include "runTimeSelectionTables.H"
 
+#include "RawFoamDictionaryParserDriver.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -79,6 +81,8 @@ class generalInterpreterWrapper
     const objectRegistry& obr_;
 
     const dictionary& dict_;
+
+    autoPtr<RawFoamDictionaryParserDriver> parser_;
 
 protected:
     //- should exceptions be tolerated or lead to a fatal error?
@@ -165,7 +169,18 @@ protected:
         string &stdout
     ) = 0;
 
+    virtual autoPtr<RawFoamDictionaryParserDriver> getParserInternal(
+        RawFoamDictionaryParserDriver::ErrorMode mode
+    );
+
+    virtual bool startDictionary(const word &name);
+
+    virtual bool wrapUpDictionary(const word &name);
+
 public:
+    //- get the parser on demand
+    RawFoamDictionaryParserDriver &getParser();
+
     //- run an interactive session
     virtual void interactiveLoop(const string &banner) = 0;
 
@@ -221,7 +236,13 @@ public:
         bool mustRead=true
     );
 
-    //- set up the environment with the basic variables
+    //- transform contents of a OpenFOAM-dictionary and insert into local namespace
+    bool insertDictionary(
+        const word &name,
+        dictionary &dict
+    );
+
+    // set up the environment with the basic variables
     virtual void initEnvironment(const Time &t) = 0;
 
     //- set the variable 'runTime' in the interpreter

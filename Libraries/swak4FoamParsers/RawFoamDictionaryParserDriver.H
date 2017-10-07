@@ -44,6 +44,7 @@ Contributors/Copyright:
 #include "scalarList.H"
 #include "boolList.H"
 #include "stringList.H"
+#include "NamedEnum.H"
 
 namespace parserRawDict {
     class RawFoamDictionaryParser;
@@ -58,6 +59,8 @@ namespace Foam {
             FailError,
             WarnError
         };
+
+        static const NamedEnum<ErrorMode, 3> errorModeNames;
 
     private:
 

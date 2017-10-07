@@ -181,6 +181,76 @@ autoPtr<generalInterpreterWrapper> generalInterpreterWrapper::New
         );
 }
 
+RawFoamDictionaryParserDriver &generalInterpreterWrapper::getParser() {
+    Dbug << "generalInterpreterWrapper::getParser" << endl;
+
+    if(!parser_.valid()){
+        Dbug << "No parser" << endl;
+        RawFoamDictionaryParserDriver::ErrorMode mode=
+            RawFoamDictionaryParserDriver::errorModeNames[
+                dict().lookup(
+                    interpreterName()
+                    +
+                    "DictionaryParserErrorMode"
+                )
+            ];
+        Dbug << "Creating with mode " << mode << endl;
+        parser_=this->getParserInternal(mode);
+    }
+
+    Dbug << "generalInterpreterWrapper::getParser - leaving" << endl;
+
+    return parser_();
+}
+
+autoPtr<RawFoamDictionaryParserDriver> generalInterpreterWrapper::getParserInternal(
+    RawFoamDictionaryParserDriver::ErrorMode mode
+) {
+    FatalErrorIn("generalInterpreterWrapper::getParserInternal")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+
+    return autoPtr<RawFoamDictionaryParserDriver>();
+}
+
+bool generalInterpreterWrapper::startDictionary(const word &name) {
+    notImplemented("generalInterpreterWrapper::startDictionary");
+
+    return false;
+}
+
+bool generalInterpreterWrapper::wrapUpDictionary(const word &name) {
+    notImplemented("generalInterpreterWrapper::wrapUpDictionary");
+
+    return false;
+}
+
+bool generalInterpreterWrapper::insertDictionary(
+    const word &name,
+    dictionary &dict
+) {
+    Dbug << "generalInterpreterWrapper::insertDictionary: "
+        << name << " from " << dict.name()  << endl;
+    bool result=true;
+
+    result=result && startDictionary(name);
+
+    RawFoamDictionaryParserDriver &parser=getParser();
+
+    Dbug << "Start parsing" << endl;
+
+    label pResult=parser.parse(dict);
+
+    Dbug << "Finished parsing" << endl;
+
+    result=result && (pResult!=0);
+
+    result=result && wrapUpDictionary(name);
+
+    return result;
+}
+
 bool generalInterpreterWrapper::parallelMustBroadcast()
 {
     return Pstream::parRun() && parallelMasterOnly_;

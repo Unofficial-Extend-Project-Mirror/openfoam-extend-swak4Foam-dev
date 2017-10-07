@@ -44,6 +44,7 @@ using namespace Foam;
 int main(int argc,char **argv)
 {
     argList::validArgs.append("specDictionary");
+    argList::validArgs.append("dataDictionary");
     argList::validOptions.insert("debugSwitches","");
 
 #   include "setRootCase.H"
@@ -68,6 +69,14 @@ int main(int argc,char **argv)
     generalInterpreterWrapper &inter=pInter();
 
     Info << "Wrapper loaded" << endl;
+
+    Info << "Load data" << endl;
+    IFstream df(args.additionalArgs()[1]);
+    dictionary dataDict(df);
+    inter.insertDictionary(
+        "data",
+        dataDict
+    );
 
     inter.interactiveLoop("check the environment");
 
