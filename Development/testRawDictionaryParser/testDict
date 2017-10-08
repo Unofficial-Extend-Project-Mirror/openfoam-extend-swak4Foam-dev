@@ -68,6 +68,8 @@ emptyListList (());
 
 wordWordWord ((ho ja) (hi fo fo));
 
+stringList ("nix" "sicher kein Wort");
+
 stringsOfString (("nix da" "geh") ("he") () ("gg"));
 
 wordList ( boo ya tribe);

@@ -604,6 +604,317 @@ void luaInterpreterWrapper::getGlobals()
     Dbug << "End getGlobals" << endl;
 }
 
+class LuaToScalar {
+public:
+    scalar operator()(lua_State *L) {
+        return lua_tonumber(L,-1);
+    }
+};
+
+class LuaToBool {
+public:
+    bool operator()(lua_State *L) {
+        return lua_toboolean(L,-1);
+    }
+};
+
+class LuaToString {
+public:
+    string operator()(lua_State *L) {
+        return string(lua_tostring(L,-1));
+    }
+};
+
+class luaInterpreterWrapper::ValidWord {
+public:
+    bool operator()(const string &s) {
+        forAll(s,i) {
+            if(!word::valid(s[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+class luaInterpreterWrapper::ValidOk {
+public:
+    template<class T>
+    bool operator()(T &t) {
+        return true;
+    }
+};
+
+template<class T,class F,class V>
+bool luaInterpreterWrapper::isListListOnStack(int lType) {
+    label i=1;
+    while(1) {
+        int type=lua_geti(
+            luaState_,
+            -1,
+            i
+        );
+        if(type==LUA_TNIL) {
+            lua_pop(luaState_,1);
+            break;
+        }
+        label j=1;
+        while(1) {
+            int type=lua_geti(
+                luaState_,
+                -1,
+                j
+            );
+            if(type==LUA_TNIL) {
+                lua_pop(luaState_,1);
+                break;
+            }
+            T val(F()(luaState_));
+            if(
+                !V()(val)
+                !=
+                (
+                    lType!=LUA_TNIL
+                    &&
+                    type!=lType
+                )
+            ) {
+                lua_pop(luaState_,2);
+                return false;
+            }
+            lua_pop(luaState_,1);
+            j++;
+        }
+        i++;
+        lua_pop(luaState_,1);
+    }
+    return true;
+}
+
+template<class T,class F>
+void luaInterpreterWrapper::addListListFromStackToDict(
+    dictionary &dict,
+    const word &name
+) {
+    DynamicList<DynamicList<T> > result;
+    label i=1;
+    while(1) {
+        int type=lua_geti(
+            luaState_,
+            -1,
+            i
+        );
+        if(type==LUA_TNIL) {
+            lua_pop(luaState_,1);
+            break;
+        }
+        int j=1;
+        DynamicList<T> lst;
+        while(1) {
+            int type=lua_geti(
+                luaState_,
+                -1,
+                j
+            );
+            if(type==LUA_TNIL) {
+                lua_pop(luaState_,1);
+                break;
+            }
+            T val(F()(luaState_));
+            lst.append(val);
+            lua_pop(luaState_,1);
+            j++;
+        }
+        result.append(
+            lst
+        );
+        lua_pop(luaState_,1);
+        i++;
+    }
+    dict.add(name,result);
+}
+
+template<class T,class F,class V>
+bool luaInterpreterWrapper::addListFromStackToDict(
+    dictionary &dict,
+    const word &name
+) {
+    DynamicList<T> result;
+    label cnt=1;
+    while(1) {
+        int type=lua_geti(
+            luaState_,
+            -1,
+            cnt
+        );
+        if(type==LUA_TNIL) {
+            lua_pop(luaState_,1);
+            break;
+        }
+        T val(F()(luaState_));
+        if(!V()(val)) {
+            lua_pop(luaState_,1);
+            return false;
+        }
+        result.append(
+            val
+        );
+        lua_pop(luaState_,1);
+        cnt++;
+    }
+    dict.add(name,result);
+    return true;
+}
+
+void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
+    Dbug << "luaInterpreterWrapper::extractTopToDict for "
+        << dict.name() << endl;
+
+    lua_pushnil(luaState_);
+    Dbug << "Stack before loop " << lua_gettop(luaState_) << endl;
+    while(lua_next(luaState_,-2)) {
+        Dbug << "Next entry. " << lua_gettop(luaState_) << endl;
+        word name(lua_tostring(luaState_,-2));
+        Dbug << "Entry: " << name << endl;
+        int type=lua_type(luaState_,-1);
+        Dbug << "Type is " << type << " -> "
+            << lua_typename(luaState_,type) << endl;
+        switch(type) {
+            case LUA_TNIL:
+                WarningIn("luaInterpreterWrapper::extractTopToDict()")
+                    << "No symbol " << name << " in Lua namespace"
+                        << endl;
+                break;
+            case LUA_TNUMBER:
+                dict.add(name,lua_tonumber(luaState_,-1));
+                break;
+            case LUA_TBOOLEAN:
+                dict.add(name,bool(lua_toboolean(luaState_,-1)));
+                break;
+            case LUA_TSTRING:
+                {
+                    string val(lua_tostring(luaState_,-1));
+                    if(ValidWord()(val)) {
+                        dict.add(name,word(val));
+                    } else {
+                        dict.add(name,val);
+                    }
+                }
+                break;
+            case LUA_TTABLE:
+                {
+                    int itype=lua_geti(
+                        luaState_,
+                        -1,
+                        1
+                    );
+                    lua_pop(luaState_,1);
+                    if(
+                        itype!=LUA_TNIL
+                    ) {
+                        Dbug << name << " is an array" << endl;
+                        switch(itype) {
+                            case LUA_TNUMBER:
+                                addListFromStackToDict<scalar,LuaToScalar>(
+                                    dict,
+                                    name
+                                );
+                                break;
+                            case LUA_TBOOLEAN:
+                                addListFromStackToDict<bool,LuaToBool>(
+                                    dict,
+                                    name
+                                );
+                                break;
+                            case LUA_TSTRING:
+                                {
+                                    bool ok=addListFromStackToDict<word,LuaToString,ValidWord>(
+                                        dict,
+                                        name
+                                    );
+                                    if(!ok) {
+                                        addListFromStackToDict<string,LuaToString>(
+                                            dict,
+                                            name
+                                        );
+                                    }
+                                }
+                                break;
+                            case LUA_TTABLE:
+                                if(isListListOnStack<bool,LuaToBool>(LUA_TBOOLEAN)) {
+                                    addListListFromStackToDict<bool, LuaToBool>(
+                                        dict,
+                                        name
+                                    );
+                                } else if(isListListOnStack<word,LuaToString,ValidWord>(
+                                    LUA_TSTRING
+                                )) {
+                                    addListListFromStackToDict<word, LuaToString>(
+                                        dict,
+                                        name
+                                    );
+                                } else if(isListListOnStack<string,LuaToString>(
+                                    LUA_TSTRING
+                                )) {
+                                    addListListFromStackToDict<string, LuaToString>(
+                                        dict,
+                                        name
+                                    );
+                                } else if(isListListOnStack<scalar,LuaToScalar>()) {
+                                    addListListFromStackToDict<scalar, LuaToScalar>(
+                                        dict,
+                                        name
+                                    );
+                                }
+                                break;
+                        }
+                    } else {
+                        Dbug << name << " is a dictionary" << endl;
+
+                        dictionary subDict;
+                        subDict.name()=name;
+                        extractTopToDict(subDict);
+                        dict.add(name,subDict);
+                    }
+                }
+                break;
+            default:
+                WarningIn("luaInterpreterWrapper::extractTopToDict()")
+                    << name << " is of unsupported Lua-type "
+                        << lua_typename(luaState_,type)
+                        << endl;
+        }
+
+        lua_pop(luaState_,1);
+        Dbug << "Stack before next " << lua_gettop(luaState_) << endl;
+    }
+    Dbug << "luaInterpreterWrapper::extractTopToDict - finished "
+        << lua_gettop(luaState_) << endl;
+}
+
+bool luaInterpreterWrapper::extractDictionary(
+    const word &name,
+    dictionary &dict
+) {
+    Dbug << "luaInterpreterWrapper::extractDictionary" << endl;
+
+    int type=lua_getglobal(luaState_,name.c_str());
+    if(type==LUA_TTABLE) {
+        extractTopToDict(dict);
+    } else if(type==LUA_TNIL) {
+        WarningIn("luaInterpreterWrapper::extractDictionary()")
+            << "No symbol " << name << " in Lua namespace"
+                << endl;
+    }
+
+    Dbug << "Before popping. Stack size " << lua_gettop(luaState_) << endl;
+    lua_pop(luaState_,1);
+    Dbug << "finished extracting. Stack size " << lua_gettop(luaState_)
+        << endl;
+
+    return true;
+}
+
 void luaInterpreterWrapper::setGlobals()
 {
     assertParallel("setGlobals");

@@ -226,9 +226,21 @@ bool generalInterpreterWrapper::wrapUpDictionary(const word &name) {
     return false;
 }
 
-bool generalInterpreterWrapper::insertDictionary(
+bool generalInterpreterWrapper::extractDictionary(
     const word &name,
     dictionary &dict
+) {
+    FatalErrorIn("generalInterpreterWrapper::extractDictionary")
+        << "Not implemented for " << InterpreterName()
+            << endl
+            << exit(FatalError);
+
+    return false;
+}
+
+bool generalInterpreterWrapper::insertDictionary(
+    const word &name,
+    const dictionary &dict
 ) {
     Dbug << "generalInterpreterWrapper::insertDictionary: "
         << name << " from " << dict.name()  << endl;

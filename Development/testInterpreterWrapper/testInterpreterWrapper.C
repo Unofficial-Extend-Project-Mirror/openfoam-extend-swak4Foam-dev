@@ -80,6 +80,18 @@ int main(int argc,char **argv)
 
     inter.interactiveLoop("check the environment");
 
+    dictionary back;
+
+    Info << "Getting the data back" << endl;
+    inter.extractDictionary(
+        "data",
+        back
+    );
+
+    Info << "Got it back" << endl;
+
+    Info << back;
+
     Info << "End" << endl;
 
     return 0;

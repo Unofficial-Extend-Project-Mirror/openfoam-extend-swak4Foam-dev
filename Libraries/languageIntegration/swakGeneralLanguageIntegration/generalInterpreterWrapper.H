@@ -239,6 +239,12 @@ public:
     //- transform contents of a OpenFOAM-dictionary and insert into local namespace
     bool insertDictionary(
         const word &name,
+        const dictionary &dict
+    );
+
+    //- get a data structure and insert it into a dictionary
+    virtual bool extractDictionary(
+        const word &name,
         dictionary &dict
     );
 

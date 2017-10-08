@@ -122,6 +122,24 @@ class luaInterpreterWrapper
     template<class T>
     bool isVectorSpace();
 
+    class ValidOk;
+    class ValidWord;
+
+    template<class T,class F,class V=ValidOk>
+    bool addListFromStackToDict(
+        dictionary &dict,
+        const word &name
+    );
+
+    template<class T,class F,class V=ValidOk>
+    bool isListListOnStack(int lType=LUA_TNIL);
+
+    template<class T,class F>
+    void addListListFromStackToDict(
+        dictionary &dict,
+        const word &name
+    );
+
 protected:
 
     lua_State *luaState() {
@@ -162,6 +180,8 @@ protected:
 
     bool wrapUpDictionary(const word &name);
 
+    void extractTopToDict(dictionary &dict);
+
 public:
 
     //- Execute code and return a value
@@ -197,6 +217,11 @@ public:
 
     //- set the variable 'runTime' in the interpreter
     void setRunTime(const Time &time);
+
+    bool extractDictionary(
+        const word &name,
+        dictionary &dict
+    );
 
     //- Runtime type information
     TypeName("luaInterpreterWrapper");
