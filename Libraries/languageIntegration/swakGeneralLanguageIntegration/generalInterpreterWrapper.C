@@ -107,6 +107,9 @@ generalInterpreterWrapper::generalInterpreterWrapper
     ),
     interactiveAfterException_(
         dict.lookupOrDefault<bool>("interactiveAfterException",false)
+    ),
+    debugLevelParser_(
+        dict.lookupOrDefault<int>("debugLevelParser",0)
     )
 {
     Pbug << "Starting constructor" << endl;
@@ -252,7 +255,10 @@ bool generalInterpreterWrapper::insertDictionary(
 
     Dbug << "Start parsing" << endl;
 
-    label pResult=parser.parse(dict);
+    label pResult=parser.parse(
+        dict,
+        debugLevelParser_
+    );
 
     Dbug << "Finished parsing" << endl;
 

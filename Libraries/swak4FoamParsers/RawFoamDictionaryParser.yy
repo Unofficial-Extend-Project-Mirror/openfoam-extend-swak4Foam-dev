@@ -103,6 +103,7 @@ Contributors/Copyright:
 %token <Foam::scalar> SCALAR "scalar"
 %token <Foam::label> LABEL "label"
 %token <Foam::string> STRING "string"
+%token <Foam::string> UNKNOWN "unknown"
 %token <bool> BOOL "bool"
 
 // %type  <int> exp
@@ -396,6 +397,8 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
                     return RawFoamDictionaryParser::make_END_LIST(loc);
                 case token::END_STATEMENT:
                     return RawFoamDictionaryParser::make_END_STATEMENT(loc);
+                default:
+                    return RawFoamDictionaryParser::make_UNKNOWN(string(nextToken.pToken()),loc);
             }
             break;
         case token::FATALERROR:
@@ -403,6 +406,8 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
             break;
         case token::COMPOUND:
         case token::UNDEFINED:
+        default:
+            return RawFoamDictionaryParser::make_UNKNOWN(string("undefined token"),loc);
             break;
     }
 }

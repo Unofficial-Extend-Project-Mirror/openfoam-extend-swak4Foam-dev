@@ -123,6 +123,9 @@ protected:
     //- used for debugging of failed Interpreter-program
     bool interactiveAfterException_;
 
+    //- used for debugging of the parser
+    int debugLevelParser_;
+
     virtual void getGlobals() = 0;
 
     virtual void setGlobals() = 0;

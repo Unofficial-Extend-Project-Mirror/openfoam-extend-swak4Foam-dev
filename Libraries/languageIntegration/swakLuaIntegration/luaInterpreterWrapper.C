@@ -654,7 +654,7 @@ bool luaInterpreterWrapper::isListListOnStack(int lType) {
             -1,
             i
         );
-        if(type==LUA_TNIL) {
+        if(type!=LUA_TTABLE) {
             lua_pop(luaState_,1);
             break;
         }
@@ -665,9 +665,19 @@ bool luaInterpreterWrapper::isListListOnStack(int lType) {
                 -1,
                 j
             );
-            if(type==LUA_TNIL) {
+            if(
+                type==LUA_TNIL
+            ) {
                 lua_pop(luaState_,1);
                 break;
+            } else if (
+                type==LUA_TTABLE
+            ) {
+                lua_pop(luaState_,2);
+                WarningIn("luaInterpreterWrapper::isListListOnStack")
+                    << "Problem : got an unexpected table"
+                        << endl;
+                return false;
             }
             T val(F()(luaState_));
             if(
@@ -750,6 +760,13 @@ bool luaInterpreterWrapper::addListFromStackToDict(
         if(type==LUA_TNIL) {
             lua_pop(luaState_,1);
             break;
+        }
+        if(type==LUA_TTABLE) {
+            lua_pop(luaState_,1);
+            WarningIn("luaInterpreterWrapper::addListFromStackToDict")
+                << "Problem in " << name << ": got an unexpected table"
+                    << endl;
+            return false;
         }
         T val(F()(luaState_));
         if(!V()(val)) {
