@@ -71,6 +71,8 @@ namespace Foam {
 
         int debugLevel_;
 
+        bool rawMode_;
+
         string error_;
 
         ErrorMode errorMode_;
@@ -156,6 +158,16 @@ namespace Foam {
 
         int debug() {
             return debugLevel_;
+        }
+
+        bool rawMode()
+            { return rawMode_; }
+
+        void setRawMode() {
+            rawMode_=true;
+        }
+        void resetRawMode() {
+            rawMode_=false;
         }
 
         friend parserRawDict::RawFoamDictionaryParser;

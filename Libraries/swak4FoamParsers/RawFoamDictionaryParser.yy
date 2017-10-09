@@ -53,6 +53,7 @@ Contributors/Copyright:
     #include "word.H"
     #include "label.H"
     #include <sstream>
+    #include "OStringStream.H"
 
     namespace Foam {
         class RawFoamDictionaryParserDriver;
@@ -104,6 +105,7 @@ Contributors/Copyright:
 %token <Foam::label> LABEL "label"
 %token <Foam::string> STRING "string"
 %token <Foam::string> UNKNOWN "unknown"
+%token <Foam::string> RAW "raw"
 %token <bool> BOOL "bool"
 
 // %type  <int> exp
@@ -137,6 +139,9 @@ assignment:
 | "word" boolListList ";"        {driver.add($1,driver.getBoolListList()); driver.startBoolListList();}
 | "word" stringListList ";"        {driver.add($1,driver.getStringListList()); driver.startStringListList();}
 | "word" error ";"           { driver.add($1,driver.getError()); yyerrok; }
+| "word" "word" { yyclearin; driver.setRawMode();} "raw" ";"    {
+    driver.add($1,Foam::string(Foam::string($2)+" "+Foam::string($4)));
+                                       }
 | regexp {} error ";"           { yyerrok; }
 | ";"                        {}
 ;
@@ -300,6 +305,9 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
 ) {
     using namespace Foam;
 
+    static token lastToken;
+    static bool pushed=false;  // work around a EOF-problem
+
     RawFoamDictionaryParser::location_type loc(
         &(driver.is().name()),
         driver.is().lineNumber(),
@@ -308,12 +316,52 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
 
     // Info << nl << driver.is().eof() << " " << driver.is().good()
     //     << driver.is().bad() << endl;
-
-    if(driver.is().eof()) {
-        return RawFoamDictionaryParser::make_END_OF_FILE(loc);
+    if(driver.debug()>2 ) {
+        Info << "Stream: Good " << driver.is().good() << " EOF "
+            << driver.is().eof() << endl;
     }
 
+    if(driver.is().eof()) {
+        if(!pushed) {
+            if(driver.debug()>2 ) {
+                Info << "Detected EOF" << endl;
+            }
+            return RawFoamDictionaryParser::make_END_OF_FILE(loc);
+        }
+    }
+    pushed=false;
+
+    if(driver.rawMode()) {
+        if(driver.debug()>2 ) {
+            Info << "Starting raw mode " << endl;
+        }
+
+        Foam::OStringStream result;
+        result << lastToken;
+
+        while(driver.is().good()) {
+            token tok(driver.is());
+            if(
+                tok.isPunctuation()
+                &&
+                tok.pToken()==token::END_STATEMENT
+            ) {
+                if(driver.debug()>2 ) {
+                    Info << "Found ';'" << endl;
+                    Info << "Stream: Good " << driver.is().good() << " EOF "
+                        << driver.is().eof() << endl;
+                }
+                driver.is().putBack(tok);
+                pushed=true;
+                break;
+            }
+            result << " " << tok;
+        }
+        driver.resetRawMode();
+        return RawFoamDictionaryParser::make_RAW(result.str(),loc);
+    }
     token nextToken(driver.is());
+    lastToken=nextToken;
 
     if(driver.debug()>2 ) {
         Info << "Next token: " << nextToken.info() << endl;

@@ -63,6 +63,7 @@ namespace Foam {
         :
         is_(NULL),
         debugLevel_(0),
+        rawMode_(false),
         errorMode_(mode)
     {
         startLabelList();
