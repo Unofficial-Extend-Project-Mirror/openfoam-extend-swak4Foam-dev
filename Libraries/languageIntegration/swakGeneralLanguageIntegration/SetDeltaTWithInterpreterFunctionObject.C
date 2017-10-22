@@ -76,10 +76,14 @@ void SetDeltaTWithInterpreterFunctionObject<Wrapper>::readParameters(const dicti
     this->readCode(dict,"init",initCode_);
     this->readCode(dict,"deltaT",deltaTCode_);
 
+    this->dictionariesToInterpreterStructs();
+
     Wrapper::executeCode(
         initCode_,
         false
     );
+
+    this->interpreterStructsToDictionaries();
 }
 
 template<class Wrapper>
@@ -88,6 +92,8 @@ scalar SetDeltaTWithInterpreterFunctionObject<Wrapper>::deltaT()
     if(!this->parallelNoRun()) {
         this->setRunTime(this->time());
     }
+
+    this->dictionariesToInterpreterStructs();
 
     if(this->writeDebug()) {
         Pbug << "Evaluating " << deltaTCode_ << endl;

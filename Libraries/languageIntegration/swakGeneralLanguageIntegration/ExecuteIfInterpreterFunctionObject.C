@@ -91,6 +91,8 @@ bool ExecuteIfInterpreterFunctionObject<Wrapper>::condition()
         this->setRunTime(time());
     }
 
+    this->dictionariesToInterpreterStructs();
+
     if(writeDebug()) {
         Info << "Evaluating " << conditionCode_ << endl;
     }
@@ -114,10 +116,14 @@ void ExecuteIfInterpreterFunctionObject<Wrapper>::readParameters(const dictionar
     this->readCode(dict,"init",initCode_);
     this->readCode(dict,"condition",conditionCode_);
 
+    this->dictionariesToInterpreterStructs();
+
     Wrapper::executeCode(
         initCode_,
         false
     );
+
+    this->interpreterStructsToDictionaries();
 }
 
 } // namespace Foam

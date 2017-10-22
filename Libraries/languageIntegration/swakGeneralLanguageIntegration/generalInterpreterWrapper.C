@@ -52,6 +52,8 @@ Contributors/Copyright:
 #include "stringOps.H"
 #endif
 
+#include "polyMesh.H"
+
 // #include <fcntl.h>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -100,6 +102,16 @@ generalInterpreterWrapper::generalInterpreterWrapper
         dict.lookupOrDefault<wordList>(
             this->interpreterName()+"ToSwakVariables",
             wordList(0)
+        )
+    ),
+    dictionariesIntoMemory_(
+        dict.subOrEmptyDict(
+            "dictionaryTo"+this->InterpreterName()
+        )
+    ),
+    memoryIntoDictionaries_(
+        dict.subOrEmptyDict(
+            this->interpreterName()+"ToDictionary"
         )
     ),
     interactiveAfterExecute_(
@@ -518,6 +530,70 @@ void generalInterpreterWrapper::syncParallel() const
         Dbug << "syncParallel: no wait" << endl;
     }
 }
+
+void generalInterpreterWrapper::dictionariesToInterpreterStructs() {
+    wordList who(dictionariesIntoMemory_.toc());
+
+    forAll(who,i) {
+        const word &name=who[i];
+
+        word dictName;
+        word regionName;
+        bool me=true;
+        if(dictionariesIntoMemory_.isDict(name)) {
+            const dictionary &sub=dictionariesIntoMemory_.subDict(name);
+            dictName=word(sub["name"]);
+            regionName=word(sub["region"]);
+            me=false;
+        } else {
+            dictName=word(dictionariesIntoMemory_[name]);
+        }
+        const objectRegistry &obr=
+            me
+            ? obr_
+            : obr_.time().lookupObject<objectRegistry>(regionName);
+
+        const dictionary &source=obr.lookupObject<dictionary>(dictName);
+
+        insertDictionary(
+            name,
+            source
+        );
+    }
+}
+
+void generalInterpreterWrapper::interpreterStructsToDictionaries() {
+    wordList who(memoryIntoDictionaries_.toc());
+
+    forAll(who,i) {
+        const word &name=who[i];
+
+        word dictName;
+        word regionName;
+        bool me=true;
+        if(memoryIntoDictionaries_.isDict(name)) {
+            const dictionary &sub=memoryIntoDictionaries_.subDict(name);
+            dictName=word(sub["name"]);
+            regionName=word(sub["region"]);
+            me=false;
+        } else {
+            dictName=word(memoryIntoDictionaries_[name]);
+        }
+        const objectRegistry &obr=
+            me
+            ? obr_
+            : obr_.time().lookupObject<objectRegistry>(regionName);
+
+        dictionary &target=const_cast<dictionary&>(
+            obr.lookupObject<dictionary>(dictName)
+        );
+        extractDictionary(
+            name,
+            target
+        );
+    }
+}
+
 
 const word generalInterpreterWrapper::InterpreterName() {
     word result=interpreterName_;

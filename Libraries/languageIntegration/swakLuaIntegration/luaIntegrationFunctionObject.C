@@ -114,7 +114,14 @@ bool luaIntegrationFunctionObject::start()
         setRunTime();
     }
 
-    return executeCode(startCode_,true);
+    dictionariesToInterpreterStructs();
+
+    bool ok=executeCode(startCode_,true);
+
+    interpreterStructsToDictionaries();
+
+    return ok;
+
 }
 
 bool luaIntegrationFunctionObject::execute(bool)
@@ -125,11 +132,15 @@ bool luaIntegrationFunctionObject::execute(bool)
         setRunTime();
     }
 
+    dictionariesToInterpreterStructs();
+
     executeCode(executeCode_,true);
 
     if(this->time_.outputTime()) {
         executeCode(writeCode_,true);
     }
+
+    interpreterStructsToDictionaries();
 
     return true;
 }
@@ -142,7 +153,13 @@ bool luaIntegrationFunctionObject::end()
         setRunTime();
     }
 
-    return executeCode(endCode_,true);
+    dictionariesToInterpreterStructs();
+
+    bool ok=executeCode(endCode_,true);
+
+    interpreterStructsToDictionaries();
+
+    return ok;
 }
 
 bool luaIntegrationFunctionObject::read(const dictionary& dict)

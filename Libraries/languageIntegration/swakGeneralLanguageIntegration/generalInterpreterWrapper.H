@@ -115,6 +115,20 @@ protected:
     //- supported
     wordList interpreterToSwakVariables_;
 
+    //- dictionaries in memory that should be read into the interpreter namespacs
+
+    //- key is the name of the dictionary under which it will be
+    //- inserted into the interpreter
+    //- value is either the name under which it is found in the current region
+    //- or a dictionary with region and name
+    dictionary dictionariesIntoMemory_;
+
+    //- structures in memory that should update OpenFOAM-dictionaries
+
+    //- key is the name of the struct in memory
+    //- value is the specification of the OpenFOAM-dictionary
+    dictionary memoryIntoDictionaries_;
+
     //- should we get an interactive Interpreter-Shell after every code-Execution?
 
     //- used for debugging the Interpreter-program
@@ -129,6 +143,10 @@ protected:
     virtual void getGlobals() = 0;
 
     virtual void setGlobals() = 0;
+
+    void dictionariesToInterpreterStructs();
+
+    void interpreterStructsToDictionaries();
 
     //- Execute after the interpreter-code has been called
     virtual void doAfterExecution(

@@ -76,10 +76,14 @@ void SetEndTimeWithInterpreterFunctionObject<Wrapper>::readParameters(const dict
     this->readCode(dict,"init",initCode_);
     this->readCode(dict,"endTime",endTimeCode_);
 
+    this->dictionariesToInterpreterStructs();
+
     Wrapper::executeCode(
         initCode_,
         false
     );
+
+    this->interpreterStructsToDictionaries();
 }
 
 template<class Wrapper>
@@ -88,6 +92,8 @@ scalar SetEndTimeWithInterpreterFunctionObject<Wrapper>::endTime()
     if(!this->parallelNoRun()) {
         this->setRunTime(this->time());
     }
+
+    this->dictionariesToInterpreterStructs();
 
     if(this->writeDebug()) {
         Pbug << "Evaluating " << endTimeCode_ << endl;

@@ -78,6 +78,40 @@ functions {
         //        interactiveAfterExecute true;
         interactiveAfterException true;
     }
+    luaFromTransport
+    {
+        type luaIntegration;
+
+        dictionaryToLua {
+            trans {
+                name transportProperties;
+                region region0;
+            };
+            solution {
+                name fvSolution;
+                region region0;
+            };
+        }
+        luaToDictionary {
+            data {
+                name luaStorage;
+                region region0;
+            }
+        }
+        //        debugLuaWrapper 1; // switching on
+
+        startCode "";
+        executeCode "data={nu=trans.nu,uTol=solution.solvers.U.tolerance} ";
+        endCode "";
+        //        tolerateExceptions true;
+        parallelMasterOnly false;
+        isParallelized true;
+        //        interactiveAfterExecute true;
+        interactiveAfterException true;
+
+        luaDictionaryParserErrorMode fail;
+    }
+
     luaOutput
     {
         type luaIntegration;

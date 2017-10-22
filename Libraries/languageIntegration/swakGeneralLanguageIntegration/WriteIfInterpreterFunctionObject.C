@@ -103,6 +103,8 @@ bool WriteIfInterpreterFunctionObject<Wrapper>::executeCode(const string code)
         this->setRunTime(this->time());
     }
 
+    this->dictionariesToInterpreterStructs();
+
     if(this->writeDebug()) {
         Info << "Evaluating " << code << endl;
     }
@@ -117,18 +119,24 @@ bool WriteIfInterpreterFunctionObject<Wrapper>::executeCode(const string code)
 template<class Wrapper>
 bool WriteIfInterpreterFunctionObject<Wrapper>::checkStartWriting()
 {
+    this->dictionariesToInterpreterStructs();
+
     return this->executeCode(writeCode_);
 }
 
 template<class Wrapper>
 bool WriteIfInterpreterFunctionObject<Wrapper>::checkStopWriting()
 {
+    this->dictionariesToInterpreterStructs();
+
     return this->executeCode(stopWriteCode_);
 }
 
 template<class Wrapper>
 bool WriteIfInterpreterFunctionObject<Wrapper>::checkStopCooldown()
 {
+    this->dictionariesToInterpreterStructs();
+
     return this->executeCode(stopCooldownCode_);
 }
 

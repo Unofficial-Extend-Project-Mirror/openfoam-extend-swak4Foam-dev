@@ -97,6 +97,8 @@ bool WriteAndEndInterpreterFunctionObject<Wrapper>::endRunNow()
         this->setRunTime(this->time());
     }
 
+    this->dictionariesToInterpreterStructs();
+
     if(this->writeDebug()) {
         Info << "Evaluating " << conditionCode_ << endl;
     }

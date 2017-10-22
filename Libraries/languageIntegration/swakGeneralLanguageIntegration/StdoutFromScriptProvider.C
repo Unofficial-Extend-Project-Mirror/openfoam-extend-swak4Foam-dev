@@ -71,12 +71,16 @@ namespace Foam
     string StdoutFromScriptProvider<Wrapper>::getDictionaryText() {
         string buffer;
 
+        this->dictionariesToInterpreterStructs();
+
         this->executeCodeCaptureOutput(
             theScript_,
             buffer,
             false,
             true
         );
+
+        this->interpreterStructsToDictionaries();
 
         return buffer;
     }
