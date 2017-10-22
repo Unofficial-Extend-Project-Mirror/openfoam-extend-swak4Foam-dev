@@ -4029,6 +4029,10 @@ S_{expl} + S_{impl} T
      The script =./maintainanceScripts/compileRequirements.sh=
      compiles a private version of Lua that is automatically used when
      the =swakConfiguation.automatic= is used
-
+**** Function object to read and write dictionaries
+     The function object =readAndWriteDictionary= in the
+     =simpleFunctionObjects= reads a dictionary from disk and writes
+     it with the other data. The main purpose of this function object
+     is to allow scripting languages to write their data
 *** Enhancements
 *** Example

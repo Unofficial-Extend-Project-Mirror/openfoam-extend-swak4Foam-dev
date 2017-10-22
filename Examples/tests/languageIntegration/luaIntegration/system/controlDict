@@ -46,6 +46,23 @@ timePrecision   6;
 runTimeModifiable yes;
 
 functions {
+    getTransport {
+        type readAndWriteDictionary;
+        dictName transportProperties;
+        inConstant true;
+        inSystem false;
+    }
+    luaStorageDict {
+        type readAndWriteDictionary;
+        dictName luaStorage;
+        inConstant false;
+        inSystem false;
+        mustExist false;
+        autowrite true;
+    }
+    // whosThere {
+    //     type listRegisteredObjects;
+    // }
     luaSimple
     {
         type luaIntegration;
