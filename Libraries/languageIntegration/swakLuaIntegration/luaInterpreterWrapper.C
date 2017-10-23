@@ -741,7 +741,7 @@ void luaInterpreterWrapper::addListListFromStackToDict(
         lua_pop(luaState_,1);
         i++;
     }
-    dict.add(name,result);
+    dict.set(name,result);
 }
 
 template<class T,class F,class V>
@@ -779,7 +779,7 @@ bool luaInterpreterWrapper::addListFromStackToDict(
         lua_pop(luaState_,1);
         cnt++;
     }
-    dict.add(name,result);
+    dict.set(name,result);
     return true;
 }
 
@@ -803,18 +803,18 @@ void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
                         << endl;
                 break;
             case LUA_TNUMBER:
-                dict.add(name,lua_tonumber(luaState_,-1));
+                dict.set(name,lua_tonumber(luaState_,-1));
                 break;
             case LUA_TBOOLEAN:
-                dict.add(name,bool(lua_toboolean(luaState_,-1)));
+                dict.set(name,bool(lua_toboolean(luaState_,-1)));
                 break;
             case LUA_TSTRING:
                 {
                     string val(lua_tostring(luaState_,-1));
                     if(ValidWord()(val)) {
-                        dict.add(name,word(val));
+                        dict.set(name,word(val));
                     } else {
-                        dict.add(name,val);
+                        dict.set(name,val);
                     }
                 }
                 break;
@@ -891,7 +891,7 @@ void luaInterpreterWrapper::extractTopToDict(dictionary &dict) {
                         dictionary subDict;
                         subDict.name()=name;
                         extractTopToDict(subDict);
-                        dict.add(name,subDict);
+                        dict.set(name,subDict);
                     }
                 }
                 break;

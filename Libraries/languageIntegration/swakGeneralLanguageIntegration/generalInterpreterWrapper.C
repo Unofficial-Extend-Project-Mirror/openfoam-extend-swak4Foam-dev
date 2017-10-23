@@ -591,6 +591,14 @@ void generalInterpreterWrapper::interpreterStructsToDictionaries() {
             name,
             target
         );
+
+        // make sure that the latest values are written
+        if(obr.time().outputTime()) {
+            const regIOobject &o=obr.lookupObject<regIOobject>(dictName);
+            if(o.writeOpt()==IOobject::AUTO_WRITE) {
+                const_cast<regIOobject&>(o).write();
+            }
+        }
     }
 }
 

@@ -100,9 +100,9 @@ functions {
         }
         //        debugLuaWrapper 1; // switching on
 
-        startCode "";
-        executeCode "data={nu=trans.nu,uTol=solution.solvers.U.tolerance} ";
-        endCode "";
+        startCode "line={}";
+        executeCode "line[#line+1]={tonumber(timeName),deltaT,endTime}; data={nu=trans.nu,uTol=solution.solvers.U.tolerance,tline=line};print(\"Length:\",#line) ";
+        endCode $executeCode;
         //        tolerateExceptions true;
         parallelMasterOnly false;
         isParallelized true;
