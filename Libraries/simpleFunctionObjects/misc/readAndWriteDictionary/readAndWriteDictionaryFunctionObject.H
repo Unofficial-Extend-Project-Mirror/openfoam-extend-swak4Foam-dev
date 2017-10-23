@@ -101,6 +101,8 @@ public:
         const dictionary&
     );
 
+    ~readAndWriteDictionaryFunctionObject();
+
     bool start();
 
     void writeSimple();

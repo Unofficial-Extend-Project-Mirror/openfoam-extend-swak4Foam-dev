@@ -147,6 +147,13 @@ readAndWriteDictionaryFunctionObject::readAndWriteDictionaryFunctionObject
 #endif
 }
 
+readAndWriteDictionaryFunctionObject::~readAndWriteDictionaryFunctionObject()
+{
+    IOdictionary *d=dict_.ptr();  // this is a 'memory hole'
+    //delete d;  // for some reason this gives an error message
+    // not freeing the memory avoids the error message
+}
+
 bool readAndWriteDictionaryFunctionObject::start()
 {
     return simpleFunctionObject::start();
