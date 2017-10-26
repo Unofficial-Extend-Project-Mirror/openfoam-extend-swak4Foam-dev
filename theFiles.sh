@@ -11,6 +11,7 @@ export SWAKLIBS=(groovyBC \
     swak4FoamParsers \
     swakLagrangianParser \
     swak*Integration* \
+    swakScriptableLagrangian \
     swak*FunctionPlugin \
     swak*CloudAdaptor \
     swakFvOptions \

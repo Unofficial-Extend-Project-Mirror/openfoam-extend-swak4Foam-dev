@@ -7,3 +7,5 @@ wclean swakPythonIntegration
 wclean swakPython3Integration
 
 wclean swakLuaIntegration
+
+wclean swakScriptableLagrangian
