@@ -47,6 +47,7 @@
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark | \sad       | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
+  | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      |            |            |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       | \sad       | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
