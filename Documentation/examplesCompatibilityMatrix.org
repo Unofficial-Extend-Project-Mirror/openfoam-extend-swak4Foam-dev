@@ -10,9 +10,9 @@
 ** Used Foam-versions
    Currently these Foam-versions are in the matrix (these are the
    names in the column titles):
-   - 5.0 Fnd :: The OpenFOAM 5.0 Foundation release
+   - 5.0 Fnd :: The OpenFOAM.org 5.0 release
    - 4.0 Ext :: The Foam-Extend 4.0 release
-   - 1706+ :: The OpenFOAM 1706+ release
+   - 1706 :: The OpenFOAM.com 1706 release
    - 2.3 :: The OpenFOAM 2.3 release (this is the oldest release
         tested)
 ** Symbols in the tables
@@ -30,7 +30,7 @@
         of technical constraints (missing solver etc)
    - no symbol :: This means that the case was not yet tested on this version
 * The Matrix
-  | Case name                                                   | 5.0 Fnd    | 4.0 Ext    | 1706+      | 2.3        |
+  | Case name                                                   | 5.0 Fnd    | 4.0 Ext    | 1706       | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
   | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    | \checkmark | \sad       |
   | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark | \checkmark |

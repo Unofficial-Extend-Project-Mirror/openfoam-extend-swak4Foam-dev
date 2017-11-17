@@ -65,44 +65,43 @@ else:
         write(end)
 
 
-# Parse WM_PROJECT_VERSION to guess which fork and its version
+# Parse WM_PROJECT_VERSION to guess which fork and its version, but check
+# 'wmake/rules/General/general/rules' first as being more reliable
+
 verString=sys.argv[1]
+foamFork = ""
 
-foamFork = "unknown"
-if "FOAM_DEV" in environ:
-    # foam-extend
-    foamFork = "extend"
-elif verString == "plus":
-    # openfoam.com (development branch)
-    #
-    # parse wmake/rules/General/general/rules for this type of content
-    #    WM_VERSION = OPENFOAM_PLUS=1612
-    # can be used instead of parsing $WM_PROJECT_VERSION at all
-    foamFork  = "openfoamplus"
-    reVersion = re.compile(r'OPENFOAM_PLUS\s*=\s*([\d.]+)')
-    try:
-        for line in open(environ["WM_DIR"] + '/rules/General/general', 'r'):
-            m = re.search(reVersion, line)
-            if m:
-                foamFork  = "openfoamplus"
-                verString = m.group(1)
-                break
-    except (KeyError, IOError):
-        pass
-else:
-    m = re.match(r'v?(\d{4})\+?', verString)
-    # openfoam.com (release version) - eg, v1606+, v1612, 1706 etc
+# <openfoam.com> (release or develop branch)
+# wmake/rules/General/general/rules has this type of content:
+#    WM_VERSION = OPENFOAM_PLUS=1612
+reCom = re.compile(r'OPENFOAM_PLUS\s*=\s*([\d.]+)')
+try:
+    for line in open(environ["WM_DIR"] + '/rules/General/general', 'r'):
+        m = re.search(reCom, line)
+        if m:
+            foamFork  = "openfoamplus"
+            verString = m.group(1)
+            break
+except (KeyError, IOError):
+    pass
 
-    if m:
-        foamFork  = "openfoamplus"
-        verString = m.group(1)
+if not foamFork:
+    foamFork = "openfoam"  # Fallback value is openfoam.org
+
+    if "FOAM_DEV" in environ:
+        # foam-extend
+        foamFork = "extend"
     else:
-        # openfoam.org version
-        foamFork = "openfoam"
+        # Additional check for openfoam.com (v1606+, v1612, 1706)
+        # - only needed for 3.0+ and 1606
+        m = re.match(r'v?(\d{4})\+?', verString)
+        if m:
+            foamFork  = "openfoamplus"
+            verString = m.group(1)
 
 vParts=verString.split(".")
 
-# Larger to accomodate new OpenFOAM+ scheme
+# Very large to accomodate 4-digit numbering scheme (eg, OpenFOAM-v1706)
 of_version_major=2999
 of_version_minor=9
 of_version_patch="x"
@@ -110,7 +109,6 @@ of_version_patch="x"
 try:
     of_version_major=int(vParts[0])
     of_version_minor=0
-
 except ValueError:
     pass
 
@@ -183,10 +181,10 @@ if addFork("openfoamplus"):
     # OPENFOAM_PLUS is a 4-digit release date, added after 1606.
     # The release versioning now follows year/month.
     #
-    # OpenFOAM+ released v3.0+ followed by v1606+, v1612+, ...
+    # Released v3.0+ followed by v1606+, v1612+, ...
     # Provide a release date for v3.0+ (2016-01) to fit this scheme.
     # Later versions can obtain it from the WM_PROJECT_VERSION directly
-    # or rely on OpenFOAM+ to provide it.
+    # or rely on the OpenFOAM wmake rules to provide it.
     if of_version_major == 3:
         templateString += """
 // OPENFOAM_PLUS is the release date (YYMM) as an integer, added after 1606.
