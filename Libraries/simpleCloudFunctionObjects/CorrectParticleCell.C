@@ -178,7 +178,7 @@ void Foam::CorrectParticleCell<CloudType>::preEvolve()
     }
 
     if(Pstream::parRun()) {
-        out_["correctedCellProc"+name(Pstream::myProcNo())]
+        out_["correctedCellProc"+Foam::name(Pstream::myProcNo())]
             << outCnt << tab << cnt << endl;
     }
     reduce(cnt,plusOp<label>());

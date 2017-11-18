@@ -197,7 +197,7 @@ void Foam::EliminateOutsideParticles<CloudType>::postEvolve()
     );
 
     if(Pstream::parRun()) {
-        out_["eliminatedCpu"+name(Pstream::myProcNo())]
+        out_["eliminatedCpu"+Foam::name(Pstream::myProcNo())]
             << nrEliminatedPre << tab << nrEliminatedPost << endl;
     }
     reduce(nrEliminatedPre,plusOp<label>());

@@ -147,7 +147,7 @@ void Foam::EliminateCaughtParcels<CloudType>::postEvolve()
         totalEliminated
     );
     if(Pstream::parRun()) {
-        out_["eliminatedCpu"+name(Pstream::myProcNo())]
+        out_["eliminatedCpu"+Foam::name(Pstream::myProcNo())]
             << nrEliminated << endl;
     }
     reduce(nrEliminated,plusOp<label>());
