@@ -1129,7 +1129,7 @@ Examples for the use of the `simpleSearchableSurfaces`-library.
 #### littleVolcano
 
 -   **Solver:** interFoam
--   **Case preparation:** Script `caseSetup.sh` is provided
+-   **Case preparation:** Use `pyFoamPrepareCase.py`
 -   **Demonstrates:** Boolean operations on STL-files
 
 
@@ -6155,6 +6155,12 @@ that field have to be provided
 Here the function object failed with a "copy to
 myself"-error. This has been fixed by changing the name of the
 temporary field.
+
+
+#### Floating point exception in `unitCylinder` in `simpleSearchableSurfaces`
+
+When finding a cutting point in "infinity" then `magSqr`
+failed. Fixed
 
 
 ### Internals (for developers)

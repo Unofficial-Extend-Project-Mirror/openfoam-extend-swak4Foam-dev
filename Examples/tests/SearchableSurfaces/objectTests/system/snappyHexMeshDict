@@ -48,6 +48,10 @@ geometry
         translation (2 0 0);
         surface {
             type unitCylinder;
+            //            type searchableCylinder;
+            point1 (0 0 -1);
+            point2 (0 0  1);
+            radius 1;
         }
     }
 

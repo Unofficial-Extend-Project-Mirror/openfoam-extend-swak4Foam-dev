@@ -70,6 +70,12 @@ Foam::scaleSearchableSurface::scaleSearchableSurface
                 <<endl
                 <<abort(FatalError);
     }
+
+    pointField pts(2);
+    pts[0]=transform(delegate().bounds().min());
+    pts[1]=transform(delegate().bounds().max());
+
+    bounds()=boundBox(pts);
 }
 
 
@@ -144,8 +150,10 @@ void Foam::scaleSearchableSurface::boundingSpheres
     if(mag(scale_.z())>maxScale) {
         maxScale=mag(scale_.z());
     }
+
     forAll(centres,i) {
         radiusSqr[i]=radiusSqr[i]*maxScale*maxScale;
+        centres[i]=transform(centres[i]);
     }
 }
 #endif

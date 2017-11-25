@@ -115,6 +115,13 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
                 << exit(FatalError);
 
     }
+
+    pointField pts(4);
+    pts[0]=a().bounds().min();
+    pts[1]=a().bounds().max();
+    pts[2]=b().bounds().min();
+    pts[3]=b().bounds().max();
+    bounds()=boundBox(pts);
 }
 
 

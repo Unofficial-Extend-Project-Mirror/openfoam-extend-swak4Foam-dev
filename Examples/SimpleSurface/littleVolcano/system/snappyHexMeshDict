@@ -64,6 +64,7 @@ geometry
                                 surface
                                 {
                                     rename FineCone.stl;
+                                    file "$FOAM_CASE/constant/triSurface/FineCone.stl";
                                     type triSurfaceMesh;
                                 }
                             }
@@ -85,6 +86,7 @@ geometry
                                 surface
                                 {
                                     rename CoarseCone.stl;
+                                    file "$FOAM_CASE/constant/triSurface/CoarseCone.stl";
                                     type triSurfaceMesh;
                                 }
                             }
