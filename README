@@ -3940,6 +3940,8 @@ S_{expl} + S_{impl} T
      Minor adaptions were required to make this compile
 **** OpenFOAM 5.0
      Some adaptions were required to make this compile
+**** OpenFOAM+ v1712
+     Minor adaptions were required to make this compile by Mark Olesen
 *** Incompatibilities
 **** Solved field in =initPotentialFlow= now named differently
      The field name is now the name of the original field plus
