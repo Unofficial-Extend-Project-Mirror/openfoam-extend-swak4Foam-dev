@@ -93,13 +93,16 @@ CommonPluginFunction::CommonPluginFunction(
 
     forAll(argumentSpecification,i)
     {
-	const string &spec=argumentSpecification[i];
-        label space1=spec.find(' ');
-        label space2=spec.find(' ',space1+1);
-        label space3=spec.find(' ',space2+1);
+        const string &spec=argumentSpecification[i];
+        const string::size_type space1=spec.find(' ');
+        const string::size_type space2=spec.find(' ', space1+1);
+        const string::size_type space3=spec.find(' ', space2+1);
 
-        if(
-            space1 < 0 || space2 < 0 || space3 > 0
+        if
+        (
+            space1 == string::npos
+         || space2 == string::npos
+         || space3 != string::npos
         ) {
             FatalErrorIn("CommonValueExpressionDriver::CommonPluginFunction::CommonPluginFunction")
                 << "The argument specification " << spec
@@ -108,9 +111,10 @@ CommonPluginFunction::CommonPluginFunction(
                     << endl
                     << exit(FatalError);
         }
-        argumentNames_[i]=spec(space1);
-        argumentParsers_[i]=spec(space1+1,space2-space1-1);
-        argumentTypes_[i]=spec(space2+1,spec.size()-space2-1);
+        argumentNames_[i] = spec.substr(space1);
+        argumentParsers_[i] = spec.substr(space1+1,space2-space1-1);
+        argumentTypes_[i] = spec.substr(space2+1);
+
         if(debug || parentDriver_.traceParsing()) {
             Info << "Argument " << i << ": "
                 << argumentNames_[i] << " " << argumentParsers_[i]
@@ -132,7 +136,7 @@ string CommonPluginFunction::helpText() const
     string result=returnType_+" "+name_+"(";
     forAll(argumentNames_,i)
     {
-        if(i>0) {
+        if(i) {
             result+=",";
         }
         result+=argumentParsers_[i] + "/" + argumentTypes_[i]

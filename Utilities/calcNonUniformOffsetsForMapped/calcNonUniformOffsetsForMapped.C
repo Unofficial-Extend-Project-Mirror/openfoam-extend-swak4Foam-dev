@@ -50,6 +50,7 @@ Contributors/Copyright:
 #include "IFstream.H"
 #include "ListListOps.H"
 #include "meshTools.H"
+#include "NamedEnum.H"
 
 #include "swak.H"
 

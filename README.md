@@ -1100,7 +1100,7 @@ Testing the `cloud`-parser for lagrangiant particles
 2.  simplifiedSiwek
 
     Variation of the tutorial case
-
+    
     -   **Solver:** coalChemistryFoam
     -   **Demonstrates:** creating new clouds with
         `funkySetLagrangianField` and evaluations on
@@ -1354,7 +1354,7 @@ These topics may be "new" for the average OF-developer:
 -   **bison/flex:** This pair of compiler generator tools generate the
     parsers for the expressions. Google for a tutorial
     that looks promising to you.
-
+    
     For a short example that shows how a new function
     was added to two parsers have a look at this
     changeset that added the `cpu()`-function to the
@@ -2568,7 +2568,7 @@ Also fixed a leak with the labels of plugin-functions that was
 present with all drivers
 
 
-#### Maintenance scripts not working with non-=bash= `/bin/sh`
+#### Maintenance scripts not working with non-`bash` `/bin/sh`
 
 Reported by Oliver Krueger that on systems where `/bin/sh` is not
 a `bash` anymore (newer Ubuntu and SuSE) the sourcing of
@@ -3539,7 +3539,7 @@ Methods that look for fields now use the appropriate data type
 
 There were template specializations for `pTraits` in
 `ExpressionResult.C` that had to be moved to `ExpressionResult.H`
-to allow compilation on these non-=gcc=-compilers
+to allow compilation on these non-`gcc`-compilers
 
 
 #### `executeIf`-function objects are executed if `readDuringConstruction` is set to `true`
@@ -4130,7 +4130,7 @@ or on disk the data is handled differently:
     sought. This proxy object knows which data the cloud has, what
     the type is and a short description. It makes the data
     available as fields.
-
+    
     `swak` has by default proxy objects for most particle classes
     that come with `OpenFOAM`. For unsupported classes and adaptor
     library has to be written.
@@ -5340,20 +5340,20 @@ first version these objects can be added:
 
 -   **cloudMoveStatistics:** Records simple statistics about the
     solution of the cloud:
-
+    
     -   How often were faces hit by particles (total, per particle:
         minimum, mean and average)
     -   How often were particles moved (same data as face hits)
     -   How often was each patch hit
-
+    
     Only minimum effort has been spent to consolidate this data
     across processors (particles may be counted on multiple
     processors).
-
+    
     The main purpose of this function object is to spot problematic
     behavior (particles that hit patches repeatedly and don't
     move)
-
+    
     The optional parameter `reportHitNr` and `reportMoveNr` print
     out the ids of particles that exceed these thresholds
 
@@ -5363,14 +5363,14 @@ first version these objects can be added:
     simulations significantly as basically the same impact is
     calculated over and over again without any progress. Two
     parameters allow eliminating such parcels:
-
+    
     -   **maximumNumberOfHits:** if the same boundary face is hit more often
         than this by the particle (without hitting any other
         faces) then the particle is eliminated. Recommended value: 1000
     -   **minDistanceMove:** Minimum distance a particle has to move
         when hitting a boundary face. If it moved less the
         particle is removed. Recommended: \(10^{-9}\)
-
+    
     If one of the parameters is set to a negative value the
     criterion is "switched off"
 -   **eliminateOutsideParticles:** Removes particles that are outside
@@ -5379,17 +5379,17 @@ first version these objects can be added:
     correctly tracked
 -   **correctParticleCell:** Correct the cell of the particle before
     the evolution begins.
-
+    
     This should fix problems with moving meshes but is currently
     not working correctly.
-
+    
     An optional parameter `logCorrected` logs the data of the
     corrected particles to a file. Only use for debugging or if you don't
     expect many incidents
 -   **traceParticles:** This function object gets a list of particle
     ids. For these particles all data is written whenever a
     function object is called.
-
+    
     This function object should **only** be used for debugging if the
     behavior of a special particle should be tracked
 
@@ -6135,6 +6135,11 @@ Minor adaptions were required to make this compile
 #### OpenFOAM 5.0
 
 Some adaptions were required to make this compile
+
+
+#### OpenFOAM+ v1712
+
+Minor adaptions were required to make this compile by Mark Olesen
 
 
 ### Incompatibilities
