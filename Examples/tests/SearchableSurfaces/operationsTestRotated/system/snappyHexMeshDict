@@ -224,6 +224,7 @@ castellatedMeshControls
         {
             // Surface-wise min and max refinement level
             level (2 2);
+            //            level (3 3);
         }
         exclusiveTest
         {
@@ -302,6 +303,7 @@ snapControls
         nFeatureSnapIter 10;
 
         //- Detect (geometric) features by sampling the surface (default=false)
+        //        implicitFeatureSnap false;
         implicitFeatureSnap true;
 
         //- Use castellatedMeshControls::features (default = true)
