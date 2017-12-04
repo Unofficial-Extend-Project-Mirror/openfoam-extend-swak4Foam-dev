@@ -1255,10 +1255,12 @@ hide circle
      - runTime :: Current simulation time as a float
      - timeName :: Name of the current time as a string
      - deltaT :: Time step of the simulation as a float
+     - deltaT0 :: Previous time step of the simulation as a float
      - endTime :: time at which the simulation is going to end as a float
      - outputTime :: =bool= that says whether the current time is a
                      time at which output is scheduled
      - timeDir :: Directory to which current time date would be written
+     - timeIndex :: The index of the current time-step
 **** The options
      These options are common to all integrations. If the option has
      =<language>= in the name then this string is replaced with the

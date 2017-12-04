@@ -415,11 +415,13 @@ void pythonInterpreterWrapper::setRunTime(const Time &time)
 
     PyObject *m = PyImport_AddModule("__main__");
     PyObject_SetAttrString(m,"deltaT",PyFloat_FromDouble(time.deltaT().value()));
+    PyObject_SetAttrString(m,"deltaT0",PyFloat_FromDouble(time.deltaT0().value()));
     PyObject_SetAttrString(m,"endTime",PyFloat_FromDouble(time.endTime().value()));
     PyObject_SetAttrString(m,"runTime",PyFloat_FromDouble(time.value()));
     PyObject_SetAttrString(m,"timeName",PyString_FromString(time.timeName().c_str()));
     PyObject_SetAttrString(m,"outputTime",PyBool_FromLong(time.outputTime()));
     PyObject_SetAttrString(m,"timeDir",PyString_FromString((time.path()/time.timeName()).c_str()));
+    PyObject_SetAttrString(m,"timeIndex",PyInt_FromLong(time.timeIndex()));
 
     releaseInterpreter();
 }

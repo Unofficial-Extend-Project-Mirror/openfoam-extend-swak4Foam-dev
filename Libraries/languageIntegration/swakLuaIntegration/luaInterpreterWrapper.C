@@ -212,12 +212,16 @@ void luaInterpreterWrapper::setRunTime(const Time &time)
     lua_setglobal(luaState_,"endTime");
     lua_pushnumber(luaState_,time.deltaT().value());
     lua_setglobal(luaState_,"deltaT");
+    lua_pushnumber(luaState_,time.deltaT0().value());
+    lua_setglobal(luaState_,"deltaT0");
     lua_pushboolean(luaState_,time.outputTime());
     lua_setglobal(luaState_,"outputTime");
     lua_pushstring(luaState_,time.timeName().c_str());
     lua_setglobal(luaState_,"timeName");
     lua_pushstring(luaState_,(time.path()/time.timeName()).c_str());
     lua_setglobal(luaState_,"timeDir");
+    lua_pushinteger(luaState_,time.timeIndex());
+    lua_setglobal(luaState_,"timeIndex");
 
     releaseInterpreter();
 }
