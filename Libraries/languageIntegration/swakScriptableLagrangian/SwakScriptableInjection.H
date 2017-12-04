@@ -41,7 +41,8 @@ Contributors/Copyright:
 #define SwakScriptableInjection_H
 
 #include "InjectionModel.H"
-#include "pdf.H"
+
+#include "generalInterpreterWrapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,8 +60,33 @@ class SwakScriptableInjection
 {
     // Private data
 
+    autoPtr<generalInterpreterWrapper> interpreter_;
+
+
+    string initInjectorCode_;
+    string doStartInjectionCode_;
+    string doStopInjectionCode_;
+    string injectionDurationCode_;
+    string startOfInjectionTimeCode_;
+    string parcelsToInjectCode_;
+    string volumeToInjectCode_;
+
+    string prepareParcelDataCode_;
+    string particlePropertiesCode_;
+
+    word parameterStructName_;
+    word resultStructName_;
+
+    dictionary particleData_;
+
+    bool injectByEvent_;
+
+    bool isActive_;
+    scalar plannedDuration_;
 
 protected:
+
+    generalInterpreterWrapper &interpreter();
 
     // Protected member functions
 
@@ -78,6 +104,24 @@ protected:
             const scalar time1
         ) const;
 
+        //- Return flag to identify whether or not injection of parcelI is
+        //  permitted
+        bool validInjection(const label parcelI);
+
+        //- Determine properties for next time step/injection interval
+        void prepareForNextTimeStep
+        (
+            const scalar time,
+            label& newParcels,
+            scalar& newVolume
+        );
+
+        //- Post injection checks
+        void postInjectCheck
+        (
+            const label parcelsAdded,
+            const scalar massAdded
+        );
 
 public:
 
@@ -96,7 +140,7 @@ public:
 
 
     //- Destructor
-    virtual ~SwakScriptableInjection();
+    ~SwakScriptableInjection();
 
 
     // Member Functions
@@ -111,7 +155,7 @@ public:
         // Injection geometry
 
             //- Set the injection position and owner cell
-            virtual void setPositionAndCell
+            void setPositionAndCell
             (
                 const label parcelI,
                 const label nParcels,
@@ -121,7 +165,7 @@ public:
             );
 
             //- Set the parcel properties
-            virtual void setProperties
+            void setProperties
             (
                 const label parcelI,
                 const label nParcels,
@@ -130,11 +174,8 @@ public:
             );
 
             //- Flag to identify whether model fully describes the parcel
-            virtual bool fullyDescribed() const;
+            bool fullyDescribed() const;
 
-            //- Return flag to identify whether or not injection of parcelI is
-            //  permitted
-            virtual bool validInjection(const label parcelI);
 };
 
 

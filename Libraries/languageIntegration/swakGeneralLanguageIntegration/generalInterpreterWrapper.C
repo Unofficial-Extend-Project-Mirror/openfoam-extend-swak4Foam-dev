@@ -169,6 +169,17 @@ autoPtr<generalInterpreterWrapper> generalInterpreterWrapper::New
 )
 {
     word wrapperType(dict.lookup("languageWrapperType"));
+    if(
+        dictionaryConstructorTablePtr_==NULL
+        ||
+        dictionaryConstructorTablePtr_->size()==0
+    ) {
+        FatalErrorIn("generalInterpreterWrapper::New")
+            << "No scripting languages loaded. Add one or more to libs "
+                << " in the controlDict (something like 'libswakXXXIntegration.so')"
+                << endl
+                << exit(FatalError);
+    }
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(wrapperType);
 

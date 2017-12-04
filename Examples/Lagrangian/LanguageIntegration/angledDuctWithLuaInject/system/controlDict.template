@@ -58,6 +58,7 @@ libs (
     "libswakFunctionObjects.so"
     "libIOh5Write.so"
     "libswakScriptableLagrangian.so"
+    "libswakLuaIntegration.so"
 );
 
 //secondaryWriteControl timeStep;
