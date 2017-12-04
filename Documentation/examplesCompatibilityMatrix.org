@@ -10,9 +10,9 @@
 ** Used Foam-versions
    Currently these Foam-versions are in the matrix (these are the
    names in the column titles):
-   - 5.0 Fnd :: The OpenFOAM 5.0 Foundation release
+   - 5.0 Fnd :: The OpenFOAM.org 5.0 release
    - 4.0 Ext :: The Foam-Extend 4.0 release
-   - 1706+ :: The OpenFOAM 1706+ release
+   - 1706 :: The OpenFOAM.com 1706 release
    - 2.3 :: The OpenFOAM 2.3 release (this is the oldest release
         tested)
 ** Symbols in the tables
@@ -23,12 +23,14 @@
                    swak)
    - \sad :: means that the case was tested and does not run or that
         some functionality does not seem to work
+   - \partial :: Basically like \checkmark but shows a bug that needs
+                 to be fixed
    - \smiley :: test runs and gives correct results
    - \dagger :: This test will never run on this Foam version because
         of technical constraints (missing solver etc)
    - no symbol :: This means that the case was not yet tested on this version
 * The Matrix
-  | Case name                                                   | 5.0 Fnd    | 4.0 Ext    | 1706+      | 2.3        |
+  | Case name                                                   | 5.0 Fnd    | 4.0 Ext    | 1706       | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
   | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    | \checkmark | \sad       |
   | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark | \checkmark | \checkmark |
@@ -56,14 +58,19 @@
   | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \checkmark | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
+  | SimpleSurface/littleVolcano                                 | \checkmark |            | \checkmark |            |
   | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
   | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
   | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/luaIntegration                    | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/pythonIntegration                 | \checkmark | \checkmark | \checkmark | \checkmark |
   | tests/languageIntegration/python3Integration                | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/SearchableSurfaces/objectsTest                        | \checkmark |            | \checkmark |            |
+  | tests/SearchableSurfaces/operationsTest                     | \checkmark |            | \checkmark |            |
+  | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            | \partial   |            |
+  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            | \checkmark |            |
   | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark | \checkmark |
 
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
-# End
+# End:

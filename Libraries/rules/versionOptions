@@ -29,14 +29,14 @@ COMPRESSIBLE_TURB_ALL_LIBS=-lcompressibleLESModels -lcompressibleRASModels
 TRISURFACE_INC=-I$(LIB_SRC)/triSurface/lnInclude
 
 #
-# OpenFOAM+: v3.0+, v1606+, v1612+, ... plus (development branch)
+# OpenFOAM.com: v3.0+, v1606+, v1612+, ... plus (development branch)
 # OPENFOAM_PLUS is the release date (YYMM) as an integer, added after 1606.
 #
 ifdef OPENFOAM_PLUS
   # $(info This is OpenFOAM+ $(OPENFOAM_PLUS))
   IS_OPENFOAMPLUS=1
   ifeq "plus" "$(WM_PROJECT_VERSION)"
-    $(info OpenFOAM+ development version)
+    $(info OpenFOAM.com development version)
 
     WMAKE_NEW_CONVENTION=new
     FOAM_UNIFIEDTURBULENCE=yes
@@ -60,12 +60,12 @@ ifdef OPENFOAM_PLUS
   endif
 else ifeq "v3" "$(word 1, $(sort v3 $(WM_PROJECT_VERSION)))"
   # For v3.0+ and v1606+
-  $(info Appears to be an OpenFOAM+ release)
+  $(info Appears to be an OpenFOAM.com release)
   IS_OPENFOAMPLUS=1
 endif
 
 ifeq "dev" "$(WM_PROJECT_VERSION)"
-  $(info Appears to be a development version of OpenFOAM)
+  $(info Appears to be an OpenFOAM.org development version)
   IS_OPENFOAM_DEV_VERSION=1
 
   WMAKE_NEW_CONVENTION=new

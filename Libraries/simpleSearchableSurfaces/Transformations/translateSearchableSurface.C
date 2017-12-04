@@ -61,7 +61,12 @@ Foam::translateSearchableSurface::translateSearchableSurface
 :
     transformationSearchableSurface(io,dict),
     translation_(dict.lookup("translation"))
-{}
+{
+    bounds()=boundBox(
+        transform(delegate().bounds().min()),
+        transform(delegate().bounds().max())
+    );
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

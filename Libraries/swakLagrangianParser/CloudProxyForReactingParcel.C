@@ -67,6 +67,9 @@ CloudProxyForReactingParcelNoComposition<CloudType>::CloudProxyForReactingParcel
         )
     );
 
+#if OPENFOAM_PLUS >= 1712
+    // Not working
+#else
     this->addScalarFunction(
         "pc",
         "Owner cell pressure",
@@ -74,6 +77,7 @@ CloudProxyForReactingParcelNoComposition<CloudType>::CloudProxyForReactingParcel
             &CloudType::particleType::pc
         )
     );
+#endif
 
     //- constant Properties
     const typename CloudType::particleType::constantProperties &constProps=

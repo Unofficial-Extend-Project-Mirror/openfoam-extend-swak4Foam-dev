@@ -15,6 +15,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+phases (
+    phase1
+    phase2
+);
+
 phase1
 {
     transportModel  Newtonian;

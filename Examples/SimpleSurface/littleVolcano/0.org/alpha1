@@ -9,53 +9,51 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    location    "0";
-    object      U;
+    class       volScalarField;
+    object      alpha;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
+dimensions      [0 0 0 0 0 0 0];
 
-internalField   uniform (0 0 0);
+internalField   uniform 0;
 
 boundaryField
 {
     volcano_inlet
     {
-        type            fixedValue;
-        value           uniform (0 0 1);
+        type            inletOutlet;
+        value           uniform 1;
+        inletValue      uniform 1;
     }
 
     sky
     {
-        type            fixedValue;
-        value           uniform (0 0 0);
+        type            inletOutlet;
+        value           uniform 1;
+        inletValue      uniform 0;
     }
 
-    outside
-    {
-        type mixed;
-        refValue $internalField;
-        refGradient $internalField;
-        valueFraction uniform 0.5;
-        value $internalField;
+    outside {
+        $sky;
     }
 
     volcano_wall
     {
-        type            fixedValue;
-        value           uniform (0 0 0);
+        type           constantAlphaContactAngle;
+        theta0         45;
+        limit          gradient;
+        value          uniform 0;
     }
 
-    "land.+"
-    {
+    "land.*" {
         $volcano_wall;
+        theta0         15;
     }
 
     sea
     {
-        type slip;
+        type zeroGradient;
     }
 }
 

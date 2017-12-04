@@ -57,6 +57,9 @@ CloudProxyForReactingMultiphaseParcelNoComposition<CloudType>::CloudProxyForReac
 {
     typedef CloudProxyForReactingMultiphaseParcelNoComposition<CloudType> baseType;
 
+#if OPENFOAM_PLUS >= 1712
+    // Not working
+#else
     this->addScalarFunction(
         "pc",
         "Owner cell pressure",
@@ -64,6 +67,7 @@ CloudProxyForReactingMultiphaseParcelNoComposition<CloudType>::CloudProxyForReac
             &CloudType::particleType::pc
         )
     );
+#endif
 
     //- constant Properties
     const typename CloudType::particleType::constantProperties &constProps=
