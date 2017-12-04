@@ -131,7 +131,7 @@ subModels {
         parcelsToInjectCode "if (goingIn.time0 % 0.1) <0.05 then return 100 else return 0 end";
         volumeToInjectCode "return 0.000000001";
         prepareParcelDataCode "zVals={}; n=goingIn.newParcels; for i=1,n,1 do zVals[i]=-0.025+0.05*(i-0.5)/n end";
-        particlePropertiesCode "n=goingIn.nParcels; i=goingIn.parcelI+1; comingOut={position={-0.1,0.02+0.01*math.sin(runTime),zVals[i]},diameter=0.001e-3,U0={0,0,0}}";
+        particlePropertiesCode "n=goingIn.nParcels; i=goingIn.parcelI+1; comingOut={position={-0.1,0.02+zVals[i]*math.sin(runTime),math.cos(runTime)*zVals[i]},diameter=0.001e-3,U0={0,0,0}}";
 
         luaDictionaryParserErrorMode warn;
     }
