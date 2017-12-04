@@ -197,6 +197,8 @@ bool Foam::SwakScriptableInjection<CloudType>::active() const
     SwakScriptableInjection<CloudType>* wThis=
         const_cast<SwakScriptableInjection<CloudType>*>(this);
 
+    wThis->interpreter().setRunTime(this->owner().db().time());
+
     if(isActive_) {
         if(injectByEvent_) {
             bool stopInject=wThis->interpreter().evaluateCodeTrueOrFalse(
