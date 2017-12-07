@@ -421,12 +421,14 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
                 loc
             );
             break;
+#ifdef FOAM_HAS_LONG_DOUBLE_SCALAR
         case token::LONG_DOUBLE_SCALAR:
             return RawFoamDictionaryParser::make_SCALAR(
                 scalar(nextToken.longDoubleScalarToken()),
                 loc
             );
             break;
+#endif
         case token::LABEL:
             return RawFoamDictionaryParser::make_LABEL(
                 nextToken.labelToken(),
@@ -449,7 +451,11 @@ parserRawDict::RawFoamDictionaryParser::symbol_type parserRawDict::yylex(
                     return RawFoamDictionaryParser::make_UNKNOWN(string(nextToken.pToken()),loc);
             }
             break;
+#ifdef FOAM_TOKEN_CLASS_HAS_FATAL_ERROR
         case token::FATALERROR:
+#else
+        case token::ERROR:
+#endif
             return RawFoamDictionaryParser::make_END_OF_FILE(loc);
             break;
         case token::COMPOUND:
