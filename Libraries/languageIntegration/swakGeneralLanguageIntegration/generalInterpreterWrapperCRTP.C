@@ -79,7 +79,7 @@ bool generalInterpreterWrapperCRTP<T>::evaluateCodeTrueOrFalse(
 ) {
     Pbug << "evaluateCodeTrueOrFalse" << endl;
 
-    return static_cast<T*>(this)->evaluateCode<bool,typename T::toBool>(
+    return static_cast<T*>(this)->template evaluateCode<bool,typename T::toBool>(
         code,
         failOnException
     );
@@ -92,7 +92,7 @@ scalar generalInterpreterWrapperCRTP<T>::evaluateCodeScalar(
 ) {
     Pbug << "evaluateCodeScalar" << endl;
 
-    return static_cast<T*>(this)->evaluateCode<scalar,typename T::toScalar>(
+    return static_cast<T*>(this)->template evaluateCode<scalar,typename T::toScalar>(
         code,
         failOnException
     );
@@ -105,7 +105,7 @@ label generalInterpreterWrapperCRTP<T>::evaluateCodeLabel(
 ) {
     Pbug << "evaluateCodeLabel" << endl;
 
-    return static_cast<T*>(this)->evaluateCode<label,typename T::toLabel>(
+    return static_cast<T*>(this)->template evaluateCode<label,typename T::toLabel>(
         code,
         failOnException
     );
