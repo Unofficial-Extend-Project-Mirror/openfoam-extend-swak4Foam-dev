@@ -37,7 +37,10 @@ Foam::label Foam::SwakScriptableInjection<CloudType>::parcelsToInject
 (
     const scalar time0,
     const scalar time1
-) const
+)
+#ifdef FOAM_INJECT_TOINJECT_IS_CONST
+    const
+#endif
 {
     SwakScriptableInjection<CloudType>* wThis=
         const_cast<SwakScriptableInjection<CloudType>*>(this);
@@ -62,7 +65,10 @@ Foam::scalar Foam::SwakScriptableInjection<CloudType>::volumeToInject
 (
     const scalar time0,
     const scalar time1
-) const
+)
+#ifdef FOAM_INJECT_TOINJECT_IS_CONST
+    const
+#endif
 {
     SwakScriptableInjection<CloudType>* wThis=
         const_cast<SwakScriptableInjection<CloudType>*>(this);
@@ -90,11 +96,76 @@ Foam::scalar Foam::SwakScriptableInjection<CloudType>::volumeToInject
 template<class CloudType>
 Foam::SwakScriptableInjection<CloudType>::SwakScriptableInjection
 (
+    const SwakScriptableInjection<CloudType>& im
+)
+    :
+    InjectionModel<CloudType>(im),
+    interpreter_(
+        generalInterpreterWrapper::New(
+            this->owner().mesh(),
+            im.dict()
+        )
+    ),
+    initInjectorCode_(
+        im.initInjectorCode_
+    ),
+    doStartInjectionCode_(
+        im.doStartInjectionCode_
+    ),
+    doStopInjectionCode_(
+        im.doStopInjectionCode_
+    ),
+    injectionDurationCode_(
+        im.injectionDurationCode_
+    ),
+    startOfInjectionTimeCode_(
+        im.startOfInjectionTimeCode_
+    ),
+    parcelsToInjectCode_(
+        im.parcelsToInjectCode_
+    ),
+    volumeToInjectCode_(
+        im.volumeToInjectCode_
+    ),
+    prepareParcelDataCode_(
+        im.prepareParcelDataCode_
+    ),
+    particlePropertiesCode_(
+        im.particlePropertiesCode_
+    ),
+    parameterStructName_(
+        im.parameterStructName_
+    ),
+    resultStructName_(
+        im.resultStructName_
+    ),
+    injectByEvent_(
+        im.injectByEvent_
+    ),
+    isActive_(
+        im.isActive_
+    ),
+    plannedDuration_(
+        im.plannedDuration_
+    )
+{}
+
+template<class CloudType>
+Foam::SwakScriptableInjection<CloudType>::SwakScriptableInjection
+(
     const dictionary& dict,
     CloudType& owner
+#ifdef FOAM_INJECT_CONSTRUCTOR_HAS_MODELNAME
+    ,const word& modelName
+#endif
 )
 :
-    InjectionModel<CloudType>(dict, owner, typeName),
+    InjectionModel<CloudType>(
+        dict, owner, typeName
+#ifdef FOAM_INJECT_CONSTRUCTOR_HAS_MODELNAME
+    ,modelName
+#endif
+    ),
     interpreter_(
         generalInterpreterWrapper::New(
             owner.mesh(),
@@ -257,6 +328,10 @@ void Foam::SwakScriptableInjection<CloudType>::setPositionAndCell
     const scalar time,
     vector& position,
     label& cellOwner
+#ifdef FOAM_INJECT_SETPOSITION_HAS_TET_PARAMETERS
+    ,label& tetFacei
+    ,label& tetPti
+#endif
 )
 {
     dictionary d;
@@ -330,12 +405,20 @@ bool Foam::SwakScriptableInjection<CloudType>::validInjection(const label)
 }
 
 template<class CloudType>
-void Foam::SwakScriptableInjection<CloudType>::prepareForNextTimeStep
+#ifdef    FOAM_INJECT_PREPAREFORNEXT_RETURNS_BOOL
+bool
+#else
+void
+#endif
+Foam::SwakScriptableInjection<CloudType>::prepareForNextTimeStep
 (
     const scalar time,
     label& newParcels,
     scalar& newVolume
 ) {
+#ifdef    FOAM_INJECT_PREPAREFORNEXT_RETURNS_BOOL
+    bool result=
+#endif
     InjectionModel<CloudType>::prepareForNextTimeStep(
         time,
         newParcels,
@@ -354,6 +437,9 @@ void Foam::SwakScriptableInjection<CloudType>::prepareForNextTimeStep
         prepareParcelDataCode_,
         true
     );
+#ifdef    FOAM_INJECT_PREPAREFORNEXT_RETURNS_BOOL
+    return result;
+#endif
 }
 
 template<class CloudType>
