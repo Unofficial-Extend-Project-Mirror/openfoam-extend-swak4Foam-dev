@@ -91,6 +91,7 @@ subModels {
     particleForces
     {
         gravity         off;
+        //        gravity         on;
         sphereDrag;
 <!--(if foamFork=="openfoamplus" and foamVersion>=(1706,))-->
 <!--(else)-->
@@ -127,13 +128,13 @@ subModels {
         resultStructName comingOut;
 
         initInjectorCode "";
-        doStartInjectionCode "return runTime>0.5;";
+        doStartInjectionCode "return runTime>0.05;";
         doStopInjectionCode "return false;";
 
         parcelsToInjectCode "return 1;";
         volumeToInjectCode "return 0.000000001";
         prepareParcelDataCode "";
-        particlePropertiesCode "l=0.5e-3;offX=l*(math.random()-0.5);offY=l*(math.random()-0.5);comingOut={position={centerPoint.x+offX,centerPoint.y+offY,0.005},diameter=0.1e-3,U0={0,0,0}}";
+        particlePropertiesCode "l=0.1e-3;offX=l*(math.random()-0.5);offY=l*(math.random()-0.5);comingOut={position={centerPoint.x+offX,centerPoint.y+offY,0.005},diameter=0.1e-3,U0={0,0,0}}";
 
         luaDictionaryParserErrorMode warn;
     }
@@ -173,7 +174,7 @@ subModels {
                 <!--(for p in ["movingWall","fixedWalls"])-->
                 |-p-|
                 {
-                    type escape;
+                    type rebound;
                     e    1;
                     mu   0;
                 }
