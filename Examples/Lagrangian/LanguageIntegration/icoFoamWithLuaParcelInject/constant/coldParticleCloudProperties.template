@@ -117,6 +117,10 @@ subModels {
         languageWrapperType lua;
         interactiveAfterException true;
 
+        swakToLuaNamespaces (
+            injectorData
+        );
+
         injectByEvent true;
 
         parameterStructName goingIn;
@@ -129,7 +133,7 @@ subModels {
         parcelsToInjectCode "return 1;";
         volumeToInjectCode "return 0.000000001";
         prepareParcelDataCode "";
-        particlePropertiesCode "comingOut={position={0.051,0.049,0.005},diameter=0.001e-3,U0={0,0,0}}";
+        particlePropertiesCode "l=0.5e-3;offX=l*(math.random()-0.5);offY=l*(math.random()-0.5);comingOut={position={centerPoint.x+offX,centerPoint.y+offY,0.005},diameter=0.1e-3,U0={0,0,0}}";
 
         luaDictionaryParserErrorMode warn;
     }

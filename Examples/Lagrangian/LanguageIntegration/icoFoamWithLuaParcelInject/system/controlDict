@@ -50,9 +50,32 @@ libs (
     "libswakFunctionObjects.so"
     "libswakScriptableLagrangian.so"
     "libswakLuaIntegration.so"
+    "libswakVelocityFunctionPlugin.so"
 );
 
 functions {
+    streamFunction {
+        type expressionField;
+        fieldName streamF;
+        expression "interpolateToCell(streamFunction(phi))";
+        autowrite true;
+        outputControl timeStep;
+        outputInterval 1;
+    }
+    minLocation {
+        type calculateGlobalVariables;
+        outputControl timeStep;
+        outputInterval 1;
+        valueType internalField;
+        toGlobalNamespace injectorData;
+        toGlobalVariables (
+            centerPoint
+        );
+        variables (
+                "centerPoint=minPosition(streamF);"
+        );
+        noReset true;
+    }
     rhoField {
         type expressionField;
         fieldName pseudoRho;
