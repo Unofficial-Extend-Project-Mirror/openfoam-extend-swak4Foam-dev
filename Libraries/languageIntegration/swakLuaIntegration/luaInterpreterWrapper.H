@@ -123,7 +123,6 @@ class luaInterpreterWrapper
     bool isVectorSpace();
 
     class ValidOk;
-    class ValidWord;
 
     template<class T,class F,class V=ValidOk>
     bool addListFromStackToDict(
@@ -176,7 +175,7 @@ protected:
         RawFoamDictionaryParserDriver::ErrorMode mode
     );
 
-    bool startDictionary(const word &name);
+    bool startDictionary();
 
     bool wrapUpDictionary(const word &name);
 

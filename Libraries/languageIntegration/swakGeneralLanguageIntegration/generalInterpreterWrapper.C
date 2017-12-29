@@ -240,7 +240,7 @@ autoPtr<RawFoamDictionaryParserDriver> generalInterpreterWrapper::getParserInter
     return autoPtr<RawFoamDictionaryParserDriver>();
 }
 
-bool generalInterpreterWrapper::startDictionary(const word &name) {
+bool generalInterpreterWrapper::startDictionary() {
     notImplemented("generalInterpreterWrapper::startDictionary");
 
     return false;
@@ -272,7 +272,7 @@ bool generalInterpreterWrapper::insertDictionary(
         << name << " from " << dict.name()  << endl;
     bool result=true;
 
-    result=startDictionary(name);
+    result=startDictionary();
 
     RawFoamDictionaryParserDriver &parser=getParser();
 

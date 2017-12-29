@@ -49,6 +49,7 @@ Contributors/Copyright:
 #include "dictionary.H"
 #include "objectRegistry.H"
 #include "swakTime.H"
+#include "LIFOStack.H"
 
 #include "Python.h"
 
@@ -58,6 +59,8 @@ Contributors/Copyright:
 
 namespace Foam
 {
+
+    class Python2FoamDictionaryParserDriver;
 
 /*---------------------------------------------------------------------------*\
                            Class pythonInterpreterWrapper Declaration
@@ -101,6 +104,9 @@ class pythonInterpreterWrapper
 
     void initInteractiveSpecial();
 
+    //- stack for nested directories
+    LIFOStack<PyObject*> dictionaryStack_;
+
 protected:
     //- how many instances exist (we need a separate interpreter for each of those)
     static label interpreterCount;
@@ -139,7 +145,27 @@ protected:
         string &stdout
     );
 
+    bool startDictionary();
+
+    bool wrapUpDictionary(const word &name);
+
+    autoPtr<RawFoamDictionaryParserDriver> getParserInternal(
+        RawFoamDictionaryParserDriver::ErrorMode mode
+    );
+
+    PyObject *currentDictionary();
+
+    void extractDictionaryToDictionary(
+        PyObject *pyDict,
+        dictionary &dict
+    );
+
 public:
+
+    bool extractDictionary(
+        const word &name,
+        dictionary &dict
+    );
 
     //- Execute code and return a value
     template <typename T,class Func>
@@ -190,6 +216,8 @@ public:
     );
 
     virtual ~pythonInterpreterWrapper();
+
+    friend class Python2FoamDictionaryParserDriver;
 
 };
 

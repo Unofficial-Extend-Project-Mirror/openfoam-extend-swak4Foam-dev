@@ -194,9 +194,21 @@ protected:
         RawFoamDictionaryParserDriver::ErrorMode mode
     );
 
-    virtual bool startDictionary(const word &name);
+    virtual bool startDictionary();
 
     virtual bool wrapUpDictionary(const word &name);
+
+    class ValidWord {
+    public:
+        bool operator()(const string &s) {
+            forAll(s,i) {
+                if(!word::valid(s[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
 
 public:
     //- get the parser on demand

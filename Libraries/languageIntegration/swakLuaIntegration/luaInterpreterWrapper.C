@@ -629,18 +629,6 @@ public:
     }
 };
 
-class luaInterpreterWrapper::ValidWord {
-public:
-    bool operator()(const string &s) {
-        forAll(s,i) {
-            if(!word::valid(s[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-};
-
 class luaInterpreterWrapper::ValidOk {
 public:
     template<class T>
@@ -1113,8 +1101,8 @@ autoPtr<RawFoamDictionaryParserDriver> luaInterpreterWrapper::getParserInternal(
     );
 }
 
-bool luaInterpreterWrapper::startDictionary(const word &name) {
-    Dbug << "Starting table " << name << endl;
+bool luaInterpreterWrapper::startDictionary() {
+    Dbug << "Starting table " << endl;
     Dbug << "Stack in the beginning: " << lua_gettop(luaState_) << endl;
 
     lua_newtable(luaState_);

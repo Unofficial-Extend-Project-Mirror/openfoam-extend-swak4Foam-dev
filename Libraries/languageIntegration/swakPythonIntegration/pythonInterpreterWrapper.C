@@ -35,6 +35,8 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "pythonInterpreterWrapper.H"
+#include "Python2FoamDictionaryParserDriver.H"
+
 #include "addToRunTimeSelectionTable.H"
 
 #include "IFstream.H"
@@ -566,6 +568,8 @@ void pythonInterpreterWrapper::interactiveLoop(
 ) {
     Dbug << "interactiveLoop" << endl;
 
+    setInterpreter();
+
     if(!useIPython_) {
         if(banner!="") {
             Info << endl << banner.c_str() << endl;
@@ -1081,6 +1085,168 @@ void pythonInterpreterWrapper::setGlobals()
             eResult
         );
         res.noReset();
+    }
+}
+
+bool pythonInterpreterWrapper::startDictionary() {
+    Dbug << "Starting table " << endl;
+
+    setInterpreter();
+
+    PyObject *pyDict=PyDict_New();
+    if(pyDict==NULL) {
+        FatalErrorIn("pythonInterpreterWrapper::startDictionary()")
+            << "Could not allocate dictionary "
+                << endl
+                << exit(FatalError);
+    }
+
+    dictionaryStack_.push(pyDict);
+
+    releaseInterpreter();
+
+    return true;
+}
+
+PyObject *pythonInterpreterWrapper::currentDictionary()
+{
+    setInterpreter();
+
+    if(dictionaryStack_.empty()) {
+        return PyImport_AddModule("__main__");
+    } else {
+        return dictionaryStack_.top();
+    }
+}
+
+bool pythonInterpreterWrapper::wrapUpDictionary(const word &name) {
+    Dbug << "Setting global " << name << endl;
+
+    setInterpreter();
+
+    if(dictionaryStack_.empty()) {
+        FatalErrorIn("pythonInterpreterWrapper::wrapUpDictionary(const word &name)")
+            << "Dictionary stack empty. This should not happen"
+                << endl
+                << exit(FatalError);
+    }
+
+    PyObject *pyDict=dictionaryStack_.pop();
+
+    if(dictionaryStack_.empty()) {
+        PyObject *parent = PyImport_AddModule("__main__");
+        PyObject_SetAttrString(
+            parent,
+            name.c_str(),
+            pyDict
+        );
+    } else {
+        PyDict_SetItemString(
+            dictionaryStack_.top(),
+            name.c_str(),
+            pyDict
+        );
+    }
+
+    Py_DECREF(pyDict);
+
+    releaseInterpreter();
+
+    return true;
+}
+
+autoPtr<RawFoamDictionaryParserDriver> pythonInterpreterWrapper::getParserInternal(
+    RawFoamDictionaryParserDriver::ErrorMode mode
+) {
+    return autoPtr<RawFoamDictionaryParserDriver>(
+        new Python2FoamDictionaryParserDriver(
+            *this,
+            mode
+        )
+    );
+}
+
+bool pythonInterpreterWrapper::extractDictionary(
+    const word &name,
+    dictionary &dict
+) {
+    Dbug << "pythonInterpreterWrapper::extractDictionary" << endl;
+
+    setInterpreter();
+
+    PyObject *main = PyImport_AddModule("__main__");
+
+    if(
+        !PyObject_HasAttrString(
+            main,
+            const_cast<char *>(name.c_str()))
+    ) {
+        WarningIn("pythonInterpreterWrapper::extractDictionary(const word &name,dictionary &dict)")
+            << "No dictionary " << name << " in Python-namespace"
+                << endl;
+        return false;
+    }
+
+    PyObject *input=PyObject_GetAttrString(
+        main,
+        name.c_str()
+    );
+
+    if(
+        !PyDict_Check(input)
+    ) {
+        WarningIn("pythonInterpreterWrapper::extractDictionary(const word &name,dictionary &dict)")
+            << "The object " << name << " is not a dictionary but a "
+                << Py_TYPE(input)->tp_name
+                << endl;
+    }
+
+    extractDictionaryToDictionary(input, dict);
+
+    releaseInterpreter();
+
+    return true;
+}
+
+void pythonInterpreterWrapper::extractDictionaryToDictionary(
+    PyObject *pyDict,
+    dictionary &dict
+) {
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+
+    while (PyDict_Next(pyDict, &pos, &key, &value)) {
+        PyObject *keyStr=PyObject_Str(key);
+        word keyName(PyString_AsString(keyStr));
+        Py_DECREF(keyStr); keyStr=NULL;
+
+        if(PyDict_Check(value)) {
+            dictionary subdict;
+            extractDictionaryToDictionary(value, subdict);
+            dict.set(keyName,subdict);
+        } else if(PyBool_Check(value)) {
+            if(value==Py_True) {
+                dict.set(keyName,true);
+            } else {
+                dict.set(keyName,false);
+            }
+        } else if(PyFloat_Check(value)) {
+            dict.set(keyName,PyFloat_AsDouble(value));
+        } else if(PyInt_Check(value)) {
+            dict.set(keyName,PyInt_AsLong(value));
+        } else if(PyString_Check(value)) {
+            string val(PyString_AsString(value));
+            if(ValidWord()(val)) {
+                dict.set(keyName,word(val));
+            } else {
+                dict.set(keyName,val);
+            }
+        } else {
+            WarningIn("")
+                << "Unsupported type for key " << keyName
+                    << " : " << Py_TYPE(value)->tp_name
+                    << endl;
+        }
     }
 }
 
