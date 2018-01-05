@@ -160,7 +160,8 @@ void faForceEquation<T>::operator()(faMatrix<T> &eq)
         values[i]=calculated[cellIDs[i]];
     }
 
-    eq.setValues(cellIDs,values);
+    // BUG: setValues uses non-existing method
+    // eq.setValues(cellIDs,values);
 }
 
 template
