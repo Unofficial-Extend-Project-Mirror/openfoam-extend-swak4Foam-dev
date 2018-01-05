@@ -93,7 +93,12 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
             Pout << "sizes: " << vals.size() << " " << f->size() << endl;
         }
         if(vals.size()==f->size()) {
-            f->internalField()=vals;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            const_cast<Field<typename T::value_type>&>(f->internalField().field())
+#else
+            f->internalField()
+#endif
+                =vals;
         } else {
             Type avg=gAverage(vals);
 
@@ -110,7 +115,12 @@ autoPtr<T> FaFieldValueExpressionDriver::getField(
                 }
             }
 
-            f->internalField()=avg;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            const_cast<Field<typename T::value_type>&>(f->internalField().field())
+#else
+            f->internalField()
+#endif
+                =avg;
         }
         return f;
     }
@@ -490,7 +500,12 @@ inline tmp<FType> FaFieldValueExpressionDriver::makeField(
                 << exit(FatalError);
     }
 
-    f->internalField()=val;
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<Field<typename FType::value_type>&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+        =val;
 
     return tmp<FType>(f);
 }

@@ -170,7 +170,12 @@ FaFieldValueExpressionDriver::makeRandomField(label seed) const
         makeConstantField<areaScalarField>(0.)
     );
 
-    f->internalField()=CommonValueExpressionDriver::makeRandomField(seed);
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+        =CommonValueExpressionDriver::makeRandomField(seed);
 
     return f;
 }
@@ -196,7 +201,12 @@ tmp<areaScalarField> FaFieldValueExpressionDriver::makeGaussRandomField(
         makeConstantField<areaScalarField>(0.)
     );
 
-    f->internalField()=CommonValueExpressionDriver::makeGaussRandomField(seed);
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+    const_cast<scalarField&>(f->internalField().field())
+#else
+    f->internalField()
+#endif
+        =CommonValueExpressionDriver::makeGaussRandomField(seed);
 
     return f;
 }
