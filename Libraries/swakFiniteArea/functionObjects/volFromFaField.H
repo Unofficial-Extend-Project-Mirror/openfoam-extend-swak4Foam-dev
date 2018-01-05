@@ -32,8 +32,8 @@ Class
     volFromFaField
 
 Description
-    Function object that generates a volField from a faField. 
-    The field has only a useful definition on the patch that the faField 
+    Function object that generates a volField from a faField.
+    The field has only a useful definition on the patch that the faField
     is defined for
 
 SourceFiles
@@ -42,7 +42,7 @@ SourceFiles
 Contributors/Copyright:
     2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef volFromFaField_H
@@ -54,6 +54,8 @@ Contributors/Copyright:
 #include "Switch.H"
 #include "autoPtr.H"
 #include "volFieldsFwd.H"
+#include "swak.H"
+#include "dictionary.H"
 
 namespace Foam
 {
@@ -61,6 +63,7 @@ namespace Foam
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class FaFieldValueExpressionDriver;
 class regIOobject;
@@ -69,7 +72,7 @@ class volFromFaField
 {
     //- Disallow default bitwise copy construct
     volFromFaField(const volFromFaField&);
-    
+
     //- Disallow default bitwise assignment
     void operator=(const volFromFaField&);
 
@@ -106,7 +109,7 @@ public:
 
 
     // Constructors
-    
+
     //- Construct for given objectRegistry and dictionary.
     //  Allow the possibility to load fields from files
     volFromFaField
@@ -130,24 +133,35 @@ public:
             return name_;
         }
 
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
+
     //- Read the forces data
     virtual void read(const dictionary&);
-    
+
     //- Execute, currently does nothing
     virtual void execute();
-    
+
     //- Execute at the final time-loop, currently does nothing
     virtual void end();
-    
+
     //- Write the forces
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    virtual bool write();
+#else
     virtual void write();
+#endif
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
-    
+
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 
     //- Clear all data

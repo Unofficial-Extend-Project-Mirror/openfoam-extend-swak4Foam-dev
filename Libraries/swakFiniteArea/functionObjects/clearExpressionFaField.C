@@ -31,7 +31,7 @@ License
 Contributors/Copyright:
     2011, 2013, 2016-2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
- SWAK Revision: $Id:  $ 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #include "clearExpressionFaField.H"
@@ -60,6 +60,11 @@ Foam::clearExpressionFaField::clearExpressionFaField
 Foam::clearExpressionFaField::~clearExpressionFaField()
 {}
 
+void Foam::clearExpressionFaField::timeSet()
+{
+    // Do nothing
+}
+
 void Foam::clearExpressionFaField::read(const dictionary& dict)
 {
     name_=word(dict.lookup("fieldName"));
@@ -78,7 +83,7 @@ void Foam::clearExpressionFaField::execute()
             );
 
             if(ef.name()==name_) {
-                found=true;                
+                found=true;
                 ef.clearData();
             }
         }
@@ -86,7 +91,7 @@ void Foam::clearExpressionFaField::execute()
 
     if(!found) {
         WarningIn("clearExpressionFaField::execute()")
-            << "No function object named " << name_ << " found" 
+            << "No function object named " << name_ << " found"
                 << endl;
     }
 }
@@ -96,7 +101,12 @@ void Foam::clearExpressionFaField::end()
 {
 }
 
-void Foam::clearExpressionFaField::write()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::clearExpressionFaField::write()
 {
 }
 
