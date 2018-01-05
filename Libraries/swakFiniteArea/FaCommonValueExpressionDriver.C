@@ -34,6 +34,8 @@ Contributors/Copyright:
  SWAK Revision: $Id$
 \*---------------------------------------------------------------------------*/
 
+#include "edgeFaMesh.H"
+
 #include "FaCommonValueExpressionDriver.H"
 
 #include "Random.H"

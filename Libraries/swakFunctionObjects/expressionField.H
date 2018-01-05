@@ -53,7 +53,6 @@ Contributors/Copyright:
 #include "Switch.H"
 #include "autoPtr.H"
 #include "dictionary.H"
-#include "dimensionSet.H"
 
 #include "swak.H"
 

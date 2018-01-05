@@ -36,7 +36,6 @@ Contributors/Copyright:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "edgeMesh.H"
 #include "faePatchField.H"
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"
