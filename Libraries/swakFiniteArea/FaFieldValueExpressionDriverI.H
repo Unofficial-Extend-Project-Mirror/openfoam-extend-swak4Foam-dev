@@ -290,10 +290,10 @@ void FaFieldValueExpressionDriver::setCalculatedPatches
     GeometricField<T,faPatchField,areaMesh> &field,
     T unusedValue
 ) {
-    typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    const typename GeometricField<T,faPatchField,areaMesh>::GeometricBoundaryField &bf=field.boundaryField();
 
     forAll(bf,patchI) {
-        faPatchField<T> &pf=bf[patchI];
+        faPatchField<T> &pf=const_cast<faPatchField<T>&>(bf[patchI]);
 
         if(
             typeid(pf)==typeid(calculatedFaPatchField<T>)
@@ -310,10 +310,10 @@ void FaFieldValueExpressionDriver::setCalculatedPatches
     GeometricField<T,faePatchField,edgeMesh> &field,
     T value
 ) {
-    typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
+    const typename GeometricField<T,faePatchField,edgeMesh>::GeometricBoundaryField &bf=field.boundaryField();
 
     forAll(bf,patchI) {
-        faePatchField<T> &pf=bf[patchI];
+        faePatchField<T> &pf=const_cast<faePatchField<T>&>(bf[patchI]);
 
         if(
             typeid(pf)==typeid(calculatedFaePatchField<T>)

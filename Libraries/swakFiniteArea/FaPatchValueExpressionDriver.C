@@ -223,7 +223,7 @@ tmp<scalarField> FaPatchValueExpressionDriver::makeEdgeIdField() const
 {
     tmp<scalarField> result(new scalarField(patch_.size()));
     forAll(result(),i) {
-        result()[i]=i;
+        const_cast<scalar&>(result()[i])=i;
     }
     return result;
 }

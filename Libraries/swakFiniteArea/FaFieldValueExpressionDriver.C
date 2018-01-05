@@ -157,7 +157,7 @@ tmp<areaScalarField> FaFieldValueExpressionDriver::makeModuloField(
             }
         }
 
-        result()[cellI]=val;
+        const_cast<scalar&>(result()[cellI])=val;
     }
 
     return result;
@@ -182,7 +182,7 @@ tmp<areaScalarField> FaFieldValueExpressionDriver::makeCellIdField() const
     );
 
     forAll(f(),cellI) {
-        f()[cellI]=scalar(cellI);
+        const_cast<scalar&>(f()[cellI])=scalar(cellI);
     }
 
     return f;
@@ -219,7 +219,7 @@ tmp<areaVectorField> FaFieldValueExpressionDriver::makePositionField() const
         )
     );
     f->dimensions().reset(mesh_.areaCentres().dimensions());
-    f()=mesh_.areaCentres();
+    const_cast<areaVectorField&>(f())=mesh_.areaCentres();
     f->dimensions().reset(nullDim);
     return f;
 }
@@ -243,7 +243,7 @@ FaFieldValueExpressionDriver::makeEdgePositionField() const
         )
     );
     f->dimensions().reset(mesh_.edgeCentres().dimensions());
-    f()=mesh_.edgeCentres();
+    const_cast<edgeVectorField&>(f())=mesh_.edgeCentres();
     f->dimensions().reset(nullDim);
     return f;
 }
@@ -299,12 +299,14 @@ FaFieldValueExpressionDriver::makeEdgeProjectionField() const
                 }
             }
         }
-        f()[faceI] = fmax - fmin;
+        const_cast<vector&>(f()[faceI]) = fmax - fmin;
     }
     forAll(mesh_.boundary(),patchI)
     {
         labelList cNumbers = mesh_.boundary()[patchI].edgeFaces();
-        faePatchVectorField & fFace = f->boundaryField()[patchI];
+        faePatchVectorField & fFace = const_cast<faePatchVectorField &>(
+            f->boundaryField()[patchI]
+        );
 
         forAll(fFace,faceI)
         {
@@ -371,7 +373,7 @@ tmp<edgeVectorField> FaFieldValueExpressionDriver::makeEdgeField() const
         )
     );
     f->dimensions().reset(mesh_.Le().dimensions());
-    f()=mesh_.Le();
+    const_cast<edgeVectorField&>(f())=mesh_.Le();
     f->dimensions().reset(nullDim);
     return f;
 }
@@ -394,7 +396,7 @@ tmp<edgeScalarField> FaFieldValueExpressionDriver::makeLengthField() const
         )
     );
     f->dimensions().reset(mesh_.magLe().dimensions());
-    f()=mesh_.magLe();
+    const_cast<edgeScalarField&>(f())=mesh_.magLe();
     f->dimensions().reset(nullDim);
     return f;
 }
@@ -418,7 +420,7 @@ tmp<areaScalarField> FaFieldValueExpressionDriver::makeAreaField() const
     const scalarField &V=mesh_.S();
 
     forAll(f(),cellI) {
-        f()[cellI]=V[cellI];
+        const_cast<scalar&>(f()[cellI])=V[cellI];
     }
 
     return f;
@@ -445,7 +447,7 @@ tmp<areaScalarField> FaFieldValueExpressionDriver::makeRDistanceField(
     );
 
     forAll(f(),cellI) {
-        f()[cellI]=mag(mesh_.areaCentres()[cellI] - r[cellI]);
+        const_cast<scalar&>(f()[cellI])=mag(mesh_.areaCentres()[cellI] - r[cellI]);
     }
 
     return f;
@@ -462,7 +464,7 @@ tmp<areaVectorField> FaFieldValueExpressionDriver::makeVectorField
     );
 
     forAll(f(),cellI) {
-        f()[cellI]=vector(x[cellI],y[cellI],z[cellI]);
+        const_cast<vector&>(f()[cellI])=vector(x[cellI],y[cellI],z[cellI]);
     }
 
     return f;
@@ -480,7 +482,7 @@ tmp<edgeVectorField> FaFieldValueExpressionDriver::makeEdgeVectorField
     );
 
     forAll(f(),faceI) {
-        f()[faceI]=vector(x[faceI],y[faceI],z[faceI]);
+        const_cast<vector&>(f()[faceI])=vector(x[faceI],y[faceI],z[faceI]);
     }
 
     return f;
@@ -497,7 +499,7 @@ tmp<areaTensorField> FaFieldValueExpressionDriver::makeTensorField
     );
 
     forAll(f(),cellI) {
-        f()[cellI]=tensor(
+        const_cast<tensor&>(f()[cellI])=tensor(
             xx[cellI],xy[cellI],xz[cellI],
             yx[cellI],yy[cellI],yz[cellI],
             zx[cellI],zy[cellI],zz[cellI]
@@ -520,7 +522,7 @@ tmp<areaSymmTensorField> FaFieldValueExpressionDriver::makeSymmTensorField
     );
 
     forAll(f(),cellI) {
-        f()[cellI]=symmTensor(
+        const_cast<symmTensor&>(f()[cellI])=symmTensor(
             xx[cellI],xy[cellI],xz[cellI],
             yy[cellI],yz[cellI],
             zz[cellI]
@@ -542,7 +544,7 @@ FaFieldValueExpressionDriver::makeSphericalTensorField
     );
 
     forAll(f(),cellI) {
-        f()[cellI]=sphericalTensor(
+        const_cast<sphericalTensor&>(f()[cellI])=sphericalTensor(
             xx[cellI]
         );
     }
@@ -563,7 +565,7 @@ tmp<edgeTensorField> FaFieldValueExpressionDriver::makeEdgeTensorField
     );
 
     forAll(f(),faceI) {
-        f()[faceI]=tensor(
+        const_cast<tensor&>(f()[faceI])=tensor(
             xx[faceI],xy[faceI],xz[faceI],
             yx[faceI],yy[faceI],yz[faceI],
             zx[faceI],zy[faceI],zz[faceI]
@@ -584,7 +586,7 @@ tmp<edgeSymmTensorField> FaFieldValueExpressionDriver::makeEdgeSymmTensorField
     );
 
     forAll(f(),faceI) {
-        f()[faceI]=symmTensor(
+        const_cast<symmTensor&>(f()[faceI])=symmTensor(
             xx[faceI],xy[faceI],xz[faceI],
             yy[faceI],yz[faceI],
             zz[faceI]
@@ -604,7 +606,7 @@ FaFieldValueExpressionDriver::makeEdgeSphericalTensorField
     );
 
     forAll(f(),faceI) {
-        f()[faceI]=sphericalTensor(
+        const_cast<sphericalTensor&>(f()[faceI])=sphericalTensor(
             xx[faceI]
         );
     }
