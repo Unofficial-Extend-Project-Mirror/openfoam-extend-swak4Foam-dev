@@ -174,11 +174,17 @@ Foam::volFromFaField::write()
             );
         } else {
             WarningIn("Foam::volFromFaField::execute()")
-                << "Field '" << name_
-                    << "' is of an unsupported type (scalar or vector)"
+                << "Field '" << name_ << "' result type " << driver.getResultType()
+                    << " is of an unsupported type (scalar or vector)"
                     << endl;
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+            return false;
+#endif
         }
     }
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 

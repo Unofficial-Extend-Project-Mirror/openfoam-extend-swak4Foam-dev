@@ -108,6 +108,9 @@ void
 #endif
 Foam::clearExpressionFaField::write()
 {
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 // ************************************************************************* //
