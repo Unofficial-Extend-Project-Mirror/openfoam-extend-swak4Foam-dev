@@ -225,7 +225,8 @@ tmp<areaVectorField> FaFieldValueExpressionDriver::makePositionField() const
                 IOobject::NO_WRITE
             ),
             aMesh(),
-            vector(0,0,0)
+            dimensionedVector("position",dimless,vector(0,0,0)),
+            "zeroGradient"
         )
     );
     f->dimensions().reset(mesh_.areaCentres().dimensions());
@@ -249,7 +250,8 @@ FaFieldValueExpressionDriver::makeEdgePositionField() const
                 IOobject::NO_WRITE
             ),
             aMesh(),
-            vector(0,0,0)
+            dimensionedVector("edgePosition",dimless,vector(0,0,0)),
+            "zeroGradient"
         )
     );
     f->dimensions().reset(mesh_.edgeCentres().dimensions());
@@ -274,7 +276,8 @@ FaFieldValueExpressionDriver::makeEdgeProjectionField() const
                 IOobject::NO_WRITE
             ),
             aMesh(),
-            vector(0,0,0)
+            dimensionedVector("edgeProjection",dimless,vector(0,0,0)),
+            "zeroGradient"
         )
     );
     f->dimensions().reset(mesh_.edgeCentres().dimensions());
@@ -379,7 +382,8 @@ tmp<edgeVectorField> FaFieldValueExpressionDriver::makeEdgeField() const
                 IOobject::NO_WRITE
             ),
             aMesh(),
-            vector(0,0,0)
+            dimensionedVector("edgeField",dimless,vector(0,0,0)),
+            "zeroGradient"
         )
     );
     f->dimensions().reset(mesh_.Le().dimensions());
@@ -402,7 +406,8 @@ tmp<edgeScalarField> FaFieldValueExpressionDriver::makeLengthField() const
                 IOobject::NO_WRITE
             ),
             aMesh(),
-            0.
+            dimensionedScalar("length",dimless,0),
+            "zeroGradient"
         )
     );
     f->dimensions().reset(mesh_.magLe().dimensions());
@@ -424,7 +429,8 @@ tmp<areaScalarField> FaFieldValueExpressionDriver::makeAreaField() const
                 IOobject::NO_WRITE
             ),
             aMesh(),
-            0.
+            dimensionedScalar("area",dimless,0),
+            "zeroGradient"
         )
     );
     const scalarField &V=mesh_.S();
@@ -452,7 +458,8 @@ tmp<areaScalarField> FaFieldValueExpressionDriver::makeRDistanceField(
                 IOobject::NO_WRITE
             ),
             aMesh(),
-            0.
+            dimensionedScalar("rdist",dimless,0),
+            "zeroGradient"
         )
     );
 
