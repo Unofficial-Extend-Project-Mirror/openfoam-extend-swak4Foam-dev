@@ -40,7 +40,7 @@ boundaryField
         inletValue uniform 0;
     }
     bound {
-        type symmetryPlane;
+        type symmetry;
     }
 }
 

@@ -30,13 +30,13 @@
         of technical constraints (missing solver etc)
    - no symbol :: This means that the case was not yet tested on this version
 * The Matrix
-  | Case name                                                      | 5.0 Fnd    | 4.0 Ext    |       1712 | 2.3        |
+  | Case name                                                   | 5.0 Fnd    | 4.0 Ext    |       1712 | 2.3        |
   |-------------------------------------------------------------+------------+------------+------------+------------|
   | DynamicMesh/hecticInletACMI2D                               | \checkmark | \dagger    |            | \sad       |
   | DynamicMesh/rotatingTank2D                                  | \checkmark | \checkmark |            | \checkmark |
   | DynamicMesh/switchedTJunction                               | \sad       | \dagger    |            | \sad       |
   | DynamicMesh/switchedInletACMI2D                             | \checkmark | \dagger    |            | \sad       |
-  | FiniteArea/planeTransport                                   | \dagger    | \checkmark |            | \dagger    |
+  | FiniteArea/planeTransport                                   | \dagger    | \checkmark | \checkmark | \dagger    |
   | FvOptions/angledDuctWithSources                             | \checkmark | \dagger    |            | \checkmark |
   | FvOptions/heatExchangerSources                              | \checkmark | \dagger    |            | \sad       |
   | groovyBC/average-t-junction                                 | \checkmark | \checkmark |            | \checkmark |
