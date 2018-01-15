@@ -49,23 +49,23 @@
   | Lagrangian/functionObject/angledDuctWithBalls               | \checkmark | \checkmark |            | \checkmark |
   | Lagrangian/functionObject/hotStream                         | \sad       | \checkmark |            | \sad       |
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark |            | \checkmark |
-  | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark |            | \checkmark |
+  | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       |            | \checkmark |
-  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    |            | \checkmark |
-  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    |            | \checkmark |
-  | other/capillaryRise                                         | \checkmark | \sad       |            | \checkmark |
-  | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       |            | \checkmark |
-  | other/simpleBendedPipe                                      | \checkmark | \checkmark |            | \checkmark |
-  | other/topoSetDamBreak                                       | \checkmark | \checkmark |            | \checkmark |
-  | SimpleSurface/littleVolcano                                 | \checkmark |            |            |            |
-  | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark |            | \checkmark |
-  | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark |            | \checkmark |
-  | StateMachine/stateCavity                                    | \checkmark | \checkmark |            | \checkmark |
-  | tests/SearchableSurfaces/objectsTest                        | \checkmark |            |            |            |
-  | tests/SearchableSurfaces/operationsTest                     | \checkmark |            |            |            |
-  | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            |            |            |
-  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            |            |            |
-  | tests/testFOExecution                                       | \checkmark | \checkmark |            |            |
+  | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
+  | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
+  | other/capillaryRise                                         | \checkmark | \sad       | \checkmark | \checkmark |
+  | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \partial   | \checkmark |
+  | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | other/topoSetDamBreak                                       | \checkmark | \checkmark | \checkmark | \checkmark |
+  | SimpleSurface/littleVolcano                                 | \checkmark |            | \checkmark |            |
+  | solvePDE/flangeWithPDE                                      | \checkmark | \checkmark | \checkmark | \checkmark |
+  | solvePDE/pitzDailyWithPDE                                   | \checkmark | \checkmark | \checkmark | \checkmark |
+  | StateMachine/stateCavity                                    | \checkmark | \checkmark | \checkmark | \checkmark |
+  | tests/SearchableSurfaces/objectsTest                        | \checkmark |            | \checkmark |            |
+  | tests/SearchableSurfaces/operationsTest                     | \checkmark |            | \checkmark |            |
+  | tests/SearchableSurfaces/operationsTestRotated              | \partial   |            | \partial   |            |
+  | tests/SearchableSurfaces/scaledIglooWithFridges             | \checkmark |            | \checkmark |            |
+  | tests/testFOExecution                                       | \checkmark | \checkmark | \checkmark |            |
 
 # Local Variables:
 # eval: (add-hook 'after-save-hook 'org-md-export-to-markdown t t)
