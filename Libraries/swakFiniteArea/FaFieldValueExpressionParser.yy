@@ -2338,9 +2338,11 @@ texp:   tensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' yexp ')'       {
+#ifndef FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
             $$ = driver.makeField<Foam::areaTensorField>(
                 Foam::eigenVectors($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -2349,9 +2351,11 @@ texp:   tensor                  { $$ = $1; }
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' texp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::areaTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_dev '(' texp ')' 	           {
@@ -2570,9 +2574,11 @@ yexp:   symmTensor                  { $$ = $1; }
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_cof '(' yexp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::areaSymmTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;    driver.setCalculatedPatches(*$$);
           }
         | TOKEN_dev '(' yexp ')' 	           {
@@ -2987,9 +2993,11 @@ ftexp:   ftensor                  { $$ = $1; }
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_eigenVectors '(' fyexp ')'       {
+#ifndef FOAM_EIGENVECTORS_RETURNS_SYMMTENSOR
             $$ = driver.makeField<Foam::edgeTensorField>(
                 Foam::eigenVectors($3->internalField())
             ).ptr();
+#endif
             delete $3;
             driver.setCalculatedPatches(*$$);
           }
@@ -2998,9 +3006,11 @@ ftexp:   ftensor                  { $$ = $1; }
             delete $3;
           }
         | TOKEN_cof '(' ftexp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::edgeTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
           }
         | TOKEN_dev '(' ftexp ')' 	           {
@@ -3193,9 +3203,11 @@ fyexp:   fsymmTensor                  { $$ = $1; }
             delete $3;
           }
         | TOKEN_cof '(' fyexp ')' 	           {
+#ifndef FOAM_MISSING_POW2_DEFINITION_IN_COF_METHOD
             $$ = driver.makeField<Foam::edgeSymmTensorField>(
                 Foam::cof($3->internalField())
             ).ptr();
+#endif
             delete $3;
           }
         | TOKEN_dev '(' fyexp ')' 	           {

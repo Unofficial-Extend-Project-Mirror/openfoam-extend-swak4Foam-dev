@@ -30,7 +30,7 @@ boundary
         neighbourPolyPatch outlet;
     }
     bound {
-        type symmetryPlane;
+        type symmetry;
         ownerPolyPatch top;
         neighbourPolyPatch bound;
     }

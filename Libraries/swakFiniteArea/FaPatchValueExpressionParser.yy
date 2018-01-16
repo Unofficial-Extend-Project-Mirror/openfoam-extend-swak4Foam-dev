@@ -36,6 +36,7 @@ Contributors/Copyright:
 %define parser_class_name {FaPatchValueExpressionParser}
 
 %{
+#include "edgeFaMesh.H"
 #include <volFields.H>
 
 #include <functional>

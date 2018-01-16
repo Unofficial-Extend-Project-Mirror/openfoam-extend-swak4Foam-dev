@@ -106,7 +106,7 @@ void facDivFunctionPlugin<T>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().facDiv(original_())
+            const_cast<fa::divScheme<T>&>(scheme()).facDiv(original_())
         )
     );
 

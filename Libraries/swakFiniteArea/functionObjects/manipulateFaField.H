@@ -51,6 +51,9 @@ Contributors/Copyright:
 #include "pointFieldFwd.H"
 #include "Switch.H"
 #include "autoPtr.H"
+#include "dictionary.H"
+
+#include "swak.H"
 
 #include "exprString.H"
 
@@ -60,6 +63,7 @@ namespace Foam
 class objectRegistry;
 class dictionary;
 class mapPolyMesh;
+class polyMesh;
 
 class FaFieldValueExpressionDriver;
 
@@ -77,6 +81,9 @@ protected:
 
     //- are we working?
     bool active_;
+
+    //- re-write manipulated field
+    bool writeManipulated_;
 
     //- Name of the field
     word name_;
@@ -136,6 +143,9 @@ public:
             return name_;
         }
 
+    //- Called when time was set at the end of the Time::operator++
+    virtual void timeSet();
+
     //- Read the forces data
     virtual void read(const dictionary&);
 
@@ -146,14 +156,22 @@ public:
     virtual void end();
 
     //- Write the forces
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    virtual bool write();
+#else
     virtual void write();
+#endif
 
     //- Update for changes of mesh
     virtual void updateMesh(const mapPolyMesh&)
         {}
 
     //- Update for changes of mesh
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+    virtual void movePoints(const polyMesh&)
+#else
     virtual void movePoints(const pointField&)
+#endif
         {}
 };
 

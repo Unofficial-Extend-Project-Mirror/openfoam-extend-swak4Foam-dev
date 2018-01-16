@@ -564,7 +564,7 @@ S_{expl} + S_{impl} T
      Variation of =surfactantFoam= that adds an =expressionSource=
 **** =planeTransport=
      Demonstration case
-     - Preparation :: Use =blockMesh= and =makeFaMesh=
+     - Preparation :: Use =pyFoamPrepareCase.py=
      - Solver :: =surfactantFoam= (without source term) or
                  =swakSurfactantFoam=
      - Demonstrates :: FAM-specific =swakExpressions= and =groovyBC=

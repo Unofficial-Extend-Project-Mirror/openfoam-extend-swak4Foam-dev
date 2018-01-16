@@ -111,7 +111,7 @@ CommonPluginFunction::CommonPluginFunction(
                     << endl
                     << exit(FatalError);
         }
-        argumentNames_[i] = spec.substr(space1);
+        argumentNames_[i] = spec.substr(0,space1);
         argumentParsers_[i] = spec.substr(space1+1,space2-space1-1);
         argumentTypes_[i] = spec.substr(space2+1);
 
@@ -136,7 +136,7 @@ string CommonPluginFunction::helpText() const
     string result=returnType_+" "+name_+"(";
     forAll(argumentNames_,i)
     {
-        if(i) {
+        if(i>0) {
             result+=",";
         }
         result+=argumentParsers_[i] + "/" + argumentTypes_[i]
