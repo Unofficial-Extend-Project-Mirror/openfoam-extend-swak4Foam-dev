@@ -10,11 +10,11 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      alpha;
+    object      p_rgh;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
+dimensions      [1 -1 -2 0 0 0 0];
 
 internalField   uniform 0;
 
@@ -22,33 +22,29 @@ boundaryField
 {
     volcano_inlet
     {
-        type            inletOutlet;
-        value           uniform 1;
-        inletValue      uniform 1;
+        type            zeroGradient;
     }
 
     sky
     {
-        type            inletOutlet;
-        value           uniform 1;
-        inletValue      uniform 0;
+        type            fixedValue;
+        value           uniform 0;
     }
 
-    outside {
+    outside
+    {
         $sky;
     }
 
     volcano_wall
     {
-        type           constantAlphaContactAngle;
-        theta0         45;
-        limit          gradient;
-        value          uniform 0;
+        type            fixedFluxPressure;
+        adjoint         no;
     }
 
-    "land.+" {
+    "land.*"
+    {
         $volcano_wall;
-        theta0         15;
     }
 
     sea

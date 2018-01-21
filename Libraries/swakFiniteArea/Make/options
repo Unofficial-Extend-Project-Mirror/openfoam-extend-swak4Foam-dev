@@ -1,5 +1,9 @@
 include $(OBJECTS_DIR)/../../../rules/versionOptions
 
+ifdef NEEDS_FILTER_DROPIN
+ADDITIONALFILES_INC=-I$(LIB_SRC)/OpenFOAM/lnInclude -I../filesThatAreOnlyInSomeDistributions/OutputFilerDropin/
+endif
+
 ifeq "$(WMAKE_NEW_CONVENTION)" "new"
   include $(OBJECTS_DIR)/../mybisonNew
   include $(OBJECTS_DIR)/../myflexNew
@@ -16,9 +20,11 @@ EXE_INC = -I$(OBJECTS_DIR) \
     -I$(LIB_SRC)/finiteArea/lnInclude \
     -I$(LIB_SRC)/surfMesh/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
     -I../swak4FoamParsers/lnInclude/ \
     -I../groovyBC/lnInclude/ \
-    -I../swakFunctionObjects/lnInclude/
+    -I../swakFunctionObjects/lnInclude/ \
+    $(ADDITIONALFILES_INC)
 
 LIB_LIBS = -lfiniteVolume \
 	-lfiniteArea \

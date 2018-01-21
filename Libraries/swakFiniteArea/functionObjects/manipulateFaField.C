@@ -51,6 +51,7 @@ Foam::manipulateFaField::manipulateFaField
 )
 :
     active_(true),
+    writeManipulated_(false),
     obr_(obr),
     dict_(dict)
 {
@@ -64,7 +65,18 @@ Foam::manipulateFaField::manipulateFaField
                 << endl;
     }
     read(dict);
-    execute();
+    bool writeAtStart=true;
+    if(dict.found("manipulateAtStartup")) {
+        writeAtStart=readBool(dict.lookup("manipulateAtStartup"));
+    } else {
+        WarningIn("Foam::manipulateField::manipulateField")
+            << "'manipulateAtStartup' not set in " << dict.name() << nl
+                << "Assuming: true"
+                << endl;
+    }
+    if(writeAtStart) {
+        write();
+    }
 }
 
 Foam::manipulateFaField::~manipulateFaField()
@@ -77,13 +89,34 @@ void Foam::manipulateFaField::manipulate(
 )
 {
     T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
+    label cnt=0;
 
     forAll(original,cellI) {
         if(mask[cellI]>SMALL) {
+            cnt++;
             original[cellI]=data[cellI];
         }
     }
+
+    reduce(cnt,plusOp<label>());
+    Info << "Manipulated field " << name_ << " in " << cnt
+        << " cells with the expression " << expression_ << endl;
     original.correctBoundaryConditions();
+
+    if(
+        obr_.time().outputTime()
+        &&
+        original.writeOpt()==IOobject::AUTO_WRITE
+    ) {
+        if(this->writeManipulated_) {
+            Info << "Rewriting manipulated field " << original.name() << endl;
+
+            original.write();
+        } else {
+            Info << "Manipulated field " << original.name()
+                << " not rewritten. Set 'writeManipulated'" << endl;
+        }
+    }
 }
 
 template<class T,class TMask>
@@ -93,13 +126,41 @@ void Foam::manipulateFaField::manipulateEdge(
 )
 {
     T &original=const_cast<T &>(obr_.lookupObject<T>(name_));
+    label cnt=0;
 
     forAll(original,cellI) {
         if(mask[cellI]>SMALL) {
+            cnt++;
             original[cellI]=data[cellI];
         }
     }
+
+    reduce(cnt,plusOp<label>());
+    Info << "Manipulated field " << name_ << " on " << cnt
+        << " edges with the expression " << expression_ << endl;
+
+    // this does not work for surface fields
     //    original.correctBoundaryConditions();
+
+    if(
+        obr_.time().outputTime()
+        &&
+        original.writeOpt()==IOobject::AUTO_WRITE
+    ) {
+        if(this->writeManipulated_) {
+            Info << "Rewriting manipulated field " << original.name() << endl;
+
+            original.write();
+        } else {
+            Info << "Manipulated field " << original.name()
+                << " not rewritten. Set 'writeManipulated'" << endl;
+        }
+    }
+}
+
+void Foam::manipulateFaField::timeSet()
+{
+    // Do nothing
 }
 
 void Foam::manipulateFaField::read(const dictionary& dict)
@@ -114,6 +175,7 @@ void Foam::manipulateFaField::read(const dictionary& dict)
             dict.lookup("mask"),
             dict
         );
+        writeManipulated_=dict.lookupOrDefault<bool>("writeManipulated",false);
 
         const fvMesh& mesh = refCast<const fvMesh>(obr_);
 
@@ -132,7 +194,12 @@ void Foam::manipulateFaField::read(const dictionary& dict)
     }
 }
 
-void Foam::manipulateFaField::execute()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::manipulateFaField::write()
 {
     if(active_) {
         FaFieldValueExpressionDriver &driver=driver_();
@@ -226,14 +293,19 @@ void Foam::manipulateFaField::execute()
     }
 
     driver_->tryWrite();
+
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 
 void Foam::manipulateFaField::end()
 {
+    execute();
 }
 
-void Foam::manipulateFaField::write()
+void Foam::manipulateFaField::execute()
 {
 }
 

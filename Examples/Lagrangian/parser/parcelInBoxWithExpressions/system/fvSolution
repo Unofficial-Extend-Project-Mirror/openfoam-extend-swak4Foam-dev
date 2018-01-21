@@ -62,11 +62,18 @@ solvers
         maxIter         20;
     }
 
+    p_rgh {
+        $p;
+    }
+
     pFinal
     {
         $p;
         tolerance       1e-06;
         relTol          0;
+    }
+    p_rghFinal {
+        $pFinal;
     }
 
     "(Yi|O2|N2|H2O)"

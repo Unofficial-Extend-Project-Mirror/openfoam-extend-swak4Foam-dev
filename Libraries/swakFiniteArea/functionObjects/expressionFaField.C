@@ -62,7 +62,10 @@ Foam::expressionFaField::expressionFaField
                 << endl;
     }
     read(dict);
-    execute();
+    Dbug << "Read. Now writing" << endl;
+    write();
+
+    Dbug << "expressionField::expressionField - end" << endl;
 }
 
 Foam::expressionFaField::~expressionFaField()
@@ -90,6 +93,21 @@ void Foam::expressionFaField::storeField(
         //        dynamicCast<T &>(field_())==data; // doesn't work with gcc 4.2
         dynamic_cast<T &>(field_())==data;
     }
+
+    if(
+        this->autowrite_
+        &&
+        this->obr_.time().outputTime()
+    ) {
+        Dbug << "storeField() - writing" << endl;
+        field_->write();
+    }
+    Dbug << "storeField() - end" << endl;
+}
+
+void Foam::expressionFaField::timeSet()
+{
+    // Do nothing
 }
 
 void Foam::expressionFaField::read(const dictionary& dict)
@@ -119,7 +137,12 @@ void Foam::expressionFaField::read(const dictionary& dict)
     }
 }
 
-void Foam::expressionFaField::execute()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::expressionFaField::write()
 {
     if(active_) {
         FaFieldValueExpressionDriver &driver=driver_();
@@ -178,14 +201,19 @@ void Foam::expressionFaField::execute()
     }
 
     driver_->tryWrite();
+    Dbug << "write() - end" << endl;
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 
 void Foam::expressionFaField::end()
 {
+    execute();
 }
 
-void Foam::expressionFaField::write()
+void Foam::expressionFaField::execute()
 {
 }
 

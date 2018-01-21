@@ -38,7 +38,7 @@ boundaryField
         type zeroGradient;
     }
     bound {
-        type symmetryPlane;
+        type symmetry;
     }
 }
 

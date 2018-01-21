@@ -861,7 +861,7 @@ Variation of `surfactantFoam` that adds an `expressionSource`
 
 Demonstration case
 
--   **Preparation:** Use `blockMesh` and `makeFaMesh`
+-   **Preparation:** Use `pyFoamPrepareCase.py`
 -   **Solver:** `surfactantFoam` (without source term) or
     `swakSurfactantFoam`
 -   **Demonstrates:** FAM-specific `swakExpressions` and `groovyBC`
@@ -1189,7 +1189,7 @@ Examples for the use of the `simpleSearchableSurfaces`-library.
 #### littleVolcano
 
 -   **Solver:** interFoam
--   **Case preparation:** Script `caseSetup.sh` is provided
+-   **Case preparation:** Use `pyFoamPrepareCase.py`
 -   **Demonstrates:** Boolean operations on STL-files
 
 
@@ -6203,6 +6203,11 @@ Minor adaptions were required to make this compile
 Some adaptions were required to make this compile
 
 
+#### OpenFOAM+ v1712
+
+Minor adaptions were required to make this compile by Mark Olesen
+
+
 ### Incompatibilities
 
 
@@ -6227,6 +6232,12 @@ These environment variables are now renamed from `_PYTHON_` to
 Here the function object failed with a "copy to
 myself"-error. This has been fixed by changing the name of the
 temporary field.
+
+
+#### Floating point exception in `unitCylinder` in `simpleSearchableSurfaces`
+
+When finding a cutting point in "infinity" then `magSqr`
+failed. Fixed
 
 
 ### Internals (for developers)

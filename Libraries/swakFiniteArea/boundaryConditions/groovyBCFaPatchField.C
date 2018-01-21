@@ -102,7 +102,12 @@ groovyBCFaPatchField<Type>::groovyBCFaPatchField
             "const DimensionedField<Type, areaMesh>& iF,"
             "const dictionary& dict"
             ")"
-        ) << "No value defined for " << this->dimensionedInternalField().name()
+        ) << "No value defined for "
+#ifdef FOAM_NO_DIMENSIONEDINTERNAL_IN_GEOMETRIC
+            << this->internalField().name()
+#else
+            << this->dimensionedInternalField().name()
+#endif
             << " on " << this->patch().name() << " therefore using "
             << "the internal field next to the patch"
             << endl;

@@ -127,7 +127,7 @@ void loadTopoSetsFunctionObject::writeAllSets(HashSet<word> &names)
         TopoSetType &set=const_cast<TopoSetType &>(mesh.lookupObject<TopoSetType>(name));
         if(Pstream::parRun()) {
             set.instance()=
-                (word("processor") + name(Pstream::myProcNo()))
+                (word("processor") + Foam::name(Pstream::myProcNo()))
                 /
                 mesh.time().timeName();
         } else {

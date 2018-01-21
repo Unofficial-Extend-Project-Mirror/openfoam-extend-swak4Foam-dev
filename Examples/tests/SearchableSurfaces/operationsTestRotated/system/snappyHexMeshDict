@@ -51,8 +51,8 @@ baseFormOverlap {
     }
 }
 
-// baseForm { $baseFormOriginal; }
-baseForm { $baseFormOverlap; }
+baseForm { $baseFormOriginal; }
+// baseForm { $baseFormOverlap; }
 
 // Geometry. Definition of all surfaces. All surfaces are of class
 // searchableSurface.
@@ -72,7 +72,7 @@ geometry
             rotateTo   (1 1 1);
             surface {
                 type union;
-                $baseForm
+                $baseForm;
             }
         }
     }
@@ -270,7 +270,7 @@ castellatedMeshControls
     // after refinement.
     locationInMesh (0 0 0.1);
 
-     allowFreeStandingZoneFaces true;
+    allowFreeStandingZoneFaces true;
 }
 
 

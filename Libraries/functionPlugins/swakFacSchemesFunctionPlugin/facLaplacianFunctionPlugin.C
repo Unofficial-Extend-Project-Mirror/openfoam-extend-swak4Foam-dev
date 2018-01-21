@@ -110,7 +110,7 @@ void facLaplacianFunctionPlugin<T>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().facLaplacian(original_())
+            const_cast<fa::laplacianScheme<T>&>(scheme()).facLaplacian(original_())
         )
     );
 

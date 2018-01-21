@@ -114,9 +114,9 @@ NumericAccumulationNamedEnum::readAccumulations(
         if(numPos==std::string::npos) {
             aName=aNames[i];
         } else {
-            aName=aNames[i](numPos);
+            aName=aNames[i].substr(0,numPos);
             value=readScalar(
-                IStringStream(aNames[i](numPos,aNames[i].size()-numPos))()
+                IStringStream(aNames[i].substr(numPos,aNames[i].size()-numPos))()
             );
             hasValue=true;
         }

@@ -103,7 +103,7 @@ OFstream &TimelineCollection::operator()(
         &&
         autoParallel
     ) {
-        usedName+="Proc"+name(Pstream::myProcNo());
+        usedName += "Proc" + Foam::name(Pstream::myProcNo());
     }
     if(!outputFilePtr_.found(usedName)) {
         Dbug << "File name" << usedName << "not in table" << endl;

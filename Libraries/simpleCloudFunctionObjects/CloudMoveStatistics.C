@@ -173,7 +173,7 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
     );
 
     if(Pstream::parRun()) {
-        word fName="faceHitProc"+name(Pstream::myProcNo());
+        word fName="faceHitProc"+Foam::name(Pstream::myProcNo());
         out_[fName] << faceHitNr << tab << faceHitMin
             << tab << faceHitMean << tab << faceHitMax << endl;
 
@@ -242,7 +242,7 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
             << ": No moves" << endl;
     }
     if(Pstream::parRun()) {
-        word fName="movesProc"+name(Pstream::myProcNo());
+        word fName="movesProc"+Foam::name(Pstream::myProcNo());
         out_[fName] << movesNr << tab << movesMin
             << tab << movesMean << tab << movesMax << endl;
 
@@ -282,7 +282,7 @@ void Foam::CloudMoveStatistics<CloudType>::postEvolve()
             +
             this->template getModelProperty<scalar>(propName)
         );
-        out_["patchHit_"+iter.key()+"proc"+name(Pstream::myProcNo())]
+        out_["patchHit_"+iter.key()+"proc"+Foam::name(Pstream::myProcNo())]
             << iter() << endl;
     }
 

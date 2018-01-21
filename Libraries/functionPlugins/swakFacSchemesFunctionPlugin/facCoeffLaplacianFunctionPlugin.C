@@ -132,7 +132,7 @@ void facCoeffLaplacianFunctionPlugin<T,GT>::doEvaluation()
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            scheme().facLaplacian(coeff_(),original_())
+            const_cast<fa::laplacianScheme<T>&>(scheme()).facLaplacian(coeff_(),original_())
         )
     );
 

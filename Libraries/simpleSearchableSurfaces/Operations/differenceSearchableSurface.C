@@ -67,6 +67,7 @@ Foam::differenceSearchableSurface::differenceSearchableSurface
         Info << "  a: " << a().regions() << endl;
         Info << "  b: " << b().regions() << endl;
     }
+    bounds()=a().bounds();
 }
 
 

@@ -36,6 +36,7 @@ Contributors/Copyright:
 
 #include "objectRegistry.H"
 
+#include "volMesh.H"
 #include "faCFD.H"
 
 #include "volFromFaField.H"
@@ -66,7 +67,8 @@ Foam::volFromFaField::volFromFaField
                 << endl;
     }
     read(dict);
-    execute();
+
+    write();
 }
 
 Foam::volFromFaField::~volFromFaField()
@@ -101,7 +103,17 @@ void Foam::volFromFaField::makeVolField(
 
     volSurfaceMapping mapper(data.mesh());
 
-    mapper.mapToVolume(data,  dynamic_cast<VF &>(field_()).boundaryField());
+    mapper.mapToVolume(
+        data,
+        const_cast<typename VF::Boundary&>(
+            dynamic_cast<VF &>(field_()).boundaryField()
+        )
+    );
+}
+
+void Foam::volFromFaField::timeSet()
+{
+    // Do nothing
 }
 
 void Foam::volFromFaField::read(const dictionary& dict)
@@ -126,7 +138,12 @@ void Foam::volFromFaField::read(const dictionary& dict)
     }
 }
 
-void Foam::volFromFaField::execute()
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+bool
+#else
+void
+#endif
+Foam::volFromFaField::write()
 {
     if(active_) {
         FaFieldValueExpressionDriver &driver=driver_();
@@ -157,19 +174,26 @@ void Foam::volFromFaField::execute()
             );
         } else {
             WarningIn("Foam::volFromFaField::execute()")
-                << "Field '" << name_
-                    << "' is of an unsupported type (scalar or vector)"
+                << "Field '" << name_ << "' result type " << driver.getResultType()
+                    << " is of an unsupported type (scalar or vector)"
                     << endl;
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+            return false;
+#endif
         }
     }
+#ifdef FOAM_IOFILTER_WRITE_NEEDS_BOOL
+    return true;
+#endif
 }
 
 
 void Foam::volFromFaField::end()
 {
+    execute();
 }
 
-void Foam::volFromFaField::write()
+void Foam::volFromFaField::execute()
 {
 }
 
