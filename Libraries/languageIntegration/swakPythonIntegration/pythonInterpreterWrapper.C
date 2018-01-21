@@ -1230,10 +1230,14 @@ void pythonInterpreterWrapper::extractDictionaryToDictionary(
             } else {
                 dict.set(keyName,false);
             }
-        } else if(PyFloat_Check(value)) {
-            dict.set(keyName,PyFloat_AsDouble(value));
         } else if(PyInt_Check(value)) {
             dict.set(keyName,PyInt_AsLong(value));
+        } else if(
+            PyNumber_Check(value)
+            &&
+            PySequence_Check(value)==0 // this rules out numpy-arrays
+        ) {
+            dict.set(keyName,PyFloat_AsDouble(value));
         } else if(PyString_Check(value)) {
             string val(PyString_AsString(value));
             if(ValidWord()(val)) {
@@ -1241,6 +1245,8 @@ void pythonInterpreterWrapper::extractDictionaryToDictionary(
             } else {
                 dict.set(keyName,val);
             }
+        } else if(PySequence_Check(value)) {
+            notImplemented("Python sequence to Foam list")
         } else {
             WarningIn("")
                 << "Unsupported type for key " << keyName
