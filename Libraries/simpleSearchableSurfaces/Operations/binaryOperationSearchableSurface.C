@@ -116,12 +116,14 @@ Foam::binaryOperationSearchableSurface::binaryOperationSearchableSurface
 
     }
 
+#ifdef FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
     pointField pts(4);
     pts[0]=a().bounds().min();
     pts[1]=a().bounds().max();
     pts[2]=b().bounds().min();
     pts[3]=b().bounds().max();
     bounds()=boundBox(pts);
+#endif
 }
 
 

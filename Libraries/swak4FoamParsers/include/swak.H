@@ -228,6 +228,10 @@ Contributors/Copyright:
 #endif
 
 #ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
+#endif
+
+#ifndef FOAM_VERSION4SWAK_IS_EXTEND
 // points method of searchable surfaces now part of interface
 #define FOAM_SEARCHABLE_SURF_HAS_POINTS
 #endif

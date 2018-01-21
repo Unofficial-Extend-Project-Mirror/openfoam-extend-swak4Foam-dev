@@ -220,7 +220,9 @@ Foam::unitCylinderSearchableSurface::unitCylinderSearchableSurface
     top_(point(0,0,1),vector(0,0,1)),
     bottom_(point(0,0,-1),vector(0,0,-1))
 {
+#ifdef FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
     bounds()=boundBox(point(-1,-1,-1),point(1,1,1));
+#endif
 }
 
 
