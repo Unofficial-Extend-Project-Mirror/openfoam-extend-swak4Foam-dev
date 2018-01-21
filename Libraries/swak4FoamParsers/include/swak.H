@@ -236,6 +236,10 @@ Contributors/Copyright:
 #define FOAM_SEARCHABLE_SURF_HAS_POINTS
 #endif
 
+#ifndef FOAM_VERSION4SWAK_IS_EXTEND
+#define FOAM_EDGEMESH_INCLUDE_WITH_FA
+#endif
+
 #endif // version starting with 2.2
 
 // Certain OpenFOAM-versions don't have this method in fvMesh

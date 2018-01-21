@@ -36,7 +36,14 @@ Contributors/Copyright:
 %define parser_class_name {FaPatchValueExpressionParser}
 
 %{
+#include "swak.H"
+
+#ifdef FOAM_EDGEMESH_INCLUDE_WITH_FA
 #include "edgeFaMesh.H"
+#else
+#include "edgeMesh.H"
+#endif
+
 #include <volFields.H>
 
 #include <functional>
