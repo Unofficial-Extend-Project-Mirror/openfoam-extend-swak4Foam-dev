@@ -29,6 +29,9 @@ Contributors/Copyright:
 \*---------------------------------------------------------------------------*/
 
 #include "basicKinematicParcel.H"
+#ifndef FOAM_MAKEINJECTOR_TEMPLATE_HAS_3_PARAMETERS
+#include "basicKinematicCloud.H"
+#endif
 
 #include "makeParcelInjectionModels.H"
 
@@ -37,7 +40,11 @@ Contributors/Copyright:
 namespace Foam {
     makeInjectionModelType(
         SwakScriptableInjection,
+#ifdef FOAM_MAKEINJECTOR_TEMPLATE_HAS_3_PARAMETERS
         KinematicCloud,
         basicKinematicParcel
+#else
+        basicKinematicCloud
+#endif
     );
 }

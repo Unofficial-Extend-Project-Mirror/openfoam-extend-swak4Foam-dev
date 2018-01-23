@@ -44,6 +44,8 @@ Contributors/Copyright:
 
 #include "generalInterpreterWrapper.H"
 
+#include "swakCloudTypes.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -95,21 +97,34 @@ protected:
         (
             const scalar time0,
             const scalar time1
-        ) const;
+        )
+#ifdef FOAM_INJECT_TOINJECT_IS_CONST
+            const
+#endif
+            ;
 
         //- Volume of parcels to introduce over the time step relative to SOI
         scalar volumeToInject
         (
             const scalar time0,
             const scalar time1
-        ) const;
+        )
+#ifdef FOAM_INJECT_TOINJECT_IS_CONST
+            const
+#endif
+            ;
 
         //- Return flag to identify whether or not injection of parcelI is
         //  permitted
         bool validInjection(const label parcelI);
 
         //- Determine properties for next time step/injection interval
-        void prepareForNextTimeStep
+#ifdef    FOAM_INJECT_PREPAREFORNEXT_RETURNS_BOOL
+    bool
+#else
+    void
+#endif
+    prepareForNextTimeStep
         (
             const scalar time,
             label& newParcels,
@@ -136,12 +151,26 @@ public:
         (
             const dictionary& dict,
             CloudType& owner
+#ifdef FOAM_INJECT_CONSTRUCTOR_HAS_MODELNAME
+            ,const word& modelName
+#endif
         );
 
 
     //- Destructor
     ~SwakScriptableInjection();
 
+    //- Construct copy
+    SwakScriptableInjection(const SwakScriptableInjection<CloudType>& im);
+
+    //- Construct and return a clone
+    virtual autoPtr<InjectionModel<CloudType>> clone() const
+        {
+            return autoPtr<InjectionModel<CloudType>>
+                (
+                    new SwakScriptableInjection<CloudType>(*this)
+                );
+        }
 
     // Member Functions
 
@@ -162,6 +191,10 @@ public:
                 const scalar time,
                 vector& position,
                 label& cellOwner
+#ifdef FOAM_INJECT_SETPOSITION_HAS_TET_PARAMETERS
+                ,label& tetFacei
+                ,label& tetPti
+#endif
             );
 
             //- Set the parcel properties
