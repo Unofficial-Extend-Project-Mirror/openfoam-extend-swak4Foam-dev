@@ -54,6 +54,7 @@ Contributors/Copyright:
     #include "label.H"
     #include <sstream>
     #include "OStringStream.H"
+    #include "swak.H"
 
     namespace Foam {
         class RawFoamDictionaryParserDriver;
