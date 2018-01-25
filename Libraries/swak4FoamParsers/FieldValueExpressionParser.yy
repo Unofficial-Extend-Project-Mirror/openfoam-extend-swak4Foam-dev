@@ -442,6 +442,7 @@ autoPtr<T> FieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_asin
 %token TOKEN_acos
 %token TOKEN_atan
+%token TOKEN_atan2
 %token TOKEN_sinh
 %token TOKEN_cosh
 %token TOKEN_tanh
@@ -1269,6 +1270,11 @@ fsexp:  TOKEN_surf '(' scalar ')'           {
             $$ = new Foam::surfaceScalarField(Foam::atan(*$3));
             delete $3;
           }
+        | TOKEN_atan2 '(' fsexp ',' fsexp ')'  {
+            $$ = new Foam::surfaceScalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
+          }
         | TOKEN_sinh '(' fsexp ')'          {
             $$ = new Foam::surfaceScalarField(Foam::sinh(*$3));
             delete $3;
@@ -1994,6 +2000,11 @@ exp:    TOKEN_NUM                                   {
             $$ = new Foam::volScalarField(Foam::atan(*$3));
             delete $3;
             driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_atan2 '(' exp ',' exp ')'  {
+            $$ = new Foam::volScalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' exp ')'                    {
             $$ = new Foam::volScalarField(Foam::sinh(*$3));
@@ -4528,6 +4539,13 @@ psexp:  TOKEN_point '(' scalar ')'            {
                 $3->internalField())()
             ).ptr();
             delete $3;
+          }
+        | TOKEN_atan2 '(' psexp ',' psexp ')'  {
+            $$ = driver.makePointField<Foam::pointScalarField>(Foam::atan2(
+                $3->internalField(),$5->internalField())()
+            ).ptr();
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' psexp ')'            {
             $$ = driver.makePointField<Foam::pointScalarField>(Foam::sinh(

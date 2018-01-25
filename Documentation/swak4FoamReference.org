@@ -318,6 +318,10 @@ hide circle
     - log10(x) :: Logarithm with the base 10
     - sin, cos, tan :: Usual trigonometric functions
     - asin, acos, atan :: Inverse trigonometric functions
+    - atan2 :: This takes 2 values of which one must be non-zero (they
+               represent a point in the $(x,y)$-plane) and calculates
+               the angle in radiants between this vector and the
+               x-axis
     - sinh, cosh, tanh :: Hyperbolic functions
     - asinh, acosh, atanh :: Inverse hyperbolic functions
     - sqr(x) :: Square $x^2$
