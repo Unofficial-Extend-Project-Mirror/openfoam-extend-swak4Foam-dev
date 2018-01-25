@@ -114,11 +114,9 @@ SetSubset <|-- FaceSet
 Subset <|-- FaceZone
 Subset <|-- SampledSet
 Subset <|-- SampledSurface
-Common <|-- Cloud
 
 class Field << grammar >>
 class Patch << grammar >>
-class Cloud << grammar >>
 abstract class Subset << grammar >>
 abstract class SetSubset
 abstract class Common
@@ -130,6 +128,12 @@ Common <|-- FaPatch
 
 class FaField << grammar >>
 class FaPatch << grammar >>
+}
+
+package swakLagrangianParser {
+Common <|-- Cloud
+
+class Cloud << grammar >>
 }
 
 hide members
