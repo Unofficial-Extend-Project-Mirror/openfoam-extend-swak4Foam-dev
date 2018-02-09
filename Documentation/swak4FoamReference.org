@@ -114,11 +114,9 @@ SetSubset <|-- FaceSet
 Subset <|-- FaceZone
 Subset <|-- SampledSet
 Subset <|-- SampledSurface
-Common <|-- Cloud
 
 class Field << grammar >>
 class Patch << grammar >>
-class Cloud << grammar >>
 abstract class Subset << grammar >>
 abstract class SetSubset
 abstract class Common
@@ -130,6 +128,12 @@ Common <|-- FaPatch
 
 class FaField << grammar >>
 class FaPatch << grammar >>
+}
+
+package swakLagrangianParser {
+Common <|-- Cloud
+
+class Cloud << grammar >>
 }
 
 hide members
@@ -318,6 +322,10 @@ hide circle
     - log10(x) :: Logarithm with the base 10
     - sin, cos, tan :: Usual trigonometric functions
     - asin, acos, atan :: Inverse trigonometric functions
+    - atan2 :: This takes 2 values of which one must be non-zero (they
+               represent a point in the $(x,y)$-plane) and calculates
+               the angle in radiants between this vector and the
+               x-axis
     - sinh, cosh, tanh :: Hyperbolic functions
     - asinh, acosh, atanh :: Inverse hyperbolic functions
     - sqr(x) :: Square $x^2$

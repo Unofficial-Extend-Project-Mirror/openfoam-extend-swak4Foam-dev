@@ -71,11 +71,13 @@ Foam::scaleSearchableSurface::scaleSearchableSurface
                 <<abort(FatalError);
     }
 
+#ifdef FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
     pointField pts(2);
     pts[0]=transform(delegate().bounds().min());
     pts[1]=transform(delegate().bounds().max());
 
     bounds()=boundBox(pts);
+#endif
 }
 
 

@@ -78,11 +78,13 @@ Foam::rotateSearchableSurface::rotateSearchableSurface
     rotation_ = rotationTensor(from,to);
     backRotation_ = rotationTensor(to,from);
 
+#ifdef FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
     pointField pts(delegate().bounds().points());
     forAll(pts,i) {
         pts[i]=transform(pts[i]);
     }
     bounds()=boundBox(pts);
+#endif
 }
 
 

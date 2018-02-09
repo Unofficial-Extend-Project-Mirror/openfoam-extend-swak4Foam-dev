@@ -36,6 +36,14 @@ Contributors/Copyright:
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include "swak.H"
+
+#ifdef FOAM_EDGEMESH_INCLUDE_WITH_FA
+#include "edgeFaMesh.H"
+#else
+#include "edgeMesh.H"
+#endif
+
 #include "faePatchField.H"
 #include "pointPatchField.H"
 #include "primitivePatchInterpolation.H"

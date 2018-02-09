@@ -36,7 +36,14 @@ Contributors/Copyright:
 %define parser_class_name {FaPatchValueExpressionParser}
 
 %{
+#include "swak.H"
+
+#ifdef FOAM_EDGEMESH_INCLUDE_WITH_FA
 #include "edgeFaMesh.H"
+#else
+#include "edgeMesh.H"
+#endif
+
 #include <volFields.H>
 
 #include <functional>
@@ -302,6 +309,7 @@ namespace Foam {
 %token TOKEN_asin
 %token TOKEN_acos
 %token TOKEN_atan
+%token TOKEN_atan2
 %token TOKEN_sinh
 %token TOKEN_cosh
 %token TOKEN_tanh
@@ -993,6 +1001,11 @@ exp:    TOKEN_NUM                  { $$ = driver.makeField($1).ptr(); }
         | TOKEN_atan '(' exp ')'          {
             $$ = new Foam::scalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' exp ',' exp ')'          {
+            $$ = new Foam::scalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' exp ')'          {
             $$ = new Foam::scalarField(Foam::sinh(*$3));
@@ -2151,6 +2164,11 @@ pexp:   pexp '+' pexp 		{
         | TOKEN_atan '(' pexp ')'          {
             $$ = new Foam::scalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' pexp ',' pexp ')'          {
+            $$ = new Foam::scalarField(Foam::atan2(*$3,*$5));
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' pexp ')'          {
             $$ = new Foam::scalarField(Foam::sinh(*$3));

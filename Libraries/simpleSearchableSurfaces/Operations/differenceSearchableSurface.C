@@ -67,7 +67,9 @@ Foam::differenceSearchableSurface::differenceSearchableSurface
         Info << "  a: " << a().regions() << endl;
         Info << "  b: " << b().regions() << endl;
     }
+#ifdef FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
     bounds()=a().bounds();
+#endif
 }
 
 

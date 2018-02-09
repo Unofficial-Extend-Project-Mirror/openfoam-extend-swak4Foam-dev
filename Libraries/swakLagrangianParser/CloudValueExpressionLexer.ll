@@ -139,6 +139,7 @@ log10                 return token::TOKEN_log10;
 asin                  return token::TOKEN_asin;
 acos                  return token::TOKEN_acos;
 atan                  return token::TOKEN_atan;
+atan2                 return token::TOKEN_atan2;
 sinh                  return token::TOKEN_sinh;
 cosh                  return token::TOKEN_cosh;
 tanh                  return token::TOKEN_tanh;

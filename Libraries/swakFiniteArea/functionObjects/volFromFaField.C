@@ -43,6 +43,12 @@ Contributors/Copyright:
 
 #include "FaFieldValueExpressionDriver.H"
 
+#include "swak.H"
+
+#ifdef FOAM_PATCHFIELDTYPE_IN_GEOFIELD_IS_NOW_PATCH
+#define GeometricBoundaryField Boundary
+#endif
+
 namespace Foam {
     defineTypeNameAndDebug(volFromFaField,0);
 }
@@ -105,7 +111,7 @@ void Foam::volFromFaField::makeVolField(
 
     mapper.mapToVolume(
         data,
-        const_cast<typename VF::Boundary&>(
+        const_cast<typename VF::GeometricBoundaryField&>(
             dynamic_cast<VF &>(field_()).boundaryField()
         )
     );

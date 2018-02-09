@@ -62,10 +62,12 @@ Foam::translateSearchableSurface::translateSearchableSurface
     transformationSearchableSurface(io,dict),
     translation_(dict.lookup("translation"))
 {
+#ifdef FOAM_SEARCHABLE_SURF_HAS_BOUND_METHOD
     bounds()=boundBox(
         transform(delegate().bounds().min()),
         transform(delegate().bounds().max())
     );
+#endif
 }
 
 
