@@ -32,7 +32,7 @@ Contributors/Copyright:
 #include "trackDictionaryFunctionObject.H"
 #include "addToRunTimeSelectionTable.H"
 #include "dimensionedConstants.H"
-#include "stringListOps.H"
+#include "ListOps.H"
 #include "fileStat.H"
 
 #include "swak.H"
@@ -247,10 +247,10 @@ bool Foam::trackDictionaryFunctionObject::read(const dictionary& dict)
     // Usually, this member function is called when the case controlDict file
     // is modified. So let's see if controlDict is in the list of
     // dictionaries of interest
-    labelList matchPatternString = findStrings("system/controlDict", dictionaryNames_);
+    labelList matchPatternString = findIndices(dictionaryNames_, "system/controlDict");
 
     // We are only interested in the first occurence
-    if(matchPatternString.size() > 0)
+    if (matchPatternString.size())
     {
         echoDictionaryValues(matchPatternString[0]);
     }
