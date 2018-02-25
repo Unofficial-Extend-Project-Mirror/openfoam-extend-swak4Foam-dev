@@ -586,10 +586,7 @@ S_{expl} + S_{impl} T
     Cases that don't have a =groovyBC=
 **** =angledDuctImplicit=
      - Solver :: rhoPorousMRFSimpleFoam
-     - Mesh preparation :: Execute the =makeMesh.sh=-script in that
-          directory. If you want to run in parallel call the
-          =decomposeMesh.sh=-script with the number of processors as
-          an argument
+     - Mesh preparation :: Execute =pyFoamPrepareCase.py .=
      - Demonstrates :: Usage of the =swakTopoSources=. Compares
           different approaches to evaluating with the
           =swakExpression=-functionObject. Also an example dictionary
