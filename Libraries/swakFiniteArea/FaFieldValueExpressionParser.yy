@@ -969,7 +969,9 @@ fsexp:  TOKEN_surf '(' scalar ')'           {
             delete $3;
           }
         | TOKEN_atan2 '(' fsexp ',' fsexp ')'          {
-            $$ = new Foam::edgeScalarField(Foam::atan2(*$3,*$5));
+            $$ = driver.makeField<Foam::edgeScalarField>(
+                Foam::atan2(*$3,*$5)
+            ).ptr();
             delete $3;
             delete $5;
           }
@@ -1616,7 +1618,9 @@ exp:    TOKEN_NUM                                  {
             driver.setCalculatedPatches(*$$);
           }
         | TOKEN_atan2 '(' exp ',' exp ')'          {
-            $$ = new Foam::areaScalarField(Foam::atan2(*$3,*$5));
+            $$ = driver.makeField<Foam::areaScalarField>(
+                Foam::atan2(*$3,*$5)
+            ).ptr();
             delete $3;
             delete $5;
           }
