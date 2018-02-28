@@ -56,6 +56,8 @@ Contributors/Copyright:
 #include "swak.H"
 #include "switchableNotImplemented.H"
 
+#include "polyMesh.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -132,7 +134,13 @@ public:
     }
 
     // make functionObject happy but fail because this is not an implementation
-    virtual void movePoints(const polyMesh&) {
+    virtual void movePoints(
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+        const polyMesh&
+#else
+        const pointField&
+#endif
+    ) {
         switchableNotImplemented(
             "initSwakFunctionObject::movePoints",
             dict_

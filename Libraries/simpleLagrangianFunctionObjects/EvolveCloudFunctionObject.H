@@ -170,7 +170,13 @@ public:
     }
 
     // make functionObject happy but fail because this is not an implementation
-    virtual void movePoints(const polyMesh&) {
+    virtual void movePoints(
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+        const polyMesh&
+#else
+        const pointField&
+#endif
+    ) {
         switchableNotImplemented(
             "EvolveCloudFunctionObject::movePoints",
             dict_
