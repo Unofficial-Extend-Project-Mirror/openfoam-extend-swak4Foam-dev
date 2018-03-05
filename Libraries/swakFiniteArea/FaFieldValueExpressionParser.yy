@@ -348,6 +348,7 @@ autoPtr<T> FaFieldValueExpressionDriver::evaluatePluginFunction(
 %token TOKEN_asin
 %token TOKEN_acos
 %token TOKEN_atan
+%token TOKEN_atan2
 %token TOKEN_sinh
 %token TOKEN_cosh
 %token TOKEN_tanh
@@ -966,6 +967,13 @@ fsexp:  TOKEN_surf '(' scalar ')'           {
         | TOKEN_atan '(' fsexp ')'          {
             $$ = new Foam::edgeScalarField(Foam::atan(*$3));
             delete $3;
+          }
+        | TOKEN_atan2 '(' fsexp ',' fsexp ')'          {
+            $$ = driver.makeField<Foam::edgeScalarField>(
+                Foam::atan2(*$3,*$5)
+            ).ptr();
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' fsexp ')'          {
             $$ = new Foam::edgeScalarField(Foam::sinh(*$3));
@@ -1608,6 +1616,13 @@ exp:    TOKEN_NUM                                  {
             $$ = new Foam::areaScalarField(Foam::atan(*$3));
             delete $3;
             driver.setCalculatedPatches(*$$);
+          }
+        | TOKEN_atan2 '(' exp ',' exp ')'          {
+            $$ = driver.makeField<Foam::areaScalarField>(
+                Foam::atan2(*$3,*$5)
+            ).ptr();
+            delete $3;
+            delete $5;
           }
         | TOKEN_sinh '(' exp ')'                   {
             $$ = new Foam::areaScalarField(Foam::sinh(*$3));

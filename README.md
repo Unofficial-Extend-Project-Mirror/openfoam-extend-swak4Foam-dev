@@ -1,3 +1,5 @@
+
+
 # Description
 
 A collection of libraries and tools that let the user handle
@@ -381,7 +383,7 @@ for manipulating and creating fields with expressions
 -   **swakCoded:** Child of the `coded`-functionObject that can read
     and write global variables from and to
     swak-namespaces
-
+    
     Assumes that the `SWAK4FOAM_SRC` environment
     variable is set to the `Libraries`-directory of the
     `swak4Foam`-sources
@@ -6300,7 +6302,15 @@ it with the other data. The main purpose of this function object
 is to allow scripting languages to write their data
 
 
+#### `atan2` added to parsers
+
+The `atan2(x,y)` function has been added to all the parsers. This
+takes 2 values of which one must be non-zero (they represent a
+point in the $(x,y)$-plane) and calculates the angle in radiants
+between this vector and the x-axis
+
+
 ### Enhancements
 
 
-### Example
+### Examples

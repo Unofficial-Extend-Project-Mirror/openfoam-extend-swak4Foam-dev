@@ -4039,5 +4039,10 @@ S_{expl} + S_{impl} T
      =simpleFunctionObjects= reads a dictionary from disk and writes
      it with the other data. The main purpose of this function object
      is to allow scripting languages to write their data
+**** =atan2= added to parsers
+     The =atan2(x,y)= function has been added to all the parsers. This
+     takes 2 values of which one must be non-zero (they represent a
+     point in the $(x,y)$-plane) and calculates the angle in radiants
+     between this vector and the x-axis
 *** Enhancements
 *** Example

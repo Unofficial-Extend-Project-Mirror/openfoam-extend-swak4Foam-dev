@@ -64,7 +64,7 @@ hgbranch=None
 
 from subprocess import Popen,PIPE
 try:
-    output = Popen(["hg", "branch"], stdout=PIPE).communicate()[0]
+    output = Popen(["HGRCPATH=", "hg", "branch"], stdout=PIPE).communicate()[0]
     try:
         output=output.decode()
     except AttributeError:
