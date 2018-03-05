@@ -54,6 +54,8 @@ Contributors/Copyright:
 
 #include "addToRunTimeSelectionTable.H"
 
+#include "pythonHelperTemplates.H"
+
 // #include <fcntl.h>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -598,7 +600,6 @@ void pythonInterpreterWrapper::interactiveLoop(
             WarningIn("pythonInterpreterWrapper::interactiveLoop")
                 << "Problem executing "+cmdString
                     << endl;
-
         }
     }
 }
@@ -1206,154 +1207,6 @@ bool pythonInterpreterWrapper::extractDictionary(
     releaseInterpreter();
 
     return true;
-}
-
-class checkBoolType {
-public:
-    bool operator()(PyObject *el) {
-        return PyBool_Check(el);
-    }
-};
-
-class checkStringType {
-public:
-    bool operator()(PyObject *el) {
-        return PyString_Check(el);
-    }
-};
-
-class checkIntType {
-public:
-    bool operator()(PyObject *el) {
-        return PyInt_Check(el);
-    }
-};
-
-class checkFloatType {
-public:
-    bool operator()(PyObject *el) {
-        // scalar val=PyFloat_AsDouble(el);
-        // PyObject *err=PyErr_Occurred();
-        // return !err;
-        return PyNumber_Check(el);
-    }
-};
-
-class checkWordType {
-public:
-    bool operator()(PyObject *el) {
-        if(!PyString_Check(el)) {
-            return false;
-        }
-        string val(PyString_AsString(el));
-        return Foam::generalInterpreterWrapper::ValidWord()(val);
-    }
-};
-
-template<class FCheck>
-bool isList(PyObject *list) {
-    Py_ssize_t size=PySequence_Length(list);
-    for(Py_ssize_t i=0;i<size;i++) {
-        PyObject *el=PySequence_GetItem(list,i);
-        if(el==NULL) {
-            return false;
-        }
-        bool ok=FCheck()(el);
-        Py_DECREF(el);
-        if(!ok) {
-            return false;
-        }
-    }
-    return true;
-}
-
-template<class FCheck>
-bool isListList(PyObject *list) {
-    Py_ssize_t size=PySequence_Length(list);
-    for(Py_ssize_t i=0;i<size;i++) {
-        PyObject *el=PySequence_GetItem(list,i);
-        if(el==NULL) {
-            return false;
-        }
-        bool ok=PySequence_Check(el);
-        if(ok){
-            ok=isList<FCheck>(el);
-        }
-        Py_DECREF(el);
-        if(!ok) {
-            return false;
-        }
-    }
-    return true;
-}
-
-class getBoolValue {
-public:
-    bool operator()(PyObject *el) {
-        return el==Py_True;
-    }
-};
-
-class getWordValue {
-public:
-    word operator()(PyObject *el) {
-        return word(PyString_AsString(el));
-    }
-};
-
-class getStringValue {
-public:
-    string operator()(PyObject *el) {
-        return string(PyString_AsString(el));
-    }
-};
-
-class getIntValue {
-public:
-    label operator()(PyObject *el) {
-        return PyInt_AsLong(el);
-    }
-};
-
-class getFloatValue {
-public:
-    scalar operator()(PyObject *el) {
-        return PyFloat_AsDouble(el);
-    }
-};
-
-template<class FConv,class T>
-autoPtr<List<T> > getList(PyObject *list)
-{
-    Py_ssize_t size=PySequence_Length(list);
-    autoPtr<List<T> > val(new List<T>(size));
-
-    for(Py_ssize_t i=0;i<size;i++) {
-        PyObject *el=PySequence_GetItem(list,i);
-        if(el==NULL) {
-            continue;
-        }
-        val()[i]=FConv()(el);
-        Py_DECREF(el);
-    }
-    return val;
-}
-
-template<class FConv,class T>
-autoPtr<List<List<T> > > getListList(PyObject *list)
-{
-    Py_ssize_t size=PySequence_Length(list);
-    autoPtr<List<List<T> > > val(new List<List<T> >(size));
-
-    for(Py_ssize_t i=0;i<size;i++) {
-        PyObject *el=PySequence_GetItem(list,i);
-        if(el==NULL) {
-            continue;
-        }
-        val()[i]=getList<FConv,T>(el)();
-        Py_DECREF(el);
-    }
-    return val;
 }
 
 void pythonInterpreterWrapper::extractDictionaryToDictionary(

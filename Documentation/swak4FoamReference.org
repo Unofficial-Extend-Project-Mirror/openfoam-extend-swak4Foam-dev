@@ -332,7 +332,7 @@ hide circle
     - magSqr(x) :: Square of the magnitude $|x|^2$
     - sqrt(x) :: Square root $\sqrt{x}$
     - erf(x) :: Error function
-    - erfc(x) ::Complement error function
+    - erfc(x) :: Complement error function
     - besselJ0, besselJ1, besselY0, besselY1 :: Bessel-functions
     - lgamma :: Logarithm gamma function
     These functions depend on the sign of a scalar:
