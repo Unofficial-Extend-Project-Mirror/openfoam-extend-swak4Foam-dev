@@ -160,6 +160,10 @@ protected:
         dictionary &dict
     );
 
+    bool useNumpy() {
+        return useNumpy_;
+    }
+
 public:
 
     bool extractDictionary(

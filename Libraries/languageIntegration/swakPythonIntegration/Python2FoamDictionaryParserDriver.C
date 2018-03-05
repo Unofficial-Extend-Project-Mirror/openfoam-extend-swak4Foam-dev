@@ -50,6 +50,128 @@ namespace Foam {
     {
     }
 
+    template<class T>
+    PyObject *makePrimitiveElement(const T &el) {
+        notImplemented(string("makePrimitiveElement ")+string(pTraits<T>::typeName));
+        return NULL;
+    }
+
+    template<>
+    PyObject *makePrimitiveElement(const label &el) {
+        return PyInt_FromLong(el);
+    }
+
+    template<>
+    PyObject *makePrimitiveElement(const scalar &el) {
+        return PyFloat_FromDouble(el);
+    }
+
+    template<>
+    PyObject *makePrimitiveElement(const bool &el) {
+        return PyBool_FromLong(el);
+    }
+
+    template<>
+    PyObject *makePrimitiveElement(const word &el) {
+        return PyString_FromString(el.c_str());
+    }
+
+    template<>
+    PyObject *makePrimitiveElement(const string &el) {
+        return PyString_FromString(el.c_str());
+    }
+
+    template<class T>
+    void Python2FoamDictionaryParserDriver::add1DListDirect(
+        const word &name,const List<T> &value
+    ) {
+        PyObject *list=PyList_New(value.size());
+        for(label i=0;i<value.size();i++) {
+            PyList_SetItem(
+                list,
+                i,
+                makePrimitiveElement(value[i])
+            );
+        }
+        PyDict_SetItemString(
+            parent_.currentDictionary(),
+            name.c_str(),
+            list
+        );
+    }
+
+    template<class T>
+    void Python2FoamDictionaryParserDriver::add1DList(
+        const word &name,const List<T> &value
+    ) {
+        if(parent_.useNumpy()) {
+            notImplemented("Adding parsed lists as numpy");
+        } else {
+            add1DListDirect(name, value);
+        }
+    }
+
+    template<class T>
+    void Python2FoamDictionaryParserDriver::add2DListDirect(
+        const word &name,
+        const List<List<T> > &value
+    ) {
+        PyObject *outerList=PyList_New(value.size());
+        for(label i=0;i<value.size();i++) {
+            const List<T> &iValue=value[i];
+            PyObject *innerList=PyList_New(iValue.size());
+            for(label j=0;j<iValue.size();j++) {
+                PyList_SetItem(
+                    innerList,
+                    j,
+                    makePrimitiveElement(iValue[j])
+                );
+            }
+            PyList_SetItem(
+                outerList,
+                i,
+                innerList
+            );
+        }
+        PyDict_SetItemString(
+            parent_.currentDictionary(),
+            name.c_str(),
+            outerList
+        );
+    }
+
+    template<class T>
+    void Python2FoamDictionaryParserDriver::add2DList(
+        const word &name,
+        const List<List<T> > &value
+    ) {
+        if(
+            parent_.useNumpy()
+            &&
+            isUniform2DList(value)
+        ) {
+            notImplemented("Adding parsed lists of lists as numpy");
+        } else {
+            add2DListDirect(name, value);
+        }
+    }
+
+    template<class T>
+    bool Python2FoamDictionaryParserDriver::isUniform2DList(
+        const List<List<T> > &value
+    ) {
+        if(value.size()==0) {
+            return true;
+        }
+        label size=value[0].size();
+        forAll(value,i) {
+            if(value[i].size()!=size) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     void Python2FoamDictionaryParserDriver::add(const word& name,scalar value)
     {
         PyDict_SetItemString(
@@ -77,8 +199,9 @@ namespace Foam {
         );
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const word &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const word &value
+    ) {
         PyDict_SetItemString(
             parent_.currentDictionary(),
             name.c_str(),
@@ -86,8 +209,9 @@ namespace Foam {
         );
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const string &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const string &value
+    ) {
         PyDict_SetItemString(
             parent_.currentDictionary(),
             name.c_str(),
@@ -95,44 +219,64 @@ namespace Foam {
         );
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const labelList &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const labelList &value
+    ) {
+        add1DList(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const scalarList &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const scalarList &value
+    ) {
+        add1DList(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const boolList &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const boolList &value
+    ) {
+        add1DList(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const wordList &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const wordList &value
+    ) {
+        add1DListDirect(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const stringList &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const stringList &value
+    ) {
+        add1DListDirect(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const List<labelList> &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const List<labelList> &value
+    ) {
+        add2DList(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const List<scalarList> &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const List<scalarList> &value
+    ) {
+        add2DList(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const List<boolList> &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const List<boolList> &value
+    ) {
+        add2DList(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const List<wordList> &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const List<wordList> &value
+    ) {
+        add2DListDirect(name, value);
     }
 
-    void Python2FoamDictionaryParserDriver::add(const word& name,const List<stringList> &value)
-    {
+    void Python2FoamDictionaryParserDriver::add(
+        const word& name,const List<stringList> &value
+    ) {
+        add2DListDirect(name, value);
     }
 
     void Python2FoamDictionaryParserDriver::addTopDictAs(const word &name) {

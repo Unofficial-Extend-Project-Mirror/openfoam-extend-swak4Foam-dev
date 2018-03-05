@@ -50,6 +50,21 @@ namespace Foam {
 
         pythonInterpreterWrapper &parent_;
 
+        template<class T>
+        void add1DList(const word &name,const List<T> &value);
+
+        template<class T>
+        void add2DList(const word &name,const List<List<T> > &value);
+
+        template<class T>
+        void add1DListDirect(const word &name,const List<T> &value);
+
+        template<class T>
+        void add2DListDirect(const word &name,const List<List<T> > &value);
+
+        template<class T>
+        bool isUniform2DList(const List<List<T> > &value);
+
     public:
 
         Python2FoamDictionaryParserDriver(

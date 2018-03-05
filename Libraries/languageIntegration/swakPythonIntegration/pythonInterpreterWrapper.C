@@ -1208,6 +1208,154 @@ bool pythonInterpreterWrapper::extractDictionary(
     return true;
 }
 
+class checkBoolType {
+public:
+    bool operator()(PyObject *el) {
+        return PyBool_Check(el);
+    }
+};
+
+class checkStringType {
+public:
+    bool operator()(PyObject *el) {
+        return PyString_Check(el);
+    }
+};
+
+class checkIntType {
+public:
+    bool operator()(PyObject *el) {
+        return PyInt_Check(el);
+    }
+};
+
+class checkFloatType {
+public:
+    bool operator()(PyObject *el) {
+        // scalar val=PyFloat_AsDouble(el);
+        // PyObject *err=PyErr_Occurred();
+        // return !err;
+        return PyNumber_Check(el);
+    }
+};
+
+class checkWordType {
+public:
+    bool operator()(PyObject *el) {
+        if(!PyString_Check(el)) {
+            return false;
+        }
+        string val(PyString_AsString(el));
+        return Foam::generalInterpreterWrapper::ValidWord()(val);
+    }
+};
+
+template<class FCheck>
+bool isList(PyObject *list) {
+    Py_ssize_t size=PySequence_Length(list);
+    for(Py_ssize_t i=0;i<size;i++) {
+        PyObject *el=PySequence_GetItem(list,i);
+        if(el==NULL) {
+            return false;
+        }
+        bool ok=FCheck()(el);
+        Py_DECREF(el);
+        if(!ok) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<class FCheck>
+bool isListList(PyObject *list) {
+    Py_ssize_t size=PySequence_Length(list);
+    for(Py_ssize_t i=0;i<size;i++) {
+        PyObject *el=PySequence_GetItem(list,i);
+        if(el==NULL) {
+            return false;
+        }
+        bool ok=PySequence_Check(el);
+        if(ok){
+            ok=isList<FCheck>(el);
+        }
+        Py_DECREF(el);
+        if(!ok) {
+            return false;
+        }
+    }
+    return true;
+}
+
+class getBoolValue {
+public:
+    bool operator()(PyObject *el) {
+        return el==Py_True;
+    }
+};
+
+class getWordValue {
+public:
+    word operator()(PyObject *el) {
+        return word(PyString_AsString(el));
+    }
+};
+
+class getStringValue {
+public:
+    string operator()(PyObject *el) {
+        return string(PyString_AsString(el));
+    }
+};
+
+class getIntValue {
+public:
+    label operator()(PyObject *el) {
+        return PyInt_AsLong(el);
+    }
+};
+
+class getFloatValue {
+public:
+    scalar operator()(PyObject *el) {
+        return PyFloat_AsDouble(el);
+    }
+};
+
+template<class FConv,class T>
+autoPtr<List<T> > getList(PyObject *list)
+{
+    Py_ssize_t size=PySequence_Length(list);
+    autoPtr<List<T> > val(new List<T>(size));
+
+    for(Py_ssize_t i=0;i<size;i++) {
+        PyObject *el=PySequence_GetItem(list,i);
+        if(el==NULL) {
+            continue;
+        }
+        val()[i]=FConv()(el);
+        Py_DECREF(el);
+    }
+    return val;
+}
+
+template<class FConv,class T>
+autoPtr<List<List<T> > > getListList(PyObject *list)
+{
+    Py_ssize_t size=PySequence_Length(list);
+    autoPtr<List<List<T> > > val(new List<List<T> >(size));
+
+    for(Py_ssize_t i=0;i<size;i++) {
+        PyObject *el=PySequence_GetItem(list,i);
+        if(el==NULL) {
+            continue;
+        }
+        val()[i]=getList<FConv,T>(el)();
+        Py_DECREF(el);
+    }
+    return val;
+}
+
 void pythonInterpreterWrapper::extractDictionaryToDictionary(
     PyObject *pyDict,
     dictionary &dict
@@ -1246,7 +1394,29 @@ void pythonInterpreterWrapper::extractDictionaryToDictionary(
                 dict.set(keyName,val);
             }
         } else if(PySequence_Check(value)) {
-            notImplemented("Python sequence to Foam list")
+            if(isList<checkBoolType>(value)) {
+                dict.set(keyName,getList<getBoolValue,bool>(value)());
+            } else if(isList<checkWordType>(value)) {
+                dict.set(keyName,getList<getWordValue,word>(value)());
+            } else if(isList<checkStringType>(value)) {
+                dict.set(keyName,getList<getStringValue,string>(value)());
+            } else if(isList<checkIntType>(value)) {
+                dict.set(keyName,getList<getIntValue,label>(value)());
+            } else if(isList<checkFloatType>(value)) {
+                dict.set(keyName,getList<getFloatValue,scalar>(value)());
+            } else if(isListList<checkBoolType>(value)) {
+                dict.set(keyName,getListList<getBoolValue,bool>(value)());
+            } else if(isListList<checkWordType>(value)) {
+                dict.set(keyName,getListList<getWordValue,word>(value)());
+            } else if(isListList<checkStringType>(value)) {
+                dict.set(keyName,getListList<getStringValue,string>(value)());
+            } else if(isListList<checkIntType>(value)) {
+                dict.set(keyName,getListList<getIntValue,label>(value)());
+            } else if(isListList<checkFloatType>(value)) {
+                dict.set(keyName,getListList<getFloatValue,scalar>(value)());
+            } else {
+                notImplemented("Python sequence to Foam list");
+            }
         } else {
             WarningIn("")
                 << "Unsupported type for key " << keyName

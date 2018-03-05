@@ -198,6 +198,7 @@ protected:
 
     virtual bool wrapUpDictionary(const word &name);
 
+public:
     class ValidWord {
     public:
         bool operator()(const string &s) {
@@ -210,7 +211,6 @@ protected:
         }
     };
 
-public:
     //- get the parser on demand
     RawFoamDictionaryParserDriver &getParser();
 
