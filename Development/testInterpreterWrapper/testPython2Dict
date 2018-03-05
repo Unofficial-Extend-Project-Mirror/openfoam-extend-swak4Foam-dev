@@ -21,7 +21,7 @@ pythonDictionaryParserErrorMode warn;
 
 interactiveAfterExecute true;
 
-useNumpy no;
+useNumpy yes;
 
 // debugLevelParser 3;
 

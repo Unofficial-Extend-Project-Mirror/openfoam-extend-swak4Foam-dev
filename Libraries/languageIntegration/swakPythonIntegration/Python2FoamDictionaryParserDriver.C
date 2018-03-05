@@ -104,11 +104,11 @@ namespace Foam {
     void Python2FoamDictionaryParserDriver::add1DList(
         const word &name,const List<T> &value
     ) {
-        if(parent_.useNumpy()) {
-            notImplemented("Adding parsed lists as numpy");
-        } else {
+        // if(parent_.useNumpy()) {
+        //     notImplemented("Adding parsed lists as numpy");
+        // } else {
             add1DListDirect(name, value);
-        }
+        // }
     }
 
     template<class T>
@@ -145,15 +145,15 @@ namespace Foam {
         const word &name,
         const List<List<T> > &value
     ) {
-        if(
-            parent_.useNumpy()
-            &&
-            isUniform2DList(value)
-        ) {
-            notImplemented("Adding parsed lists of lists as numpy");
-        } else {
+        // if(
+        //     parent_.useNumpy()
+        //     &&
+        //     isUniform2DList(value)
+        // ) {
+        //     notImplemented("Adding parsed lists of lists as numpy");
+        // } else {
             add2DListDirect(name, value);
-        }
+        // }
     }
 
     template<class T>
