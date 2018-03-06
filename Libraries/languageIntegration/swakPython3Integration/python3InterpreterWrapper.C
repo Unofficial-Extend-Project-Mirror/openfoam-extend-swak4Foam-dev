@@ -175,9 +175,11 @@ python3InterpreterWrapper::python3InterpreterWrapper
     triedIPython_(false),
     oldIPython_(false)
 {
+    //    Py_Initialize();
     if(generalInterpreterWrapper::debug>debug) {
         debug=1;
     }
+    //    Pbug << "Version: " << Py_GetVersion() << endl;
 
     Pbug << "Starting constructor: We have the GIL: " << PyGILState_Check()
         << " our state " << getHex(pythonState_) << " Main: "
@@ -211,7 +213,14 @@ python3InterpreterWrapper::python3InterpreterWrapper
     if(interpreterCount==0) {
         Pbug << "Initializing Python" << endl;
 
+        if(Py_IsInitialized()) {
+            FatalErrorIn("python3InterpreterWrapper::python3InterpreterWrapper")
+                << "Already initialized. Something is wrong"
+                    << endl
+                    << exit(FatalError);
+        }
         Py_Initialize();
+        //        Py_InitializeEx(0);
 
 #ifdef OLD_PYTHON3
         if(debug) {
