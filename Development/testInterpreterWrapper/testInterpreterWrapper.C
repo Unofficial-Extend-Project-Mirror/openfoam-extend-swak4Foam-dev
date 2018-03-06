@@ -36,6 +36,7 @@ Description
 
 #include "generalInterpreterWrapper.H"
 
+#include "swak.H"
 
 using namespace Foam;
 
@@ -56,6 +57,18 @@ int main(int argc,char **argv)
     IFstream f(args.args()[1]);
     dictionary dict(f);
 
+    if(dict.found("libs")) {
+        List<fileName> libList(dict["libs"]);
+        forAll(libList,i) {
+            const fileName &theLib=libList[i];
+            Info << "Loading library " << theLib << endl;
+#ifdef FOAM_DLLIBRARY_USES_STATIC_METHODS
+            dlLibraryTable::open(theLib);
+#else
+            table.open(theLib);
+#endif
+        }
+    }
     if(args.options().found("debugSwitches")) {
         generalInterpreterWrapper::debug=1;
     }

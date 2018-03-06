@@ -25,4 +25,8 @@ useNumpy yes;
 
 // debugLevelParser 3;
 
+libs (
+    "libswakPythonIntegration.so"
+);
+
 // ************************************************************************* //
