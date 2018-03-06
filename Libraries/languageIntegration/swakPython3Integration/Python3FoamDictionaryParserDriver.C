@@ -173,9 +173,15 @@ namespace Foam {
     void Python3FoamDictionaryParserDriver::add(
         const word& name,const word &value
     ) {
+        //        string cmd='"'+value+'"';
+        //        PyObject *o=PyRun_String(cmd.c_str(),0,NULL,NULL);
         PyDict_SetItemString(
             parent_.currentDictionary(),
             name.c_str(),
+            //            PyBytes_FromString(value.c_str())
+            //            PyUnicode_DecodeLocale(value.c_str(),NULL)
+            //            PyUnicode_DecodeLocale("nixda",NULL)
+            //            o
             PyUnicode_FromString(value.c_str())
         );
     }

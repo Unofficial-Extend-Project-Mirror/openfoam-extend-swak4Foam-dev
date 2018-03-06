@@ -47,6 +47,8 @@ manualCoeffs
 
 distributed     no;
 
+aWord buh;
+
 roots           ( );
 
 boolList ( on off true no yes false );
