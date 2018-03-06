@@ -31,7 +31,7 @@ Description
 
 #include "argList.H"
 #include "polyMesh.H"
-#include "foamTime.H"
+#include "swakTime.H"
 #include "IFstream.H"
 
 #include "generalInterpreterWrapper.H"
@@ -51,14 +51,14 @@ int main(int argc,char **argv)
 #   include "createTime.H"
 #   include "createPolyMesh.H"
 
-    IFstream f(args.additionalArgs()[0]);
+    Info << nl << "Getting Wrapper " << args.args()[1] << endl;
+
+    IFstream f(args.args()[1]);
     dictionary dict(f);
 
     if(args.options().found("debugSwitches")) {
         generalInterpreterWrapper::debug=1;
     }
-
-    Info << nl << "Getting Wrapper" << endl;
 
     autoPtr<generalInterpreterWrapper> pInter=
         generalInterpreterWrapper::New(
@@ -70,8 +70,8 @@ int main(int argc,char **argv)
 
     Info << "Wrapper loaded" << endl;
 
-    Info << "Load data" << endl;
-    IFstream df(args.additionalArgs()[1]);
+    Info << "Load data from " << args.args()[2] << endl;
+    IFstream df(args.args()[2]);
     dictionary dataDict(df);
     inter.insertDictionary(
         "data",

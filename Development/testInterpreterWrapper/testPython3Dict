@@ -17,7 +17,7 @@ FoamFile
 
 languageWrapperType python3;
 
-pythonDictionaryParserErrorMode warn;
+python3DictionaryParserErrorMode warn;
 
 interactiveAfterExecute true;
 
