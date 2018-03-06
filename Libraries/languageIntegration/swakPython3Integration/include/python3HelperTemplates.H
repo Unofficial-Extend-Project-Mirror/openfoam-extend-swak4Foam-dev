@@ -189,7 +189,15 @@ namespace Foam {
     class getFloatValue {
     public:
         scalar operator()(PyObject *el) {
-            return PyFloat_AsDouble(el);
+            scalar val=PyFloat_AsDouble(el);
+            PyObject *err=PyErr_Occurred();
+            if(err) {
+                WarningIn("getFloat()")
+                    << "Not a float (probably 2D numpy)"
+                        << endl;
+                PyErr_WriteUnraisable(err);
+            }
+            return val;
         }
     };
 
