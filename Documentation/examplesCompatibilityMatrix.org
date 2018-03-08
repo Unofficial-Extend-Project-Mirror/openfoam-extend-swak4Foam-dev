@@ -51,6 +51,7 @@
   | Lagrangian/functionObject/icoFoamCavityWithParcel           | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/LanguageIntegration/angledDuctWithLuaInject      |            | \checkmark |            | \checkmark |
   | Lagrangian/LanguageIntegration/angledDuctWithPython2Inject  |            | \checkmark |            |            |
+  | Lagrangian/LanguageIntegration/angledDuctWithPython3Inject  |            | \checkmark |            |            |
   | Lagrangian/parser/parcelInBoxWithExpressions                | \checkmark | \checkmark | \checkmark | \checkmark |
   | Lagrangian/parser/simplifiedSiwek                           | \sad       | \sad       |            | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
