@@ -4045,4 +4045,8 @@ S_{expl} + S_{impl} T
      point in the $(x,y)$-plane) and calculates the angle in radiants
      between this vector and the x-axis
 *** Enhancements
+**** =solverPerformanceToGlobalVariables= now supports vector fields
+     With an additional (optional) parameter =vectorFieldNames= this
+     function object now collects information about the performance of
+     the linear solver for vector fields as well
 *** Example

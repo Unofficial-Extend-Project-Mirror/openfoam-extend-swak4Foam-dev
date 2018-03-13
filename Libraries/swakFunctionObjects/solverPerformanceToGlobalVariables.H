@@ -71,8 +71,11 @@ class solverPerformanceToGlobalVariables
 
     const objectRegistry& obr_;
 
-    //- names of the Fields for which the values are added
-    wordList fieldNames_;
+    //- names of the scalar Fields for which the values are added
+    wordList scalarFieldNames_;
+
+    //- names of the vector Fields for which the values are added
+    wordList vectorFieldNames_;
 
     //- the global namespace the variables should go to
     word toGlobalNamespace_;
@@ -82,11 +85,14 @@ class solverPerformanceToGlobalVariables
 
 protected:
 
+    template<class T>
     void addFieldToData(const word &name);
 
-    void setValue(const word &name,scalar value);
+    template<class T>
+    void setValue(const word &name,T value);
 
-    void setValue(const word &name,const scalarField &value);
+    template<class T>
+    void setValue(const word &name,const Field<T> &value);
 
     void executeAndWriteToGlobal();
 

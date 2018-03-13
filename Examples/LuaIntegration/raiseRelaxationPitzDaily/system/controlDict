@@ -58,6 +58,9 @@ functions
         fieldNames (
             p
         );
+        vectorFieldNames (
+            U
+        );
         toGlobalNamespace solverResiduals;
     }
     raiseRelax {
@@ -69,7 +72,7 @@ functions
         dictFromSolution currentSolution;
         luaDictionaryParserErrorMode fail;
         interactiveAfterException true;
-        //        interactiveAfterExecute true;
+        interactiveAfterExecute true;
 
         initCode #{
 --- -*- mode: lua -*-

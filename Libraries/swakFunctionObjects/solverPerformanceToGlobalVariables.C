@@ -61,7 +61,8 @@ Foam::solverPerformanceToGlobalVariables::solverPerformanceToGlobalVariables
 )
     :
     obr_(obr),
-    fieldNames_(dict.lookup("fieldNames")),
+    scalarFieldNames_(dict.lookup("fieldNames")),
+    vectorFieldNames_(dict.lookupOrDefault("vectorFieldNames",wordList())),
     toGlobalNamespace_(dict.lookup("toGlobalNamespace")),
     noReset_(dict.lookupOrDefault<bool>("noReset",false))
 {
@@ -82,33 +83,33 @@ Foam::solverPerformanceToGlobalVariables::solverPerformanceToGlobalVariables
 Foam::solverPerformanceToGlobalVariables::~solverPerformanceToGlobalVariables()
 {}
 
+template<class T>
 void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
 {
     Dbug << "Getting solver performance for " << name << endl;
 
     const data &theData=dynamicCast<const fvMesh&>(obr_);
     //    Info << theData.solverPerformanceDict() << endl;
-    List<solverPerformance> perf(
+    List<SolverPerformance<T> > perf(
         theData.solverPerformanceDict()[name]
     );
 
-    setValue(name+"_nrOfPerformances",perf.size());
-
+    setValue(name+"_nrOfPerformances",scalar(perf.size()));
     if(perf.size()==0) {
         Dbug << "No performances. Nothing stored" << endl;
         return;
     }
 
-    setValue(name+"_nIterations_first",perf[0].nIterations());
-    setValue(name+"_nIterations_last", perf[perf.size()-1].nIterations());
-    setValue(name+"_initialResidual_first",perf[0].initialResidual());
-    setValue(name+"_initialResidual_last", perf[perf.size()-1].initialResidual());
-    setValue(name+"_finalResidual_first",perf[0].finalResidual());
-    setValue(name+"_finalResidual_last", perf[perf.size()-1].finalResidual());
+    setValue(name+"_nIterations_first",dimensioned<T>("nix",dimless,perf[0].nIterations()));
+    setValue(name+"_nIterations_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].nIterations()));
+    setValue(name+"_initialResidual_first",dimensioned<T>("nix",dimless,perf[0].initialResidual()));
+    setValue(name+"_initialResidual_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].initialResidual()));
+    setValue(name+"_finalResidual_first",dimensioned<T>("nix",dimless,perf[0].finalResidual()));
+    setValue(name+"_finalResidual_last", dimensioned<T>("nix",dimless,perf[perf.size()-1].finalResidual()));
 
-    scalarField nIterations(perf.size());
-    scalarField initialResidual(perf.size());
-    scalarField finalResidual(perf.size());
+    Field<T> nIterations(perf.size());
+    Field<T> initialResidual(perf.size());
+    Field<T> finalResidual(perf.size());
 
     for(int i=0;i<perf.size();i++) {
         nIterations[i]=perf[i].nIterations();
@@ -121,9 +122,10 @@ void Foam::solverPerformanceToGlobalVariables::addFieldToData(const word &name)
     setValue(name+"_finalResidual",finalResidual);
 }
 
+template<class T>
 void Foam::solverPerformanceToGlobalVariables::setValue(
     const word &name,
-    scalar value
+    T value
 ) {
     Dbug << "Setting " << name << " to " << value << endl;
 
@@ -140,9 +142,10 @@ void Foam::solverPerformanceToGlobalVariables::setValue(
     }
 }
 
+template<class T>
 void Foam::solverPerformanceToGlobalVariables::setValue(
     const word &name,
-    const scalarField &value
+    const Field<T> &value
 ) {
     Dbug << "Setting " << name << " to " << value << endl;
 
@@ -161,8 +164,11 @@ void Foam::solverPerformanceToGlobalVariables::setValue(
 
 void Foam::solverPerformanceToGlobalVariables::executeAndWriteToGlobal()
 {
-    forAll(fieldNames_,i) {
-        addFieldToData(fieldNames_[i]);
+    forAll(scalarFieldNames_,i) {
+        addFieldToData<scalar>(scalarFieldNames_[i]);
+    }
+    forAll(vectorFieldNames_,i) {
+        addFieldToData<vector>(vectorFieldNames_[i]);
     }
 }
 
