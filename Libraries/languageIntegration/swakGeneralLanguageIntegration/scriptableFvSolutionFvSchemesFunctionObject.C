@@ -86,17 +86,17 @@ scriptableFvSolutionFvSchemesFunctionObject::scriptableFvSolutionFvSchemesFuncti
 {
     interpreter().readCode(
         dict,
-        "initCode",
+        "init",
         initCode_
     );
     interpreter().readCode(
         dict,
-        "schemesCode",
+        "schemes",
         schemesCode_
     );
     interpreter().readCode(
         dict,
-        "solutionCode",
+        "solution",
         solutionCode_
     );
 
