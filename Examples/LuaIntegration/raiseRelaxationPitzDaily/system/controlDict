@@ -75,8 +75,10 @@ functions
 --- -*- mode: lua -*-
 print('Starting up')
 lastResiduals={}
+allResiduals={}
 nrResiduals=10
-    scaleResiduals={U=true,p=true}
+scaleResiduals={p=true}
+--- scaleResiduals={U=true,p=true}
 factor=0.75
 upFactor=1.05
 scaleThres=1.05
@@ -87,10 +89,11 @@ function average(vals)
 
    for i,v in pairs(vals) do
       cnt=cnt+1
-      sum=sum+v
+      sum=sum+math.log(v)
    end
    if cnt>0 then
-      return sum/cnt
+      --- print("avg: "..sum.."/"..cnt)
+      return math.exp(sum/cnt)
    else
       return 0
    end
@@ -108,12 +111,17 @@ if not initRelax then
 end
 
 lastP=p_initialResidual_last
+avgP=average(allResiduals)
+
+print("Average p-Residual "..avgP)
 
 if #lastResiduals>=nrResiduals then
    table.remove(lastResiduals,1)
    avg=average(lastResiduals)
-   if avg*scaleThres<lastP then
-      print("Scaling residuals down")
+   usedP=lastP
+   ---   usedP=avgP
+   if avg*scaleThres<usedP then
+      print("Scaling residuals down: "..avg*scaleThres.."<"..usedP)
       if factor>1 then
          factor=1/upFactor
       else
@@ -122,8 +130,8 @@ if #lastResiduals>=nrResiduals then
       if factor<0.1 then
          factor=0.1
       end
-   elseif avg>lastP*scaleThres then
-      print("Scaling residuals up")
+   elseif avg>usedP*scaleThres then
+      print("Scaling residuals up :"..avg..">"..usedP*scaleThres)
       factor=factor*upFactor
       if factor>2 then
          factor=2
@@ -134,6 +142,7 @@ if #lastResiduals>=nrResiduals then
 end
 
 lastResiduals[#lastResiduals+1]=lastP
+allResiduals[#allResiduals+1]=lastP
 
 print("Scaling relaxation with factor "..factor)
 relax={}

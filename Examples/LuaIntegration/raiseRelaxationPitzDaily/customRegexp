@@ -6,3 +6,9 @@ scaling {
     titles ( val );
     logscale yes;
 }
+averagePResidual {
+    expr "Average p-Residual (.+)";
+    theTitle "Average Residual of p";
+    titles ( val );
+    logscale yes;
+}
