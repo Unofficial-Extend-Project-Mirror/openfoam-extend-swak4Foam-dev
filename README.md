@@ -1,5 +1,3 @@
-
-
 # Description
 
 A collection of libraries and tools that let the user handle
@@ -383,7 +381,7 @@ for manipulating and creating fields with expressions
 -   **swakCoded:** Child of the `coded`-functionObject that can read
     and write global variables from and to
     swak-namespaces
-    
+
     Assumes that the `SWAK4FOAM_SRC` environment
     variable is set to the `Libraries`-directory of the
     `swak4Foam`-sources
@@ -900,10 +898,7 @@ Cases that don't have a `groovyBC`
 #### `angledDuctImplicit`
 
 -   **Solver:** rhoPorousMRFSimpleFoam
--   **Mesh preparation:** Execute the `makeMesh.sh`-script in that
-    directory. If you want to run in parallel call the
-    `decomposeMesh.sh`-script with the number of processors as
-    an argument
+-   **Mesh preparation:** Execute `pyFoamPrepareCase.py .`
 -   **Demonstrates:** Usage of the `swakTopoSources`. Compares
     different approaches to evaluating with the
     `swakExpression`-functionObject. Also an example dictionary
@@ -1162,7 +1157,7 @@ Testing the `cloud`-parser for lagrangiant particles
 2.  simplifiedSiwek
 
     Variation of the tutorial case
-    
+
     -   **Solver:** coalChemistryFoam
     -   **Demonstrates:** creating new clouds with
         `funkySetLagrangianField` and evaluations on
@@ -1422,7 +1417,7 @@ These topics may be "new" for the average OF-developer:
 -   **bison/flex:** This pair of compiler generator tools generate the
     parsers for the expressions. Google for a tutorial
     that looks promising to you.
-    
+
     For a short example that shows how a new function
     was added to two parsers have a look at this
     changeset that added the `cpu()`-function to the
@@ -4198,7 +4193,7 @@ or on disk the data is handled differently:
     sought. This proxy object knows which data the cloud has, what
     the type is and a short description. It makes the data
     available as fields.
-    
+
     `swak` has by default proxy objects for most particle classes
     that come with `OpenFOAM`. For unsupported classes and adaptor
     library has to be written.
@@ -5408,20 +5403,20 @@ first version these objects can be added:
 
 -   **cloudMoveStatistics:** Records simple statistics about the
     solution of the cloud:
-    
+
     -   How often were faces hit by particles (total, per particle:
         minimum, mean and average)
     -   How often were particles moved (same data as face hits)
     -   How often was each patch hit
-    
+
     Only minimum effort has been spent to consolidate this data
     across processors (particles may be counted on multiple
     processors).
-    
+
     The main purpose of this function object is to spot problematic
     behavior (particles that hit patches repeatedly and don't
     move)
-    
+
     The optional parameter `reportHitNr` and `reportMoveNr` print
     out the ids of particles that exceed these thresholds
 
@@ -5431,14 +5426,14 @@ first version these objects can be added:
     simulations significantly as basically the same impact is
     calculated over and over again without any progress. Two
     parameters allow eliminating such parcels:
-    
+
     -   **maximumNumberOfHits:** if the same boundary face is hit more often
         than this by the particle (without hitting any other
         faces) then the particle is eliminated. Recommended value: 1000
     -   **minDistanceMove:** Minimum distance a particle has to move
         when hitting a boundary face. If it moved less the
         particle is removed. Recommended: \(10^{-9}\)
-    
+
     If one of the parameters is set to a negative value the
     criterion is "switched off"
 -   **eliminateOutsideParticles:** Removes particles that are outside
@@ -5447,17 +5442,17 @@ first version these objects can be added:
     correctly tracked
 -   **correctParticleCell:** Correct the cell of the particle before
     the evolution begins.
-    
+
     This should fix problems with moving meshes but is currently
     not working correctly.
-    
+
     An optional parameter `logCorrected` logs the data of the
     corrected particles to a file. Only use for debugging or if you don't
     expect many incidents
 -   **traceParticles:** This function object gets a list of particle
     ids. For these particles all data is written whenever a
     function object is called.
-    
+
     This function object should **only** be used for debugging if the
     behavior of a special particle should be tracked
 
@@ -6208,6 +6203,12 @@ Some adaptions were required to make this compile
 #### OpenFOAM+ v1712
 
 Minor adaptions were required to make this compile by Mark Olesen
+
+
+#### foam-extend 4.1
+
+This is a work in progress based on the `nextRelease`-branch as
+there is no release yet
 
 
 ### Incompatibilities

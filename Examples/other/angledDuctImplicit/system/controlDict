@@ -429,6 +429,11 @@ functions
             type plane;
             basePoint       (0.0001 0.0001 0.0001);
             normalVector    (0 0 1);
+            planeType pointAndNormal;
+            pointAndNormalDict {
+                point $..basePoint;
+                normal $..normalVector;
+            }
             interpolate false;
         }
         verbose true;
@@ -491,6 +496,11 @@ functions
             type plane;
             basePoint       (0 0 0);
             normalVector    (0 0 1);
+            planeType pointAndNormal;
+            pointAndNormalDict {
+                point $..basePoint;
+                normal $..normalVector;
+            }
             interpolate true;
         }
         writeSurfaceOnConstruction true;
@@ -521,6 +531,11 @@ functions
             type plane;
             basePoint       (0 0 0.01);
             normalVector    (0 0 1);
+            planeType pointAndNormal;
+            pointAndNormalDict {
+                point $..basePoint;
+                normal $..normalVector;
+            }
             interpolate true;
         }
         verbose true;
@@ -797,6 +812,7 @@ functions
                 name velClass;
                 outOfBounds clamp;
                 fileName "$FOAM_CASE/velClass.data";
+                file "$FOAM_CASE/velClass.data";
             }
         );
         expression "velClass(mag(U))";
@@ -1131,7 +1147,6 @@ functions
         fields (
             heatFlux
             heatFluxPoint // just to test point fields
-            heatFluxFace // just to test face fields
         );
     }
     totalHeatFlux

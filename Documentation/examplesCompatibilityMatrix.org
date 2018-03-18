@@ -57,6 +57,7 @@
   | LuaIntegration/raiseRelaxationPitzDaily                     | \checkmark | \dagger    |            |            |
   | manipulateFvSolutionFvSchemes/pitzDailyStateMachineSwitched | \checkmark | \dagger    | \checkmark | \checkmark |
   | manipulateFvSolutionFvSchemes/pitzDailyTimeSwitched         | \checkmark | \dagger    | \checkmark | \checkmark |
+  | other/angledDuctImplicit                                    |            |            | \checkmark |            |
   | other/capillaryRise                                         | \checkmark | \sad       | \checkmark | \checkmark |
   | other/counterFlowFlame2DInitialized                         | \checkmark | \sad       | \partial   | \checkmark |
   | other/simpleBendedPipe                                      | \checkmark | \checkmark | \checkmark | \checkmark |

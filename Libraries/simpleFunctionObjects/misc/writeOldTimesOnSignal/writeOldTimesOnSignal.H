@@ -184,7 +184,13 @@ public:
     virtual void updateMesh(const mapPolyMesh&) {
     }
 
-    virtual void movePoints(const polyMesh&) {
+    virtual void movePoints(
+#ifdef FOAM_MOVEPOINTS_GETS_POLYMESH
+        const polyMesh&
+#else
+        const pointField&
+#endif
+    ) {
     }
 #endif
 
