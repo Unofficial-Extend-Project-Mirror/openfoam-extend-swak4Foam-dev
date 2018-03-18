@@ -112,24 +112,24 @@ Contributors/Copyright:
 #if FOAM_VERSION4SWAK < VERSION_NR(2,1,0) || defined(FOAM_VERSION4SWAK_IS_EXTEND)
 // what is later called mappedPatch is called directMappedPatch
 #define FOAM_MAPPED_IS_DIRECTMAPPED
+#endif
 
-#else
-
+#if !(FOAM_VERSION4SWAK < VERSION_NR(2,1,0) || defined(FOAM_VERSION4SWAK_IS_EXTEND))
 // has basicSources
 #define FOAM_HAS_BASICSOURCES
-
 #endif
 
 #if FOAM_VERSION4SWAK >= VERSION_NR(3,2,0) && defined(FOAM_VERSION4SWAK_IS_EXTEND)
 #define FOAM_DEFAULTCOMMSTYPE_IS_METHOD
 #endif
 
-// this changed starting with 2.1
 #if (FOAM_VERSION4SWAK >= VERSION_NR(2,1,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
-
 // this Foam-Version now has ABI-patches
 #define FOAM_HAS_ABI_PATCHES
+#endif
 
+#if (FOAM_VERSION4SWAK >= VERSION_NR(2,1,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND) \
+    || ((FOAM_VERSION4SWAK > VERSION_NR(4,0,9)) && defined(FOAM_VERSION4SWAK_IS_EXTEND))
 // the coded function objects have an additional data entry
 #define SWAK_FUNCTION_OBJECT_HAS_DATAPTR
 
@@ -289,12 +289,13 @@ Contributors/Copyright:
 #define FOAM_PARTICLE_CLASS_IS_TEMPLATE
 #endif
 
-#ifdef FOAM_VERSION4SWAK_IS_EXTEND
+#if defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK < VERSION_NR2(4, 0))
 #define FOAM_HAS_NO_DATAENTRY_CLASS
 #endif
 
 #if (OPENFOAM_PLUS >= 1606) \
-    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0))
+    || (defined(FOAM_VERSION4SWAK_IS_OPENFOAM) && FOAM_VERSION4SWAK>VERSION_NR2(3,0)) \
+    || (defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK > VERSION_NR2(4, 0)))
 #define FOAM_DATAENTRY_IS_NOW_FUNCTION1
 #endif
 
@@ -302,7 +303,8 @@ Contributors/Copyright:
 #define FOAM_DATAENTRY_HAS_TENSOR_INSTANCES
 #endif
 
-#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND)
+#if (FOAM_VERSION4SWAK > VERSION_NR2(2,0)) && !defined(FOAM_VERSION4SWAK_IS_EXTEND) \
+    || (defined(FOAM_VERSION4SWAK_IS_EXTEND) && (FOAM_VERSION4SWAK > VERSION_NR2(4, 0)))
 #define FOAM_DATAENTRY_CLASS_NEEDS_WRITEDATA
 #endif
 
