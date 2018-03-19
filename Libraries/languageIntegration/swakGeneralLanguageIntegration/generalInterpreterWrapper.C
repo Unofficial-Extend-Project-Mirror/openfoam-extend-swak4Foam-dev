@@ -126,6 +126,8 @@ generalInterpreterWrapper::generalInterpreterWrapper
 {
     Pbug << "Starting constructor" << endl;
 
+    checkConflicts();
+
     syncParallel();
 
 #ifdef FOAM_HAS_LOCAL_DEBUGSWITCHES
@@ -161,6 +163,36 @@ generalInterpreterWrapper::generalInterpreterWrapper
     Pbug << "End constructor" << endl;
  }
 
+void generalInterpreterWrapper::checkConflicts()
+{
+    if(
+        (
+            dictionaryConstructorTablePtr_->find("python2")
+            !=
+            dictionaryConstructorTablePtr_->end()
+        )
+        &&
+        (
+            dictionaryConstructorTablePtr_->find("python3")
+            !=
+            dictionaryConstructorTablePtr_->end()
+        )
+    ) {
+        FatalErrorIn
+            (
+                "void generalInterpreterWrapper::checkConflicts"
+            )   << "'python2' and 'python3' loaded. Only one Python-Integration can be used"
+                << endl << endl
+                << "Loaded valueTypes are :" << endl
+                #ifdef FOAM_HAS_SORTED_TOC
+                << dictionaryConstructorTablePtr_->sortedToc()
+                #else
+                << dictionaryConstructorTablePtr_->toc()
+                #endif
+                << exit(FatalError);
+    }
+}
+
 autoPtr<generalInterpreterWrapper> generalInterpreterWrapper::New
 (
     const objectRegistry& obr,
@@ -180,6 +212,9 @@ autoPtr<generalInterpreterWrapper> generalInterpreterWrapper::New
                 << endl
                 << exit(FatalError);
     }
+
+    checkConflicts();
+
     dictionaryConstructorTable::iterator cstrIter =
         dictionaryConstructorTablePtr_->find(wrapperType);
 

@@ -198,6 +198,8 @@ protected:
 
     virtual bool wrapUpDictionary(const word &name);
 
+    static void checkConflicts();
+
 public:
     class ValidWord {
     public:

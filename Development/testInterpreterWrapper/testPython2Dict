@@ -27,6 +27,7 @@ useNumpy yes;
 
 libs (
     "libswakPythonIntegration.so"
+    //    "libswakPython3Integration.so"
 );
 
 // ************************************************************************* //

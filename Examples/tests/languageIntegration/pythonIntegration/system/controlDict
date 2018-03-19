@@ -340,6 +340,7 @@ functions {
 libs (
     "libgroovyBC.so"
     "libswakPythonIntegration.so"
+    //  "libswakPython3Integration.so"
     //    "libswakPythonIntegrationCluster.so"
     "libswakFunctionObjects.so"
 );
