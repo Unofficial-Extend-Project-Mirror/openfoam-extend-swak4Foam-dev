@@ -72,7 +72,7 @@ parser.add_argument('--extensions', dest='extensions', type=str, action='append'
                     default=["py","C","sh","H","ll","yy"],
                     help="Valid extension to investigate. Add to default list: %(default)s")
 parser.add_argument('--ignore-files', dest='ignoreList', type=str, action='append',
-                    default=["lnInclude","Make",".hg",".issues"],
+                    default=["lnInclude","Make",".hg",".issues","filesThatAreOnlyInSomeDistributions"],
                     help="Directories and files that should not be handled. Add to default list: %(default)s")
 parser.add_argument('--special-file', dest='special', type=str, action='append',
                     default=["Allwmake","Allwclean","files","options"],
@@ -323,6 +323,7 @@ def processFile(f,data):
 def handleFiles(files):
     for f in files:
         if path.basename(f) in args.ignoreList:
+            print_("Skipping",f)
             continue
         if not path.exists(f):
             print_("WARNING: File",f,"does not exist. Don't try this again with me")
@@ -341,7 +342,7 @@ def handleFiles(files):
 
 handleFiles(args.files)
 
-print
+print_("\n\n")
 print_("Summary: Lines")
 nameLen=max([len(n) for n in allLines.keys()])
 tabFormat="%"+str(nameLen)+"s : %s"
