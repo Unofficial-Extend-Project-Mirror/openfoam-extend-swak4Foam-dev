@@ -4012,6 +4012,10 @@ S_{expl} + S_{impl} T
      If =swakConfiguation.automatic= is used as =swakConfiguation=
      then the highest available version of Python 2 and Python 3 is
      used for the integration of these two languages
+**** Change banner in Sources
+     The regular OpenFOAM and the obsolete ICE-banner are removed and
+     a new swak4Foam-banner are added to the source files. This
+     modifies almost every file without changing any functionality
 *** Documentation
 *** New features
 **** Python 3 integration

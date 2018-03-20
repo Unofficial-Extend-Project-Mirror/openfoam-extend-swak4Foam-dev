@@ -5,8 +5,7 @@
 |    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
 |    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
 |                                                               | OpenFOAM    |
-*-----------------------------------------------------------------------------*
-
+-------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
 
@@ -35,6 +34,7 @@ SourceFiles
 Contributors/Copyright:
     2017 Bernhard F.W. Gschaider <bgschaid@hfd-research.com>
 
+ SWAK Revision: $Id:  $
 \*---------------------------------------------------------------------------*/
 
 #ifndef SwakScriptableInjection_H

@@ -5,8 +5,7 @@
 |    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
 |    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
 |                                                               | OpenFOAM    |
------------------------------------------------------------------------------*
-
+-------------------------------------------------------------------------------
 License
     This file is part of swak4Foam.
 
@@ -24,7 +23,7 @@ License
     along with swak4Foam.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Parser that is the framework for transforming any OpenFOAM-dictionary
+    Parser that is the framework for transforming any swak4Foam-dictionary
     into another dictionary-like data structure
 
     Won't be able to read all possible OF-dictionaries
