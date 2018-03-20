@@ -135,6 +135,7 @@ swakBanner=r"""|                       _    _  _     ___                       |
 -------------------------------------------------------------------------------"""+"\n"
 
 modifiedFiles=[]
+noContributorsAdded=[]
 
 def getContributorsFromLine(line):
     m=contribLine.match(line)
@@ -293,19 +294,22 @@ def processFile(f,data):
             allContrib|=getContributorsFromLine(l)
 
     if contrStart!=None:
-        doWrite=True
         if swakLine==None:
             print_("No finishing '"+swakRevision+"' found. No contributors added")
+            noContributorsAdded.append(f)
             return
-        users=list(set([u for u,y in localContrib]))
-        cLines=[]
-        for u in users:
-            cLines.append(buildContributorLine(u,localContrib))
-        cLines.sort()
-        print_("Adding",len(cLines),"contributor lines to",f)
+        else:
+            doWrite=True
+            users=list(set([u for u,y in localContrib]))
+            cLines=[]
+            for u in users:
+                cLines.append(buildContributorLine(u,localContrib))
+            cLines.sort()
+            print_("Adding",len(cLines),"contributor lines to",f)
 
     if doWrite:
         if not args.dryRun:
+            print_("Writing",f)
             f=open(f,"w")
             if contrStart is not None:
                 f.writelines(lines[:contrStart+1])
@@ -347,10 +351,13 @@ for k in allLines:
     print_(tabFormat % (k,allLines[k]))
 
 if len(modifiedFiles)>0:
-    print
+    print_()
     print_(len(modifiedFiles),"files modified")
-    print
-
+    print_()
+if len(noContributorsAdded)>0:
+    print_()
+    print_("\n    ".join(["No contributors added"]+noContributorsAdded))
+    print_()
 print_("Years - Contributors")
 print_("--------------------")
 years=list(set([y for u,y in allContrib]))
