@@ -83,6 +83,12 @@ parser.add_argument('--all-files', dest='allFiles', action='store_true',
 parser.add_argument('--add-contributor', dest='addContrib', type=str, action='append',
                     default=[],
                     help="Add a contributor entry of the form '<year>,<name>' to the file even if he is not yet in the source file")
+parser.add_argument('--no-banner',dest="banner",action='store_false',
+                    default=True,
+                    help="Do not add the swak4Foam banner and remove old banners")
+parser.add_argument('--no-add-contributor',dest="addContributor",action='store_false',
+                    default=True,
+                    help="Do not add the contributor line if it is missing")
 
 args = parser.parse_args()
 
@@ -116,6 +122,17 @@ contribStart="Contributors/Copyright:"
 swakRevision=" SWAK Revision:"
 
 contribLine=re.compile("\s*(?P<years>[0-9]{4}((-|, )[0-9]{4})*) (?P<name>.+)$")
+
+headerStart=re.compile(r"/\*-----.*-----\*\\")
+headerEnd=re.compile(r"\\\*-----.*-----\*/")
+licenseLine=re.compile("License.*")
+swakBanner=r"""|                       _    _  _     ___                       | The         |
+|     _____      ____ _| | _| || |   / __\__   __ _ _ __ ___    | Swiss       |
+|    / __\ \ /\ / / _` | |/ / || |_ / _\/ _ \ / _` | '_ ` _ \   | Army        |
+|    \__ \\ V  V / (_| |   <|__   _/ / | (_) | (_| | | | | | |  | Knife       |
+|    |___/ \_/\_/ \__,_|_|\_\  |_| \/   \___/ \__,_|_| |_| |_|  | For         |
+|                                                               | OpenFOAM    |
+-------------------------------------------------------------------------------"""+"\n"
 
 modifiedFiles=[]
 
@@ -203,6 +220,64 @@ def processFile(f,data):
 
     lines=open(f).readlines()
 
+    doWrite=False
+    def changeText(lines):
+        m1=headerStart.match(lines[0])
+        touched=False
+        if m1 is None:
+            return False,lines
+        oldBanner=[]
+        bannerLen=0
+        for i,l in enumerate(lines[1:]):
+            ml=licenseLine.match(l)
+            if ml is None:
+                oldBanner.append(l)
+                bannerLen+=1
+            else:
+                break
+        if "".join(oldBanner)!=swakBanner:
+            touched=True
+            #            print_("".join(oldBanner))
+            #            print(swakBanner)
+            print_("Adding swak4Foam-Banner")
+            del lines[1:(bannerLen+1)]
+            lines.insert(1,swakBanner)
+
+        touchedCopy=0
+        inCopy=False
+        foundContrib=False
+        for i,l in enumerate(lines):
+            if l.startswith(contribStart):
+                foundContrib=True
+            me=headerEnd.match(l)
+            if me is not None:
+                if not foundContrib and args.addContributor:
+                    touched=True
+                    print("Adding missing contributor-start")
+                    lines.insert(i,contribStart+"\n")
+                    lines.insert(i+1,"\n")
+                    lines.insert(i+2,swakRevision+" $Id$\n")
+                break
+            ml=licenseLine.match(l)
+            if ml is not None:
+                inCopy=True
+            if inCopy:
+                newline=l
+                for o,n in [("based on OpenFOAM","part of swak4Foam"),("OpenFOAM","swak4Foam")]:
+                    newline=newline.replace(o,n)
+                if newline!=l:
+                    touchedCopy+=1
+                    touched=True
+                    lines[i]=newline
+
+        if touchedCopy>0:
+            print_("Replaced OpenFOAM in license {} times".format(touchedCopy))
+
+        return touched,lines
+
+    if args.banner:
+        doWrite,lines=changeText(lines)
+
     for i,l in enumerate(lines):
         if l.startswith(swakRevision):
             swakLine=i
@@ -218,6 +293,7 @@ def processFile(f,data):
             allContrib|=getContributorsFromLine(l)
 
     if contrStart!=None:
+        doWrite=True
         if swakLine==None:
             print_("No finishing '"+swakRevision+"' found. No contributors added")
             return
@@ -227,11 +303,16 @@ def processFile(f,data):
             cLines.append(buildContributorLine(u,localContrib))
         cLines.sort()
         print_("Adding",len(cLines),"contributor lines to",f)
+
+    if doWrite:
         if not args.dryRun:
             f=open(f,"w")
-            f.writelines(lines[:contrStart+1])
-            f.writelines([l+"\n" for l in cLines])
-            f.writelines(lines[swakLine-1:])
+            if contrStart is not None:
+                f.writelines(lines[:contrStart+1])
+                f.writelines([l+"\n" for l in cLines])
+                f.writelines(lines[swakLine-1:])
+            else:
+                f.writelines(lines)
             f.close()
             modifiedFiles.append(f)
 
