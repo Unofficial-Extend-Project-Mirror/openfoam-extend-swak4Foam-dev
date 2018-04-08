@@ -37,7 +37,7 @@ writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression uncompressed;
+writeCompression compressed;
 
 timeFormat      general;
 
@@ -65,14 +65,14 @@ libs (
 
 functions {
 
-    getSLGThermoForParcels {
-        type loadSLGThermoModel;
-        correctModel false;
-        allowReload true; //false;
-        thermoName thermophysicalProperties;
-        outputControlMode timeStep;
-        outputInterval 0;
-    }
+    // getSLGThermoForParcels {
+    //     type loadSLGThermoModel;
+    //     correctModel false;
+    //     allowReload true; //false;
+    //     thermoName thermophysicalProperties;
+    //     outputControlMode timeStep;
+    //     outputInterval 0;
+    // }
 
 
     writeClouds {
@@ -88,23 +88,27 @@ functions {
         cloudName coldParticleCloud;
         g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
         rhoName rho;
+<!--(if foamFork=="extend")-->
+        muName mu;
+<!--(else)-->
         muName thermo:mu;
+<!--(end)-->
         UName U;
         SLGThermoName SLGThermo;
         autowrite false;
     }
 
-    hotParticle {
-        type evolveThermoCloud;
-        //        type evolveConstReactingCloud;
-        cloudName hotParticleCloud;
-        g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
-        rhoName rho;
-        muName mu;
-        UName U;
-        SLGThermoName SLGThermo;
-        autowrite true;
-    }
+    // hotParticle {
+    //     type evolveThermoCloud;
+    //     //        type evolveConstReactingCloud;
+    //     cloudName hotParticleCloud;
+    //     g "down" [0 1 -2 0 0 0 0] (0 -9.81 0);
+    //     rhoName rho;
+    //     muName mu;
+    //     UName U;
+    //     SLGThermoName SLGThermo;
+    //     autowrite true;
+    // }
 
     momentumSourceKinematic {
         enabled false;

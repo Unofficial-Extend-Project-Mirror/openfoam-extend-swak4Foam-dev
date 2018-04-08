@@ -9,36 +9,31 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       areaScalarField;
+    class       areaVectorField;
     location    "0";
-    object      Cs;
+    object      Us;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions          [0 0 0 0 0 0 0];
+dimensions          [0 1 -1 0 0 0 0];
 
-internalField       uniform 0;
-
-referenceLevel      0;
+internalField       uniform (0.05 0 0);
 
 boundaryField
 {
     inlet {
-        type groovyBC;
-        value uniform 1;
-        variables (
-            "const=0.5;"
-            "amplitude=0.5;"
-            "minY=min(pos().y);"
-            "maxY=max(pos().y);"
-        );
-        valueExpression "const+amplitude*sin(2*pi*(pos().y-minY)/(maxY-minY))";
+        type fixedValue;
+        value $internalField;
     }
     outlet {
         type zeroGradient;
     }
     bound {
+<!--(if foamFork=="extend")-->
+        type symmetryPlane;
+<!--(else)-->
         type symmetry;
+<!--(end)-->
     }
 }
 
