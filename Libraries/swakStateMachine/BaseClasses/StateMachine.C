@@ -212,10 +212,15 @@ bool StateMachine::StateTransition::operator()()
 
     switch(logicalAccumulation_) {
         case LogicalAccumulationNamedEnum::logAnd:
+        case LogicalAccumulationNamedEnum::logAll:
             result=driver.getReduced(andOp<bool>(),true);
             break;
         case LogicalAccumulationNamedEnum::logOr:
+        case LogicalAccumulationNamedEnum::logAny:
             result=driver.getReduced(orOp<bool>(),false);
+            break;
+        case LogicalAccumulationNamedEnum::logNone:
+            result=!driver.getReduced(orOp<bool>(),false);
             break;
         default:
             FatalErrorIn("StateMachine::StateTransition::operator()()")
